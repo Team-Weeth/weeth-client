@@ -1,15 +1,79 @@
-@import "tailwindcss";
+@import 'tailwindcss';
+
+@font-face {
+  font-family: 'Pretendard Variable';
+  font-weight: 45 920;
+  font-style: normal;
+  font-display: swap;
+  src: url('/fonts/PretendardVariable.woff2') format('woff2-variations');
+}
 
 :root {
   --background: #ffffff;
   --foreground: #171717;
+
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  --letter-spacing: -0.005em;
+
+  --h1-size: 40px;
+  --h1-line-height: 48px;
+  --h2-size: 32px;
+  --h2-line-height: 40px;
+  --h3-size: 24px;
+  --h3-line-height: 30px;
+  --sub1-size: 18px;
+  --sub1-line-height: 22px;
+  --sub2-size: 16px;
+  --sub2-line-height: 20px;
+  --body1-size: 16px;
+  --body1-line-height: 24px;
+  --body1-weight: 470;
+  --body2-size: 14px;
+  --body2-line-height: 20px;
+  --body2-weight: 450;
+  --caption1-size: 12px;
+  --caption1-line-height: 16px;
+  --caption2-size: 12px;
+  --caption2-line-height: 16px;
+  --button1-size: 16px;
+  --button1-line-height: 24px;
+  --button2-size: 14px;
+  --button2-line-height: 20px;
+}
+
+[data-admin] {
+  --h1-size: 36px;
+  --h1-line-height: 44px;
+  --h2-size: 28px;
+  --h2-line-height: 36px;
+  --h3-size: 22px;
+  --h3-line-height: 28px;
+  --sub1-size: 16px;
+  --sub1-line-height: 20px;
+  --sub2-size: 14px;
+  --sub2-line-height: 18px;
+  --body1-size: 14px;
+  --body1-line-height: 22px;
+  --body1-weight: 500;
+  --body2-size: 13px;
+  --body2-line-height: 18px;
+  --body2-weight: 500;
+  --caption1-size: 12px;
+  --caption1-line-height: 16px;
+  --caption2-size: 12px;
+  --caption2-line-height: 16px;
+  --button1-size: 14px;
+  --button1-line-height: 24px;
+  --button2-size: 13px;
+  --button2-line-height: 16px;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-pretendard: 'Pretendard Variable', sans-serif;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -22,5 +86,88 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-pretendard);
+}
+
+input:focus,
+select:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+@utility typo-h1 {
+  font-size: var(--h1-size);
+  line-height: var(--h1-line-height);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: var(--letter-spacing);
+}
+
+@utility typo-h2 {
+  font-size: var(--h2-size);
+  line-height: var(--h2-line-height);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: var(--letter-spacing);
+}
+
+@utility typo-h3 {
+  font-size: var(--h3-size);
+  line-height: var(--h3-line-height);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--letter-spacing);
+}
+
+@utility typo-sub1 {
+  font-size: var(--sub1-size);
+  line-height: var(--sub1-line-height);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--letter-spacing);
+}
+
+@utility typo-sub2 {
+  font-size: var(--sub2-size);
+  line-height: var(--sub2-line-height);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--letter-spacing);
+}
+
+@utility typo-body1 {
+  font-size: var(--body1-size);
+  line-height: var(--body1-line-height);
+  font-weight: var(--body1-weight);
+  letter-spacing: var(--letter-spacing);
+}
+
+@utility typo-body2 {
+  font-size: var(--body2-size);
+  line-height: var(--body2-line-height);
+  font-weight: var(--body2-weight);
+  letter-spacing: var(--letter-spacing);
+}
+
+@utility typo-caption1 {
+  font-size: var(--caption1-size);
+  line-height: var(--caption1-line-height);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--letter-spacing);
+}
+
+@utility typo-caption2 {
+  font-size: var(--caption2-size);
+  line-height: var(--caption2-line-height);
+  font-weight: var(--font-weight-medium);
+  letter-spacing: var(--letter-spacing);
+}
+
+@utility typo-button1 {
+  font-size: var(--button1-size);
+  line-height: var(--button1-line-height);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--letter-spacing);
+}
+
+@utility typo-button2 {
+  font-size: var(--button2-size);
+  line-height: var(--button2-line-height);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--letter-spacing);
 }
