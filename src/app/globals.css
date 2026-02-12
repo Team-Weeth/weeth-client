@@ -8,9 +8,88 @@
   src: url('/fonts/PretendardVariable.woff2') format('woff2-variations');
 }
 
+@theme {
+  --breakpoint-*: initial;
+  --breakpoint-mobile: 360px;
+  --breakpoint-tablet: 696px;
+  --breakpoint-desktop: 1032px;
+}
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --neutral-0: #ffffff;
+  --neutral-100: #eef2f5;
+  --neutral-200: #f3f5f7;
+  --neutral-300: #ffffff;
+  --neutral-400: #e6eaed;
+  --neutral-500: #b7bcbf;
+  --neutral-600: #909599;
+  --neutral-700: #5d6166;
+  --neutral-800: #1e2021;
+  --neutral-900: #000000;
+
+  --primary-100: #e6fff6;
+  --primary-200: #a3ffe0;
+  --primary-500: #00c8aa;
+  --primary-600: #00877a;
+  --primary-700: #00615a;
+  --primary-900: #003228;
+
+  --secondary-100: #d5e4ff;
+  --secondary-200: #92b9ff;
+  --secondary-500: #508fff;
+  --secondary-700: #305599;
+  --secondary-900: #0f1c32;
+
+  --purple-100: #e0d7f9;
+  --purple-200: #af98f1;
+  --purple-500: #7f5ae9;
+  --purple-700: #32245d;
+  --purple-900: #15083c;
+
+  --pink-100: #faddf9;
+  --pink-200: #f3a7f0;
+  --pink-500: #ed72e7;
+  --pink-700: #8e448a;
+  --pink-900: #280526;
+
+  --background: var(--neutral-200);
+  --line: var(--neutral-400);
+
+  --text-normal: var(--neutral-800);
+  --text-strong: var(--neutral-900);
+  --text-alternative: var(--neutral-600);
+  --text-disabled: var(--neutral-500);
+  --text-inverse: var(--neutral-0);
+
+  --container-neutral: var(--neutral-300);
+  --container-neutral-interaction: var(--neutral-400);
+  --container-neutral-alternative: var(--neutral-100);
+  --container-primary: var(--primary-500);
+  --container-primary-interaction: var(--primary-600);
+  --container-primary-alternative: var(--primary-100);
+  --container-secondary: var(--secondary-500);
+  --container-secondary-interaction: var(--secondary-700);
+  --container-secondary-alternative: var(--secondary-100);
+
+  --button-neutral: var(--neutral-400);
+  --button-neutral-interaction: var(--neutral-500);
+  --button-primary: var(--primary-500);
+  --button-primary-interaction: var(--primary-600);
+
+  --icon-normal: var(--neutral-800);
+  --icon-strong: var(--neutral-900);
+  --icon-alternative: var(--neutral-600);
+  --icon-disabled: var(--neutral-500);
+  --icon-inverse: var(--neutral-0);
+
+  --brand-primary: var(--primary-500);
+  --brand-secondary: var(--secondary-500);
+  --brand-purple: var(--purple-500);
+  --brand-pink: var(--pink-500);
+
+  --state-success: #2370f9;
+  --state-caution: #ffb202;
+  --state-error: #ff5857;
 
   --font-weight-medium: 500;
   --font-weight-semibold: 600;
@@ -41,6 +120,26 @@
   --button1-line-height: 24px;
   --button2-size: 14px;
   --button2-line-height: 20px;
+
+  --margin-0: 0px;
+  --margin-100: 4px;
+  --margin-200: 8px;
+  --margin-300: 16px;
+  --margin-400: 24px;
+  --margin-500: 32px;
+  --margin-600: 40px;
+
+  --padding-0: 0px;
+  --padding-100: 4px;
+  --padding-200: 8px;
+  --padding-300: 12px;
+  --padding-400: 16px;
+  --padding-450: 18px;
+  --padding-500: 20px;
+
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
 }
 
 [data-admin] {
@@ -70,22 +169,121 @@
   --button2-line-height: 16px;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-pretendard: 'Pretendard Variable', sans-serif;
+.dark {
+  --neutral-0: #000000;
+  --neutral-100: #171819;
+  --neutral-200: #1e2021;
+  --neutral-300: #2a2c2e;
+  --neutral-400: #46494d;
+  --neutral-500: #6e7173;
+  --neutral-600: #9fa3a6;
+  --neutral-700: #dddfe0;
+  --neutral-800: #f8f8f8;
+  --neutral-900: #ffffff;
+
+  --primary-100: #003127;
+  --primary-200: #00615a;
+  --primary-500: #00fac8;
+  --primary-600: #a3ffe0;
+  --primary-700: #e6fff6;
+  --primary-900: #f2fefc;
+
+  --secondary-100: #0f1c32;
+  --secondary-200: #305599;
+  --secondary-500: #508fff;
+  --secondary-700: #92b9ff;
+  --secondary-900: #d5e4ff;
+
+  --purple-100: #15083c;
+  --purple-200: #32245d;
+  --purple-500: #7f5ae9;
+  --purple-700: #af98f1;
+  --purple-900: #e0d7f9;
+
+  --pink-100: #280526;
+  --pink-200: #8e448a;
+  --pink-500: #ed72e7;
+  --pink-700: #f3a7f0;
+  --pink-900: #faddf9;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+@theme inline {
+  --font-pretendard: 'Pretendard Variable', sans-serif;
+
+  --color-background: var(--background);
+  --color-line: var(--line);
+
+  --color-text-normal: var(--text-normal);
+  --color-text-strong: var(--text-strong);
+  --color-text-alternative: var(--text-alternative);
+  --color-text-disabled: var(--text-disabled);
+  --color-text-inverse: var(--text-inverse);
+
+  --color-container-neutral: var(--container-neutral);
+  --color-container-neutral-interaction: var(--container-neutral-interaction);
+  --color-container-neutral-alternative: var(--container-neutral-alternative);
+  --color-container-primary: var(--container-primary);
+  --color-container-primary-interaction: var(--container-primary-interaction);
+  --color-container-primary-alternative: var(--container-primary-alternative);
+  --color-container-secondary: var(--container-secondary);
+  --color-container-secondary-interaction: var(--container-secondary-interaction);
+  --color-container-secondary-alternative: var(--container-secondary-alternative);
+
+  --color-button-neutral: var(--button-neutral);
+  --color-button-neutral-interaction: var(--button-neutral-interaction);
+  --color-button-primary: var(--button-primary);
+  --color-button-primary-interaction: var(--button-primary-interaction);
+
+  --color-icon-normal: var(--icon-normal);
+  --color-icon-strong: var(--icon-strong);
+  --color-icon-alternative: var(--icon-alternative);
+  --color-icon-disabled: var(--icon-disabled);
+  --color-icon-inverse: var(--icon-inverse);
+
+  --color-brand-primary: var(--brand-primary);
+  --color-brand-secondary: var(--brand-secondary);
+  --color-brand-purple: var(--brand-purple);
+  --color-brand-pink: var(--brand-pink);
+
+  --color-state-success: var(--state-success);
+  --color-state-caution: var(--state-caution);
+  --color-state-error: var(--state-error);
+
+  --spacing-0: 0px;
+  --spacing-100: 4px;
+  --spacing-200: 8px;
+  --spacing-300: 12px;
+  --spacing-400: 16px;
+  --spacing-450: 18px;
+  --spacing-500: 20px;
+  --spacing-600: 24px;
+  --spacing-700: 32px;
+  --spacing-800: 40px;
+
+  --margin-0: var(--spacing-0);
+  --margin-100: var(--spacing-100);
+  --margin-200: var(--spacing-200);
+  --margin-300: var(--spacing-400);
+  --margin-400: var(--spacing-600);
+  --margin-500: var(--spacing-700);
+  --margin-600: var(--spacing-800);
+
+  --padding-0: var(--spacing-0);
+  --padding-100: var(--spacing-100);
+  --padding-200: var(--spacing-200);
+  --padding-300: var(--spacing-300);
+  --padding-400: var(--spacing-400);
+  --padding-450: var(--spacing-450);
+  --padding-500: var(--spacing-500);
+
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
 }
 
 body {
   background: var(--background);
-  color: var(--foreground);
+  color: var(--text-normal);
   font-family: var(--font-pretendard);
 }
 
