@@ -1,6 +1,6 @@
 'use client';
 
-import { Button } from '@/components/ui';
+import { Button, TextField } from '@/components/ui';
 import { useThemeStore } from '@/stores/theme-store';
 
 function Row({ label, className }: { label: string; className: string }) {
@@ -12,11 +12,17 @@ export default function LandingPage() {
 
   return (
     <div className="bg-background min-h-screen p-400">
-      <Button variant="secondary" size="lg" onClick={toggle}>
+      <Button variant="primary" size="lg" onClick={toggle}>
+        {isDark ? '☀️ 라이트모드' : '🌙 다크모드'}
+      </Button>
+      <Button variant="secondary" size="md" onClick={toggle}>
+        {isDark ? '☀️ 라이트모드' : '🌙 다크모드'}
+      </Button>
+      <Button variant="tertiary" size="sm" onClick={toggle}>
         {isDark ? '☀️ 라이트모드' : '🌙 다크모드'}
       </Button>
 
-      <p className="typo-caption1 text-text-disabled mb-2">TYPOGRAPHY</p>
+      <p className="typo-caption1 text-text-disabled mt-6 mb-2">TYPOGRAPHY</p>
       <div className="typo-h1 text-text-strong">H1 Weeth</div>
       <div className="typo-h2 text-text-strong">H2 Weeth</div>
       <div className="typo-h3 text-text-strong">H3 Weeth</div>
@@ -111,6 +117,26 @@ export default function LandingPage() {
         <Row label="state-success" className="text-state-success" />
         <Row label="state-caution" className="text-state-caution" />
         <Row label="state-error" className="text-state-error" />
+      </div>
+
+      <p className="typo-caption1 text-text-disabled mt-6 mb-2">TEXT FIELD</p>
+      <div className="flex flex-col gap-3">
+        <div>
+          <p className="typo-caption2 text-text-alternative mb-1">Default</p>
+          <TextField placeholder="기본 텍스트 필드" />
+        </div>
+        <div>
+          <p className="typo-caption2 text-text-alternative mb-1">Clearable</p>
+          <TextField clearable placeholder="내용을 입력하면 X 버튼이 나타납니다" />
+        </div>
+        <div>
+          <p className="typo-caption2 text-text-alternative mb-1">Multiline (scrollable)</p>
+          <TextField multiline rows={3} placeholder="여러 줄 입력이 가능하고 내부 스크롤됩니다" />
+        </div>
+        <div>
+          <p className="typo-caption2 text-text-alternative mb-1">Disabled</p>
+          <TextField disabled placeholder="비활성화 상태" />
+        </div>
       </div>
     </div>
   );

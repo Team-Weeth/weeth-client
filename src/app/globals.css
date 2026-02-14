@@ -369,3 +369,23 @@ select:focus {
   font-weight: var(--font-weight-semibold);
   letter-spacing: var(--letter-spacing);
 }
+
+.scrollbar-custom {
+  scrollbar-width: thin;
+  scrollbar-color: var(--neutral-500) transparent;
+}
+
+.scrollbar-custom::-webkit-scrollbar {
+  width: 8px;
+}
+
+.scrollbar-custom::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scrollbar-custom::-webkit-scrollbar-thumb {
+  background-color: var(--neutral-500);
+  border-radius: 9999px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
