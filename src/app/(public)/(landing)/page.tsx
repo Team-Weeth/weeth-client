@@ -1,5 +1,6 @@
 'use client';
 
+import { Button } from '@/components/ui';
 import { useThemeStore } from '@/stores/theme-store';
 
 function Row({ label, className }: { label: string; className: string }) {
@@ -11,12 +12,9 @@ export default function LandingPage() {
 
   return (
     <div className="bg-background min-h-screen p-400">
-      <button
-        onClick={toggle}
-        className="typo-button1 bg-button-primary text-text-inverse mb-8 rounded-lg px-4 py-2"
-      >
+      <Button variant="secondary" size="lg" onClick={toggle}>
         {isDark ? '☀️ 라이트모드' : '🌙 다크모드'}
-      </button>
+      </Button>
 
       <p className="typo-caption1 text-text-disabled mb-2">TYPOGRAPHY</p>
       <div className="typo-h1 text-text-strong">H1 Weeth</div>
