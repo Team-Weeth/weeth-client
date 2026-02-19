@@ -536,6 +536,15 @@ select:focus {
   padding: 0;
 }
 
+.ProseMirror ul[data-type='taskList'] {
+  padding-left: 0;
+}
+
+.ProseMirror ul[data-type='taskList'] li p {
+  margin-top: 8px !important;
+  margin-bottom: 8px !important;
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
