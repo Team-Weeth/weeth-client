@@ -1,5 +1,33 @@
 'use client';
 
+import {
+  Button,
+  TextField,
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogHeader,
+  DialogFooter,
+  DialogTitle,
+  DialogDescription,
+  DialogClose,
+  AlertDialog,
+  AlertDialogTrigger,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogFooter,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogAction,
+  AlertDialogCancel,
+  Breadcrumb,
+  BreadcrumbList,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+  BreadcrumbEllipsis,
+} from '@/components/ui';
 import { useThemeStore } from '@/stores/theme-store';
 
 function Row({ label, className }: { label: string; className: string }) {
@@ -11,14 +39,17 @@ export default function LandingPage() {
 
   return (
     <div className="bg-background min-h-screen p-400">
-      <button
-        onClick={toggle}
-        className="typo-button1 bg-button-primary text-text-inverse mb-8 rounded-lg px-4 py-2"
-      >
+      <Button variant="primary" size="lg" onClick={toggle}>
         {isDark ? '☀️ 라이트모드' : '🌙 다크모드'}
-      </button>
+      </Button>
+      <Button variant="secondary" size="md" onClick={toggle}>
+        {isDark ? '☀️ 라이트모드' : '🌙 다크모드'}
+      </Button>
+      <Button variant="tertiary" size="sm" onClick={toggle}>
+        {isDark ? '☀️ 라이트모드' : '🌙 다크모드'}
+      </Button>
 
-      <p className="typo-caption1 text-text-disabled mb-2">TYPOGRAPHY</p>
+      <p className="typo-caption1 text-text-disabled mt-6 mb-2">TYPOGRAPHY</p>
       <div className="typo-h1 text-text-strong">H1 Weeth</div>
       <div className="typo-h2 text-text-strong">H2 Weeth</div>
       <div className="typo-h3 text-text-strong">H3 Weeth</div>
@@ -113,6 +144,130 @@ export default function LandingPage() {
         <Row label="state-success" className="text-state-success" />
         <Row label="state-caution" className="text-state-caution" />
         <Row label="state-error" className="text-state-error" />
+      </div>
+
+      <p className="typo-caption1 text-text-disabled mt-6 mb-2">DIALOG</p>
+      <div className="flex flex-wrap gap-2">
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button variant="secondary" size="sm">
+              Dialog 열기
+            </Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>프로필 수정</DialogTitle>
+              <DialogDescription>프로필 정보를 수정할 수 있습니다.</DialogDescription>
+            </DialogHeader>
+            <TextField placeholder="이름을 입력하세요" />
+            <DialogFooter>
+              <DialogClose asChild>
+                <Button variant="secondary">취소</Button>
+              </DialogClose>
+              <Button variant="primary">저장</Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      </div>
+
+      <p className="typo-caption1 text-text-disabled mt-6 mb-2">ALERT DIALOG</p>
+      <div className="flex flex-wrap gap-2">
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <Button variant="secondary" size="sm">
+              기본 Alert
+            </Button>
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>로그아웃</AlertDialogTitle>
+              <AlertDialogDescription>로그아웃 하시겠습니까?</AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>취소</AlertDialogCancel>
+              <AlertDialogAction>확인</AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <Button variant="secondary" size="sm">
+              버튼 색상 커스텀
+            </Button>
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>정말 삭제하시겠습니까?</AlertDialogTitle>
+              <AlertDialogDescription>이 작업은 되돌릴 수 없습니다.</AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>취소</AlertDialogCancel>
+              <AlertDialogAction className="bg-state-error hover:bg-state-error/80 text-white">
+                삭제
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      </div>
+
+      <p className="typo-caption1 text-text-disabled mt-6 mb-2">BREADCRUMB</p>
+      <div className="flex flex-col gap-3">
+        <Breadcrumb>
+          <BreadcrumbList>
+            <BreadcrumbItem>
+              <BreadcrumbLink href="/">홈</BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbLink href="/">게시판</BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbPage>공지사항</BreadcrumbPage>
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
+
+        <Breadcrumb>
+          <BreadcrumbList>
+            <BreadcrumbItem>
+              <BreadcrumbLink href="/">홈</BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbEllipsis />
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbLink href="/">설정</BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbPage>프로필</BreadcrumbPage>
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
+      </div>
+
+      <p className="typo-caption1 text-text-disabled mt-6 mb-2">TEXT FIELD</p>
+      <div className="flex flex-col gap-3">
+        <div>
+          <p className="typo-caption2 text-text-alternative mb-1">Default</p>
+          <TextField placeholder="기본 텍스트 필드" />
+        </div>
+        <div>
+          <p className="typo-caption2 text-text-alternative mb-1">Clearable</p>
+          <TextField clearable placeholder="내용을 입력하면 X 버튼이 나타납니다" />
+        </div>
+        <div>
+          <p className="typo-caption2 text-text-alternative mb-1">Multiline (scrollable)</p>
+          <TextField multiline rows={3} placeholder="여러 줄 입력이 가능하고 내부 스크롤됩니다" />
+        </div>
+        <div>
+          <p className="typo-caption2 text-text-alternative mb-1">Disabled</p>
+          <TextField disabled placeholder="비활성화 상태" />
+        </div>
       </div>
     </div>
   );
