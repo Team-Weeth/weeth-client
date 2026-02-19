@@ -1,3 +1,13 @@
+'use client';
+
+import dynamic from 'next/dynamic';
+
+const Editor = dynamic(() => import('@/components/board/Editor'), { ssr: false });
+
 export default function BoardPage() {
-  return <div>BoardPage</div>;
+  return (
+    <main className="mx-auto max-w-3xl p-8">
+      <Editor />
+    </main>
+  );
 }
