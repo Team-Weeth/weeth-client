@@ -2,12 +2,14 @@ name: CI
 
 on:
   pull_request:
-    branches: [main]
+    branches: [main, develop]
 
 jobs:
   ci:
     name: Lint & Build
     runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
 
     steps:
       - name: Checkout
@@ -27,8 +29,75 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Lint
+      - name: TypeScript
+        id: typescript
+        run: pnpm tsc --noEmit
+
+      - name: ESLint
+        id: eslint
         run: pnpm lint
 
+      - name: Prettier
+        id: prettier
+        run: pnpm prettier --check .
+
       - name: Build
+        id: build
         run: pnpm build
+
+      - name: PR 검증 결과 코멘트
+        if: always()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const results = {
+              typescript: '${{ steps.typescript.outcome }}',
+              eslint:     '${{ steps.eslint.outcome }}',
+              prettier:   '${{ steps.prettier.outcome }}',
+              build:      '${{ steps.build.outcome }}',
+            };
+
+            const icon = (outcome) =>
+              outcome === 'success' ? '✅' : outcome === 'failure' ? '❌' : '⏭️';
+
+            const label = (outcome) =>
+              outcome === 'success' ? '통과' : outcome === 'failure' ? '실패' : '건너뜀';
+
+            const allPassed = Object.values(results).every((r) => r === 'success');
+
+            const body = [
+              '## PR 검증 결과',
+              '',
+              `${icon(results.typescript)} **TypeScript:** ${label(results.typescript)}`,
+              `${icon(results.eslint)} **ESLint:** ${label(results.eslint)}`,
+              `${icon(results.prettier)} **Prettier:** ${label(results.prettier)}`,
+              `${icon(results.build)} **Build:** ${label(results.build)}`,
+              '',
+              allPassed ? '🎉 모든 검증을 통과했습니다!' : '⚠️ 일부 검증에 실패했습니다. 확인 후 수정해주세요.',
+            ].join('\n');
+
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+
+            const existing = comments.find(
+              (c) => c.user.login === 'github-actions[bot]' && c.body.includes('PR 검증 결과'),
+            );
+
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existing.id,
+                body,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body,
+              });
+            }

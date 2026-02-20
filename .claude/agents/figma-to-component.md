@@ -36,7 +36,7 @@ Gap             | 12px       | gap-300
 import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@/lib/cn';
 
-const componentVariants = cva('base-styles', {
+const variants = cva('base-styles', {
   variants: {
     variant: { primary: '...', secondary: '...' },
     size: { lg: '...', md: '...', sm: '...' },
@@ -44,17 +44,15 @@ const componentVariants = cva('base-styles', {
   defaultVariants: { variant: 'primary', size: 'md' },
 });
 
-interface ComponentProps
-  extends React.HTMLAttributes<HTMLElement>,
-    VariantProps<typeof componentVariants> {}
+interface Props extends React.HTMLAttributes<HTMLElement>, VariantProps<typeof variants> {}
 
-function Component({ className, variant, size, ...props }: ComponentProps) {
+function Component({ className, variant, size, ...props }: Props) {
   return (
-    <div className={cn(componentVariants({ variant, size }), className)} {...props} />
+    <div className={cn(variants({ variant, size }), className)} {...props} />
   );
 }
 
-export { Component, componentVariants, type ComponentProps };
+export { Component, variants, type Props };
 ```
 
 **원칙:**
