@@ -31,18 +31,22 @@ jobs:
 
       - name: TypeScript
         id: typescript
-        run: pnpm tsc --noEmit
+        continue-on-error: true
+        run: pnpm typecheck
 
       - name: ESLint
         id: eslint
+        continue-on-error: true
         run: pnpm lint
 
       - name: Prettier
         id: prettier
-        run: pnpm prettier --check .
+        continue-on-error: true
+        run: pnpm format:check
 
       - name: Build
         id: build
+        continue-on-error: true
         run: pnpm build
 
       - name: PR 검증 결과 코멘트
