@@ -488,17 +488,13 @@ select:focus {
 }
 
 .ProseMirror {
-  color: #ffffff;
-}
-
-.ProseMirror p {
-  color: #ffffff;
+  color: var(--text-normal);
 }
 
 /* 인용 */
 .ProseMirror blockquote {
   font-style: italic;
-  border-left: 3px solid #d1d5db;
+  border-left: 3px solid var(--line);
   padding-left: 1rem;
   margin: 1rem 0;
   font-weight: normal;
@@ -511,8 +507,8 @@ select:focus {
 
 /* 인라인 코드 */
 .ProseMirror code:not(pre code) {
-  background-color: #3a3a3a;
-  color: #f3f4f6; /* gray-100 */
+  background-color: var(--container-neutral-alternative);
+  color: var(--text-normal);
   padding: 0.125rem 0.375rem;
   border-radius: 0.25rem;
   font-weight: normal;
@@ -525,14 +521,14 @@ select:focus {
 
 /* 코드 블록 */
 .ProseMirror pre {
-  background-color: #3a3a3a;
+  background-color: var(--container-neutral-alternative);
   border-radius: 0.5rem;
   padding: 0.75rem 1rem;
 }
 
 .ProseMirror pre code {
   background-color: transparent;
-  color: #f3f4f6; /* gray-100 */
+  color: var(--text-normal);
   padding: 0;
 }
 
