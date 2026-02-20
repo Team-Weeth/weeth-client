@@ -23,7 +23,7 @@ import Placeholder from '@tiptap/extension-placeholder';
 import TaskList from '@tiptap/extension-task-list';
 import TaskItem from '@tiptap/extension-task-item';
 import Typography from '@tiptap/extension-typography';
-import { useState, useRef } from 'react';
+import { useState, useRef, useCallback } from 'react';
 import { usePostStore } from '@/stores/usePostStore';
 import { SlashMenuContent } from './SlashMenu';
 
@@ -39,7 +39,19 @@ import { SlashMenuContent } from './SlashMenu';
 export default function Editor() {
   const setContent = usePostStore((state) => state.setContent);
   const [showSlashMenu, setShowSlashMenu] = useState(false);
+  // ref로 최신 상태 유지 → useEditor 내부 handleKeyDown stale closure 방지
+  const showSlashMenuRef = useRef(false);
   const containerRef = useRef<HTMLDivElement>(null);
+
+  const closeSlashMenu = useCallback(() => {
+    showSlashMenuRef.current = false;
+    setShowSlashMenu(false);
+  }, []);
+
+  const updateSlashMenuState = useCallback((isSlash: boolean) => {
+    showSlashMenuRef.current = isSlash;
+    setShowSlashMenu(isSlash);
+  }, []);
 
   const editor = useEditor({
     extensions: [
@@ -71,22 +83,21 @@ export default function Editor() {
 
     onUpdate: ({ editor }) => {
       setContent(editor.getHTML());
-
       const { $from } = editor.state.selection;
-      const currentLineText = $from.nodeBefore?.textContent ?? '';
-
-      setShowSlashMenu(currentLineText.endsWith('/'));
+      updateSlashMenuState(($from.nodeBefore?.textContent ?? '').endsWith('/'));
     },
+
+    // 커서 이동만으로 '/' 뒤를 벗어났을 때도 메뉴를 닫기 위해 추적
+    onSelectionUpdate: ({ editor }) => {
+      const { $from } = editor.state.selection;
+      updateSlashMenuState(($from.nodeBefore?.textContent ?? '').endsWith('/'));
+    },
+
     editorProps: {
       handleKeyDown: (view, event) => {
-        // 슬래시 메뉴 우선 처리
-        if (showSlashMenu) {
-          if (event.key === 'Enter') {
-            event.preventDefault();
-            return true;
-          }
-
-          if (event.key === 'ArrowUp' || event.key === 'ArrowDown') {
+        // 슬래시 메뉴 우선 처리 (ref로 stale closure 없이 최신 값 참조)
+        if (showSlashMenuRef.current) {
+          if (event.key === 'Enter' || event.key === 'ArrowUp' || event.key === 'ArrowDown') {
             event.preventDefault();
             return true;
           }
@@ -119,16 +130,10 @@ export default function Editor() {
           }
         }
 
-        // Backspace UX 개선 (빈 리스트 아이템/헤딩 → 일반 단락으로 전환)
+        // Backspace UX 개선 (빈 헤딩 → 일반 단락으로 전환)
+        // listItem은 Tiptap ListItem extension이 자체 처리
         if (event.key === 'Backspace') {
           if ($from.parentOffset === 0 && $from.parent.textContent === '') {
-            if ($from.parent.type.name === 'listItem') {
-              const depth = $from.depth;
-              const pos = $from.before(depth);
-
-              view.dispatch(state.tr.setBlockType(pos, pos, state.schema.nodes.paragraph));
-              return true;
-            }
             if ($from.parent.type.name === 'heading') {
               view.dispatch(
                 state.tr.setBlockType($from.pos, $from.pos, state.schema.nodes.paragraph),
@@ -154,77 +159,89 @@ export default function Editor() {
           duration: 100,
           appendTo: () => containerRef.current ?? document.body,
         }}
-        className="flex items-center gap-0.5 rounded-lg border border-gray-200 bg-white p-1 shadow-md"
+        className="border-line bg-container-neutral flex items-center gap-0.5 rounded-lg border p-1 shadow-md"
       >
         <button
+          type="button"
           onMouseDown={(e) => {
             e.preventDefault();
             editor.chain().focus().toggleBold().run();
           }}
           className={`rounded px-2 py-1 text-sm font-bold transition-colors ${
-            editor.isActive('bold') ? 'bg-gray-900 text-white' : 'text-gray-700 hover:bg-gray-100'
+            editor.isActive('bold')
+              ? 'bg-button-primary text-text-inverse'
+              : 'text-text-normal hover:bg-container-neutral-interaction'
           }`}
         >
           B
         </button>
         <button
+          type="button"
           onMouseDown={(e) => {
             e.preventDefault();
             editor.chain().focus().toggleItalic().run();
           }}
           className={`rounded px-2 py-1 text-sm italic transition-colors ${
-            editor.isActive('italic') ? 'bg-gray-900 text-white' : 'text-gray-700 hover:bg-gray-100'
+            editor.isActive('italic')
+              ? 'bg-button-primary text-text-inverse'
+              : 'text-text-normal hover:bg-container-neutral-interaction'
           }`}
         >
           I
         </button>
         <button
+          type="button"
           onMouseDown={(e) => {
             e.preventDefault();
             editor.chain().focus().toggleCode().run();
           }}
           className={`rounded px-2 py-1 font-mono text-sm transition-colors ${
-            editor.isActive('code') ? 'bg-gray-900 text-white' : 'text-gray-700 hover:bg-gray-100'
+            editor.isActive('code')
+              ? 'bg-button-primary text-text-inverse'
+              : 'text-text-normal hover:bg-container-neutral-interaction'
           }`}
         >
           {'<>'}
         </button>
-        <div className="mx-1 h-4 w-px bg-gray-200" />
+        <div className="bg-line mx-1 h-4 w-px" />
         <button
+          type="button"
           onMouseDown={(e) => {
             e.preventDefault();
             editor.chain().focus().toggleHeading({ level: 1 }).run();
           }}
           className={`rounded px-2 py-1 text-sm transition-colors ${
             editor.isActive('heading', { level: 1 })
-              ? 'bg-gray-900 text-white'
-              : 'text-gray-700 hover:bg-gray-100'
+              ? 'bg-button-primary text-text-inverse'
+              : 'text-text-normal hover:bg-container-neutral-interaction'
           }`}
         >
           H1
         </button>
         <button
+          type="button"
           onMouseDown={(e) => {
             e.preventDefault();
             editor.chain().focus().toggleHeading({ level: 2 }).run();
           }}
           className={`rounded px-2 py-1 text-sm transition-colors ${
             editor.isActive('heading', { level: 2 })
-              ? 'bg-gray-900 text-white'
-              : 'text-gray-700 hover:bg-gray-100'
+              ? 'bg-button-primary text-text-inverse'
+              : 'text-text-normal hover:bg-container-neutral-interaction'
           }`}
         >
           H2
         </button>
         <button
+          type="button"
           onMouseDown={(e) => {
             e.preventDefault();
             editor.chain().focus().toggleHeading({ level: 3 }).run();
           }}
           className={`rounded px-2 py-1 text-sm transition-colors ${
             editor.isActive('heading', { level: 3 })
-              ? 'bg-gray-900 text-white'
-              : 'text-gray-700 hover:bg-gray-100'
+              ? 'bg-button-primary text-text-inverse'
+              : 'text-text-normal hover:bg-container-neutral-interaction'
           }`}
         >
           H3
@@ -241,14 +258,10 @@ export default function Editor() {
         }}
         shouldShow={({ state }) => {
           const { $from } = state.selection;
-          const isSlash = ($from.nodeBefore?.textContent ?? '').endsWith('/');
-          setShowSlashMenu(isSlash);
-          return isSlash;
+          return ($from.nodeBefore?.textContent ?? '').endsWith('/');
         }}
       >
-        {showSlashMenu && (
-          <SlashMenuContent editor={editor} onClose={() => setShowSlashMenu(false)} />
-        )}
+        {showSlashMenu && <SlashMenuContent editor={editor} onClose={closeSlashMenu} />}
       </FloatingMenu>
 
       {/* 에디터 본문 */}
