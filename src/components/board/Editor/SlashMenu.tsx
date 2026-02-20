@@ -1,7 +1,7 @@
 'use client';
 
 import { Editor as TiptapEditor } from '@tiptap/core';
-import { useEffect, useMemo, useState, useCallback } from 'react';
+import { useEffect, useMemo, useState, useCallback, useRef } from 'react';
 import { STYLE_ITEMS, INSERT_ITEMS } from '@/constants/editor';
 import { MenuItem } from '@/types/editor';
 
@@ -21,6 +21,7 @@ interface SlashMenuContentProps {
 
 export function SlashMenuContent({ editor, onClose }: SlashMenuContentProps) {
   const [selectedIndex, setSelectedIndex] = useState(0);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   /**
    * 그룹 구조 정의
@@ -45,6 +46,15 @@ export function SlashMenuContent({ editor, onClose }: SlashMenuContentProps) {
       setSelectedIndex(0);
     }
   }, [flatItems.length, selectedIndex]);
+
+  // 선택된 아이템이 스크롤 영역 밖에 있을 때 자동 스크롤
+  useEffect(() => {
+    const container = scrollContainerRef.current;
+    if (!container) return;
+
+    const selectedEl = container.querySelector<HTMLElement>(`[data-index="${selectedIndex}"]`);
+    selectedEl?.scrollIntoView({ block: 'nearest' });
+  }, [selectedIndex]);
 
   // 메뉴 선택 시 실행
   const handleSelect = useCallback(
@@ -90,16 +100,16 @@ export function SlashMenuContent({ editor, onClose }: SlashMenuContentProps) {
 
   if (flatItems.length === 0) return null;
 
+  // runningIndex는 그룹을 넘어서도 연속된 flat index를 부여하기 위해 사용
   let runningIndex = 0;
-  const currentIndex = runningIndex++;
 
   return (
-    <div className="w-64 overflow-hidden rounded-lg border border-gray-200 bg-white shadow-xl">
-      <div className="max-h-80 overflow-x-hidden overflow-y-auto">
+    <div className="border-line bg-container-neutral w-64 overflow-hidden rounded-lg border shadow-xl">
+      <div ref={scrollContainerRef} className="max-h-80 overflow-x-hidden overflow-y-auto">
         {GROUPS.map((group, groupIdx) => (
           <div key={group.title}>
-            <div className={`px-3 pt-2 pb-1 ${groupIdx !== 0 ? 'border-t border-gray-100' : ''}`}>
-              <p className="text-xs font-semibold tracking-wider text-gray-400 uppercase">
+            <div className={`px-3 pt-2 pb-1 ${groupIdx !== 0 ? 'border-line border-t' : ''}`}>
+              <p className="text-text-disabled text-xs font-semibold tracking-wider uppercase">
                 {group.title}
               </p>
             </div>
@@ -111,20 +121,24 @@ export function SlashMenuContent({ editor, onClose }: SlashMenuContentProps) {
               return (
                 <button
                   key={item.label}
+                  type="button"
+                  data-index={currentIndex}
                   onMouseDown={(e) => {
                     e.preventDefault();
                     handleSelect(item);
                   }}
                   className={`flex w-full items-center gap-3 px-3 py-2 text-left transition-colors ${
-                    isSelected ? 'bg-gray-100' : 'hover:bg-gray-50'
+                    isSelected
+                      ? 'bg-container-neutral-interaction'
+                      : 'hover:bg-container-neutral-alternative'
                   }`}
                 >
-                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded border border-gray-200 bg-gray-50 text-sm font-medium text-gray-600">
+                  <span className="border-line bg-container-neutral-alternative text-text-alternative flex h-8 w-8 shrink-0 items-center justify-center rounded border text-sm font-medium">
                     {item.icon}
                   </span>
                   <div>
-                    <p className="text-sm font-medium text-gray-800">{item.label}</p>
-                    <p className="text-xs text-gray-400">{item.description}</p>
+                    <p className="text-text-strong text-sm font-medium">{item.label}</p>
+                    <p className="text-text-disabled text-xs">{item.description}</p>
                   </div>
                 </button>
               );
