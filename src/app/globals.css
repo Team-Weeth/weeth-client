@@ -491,6 +491,18 @@ select:focus {
   color: var(--text-normal);
 }
 
+.ProseMirror h1 {
+  @apply typo-h1;
+}
+
+.ProseMirror h2 {
+  @apply typo-h2;
+}
+
+.ProseMirror h3 {
+  @apply typo-h3;
+}
+
 /* 인용 */
 .ProseMirror blockquote {
   font-style: italic;
