@@ -117,6 +117,7 @@ export function SlashMenuContent({ editor, onClose }: SlashMenuContentProps) {
             {group.items.map((item) => {
               const currentIndex = runningIndex++;
               const isSelected = currentIndex === selectedIndex;
+              const Icon = item.icon;
 
               return (
                 <button
@@ -133,8 +134,8 @@ export function SlashMenuContent({ editor, onClose }: SlashMenuContentProps) {
                       : 'hover:bg-container-neutral-alternative'
                   }`}
                 >
-                  <span className="border-line bg-container-neutral-alternative text-text-alternative flex h-8 w-8 shrink-0 items-center justify-center rounded border text-sm font-medium">
-                    {item.icon}
+                  <span className="border-line bg-container-neutral-alternative text-text-alternative flex h-8 w-8 shrink-0 items-center justify-center rounded border">
+                    <Icon size={16} />
                   </span>
                   <div>
                     <p className="text-text-strong text-sm font-medium">{item.label}</p>
