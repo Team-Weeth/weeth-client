@@ -24,6 +24,8 @@ import TaskList from '@tiptap/extension-task-list';
 import TaskItem from '@tiptap/extension-task-item';
 import Typography from '@tiptap/extension-typography';
 import { useState, useRef, useCallback } from 'react';
+import { cva } from 'class-variance-authority';
+import { cn } from '@/lib/cn';
 import { usePostStore } from '@/stores/usePostStore';
 import { SlashMenuContent } from './SlashMenu';
 
@@ -35,6 +37,16 @@ import { SlashMenuContent } from './SlashMenu';
  * - Bubble Menu (텍스트 선택 시)
  * - 커스텀 키보드 단축키 (` 인라인 코드, Backspace 블록 정리)
  */
+
+const bubbleButtonVariants = cva('rounded px-200 py-100 typo-button2 transition-colors', {
+  variants: {
+    active: {
+      true: 'bg-button-primary text-text-inverse',
+      false: 'text-text-normal hover:bg-container-neutral-interaction',
+    },
+  },
+  defaultVariants: { active: false },
+});
 
 export default function Editor() {
   const setContent = usePostStore((state) => state.setContent);
@@ -159,7 +171,7 @@ export default function Editor() {
           duration: 100,
           appendTo: () => containerRef.current ?? document.body,
         }}
-        className="border-line bg-container-neutral flex items-center gap-0.5 rounded-lg border p-1 shadow-md"
+        className="border-line bg-container-neutral flex items-center gap-100 rounded-lg border p-100 shadow-md"
       >
         <button
           type="button"
@@ -167,11 +179,7 @@ export default function Editor() {
             e.preventDefault();
             editor.chain().focus().toggleBold().run();
           }}
-          className={`rounded px-2 py-1 text-sm font-bold transition-colors ${
-            editor.isActive('bold')
-              ? 'bg-button-primary text-text-inverse'
-              : 'text-text-normal hover:bg-container-neutral-interaction'
-          }`}
+          className={cn(bubbleButtonVariants({ active: editor.isActive('bold') }), 'font-bold')}
         >
           B
         </button>
@@ -181,11 +189,7 @@ export default function Editor() {
             e.preventDefault();
             editor.chain().focus().toggleItalic().run();
           }}
-          className={`rounded px-2 py-1 text-sm italic transition-colors ${
-            editor.isActive('italic')
-              ? 'bg-button-primary text-text-inverse'
-              : 'text-text-normal hover:bg-container-neutral-interaction'
-          }`}
+          className={cn(bubbleButtonVariants({ active: editor.isActive('italic') }), 'italic')}
         >
           I
         </button>
@@ -195,26 +199,18 @@ export default function Editor() {
             e.preventDefault();
             editor.chain().focus().toggleCode().run();
           }}
-          className={`rounded px-2 py-1 font-mono text-sm transition-colors ${
-            editor.isActive('code')
-              ? 'bg-button-primary text-text-inverse'
-              : 'text-text-normal hover:bg-container-neutral-interaction'
-          }`}
+          className={cn(bubbleButtonVariants({ active: editor.isActive('code') }), 'font-mono')}
         >
           {'<>'}
         </button>
-        <div className="bg-line mx-1 h-4 w-px" />
+        <div className="bg-line mx-100 h-4 w-px" />
         <button
           type="button"
           onMouseDown={(e) => {
             e.preventDefault();
             editor.chain().focus().toggleHeading({ level: 1 }).run();
           }}
-          className={`rounded px-2 py-1 text-sm transition-colors ${
-            editor.isActive('heading', { level: 1 })
-              ? 'bg-button-primary text-text-inverse'
-              : 'text-text-normal hover:bg-container-neutral-interaction'
-          }`}
+          className={cn(bubbleButtonVariants({ active: editor.isActive('heading', { level: 1 }) }))}
         >
           H1
         </button>
@@ -224,11 +220,7 @@ export default function Editor() {
             e.preventDefault();
             editor.chain().focus().toggleHeading({ level: 2 }).run();
           }}
-          className={`rounded px-2 py-1 text-sm transition-colors ${
-            editor.isActive('heading', { level: 2 })
-              ? 'bg-button-primary text-text-inverse'
-              : 'text-text-normal hover:bg-container-neutral-interaction'
-          }`}
+          className={cn(bubbleButtonVariants({ active: editor.isActive('heading', { level: 2 }) }))}
         >
           H2
         </button>
@@ -238,11 +230,7 @@ export default function Editor() {
             e.preventDefault();
             editor.chain().focus().toggleHeading({ level: 3 }).run();
           }}
-          className={`rounded px-2 py-1 text-sm transition-colors ${
-            editor.isActive('heading', { level: 3 })
-              ? 'bg-button-primary text-text-inverse'
-              : 'text-text-normal hover:bg-container-neutral-interaction'
-          }`}
+          className={cn(bubbleButtonVariants({ active: editor.isActive('heading', { level: 3 }) }))}
         >
           H3
         </button>
