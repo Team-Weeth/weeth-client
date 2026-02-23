@@ -1,3 +1,4 @@
+import { IndentExtension } from './IndentExtension';
 import Document from '@tiptap/extension-document';
 import Paragraph from '@tiptap/extension-paragraph';
 import Text from '@tiptap/extension-text';
@@ -44,4 +45,5 @@ export const editorExtensions = [
   Placeholder.configure({ placeholder: "명령어는 '/'를 입력하세요." }),
   TaskList,
   TaskItem.configure({ nested: true, onReadOnlyChecked: () => false }),
+  IndentExtension,
 ];
