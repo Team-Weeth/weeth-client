@@ -2,8 +2,10 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
+import type { StaticImageData } from 'next/image';
 import { usePathname } from 'next/navigation';
 
+import logoIcon from '@/assets/icons/logo/logo_initial_Origin.svg';
 import userIcon from '@/assets/icons/admin/ic_admin_user.svg';
 import checkIcon from '@/assets/icons/admin/ic_admin_attendance.svg';
 import penaltyIcon from '@/assets/icons/admin/ic_admin_penalty.svg';
@@ -25,17 +27,43 @@ const moveNavItems = [
   { id: 'manual', icon: manualIcon, label: '관리자 매뉴얼', path: '' },
 ];
 
-const navItemClass = cn(
-  'typo-sub1 flex h-12 items-center gap-300 rounded-sm px-300 transition-colors',
-  'text-text-alternative hover:bg-container-neutral-interaction',
-);
+function NavIcon({ src, isActive }: { src: StaticImageData | string; isActive: boolean }) {
+  const url = typeof src === 'string' ? src : (src as StaticImageData).src;
+  return (
+    <span
+      aria-hidden
+      className={cn(
+        'block h-6 w-6 shrink-0',
+        isActive ? 'bg-brand-primary' : 'bg-text-alternative',
+      )}
+      style={{
+        maskImage: `url(${url})`,
+        WebkitMaskImage: `url(${url})`,
+        maskRepeat: 'no-repeat',
+        maskPosition: 'center',
+        maskSize: 'contain',
+      }}
+    />
+  );
+}
+
+const navItemClass =
+  'typo-sub1 flex h-12 items-center gap-300 px-300 transition-colors text-text-alternative hover:bg-container-neutral-interaction';
 
 export function LNB() {
   const pathname = usePathname();
 
   return (
-    <nav className="border-line bg-container-neutral flex h-full w-60 shrink-0 flex-col border-r px-300 py-500">
-      <div className="flex flex-col gap-100">
+    <nav className="border-line bg-container-neutral flex h-full w-60 shrink-0 flex-col border-r">
+      {/* LNB 헤더 */}
+      <div className="flex items-center gap-300 px-300 pt-1.25">
+        <Image src={logoIcon} alt="Weeth" width={40} height={40} />
+        <span className="typo-sub2 text-text-alternative">WEETH ADMIN</span>
+      </div>
+
+      {/* 관리 메뉴 */}
+      <div className="flex flex-col">
+        <span className="typo-caption1 text-text-alternative px-400 pt-500 pb-300">관리 메뉴</span>
         {mainNavItems.map(({ id, icon, label, path }) => {
           const isActive = pathname.startsWith(path);
           return (
@@ -47,40 +75,47 @@ export function LNB() {
                 isActive && 'bg-container-neutral-interaction text-text-strong',
               )}
             >
-              <Image src={icon} alt={label} width={24} height={24} />
+              <NavIcon src={icon} isActive={isActive} />
               {label}
             </Link>
           );
         })}
-      </div>
 
-      <div className="mt-400 flex flex-col gap-100">
-        <span className="typo-caption1 text-text-alternative px-300 py-100">이동</span>
-        {moveNavItems.map(({ id, icon, label, path }) => {
-          const isExternal = id === 'service';
-
-          if (!path) {
-            return (
-              <div key={id} className={navItemClass}>
-                <Image src={icon} alt={label} width={24} height={24} />
+        {/* 이동 */}
+        <div>
+          <span className="typo-caption1 text-text-alternative block px-400 pt-500 pb-300">
+            이동
+          </span>
+          {moveNavItems.map(({ id, icon, label, path }) => {
+            const isExternal = id === 'service';
+            const inner = (
+              <>
+                <NavIcon src={icon} isActive={false} />
                 {label}
-              </div>
+              </>
             );
-          }
 
-          return (
-            <Link
-              key={id}
-              href={path}
-              className={navItemClass}
-              target={isExternal ? '_blank' : undefined}
-              rel={isExternal ? 'noopener noreferrer' : undefined}
-            >
-              <Image src={icon} alt={label} width={24} height={24} />
-              {label}
-            </Link>
-          );
-        })}
+            if (!path) {
+              return (
+                <div key={id} className={navItemClass}>
+                  {inner}
+                </div>
+              );
+            }
+
+            return (
+              <Link
+                key={id}
+                href={path}
+                className={navItemClass}
+                target={isExternal ? '_blank' : undefined}
+                rel={isExternal ? 'noopener noreferrer' : undefined}
+              >
+                {inner}
+              </Link>
+            );
+          })}
+        </div>
       </div>
     </nav>
   );
