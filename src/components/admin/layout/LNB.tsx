@@ -9,7 +9,7 @@ import logoIcon from '@/assets/icons/logo/logo_initial_Origin.svg';
 import userIcon from '@/assets/icons/admin/ic_admin_user.svg';
 import checkIcon from '@/assets/icons/admin/ic_admin_attendance.svg';
 import penaltyIcon from '@/assets/icons/admin/ic_admin_penalty.svg';
-import dueIcon from '@/assets/icons/admin/ic_admin_due.svg';
+// import dueIcon from '@/assets/icons/admin/ic_admin_due.svg';
 import arrowIcon from '@/assets/icons/admin/ic_admin_service_transfer.svg';
 import manualIcon from '@/assets/icons/admin/ic_admin_manual.svg';
 
@@ -19,12 +19,17 @@ const mainNavItems = [
   { id: 'member', icon: userIcon, label: '멤버 관리', path: '/admin/member' },
   { id: 'attendance', icon: checkIcon, label: '출석 관리', path: '/admin/attendance' },
   { id: 'penalty', icon: penaltyIcon, label: '페널티 관리', path: '/admin/penalty' },
-  { id: 'dues', icon: dueIcon, label: '회비 관리', path: '/admin/dues' },
+  // { id: 'dues', icon: dueIcon, label: '회비 관리', path: '/admin/dues' },
 ];
 
 const moveNavItems = [
-  { id: 'service', icon: arrowIcon, label: 'Weeth로 이동', path: 'https://weeth.kr' },
-  { id: 'manual', icon: manualIcon, label: '관리자 매뉴얼', path: '' },
+  { id: 'service', icon: arrowIcon, label: '서비스로 이동', path: 'https://weeth.kr' },
+  {
+    id: 'manual',
+    icon: manualIcon,
+    label: '관리자 매뉴얼',
+    path: 'https://weeth-develop-2.s3.ap-northeast-2.amazonaws.com/Weeth_%E1%84%80%E1%85%AA%E1%86%AB%E1%84%85%E1%85%B5%E1%84%8C%E1%85%A1_%E1%84%86%E1%85%A6%E1%84%82%E1%85%B2%E1%84%8B%E1%85%A5%E1%86%AF_v3.pdf',
+  },
 ];
 
 function NavIcon({ src, isActive }: { src: StaticImageData | string; isActive: boolean }) {
@@ -87,7 +92,6 @@ export function LNB() {
             이동
           </span>
           {moveNavItems.map(({ id, icon, label, path }) => {
-            const isExternal = id === 'service';
             const inner = (
               <>
                 <NavIcon src={icon} isActive={false} />
@@ -95,11 +99,15 @@ export function LNB() {
               </>
             );
 
-            if (!path) {
+            if (id === 'manual') {
               return (
-                <div key={id} className={navItemClass}>
+                <button
+                  key={id}
+                  className={cn(navItemClass, 'w-full cursor-pointer')}
+                  onClick={() => window.open(path, '_blank')}
+                >
                   {inner}
-                </div>
+                </button>
               );
             }
 
@@ -108,8 +116,8 @@ export function LNB() {
                 key={id}
                 href={path}
                 className={navItemClass}
-                target={isExternal ? '_blank' : undefined}
-                rel={isExternal ? 'noopener noreferrer' : undefined}
+                target="_blank"
+                rel="noopener noreferrer"
               >
                 {inner}
               </Link>
