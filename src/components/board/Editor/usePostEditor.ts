@@ -1,7 +1,7 @@
 'use client';
 
 import { useEditor } from '@tiptap/react';
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef } from 'react';
 import { usePostStore } from '@/stores/usePostStore';
 import { editorExtensions } from './extensions';
 
@@ -12,15 +12,15 @@ export function usePostEditor() {
   const showSlashMenuRef = useRef(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const closeSlashMenu = useCallback(() => {
+  const closeSlashMenu = () => {
     showSlashMenuRef.current = false;
     setShowSlashMenu(false);
-  }, []);
+  };
 
-  const updateSlashMenuState = useCallback((isSlash: boolean) => {
+  const updateSlashMenuState = (isSlash: boolean) => {
     showSlashMenuRef.current = isSlash;
     setShowSlashMenu(isSlash);
-  }, []);
+  };
 
   const editor = useEditor({
     extensions: editorExtensions,

@@ -1,9 +1,16 @@
 'use client';
 
 import { Editor as TiptapEditor } from '@tiptap/core';
-import { useEffect, useMemo, useState, useCallback, useRef } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { STYLE_ITEMS, INSERT_ITEMS } from '@/constants/editor';
 import { MenuItem } from '@/types/editor';
+
+const GROUPS = [
+  { title: 'Style', items: STYLE_ITEMS },
+  { title: 'Insert', items: INSERT_ITEMS },
+];
+
+const flatItems = GROUPS.flatMap((group) => group.items);
 
 interface SlashMenuContentProps {
   editor: TiptapEditor;
@@ -23,19 +30,6 @@ export function SlashMenuContent({ editor, onClose }: SlashMenuContentProps) {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
-  /**
-   * 그룹 구조 정의
-   */
-  const GROUPS = useMemo(
-    () => [
-      { title: 'Style', items: STYLE_ITEMS },
-      { title: 'Insert', items: INSERT_ITEMS },
-    ],
-    [],
-  );
-
-  const flatItems = useMemo(() => GROUPS.flatMap((group) => group.items), [GROUPS]);
-
   useEffect(() => {
     if (flatItems.length === 0) {
       setSelectedIndex(0);
@@ -45,7 +39,7 @@ export function SlashMenuContent({ editor, onClose }: SlashMenuContentProps) {
     if (selectedIndex >= flatItems.length) {
       setSelectedIndex(0);
     }
-  }, [flatItems.length, selectedIndex]);
+  }, [selectedIndex]);
 
   // 선택된 아이템이 스크롤 영역 밖에 있을 때 자동 스크롤
   useEffect(() => {
@@ -57,19 +51,16 @@ export function SlashMenuContent({ editor, onClose }: SlashMenuContentProps) {
   }, [selectedIndex]);
 
   // 메뉴 선택 시 실행
-  const handleSelect = useCallback(
-    (item: MenuItem) => {
-      const { $anchor } = editor.state.selection;
+  const handleSelect = (item: MenuItem) => {
+    const { $anchor } = editor.state.selection;
 
-      const from = $anchor.pos - 1;
-      const to = $anchor.pos;
+    const from = $anchor.pos - 1;
+    const to = $anchor.pos;
 
-      editor.chain().focus().deleteRange({ from, to }).run();
-      item.command(editor);
-      onClose();
-    },
-    [editor, onClose],
-  );
+    editor.chain().focus().deleteRange({ from, to }).run();
+    item.command(editor);
+    onClose();
+  };
 
   // 키보드 이벤트 핸들링
   useEffect(() => {
@@ -96,7 +87,7 @@ export function SlashMenuContent({ editor, onClose }: SlashMenuContentProps) {
 
     dom.addEventListener('keydown', handleKeyDown);
     return () => dom.removeEventListener('keydown', handleKeyDown);
-  }, [editor, flatItems, selectedIndex, handleSelect, onClose]);
+  }, [editor, selectedIndex, handleSelect, onClose]);
 
   if (flatItems.length === 0) return null;
 
