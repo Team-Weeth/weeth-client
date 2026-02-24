@@ -1,7 +1,6 @@
 'use client';
 
 import Link from 'next/link';
-import Image from 'next/image';
 import type { StaticImageData } from 'next/image';
 import { usePathname } from 'next/navigation';
 
@@ -23,7 +22,7 @@ const mainNavItems = [
 ];
 
 const moveNavItems = [
-  { id: 'service', icon: arrowIcon, label: '서비스로 이동', path: 'https://weeth.kr' },
+  { id: 'service', icon: arrowIcon, label: 'WEETH로 이동', path: 'https://weeth.kr' },
   {
     id: 'manual',
     icon: manualIcon,
@@ -61,8 +60,18 @@ export function LNB() {
   return (
     <nav className="border-line bg-container-neutral flex h-full w-60 shrink-0 flex-col border-r">
       {/* LNB 헤더 */}
-      <div className="flex items-center gap-300 px-300 pt-1.25">
-        <Image src={logoIcon} alt="Weeth" width={40} height={40} />
+      <div className="flex items-center gap-300 px-300 pt-[8px]">
+        <span
+          aria-label="Weeth"
+          className="bg-text-alternative block h-10 w-10 shrink-0"
+          style={{
+            maskImage: `url(${(logoIcon as StaticImageData).src})`,
+            WebkitMaskImage: `url(${(logoIcon as StaticImageData).src})`,
+            maskRepeat: 'no-repeat',
+            maskPosition: 'center',
+            maskSize: 'contain',
+          }}
+        />
         <span className="typo-sub2 text-text-alternative">WEETH ADMIN</span>
       </div>
 
