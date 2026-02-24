@@ -1,6 +1,5 @@
 'use client';
 
-import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 
 const PAGE_METADATA: Record<string, { title: string; description: string }> = {
@@ -15,11 +14,12 @@ const PAGE_METADATA: Record<string, { title: string; description: string }> = {
   },
   '/admin/penalty': {
     title: '페널티 관리',
-    description: '멤버별 페널티 내역을 조회하고 관리하는 페이지입니다.',
+    description: '기수를 선택하고, 해당 멤버에 대한 페널티를 수정하는 페이지입니다.',
   },
   '/admin/dues': {
     title: '회비 관리',
-    description: '멤버별 회비 납부 내역을 조회하고 관리하는 페이지입니다.',
+    description:
+      '기수 시작시 이월된 회비와 해당 기수 회비를 종합해 회비를 등록해주시기 바랍니다. 회비 등록은 기수당 한 번만 가능합니다.',
   },
 };
 
@@ -34,11 +34,13 @@ export function Header() {
         <>
           <div className="border-line h-5 w-px shrink-0" />
           <span className="typo-sub1 text-text-strong shrink-0">{metadata.title}</span>
-          <span className="typo-body2 text-text-alternative">{metadata.description}</span>
+          <span className="typo-body2 text-text-alternative min-w-0 truncate">
+            {metadata.description}
+          </span>
         </>
       )}
 
-      <button className="border-line typo-button2 text-text-strong ml-auto shrink-0 rounded-sm border px-300 py-200">
+      <button className="border-line typo-button2 bg-button-neutral text-text-strong hover:bg-button-neutral-interaction ml-auto shrink-0 cursor-pointer rounded-sm border px-300 py-200">
         Logout
       </button>
     </header>
