@@ -172,40 +172,46 @@ export default function LandingPage() {
 
       <p className="typo-caption1 text-text-disabled mt-6 mb-2">ALERT DIALOG</p>
       <div className="flex flex-wrap gap-2">
-        <AlertDialog>
+        <AlertDialog status="default">
           <AlertDialogTrigger asChild>
             <Button variant="secondary" size="sm">
-              기본 Alert
+              Default Alert (확인)
             </Button>
           </AlertDialogTrigger>
           <AlertDialogContent>
             <AlertDialogHeader>
-              <AlertDialogTitle>로그아웃</AlertDialogTitle>
-              <AlertDialogDescription>로그아웃 하시겠습니까?</AlertDialogDescription>
+              <AlertDialogTitle>변경 사항을 적용하시겠어요?</AlertDialogTitle>
+              <AlertDialogDescription>
+                선택한 내용이 저장됩니다.
+                <br />
+                진행하시려면 &apos;확인&apos;을 눌러주세요.
+              </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
-              <AlertDialogCancel>취소</AlertDialogCancel>
               <AlertDialogAction>확인</AlertDialogAction>
+              <AlertDialogCancel>취소</AlertDialogCancel>
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>
 
-        <AlertDialog>
+        <AlertDialog status="danger">
           <AlertDialogTrigger asChild>
             <Button variant="secondary" size="sm">
-              버튼 색상 커스텀
+              Danger Alert (삭제)
             </Button>
           </AlertDialogTrigger>
           <AlertDialogContent>
             <AlertDialogHeader>
-              <AlertDialogTitle>정말 삭제하시겠습니까?</AlertDialogTitle>
-              <AlertDialogDescription>이 작업은 되돌릴 수 없습니다.</AlertDialogDescription>
+              <AlertDialogTitle>이 게시글을 삭제하시겠어요?</AlertDialogTitle>
+              <AlertDialogDescription>
+                삭제된 게시글을 복구할 수 없습니다.
+                <br />
+                신중히 확인 후 진행해 주세요.
+              </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
+              <AlertDialogAction>삭제</AlertDialogAction>
               <AlertDialogCancel>취소</AlertDialogCancel>
-              <AlertDialogAction className="bg-state-error hover:bg-state-error/80 text-white">
-                삭제
-              </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>

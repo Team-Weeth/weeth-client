@@ -2,12 +2,30 @@
 
 import * as React from 'react';
 import { AlertDialog as AlertDialogPrimitive } from 'radix-ui';
+import Image from 'next/image';
 
 import { cn } from '@/lib/cn';
 import { Button, type ButtonProps } from '@/components/ui/Button';
 
-function AlertDialog({ ...props }: React.ComponentProps<typeof AlertDialogPrimitive.Root>) {
-  return <AlertDialogPrimitive.Root data-slot="alert-dialog" {...props} />;
+import InfoIcon from '@/assets/icons/info.svg';
+import DeleteIcon from '@/assets/icons/delete_forever.svg';
+
+type AlertStatus = 'default' | 'danger';
+
+const AlertDialogContext = React.createContext<{ status: AlertStatus }>({
+  status: 'default',
+});
+
+interface AlertDialogProps extends React.ComponentProps<typeof AlertDialogPrimitive.Root> {
+  status?: AlertStatus;
+}
+
+function AlertDialog({ status = 'default', ...props }: AlertDialogProps) {
+  return (
+    <AlertDialogContext.Provider value={{ status }}>
+      <AlertDialogPrimitive.Root data-slot="alert-dialog" {...props} />
+    </AlertDialogContext.Provider>
+  );
 }
 
 function AlertDialogTrigger({
@@ -46,9 +64,10 @@ function AlertDialogContent({
       <AlertDialogPrimitive.Content
         data-slot="alert-dialog-content"
         className={cn(
-          'bg-container-neutral data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 fixed top-[50%] left-[50%] z-50 grid w-81.25 max-w-[calc(100%-2rem)] translate-x-[-50%] translate-y-[-50%] gap-300 rounded-lg p-500 shadow-lg duration-200 sm:max-w-xs',
+          'bg-background data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 fixed top-[50%] left-[50%] z-50 grid w-81.25 max-w-[calc(100%-2rem)] translate-x-[-50%] translate-y-[-50%] gap-300 rounded-lg p-500 duration-200 sm:max-w-xs',
           className,
         )}
+        style={{ boxShadow: 'var(--shadow-dialog)' }}
         {...props}
       />
     </AlertDialogPortal>
@@ -56,12 +75,18 @@ function AlertDialogContent({
 }
 
 function AlertDialogHeader({ className, ...props }: React.ComponentProps<'div'>) {
+  const { status } = React.useContext(AlertDialogContext);
+  const Icon = status === 'danger' ? DeleteIcon : InfoIcon;
+
   return (
     <div
       data-slot="alert-dialog-header"
-      className={cn('flex flex-col gap-400', className)}
+      className={cn('flex flex-col items-center gap-400', className)}
       {...props}
-    />
+    >
+      <Image src={Icon} alt="" width={48} height={48} />
+      <div className="flex flex-col items-center gap-200 text-center">{props.children}</div>
+    </div>
   );
 }
 
@@ -69,7 +94,7 @@ function AlertDialogFooter({ className, ...props }: React.ComponentProps<'div'>)
   return (
     <div
       data-slot="alert-dialog-footer"
-      className={cn('grid grid-cols-2 gap-200', className)}
+      className={cn('border-line flex flex-col gap-200 border-t pt-200', className)}
       {...props}
     />
   );
@@ -103,14 +128,17 @@ function AlertDialogDescription({
 
 function AlertDialogAction({
   className,
-  variant = 'primary',
-  size = 'md',
+  variant,
+  size = 'lg',
   ...props
 }: React.ComponentProps<typeof AlertDialogPrimitive.Action> &
   Pick<ButtonProps, 'variant' | 'size'>) {
+  const { status } = React.useContext(AlertDialogContext);
+  const defaultVariant = variant || (status === 'danger' ? 'danger' : 'primary');
+
   return (
     <AlertDialogPrimitive.Action asChild data-slot="alert-dialog-action">
-      <Button variant={variant} size={size} className={className} {...props} />
+      <Button variant={defaultVariant} size={size} className={cn('w-full', className)} {...props} />
     </AlertDialogPrimitive.Action>
   );
 }
@@ -118,13 +146,13 @@ function AlertDialogAction({
 function AlertDialogCancel({
   className,
   variant = 'secondary',
-  size = 'md',
+  size = 'lg',
   ...props
 }: React.ComponentProps<typeof AlertDialogPrimitive.Cancel> &
   Pick<ButtonProps, 'variant' | 'size'>) {
   return (
     <AlertDialogPrimitive.Cancel asChild data-slot="alert-dialog-cancel">
-      <Button variant={variant} size={size} className={className} {...props} />
+      <Button variant={variant} size={size} className={cn('w-full', className)} {...props} />
     </AlertDialogPrimitive.Cancel>
   );
 }
