@@ -31,6 +31,8 @@ export {
   AlertDialogCancel,
 } from './alert-dialog';
 
+export type { AlertDialogProps } from './alert-dialog';
+
 export {
   Breadcrumb,
   BreadcrumbList,
