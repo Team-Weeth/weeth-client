@@ -38,7 +38,7 @@ function NavIcon({ src, isActive }: { src: StaticImageData | string; isActive: b
       aria-hidden
       className={cn(
         'block h-6 w-6 shrink-0',
-        isActive ? 'bg-brand-primary' : 'bg-text-alternative',
+        isActive ? 'bg-button-primary' : 'bg-container-neutral-interaction',
       )}
       style={{
         maskImage: `url(${url})`,
@@ -60,7 +60,7 @@ export function LNB() {
   return (
     <nav className="border-line bg-container-neutral flex h-full w-60 shrink-0 flex-col border-r">
       {/* LNB 헤더 */}
-      <div className="flex items-center gap-300 px-300 pt-[8px]">
+      <div className="flex items-center gap-300 px-300 pt-200">
         <span
           aria-label="Weeth"
           className="bg-text-alternative block h-10 w-10 shrink-0"
@@ -113,7 +113,7 @@ export function LNB() {
                 <button
                   key={id}
                   className={cn(navItemClass, 'w-full cursor-pointer')}
-                  onClick={() => window.open(path, '_blank')}
+                  onClick={() => window.open(path, '_blank', 'noopener,noreferrer')}
                 >
                   {inner}
                 </button>

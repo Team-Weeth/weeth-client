@@ -40,7 +40,7 @@ export function Header() {
         </>
       )}
 
-      <button className="border-line typo-button2 bg-button-neutral text-text-strong hover:bg-button-neutral-interaction ml-auto shrink-0 cursor-pointer rounded-sm border px-300 py-200">
+      <button className="border-line typo-button2 bg-button-neutral text-text-strong hover:bg-container-neutral-interaction ml-auto shrink-0 cursor-pointer rounded-sm border px-300 py-200">
         Logout
       </button>
     </header>
