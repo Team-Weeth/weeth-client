@@ -16,14 +16,64 @@ const AlertDialogContext = React.createContext<{ status: AlertStatus }>({
   status: 'default',
 });
 
+const defaultTexts: Record<AlertStatus, { title: string; description: string }> = {
+  default: {
+    title: '변경 사항을 적용하시겠어요?',
+    description: "선택한 내용이 저장됩니다.\n진행하시려면 '확인'을 눌러주세요.",
+  },
+  danger: {
+    title: '이 게시글을 삭제하시겠어요?',
+    description: '삭제된 게시글은 복구할 수 없습니다.\n신중히 확인 후 진행해 주세요.',
+  },
+};
+
 interface AlertDialogProps extends React.ComponentProps<typeof AlertDialogPrimitive.Root> {
   status?: AlertStatus;
+  /** 간소화 모드: trigger 엘리먼트를 전달하면 내부에서 Content/Header/Footer를 자동 렌더링 */
+  trigger?: React.ReactNode;
+  /** 기본값: status에 따라 자동 설정 */
+  title?: string;
+  /** 기본값: status에 따라 자동 설정 */
+  description?: string;
 }
 
-function AlertDialog({ status = 'default', ...props }: AlertDialogProps) {
+function AlertDialog({
+  status = 'default',
+  trigger,
+  title,
+  description,
+  children,
+  ...props
+}: AlertDialogProps) {
+  const defaults = defaultTexts[status];
+  const resolvedTitle = title ?? defaults.title;
+  const resolvedDescription = description ?? defaults.description;
+
   return (
     <AlertDialogContext.Provider value={{ status }}>
-      <AlertDialogPrimitive.Root data-slot="alert-dialog" {...props} />
+      <AlertDialogPrimitive.Root data-slot="alert-dialog" {...props}>
+        {trigger !== undefined ? (
+          <>
+            <AlertDialogTrigger asChild>{trigger}</AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>{resolvedTitle}</AlertDialogTitle>
+                <AlertDialogDescription>
+                  {resolvedDescription.split('\n').map((line, i, arr) => (
+                    <React.Fragment key={i}>
+                      {line}
+                      {i < arr.length - 1 && <br />}
+                    </React.Fragment>
+                  ))}
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>{children}</AlertDialogFooter>
+            </AlertDialogContent>
+          </>
+        ) : (
+          children
+        )}
+      </AlertDialogPrimitive.Root>
     </AlertDialogContext.Provider>
   );
 }
@@ -64,7 +114,7 @@ function AlertDialogContent({
       <AlertDialogPrimitive.Content
         data-slot="alert-dialog-content"
         className={cn(
-          'bg-background data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 fixed top-[50%] left-[50%] z-50 grid w-81.25 max-w-[calc(100%-2rem)] translate-x-[-50%] translate-y-[-50%] gap-300 rounded-lg p-500 duration-200 sm:max-w-xs',
+          'bg-background border-line data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 fixed top-[50%] left-[50%] z-50 grid w-[339px] max-w-[calc(100%-2rem)] translate-x-[-50%] translate-y-[-50%] gap-300 rounded-lg border p-500 pb-400 duration-200',
           className,
         )}
         style={{ boxShadow: 'var(--shadow-dialog)' }}
@@ -120,7 +170,7 @@ function AlertDialogDescription({
   return (
     <AlertDialogPrimitive.Description
       data-slot="alert-dialog-description"
-      className={cn('typo-body2 text-text-alternative', className)}
+      className={cn('typo-body2 text-text-alternative mb-500', className)}
       {...props}
     />
   );
@@ -170,3 +220,5 @@ export {
   AlertDialogTitle,
   AlertDialogTrigger,
 };
+
+export type { AlertDialogProps };
