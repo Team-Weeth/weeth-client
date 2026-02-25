@@ -1,7 +1,7 @@
 'use client';
 
 import { useEditor } from '@tiptap/react';
-import { useState, useRef } from 'react';
+import { useState, useRef, useCallback } from 'react';
 import { usePostStore } from '@/stores/usePostStore';
 import { editorExtensions } from './extensions';
 
@@ -12,10 +12,10 @@ export function usePostEditor() {
   const showSlashMenuRef = useRef(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const closeSlashMenu = () => {
+  const closeSlashMenu = useCallback(() => {
     showSlashMenuRef.current = false;
     setShowSlashMenu(false);
-  };
+  }, []);
 
   const updateSlashMenuState = (isSlash: boolean) => {
     showSlashMenuRef.current = isSlash;
@@ -34,8 +34,11 @@ export function usePostEditor() {
 
     // 커서 이동만으로 '/' 뒤를 벗어났을 때도 메뉴를 닫기 위해 추적
     onSelectionUpdate: ({ editor }) => {
+      if (!showSlashMenuRef.current) return;
       const { $from } = editor.state.selection;
-      updateSlashMenuState(($from.nodeBefore?.textContent ?? '').endsWith('/'));
+      if (!($from.nodeBefore?.textContent ?? '').endsWith('/')) {
+        closeSlashMenu();
+      }
     },
 
     editorProps: {

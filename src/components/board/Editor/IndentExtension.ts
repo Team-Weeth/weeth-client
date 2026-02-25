@@ -22,7 +22,7 @@ export const IndentExtension = Extension.create({
         attributes: {
           indent: {
             default: 0,
-            parseHTML: (el) => parseInt(el.dataset.indent ?? '0'),
+            parseHTML: (el) => parseInt(el.dataset.indent ?? '0', 10),
             // 렌더링 시 단계에 비례한 margin-left 적용
             renderHTML: ({ indent }) => {
               if (!indent) return {};

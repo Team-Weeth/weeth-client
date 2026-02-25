@@ -33,6 +33,7 @@ export function BubbleMenuBar({ editor, containerRef }: BubbleMenuBarProps) {
     >
       <button
         type="button"
+        aria-label="굵게"
         onMouseDown={(e) => {
           e.preventDefault();
           editor.chain().focus().toggleBold().run();
@@ -43,6 +44,7 @@ export function BubbleMenuBar({ editor, containerRef }: BubbleMenuBarProps) {
       </button>
       <button
         type="button"
+        aria-label="기울임"
         onMouseDown={(e) => {
           e.preventDefault();
           editor.chain().focus().toggleItalic().run();
@@ -53,6 +55,7 @@ export function BubbleMenuBar({ editor, containerRef }: BubbleMenuBarProps) {
       </button>
       <button
         type="button"
+        aria-label="인라인 코드"
         onMouseDown={(e) => {
           e.preventDefault();
           editor.chain().focus().toggleCode().run();
@@ -64,6 +67,7 @@ export function BubbleMenuBar({ editor, containerRef }: BubbleMenuBarProps) {
       <div className="bg-line mx-100 h-4 w-px" />
       <button
         type="button"
+        aria-label="제목 1"
         onMouseDown={(e) => {
           e.preventDefault();
           editor.chain().focus().toggleHeading({ level: 1 }).run();
@@ -74,6 +78,7 @@ export function BubbleMenuBar({ editor, containerRef }: BubbleMenuBarProps) {
       </button>
       <button
         type="button"
+        aria-label="제목 2"
         onMouseDown={(e) => {
           e.preventDefault();
           editor.chain().focus().toggleHeading({ level: 2 }).run();
@@ -84,6 +89,7 @@ export function BubbleMenuBar({ editor, containerRef }: BubbleMenuBarProps) {
       </button>
       <button
         type="button"
+        aria-label="제목 3"
         onMouseDown={(e) => {
           e.preventDefault();
           editor.chain().focus().toggleHeading({ level: 3 }).run();

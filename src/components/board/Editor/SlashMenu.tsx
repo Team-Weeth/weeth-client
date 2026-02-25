@@ -1,7 +1,7 @@
 'use client';
 
 import { Editor as TiptapEditor } from '@tiptap/core';
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
 import { STYLE_ITEMS, INSERT_ITEMS } from '@/constants/editor';
 import { MenuItem } from '@/types/editor';
 
@@ -51,16 +51,19 @@ export function SlashMenuContent({ editor, onClose }: SlashMenuContentProps) {
   }, [selectedIndex]);
 
   // 메뉴 선택 시 실행
-  const handleSelect = (item: MenuItem) => {
-    const { $anchor } = editor.state.selection;
+  const handleSelect = useCallback(
+    (item: MenuItem) => {
+      const { $anchor } = editor.state.selection;
 
-    const from = $anchor.pos - 1;
-    const to = $anchor.pos;
+      const from = $anchor.pos - 1;
+      const to = $anchor.pos;
 
-    editor.chain().focus().deleteRange({ from, to }).run();
-    item.command(editor);
-    onClose();
-  };
+      editor.chain().focus().deleteRange({ from, to }).run();
+      item.command(editor);
+      onClose();
+    },
+    [editor, onClose],
+  );
 
   // 키보드 이벤트 핸들링
   useEffect(() => {
