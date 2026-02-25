@@ -13,6 +13,8 @@ const buttonVariants = cva(
           'bg-button-neutral text-text-normal hover:bg-button-neutral-interaction active:bg-button-neutral-interaction disabled:bg-button-neutral disabled:text-text-disabled',
         tertiary:
           'bg-transparent text-text-normal hover:bg-container-neutral-interaction active:bg-container-neutral-interaction disabled:text-text-disabled',
+        danger:
+          'bg-[var(--state-error)] text-text-strong hover:opacity-90 active:opacity-80 disabled:bg-button-neutral disabled:text-text-disabled',
       },
       size: {
         lg: 'typo-button1 px-400 py-300 rounded-md',
