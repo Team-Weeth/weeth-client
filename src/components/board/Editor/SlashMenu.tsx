@@ -1,9 +1,10 @@
 'use client';
 
 import { Editor as TiptapEditor } from '@tiptap/core';
-import { useEffect, useState, useRef, useCallback } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { STYLE_ITEMS, INSERT_ITEMS } from '@/constants/editor';
 import { MenuItem } from '@/types/editor';
+import { useAutoScrollIntoView } from '@/hooks/useAutoScrollIntoView';
 
 const GROUPS = [
   { title: 'Style', items: STYLE_ITEMS },
@@ -28,7 +29,7 @@ interface SlashMenuContentProps {
 
 export function SlashMenuContent({ editor, onClose }: SlashMenuContentProps) {
   const [selectedIndex, setSelectedIndex] = useState(0);
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const scrollContainerRef = useAutoScrollIntoView<HTMLDivElement>(selectedIndex);
 
   useEffect(() => {
     if (flatItems.length === 0) {
@@ -39,15 +40,6 @@ export function SlashMenuContent({ editor, onClose }: SlashMenuContentProps) {
     if (selectedIndex >= flatItems.length) {
       setSelectedIndex(0);
     }
-  }, [selectedIndex]);
-
-  // 선택된 아이템이 스크롤 영역 밖에 있을 때 자동 스크롤
-  useEffect(() => {
-    const container = scrollContainerRef.current;
-    if (!container) return;
-
-    const selectedEl = container.querySelector<HTMLElement>(`[data-index="${selectedIndex}"]`);
-    selectedEl?.scrollIntoView({ block: 'nearest' });
   }, [selectedIndex]);
 
   // 메뉴 선택 시 실행
