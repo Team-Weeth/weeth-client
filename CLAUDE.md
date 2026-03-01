@@ -21,13 +21,13 @@ src/
 
 하드코딩 금지. 반드시 아래 토큰 우선 사용. 신규 토큰 필요 시 사용자 확인 후 추가.
 
-| 카테고리 | 클래스 예시 |
-|----------|------------|
-| 텍스트 | `text-text-strong` `text-text-normal` `text-text-alternative` `text-text-disabled` `text-text-inverse` |
-| 배경 | `bg-container-neutral` `bg-container-neutral-interaction` |
-| 버튼 | `bg-button-primary` `bg-button-neutral` |
-| Typography | `typo-h1~h3` `typo-sub1~2` `typo-body1~2` `typo-caption1~2` `typo-button1~2` |
-| Spacing | `p-100~500` `gap-100~400` |
+| 카테고리   | 클래스 예시                                                                                            |
+| ---------- | ------------------------------------------------------------------------------------------------------ |
+| 텍스트     | `text-text-strong` `text-text-normal` `text-text-alternative` `text-text-disabled` `text-text-inverse` |
+| 배경       | `bg-container-neutral` `bg-container-neutral-interaction`                                              |
+| 버튼       | `bg-button-primary` `bg-button-neutral`                                                                |
+| Typography | `typo-h1~h3` `typo-sub1~2` `typo-body1~2` `typo-caption1~2` `typo-button1~2`                           |
+| Spacing    | `p-100~500` `gap-100~400`                                                                              |
 
 ## Component Pattern
 
