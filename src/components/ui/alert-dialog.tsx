@@ -160,7 +160,13 @@ function AlertDialogHeader({ className, ...props }: React.ComponentProps<'div'>)
       className={cn('flex flex-col items-center gap-400', className)}
       {...props}
     >
-      <Image src={Icon} alt="" width={48} height={48} className={alertDialogIconVariants({ status })} />
+      <Image
+        src={Icon}
+        alt=""
+        width={48}
+        height={48}
+        className={alertDialogIconVariants({ status })}
+      />
       <div className="flex flex-col items-center gap-200 text-center">{props.children}</div>
     </div>
   );
