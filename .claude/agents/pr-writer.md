@@ -12,9 +12,10 @@ Weeth 프로젝트의 PR 문서를 작성하는 전문가입니다.
 ### 1. 변경사항 파악
 
 ```bash
-git diff main...HEAD --stat          # 변경된 파일 목록
-git log main...HEAD --oneline        # 커밋 메시지 목록
-git diff main...HEAD                 # 실제 변경 내용
+BASE_BRANCH=$(git remote show origin | sed -n '/HEAD branch/s/.*: //p')
+git diff "origin/${BASE_BRANCH}"...HEAD --stat   # 변경된 파일 목록
+git log "origin/${BASE_BRANCH}"...HEAD --oneline # 커밋 메시지 목록
+git diff "origin/${BASE_BRANCH}"...HEAD          # 실제 변경 내용
 ```
 
 ### 2. 브랜치명에서 이슈번호 추출

@@ -10,7 +10,7 @@
 
 ## Project Structure
 
-```
+```text
 src/
   app/globals.css        # 디자인 토큰 (CSS variables, @utility)
   components/ui/         # 재사용 UI 컴포넌트, index.ts에서 re-export
@@ -48,7 +48,7 @@ export { Component, variants, type Props };
 
 ## Git Conventions
 
-```
+```text
 feat / fix / style / refactor / ci / chore
 ```
 

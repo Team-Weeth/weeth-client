@@ -54,7 +54,7 @@ const statusConfigs: Record<
 
 interface AlertDialogProps extends React.ComponentProps<typeof AlertDialogPrimitive.Root> {
   status?: VariantProps<typeof alertDialogIconVariants>['status'];
-  trigger?: React.ReactNode;
+  trigger?: React.ReactElement;
   title?: string;
   description?: string;
 }
