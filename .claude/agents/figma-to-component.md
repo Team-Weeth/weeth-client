@@ -22,6 +22,7 @@ Gap             | 12px       | gap-300
 ```
 
 **토큰 매칭 우선순위:**
+
 1. Tailwind 토큰 클래스 (`bg-container-neutral`, `text-text-strong`)
 2. CSS 변수 (`var(--color-primary)`)
 3. 신규 토큰 필요 시 → 사용자에게 제안 후 확인
@@ -47,15 +48,14 @@ const variants = cva('base-styles', {
 interface Props extends React.HTMLAttributes<HTMLElement>, VariantProps<typeof variants> {}
 
 function Component({ className, variant, size, ...props }: Props) {
-  return (
-    <div className={cn(variants({ variant, size }), className)} {...props} />
-  );
+  return <div className={cn(variants({ variant, size }), className)} {...props} />;
 }
 
 export { Component, variants, type Props };
 ```
 
 **원칙:**
+
 - 하드코딩 값 사용 금지
 - `className` 항상 노출
 - Radix UI 사용 시 `asChild` 지원

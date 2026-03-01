@@ -37,3 +37,8 @@ Thumbs.db
 # Temporary files
 *.tmp
 *.temp
+
+# Project docs / agent prompts
+.claude/
+CLAUDE.md
+.github/pull_request_template.md

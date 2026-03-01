@@ -109,14 +109,24 @@ jobs:
       - name: Fail workflow if any check failed
         if: always()
         run: |
-          failed=0
+          typescript_outcome="${{ steps.typescript.outcome }}"
+          eslint_outcome="${{ steps.eslint.outcome }}"
+          prettier_outcome="${{ steps.prettier.outcome }}"
+          build_outcome="${{ steps.build.outcome }}"
 
-          [ "${{ steps.typescript.outcome }}" = "failure" ] && failed=1
-          [ "${{ steps.eslint.outcome }}" = "failure" ] && failed=1
-          [ "${{ steps.prettier.outcome }}" = "failure" ] && failed=1
-          [ "${{ steps.build.outcome }}" = "failure" ] && failed=1
+          echo "TypeScript: ${typescript_outcome}"
+          echo "ESLint: ${eslint_outcome}"
+          echo "Prettier: ${prettier_outcome}"
+          echo "Build: ${build_outcome}"
 
-          if [ "$failed" -eq 1 ]; then
-            echo "하나 이상의 검증 단계가 실패했습니다."
+          failed_checks=()
+
+          [ "${typescript_outcome}" = "failure" ] && failed_checks+=("TypeScript")
+          [ "${eslint_outcome}" = "failure" ] && failed_checks+=("ESLint")
+          [ "${prettier_outcome}" = "failure" ] && failed_checks+=("Prettier")
+          [ "${build_outcome}" = "failure" ] && failed_checks+=("Build")
+
+          if [ ${#failed_checks[@]} -gt 0 ]; then
+            echo "::error::실패한 단계: ${failed_checks[*]}"
             exit 1
           fi
