@@ -54,11 +54,8 @@ const statusConfigs: Record<
 
 interface AlertDialogProps extends React.ComponentProps<typeof AlertDialogPrimitive.Root> {
   status?: VariantProps<typeof alertDialogIconVariants>['status'];
-  /** 간소화 모드: trigger 엘리먼트를 전달하면 내부에서 Content/Header/Footer를 자동 렌더링 */
   trigger?: React.ReactNode;
-  /** 기본값: status에 따라 자동 설정 */
   title?: string;
-  /** 기본값: status에 따라 자동 설정 */
   description?: string;
 }
 
