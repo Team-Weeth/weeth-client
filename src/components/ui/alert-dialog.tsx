@@ -78,7 +78,7 @@ function AlertDialog({
   return (
     <AlertDialogContext.Provider value={{ status: resolvedStatus }}>
       <AlertDialogPrimitive.Root data-slot="alert-dialog" {...props}>
-        {trigger !== undefined ? (
+        {trigger != null ? (
           <>
             <AlertDialogTrigger asChild>{trigger}</AlertDialogTrigger>
             <AlertDialogContent>
@@ -160,7 +160,7 @@ function AlertDialogHeader({ className, ...props }: React.ComponentProps<'div'>)
       className={cn('flex flex-col items-center gap-400', className)}
       {...props}
     >
-      <Image src={Icon} alt="" width={48} height={48} />
+      <Image src={Icon} alt="AlertDiaglogHeader" width={48} height={48} />
       <div className="flex flex-col items-center gap-200 text-center">{props.children}</div>
     </div>
   );
