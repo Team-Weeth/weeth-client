@@ -3,6 +3,7 @@
 import * as React from 'react';
 import { AlertDialog as AlertDialogPrimitive } from 'radix-ui';
 import Image from 'next/image';
+import { cva, type VariantProps } from 'class-variance-authority';
 
 import { cn } from '@/lib/cn';
 import { Button, type ButtonProps } from '@/components/ui/Button';
@@ -10,25 +11,49 @@ import { Button, type ButtonProps } from '@/components/ui/Button';
 import InfoIcon from '@/assets/icons/info.svg';
 import DeleteIcon from '@/assets/icons/delete_forever.svg';
 
-type AlertStatus = 'default' | 'danger';
+const alertDialogStatusVariants = cva('', {
+  variants: {
+    status: {
+      default: '',
+      danger: '',
+    },
+  },
+  defaultVariants: {
+    status: 'default',
+  },
+});
+
+type AlertStatus = NonNullable<VariantProps<typeof alertDialogStatusVariants>['status']>;
 
 const AlertDialogContext = React.createContext<{ status: AlertStatus }>({
   status: 'default',
 });
 
-const defaultTexts: Record<AlertStatus, { title: string; description: string }> = {
+const statusConfigs: Record<
+  AlertStatus,
+  {
+    title: string;
+    description: string;
+    icon: typeof InfoIcon;
+    actionVariant: ButtonProps['variant'];
+  }
+> = {
   default: {
     title: '변경 사항을 적용하시겠어요?',
     description: "선택한 내용이 저장됩니다.\n진행하시려면 '확인'을 눌러주세요.",
+    icon: InfoIcon,
+    actionVariant: 'primary',
   },
   danger: {
     title: '이 게시글을 삭제하시겠어요?',
     description: '삭제된 게시글은 복구할 수 없습니다.\n신중히 확인 후 진행해 주세요.',
+    icon: DeleteIcon,
+    actionVariant: 'danger',
   },
 };
 
 interface AlertDialogProps extends React.ComponentProps<typeof AlertDialogPrimitive.Root> {
-  status?: AlertStatus;
+  status?: VariantProps<typeof alertDialogStatusVariants>['status'];
   /** 간소화 모드: trigger 엘리먼트를 전달하면 내부에서 Content/Header/Footer를 자동 렌더링 */
   trigger?: React.ReactNode;
   /** 기본값: status에 따라 자동 설정 */
@@ -45,12 +70,13 @@ function AlertDialog({
   children,
   ...props
 }: AlertDialogProps) {
-  const defaults = defaultTexts[status];
+  const resolvedStatus = status ?? 'default';
+  const defaults = statusConfigs[resolvedStatus];
   const resolvedTitle = title ?? defaults.title;
   const resolvedDescription = description ?? defaults.description;
 
   return (
-    <AlertDialogContext.Provider value={{ status }}>
+    <AlertDialogContext.Provider value={{ status: resolvedStatus }}>
       <AlertDialogPrimitive.Root data-slot="alert-dialog" {...props}>
         {trigger !== undefined ? (
           <>
@@ -126,7 +152,7 @@ function AlertDialogContent({
 
 function AlertDialogHeader({ className, ...props }: React.ComponentProps<'div'>) {
   const { status } = React.useContext(AlertDialogContext);
-  const Icon = status === 'danger' ? DeleteIcon : InfoIcon;
+  const Icon = statusConfigs[status].icon;
 
   return (
     <div
@@ -184,7 +210,7 @@ function AlertDialogAction({
 }: React.ComponentProps<typeof AlertDialogPrimitive.Action> &
   Pick<ButtonProps, 'variant' | 'size'>) {
   const { status } = React.useContext(AlertDialogContext);
-  const defaultVariant = variant || (status === 'danger' ? 'danger' : 'primary');
+  const defaultVariant = variant ?? statusConfigs[status].actionVariant;
 
   return (
     <AlertDialogPrimitive.Action asChild data-slot="alert-dialog-action">
