@@ -11,7 +11,7 @@ import { Button, type ButtonProps } from '@/components/ui/Button';
 import InfoIcon from '@/assets/icons/info.svg';
 import DeleteIcon from '@/assets/icons/delete_forever.svg';
 
-const alertDialogStatusVariants = cva('', {
+const alertDialogIconVariants = cva('', {
   variants: {
     status: {
       default: '',
@@ -23,7 +23,7 @@ const alertDialogStatusVariants = cva('', {
   },
 });
 
-type AlertStatus = NonNullable<VariantProps<typeof alertDialogStatusVariants>['status']>;
+type AlertStatus = NonNullable<VariantProps<typeof alertDialogIconVariants>['status']>;
 
 const AlertDialogContext = React.createContext<{ status: AlertStatus }>({
   status: 'default',
@@ -53,7 +53,7 @@ const statusConfigs: Record<
 };
 
 interface AlertDialogProps extends React.ComponentProps<typeof AlertDialogPrimitive.Root> {
-  status?: VariantProps<typeof alertDialogStatusVariants>['status'];
+  status?: VariantProps<typeof alertDialogIconVariants>['status'];
   /** 간소화 모드: trigger 엘리먼트를 전달하면 내부에서 Content/Header/Footer를 자동 렌더링 */
   trigger?: React.ReactNode;
   /** 기본값: status에 따라 자동 설정 */
@@ -160,7 +160,7 @@ function AlertDialogHeader({ className, ...props }: React.ComponentProps<'div'>)
       className={cn('flex flex-col items-center gap-400', className)}
       {...props}
     >
-      <Image src={Icon} alt="AlertDiaglogHeader" width={48} height={48} />
+      <Image src={Icon} alt="" width={48} height={48} className={alertDialogIconVariants({ status })} />
       <div className="flex flex-col items-center gap-200 text-center">{props.children}</div>
     </div>
   );
