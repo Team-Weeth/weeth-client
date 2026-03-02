@@ -48,7 +48,6 @@ export default function LandingPage() {
       <Button variant="tertiary" size="sm" onClick={toggle}>
         {isDark ? '☀️ 라이트모드' : '🌙 다크모드'}
       </Button>
-
       <p className="typo-caption1 text-text-disabled mt-6 mb-2">TYPOGRAPHY</p>
       <div className="typo-h1 text-text-strong">H1 Weeth</div>
       <div className="typo-h2 text-text-strong">H2 Weeth</div>
@@ -61,7 +60,6 @@ export default function LandingPage() {
       <div className="typo-caption2 text-text-alternative">Caption2 Weeth</div>
       <div className="typo-button1 text-text-normal">Button1 Weeth</div>
       <div className="typo-button2 text-text-normal">Button2 Weeth</div>
-
       <p className="typo-caption1 text-text-disabled mt-6 mb-2">TEXT</p>
       <div className="flex flex-col gap-1">
         <Row label="text-normal" className="text-text-normal" />
@@ -70,13 +68,11 @@ export default function LandingPage() {
         <Row label="text-disabled" className="text-text-disabled" />
         <Row label="text-inverse" className="bg-text-normal text-text-inverse" />
       </div>
-
       <p className="typo-caption1 text-text-disabled mt-6 mb-2">BACKGROUND</p>
       <div className="flex flex-col gap-1">
         <Row label="background" className="border-line bg-background text-text-normal border" />
         <Row label="line" className="bg-line text-text-inverse" />
       </div>
-
       <p className="typo-caption1 text-text-disabled mt-6 mb-2">CONTAINER</p>
       <div className="flex flex-col gap-1">
         <Row label="container-neutral" className="bg-container-neutral text-text-normal" />
@@ -107,7 +103,6 @@ export default function LandingPage() {
           className="bg-container-secondary-alternative text-text-normal"
         />
       </div>
-
       <p className="typo-caption1 text-text-disabled mt-6 mb-2">BUTTON</p>
       <div className="flex flex-col gap-1">
         <Row label="button-neutral" className="bg-button-neutral text-text-normal" />
@@ -121,7 +116,6 @@ export default function LandingPage() {
           className="bg-button-primary-interaction text-text-inverse"
         />
       </div>
-
       <p className="typo-caption1 text-text-disabled mt-6 mb-2">ICON</p>
       <div className="flex flex-col gap-1">
         <Row label="icon-normal" className="text-icon-normal" />
@@ -130,7 +124,6 @@ export default function LandingPage() {
         <Row label="icon-disabled" className="text-icon-disabled" />
         <Row label="icon-inverse" className="bg-icon-normal text-icon-inverse" />
       </div>
-
       <p className="typo-caption1 text-text-disabled mt-6 mb-2">BRAND</p>
       <div className="flex flex-col gap-1">
         <Row label="brand-primary" className="text-brand-primary" />
@@ -138,14 +131,12 @@ export default function LandingPage() {
         <Row label="brand-purple" className="text-brand-purple" />
         <Row label="brand-pink" className="text-brand-pink" />
       </div>
-
       <p className="typo-caption1 text-text-disabled mt-6 mb-2">STATE</p>
       <div className="flex flex-col gap-1">
         <Row label="state-success" className="text-state-success" />
         <Row label="state-caution" className="text-state-caution" />
         <Row label="state-error" className="text-state-error" />
       </div>
-
       <p className="typo-caption1 text-text-disabled mt-6 mb-2">DIALOG</p>
       <div className="flex flex-wrap gap-2">
         <Dialog>
@@ -169,7 +160,6 @@ export default function LandingPage() {
           </DialogContent>
         </Dialog>
       </div>
-
       <p className="typo-caption1 text-text-disabled mt-6 mb-2">ALERT DIALOG</p>
       <div className="flex flex-wrap gap-2">
         <AlertDialog status="default">
@@ -216,7 +206,6 @@ export default function LandingPage() {
           </AlertDialogContent>
         </AlertDialog>
       </div>
-
       <p className="typo-caption1 text-text-disabled mt-6 mb-2">BREADCRUMB</p>
       <div className="flex flex-col gap-3">
         <Breadcrumb>
@@ -255,7 +244,6 @@ export default function LandingPage() {
           </BreadcrumbList>
         </Breadcrumb>
       </div>
-
       <p className="typo-caption1 text-text-disabled mt-6 mb-2">TEXT FIELD</p>
       <div className="flex flex-col gap-3">
         <div>
