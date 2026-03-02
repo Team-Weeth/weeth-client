@@ -39,6 +39,7 @@ export default function LandingPage() {
 
   return (
     <div className="bg-background min-h-screen p-400">
+      버셀 확인용
       <Button variant="primary" size="lg" onClick={toggle}>
         {isDark ? '☀️ 라이트모드' : '🌙 다크모드'}
       </Button>
