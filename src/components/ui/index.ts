@@ -56,5 +56,8 @@ export {
   CardContent,
 } from './card';
 
+export { Divider } from './Divider';
+export type { DividerProps } from './Divider';
+
 export { Modal, ModalHeader, ModalBody, ModalFooter } from './modal';
 export type { ModalProps, ModalHeaderProps, ModalBodyProps, ModalFooterProps } from './modal';
