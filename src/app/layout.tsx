@@ -24,7 +24,7 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className="antialiased">
+      <body className="mx-auto w-full max-w-[1032px] antialiased">
         <ThemeProvider>{children}</ThemeProvider>
       </body>
     </html>
