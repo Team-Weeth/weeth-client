@@ -80,28 +80,34 @@ jobs:
               allPassed ? '🎉 모든 검증을 통과했습니다!' : '⚠️ 일부 검증에 실패했습니다. 확인 후 수정해주세요.',
             ].join('\n');
 
-            const { data: comments } = await github.rest.issues.listComments({
+            await github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: context.issue.number,
+              body,
             });
 
-            const existing = comments.find(
-              (c) => c.user.login === 'github-actions[bot]' && c.body.includes('PR 검증 결과'),
-            );
+      - name: Fail workflow if any check failed
+        if: always()
+        run: |
+          typescript_outcome="${{ steps.typescript.outcome }}"
+          eslint_outcome="${{ steps.eslint.outcome }}"
+          prettier_outcome="${{ steps.prettier.outcome }}"
+          build_outcome="${{ steps.build.outcome }}"
 
-            if (existing) {
-              await github.rest.issues.updateComment({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                comment_id: existing.id,
-                body,
-              });
-            } else {
-              await github.rest.issues.createComment({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: context.issue.number,
-                body,
-              });
-            }
+          echo "TypeScript: ${typescript_outcome}"
+          echo "ESLint: ${eslint_outcome}"
+          echo "Prettier: ${prettier_outcome}"
+          echo "Build: ${build_outcome}"
+
+          failed_checks=()
+
+          [ "${typescript_outcome}" = "failure" ] && failed_checks+=("TypeScript")
+          [ "${eslint_outcome}" = "failure" ] && failed_checks+=("ESLint")
+          [ "${prettier_outcome}" = "failure" ] && failed_checks+=("Prettier")
+          [ "${build_outcome}" = "failure" ] && failed_checks+=("Build")
+
+          if [ ${#failed_checks[@]} -gt 0 ]; then
+            echo "::error::실패한 단계: ${failed_checks[*]}"
+            exit 1
+          fi

@@ -142,6 +142,7 @@
   --radius-md: 12px;
   --radius-lg: 16px;
   --radius: 0.625rem;
+  --shadow-dialog: 0 10px 40px 0 rgba(0, 0, 0, 0.4);
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);

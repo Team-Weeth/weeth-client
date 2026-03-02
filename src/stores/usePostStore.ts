@@ -28,7 +28,8 @@ export const usePostStore = create(
     combine(initialState, (set, get) => ({
       setBoard: (board: string) => set({ board }, false, 'setBoard'),
       setTitle: (title: string) => set({ title }, false, 'setTitle'),
-      setCardinalNumber: (cardinalNumber: number) => set({ cardinalNumber }, false, 'setCardinalNumber'),
+      setCardinalNumber: (cardinalNumber: number) =>
+        set({ cardinalNumber }, false, 'setCardinalNumber'),
       setPart: (part: string) => set({ part }, false, 'setPart'),
       setCategory: (category: string) => set({ category }, false, 'setCategory'),
       setStudyName: (studyName: string) => set({ studyName }, false, 'setStudyName'),
@@ -56,8 +57,7 @@ export const usePostStore = create(
           'updateFileUrl',
         ),
 
-      setStatus: (status: 'DRAFT' | 'PUBLISHED') =>
-        set({ status }, false, 'setStatus'),
+      setStatus: (status: 'DRAFT' | 'PUBLISHED') => set({ status }, false, 'setStatus'),
 
       reset: () => set(initialState, false, 'reset'),
 
