@@ -1,12 +1,11 @@
 // list item component를  shadcn/ui 의 card 로 구현
 
 import * as React from 'react';
-import Image from 'next/image';
 import { cva, type VariantProps } from 'class-variance-authority';
 
 import { cn } from '@/lib/cn';
 import { Button } from '@/components/ui/Button';
-import ArrowRightIcon from '@/assets/icons/arrow-right.svg';
+import { ArrowRightIcon } from '@/components/ui/ArrowRightIcon';
 
 const cardVariants = cva('bg-container-neutral flex rounded-lg p-400 transition-colors', {
   variants: {
@@ -51,7 +50,7 @@ function Card({
   ...props
 }: CardProps) {
   // onlyText variant
-  if (variant === 'onlyText' && title && description) {
+  if (variant === 'onlyText' && title) {
     return (
       <div
         data-slot="card"
@@ -64,40 +63,28 @@ function Card({
         <div className="flex flex-col gap-200">
           {overline && <p className="typo-caption1 text-text-alternative">{overline}</p>}
           <h3 className="typo-sub1 text-text-strong">{title}</h3>
-          <p className="typo-body2 text-text-alternative whitespace-pre-line">{description}</p>
+          {description && (
+            <p className="typo-body2 text-text-alternative whitespace-pre-line">{description}</p>
+          )}
         </div>
-        {showArrow && (
-          <Image
-            src={ArrowRightIcon}
-            alt="arrow-right"
-            width={24}
-            height={24}
-            className="text-neutral-800"
-          />
-        )}
+        {showArrow && <ArrowRightIcon />}
       </div>
     );
   }
 
   // buttonSet variant
-  if (variant === 'buttonSet' && title && description) {
+  if (variant === 'buttonSet' && title) {
     return (
       <div data-slot="card" className={cn(cardVariants({ variant }), className)} {...props}>
         <div className="flex items-start justify-between gap-300">
           <div className="flex flex-col gap-200">
             {overline && <p className="typo-caption1 text-text-alternative">{overline}</p>}
             <h3 className="typo-sub1 text-text-strong">{title}</h3>
-            <p className="typo-body2 text-text-alternative whitespace-pre-line">{description}</p>
+            {description && (
+              <p className="typo-body2 text-text-alternative whitespace-pre-line">{description}</p>
+            )}
           </div>
-          {showArrow && (
-            <Image
-              src={ArrowRightIcon}
-              alt="arrow-right"
-              width={24}
-              height={24}
-              className="shrink-0 text-neutral-800"
-            />
-          )}
+          {showArrow && <ArrowRightIcon className="shrink-0" />}
         </div>
 
         <div className="flex flex-col gap-200">
