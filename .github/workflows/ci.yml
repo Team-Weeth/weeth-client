@@ -1,0 +1,113 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  ci:
+    name: Lint & Build
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: latest
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: TypeScript
+        id: typescript
+        continue-on-error: true
+        run: pnpm typecheck
+
+      - name: ESLint
+        id: eslint
+        continue-on-error: true
+        run: pnpm lint
+
+      - name: Prettier
+        id: prettier
+        continue-on-error: true
+        run: pnpm format:check
+
+      - name: Build
+        id: build
+        continue-on-error: true
+        run: pnpm build
+
+      - name: PR 검증 결과 코멘트
+        if: always()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const results = {
+              typescript: '${{ steps.typescript.outcome }}',
+              eslint:     '${{ steps.eslint.outcome }}',
+              prettier:   '${{ steps.prettier.outcome }}',
+              build:      '${{ steps.build.outcome }}',
+            };
+
+            const icon = (outcome) =>
+              outcome === 'success' ? '✅' : outcome === 'failure' ? '❌' : '⏭️';
+
+            const label = (outcome) =>
+              outcome === 'success' ? '통과' : outcome === 'failure' ? '실패' : '건너뜀';
+
+            const allPassed = Object.values(results).every((r) => r === 'success');
+
+            const body = [
+              '## PR 검증 결과',
+              '',
+              `${icon(results.typescript)} **TypeScript:** ${label(results.typescript)}`,
+              `${icon(results.eslint)} **ESLint:** ${label(results.eslint)}`,
+              `${icon(results.prettier)} **Prettier:** ${label(results.prettier)}`,
+              `${icon(results.build)} **Build:** ${label(results.build)}`,
+              '',
+              allPassed ? '🎉 모든 검증을 통과했습니다!' : '⚠️ 일부 검증에 실패했습니다. 확인 후 수정해주세요.',
+            ].join('\n');
+
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body,
+            });
+
+      - name: Fail workflow if any check failed
+        if: always()
+        run: |
+          typescript_outcome="${{ steps.typescript.outcome }}"
+          eslint_outcome="${{ steps.eslint.outcome }}"
+          prettier_outcome="${{ steps.prettier.outcome }}"
+          build_outcome="${{ steps.build.outcome }}"
+
+          echo "TypeScript: ${typescript_outcome}"
+          echo "ESLint: ${eslint_outcome}"
+          echo "Prettier: ${prettier_outcome}"
+          echo "Build: ${build_outcome}"
+
+          failed_checks=()
+
+          [ "${typescript_outcome}" = "failure" ] && failed_checks+=("TypeScript")
+          [ "${eslint_outcome}" = "failure" ] && failed_checks+=("ESLint")
+          [ "${prettier_outcome}" = "failure" ] && failed_checks+=("Prettier")
+          [ "${build_outcome}" = "failure" ] && failed_checks+=("Build")
+
+          if [ ${#failed_checks[@]} -gt 0 ]; then
+            echo "::error::실패한 단계: ${failed_checks[*]}"
+            exit 1
+          fi
