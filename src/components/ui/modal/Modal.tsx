@@ -49,11 +49,7 @@ function Modal({ open: controlledOpen, onOpenChange, children }: ModalProps) {
   return createPortal(
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       {/* Overlay */}
-      <div
-        className="fixed inset-0 bg-neutral-800/60"
-        onClick={handleClose}
-        aria-hidden="true"
-      />
+      <div className="fixed inset-0 bg-neutral-800/60" onClick={handleClose} aria-hidden="true" />
 
       {/* Modal Content */}
       <div className="bg-container-neutral relative z-50 flex max-h-[90vh] w-full max-w-[600px] flex-col rounded-lg">

@@ -16,7 +16,7 @@ export default function AttendancePage() {
   const [currentPage, setCurrentPage] = useState(1);
 
   return (
-    <div className="flex flex-col gap-6 px-450">
+    <div className="mt-300 flex flex-col gap-6 px-450">
       <AttendanceProgressBar attendanceRate={80} />
 
       <Card

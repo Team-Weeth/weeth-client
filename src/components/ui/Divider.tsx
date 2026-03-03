@@ -16,7 +16,8 @@ const dividerVariants = cva('', {
   },
 });
 
-interface DividerProps extends React.HTMLAttributes<HTMLHRElement>, VariantProps<typeof dividerVariants> {}
+interface DividerProps
+  extends React.HTMLAttributes<HTMLHRElement>, VariantProps<typeof dividerVariants> {}
 
 function Divider({ className, orientation, ...props }: DividerProps) {
   return <hr className={cn(dividerVariants({ orientation }), className)} {...props} />;

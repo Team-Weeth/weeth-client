@@ -24,7 +24,13 @@ function ModalFooter({
       {showDivider && <Divider />}
       <div className="flex flex-col gap-[10px] p-400">
         {children}
-        {pagination ? pagination : description && <p className="typo-caption2 text-text-alternative mt-200 text-center">{description}</p>}
+        {pagination
+          ? pagination
+          : description && (
+              <p className="typo-caption2 text-text-alternative mt-200 text-center">
+                {description}
+              </p>
+            )}
       </div>
     </div>
   );

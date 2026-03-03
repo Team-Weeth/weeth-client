@@ -12,7 +12,7 @@ export function CloseIcon({ className, ...props }: IconProps) {
       viewBox="0 0 24 24"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
-      className={cn('text-neutral-800 cursor-pointer', className)}
+      className={cn('cursor-pointer text-neutral-800', className)}
       {...props}
     >
       <path
