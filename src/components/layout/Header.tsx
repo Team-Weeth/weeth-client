@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { usePathname } from 'next/navigation';
 import { Button } from '../ui';
+import LogoIcon from '@/assets/icons/logo/logo_full_Origin.svg';
 import ExitIcon from '@/assets/icons/exit_to_app.svg';
 import AvatarIcon from '@/assets/icons/avatar.svg';
 import EditIcon from '@/assets/icons/edit.svg';
@@ -17,7 +18,7 @@ interface HeaderProps {
 
 const Logo = ({ width = 76, onClick }: { width?: number; onClick: () => void }) => (
   <Image
-    src="/assets/logo/logo_full_Origin.svg"
+    src={LogoIcon}
     alt="logo"
     width={width}
     height={40}

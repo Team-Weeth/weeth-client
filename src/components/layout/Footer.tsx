@@ -1,5 +1,5 @@
 import Image from 'next/image';
-
+import FooterIcon from '@/assets/icons/logo/logo_full_Footer.svg';
 interface FooterProps {
   isSmall?: boolean;
 }
@@ -23,7 +23,7 @@ export default function Footer({ isSmall = false }: FooterProps) {
             </div>
           </div>
           <div className="flex w-[992px] flex-col gap-[10px]">
-            <Image src="/assets/logo/logo_full_Footer.svg" width={90} height={40} alt="logo" />
+            <Image src={FooterIcon} width={90} height={40} alt="logo" />
             <p className="typo-caption1 text-text-disabled">© Weeth ALL RIGHTS RESERVED.</p>
           </div>
         </footer>
@@ -36,7 +36,7 @@ export default function Footer({ isSmall = false }: FooterProps) {
             <p className="typo-body2 text-text-alternative">문의 메일</p>
           </div>
           <div className="flex flex-col gap-[10px]">
-            <Image src="/assets/logo/logo_full_Footer.svg" width={90} height={40} alt="logo" />
+            <Image src={FooterIcon} width={90} height={40} alt="logo" />
             <p className="typo-caption1 text-text-disabled">© Weeth ALL RIGHTS RESERVED.</p>
           </div>
         </footer>
