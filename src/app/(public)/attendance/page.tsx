@@ -162,7 +162,7 @@ export default function AttendancePage() {
         />
         <ModalBody>
           {/* 이미지 영역 */}
-          <div className="relative aspect-[16/9] w-full overflow-hidden rounded-lg">
+          <div className="relative aspect-video w-full overflow-hidden rounded-lg">
             <Image src={DummyImage} alt="웹사이트 미리보기" fill className="object-cover" />
           </div>
           {/* 설정하러 가기 링크 */}
@@ -178,9 +178,7 @@ export default function AttendancePage() {
               >
                 &lt;
               </button>
-              <span className="typo-body2 text-text-normal">
-                {currentPage} / 4
-              </span>
+              <span className="typo-body2 text-text-normal">{currentPage} / 4</span>
               <button
                 onClick={() => setCurrentPage((prev) => Math.min(4, prev + 1))}
                 className="typo-body2 text-text-alternative disabled:opacity-50"
