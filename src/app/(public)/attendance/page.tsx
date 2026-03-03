@@ -1,15 +1,19 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import { AttendanceProgressBar } from '@/components/attendance/AttendanceProgressBar';
 import { Card, Button, Modal, ModalHeader, ModalBody, ModalFooter } from '@/components/ui';
 import { useModalStore } from '@/stores';
+import DummyImage from '@/assets/icons/dummy.svg';
 
 export default function AttendancePage() {
   const { open, close } = useModalStore();
   const [simpleModalOpen, setSimpleModalOpen] = useState(false);
   const [paginationModalOpen, setPaginationModalOpen] = useState(false);
   const [customModalOpen, setCustomModalOpen] = useState(false);
+  const [onboardingModalOpen, setOnboardingModalOpen] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
 
   return (
     <div className="flex flex-col gap-6 px-450">
@@ -37,6 +41,9 @@ export default function AttendancePage() {
           </Button>
           <Button variant="secondary" size="md" onClick={() => setCustomModalOpen(true)}>
             커스텀 헤더 모달
+          </Button>
+          <Button variant="secondary" size="md" onClick={() => setOnboardingModalOpen(true)}>
+            온보딩 모달
           </Button>
         </div>
       </div>
@@ -142,6 +149,61 @@ export default function AttendancePage() {
         <ModalFooter showDivider={false}>
           <Button variant="primary" size="lg" onClick={() => setCustomModalOpen(false)}>
             확인
+          </Button>
+        </ModalFooter>
+      </Modal>
+
+      {/* 모달 5: 온보딩 모달 (이미지 참조) */}
+      <Modal open={onboardingModalOpen} onOpenChange={setOnboardingModalOpen}>
+        <ModalHeader
+          overline="사이트 완성하기"
+          title="동아리의 프로필과 배경화면을 설정해서 사이트를 꾸며보세요!"
+          description="관리자 서비스에서 언제든 수정할 수 있어요."
+        />
+        <ModalBody>
+          {/* 이미지 영역 */}
+          <div className="relative aspect-[16/9] w-full overflow-hidden rounded-lg">
+            <Image src={DummyImage} alt="웹사이트 미리보기" fill className="object-cover" />
+          </div>
+          {/* 설정하러 가기 링크 */}
+          <p className="typo-body2 text-text-alternative text-center">설정하러 가기</p>
+        </ModalBody>
+        <ModalFooter
+          pagination={
+            <div className="flex items-center justify-center gap-300">
+              <button
+                onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
+                className="typo-body2 text-text-alternative disabled:opacity-50"
+                disabled={currentPage === 1}
+              >
+                &lt;
+              </button>
+              <span className="typo-body2 text-text-normal">
+                {currentPage} / 4
+              </span>
+              <button
+                onClick={() => setCurrentPage((prev) => Math.min(4, prev + 1))}
+                className="typo-body2 text-text-alternative disabled:opacity-50"
+                disabled={currentPage === 4}
+              >
+                &gt;
+              </button>
+            </div>
+          }
+        >
+          <Button
+            variant="primary"
+            size="lg"
+            onClick={() => {
+              if (currentPage < 4) {
+                setCurrentPage((prev) => prev + 1);
+              } else {
+                setOnboardingModalOpen(false);
+                setCurrentPage(1);
+              }
+            }}
+          >
+            다음
           </Button>
         </ModalFooter>
       </Modal>
