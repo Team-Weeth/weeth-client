@@ -1,21 +1,17 @@
 'use client';
 
 import { Editor as TiptapEditor } from '@tiptap/core';
-import { useEffect, useState, useCallback } from 'react';
-import { STYLE_ITEMS, INSERT_ITEMS } from '@/constants/editor';
+import { useEffect, useState, useCallback, useRef, useMemo } from 'react';
+import { STYLE_ITEMS } from '@/constants/editor';
+import { cn } from '@/lib/cn';
 import { MenuItem } from '@/types/editor';
-import { useAutoScrollIntoView } from '@/hooks/useAutoScrollIntoView';
 
-const GROUPS = [
-  { title: 'Style', items: STYLE_ITEMS },
-  { title: 'Insert', items: INSERT_ITEMS },
-];
-
-const flatItems = GROUPS.flatMap((group) => group.items);
+const DEFAULT_GROUPS = [{ title: '기본 블록', items: STYLE_ITEMS }];
 
 interface SlashMenuContentProps {
   editor: TiptapEditor;
   onClose: () => void;
+  extraGroups?: { title: string; items: MenuItem[] }[];
 }
 
 /**
@@ -23,31 +19,92 @@ interface SlashMenuContentProps {
  *
  * 역할:
  * - '/' 입력 후 나타나는 커맨드 목록 렌더링
+ * - '/' 뒤 텍스트로 항목 필터링
  * - 키보드 탐색 (↑ ↓ Enter Escape)
- * - 선택 시 slash 문자 제거 후 해당 command 실행
+ * - 선택 시 slash 문자 + 쿼리 제거 후 해당 command 실행
  */
 
-export function SlashMenuContent({ editor, onClose }: SlashMenuContentProps) {
+function getSlashQuery(editor: TiptapEditor): string {
+  const { $anchor } = editor.state.selection;
+  const text = $anchor.nodeBefore?.textContent ?? '';
+  const slashIdx = text.lastIndexOf('/');
+  if (slashIdx === -1) return '';
+  return text.slice(slashIdx + 1);
+}
+
+export function SlashMenuContent({ editor, onClose, extraGroups = [] }: SlashMenuContentProps) {
+  const allGroups = useMemo(() => [...DEFAULT_GROUPS, ...extraGroups], [extraGroups]);
+
+  const [query, setQuery] = useState('');
   const [selectedIndex, setSelectedIndex] = useState(0);
-  const scrollContainerRef = useAutoScrollIntoView<HTMLDivElement>(selectedIndex);
+  const prevQueryRef = useRef(query);
 
+  // 에디터 변경 시 쿼리 업데이트 + 쿼리 변경 시 선택 인덱스 리셋
   useEffect(() => {
-    if (flatItems.length === 0) {
-      setSelectedIndex(0);
-      return;
-    }
+    const updateQuery = () => {
+      const next = getSlashQuery(editor);
+      setQuery(next);
+      if (next !== prevQueryRef.current) {
+        setSelectedIndex(0);
+        prevQueryRef.current = next;
+      }
+    };
+    editor.on('update', updateQuery);
+    return () => {
+      editor.off('update', updateQuery);
+    };
+  }, [editor]);
 
-    if (selectedIndex >= flatItems.length) {
-      setSelectedIndex(0);
+  // 쿼리로 필터링된 그룹 + 각 그룹의 flat offset 계산
+  const filteredGroups = useMemo(() => {
+    let offset = 0;
+    return allGroups
+      .map((group) => ({
+        ...group,
+        items: group.items.filter((item) => item.label.toLowerCase().includes(query.toLowerCase())),
+      }))
+      .filter((group) => group.items.length > 0)
+      .map((group) => {
+        const withOffset = { ...group, offset };
+        offset += group.items.length;
+        return withOffset;
+      });
+  }, [allGroups, query]);
+
+  const flatItems = useMemo(() => filteredGroups.flatMap((group) => group.items), [filteredGroups]);
+
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  // 바깥 클릭 시 메뉴 닫기
+  useEffect(() => {
+    const handleMouseDown = (e: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        onClose();
+      }
+    };
+    document.addEventListener('mousedown', handleMouseDown);
+    return () => document.removeEventListener('mousedown', handleMouseDown);
+  }, [onClose]);
+
+  // 필터 결과 없으면 메뉴 닫기
+  useEffect(() => {
+    if (flatItems.length === 0 && query.length > 0) {
+      onClose();
     }
+  }, [flatItems.length, query, onClose]);
+
+  // 선택된 항목이 보이도록 스크롤
+  useEffect(() => {
+    const el = menuRef.current?.querySelector(`[data-index="${selectedIndex}"]`);
+    el?.scrollIntoView({ block: 'nearest' });
   }, [selectedIndex]);
 
-  // 메뉴 선택 시 실행
+  // 메뉴 선택 시 실행 — slash + 쿼리 전체 삭제
   const handleSelect = useCallback(
     (item: MenuItem) => {
       const { $anchor } = editor.state.selection;
-
-      const from = $anchor.pos - 1;
+      const currentQuery = getSlashQuery(editor);
+      const from = $anchor.pos - currentQuery.length - 1; // '/' + query
       const to = $anchor.pos;
 
       editor.chain().focus().deleteRange({ from, to }).run();
@@ -57,24 +114,35 @@ export function SlashMenuContent({ editor, onClose }: SlashMenuContentProps) {
     [editor, onClose],
   );
 
+  // ref로 최신 값 추적 → 리스너 재등록 방지
+  const selectedIndexRef = useRef(selectedIndex);
+  const flatItemsRef = useRef(flatItems);
+  const handleSelectRef = useRef(handleSelect);
+  useEffect(() => {
+    selectedIndexRef.current = selectedIndex;
+    flatItemsRef.current = flatItems;
+    handleSelectRef.current = handleSelect;
+  });
+
   // 키보드 이벤트 핸들링
   useEffect(() => {
-    if (flatItems.length === 0) return;
-
     const dom = editor.view.dom;
 
     const handleKeyDown = (e: KeyboardEvent) => {
+      const items = flatItemsRef.current;
+      if (items.length === 0) return;
+
       if (e.key === 'ArrowDown') {
         e.preventDefault();
-        setSelectedIndex((prev) => (prev + 1) % flatItems.length);
+        setSelectedIndex((prev) => (prev + 1) % items.length);
       } else if (e.key === 'ArrowUp') {
         e.preventDefault();
-        setSelectedIndex((prev) => (prev - 1 + flatItems.length) % flatItems.length);
+        setSelectedIndex((prev) => (prev - 1 + items.length) % items.length);
       } else if (e.key === 'Enter') {
         e.preventDefault();
         e.stopPropagation();
-        const item = flatItems[selectedIndex];
-        if (item) handleSelect(item);
+        const item = items[selectedIndexRef.current];
+        if (item) handleSelectRef.current(item);
       } else if (e.key === 'Escape') {
         onClose();
       }
@@ -82,51 +150,51 @@ export function SlashMenuContent({ editor, onClose }: SlashMenuContentProps) {
 
     dom.addEventListener('keydown', handleKeyDown);
     return () => dom.removeEventListener('keydown', handleKeyDown);
-  }, [editor, selectedIndex, handleSelect, onClose]);
+  }, [editor, onClose]);
 
   if (flatItems.length === 0) return null;
 
-  // runningIndex는 그룹을 넘어서도 연속된 flat index를 부여하기 위해 사용
-  let runningIndex = 0;
-
   return (
-    <div className="border-line bg-container-neutral w-64 overflow-hidden rounded-lg border shadow-xl">
-      <div ref={scrollContainerRef} className="max-h-80 overflow-x-hidden overflow-y-auto">
-        {GROUPS.map((group, groupIdx) => (
+    <div
+      ref={menuRef}
+      className="border-line bg-container-neutral max-h-[min(400px,calc(100dvh-64px))] w-64 overflow-hidden rounded-lg border shadow-xl"
+    >
+      <div className="scrollbar-custom max-h-[inherit] overflow-y-auto">
+        {filteredGroups.map((group, groupIdx) => (
           <div key={group.title}>
-            <div className={`px-3 pt-2 pb-1 ${groupIdx !== 0 ? 'border-line border-t' : ''}`}>
+            <div className={cn('px-3 pt-2 pb-1', groupIdx !== 0 && 'border-line border-t')}>
               <p className="text-text-disabled text-xs font-semibold tracking-wider uppercase">
                 {group.title}
               </p>
             </div>
 
-            {group.items.map((item) => {
-              const currentIndex = runningIndex++;
-              const isSelected = currentIndex === selectedIndex;
+            {group.items.map((item, itemIdx) => {
+              const flatIndex = group.offset + itemIdx;
+              const isSelected = flatIndex === selectedIndex;
               const Icon = item.icon;
 
               return (
                 <button
                   key={item.label}
                   type="button"
-                  data-index={currentIndex}
+                  data-index={flatIndex}
+                  onMouseEnter={() => setSelectedIndex(flatIndex)}
                   onMouseDown={(e) => {
                     e.preventDefault();
                     handleSelect(item);
                   }}
-                  className={`flex w-full items-center gap-3 px-3 py-2 text-left transition-colors ${
-                    isSelected
-                      ? 'bg-container-neutral-interaction'
-                      : 'hover:bg-container-neutral-alternative'
-                  }`}
+                  className={cn(
+                    'flex w-full items-center gap-3 px-3 py-2 text-left transition-colors',
+                    isSelected && 'bg-container-neutral-interaction',
+                  )}
                 >
-                  <span className="border-line bg-container-neutral-alternative text-text-alternative flex h-8 w-8 shrink-0 items-center justify-center rounded border">
+                  <span className="text-text-alternative flex shrink-0 items-center justify-center">
                     <Icon size={16} />
                   </span>
-                  <div>
-                    <p className="text-text-strong text-sm font-medium">{item.label}</p>
-                    <p className="text-text-disabled text-xs">{item.description}</p>
-                  </div>
+                  <span className="text-text-strong text-sm font-medium">{item.label}</span>
+                  {item.description && (
+                    <span className="text-text-disabled ml-auto text-xs">{item.description}</span>
+                  )}
                 </button>
               );
             })}
