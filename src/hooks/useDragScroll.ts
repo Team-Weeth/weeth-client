@@ -47,6 +47,7 @@ export function useDragScroll() {
 
     if (lastImg && !lastImg.complete) {
       lastImg.addEventListener('load', doScroll, { once: true });
+      lastImg.addEventListener('error', doScroll, { once: true });
     } else {
       requestAnimationFrame(doScroll);
     }
