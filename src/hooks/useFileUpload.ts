@@ -9,11 +9,8 @@ export function useFileUpload() {
   const addFile = usePostStore((s) => s.addFile);
   const removeFile = usePostStore((s) => s.removeFile);
 
-
   const imageInputRef = useRef<HTMLInputElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const dragCounter = useRef(0);
-  const [isDragging, setIsDragging] = useState(false);
   // TODO: toast 시스템 구축 후 setWarning 대신 toast 호출로 교체
   const [warning, setWarning] = useState<string | null>(null);
 
@@ -56,32 +53,6 @@ export function useFileUpload() {
     [processFiles],
   );
 
-  const handleDragEnter = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    dragCounter.current += 1;
-    if (dragCounter.current === 1) setIsDragging(true);
-  }, []);
-
-  const handleDragOver = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-  }, []);
-
-  const handleDragLeave = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    dragCounter.current -= 1;
-    if (dragCounter.current === 0) setIsDragging(false);
-  }, []);
-
-  const handleDrop = useCallback(
-    (e: React.DragEvent) => {
-      e.preventDefault();
-      dragCounter.current = 0;
-      setIsDragging(false);
-      processFiles(Array.from(e.dataTransfer.files));
-    },
-    [processFiles],
-  );
-
   const openImagePicker = useCallback(() => imageInputRef.current?.click(), []);
   const openFilePicker = useCallback(() => fileInputRef.current?.click(), []);
 
@@ -93,23 +64,17 @@ export function useFileUpload() {
     [removeFile],
   );
 
-
   const imageFiles = useMemo(() => files.filter((f) => f.file.type.startsWith('image/')), [files]);
   const nonImageFiles = useMemo(() => files.filter((f) => !f.file.type.startsWith('image/')), [files]);
 
   return {
     imageInputRef,
     fileInputRef,
-    isDragging,
     warning,
     clearWarning,
     imageFiles,
     nonImageFiles,
     handleInputChange,
-    handleDragEnter,
-    handleDragOver,
-    handleDragLeave,
-    handleDrop,
     openImagePicker,
     openFilePicker,
     handleRemoveFile,
