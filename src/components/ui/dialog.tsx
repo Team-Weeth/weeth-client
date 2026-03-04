@@ -6,6 +6,8 @@ import { Dialog as DialogPrimitive } from 'radix-ui';
 
 import { cn } from '@/lib/cn';
 import { Button } from '@/components/ui/Button';
+import { CloseIcon } from '@/components/ui/CloseIcon';
+import { Divider } from '@/components/ui/Divider';
 
 function Dialog({ ...props }: React.ComponentProps<typeof DialogPrimitive.Root>) {
   return <DialogPrimitive.Root data-slot="dialog" {...props} />;
@@ -73,36 +75,110 @@ function DialogContent({
   );
 }
 
-function DialogHeader({ className, ...props }: React.ComponentProps<'div'>) {
+interface DialogHeaderProps extends React.HTMLAttributes<HTMLDivElement> {
+  overline?: string;
+  title?: string;
+  description?: string;
+  showClose?: boolean;
+  onClose?: () => void;
+  children?: React.ReactNode;
+}
+
+function DialogHeader({
+  overline,
+  title,
+  description,
+  showClose = false,
+  onClose,
+  children,
+  className,
+  ...props
+}: DialogHeaderProps) {
+  // If children provided, use custom content mode
+  if (children) {
+    return (
+      <div
+        data-slot="dialog-header"
+        className={cn('flex items-center justify-between p-400', className)}
+        {...props}
+      >
+        <DialogPrimitive.Title asChild>
+          <div className="flex items-center gap-300">{children}</div>
+        </DialogPrimitive.Title>
+        {showClose && onClose && <CloseIcon onClick={onClose} className="shrink-0" />}
+      </div>
+    );
+  }
+
   return (
     <div
       data-slot="dialog-header"
-      className={cn('flex flex-col gap-2 text-center sm:text-left', className)}
+      className={cn('flex items-start justify-between p-400', className)}
       {...props}
-    />
+    >
+      <div className="flex flex-col">
+        {overline && <p className="typo-caption1 text-text-alternative mb-200">{overline}</p>}
+        {title ? (
+          <DialogPrimitive.Title asChild>
+            <h2 className="typo-sub1 text-text-strong mb-200">{title}</h2>
+          </DialogPrimitive.Title>
+        ) : (
+          <DialogPrimitive.Title className="sr-only">Dialog</DialogPrimitive.Title>
+        )}
+        {description && <p className="typo-body2 text-text-alternative">{description}</p>}
+      </div>
+      {showClose && onClose && <CloseIcon onClick={onClose} className="shrink-0" />}
+    </div>
   );
 }
 
-function DialogFooter({
-  className,
-  showCloseButton = false,
-  children,
-  ...props
-}: React.ComponentProps<'div'> & {
-  showCloseButton?: boolean;
-}) {
+function DialogBody({ children, className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
   return (
     <div
-      data-slot="dialog-footer"
-      className={cn('flex flex-col-reverse gap-2 sm:flex-row sm:justify-end', className)}
+      data-slot="dialog-body"
+      className={cn('scrollbar-custom flex flex-col gap-300 overflow-y-auto p-400', className)}
       {...props}
     >
       {children}
-      {showCloseButton && (
-        <DialogPrimitive.Close asChild>
-          <Button variant="secondary">Close</Button>
-        </DialogPrimitive.Close>
-      )}
+    </div>
+  );
+}
+
+interface DialogFooterProps extends React.HTMLAttributes<HTMLDivElement> {
+  children: React.ReactNode;
+  description?: string;
+  pagination?: React.ReactNode;
+  showDivider?: boolean;
+  showCloseButton?: boolean;
+}
+
+function DialogFooter({
+  children,
+  description,
+  pagination,
+  showDivider = true,
+  showCloseButton = false,
+  className,
+  ...props
+}: DialogFooterProps) {
+  return (
+    <div data-slot="dialog-footer" className={cn('flex flex-col', className)} {...props}>
+      {showDivider && <Divider />}
+      <div className="flex flex-col gap-[10px] p-400">
+        {children}
+        {pagination
+          ? pagination
+          : description && (
+              <p className="typo-caption2 text-text-alternative mt-200 text-center">
+                {description}
+              </p>
+            )}
+        {showCloseButton && (
+          <DialogPrimitive.Close asChild>
+            <Button variant="secondary">Close</Button>
+          </DialogPrimitive.Close>
+        )}
+      </div>
     </div>
   );
 }
@@ -132,6 +208,7 @@ function DialogDescription({
 
 export {
   Dialog,
+  DialogBody,
   DialogClose,
   DialogContent,
   DialogDescription,
@@ -142,3 +219,4 @@ export {
   DialogTitle,
   DialogTrigger,
 };
+export type { DialogHeaderProps, DialogFooterProps };

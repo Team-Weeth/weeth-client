@@ -10,6 +10,7 @@ export type { TextFieldProps } from './TextField';
 
 export {
   Dialog,
+  DialogBody,
   DialogTrigger,
   DialogContent,
   DialogHeader,
@@ -18,6 +19,7 @@ export {
   DialogDescription,
   DialogClose,
 } from './dialog';
+export type { DialogHeaderProps, DialogFooterProps } from './dialog';
 
 export {
   AlertDialog,
@@ -59,5 +61,3 @@ export {
 export { Divider } from './Divider';
 export type { DividerProps } from './Divider';
 
-export { Modal, ModalHeader, ModalBody, ModalFooter } from './modal';
-export type { ModalProps, ModalHeaderProps, ModalBodyProps, ModalFooterProps } from './modal';
