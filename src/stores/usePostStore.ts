@@ -41,18 +41,12 @@ export const usePostStore = create(
         set((state) => ({ files: [...state.files, file] }), false, 'addFile'),
 
       removeFile: (id: string) =>
-        set(
-          (state) => ({ files: state.files.filter((f) => f.id !== id) }),
-          false,
-          'removeFile',
-        ),
+        set((state) => ({ files: state.files.filter((f) => f.id !== id) }), false, 'removeFile'),
 
       updateFileUrl: (id: string, fileUrl: string) =>
         set(
           (state) => ({
-            files: state.files.map((f) =>
-              f.id === id ? { ...f, fileUrl, uploaded: true } : f,
-            ),
+            files: state.files.map((f) => (f.id === id ? { ...f, fileUrl, uploaded: true } : f)),
           }),
           false,
           'updateFileUrl',
