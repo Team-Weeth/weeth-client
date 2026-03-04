@@ -29,14 +29,16 @@ export function usePostEditor() {
     onUpdate: ({ editor }) => {
       setContent(editor.getHTML());
       const { $from } = editor.state.selection;
-      updateSlashMenuState(($from.nodeBefore?.textContent ?? '').endsWith('/'));
+      const text = $from.nodeBefore?.textContent ?? '';
+      updateSlashMenuState(/\/[^\s]*$/.test(text));
     },
 
     // 커서 이동만으로 '/' 뒤를 벗어났을 때도 메뉴를 닫기 위해 추적
     onSelectionUpdate: ({ editor }) => {
       if (!showSlashMenuRef.current) return;
       const { $from } = editor.state.selection;
-      if (!($from.nodeBefore?.textContent ?? '').endsWith('/')) {
+      const text = $from.nodeBefore?.textContent ?? '';
+      if (!/\/[^\s]*$/.test(text)) {
         closeSlashMenu();
       }
     },
