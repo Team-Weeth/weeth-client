@@ -1,5 +1,4 @@
-import Footer from '@/components/layout/Footer';
-import Header from '@/components/layout/Header';
+import { Footer, Header } from '@/components/layout';
 
 export default function PublicLayout({
   children,
@@ -8,9 +7,9 @@ export default function PublicLayout({
 }>) {
   return (
     <>
-      <div className="mx-auto flex h-screen max-w-[1032px] flex-col">
+      <div className="mx-auto flex min-h-screen max-w-[1032px] flex-col">
         <Header isMain={false} />
-        {children}
+        <main className="flex-1">{children}</main>
       </div>
       <Footer />
     </>
