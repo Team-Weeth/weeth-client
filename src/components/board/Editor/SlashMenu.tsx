@@ -122,7 +122,7 @@ export function SlashMenuContent({ editor, onClose, extraGroups = [] }: SlashMen
     selectedIndexRef.current = selectedIndex;
     flatItemsRef.current = flatItems;
     handleSelectRef.current = handleSelect;
-  });
+  }, [selectedIndex, flatItems, handleSelect]);
 
   // 키보드 이벤트 핸들링
   useEffect(() => {

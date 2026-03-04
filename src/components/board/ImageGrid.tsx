@@ -146,7 +146,7 @@ export function ImageGrid({ files, removable, onRemove }: ImageGridProps) {
   const { ref, scrollToEnd, ...scrollHandlers } = useDragScroll();
 
   // 새 이미지 추가 시 끝으로 스크롤
-  const prevCount = useRef(files.length);
+  const prevCount = useRef(-1);
   useEffect(() => {
     if (files.length > prevCount.current) {
       scrollToEnd();
@@ -176,6 +176,8 @@ export function ImageGrid({ files, removable, onRemove }: ImageGridProps) {
     <div
       ref={ref}
       tabIndex={0}
+      role="region"
+      aria-label="첨부된 이미지 목록"
       className="-mx-800 flex h-[182px] cursor-grab gap-200 self-stretch overflow-x-auto pl-800 [-ms-overflow-style:none] [scrollbar-width:none] active:cursor-grabbing [&::-webkit-scrollbar]:hidden"
       {...scrollHandlers}
     >

@@ -28,7 +28,7 @@ export function FileList({ files, removable, onRemove }: FileListProps) {
         >
           {/* FolderIcon + 파일명 */}
           <div className="flex items-center gap-200">
-            <Image src={folderIcon} alt="" width={20} height={16} className="shrink-0" />
+            <Image src={folderIcon} alt="" width={20} height={16} className="shrink-0" aria-hidden="true" />
             <a
               href={item.fileUrl}
               download={item.fileName}
@@ -36,6 +36,7 @@ export function FileList({ files, removable, onRemove }: FileListProps) {
                 'text-text-normal typo-button2 min-w-0 truncate hover:underline',
                 !item.uploaded && 'pointer-events-none',
               )}
+              {...(!item.uploaded && { tabIndex: -1, 'aria-disabled': true })}
             >
               {item.fileName}
             </a>
@@ -47,6 +48,7 @@ export function FileList({ files, removable, onRemove }: FileListProps) {
               href={item.fileUrl}
               download={item.fileName}
               className={cn('shrink-0', !item.uploaded && 'pointer-events-none')}
+              {...(!item.uploaded && { tabIndex: -1, 'aria-disabled': true })}
             >
               <span
                 aria-label="다운로드"

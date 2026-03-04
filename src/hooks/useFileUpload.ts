@@ -3,6 +3,12 @@ import { usePostStore } from '@/stores/usePostStore';
 
 const MAX_FILES = 10; // 이미지 5 + 파일 5 합산 기준
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+const IMAGE_EXTENSIONS = /\.(jpe?g|png|gif|webp|svg|bmp|ico|avif)$/i;
+
+function isImageFile(file: File): boolean {
+  if (file.type.startsWith('image/')) return true;
+  return IMAGE_EXTENSIONS.test(file.name);
+}
 
 export function useFileUpload() {
   const files = usePostStore((s) => s.files);
@@ -64,8 +70,8 @@ export function useFileUpload() {
     [removeFile],
   );
 
-  const imageFiles = useMemo(() => files.filter((f) => f.file.type.startsWith('image/')), [files]);
-  const nonImageFiles = useMemo(() => files.filter((f) => !f.file.type.startsWith('image/')), [files]);
+  const imageFiles = useMemo(() => files.filter((f) => isImageFile(f.file)), [files]);
+  const nonImageFiles = useMemo(() => files.filter((f) => !isImageFile(f.file)), [files]);
 
   return {
     imageInputRef,
