@@ -24,7 +24,7 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className="antialiased">
+      <body className="w-full antialiased">
         <ThemeProvider>{children}</ThemeProvider>
       </body>
     </html>
