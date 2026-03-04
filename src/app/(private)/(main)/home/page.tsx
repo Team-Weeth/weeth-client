@@ -1,3 +1,9 @@
+import Footer from '@/components/layout/Footer';
+
 export default function HomePage() {
-  return <div>HomePage</div>;
+  return (
+    <div>
+      <Footer isSmall />
+    </div>
+  );
 }
