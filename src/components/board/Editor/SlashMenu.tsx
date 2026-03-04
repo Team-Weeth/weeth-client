@@ -49,6 +49,7 @@ export function SlashMenuContent({ editor, onClose, extraGroups = [] }: SlashMen
         prevQueryRef.current = next;
       }
     };
+    updateQuery();
     editor.on('update', updateQuery);
     return () => {
       editor.off('update', updateQuery);

@@ -54,7 +54,13 @@ export const usePostStore = create(
 
       setStatus: (status: 'DRAFT' | 'PUBLISHED') => set({ status }, false, 'setStatus'),
 
-      reset: () => set(initialState, false, 'reset'),
+      reset: () => {
+        const { files } = get();
+        for (const f of files) {
+          if (f.fileUrl.startsWith('blob:')) URL.revokeObjectURL(f.fileUrl);
+        }
+        set(initialState, false, 'reset');
+      },
 
       getPayload: () => {
         const state = get();

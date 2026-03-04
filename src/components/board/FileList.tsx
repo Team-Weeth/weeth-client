@@ -22,7 +22,7 @@ export function FileList({ files, removable, onRemove }: FileListProps) {
         <div
           key={item.id}
           className={cn(
-            'border-line inline-flex h-[36px] items-center gap-[15px] rounded-sm border bg-[rgba(255,255,255,0.05)] px-200 py-[6px]',
+            'border-line inline-flex items-center gap-400 rounded-sm border bg-container-neutral-alternative px-200 py-200',
             !item.uploaded && 'opacity-60',
           )}
         >
@@ -54,11 +54,12 @@ export function FileList({ files, removable, onRemove }: FileListProps) {
             <a
               href={item.fileUrl}
               download={item.fileName}
+              aria-label={`${item.fileName} 다운로드`}
               className={cn('shrink-0', !item.uploaded && 'pointer-events-none')}
               {...(!item.uploaded && { tabIndex: -1, 'aria-disabled': true })}
             >
               <span
-                aria-label="다운로드"
+                aria-hidden="true"
                 className="bg-icon-normal block h-6 w-6"
                 style={{
                   maskImage: `url(${(downloadIcon as StaticImageData).src})`,

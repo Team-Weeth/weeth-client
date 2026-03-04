@@ -54,7 +54,6 @@ export default function Editor() {
       <input
         ref={fileInputRef}
         type="file"
-        accept="*"
         multiple
         className="hidden"
         onChange={handleInputChange}
@@ -74,7 +73,8 @@ export default function Editor() {
               {
                 name: 'flip',
                 options: {
-                  boundary: 'viewport' as unknown as Element,
+                  boundary: 'clippingParents',
+                  rootBoundary: 'viewport',
                   fallbackPlacements: ['top-start'],
                   padding: 16,
                 },
@@ -82,7 +82,8 @@ export default function Editor() {
               {
                 name: 'preventOverflow',
                 options: {
-                  boundary: 'viewport' as unknown as Element,
+                  boundary: 'clippingParents',
+                  rootBoundary: 'viewport',
                   padding: 16,
                 },
               },
@@ -100,7 +101,7 @@ export default function Editor() {
         )}
       </FloatingMenu>
 
-      <div className="relative px-800">
+      <div className="relative px-500">
         <EditorContent
           editor={editor}
           className="prose prose-gray max-w-none [&_.ProseMirror]:min-h-[400px] [&_.ProseMirror]:focus:outline-none [&_.ProseMirror_h1]:leading-(--h1-line-height) [&_.ProseMirror_h1]:text-(--h1-size) [&_.ProseMirror_h2]:leading-(--h2-line-height) [&_.ProseMirror_h2]:text-(--h2-size) [&_.ProseMirror_h3]:leading-(--h3-line-height) [&_.ProseMirror_h3]:text-(--h3-size) [&_.ProseMirror_p.is-empty::before]:pointer-events-none [&_.ProseMirror_p.is-empty::before]:float-left [&_.ProseMirror_p.is-empty::before]:h-0 [&_.ProseMirror_p.is-empty::before]:text-gray-400 [&_.ProseMirror_p.is-empty::before]:content-[attr(data-placeholder)] [&_.ProseMirror_ul[data-type=taskList]]:my-0 [&_.ProseMirror_ul[data-type=taskList]]:list-none [&_.ProseMirror_ul[data-type=taskList]_li]:my-0 [&_.ProseMirror_ul[data-type=taskList]_li]:flex [&_.ProseMirror_ul[data-type=taskList]_li]:items-center [&_.ProseMirror_ul[data-type=taskList]_li]:gap-300 [&_.ProseMirror>*]:my-300"
