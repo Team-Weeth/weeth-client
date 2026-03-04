@@ -22,7 +22,7 @@ export function FileList({ files, removable, onRemove }: FileListProps) {
         <div
           key={item.id}
           className={cn(
-            'border-line inline-flex items-center gap-400 rounded-sm border bg-container-neutral-alternative px-200 py-200',
+            'border-line bg-container-neutral-alternative inline-flex items-center gap-400 rounded-sm border px-200 py-200',
             !item.uploaded && 'opacity-60',
           )}
         >
