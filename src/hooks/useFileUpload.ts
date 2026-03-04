@@ -35,7 +35,9 @@ export function useFileUpload() {
       const slots = MAX_FILES - files.length;
 
       if (valid.length > slots) {
-        warnings.push(`최대 ${MAX_FILES}개까지 첨부할 수 있습니다. (${valid.length - slots}개 제외)`);
+        warnings.push(
+          `최대 ${MAX_FILES}개까지 첨부할 수 있습니다. (${valid.length - slots}개 제외)`,
+        );
       }
 
       const toProcess = valid.slice(0, Math.max(0, slots));
@@ -43,7 +45,13 @@ export function useFileUpload() {
       for (const file of toProcess) {
         const previewUrl = URL.createObjectURL(file);
         // TODO: 실제 업로드 API 연동 후 uploaded를 false → true로 전환
-        addFile({ id: crypto.randomUUID(), file, fileName: file.name, fileUrl: previewUrl, uploaded: true });
+        addFile({
+          id: crypto.randomUUID(),
+          file,
+          fileName: file.name,
+          fileUrl: previewUrl,
+          uploaded: true,
+        });
       }
 
       setWarning(warnings.length > 0 ? warnings.join(' ') : null);

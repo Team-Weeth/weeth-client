@@ -28,7 +28,14 @@ export function FileList({ files, removable, onRemove }: FileListProps) {
         >
           {/* FolderIcon + 파일명 */}
           <div className="flex items-center gap-200">
-            <Image src={folderIcon} alt="" width={20} height={16} className="shrink-0" aria-hidden="true" />
+            <Image
+              src={folderIcon}
+              alt=""
+              width={20}
+              height={16}
+              className="shrink-0"
+              aria-hidden="true"
+            />
             <a
               href={item.fileUrl}
               download={item.fileName}
