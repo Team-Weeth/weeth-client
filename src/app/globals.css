@@ -54,6 +54,9 @@
   --pink-500: #ed72e7;
   --pink-700: #8e448a;
   --pink-900: #280526;
+
+  --background: var(--neutral-200);
+  --foreground: var(--text-normal);
   --line: var(--neutral-400);
 
   --text-normal: var(--neutral-800);
@@ -142,9 +145,8 @@
   --radius-md: 12px;
   --radius-lg: 16px;
   --radius: 0.625rem;
+
   --shadow-dialog: 0 10px 40px 0 rgba(0, 0, 0, 0.4);
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
@@ -239,8 +241,7 @@
   --pink-500: #ed72e7;
   --pink-700: #f3a7f0;
   --pink-900: #faddf9;
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
+
   --card: oklch(0.205 0 0);
   --card-foreground: oklch(0.985 0 0);
   --popover: oklch(0.205 0 0);
