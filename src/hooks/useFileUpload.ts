@@ -84,13 +84,21 @@ export function useFileUpload() {
   return {
     imageInputRef,
     fileInputRef,
-    warning,
-    clearWarning,
-    imageFiles,
-    nonImageFiles,
-    handleInputChange,
-    openImagePicker,
-    openFilePicker,
-    handleRemoveFile,
+    picker: {
+      openImagePicker,
+      openFilePicker,
+    },
+    files: {
+      imageFiles,
+      nonImageFiles,
+      handleRemoveFile,
+    },
+    warning: {
+      message: warning,
+      clear: clearWarning,
+    },
+    handlers: {
+      handleInputChange,
+    },
   };
 }

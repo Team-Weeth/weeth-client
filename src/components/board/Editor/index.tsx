@@ -21,20 +21,11 @@ import { createMediaItems } from '@/constants/editor';
 
 export default function Editor() {
   const { editor, showSlashMenu, closeSlashMenu, containerRef } = usePostEditor();
-  const {
-    imageInputRef,
-    fileInputRef,
-    imageFiles,
-    nonImageFiles,
-    handleInputChange,
-    handleRemoveFile,
-    openImagePicker,
-    openFilePicker,
-  } = useFileUpload();
+  const { imageInputRef, fileInputRef, picker, files, handlers } = useFileUpload();
 
   const mediaGroups = useMemo(
-    () => [{ title: '미디어', items: createMediaItems(openImagePicker, openFilePicker) }],
-    [openImagePicker, openFilePicker],
+    () => [{ title: '미디어', items: createMediaItems(picker.openImagePicker, picker.openFilePicker) }],
+    [picker.openImagePicker, picker.openFilePicker],
   );
 
   if (!editor) return null;
@@ -48,7 +39,7 @@ export default function Editor() {
         accept="image/*"
         multiple
         className="hidden"
-        onChange={handleInputChange}
+        onChange={handlers.handleInputChange}
         aria-hidden="true"
       />
       <input
@@ -56,7 +47,7 @@ export default function Editor() {
         type="file"
         multiple
         className="hidden"
-        onChange={handleInputChange}
+        onChange={handlers.handleInputChange}
         aria-hidden="true"
       />
 
@@ -109,8 +100,8 @@ export default function Editor() {
 
         {/* 게시글 하단 첨부 영역 */}
         <div className="flex flex-col gap-400">
-          <ImageGrid files={imageFiles} removable onRemove={handleRemoveFile} />
-          <FileList files={nonImageFiles} onRemove={handleRemoveFile} removable />
+          <ImageGrid files={files.imageFiles} removable onRemove={files.handleRemoveFile} />
+          <FileList files={files.nonImageFiles} onRemove={files.handleRemoveFile} removable />
         </div>
       </div>
     </div>
