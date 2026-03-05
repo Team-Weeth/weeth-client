@@ -4,7 +4,7 @@ import { EditorContent, FloatingMenu } from '@tiptap/react';
 import { usePostEditor } from './usePostEditor';
 import { BubbleMenuBar } from './EditorBubbleMenu';
 import { SlashMenuContent } from './SlashMenu';
-import { ImageGrid } from '../ImageGrid';
+import { ImageList } from '../ImageList';
 import { FileList } from '../FileList';
 import { useMemo } from 'react';
 import { useFileUpload } from '@/hooks/useFileUpload';
@@ -100,7 +100,7 @@ export default function Editor() {
 
         {/* 게시글 하단 첨부 영역 */}
         <div className="flex flex-col gap-400">
-          <ImageGrid files={files.imageFiles} removable onRemove={files.handleRemoveFile} />
+          <ImageList files={files.imageFiles} removable onRemove={files.handleRemoveFile} />
           <FileList files={files.nonImageFiles} onRemove={files.handleRemoveFile} removable />
         </div>
       </div>
