@@ -1,17 +1,29 @@
 import { useCallback, useMemo, useRef, useState } from 'react';
+import { useShallow } from 'zustand/react/shallow';
 import { usePostStore } from '@/stores/usePostStore';
 import { MAX_FILES, MAX_FILE_SIZE } from '@/constants/file';
+
 const IMAGE_EXTENSIONS = /\.(jpe?g|png|gif|webp|svg|bmp|ico|avif)$/i;
 
+// 파일이 이미지인지 판별
 function isImageFile(file: File): boolean {
   if (file.type.startsWith('image/')) return true;
   return IMAGE_EXTENSIONS.test(file.name);
 }
 
+/**
+ * 게시글 파일 첨부를 관리하는 훅
+ *
+ * - 이미지/일반 파일 분류
+ * - 파일 선택 input (picker) 제어
+ * - 파일 크기 및 개수 제한 검증
+ * - blob preview URL 생성 및 해제
+ */
+
 export function useFileUpload() {
-  const files = usePostStore((s) => s.files);
-  const addFile = usePostStore((s) => s.addFile);
-  const removeFile = usePostStore((s) => s.removeFile);
+  const { files, addFiles, removeFile } = usePostStore(
+    useShallow((s) => ({ files: s.files, addFiles: s.addFiles, removeFile: s.removeFile })),
+  );
 
   const imageInputRef = useRef<HTMLInputElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -40,21 +52,20 @@ export function useFileUpload() {
 
       const toProcess = valid.slice(0, Math.max(0, slots));
 
-      for (const file of toProcess) {
-        const previewUrl = URL.createObjectURL(file);
-        // TODO: 실제 업로드 API 연동 후 uploaded를 false → true로 전환
-        addFile({
+      // TODO: 실제 업로드 API 연동 후 uploaded를 false → true로 전환
+      addFiles(
+        toProcess.map((file) => ({
           id: crypto.randomUUID(),
           file,
           fileName: file.name,
-          fileUrl: previewUrl,
+          fileUrl: URL.createObjectURL(file),
           uploaded: true,
-        });
-      }
+        })),
+      );
 
       setWarning(warnings.length > 0 ? warnings.join(' ') : null);
     },
-    [files.length, addFile],
+    [files.length, addFiles],
   );
 
   const handleInputChange = useCallback(
@@ -68,6 +79,7 @@ export function useFileUpload() {
   const openImagePicker = useCallback(() => imageInputRef.current?.click(), []);
   const openFilePicker = useCallback(() => fileInputRef.current?.click(), []);
 
+  // 파일 제거 시 blob URL 해제
   const handleRemoveFile = useCallback(
     (id: string, fileUrl: string) => {
       if (fileUrl.startsWith('blob:')) URL.revokeObjectURL(fileUrl);
@@ -76,6 +88,7 @@ export function useFileUpload() {
     [removeFile],
   );
 
+  // 이미지 파일 / 일반 파일 분리 (UI 표시용)
   const imageFiles = useMemo(() => files.filter((f) => isImageFile(f.file)), [files]);
   const nonImageFiles = useMemo(() => files.filter((f) => !isImageFile(f.file)), [files]);
 
