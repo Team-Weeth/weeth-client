@@ -136,6 +136,8 @@ export function useSlashMenu(
         const item = items[selectedIndexRef.current];
         if (item) handleSelectRef.current(item);
       } else if (e.key === 'Escape') {
+        e.preventDefault();
+        e.stopPropagation();
         onClose();
       }
     };
