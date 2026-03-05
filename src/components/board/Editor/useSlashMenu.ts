@@ -43,18 +43,24 @@ export function useSlashMenu(
 
   // 쿼리로 필터링된 그룹 + 각 그룹의 flat offset 계산
   const filteredGroups = useMemo(() => {
-    let offset = 0;
-    return allGroups
-      .map((group) => ({
-        ...group,
-        items: group.items.filter((item) => item.label.toLowerCase().includes(query.toLowerCase())),
-      }))
-      .filter((group) => group.items.length > 0)
-      .map((group) => {
-        const withOffset = { ...group, offset };
-        offset += group.items.length;
-        return withOffset;
-      });
+    const normalizedQuery = query.toLowerCase();
+    const { groups } = allGroups.reduce<{
+      groups: { title: string; items: MenuItem[]; offset: number }[];
+      offset: number;
+    }>(
+      (acc, group) => {
+        const items = group.items.filter((item) =>
+          item.label.toLowerCase().includes(normalizedQuery),
+        );
+        if (items.length > 0) {
+          acc.groups.push({ title: group.title, items, offset: acc.offset });
+          acc.offset += items.length;
+        }
+        return acc;
+      },
+      { groups: [], offset: 0 },
+    );
+    return groups;
   }, [allGroups, query]);
 
   const flatItems = useMemo(() => filteredGroups.flatMap((group) => group.items), [filteredGroups]);
