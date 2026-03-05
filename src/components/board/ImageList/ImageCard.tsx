@@ -51,6 +51,7 @@ export function ImageCard({
       className={cn('relative overflow-hidden', className)}
       style={{ borderRadius: 'var(--radius-sm, 8px)' }}
     >
+      {/* TODO: API 연결 후 blob URL → 실제 URL로 변경되면 next/image로 교체 */}
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         src={item.fileUrl}
