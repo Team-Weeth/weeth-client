@@ -2,10 +2,11 @@
 
 import * as React from 'react';
 import { cva, type VariantProps } from 'class-variance-authority';
+import type { StaticImageData } from 'next/image';
 
 import { cn } from '@/lib/cn';
 import { Button } from '@/components/ui/Button';
-import { ArrowRightIcon } from '@/components/ui/ArrowRightIcon';
+import arrowRightIcon from '@/assets/icons/arrow_right.svg';
 
 const cardVariants = cva('bg-container-neutral flex rounded-lg p-400 transition-colors', {
   variants: {
@@ -67,7 +68,19 @@ function Card({
             <p className="typo-body2 text-text-alternative whitespace-pre-line">{description}</p>
           )}
         </div>
-        {showArrow && <ArrowRightIcon />}
+        {showArrow && (
+          <span
+            aria-hidden
+            className="block h-4 w-4 shrink-0 bg-neutral-800"
+            style={{
+              maskImage: `url(${(arrowRightIcon as StaticImageData).src})`,
+              WebkitMaskImage: `url(${(arrowRightIcon as StaticImageData).src})`,
+              maskRepeat: 'no-repeat',
+              maskPosition: 'center',
+              maskSize: 'contain',
+            }}
+          />
+        )}
       </div>
     );
   }
@@ -84,7 +97,19 @@ function Card({
               <p className="typo-body2 text-text-alternative whitespace-pre-line">{description}</p>
             )}
           </div>
-          {showArrow && <ArrowRightIcon className="shrink-0" />}
+          {showArrow && (
+            <span
+              aria-hidden
+              className="block h-4 w-4 shrink-0 bg-neutral-800"
+              style={{
+                maskImage: `url(${(arrowRightIcon as StaticImageData).src})`,
+                WebkitMaskImage: `url(${(arrowRightIcon as StaticImageData).src})`,
+                maskRepeat: 'no-repeat',
+                maskPosition: 'center',
+                maskSize: 'contain',
+              }}
+            />
+          )}
         </div>
 
         <div className="flex flex-col gap-200">

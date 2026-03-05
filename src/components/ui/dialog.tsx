@@ -1,13 +1,13 @@
 'use client';
 
 import * as React from 'react';
-import { XIcon } from 'lucide-react';
 import { Dialog as DialogPrimitive } from 'radix-ui';
+import type { StaticImageData } from 'next/image';
 
 import { cn } from '@/lib/cn';
 import { Button } from '@/components/ui/Button';
-import { CloseIcon } from '@/components/ui/CloseIcon';
 import { Divider } from '@/components/ui/Divider';
+import deleteIcon from '@/assets/icons/delete.svg';
 
 function Dialog({ ...props }: React.ComponentProps<typeof DialogPrimitive.Root>) {
   return <DialogPrimitive.Root data-slot="dialog" {...props} />;
@@ -64,9 +64,19 @@ function DialogContent({
         {showCloseButton && (
           <DialogPrimitive.Close
             data-slot="dialog-close"
-            className="ring-offset-background focus:ring-ring data-[state=open]:bg-accent data-[state=open]:text-muted-foreground absolute top-4 right-4 rounded-xs opacity-70 transition-opacity hover:opacity-100 focus:ring-2 focus:ring-offset-2 focus:outline-hidden disabled:pointer-events-none [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4"
+            className="ring-offset-background focus:ring-ring data-[state=open]:bg-accent data-[state=open]:text-muted-foreground absolute top-4 right-4 rounded-xs opacity-70 transition-opacity hover:opacity-100 focus:ring-2 focus:ring-offset-2 focus:outline-hidden disabled:pointer-events-none"
           >
-            <XIcon />
+            <span
+              aria-hidden
+              className="block h-6 w-6 shrink-0 bg-neutral-800"
+              style={{
+                maskImage: `url(${(deleteIcon as StaticImageData).src})`,
+                WebkitMaskImage: `url(${(deleteIcon as StaticImageData).src})`,
+                maskRepeat: 'no-repeat',
+                maskPosition: 'center',
+                maskSize: 'contain',
+              }}
+            />
             <span className="sr-only">Close</span>
           </DialogPrimitive.Close>
         )}
@@ -105,7 +115,20 @@ function DialogHeader({
         <DialogPrimitive.Title asChild>
           <div className="flex items-center gap-300">{children}</div>
         </DialogPrimitive.Title>
-        {showClose && onClose && <CloseIcon onClick={onClose} className="shrink-0" />}
+        {showClose && onClose && (
+          <span
+            aria-hidden
+            onClick={onClose}
+            className="block h-6 w-6 shrink-0 cursor-pointer bg-neutral-800"
+            style={{
+              maskImage: `url(${(deleteIcon as StaticImageData).src})`,
+              WebkitMaskImage: `url(${(deleteIcon as StaticImageData).src})`,
+              maskRepeat: 'no-repeat',
+              maskPosition: 'center',
+              maskSize: 'contain',
+            }}
+          />
+        )}
       </div>
     );
   }
@@ -127,7 +150,20 @@ function DialogHeader({
         )}
         {description && <p className="typo-body2 text-text-alternative">{description}</p>}
       </div>
-      {showClose && onClose && <CloseIcon onClick={onClose} className="shrink-0" />}
+      {showClose && onClose && (
+        <span
+          aria-hidden
+          onClick={onClose}
+          className="block h-6 w-6 shrink-0 cursor-pointer bg-neutral-800"
+          style={{
+            maskImage: `url(${(deleteIcon as StaticImageData).src})`,
+            WebkitMaskImage: `url(${(deleteIcon as StaticImageData).src})`,
+            maskRepeat: 'no-repeat',
+            maskPosition: 'center',
+            maskSize: 'contain',
+          }}
+        />
+      )}
     </div>
   );
 }

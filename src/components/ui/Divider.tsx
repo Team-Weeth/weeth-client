@@ -20,7 +20,13 @@ interface DividerProps
   extends React.HTMLAttributes<HTMLHRElement>, VariantProps<typeof dividerVariants> {}
 
 function Divider({ className, orientation, ...props }: DividerProps) {
-  return <hr className={cn(dividerVariants({ orientation }), className)} {...props} />;
+  return (
+    <hr
+      className={cn(dividerVariants({ orientation }), className)}
+      aria-orientation={orientation === 'vertical' ? 'vertical' : undefined}
+      {...props}
+    />
+  );
 }
 
 export { Divider, dividerVariants };

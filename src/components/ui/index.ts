@@ -45,9 +45,6 @@ export {
   BreadcrumbEllipsis,
 } from './breadcrumb';
 
-export { ArrowRightIcon } from './ArrowRightIcon';
-export { CloseIcon } from './CloseIcon';
-
 export {
   Card,
   CardHeader,
