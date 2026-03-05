@@ -24,7 +24,9 @@ export default function Editor() {
   const { imageInputRef, fileInputRef, picker, files, handlers } = useFileUpload();
 
   const mediaGroups = useMemo(
-    () => [{ title: '미디어', items: createMediaItems(picker.openImagePicker, picker.openFilePicker) }],
+    () => [
+      { title: '미디어', items: createMediaItems(picker.openImagePicker, picker.openFilePicker) },
+    ],
     [picker.openImagePicker, picker.openFilePicker],
   );
 

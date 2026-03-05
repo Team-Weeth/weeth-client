@@ -1,11 +1,9 @@
-import dynamic from 'next/dynamic';
-
-const Editor = dynamic(() => import('@/components/board/Editor'), { ssr: false });
+import ClientEditor from './ClientEditor';
 
 export default function WritePage() {
   return (
     <main className="w-full">
-      <Editor />
+      <ClientEditor />
     </main>
   );
 }
