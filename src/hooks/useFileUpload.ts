@@ -1,8 +1,6 @@
 import { useCallback, useMemo, useRef, useState } from 'react';
 import { usePostStore } from '@/stores/usePostStore';
-
-const MAX_FILES = 10; // 이미지 5 + 파일 5 합산 기준
-const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+import { MAX_FILES, MAX_FILE_SIZE } from '@/constants/file';
 const IMAGE_EXTENSIONS = /\.(jpe?g|png|gif|webp|svg|bmp|ico|avif)$/i;
 
 function isImageFile(file: File): boolean {
