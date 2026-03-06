@@ -11,7 +11,7 @@ Figma 디자인의 레이아웃 구조를 먼저 파악합니다:
 - 텍스트 overflow 처리 필요 위치
 
 이후 Figma 속성을 토큰으로 매핑한 표를 출력합니다:
-```
+```text
 Figma Property  | Value      | Mapped Token/Class
 --------------- | ---------- | -------------------------
 Background      | #1E2125    | bg-container-neutral
@@ -64,7 +64,7 @@ export { Component, variants, type Props };
 - 브레이크포인트: `mobile(360px)`, `tablet(696px)`, `desktop(1032px)`
 
 ## Step 4. 결과 요약
-```
+```text
 ✅ 파일 생성: src/components/ui/ComponentName.tsx
 ✅ 디자인 토큰: N개 사용
 ⚠️  신규 토큰 필요: --token-name (제안값)
