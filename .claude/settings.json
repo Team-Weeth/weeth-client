@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "weeth-api": {
+      "command": "npx",
+      "args": ["-y", "@ivotoby/openapi-mcp-server"],
+      "env": {
+        "API_BASE_URL": "https://13.124.170.169.nip.io",
+        "OPENAPI_SPEC_PATH": "https://13.124.170.169.nip.io/v3/api-docs"
+      }
+    }
+  }
+}
