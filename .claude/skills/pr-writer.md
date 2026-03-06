@@ -79,7 +79,7 @@ git branch --show-current
 이미 PR이 올라간 상태에서 추가 커밋 후 PR 업데이트 요청을 보내면, 마지막 푸시 이후 변경사항을 분석해 추가 변경사항만 출력합니다.
 ```bash
 # 마지막 푸시 이후 변경사항 확인
-LAST_PUSH=$(git rev-parse @{push} 2>/dev/null || git merge-base origin/$(git branch --show-current) HEAD)
+LAST_PUSH=$(git rev-parse @{push} 2>/dev/null || git rev-parse origin/$(git branch --show-current) 2>/dev/null || echo "HEAD")
 git diff "${LAST_PUSH}" --stat
 git log "${LAST_PUSH}"..HEAD --oneline
 git diff "${LAST_PUSH}"
