@@ -6,7 +6,6 @@ import { BubbleMenuBar } from './EditorBubbleMenu';
 import { SlashMenuContent } from './SlashMenu';
 import { ImageList } from '../ImageList';
 import { FileList } from '../FileList';
-import { useMemo } from 'react';
 import { useFileUpload } from '@/hooks/useFileUpload';
 import { createMediaItems } from '@/constants/editor';
 
@@ -23,12 +22,9 @@ export default function Editor() {
   const { editor, showSlashMenu, closeSlashMenu, containerRef } = usePostEditor();
   const { imageInputRef, fileInputRef, picker, files, handlers } = useFileUpload();
 
-  const mediaGroups = useMemo(
-    () => [
-      { title: '미디어', items: createMediaItems(picker.openImagePicker, picker.openFilePicker) },
-    ],
-    [picker.openImagePicker, picker.openFilePicker],
-  );
+  const mediaGroups = [
+    { title: '미디어', items: createMediaItems(picker.openImagePicker, picker.openFilePicker) },
+  ];
 
   if (!editor) return null;
 
@@ -86,7 +82,7 @@ export default function Editor() {
         shouldShow={({ state }) => {
           const { $from } = state.selection;
           const text = $from.nodeBefore?.textContent ?? '';
-          return /\/[^\s]*$/.test(text);
+          return /(?:^|\s)\/[^\s]*$/.test(text);
         }}
       >
         {showSlashMenu && (
