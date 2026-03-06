@@ -92,14 +92,14 @@ export function useSlashMenu(
 
   // 메뉴 선택 시 실행 — slash + 쿼리 전체 삭제
   const handleSelect = (item: MenuItem) => {
-      const { $anchor } = editor.state.selection;
-      const currentQuery = getSlashQuery(editor) ?? '';
-      const from = $anchor.pos - currentQuery.length - 1; // '/' + query
-      const to = $anchor.pos;
+    const { $anchor } = editor.state.selection;
+    const currentQuery = getSlashQuery(editor) ?? '';
+    const from = $anchor.pos - currentQuery.length - 1; // '/' + query
+    const to = $anchor.pos;
 
-      editor.chain().focus().deleteRange({ from, to }).run();
-      item.command(editor);
-      onClose();
+    editor.chain().focus().deleteRange({ from, to }).run();
+    item.command(editor);
+    onClose();
   };
 
   // ref로 최신 값 추적 → 리스너 재등록 방지
