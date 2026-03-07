@@ -16,9 +16,9 @@ components/board/Editor/
 
 ## Editor Features
 
-- **Slash Menu (`/`)**: Typing `/` in an empty paragraph shows the block type selection menu
+- **Slash Menu (`/`)**: Opens when the text immediately before the cursor matches `/[^\s]*$` (i.e., ends with `/` optionally followed by non-space characters); closes when the cursor moves away from that pattern
 - **Bubble Menu**: Inline format toolbar (Bold, Italic, Strike, Code, etc.) shown on text selection
-- **Custom Shortcuts**: `` ` `` → inline code, `Backspace` → clears empty blocks
+- **Custom Shortcuts**: `` ` `` → inline code (wraps text between two backticks with a `code` mark), `Backspace` → converts an empty heading node to a paragraph
 - **Indent**: Indentation support via the custom `IndentExtension`
 
 ## Extension Addition Rules
@@ -51,7 +51,7 @@ Internal editor elements (`.ProseMirror`) are managed as global styles in `globa
 
 ## State Management
 
-Editor form data (title, category, content, attachments, etc.) is managed in `usePostStore` (Zustand).
+Editor form data (title, category, content, files, etc.) is managed in `usePostStore` (Zustand).
 
 ```ts
 import { usePostStore } from '@/stores';

@@ -62,11 +62,13 @@ Composite classes defined with `@utility`. Includes font-size + line-height + fo
 | Class | Purpose |
 |-------|---------|
 | `bg-container-neutral` | Default container background |
-| `bg-container-neutral-interaction` | hover / active state |
+| `bg-container-neutral-interaction` | Neutral hover / active state |
 | `bg-container-neutral-alternative` | Secondary background |
 | `bg-container-primary` | Primary color background |
+| `bg-container-primary-interaction` | Primary hover / active state |
 | `bg-container-primary-alternative` | Light primary color background |
 | `bg-container-secondary` | Secondary color background |
+| `bg-container-secondary-interaction` | Secondary hover / active state |
 | `bg-container-secondary-alternative` | Light secondary color background |
 
 ### Button

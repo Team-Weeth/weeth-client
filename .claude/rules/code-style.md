@@ -20,7 +20,8 @@ type ButtonProps = { variant?: string };
 
 ### Type Export
 - Use named exports only; default exports are forbidden (including components)
-- Exception: Next.js page/layout files require default export (framework requirement)
+- Exception: Next.js App Router special files require default export (framework requirement)
+  - Includes: `page.tsx`, `layout.tsx`, `template.tsx`, `loading.tsx`, `error.tsx`, `global-error.tsx`, `not-found.tsx`, `default.tsx`
 
 ```ts
 // components/ui/Button.tsx

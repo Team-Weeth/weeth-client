@@ -83,7 +83,7 @@ import { ArrowRightIcon } from '@/assets/icons';
 
 ```ts
 // src/assets/icons/index.ts
-export { default as ArrowRightIcon } from './arrow_right.svg';
+export { default as AdminUserIcon } from './admin/ic_admin_user.svg';
 ```
 
 ## Type Naming Conventions

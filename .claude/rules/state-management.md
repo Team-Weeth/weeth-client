@@ -55,19 +55,22 @@ export const useExampleStore = create(
 
 ```ts
 // lib/apis/post.ts
-export async function fetchPosts() {
-  const res = await fetch('/api/posts');
-  if (!res.ok) throw new Error('Failed to fetch posts');
-  return res.json();
-}
+export const postApi = {
+  getList: async (): Promise<Post[]> => {
+    const res = await fetch('/api/posts');
+    if (!res.ok) throw new Error('Failed to fetch posts');
+    return res.json();
+  },
+};
 
 // Usage in components
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
+import { postApi } from '@/lib/apis/post';
 
 function PostList() {
   const { data, isLoading } = useQuery({
     queryKey: ['posts'],
-    queryFn: fetchPosts,
+    queryFn: postApi.getList,
   });
 }
 ```

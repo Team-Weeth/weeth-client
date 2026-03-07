@@ -55,7 +55,9 @@ src/
 - Layout components (Header, Footer, etc.) → `components/layout/`
 
 ### index.ts Re-export Required
-Every folder must re-export through `index.ts`. Do not import directly from file paths outside the folder.
+Public entry-point folders (`components/ui/`, `assets/icons/`) must re-export through `index.ts`. Do not import directly from file paths within these folders.
+
+Feature folders (`components/home/`, `components/board/`, etc.), route segments (`app/`), and utility folders (`lib/actions/`, `lib/apis/`, etc.) are **not** required to have a barrel `index.ts`.
 
 ```ts
 // Good
