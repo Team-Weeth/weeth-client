@@ -42,3 +42,20 @@ export {
   BreadcrumbSeparator,
   BreadcrumbEllipsis,
 } from './breadcrumb';
+
+export { Tabs, TabsContent, TabsList, TabsTrigger } from './tabs';
+
+export {
+  Avatar,
+  avatarVariants,
+  AvatarImage,
+  AvatarFallback,
+  AvatarBadge,
+  AvatarGroup,
+  AvatarGroupCount,
+  type AvatarProps,
+} from './avatar';
+
+export { Chip, chipVariants, ChipList, type ChipProps } from './chips';
+
+export { Tag, type TagProps } from './tag';
