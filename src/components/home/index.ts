@@ -8,5 +8,5 @@ export * from './ClubInfo';
 export * from './ClubInfoBox';
 export * from './MyActivity';
 export * from './NoticeBoardBox';
-export * from './TodaySchedulBox';
+export * from './TodayScheduleBox';
 export * from './UnreadNoticeBox';
