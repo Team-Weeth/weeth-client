@@ -1,19 +1,26 @@
+'use client';
+
 import Image from 'next/image';
 import { NewIcon, ArrowRightIcon } from '@/assets/icons';
 import { Tag } from '@/components/ui';
+import { useRouter } from 'next/navigation';
 
 export function NoticeBoardBox() {
+  const router = useRouter();
+
   return (
     <div className="bg-container-neutral flex flex-col rounded-lg pb-300">
       <div className="flex items-center justify-between p-450">
         <p className="typo-sub1 text-text-strong">공지</p>
-        <Image
-          src={ArrowRightIcon}
-          alt="arrow-right"
-          width={24}
-          height={24}
-          className="cursor-pointer"
-        />
+        <button onClick={() => router.push('/notice')}>
+          <Image
+            src={ArrowRightIcon}
+            alt="arrow-right"
+            width={24}
+            height={24}
+            className="cursor-pointer"
+          />
+        </button>
       </div>
       <div className="flex flex-col items-center justify-center gap-200">
         <div className="flex flex-col gap-300 px-450 py-400">
