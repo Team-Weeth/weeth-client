@@ -10,6 +10,7 @@ export type { TextFieldProps } from './TextField';
 
 export {
   Dialog,
+  DialogBody,
   DialogTrigger,
   DialogContent,
   DialogHeader,
@@ -18,6 +19,7 @@ export {
   DialogDescription,
   DialogClose,
 } from './dialog';
+export type { DialogHeaderProps, DialogFooterProps } from './dialog';
 
 export {
   AlertDialog,
@@ -42,3 +44,16 @@ export {
   BreadcrumbSeparator,
   BreadcrumbEllipsis,
 } from './breadcrumb';
+
+export {
+  Card,
+  CardHeader,
+  CardFooter,
+  CardTitle,
+  CardAction,
+  CardDescription,
+  CardContent,
+} from './card';
+
+export { Divider } from './Divider';
+export type { DividerProps } from './Divider';
