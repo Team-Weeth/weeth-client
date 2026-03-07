@@ -16,20 +16,35 @@ import { createMediaItems } from '@/constants/editor';
  * - Slash Menu (/)
  * - Bubble Menu (텍스트 선택 시)
  * - 커스텀 키보드 단축키 (` 인라인 코드, Backspace 블록 정리)
+ * - 이미지 붙여넣기 (Ctrl+V) 및 드래그앤드롭
  */
 
 export default function Editor() {
-  const { editor, showSlashMenu, closeSlashMenu, containerRef } = usePostEditor();
-  const { imageInputRef, fileInputRef, picker, files, handlers } = useFileUpload();
+  const { imageInputRef, fileInputRef, processFiles, picker, files, handlers } = useFileUpload();
+  const { editor, showSlashMenu, closeSlashMenu, containerRef } = usePostEditor({
+    processFiles,
+  });
 
   const mediaGroups = [
     { title: '미디어', items: createMediaItems(picker.openImagePicker, picker.openFilePicker) },
   ];
 
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    const droppedFiles = Array.from(e.dataTransfer.files);
+    if (droppedFiles.length > 0) {
+      processFiles(droppedFiles);
+    }
+  };
+
   if (!editor) return null;
 
   return (
-    <div ref={containerRef} className="relative w-full">
+    <div ref={containerRef} className="relative w-full" onDragOver={handleDragOver} onDrop={handleDrop}>
       {/* 숨겨진 파일 input — 슬래시 메뉴에서 각 ref를 통해 트리거 */}
       <input
         ref={imageInputRef}
