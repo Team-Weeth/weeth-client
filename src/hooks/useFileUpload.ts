@@ -44,9 +44,7 @@ export function useFileUpload() {
     const slots = MAX_FILES - files.length;
 
     if (valid.length > slots) {
-      warnings.push(
-        `최대 ${MAX_FILES}개까지 첨부할 수 있습니다. (${valid.length - slots}개 제외)`,
-      );
+      warnings.push(`최대 ${MAX_FILES}개까지 첨부할 수 있습니다. (${valid.length - slots}개 제외)`);
     }
 
     const toProcess = valid.slice(0, Math.max(0, slots));

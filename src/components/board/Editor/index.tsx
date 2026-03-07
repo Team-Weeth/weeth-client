@@ -44,7 +44,12 @@ export default function Editor() {
   if (!editor) return null;
 
   return (
-    <div ref={containerRef} className="relative w-full" onDragOver={handleDragOver} onDrop={handleDrop}>
+    <div
+      ref={containerRef}
+      className="relative w-full"
+      onDragOver={handleDragOver}
+      onDrop={handleDrop}
+    >
       {/* 숨겨진 파일 input — 슬래시 메뉴에서 각 ref를 통해 트리거 */}
       <input
         ref={imageInputRef}

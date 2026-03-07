@@ -23,7 +23,7 @@ export function ImageList({ files, removable, onRemove }: ImageListProps) {
       <div className="self-stretch">
         <ImageCard
           item={files[0]}
-          className="inline-block min-h-[80px] min-w-[80px] max-w-full"
+          className="inline-block min-h-[80px] max-w-full min-w-[80px]"
           imgClassName="max-h-[320px] max-w-full object-contain"
           removable={removable}
           onRemove={onRemove}
