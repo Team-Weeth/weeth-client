@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { combine, devtools } from 'zustand/middleware';
 
 export interface FileItem {
+  id: string;
   file: File;
   fileName: string;
   fileUrl: string;
@@ -39,19 +40,16 @@ export const usePostStore = create(
       addFile: (file: FileItem) =>
         set((state) => ({ files: [...state.files, file] }), false, 'addFile'),
 
-      removeFile: (fileName: string) =>
-        set(
-          (state) => ({ files: state.files.filter((f) => f.fileName !== fileName) }),
-          false,
-          'removeFile',
-        ),
+      addFiles: (newFiles: FileItem[]) =>
+        set((state) => ({ files: [...state.files, ...newFiles] }), false, 'addFiles'),
 
-      updateFileUrl: (fileName: string, fileUrl: string) =>
+      removeFile: (id: string) =>
+        set((state) => ({ files: state.files.filter((f) => f.id !== id) }), false, 'removeFile'),
+
+      updateFileUrl: (id: string, fileUrl: string) =>
         set(
           (state) => ({
-            files: state.files.map((f) =>
-              f.fileName === fileName ? { ...f, fileUrl, uploaded: true } : f,
-            ),
+            files: state.files.map((f) => (f.id === id ? { ...f, fileUrl, uploaded: true } : f)),
           }),
           false,
           'updateFileUrl',
@@ -59,7 +57,13 @@ export const usePostStore = create(
 
       setStatus: (status: 'DRAFT' | 'PUBLISHED') => set({ status }, false, 'setStatus'),
 
-      reset: () => set(initialState, false, 'reset'),
+      reset: () => {
+        const { files } = get();
+        for (const f of files) {
+          if (f.fileUrl.startsWith('blob:')) URL.revokeObjectURL(f.fileUrl);
+        }
+        set(initialState, false, 'reset');
+      },
 
       getPayload: () => {
         const state = get();

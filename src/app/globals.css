@@ -64,6 +64,15 @@
   --text-alternative: var(--neutral-600);
   --text-disabled: var(--neutral-500);
   --text-inverse: var(--neutral-0);
+  --container-code: var(--neutral-400);
+
+  --code-keyword: #d73a49;
+  --code-string: #032f62;
+  --code-comment: #6a737d;
+  --code-function: #6f42c1;
+  --code-number: #005cc5;
+  --code-attr: #e36209;
+  --code-built-in: #22863a;
 
   --container-neutral: var(--neutral-300);
   --container-neutral-interaction: var(--neutral-400);
@@ -206,6 +215,16 @@
 }
 
 .dark {
+  --container-code: var(--neutral-100);
+
+  --code-keyword: #ff7b72;
+  --code-string: #a5d6ff;
+  --code-comment: #8b949e;
+  --code-function: #d2a8ff;
+  --code-number: #79c0ff;
+  --code-attr: #ffa657;
+  --code-built-in: #7ee787;
+
   --neutral-0: #000000;
   --neutral-100: #171819;
   --neutral-200: #1e2021;
@@ -512,6 +531,7 @@ select:focus {
   padding-left: var(--padding-400);
   margin: var(--margin-300) 0;
   font-weight: normal;
+  color: var(--text-alternative);
 }
 
 .ProseMirror blockquote p::before,
@@ -521,7 +541,7 @@ select:focus {
 
 /* 인라인 코드 */
 .ProseMirror code:not(pre code) {
-  background-color: var(--container-neutral-alternative);
+  background-color: var(--container-code);
   color: var(--text-normal);
   padding: var(--padding-100) var(--padding-200);
   border-radius: var(--radius-sm);
@@ -535,7 +555,7 @@ select:focus {
 
 /* 코드 블록 */
 .ProseMirror pre {
-  background-color: var(--container-neutral-alternative);
+  background-color: var(--container-code);
   border-radius: var(--radius-sm);
   padding: var(--padding-300) var(--padding-400);
 }
@@ -544,6 +564,49 @@ select:focus {
   background-color: transparent;
   color: var(--text-normal);
   padding: 0;
+}
+
+/* 코드 블록 syntax highlighting */
+.ProseMirror pre code .hljs-keyword,
+.ProseMirror pre code .hljs-selector-tag,
+.ProseMirror pre code .hljs-deletion {
+  color: var(--code-keyword);
+}
+
+.ProseMirror pre code .hljs-string,
+.ProseMirror pre code .hljs-regexp,
+.ProseMirror pre code .hljs-addition {
+  color: var(--code-string);
+}
+
+.ProseMirror pre code .hljs-comment,
+.ProseMirror pre code .hljs-quote {
+  color: var(--code-comment);
+  font-style: italic;
+}
+
+.ProseMirror pre code .hljs-title,
+.ProseMirror pre code .hljs-section,
+.ProseMirror pre code .hljs-title.function_ {
+  color: var(--code-function);
+}
+
+.ProseMirror pre code .hljs-number,
+.ProseMirror pre code .hljs-literal,
+.ProseMirror pre code .hljs-variable,
+.ProseMirror pre code .hljs-template-variable {
+  color: var(--code-number);
+}
+
+.ProseMirror pre code .hljs-attr,
+.ProseMirror pre code .hljs-tag,
+.ProseMirror pre code .hljs-name {
+  color: var(--code-attr);
+}
+
+.ProseMirror pre code .hljs-built_in,
+.ProseMirror pre code .hljs-type {
+  color: var(--code-built-in);
 }
 
 @layer base {
