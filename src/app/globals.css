@@ -531,6 +531,7 @@ select:focus {
   padding-left: var(--padding-400);
   margin: var(--margin-300) 0;
   font-weight: normal;
+  color: var(--text-alternative);
 }
 
 .ProseMirror blockquote p::before,
