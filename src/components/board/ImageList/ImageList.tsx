@@ -23,7 +23,7 @@ export function ImageList({ files, removable, onRemove }: ImageListProps) {
       <div className="self-stretch">
         <ImageCard
           item={files[0]}
-          className="inline-block max-w-full"
+          className="inline-block min-h-[80px] min-w-[80px] max-w-full"
           imgClassName="max-h-[320px] max-w-full object-contain"
           removable={removable}
           onRemove={onRemove}
@@ -32,7 +32,7 @@ export function ImageList({ files, removable, onRemove }: ImageListProps) {
     );
   }
 
-  // 2개 이상: 고정 높이, 원본 비율 유지, 넘치면 드래그 스크롤
+  // 2개 이상: 고정 높이, 넘치면 드래그 스크롤
   return (
     <div
       ref={ref}
