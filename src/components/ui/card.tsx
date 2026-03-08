@@ -71,7 +71,7 @@ function Card({
         {showArrow && (
           <span
             aria-hidden
-            className="block h-3 w-3 shrink-0 bg-neutral-800"
+            className="block h-3 w-3 shrink-0 cursor-pointer bg-neutral-800"
             style={{
               maskImage: `url(${(arrowRightIcon as StaticImageData).src})`,
               WebkitMaskImage: `url(${(arrowRightIcon as StaticImageData).src})`,
@@ -100,7 +100,7 @@ function Card({
           {showArrow && (
             <span
               aria-hidden
-              className="block h-3 w-3 shrink-0 bg-neutral-800"
+              className="block h-3 w-3 shrink-0 cursor-pointer bg-neutral-800"
               style={{
                 maskImage: `url(${(arrowRightIcon as StaticImageData).src})`,
                 WebkitMaskImage: `url(${(arrowRightIcon as StaticImageData).src})`,
