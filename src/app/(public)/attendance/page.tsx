@@ -63,7 +63,7 @@ export default function AttendancePage() {
               <p className="typo-body2 text-brand-primary">출석 가능 시간 10:00</p>
             </div>
           </DialogBody>
-          <DialogFooter description="모바일에서는 QR코드를 카메라로 스캔할 수 있어요.">
+          <DialogFooter description="모바일에서는 QR코드를 카메라로 스캔할 수 있어요." showDivider>
             <DialogClose asChild>
               <Button variant="primary" size="lg">
                 출석 확인하기

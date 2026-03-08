@@ -53,6 +53,7 @@ function DialogContent({
     <DialogPortal data-slot="dialog-portal">
       <DialogOverlay />
       <DialogPrimitive.Content
+        aria-describedby={undefined}
         data-slot="dialog-content"
         className={cn(
           'bg-container-neutral data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 fixed top-[50%] left-[50%] z-50 grid w-78.75 max-w-[calc(100%-2rem)] translate-x-[-50%] translate-y-[-50%] rounded-lg border p-400 shadow-lg duration-200 outline-none sm:max-w-lg',
@@ -112,9 +113,8 @@ function DialogHeader({
         className={cn('flex items-center justify-between pb-400', className)}
         {...props}
       >
-        <DialogPrimitive.Title asChild>
-          <div className="flex items-center gap-300">{children}</div>
-        </DialogPrimitive.Title>
+        <DialogPrimitive.Title className="sr-only">Dialog</DialogPrimitive.Title>
+        <div className="flex items-center gap-300">{children}</div>
         {showClose && onClose && (
           <span
             aria-hidden
@@ -192,7 +192,7 @@ function DialogFooter({
   children,
   description,
   pagination,
-  showDivider = true,
+  showDivider = false,
   showCloseButton = false,
   className,
   ...props
