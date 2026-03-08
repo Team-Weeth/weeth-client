@@ -26,8 +26,6 @@ interface PostCardProps extends React.ComponentProps<'article'> {
   isLiked?: boolean;
   onLike?: () => void;
   onComment?: () => void;
-  showReadMore?: boolean;
-  onReadMore?: () => void;
 }
 
 function PostCard({
@@ -43,10 +41,8 @@ function PostCard({
   likeCount = 0,
   commentCount = 0,
   isLiked = false,
-  showReadMore = false,
   onLike,
   onComment,
-  onReadMore,
   ...props
 }: PostCardProps) {
   return (
@@ -64,13 +60,7 @@ function PostCard({
         hasAttachment={hasAttachment}
       />
 
-      <PostCardContent
-        title={title}
-        content={content}
-        isNew={isNew}
-        showReadMore={showReadMore}
-        onReadMore={onReadMore}
-      />
+      <PostCardContent title={title} content={content} isNew={isNew} />
 
       {/* Images */}
       <ImageList files={images} />
@@ -80,20 +70,18 @@ function PostCard({
         <button
           type="button"
           aria-label="좋아요"
-          className="flex cursor-pointer items-center gap-100"
+          className="flex cursor-pointer items-center gap-100 rounded-sm hover:opacity-70 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
           onClick={onLike}
         >
           <span
             aria-hidden
             className={cn(
-              'block h-[15px] w-[17px]',
+              'block h-[15px] w-[17px] mask-contain mask-no-repeat',
               isLiked ? 'bg-state-error' : 'bg-icon-alternative',
             )}
             style={{
               maskImage: `url(${(LikeIcon as StaticImageData).src})`,
               WebkitMaskImage: `url(${(LikeIcon as StaticImageData).src})`,
-              maskRepeat: 'no-repeat',
-              maskSize: 'contain',
             }}
           />
           <span className="typo-caption2 text-text-alternative">{likeCount}</span>
@@ -101,7 +89,7 @@ function PostCard({
         <button
           type="button"
           aria-label="댓글"
-          className="flex cursor-pointer items-center gap-100"
+          className="flex cursor-pointer items-center gap-100 rounded-sm hover:opacity-70 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
           onClick={onComment}
         >
           <Image src={ChatIcon as StaticImageData} alt="" width={17} height={17} aria-hidden />
