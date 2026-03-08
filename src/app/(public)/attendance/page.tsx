@@ -18,21 +18,22 @@ import DummyImage from '@/assets/icons/dummy.svg';
 
 export default function AttendancePage() {
   const [currentPage, setCurrentPage] = useState(1);
+  const [qrModalOpen, setQrModalOpen] = useState(false);
 
   return (
     <div className="mt-300 flex flex-col gap-6 px-450">
       <AttendanceProgressBar attendanceRate={80} />
 
-      <Dialog>
-        <DialogTrigger asChild>
-          <Card
-            variant="buttonSet"
-            overline="오늘의 출석"
-            title="프론트엔드 중간 발표"
-            description="날짜: 2024년 7월 18일 (7:00 PM~8:30 PM)\n장소: 가천관 247호"
-            onSecondaryClick={() => console.log('출석코드 확인')}
-          />
-        </DialogTrigger>
+      <Card
+        variant="buttonSet"
+        overline="오늘의 출석"
+        title="프론트엔드 중간 발표"
+        description="날짜: 2024년 7월 18일 (7:00 PM~8:30 PM)\n장소: 가천관 247호"
+        onPrimaryClick={() => setQrModalOpen(true)}
+        onSecondaryClick={() => console.log('출석코드 확인')}
+      />
+
+      <Dialog open={qrModalOpen} onOpenChange={setQrModalOpen}>
         <DialogContent>
           <DialogHeader
             overline="출석 확인"

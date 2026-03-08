@@ -55,7 +55,7 @@ function DialogContent({
       <DialogPrimitive.Content
         data-slot="dialog-content"
         className={cn(
-          'bg-container-neutral data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 fixed top-[50%] left-[50%] z-50 grid w-78.75 max-w-[calc(100%-2rem)] translate-x-[-50%] translate-y-[-50%] gap-4 rounded-lg border p-400 shadow-lg duration-200 outline-none sm:max-w-lg',
+          'bg-container-neutral data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 fixed top-[50%] left-[50%] z-50 grid w-78.75 max-w-[calc(100%-2rem)] translate-x-[-50%] translate-y-[-50%] rounded-lg border p-400 shadow-lg duration-200 outline-none sm:max-w-lg',
           className,
         )}
         {...props}
@@ -109,7 +109,7 @@ function DialogHeader({
     return (
       <div
         data-slot="dialog-header"
-        className={cn('flex items-center justify-between p-400', className)}
+        className={cn('flex items-center justify-between pb-400', className)}
         {...props}
       >
         <DialogPrimitive.Title asChild>
@@ -136,7 +136,7 @@ function DialogHeader({
   return (
     <div
       data-slot="dialog-header"
-      className={cn('flex items-start justify-between p-400', className)}
+      className={cn('flex items-start justify-between pb-400', className)}
       {...props}
     >
       <div className="flex flex-col">
@@ -172,7 +172,7 @@ function DialogBody({ children, className, ...props }: React.HTMLAttributes<HTML
   return (
     <div
       data-slot="dialog-body"
-      className={cn('scrollbar-custom flex flex-col gap-300 overflow-y-auto p-400', className)}
+      className={cn('scrollbar-custom flex flex-col gap-300 overflow-y-auto py-400', className)}
       {...props}
     >
       {children}
@@ -200,21 +200,18 @@ function DialogFooter({
   return (
     <div data-slot="dialog-footer" className={cn('flex flex-col', className)} {...props}>
       {showDivider && <Divider />}
-      <div className="flex flex-col gap-[10px] p-400">
+      <div className="flex flex-col gap-[10px] pt-400">
         {children}
-        {pagination
-          ? pagination
-          : description && (
-              <p className="typo-caption2 text-text-alternative mt-200 text-center">
-                {description}
-              </p>
-            )}
+        {description && (
+          <p className="typo-caption2 text-text-alternative mt-200 text-center">{description}</p>
+        )}
         {showCloseButton && (
           <DialogPrimitive.Close asChild>
             <Button variant="secondary">Close</Button>
           </DialogPrimitive.Close>
         )}
       </div>
+      {pagination && <div data-slot="dialog-pagination">{pagination}</div>}
     </div>
   );
 }
