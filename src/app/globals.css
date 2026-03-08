@@ -103,6 +103,7 @@
   --state-success: #2370f9;
   --state-caution: #ffb202;
   --state-error: #ff5857;
+  --state-new: #ff5858;
 
   --font-weight-medium: 500;
   --font-weight-semibold: 600;
@@ -333,6 +334,7 @@
   --color-state-success: var(--state-success);
   --color-state-caution: var(--state-caution);
   --color-state-error: var(--state-error);
+  --color-state-new: var(--state-new);
 
   --spacing-0: 0px;
   --spacing-100: 4px;
