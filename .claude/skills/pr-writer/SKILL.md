@@ -1,9 +1,9 @@
 ---
 name: pr-writer
-description: 코드 변경사항을 분석해 .github/pull_request_template.md 형식에 맞는 PR 본문을 생성합니다. PR 작성 또는 PR 업데이트 요청 시 사용합니다.
+description: Analyzes code changes and generates a PR body following .github/pull_request_template.md format. Use for PR creation or PR update requests.
 ---
 
-## Step 1. 변경사항 파악
+## Step 1. Analyze Changes
 ```bash
 BASE_BRANCH=$(git remote show origin | sed -n '/HEAD branch/s/.*: //p')
 git diff "origin/${BASE_BRANCH}"...HEAD --stat
@@ -11,49 +11,48 @@ git log "origin/${BASE_BRANCH}"...HEAD --oneline
 git diff "origin/${BASE_BRANCH}"...HEAD
 ```
 
-## Step 2. 브랜치명에서 이슈번호 추출
+## Step 2. Extract Issue Number from Branch Name
 ```bash
 git branch --show-current
-# 예: feat/WTH-42-button-component → 이슈 #42
+# e.g. feat/WTH-42-button-component → issue #42
 ```
 
-## Step 3. PR 유형 판단
+## Step 3. Determine PR Type
 
-| 변경 내용               | PR 유형                   |
-| ----------------------- | ------------------------- |
-| 새 파일 생성, 새 기능   | 새로운 기능 추가          |
-| 버그 수정, 오동작 해결  | 버그 수정                 |
-| 리팩토링, 구조 변경     | 코드 리팩토링             |
-| 오타, 변수명, 탭 사이즈 | 코드에 영향 없는 변경사항 |
-| 주석 추가/수정          | 주석 추가 및 수정         |
-| README, md 파일         | 문서 수정                 |
-| package.json, CI 등     | 빌드/패키지 매니저 수정   |
-| 파일/폴더 이름 변경     | 파일 혹은 폴더명 수정     |
-| 파일/폴더 삭제          | 파일 혹은 폴더 삭제       |
+| Change | PR Type |
+|--------|---------|
+| New files, new feature | 새로운 기능 추가 |
+| Bug fix | 버그 수정 |
+| Refactor, restructure | 코드 리팩토링 |
+| Typo, variable rename, tab size | 코드에 영향 없는 변경사항 |
+| Comment add/edit | 주석 추가 및 수정 |
+| README, md files | 문서 수정 |
+| package.json, CI, etc. | 빌드/패키지 매니저 수정 |
+| File/folder rename | 파일 혹은 폴더명 수정 |
+| File/folder delete | 파일 혹은 폴더 삭제 |
 
-## Step 4. 출력
+## Step 4. Output
 
-분석 결과를 [template.md](template.md) 형식에 채워서 출력합니다.
-스크린샷 섹션은 사용자가 직접 추가해야 하므로 안내 문구만 남깁니다.
+Fill [template.md](template.md) with analysis results.
+Leave screenshot section with a placeholder for user to fill in.
 
-## Step 5. PR 업데이트
+## Step 5. PR Update
 
-이미 PR이 올라간 상태에서 추가 커밋 후 PR 업데이트 요청을 보내면, 마지막 푸시 이후 변경사항을 분석해 추가 변경사항만 출력합니다.
+When updating an existing PR after additional commits, analyze only changes since last push:
 ```bash
-# 마지막 푸시 이후 변경사항 확인
 LAST_PUSH=$(git rev-parse @{push} 2>/dev/null || git rev-parse origin/$(git branch --show-current) 2>/dev/null || echo "HEAD")
 git diff "${LAST_PUSH}" --stat
 git log "${LAST_PUSH}"..HEAD --oneline
 git diff "${LAST_PUSH}"
 ```
 
-기존 Key Changes 아래에 구분선과 함께 추가합니다:
+Append under existing Key Changes with a separator:
 ```markdown
 #### 🔄 추가 변경사항 (2차)
 
-- 추가 변경사항 1
-- 추가 변경사항 2
+- change 1
+- change 2
 ```
 
-- 몇 차 수정인지 표시합니다 (2차, 3차, ...).
-- PR 유형이 달라졌으면 체크박스도 업데이트합니다.
+- Indicate which iteration (2nd, 3rd, ...).
+- Update PR type checkboxes if changed.
