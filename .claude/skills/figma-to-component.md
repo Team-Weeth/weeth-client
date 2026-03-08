@@ -53,7 +53,14 @@ function Component({ className, variant, size, ...props }: Props) {
 export { Component, variants, type Props };
 ```
 
-**원칙:**
+**레이아웃 원칙:**
+
+- **텍스트 overflow 처리:** 잘려야 하는 텍스트에는 `truncate`를 사용하고, flex/grid 자식에는 `min-w-0`을 추가합니다.
+- **간격 구조:** 부모에 `gap-*` 클래스를 사용합니다. 간격을 위한 불필요한 wrapper div를 만들지 않습니다.
+- **고정 높이 vs 동적 높이:** 리스트 행처럼 균일한 높이가 필요한 요소에는 `h-*`을 명시합니다. 그 외에는 콘텐츠에 의한 동적 높이를 유지합니다.
+- **계층 구조 정확도:** Figma에서 어떤 요소가 어디 안에 있는지 정확히 반영합니다. 예: 페이지네이션이 메인 영역 안인지 밖인지에 따라 구조가 달라집니다.
+
+**기타 원칙:**
 
 - 하드코딩 값 사용 금지
 - `className` 항상 노출
