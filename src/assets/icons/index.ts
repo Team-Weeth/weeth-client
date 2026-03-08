@@ -1,4 +1,6 @@
 export { default as ArrowRightIcon } from './arrow_right.svg';
+export { default as ChatIcon } from './chat.svg';
+export { default as LikeIcon } from './like.svg';
 export { default as AvatarIcon } from './avatar.svg';
 export { default as CheckRoundIcon } from './check_round.svg';
 export { default as CloseCircleIcon } from './close_circle.svg';
@@ -9,3 +11,4 @@ export { default as InfoIcon } from './info.svg';
 export { default as MenuIcon } from './menu.svg';
 export { default as LogoIcon } from './logo/logo_full_Origin.svg';
 export { default as FooterLogoIcon } from './logo/logo_full_Footer.svg';
+export { default as PaperclipIcon } from './paperclip.svg';
