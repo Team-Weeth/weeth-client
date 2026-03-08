@@ -1,7 +1,7 @@
-# Figma to Component
-
-Figma 디자인을 Weeth 디자인 시스템에 맞는 React 컴포넌트로 변환합니다.
-Figma URL이나 스크린샷이 주어졌을 때 이 스킬을 사용합니다.
+---
+name: figma-to-component
+description: Figma 디자인(URL 또는 스크린샷)을 Weeth 디자인 시스템에 맞는 React 컴포넌트로 변환합니다. Figma URL이나 스크린샷이 주어졌을 때 사용합니다.
+---
 
 ## Step 1. 디자인 분석
 
@@ -32,26 +32,8 @@ Gap             | 12px       | gap-300
 `src/components/ui/` 기존 컴포넌트를 먼저 읽어 패턴을 파악합니다.
 
 ## Step 3. 컴포넌트 생성
-```tsx
-import { cva, type VariantProps } from 'class-variance-authority';
-import { cn } from '@/lib/cn';
 
-const variants = cva('base-styles', {
-  variants: {
-    variant: { primary: '...', secondary: '...' },
-    size: { lg: '...', md: '...', sm: '...' },
-  },
-  defaultVariants: { variant: 'primary', size: 'md' },
-});
-
-interface Props extends React.HTMLAttributes<HTMLElement>, VariantProps<typeof variants> {}
-
-function Component({ className, variant, size, ...props }: Props) {
-  return <div className={cn(variants({ variant, size }), className)} {...props} />;
-}
-
-export { Component, variants, type Props };
-```
+[template.md](template.md) 구조를 기반으로 컴포넌트를 생성합니다.
 
 **레이아웃 원칙:**
 
