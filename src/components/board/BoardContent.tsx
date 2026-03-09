@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import Image from 'next/image';
 import type { StaticImageData } from 'next/image';
 import { MoreVerticalIcon } from '@/assets/icons';
 import { BoardNav } from '@/components/board';
@@ -150,12 +149,13 @@ function BoardContent() {
                   aria-label="더보기"
                   className="focus-visible:outline-ring cursor-pointer rounded-sm p-100 hover:opacity-70 focus-visible:outline-2 focus-visible:outline-offset-2"
                 >
-                  <Image
-                    src={MoreVerticalIcon as StaticImageData}
-                    alt=""
-                    width={3}
-                    height={16}
+                  <span
                     aria-hidden
+                    className="block h-4 w-[3px] bg-icon-normal mask-contain mask-center mask-no-repeat"
+                    style={{
+                      maskImage: `url(${(MoreVerticalIcon as StaticImageData).src})`,
+                      WebkitMaskImage: `url(${(MoreVerticalIcon as StaticImageData).src})`,
+                    }}
                   />
                 </button>
               )}
