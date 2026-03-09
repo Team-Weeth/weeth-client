@@ -6,7 +6,7 @@ import type { StaticImageData } from 'next/image';
 import { cn } from '@/lib/cn';
 import { ImageList } from '@/components/board/ImageList';
 import type { FileItem } from '@/stores/usePostStore';
-import { LikeIcon, ChatIcon } from '@/assets/icons';
+import { LikeIcon, LikeFilledIcon, ChatIcon } from '@/assets/icons';
 import { PostAuthorInfo } from './PostAuthorInfo';
 import { PostCardContent } from './PostCardContent';
 
@@ -90,8 +90,8 @@ function PostCard({
               isLiked ? 'bg-state-error' : 'bg-icon-alternative',
             )}
             style={{
-              maskImage: `url(${(LikeIcon as StaticImageData).src})`,
-              WebkitMaskImage: `url(${(LikeIcon as StaticImageData).src})`,
+              maskImage: `url(${(isLiked ? LikeFilledIcon as StaticImageData : LikeIcon as StaticImageData).src})`,
+              WebkitMaskImage: `url(${(isLiked ? LikeFilledIcon as StaticImageData : LikeIcon as StaticImageData).src})`,
             }}
           />
           <span className="typo-caption2 text-text-alternative">{likeCount}</span>
