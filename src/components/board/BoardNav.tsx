@@ -3,6 +3,7 @@
 import Image from 'next/image';
 import type { StaticImageData } from 'next/image';
 import { cn } from '@/lib/cn';
+import { Divider } from '@/components/ui';
 import { MegaphoneIcon, PinIcon } from '@/assets/icons';
 
 interface BoardNavItem {
@@ -32,10 +33,14 @@ function BoardNav({ className, items, activeId, onItemSelect, ...props }: BoardN
 
       {/* 채널 목록 */}
       <ul className="flex flex-col items-start gap-200 self-stretch px-450 py-400" role="list">
-        {items.map((item) => {
+        {items.map((item, index) => {
           const isActive = item.id === activeId;
+          const prevItem = items[index - 1];
+          const showDivider = prevItem && prevItem.type === 'notice' && item.type === 'channel';
+
           return (
-            <li key={item.id} className="self-stretch">
+            <li key={item.id} className="flex flex-col gap-200 self-stretch">
+              {showDivider && <Divider className="my-100" />}
               <button
                 type="button"
                 className={cn(
