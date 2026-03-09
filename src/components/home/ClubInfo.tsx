@@ -7,7 +7,7 @@ export function ClubInfo() {
     <>
       <div className="flex items-center gap-4 px-200 py-300">
         <Avatar type="square">
-          <AvatarImage width={64} height={64} src="https://github.com/shadcn.png" />
+          <AvatarImage width={64} height={64} alt="clubImage" src="https://github.com/shadcn.png" />
           <AvatarFallback>CN</AvatarFallback>
         </Avatar>
         <div className="flex w-[172px] flex-col justify-center gap-[2px]">
