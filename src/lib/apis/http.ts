@@ -15,9 +15,8 @@ let refreshTokenPromise: Promise<{
 }> | null = null;
 
 const getRefreshToken = async () => {
-  const response = await http.post('/api/v1/users/refresh');
-  const { accessToken: newAccessToken, refreshToken: newRefreshToken } =
-    response.data.data;
+  const response = await http.post('/api/v4/users/refresh');
+  const { accessToken: newAccessToken, refreshToken: newRefreshToken } = response.data.data;
 
   if (typeof window !== 'undefined') {
     localStorage.setItem('accessToken', newAccessToken);
@@ -61,8 +60,7 @@ http.interceptors.response.use(
         refreshTokenPromise = null;
 
         originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
-        originalRequest.headers['Authorization_refresh'] =
-          `Bearer ${newRefreshToken}`;
+        originalRequest.headers['Authorization_refresh'] = `Bearer ${newRefreshToken}`;
 
         return http(originalRequest);
       } catch {
