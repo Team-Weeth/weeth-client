@@ -28,6 +28,7 @@ function PostCardActions({
   const handleLike = () => {
     const next = !isLiked;
     setIsLiked(next);
+    // TODO: API 연동 시 제거
     console.log(next ? '좋아요' : '좋아요 취소');
     onLike?.();
   };
