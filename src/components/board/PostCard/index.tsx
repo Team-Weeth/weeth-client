@@ -24,6 +24,14 @@ function PostCardRoot({ className, children, ...props }: React.ComponentProps<'a
   );
 }
 
+function PostCardHeader({ className, children, ...props }: React.ComponentProps<'div'>) {
+  return (
+    <div className={cn('flex items-center justify-between self-stretch', className)} {...props}>
+      {children}
+    </div>
+  );
+}
+
 interface PostCardActionsProps {
   className?: string;
   likeCount?: number;
@@ -55,7 +63,7 @@ function PostCardActions({
       <button
         type="button"
         aria-label="좋아요"
-        className="flex cursor-pointer items-center gap-100 rounded-sm hover:opacity-70 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+        className="focus-visible:outline-ring flex cursor-pointer items-center gap-100 rounded-sm hover:opacity-70 focus-visible:outline-2 focus-visible:outline-offset-2"
         onClick={handleLike}
       >
         <span
@@ -74,7 +82,7 @@ function PostCardActions({
       <button
         type="button"
         aria-label="댓글"
-        className="flex cursor-pointer items-center gap-100 rounded-sm hover:opacity-70 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+        className="focus-visible:outline-ring flex cursor-pointer items-center gap-100 rounded-sm hover:opacity-70 focus-visible:outline-2 focus-visible:outline-offset-2"
         onClick={onComment}
       >
         <Image src={ChatIcon as StaticImageData} alt="" width={17} height={17} aria-hidden />
@@ -100,6 +108,7 @@ function PostCardImages({ className, files }: PostCardImagesProps) {
 
 const PostCard = {
   Root: PostCardRoot,
+  Header: PostCardHeader,
   Author: PostAuthorInfo,
   Content: PostCardContent,
   Images: PostCardImages,
