@@ -73,4 +73,4 @@ export {
 
 export { Chip, chipVariants, ChipList, type ChipProps } from './chips';
 
-export { Tag, type TagProps } from './tag';
+export { Tag, tagVariants, type TagProps } from './tag';
