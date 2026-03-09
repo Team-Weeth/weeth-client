@@ -6,7 +6,8 @@ import Heading from '@tiptap/extension-heading';
 import Bold from '@tiptap/extension-bold';
 import Italic from '@tiptap/extension-italic';
 import Code from '@tiptap/extension-code';
-import CodeBlock from '@tiptap/extension-code-block';
+import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight';
+import { common, createLowlight } from 'lowlight';
 import Strike from '@tiptap/extension-strike';
 import Blockquote from '@tiptap/extension-blockquote';
 import BulletList from '@tiptap/extension-bullet-list';
@@ -22,6 +23,8 @@ import TaskList from '@tiptap/extension-task-list';
 import TaskItem from '@tiptap/extension-task-item';
 import Typography from '@tiptap/extension-typography';
 
+const lowlight = createLowlight(common);
+
 export const editorExtensions = [
   Document,
   Paragraph,
@@ -30,7 +33,8 @@ export const editorExtensions = [
   Bold,
   Italic,
   Code,
-  CodeBlock,
+  // TODO: 코드 블록 언어 선택 UI 추가 (현재는 auto-detect만 지원)
+  CodeBlockLowlight.configure({ lowlight }),
   Strike,
   Blockquote,
   BulletList.configure({ keepMarks: true, keepAttributes: false }),
