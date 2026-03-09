@@ -58,7 +58,7 @@ function PostCard({
   return (
     <article
       className={cn(
-        'bg-container-neutral flex flex-col items-start gap-400 self-stretch overflow-hidden rounded-(--radius-lg) px-450 py-400',
+        'bg-container-neutral flex flex-col items-start gap-400 self-stretch overflow-x-hidden rounded-(--radius-lg) px-450 py-400',
         className,
       )}
       {...props}
