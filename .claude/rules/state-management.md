@@ -45,35 +45,53 @@ export const useExampleStore = create(
 );
 ```
 
+### Selector Hooks (required)
+
+Do not use the store hook directly in components. Always create selector hooks that extract only the needed slice.
+
+```ts
+// stores/useExampleStore.ts — export selector hooks alongside the store
+export const useValue = () => useExampleStore((store) => store.value);
+export const useCount = () => useExampleStore((store) => store.count);
+
+// Actions are stable references — group them into one hook
+export const useExampleActions = () =>
+  useExampleStore((store) => ({
+    setValue: store.setValue,
+    increment: store.increment,
+    reset: store.reset,
+  }));
+```
+
+```tsx
+// In components — use selector hooks, not the raw store
+const count = useCount();
+const { increment } = useExampleActions();
+```
+
+This ensures components only re-render when the specific slice they subscribe to changes.
+
 ### Rules
 - Always separate the `initialState` object → reuse in the `reset` action
 - Always write the third argument of `set` (action name label)
 - Always write the `name` option in `devtools` (`{Name}Store` format)
 - File name: `use{Name}Store.ts` (e.g. `usePostStore.ts`)
+- Always export selector hooks from the store file; do not use the raw store hook in components
 
 ## React Query Pattern
 
-```ts
-// lib/apis/post.ts
-export const postApi = {
-  getList: async (): Promise<Post[]> => {
-    const res = await fetch('/api/posts');
-    if (!res.ok) throw new Error('Failed to fetch posts');
-    return res.json();
-  },
-};
+### staleTime / gcTime
 
-// Usage in components
-import { useQuery } from '@tanstack/react-query';
-import { postApi } from '@/lib/apis/post';
+Default is `5 * 60 * 1000` (5 minutes). Adjust based on how frequently the data changes:
 
-function PostList() {
-  const { data, isLoading } = useQuery({
-    queryKey: ['posts'],
-    queryFn: postApi.getList,
-  });
-}
-```
+| Data characteristic | staleTime | gcTime |
+|--------------------|-----------|--------|
+| Real-time (attendance, etc.) | `0` | `5 * 60 * 1000` |
+| Moderate update frequency (board list) | `5 * 60 * 1000` | `10 * 60 * 1000` |
+| Rarely changes (user profile, constants) | `30 * 60 * 1000` | `60 * 60 * 1000` |
+
+**When unsure, ask the user before setting these values.** 
+Do not silently apply an arbitrary value.
 
 ## Server Actions Pattern
 
