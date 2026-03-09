@@ -3,9 +3,8 @@
 import { useState } from 'react';
 import type { StaticImageData } from 'next/image';
 import { MoreVerticalIcon } from '@/assets/icons';
-import { BoardNav } from '@/components/board';
-import type { BoardNavItem } from '@/components/board';
-import { PostCard } from '@/components/board';
+import { BoardNav, type BoardNavItem } from './BoardNav';
+import { PostCard } from './PostCard';
 
 const MOCK_CHANNELS: BoardNavItem[] = [
   { id: 'notice', label: '공지', type: 'notice' },
@@ -126,7 +125,7 @@ function BoardContent() {
   const posts = MOCK_POSTS;
 
   return (
-    <div className="flex items-start gap-700 self-stretch px-[64px] pt-450">
+    <div className="flex items-start gap-700 self-stretch px-800 pt-450">
       <aside className="shrink-0">
         <BoardNav
           items={MOCK_CHANNELS}
