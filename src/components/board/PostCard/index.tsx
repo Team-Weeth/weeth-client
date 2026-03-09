@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import Image from 'next/image';
 import type { StaticImageData } from 'next/image';
 import { cn } from '@/lib/cn';
@@ -40,11 +41,20 @@ function PostCard({
   images = [],
   likeCount = 0,
   commentCount = 0,
-  isLiked = false,
+  isLiked: initialIsLiked = false,
   onLike,
   onComment,
   ...props
 }: PostCardProps) {
+  const [isLiked, setIsLiked] = useState(initialIsLiked);
+
+  const handleLike = () => {
+    const next = !isLiked;
+    setIsLiked(next);
+    console.log(next ? '좋아요' : '좋아요 취소');
+    onLike?.();
+  };
+
   return (
     <article
       className={cn(
@@ -71,7 +81,7 @@ function PostCard({
           type="button"
           aria-label="좋아요"
           className="flex cursor-pointer items-center gap-100 rounded-sm hover:opacity-70 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
-          onClick={onLike}
+          onClick={handleLike}
         >
           <span
             aria-hidden
