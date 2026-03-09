@@ -1,6 +1,7 @@
 export { default as ArrowRightIcon } from './arrow_right.svg';
 export { default as ChatIcon } from './chat.svg';
 export { default as LikeIcon } from './like.svg';
+export { default as LikeFilledIcon } from './like_filled.svg';
 export { default as AvatarIcon } from './avatar.svg';
 export { default as CheckRoundIcon } from './check_round.svg';
 export { default as CloseCircleIcon } from './close_circle.svg';
