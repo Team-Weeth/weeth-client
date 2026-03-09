@@ -31,6 +31,21 @@ if echo "$prompt" | grep -qE "pr 작성|pr 내용|풀리퀘 설명|pr descriptio
   suggestions+=("  → /pr-writer     PR 본문 자동 작성")
 fi
 
+# /vercel-react-best-practices
+if echo "$prompt" | grep -qE "성능|performance|최적화|번들|렌더링|data fetching|서버 컴포넌트|server component|next.js|nextjs"; then
+  suggestions+=("  → /vercel-react-best-practices   React/Next.js 성능 최적화 패턴")
+fi
+
+# /vercel-composition-patterns
+if echo "$prompt" | grep -qE "컴포넌트 설계|합성|composition|compound|render prop|리팩토링|props 정리|boolean prop"; then
+  suggestions+=("  → /vercel-composition-patterns   컴포넌트 합성 패턴 (React 19)")
+fi
+
+# /web-design-guidelines
+if echo "$prompt" | grep -qE "접근성|accessibility|a11y|ui 리뷰|ux|디자인 검토|aria|시맨틱"; then
+  suggestions+=("  → /web-design-guidelines   UI 접근성·디자인 가이드라인 검토")
+fi
+
 # 매칭된 스킬이 있을 때만 출력
 if [ ${#suggestions[@]} -gt 0 ]; then
   echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
