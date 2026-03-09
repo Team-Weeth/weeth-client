@@ -68,7 +68,7 @@ export function NoticeBoardBox() {
               <div className="flex flex-col gap-200">
                 <div className="flex gap-[5px]">
                   <p className="typo-sub2 text-text-strong">{notice.title}</p>
-                  {notice.isNew && <Image src={NewIcon} alt="new" width={9} height={16} />}
+                  {notice.isNew && <Image src={NewIcon} alt="new" width={9} height={12} />}
                 </div>
                 <p className="typo-body2 text-icon-normal line-clamp-2 max-w-[268px]">
                   {notice.content}
