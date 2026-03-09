@@ -15,3 +15,5 @@ export { default as PaperclipIcon } from './paperclip.svg';
 export { default as NewIcon } from './new.svg';
 export { default as DeleteIcon } from './delete.svg';
 export { default as PeopleIcon } from './people.svg';
+export { default as MegaphoneIcon } from './megaphone.svg';
+export { default as PinIcon } from './pin.svg';
