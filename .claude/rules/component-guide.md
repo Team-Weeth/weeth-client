@@ -1,12 +1,13 @@
 # Component Guide
 
-## Base Pattern (cva + cn + forwardRef)
+## Base Pattern (cva + cn)
+
+React 19 passes `ref` directly as a prop — `forwardRef` is no longer needed.
 
 ```tsx
 // Only when state or event handlers are used
 'use client';
 
-import { forwardRef } from 'react';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@/lib/cn';
 
@@ -30,21 +31,19 @@ const componentVariants = cva('base-classes', {
 
 interface ComponentProps
   extends React.HTMLAttributes<HTMLElement>,
-    VariantProps<typeof componentVariants> {}
+    VariantProps<typeof componentVariants> {
+  ref?: React.Ref<HTMLElement>;
+}
 
-const Component = forwardRef<HTMLElement, ComponentProps>(
-  ({ className, variant, size, ...props }, ref) => {
-    return (
-      <div
-        ref={ref}
-        className={cn(componentVariants({ variant, size }), className)}
-        {...props}
-      />
-    );
-  },
-);
-
-Component.displayName = 'Component';
+function Component({ className, variant, size, ref, ...props }: ComponentProps) {
+  return (
+    <div
+      ref={ref}
+      className={cn(componentVariants({ variant, size }), className)}
+      {...props}
+    />
+  );
+}
 
 export { Component, componentVariants, type ComponentProps };
 ```
@@ -53,7 +52,7 @@ export { Component, componentVariants, type ComponentProps };
 
 ### Required
 - Always expose the `className` prop (to allow external override)
-- Shared UI components must use `forwardRef` + `displayName`
+- Shared UI components must expose `ref` via `React.Ref<T>` in the props interface (React 19 — no `forwardRef` needed)
 - When using `cn()`, always merge the external `className` last (to guarantee override priority)
 - When creating a new component, add its export to `components/ui/index.ts`
 
