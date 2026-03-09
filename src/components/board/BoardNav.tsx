@@ -44,7 +44,7 @@ function BoardNav({ className, items, activeId, onItemSelect, ...props }: BoardN
               <button
                 type="button"
                 className={cn(
-                  'flex w-full cursor-pointer items-center gap-300 self-stretch rounded-md p-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
+                  'focus-visible:outline-ring flex w-full cursor-pointer items-center gap-300 self-stretch rounded-md p-200 focus-visible:outline-2 focus-visible:outline-offset-2',
                   isActive
                     ? 'bg-container-primary text-text-inverse'
                     : 'text-text-normal hover:bg-container-neutral-interaction',

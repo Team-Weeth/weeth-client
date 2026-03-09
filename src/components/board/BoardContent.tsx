@@ -151,7 +151,7 @@ function BoardContent() {
                 >
                   <span
                     aria-hidden
-                    className="block h-4 w-[3px] bg-icon-normal mask-contain mask-center mask-no-repeat"
+                    className="bg-icon-normal block h-4 w-[3px] mask-contain mask-center mask-no-repeat"
                     style={{
                       maskImage: `url(${(MoreVerticalIcon as StaticImageData).src})`,
                       WebkitMaskImage: `url(${(MoreVerticalIcon as StaticImageData).src})`,
