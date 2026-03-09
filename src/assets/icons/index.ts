@@ -18,3 +18,4 @@ export { default as DeleteIcon } from './delete.svg';
 export { default as PeopleIcon } from './people.svg';
 export { default as MegaphoneIcon } from './megaphone.svg';
 export { default as PinIcon } from './pin.svg';
+export { default as MoreVerticalIcon } from './more_vertical.svg';
