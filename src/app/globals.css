@@ -15,7 +15,7 @@
   --breakpoint-*: initial;
   --breakpoint-mobile: 360px;
   --breakpoint-tablet: 696px;
-  --breakpoint-desktop: 1032px;
+  --breakpoint-desktop: 1440px;
 }
 
 :root {
