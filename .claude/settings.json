@@ -17,7 +17,9 @@
       "Bash(git status*)",
       "Read(**)",
       "Glob(**)",
-      "Grep(**)"
+      "Grep(**)",
+      "Edit(**)",
+      "Write(**)"
     ]
   },
   "hooks": {
@@ -26,7 +28,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash d:/project/weeth-client/.claude/hooks/skill-suggest.sh"
+            "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/skill-suggest.sh\""
           }
         ]
       }
@@ -37,7 +39,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "cd d:/project/weeth-client && pnpm lint:fix --quiet 2>&1 | tail -5"
+            "command": "cd \"$CLAUDE_PROJECT_DIR\" && pnpm lint:fix --quiet 2>&1 | tail -5"
           }
         ]
       }
@@ -47,7 +49,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "cd d:/project/weeth-client && echo '⚡ TypeScript 검사 중...' && pnpm typecheck 2>&1 && echo '✅ 타입 에러 없음' || echo '❌ 타입 에러 발견 — 위 오류를 확인하세요'"
+            "command": "cd \"$CLAUDE_PROJECT_DIR\" && echo '⚡ TypeScript 검사 중...' && pnpm typecheck 2>&1 && echo '✅ 타입 에러 없음' || echo '❌ 타입 에러 발견 — 위 오류를 확인하세요'"
           }
         ]
       }
