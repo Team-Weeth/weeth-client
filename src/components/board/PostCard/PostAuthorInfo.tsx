@@ -2,8 +2,10 @@ import Image from 'next/image';
 import type { StaticImageData } from 'next/image';
 import { PaperclipIcon } from '@/assets/icons';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui';
+import { cn } from '@/lib/cn';
 
 interface PostAuthorInfoProps {
+  className?: string;
   author: {
     name: string;
     profileImageUrl?: string;
@@ -13,9 +15,9 @@ interface PostAuthorInfoProps {
   hasAttachment?: boolean;
 }
 
-function PostAuthorInfo({ author, date, dateTime, hasAttachment }: PostAuthorInfoProps) {
+function PostAuthorInfo({ className, author, date, dateTime, hasAttachment }: PostAuthorInfoProps) {
   return (
-    <div className="flex items-center gap-200">
+    <div className={cn('flex items-center gap-200', className)}>
       <Avatar size={24}>
         <AvatarImage src={author.profileImageUrl} alt={author.name} />
         <AvatarFallback>{author.name.charAt(0)}</AvatarFallback>

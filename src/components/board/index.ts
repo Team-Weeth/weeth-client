@@ -2,3 +2,4 @@
 
 export { BoardNav, type BoardNavProps, type BoardNavItem } from './BoardNav';
 export { BoardContent } from './BoardContent';
+export { PostCard } from './PostCard';

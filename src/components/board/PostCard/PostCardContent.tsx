@@ -4,12 +4,13 @@ import { useEffect, useRef, useState } from 'react';
 import { cn } from '@/lib/cn';
 
 interface PostCardContentProps {
+  className?: string;
   title: string;
   content: string;
   isNew?: boolean;
 }
 
-function PostCardContent({ title, content, isNew }: PostCardContentProps) {
+function PostCardContent({ className, title, content, isNew }: PostCardContentProps) {
   const contentRef = useRef<HTMLParagraphElement>(null);
   const [isClamped, setIsClamped] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
@@ -33,7 +34,7 @@ function PostCardContent({ title, content, isNew }: PostCardContentProps) {
   }, [content, isExpanded]);
 
   return (
-    <div className="flex flex-col gap-200 self-stretch">
+    <div className={cn('flex flex-col gap-200 self-stretch', className)}>
       <div className="flex items-center gap-[5px]">
         <h3 className="typo-sub2 text-text-strong">{title}</h3>
         {isNew && (

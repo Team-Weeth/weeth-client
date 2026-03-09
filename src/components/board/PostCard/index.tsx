@@ -10,18 +10,22 @@ import { LikeIcon, LikeFilledIcon, ChatIcon } from '@/assets/icons';
 import { PostAuthorInfo } from './PostAuthorInfo';
 import { PostCardContent } from './PostCardContent';
 
-interface PostCardProps extends React.ComponentProps<'article'> {
-  author: {
-    name: string;
-    profileImageUrl?: string;
-  };
-  date: string;
-  dateTime?: string;
-  title: string;
-  content: string;
-  isNew?: boolean;
-  hasAttachment?: boolean;
-  images?: FileItem[];
+function PostCardRoot({ className, children, ...props }: React.ComponentProps<'article'>) {
+  return (
+    <article
+      className={cn(
+        'bg-container-neutral flex flex-col items-start gap-400 self-stretch overflow-x-hidden rounded-(--radius-lg) px-450 py-400',
+        className,
+      )}
+      {...props}
+    >
+      {children}
+    </article>
+  );
+}
+
+interface PostCardActionsProps {
+  className?: string;
   likeCount?: number;
   commentCount?: number;
   isLiked?: boolean;
@@ -29,23 +33,14 @@ interface PostCardProps extends React.ComponentProps<'article'> {
   onComment?: () => void;
 }
 
-function PostCard({
+function PostCardActions({
   className,
-  author,
-  date,
-  dateTime,
-  title,
-  content,
-  isNew,
-  hasAttachment,
-  images = [],
   likeCount = 0,
   commentCount = 0,
   isLiked: initialIsLiked = false,
   onLike,
   onComment,
-  ...props
-}: PostCardProps) {
+}: PostCardActionsProps) {
   const [isLiked, setIsLiked] = useState(initialIsLiked);
 
   const handleLike = () => {
@@ -56,58 +51,59 @@ function PostCard({
   };
 
   return (
-    <article
-      className={cn(
-        'bg-container-neutral flex flex-col items-start gap-400 self-stretch overflow-x-hidden rounded-(--radius-lg) px-450 py-400',
-        className,
-      )}
-      {...props}
-    >
-      <PostAuthorInfo
-        author={author}
-        date={date}
-        dateTime={dateTime}
-        hasAttachment={hasAttachment}
-      />
-
-      <PostCardContent title={title} content={content} isNew={isNew} />
-
-      {/* Images */}
-      <ImageList files={images} />
-
-      {/* Footer */}
-      <div className="flex items-center gap-300">
-        <button
-          type="button"
-          aria-label="좋아요"
-          className="flex cursor-pointer items-center gap-100 rounded-sm hover:opacity-70 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
-          onClick={handleLike}
-        >
-          <span
-            aria-hidden
-            className={cn(
-              'block h-[15px] w-[17px] mask-contain mask-no-repeat',
-              isLiked ? 'bg-state-error' : 'bg-icon-alternative',
-            )}
-            style={{
-              maskImage: `url(${(isLiked ? LikeFilledIcon as StaticImageData : LikeIcon as StaticImageData).src})`,
-              WebkitMaskImage: `url(${(isLiked ? LikeFilledIcon as StaticImageData : LikeIcon as StaticImageData).src})`,
-            }}
-          />
-          <span className="typo-caption2 text-text-alternative">{likeCount}</span>
-        </button>
-        <button
-          type="button"
-          aria-label="댓글"
-          className="flex cursor-pointer items-center gap-100 rounded-sm hover:opacity-70 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
-          onClick={onComment}
-        >
-          <Image src={ChatIcon as StaticImageData} alt="" width={17} height={17} aria-hidden />
-          <span className="typo-caption2 text-text-alternative">{commentCount}</span>
-        </button>
-      </div>
-    </article>
+    <div className={cn('flex items-center gap-300', className)}>
+      <button
+        type="button"
+        aria-label="좋아요"
+        className="flex cursor-pointer items-center gap-100 rounded-sm hover:opacity-70 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+        onClick={handleLike}
+      >
+        <span
+          aria-hidden
+          className={cn(
+            'block h-[15px] w-[17px] mask-contain mask-no-repeat',
+            isLiked ? 'bg-state-error' : 'bg-icon-alternative',
+          )}
+          style={{
+            maskImage: `url(${(isLiked ? (LikeFilledIcon as StaticImageData) : (LikeIcon as StaticImageData)).src})`,
+            WebkitMaskImage: `url(${(isLiked ? (LikeFilledIcon as StaticImageData) : (LikeIcon as StaticImageData)).src})`,
+          }}
+        />
+        <span className="typo-caption2 text-text-alternative">{likeCount}</span>
+      </button>
+      <button
+        type="button"
+        aria-label="댓글"
+        className="flex cursor-pointer items-center gap-100 rounded-sm hover:opacity-70 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+        onClick={onComment}
+      >
+        <Image src={ChatIcon as StaticImageData} alt="" width={17} height={17} aria-hidden />
+        <span className="typo-caption2 text-text-alternative">{commentCount}</span>
+      </button>
+    </div>
   );
 }
 
-export { PostCard, type PostCardProps };
+interface PostCardImagesProps {
+  className?: string;
+  files: FileItem[];
+}
+
+function PostCardImages({ className, files }: PostCardImagesProps) {
+  if (files.length === 0) return null;
+  return (
+    <div className={className}>
+      <ImageList files={files} />
+    </div>
+  );
+}
+
+const PostCard = {
+  Root: PostCardRoot,
+  Author: PostAuthorInfo,
+  Content: PostCardContent,
+  Images: PostCardImages,
+  Actions: PostCardActions,
+};
+
+export { PostCard, type PostCardActionsProps, type PostCardImagesProps };

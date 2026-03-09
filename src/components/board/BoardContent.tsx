@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { BoardNav } from '@/components/board';
 import type { BoardNavItem } from '@/components/board';
-import { PostCard } from '@/components/board/PostCard';
+import { PostCard } from '@/components/board';
 
 const MOCK_CHANNELS: BoardNavItem[] = [
   { id: 'notice', label: '공지', type: 'notice' },
@@ -80,7 +80,16 @@ function BoardContent() {
       </aside>
       <main className="flex min-w-0 flex-1 flex-col gap-400">
         {posts.map((post) => (
-          <PostCard key={post.id} {...post} />
+          <PostCard.Root key={post.id}>
+            <PostCard.Author
+              author={post.author}
+              date={post.date}
+              hasAttachment={post.hasAttachment}
+            />
+            <PostCard.Content title={post.title} content={post.content} isNew={post.isNew} />
+            <PostCard.Images files={post.images} />
+            <PostCard.Actions likeCount={post.likeCount} commentCount={post.commentCount} />
+          </PostCard.Root>
         ))}
       </main>
     </div>
