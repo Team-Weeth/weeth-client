@@ -1,14 +1,9 @@
-'use client';
-
-import { useState } from 'react';
-import Image from 'next/image';
-import type { StaticImageData } from 'next/image';
 import { cn } from '@/lib/cn';
 import { ImageList } from '@/components/board/ImageList';
 import type { FileItem } from '@/stores/usePostStore';
-import { LikeIcon, LikeFilledIcon, ChatIcon } from '@/assets/icons';
 import { PostAuthorInfo } from './PostAuthorInfo';
 import { PostCardContent } from './PostCardContent';
+import { PostCardActions, type PostCardActionsProps } from './PostCardActions';
 
 function PostCardRoot({ className, children, ...props }: React.ComponentProps<'article'>) {
   return (
@@ -28,66 +23,6 @@ function PostCardHeader({ className, children, ...props }: React.ComponentProps<
   return (
     <div className={cn('flex items-center justify-between self-stretch', className)} {...props}>
       {children}
-    </div>
-  );
-}
-
-interface PostCardActionsProps {
-  className?: string;
-  likeCount?: number;
-  commentCount?: number;
-  isLiked?: boolean;
-  onLike?: () => void;
-  onComment?: () => void;
-}
-
-function PostCardActions({
-  className,
-  likeCount = 0,
-  commentCount = 0,
-  isLiked: initialIsLiked = false,
-  onLike,
-  onComment,
-}: PostCardActionsProps) {
-  const [isLiked, setIsLiked] = useState(initialIsLiked);
-
-  const handleLike = () => {
-    const next = !isLiked;
-    setIsLiked(next);
-    console.log(next ? '좋아요' : '좋아요 취소');
-    onLike?.();
-  };
-
-  return (
-    <div className={cn('flex items-center gap-300', className)}>
-      <button
-        type="button"
-        aria-label="좋아요"
-        className="focus-visible:outline-ring flex cursor-pointer items-center gap-100 rounded-sm hover:opacity-70 focus-visible:outline-2 focus-visible:outline-offset-2"
-        onClick={handleLike}
-      >
-        <span
-          aria-hidden
-          className={cn(
-            'block h-[15px] w-[17px] mask-contain mask-no-repeat',
-            isLiked ? 'bg-state-error' : 'bg-icon-alternative',
-          )}
-          style={{
-            maskImage: `url(${(isLiked ? (LikeFilledIcon as StaticImageData) : (LikeIcon as StaticImageData)).src})`,
-            WebkitMaskImage: `url(${(isLiked ? (LikeFilledIcon as StaticImageData) : (LikeIcon as StaticImageData)).src})`,
-          }}
-        />
-        <span className="typo-caption2 text-text-alternative">{likeCount}</span>
-      </button>
-      <button
-        type="button"
-        aria-label="댓글"
-        className="focus-visible:outline-ring flex cursor-pointer items-center gap-100 rounded-sm hover:opacity-70 focus-visible:outline-2 focus-visible:outline-offset-2"
-        onClick={onComment}
-      >
-        <Image src={ChatIcon as StaticImageData} alt="" width={17} height={17} aria-hidden />
-        <span className="typo-caption2 text-text-alternative">{commentCount}</span>
-      </button>
     </div>
   );
 }
