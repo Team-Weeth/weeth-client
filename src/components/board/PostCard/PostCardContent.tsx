@@ -1,9 +1,6 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import Image from 'next/image';
-import type { StaticImageData } from 'next/image';
-import { NewIcon } from '@/assets/icons';
 import { cn } from '@/lib/cn';
 
 interface PostCardContentProps {
@@ -37,11 +34,13 @@ function PostCardContent({ title, content, isNew }: PostCardContentProps) {
 
   return (
     <div className="flex flex-col gap-200 self-stretch">
-      <div className="flex items-center gap-200">
+      <div className="flex items-center gap-[5px]">
         <h3 className="typo-sub2 text-text-strong">{title}</h3>
         {isNew && (
           <>
-            <Image src={NewIcon as StaticImageData} alt="" width={9} height={12} aria-hidden />
+            <span className="typo-caption1 text-state-error" aria-hidden>
+              N
+            </span>
             <span className="sr-only">새 글</span>
           </>
         )}
