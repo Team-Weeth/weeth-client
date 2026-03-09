@@ -1,1 +1,1 @@
-// apis index file
+export { http } from './http';
