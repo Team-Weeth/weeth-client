@@ -1,3 +1,12 @@
+export { default as AdminSearchIcon } from './admin/ic_admin_search.svg';
+export { default as AdminPlusIcon } from './admin/ic_admin_plus.svg';
+export { default as AdminMeatballIcon } from './admin/ic_admin_meatball.svg';
+export { default as AdminColumnMeatballIcon } from './admin/ic_admin_column_meatball.svg';
+export { default as AdminChangeIcon } from './admin/ic_admin_change.svg';
+export { default as AdminCheckboxIcon } from './admin/ic_admin_checkbox.svg';
+export { default as AdminUncheckboxIcon } from './admin/ic_admin_uncheckbox.svg';
+export { default as AdminCardinalIcon } from './admin/ic_admin_cardinal.svg';
+export { default as AdminUserIcon } from './admin/ic_admin_user.svg';
 export { default as ArrowRightIcon } from './arrow_right.svg';
 export { default as AvatarIcon } from './avatar.svg';
 export { default as CheckRoundIcon } from './check_round.svg';
