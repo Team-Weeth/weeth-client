@@ -74,3 +74,14 @@ export {
 export { Chip, chipVariants, ChipList, type ChipProps } from './chips';
 
 export { Tag, tagVariants, type TagProps } from './tag';
+
+export {
+  Table,
+  TableHeader,
+  TableBody,
+  TableFooter,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableCaption,
+} from './table';
