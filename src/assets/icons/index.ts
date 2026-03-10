@@ -21,3 +21,5 @@ export { default as FooterLogoIcon } from './logo/logo_full_Footer.svg';
 export { default as NewIcon } from './new.svg';
 export { default as DeleteIcon } from './delete.svg';
 export { default as PeopleIcon } from './people.svg';
+
+export { default as SearchIcon } from './search.svg';
