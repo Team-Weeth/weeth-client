@@ -11,8 +11,6 @@
 !.yarn/versions
 
 
-.claude/settings.json
-
 # testing
 /coverage
 

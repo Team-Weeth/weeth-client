@@ -41,10 +41,6 @@ if echo "$prompt" | grep -qE "컴포넌트 설계|합성|composition|compound|re
   suggestions+=("  → /vercel-composition-patterns   컴포넌트 합성 패턴 (React 19)")
 fi
 
-# /web-design-guidelines
-if echo "$prompt" | grep -qE "접근성|accessibility|a11y|ui 리뷰|ux|디자인 검토|aria|시맨틱"; then
-  suggestions+=("  → /web-design-guidelines   UI 접근성·디자인 가이드라인 검토")
-fi
 
 # 매칭된 스킬이 있을 때만 출력
 if [ ${#suggestions[@]} -gt 0 ]; then

@@ -39,7 +39,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "cd \"$CLAUDE_PROJECT_DIR\" && pnpm lint:fix --quiet 2>&1 | tail -5"
+            "command": "bash -lc 'set -o pipefail; cd \"$CLAUDE_PROJECT_DIR\" && pnpm lint:fix --quiet 2>&1 | tail -5'"
           }
         ]
       }

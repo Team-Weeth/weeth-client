@@ -15,7 +15,12 @@ const config: Config = {
 
   testMatch: ['**/__tests__/**/*.{ts,tsx}', '**/*.{spec,test}.{ts,tsx}'],
 
-  testPathIgnorePatterns: ['<rootDir>/.next/', '<rootDir>/node_modules/', '<rootDir>/scripts/', '<rootDir>/.claude/'],
+  testPathIgnorePatterns: [
+    '<rootDir>/.next/',
+    '<rootDir>/node_modules/',
+    '<rootDir>/scripts/',
+    '<rootDir>/.claude/',
+  ],
 
   collectCoverageFrom: [
     'src/**/*.{ts,tsx}',

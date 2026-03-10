@@ -1,7 +1,12 @@
+# Button 테스트 예시
+
+`src/components/ui/__tests__/Button.test.tsx` 위치에 작성하는 예시입니다.
+
+```tsx
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { Button } from '@/components/ui/Button';
+import { Button } from '@/components/ui';
 
 describe('Button', () => {
   it('크래시 없이 렌더링된다', () => {
@@ -12,6 +17,8 @@ describe('Button', () => {
   it.each([
     ['primary'],
     ['secondary'],
+    ['tertiary'],
+    ['danger'],
   ] as const)('variant=%s 렌더링', (variant) => {
     render(<Button variant={variant}>버튼</Button>);
     expect(screen.getByRole('button')).toBeInTheDocument();
@@ -42,13 +49,5 @@ describe('Button', () => {
     render(<Button ref={ref}>버튼</Button>);
     expect(ref.current).toBeInstanceOf(HTMLButtonElement);
   });
-
-  it('asChild prop으로 다른 요소로 렌더링된다', () => {
-    render(
-      <Button asChild>
-        <a href="/test">링크 버튼</a>
-      </Button>,
-    );
-    expect(screen.getByRole('link', { name: '링크 버튼' })).toBeInTheDocument();
-  });
 });
+```
