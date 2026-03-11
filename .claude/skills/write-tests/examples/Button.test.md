@@ -1,6 +1,6 @@
-# Button 테스트 예시
+# Button Test Example
 
-`src/components/ui/__tests__/Button.test.tsx` 위치에 작성하는 예시입니다.
+Example test written at `src/components/ui/__tests__/Button.test.tsx`.
 
 ```tsx
 import React from 'react';
@@ -9,9 +9,9 @@ import userEvent from '@testing-library/user-event';
 import { Button } from '@/components/ui';
 
 describe('Button', () => {
-  it('크래시 없이 렌더링된다', () => {
-    render(<Button>클릭</Button>);
-    expect(screen.getByRole('button', { name: '클릭' })).toBeInTheDocument();
+  it('renders without crashing', () => {
+    render(<Button>Click</Button>);
+    expect(screen.getByRole('button', { name: 'Click' })).toBeInTheDocument();
   });
 
   it.each([
@@ -19,34 +19,34 @@ describe('Button', () => {
     ['secondary'],
     ['tertiary'],
     ['danger'],
-  ] as const)('variant=%s 렌더링', (variant) => {
-    render(<Button variant={variant}>버튼</Button>);
+  ] as const)('renders variant=%s', (variant) => {
+    render(<Button variant={variant}>Button</Button>);
     expect(screen.getByRole('button')).toBeInTheDocument();
   });
 
-  it('disabled 상태에서 클릭이 무시된다', async () => {
+  it('ignores click when disabled', async () => {
     const handleClick = jest.fn();
     const user = userEvent.setup();
 
-    render(<Button disabled onClick={handleClick}>버튼</Button>);
+    render(<Button disabled onClick={handleClick}>Button</Button>);
 
     await user.click(screen.getByRole('button'));
     expect(handleClick).not.toHaveBeenCalled();
   });
 
-  it('onClick 핸들러가 호출된다', async () => {
+  it('calls onClick handler', async () => {
     const handleClick = jest.fn();
     const user = userEvent.setup();
 
-    render(<Button onClick={handleClick}>버튼</Button>);
+    render(<Button onClick={handleClick}>Button</Button>);
 
     await user.click(screen.getByRole('button'));
     expect(handleClick).toHaveBeenCalledTimes(1);
   });
 
-  it('ref가 DOM 버튼 요소에 연결된다', () => {
+  it('attaches ref to the DOM button element', () => {
     const ref = React.createRef<HTMLButtonElement>();
-    render(<Button ref={ref}>버튼</Button>);
+    render(<Button ref={ref}>Button</Button>);
     expect(ref.current).toBeInstanceOf(HTMLButtonElement);
   });
 });

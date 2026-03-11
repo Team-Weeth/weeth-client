@@ -1,69 +1,69 @@
-# 코드 리뷰 결과
+# Code Review Result
 
-## 요약
-- Critical: N건
-- Major: N건
-- Minor: N건
-- Suggestion: N건
-
----
-
-## Critical 이슈
-
-### [파일명:줄번호] 이슈 제목
-**문제**: 문제 설명
-**수정 전**:
-```tsx
-// 문제 있는 코드
-```
-**수정 후**:
-```tsx
-// 수정된 코드
-```
+## Summary
+- Critical: N
+- Major: N
+- Minor: N
+- Suggestion: N
 
 ---
 
-## Major 이슈
+## Critical Issues
 
-### [파일명:줄번호] 이슈 제목
-**문제**: 문제 설명
-**수정 전**:
+### [filename:line] Issue title
+**Problem**: description
+**Before**:
 ```tsx
-// 문제 있는 코드
+// problematic code
 ```
-**수정 후**:
+**After**:
 ```tsx
-// 수정된 코드
+// fixed code
 ```
 
 ---
 
-## Minor 이슈
+## Major Issues
 
-### [파일명:줄번호] 이슈 제목
-**문제**: 문제 설명
-**수정 전**:
+### [filename:line] Issue title
+**Problem**: description
+**Before**:
 ```tsx
-// 문제 있는 코드
+// problematic code
 ```
-**수정 후**:
+**After**:
 ```tsx
-// 수정된 코드
+// fixed code
 ```
 
 ---
 
-## Suggestion
+## Minor Issues
 
-### [파일명:줄번호] 제안 제목
-**제안**: 제안 내용 및 개선된 코드
+### [filename:line] Issue title
+**Problem**: description
+**Before**:
+```tsx
+// problematic code
+```
+**After**:
+```tsx
+// fixed code
+```
 
 ---
 
-## 좋은 점
-- 잘 작성된 부분 설명
+## Suggestions
+
+### [filename:line] Suggestion title
+**Suggestion**: description and improved code
 
 ---
 
-## 전체 평가
-> ✅ LGTM / ⚠️ 수정 필요 — Critical N건, Major N건 수정 후 재확인 부탁드립니다.
+## What's Good
+- Description of well-written parts
+
+---
+
+## Overall Assessment
+> ✅ LGTM / ⚠️ Changes needed — please fix Critical N, Major N issues and request re-review.

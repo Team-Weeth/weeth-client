@@ -1,6 +1,6 @@
 ---
 name: code-review
-description: "PR/커밋 코드 변경사항을 리뷰한다. 버그, 보안 취약점, 성능 이슈를 탐지하고 구체적인 수정 제안을 제공한다."
+description: "Reviews PR/commit code changes. Detects bugs, security vulnerabilities, and performance issues, and provides actionable fix suggestions."
 argument-hint: "[HEAD~1 | --staged | <commit-hash>]"
 disable-model-invocation: true
 allowed-tools: Glob, Grep, Read, Bash
@@ -8,98 +8,98 @@ allowed-tools: Glob, Grep, Read, Bash
 
 # Code Review
 
-코드 변경사항을 체계적으로 분석해 이슈를 탐지하고 실행 가능한 수정안을 제공한다.
-**모든 출력은 반드시 한국어(Korean)로 작성한다.**
+Systematically analyzes code changes to detect issues and provide actionable fixes.
+**All output must be written in Korean.**
 
-## 인수
+## Arguments
 
-`$ARGUMENTS`로 리뷰 범위를 지정할 수 있다. 생략 시 `HEAD~1`을 기본으로 사용한다.
+Use `$ARGUMENTS` to specify the review scope. Defaults to `HEAD~1` if omitted.
 
 - `/code-review` → `git diff HEAD~1`
 - `/code-review --staged` → `git diff --staged`
-- `/code-review abc1234` → 특정 커밋
+- `/code-review abc1234` → specific commit
 
-## Workflow (순서 엄수)
+## Workflow (follow in order)
 
-### 1. 변경사항 분석
+### 1. Analyze changes
 
 ```bash
-git diff $ARGUMENTS --name-only   # 변경 파일 목록
-git diff $ARGUMENTS               # 전체 diff
+git diff $ARGUMENTS --name-only   # list changed files
+git diff $ARGUMENTS               # full diff
 ```
 
-- 변경 파일 나열 및 영향도 파악
-- 관련 테스트 파일 존재 여부 확인
+- List changed files and assess impact
+- Check whether related test files exist
 
-### 2. 카테고리별 리뷰 (순서대로)
+### 2. Review by category (in order)
 
-1. **Critical** — 버그, 보안 취약점, 데이터 손실 위험
-2. **Major** — 성능 이슈, 아키텍처 위반, 테스트 누락
-3. **Minor** — 코드 스타일, 네이밍, 중복 코드
-4. **Suggestion** — 더 나은 구현, React/TS 관용 패턴
+1. **Critical** — bugs, security vulnerabilities, data loss risk
+2. **Major** — performance issues, architecture violations, missing tests
+3. **Minor** — code style, naming, duplicate code
+4. **Suggestion** — better implementations, idiomatic React/TS patterns
 
-### 3. 결과 출력
+### 3. Output result
 
-`template.md`의 형식을 반드시 따라 출력한다.
+Output must strictly follow the format in `template.md`.
 
-## 리뷰 체크리스트
+## Review Checklist
 
 ### Bug/Logic
 
-- 조건부 렌더링 falsy 값 노출 (`count && <Comp />` → count가 0이면 "0" 렌더링)
-- 비동기 처리 누락 (loading/error 상태 처리)
-- `useEffect` 의존성 배열 누락 또는 과다 포함
-- 이벤트 핸들러 메모리 누수 (cleanup 없는 구독, 타이머)
-- `key` prop 오용 (`index` 사용, 중복 key)
+- Falsy value exposed in conditional rendering (`count && <Comp />` renders "0" when count is 0)
+- Missing async handling (loading/error state not handled)
+- Missing or over-specified `useEffect` dependency arrays
+- Event handler memory leaks (subscriptions or timers without cleanup)
+- Misuse of `key` prop (using index, duplicate keys)
 
 ### Security
 
-- `dangerouslySetInnerHTML` XSS 위험
-- 민감 정보 노출 (console.log, 에러 메시지에 토큰/비밀번호)
-- 환경 변수 노출 (`NEXT_PUBLIC_` 접두사 주의)
-- 사용자 입력 미검증 (폼 validation 누락)
-- 외부 URL 직접 삽입 (`href={userInput}` → `javascript:` 공격)
+- XSS risk via `dangerouslySetInnerHTML`
+- Sensitive data exposure (tokens/passwords in `console.log` or error messages)
+- Exposed environment variables (watch for `NEXT_PUBLIC_` prefix)
+- Unvalidated user input (missing form validation)
+- Direct injection of external URLs (`href={userInput}` → `javascript:` attack)
 
 ### Performance
 
-- 불필요한 리렌더링 (useMemo/useCallback 누락, 객체/배열 인라인 선언)
-- 과도한 번들 사이즈 (무분별한 라이브러리 전체 import)
-- 이미지 최적화 누락 (`<img>` 대신 `next/image` 미사용)
-- 무한 루프 위험 (useEffect 내부에서 의존 state 변경)
-- 비용이 큰 연산의 메모이제이션 누락
+- Unnecessary re-renders (missing `useMemo`/`useCallback`, inline object/array declarations)
+- Excessive bundle size (importing entire libraries unnecessarily)
+- Missing image optimization (using `<img>` instead of `next/image`)
+- Infinite loop risk (mutating dependent state inside `useEffect`)
+- Missing memoization for expensive computations
 
 ### Architecture
 
-- 컴포넌트 계층 준수: Page → Feature 컴포넌트 → UI 컴포넌트 (역방향 의존 금지)
-- UI 컴포넌트(`src/components/ui/`)에 비즈니스 로직 포함 금지
-- 디자인 토큰 우선 사용 (하드코딩된 색상값, 간격값 금지)
-- `cn()` 미사용 (className 직접 문자열 연결 금지)
-- cva variant 미활용 (조건부 className 인라인 처리)
-- `src/components/ui/index.ts` re-export 누락
+- Component hierarchy violation: Page → Feature component → UI component (no reverse dependencies)
+- Business logic inside UI components (`src/components/ui/`) is forbidden
+- Use design tokens first (hardcoded color or spacing values are forbidden)
+- Not using `cn()` (direct string concatenation for className is forbidden)
+- Not using cva variants (inline conditional className handling)
+- Missing re-export in `src/components/ui/index.ts`
 
 ### TypeScript
 
-- `any` 타입 남용
-- 타입 단언(`as`) 과다 사용
-- 옵셔널 체이닝(`?.`) 미사용
-- 명시적 반환 타입 누락 (컴포넌트 Props, API 응답 타입)
+- Overuse of `any` type
+- Excessive type assertions (`as`)
+- Not using optional chaining (`?.`)
+- Missing explicit return types (component Props, API response types)
 
 ### Accessibility (a11y)
 
-- 인터랙티브 요소에 `aria-label` 누락 (아이콘 버튼 등)
-- 키보드 접근 불가 (`onClick`만 있고 `onKeyDown` 없는 `<div>`)
-- 시맨틱 마크업 미사용 (`<div>` 버튼, `<div>` 링크)
-- 이미지 `alt` 텍스트 누락 또는 빈 문자열 오용
-- 폼 `label`과 `input` 연결 누락
+- Missing `aria-label` on interactive elements (icon buttons, etc.)
+- Keyboard inaccessible elements (`<div>` with only `onClick`, no `onKeyDown`)
+- Non-semantic markup (`<div>` used as button or link)
+- Missing or misused `alt` text on images
+- `label` not associated with `input` in forms
 
-## 규칙
+## Rules
 
-- **모든 출력은 한국어**
-- 항상 구체적인 수정 코드 제시 (비판만 금지)
-- 잘 작성된 코드도 칭찬하기
-- 불확실한 이슈는 "확인 필요"로 표시
-- 이슈 없으면 "리뷰 완료 - 이슈 없음" 명시
+- **All output in Korean**
+- Always provide concrete fix code (critique without fix is not allowed)
+- Acknowledge well-written code
+- Mark uncertain issues as "needs verification"
+- If no issues found, explicitly state "Review complete — no issues"
 
-## 지원 파일
+## Supporting Files
 
-- 출력 형식: [template.md](template.md)
+- Output format: [template.md](template.md)

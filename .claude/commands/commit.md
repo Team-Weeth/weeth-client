@@ -1,58 +1,58 @@
 # Commit
 
-스테이징된 변경사항을 분석하고 프로젝트 컨벤션에 맞는 커밋 메시지를 작성해 커밋한다.
+Analyzes staged changes and creates a commit with a message following project conventions.
 
-## 인수
+## Arguments
 
-`$ARGUMENTS`로 커밋 메시지 힌트를 줄 수 있다. 생략 시 변경사항을 직접 분석해 도출한다.
+Use `$ARGUMENTS` to provide a commit message hint. If omitted, the message is derived from the changes.
 
-- `/commit` → 변경사항 분석 후 자동 도출
-- `/commit 버튼 컴포넌트 추가` → 힌트를 참고해 메시지 작성
+- `/commit` → auto-derive from changes
+- `/commit add button component` → use hint to compose message
 
-## Workflow (순서 엄수)
+## Workflow (follow in order)
 
-### 1. 변경사항 파악
+### 1. Check changes
 
 ```bash
 git status
 git diff --staged
 ```
 
-- 스테이징된 파일이 없으면 **작업 중단** 후 사용자에게 알린다
-- `main` 브랜치 직접 커밋 금지 — 현재 브랜치 확인 후 `main`이면 경고하고 중단
+- If no files are staged, **stop** and notify the user
+- Direct commits to `main` are forbidden — check the current branch and abort if on `main`
 
 ```bash
 git branch --show-current
 ```
 
-### 2. 커밋 타입 선택
+### 2. Select commit type
 
-변경 내용에 따라 아래 타입 중 하나를 선택한다.
+Choose one type based on the nature of the change.
 
-| 타입 | 사용 시점 |
+| Type | When to use |
 |---|---|
-| `feat` | 새로운 기능 추가 |
-| `fix` | 버그 수정 |
-| `style` | UI/CSS 변경 (기능 변경 없음) |
-| `refactor` | 리팩토링 (기능/버그 변경 없음) |
-| `test` | 테스트 코드 추가/수정 |
-| `ci` | CI/CD 설정 변경 |
-| `chore` | 빌드 설정, 의존성, 기타 잡무 |
-| `docs` | 문서 수정 |
-| `remove` | 파일/코드 삭제 |
+| `feat` | New feature |
+| `fix` | Bug fix |
+| `style` | UI/CSS change (no logic change) |
+| `refactor` | Refactoring (no feature or bug change) |
+| `test` | Add or update tests |
+| `ci` | CI/CD configuration change |
+| `chore` | Build config, dependencies, misc |
+| `docs` | Documentation update |
+| `remove` | File or code removal |
 
-### 3. 메시지 작성 규칙
+### 3. Message format
 
 ```
-<타입>: <변경 내용 요약>
+<type>: <summary in Korean>
 ```
 
-- **한국어** 사용
-- 50자 이내로 간결하게
-- 명사형 또는 동사 원형으로 끝내기 ("추가", "수정", "제거")
-- 이슈 번호가 브랜치명에 있으면 메시지에 포함 가능 (`WTH-123`)
+- Write the summary in **Korean**
+- Keep it under 50 characters
+- End with a noun or verb root ("추가", "수정", "제거")
+- Include issue number from branch name if present (`WTH-123`)
 
-**좋은 예:**
+**Good:**
 ```
 feat: 버튼 컴포넌트 variant 추가
 fix: 페이지네이션 0 렌더링 버그 수정
@@ -60,27 +60,27 @@ style: 헤더 레이아웃 간격 조정
 refactor: useAuth 훅 의존성 정리
 ```
 
-**나쁜 예:**
+**Bad:**
 ```
-fix: fixed bug        ← 영어
-feat: 여러 가지 수정  ← 너무 모호
-update: 업데이트      ← 잘못된 타입
+fix: fixed bug        ← English not allowed
+feat: 여러 가지 수정  ← too vague
+update: 업데이트      ← invalid type
 ```
 
-### 4. 사용자 확인 후 커밋
+### 4. Confirm with user, then commit
 
-작성한 커밋 메시지를 사용자에게 보여주고 확인을 받은 뒤 커밋한다.
+Show the proposed commit message to the user and wait for approval before committing.
 
 ```bash
-git commit -m "<타입>: <메시지>"
+git commit -m "<type>: <message>"
 ```
 
-- 사용자가 메시지를 수정 요청하면 반영 후 재확인
-- 커밋 성공 시 커밋 해시와 메시지 출력
+- If the user requests changes, revise and re-confirm
+- On success, print the commit hash and message
 
-## 규칙
+## Rules
 
-- `main` 브랜치 직접 커밋 **절대 금지**
-- `--no-verify` 플래그 사용 금지 (훅 우회 금지)
-- `--amend` 는 사용자가 명시적으로 요청한 경우에만 사용
-- 스테이징되지 않은 파일은 임의로 `git add` 하지 않는다
+- **Never** commit directly to `main`
+- Never use `--no-verify` (hook bypass is forbidden)
+- Use `--amend` only when explicitly requested by the user
+- Never `git add` unstaged files without explicit instruction
