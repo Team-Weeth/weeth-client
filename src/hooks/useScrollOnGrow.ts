@@ -6,8 +6,7 @@ import { useRef, useEffect } from 'react';
  *
  */
 export function useScrollOnGrow(count: number, callback: () => void) {
-  // 초기값 -1로 설정하여 최초 렌더링(0→N) 시에도 callback이 호출되도록 함
-  const prevCount = useRef(-1);
+  const prevCount = useRef(count);
 
   useEffect(() => {
     if (count > prevCount.current) {
