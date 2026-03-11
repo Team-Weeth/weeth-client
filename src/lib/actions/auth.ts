@@ -1,0 +1,40 @@
+'use server';
+
+import { cookies } from 'next/headers';
+import { redirect } from 'next/navigation';
+import { ACCESS_TOKEN_KEY, REFRESH_TOKEN_KEY, COOKIE_OPTIONS } from '@/lib/apis/cookies';
+
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
+
+export async function loginAction(formData: FormData) {
+  const email = formData.get('email') as string;
+  const password = formData.get('password') as string;
+
+  const response = await fetch(`${BASE_URL}/api/v4/users/login`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, password }),
+  });
+
+  if (!response.ok) {
+    const error = await response.json().catch(() => null);
+    return { error: error?.message ?? '로그인에 실패했습니다.' };
+  }
+
+  const json = await response.json();
+  const { accessToken, refreshToken } = json.data;
+
+  const cookieStore = await cookies();
+  cookieStore.set(ACCESS_TOKEN_KEY, accessToken, COOKIE_OPTIONS);
+  cookieStore.set(REFRESH_TOKEN_KEY, refreshToken, COOKIE_OPTIONS);
+
+  redirect('/home');
+}
+
+export async function logoutAction() {
+  const cookieStore = await cookies();
+  cookieStore.delete(ACCESS_TOKEN_KEY);
+  cookieStore.delete(REFRESH_TOKEN_KEY);
+
+  redirect('/login');
+}

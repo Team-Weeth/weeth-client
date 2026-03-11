@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { QueryProvider } from '@/providers';
 import { ThemeProvider } from '@/providers/theme-provider';
 import './globals.css';
 
@@ -25,7 +26,9 @@ export default function RootLayout({
         />
       </head>
       <body className="w-full antialiased">
-        <ThemeProvider>{children}</ThemeProvider>
+        <QueryProvider>
+          <ThemeProvider>{children}</ThemeProvider>
+        </QueryProvider>
       </body>
     </html>
   );
