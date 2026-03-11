@@ -3,7 +3,7 @@
 import React from 'react';
 import Image from 'next/image';
 
-import { AdminBackarrowIcon } from '@/assets/icons';
+import { ArrowLeftIcon } from '@/assets/icons';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -73,23 +73,15 @@ function MemberTopBar({
     <>
       <div
         ref={ref}
-        className={cn(
-          'bg-container-primary flex items-center px-500 py-300',
-          className,
-        )}
+        className={cn('bg-container-primary flex h-15 items-center px-500', className)}
         {...props}
       >
         <button
           type="button"
           onClick={onBack}
-          className="flex shrink-0 items-center justify-center rounded-sm p-200"
+          className="flex shrink-0 cursor-pointer items-center justify-center rounded-sm p-200"
         >
-          <Image
-            src={AdminBackarrowIcon}
-            alt="뒤로"
-            width={24}
-            height={24}
-          />
+          <Image src={ArrowLeftIcon} alt="뒤로" width={6} height={6} className="invert" />
         </button>
 
         <span className="typo-sub1 text-text-inverse ml-200 shrink-0">
@@ -112,38 +104,24 @@ function MemberTopBar({
           <AlertDialog
             title={`${selectedCount}명의 멤버 역할을 관리자로 변경하시겠습니까?`}
             trigger={
-              <Button
-                variant="secondary"
-                size="lg"
-                className="py-200"
-                disabled={!canChangeToAdmin}
-              >
+              <Button variant="secondary" size="lg" className="py-200" disabled={!canChangeToAdmin}>
                 관리자로 변경
               </Button>
             }
           >
-            <AlertDialogAction onClick={onChangeToAdmin}>
-              확인
-            </AlertDialogAction>
+            <AlertDialogAction onClick={onChangeToAdmin}>확인</AlertDialogAction>
             <AlertDialogCancel>취소</AlertDialogCancel>
           </AlertDialog>
 
           <AlertDialog
             title={`${selectedCount}명의 멤버 역할을 사용자로 변경하시겠습니까?`}
             trigger={
-              <Button
-                variant="secondary"
-                size="lg"
-                className="py-200"
-                disabled={!canChangeToUser}
-              >
+              <Button variant="secondary" size="lg" className="py-200" disabled={!canChangeToUser}>
                 사용자로 변경
               </Button>
             }
           >
-            <AlertDialogAction onClick={onChangeToUser}>
-              확인
-            </AlertDialogAction>
+            <AlertDialogAction onClick={onChangeToUser}>확인</AlertDialogAction>
             <AlertDialogCancel>취소</AlertDialogCancel>
           </AlertDialog>
 
@@ -155,9 +133,7 @@ function MemberTopBar({
               </Button>
             }
           >
-            <AlertDialogAction onClick={onResetPassword}>
-              확인
-            </AlertDialogAction>
+            <AlertDialogAction onClick={onResetPassword}>확인</AlertDialogAction>
             <AlertDialogCancel>취소</AlertDialogCancel>
           </AlertDialog>
 
@@ -213,9 +189,7 @@ function MemberTopBar({
             </AlertDialogTitle>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogAction onClick={handleGenConfirm}>
-              확인
-            </AlertDialogAction>
+            <AlertDialogAction onClick={handleGenConfirm}>확인</AlertDialogAction>
             <AlertDialogCancel>취소</AlertDialogCancel>
           </AlertDialogFooter>
         </AlertDialogContent>

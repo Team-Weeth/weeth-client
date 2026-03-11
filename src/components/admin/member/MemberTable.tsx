@@ -3,15 +3,8 @@
 import React from 'react';
 import Image from 'next/image';
 
-import { AdminChangeIcon, AdminColumnMeatballIcon } from '@/assets/icons';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui';
+import { AdminChangeIcon, AdminMeatballIcon } from '@/assets/icons';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui';
 import { cn } from '@/lib/cn';
 
 type MemberStatus = 'approved' | 'pending' | 'banned';
@@ -165,9 +158,7 @@ function MemberTable({
   onSelectionChange,
   ...props
 }: MemberTableProps) {
-  const [internalSelectedIds, setInternalSelectedIds] = React.useState<
-    Set<string>
-  >(new Set());
+  const [internalSelectedIds, setInternalSelectedIds] = React.useState<Set<string>>(new Set());
   const [sortBy, setSortBy] = React.useState<SortBy>('cardinal');
 
   const selectedIds = controlledSelectedIds ?? internalSelectedIds;
@@ -179,9 +170,7 @@ function MemberTable({
   const isIndeterminate = selectedIds.size > 0 && !isAllSelected;
 
   const toggleAll = () => {
-    setSelectedIds(
-      isAllSelected ? new Set() : new Set(MOCK_MEMBERS.map((m) => m.id)),
-    );
+    setSelectedIds(isAllSelected ? new Set() : new Set(MOCK_MEMBERS.map((m) => m.id)));
   };
 
   const toggleOne = (id: string) => {
@@ -203,10 +192,7 @@ function MemberTable({
       <div className="flex items-center">
         <div className="flex items-center gap-400">
           {STATUS_LEGEND.map(({ label, color }) => (
-            <span
-              key={label}
-              className="typo-caption2 text-text-strong flex items-center gap-200"
-            >
+            <span key={label} className="typo-caption2 text-text-strong flex items-center gap-200">
               <span className={cn('size-1', color)} />
               {label}
             </span>
@@ -238,10 +224,7 @@ function MemberTable({
               />
             </TableHead>
             {COLUMNS.map((col) => (
-              <TableHead
-                key={col}
-                className="typo-body1 text-text-strong"
-              >
+              <TableHead key={col} className="typo-body1 text-text-strong">
                 {col}
               </TableHead>
             ))}
@@ -250,13 +233,8 @@ function MemberTable({
         </TableHeader>
         <TableBody>
           {sortedMembers.map((member) => (
-            <TableRow
-              key={member.id}
-              className="hover:bg-container-neutral-interaction border-0"
-            >
-              <TableCell
-                className={cn('w-1 p-0', STATUS_BAR_COLOR[member.status])}
-              />
+            <TableRow key={member.id} className="hover:bg-container-neutral-interaction border-0">
+              <TableCell className={cn('w-1 p-0', STATUS_BAR_COLOR[member.status])} />
               <TableCell className="w-12">
                 <input
                   type="checkbox"
@@ -265,50 +243,20 @@ function MemberTable({
                   onChange={() => toggleOne(member.id)}
                 />
               </TableCell>
-              <TableCell className="typo-body1 text-text-strong">
-                {member.name}
-              </TableCell>
-              <TableCell className="typo-body1 text-text-strong">
-                {member.role}
-              </TableCell>
-              <TableCell className="typo-body1 text-text-strong">
-                {member.department}
-              </TableCell>
-              <TableCell className="typo-body1 text-text-strong">
-                {member.cardinal}
-              </TableCell>
-              <TableCell className="typo-body1 text-text-strong">
-                {member.phone}
-              </TableCell>
-              <TableCell className="typo-body1 text-text-strong">
-                {member.studentId}
-              </TableCell>
-              <TableCell className="typo-body1 text-text-strong">
-                {member.position}
-              </TableCell>
-              <TableCell className="typo-body1 text-text-strong">
-                {member.attendance}
-              </TableCell>
-              <TableCell className="typo-body1 text-text-strong">
-                {member.absence}
-              </TableCell>
-              <TableCell className="typo-body1 text-text-strong">
-                {member.penalty}
-              </TableCell>
-              <TableCell className="typo-body1 text-text-strong">
-                {member.warning}
-              </TableCell>
+              <TableCell className="typo-body1 text-text-strong">{member.name}</TableCell>
+              <TableCell className="typo-body1 text-text-strong">{member.role}</TableCell>
+              <TableCell className="typo-body1 text-text-strong">{member.department}</TableCell>
+              <TableCell className="typo-body1 text-text-strong">{member.cardinal}</TableCell>
+              <TableCell className="typo-body1 text-text-strong">{member.phone}</TableCell>
+              <TableCell className="typo-body1 text-text-strong">{member.studentId}</TableCell>
+              <TableCell className="typo-body1 text-text-strong">{member.position}</TableCell>
+              <TableCell className="typo-body1 text-text-strong">{member.attendance}</TableCell>
+              <TableCell className="typo-body1 text-text-strong">{member.absence}</TableCell>
+              <TableCell className="typo-body1 text-text-strong">{member.penalty}</TableCell>
+              <TableCell className="typo-body1 text-text-strong">{member.warning}</TableCell>
               <TableCell className="w-10">
-                <button
-                  type="button"
-                  className="flex items-center justify-center"
-                >
-                  <Image
-                    src={AdminColumnMeatballIcon}
-                    alt="더보기"
-                    width={20}
-                    height={20}
-                  />
+                <button type="button" className="flex items-center justify-center">
+                  <Image src={AdminMeatballIcon} alt="더보기" width={20} height={20} />
                 </button>
               </TableCell>
             </TableRow>

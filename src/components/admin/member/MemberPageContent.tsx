@@ -31,6 +31,7 @@ function MemberPageContent() {
     <div className="flex flex-col">
       {/* Selection top bar */}
       <MemberTopBar
+        className="sticky top-0 z-10 -mt-15"
         selectedCount={selectedCount}
         canChangeToAdmin={allUsers}
         canChangeToUser={allAdmins}

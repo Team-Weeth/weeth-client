@@ -9,6 +9,7 @@ export { default as AdminUncheckboxIcon } from './admin/ic_admin_uncheckbox.svg'
 export { default as AdminCardinalIcon } from './admin/ic_admin_cardinal.svg';
 export { default as AdminUserIcon } from './admin/ic_admin_user.svg';
 export { default as ArrowRightIcon } from './arrow_right.svg';
+export { default as ArrowLeftIcon } from './arrow_left.svg';
 export { default as AvatarIcon } from './avatar.svg';
 export { default as CheckRoundIcon } from './check_round.svg';
 export { default as CloseCircleIcon } from './close_circle.svg';
