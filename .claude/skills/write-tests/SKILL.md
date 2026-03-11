@@ -101,6 +101,66 @@ it('ref가 DOM 요소에 연결된다', () => {
 });
 ```
 
+#### 훅 테스트 — renderHook + act
+
+훅 파일(`.ts`)이 대상일 때는 `render` 대신 `renderHook` + `act`를 사용한다.
+
+```tsx
+import { renderHook, act } from '@testing-library/react';
+import { useCounter } from '@/hooks/useCounter';
+
+// ✅ 기본 사용 — 초기값 확인
+it('초기 count는 0이다', () => {
+  const { result } = renderHook(() => useCounter());
+  expect(result.current.count).toBe(0);
+});
+
+// ✅ 상태 변경 — act()로 감싸기
+it('increment 호출 시 count가 1 증가한다', () => {
+  const { result } = renderHook(() => useCounter());
+  act(() => {
+    result.current.increment();
+  });
+  expect(result.current.count).toBe(1);
+});
+
+// ✅ 비동기 상태 변경 — await act()
+it('비동기 fetch 후 data가 채워진다', async () => {
+  const { result } = renderHook(() => useFetchData());
+  await act(async () => {
+    await result.current.load();
+  });
+  expect(result.current.data).not.toBeNull();
+});
+
+// ✅ props 변경 — rerender
+it('initialValue prop이 변경되면 count가 리셋된다', () => {
+  const { result, rerender } = renderHook(
+    ({ initialValue }) => useCounter(initialValue),
+    { initialProps: { initialValue: 0 } },
+  );
+  rerender({ initialValue: 10 });
+  expect(result.current.count).toBe(10);
+});
+
+// ✅ userEvent가 필요한 훅 (DOM과 연동)
+it('input 이벤트에 반응한다', async () => {
+  const user = userEvent.setup();
+  const { result } = renderHook(() => useSearch());
+
+  const input = document.createElement('input');
+  document.body.appendChild(input);
+
+  await user.type(input, 'hello');
+  // result.current 상태 검증 ...
+});
+```
+
+> **규칙**
+> - 상태·사이드이펙트를 유발하는 모든 훅 호출은 `act()` 안에서 실행
+> - 비동기 훅은 `await act(async () => { ... })`
+> - 외부 의존성(API, 타이머)은 `jest.mock` / `jest.useFakeTimers`로 격리
+
 ### 4. 기존 테스트 처리
 
 테스트 파일이 이미 존재하면:

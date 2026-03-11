@@ -1,11 +1,3 @@
----
-name: commit
-description: "스테이징된 변경사항을 분석해 Conventional Commits 형식의 커밋 메시지를 작성하고 커밋한다."
-argument-hint: "[커밋 메시지 힌트 (선택)]"
-disable-model-invocation: true
-allowed-tools: Bash(git *)
----
-
 # Commit
 
 스테이징된 변경사항을 분석하고 프로젝트 컨벤션에 맞는 커밋 메시지를 작성해 커밋한다.
