@@ -50,6 +50,7 @@ const MOCK_CONTENT = `8줄 이상일 때는 이렇게 표시돼요.
 끝나고 생각해보니까
 상대를 이기겠다는 생각보다 "맞지 말아야지"라는 생각이 더 컸던 것 같아요\u2026.`;
 
+// TODO: API 연결 시 Post 타입을 types/board.ts로 분리
 const MOCK_POSTS = [
   {
     id: '0',
