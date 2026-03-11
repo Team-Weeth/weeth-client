@@ -1,6 +1,6 @@
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
-import { ACCESS_TOKEN_KEY } from './cookies';
+import { ACCESS_TOKEN_KEY, REFRESH_TOKEN_KEY, COOKIE_OPTIONS } from './cookies';
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -42,7 +42,33 @@ async function request<T>(
   });
 
   if (response.status === 401) {
-    redirect('/login');
+    const refreshToken = cookieStore.get(REFRESH_TOKEN_KEY)?.value;
+
+    if (!refreshToken) {
+      redirect('/login');
+    }
+
+    const refreshResponse = await fetch(`${BASE_URL}/api/v4/users/refresh`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization_refresh: `Bearer ${refreshToken}`,
+      },
+    });
+
+    if (!refreshResponse.ok) {
+      cookieStore.delete(ACCESS_TOKEN_KEY);
+      cookieStore.delete(REFRESH_TOKEN_KEY);
+      redirect('/login');
+    }
+
+    const refreshJson = await refreshResponse.json();
+    const { accessToken: newAccessToken, refreshToken: newRefreshToken } = refreshJson.data;
+
+    cookieStore.set(ACCESS_TOKEN_KEY, newAccessToken, COOKIE_OPTIONS);
+    cookieStore.set(REFRESH_TOKEN_KEY, newRefreshToken, COOKIE_OPTIONS);
+
+    return request<T>(method, path, body, options);
   }
 
   if (!response.ok) {

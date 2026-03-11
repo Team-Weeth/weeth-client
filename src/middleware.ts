@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { ACCESS_TOKEN_KEY } from '@/lib/apis/cookies';
 
-const PUBLIC_PATHS = ['/', '/login', '/signup', '/attendance'];
+const PUBLIC_PATHS = ['/', '/login', '/signup', '/home'];
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
