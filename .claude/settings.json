@@ -1,0 +1,58 @@
+{
+  "mcpServers": {
+    "weeth-api": {
+      "command": "npx",
+      "args": ["-y", "@ivotoby/openapi-mcp-server"],
+      "env": {
+        "API_BASE_URL": "https://13.124.170.169.nip.io",
+        "OPENAPI_SPEC_PATH": "https://13.124.170.169.nip.io/v3/api-docs"
+      }
+    }
+  },
+  "permissions": {
+    "allow": [
+      "Bash(pnpm *)",
+      "Bash(git diff*)",
+      "Bash(git log*)",
+      "Bash(git status*)",
+      "Read(**)",
+      "Glob(**)",
+      "Grep(**)",
+      "Edit(**)",
+      "Write(**)"
+    ]
+  },
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/skill-suggest.sh\""
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash -lc 'set -o pipefail; cd \"$CLAUDE_PROJECT_DIR\" && pnpm lint:fix --quiet 2>&1 | tail -5'"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cd \"$CLAUDE_PROJECT_DIR\" && echo '⚡ TypeScript 검사 중...' && pnpm typecheck 2>&1 && echo '✅ 타입 에러 없음' || echo '❌ 타입 에러 발견 — 위 오류를 확인하세요'"
+          }
+        ]
+      }
+    ]
+  }
+}
