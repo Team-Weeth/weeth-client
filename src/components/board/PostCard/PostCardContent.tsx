@@ -1,6 +1,8 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import Image from 'next/image';
+import { NewIcon } from '@/assets/icons';
 import { cn } from '@/lib/cn';
 
 interface PostCardContentProps {
@@ -20,10 +22,7 @@ function PostCardContent({ className, title, content, isNew }: PostCardContentPr
     if (!el || isExpanded) return;
 
     const check = () => {
-      el.style.webkitLineClamp = 'unset';
-      const fullHeight = el.scrollHeight;
-      el.style.webkitLineClamp = '';
-      setIsClamped(fullHeight > el.clientHeight);
+      setIsClamped(el.scrollHeight > el.clientHeight);
     };
 
     check();
@@ -39,9 +38,7 @@ function PostCardContent({ className, title, content, isNew }: PostCardContentPr
         <h3 className="typo-sub2 text-text-strong">{title}</h3>
         {isNew && (
           <>
-            <span className="typo-caption1 text-state-error" aria-hidden>
-              N
-            </span>
+            <Image src={NewIcon} alt="" width={7} height={9} aria-hidden />
             <span className="sr-only">새 글</span>
           </>
         )}
