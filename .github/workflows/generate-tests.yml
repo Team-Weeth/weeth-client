@@ -1,0 +1,214 @@
+name: Generate Test Suggestions
+
+on:
+  pull_request:
+    branches: [main, develop]
+    types: [opened, synchronize]
+
+jobs:
+  generate-tests:
+    name: Claude 테스트 제안
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: latest
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: 변경된 컴포넌트 파일 감지
+        id: changed
+        run: |
+          BASE="${{ github.event.pull_request.base.sha }}"
+          HEAD="${{ github.event.pull_request.head.sha }}"
+
+          CHANGED=$(git diff --name-only "$BASE" "$HEAD" \
+            | grep -E '^src/.*\.(ts|tsx)$' \
+            | grep -v '__tests__' \
+            | grep -v '\.test\.' \
+            | grep -v '\.spec\.' \
+            | grep -v '/index\.ts$' \
+            | grep -v '\.d\.ts$' \
+            | head -5)
+
+          echo "files<<EOF" >> $GITHUB_OUTPUT
+          echo "$CHANGED" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+          if [ -z "$CHANGED" ]; then
+            echo "has_files=false" >> $GITHUB_OUTPUT
+            echo "변경된 컴포넌트 파일 없음"
+          else
+            echo "has_files=true" >> $GITHUB_OUTPUT
+            echo "변경된 파일:"
+            echo "$CHANGED"
+          fi
+
+      - name: Claude API로 테스트 제안 생성
+        id: generate
+        if: steps.changed.outputs.has_files == 'true'
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const path = require('path');
+            const https = require('https');
+
+            const files = `${{ steps.changed.outputs.files }}`
+              .trim()
+              .split('\n')
+              .filter(Boolean);
+
+            if (files.length === 0) return;
+
+            const MODEL = 'claude-sonnet-4-6';
+            const API_KEY = process.env.ANTHROPIC_API_KEY;
+
+            const systemPrompt = `You are an expert React and TypeScript test engineer.
+            Generate Jest + React Testing Library test files for Next.js 16 App Router components.
+            Rules:
+            - React 19, TypeScript strict
+            - Use @testing-library/react and @testing-library/user-event
+            - Use userEvent.setup() pattern, not direct userEvent calls
+            - Query by role/label/text — NOT test IDs or CSS classes
+            - DO NOT assert on Tailwind class names
+            - next/image and next/navigation are already mocked in jest.setup.ts — do not re-mock
+            - Write behavior tests, not implementation tests
+            - Include: smoke test, variant tests, interaction tests, a11y checks
+            - Output ONLY the test file content — no markdown, no explanation, no code fences`;
+
+            function callClaude(source, filePath) {
+              return new Promise((resolve, reject) => {
+                const body = JSON.stringify({
+                  model: MODEL,
+                  max_tokens: 2048,
+                  system: systemPrompt,
+                  messages: [{
+                    role: 'user',
+                    content: `Generate a Jest + RTL test file for this component.\n\nFile: ${filePath}\n\`\`\`tsx\n${source}\n\`\`\`\n\nReturn only the test file TypeScript content. No markdown.`
+                  }]
+                });
+
+                const options = {
+                  hostname: 'api.anthropic.com',
+                  path: '/v1/messages',
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json',
+                    'x-api-key': API_KEY,
+                    'anthropic-version': '2023-06-01',
+                    'Content-Length': Buffer.byteLength(body),
+                  }
+                };
+
+                const req = https.request(options, (res) => {
+                  let data = '';
+                  res.on('data', (chunk) => data += chunk);
+                  res.on('end', () => {
+                    try {
+                      const parsed = JSON.parse(data);
+                      if (parsed.error) reject(new Error(parsed.error.message));
+                      else resolve({ content: parsed.content[0].text, usage: parsed.usage });
+                    } catch (e) { reject(e); }
+                  });
+                });
+
+                req.on('error', reject);
+                req.write(body);
+                req.end();
+              });
+            }
+
+            const sections = [];
+            let totalIn = 0, totalOut = 0;
+
+            for (const filePath of files) {
+              console.log(`처리 중: ${filePath}`);
+              try {
+                const source = fs.readFileSync(filePath, 'utf-8');
+                if (source.trim().split('\n').length < 5) {
+                  console.log(`건너뜀 (너무 짧음): ${filePath}`);
+                  continue;
+                }
+
+                const result = await callClaude(source, filePath);
+                totalIn += result.usage.input_tokens;
+                totalOut += result.usage.output_tokens;
+
+                const dir = path.dirname(filePath);
+                const base = path.basename(filePath);
+                const ext = path.extname(base);
+                const stem = path.basename(base, ext);
+                const testExt = ext === '.tsx' ? '.test.tsx' : '.test.ts';
+                const outputPath = path.join(dir, '__tests__', stem + testExt);
+
+                const cleaned = result.content
+                  .replace(/^```(?:tsx?|typescript)?\n?/m, '')
+                  .replace(/\n?```\s*$/m, '')
+                  .trim();
+
+                sections.push({ source: filePath, output: outputPath, code: cleaned });
+              } catch (err) {
+                console.error(`오류 (${filePath}): ${err.message}`);
+                sections.push({ source: filePath, output: null, error: err.message });
+              }
+            }
+
+            const lines = [
+              '## 🤖 Claude 테스트 제안',
+              '',
+              `> **모델:** \`${MODEL}\` | **토큰:** ${totalIn} 입력 / ${totalOut} 출력`,
+              '',
+              '변경된 컴포넌트에 대해 Claude가 생성한 테스트 코드입니다. 검토 후 적합한 부분만 사용하세요.',
+              '',
+            ];
+
+            for (const s of sections) {
+              lines.push(`### \`${s.source}\``);
+              if (s.output) lines.push(`> 저장 위치: \`${s.output}\``);
+              lines.push('');
+              if (s.error) {
+                lines.push(`**오류:** ${s.error}`);
+              } else {
+                lines.push('```tsx');
+                lines.push(s.code);
+                lines.push('```');
+              }
+              lines.push('');
+              lines.push('---');
+              lines.push('');
+            }
+
+            lines.push('*이 코멘트는 Claude API를 통해 자동 생성되었습니다. 반드시 검토 후 사용하세요.*');
+
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: lines.join('\n'),
+            });
+
+            console.log(`${sections.length}개 파일 처리 완료. 토큰: ${totalIn}/${totalOut}`);
+
+      - name: 변경 파일 없음
+        if: steps.changed.outputs.has_files == 'false'
+        run: echo "이 PR에 분석할 컴포넌트 파일이 없습니다."
