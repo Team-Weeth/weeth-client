@@ -8,12 +8,15 @@ export {
   generationCardVariants,
   type GenerationCardProps,
 } from './member/GenerationCard';
+export { MemberPageContent } from './member/MemberPageContent';
 export {
   MemberSearchBar,
   type MemberSearchBarProps,
 } from './member/MemberSearchBar';
 export {
   MemberTable,
+  MOCK_MEMBERS,
   type Member,
   type MemberStatus,
 } from './member/MemberTable';
+export { MemberTopBar, type MemberTopBarProps } from './member/MemberTopBar';

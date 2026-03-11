@@ -2,9 +2,17 @@
 
 import React from 'react';
 import Image from 'next/image';
-import { cn } from '@/lib/cn';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui';
+
 import { AdminChangeIcon, AdminColumnMeatballIcon } from '@/assets/icons';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui';
+import { cn } from '@/lib/cn';
 
 type MemberStatus = 'approved' | 'pending' | 'banned';
 
@@ -17,7 +25,10 @@ interface Member {
   phone: string;
   studentId: string;
   position: string;
-
+  attendance: number;
+  absence: number;
+  penalty: number;
+  warning: number;
   status: MemberStatus;
 }
 
@@ -31,7 +42,10 @@ const MOCK_MEMBERS: Member[] = [
     phone: '01000009999',
     studentId: '202036123',
     position: '사용자',
-
+    attendance: 12,
+    absence: 12,
+    penalty: 12,
+    warning: 0,
     status: 'approved',
   },
   {
@@ -43,7 +57,10 @@ const MOCK_MEMBERS: Member[] = [
     phone: '01000009999',
     studentId: '202036123',
     position: '사용자',
-
+    attendance: 12,
+    absence: 12,
+    penalty: 12,
+    warning: 0,
     status: 'pending',
   },
   {
@@ -55,7 +72,10 @@ const MOCK_MEMBERS: Member[] = [
     phone: '01000009999',
     studentId: '202036123',
     position: '관리자',
-
+    attendance: 12,
+    absence: 12,
+    penalty: 12,
+    warning: 0,
     status: 'banned',
   },
   {
@@ -67,7 +87,10 @@ const MOCK_MEMBERS: Member[] = [
     phone: '01011112222',
     studentId: '202112345',
     position: '사용자',
-
+    attendance: 12,
+    absence: 12,
+    penalty: 12,
+    warning: 0,
     status: 'approved',
   },
   {
@@ -79,6 +102,10 @@ const MOCK_MEMBERS: Member[] = [
     phone: '01033334444',
     studentId: '202298765',
     position: '사용자',
+    attendance: 12,
+    absence: 12,
+    penalty: 12,
+    warning: 0,
     status: 'pending',
   },
 ];
@@ -89,7 +116,19 @@ const STATUS_BAR_COLOR: Record<MemberStatus, string> = {
   banned: 'bg-state-error',
 };
 
-const COLUMNS = ['이름', '역할', '학과', '기수', '전화번호', '학번', '직급'];
+const COLUMNS = [
+  '이름',
+  '역할',
+  '학과',
+  '기수',
+  '전화번호',
+  '학번',
+  '직급',
+  '출석',
+  '결석',
+  '패널티',
+  '경고',
+];
 
 type SortBy = 'cardinal' | 'name';
 
@@ -100,7 +139,7 @@ const STATUS_LEGEND = [
 ] as const;
 
 const SORT_LABEL: Record<SortBy, string> = {
-  cardinal: '기수순',
+  cardinal: '기수 순',
   name: '이름순',
 };
 
@@ -115,9 +154,24 @@ function sortMembers(members: Member[], sortBy: SortBy): Member[] {
   });
 }
 
-function MemberTable() {
-  const [selectedIds, setSelectedIds] = React.useState<Set<string>>(new Set());
+interface MemberTableProps extends React.HTMLAttributes<HTMLDivElement> {
+  selectedIds?: Set<string>;
+  onSelectionChange?: (ids: Set<string>) => void;
+}
+
+function MemberTable({
+  className,
+  selectedIds: controlledSelectedIds,
+  onSelectionChange,
+  ...props
+}: MemberTableProps) {
+  const [internalSelectedIds, setInternalSelectedIds] = React.useState<
+    Set<string>
+  >(new Set());
   const [sortBy, setSortBy] = React.useState<SortBy>('cardinal');
+
+  const selectedIds = controlledSelectedIds ?? internalSelectedIds;
+  const setSelectedIds = onSelectionChange ?? setInternalSelectedIds;
 
   const sortedMembers = sortMembers(MOCK_MEMBERS, sortBy);
 
@@ -125,19 +179,19 @@ function MemberTable() {
   const isIndeterminate = selectedIds.size > 0 && !isAllSelected;
 
   const toggleAll = () => {
-    setSelectedIds(isAllSelected ? new Set() : new Set(MOCK_MEMBERS.map((m) => m.id)));
+    setSelectedIds(
+      isAllSelected ? new Set() : new Set(MOCK_MEMBERS.map((m) => m.id)),
+    );
   };
 
   const toggleOne = (id: string) => {
-    setSelectedIds((prev) => {
-      const next = new Set(prev);
-      if (next.has(id)) {
-        next.delete(id);
-      } else {
-        next.add(id);
-      }
-      return next;
-    });
+    const next = new Set(selectedIds);
+    if (next.has(id)) {
+      next.delete(id);
+    } else {
+      next.add(id);
+    }
+    setSelectedIds(next);
   };
 
   const toggleSort = () => {
@@ -145,11 +199,14 @@ function MemberTable() {
   };
 
   return (
-    <div className="flex flex-col gap-400">
+    <div className={cn('flex flex-col gap-600', className)} {...props}>
       <div className="flex items-center">
         <div className="flex items-center gap-400">
           {STATUS_LEGEND.map(({ label, color }) => (
-            <span key={label} className="typo-caption1 text-text-normal flex items-center gap-200">
+            <span
+              key={label}
+              className="typo-caption2 text-text-strong flex items-center gap-200"
+            >
               <span className={cn('size-1', color)} />
               {label}
             </span>
@@ -158,17 +215,18 @@ function MemberTable() {
         <button
           type="button"
           onClick={toggleSort}
-          className="bg-button-neutral typo-button2 text-text-strong ml-300 flex cursor-pointer items-center gap-200 rounded-md px-300 py-200"
+          className="bg-button-neutral typo-button2 text-text-strong ml-300 flex cursor-pointer items-center gap-200 rounded px-200 py-100"
         >
           {SORT_LABEL[sortBy]}
           <Image src={AdminChangeIcon} alt="정렬" width={20} height={20} />
         </button>
       </div>
+
       <Table>
         <TableHeader>
           <TableRow className="border-0 hover:bg-transparent">
             <TableHead className="w-1 p-0" />
-            <TableHead className="w-10">
+            <TableHead className="w-12">
               <input
                 type="checkbox"
                 className="cursor-pointer"
@@ -180,7 +238,10 @@ function MemberTable() {
               />
             </TableHead>
             {COLUMNS.map((col) => (
-              <TableHead key={col} className="typo-caption1 text-text-alternative">
+              <TableHead
+                key={col}
+                className="typo-body1 text-text-strong"
+              >
                 {col}
               </TableHead>
             ))}
@@ -189,9 +250,14 @@ function MemberTable() {
         </TableHeader>
         <TableBody>
           {sortedMembers.map((member) => (
-            <TableRow key={member.id} className="hover:bg-container-neutral-interaction border-0">
-              <TableCell className={cn('w-1 p-0', STATUS_BAR_COLOR[member.status])} />
-              <TableCell className="w-10">
+            <TableRow
+              key={member.id}
+              className="hover:bg-container-neutral-interaction border-0"
+            >
+              <TableCell
+                className={cn('w-1 p-0', STATUS_BAR_COLOR[member.status])}
+              />
+              <TableCell className="w-12">
                 <input
                   type="checkbox"
                   className="cursor-pointer"
@@ -199,16 +265,50 @@ function MemberTable() {
                   onChange={() => toggleOne(member.id)}
                 />
               </TableCell>
-              <TableCell className="typo-body2 text-text-normal">{member.name}</TableCell>
-              <TableCell className="typo-body2 text-text-normal">{member.role}</TableCell>
-              <TableCell className="typo-body2 text-text-normal">{member.department}</TableCell>
-              <TableCell className="typo-body2 text-text-normal">{member.cardinal}</TableCell>
-              <TableCell className="typo-body2 text-text-normal">{member.phone}</TableCell>
-              <TableCell className="typo-body2 text-text-normal">{member.studentId}</TableCell>
-              <TableCell className="typo-body2 text-text-normal">{member.position}</TableCell>
+              <TableCell className="typo-body1 text-text-strong">
+                {member.name}
+              </TableCell>
+              <TableCell className="typo-body1 text-text-strong">
+                {member.role}
+              </TableCell>
+              <TableCell className="typo-body1 text-text-strong">
+                {member.department}
+              </TableCell>
+              <TableCell className="typo-body1 text-text-strong">
+                {member.cardinal}
+              </TableCell>
+              <TableCell className="typo-body1 text-text-strong">
+                {member.phone}
+              </TableCell>
+              <TableCell className="typo-body1 text-text-strong">
+                {member.studentId}
+              </TableCell>
+              <TableCell className="typo-body1 text-text-strong">
+                {member.position}
+              </TableCell>
+              <TableCell className="typo-body1 text-text-strong">
+                {member.attendance}
+              </TableCell>
+              <TableCell className="typo-body1 text-text-strong">
+                {member.absence}
+              </TableCell>
+              <TableCell className="typo-body1 text-text-strong">
+                {member.penalty}
+              </TableCell>
+              <TableCell className="typo-body1 text-text-strong">
+                {member.warning}
+              </TableCell>
               <TableCell className="w-10">
-                <button type="button" className="flex items-center justify-center">
-                  <Image src={AdminColumnMeatballIcon} alt="더보기" width={20} height={20} />
+                <button
+                  type="button"
+                  className="flex items-center justify-center"
+                >
+                  <Image
+                    src={AdminColumnMeatballIcon}
+                    alt="더보기"
+                    width={20}
+                    height={20}
+                  />
                 </button>
               </TableCell>
             </TableRow>
@@ -219,4 +319,4 @@ function MemberTable() {
   );
 }
 
-export { MemberTable, type Member, type MemberStatus };
+export { MemberTable, MOCK_MEMBERS, type Member, type MemberStatus };

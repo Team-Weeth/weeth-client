@@ -1,3 +1,4 @@
+export { default as AdminBackarrowIcon } from './admin/ic_admin_backarrow.svg';
 export { default as AdminSearchIcon } from './admin/ic_admin_search.svg';
 export { default as AdminPlusIcon } from './admin/ic_admin_plus.svg';
 export { default as AdminMeatballIcon } from './admin/ic_admin_meatball.svg';
