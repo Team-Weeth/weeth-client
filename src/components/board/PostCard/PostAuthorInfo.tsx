@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import type { StaticImageData } from 'next/image';
 import { PaperclipIcon } from '@/assets/icons';
-import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui';
+import { Avatar, AvatarImage, AvatarFallback, Divider } from '@/components/ui';
 import { cn } from '@/lib/cn';
 
 interface PostAuthorInfoProps {
@@ -23,11 +23,15 @@ function PostAuthorInfo({ className, author, date, dateTime, hasAttachment }: Po
         <AvatarFallback>{author.name.charAt(0)}</AvatarFallback>
       </Avatar>
       <span className="typo-caption1 text-text-normal">{author.name}</span>
+      <Divider orientation="vertical" className="h-3" />
       <time className="typo-caption2 text-text-alternative text-right" dateTime={dateTime}>
         {date}
       </time>
       {hasAttachment && (
-        <Image src={PaperclipIcon as StaticImageData} alt="첨부파일 있음" width={8} height={9} />
+        <>
+          <Divider orientation="vertical" className="h-3" />
+          <Image src={PaperclipIcon as StaticImageData} alt="첨부파일 있음" width={8} height={9} />
+        </>
       )}
     </div>
   );
