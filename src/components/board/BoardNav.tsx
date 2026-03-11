@@ -4,7 +4,14 @@ import Image from 'next/image';
 import type { StaticImageData } from 'next/image';
 import { cn } from '@/lib/cn';
 import { Divider } from '@/components/ui';
-import { MegaphoneIcon, PinIcon } from '@/assets/icons';
+import {
+  MegaphoneDarkActiveIcon,
+  MegaphoneDarkIcon,
+  MegaphoneWhiteActiveIcon,
+  MegaphoneWhiteIcon,
+  PinIcon,
+} from '@/assets/icons';
+import { useThemeStore } from '@/stores/theme-store';
 
 interface BoardNavItem {
   id: string;
@@ -19,6 +26,7 @@ interface BoardNavProps extends React.ComponentProps<'nav'> {
 }
 
 function BoardNav({ className, items, activeId, onItemSelect, ...props }: BoardNavProps) {
+  const isDark = useThemeStore((state) => state.isDark);
   return (
     <nav
       className={cn(
@@ -54,7 +62,15 @@ function BoardNav({ className, items, activeId, onItemSelect, ...props }: BoardN
               >
                 {item.type === 'notice' ? (
                   <Image
-                    src={MegaphoneIcon as StaticImageData}
+                    src={
+                      (isDark
+                        ? isActive
+                          ? MegaphoneDarkActiveIcon
+                          : MegaphoneWhiteIcon
+                        : isActive
+                          ? MegaphoneWhiteActiveIcon
+                          : MegaphoneDarkIcon) as StaticImageData
+                    }
                     alt=""
                     width={24}
                     height={24}
