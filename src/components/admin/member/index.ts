@@ -1,19 +1,18 @@
-// admin components index file
 export {
   AddGenerationButton,
   type AddGenerationButtonProps,
-} from './member/AddGenerationButton';
+} from './AddGenerationButton';
 export {
   GenerationCard,
   generationCardVariants,
   type GenerationCardProps,
-} from './member/GenerationCard';
+} from './GenerationCard';
 export {
   MemberSearchBar,
   type MemberSearchBarProps,
-} from './member/MemberSearchBar';
+} from './MemberSearchBar';
 export {
   MemberTable,
   type Member,
   type MemberStatus,
-} from './member/MemberTable';
+} from './MemberTable';
