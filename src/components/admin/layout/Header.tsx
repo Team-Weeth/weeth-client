@@ -29,7 +29,7 @@ export function Header() {
   const metadata = Object.entries(PAGE_METADATA).find(([path]) => pathname.startsWith(path))?.[1];
 
   return (
-    <header className="border-line bg-container-neutral flex h-15 w-full shrink-0 items-center gap-300 border-b px-500">
+    <header className="border-line bg-background flex h-15 w-full shrink-0 items-center gap-300 border-b px-500">
       {metadata && (
         <>
           <div className="border-line h-5 w-px shrink-0" />
