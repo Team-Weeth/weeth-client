@@ -488,6 +488,14 @@ select:focus {
   letter-spacing: var(--letter-spacing);
 }
 
+.scrollbar-none {
+  scrollbar-width: none;
+}
+
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+
 .scrollbar-custom {
   scrollbar-width: thin;
   scrollbar-color: var(--neutral-500) transparent;

@@ -12,18 +12,14 @@ import {
 import { MOCK_MEMBERS } from '@/components/admin/member/MemberTable';
 
 function MemberPageContent() {
-  const [selectedIds, setSelectedIds] = React.useState<Set<string>>(
-    new Set(),
-  );
+  const [selectedIds, setSelectedIds] = React.useState<Set<string>>(new Set());
   const [searchValue, setSearchValue] = React.useState('');
 
   const selectedMembers = MOCK_MEMBERS.filter((m) => selectedIds.has(m.id));
   const selectedCount = selectedMembers.length;
 
-  const allUsers =
-    selectedCount > 0 && selectedMembers.every((m) => m.position === '사용자');
-  const allAdmins =
-    selectedCount > 0 && selectedMembers.every((m) => m.position === '관리자');
+  const allUsers = selectedCount > 0 && selectedMembers.every((m) => m.position === '사용자');
+  const allAdmins = selectedCount > 0 && selectedMembers.every((m) => m.position === '관리자');
 
   const handleClearSelection = () => setSelectedIds(new Set());
 
@@ -42,27 +38,30 @@ function MemberPageContent() {
       <div className="flex flex-col gap-400 p-700">
         {/* Search bar */}
         <div className="bg-container-neutral flex items-center rounded-lg px-600 py-400 shadow-[0px_1px_5px_0px_rgba(17,33,49,0.15)]">
-          <MemberSearchBar
-            isWrapped={false}
-            value={searchValue}
-            onValueChange={setSearchValue}
-          />
+          <MemberSearchBar isWrapped={false} value={searchValue} onValueChange={setSearchValue} />
         </div>
 
         {/* Generation cards */}
-        <div className="flex gap-400 overflow-x-auto">
+        <div
+          className="scrollbar-none flex cursor-grab gap-400 overflow-x-auto select-none active:cursor-grabbing"
+          onMouseDown={(e) => {
+            const el = e.currentTarget;
+            const startX = e.pageX - el.offsetLeft;
+            const scrollLeft = el.scrollLeft;
+            const onMouseMove = (ev: MouseEvent) => {
+              el.scrollLeft = scrollLeft - (ev.pageX - el.offsetLeft - startX);
+            };
+            const onMouseUp = () => {
+              window.removeEventListener('mousemove', onMouseMove);
+              window.removeEventListener('mouseup', onMouseUp);
+            };
+            window.addEventListener('mousemove', onMouseMove);
+            window.addEventListener('mouseup', onMouseUp);
+          }}
+        >
           <AddGenerationButton />
-          <GenerationCard
-            variant="active"
-            title="전체"
-            description="총 100명"
-          />
-          <GenerationCard
-            variant="empty"
-            title="5기"
-            subtitle="정보를 입력해주세요"
-            description="노정완 외 25명"
-          />
+          <GenerationCard variant="active" title="전체" description="총 100명" />
+
           <GenerationCard
             variant="normal"
             title="4기"
@@ -90,11 +89,8 @@ function MemberPageContent() {
         </div>
 
         {/* Member table */}
-        <div className="bg-container-neutral rounded-lg px-600 pb-[64px] pt-600 shadow-[0px_1px_5px_0px_rgba(17,33,49,0.15)]">
-          <MemberTable
-            selectedIds={selectedIds}
-            onSelectionChange={setSelectedIds}
-          />
+        <div className="bg-container-neutral rounded-lg px-600 pt-600 pb-[64px] shadow-[0px_1px_5px_0px_rgba(17,33,49,0.15)]">
+          <MemberTable selectedIds={selectedIds} onSelectionChange={setSelectedIds} />
         </div>
       </div>
     </div>
