@@ -625,3 +625,17 @@ select:focus {
     @apply bg-background text-foreground;
   }
 }
+
+@layer utilities {
+  .scrollbar-none {
+    /* IE and Edge */
+    -ms-overflow-style: none;
+    /* Firefox */
+    scrollbar-width: none;
+  }
+
+  /* Chrome, Safari and Opera */
+  .scrollbar-none::-webkit-scrollbar {
+    display: none;
+  }
+}

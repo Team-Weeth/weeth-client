@@ -22,7 +22,7 @@ const mainNavItems = [
 ];
 
 const moveNavItems = [
-  { id: 'service', icon: arrowIcon, label: 'WEETH로 이동', path: 'https://weeth.kr' },
+  { id: 'service', icon: arrowIcon, label: '서비스로 이동', path: 'https://weeth.kr' },
   {
     id: 'manual',
     icon: manualIcon,
@@ -69,7 +69,7 @@ export function LNB() {
             maskSize: 'contain',
           }}
         />
-        <span className="typo-sub2 text-text-alternative">WEETH ADMIN</span>
+        <span className="typo-sub2 text-text-alternative">ADMIN</span>
       </div>
 
       {/* 관리 메뉴 */}

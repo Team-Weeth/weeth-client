@@ -24,7 +24,7 @@ function MemberPageContent() {
   const handleClearSelection = () => setSelectedIds(new Set());
 
   return (
-    <div className="flex flex-col">
+    <div className="flex min-w-0 flex-col">
       {/* Selection top bar */}
       <MemberTopBar
         className="sticky top-0 z-10 -mt-15"
@@ -89,7 +89,7 @@ function MemberPageContent() {
         </div>
 
         {/* Member table */}
-        <div className="bg-container-neutral rounded-lg px-600 pt-600 pb-[64px] shadow-[0px_1px_5px_0px_rgba(17,33,49,0.15)]">
+        <div className="bg-container-neutral min-w-0 overflow-hidden rounded-lg px-600 pt-600 pb-[64px] shadow-[0px_1px_5px_0px_rgba(17,33,49,0.15)]">
           <MemberTable selectedIds={selectedIds} onSelectionChange={setSelectedIds} />
         </div>
       </div>
