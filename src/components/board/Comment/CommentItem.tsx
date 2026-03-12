@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import Image from 'next/image';
+import type { StaticImageData } from 'next/image';
 import { ChatIcon } from '@/assets/icons';
 import { Avatar, AvatarFallback, AvatarImage, Button } from '@/components/ui';
 import { cn } from '@/lib/cn';
@@ -64,7 +64,14 @@ function CommentItem({
             onClick={() => setReplyOpen((prev) => !prev)}
             aria-label="답글"
           >
-            <Image src={ChatIcon} alt="" width={13} height={13} className="text-icon-normal" />
+            <span
+              aria-hidden
+              className="bg-icon-normal block h-[13px] w-[13px] mask-contain mask-center mask-no-repeat"
+              style={{
+                maskImage: `url(${(ChatIcon as StaticImageData).src})`,
+                WebkitMaskImage: `url(${(ChatIcon as StaticImageData).src})`,
+              }}
+            />
           </Button>
           {isAuthor && (
             <PostActionMenu

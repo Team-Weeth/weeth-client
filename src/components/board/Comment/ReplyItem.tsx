@@ -1,9 +1,10 @@
 'use client';
 
 import type { StaticImageData } from 'next/image';
-import { MoreVerticalIcon, ReplyIcon } from '@/assets/icons';
+import { ReplyIcon } from '@/assets/icons';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui';
 import { cn } from '@/lib/cn';
+import { PostActionMenu } from '@/components/board/PostActionMenu';
 
 interface ReplyItemProps {
   className?: string;
@@ -12,10 +13,20 @@ interface ReplyItemProps {
   content: string;
   date: string;
   isAuthor?: boolean;
-  onMore?: () => void;
+  onEdit?: () => void;
+  onDelete?: () => void;
 }
 
-function ReplyItem({ className, profileImage, name, content, date, isAuthor, onMore }: ReplyItemProps) {
+function ReplyItem({
+  className,
+  profileImage,
+  name,
+  content,
+  date,
+  isAuthor,
+  onEdit,
+  onDelete,
+}: ReplyItemProps) {
   return (
     <div className={cn('flex items-start justify-between self-stretch px-450', className)}>
       <span
@@ -26,7 +37,7 @@ function ReplyItem({ className, profileImage, name, content, date, isAuthor, onM
           WebkitMaskImage: `url(${(ReplyIcon as StaticImageData).src})`,
         }}
       />
-      <div className="relative flex-1 rounded-lg bg-container-neutral-alternative p-400">
+      <div className="bg-container-neutral-alternative relative flex-1 rounded-lg p-400">
         <div className="flex flex-col gap-200">
           <div className="flex items-center gap-[5px]">
             <Avatar size={24}>
@@ -39,21 +50,12 @@ function ReplyItem({ className, profileImage, name, content, date, isAuthor, onM
           <p className="typo-caption2 text-text-alternative">{date}</p>
         </div>
         {isAuthor && (
-          <button
-            type="button"
-            className="absolute right-400 top-400 flex size-6 items-center justify-center rounded-sm bg-button-neutral"
-            onClick={onMore}
-            aria-label="더보기"
-          >
-            <span
-              aria-hidden
-              className="bg-icon-normal block h-4 w-1 mask-contain mask-center mask-no-repeat"
-              style={{
-                maskImage: `url(${(MoreVerticalIcon as StaticImageData).src})`,
-                WebkitMaskImage: `url(${(MoreVerticalIcon as StaticImageData).src})`,
-              }}
-            />
-          </button>
+          <PostActionMenu
+            triggerVariant="secondary"
+            triggerClassName="absolute top-400 right-400 size-6"
+            onEdit={onEdit}
+            onDelete={onDelete}
+          />
         )}
       </div>
     </div>

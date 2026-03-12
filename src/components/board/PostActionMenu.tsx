@@ -45,7 +45,7 @@ function PostActionMenu({
         >
           <span
             aria-hidden
-            className="bg-icon-normal block h-4 w-1 mask-contain mask-center mask-no-repeat"
+            className="bg-icon-normal block h-[10px] w-[3px] mask-contain mask-center mask-no-repeat"
             style={{
               maskImage: `url(${(MoreVerticalIcon as StaticImageData).src})`,
               WebkitMaskImage: `url(${(MoreVerticalIcon as StaticImageData).src})`,
