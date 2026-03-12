@@ -82,14 +82,14 @@ const MOCK_POST = {
       name: '홍길동',
       content: '한 줄에 공백 포함 글자 갯수 26개 미포함 20개',
       date: '00/00 00:00',
-      isAuthor: false,
+      isAuthor: true,
       replies: [
         {
           profileImage: '',
           name: '홍길동',
           content: '댓글은 공백 포함 23개 미포함 17개,18개',
           date: '00/00 00:00',
-          isAuthor: false,
+          isAuthor: true,
         },
       ],
     },
