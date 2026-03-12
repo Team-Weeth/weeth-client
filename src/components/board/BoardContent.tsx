@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import type { StaticImageData } from 'next/image';
 import { MoreVerticalIcon } from '@/assets/icons';
 import { BoardNav, type BoardNavItem } from './BoardNav';
@@ -136,34 +137,37 @@ function BoardContent() {
       </aside>
       <main className="flex min-w-0 flex-1 flex-col gap-400">
         {posts.map((post) => (
-          <PostCard.Root key={post.id}>
-            <PostCard.Header>
-              <PostCard.Author
-                author={post.author}
-                date={post.date}
-                hasAttachment={post.hasAttachment}
-              />
-              {post.isMyPost && (
-                <button
-                  type="button"
-                  aria-label="더보기"
-                  className="focus-visible:outline-ring cursor-pointer rounded-sm p-100 hover:opacity-70 focus-visible:outline-2 focus-visible:outline-offset-2"
-                >
-                  <span
-                    aria-hidden
-                    className="bg-icon-normal block h-4 w-[3px] mask-contain mask-center mask-no-repeat"
-                    style={{
-                      maskImage: `url(${(MoreVerticalIcon as StaticImageData).src})`,
-                      WebkitMaskImage: `url(${(MoreVerticalIcon as StaticImageData).src})`,
-                    }}
-                  />
-                </button>
-              )}
-            </PostCard.Header>
-            <PostCard.Content title={post.title} content={post.content} isNew={post.isNew} />
-            <PostCard.Images files={post.images} />
-            <PostCard.Actions likeCount={post.likeCount} commentCount={post.commentCount} />
-          </PostCard.Root>
+          <Link key={post.id} href={`/board/${post.id}`} className="block">
+            <PostCard.Root>
+              <PostCard.Header>
+                <PostCard.Author
+                  author={post.author}
+                  date={post.date}
+                  hasAttachment={post.hasAttachment}
+                />
+                {post.isMyPost && (
+                  <button
+                    type="button"
+                    aria-label="더보기"
+                    className="focus-visible:outline-ring cursor-pointer rounded-sm p-100 hover:opacity-70 focus-visible:outline-2 focus-visible:outline-offset-2"
+                    onClick={(e) => e.preventDefault()}
+                  >
+                    <span
+                      aria-hidden
+                      className="bg-icon-normal block h-[16px] w-[4px] mask-contain mask-center mask-no-repeat"
+                      style={{
+                        maskImage: `url(${(MoreVerticalIcon as StaticImageData).src})`,
+                        WebkitMaskImage: `url(${(MoreVerticalIcon as StaticImageData).src})`,
+                      }}
+                    />
+                  </button>
+                )}
+              </PostCard.Header>
+              <PostCard.Content title={post.title} content={post.content} isNew={post.isNew} />
+              <PostCard.Images files={post.images} />
+              <PostCard.Actions likeCount={post.likeCount} commentCount={post.commentCount} />
+            </PostCard.Root>
+          </Link>
         ))}
       </main>
     </div>
