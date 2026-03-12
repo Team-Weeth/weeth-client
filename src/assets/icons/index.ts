@@ -1,3 +1,4 @@
+export { default as ArrowLeftIcon } from './arrow_left.svg';
 export { default as ArrowRightIcon } from './arrow_right.svg';
 export { default as ChatIcon } from './chat.svg';
 export { default as LikeIcon } from './like.svg';
@@ -22,3 +23,6 @@ export { default as MegaphoneWhiteIcon } from './megaphone_white.svg';
 export { default as MegaphoneWhiteActiveIcon } from './megaphone_white_active.svg';
 export { default as PinIcon } from './pin.svg';
 export { default as MoreVerticalIcon } from './more_vertical.svg';
+export { default as SendIcon } from './send.svg';
+export { default as FolderPlusIcon } from './folder_plus.svg';
+export { default as ReplyIcon } from './reply.svg';
