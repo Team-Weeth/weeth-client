@@ -1,4 +1,3 @@
-import { ButtonHTMLAttributes, forwardRef } from 'react';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@/lib/cn';
 
@@ -20,6 +19,8 @@ const buttonVariants = cva(
         lg: 'typo-button1 px-400 py-300 rounded-md',
         md: 'typo-button2 px-300 py-200 rounded-md',
         sm: 'typo-button2 px-200 py-100 rounded-sm',
+        'icon-md': 'rounded-sm p-200',
+        'icon-sm': 'rounded-sm p-100',
       },
     },
     defaultVariants: {
@@ -30,16 +31,15 @@ const buttonVariants = cva(
 );
 
 interface ButtonProps
-  extends ButtonHTMLAttributes<HTMLButtonElement>, VariantProps<typeof buttonVariants> {}
+  extends React.ButtonHTMLAttributes<HTMLButtonElement>,
+    VariantProps<typeof buttonVariants> {
+  ref?: React.Ref<HTMLButtonElement>;
+}
 
-const Button = forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant, size, ...props }, ref) => {
-    return (
-      <button ref={ref} className={cn(buttonVariants({ variant, size }), className)} {...props} />
-    );
-  },
-);
-
-Button.displayName = 'Button';
+function Button({ className, variant, size, ref, ...props }: ButtonProps) {
+  return (
+    <button ref={ref} className={cn(buttonVariants({ variant, size }), className)} {...props} />
+  );
+}
 
 export { Button, buttonVariants, type ButtonProps };
