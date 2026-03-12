@@ -5,7 +5,7 @@ import { X } from 'lucide-react';
 import { cn } from '@/lib/cn';
 import type { FileItem } from '@/stores/usePostStore';
 
-type FileListProps = {
+export type FileListProps = {
   files: FileItem[];
 } & (
   | { removable: true; onRemove: (id: string, fileUrl: string) => void }

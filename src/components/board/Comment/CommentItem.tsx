@@ -4,7 +4,17 @@ import { useState } from 'react';
 import Image from 'next/image';
 import type { StaticImageData } from 'next/image';
 import { ChatIcon, MoreVerticalIcon } from '@/assets/icons';
-import { Avatar, AvatarFallback, AvatarImage, Button } from '@/components/ui';
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+  Button,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui';
 import { cn } from '@/lib/cn';
 import { CommentInput } from './CommentInput';
 import { ReplyItem, type ReplyItemProps } from './ReplyItem';
@@ -18,7 +28,8 @@ interface CommentItemProps {
   isAuthor?: boolean;
   replies?: ReplyItemProps[];
   onReply?: (value: string) => void;
-  onMore?: () => void;
+  onEdit?: () => void;
+  onDelete?: () => void;
 }
 
 function CommentItem({
@@ -30,7 +41,8 @@ function CommentItem({
   isAuthor,
   replies,
   onReply,
-  onMore,
+  onEdit,
+  onDelete,
 }: CommentItemProps) {
   const [replyOpen, setReplyOpen] = useState(false);
 
@@ -65,21 +77,33 @@ function CommentItem({
             <Image src={ChatIcon} alt="" width={13} height={13} className="text-icon-normal" />
           </Button>
           {isAuthor && (
-            <button
-              type="button"
-              className="flex size-6 items-center justify-center rounded-sm bg-button-neutral"
-              onClick={onMore}
-              aria-label="더보기"
-            >
-              <span
-                aria-hidden
-                className="bg-icon-normal block h-4 w-1 mask-contain mask-center mask-no-repeat"
-                style={{
-                  maskImage: `url(${(MoreVerticalIcon as StaticImageData).src})`,
-                  WebkitMaskImage: `url(${(MoreVerticalIcon as StaticImageData).src})`,
-                }}
-              />
-            </button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  type="button"
+                  variant="secondary"
+                  size="icon-sm"
+                  className="size-6"
+                  aria-label="더보기"
+                >
+                  <span
+                    aria-hidden
+                    className="bg-icon-normal block h-4 w-1 mask-contain mask-center mask-no-repeat"
+                    style={{
+                      maskImage: `url(${(MoreVerticalIcon as StaticImageData).src})`,
+                      WebkitMaskImage: `url(${(MoreVerticalIcon as StaticImageData).src})`,
+                    }}
+                  />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-[144px]">
+                <DropdownMenuItem onSelect={onEdit}>수정</DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem destructive onSelect={onDelete}>
+                  삭제
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           )}
         </div>
       </div>
