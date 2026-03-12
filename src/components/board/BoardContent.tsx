@@ -2,17 +2,8 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import type { StaticImageData } from 'next/image';
-import { MoreVerticalIcon } from '@/assets/icons';
-import {
-  Button,
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui';
 import { BoardNav, type BoardNavItem } from './BoardNav';
+import { PostActionMenu } from './PostActionMenu';
 import { PostCard } from './PostCard';
 
 const MOCK_CHANNELS: BoardNavItem[] = [
@@ -154,31 +145,7 @@ function BoardContent() {
                   hasAttachment={post.hasAttachment}
                 />
                 {post.isMyPost && (
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button
-                        type="button"
-                        variant="tertiary"
-                        size="icon-sm"
-                        aria-label="더보기"
-                        onClick={(e) => e.preventDefault()}
-                      >
-                        <span
-                          aria-hidden
-                          className="bg-icon-normal block h-[16px] w-[4px] mask-contain mask-center mask-no-repeat"
-                          style={{
-                            maskImage: `url(${(MoreVerticalIcon as StaticImageData).src})`,
-                            WebkitMaskImage: `url(${(MoreVerticalIcon as StaticImageData).src})`,
-                          }}
-                        />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="w-[144px]">
-                      <DropdownMenuItem>수정</DropdownMenuItem>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem destructive>삭제</DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
+                  <PostActionMenu onClick={(e) => e.preventDefault()} />
                 )}
               </PostCard.Header>
               <PostCard.Content title={post.title} content={post.content} isNew={post.isNew} />
