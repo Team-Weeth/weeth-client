@@ -259,6 +259,18 @@ export default function LandingPage() {
           <TextField multiline rows={3} placeholder="여러 줄 입력이 가능하고 내부 스크롤됩니다" />
         </div>
         <div>
+          <p className="typo-caption2 text-text-alternative mb-1">
+            Multiline + AutoGrow + Clearable
+          </p>
+          <TextField
+            multiline
+            autoGrow
+            clearable
+            rows={1}
+            placeholder="자동 높이 조절 + 지우기 버튼"
+          />
+        </div>
+        <div>
           <p className="typo-caption2 text-text-alternative mb-1">Disabled</p>
           <TextField disabled placeholder="비활성화 상태" />
         </div>
