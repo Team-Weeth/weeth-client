@@ -1,4 +1,3 @@
-import Image from 'next/image';
 import type { StaticImageData } from 'next/image';
 import downloadIcon from '@/assets/icons/download.svg';
 import folderIcon from '@/assets/icons/folder.svg';
@@ -22,19 +21,19 @@ export function FileList({ files, removable, onRemove }: FileListProps) {
         <div
           key={item.id}
           className={cn(
-            'border-line bg-container-neutral-alternative inline-flex items-center gap-400 rounded-sm border px-200 py-200',
+            'inline-flex items-center gap-400 rounded-sm border border-line bg-white/5 px-200 py-200',
             !item.uploaded && 'opacity-60',
           )}
         >
           {/* FolderIcon + 파일명 */}
           <div className="flex items-center gap-200">
-            <Image
-              src={folderIcon}
-              alt=""
-              width={20}
-              height={16}
-              className="shrink-0"
+            <span
               aria-hidden="true"
+              className="bg-icon-alternative block h-4 w-5 shrink-0 mask-contain mask-center mask-no-repeat"
+              style={{
+                maskImage: `url(${(folderIcon as StaticImageData).src})`,
+                WebkitMaskImage: `url(${(folderIcon as StaticImageData).src})`,
+              }}
             />
             <a
               href={item.fileUrl}
