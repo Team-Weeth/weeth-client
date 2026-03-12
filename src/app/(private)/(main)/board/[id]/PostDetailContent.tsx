@@ -49,7 +49,29 @@ const MOCK_POST = {
     },
     { id: '3', file: new File([], ''), fileName: '메롱.png', fileUrl: '#', uploaded: true },
   ] as FileItem[],
-  images: [] as FileItem[],
+  images: [
+    {
+      id: 'img-1',
+      file: new File([], ''),
+      fileName: '훈련사진1.jpg',
+      fileUrl: 'https://picsum.photos/seed/weeth1/600/400',
+      uploaded: true,
+    },
+    {
+      id: 'img-2',
+      file: new File([], ''),
+      fileName: '훈련사진2.jpg',
+      fileUrl: 'https://picsum.photos/seed/weeth2/400/400',
+      uploaded: true,
+    },
+    {
+      id: 'img-3',
+      file: new File([], ''),
+      fileName: '훈련사진3.jpg',
+      fileUrl: 'https://picsum.photos/seed/weeth3/500/350',
+      uploaded: true,
+    },
+  ] as FileItem[],
   likeCount: 2,
   commentCount: 2,
   isLiked: false,
@@ -83,7 +105,7 @@ function PostDetailContent({ id }: PostDetailContentProps) {
   const post = MOCK_POST;
 
   return (
-    <div className="bg-container-neutral flex flex-1 flex-col items-center rounded-(--radius-lg)">
+    <div className="bg-container-neutral flex flex-1 flex-col items-center overflow-hidden rounded-(--radius-lg)">
       <PostDetailHeader />
 
       <div className="flex flex-col items-start gap-600 self-stretch p-450">
