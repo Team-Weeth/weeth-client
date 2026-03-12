@@ -1,3 +1,5 @@
+'use client';
+
 import { cn } from '@/lib/cn';
 import { useDragScroll, useScrollOnGrow } from '@/hooks';
 import type { FileItem } from '@/stores/usePostStore';
@@ -10,7 +12,7 @@ type ImageListProps = {
   | { removable?: false; onRemove?: never }
 );
 
-export function ImageList({ files, removable, onRemove }: ImageListProps) {
+function ImageList({ files, removable, onRemove }: ImageListProps) {
   const { ref, scrollToEnd, ...scrollHandlers } = useDragScroll();
 
   useScrollOnGrow(files.length, scrollToEnd);
@@ -55,3 +57,5 @@ export function ImageList({ files, removable, onRemove }: ImageListProps) {
     </div>
   );
 }
+
+export { ImageList, type ImageListProps };

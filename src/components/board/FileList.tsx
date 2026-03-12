@@ -1,18 +1,19 @@
+'use client';
+
 import type { StaticImageData } from 'next/image';
-import downloadIcon from '@/assets/icons/download.svg';
-import folderIcon from '@/assets/icons/folder.svg';
+import { DownloadIcon, FolderIcon } from '@/assets/icons';
 import { X } from 'lucide-react';
 import { cn } from '@/lib/cn';
 import type { FileItem } from '@/stores/usePostStore';
 
-export type FileListProps = {
+type FileListProps = {
   files: FileItem[];
 } & (
   | { removable: true; onRemove: (id: string, fileUrl: string) => void }
   | { removable?: false; onRemove?: never }
 );
 
-export function FileList({ files, removable, onRemove }: FileListProps) {
+function FileList({ files, removable, onRemove }: FileListProps) {
   if (files.length === 0) return null;
 
   return (
@@ -31,8 +32,8 @@ export function FileList({ files, removable, onRemove }: FileListProps) {
               aria-hidden="true"
               className="bg-icon-alternative block h-4 w-5 shrink-0 mask-contain mask-center mask-no-repeat"
               style={{
-                maskImage: `url(${(folderIcon as StaticImageData).src})`,
-                WebkitMaskImage: `url(${(folderIcon as StaticImageData).src})`,
+                maskImage: `url(${(FolderIcon as StaticImageData).src})`,
+                WebkitMaskImage: `url(${(FolderIcon as StaticImageData).src})`,
               }}
             />
             <a
@@ -61,8 +62,8 @@ export function FileList({ files, removable, onRemove }: FileListProps) {
                 aria-hidden="true"
                 className="bg-icon-normal block h-6 w-6"
                 style={{
-                  maskImage: `url(${(downloadIcon as StaticImageData).src})`,
-                  WebkitMaskImage: `url(${(downloadIcon as StaticImageData).src})`,
+                  maskImage: `url(${(DownloadIcon as StaticImageData).src})`,
+                  WebkitMaskImage: `url(${(DownloadIcon as StaticImageData).src})`,
                   maskRepeat: 'no-repeat',
                   maskPosition: 'center',
                   maskSize: 'contain',
@@ -85,3 +86,5 @@ export function FileList({ files, removable, onRemove }: FileListProps) {
     </div>
   );
 }
+
+export { FileList, type FileListProps };

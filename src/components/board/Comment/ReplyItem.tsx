@@ -1,8 +1,12 @@
+'use client';
+
 import type { StaticImageData } from 'next/image';
 import { MoreVerticalIcon, ReplyIcon } from '@/assets/icons';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui';
+import { cn } from '@/lib/cn';
 
 interface ReplyItemProps {
+  className?: string;
   profileImage?: string;
   name: string;
   content: string;
@@ -11,9 +15,9 @@ interface ReplyItemProps {
   onMore?: () => void;
 }
 
-function ReplyItem({ profileImage, name, content, date, isAuthor, onMore }: ReplyItemProps) {
+function ReplyItem({ className, profileImage, name, content, date, isAuthor, onMore }: ReplyItemProps) {
   return (
-    <div className="flex items-start justify-between self-stretch px-450">
+    <div className={cn('flex items-start justify-between self-stretch px-450', className)}>
       <span
         aria-hidden
         className="bg-icon-alternative block size-5 shrink-0 mask-contain mask-center mask-no-repeat"

@@ -1,3 +1,5 @@
+'use client';
+
 import { X } from 'lucide-react';
 import { cn } from '@/lib/cn';
 import type { FileItem } from '@/stores/usePostStore';
@@ -33,23 +35,24 @@ function RemoveButton({
   );
 }
 
-export function ImageCard({
-  item,
-  className,
-  imgClassName,
-  removable,
-  onRemove,
-}: {
+interface ImageCardProps {
   item: FileItem;
   className?: string;
   imgClassName?: string;
   removable?: boolean;
   onRemove?: (id: string, fileUrl: string) => void;
-}) {
+}
+
+function ImageCard({
+  item,
+  className,
+  imgClassName,
+  removable,
+  onRemove,
+}: ImageCardProps) {
   return (
     <div
-      className={cn('relative overflow-hidden', className)}
-      style={{ borderRadius: 'var(--radius-sm, 8px)' }}
+      className={cn('relative overflow-hidden rounded-sm', className)}
     >
       {/* TODO: API 연결 후 blob URL → 실제 URL로 변경되면 next/image로 교체 */}
       {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -71,3 +74,5 @@ export function ImageCard({
     </div>
   );
 }
+
+export { ImageCard, type ImageCardProps };

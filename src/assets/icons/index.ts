@@ -26,3 +26,5 @@ export { default as MoreVerticalIcon } from './more_vertical.svg';
 export { default as SendIcon } from './send.svg';
 export { default as FolderPlusIcon } from './folder_plus.svg';
 export { default as ReplyIcon } from './reply.svg';
+export { default as DownloadIcon } from './download.svg';
+export { default as FolderIcon } from './folder.svg';
