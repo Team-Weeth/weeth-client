@@ -74,3 +74,12 @@ export {
 export { Chip, chipVariants, ChipList, type ChipProps } from './chips';
 
 export { Tag, tagVariants, type TagProps } from './tag';
+
+export {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuPortal,
+} from './dropdown-menu';

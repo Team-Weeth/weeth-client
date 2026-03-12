@@ -4,6 +4,14 @@ import { useState } from 'react';
 import Link from 'next/link';
 import type { StaticImageData } from 'next/image';
 import { MoreVerticalIcon } from '@/assets/icons';
+import {
+  Button,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui';
 import { BoardNav, type BoardNavItem } from './BoardNav';
 import { PostCard } from './PostCard';
 
@@ -146,21 +154,31 @@ function BoardContent() {
                   hasAttachment={post.hasAttachment}
                 />
                 {post.isMyPost && (
-                  <button
-                    type="button"
-                    aria-label="더보기"
-                    className="focus-visible:outline-ring cursor-pointer rounded-sm p-100 hover:opacity-70 focus-visible:outline-2 focus-visible:outline-offset-2"
-                    onClick={(e) => e.preventDefault()}
-                  >
-                    <span
-                      aria-hidden
-                      className="bg-icon-normal block h-[16px] w-[4px] mask-contain mask-center mask-no-repeat"
-                      style={{
-                        maskImage: `url(${(MoreVerticalIcon as StaticImageData).src})`,
-                        WebkitMaskImage: `url(${(MoreVerticalIcon as StaticImageData).src})`,
-                      }}
-                    />
-                  </button>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button
+                        type="button"
+                        variant="tertiary"
+                        size="icon-sm"
+                        aria-label="더보기"
+                        onClick={(e) => e.preventDefault()}
+                      >
+                        <span
+                          aria-hidden
+                          className="bg-icon-normal block h-[16px] w-[4px] mask-contain mask-center mask-no-repeat"
+                          style={{
+                            maskImage: `url(${(MoreVerticalIcon as StaticImageData).src})`,
+                            WebkitMaskImage: `url(${(MoreVerticalIcon as StaticImageData).src})`,
+                          }}
+                        />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="w-[144px]">
+                      <DropdownMenuItem>수정</DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem destructive>삭제</DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 )}
               </PostCard.Header>
               <PostCard.Content title={post.title} content={post.content} isNew={post.isNew} />

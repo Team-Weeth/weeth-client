@@ -2,9 +2,22 @@
 
 import type { StaticImageData } from 'next/image';
 import { MoreVerticalIcon } from '@/assets/icons';
-import { Divider } from '@/components/ui';
-import { PostCard, PostDetailHeader, CommentInput, CommentItem } from '@/components/board';
-import { FileList } from '@/components/board/FileList';
+import {
+  Button,
+  Divider,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui';
+import {
+  PostCard,
+  PostDetailHeader,
+  CommentInput,
+  CommentItem,
+  FileList,
+} from '@/components/board';
 import type { FileItem } from '@/stores/usePostStore';
 
 // TODO: API 연동 시 실제 타입으로 교체
@@ -90,16 +103,30 @@ function PostDetailContent({ id }: PostDetailContentProps) {
             hasAttachment={post.hasAttachment}
           />
           {post.isAuthor && (
-            <button type="button" aria-label="더보기" className="cursor-pointer p-100">
-              <span
-                aria-hidden
-                className="bg-icon-normal block h-4 w-1 mask-contain mask-center mask-no-repeat"
-                style={{
-                  maskImage: `url(${(MoreVerticalIcon as StaticImageData).src})`,
-                  WebkitMaskImage: `url(${(MoreVerticalIcon as StaticImageData).src})`,
-                }}
-              />
-            </button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  type="button"
+                  variant="tertiary"
+                  size="icon-sm"
+                  aria-label="더보기"
+                >
+                  <span
+                    aria-hidden
+                    className="bg-icon-normal block h-4 w-1 mask-contain mask-center mask-no-repeat"
+                    style={{
+                      maskImage: `url(${(MoreVerticalIcon as StaticImageData).src})`,
+                      WebkitMaskImage: `url(${(MoreVerticalIcon as StaticImageData).src})`,
+                    }}
+                  />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-[144px]">
+                <DropdownMenuItem>수정</DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem destructive>삭제</DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           )}
         </PostCard.Header>
 
