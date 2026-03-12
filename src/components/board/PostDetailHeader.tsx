@@ -3,6 +3,7 @@
 import { useRouter } from 'next/navigation';
 import type { StaticImageData } from 'next/image';
 import { ArrowLeftIcon } from '@/assets/icons';
+import { Button } from '@/components/ui';
 import { cn } from '@/lib/cn';
 
 interface PostDetailHeaderProps {
@@ -14,11 +15,13 @@ function PostDetailHeader({ className }: PostDetailHeaderProps) {
 
   return (
     <div className={cn('flex items-start gap-200 self-stretch px-450 pt-450 pb-300', className)}>
-      <button
+      <Button
         type="button"
+        variant="tertiary"
+        size="icon-md"
+        className="h-600 w-600"
         onClick={() => router.back()}
         aria-label="뒤로 가기"
-        className="cursor-pointer p-200"
       >
         <span
           aria-hidden
@@ -28,7 +31,7 @@ function PostDetailHeader({ className }: PostDetailHeaderProps) {
             WebkitMaskImage: `url(${(ArrowLeftIcon as StaticImageData).src})`,
           }}
         />
-      </button>
+      </Button>
     </div>
   );
 }
