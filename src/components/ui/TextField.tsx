@@ -117,7 +117,7 @@ function TextField(props: TextFieldProps) {
       return (
         <div
           className={cn(
-            'flex items-end gap-200',
+            'flex items-center gap-200',
             wrapperStyles,
             textareaProps.disabled &&
               'bg-container-neutral-alternative text-text-disabled cursor-not-allowed',
@@ -142,7 +142,7 @@ function TextField(props: TextFieldProps) {
             <button
               type="button"
               onClick={handleClear}
-              className="text-icon-normal shrink-0 cursor-pointer"
+              className="flex h-600 w-600 shrink-0 cursor-pointer items-center justify-center self-end text-icon-normal"
               tabIndex={-1}
               aria-label="입력 내용 지우기"
             >

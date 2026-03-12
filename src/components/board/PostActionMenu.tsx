@@ -29,7 +29,7 @@ function PostActionMenu({
   onDelete,
   onClick,
   triggerVariant = 'tertiary',
-  triggerSize = 'icon-sm',
+  triggerSize = 'icon-md',
   triggerClassName,
 }: PostActionMenuProps) {
   return (
@@ -39,7 +39,7 @@ function PostActionMenu({
           type="button"
           variant={triggerVariant}
           size={triggerSize}
-          className={cn(triggerClassName, className)}
+          className={cn('h-600 w-600', triggerClassName, className)}
           aria-label="더보기"
           onClick={onClick}
         >

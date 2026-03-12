@@ -44,7 +44,9 @@ function CommentInput({
         disabled={disabled}
         aria-label="파일 첨부"
       >
-        <Image src={FolderPlusIcon} alt="" width={20} height={16} className="text-icon-normal" />
+        <span className="flex h-600 w-600 items-center justify-center">
+          <Image src={FolderPlusIcon} alt="" width={20} height={16} className="text-icon-normal" />
+        </span>
       </Button>
 
       <TextField
@@ -57,7 +59,7 @@ function CommentInput({
         onChange={(e) => setValue(e.target.value)}
         placeholder={placeholder}
         disabled={disabled}
-        className="min-w-0 flex-1 rounded-lg px-400 py-200"
+        className="min-h-800 min-w-0 flex-1 rounded-lg px-400 py-200"
       />
 
       <Button
@@ -69,17 +71,19 @@ function CommentInput({
         disabled={disabled || !value.trim()}
         aria-label="댓글 전송"
       >
-        <span
-          aria-hidden
-          className={cn(
-            'block h-4 w-5 mask-contain mask-center mask-no-repeat',
-            disabled || !value.trim() ? 'bg-icon-disabled' : 'bg-icon-normal',
-          )}
-          style={{
-            maskImage: `url(${(SendIcon as StaticImageData).src})`,
-            WebkitMaskImage: `url(${(SendIcon as StaticImageData).src})`,
-          }}
-        />
+        <span className="flex h-600 w-600 items-center justify-center">
+          <span
+            aria-hidden
+            className={cn(
+              'block h-4 w-5 mask-contain mask-center mask-no-repeat',
+              disabled || !value.trim() ? 'bg-icon-disabled' : 'bg-icon-normal',
+            )}
+            style={{
+              maskImage: `url(${(SendIcon as StaticImageData).src})`,
+              WebkitMaskImage: `url(${(SendIcon as StaticImageData).src})`,
+            }}
+          />
+        </span>
       </Button>
     </div>
   );
