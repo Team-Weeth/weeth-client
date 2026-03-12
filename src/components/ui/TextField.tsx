@@ -53,29 +53,33 @@ function TextField(props: TextFieldProps) {
   const { className, multiline, clearable, ...rest } = props;
   const autoGrow = multiline ? (props as MultilineProps).autoGrow : false;
   const innerRef = useRef<HTMLInputElement | HTMLTextAreaElement>(null);
-  const [internalValue, setInternalValue] = useState(
-    () => (props.defaultValue as string) ?? '',
-  );
+  const [internalValue, setInternalValue] = useState(() => (props.defaultValue as string) ?? '');
 
   const isControlled = props.value !== undefined;
 
   const setRef = (el: HTMLInputElement | HTMLTextAreaElement | null) => {
-    (innerRef as React.MutableRefObject<HTMLInputElement | HTMLTextAreaElement | null>).current = el;
+    (innerRef as React.MutableRefObject<HTMLInputElement | HTMLTextAreaElement | null>).current =
+      el;
     const externalRef = props.ref;
     if (typeof externalRef === 'function') {
       externalRef(el as never);
     } else if (externalRef && typeof externalRef === 'object') {
-      (externalRef as React.MutableRefObject<HTMLInputElement | HTMLTextAreaElement | null>).current = el;
+      (
+        externalRef as React.MutableRefObject<HTMLInputElement | HTMLTextAreaElement | null>
+      ).current = el;
     }
   };
 
   // --- Multiline (textarea) ---
   if (multiline) {
-    const { autoGrow: _, ref: __, ...textareaProps } =
-      rest as TextareaHTMLAttributes<HTMLTextAreaElement> & {
-        autoGrow?: boolean;
-        ref?: React.Ref<HTMLTextAreaElement>;
-      };
+    const {
+      autoGrow: _,
+      ref: __,
+      ...textareaProps
+    } = rest as TextareaHTMLAttributes<HTMLTextAreaElement> & {
+      autoGrow?: boolean;
+      ref?: React.Ref<HTMLTextAreaElement>;
+    };
 
     const showClear = clearable
       ? isControlled
@@ -142,7 +146,7 @@ function TextField(props: TextFieldProps) {
             <button
               type="button"
               onClick={handleClear}
-              className="flex h-600 w-600 shrink-0 cursor-pointer items-center justify-center self-end text-icon-normal"
+              className="text-icon-normal flex h-600 w-600 shrink-0 cursor-pointer items-center justify-center self-end"
               tabIndex={-1}
               aria-label="입력 내용 지우기"
             >
@@ -175,9 +179,7 @@ function TextField(props: TextFieldProps) {
     const { ref: __, ...inputProps } = rest as InputHTMLAttributes<HTMLInputElement> & {
       ref?: React.Ref<HTMLInputElement>;
     };
-    const showClear = isControlled
-      ? Boolean(props.value)
-      : internalValue.length > 0;
+    const showClear = isControlled ? Boolean(props.value) : internalValue.length > 0;
 
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
       if (!isControlled) setInternalValue(e.target.value);
@@ -219,12 +221,7 @@ function TextField(props: TextFieldProps) {
             tabIndex={-1}
             aria-label="입력 내용 지우기"
           >
-            <Image
-              src={closeCircleIcon}
-              alt="텍스트 지우기 버튼"
-              width={16}
-              height={16}
-            />
+            <Image src={closeCircleIcon} alt="텍스트 지우기 버튼" width={16} height={16} />
           </button>
         )}
       </div>

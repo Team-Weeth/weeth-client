@@ -44,12 +44,7 @@ function PostCardContent({
   return (
     <div className={cn('flex flex-col gap-200 self-stretch', className)}>
       <div className="flex items-center gap-[5px]">
-        <h3
-          className={cn(
-            'text-text-strong',
-            variant === 'detail' ? 'typo-h3' : 'typo-sub2',
-          )}
-        >
+        <h3 className={cn('text-text-strong', variant === 'detail' ? 'typo-h3' : 'typo-sub2')}>
           {title}
         </h3>
         {isNew && (

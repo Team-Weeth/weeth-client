@@ -32,9 +32,13 @@ function CommentInput({
     setValue('');
   };
 
-
   return (
-    <div className={cn('flex items-end gap-300 rounded-lg bg-container-neutral-alternative p-300', className)}>
+    <div
+      className={cn(
+        'bg-container-neutral-alternative flex items-end gap-300 rounded-lg p-300',
+        className,
+      )}
+    >
       <Button
         type="button"
         variant="secondary"

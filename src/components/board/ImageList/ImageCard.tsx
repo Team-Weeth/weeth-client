@@ -43,17 +43,9 @@ interface ImageCardProps {
   onRemove?: (id: string, fileUrl: string) => void;
 }
 
-function ImageCard({
-  item,
-  className,
-  imgClassName,
-  removable,
-  onRemove,
-}: ImageCardProps) {
+function ImageCard({ item, className, imgClassName, removable, onRemove }: ImageCardProps) {
   return (
-    <div
-      className={cn('relative overflow-hidden rounded-sm', className)}
-    >
+    <div className={cn('relative overflow-hidden rounded-sm', className)}>
       {/* TODO: API 연결 후 blob URL → 실제 URL로 변경되면 next/image로 교체 */}
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img

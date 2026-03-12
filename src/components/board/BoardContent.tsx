@@ -144,9 +144,7 @@ function BoardContent() {
                   date={post.date}
                   hasAttachment={post.hasAttachment}
                 />
-                {post.isMyPost && (
-                  <PostActionMenu onClick={(e) => e.preventDefault()} />
-                )}
+                {post.isMyPost && <PostActionMenu onClick={(e) => e.preventDefault()} />}
               </PostCard.Header>
               <PostCard.Content title={post.title} content={post.content} isNew={post.isNew} />
               <PostCard.Images files={post.images} />

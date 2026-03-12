@@ -25,9 +25,7 @@ function FileListItem({ item }: { item: FileItem }) {
             WebkitMaskImage: `url(${(FolderIcon as StaticImageData).src})`,
           }}
         />
-        <span className="text-text-normal typo-button2 min-w-0 truncate">
-          {item.fileName}
-        </span>
+        <span className="text-text-normal typo-button2 min-w-0 truncate">{item.fileName}</span>
       </div>
 
       <span
@@ -55,10 +53,7 @@ function FileList({ files, editable, onRemove }: FileListProps) {
     <div className="flex flex-col items-start gap-200">
       {files.map((item) =>
         editable ? (
-          <div
-            key={item.id}
-            className={cn(rowStyles, !item.uploaded && 'opacity-60')}
-          >
+          <div key={item.id} className={cn(rowStyles, !item.uploaded && 'opacity-60')}>
             <FileListItem item={item} />
             <button
               type="button"

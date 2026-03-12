@@ -90,7 +90,7 @@ function CommentItem({
 
       {replyOpen && (
         <CommentInput
-          className="mt-200 ml-[38px] mr-450"
+          className="mt-200 mr-450 ml-[38px]"
           placeholder="답글을 입력하세요"
           onSubmit={handleReplySubmit}
         />
