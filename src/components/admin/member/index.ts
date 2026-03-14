@@ -3,6 +3,10 @@ export {
   type AddGenerationButtonProps,
 } from './AddGenerationButton';
 export {
+  ChangeGenerationModal,
+  type ChangeGenerationModalProps,
+} from './ChangeGenerationModal';
+export {
   GenerationCard,
   generationCardVariants,
   type GenerationCardProps,

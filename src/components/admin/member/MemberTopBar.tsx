@@ -13,13 +13,8 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   Button,
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  TextField,
 } from '@/components/ui';
+import { ChangeGenerationModal } from '@/components/admin/member/ChangeGenerationModal';
 import { cn } from '@/lib/cn';
 
 interface MemberTopBarProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -52,21 +47,20 @@ function MemberTopBar({
   ...props
 }: MemberTopBarProps) {
   const [genDialogOpen, setGenDialogOpen] = React.useState(false);
-  const [genInput, setGenInput] = React.useState('');
   const [genConfirmOpen, setGenConfirmOpen] = React.useState(false);
+  const [pendingGeneration, setPendingGeneration] = React.useState(0);
 
   if (selectedCount === 0) return null;
 
-  const handleGenSubmit = () => {
-    if (!genInput.trim()) return;
-    setGenDialogOpen(false);
+  const handleGenSubmit = (generation: number) => {
+    setPendingGeneration(generation);
     setGenConfirmOpen(true);
   };
 
   const handleGenConfirm = () => {
-    onChangeGeneration?.(parseInt(genInput, 10));
+    onChangeGeneration?.(pendingGeneration);
     setGenConfirmOpen(false);
-    setGenInput('');
+    setPendingGeneration(0);
   };
 
   return (
@@ -160,32 +154,19 @@ function MemberTopBar({
         </div>
       </div>
 
-      {/* Generation input dialog */}
-      <Dialog open={genDialogOpen} onOpenChange={setGenDialogOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>기수 변경</DialogTitle>
-          </DialogHeader>
-          <TextField
-            placeholder="변경할 기수를 입력하세요"
-            value={genInput}
-            onChange={(e) => setGenInput(e.target.value)}
-            type="number"
-          />
-          <DialogFooter>
-            <Button variant="primary" onClick={handleGenSubmit}>
-              변경
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      {/* Generation change modal */}
+      <ChangeGenerationModal
+        open={genDialogOpen}
+        onOpenChange={setGenDialogOpen}
+        onSubmit={handleGenSubmit}
+      />
 
       {/* Generation confirm alert */}
       <AlertDialog open={genConfirmOpen} onOpenChange={setGenConfirmOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>
-              {selectedCount}명의 멤버를 {genInput}기로 변경하시겠습니까?
+              {selectedCount}명의 멤버를 {pendingGeneration}기로 변경하시겠습니까?
             </AlertDialogTitle>
           </AlertDialogHeader>
           <AlertDialogFooter>

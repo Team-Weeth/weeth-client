@@ -8,6 +8,10 @@ export {
   type AddGenerationModalProps,
 } from './member/AddGenerationModal';
 export {
+  ChangeGenerationModal,
+  type ChangeGenerationModalProps,
+} from './member/ChangeGenerationModal';
+export {
   GenerationCard,
   generationCardVariants,
   type GenerationCardProps,
