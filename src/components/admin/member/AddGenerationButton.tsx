@@ -5,21 +5,16 @@ import Image from 'next/image';
 import { AdminPlusIcon } from '@/assets/icons';
 import { cn } from '@/lib/cn';
 
-interface AddGenerationButtonProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+interface AddGenerationButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   ref?: React.Ref<HTMLButtonElement>;
 }
 
-function AddGenerationButton({
-  className,
-  ref,
-  ...props
-}: AddGenerationButtonProps) {
+function AddGenerationButton({ className, ref, ...props }: AddGenerationButtonProps) {
   return (
     <button
       ref={ref}
       className={cn(
-        'flex h-[164px] w-[80px] shrink-0 items-center justify-center rounded-lg bg-container-neutral',
+        'bg-container-neutral flex h-[164px] w-[80px] shrink-0 cursor-pointer items-center justify-center rounded-lg shadow-sm',
         className,
       )}
       {...props}

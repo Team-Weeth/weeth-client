@@ -4,6 +4,7 @@ import React from 'react';
 
 import {
   AddGenerationButton,
+  AddGenerationModal,
   GenerationCard,
   MemberSearchBar,
   MemberTable,
@@ -59,7 +60,9 @@ function MemberPageContent() {
             window.addEventListener('mouseup', onMouseUp);
           }}
         >
-          <AddGenerationButton />
+          <AddGenerationModal>
+            <AddGenerationButton />
+          </AddGenerationModal>
           <GenerationCard variant="active" title="전체" description="총 100명" />
 
           <GenerationCard
