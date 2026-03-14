@@ -46,7 +46,6 @@ function MemberTopBar({
   ref,
   ...props
 }: MemberTopBarProps) {
-  const [genDialogOpen, setGenDialogOpen] = React.useState(false);
   const [genConfirmOpen, setGenConfirmOpen] = React.useState(false);
   const [pendingGeneration, setPendingGeneration] = React.useState(0);
 
@@ -143,23 +142,13 @@ function MemberTopBar({
             <AlertDialogCancel>취소</AlertDialogCancel>
           </AlertDialog>
 
-          <Button
-            variant="secondary"
-            size="lg"
-            className="py-200"
-            onClick={() => setGenDialogOpen(true)}
-          >
-            기수 변경
-          </Button>
+          <ChangeGenerationModal onSubmit={handleGenSubmit}>
+            <Button variant="secondary" size="lg" className="py-200">
+              기수 변경
+            </Button>
+          </ChangeGenerationModal>
         </div>
       </div>
-
-      {/* Generation change modal */}
-      <ChangeGenerationModal
-        open={genDialogOpen}
-        onOpenChange={setGenDialogOpen}
-        onSubmit={handleGenSubmit}
-      />
 
       {/* Generation confirm alert */}
       <AlertDialog open={genConfirmOpen} onOpenChange={setGenConfirmOpen}>

@@ -11,23 +11,23 @@ import {
   DialogContent,
   DialogFooter,
   DialogHeader,
+  DialogTrigger,
 } from '@/components/ui/dialog';
 import { TextField } from '@/components/ui/TextField';
 import { cn } from '@/lib/cn';
 
 interface ChangeGenerationModalProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
+  children: React.ReactNode;
   generations?: number[];
   onSubmit?: (generation: number) => void;
 }
 
 function ChangeGenerationModal({
-  open,
-  onOpenChange,
+  children,
   generations = [],
   onSubmit,
 }: ChangeGenerationModalProps) {
+  const [open, setOpen] = React.useState(false);
   const [input, setInput] = React.useState('');
   const [dropdownOpen, setDropdownOpen] = React.useState(false);
   const [selectedLabel, setSelectedLabel] = React.useState('직접 입력');
@@ -40,7 +40,7 @@ function ChangeGenerationModal({
   };
 
   const handleOpenChange = (next: boolean) => {
-    onOpenChange(next);
+    setOpen(next);
     if (!next) resetForm();
   };
 
@@ -79,6 +79,7 @@ function ChangeGenerationModal({
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
+      <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent
         className="bg-background min-h-78.75 w-99.5 min-w-90 grid-rows-[auto_1fr_auto] p-0"
         showCloseButton={false}
