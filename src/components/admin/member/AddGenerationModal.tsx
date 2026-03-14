@@ -61,7 +61,7 @@ function AddGenerationModal({ children, onSubmit }: AddGenerationModalProps) {
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>{children}</DialogTrigger>
 
-      <DialogContent className="bg-background w-97.5 min-w-90 p-700" showCloseButton={false}>
+      <DialogContent className="bg-background w-97.5 min-w-90 p-700">
         <DialogHeader title="새로운 기수 추가" />
 
         <DialogBody className="gap-400 py-0">
@@ -73,8 +73,12 @@ function AddGenerationModal({ children, onSubmit }: AddGenerationModalProps) {
             <div className="relative">
               <TextField
                 type="number"
+                min={1}
                 value={generation}
-                onChange={(e) => setGeneration((e.target as HTMLInputElement).value)}
+                onChange={(e) => {
+                  const v = (e.target as HTMLInputElement).value;
+                  if (v === '' || Number(v) > 0) setGeneration(v);
+                }}
                 className="pr-10"
                 placeholder=" "
               />
@@ -91,8 +95,12 @@ function AddGenerationModal({ children, onSubmit }: AddGenerationModalProps) {
               <div className="relative flex-1">
                 <TextField
                   type="number"
+                  min={1}
                   value={year}
-                  onChange={(e) => setYear((e.target as HTMLInputElement).value)}
+                  onChange={(e) => {
+                    const v = (e.target as HTMLInputElement).value;
+                    if (v === '' || Number(v) > 0) setYear(v);
+                  }}
                   className="pr-10"
                   placeholder=" "
                 />
@@ -103,8 +111,12 @@ function AddGenerationModal({ children, onSubmit }: AddGenerationModalProps) {
               <div className="relative flex-1">
                 <TextField
                   type="number"
+                  min={1}
                   value={semester}
-                  onChange={(e) => setSemester((e.target as HTMLInputElement).value)}
+                  onChange={(e) => {
+                    const v = (e.target as HTMLInputElement).value;
+                    if (v === '' || Number(v) > 0) setSemester(v);
+                  }}
                   className="pr-10"
                   placeholder=" "
                 />
