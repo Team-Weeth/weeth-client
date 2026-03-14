@@ -79,10 +79,13 @@ function ChangeGenerationModal({
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogContent className="bg-background w-99.5 min-w-90 p-0" showCloseButton={false}>
+      <DialogContent
+        className="bg-background min-h-78.75 w-99.5 min-w-90 grid-rows-[auto_1fr_auto] p-0"
+        showCloseButton={false}
+      >
         <DialogHeader title="기수 변경" className="px-600 pt-600 pb-0" />
 
-        <DialogBody className="gap-200 px-600 py-0">
+        <DialogBody className="gap-200 overflow-visible px-600 py-0 pt-12.5">
           <div className="flex items-center gap-200">
             {/* 숫자 입력 필드 */}
             <TextField
@@ -153,7 +156,7 @@ function ChangeGenerationModal({
           )}
         </DialogBody>
 
-        <DialogFooter className="bg-container-neutral rounded-b-lg px-300 py-300">
+        <DialogFooter className="bg-container-neutral max-h-[72px] rounded-b-lg px-300 pb-300">
           <div className="flex items-center justify-end gap-200">
             <Button variant="secondary" size="lg" onClick={() => handleOpenChange(false)}>
               취소

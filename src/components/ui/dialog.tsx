@@ -200,7 +200,7 @@ function DialogFooter({
   return (
     <div data-slot="dialog-footer" className={cn('flex flex-col', className)} {...props}>
       {showDivider && <Divider />}
-      <div className="flex flex-col gap-[10px] pt-400">
+      <div className="flex flex-col gap-[10px] pt-300">
         {children}
         {description && (
           <p className="typo-caption2 text-text-alternative mt-200 text-center">{description}</p>
