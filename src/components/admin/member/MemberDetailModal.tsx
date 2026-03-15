@@ -11,10 +11,12 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   Button,
+  Icon,
 } from '@/components/ui';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { ChangeGenerationModal } from '@/components/admin/member/ChangeGenerationModal';
 import { cn } from '@/lib/cn';
+import { AdminCloseIcon } from '@/assets/icons';
 
 type MemberDetailStatus = 'approved' | 'pending' | 'banned';
 
@@ -69,7 +71,6 @@ function MemberDetailModal({
   onBan,
   onChangeGeneration,
 }: MemberDetailModalProps) {
-  const [genDialogOpen, setGenDialogOpen] = React.useState(false);
   const [genConfirmOpen, setGenConfirmOpen] = React.useState(false);
   const [pendingGeneration, setPendingGeneration] = React.useState(0);
 
@@ -123,18 +124,7 @@ function MemberDetailModal({
               className="flex cursor-pointer items-center justify-center rounded-sm p-200"
               aria-label="닫기"
             >
-              <svg
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M13.2 12L17.7 7.5C17.8833 7.31667 17.975 7.09167 17.975 6.825C17.975 6.55833 17.8833 6.33333 17.7 6.15C17.5167 5.96667 17.2917 5.875 17.025 5.875C16.7583 5.875 16.5333 5.96667 16.35 6.15L12 10.5L7.5 6.15C7.31667 5.96667 7.09167 5.875 6.825 5.875C6.55833 5.875 6.33333 5.96667 6.15 6.15C5.96667 6.33333 5.875 6.55833 5.875 6.825C5.875 7.09167 5.96667 7.31667 6.15 7.5L10.5 12L6.15 16.35C5.96667 16.5333 5.875 16.7583 5.875 17.025C5.875 17.2917 5.96667 17.5167 6.15 17.7C6.33333 17.8833 6.55833 17.975 6.825 17.975C7.09167 17.975 7.31667 17.8833 7.5 17.7L12 13.2L16.35 17.7C16.5333 17.8833 16.7583 17.975 17.025 17.975C17.2917 17.975 17.5167 17.8833 17.7 17.7C17.8833 17.5167 17.975 17.2917 17.975 17.025C17.975 16.7583 17.8833 16.5333 17.7 16.35L13.2 12Z"
-                  fill="currentColor"
-                />
-              </svg>
+              <Icon src={AdminCloseIcon} size={24} alt="닫기버튼" />
             </button>
           </div>
 
@@ -248,7 +238,7 @@ function MemberDetailModal({
               </AlertDialog>
               {/* Generation change modal */}
               <ChangeGenerationModal onSubmit={handleGenSubmit}>
-                <Button variant="secondary" size="lg" onClick={() => setGenDialogOpen(true)}>
+                <Button variant="secondary" size="lg">
                   기수 변경
                 </Button>
               </ChangeGenerationModal>
