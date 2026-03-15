@@ -13,6 +13,7 @@ async function request<T>(
   path: string,
   body?: unknown,
   options: RequestOptions = {},
+  _retried = false,
 ): Promise<T> {
   const cookieStore = await cookies();
   const accessToken = cookieStore.get(ACCESS_TOKEN_KEY)?.value;
@@ -42,6 +43,10 @@ async function request<T>(
   });
 
   if (response.status === 401) {
+    if (_retried) {
+      redirect('/login');
+    }
+
     const refreshToken = cookieStore.get(REFRESH_TOKEN_KEY)?.value;
 
     if (!refreshToken) {
@@ -68,7 +73,7 @@ async function request<T>(
     cookieStore.set(ACCESS_TOKEN_KEY, newAccessToken, COOKIE_OPTIONS);
     cookieStore.set(REFRESH_TOKEN_KEY, newRefreshToken, COOKIE_OPTIONS);
 
-    return request<T>(method, path, body, options);
+    return request<T>(method, path, body, options, true);
   }
 
   if (!response.ok) {

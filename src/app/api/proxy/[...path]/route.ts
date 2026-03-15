@@ -35,6 +35,7 @@ async function handler(request: NextRequest, { params }: { params: Promise<{ pat
 
   const responseHeaders = new Headers(response.headers);
   responseHeaders.delete('transfer-encoding');
+  responseHeaders.delete('set-cookie');
 
   if (response.status === 204) {
     return new NextResponse(null, {

@@ -3,7 +3,7 @@ import { ACCESS_TOKEN_KEY } from '@/lib/apis/cookies';
 
 const PUBLIC_PATHS = ['/', '/login', '/signup', '/home'];
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   if (PUBLIC_PATHS.some((path) => pathname === path)) {
