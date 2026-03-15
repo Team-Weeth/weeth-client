@@ -1,8 +1,7 @@
 'use client';
 
 import type { StaticImageData } from 'next/image';
-import { DownloadIcon, FolderIcon } from '@/assets/icons';
-import { X } from 'lucide-react';
+import { DeleteIcon, DownloadIcon, FolderIcon } from '@/assets/icons';
 import { cn } from '@/lib/cn';
 import type { FileItem } from '@/stores/usePostStore';
 
@@ -13,7 +12,7 @@ type FileListProps = {
   | { editable?: false; onRemove?: never }
 );
 
-function FileListItem({ item }: { item: FileItem }) {
+function FileListItem({ item, showDownload = true }: { item: FileItem; showDownload?: boolean }) {
   return (
     <>
       <div className="flex items-center gap-200">
@@ -28,17 +27,19 @@ function FileListItem({ item }: { item: FileItem }) {
         <span className="text-text-normal typo-button2 min-w-0 truncate">{item.fileName}</span>
       </div>
 
-      <span
-        aria-hidden="true"
-        className="bg-icon-normal block h-6 w-6 shrink-0"
-        style={{
-          maskImage: `url(${(DownloadIcon as StaticImageData).src})`,
-          WebkitMaskImage: `url(${(DownloadIcon as StaticImageData).src})`,
-          maskRepeat: 'no-repeat',
-          maskPosition: 'center',
-          maskSize: 'contain',
-        }}
-      />
+      {showDownload && (
+        <span
+          aria-hidden="true"
+          className="bg-icon-normal block h-6 w-6 shrink-0"
+          style={{
+            maskImage: `url(${(DownloadIcon as StaticImageData).src})`,
+            WebkitMaskImage: `url(${(DownloadIcon as StaticImageData).src})`,
+            maskRepeat: 'no-repeat',
+            maskPosition: 'center',
+            maskSize: 'contain',
+          }}
+        />
+      )}
     </>
   );
 }
@@ -54,14 +55,21 @@ function FileList({ files, editable, onRemove }: FileListProps) {
       {files.map((item) =>
         editable ? (
           <div key={item.id} className={cn(rowStyles, !item.uploaded && 'opacity-60')}>
-            <FileListItem item={item} />
+            <FileListItem item={item} showDownload={false} />
             <button
               type="button"
               onClick={() => onRemove(item.id, item.fileUrl)}
               aria-label={`${item.fileName} 삭제`}
               className="text-state-error hover:text-state-error/80 shrink-0"
             >
-              <X size={16} />
+              <span
+                aria-hidden="true"
+                className="block h-4 w-4 bg-current mask-contain mask-center mask-no-repeat"
+                style={{
+                  maskImage: `url(${(DeleteIcon as StaticImageData).src})`,
+                  WebkitMaskImage: `url(${(DeleteIcon as StaticImageData).src})`,
+                }}
+              />
             </button>
           </div>
         ) : (
