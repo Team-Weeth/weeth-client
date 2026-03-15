@@ -12,6 +12,9 @@ export { default as AdminCloseIcon } from './admin/ic_admin_close.svg';
 
 export { default as ArrowRightIcon } from './arrow_right.svg';
 export { default as ArrowLeftIcon } from './arrow_left.svg';
+export { default as ChatIcon } from './chat.svg';
+export { default as LikeIcon } from './like.svg';
+export { default as LikeFilledIcon } from './like_filled.svg';
 export { default as AvatarIcon } from './avatar.svg';
 export { default as CheckRoundIcon } from './check_round.svg';
 export { default as CloseCircleIcon } from './close_circle.svg';
@@ -22,8 +25,15 @@ export { default as InfoIcon } from './info.svg';
 export { default as MenuIcon } from './menu.svg';
 export { default as LogoIcon } from './logo/logo_full_Origin.svg';
 export { default as FooterLogoIcon } from './logo/logo_full_Footer.svg';
+export { default as PaperclipIcon } from './paperclip.svg';
 export { default as NewIcon } from './new.svg';
 export { default as DeleteIcon } from './delete.svg';
 export { default as PeopleIcon } from './people.svg';
 
 export { default as SearchIcon } from './search.svg';
+export { default as MegaphoneDarkIcon } from './megaphone_dark.svg';
+export { default as MegaphoneDarkActiveIcon } from './megaphone_dark_active.svg';
+export { default as MegaphoneWhiteIcon } from './megaphone_white.svg';
+export { default as MegaphoneWhiteActiveIcon } from './megaphone_white_active.svg';
+export { default as PinIcon } from './pin.svg';
+export { default as MoreVerticalIcon } from './more_vertical.svg';
