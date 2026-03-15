@@ -68,7 +68,10 @@ function PostCardContent({
         <button
           type="button"
           className="typo-body2 text-text-alternative hover:text-text-normal focus-visible:outline-ring cursor-pointer self-start rounded-sm focus-visible:outline-2 focus-visible:outline-offset-2"
-          onClick={() => setIsExpanded(true)}
+          onClick={(e) => {
+            e.stopPropagation();
+            setIsExpanded(true);
+          }}
         >
           이어서 보기
         </button>

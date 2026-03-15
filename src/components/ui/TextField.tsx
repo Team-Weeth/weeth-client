@@ -4,6 +4,7 @@ import {
   type ChangeEvent,
   type InputHTMLAttributes,
   type TextareaHTMLAttributes,
+  useEffect,
   useRef,
   useState,
 } from 'react';
@@ -13,7 +14,7 @@ import { cn } from '@/lib/cn';
 
 const baseStyles = cn(
   'w-full bg-container-neutral text-text-normal typo-body2',
-  'rounded-sm px-300 py-200',
+  'rounded-sm border border-transparent px-300 py-200',
   'placeholder:text-text-alternative',
   'focus:outline-none focus:border-brand-primary',
   'disabled:bg-container-neutral-alternative disabled:text-text-disabled disabled:cursor-not-allowed',
@@ -22,7 +23,7 @@ const baseStyles = cn(
 
 const wrapperStyles = cn(
   'w-full bg-container-neutral text-text-normal typo-body2',
-  'rounded-sm px-300 py-200',
+  'rounded-sm border border-transparent px-300 py-200',
   'focus-within:border-brand-primary',
   'transition-colors',
 );
@@ -94,6 +95,9 @@ function TextField(props: TextFieldProps) {
       el.style.height = `${el.scrollHeight}px`;
     };
 
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- resizeToContent reads autoGrow and innerRef internally
+    useEffect(resizeToContent, [props.value]);
+
     const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
       if (!isControlled) setInternalValue(e.target.value);
       textareaProps.onChange?.(e);
@@ -146,8 +150,8 @@ function TextField(props: TextFieldProps) {
             <button
               type="button"
               onClick={handleClear}
+              onMouseDown={(e) => e.preventDefault()}
               className="text-icon-normal flex h-600 w-600 shrink-0 cursor-pointer items-center justify-center self-end"
-              tabIndex={-1}
               aria-label="입력 내용 지우기"
             >
               <Image src={closeCircleIcon} alt="" width={16} height={16} />
@@ -213,12 +217,12 @@ function TextField(props: TextFieldProps) {
           <button
             type="button"
             onClick={handleClear}
+            onMouseDown={(e) => e.preventDefault()}
             className={cn(
               'absolute top-1/2 right-200 -translate-y-1/2',
               'text-icon-alternative hover:text-icon-normal',
               'cursor-pointer transition-colors',
             )}
-            tabIndex={-1}
             aria-label="입력 내용 지우기"
           >
             <Image src={closeCircleIcon} alt="텍스트 지우기 버튼" width={16} height={16} />

@@ -30,6 +30,7 @@ function PostAuthorInfo({ className, author, date, dateTime, hasAttachment }: Po
         <>
           <Divider orientation="vertical" className="h-3" />
           <span
+            role="img"
             aria-label="첨부파일 있음"
             className="bg-icon-alternative block h-[9px] w-[8px] mask-contain mask-center mask-no-repeat"
             style={{

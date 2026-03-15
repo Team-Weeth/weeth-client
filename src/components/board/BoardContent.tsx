@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { BoardNav, type BoardNavItem } from './BoardNav';
 import { PostActionMenu } from './PostActionMenu';
 import { PostCard } from './PostCard';
@@ -121,6 +121,7 @@ const MOCK_POSTS = [
 
 function BoardContent() {
   const [activeChannelId, setActiveChannelId] = useState('all');
+  const router = useRouter();
 
   // TODO: API 연동 시 activeChannelId 기반으로 게시글 목록 조회
   const posts = MOCK_POSTS;
@@ -136,21 +137,27 @@ function BoardContent() {
       </aside>
       <main className="flex min-w-0 flex-1 flex-col gap-400">
         {posts.map((post) => (
-          <Link key={post.id} href={`/board/${post.id}`} className="block">
-            <PostCard.Root>
-              <PostCard.Header>
-                <PostCard.Author
-                  author={post.author}
-                  date={post.date}
-                  hasAttachment={post.hasAttachment}
-                />
-                {post.isMyPost && <PostActionMenu onClick={(e) => e.preventDefault()} />}
-              </PostCard.Header>
-              <PostCard.Content title={post.title} content={post.content} isNew={post.isNew} />
-              <PostCard.Images files={post.images} />
-              <PostCard.Actions likeCount={post.likeCount} commentCount={post.commentCount} />
-            </PostCard.Root>
-          </Link>
+          <PostCard.Root
+            key={post.id}
+            className="cursor-pointer"
+            onClick={() => router.push(`/board/${post.id}`)}
+          >
+            <PostCard.Header>
+              <PostCard.Author
+                author={post.author}
+                date={post.date}
+                hasAttachment={post.hasAttachment}
+              />
+              {post.isMyPost && (
+                <div onClick={(e) => e.stopPropagation()}>
+                  <PostActionMenu />
+                </div>
+              )}
+            </PostCard.Header>
+            <PostCard.Content title={post.title} content={post.content} isNew={post.isNew} />
+            <PostCard.Images files={post.images} />
+            <PostCard.Actions likeCount={post.likeCount} commentCount={post.commentCount} />
+          </PostCard.Root>
         ))}
       </main>
     </div>

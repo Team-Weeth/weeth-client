@@ -1,7 +1,6 @@
 'use client';
 
 import { useRef, useState } from 'react';
-import Image from 'next/image';
 import type { StaticImageData } from 'next/image';
 import { FolderPlusIcon, SendIcon } from '@/assets/icons';
 import { Button, TextField } from '@/components/ui';
@@ -49,7 +48,14 @@ function CommentInput({
         aria-label="파일 첨부"
       >
         <span className="flex h-600 w-600 items-center justify-center">
-          <Image src={FolderPlusIcon} alt="" width={20} height={16} className="text-icon-normal" />
+          <span
+            aria-hidden
+            className="bg-icon-normal block h-4 w-5 mask-contain mask-center mask-no-repeat"
+            style={{
+              maskImage: `url(${(FolderPlusIcon as StaticImageData).src})`,
+              WebkitMaskImage: `url(${(FolderPlusIcon as StaticImageData).src})`,
+            }}
+          />
         </span>
       </Button>
 

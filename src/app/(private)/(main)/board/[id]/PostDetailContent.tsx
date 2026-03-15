@@ -85,6 +85,7 @@ const MOCK_POST = {
       isAuthor: true,
       replies: [
         {
+          id: 1,
           profileImage: '',
           name: '홍길동',
           content: '댓글은 공백 포함 23개 미포함 17개,18개',
@@ -100,7 +101,7 @@ interface PostDetailContentProps {
   id: string;
 }
 
-function PostDetailContent({ id }: PostDetailContentProps) {
+function PostDetailContent({ id: _id }: PostDetailContentProps) {
   // TODO: API 연동 시 id로 게시글 조회
   const post = MOCK_POST;
 

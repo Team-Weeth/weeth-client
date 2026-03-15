@@ -7,6 +7,7 @@ import { cn } from '@/lib/cn';
 import { PostActionMenu } from '@/components/board/PostActionMenu';
 
 interface ReplyItemProps {
+  id: number | string;
   className?: string;
   profileImage?: string;
   name: string;

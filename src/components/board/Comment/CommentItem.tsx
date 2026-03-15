@@ -84,8 +84,8 @@ function CommentItem({
         </div>
       </div>
 
-      {replies?.map((reply, index) => (
-        <ReplyItem key={index} {...reply} />
+      {replies?.map((reply) => (
+        <ReplyItem key={reply.id} {...reply} />
       ))}
 
       {replyOpen && (

@@ -35,9 +35,14 @@ interface ButtonProps
   ref?: React.Ref<HTMLButtonElement>;
 }
 
-function Button({ className, variant, size, ref, ...props }: ButtonProps) {
+function Button({ className, variant, size, ref, type = 'button', ...props }: ButtonProps) {
   return (
-    <button ref={ref} className={cn(buttonVariants({ variant, size }), className)} {...props} />
+    <button
+      ref={ref}
+      type={type}
+      className={cn(buttonVariants({ variant, size }), className)}
+      {...props}
+    />
   );
 }
 
