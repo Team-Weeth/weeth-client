@@ -1,10 +1,9 @@
 'use client';
 
 import React from 'react';
-import Image from 'next/image';
 
 import { AdminMeatballIcon } from '@/assets/icons';
-import { Button } from '@/components/ui';
+import { Button, Icon } from '@/components/ui';
 import {
   Dialog,
   DialogBody,
@@ -115,7 +114,7 @@ function ChangeGenerationModal({
                 onClick={() => setDropdownOpen(!dropdownOpen)}
               >
                 <span className="typo-button2 truncate">{selectedLabel}</span>
-                <Image src={AdminMeatballIcon} alt="옵션" width={24} height={24} />
+                <Icon src={AdminMeatballIcon} alt="옵션" size={24} />
               </button>
 
               {/* 드롭다운 메뉴 */}

@@ -1,10 +1,9 @@
 'use client';
 
 import React from 'react';
-import Image from 'next/image';
 
 import { AdminCheckboxIcon, AdminUncheckboxIcon } from '@/assets/icons';
-import { Button } from '@/components/ui';
+import { Button, Icon } from '@/components/ui';
 import {
   Dialog,
   DialogBody,
@@ -135,11 +134,10 @@ function AddGenerationModal({ children, onSubmit }: AddGenerationModalProps) {
               className="flex cursor-pointer items-center gap-200"
               onClick={() => setIsCurrent(!isCurrent)}
             >
-              <Image
+              <Icon
                 src={isCurrent ? AdminCheckboxIcon : AdminUncheckboxIcon}
                 alt={isCurrent ? '선택됨' : '선택 안됨'}
-                width={24}
-                height={24}
+                size={24}
               />
               <span className="typo-button2 text-text-normal">현재 진행 중</span>
             </button>

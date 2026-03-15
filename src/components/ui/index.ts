@@ -85,3 +85,5 @@ export {
   TableCell,
   TableCaption,
 } from './table';
+
+export { Icon, type IconProps } from './Icon';

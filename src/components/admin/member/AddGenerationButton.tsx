@@ -1,8 +1,7 @@
 'use client';
 
-import Image from 'next/image';
-
 import { AdminPlusIcon } from '@/assets/icons';
+import { Icon } from '@/components/ui';
 import { cn } from '@/lib/cn';
 
 interface AddGenerationButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
@@ -19,7 +18,7 @@ function AddGenerationButton({ className, ref, ...props }: AddGenerationButtonPr
       )}
       {...props}
     >
-      <Image src={AdminPlusIcon} alt="기수 추가" width={24} height={24} />
+      <Icon src={AdminPlusIcon} alt="기수 추가" size={24} />
     </button>
   );
 }
