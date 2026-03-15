@@ -1,8 +1,7 @@
 import { cookies } from 'next/headers';
 import { NextRequest, NextResponse } from 'next/server';
+import { BASE_URL } from '@/constants';
 import { ACCESS_TOKEN_KEY } from '@/lib/apis/cookies';
-
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
 async function handler(request: NextRequest, { params }: { params: Promise<{ path: string[] }> }) {
   if (!BASE_URL) {

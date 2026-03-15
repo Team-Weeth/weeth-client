@@ -2,9 +2,13 @@
 
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
-import { ACCESS_TOKEN_KEY, REFRESH_TOKEN_KEY, COOKIE_OPTIONS } from '@/lib/apis/cookies';
-
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
+import { BASE_URL } from '@/constants';
+import {
+  ACCESS_TOKEN_KEY,
+  REFRESH_TOKEN_KEY,
+  ACCESS_COOKIE_OPTIONS,
+  REFRESH_COOKIE_OPTIONS,
+} from '@/lib/apis/cookies';
 
 export async function loginAction(formData: FormData) {
   const email = formData.get('email') as string;
@@ -25,8 +29,8 @@ export async function loginAction(formData: FormData) {
   const { accessToken, refreshToken } = json.data;
 
   const cookieStore = await cookies();
-  cookieStore.set(ACCESS_TOKEN_KEY, accessToken, COOKIE_OPTIONS);
-  cookieStore.set(REFRESH_TOKEN_KEY, refreshToken, COOKIE_OPTIONS);
+  cookieStore.set(ACCESS_TOKEN_KEY, accessToken, ACCESS_COOKIE_OPTIONS);
+  cookieStore.set(REFRESH_TOKEN_KEY, refreshToken, REFRESH_COOKIE_OPTIONS);
 
   redirect('/home');
 }

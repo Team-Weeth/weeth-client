@@ -11,7 +11,7 @@ export const apiClient = axios.create({
 let refreshPromise: Promise<void> | null = null;
 
 const refreshTokens = async () => {
-  await axios.post('/api/proxy/auth/refresh');
+  await apiClient.post('/auth/refresh');
 };
 
 // Response: 401 시 refresh → 재시도

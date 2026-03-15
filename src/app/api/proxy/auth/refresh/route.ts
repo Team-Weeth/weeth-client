@@ -1,8 +1,12 @@
 import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
-import { ACCESS_TOKEN_KEY, REFRESH_TOKEN_KEY, COOKIE_OPTIONS } from '@/lib/apis/cookies';
-
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
+import { BASE_URL } from '@/constants';
+import {
+  ACCESS_TOKEN_KEY,
+  REFRESH_TOKEN_KEY,
+  ACCESS_COOKIE_OPTIONS,
+  REFRESH_COOKIE_OPTIONS,
+} from '@/lib/apis/cookies';
 
 export async function POST() {
   try {
@@ -34,8 +38,8 @@ export async function POST() {
     const json = await response.json();
     const { accessToken: newAccessToken, refreshToken: newRefreshToken } = json.data;
 
-    cookieStore.set(ACCESS_TOKEN_KEY, newAccessToken, COOKIE_OPTIONS);
-    cookieStore.set(REFRESH_TOKEN_KEY, newRefreshToken, COOKIE_OPTIONS);
+    cookieStore.set(ACCESS_TOKEN_KEY, newAccessToken, ACCESS_COOKIE_OPTIONS);
+    cookieStore.set(REFRESH_TOKEN_KEY, newRefreshToken, REFRESH_COOKIE_OPTIONS);
 
     return NextResponse.json({ success: true });
   } catch {
