@@ -78,6 +78,7 @@ const MOCK_POST = {
   isAuthor: true,
   comments: [
     {
+      id: 1,
       profileImage: '',
       name: '홍길동',
       content: '한 줄에 공백 포함 글자 갯수 26개 미포함 20개',
@@ -148,7 +149,7 @@ function PostDetailContent({ id: _id }: PostDetailContentProps) {
 
       <div className="flex flex-col gap-[15px] self-stretch pb-300">
         {post.comments.map((comment, index) => (
-          <CommentItem key={index} {...comment} />
+          <CommentItem key={comment.id} {...comment} />
         ))}
       </div>
     </div>
