@@ -1,4 +1,17 @@
+export { default as AdminBackarrowIcon } from './admin/ic_admin_backarrow.svg';
+export { default as AdminSearchIcon } from './admin/ic_admin_search.svg';
+export { default as AdminPlusIcon } from './admin/ic_admin_plus.svg';
+export { default as AdminMeatballIcon } from './admin/ic_admin_meatball.svg';
+export { default as AdminColumnMeatballIcon } from './admin/ic_admin_column_meatball.svg';
+export { default as AdminChangeIcon } from './admin/ic_admin_change.svg';
+export { default as AdminCheckboxIcon } from './admin/ic_admin_checkbox.svg';
+export { default as AdminUncheckboxIcon } from './admin/ic_admin_uncheckbox.svg';
+export { default as AdminCardinalIcon } from './admin/ic_admin_cardinal.svg';
+export { default as AdminUserIcon } from './admin/ic_admin_user.svg';
+export { default as AdminCloseIcon } from './admin/ic_admin_close.svg';
+
 export { default as ArrowRightIcon } from './arrow_right.svg';
+export { default as ArrowLeftIcon } from './arrow_left.svg';
 export { default as ChatIcon } from './chat.svg';
 export { default as LikeIcon } from './like.svg';
 export { default as LikeFilledIcon } from './like_filled.svg';
@@ -16,6 +29,8 @@ export { default as PaperclipIcon } from './paperclip.svg';
 export { default as NewIcon } from './new.svg';
 export { default as DeleteIcon } from './delete.svg';
 export { default as PeopleIcon } from './people.svg';
+
+export { default as SearchIcon } from './search.svg';
 export { default as MegaphoneDarkIcon } from './megaphone_dark.svg';
 export { default as MegaphoneDarkActiveIcon } from './megaphone_dark_active.svg';
 export { default as MegaphoneWhiteIcon } from './megaphone_white.svg';

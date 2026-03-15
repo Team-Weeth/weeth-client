@@ -488,6 +488,14 @@ select:focus {
   letter-spacing: var(--letter-spacing);
 }
 
+.scrollbar-none {
+  scrollbar-width: none;
+}
+
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+
 .scrollbar-custom {
   scrollbar-width: thin;
   scrollbar-color: var(--neutral-500) transparent;
@@ -615,5 +623,19 @@ select:focus {
   }
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+@layer utilities {
+  .scrollbar-none {
+    /* IE and Edge */
+    -ms-overflow-style: none;
+    /* Firefox */
+    scrollbar-width: none;
+  }
+
+  /* Chrome, Safari and Opera */
+  .scrollbar-none::-webkit-scrollbar {
+    display: none;
   }
 }

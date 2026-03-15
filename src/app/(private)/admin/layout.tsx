@@ -10,7 +10,7 @@ export default function AdminLayout({
     <div data-admin className="flex h-screen flex-col">
       <div className="flex flex-1 overflow-hidden">
         <LNB />
-        <main className="bg-container-neutral flex-1 overflow-auto">
+        <main className="bg-background flex-1 overflow-x-hidden overflow-y-auto">
           <Header />
           {children}
         </main>

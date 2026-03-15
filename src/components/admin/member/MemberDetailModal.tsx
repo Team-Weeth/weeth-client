@@ -1,0 +1,258 @@
+'use client';
+
+import React from 'react';
+
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  Button,
+  Icon,
+} from '@/components/ui';
+import { Dialog, DialogContent } from '@/components/ui/dialog';
+import { ChangeGenerationModal } from '@/components/admin/member/ChangeGenerationModal';
+import { cn } from '@/lib/cn';
+import { AdminCloseIcon } from '@/assets/icons';
+
+type MemberDetailStatus = 'approved' | 'pending' | 'banned';
+
+interface MemberDetail {
+  name: string;
+  generation: number;
+  status: MemberDetailStatus;
+  position: string;
+  role: string;
+  department: string;
+  phone: string;
+  studentId: string;
+  email: string;
+  activeGenerations: string;
+  memberStatus: string;
+  joinDate: string;
+  attendance: number;
+  absence: number;
+  penalty: number;
+}
+
+const STATUS_LABEL: Record<MemberDetailStatus, string> = {
+  approved: '승인 완료',
+  pending: '대기 중',
+  banned: '추방',
+};
+
+const STATUS_DOT_COLOR: Record<MemberDetailStatus, string> = {
+  approved: 'bg-container-primary',
+  pending: 'bg-state-caution',
+  banned: 'bg-state-error',
+};
+
+interface MemberDetailModalProps {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  member: MemberDetail | null;
+  onApprove?: () => void;
+  onChangeToAdmin?: () => void;
+  onResetPassword?: () => void;
+  onBan?: () => void;
+  onChangeGeneration?: (generation: number) => void;
+}
+
+function MemberDetailModal({
+  open,
+  onOpenChange,
+  member,
+  onApprove,
+  onChangeToAdmin,
+  onResetPassword,
+  onBan,
+  onChangeGeneration,
+}: MemberDetailModalProps) {
+  const [genConfirmOpen, setGenConfirmOpen] = React.useState(false);
+  const [pendingGeneration, setPendingGeneration] = React.useState(0);
+
+  if (!member) return null;
+
+  const handleClose = () => onOpenChange(false);
+
+  const handleGenSubmit = (generation: number) => {
+    setPendingGeneration(generation);
+    setGenConfirmOpen(true);
+  };
+
+  const handleGenConfirm = () => {
+    onChangeGeneration?.(pendingGeneration);
+    setGenConfirmOpen(false);
+    setPendingGeneration(0);
+  };
+
+  const personalInfo = [
+    { label: '직급', value: member.position },
+    { label: '역할', value: member.role },
+    { label: '학과', value: member.department },
+    { label: '전화번호', value: member.phone },
+    { label: '학번', value: member.studentId },
+    { label: '이메일', value: member.email },
+  ];
+
+  const activityInfo = [
+    { label: '활동기수', value: member.activeGenerations },
+    { label: '상태', value: member.memberStatus },
+    { label: '가입일', value: member.joinDate },
+  ];
+
+  const activityStats = [
+    { label: '출석', value: member.attendance, color: 'text-text-strong' },
+    { label: '결석', value: member.absence, color: 'text-text-strong' },
+    {
+      label: '패널티',
+      value: member.penalty,
+      color: member.penalty > 0 ? 'text-state-error' : 'text-text-strong',
+    },
+  ];
+
+  const footerActions = [
+    { label: '가입 승인', title: '1명의 멤버 가입을 승인하시겠습니까?', handler: onApprove },
+    {
+      label: '관리자로 변경',
+      title: '1명의 멤버 역할을 관리자로\n변경하시겠습니까?',
+      handler: onChangeToAdmin,
+    },
+    {
+      label: '비밀번호 초기화',
+      title: '1명의 멤버 비밀번호를 초기화\n시키시겠습니까?',
+      handler: onResetPassword,
+    },
+    { label: '유저 추방', title: '1명의 멤버를 추방하시겠습니까?', handler: onBan },
+  ];
+
+  return (
+    <>
+      <Dialog open={open} onOpenChange={onOpenChange}>
+        <DialogContent
+          className="bg-background flex w-215 max-w-[860px] flex-col gap-0 rounded-sm p-0"
+          showCloseButton={false}
+        >
+          {/* Header */}
+          <div className="flex items-center justify-between px-600 pt-700 pb-400">
+            <h2 className="typo-h3 text-text-normal">멤버 관리 상세</h2>
+            <button
+              type="button"
+              onClick={handleClose}
+              className="flex cursor-pointer items-center justify-center rounded-sm p-200"
+              aria-label="닫기"
+            >
+              <Icon src={AdminCloseIcon} size={24} alt="닫기버튼" />
+            </button>
+          </div>
+
+          {/* Body */}
+          <div className="flex gap-500 px-700 pb-500">
+            {/* 회원정보 */}
+            <div className="bg-container-neutral flex-1 rounded-md p-400">
+              <p className="typo-caption1 text-text-alternative mb-400">회원정보</p>
+
+              <div className="mb-200 flex items-baseline gap-200">
+                <span className="typo-h3 text-text-strong">{member.name}</span>
+                <span className="typo-h3 text-text-strong">{member.generation}기</span>
+              </div>
+
+              <div className="mb-400 flex items-center gap-200">
+                <span className={cn('size-1', STATUS_DOT_COLOR[member.status])} />
+                <span className="typo-caption2 text-text-strong">
+                  {STATUS_LABEL[member.status]}
+                </span>
+              </div>
+
+              <div className="flex flex-col gap-400">
+                {personalInfo.map(({ label, value }) => (
+                  <div key={label} className="flex items-start">
+                    <span className="typo-body1 text-text-alternative w-24 shrink-0">{label}</span>
+                    <span className="typo-body1 text-text-strong">{value}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* 활동정보 */}
+            <div className="bg-container-neutral w-80 shrink-0 rounded-md p-400">
+              <p className="typo-caption1 text-text-alternative mb-400">활동정보</p>
+
+              <div className="flex flex-col gap-400">
+                {activityInfo.map(({ label, value }) => (
+                  <div key={label} className="flex items-start">
+                    <span className="typo-body1 text-text-alternative w-24 shrink-0">{label}</span>
+                    <span className="typo-body1 text-text-strong">{value}</span>
+                  </div>
+                ))}
+              </div>
+
+              <div className="mt-500 flex flex-col gap-200">
+                {activityStats.map(({ label, value, color }) => (
+                  <div key={label} className="flex items-start">
+                    <span className="typo-body1 text-text-alternative w-24 shrink-0">{label}</span>
+                    <span className={cn('typo-body1', color)}>{value}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Footer */}
+          <div className="bg-container-neutral flex items-center justify-between rounded-b-sm px-400 pt-400 pb-500">
+            <div className="flex items-center gap-200">
+              {footerActions.map(({ label, title, handler }) => (
+                <AlertDialog
+                  key={label}
+                  title={title}
+                  trigger={
+                    <Button variant="secondary" size="lg">
+                      {label}
+                    </Button>
+                  }
+                >
+                  <AlertDialogAction onClick={handler}>확인</AlertDialogAction>
+                  <AlertDialogCancel>취소</AlertDialogCancel>
+                </AlertDialog>
+              ))}
+              <ChangeGenerationModal onSubmit={handleGenSubmit}>
+                <Button variant="secondary" size="lg">
+                  기수 변경
+                </Button>
+              </ChangeGenerationModal>
+            </div>
+
+            <Button variant="primary" size="lg" onClick={handleClose}>
+              완료
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Generation confirm alert */}
+      <AlertDialog open={genConfirmOpen} onOpenChange={setGenConfirmOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              1명의 멤버를 {pendingGeneration}기로 변경하시겠습니까?
+            </AlertDialogTitle>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogAction onClick={handleGenConfirm}>확인</AlertDialogAction>
+            <AlertDialogCancel>취소</AlertDialogCancel>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </>
+  );
+}
+
+export {
+  MemberDetailModal,
+  type MemberDetailModalProps,
+  type MemberDetail,
+  type MemberDetailStatus,
+};

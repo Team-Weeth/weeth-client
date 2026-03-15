@@ -22,7 +22,7 @@ const mainNavItems = [
 ];
 
 const moveNavItems = [
-  { id: 'service', icon: arrowIcon, label: 'WEETH로 이동', path: 'https://weeth.kr' },
+  { id: 'service', icon: arrowIcon, label: '서비스로 이동', path: 'https://weeth.kr' },
   {
     id: 'manual',
     icon: manualIcon,
@@ -36,10 +36,7 @@ function NavIcon({ src, isActive }: { src: StaticImageData | string; isActive: b
   return (
     <span
       aria-hidden
-      className={cn(
-        'block h-6 w-6 shrink-0',
-        isActive ? 'bg-button-primary' : 'bg-container-neutral-interaction',
-      )}
+      className={cn('block h-6 w-6 shrink-0', isActive ? 'bg-button-primary' : 'bg-icon-disabled')}
       style={{
         maskImage: `url(${url})`,
         WebkitMaskImage: `url(${url})`,
@@ -58,7 +55,7 @@ export function LNB() {
   const pathname = usePathname();
 
   return (
-    <nav className="border-line bg-container-neutral flex h-full w-60 shrink-0 flex-col border-r">
+    <nav className="border-line bg-background flex h-full w-60 shrink-0 flex-col border-r">
       {/* LNB 헤더 */}
       <div className="flex items-center gap-300 px-300 pt-200">
         <span
@@ -72,7 +69,7 @@ export function LNB() {
             maskSize: 'contain',
           }}
         />
-        <span className="typo-sub2 text-text-alternative">WEETH ADMIN</span>
+        <span className="typo-sub2 text-text-alternative">ADMIN</span>
       </div>
 
       {/* 관리 메뉴 */}
