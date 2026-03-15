@@ -68,7 +68,7 @@ function CommentInput({
         onChange={(e) => setValue(e.target.value)}
         placeholder={placeholder}
         disabled={disabled}
-        className="min-h-800 min-w-0 flex-1 rounded-lg px-400 py-200"
+        wrapperClassName="min-h-800 min-w-0 flex-1 rounded-lg px-400 py-200"
       />
 
       <Button

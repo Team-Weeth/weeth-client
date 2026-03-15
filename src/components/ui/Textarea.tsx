@@ -25,12 +25,21 @@ const wrapperStyles = cn(
 interface TextareaProps extends TextareaHTMLAttributes<HTMLTextAreaElement> {
   clearable?: boolean;
   autoGrow?: boolean;
+  wrapperClassName?: string;
   ref?: React.Ref<HTMLTextAreaElement>;
 }
 
-function Textarea({ className, clearable, autoGrow, ref, rows = 4, ...props }: TextareaProps) {
+function Textarea({
+  className,
+  clearable,
+  autoGrow,
+  wrapperClassName,
+  ref,
+  rows = 4,
+  ...props
+}: TextareaProps) {
   const innerRef = useRef<HTMLTextAreaElement>(null);
-  const [internalValue, setInternalValue] = useState(() => (props.defaultValue as string) ?? '');
+  const [internalValue, setInternalValue] = useState(() => String(props.defaultValue ?? ''));
 
   const isControlled = props.value !== undefined;
 
@@ -61,7 +70,7 @@ function Textarea({ className, clearable, autoGrow, ref, rows = 4, ...props }: T
 
   const showClear = clearable
     ? isControlled
-      ? Boolean(props.value)
+      ? String(props.value).length > 0
       : internalValue.length > 0
     : false;
 
@@ -88,7 +97,7 @@ function Textarea({ className, clearable, autoGrow, ref, rows = 4, ...props }: T
           wrapperStyles,
           props.disabled &&
             'bg-container-neutral-alternative text-text-disabled cursor-not-allowed',
-          className,
+          wrapperClassName,
         )}
       >
         <textarea
@@ -100,6 +109,7 @@ function Textarea({ className, clearable, autoGrow, ref, rows = 4, ...props }: T
             'focus:outline-none',
             'disabled:text-text-disabled disabled:cursor-not-allowed',
             autoGrow ? 'overflow-hidden' : 'scrollbar-custom overflow-y-auto',
+            className,
           )}
           rows={rows}
           {...props}

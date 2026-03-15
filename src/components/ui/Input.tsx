@@ -16,12 +16,13 @@ const baseStyles = cn(
 
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   clearable?: boolean;
+  wrapperClassName?: string;
   ref?: React.Ref<HTMLInputElement>;
 }
 
-function Input({ className, clearable, ref, ...props }: InputProps) {
+function Input({ className, clearable, wrapperClassName, ref, ...props }: InputProps) {
   const innerRef = useRef<HTMLInputElement>(null);
-  const [internalValue, setInternalValue] = useState(() => (props.defaultValue as string) ?? '');
+  const [internalValue, setInternalValue] = useState(() => String(props.defaultValue ?? ''));
 
   const isControlled = props.value !== undefined;
 
@@ -38,7 +39,9 @@ function Input({ className, clearable, ref, ...props }: InputProps) {
     return <input ref={setRef} className={cn(baseStyles, className)} {...props} />;
   }
 
-  const showClear = isControlled ? Boolean(props.value) : internalValue.length > 0;
+  const showClear = isControlled
+    ? String(props.value).length > 0
+    : internalValue.length > 0;
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (!isControlled) setInternalValue(e.target.value);
@@ -58,10 +61,10 @@ function Input({ className, clearable, ref, ...props }: InputProps) {
   };
 
   return (
-    <div className={cn('relative w-full', className)}>
+    <div className={cn('relative w-full', wrapperClassName)}>
       <input
         ref={setRef}
-        className={cn(baseStyles, showClear && 'pr-9')}
+        className={cn(baseStyles, showClear && 'pr-9', className)}
         {...props}
         onChange={handleChange}
       />
