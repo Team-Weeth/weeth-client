@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import Image from 'next/image';
 import type { StaticImageData } from 'next/image';
 import { cn } from '@/lib/cn';
 import { LikeIcon, LikeFilledIcon, ChatIcon } from '@/assets/icons';
