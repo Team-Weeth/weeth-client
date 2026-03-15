@@ -1,7 +1,6 @@
 'use client';
 
 import React from 'react';
-import Image from 'next/image';
 
 import { ArrowLeftIcon } from '@/assets/icons';
 import {
@@ -13,6 +12,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   Button,
+  Icon,
 } from '@/components/ui';
 import { ChangeGenerationModal } from '@/components/admin/member/ChangeGenerationModal';
 import { cn } from '@/lib/cn';
@@ -62,6 +62,39 @@ function MemberTopBar({
     setPendingGeneration(0);
   };
 
+  const topBarActions = [
+    {
+      label: '가입 승인',
+      title: `${selectedCount}명의 멤버 가입을 승인하시겠습니까?`,
+      handler: onApprove,
+      disabled: false,
+    },
+    {
+      label: '관리자로 변경',
+      title: `${selectedCount}명의 멤버 역할을 관리자로\n변경하시겠습니까?`,
+      handler: onChangeToAdmin,
+      disabled: !canChangeToAdmin,
+    },
+    {
+      label: '사용자로 변경',
+      title: `${selectedCount}명의 멤버 역할을 사용자로\n변경하시겠습니까?`,
+      handler: onChangeToUser,
+      disabled: !canChangeToUser,
+    },
+    {
+      label: '비밀번호 초기화',
+      title: `${selectedCount}명의 멤버 비밀번호를 초기화\n시키시겠습니까?`,
+      handler: onResetPassword,
+      disabled: false,
+    },
+    {
+      label: '유저 추방',
+      title: `${selectedCount}명의 멤버를 추방하시겠습니까?`,
+      handler: onBan,
+      disabled: false,
+    },
+  ];
+
   return (
     <>
       <div
@@ -74,7 +107,7 @@ function MemberTopBar({
           onClick={onBack}
           className="flex shrink-0 cursor-pointer items-center justify-center rounded-sm p-200"
         >
-          <Image src={ArrowLeftIcon} alt="뒤로" width={6} height={6} className="invert" />
+          <Icon src={ArrowLeftIcon} alt="뒤로" size={16} className="text-text-inverse" />
         </button>
 
         <span className="typo-sub1 text-text-inverse ml-200 shrink-0">
@@ -82,66 +115,20 @@ function MemberTopBar({
         </span>
 
         <div className="ml-auto flex items-center gap-200">
-          <AlertDialog
-            title={`${selectedCount}명의 멤버 가입을 승인하시겠습니까?`}
-            trigger={
-              <Button variant="secondary" size="lg" className="py-200">
-                가입 승인
-              </Button>
-            }
-          >
-            <AlertDialogAction onClick={onApprove}>확인</AlertDialogAction>
-            <AlertDialogCancel>취소</AlertDialogCancel>
-          </AlertDialog>
-
-          <AlertDialog
-            title={`${selectedCount}명의 멤버 역할을 관리자로 변경하시겠습니까?`}
-            trigger={
-              <Button variant="secondary" size="lg" className="py-200" disabled={!canChangeToAdmin}>
-                관리자로 변경
-              </Button>
-            }
-          >
-            <AlertDialogAction onClick={onChangeToAdmin}>확인</AlertDialogAction>
-            <AlertDialogCancel>취소</AlertDialogCancel>
-          </AlertDialog>
-
-          <AlertDialog
-            title={`${selectedCount}명의 멤버 역할을 사용자로 변경하시겠습니까?`}
-            trigger={
-              <Button variant="secondary" size="lg" className="py-200" disabled={!canChangeToUser}>
-                사용자로 변경
-              </Button>
-            }
-          >
-            <AlertDialogAction onClick={onChangeToUser}>확인</AlertDialogAction>
-            <AlertDialogCancel>취소</AlertDialogCancel>
-          </AlertDialog>
-
-          <AlertDialog
-            title={`${selectedCount}명의 멤버 비밀번호를 초기화 시키시겠습니까?`}
-            trigger={
-              <Button variant="secondary" size="lg" className="py-200">
-                비밀번호 초기화
-              </Button>
-            }
-          >
-            <AlertDialogAction onClick={onResetPassword}>확인</AlertDialogAction>
-            <AlertDialogCancel>취소</AlertDialogCancel>
-          </AlertDialog>
-
-          <AlertDialog
-            title={`${selectedCount}명의 멤버를 추방하시겠습니까?`}
-            trigger={
-              <Button variant="secondary" size="lg" className="py-200">
-                유저 추방
-              </Button>
-            }
-          >
-            <AlertDialogAction onClick={onBan}>확인</AlertDialogAction>
-            <AlertDialogCancel>취소</AlertDialogCancel>
-          </AlertDialog>
-
+          {topBarActions.map(({ label, title, handler, disabled }) => (
+            <AlertDialog
+              key={label}
+              title={title}
+              trigger={
+                <Button variant="secondary" size="lg" className="py-200" disabled={disabled}>
+                  {label}
+                </Button>
+              }
+            >
+              <AlertDialogAction onClick={handler}>확인</AlertDialogAction>
+              <AlertDialogCancel>취소</AlertDialogCancel>
+            </AlertDialog>
+          ))}
           <ChangeGenerationModal onSubmit={handleGenSubmit}>
             <Button variant="secondary" size="lg" className="py-200">
               기수 변경
