@@ -10,16 +10,25 @@ interface PostCardContentProps {
   title: string;
   content: string;
   isNew?: boolean;
+  expandable?: boolean;
+  variant?: 'list' | 'detail';
 }
 
-function PostCardContent({ className, title, content, isNew }: PostCardContentProps) {
+function PostCardContent({
+  className,
+  title,
+  content,
+  isNew,
+  expandable = true,
+  variant = 'list',
+}: PostCardContentProps) {
   const contentRef = useRef<HTMLParagraphElement>(null);
   const [isClamped, setIsClamped] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
 
   useEffect(() => {
     const el = contentRef.current;
-    if (!el || isExpanded) return;
+    if (!el || !expandable || isExpanded) return;
 
     const check = () => {
       setIsClamped(el.scrollHeight > el.clientHeight);
@@ -30,12 +39,14 @@ function PostCardContent({ className, title, content, isNew }: PostCardContentPr
     const ro = new ResizeObserver(check);
     ro.observe(el);
     return () => ro.disconnect();
-  }, [content, isExpanded]);
+  }, [content, expandable, isExpanded]);
 
   return (
     <div className={cn('flex flex-col gap-200 self-stretch', className)}>
       <div className="flex items-center gap-[5px]">
-        <h3 className="typo-sub2 text-text-strong">{title}</h3>
+        <h3 className={cn('text-text-strong', variant === 'detail' ? 'typo-h3' : 'typo-sub2')}>
+          {title}
+        </h3>
         {isNew && (
           <>
             <Image src={NewIcon} alt="" width={7} height={9} aria-hidden />
@@ -44,19 +55,23 @@ function PostCardContent({ className, title, content, isNew }: PostCardContentPr
         )}
       </div>
       <p
-        ref={contentRef}
+        ref={expandable ? contentRef : undefined}
         className={cn(
-          'typo-body2 text-text-normal whitespace-pre-line',
-          !isExpanded && 'line-clamp-8',
+          'text-text-normal whitespace-pre-line',
+          variant === 'detail' ? 'typo-body1' : 'typo-body2',
+          expandable && !isExpanded && 'line-clamp-8',
         )}
       >
         {content}
       </p>
-      {isClamped && !isExpanded && (
+      {expandable && isClamped && !isExpanded && (
         <button
           type="button"
           className="typo-body2 text-text-alternative hover:text-text-normal focus-visible:outline-ring cursor-pointer self-start rounded-sm focus-visible:outline-2 focus-visible:outline-offset-2"
-          onClick={() => setIsExpanded(true)}
+          onClick={(e) => {
+            e.stopPropagation();
+            setIsExpanded(true);
+          }}
         >
           이어서 보기
         </button>
