@@ -4,8 +4,10 @@ import { useState } from 'react';
 import type { StaticImageData } from 'next/image';
 import { ChatIcon } from '@/assets/icons';
 import { Avatar, AvatarFallback, AvatarImage, Button } from '@/components/ui';
+import { useScrollIntoView } from '@/hooks';
 import { cn } from '@/lib/cn';
 import { PostActionMenu } from '@/components/board/PostActionMenu';
+import type { FileItem } from '@/stores/usePostStore';
 import { CommentInput } from './CommentInput';
 import { ReplyItem, type ReplyItemProps } from './ReplyItem';
 
@@ -17,7 +19,7 @@ interface CommentItemProps {
   date: string;
   isAuthor?: boolean;
   replies?: ReplyItemProps[];
-  onReply?: (value: string) => void;
+  onReply?: (value: string, file: FileItem | null) => void;
   onEdit?: () => void;
   onDelete?: () => void;
 }
@@ -35,9 +37,10 @@ function CommentItem({
   onDelete,
 }: CommentItemProps) {
   const [replyOpen, setReplyOpen] = useState(false);
+  const replyInputRef = useScrollIntoView<HTMLDivElement>(replyOpen);
 
-  const handleReplySubmit = (value: string) => {
-    onReply?.(value);
+  const handleReplySubmit = (value: string, file: FileItem | null) => {
+    onReply?.(value, file);
     setReplyOpen(false);
   };
 
@@ -89,11 +92,13 @@ function CommentItem({
       ))}
 
       {replyOpen && (
-        <CommentInput
-          className="mt-200 mr-450 ml-[38px]"
-          placeholder="답글을 입력하세요"
-          onSubmit={handleReplySubmit}
-        />
+        <div ref={replyInputRef}>
+          <CommentInput
+            className="mt-200 mr-450 ml-[38px]"
+            placeholder="답글을 입력하세요"
+            onSubmit={handleReplySubmit}
+          />
+        </div>
       )}
     </div>
   );
