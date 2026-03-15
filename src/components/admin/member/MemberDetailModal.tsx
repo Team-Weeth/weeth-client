@@ -98,6 +98,12 @@ function MemberDetailModal({
     { label: '이메일', value: member.email },
   ];
 
+  const activityInfo = [
+    { label: '활동기수', value: member.activeGenerations },
+    { label: '상태', value: member.memberStatus },
+    { label: '가입일', value: member.joinDate },
+  ];
+
   const activityStats = [
     { label: '출석', value: member.attendance, color: 'text-text-strong' },
     { label: '결석', value: member.absence, color: 'text-text-strong' },
@@ -106,6 +112,21 @@ function MemberDetailModal({
       value: member.penalty,
       color: member.penalty > 0 ? 'text-state-error' : 'text-text-strong',
     },
+  ];
+
+  const footerActions = [
+    { label: '가입 승인', title: '1명의 멤버 가입을 승인하시겠습니까?', handler: onApprove },
+    {
+      label: '관리자로 변경',
+      title: '1명의 멤버 역할을 관리자로\n변경하시겠습니까?',
+      handler: onChangeToAdmin,
+    },
+    {
+      label: '비밀번호 초기화',
+      title: '1명의 멤버 비밀번호를 초기화\n시키시겠습니까?',
+      handler: onResetPassword,
+    },
+    { label: '유저 추방', title: '1명의 멤버를 추방하시겠습니까?', handler: onBan },
   ];
 
   return (
@@ -161,18 +182,12 @@ function MemberDetailModal({
               <p className="typo-caption1 text-text-alternative mb-400">활동정보</p>
 
               <div className="flex flex-col gap-400">
-                <div className="flex items-start">
-                  <span className="typo-body1 text-text-alternative w-24 shrink-0">활동기수</span>
-                  <span className="typo-body1 text-text-strong">{member.activeGenerations}</span>
-                </div>
-                <div className="flex items-start">
-                  <span className="typo-body1 text-text-alternative w-24 shrink-0">상태</span>
-                  <span className="typo-body1 text-text-strong">{member.memberStatus}</span>
-                </div>
-                <div className="flex items-start">
-                  <span className="typo-body1 text-text-alternative w-24 shrink-0">가입일</span>
-                  <span className="typo-body1 text-text-strong">{member.joinDate}</span>
-                </div>
+                {activityInfo.map(({ label, value }) => (
+                  <div key={label} className="flex items-start">
+                    <span className="typo-body1 text-text-alternative w-24 shrink-0">{label}</span>
+                    <span className="typo-body1 text-text-strong">{value}</span>
+                  </div>
+                ))}
               </div>
 
               <div className="mt-500 flex flex-col gap-200">
@@ -189,54 +204,20 @@ function MemberDetailModal({
           {/* Footer */}
           <div className="bg-container-neutral flex items-center justify-between rounded-b-sm px-400 pt-400 pb-500">
             <div className="flex items-center gap-200">
-              <AlertDialog
-                title="1명의 멤버 가입을 승인하시겠습니까?"
-                trigger={
-                  <Button variant="secondary" size="lg">
-                    가입 승인
-                  </Button>
-                }
-              >
-                <AlertDialogAction onClick={onApprove}>확인</AlertDialogAction>
-                <AlertDialogCancel>취소</AlertDialogCancel>
-              </AlertDialog>
-
-              <AlertDialog
-                title="1명의 멤버 역할을 관리자로 변경하시겠습니까?"
-                trigger={
-                  <Button variant="secondary" size="lg">
-                    관리자로 변경
-                  </Button>
-                }
-              >
-                <AlertDialogAction onClick={onChangeToAdmin}>확인</AlertDialogAction>
-                <AlertDialogCancel>취소</AlertDialogCancel>
-              </AlertDialog>
-
-              <AlertDialog
-                title="1명의 멤버 비밀번호를 초기화 시키시겠습니까?"
-                trigger={
-                  <Button variant="secondary" size="lg">
-                    비밀번호 초기화
-                  </Button>
-                }
-              >
-                <AlertDialogAction onClick={onResetPassword}>확인</AlertDialogAction>
-                <AlertDialogCancel>취소</AlertDialogCancel>
-              </AlertDialog>
-
-              <AlertDialog
-                title="1명의 멤버를 추방하시겠습니까?"
-                trigger={
-                  <Button variant="secondary" size="lg">
-                    유저 추방
-                  </Button>
-                }
-              >
-                <AlertDialogAction onClick={onBan}>확인</AlertDialogAction>
-                <AlertDialogCancel>취소</AlertDialogCancel>
-              </AlertDialog>
-              {/* Generation change modal */}
+              {footerActions.map(({ label, title, handler }) => (
+                <AlertDialog
+                  key={label}
+                  title={title}
+                  trigger={
+                    <Button variant="secondary" size="lg">
+                      {label}
+                    </Button>
+                  }
+                >
+                  <AlertDialogAction onClick={handler}>확인</AlertDialogAction>
+                  <AlertDialogCancel>취소</AlertDialogCancel>
+                </AlertDialog>
+              ))}
               <ChangeGenerationModal onSubmit={handleGenSubmit}>
                 <Button variant="secondary" size="lg">
                   기수 변경
