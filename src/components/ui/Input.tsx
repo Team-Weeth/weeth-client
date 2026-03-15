@@ -39,9 +39,7 @@ function Input({ className, clearable, wrapperClassName, ref, ...props }: InputP
     return <input ref={setRef} className={cn(baseStyles, className)} {...props} />;
   }
 
-  const showClear = isControlled
-    ? String(props.value).length > 0
-    : internalValue.length > 0;
+  const showClear = isControlled ? String(props.value).length > 0 : internalValue.length > 0;
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (!isControlled) setInternalValue(e.target.value);
