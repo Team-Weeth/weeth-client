@@ -108,7 +108,17 @@ const STATUS_BAR_COLOR: Record<MemberStatus, string> = {
   banned: 'bg-state-error',
 };
 
-const COLUMNS = ['이름', '역할', '학과', '기수', '전화번호', '학번', '직급', '출석', '결석'];
+const COLUMNS: { label: string; key: keyof Member }[] = [
+  { label: '이름', key: 'name' },
+  { label: '역할', key: 'role' },
+  { label: '학과', key: 'department' },
+  { label: '기수', key: 'cardinal' },
+  { label: '전화번호', key: 'phone' },
+  { label: '학번', key: 'studentId' },
+  { label: '직급', key: 'position' },
+  { label: '출석', key: 'attendance' },
+  { label: '결석', key: 'absence' },
+];
 
 type SortBy = 'cardinal' | 'name';
 
@@ -213,9 +223,9 @@ function MemberTable({
                   onChange={toggleAll}
                 />
               </TableHead>
-              {COLUMNS.map((col) => (
-                <TableHead key={col} className="typo-body1 text-text-strong">
-                  {col}
+              {COLUMNS.map(({ label }) => (
+                <TableHead key={label} className="typo-body1 text-text-strong">
+                  {label}
                 </TableHead>
               ))}
               <TableHead className="w-10" />
@@ -233,15 +243,11 @@ function MemberTable({
                     onChange={() => toggleOne(member.id)}
                   />
                 </TableCell>
-                <TableCell className="typo-body1 text-text-strong">{member.name}</TableCell>
-                <TableCell className="typo-body1 text-text-strong">{member.role}</TableCell>
-                <TableCell className="typo-body1 text-text-strong">{member.department}</TableCell>
-                <TableCell className="typo-body1 text-text-strong">{member.cardinal}</TableCell>
-                <TableCell className="typo-body1 text-text-strong">{member.phone}</TableCell>
-                <TableCell className="typo-body1 text-text-strong">{member.studentId}</TableCell>
-                <TableCell className="typo-body1 text-text-strong">{member.position}</TableCell>
-                <TableCell className="typo-body1 text-text-strong">{member.attendance}</TableCell>
-                <TableCell className="typo-body1 text-text-strong">{member.absence}</TableCell>
+                {COLUMNS.map(({ key, label }) => (
+                  <TableCell key={label} className="typo-body1 text-text-strong">
+                    {String(member[key])}
+                  </TableCell>
+                ))}
                 <TableCell className="w-10">
                   <button
                     type="button"
