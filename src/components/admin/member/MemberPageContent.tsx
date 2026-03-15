@@ -13,6 +13,7 @@ import {
 } from '@/components/admin';
 import { MOCK_MEMBERS, type Member } from '@/components/admin/member/MemberTable';
 import type { MemberDetail } from '@/components/admin/member/MemberDetailModal';
+import { Card } from '@/components/ui';
 
 function MemberPageContent() {
   const [selectedIds, setSelectedIds] = React.useState<Set<string>>(new Set());
@@ -65,9 +66,9 @@ function MemberPageContent() {
       {/* Main content */}
       <div className="flex flex-col gap-400 p-700">
         {/* Search bar */}
-        <div className="bg-container-neutral flex items-center rounded-lg px-600 py-400 shadow-[0px_1px_5px_0px_rgba(17,33,49,0.15)]">
+        <Card>
           <MemberSearchBar isWrapped={false} value={searchValue} onValueChange={setSearchValue} />
-        </div>
+        </Card>
 
         {/* Generation cards */}
         <div
@@ -91,7 +92,7 @@ function MemberPageContent() {
             <AddGenerationButton />
           </AddGenerationModal>
           <GenerationCard variant="active" title="전체" description="총 100명" />
-
+          {/* TODO: api 연결시 하드 코딩 제거 */}
           <GenerationCard
             variant="normal"
             title="4기"
@@ -119,9 +120,13 @@ function MemberPageContent() {
         </div>
 
         {/* Member table */}
-        <div className="bg-container-neutral min-w-0 overflow-hidden rounded-lg px-600 pt-600 pb-[64px] shadow-[0px_1px_5px_0px_rgba(17,33,49,0.15)]">
-          <MemberTable selectedIds={selectedIds} onSelectionChange={setSelectedIds} onMemberAction={handleMemberAction} />
-        </div>
+        <Card>
+          <MemberTable
+            selectedIds={selectedIds}
+            onSelectionChange={setSelectedIds}
+            onMemberAction={handleMemberAction}
+          />
+        </Card>
       </div>
 
       {/* Member detail modal */}
