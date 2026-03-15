@@ -7,7 +7,7 @@ import { SlashMenuContent } from './SlashMenu';
 import { ImageList } from '../ImageList';
 import { FileList } from '../FileList';
 import { useFileUpload } from '@/hooks/useFileUpload';
-import { createMediaItems } from '@/constants/editor';
+import { createMediaItems } from '@/constants/slashMenu';
 
 /**
  * 주요 기능:

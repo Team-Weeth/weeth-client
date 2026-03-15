@@ -1,6 +1,6 @@
 import { Editor as TiptapEditor } from '@tiptap/core';
 import { useEffect, useState, useRef } from 'react';
-import { STYLE_ITEMS } from '@/constants/editor';
+import { STYLE_ITEMS } from '@/constants/slashMenu';
 import { MenuItem } from '@/types/editor';
 
 const DEFAULT_GROUPS = [{ title: '기본 블록', items: STYLE_ITEMS }];
