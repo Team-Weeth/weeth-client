@@ -3,7 +3,7 @@
 import { useRef, useState } from 'react';
 import type { StaticImageData } from 'next/image';
 import { FolderPlusIcon, SendIcon } from '@/assets/icons';
-import { Button, TextField } from '@/components/ui';
+import { Button, Textarea } from '@/components/ui';
 import { cn } from '@/lib/cn';
 
 interface CommentInputProps {
@@ -59,9 +59,8 @@ function CommentInput({
         </span>
       </Button>
 
-      <TextField
+      <Textarea
         ref={textareaRef}
-        multiline
         autoGrow
         clearable
         rows={1}

@@ -2,7 +2,8 @@
 
 import {
   Button,
-  TextField,
+  Input,
+  Textarea,
   Dialog,
   DialogTrigger,
   DialogContent,
@@ -150,7 +151,7 @@ export default function LandingPage() {
               <DialogTitle>프로필 수정</DialogTitle>
               <DialogDescription>프로필 정보를 수정할 수 있습니다.</DialogDescription>
             </DialogHeader>
-            <TextField placeholder="이름을 입력하세요" />
+            <Input placeholder="이름을 입력하세요" />
             <DialogFooter>
               <DialogClose asChild>
                 <Button variant="secondary">취소</Button>
@@ -244,35 +245,29 @@ export default function LandingPage() {
           </BreadcrumbList>
         </Breadcrumb>
       </div>
-      <p className="typo-caption1 text-text-disabled mt-6 mb-2">TEXT FIELD</p>
+      <p className="typo-caption1 text-text-disabled mt-6 mb-2">INPUT / TEXTAREA</p>
       <div className="flex flex-col gap-3">
         <div>
-          <p className="typo-caption2 text-text-alternative mb-1">Default</p>
-          <TextField placeholder="기본 텍스트 필드" />
+          <p className="typo-caption2 text-text-alternative mb-1">Default Input</p>
+          <Input placeholder="기본 텍스트 필드" />
         </div>
         <div>
-          <p className="typo-caption2 text-text-alternative mb-1">Clearable</p>
-          <TextField clearable placeholder="내용을 입력하면 X 버튼이 나타납니다" />
+          <p className="typo-caption2 text-text-alternative mb-1">Clearable Input</p>
+          <Input clearable placeholder="내용을 입력하면 X 버튼이 나타납니다" />
         </div>
         <div>
-          <p className="typo-caption2 text-text-alternative mb-1">Multiline (scrollable)</p>
-          <TextField multiline rows={3} placeholder="여러 줄 입력이 가능하고 내부 스크롤됩니다" />
+          <p className="typo-caption2 text-text-alternative mb-1">Textarea (scrollable)</p>
+          <Textarea rows={3} placeholder="여러 줄 입력이 가능하고 내부 스크롤됩니다" />
         </div>
         <div>
           <p className="typo-caption2 text-text-alternative mb-1">
-            Multiline + AutoGrow + Clearable
+            Textarea + AutoGrow + Clearable
           </p>
-          <TextField
-            multiline
-            autoGrow
-            clearable
-            rows={1}
-            placeholder="자동 높이 조절 + 지우기 버튼"
-          />
+          <Textarea autoGrow clearable rows={1} placeholder="자동 높이 조절 + 지우기 버튼" />
         </div>
         <div>
-          <p className="typo-caption2 text-text-alternative mb-1">Disabled</p>
-          <TextField disabled placeholder="비활성화 상태" />
+          <p className="typo-caption2 text-text-alternative mb-1">Disabled Input</p>
+          <Input disabled placeholder="비활성화 상태" />
         </div>
       </div>
     </div>
