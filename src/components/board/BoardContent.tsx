@@ -128,9 +128,7 @@ function BoardContent() {
               hasAttachment={post.hasAttachment}
             />
             {post.isMyPost && (
-              <div onClick={(e) => e.stopPropagation()}>
-                <PostActionMenu />
-              </div>
+              <PostActionMenu onClick={(e) => e.stopPropagation()} />
             )}
           </PostCard.Header>
           <PostCard.Content title={post.title} content={post.content} isNew={post.isNew} />
