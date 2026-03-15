@@ -151,7 +151,7 @@ function PostDetailContent({ id: _id }: PostDetailContentProps) {
         <Divider />
       </div>
 
-      <div className="flex flex-col gap-[15px] self-stretch pb-400">
+      <div className="flex flex-col gap-200 self-stretch pb-400">
         {post.comments.map((comment, index) => (
           <CommentItem key={comment.id} {...comment} />
         ))}

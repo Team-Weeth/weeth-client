@@ -45,7 +45,7 @@ function FileListItem({ item, showDownload = true }: { item: FileItem; showDownl
 }
 
 const rowStyles =
-  'inline-flex items-center gap-400 rounded-sm border border-line bg-white/5 px-200 py-200 transition-colors hover:bg-container-neutral-interaction';
+  'inline-flex items-center gap-400 rounded-sm border border-line bg-container-neutral px-200 py-200 transition-colors hover:bg-container-neutral-interaction';
 
 function FileList({ files, editable, onRemove }: FileListProps) {
   if (files.length === 0) return null;
