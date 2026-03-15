@@ -22,7 +22,7 @@ export default function BoardLayout({ children, footer }: BoardLayoutProps) {
   const [activeChannelId, setActiveChannelId] = useState('all');
 
   return (
-    <div className="flex items-start gap-700 px-800 pt-450">
+    <div className="flex items-start gap-700 px-800 pt-450 pb-[63px]">
       <aside className="flex shrink-0 flex-col gap-400">
         <BoardNav
           items={MOCK_CHANNELS}

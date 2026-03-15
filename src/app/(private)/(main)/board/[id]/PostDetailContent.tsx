@@ -106,6 +106,10 @@ function PostDetailContent({ id: _id }: PostDetailContentProps) {
   // TODO: API 연동 시 id로 게시글 조회
   const post = MOCK_POST;
 
+  const handleCommentSubmit = (value: string, file: FileItem | null) => {
+    // TODO: API 연동
+  };
+
   return (
     <div className="bg-container-neutral flex flex-1 flex-col items-center overflow-hidden rounded-(--radius-lg)">
       <PostDetailHeader />
@@ -140,14 +144,14 @@ function PostDetailContent({ id: _id }: PostDetailContentProps) {
       </div>
 
       <div className="self-stretch px-450 py-400">
-        <CommentInput placeholder="댓글을 입력하세요." />
+        <CommentInput placeholder="댓글을 입력하세요." onSubmit={handleCommentSubmit} />
       </div>
 
       <div className="self-stretch px-450">
         <Divider />
       </div>
 
-      <div className="flex flex-col gap-[15px] self-stretch pb-300">
+      <div className="flex flex-col gap-[15px] self-stretch pb-400">
         {post.comments.map((comment, index) => (
           <CommentItem key={comment.id} {...comment} />
         ))}
