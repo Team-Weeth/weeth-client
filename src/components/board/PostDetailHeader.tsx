@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import type { StaticImageData } from 'next/image';
-import { ArrowLeftIcon } from '@/assets/icons';
+import { BackIcon } from '@/assets/icons';
 import { Button } from '@/components/ui';
 import { cn } from '@/lib/cn';
 
@@ -25,10 +25,10 @@ function PostDetailHeader({ className }: PostDetailHeaderProps) {
       >
         <span
           aria-hidden
-          className="bg-icon-alternative block h-[7.45px] w-[4.39px] mask-contain mask-center mask-no-repeat"
+          className="bg-icon-alternative block h-[12.51px] w-[7.16px] mask-contain mask-center mask-no-repeat"
           style={{
-            maskImage: `url(${(ArrowLeftIcon as StaticImageData).src})`,
-            WebkitMaskImage: `url(${(ArrowLeftIcon as StaticImageData).src})`,
+            maskImage: `url(${(BackIcon as StaticImageData).src})`,
+            WebkitMaskImage: `url(${(BackIcon as StaticImageData).src})`,
           }}
         />
       </Button>
