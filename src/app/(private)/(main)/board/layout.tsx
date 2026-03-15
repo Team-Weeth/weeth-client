@@ -13,27 +13,25 @@ const MOCK_CHANNELS: BoardNavItem[] = [
   { id: 'pm', label: 'PM', type: 'channel' },
 ];
 
-interface PostDetailLayoutProps {
+interface BoardLayoutProps {
   children: React.ReactNode;
+  footer: React.ReactNode;
 }
 
-function PostDetailLayout({ children }: PostDetailLayoutProps) {
+export default function BoardLayout({ children, footer }: BoardLayoutProps) {
   const [activeChannelId, setActiveChannelId] = useState('all');
 
   return (
-    <div className="bg-background flex w-full max-w-[1440px] flex-col items-start pb-[183px]">
-      <div className="flex w-full items-start gap-700 px-800 pt-450">
-        <aside className="shrink-0">
-          <BoardNav
-            items={MOCK_CHANNELS}
-            activeId={activeChannelId}
-            onItemSelect={setActiveChannelId}
-          />
-        </aside>
-        {children}
-      </div>
+    <div className="flex items-start gap-700 px-800 pt-450">
+      <aside className="flex shrink-0 flex-col gap-400">
+        <BoardNav
+          items={MOCK_CHANNELS}
+          activeId={activeChannelId}
+          onItemSelect={setActiveChannelId}
+        />
+        {footer}
+      </aside>
+      {children}
     </div>
   );
 }
-
-export { PostDetailLayout };

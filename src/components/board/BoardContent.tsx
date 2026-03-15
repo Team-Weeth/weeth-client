@@ -1,20 +1,8 @@
 'use client';
 
-import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { BoardNav, type BoardNavItem } from './BoardNav';
 import { PostActionMenu } from './PostActionMenu';
 import { PostCard } from './PostCard';
-
-const MOCK_CHANNELS: BoardNavItem[] = [
-  { id: 'notice', label: '공지', type: 'notice' },
-  { id: 'all', label: '전체', type: 'channel' },
-  { id: 'study-fe', label: '[스터디 게시판] FE', type: 'channel' },
-  { id: 'study-be', label: '[스터디 게시판] BE', type: 'channel' },
-  { id: 'be', label: 'BE', type: 'channel' },
-  { id: 'd', label: 'D', type: 'channel' },
-  { id: 'pm', label: 'PM', type: 'channel' },
-];
 
 const MOCK_IMAGES = [
   {
@@ -120,47 +108,37 @@ const MOCK_POSTS = [
 ];
 
 function BoardContent() {
-  const [activeChannelId, setActiveChannelId] = useState('all');
   const router = useRouter();
 
   // TODO: API 연동 시 activeChannelId 기반으로 게시글 목록 조회
   const posts = MOCK_POSTS;
 
   return (
-    <div className="flex items-start gap-700 self-stretch px-800 pt-450">
-      <aside className="shrink-0">
-        <BoardNav
-          items={MOCK_CHANNELS}
-          activeId={activeChannelId}
-          onItemSelect={setActiveChannelId}
-        />
-      </aside>
-      <main className="flex min-w-0 flex-1 flex-col gap-400">
-        {posts.map((post) => (
-          <PostCard.Root
-            key={post.id}
-            className="cursor-pointer"
-            onClick={() => router.push(`/board/${post.id}`)}
-          >
-            <PostCard.Header>
-              <PostCard.Author
-                author={post.author}
-                date={post.date}
-                hasAttachment={post.hasAttachment}
-              />
-              {post.isMyPost && (
-                <div onClick={(e) => e.stopPropagation()}>
-                  <PostActionMenu />
-                </div>
-              )}
-            </PostCard.Header>
-            <PostCard.Content title={post.title} content={post.content} isNew={post.isNew} />
-            <PostCard.Images files={post.images} />
-            <PostCard.Actions likeCount={post.likeCount} commentCount={post.commentCount} />
-          </PostCard.Root>
-        ))}
-      </main>
-    </div>
+    <main className="flex min-w-0 flex-1 flex-col gap-400">
+      {posts.map((post) => (
+        <PostCard.Root
+          key={post.id}
+          className="cursor-pointer"
+          onClick={() => router.push(`/board/${post.id}`)}
+        >
+          <PostCard.Header>
+            <PostCard.Author
+              author={post.author}
+              date={post.date}
+              hasAttachment={post.hasAttachment}
+            />
+            {post.isMyPost && (
+              <div onClick={(e) => e.stopPropagation()}>
+                <PostActionMenu />
+              </div>
+            )}
+          </PostCard.Header>
+          <PostCard.Content title={post.title} content={post.content} isNew={post.isNew} />
+          <PostCard.Images files={post.images} />
+          <PostCard.Actions likeCount={post.likeCount} commentCount={post.commentCount} />
+        </PostCard.Root>
+      ))}
+    </main>
   );
 }
 
