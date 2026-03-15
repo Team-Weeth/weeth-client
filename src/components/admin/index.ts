@@ -16,6 +16,12 @@ export {
   generationCardVariants,
   type GenerationCardProps,
 } from './member/GenerationCard';
+export {
+  MemberDetailModal,
+  type MemberDetailModalProps,
+  type MemberDetail,
+  type MemberDetailStatus,
+} from './member/MemberDetailModal';
 export { MemberPageContent } from './member/MemberPageContent';
 export {
   MemberSearchBar,

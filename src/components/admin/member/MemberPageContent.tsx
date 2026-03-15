@@ -6,15 +6,42 @@ import {
   AddGenerationButton,
   AddGenerationModal,
   GenerationCard,
+  MemberDetailModal,
   MemberSearchBar,
   MemberTable,
   MemberTopBar,
 } from '@/components/admin';
-import { MOCK_MEMBERS } from '@/components/admin/member/MemberTable';
+import { MOCK_MEMBERS, type Member } from '@/components/admin/member/MemberTable';
+import type { MemberDetail } from '@/components/admin/member/MemberDetailModal';
 
 function MemberPageContent() {
   const [selectedIds, setSelectedIds] = React.useState<Set<string>>(new Set());
   const [searchValue, setSearchValue] = React.useState('');
+  const [detailModalOpen, setDetailModalOpen] = React.useState(false);
+  const [detailMember, setDetailMember] = React.useState<MemberDetail | null>(null);
+
+  const toMemberDetail = (m: Member): MemberDetail => ({
+    name: m.name,
+    generation: parseInt(m.cardinal.split('.')[0], 10),
+    status: m.status,
+    position: m.position,
+    role: m.role,
+    department: m.department,
+    phone: m.phone,
+    studentId: m.studentId,
+    email: 'weeth123@gmail.com',
+    activeGenerations: m.cardinal,
+    memberStatus: '알럼나이',
+    joinDate: '2024.12.03.',
+    attendance: m.attendance,
+    absence: m.absence,
+    penalty: 0,
+  });
+
+  const handleMemberAction = (m: Member) => {
+    setDetailMember(toMemberDetail(m));
+    setDetailModalOpen(true);
+  };
 
   const selectedMembers = MOCK_MEMBERS.filter((m) => selectedIds.has(m.id));
   const selectedCount = selectedMembers.length;
@@ -93,9 +120,16 @@ function MemberPageContent() {
 
         {/* Member table */}
         <div className="bg-container-neutral min-w-0 overflow-hidden rounded-lg px-600 pt-600 pb-[64px] shadow-[0px_1px_5px_0px_rgba(17,33,49,0.15)]">
-          <MemberTable selectedIds={selectedIds} onSelectionChange={setSelectedIds} />
+          <MemberTable selectedIds={selectedIds} onSelectionChange={setSelectedIds} onMemberAction={handleMemberAction} />
         </div>
       </div>
+
+      {/* Member detail modal */}
+      <MemberDetailModal
+        open={detailModalOpen}
+        onOpenChange={setDetailModalOpen}
+        member={detailMember}
+      />
     </div>
   );
 }

@@ -148,12 +148,14 @@ function sortMembers(members: Member[], sortBy: SortBy): Member[] {
 interface MemberTableProps extends React.HTMLAttributes<HTMLDivElement> {
   selectedIds?: Set<string>;
   onSelectionChange?: (ids: Set<string>) => void;
+  onMemberAction?: (member: Member) => void;
 }
 
 function MemberTable({
   className,
   selectedIds: controlledSelectedIds,
   onSelectionChange,
+  onMemberAction,
   ...props
 }: MemberTableProps) {
   const [internalSelectedIds, setInternalSelectedIds] = React.useState<Set<string>>(new Set());
@@ -256,6 +258,7 @@ function MemberTable({
                   type="button"
                   className="text-icon-normal flex items-center justify-center"
                   aria-label="더보기"
+                  onClick={() => onMemberAction?.(member)}
                 >
                   <svg
                     width="20"
