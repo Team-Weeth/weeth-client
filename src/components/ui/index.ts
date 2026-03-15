@@ -85,4 +85,4 @@ export {
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuPortal,
-} from './dropdown-menu';
+} from './DropdownMenu';
