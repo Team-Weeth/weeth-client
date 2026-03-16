@@ -105,8 +105,8 @@ export const STATUS_LEGEND = [
 export type SortBy = 'generation' | 'name';
 
 export const SORT_LABEL: Record<SortBy, string> = {
-  generation: '기수 순',
-  name: '이름순',
+  generation: '기수',
+  name: '이름',
 };
 
 export function sortMembers(members: Member[], sortBy: SortBy): Member[] {

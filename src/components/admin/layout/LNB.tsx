@@ -7,7 +7,7 @@ import { usePathname } from 'next/navigation';
 import logoIcon from '@/assets/icons/logo/logo_initial_Origin.svg';
 import userIcon from '@/assets/icons/admin/ic_admin_user.svg';
 import checkIcon from '@/assets/icons/admin/ic_admin_attendance.svg';
-import penaltyIcon from '@/assets/icons/admin/ic_admin_penalty.svg';
+//import penaltyIcon from '@/assets/icons/admin/ic_admin_penalty.svg';
 // import dueIcon from '@/assets/icons/admin/ic_admin_due.svg';
 import arrowIcon from '@/assets/icons/admin/ic_admin_service_transfer.svg';
 import manualIcon from '@/assets/icons/admin/ic_admin_manual.svg';
@@ -17,7 +17,7 @@ import { cn } from '@/lib/cn';
 const mainNavItems = [
   { id: 'member', icon: userIcon, label: '멤버 관리', path: '/admin/member' },
   { id: 'attendance', icon: checkIcon, label: '출석 관리', path: '/admin/attendance' },
-  { id: 'penalty', icon: penaltyIcon, label: '페널티 관리', path: '/admin/penalty' },
+  // { id: 'penalty', icon: penaltyIcon, label: '페널티 관리', path: '/admin/penalty' },
   // { id: 'dues', icon: dueIcon, label: '회비 관리', path: '/admin/dues' },
 ];
 

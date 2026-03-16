@@ -82,6 +82,7 @@ function ChangeGenerationModal({
           <div className="flex items-center gap-200">
             <TextField
               type="number"
+              inputMode="numeric"
               min={1}
               value={input}
               onChange={handleInputChange}
