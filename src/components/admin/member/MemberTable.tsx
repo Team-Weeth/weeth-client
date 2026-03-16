@@ -94,6 +94,7 @@ function MemberTable({
               <TableHead className="w-1 min-w-1 p-0" />
               <TableHead className="w-12">
                 <input
+                  aria-label="전체 멤버 선택"
                   type="checkbox"
                   className="cursor-pointer"
                   checked={isAllSelected}
@@ -117,6 +118,7 @@ function MemberTable({
                 <TableCell className={cn('w-1 min-w-1 p-0', STATUS_BAR_COLOR[member.status])} />
                 <TableCell className="w-12">
                   <input
+                    aria-label={`${member.name} ${member.studentId} 선택`}
                     type="checkbox"
                     className="cursor-pointer"
                     checked={selectedIds.has(member.id)}
