@@ -35,11 +35,11 @@ export function getActivityStats(member: MemberDetail) {
   return [
     { label: '출석', value: member.attendance, color: 'text-text-strong' },
     { label: '결석', value: member.absence, color: 'text-text-strong' },
-    {
-      label: '패널티',
-      value: member.penalty,
-      color: member.penalty > 0 ? 'text-state-error' : 'text-text-strong',
-    },
+    // {
+    //   label: '패널티',
+    //   value: member.penalty,
+    //   color: member.penalty > 0 ? 'text-state-error' : 'text-text-strong',
+    // },
   ];
 }
 

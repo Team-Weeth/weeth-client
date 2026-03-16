@@ -17,6 +17,5 @@ export function toMemberDetail(m: Member): MemberDetail {
     joinDate: '2024.12.03.',
     attendance: m.attendance,
     absence: m.absence,
-    penalty: 0,
   };
 }

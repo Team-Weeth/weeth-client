@@ -43,7 +43,6 @@ interface MemberDetail {
   joinDate: string;
   attendance: number;
   absence: number;
-  penalty: number;
 }
 
 interface MemberDetailModalProps {

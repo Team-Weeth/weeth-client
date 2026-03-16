@@ -12,8 +12,6 @@ export const MOCK_MEMBERS: Member[] = [
     position: '사용자',
     attendance: 12,
     absence: 12,
-    penalty: 12,
-    warning: 0,
     status: 'approved',
   },
   {
@@ -27,8 +25,6 @@ export const MOCK_MEMBERS: Member[] = [
     position: '사용자',
     attendance: 12,
     absence: 12,
-    penalty: 12,
-    warning: 0,
     status: 'pending',
   },
   {
@@ -42,8 +38,6 @@ export const MOCK_MEMBERS: Member[] = [
     position: '관리자',
     attendance: 12,
     absence: 12,
-    penalty: 12,
-    warning: 0,
     status: 'banned',
   },
   {
@@ -57,8 +51,6 @@ export const MOCK_MEMBERS: Member[] = [
     position: '사용자',
     attendance: 12,
     absence: 12,
-    penalty: 12,
-    warning: 0,
     status: 'approved',
   },
   {
@@ -72,8 +64,6 @@ export const MOCK_MEMBERS: Member[] = [
     position: '사용자',
     attendance: 12,
     absence: 12,
-    penalty: 12,
-    warning: 0,
     status: 'pending',
   },
 ];

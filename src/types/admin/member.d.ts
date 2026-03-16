@@ -9,8 +9,6 @@ export interface Member {
   position: string;
   attendance: number;
   absence: number;
-  penalty: number;
-  warning: number;
   status: MemberStatus;
 }
 

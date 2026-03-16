@@ -12,15 +12,15 @@ const PAGE_METADATA: Record<string, { title: string; description: string }> = {
     title: '출석 관리',
     description: '기수를 선택하고, 해당 모임에 대한 출석을 수정하는 페이지입니다.',
   },
-  '/admin/penalty': {
-    title: '페널티 관리',
-    description: '기수를 선택하고, 해당 멤버에 대한 페널티를 수정하는 페이지입니다.',
-  },
-  '/admin/dues': {
-    title: '회비 관리',
-    description:
-      '기수 시작시 이월된 회비와 해당 기수 회비를 종합해 회비를 등록해주시기 바랍니다. 회비 등록은 기수당 한 번만 가능합니다.',
-  },
+  // '/admin/penalty': {
+  //   title: '페널티 관리',
+  //   description: '기수를 선택하고, 해당 멤버에 대한 페널티를 수정하는 페이지입니다.',
+  // },
+  // '/admin/dues': {
+  //   title: '회비 관리',
+  //   description:
+  //     '기수 시작시 이월된 회비와 해당 기수 회비를 종합해 회비를 등록해주시기 바랍니다. 회비 등록은 기수당 한 번만 가능합니다.',
+  // },
 };
 
 export function Header() {

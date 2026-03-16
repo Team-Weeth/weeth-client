@@ -29,7 +29,7 @@ export const usePostStore = create(
     combine(initialState, (set, get) => ({
       setBoard: (board: string) => set({ board }, false, 'setBoard'),
       setTitle: (title: string) => set({ title }, false, 'setTitle'),
-      setgenerationNumber: (generationNumber: number) =>
+      setGenerationNumber: (generationNumber: number) =>
         set({ generationNumber }, false, 'setgenerationNumber'),
       setPart: (part: string) => set({ part }, false, 'setPart'),
       setCategory: (category: string) => set({ category }, false, 'setCategory'),
