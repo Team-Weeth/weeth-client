@@ -81,7 +81,7 @@ function BoardNav({ className, items, activeId, onItemSelect, ...props }: BoardN
                     aria-hidden
                     className={cn(
                       'block h-6 w-6 shrink-0 mask-contain mask-center mask-no-repeat',
-                      isActive ? 'bg-text-inverse' : 'bg-icon-strong',
+                      isActive ? 'bg-text-inverse' : 'bg-icon-normal',
                     )}
                     style={{
                       maskImage: `url(${(PinIcon as StaticImageData).src})`,

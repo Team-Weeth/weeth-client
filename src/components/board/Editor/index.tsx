@@ -119,7 +119,7 @@ export default function Editor() {
         {/* 게시글 하단 첨부 영역 */}
         <div className="flex flex-col gap-400">
           <ImageList files={files.imageFiles} removable onRemove={files.handleRemoveFile} />
-          <FileList files={files.nonImageFiles} onRemove={files.handleRemoveFile} removable />
+          <FileList files={files.nonImageFiles} onRemove={files.handleRemoveFile} editable />
         </div>
       </div>
     </div>

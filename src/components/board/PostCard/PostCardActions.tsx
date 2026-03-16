@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import Image from 'next/image';
 import type { StaticImageData } from 'next/image';
 import { cn } from '@/lib/cn';
 import { LikeIcon, LikeFilledIcon, ChatIcon } from '@/assets/icons';
@@ -60,7 +59,14 @@ function PostCardActions({
         className="focus-visible:outline-ring flex cursor-pointer items-center gap-100 rounded-sm hover:opacity-70 focus-visible:outline-2 focus-visible:outline-offset-2"
         onClick={onComment}
       >
-        <Image src={ChatIcon as StaticImageData} alt="" width={17} height={17} aria-hidden />
+        <span
+          aria-hidden
+          className="bg-icon-alternative block size-[17px] mask-contain mask-no-repeat"
+          style={{
+            maskImage: `url(${(ChatIcon as StaticImageData).src})`,
+            WebkitMaskImage: `url(${(ChatIcon as StaticImageData).src})`,
+          }}
+        />
         <span className="typo-caption2 text-text-alternative">{commentCount}</span>
       </button>
     </div>
