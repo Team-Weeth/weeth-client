@@ -20,3 +20,9 @@ export { default as DeleteIcon } from './delete.svg';
 export { default as PeopleIcon } from './people.svg';
 
 export { default as SearchIcon } from './search.svg';
+export { default as MegaphoneDarkIcon } from './megaphone_dark.svg';
+export { default as MegaphoneDarkActiveIcon } from './megaphone_dark_active.svg';
+export { default as MegaphoneWhiteIcon } from './megaphone_white.svg';
+export { default as MegaphoneWhiteActiveIcon } from './megaphone_white_active.svg';
+export { default as PinIcon } from './pin.svg';
+export { default as MoreVerticalIcon } from './more_vertical.svg';
