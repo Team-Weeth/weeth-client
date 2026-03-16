@@ -48,8 +48,13 @@ function MemberTopBar({
   ref,
   ...props
 }: MemberTopBarProps) {
-  const { genConfirmOpen, setGenConfirmOpen, pendingGeneration, handleGenSubmit, handleGenConfirm } =
-    useGenerationConfirm(onChangeGeneration);
+  const {
+    genConfirmOpen,
+    setGenConfirmOpen,
+    pendingGeneration,
+    handleGenSubmit,
+    handleGenConfirm,
+  } = useGenerationConfirm(onChangeGeneration);
 
   if (selectedCount === 0) return null;
 

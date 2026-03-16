@@ -46,7 +46,6 @@ interface MemberDetail {
   penalty: number;
 }
 
-
 interface MemberDetailModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -68,8 +67,13 @@ function MemberDetailModal({
   onBan,
   onChangeGeneration,
 }: MemberDetailModalProps) {
-  const { genConfirmOpen, setGenConfirmOpen, pendingGeneration, handleGenSubmit, handleGenConfirm } =
-    useGenerationConfirm(onChangeGeneration);
+  const {
+    genConfirmOpen,
+    setGenConfirmOpen,
+    pendingGeneration,
+    handleGenSubmit,
+    handleGenConfirm,
+  } = useGenerationConfirm(onChangeGeneration);
 
   if (!member) return null;
 

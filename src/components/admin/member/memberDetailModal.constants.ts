@@ -50,7 +50,12 @@ interface FooterActionHandlers {
   onBan?: () => void;
 }
 
-export function getFooterActions({ onApprove, onChangeToAdmin, onResetPassword, onBan }: FooterActionHandlers) {
+export function getFooterActions({
+  onApprove,
+  onChangeToAdmin,
+  onResetPassword,
+  onBan,
+}: FooterActionHandlers) {
   return [
     { label: '가입 승인', title: '1명의 멤버 가입을 승인하시겠습니까?', handler: onApprove },
     {
