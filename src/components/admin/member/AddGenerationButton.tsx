@@ -1,6 +1,6 @@
 'use client';
 
-import { AdminPlusIcon } from '@/assets/icons';
+import { AdminPlusIcon } from '@/assets/icons/admin';
 import { Icon } from '@/components/ui';
 import { cn } from '@/lib/cn';
 
@@ -8,10 +8,16 @@ interface AddGenerationButtonProps extends React.ButtonHTMLAttributes<HTMLButton
   ref?: React.Ref<HTMLButtonElement>;
 }
 
-function AddGenerationButton({ className, ref, ...props }: AddGenerationButtonProps) {
+function AddGenerationButton({
+  className,
+  ref,
+  type = 'button',
+  ...props
+}: AddGenerationButtonProps) {
   return (
     <button
       ref={ref}
+      type={type}
       className={cn(
         'bg-container-neutral flex h-[164px] w-[80px] shrink-0 cursor-pointer items-center justify-center rounded-lg shadow-sm',
         className,

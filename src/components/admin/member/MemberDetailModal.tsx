@@ -16,7 +16,7 @@ import {
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { ChangeGenerationModal } from '@/components/admin/member/ChangeGenerationModal';
 import { cn } from '@/lib/cn';
-import { AdminCloseIcon } from '@/assets/icons';
+import { AdminCloseIcon } from '@/assets/icons/admin';
 
 type MemberDetailStatus = 'approved' | 'pending' | 'banned';
 

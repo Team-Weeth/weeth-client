@@ -2,7 +2,7 @@
 
 import React from 'react';
 
-import { AdminMeatballIcon } from '@/assets/icons';
+import { AdminMeatballIcon } from '@/assets/icons/admin';
 import { Button, Icon } from '@/components/ui';
 import {
   Dialog,

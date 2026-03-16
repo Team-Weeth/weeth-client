@@ -2,7 +2,7 @@
 
 import React from 'react';
 
-import { AdminCheckboxIcon, AdminUncheckboxIcon } from '@/assets/icons';
+import { AdminCheckboxIcon, AdminUncheckboxIcon } from '@/assets/icons/admin';
 import { Button, Icon } from '@/components/ui';
 import {
   Dialog,

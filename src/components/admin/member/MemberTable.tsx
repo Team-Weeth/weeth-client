@@ -2,8 +2,16 @@
 
 import React from 'react';
 
-import { AdminChangeIcon, AdminMeatballIcon } from '@/assets/icons';
-import { Icon, Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui';
+import { AdminChangeIcon, AdminMeatballIcon } from '@/assets/icons/admin';
+import {
+  Icon,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui';
 import { cn } from '@/lib/cn';
 
 type MemberStatus = 'approved' | 'pending' | 'banned';
