@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 
 import { AdminCheckboxIcon, AdminUncheckboxIcon } from '@/assets/icons/admin';
 import { Button, Icon } from '@/components/ui';
@@ -25,11 +25,11 @@ interface AddGenerationModalProps {
 }
 
 function AddGenerationModal({ children, onSubmit }: AddGenerationModalProps) {
-  const [open, setOpen] = React.useState(false);
-  const [generation, setGeneration] = React.useState('');
-  const [year, setYear] = React.useState('');
-  const [semester, setSemester] = React.useState('');
-  const [isCurrent, setIsCurrent] = React.useState(false);
+  const [open, setOpen] = useState(false);
+  const [generation, setGeneration] = useState('');
+  const [year, setYear] = useState('');
+  const [semester, setSemester] = useState('');
+  const [isCurrent, setIsCurrent] = useState(false);
 
   const resetForm = () => {
     setGeneration('');
@@ -71,6 +71,7 @@ function AddGenerationModal({ children, onSubmit }: AddGenerationModalProps) {
             </p>
             <div className="relative">
               <TextField
+                aria-label="기수"
                 type="number"
                 min={1}
                 value={generation}
@@ -93,6 +94,7 @@ function AddGenerationModal({ children, onSubmit }: AddGenerationModalProps) {
             <div className="flex gap-200">
               <div className="relative flex-1">
                 <TextField
+                  aria-label="연도"
                   type="number"
                   min={1}
                   value={year}
@@ -109,6 +111,7 @@ function AddGenerationModal({ children, onSubmit }: AddGenerationModalProps) {
               </div>
               <div className="relative flex-1">
                 <TextField
+                  aria-label="학기"
                   type="number"
                   min={1}
                   value={semester}
@@ -130,6 +133,8 @@ function AddGenerationModal({ children, onSubmit }: AddGenerationModalProps) {
         <DialogFooter>
           <div className="flex items-center justify-between">
             <button
+              aria-pressed={isCurrent}
+              aria-label="현재 진행 중 여부 토글"
               type="button"
               className="flex cursor-pointer items-center gap-200"
               onClick={() => setIsCurrent(!isCurrent)}
