@@ -12,7 +12,7 @@ export interface FileItem {
 const initialState = {
   board: '',
   title: '',
-  cardinalNumber: 0,
+  generationNumber: 0,
   part: '',
   category: '',
   studyName: '',
@@ -29,8 +29,8 @@ export const usePostStore = create(
     combine(initialState, (set, get) => ({
       setBoard: (board: string) => set({ board }, false, 'setBoard'),
       setTitle: (title: string) => set({ title }, false, 'setTitle'),
-      setCardinalNumber: (cardinalNumber: number) =>
-        set({ cardinalNumber }, false, 'setCardinalNumber'),
+      setgenerationNumber: (generationNumber: number) =>
+        set({ generationNumber }, false, 'setgenerationNumber'),
       setPart: (part: string) => set({ part }, false, 'setPart'),
       setCategory: (category: string) => set({ category }, false, 'setCategory'),
       setStudyName: (studyName: string) => set({ studyName }, false, 'setStudyName'),
@@ -74,7 +74,7 @@ export const usePostStore = create(
           studyName: state.studyName,
           week: state.week,
           part: state.part,
-          cardinalNumber: state.cardinalNumber,
+          generationNumber: state.generationNumber,
           files: state.files
             .filter((f) => f.uploaded)
             .map(({ fileName, fileUrl }) => ({ fileName, fileUrl })),

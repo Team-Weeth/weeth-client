@@ -3,7 +3,7 @@ export interface Member {
   name: string;
   role: string;
   department: string;
-  cardinal: string;
+  generation: string;
   phone: string;
   studentId: string;
   position: string;
