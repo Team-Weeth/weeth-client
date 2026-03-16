@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 
 import {
   AddGenerationButton,
@@ -16,10 +16,9 @@ import type { MemberDetail } from '@/components/admin/member/MemberDetailModal';
 import { Card } from '@/components/ui';
 
 function MemberPageContent() {
-  const [selectedIds, setSelectedIds] = React.useState<Set<string>>(new Set());
-  const [searchValue, setSearchValue] = React.useState('');
-  const [detailModalOpen, setDetailModalOpen] = React.useState(false);
-  const [detailMember, setDetailMember] = React.useState<MemberDetail | null>(null);
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [searchValue, setSearchValue] = useState('');
+  const [detailMember, setDetailMember] = useState<MemberDetail | null>(null);
 
   const toMemberDetail = (m: Member): MemberDetail => ({
     name: m.name,
@@ -41,7 +40,6 @@ function MemberPageContent() {
 
   const handleMemberAction = (m: Member) => {
     setDetailMember(toMemberDetail(m));
-    setDetailModalOpen(true);
   };
 
   const selectedMembers = MOCK_MEMBERS.filter((m) => selectedIds.has(m.id));
@@ -131,8 +129,10 @@ function MemberPageContent() {
 
       {/* Member detail modal */}
       <MemberDetailModal
-        open={detailModalOpen}
-        onOpenChange={setDetailModalOpen}
+        open={detailMember !== null}
+        onOpenChange={(open) => {
+          if (!open) setDetailMember(null);
+        }}
         member={detailMember}
       />
     </div>
