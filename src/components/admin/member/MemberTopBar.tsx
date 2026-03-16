@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 
 import { ArrowLeftIcon } from '@/assets/icons';
 import {
@@ -17,6 +17,7 @@ import {
 import { ChangeGenerationModal } from '@/components/admin/member/ChangeGenerationModal';
 import { cn } from '@/lib/cn';
 import { getTopBarActions } from './memberTopBar.constants';
+import { useGenerationConfirm } from '@/hooks';
 
 interface MemberTopBarProps extends React.HTMLAttributes<HTMLDivElement> {
   selectedCount: number;
@@ -47,21 +48,10 @@ function MemberTopBar({
   ref,
   ...props
 }: MemberTopBarProps) {
-  const [genConfirmOpen, setGenConfirmOpen] = useState(false);
-  const [pendingGeneration, setPendingGeneration] = useState(0);
+  const { genConfirmOpen, setGenConfirmOpen, pendingGeneration, handleGenSubmit, handleGenConfirm } =
+    useGenerationConfirm(onChangeGeneration);
 
   if (selectedCount === 0) return null;
-
-  const handleGenSubmit = (generation: number) => {
-    setPendingGeneration(generation);
-    setGenConfirmOpen(true);
-  };
-
-  const handleGenConfirm = () => {
-    onChangeGeneration?.(pendingGeneration);
-    setGenConfirmOpen(false);
-    setPendingGeneration(0);
-  };
 
   const topBarActions = getTopBarActions({
     selectedCount,

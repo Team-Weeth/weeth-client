@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import { useGenerationConfirm } from '@/hooks';
 
 import {
   AlertDialog,
@@ -68,23 +68,12 @@ function MemberDetailModal({
   onBan,
   onChangeGeneration,
 }: MemberDetailModalProps) {
-  const [genConfirmOpen, setGenConfirmOpen] = useState(false);
-  const [pendingGeneration, setPendingGeneration] = useState(0);
+  const { genConfirmOpen, setGenConfirmOpen, pendingGeneration, handleGenSubmit, handleGenConfirm } =
+    useGenerationConfirm(onChangeGeneration);
 
   if (!member) return null;
 
   const handleClose = () => onOpenChange(false);
-
-  const handleGenSubmit = (generation: number) => {
-    setPendingGeneration(generation);
-    setGenConfirmOpen(true);
-  };
-
-  const handleGenConfirm = () => {
-    onChangeGeneration?.(pendingGeneration);
-    setGenConfirmOpen(false);
-    setPendingGeneration(0);
-  };
 
   const personalInfo = getPersonalInfo(member);
   const activityInfo = getActivityInfo(member);
