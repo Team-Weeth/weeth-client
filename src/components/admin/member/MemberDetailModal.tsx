@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 
 import {
   AlertDialog,
@@ -71,8 +71,8 @@ function MemberDetailModal({
   onBan,
   onChangeGeneration,
 }: MemberDetailModalProps) {
-  const [genConfirmOpen, setGenConfirmOpen] = React.useState(false);
-  const [pendingGeneration, setPendingGeneration] = React.useState(0);
+  const [genConfirmOpen, setGenConfirmOpen] = useState(false);
+  const [pendingGeneration, setPendingGeneration] = useState(0);
 
   if (!member) return null;
 
@@ -204,25 +204,29 @@ function MemberDetailModal({
           {/* Footer */}
           <div className="bg-container-neutral flex items-center justify-between rounded-b-sm px-400 pt-400 pb-500">
             <div className="flex items-center gap-200">
-              {footerActions.map(({ label, title, handler }) => (
-                <AlertDialog
-                  key={label}
-                  title={title}
-                  trigger={
-                    <Button variant="secondary" size="lg">
-                      {label}
-                    </Button>
-                  }
-                >
-                  <AlertDialogAction onClick={handler}>확인</AlertDialogAction>
-                  <AlertDialogCancel>취소</AlertDialogCancel>
-                </AlertDialog>
-              ))}
-              <ChangeGenerationModal onSubmit={handleGenSubmit}>
-                <Button variant="secondary" size="lg">
-                  기수 변경
-                </Button>
-              </ChangeGenerationModal>
+              {footerActions
+                .filter(({ handler }) => handler !== undefined)
+                .map(({ label, title, handler }) => (
+                  <AlertDialog
+                    key={label}
+                    title={title}
+                    trigger={
+                      <Button variant="secondary" size="lg">
+                        {label}
+                      </Button>
+                    }
+                  >
+                    <AlertDialogAction onClick={handler}>확인</AlertDialogAction>
+                    <AlertDialogCancel>취소</AlertDialogCancel>
+                  </AlertDialog>
+                ))}
+              {onChangeGeneration && (
+                <ChangeGenerationModal onSubmit={handleGenSubmit}>
+                  <Button variant="secondary" size="lg">
+                    기수 변경
+                  </Button>
+                </ChangeGenerationModal>
+              )}
             </div>
 
             <Button variant="primary" size="lg" onClick={handleClose}>

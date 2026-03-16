@@ -6,6 +6,7 @@ export {
   ChangeGenerationModal,
   type ChangeGenerationModalProps,
 } from './ChangeGenerationModal';
+export { GenerationDropdown, type GenerationDropdownProps } from './GenerationDropdown';
 export {
   GenerationCard,
   generationCardVariants,
