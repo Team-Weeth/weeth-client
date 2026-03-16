@@ -1,25 +1,36 @@
-import { useRef, useCallback } from 'react';
+import { useRef, useCallback, useEffect } from 'react';
 
 export function useDragScroll() {
   const ref = useRef<HTMLDivElement>(null);
-  const state = useRef({ isDown: false, startX: 0, scrollLeft: 0 });
+  const cleanupRef = useRef<(() => void) | null>(null);
+
+  useEffect(() => {
+    return () => {
+      cleanupRef.current?.();
+    };
+  }, []);
 
   const onMouseDown = useCallback((e: React.MouseEvent) => {
     const el = ref.current;
     if (!el) return;
-    state.current = { isDown: true, startX: e.pageX, scrollLeft: el.scrollLeft };
-  }, []);
 
-  const onMouseMove = useCallback((e: React.MouseEvent) => {
-    if (!state.current.isDown) return;
-    e.preventDefault();
-    const el = ref.current;
-    if (!el) return;
-    el.scrollLeft = state.current.scrollLeft - (e.pageX - state.current.startX);
-  }, []);
+    const startX = e.pageX - el.offsetLeft;
+    const scrollLeft = el.scrollLeft;
 
-  const onMouseUp = useCallback(() => {
-    state.current.isDown = false;
+    const handleMouseMove = (ev: MouseEvent) => {
+      ev.preventDefault();
+      el.scrollLeft = scrollLeft - (ev.pageX - el.offsetLeft - startX);
+    };
+
+    const cleanup = () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('mouseup', cleanup);
+      cleanupRef.current = null;
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('mouseup', cleanup);
+    cleanupRef.current = cleanup;
   }, []);
 
   const SCROLL_STEP = 200;
@@ -56,9 +67,6 @@ export function useDragScroll() {
   return {
     ref,
     onMouseDown,
-    onMouseMove,
-    onMouseUp,
-    onMouseLeave: onMouseUp,
     onKeyDown,
     scrollToEnd,
   };

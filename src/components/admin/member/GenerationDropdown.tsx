@@ -1,10 +1,11 @@
 'use client';
 
-import React, { useState } from 'react';
+import { useState, useCallback } from 'react';
 
 import { AdminMeatballIcon } from '@/assets/icons/admin';
 import { Icon } from '@/components/ui';
 import { cn } from '@/lib/cn';
+import { useClickOutside } from '@/hooks';
 
 interface GenerationDropdownProps {
   generations: number[];
@@ -20,19 +21,7 @@ function GenerationDropdown({
   onSelectDirect,
 }: GenerationDropdownProps) {
   const [open, setOpen] = useState(false);
-  const ref = React.useRef<HTMLDivElement>(null);
-
-  React.useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      if (ref.current && !ref.current.contains(e.target as Node)) {
-        setOpen(false);
-      }
-    };
-    if (open) {
-      document.addEventListener('mousedown', handleClickOutside);
-    }
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, [open]);
+  const ref = useClickOutside<HTMLDivElement>(useCallback(() => setOpen(false), []));
 
   const handleSelectGeneration = (gen: number) => {
     onSelectGeneration(gen);

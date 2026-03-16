@@ -21,7 +21,7 @@ function MemberPageContent() {
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [searchValue, setSearchValue] = useState('');
   const [detailMember, setDetailMember] = useState<MemberDetail | null>(null);
-  const { ref: dragScrollRef, onMouseDown, onMouseMove, onMouseUp, onMouseLeave } = useDragScroll();
+  const { ref: dragScrollRef, onMouseDown } = useDragScroll();
 
   const handleMemberAction = (m: Member) => {
     setDetailMember(toMemberDetail(m));
@@ -58,9 +58,6 @@ function MemberPageContent() {
           ref={dragScrollRef}
           className="scrollbar-none flex cursor-grab gap-400 overflow-x-auto select-none active:cursor-grabbing"
           onMouseDown={onMouseDown}
-          onMouseMove={onMouseMove}
-          onMouseUp={onMouseUp}
-          onMouseLeave={onMouseLeave}
         >
           <AddGenerationModal>
             <AddGenerationButton />
