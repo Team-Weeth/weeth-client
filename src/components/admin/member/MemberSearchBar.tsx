@@ -20,7 +20,7 @@ function MemberSearchBar({
   ...props
 }: MemberSearchBarProps) {
   const inputField = (
-    <div className="relative w-full">
+    <div className={cn('relative w-full', !isWrapped && className)} {...(!isWrapped ? props : {})}>
       <Image
         src={SearchIcon}
         alt="검색"

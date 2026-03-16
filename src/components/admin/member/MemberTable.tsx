@@ -13,24 +13,7 @@ import {
   TableRow,
 } from '@/components/ui';
 import { cn } from '@/lib/cn';
-
-type MemberStatus = 'approved' | 'pending' | 'banned';
-
-interface Member {
-  id: string;
-  name: string;
-  role: string;
-  department: string;
-  cardinal: string;
-  phone: string;
-  studentId: string;
-  position: string;
-  attendance: number;
-  absence: number;
-  penalty: number;
-  warning: number;
-  status: MemberStatus;
-}
+import { Member, MemberStatus } from '@/types/admin/member';
 
 const MOCK_MEMBERS: Member[] = [
   {

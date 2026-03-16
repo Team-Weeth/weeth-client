@@ -1,42 +1,27 @@
 'use client';
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 import {
   AddGenerationButton,
   AddGenerationModal,
   GenerationCard,
+  MemberDetail,
   MemberDetailModal,
   MemberSearchBar,
   MemberTable,
   MemberTopBar,
 } from '@/components/admin';
 import { MOCK_MEMBERS, type Member } from '@/components/admin/member/MemberTable';
-import type { MemberDetail } from '@/components/admin/member/MemberDetailModal';
+import { toMemberDetail } from '@/components/admin/member/memberMapper';
 import { Card } from '@/components/ui';
+import { useDragScroll } from '@/hooks';
 
 function MemberPageContent() {
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [searchValue, setSearchValue] = useState('');
   const [detailMember, setDetailMember] = useState<MemberDetail | null>(null);
-
-  const toMemberDetail = (m: Member): MemberDetail => ({
-    name: m.name,
-    generation: parseInt(m.cardinal.split('.')[0], 10),
-    status: m.status,
-    position: m.position,
-    role: m.role,
-    department: m.department,
-    phone: m.phone,
-    studentId: m.studentId,
-    email: 'weeth123@gmail.com',
-    activeGenerations: m.cardinal,
-    memberStatus: '알럼나이',
-    joinDate: '2024.12.03.',
-    attendance: m.attendance,
-    absence: m.absence,
-    penalty: 0,
-  });
+  const { ref: dragScrollRef, onMouseDown, onMouseMove, onMouseUp, onMouseLeave } = useDragScroll();
 
   const handleMemberAction = (m: Member) => {
     setDetailMember(toMemberDetail(m));
@@ -70,21 +55,12 @@ function MemberPageContent() {
 
         {/* Generation cards */}
         <div
+          ref={dragScrollRef}
           className="scrollbar-none flex cursor-grab gap-400 overflow-x-auto select-none active:cursor-grabbing"
-          onMouseDown={(e) => {
-            const el = e.currentTarget;
-            const startX = e.pageX - el.offsetLeft;
-            const scrollLeft = el.scrollLeft;
-            const onMouseMove = (ev: MouseEvent) => {
-              el.scrollLeft = scrollLeft - (ev.pageX - el.offsetLeft - startX);
-            };
-            const onMouseUp = () => {
-              window.removeEventListener('mousemove', onMouseMove);
-              window.removeEventListener('mouseup', onMouseUp);
-            };
-            window.addEventListener('mousemove', onMouseMove);
-            window.addEventListener('mouseup', onMouseUp);
-          }}
+          onMouseDown={onMouseDown}
+          onMouseMove={onMouseMove}
+          onMouseUp={onMouseUp}
+          onMouseLeave={onMouseLeave}
         >
           <AddGenerationModal>
             <AddGenerationButton />
