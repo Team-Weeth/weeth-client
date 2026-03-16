@@ -1,11 +1,14 @@
 'use client';
 
-import { useState, useCallback } from 'react';
-
 import { AdminMeatballIcon } from '@/assets/icons/admin';
-import { Icon } from '@/components/ui';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  Icon,
+} from '@/components/ui';
 import { cn } from '@/lib/cn';
-import { useClickOutside } from '@/hooks';
 
 interface GenerationDropdownProps {
   generations: number[];
@@ -20,61 +23,36 @@ function GenerationDropdown({
   onSelectGeneration,
   onSelectDirect,
 }: GenerationDropdownProps) {
-  const [open, setOpen] = useState(false);
-  const ref = useClickOutside<HTMLDivElement>(useCallback(() => setOpen(false), []));
-
-  const handleSelectGeneration = (gen: number) => {
-    onSelectGeneration(gen);
-    setOpen(false);
-  };
-
-  const handleSelectDirect = () => {
-    onSelectDirect();
-    setOpen(false);
-  };
-
   return (
-    <div ref={ref} className="relative">
-      <button
-        type="button"
+    <DropdownMenu>
+      <DropdownMenuTrigger
         className={cn(
           'bg-button-neutral flex h-12 w-36 cursor-pointer items-center justify-between rounded-sm px-400',
           'text-text-strong typo-body2',
         )}
-        onClick={() => setOpen((prev) => !prev)}
       >
         <span className="typo-button2 truncate">{selectedLabel}</span>
         <Icon src={AdminMeatballIcon} alt="옵션" size={24} />
-      </button>
+      </DropdownMenuTrigger>
 
-      {open && (
-        <div className="bg-container-neutral absolute top-full right-0 z-10 mt-100 w-36 overflow-hidden rounded-sm shadow-lg">
-          <button
-            type="button"
-            className={cn(
-              'typo-body2 text-text-normal hover:bg-container-neutral-interaction w-full cursor-pointer px-400 py-300 text-left',
-              selectedLabel === '직접 입력' && 'text-brand-primary',
-            )}
-            onClick={handleSelectDirect}
+      <DropdownMenuContent align="end" className="w-36">
+        <DropdownMenuItem
+          className={cn(selectedLabel === '직접 입력' && 'text-brand-primary')}
+          onClick={onSelectDirect}
+        >
+          직접 입력
+        </DropdownMenuItem>
+        {generations.map((gen) => (
+          <DropdownMenuItem
+            key={gen}
+            className={cn(selectedLabel === `${gen}기` && 'text-brand-primary')}
+            onClick={() => onSelectGeneration(gen)}
           >
-            직접 입력
-          </button>
-          {generations.map((gen) => (
-            <button
-              key={gen}
-              type="button"
-              className={cn(
-                'typo-body2 text-text-normal hover:bg-container-neutral-interaction w-full cursor-pointer px-400 py-300 text-left',
-                selectedLabel === `${gen}기` && 'text-brand-primary',
-              )}
-              onClick={() => handleSelectGeneration(gen)}
-            >
-              {gen}기
-            </button>
-          ))}
-        </div>
-      )}
-    </div>
+            {gen}기
+          </DropdownMenuItem>
+        ))}
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }
 
