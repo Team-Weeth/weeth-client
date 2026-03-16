@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 
-import { Button } from '@/components/ui';
+import { Button, Input } from '@/components/ui';
 import {
   Dialog,
   DialogBody,
@@ -11,7 +11,6 @@ import {
   DialogHeader,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import { TextField } from '@/components/ui/TextField';
 
 import { GenerationDropdown } from './GenerationDropdown';
 
@@ -80,7 +79,7 @@ function ChangeGenerationModal({
 
         <DialogBody className="gap-200 overflow-visible px-600 py-0 pt-12.5">
           <div className="flex items-center gap-200">
-            <TextField
+            <Input
               type="number"
               inputMode="numeric"
               min={1}

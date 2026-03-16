@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 
 import { AdminCheckboxIcon, AdminUncheckboxIcon } from '@/assets/icons/admin';
-import { Button, Icon } from '@/components/ui';
+import { Button, Icon, Input } from '@/components/ui';
 import {
   Dialog,
   DialogBody,
@@ -12,7 +12,6 @@ import {
   DialogHeader,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import { TextField } from '@/components/ui/TextField';
 
 interface AddGenerationModalProps {
   children: React.ReactNode;
@@ -70,7 +69,7 @@ function AddGenerationModal({ children, onSubmit }: AddGenerationModalProps) {
               추가할 새로운 기수를 작성해주세요
             </p>
             <div className="relative">
-              <TextField
+              <Input
                 aria-label="기수"
                 type="number"
                 min={1}
@@ -93,7 +92,7 @@ function AddGenerationModal({ children, onSubmit }: AddGenerationModalProps) {
             <p className="typo-sub2 text-text-normal py-300">활동 시기</p>
             <div className="flex gap-200">
               <div className="relative flex-1">
-                <TextField
+                <Input
                   aria-label="연도"
                   type="number"
                   min={1}
@@ -110,7 +109,7 @@ function AddGenerationModal({ children, onSubmit }: AddGenerationModalProps) {
                 </span>
               </div>
               <div className="relative flex-1">
-                <TextField
+                <Input
                   aria-label="학기"
                   type="number"
                   min={1}

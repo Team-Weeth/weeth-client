@@ -1,1 +1,1 @@
-// providers index file
+export { QueryProvider } from './query-provider';
