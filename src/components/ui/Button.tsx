@@ -23,7 +23,7 @@ const buttonVariants = cva(
         lg: 'typo-button1 px-400 py-300 rounded-md',
         md: 'typo-button2 px-300 py-200 rounded-md',
         sm: 'typo-button2 px-200 py-100 rounded-sm',
-        social: 'typo-button1 h-[48px] px-[14px] rounded-md gap-200',
+        social: 'typo-button1 h-[48px] px-[14px] rounded-md relative',
         'icon-md': 'rounded-sm p-200',
         'icon-sm': 'rounded-sm p-100',
       },

@@ -10,7 +10,7 @@ type AppleLoginButtonProps = Omit<ButtonProps, 'variant' | 'size'>;
 function AppleLoginButton({ className, ...props }: AppleLoginButtonProps) {
   return (
     <Button variant="apple" size="social" className={cn('w-full', className)} {...props}>
-      <Image src={AppleLogoIcon} alt="" width={18} height={18} />
+      <Image src={AppleLogoIcon} alt="apple-login" width={18} height={18} className="absolute left-[14px]" />
       Apple로 시작하기
     </Button>
   );

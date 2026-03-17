@@ -56,6 +56,7 @@
   --pink-900: #280526;
 
   --background: var(--neutral-200);
+  --background-2: var(--neutral-300);
   --foreground: var(--text-normal);
   --line: var(--neutral-400);
 
@@ -104,7 +105,7 @@
   --state-caution: #ffb202;
   --state-error: #ff5857;
 
-  --kakao-bg: #FEE500;
+  --kakao-bg: #fee500;
 
   --font-weight-medium: 500;
   --font-weight-semibold: 600;
@@ -298,6 +299,7 @@
   --font-pretendard: 'Pretendard Variable', sans-serif;
 
   --color-background: var(--background);
+  --color-background-2: var(--background-2);
   --color-line: var(--line);
 
   --color-text-normal: var(--text-normal);

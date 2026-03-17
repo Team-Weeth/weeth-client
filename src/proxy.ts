@@ -1,15 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { ACCESS_TOKEN_KEY } from '@/lib/apis/cookies';
 
-const PUBLIC_PATHS = ['/', '/login', '/signup', '/terms'];
+// 추후 hub제거
+const PUBLIC_PATHS = ['/', '/login', , '/terms', '/hub'];
 
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  if (
-    PUBLIC_PATHS.some((path) => pathname === path) ||
-    pathname.startsWith('/invite/')
-  ) {
+  if (PUBLIC_PATHS.some((path) => pathname === path) || pathname.startsWith('/invite/')) {
     return NextResponse.next();
   }
 

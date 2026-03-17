@@ -10,7 +10,7 @@ type KakaoLoginButtonProps = Omit<ButtonProps, 'variant' | 'size'>;
 function KakaoLoginButton({ className, ...props }: KakaoLoginButtonProps) {
   return (
     <Button variant="kakao" size="social" className={cn('w-full', className)} {...props}>
-      <Image src={KakaoLogoIcon} alt="" width={18} height={18} />
+      <Image src={KakaoLogoIcon} alt="" width={18} height={18} className="absolute left-[14px]" />
       카카오로 시작하기
     </Button>
   );

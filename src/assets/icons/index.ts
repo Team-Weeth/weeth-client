@@ -32,3 +32,6 @@ export { default as FolderIcon } from './folder.svg';
 export { default as KakaoLogoIcon } from './kakao_logo.svg';
 export { default as AppleLogoIcon } from './apple_logo.svg';
 export { default as LoginCoverIcon } from './login_cover.svg';
+export { default as HubCreateIcon } from './hub_create.svg';
+export { default as HubJoinIcon } from './hub_join.svg';
+export { default as HubGoIcon } from './hub_go.svg';
