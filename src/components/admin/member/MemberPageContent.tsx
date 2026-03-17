@@ -6,16 +6,16 @@ import {
   AddGenerationButton,
   AddGenerationModal,
   GenerationCard,
-  MemberDetail,
   MemberDetailModal,
   MemberSearchBar,
   MemberTable,
   MemberTopBar,
 } from '@/components/admin';
-import { MOCK_MEMBERS, type Member } from '@/components/admin/member/MemberTable';
-import { toMemberDetail } from '@/components/admin/member/memberMapper';
+import { toMemberDetail } from '@/utils/admin/memberMapper';
 import { Card } from '@/components/ui';
 import { useDragScroll } from '@/hooks';
+import { Member, MemberDetail } from '@/types/admin/member';
+import { MOCK_MEMBERS } from '@/constants/admin/memberTable.constants';
 
 function MemberPageContent() {
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());

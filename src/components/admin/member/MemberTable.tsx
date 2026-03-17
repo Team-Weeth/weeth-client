@@ -13,7 +13,7 @@ import {
   TableRow,
 } from '@/components/ui';
 import { cn } from '@/lib/cn';
-import type { Member, MemberStatus } from '@/types/admin/member';
+import type { Member } from '@/types/admin/member';
 import {
   COLUMNS,
   MOCK_MEMBERS,
@@ -149,4 +149,4 @@ function MemberTable({
   );
 }
 
-export { MemberTable, MOCK_MEMBERS, type Member, type MemberStatus };
+export { MemberTable };
