@@ -14,9 +14,9 @@ import {
   Button,
   Icon,
 } from '@/components/ui';
-import { ChangeGenerationModal } from '@/components/admin/member/ChangeGenerationModal';
+import { ChangeGenerationModal } from '@/components/admin/member/modal/ChangeGenerationModal';
 import { cn } from '@/lib/cn';
-import { getTopBarActions } from './memberTopBar.constants';
+import { getTopBarActions } from '@/constants/admin/memberTopBar.constants';
 import { useGenerationConfirm } from '@/hooks';
 
 interface MemberTopBarProps extends React.HTMLAttributes<HTMLDivElement> {

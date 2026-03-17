@@ -1,5 +1,4 @@
-import type { Member } from './MemberTable';
-import type { MemberDetail } from './MemberDetailModal';
+import { Member, MemberDetail } from '@/types/admin/member.d';
 
 export function toMemberDetail(m: Member): MemberDetail {
   return {

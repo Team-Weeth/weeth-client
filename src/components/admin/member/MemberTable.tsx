@@ -22,7 +22,7 @@ import {
   STATUS_LEGEND,
   sortMembers,
   type SortBy,
-} from './memberTable.constants';
+} from '@/constants/admin/memberTable.constants';
 
 interface MemberTableProps extends React.HTMLAttributes<HTMLDivElement> {
   selectedIds?: Set<string>;

@@ -1,4 +1,4 @@
-import type { MemberDetail, MemberDetailStatus } from './MemberDetailModal';
+import { MemberDetail, MemberDetailStatus } from '@/types/admin/member';
 
 export const STATUS_LABEL: Record<MemberDetailStatus, string> = {
   approved: '승인 완료',

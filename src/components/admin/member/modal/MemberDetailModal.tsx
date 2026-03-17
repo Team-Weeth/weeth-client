@@ -14,7 +14,7 @@ import {
   Icon,
 } from '@/components/ui';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
-import { ChangeGenerationModal } from '@/components/admin/member/ChangeGenerationModal';
+import { ChangeGenerationModal } from '@/components/admin/member/modal/ChangeGenerationModal';
 import { cn } from '@/lib/cn';
 import { AdminCloseIcon } from '@/assets/icons/admin';
 import {
@@ -24,26 +24,8 @@ import {
   getActivityInfo,
   getActivityStats,
   getFooterActions,
-} from './memberDetailModal.constants';
-
-type MemberDetailStatus = 'approved' | 'pending' | 'banned';
-
-interface MemberDetail {
-  name: string;
-  generation: number;
-  status: MemberDetailStatus;
-  position: string;
-  role: string;
-  department: string;
-  phone: string;
-  studentId: string;
-  email: string;
-  activeGenerations: string;
-  memberStatus: string;
-  joinDate: string;
-  attendance: number;
-  absence: number;
-}
+} from '@/constants/admin/memberDetailModal.constants';
+import { MemberDetail } from '@/types/admin/member';
 
 interface MemberDetailModalProps {
   open: boolean;
@@ -208,9 +190,4 @@ function MemberDetailModal({
   );
 }
 
-export {
-  MemberDetailModal,
-  type MemberDetailModalProps,
-  type MemberDetail,
-  type MemberDetailStatus,
-};
+export { MemberDetailModal, type MemberDetailModalProps };

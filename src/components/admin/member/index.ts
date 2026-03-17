@@ -1,6 +1,9 @@
 export { AddGenerationButton, type AddGenerationButtonProps } from './AddGenerationButton';
-export { ChangeGenerationModal, type ChangeGenerationModalProps } from './ChangeGenerationModal';
-export { GenerationDropdown, type GenerationDropdownProps } from './GenerationDropdown';
+export {
+  ChangeGenerationModal,
+  type ChangeGenerationModalProps,
+} from './modal/ChangeGenerationModal';
+export { GenerationDropdown, type GenerationDropdownProps } from './modal/GenerationDropdown';
 export { GenerationCard, generationCardVariants, type GenerationCardProps } from './GenerationCard';
 export { MemberPageContent } from './MemberPageContent';
 export { MemberSearchBar, type MemberSearchBarProps } from './MemberSearchBar';
