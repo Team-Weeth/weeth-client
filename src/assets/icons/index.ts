@@ -29,3 +29,6 @@ export { default as FolderPlusIcon } from './folder_plus.svg';
 export { default as ReplyIcon } from './reply.svg';
 export { default as DownloadIcon } from './download.svg';
 export { default as FolderIcon } from './folder.svg';
+export { default as KakaoLogoIcon } from './kakao_logo.svg';
+export { default as AppleLogoIcon } from './apple_logo.svg';
+export { default as LoginCoverIcon } from './login_cover.svg';

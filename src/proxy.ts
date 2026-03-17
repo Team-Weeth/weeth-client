@@ -1,12 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { ACCESS_TOKEN_KEY } from '@/lib/apis/cookies';
 
-const PUBLIC_PATHS = ['/', '/login', '/signup'];
+const PUBLIC_PATHS = ['/', '/login', '/signup', '/terms'];
 
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  if (PUBLIC_PATHS.some((path) => pathname === path)) {
+  if (
+    PUBLIC_PATHS.some((path) => pathname === path) ||
+    pathname.startsWith('/invite/')
+  ) {
     return NextResponse.next();
   }
 

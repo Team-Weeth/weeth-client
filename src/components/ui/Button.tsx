@@ -14,11 +14,16 @@ const buttonVariants = cva(
           'bg-transparent text-text-normal hover:bg-container-neutral-interaction active:bg-container-neutral-interaction disabled:text-text-disabled',
         danger:
           'bg-state-error text-text-strong hover:opacity-90 active:opacity-80 disabled:bg-button-neutral disabled:text-text-disabled',
+        kakao:
+          'bg-[var(--kakao-bg)] text-text-strong hover:opacity-90 active:opacity-80 disabled:bg-button-neutral disabled:text-text-disabled',
+        apple:
+          'bg-button-neutral text-text-strong border border-line hover:opacity-90 active:opacity-80 disabled:bg-button-neutral disabled:text-text-disabled',
       },
       size: {
         lg: 'typo-button1 px-400 py-300 rounded-md',
         md: 'typo-button2 px-300 py-200 rounded-md',
         sm: 'typo-button2 px-200 py-100 rounded-sm',
+        social: 'typo-button1 h-[48px] px-[14px] rounded-md gap-200',
         'icon-md': 'rounded-sm p-200',
         'icon-sm': 'rounded-sm p-100',
       },
