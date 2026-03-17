@@ -80,7 +80,14 @@ function AlertDialog({
             <AlertDialogTrigger asChild>{trigger}</AlertDialogTrigger>
             <AlertDialogContent>
               <AlertDialogHeader>
-                <AlertDialogTitle>{resolvedTitle}</AlertDialogTitle>
+                <AlertDialogTitle>
+                  {resolvedTitle.split('\n').map((line, i, arr) => (
+                    <React.Fragment key={i}>
+                      {line}
+                      {i < arr.length - 1 && <br />}
+                    </React.Fragment>
+                  ))}
+                </AlertDialogTitle>
                 <AlertDialogDescription>
                   {resolvedDescription.split('\n').map((line, i, arr) => (
                     <React.Fragment key={i}>

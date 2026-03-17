@@ -52,5 +52,5 @@ export const postApi = {
 ```ts
 ['posts']                          // list
 ['posts', id]                      // single item
-['attendance', { cardinalNumber }] // with filter
+['attendance', { generationNumber }] // with filter
 ```
