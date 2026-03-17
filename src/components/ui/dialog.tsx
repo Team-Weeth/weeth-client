@@ -1,6 +1,7 @@
 'use client';
 
 import * as React from 'react';
+import type { ReactNode } from 'react';
 import { Dialog as DialogPrimitive } from 'radix-ui';
 import type { StaticImageData } from 'next/image';
 
@@ -92,7 +93,7 @@ interface DialogHeaderProps extends React.HTMLAttributes<HTMLDivElement> {
   description?: string;
   showClose?: boolean;
   onClose?: () => void;
-  children?: React.ReactNode;
+  children?: ReactNode;
 }
 
 function DialogHeader({
@@ -181,9 +182,9 @@ function DialogBody({ children, className, ...props }: React.HTMLAttributes<HTML
 }
 
 interface DialogFooterProps extends React.HTMLAttributes<HTMLDivElement> {
-  children: React.ReactNode;
+  children: ReactNode;
   description?: string;
-  pagination?: React.ReactNode;
+  pagination?: ReactNode;
   showDivider?: boolean;
   showCloseButton?: boolean;
 }

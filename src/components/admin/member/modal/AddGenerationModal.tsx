@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import { useState, type ReactNode } from 'react';
 
 import { AdminCheckboxIcon, AdminUncheckboxIcon } from '@/assets/icons/admin';
 import { Button, Icon, Input } from '@/components/ui';
@@ -14,7 +14,7 @@ import {
 } from '@/components/ui/dialog';
 
 interface AddGenerationModalProps {
-  children: React.ReactNode;
+  children: ReactNode;
   onSubmit?: (data: {
     generation: number;
     year: number;

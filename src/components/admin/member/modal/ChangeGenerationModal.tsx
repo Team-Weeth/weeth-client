@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import { useState, type ReactNode, type ChangeEvent } from 'react';
 
 import { Button, Input } from '@/components/ui';
 import {
@@ -17,7 +17,7 @@ import { GenerationDropdown } from './GenerationDropdown';
 const DIRECT_INPUT_LABEL = '직접 입력';
 
 interface ChangeGenerationModalProps {
-  children: React.ReactNode;
+  children: ReactNode;
   generations?: number[];
   onSubmit?: (generation: number) => void;
 }
@@ -41,7 +41,7 @@ function ChangeGenerationModal({
     if (!next) resetForm();
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const v = e.target.value;
     if (v === '' || Number(v) > 0) {
       setInput(v);

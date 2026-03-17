@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, type ReactNode } from 'react';
 import { BoardNav, type BoardNavItem } from '@/components/board';
 
 const MOCK_CHANNELS: BoardNavItem[] = [
@@ -14,8 +14,8 @@ const MOCK_CHANNELS: BoardNavItem[] = [
 ];
 
 interface BoardLayoutProps {
-  children: React.ReactNode;
-  footer: React.ReactNode;
+  children: ReactNode;
+  footer: ReactNode;
 }
 
 export default function BoardLayout({ children, footer }: BoardLayoutProps) {
