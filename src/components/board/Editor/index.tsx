@@ -9,6 +9,33 @@ import { FileList } from '../FileList';
 import { useFileUpload } from '@/hooks/useFileUpload';
 import { createMediaItems } from '@/constants/slashMenu';
 
+const floatingMenuTippyOptions = {
+  duration: 100,
+  placement: 'bottom-start' as const,
+  appendTo: () => document.body,
+  popperOptions: {
+    modifiers: [
+      {
+        name: 'flip',
+        options: {
+          boundary: 'clippingParents',
+          rootBoundary: 'viewport',
+          fallbackPlacements: ['top-start'],
+          padding: 16,
+        },
+      },
+      {
+        name: 'preventOverflow',
+        options: {
+          boundary: 'clippingParents',
+          rootBoundary: 'viewport',
+          padding: 16,
+        },
+      },
+    ],
+  },
+};
+
 /**
  * 주요 기능:
  * Tiptap 기반 에디터 컴포넌트
@@ -24,10 +51,6 @@ export default function Editor() {
   const { editor, showSlashMenu, closeSlashMenu, containerRef } = usePostEditor({
     processFiles,
   });
-
-  const mediaGroups = [
-    { title: '미디어', items: createMediaItems(picker.openImagePicker, picker.openFilePicker) },
-  ];
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
@@ -73,32 +96,7 @@ export default function Editor() {
 
       <FloatingMenu
         editor={editor}
-        tippyOptions={{
-          duration: 100,
-          placement: 'bottom-start',
-          appendTo: () => document.body,
-          popperOptions: {
-            modifiers: [
-              {
-                name: 'flip',
-                options: {
-                  boundary: 'clippingParents',
-                  rootBoundary: 'viewport',
-                  fallbackPlacements: ['top-start'],
-                  padding: 16,
-                },
-              },
-              {
-                name: 'preventOverflow',
-                options: {
-                  boundary: 'clippingParents',
-                  rootBoundary: 'viewport',
-                  padding: 16,
-                },
-              },
-            ],
-          },
-        }}
+        tippyOptions={floatingMenuTippyOptions}
         shouldShow={({ state }) => {
           const { $from } = state.selection;
           const text = $from.nodeBefore?.textContent ?? '';
@@ -106,15 +104,21 @@ export default function Editor() {
         }}
       >
         {showSlashMenu && (
-          <SlashMenuContent editor={editor} onClose={closeSlashMenu} extraGroups={mediaGroups} />
+          <SlashMenuContent
+            editor={editor}
+            onClose={closeSlashMenu}
+            extraGroups={[
+              {
+                title: '미디어',
+                items: createMediaItems(picker.openImagePicker, picker.openFilePicker),
+              },
+            ]}
+          />
         )}
       </FloatingMenu>
 
       <div className="relative">
-        <EditorContent
-          editor={editor}
-          className="max-w-none"
-        />
+        <EditorContent editor={editor} className="max-w-none" />
 
         {/* 게시글 하단 첨부 영역 */}
         <div className="flex flex-col gap-400">
