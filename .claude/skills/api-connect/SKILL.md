@@ -303,7 +303,6 @@ export function useSkillList(params?: { page?: number; size?: number }) {
   return useQuery({
     queryKey: ['skills', params],
     queryFn: () => skillApi.getList(params),
-    staleTime: 5 * 60 * 1000,
   });
 }
 
@@ -311,18 +310,21 @@ export function useSkill(id: number) {
   return useQuery({
     queryKey: ['skills', id],
     queryFn: () => skillApi.getById(id),
-    staleTime: 5 * 60 * 1000,
   });
 }
 ```
 
-**staleTime 규칙** (불확실하면 사용자에게 확인):
+**staleTime 규칙:**
 
-| 데이터 특성 | staleTime | gcTime |
-|------------|-----------|--------|
-| 실시간 (출석 등) | `0` | `5 * 60 * 1000` |
-| 중간 빈도 (목록 등) | `5 * 60 * 1000` | `10 * 60 * 1000` |
-| 거의 안 바뀜 (프로필 등) | `30 * 60 * 1000` | `60 * 60 * 1000` |
+QueryProvider 기본값이 `5분`으로 설정되어 있으므로, 특별한 이유가 없으면 `staleTime` 생략합니다.
+
+| 데이터 특성 | staleTime | 명시 여부 |
+|------------|-----------|-----------|
+| 기본 (목록, 단건 등) | 기본값 (5분) | 생략 |
+| 실시간 (출석 등) | `0` | 명시 필요 |
+| 거의 안 바뀜 (프로필 등) | `30 * 60 * 1000` | 명시 필요 |
+
+불확실하면 사용자에게 확인합니다.
 
 **쿼리 키 컨벤션:**
 ```ts
