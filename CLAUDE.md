@@ -11,6 +11,7 @@ Weeth client is a club management/community service built on Next.js 16.
 - **pnpm** only (npm/yarn forbidden)
 - tanstack query, zustand
 - axios (API client), next/image, next/font
+- tiptap 2.4.0 (`@tiptap/react`) — Rich text editor
 - React Server Components (RSC) + Server Actions
 - Auth: cookie-based (accessToken/refreshToken)
 - **React Compiler** enabled (`reactCompiler: true`) — `useMemo`, `useCallback`, `React.memo` are unnecessary unless truly needed
