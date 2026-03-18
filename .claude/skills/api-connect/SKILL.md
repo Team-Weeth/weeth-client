@@ -335,31 +335,68 @@ export function useSkill(id: number) {
 
 **파일 위치:** `src/hooks/use{Domain}Mutation.ts`
 
+`MutationCallbacks` 타입을 `src/types/common.ts`에 공통 선언하고 import해서 사용합니다.
+
+`src/types/common.ts`에 없으면 추가합니다:
+```ts
+// src/types/common.ts
+export type MutationCallbacks<TError = Error> = {
+  onSuccess?: () => void;
+  onError?: (error: TError) => void;
+  onMutate?: () => void;
+  onSettled?: () => void;
+};
+```
+
 ```ts
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { skillApi } from '@/lib/apis';
 import type { CreateSkillBody } from '@/types/skill';
+import type { MutationCallbacks } from '@/types/common';
 
-export function useCreateSkill() {
+export function useCreateSkill(callbacks?: MutationCallbacks) {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (body: CreateSkillBody) => skillApi.create(body),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['skills'] });
+      callbacks?.onSuccess?.();
+    },
+    onError: (error) => {
+      callbacks?.onError?.(error);
+    },
+    onMutate: () => {
+      callbacks?.onMutate?.();
+    },
+    onSettled: () => {
+      callbacks?.onSettled?.();
     },
   });
 }
 
-export function useDeleteSkill() {
+export function useDeleteSkill(callbacks?: MutationCallbacks) {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (id: number) => skillApi.delete(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['skills'] });
+      callbacks?.onSuccess?.();
+    },
+    onError: (error) => {
+      callbacks?.onError?.(error);
+    },
+    onSettled: () => {
+      callbacks?.onSettled?.();
     },
   });
 }
 ```
+
+**`MutationCallbacks` 규칙:**
+- `src/types/common.ts`에 공통 선언 — 없으면 추가, 있으면 그대로 import
+- 필요한 콜백만 구현 — `onMutate`, `onSettled`는 없으면 생략
+- 항상 optional chaining(`?.`) 사용
+- `queryClient.invalidateQueries` 후 `callbacks?.onSuccess?.()` 순서 유지
 
 ---
 
