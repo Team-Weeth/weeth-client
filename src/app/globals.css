@@ -538,19 +538,28 @@ select:focus {
   @apply typo-sub2 mt-300;
 }
 
-.ProseMirror ul,
+.ProseMirror ul {
+  @apply text-text-alternative my-0 list-disc py-0 pl-500;
+}
+
 .ProseMirror ol {
-  @apply my-0 py-0 pl-400;
+  @apply text-text-alternative my-0 list-decimal py-0 pl-500;
 }
 
 .ProseMirror ul li,
 .ProseMirror ol li {
   @apply my-0 py-0;
+  padding-inline-start: 8px;
+}
+
+.ProseMirror ul li > p,
+.ProseMirror ol li > p {
+  @apply text-text-strong;
 }
 
 /* 체크리스트 */
 .ProseMirror ul[data-type='taskList'] {
-  @apply pl-0;
+  @apply list-none pl-0;
 }
 
 .ProseMirror ul[data-type='taskList'] li {
