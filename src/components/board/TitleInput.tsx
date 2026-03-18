@@ -33,14 +33,11 @@ function TitleInput({ className, onKeyDown, onChange, ...props }: TitleInputProp
 
   return (
     <div
-      className={cn(
-        'flex items-center gap-200 self-stretch rounded-lg px-100 py-300',
-        className,
-      )}
+      className={cn('flex items-center gap-200 self-stretch rounded-lg px-100 py-300', className)}
     >
       <textarea
         rows={1}
-        className="typo-h3 w-full resize-none overflow-hidden bg-transparent text-text-strong outline-none placeholder:text-text-alternative"
+        className="typo-h3 text-text-strong placeholder:text-text-alternative w-full resize-none overflow-hidden bg-transparent outline-none"
         placeholder="제목"
         onChange={handleChange}
         onKeyDown={handleKeyDown}
