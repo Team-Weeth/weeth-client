@@ -5,9 +5,14 @@ import { BubbleMenu } from '@tiptap/react';
 import { Editor as TiptapEditor } from '@tiptap/core';
 import { cva } from 'class-variance-authority';
 import { cn } from '@/lib/cn';
-import { MARK_BUTTONS, HEADING_BUTTONS, BubbleMenuItem, BubbleActiveKey } from '@/constants/bubbleMenu';
+import {
+  MARK_BUTTONS,
+  HEADING_BUTTONS,
+  BubbleMenuItem,
+  BubbleActiveKey,
+} from '@/constants/bubbleMenu';
 
-const ICON_SIZE = 14;
+const ICON_SIZE = 15;
 
 const bubbleButtonVariants = cva('rounded px-200 py-100 transition-colors', {
   variants: {

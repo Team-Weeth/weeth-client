@@ -614,6 +614,7 @@ select:focus {
   color: var(--text-normal);
   padding: var(--padding-100) var(--padding-200);
   border-radius: var(--radius-sm);
+  font-size: 0.9em;
   font-weight: normal;
 }
 
@@ -632,6 +633,7 @@ select:focus {
 .ProseMirror pre code {
   background-color: transparent;
   color: var(--text-normal);
+  font-size: 0.9em;
   padding: 0;
 }
 

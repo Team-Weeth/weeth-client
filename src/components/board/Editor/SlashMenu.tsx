@@ -55,7 +55,7 @@ export function SlashMenuContent({ editor, onClose, extraGroups = [] }: SlashMen
                   className="text-text-alternative flex shrink-0 items-center justify-center"
                   aria-hidden="true"
                 >
-                  <Icon size={16} />
+                  <Icon size={15} />
                 </span>
                 <span className="text-text-strong text-sm font-medium">{item.label}</span>
                 {item.description && (
