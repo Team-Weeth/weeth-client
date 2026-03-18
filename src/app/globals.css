@@ -490,7 +490,7 @@ select:focus {
 
 .scrollbar-custom {
   scrollbar-width: thin;
-  scrollbar-color: var(--neutral-500) transparent;
+  scrollbar-color: var(--neutral-400) transparent;
 }
 
 .scrollbar-custom::-webkit-scrollbar {
@@ -502,10 +502,8 @@ select:focus {
 }
 
 .scrollbar-custom::-webkit-scrollbar-thumb {
-  background-color: var(--neutral-500);
+  background-color: var(--neutral-400);
   border-radius: 9999px;
-  border: 2px solid transparent;
-  background-clip: content-box;
 }
 
 .ProseMirror {
@@ -521,7 +519,7 @@ select:focus {
   @apply text-text-alternative pointer-events-none float-left h-0 content-[attr(data-placeholder)];
 }
 
-/* 리스트 내부 p 마진 리셋 */
+/* 리스트 */
 .ProseMirror li p {
   @apply my-0;
 }
@@ -559,15 +557,16 @@ select:focus {
 
 /* 체크리스트 */
 .ProseMirror ul[data-type='taskList'] {
-  @apply list-none pl-0;
+  @apply text-text-strong list-none pl-0;
 }
 
-.ProseMirror ul[data-type='taskList'] li {
-  @apply flex items-start;
+.ProseMirror ul[data-type='taskList'] > li {
+  @apply flex items-start gap-300;
+  padding-inline-start: 0;
 }
 
-.ProseMirror ul[data-type='taskList'] li > label {
-  @apply mt-100 mr-200 flex items-center self-start;
+.ProseMirror ul[data-type='taskList'] > li > label {
+  @apply mt-100 flex items-center self-start;
 }
 
 .ProseMirror ul[data-type='taskList'] li > div {
