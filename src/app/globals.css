@@ -509,29 +509,90 @@ select:focus {
 }
 
 .ProseMirror {
-  color: var(--text-normal);
+  @apply text-text-strong min-h-[400px] focus:outline-none;
+}
+
+.ProseMirror > * {
+  @apply my-100;
+}
+
+/* placeholder */
+.ProseMirror p.is-empty::before {
+  @apply text-text-alternative pointer-events-none float-left h-0 content-[attr(data-placeholder)];
+}
+
+/* 리스트 내부 p 마진 리셋 */
+.ProseMirror li p {
+  @apply my-0;
 }
 
 .ProseMirror h1 {
-  @apply typo-h1;
+  @apply typo-h3 mt-300;
 }
 
 .ProseMirror h2 {
-  @apply typo-h2;
+  @apply typo-sub1 mt-300;
 }
 
 .ProseMirror h3 {
-  @apply typo-h3;
+  @apply typo-sub2 mt-300;
+}
+
+.ProseMirror ul,
+.ProseMirror ol {
+  @apply my-0 py-0 pl-400;
+}
+
+.ProseMirror ul li,
+.ProseMirror ol li {
+  @apply my-0 py-0;
+}
+
+/* 체크리스트 */
+.ProseMirror ul[data-type='taskList'] {
+  @apply pl-0;
+}
+
+.ProseMirror ul[data-type='taskList'] li {
+  @apply flex items-start;
+}
+
+.ProseMirror ul[data-type='taskList'] li > label {
+  @apply mt-100 mr-200 flex items-center self-start;
+}
+
+.ProseMirror ul[data-type='taskList'] li > div {
+  @apply min-h-[1.5em] flex-1;
+}
+
+.ProseMirror ul[data-type='taskList'] li input[type='checkbox'] {
+  @apply border-icon-alternative size-[16px] shrink-0 cursor-pointer appearance-none rounded-[4px] border;
+}
+
+.ProseMirror ul[data-type='taskList'] li input[type='checkbox']:checked {
+  @apply border-button-primary bg-button-primary;
+}
+
+.ProseMirror ul[data-type='taskList'] li input[type='checkbox']:checked::after {
+  content: '';
+  @apply bg-text-inverse block size-full;
+  mask-image: url('@/assets/icons/check.svg');
+  mask-size: 12px;
+  mask-position: center;
+  mask-repeat: no-repeat;
 }
 
 /* 인용 */
 .ProseMirror blockquote {
-  font-style: italic;
-  border-left: 3px solid var(--line);
+  @apply typo-body1 text-text-alternative;
+  font-style: normal;
+  @apply border-l-text-alternative border-l-4;
   padding-left: var(--padding-400);
   margin: var(--margin-300) 0;
-  font-weight: normal;
-  color: var(--text-alternative);
+}
+
+.ProseMirror blockquote > * {
+  @apply my-100;
 }
 
 .ProseMirror blockquote p::before,
