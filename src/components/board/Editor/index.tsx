@@ -2,7 +2,7 @@
 
 import { EditorContent, FloatingMenu } from '@tiptap/react';
 import { usePostEditor } from './usePostEditor';
-import { BubbleMenuBar } from './EditorBubbleMenu';
+import { BubbleMenuBar } from './BubbleMenu';
 import { SlashMenuContent } from './SlashMenu';
 import { ImageList } from '../ImageList';
 import { FileList } from '../FileList';
