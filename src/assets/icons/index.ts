@@ -1,6 +1,8 @@
+export { default as ArrowDownIcon } from './arrow_down.svg';
 export { default as ArrowLeftIcon } from './arrow_left.svg';
 export { default as ArrowRightIcon } from './arrow_right.svg';
 export { default as ChatIcon } from './chat.svg';
+export { default as CheckIcon } from './check.svg';
 export { default as BackIcon } from './back.svg';
 export { default as LikeIcon } from './like.svg';
 export { default as LikeFilledIcon } from './like_filled.svg';
