@@ -20,14 +20,16 @@ export { default as PaperclipIcon } from './paperclip.svg';
 export { default as NewIcon } from './new.svg';
 export { default as DeleteIcon } from './delete.svg';
 export { default as PeopleIcon } from './people.svg';
+
+export { default as SearchIcon } from './search.svg';
 export { default as MegaphoneDarkIcon } from './megaphone_dark.svg';
 export { default as MegaphoneDarkActiveIcon } from './megaphone_dark_active.svg';
 export { default as MegaphoneWhiteIcon } from './megaphone_white.svg';
 export { default as MegaphoneWhiteActiveIcon } from './megaphone_white_active.svg';
 export { default as PinIcon } from './pin.svg';
 export { default as MoreVerticalIcon } from './more_vertical.svg';
-export { default as SendIcon } from './send.svg';
-export { default as FolderPlusIcon } from './folder_plus.svg';
 export { default as ReplyIcon } from './reply.svg';
+export { default as FolderPlusIcon } from './folder_plus.svg';
+export { default as SendIcon } from './send.svg';
 export { default as DownloadIcon } from './download.svg';
 export { default as FolderIcon } from './folder.svg';

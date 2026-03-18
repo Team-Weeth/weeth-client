@@ -1,6 +1,7 @@
 'use client';
 
 import * as React from 'react';
+import type { ReactNode } from 'react';
 import { Dialog as DialogPrimitive } from 'radix-ui';
 import type { StaticImageData } from 'next/image';
 
@@ -65,7 +66,7 @@ function DialogContent({
         {showCloseButton && (
           <DialogPrimitive.Close
             data-slot="dialog-close"
-            className="ring-offset-background focus:ring-ring data-[state=open]:bg-accent data-[state=open]:text-muted-foreground absolute top-4 right-4 rounded-xs opacity-70 transition-opacity hover:opacity-100 focus:ring-2 focus:ring-offset-2 focus:outline-hidden disabled:pointer-events-none"
+            className="ring-offset-background focus:ring-ring data-[state=open]:bg-accent data-[state=open]:text-muted-foreground absolute top-4 right-4 cursor-pointer rounded-xs opacity-70 transition-opacity hover:opacity-100 focus:ring-2 focus:ring-offset-2 focus:outline-hidden disabled:pointer-events-none"
           >
             <span
               aria-hidden
@@ -92,7 +93,7 @@ interface DialogHeaderProps extends React.HTMLAttributes<HTMLDivElement> {
   description?: string;
   showClose?: boolean;
   onClose?: () => void;
-  children?: React.ReactNode;
+  children?: ReactNode;
 }
 
 function DialogHeader({
@@ -181,9 +182,9 @@ function DialogBody({ children, className, ...props }: React.HTMLAttributes<HTML
 }
 
 interface DialogFooterProps extends React.HTMLAttributes<HTMLDivElement> {
-  children: React.ReactNode;
+  children: ReactNode;
   description?: string;
-  pagination?: React.ReactNode;
+  pagination?: ReactNode;
   showDivider?: boolean;
   showCloseButton?: boolean;
 }
@@ -200,7 +201,7 @@ function DialogFooter({
   return (
     <div data-slot="dialog-footer" className={cn('flex flex-col', className)} {...props}>
       {showDivider && <Divider />}
-      <div className="flex flex-col gap-[10px] pt-400">
+      <div className="flex flex-col gap-[10px] pt-300">
         {children}
         {description && (
           <p className="typo-caption2 text-text-alternative mt-200 text-center">{description}</p>
