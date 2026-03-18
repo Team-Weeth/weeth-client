@@ -104,7 +104,14 @@ export const IndentExtension = Extension.create({
       },
 
       Backspace: () => {
-        if (getListContext()) return false;
+        const ctx = getListContext();
+        if (ctx) {
+          const { $from } = this.editor.state.selection;
+          // 커서가 아이템 시작점에 있을 때만 리스트 이탈 시도
+          if ($from.parentOffset !== 0) return false;
+          const itemType = ctx.listNode.type.name === 'taskList' ? 'taskItem' : 'listItem';
+          return this.editor.commands.liftListItem(itemType);
+        }
 
         const { $from } = this.editor.state.selection;
         if ($from.parentOffset !== 0) return false;
