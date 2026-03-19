@@ -1,9 +1,9 @@
 'use client';
 
-import { useState } from 'react';
 import dynamic from 'next/dynamic';
 import { TitleInput, CategorySelector } from '@/components/board';
 import type { BoardNavItem } from '@/components/board';
+import { usePostStore } from '@/stores/usePostStore';
 
 const Editor = dynamic(() => import('@/components/board/Editor'), { ssr: false });
 
@@ -15,14 +15,15 @@ const MOCK_ITEMS: BoardNavItem[] = [
 ];
 
 export default function ClientEditor() {
-  const [activeChannelId, setActiveChannelId] = useState('all');
+  const board = usePostStore((s) => s.board) || 'all';
+  const setBoard = usePostStore((s) => s.setBoard);
 
   return (
     <div className="mx-auto flex max-w-[1200px] flex-1 flex-col items-center gap-400 p-450">
       <CategorySelector
         items={MOCK_ITEMS}
-        activeId={activeChannelId}
-        onItemSelect={setActiveChannelId}
+        activeId={board}
+        onItemSelect={setBoard}
       />
       <div className="flex w-full flex-col items-start">
         <TitleInput />
