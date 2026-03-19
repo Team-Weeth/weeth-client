@@ -122,7 +122,20 @@ GET /api/v4/skills — 두 가지 방식이 가능합니다:
 
 ### Step 5. 기존 파일 확인
 
-아래 파일 존재 여부를 확인합니다. 존재하면 병합, 없으면 신규 생성합니다.
+**API 인스턴스 시그니처 파악:**
+
+`src/lib/apis/client.ts`와 `src/lib/apis/server.ts`를 읽어 실제 메서드 시그니처를 확인합니다.
+
+| 인스턴스 | 기반 | query params 방식 | 반환값 |
+|---------|------|-----------------|--------|
+| `apiClient` | axios | `{ params: Record<string, any> }` (axios config) | `AxiosResponse<T>` |
+| `apiServer` | fetch | `{ params: Record<string, string \| number> }` (custom options) | `Promise<T>` (data 바로 반환) |
+
+이 시그니처를 기준으로 Step 7 코드를 생성합니다. 파일 구조나 인터페이스가 변경된 경우 읽은 내용을 우선합니다.
+
+**생성 대상 파일 존재 여부 확인:**
+
+아래 파일이 존재하면 병합, 없으면 신규 생성합니다.
 
 ```
 src/lib/apis/{domain}.ts
@@ -193,17 +206,24 @@ export interface UpdateSkillBody {
 - RSC / Server Action 전략 → `apiServer`
 - 혼재하는 경우 → 각각 import
 
+**Step 5에서 읽은 실제 시그니처를 기준으로 코드를 생성합니다.**
+
+| 인스턴스 | get | post/put/patch | delete |
+|---------|-----|---------------|--------|
+| `apiClient` (axios) | `apiClient.get<T>(url, { params })` | `apiClient.post<T>(url, body)` | `apiClient.delete<T>(url)` |
+| `apiServer` (fetch) | `apiServer.get<T>(path, { params })` | `apiServer.post<T>(path, body)` | `apiServer.delete<T>(path)` |
+
 ```ts
 import { apiClient } from '@/lib/apis/client';
 import { apiServer } from '@/lib/apis/server';
 import type { Skill, CreateSkillBody, UpdateSkillBody } from '@/types/skill';
 
 export const skillApi = {
-  // React Query용 (apiClient)
+  // React Query용 (apiClient — axios, AxiosResponse<T> 반환)
   getList: (params?: { page?: number; size?: number }) =>
     apiClient.get<Skill[]>('/api/v4/skills', { params }),
 
-  // RSC/Server Action용 (apiServer)
+  // RSC/Server Action용 (apiServer — fetch, T 바로 반환)
   getById: (id: number) =>
     apiServer.get<Skill>(`/api/v4/skills/${id}`),
 
@@ -404,11 +424,23 @@ export function useDeleteSkill(callbacks?: MutationCallbacks) {
 
 ### Step 9. index.ts 업데이트
 
-`src/lib/apis/index.ts`에 새 export 추가 (기존 export 유지):
+**1. `src/lib/apis/index.ts`** — 새 domain API export 추가 (기존 export 유지):
 
 ```ts
 export { skillApi } from './skill';
 ```
+
+**2. `src/hooks/index.ts`** — Query/Mutation 훅이 생성된 경우에만 추가 (기존 export 유지):
+
+```ts
+// useQuery 훅 생성 시
+export { useSkillList, useSkill } from './useSkillQuery';
+
+// useMutation 훅 생성 시
+export { useCreateSkill, useDeleteSkill } from './useSkillMutation';
+```
+
+`src/hooks/index.ts`가 없으면 새로 생성합니다.
 
 ---
 
