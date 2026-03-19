@@ -1,6 +1,7 @@
 // board components index file
 
 export { ChannelList, type ChannelListProps, type BoardNavItem } from './ChannelList';
+export { MegaphoneIcon, type MegaphoneIconProps } from './MegaphoneIcon';
 export { BoardNav, type BoardNavProps } from './BoardNav';
 export { BoardContent } from './BoardContent';
 export { PostCard } from './PostCard';

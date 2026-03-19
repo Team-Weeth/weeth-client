@@ -1,17 +1,10 @@
 'use client';
 
-import Image from 'next/image';
 import type { StaticImageData } from 'next/image';
 import { cn } from '@/lib/cn';
 import { Divider } from '@/components/ui';
-import {
-  MegaphoneDarkActiveIcon,
-  MegaphoneDarkIcon,
-  MegaphoneWhiteActiveIcon,
-  MegaphoneWhiteIcon,
-  PinIcon,
-} from '@/assets/icons';
-import { useThemeStore } from '@/stores/theme-store';
+import { PinIcon } from '@/assets/icons';
+import { MegaphoneIcon } from '@/components/board/MegaphoneIcon';
 
 interface BoardNavItem {
   id: string;
@@ -30,8 +23,6 @@ interface ChannelListProps extends React.ComponentProps<'ul'> {
  * notice/channel 타입에 따라 아이콘을 분기하고, 타입 경계에 Divider를 렌더링
  */
 function ChannelList({ className, items, activeId, onItemSelect, ...props }: ChannelListProps) {
-  const isDark = useThemeStore((state) => state.isDark);
-
   return (
     <ul className={cn('flex flex-col gap-200', className)} role="list" {...props}>
       {items.map((item, index) => {
@@ -55,22 +46,13 @@ function ChannelList({ className, items, activeId, onItemSelect, ...props }: Cha
               aria-current={isActive ? 'page' : undefined}
               onClick={() => onItemSelect?.(item.id)}
             >
-              {/* 테마·활성 상태에 따라 아이콘 분기 */}
               {item.type === 'notice' ? (
-                <Image
-                  src={
-                    (isDark
-                      ? isActive
-                        ? MegaphoneDarkActiveIcon
-                        : MegaphoneWhiteIcon
-                      : isActive
-                        ? MegaphoneWhiteActiveIcon
-                        : MegaphoneDarkIcon) as StaticImageData
+                <MegaphoneIcon
+                  accentColor={
+                    isActive
+                      ? 'var(--color-text-strong)'
+                      : 'var(--color-brand-primary)'
                   }
-                  alt=""
-                  width={24}
-                  height={24}
-                  aria-hidden
                 />
               ) : (
                 <span
