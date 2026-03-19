@@ -66,7 +66,9 @@ export function SlashMenuContent({ editor, onClose, extraGroups = [] }: SlashMen
                 </span>
                 <span className="typo-body2 text-text-strong">{item.label}</span>
                 {item.description && (
-                  <span className="typo-caption2 text-text-disabled ml-auto">{item.description}</span>
+                  <span className="typo-caption2 text-text-disabled ml-auto">
+                    {item.description}
+                  </span>
                 )}
               </button>
             );
