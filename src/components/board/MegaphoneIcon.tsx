@@ -4,7 +4,11 @@ interface MegaphoneIconProps extends React.SVGProps<SVGSVGElement> {
   accentColor?: string;
 }
 
-function MegaphoneIcon({ className, accentColor = 'var(--color-brand-primary)', ...props }: MegaphoneIconProps) {
+function MegaphoneIcon({
+  className,
+  accentColor = 'var(--color-brand-primary)',
+  ...props
+}: MegaphoneIconProps) {
   return (
     <svg
       width="24"

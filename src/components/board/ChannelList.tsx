@@ -48,11 +48,7 @@ function ChannelList({ className, items, activeId, onItemSelect, ...props }: Cha
             >
               {item.type === 'notice' ? (
                 <MegaphoneIcon
-                  accentColor={
-                    isActive
-                      ? 'var(--color-text-strong)'
-                      : 'var(--color-brand-primary)'
-                  }
+                  accentColor={isActive ? 'var(--color-text-strong)' : 'var(--color-brand-primary)'}
                 />
               ) : (
                 <span

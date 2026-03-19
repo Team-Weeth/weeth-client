@@ -20,11 +20,7 @@ export default function ClientEditor() {
 
   return (
     <div className="mx-auto flex max-w-[1200px] flex-1 flex-col items-center gap-400 p-450">
-      <CategorySelector
-        items={MOCK_ITEMS}
-        activeId={board}
-        onItemSelect={setBoard}
-      />
+      <CategorySelector items={MOCK_ITEMS} activeId={board} onItemSelect={setBoard} />
       <div className="flex w-full flex-col items-start">
         <TitleInput />
         <div className="flex w-full items-center gap-200 rounded-lg p-100">
