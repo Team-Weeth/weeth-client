@@ -10,18 +10,18 @@ import { useState, useEffect } from 'react';
  * @returns seconds - 남은 초 (2자리, 예: "09")
  * @returns isExpired - 시간 만료 여부
  */
-function useRemainingTime(endTime: string) {
-  // 초 단위 남은 시간 (초기값은 함수형 초기화로 한 번만 계산)
-  const [remaining, setRemaining] = useState(() => {
-    const diff = new Date(endTime).getTime() - Date.now();
-    return Math.max(0, Math.floor(diff / 1000));
-  });
+function getRemainingSeconds(endTime: string) {
+  const end = new Date(endTime).getTime();
+  if (Number.isNaN(end)) return 0;
+  return Math.max(0, Math.floor((end - Date.now()) / 1000));
+}
 
-  // 1초마다 남은 시간 갱신, 만료 시 인터벌 자동 정리
+function useRemainingTime(endTime: string) {
+  const [remaining, setRemaining] = useState(() => getRemainingSeconds(endTime));
+
   useEffect(() => {
     const interval = setInterval(() => {
-      const diff = new Date(endTime).getTime() - Date.now();
-      const seconds = Math.max(0, Math.floor(diff / 1000));
+      const seconds = getRemainingSeconds(endTime);
       setRemaining(seconds);
       if (seconds <= 0) clearInterval(interval);
     }, 1000);
