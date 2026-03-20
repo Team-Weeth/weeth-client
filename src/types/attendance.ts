@@ -4,7 +4,7 @@ interface AttendanceData {
   attendanceRate: number;
   title: string;
   status: AttendanceStatus;
-  code: number;
+  code: string;
   start: string;
   end: string;
   location: string;

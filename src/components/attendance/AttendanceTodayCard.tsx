@@ -17,6 +17,7 @@ interface AttendanceTodayCardProps {
   location: string;
   isAdmin?: boolean;
   isChecked?: boolean;
+  onAttendanceComplete?: (code: string) => void;
 }
 
 function AttendanceCompleteBanner() {
@@ -40,9 +41,15 @@ function AttendanceTodayCard({
   location,
   isAdmin = false,
   isChecked = false,
+  onAttendanceComplete,
 }: AttendanceTodayCardProps) {
   const [codeModalOpen, setCodeModalOpen] = useState(false);
   const [completeModalOpen, setCompleteModalOpen] = useState(false);
+
+  function handleCodeConfirm(code: string) {
+    onAttendanceComplete?.(code);
+    setCompleteModalOpen(true);
+  }
 
   return (
     <>
@@ -53,7 +60,7 @@ function AttendanceTodayCard({
         description={description}
         showArrow={false}
         onPrimaryClick={isChecked ? () => setCompleteModalOpen(true) : () => setCodeModalOpen(true)}
-        primaryButtonText="출석하기"
+        primaryButtonText={isChecked ? '출석 완료' : '출석하기'}
         // TODO: 관리자 출석코드 확인 기능 별도 브랜치에서 구현 예정
         onSecondaryClick={isAdmin ? () => {} : undefined}
         secondaryButtonText="출석코드 확인"
@@ -64,6 +71,7 @@ function AttendanceTodayCard({
       <AttendanceCodeModal
         open={codeModalOpen}
         onOpenChange={setCodeModalOpen}
+        onConfirm={handleCodeConfirm}
         title={title}
         start={start}
         endTime={endTime}

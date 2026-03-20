@@ -19,6 +19,7 @@ import { formatModalDescription } from '@/lib/formatTime';
 interface AttendanceCodeModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  onConfirm?: (code: string) => void;
   title: string;
   start: string;
   endTime: string;
@@ -28,6 +29,7 @@ interface AttendanceCodeModalProps {
 function AttendanceCodeModal({
   open,
   onOpenChange,
+  onConfirm,
   title,
   start,
   endTime,
@@ -96,7 +98,10 @@ function AttendanceCodeModal({
             size="lg"
             className="w-full"
             disabled={!isComplete || isExpired}
-            onClick={() => handleOpenChange(false)}
+            onClick={() => {
+              onConfirm?.(code);
+              handleOpenChange(false);
+            }}
           >
             출석 확인하기
           </Button>

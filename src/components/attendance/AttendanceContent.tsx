@@ -1,4 +1,7 @@
+'use client';
+
 import Link from 'next/link';
+import { useState } from 'react';
 
 import { HomeIcon } from '@/assets/icons';
 import {
@@ -17,13 +20,21 @@ import { formatAttendanceDescription } from '@/lib/formatTime';
 import type { AttendanceData } from '@/types/attendance';
 
 interface AttendanceContentProps {
+  name: string;
   attendance: AttendanceData;
   isAdmin?: boolean;
 }
 
-function AttendanceContent({ attendance, isAdmin = true }: AttendanceContentProps) {
+function AttendanceContent({ name, attendance, isAdmin = false }: AttendanceContentProps) {
+  const [isChecked, setIsChecked] = useState(false);
   const { attendanceRate, title, start, end, location } = attendance;
   const description = formatAttendanceDescription(start, end, location);
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  function handleAttendanceComplete(code: string) {
+    // TODO: API 연결 시 출석 코드 검증 로직 추가
+    setIsChecked(true);
+  }
 
   return (
     <div className="mx-auto flex w-full max-w-[1025px] flex-col gap-700 pt-600">
@@ -32,7 +43,7 @@ function AttendanceContent({ attendance, isAdmin = true }: AttendanceContentProp
           <BreadcrumbItem>
             <BreadcrumbLink asChild>
               <Link href="/" className="flex items-center">
-                <Icon src={HomeIcon} size={16} className="text-icon-alternative" />
+                <Icon src={HomeIcon} size={16} className="text-icon-alternative" aria-label="홈" />
               </Link>
             </BreadcrumbLink>
           </BreadcrumbItem>
@@ -43,7 +54,7 @@ function AttendanceContent({ attendance, isAdmin = true }: AttendanceContentProp
         </BreadcrumbList>
       </Breadcrumb>
 
-      <AttendanceStatus attendanceRate={attendanceRate} className="px-450" />
+      <AttendanceStatus name={name} attendanceRate={attendanceRate} className="px-450" />
 
       <div className="flex flex-col gap-300 px-450">
         <AttendanceTodayCard
@@ -54,6 +65,8 @@ function AttendanceContent({ attendance, isAdmin = true }: AttendanceContentProp
           endTime={end}
           location={location}
           isAdmin={isAdmin}
+          isChecked={isChecked}
+          onAttendanceComplete={handleAttendanceComplete}
         />
 
         <Card variant="onlyText" overline="출석" title="출석 기록" />
