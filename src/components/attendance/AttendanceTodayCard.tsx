@@ -1,9 +1,12 @@
 'use client';
 
+import Image from 'next/image';
 import { useState } from 'react';
 
+import { CompleteIcon } from '@/assets/icons';
 import { Card } from '@/components/ui';
 import { AttendanceCodeModal } from '@/components/attendance/AttendanceCodeModal';
+import { AttendanceCompleteModal } from '@/components/attendance/AttendanceCompleteModal';
 
 interface AttendanceTodayCardProps {
   overline: string;
@@ -13,6 +16,19 @@ interface AttendanceTodayCardProps {
   endTime: string;
   location: string;
   isAdmin?: boolean;
+  isChecked?: boolean;
+}
+
+function AttendanceCompleteBanner() {
+  return (
+    <div className="bg-background flex items-start gap-[10px] rounded-md p-300">
+      <Image src={CompleteIcon} alt="출석 완료" width={40} height={40} />
+      <div className="flex min-h-px min-w-px flex-1 flex-col gap-100">
+        <p className="typo-sub2 text-text-normal">출석이 완료되었어요!</p>
+        <p className="typo-body2 text-text-alternative">오늘도 즐거운 활동을 이어가세요.</p>
+      </div>
+    </div>
+  );
 }
 
 function AttendanceTodayCard({
@@ -23,8 +39,10 @@ function AttendanceTodayCard({
   endTime,
   location,
   isAdmin = false,
+  isChecked = false,
 }: AttendanceTodayCardProps) {
-  const [modalOpen, setModalOpen] = useState(false);
+  const [codeModalOpen, setCodeModalOpen] = useState(false);
+  const [completeModalOpen, setCompleteModalOpen] = useState(false);
 
   return (
     <>
@@ -34,20 +52,25 @@ function AttendanceTodayCard({
         title={title}
         description={description}
         showArrow={false}
-        onPrimaryClick={() => setModalOpen(true)}
+        onPrimaryClick={isChecked ? () => setCompleteModalOpen(true) : () => setCodeModalOpen(true)}
+        primaryButtonText="출석하기"
         // TODO: 관리자 출석코드 확인 기능 별도 브랜치에서 구현 예정
         onSecondaryClick={isAdmin ? () => {} : undefined}
         secondaryButtonText="출석코드 확인"
-      />
+      >
+        {isChecked && <AttendanceCompleteBanner />}
+      </Card>
 
       <AttendanceCodeModal
-        open={modalOpen}
-        onOpenChange={setModalOpen}
+        open={codeModalOpen}
+        onOpenChange={setCodeModalOpen}
         title={title}
         start={start}
         endTime={endTime}
         location={location}
       />
+
+      <AttendanceCompleteModal open={completeModalOpen} onOpenChange={setCompleteModalOpen} />
     </>
   );
 }

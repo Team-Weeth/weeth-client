@@ -9,6 +9,9 @@ export type { AttendanceTodayCardProps } from './AttendanceTodayCard';
 export { AttendanceCodeModal } from './AttendanceCodeModal';
 export type { AttendanceCodeModalProps } from './AttendanceCodeModal';
 
+export { AttendanceCompleteModal } from './AttendanceCompleteModal';
+export type { AttendanceCompleteModalProps } from './AttendanceCompleteModal';
+
 export { InputOTP } from './InputOTP';
 export type { InputOTPProps } from './InputOTP';
 

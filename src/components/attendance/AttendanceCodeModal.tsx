@@ -96,6 +96,7 @@ function AttendanceCodeModal({
             size="lg"
             className="w-full"
             disabled={!isComplete || isExpired}
+            onClick={() => handleOpenChange(false)}
           >
             출석 확인하기
           </Button>
