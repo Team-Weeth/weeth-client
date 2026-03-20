@@ -75,7 +75,7 @@ export default function Header({ isMain = true }: HeaderProps) {
                   작성 취소
                 </Button>
                 <Button variant="primary" size="md" type="submit" className="typo-button1 gap-100">
-                  <Icon src={SendIcon} size={20} alt="check" className="text-icon-inverse" />
+                  <Icon src={SendIcon} size={20} alt="send" className="text-icon-inverse" />
                   게시하기
                 </Button>
               </>
