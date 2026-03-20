@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import Image from 'next/image';
 import { cn } from '@/lib/cn';
 import { ArrowDownIcon } from '@/assets/icons';
 import {
@@ -12,6 +11,7 @@ import {
   DropdownMenu,
   DropdownMenuTrigger,
   DropdownMenuContent,
+  Icon,
 } from '@/components/ui';
 import { ChannelList } from '@/components/board/ChannelList';
 import type { BoardNavItem } from '@/components/board/ChannelList';
@@ -56,14 +56,7 @@ function CategorySelector({ className, items, activeId, onItemSelect }: Category
             <BreadcrumbItem className="typo-button2 text-text-strong">{channelName}</BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
-        <Image
-          src={ArrowDownIcon}
-          alt=""
-          width={20}
-          height={20}
-          className="text-icon-normal"
-          aria-hidden
-        />
+        <Icon src={ArrowDownIcon} size={20} className="text-icon-normal" />
       </DropdownMenuTrigger>
 
       <DropdownMenuContent

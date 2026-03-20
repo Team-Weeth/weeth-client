@@ -1,8 +1,7 @@
 'use client';
 
-import type { StaticImageData } from 'next/image';
 import { cn } from '@/lib/cn';
-import { Divider } from '@/components/ui';
+import { Divider, Icon } from '@/components/ui';
 import { PinIcon } from '@/assets/icons';
 import { MegaphoneIcon } from '@/components/board/MegaphoneIcon';
 
@@ -51,16 +50,10 @@ function ChannelList({ className, items, activeId, onItemSelect, ...props }: Cha
                   accentColor={isActive ? 'var(--color-text-strong)' : 'var(--color-brand-primary)'}
                 />
               ) : (
-                <span
-                  aria-hidden
-                  className={cn(
-                    'block h-6 w-6 shrink-0 mask-contain mask-center mask-no-repeat',
-                    isActive ? 'bg-text-inverse' : 'bg-icon-normal',
-                  )}
-                  style={{
-                    maskImage: `url(${(PinIcon as StaticImageData).src})`,
-                    WebkitMaskImage: `url(${(PinIcon as StaticImageData).src})`,
-                  }}
+                <Icon
+                  src={PinIcon}
+                  size={24}
+                  className={isActive ? 'text-text-inverse' : 'text-icon-normal'}
                 />
               )}
               <span className="typo-button1 truncate">{item.label}</span>

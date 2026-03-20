@@ -1,6 +1,5 @@
-import type { StaticImageData } from 'next/image';
 import { PaperclipIcon } from '@/assets/icons';
-import { Avatar, AvatarImage, AvatarFallback, Divider } from '@/components/ui';
+import { Avatar, AvatarImage, AvatarFallback, Divider, Icon } from '@/components/ui';
 import { cn } from '@/lib/cn';
 
 interface PostAuthorInfoProps {
@@ -29,14 +28,11 @@ function PostAuthorInfo({ className, author, date, dateTime, hasAttachment }: Po
       {hasAttachment && (
         <>
           <Divider orientation="vertical" className="h-3" />
-          <span
-            role="img"
-            aria-label="첨부파일 있음"
-            className="bg-icon-alternative block h-[9px] w-[8px] mask-contain mask-center mask-no-repeat"
-            style={{
-              maskImage: `url(${(PaperclipIcon as StaticImageData).src})`,
-              WebkitMaskImage: `url(${(PaperclipIcon as StaticImageData).src})`,
-            }}
+          <Icon
+            src={PaperclipIcon}
+            size={9}
+            alt="첨부파일 있음"
+            className="text-icon-alternative"
           />
         </>
       )}
