@@ -8,7 +8,7 @@ const mockAttendance: AttendanceData = {
   status: 'ATTEND',
   code: 1234,
   start: '2026-03-20T04:53:06.913Z',
-  end: '2026-03-20T04:53:06.913Z',
+  end: '2026-03-21T15:00:00.000Z',
   location: '공학관 401호',
 };
 
