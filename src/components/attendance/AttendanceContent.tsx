@@ -13,19 +13,8 @@ import {
 } from '@/components/ui';
 import { AttendanceStatus } from '@/components/attendance/AttendanceStatus';
 import { AttendanceTodayCard } from '@/components/attendance/AttendanceTodayCard';
-import { formatTime } from '@/lib/formatTime';
+import { formatAttendanceDescription } from '@/lib/formatTime';
 import type { AttendanceData } from '@/types/attendance';
-
-function formatAttendanceDescription(start: string, end: string, location: string) {
-  const startDate = new Date(start);
-  const endDate = new Date(end);
-
-  const year = startDate.getFullYear();
-  const month = startDate.getMonth() + 1;
-  const day = startDate.getDate();
-
-  return `날짜 : ${year}년 ${month}월 ${day}일 (${formatTime(startDate)}~${formatTime(endDate)})\n장소 : ${location}`;
-}
 
 interface AttendanceContentProps {
   attendance: AttendanceData;
@@ -61,6 +50,9 @@ function AttendanceContent({ attendance, isAdmin = true }: AttendanceContentProp
           overline="오늘의 출석"
           title={title}
           description={description}
+          start={start}
+          endTime={end}
+          location={location}
           isAdmin={isAdmin}
         />
 
