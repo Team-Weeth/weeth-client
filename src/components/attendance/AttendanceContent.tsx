@@ -29,9 +29,10 @@ function formatAttendanceDescription(start: string, end: string, location: strin
 
 interface AttendanceContentProps {
   attendance: AttendanceData;
+  isAdmin?: boolean;
 }
 
-function AttendanceContent({ attendance }: AttendanceContentProps) {
+function AttendanceContent({ attendance, isAdmin = true }: AttendanceContentProps) {
   const { attendanceRate, title, start, end, location } = attendance;
   const description = formatAttendanceDescription(start, end, location);
 
@@ -60,6 +61,7 @@ function AttendanceContent({ attendance }: AttendanceContentProps) {
           overline="오늘의 출석"
           title={title}
           description={description}
+          isAdmin={isAdmin}
         />
 
         <Card variant="onlyText" overline="출석" title="출석 기록" />

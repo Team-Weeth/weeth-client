@@ -6,9 +6,15 @@ interface AttendanceTodayCardProps {
   overline: string;
   title: string;
   description: string;
+  isAdmin?: boolean;
 }
 
-function AttendanceTodayCard({ overline, title, description }: AttendanceTodayCardProps) {
+function AttendanceTodayCard({
+  overline,
+  title,
+  description,
+  isAdmin = false,
+}: AttendanceTodayCardProps) {
   return (
     <Card
       variant="buttonSet"
@@ -17,6 +23,8 @@ function AttendanceTodayCard({ overline, title, description }: AttendanceTodayCa
       description={description}
       showArrow={false}
       onPrimaryClick={() => {}}
+      onSecondaryClick={isAdmin ? () => {} : undefined}
+      secondaryButtonText="출석코드 확인"
     />
   );
 }
