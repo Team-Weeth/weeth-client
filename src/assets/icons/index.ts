@@ -1,4 +1,5 @@
 export { default as ArrowLeftIcon } from './arrow_left.svg';
+import { Home } from 'lucide-react';
 export { default as ArrowRightIcon } from './arrow_right.svg';
 export { default as ChatIcon } from './chat.svg';
 export { default as BackIcon } from './back.svg';
@@ -31,3 +32,4 @@ export { default as FolderPlusIcon } from './folder_plus.svg';
 export { default as SendIcon } from './send.svg';
 export { default as DownloadIcon } from './download.svg';
 export { default as FolderIcon } from './folder.svg';
+export { default as HomeIcon } from './home.svg';
