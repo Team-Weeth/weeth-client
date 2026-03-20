@@ -97,10 +97,12 @@ function DialogHeader({
   className,
   ...props
 }: DialogHeaderProps) {
-  const closeButton = showClose && onClose && (
-    <button type="button" onClick={onClose} className="cursor-pointer">
-      <Icon src={DeleteIcon} size={24} className="text-icon-normal" alt="Close" />
-    </button>
+  const closeButton = showClose && (
+    <DialogPrimitive.Close asChild onClick={onClose}>
+      <button type="button" className="cursor-pointer">
+        <Icon src={DeleteIcon} size={24} className="text-icon-normal" alt="Close" />
+      </button>
+    </DialogPrimitive.Close>
   );
 
   // If children provided, use custom content mode
