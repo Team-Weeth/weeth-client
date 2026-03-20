@@ -88,11 +88,16 @@ function InputOTP({ length = 6, value, onChange, className, ref }: InputOTPProps
   }
 
   return (
-    <div ref={ref} className={cn('flex items-start justify-center gap-200 self-stretch', className)}>
+    <div
+      ref={ref}
+      className={cn('flex items-start justify-center gap-200 self-stretch', className)}
+    >
       {digits.map((digit, index) => (
         <div key={index} className="flex w-[41px] flex-col items-start gap-200">
           <input
-            ref={(el) => { inputRefs.current[index] = el; }}
+            ref={(el) => {
+              inputRefs.current[index] = el;
+            }}
             type="text"
             inputMode="numeric"
             pattern="[0-9]"
