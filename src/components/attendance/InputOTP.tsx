@@ -98,6 +98,7 @@ function InputOTP({ length = 6, value, onChange, className, ref }: InputOTPProps
             pattern="[0-9]"
             maxLength={1}
             value={digit}
+            aria-label={`${index + 1}번째 자리`}
             onChange={(e) => handleInputChange(index, e.target.value)}
             onKeyDown={(e) => handleKeyDown(index, e)}
             onPaste={handlePaste}
