@@ -6,9 +6,7 @@ import dynamic from 'next/dynamic';
 
 const ReactQueryDevtools =
   process.env.NODE_ENV === 'development'
-    ? dynamic(() =>
-        import('@tanstack/react-query-devtools').then((m) => m.ReactQueryDevtools),
-      )
+    ? dynamic(() => import('@tanstack/react-query-devtools').then((m) => m.ReactQueryDevtools))
     : () => null;
 
 const FIVE_MINUTES = 5 * 60 * 1000;
