@@ -5,3 +5,5 @@ export { InfoCard, type InfoCardProps, type InfoCardItem } from './InfoCard';
 export { ThemeToggle, type ThemeToggleProps } from './ThemeToggle';
 export { SupportListItem, type SupportListItemProps } from './SupportListItem';
 export { MyPageDropdownMenu } from './MyPageDropdownMenu';
+export { EditProfileContent, type EditProfileContentProps } from './EditProfileContent';
+export { FormField, type FormFieldProps } from './FormField';

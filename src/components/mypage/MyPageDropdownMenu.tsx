@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -11,9 +12,6 @@ import {
 import { AdminMeatballIcon } from '@/assets/icons/admin';
 
 function MyPageDropdownMenu() {
-  const handleEditProfile = () => {
-    // TODO: 개인정보 수정 페이지 이동
-  };
 
   const handleEditActivity = () => {
     // TODO: 활동정보 수정 페이지 이동
@@ -39,7 +37,9 @@ function MyPageDropdownMenu() {
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuItem onSelect={handleEditProfile}>개인정보 수정</DropdownMenuItem>
+        <DropdownMenuItem asChild>
+          <Link href="/mypage/edit">개인정보 수정</Link>
+        </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem onSelect={handleEditActivity}>활동정보 수정</DropdownMenuItem>
         <DropdownMenuSeparator />

@@ -1,0 +1,20 @@
+export const MOCK_USER = {
+  name: '김위드',
+  bio: '잘부탁드립니다.',
+  profileImageUrl: '',
+  email: 'weeth12@gmail.com',
+  phone: '01012345678',
+  introduction: '방가방가햄토리',
+  image: '카카오 기본',
+  loginInfo: '카카오 로그인',
+  university: '-가천대학교',
+  department: '경영학과',
+  studentId: '202612123',
+  clubs: [
+    { clubName: '가천대 검도부', generations: [3, 4, 5] as number[] },
+    { clubName: '가천대 산악부 GUAC', generations: [31, 32] as number[] },
+  ],
+};
+
+export const MOCK_UNIVERSITIES = ['가천대학교', '고려대학교', '연세대학교', '서울대학교'];
+export const MOCK_DEPARTMENTS = ['컴퓨터공학과', '소프트웨어학과', '정보통신공학과', '전자공학과'];

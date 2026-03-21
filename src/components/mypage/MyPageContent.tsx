@@ -20,27 +20,12 @@ import { ProfileSection } from './ProfileSection';
 import { SupportListItem } from './SupportListItem';
 import { ThemeToggle } from './ThemeToggle';
 import { MyPageDropdownMenu } from './MyPageDropdownMenu';
-
-// TODO: API 연동 시 실제 데이터로 교체
-const MOCK_USER = {
-  name: '김위드',
-  bio: '잘부탁드립니다.',
-  profileImageUrl: '',
-  email: 'weeth12@gmail.com',
-  phone: '-',
-  introduction: '-',
-  image: '카카오 기본',
-  loginInfo: '카카오 로그인',
-  university: '-',
-  department: '-',
-  studentId: '-',
-  club: '가천대 검도부',
-  generations: [] as string[],
-};
+import { MOCK_USER } from '@/constants/mock';
 
 type MyPageContentProps = React.HTMLAttributes<HTMLDivElement>;
 
 function MyPageContent({ className, ...props }: MyPageContentProps) {
+  // TODO: API 연동 시 실제 데이터로 교체
   const user = MOCK_USER;
 
   return (
@@ -87,7 +72,10 @@ function MyPageContent({ className, ...props }: MyPageContentProps) {
               items={[
                 { label: '이름', value: user.name },
                 { label: '소개글', value: user.introduction },
-                { label: '연락처', value: user.phone },
+                {
+                  label: '연락처',
+                  value: user.phone?.replace(/(\d{3})(\d{4})(\d{4})/, '$1-$2-$3') ?? '-',
+                },
                 { label: '이메일', value: user.email },
                 { label: '이미지', value: user.image },
                 { label: '로그인 정보', value: user.loginInfo },
@@ -105,31 +93,31 @@ function MyPageContent({ className, ...props }: MyPageContentProps) {
 
         {/* 활동정보 */}
         <InfoSection title="활동정보">
-          <InfoCard
-            items={[
-              { label: '동아리', value: user.club },
-              {
-                label: '활동 기수',
-                value:
-                  user.generations.length > 0 ? (
-                    <div className="flex items-center gap-100">
-                      {user.generations.map((gen) => (
-                        <Tag
-                          key={gen}
-                          className="bg-container-neutral-interaction text-text-alternative"
-                        >
-                          {gen}
-                        </Tag>
-                      ))}
-                    </div>
-                  ) : (
-                    <Tag className="bg-container-neutral-interaction text-text-alternative px-200 py-100">
-                      기수정보 없음
-                    </Tag>
-                  ),
-              },
-            ]}
-          />
+          {user.clubs.map((club) => (
+            <InfoCard
+              key={club.clubName}
+              items={[
+                { label: '동아리', value: club.clubName },
+                {
+                  label: '활동 기수',
+                  value:
+                    club.generations.length > 0 ? (
+                      <div className="flex items-center gap-100">
+                        {club.generations.map((gen) => (
+                          <Tag key={gen} className="text-brand-primary bg-brand-primary/10">
+                            {gen}기
+                          </Tag>
+                        ))}
+                      </div>
+                    ) : (
+                      <Tag className="bg-container-neutral-interaction text-text-alternative px-200 py-100">
+                        기수정보 없음
+                      </Tag>
+                    ),
+                },
+              ]}
+            />
+          ))}
         </InfoSection>
 
         {/* 서비스 설정 */}
