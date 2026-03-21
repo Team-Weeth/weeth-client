@@ -4,3 +4,4 @@ export { InfoSection, type InfoSectionProps } from './InfoSection';
 export { InfoCard, type InfoCardProps, type InfoCardItem } from './InfoCard';
 export { ThemeToggle, type ThemeToggleProps } from './ThemeToggle';
 export { SupportListItem, type SupportListItemProps } from './SupportListItem';
+export { MyPageDropdownMenu } from './MyPageDropdownMenu';

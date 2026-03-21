@@ -9,7 +9,8 @@
       "Bash(find \"D:\\\\project\\\\weeth-client\\\\src\\\\app\\\\\\(private\\)\\\\\\(main\\)\" -name \"page.tsx\" -type f)",
       "Bash(grep -r PageNavigation D:projectweeth-clientsrc --include=*.tsx --include=*.ts)",
       "Bash(ls -la \"D:\\\\project\\\\weeth-client\\\\src\\\\app\\\\\\(private\\)\\\\\\(intro\\)\\\\home\")",
-      "Bash(find \"D:\\\\project\\\\weeth-client\\\\src\\\\app\\\\\\(private\\)\" -type f -name \"layout.tsx\")"
+      "Bash(find \"D:\\\\project\\\\weeth-client\\\\src\\\\app\\\\\\(private\\)\" -type f -name \"layout.tsx\")",
+      "mcp__figma__get_screenshot"
     ]
   }
 }

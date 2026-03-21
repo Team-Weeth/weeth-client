@@ -3,7 +3,6 @@
 import { Home, MoreHorizontal } from 'lucide-react';
 import Link from 'next/link';
 
-import { Tag } from '@/components/ui';
 import {
   Breadcrumb,
   BreadcrumbList,
@@ -11,6 +10,7 @@ import {
   BreadcrumbLink,
   BreadcrumbPage,
   BreadcrumbSeparator,
+  Tag,
 } from '@/components/ui';
 import { cn } from '@/lib/cn';
 
@@ -19,6 +19,7 @@ import { InfoSection } from './InfoSection';
 import { ProfileSection } from './ProfileSection';
 import { SupportListItem } from './SupportListItem';
 import { ThemeToggle } from './ThemeToggle';
+import { MyPageDropdownMenu } from './MyPageDropdownMenu';
 
 // TODO: API 연동 시 실제 데이터로 교체
 const MOCK_USER = {
@@ -69,14 +70,8 @@ function MyPageContent({ className, ...props }: MyPageContentProps) {
         </Breadcrumb>
 
         <div className="flex items-start gap-200">
-          <h1 className="typo-h2 flex-1 text-text-strong">My</h1>
-          <button
-            type="button"
-            className="flex size-[40px] items-center justify-center rounded-sm"
-            aria-label="더보기"
-          >
-            <MoreHorizontal size={24} className="text-icon-normal" />
-          </button>
+          <h1 className="typo-h2 text-text-strong flex-1">My</h1>
+          <MyPageDropdownMenu />
         </div>
       </div>
 
@@ -119,13 +114,16 @@ function MyPageContent({ className, ...props }: MyPageContentProps) {
                   user.generations.length > 0 ? (
                     <div className="flex items-center gap-100">
                       {user.generations.map((gen) => (
-                        <Tag key={gen} className="bg-container-neutral-interaction text-text-alternative">
+                        <Tag
+                          key={gen}
+                          className="bg-container-neutral-interaction text-text-alternative"
+                        >
                           {gen}
                         </Tag>
                       ))}
                     </div>
                   ) : (
-                    <Tag className="bg-container-neutral-interaction text-text-alternative">
+                    <Tag className="bg-container-neutral-interaction text-text-alternative px-200 py-100">
                       기수정보 없음
                     </Tag>
                   ),
@@ -136,7 +134,7 @@ function MyPageContent({ className, ...props }: MyPageContentProps) {
 
         {/* 서비스 설정 */}
         <InfoSection title="서비스 설정">
-          <div className="flex flex-col gap-300 rounded-lg bg-container-neutral p-400">
+          <div className="bg-container-neutral flex flex-col gap-300 rounded-lg p-400">
             <div className="flex flex-col gap-100">
               <span className="typo-caption1 text-text-alternative">모드 설정</span>
               <span className="typo-sub1 text-text-strong">다크/라이트 모드</span>
