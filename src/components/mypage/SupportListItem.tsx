@@ -1,9 +1,9 @@
 'use client';
 
-import { ChevronRight, Copy } from 'lucide-react';
-
 import { cn } from '@/lib/cn';
+import { Icon } from '@/components/ui';
 
+import { ArrowRightIcon, CopyIcon } from '@/assets/icons';
 interface SupportListItemProps extends React.HTMLAttributes<HTMLDivElement> {
   title: string;
   description?: string;
@@ -38,7 +38,7 @@ function SupportListItem({
         if (e.key === 'Enter' || e.key === ' ') handleClick();
       }}
       className={cn(
-        'relative flex w-full cursor-pointer flex-col items-start rounded-lg bg-container-neutral p-400',
+        'bg-container-neutral relative flex w-full cursor-pointer flex-col items-start rounded-lg p-400',
         className,
       )}
       {...props}
@@ -47,8 +47,12 @@ function SupportListItem({
         <span className="typo-button1 text-text-strong">{title}</span>
         {description && <p className="typo-body2 text-text-alternative">{description}</p>}
       </div>
-      <span className="text-icon-alternative absolute right-300 top-[15px]">
-        {variant === 'copy' ? <Copy size={20} /> : <ChevronRight size={20} />}
+      <span className="text-icon-alternative absolute top-[15px] right-300">
+        {variant === 'copy' ? (
+          <Icon src={CopyIcon} size={24} className="text-icon-normal" alt="복사버튼" />
+        ) : (
+          <Icon src={ArrowRightIcon} size={12} className="text-icon-normal" alt="페이지 이동버튼" />
+        )}
       </span>
     </div>
   );
