@@ -17,13 +17,10 @@ import { AdminMeatballIcon } from '@/assets/icons/admin';
 
 function MyPageDropdownMenu() {
   const [withdrawOpen, setWithdrawOpen] = useState(false);
+  const [logoutOpen, setLogoutOpen] = useState(false);
 
   const handleEditActivity = () => {
     // TODO: 활동정보 수정 페이지 이동
-  };
-
-  const handleLogout = () => {
-    // TODO: 로그아웃 처리
   };
 
   return (
@@ -45,7 +42,7 @@ function MyPageDropdownMenu() {
           <DropdownMenuSeparator />
           <DropdownMenuItem onSelect={handleEditActivity}>활동정보 수정</DropdownMenuItem>
           <DropdownMenuSeparator />
-          <DropdownMenuItem onSelect={handleLogout}>로그아웃</DropdownMenuItem>
+          <DropdownMenuItem onSelect={() => setLogoutOpen(true)}>로그아웃</DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem destructive onSelect={() => setWithdrawOpen(true)}>
             서비스 탈퇴
@@ -61,6 +58,16 @@ function MyPageDropdownMenu() {
         description={'동아리에 게시한 게시글은 남아있지 않아요.\n버튼 클릭 시 바로 탈퇴돼요.'}
       >
         <AlertDialogAction>탈퇴하기</AlertDialogAction>
+        <AlertDialogCancel>취소</AlertDialogCancel>
+      </AlertDialog>
+
+      <AlertDialog
+        open={logoutOpen}
+        onOpenChange={setLogoutOpen}
+        title={'로그아웃'}
+        description="로그아웃 하시겠습니까?"
+      >
+        <AlertDialogAction>로그아웃</AlertDialogAction>
         <AlertDialogCancel>취소</AlertDialogCancel>
       </AlertDialog>
     </>
