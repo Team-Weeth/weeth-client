@@ -1,7 +1,11 @@
 'use client';
 
+import { useState } from 'react';
 import Link from 'next/link';
 import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -12,6 +16,7 @@ import {
 import { AdminMeatballIcon } from '@/assets/icons/admin';
 
 function MyPageDropdownMenu() {
+  const [withdrawOpen, setWithdrawOpen] = useState(false);
 
   const handleEditActivity = () => {
     // TODO: 활동정보 수정 페이지 이동
@@ -21,35 +26,44 @@ function MyPageDropdownMenu() {
     // TODO: 로그아웃 처리
   };
 
-  const handleWithdraw = () => {
-    // TODO: 서비스 탈퇴 처리
-  };
-
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <button
-          type="button"
-          className="flex size-[40px] cursor-pointer items-center justify-center rounded-sm"
-          aria-label="더보기"
-        >
-          <Icon src={AdminMeatballIcon} size={24} className="text-icon-normal" />
-        </button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
-        <DropdownMenuItem asChild>
-          <Link href="/mypage/edit">개인정보 수정</Link>
-        </DropdownMenuItem>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem onSelect={handleEditActivity}>활동정보 수정</DropdownMenuItem>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem onSelect={handleLogout}>로그아웃</DropdownMenuItem>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem destructive onSelect={handleWithdraw}>
-          서비스 탈퇴
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+    <>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <button
+            type="button"
+            className="flex size-[40px] cursor-pointer items-center justify-center rounded-sm"
+            aria-label="더보기"
+          >
+            <Icon src={AdminMeatballIcon} size={24} className="text-icon-normal" />
+          </button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+          <DropdownMenuItem asChild>
+            <Link href="/mypage/edit">개인정보 수정</Link>
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem onSelect={handleEditActivity}>활동정보 수정</DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem onSelect={handleLogout}>로그아웃</DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem destructive onSelect={() => setWithdrawOpen(true)}>
+            서비스 탈퇴
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+
+      <AlertDialog
+        open={withdrawOpen}
+        onOpenChange={setWithdrawOpen}
+        status="danger"
+        title={'동아리를 탈퇴하면\n남긴 추억이 모두 사라져요'}
+        description={'동아리에 게시한 게시글은 남아있지 않아요.\n버튼 클릭 시 바로 탈퇴돼요.'}
+      >
+        <AlertDialogAction>탈퇴하기</AlertDialogAction>
+        <AlertDialogCancel>취소</AlertDialogCancel>
+      </AlertDialog>
+    </>
   );
 }
 
