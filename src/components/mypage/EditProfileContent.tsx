@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Home, ChevronDown } from 'lucide-react';
+import { Home } from 'lucide-react';
 import Link from 'next/link';
 
 import { Avatar, AvatarFallback, AvatarImage, Button, Input } from '@/components/ui';
@@ -18,6 +18,7 @@ import { EditIcon } from '@/assets/icons';
 import { cn } from '@/lib/cn';
 
 import { FormField } from './FormField';
+import { SearchSelect } from './SearchSelect';
 import { MOCK_DEPARTMENTS, MOCK_UNIVERSITIES, MOCK_USER } from '@/constants/mock';
 
 // TODO: API 연동 시 실제 데이터로 교체
@@ -48,12 +49,6 @@ function EditProfileContent({ className, ...props }: EditProfileContentProps) {
     console.log({ name, bio, phone, email, university, department, studentId });
   };
 
-  const selectClass = cn(
-    'w-full appearance-none bg-container-neutral typo-body2 text-text-normal',
-    'rounded-lg border border-transparent px-300 py-200',
-    'focus:outline-none focus:border-brand-primary',
-    'transition-colors cursor-pointer',
-  );
 
   return (
     <div
@@ -157,49 +152,21 @@ function EditProfileContent({ className, ...props }: EditProfileContentProps) {
           {/* 학교 정보 필드 그룹 */}
           <div className="flex flex-col gap-400">
             <FormField label="학교">
-              <div className="relative">
-                <select
-                  value={university}
-                  onChange={(e) => setUniversity(e.target.value)}
-                  className={selectClass}
-                >
-                  <option value="" disabled>
-                    학교 선택
-                  </option>
-                  {MOCK_UNIVERSITIES.map((u) => (
-                    <option key={u} value={u}>
-                      {u}
-                    </option>
-                  ))}
-                </select>
-                <ChevronDown
-                  size={20}
-                  className="text-icon-alternative pointer-events-none absolute top-1/2 right-300 -translate-y-1/2"
-                />
-              </div>
+              <SearchSelect
+                value={university}
+                onChange={setUniversity}
+                options={MOCK_UNIVERSITIES}
+                placeholder="학교 선택"
+              />
             </FormField>
 
             <FormField label="학과">
-              <div className="relative">
-                <select
-                  value={department}
-                  onChange={(e) => setDepartment(e.target.value)}
-                  className={selectClass}
-                >
-                  <option value="" disabled>
-                    학과 선택
-                  </option>
-                  {MOCK_DEPARTMENTS.map((d) => (
-                    <option key={d} value={d}>
-                      {d}
-                    </option>
-                  ))}
-                </select>
-                <ChevronDown
-                  size={20}
-                  className="text-icon-alternative pointer-events-none absolute top-1/2 right-300 -translate-y-1/2"
-                />
-              </div>
+              <SearchSelect
+                value={department}
+                onChange={setDepartment}
+                options={MOCK_DEPARTMENTS}
+                placeholder="학과 선택"
+              />
             </FormField>
 
             <FormField label="학번">

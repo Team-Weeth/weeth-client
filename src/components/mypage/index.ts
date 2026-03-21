@@ -7,3 +7,4 @@ export { SupportListItem, type SupportListItemProps } from './SupportListItem';
 export { MyPageDropdownMenu } from './MyPageDropdownMenu';
 export { EditProfileContent, type EditProfileContentProps } from './EditProfileContent';
 export { FormField, type FormFieldProps } from './FormField';
+export { SearchSelect, type SearchSelectProps } from './SearchSelect';
