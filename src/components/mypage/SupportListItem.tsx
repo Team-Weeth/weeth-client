@@ -1,9 +1,8 @@
-'use client';
-
+import Link from 'next/link';
 import { cn } from '@/lib/cn';
 import { Icon } from '@/components/ui';
-
 import { ArrowRightIcon, CopyIcon } from '@/assets/icons';
+
 interface SupportListItemProps extends React.HTMLAttributes<HTMLDivElement> {
   title: string;
   description?: string;
@@ -21,12 +20,39 @@ function SupportListItem({
   className,
   ...props
 }: SupportListItemProps) {
+  const content = (
+    <>
+      <div className="flex w-full flex-col gap-100">
+        <span className="typo-button1 text-text-strong">{title}</span>
+        {description && <p className="typo-body2 text-text-alternative">{description}</p>}
+      </div>
+      <span className="text-icon-alternative absolute top-3.75 right-300">
+        {variant === 'copy' ? (
+          <Icon src={CopyIcon} size={24} className="text-icon-normal" alt="복사버튼" />
+        ) : (
+          <Icon src={ArrowRightIcon} size={12} className="text-icon-normal" alt="페이지 이동버튼" />
+        )}
+      </span>
+    </>
+  );
+
+  const baseClass = cn(
+    'bg-container-neutral relative flex w-full cursor-pointer flex-col items-start rounded-lg p-400',
+    className,
+  );
+
+  if (variant === 'link' && href) {
+    return (
+      <Link href={href} className={baseClass}>
+        {content}
+      </Link>
+    );
+  }
+
   const handleClick = () => {
-    if (variant === 'copy' && copyText) {
-      navigator.clipboard.writeText(copyText);
-    } else if (variant === 'link' && href) {
-      window.open(href, '_blank', 'noopener,noreferrer');
-    }
+    // TODO: 토스트 메세지로 복사 됐다고 알려주기
+    if (copyText) navigator.clipboard.writeText(copyText);
+    alert('복사 되었습니다.');
   };
 
   return (
@@ -37,23 +63,10 @@ function SupportListItem({
       onKeyDown={(e) => {
         if (e.key === 'Enter' || e.key === ' ') handleClick();
       }}
-      className={cn(
-        'bg-container-neutral relative flex w-full cursor-pointer flex-col items-start rounded-lg p-400',
-        className,
-      )}
+      className={baseClass}
       {...props}
     >
-      <div className="flex w-full flex-col gap-100">
-        <span className="typo-button1 text-text-strong">{title}</span>
-        {description && <p className="typo-body2 text-text-alternative">{description}</p>}
-      </div>
-      <span className="text-icon-alternative absolute top-[15px] right-300">
-        {variant === 'copy' ? (
-          <Icon src={CopyIcon} size={24} className="text-icon-normal" alt="복사버튼" />
-        ) : (
-          <Icon src={ArrowRightIcon} size={12} className="text-icon-normal" alt="페이지 이동버튼" />
-        )}
-      </span>
+      {content}
     </div>
   );
 }
