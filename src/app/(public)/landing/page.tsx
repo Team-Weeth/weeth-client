@@ -16,7 +16,7 @@ export default function LandingPage() {
   return (
     <>
       <LandingHeader />
-      <main className="flex min-h-screen w-full flex-col">
+      <main className="flex min-h-screen w-full flex-col overflow-x-hidden">
         <HeroSection />
         <PhilosophySection />
         <FeatureIntroSection />
