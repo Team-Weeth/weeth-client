@@ -5,8 +5,11 @@
 export { Button, buttonVariants } from './Button';
 export type { ButtonProps } from './Button';
 
-export { TextField } from './TextField';
-export type { TextFieldProps } from './TextField';
+export { Input } from './Input';
+export type { InputProps } from './Input';
+
+export { Textarea } from './Textarea';
+export type { TextareaProps } from './Textarea';
 
 export {
   Dialog,
@@ -74,3 +77,25 @@ export {
 export { Chip, chipVariants, ChipList, type ChipProps } from './chips';
 
 export { Tag, tagVariants, type TagProps } from './tag';
+
+export {
+  Table,
+  TableHeader,
+  TableBody,
+  TableFooter,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableCaption,
+} from './table';
+
+export { Icon, type IconProps } from './Icon';
+
+export {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuPortal,
+} from './DropdownMenu';

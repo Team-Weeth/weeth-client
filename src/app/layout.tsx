@@ -1,4 +1,6 @@
 import type { Metadata } from 'next';
+import type { ReactNode } from 'react';
+import { QueryProvider } from '@/providers';
 import { Inter } from 'next/font/google';
 import { ThemeProvider } from '@/providers/theme-provider';
 import './globals.css';
@@ -20,7 +22,7 @@ export const metadata: Metadata = {
 export default function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode;
+  children: ReactNode;
 }>) {
   return (
     <html lang="ko" suppressHydrationWarning>
@@ -32,7 +34,9 @@ export default function RootLayout({
         />
       </head>
       <body className={`${inter.variable} w-full antialiased`}>
-        <ThemeProvider>{children}</ThemeProvider>
+        <QueryProvider>
+          <ThemeProvider>{children}</ThemeProvider>
+        </QueryProvider>
       </body>
     </html>
   );
