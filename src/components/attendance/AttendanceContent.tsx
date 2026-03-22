@@ -1,19 +1,8 @@
 'use client';
 
-import Link from 'next/link';
 import { useState } from 'react';
 
-import { HomeIcon } from '@/assets/icons';
-import {
-  Breadcrumb,
-  BreadcrumbList,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbSeparator,
-  BreadcrumbPage,
-  Card,
-  Icon,
-} from '@/components/ui';
+import { Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbPage, Card } from '@/components/ui';
 import { AttendanceStatus } from '@/components/attendance/AttendanceStatus';
 import { AttendanceTodayCard } from '@/components/attendance/AttendanceTodayCard';
 import { formatAttendanceDescription } from '@/lib/formatTime';
@@ -30,8 +19,7 @@ function AttendanceContent({ name, attendance, isAdmin = false }: AttendanceCont
   const { attendanceRate, title, start, end, location } = attendance;
   const description = formatAttendanceDescription(start, end, location);
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  function handleAttendanceComplete(code: string) {
+  function handleAttendanceComplete(_code: string) {
     // TODO: API 연결 시 출석 코드 검증 로직 추가
     setIsChecked(true);
   }
@@ -40,14 +28,6 @@ function AttendanceContent({ name, attendance, isAdmin = false }: AttendanceCont
     <div className="mx-auto flex w-full max-w-[1025px] flex-col gap-700 pt-600">
       <Breadcrumb className="px-450">
         <BreadcrumbList>
-          <BreadcrumbItem>
-            <BreadcrumbLink asChild>
-              <Link href="/" className="flex items-center">
-                <Icon src={HomeIcon} size={16} className="text-icon-alternative" aria-label="홈" />
-              </Link>
-            </BreadcrumbLink>
-          </BreadcrumbItem>
-          <BreadcrumbSeparator />
           <BreadcrumbItem>
             <BreadcrumbPage className="typo-caption1 text-text-alternative">출석</BreadcrumbPage>
           </BreadcrumbItem>

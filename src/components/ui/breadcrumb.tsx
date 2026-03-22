@@ -1,7 +1,8 @@
 import * as React from 'react';
+import Link from 'next/link';
 import { Slot } from 'radix-ui';
 
-import { ArrowRightIcon, MoreHorizIcon } from '@/assets/icons';
+import { ArrowRightIcon, HomeIcon, MoreHorizIcon } from '@/assets/icons';
 import { cn } from '@/lib/cn';
 import { Icon } from '@/components/ui/Icon';
 
@@ -9,7 +10,11 @@ function Breadcrumb({ ...props }: React.ComponentProps<'nav'>) {
   return <nav aria-label="breadcrumb" data-slot="breadcrumb" {...props} />;
 }
 
-function BreadcrumbList({ className, ...props }: React.ComponentProps<'ol'>) {
+interface BreadcrumbListProps extends React.ComponentProps<'ol'> {
+  showHome?: boolean;
+}
+
+function BreadcrumbList({ className, showHome = true, children, ...props }: BreadcrumbListProps) {
   return (
     <ol
       data-slot="breadcrumb-list"
@@ -18,7 +23,21 @@ function BreadcrumbList({ className, ...props }: React.ComponentProps<'ol'>) {
         className,
       )}
       {...props}
-    />
+    >
+      {showHome && (
+        <>
+          <BreadcrumbItem>
+            <BreadcrumbLink asChild>
+              <Link href="/" className="flex items-center">
+                <Icon src={HomeIcon} size={16} className="text-icon-alternative" aria-label="홈" />
+              </Link>
+            </BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator />
+        </>
+      )}
+      {children}
+    </ol>
   );
 }
 
