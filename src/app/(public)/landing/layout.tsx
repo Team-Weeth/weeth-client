@@ -1,5 +1,3 @@
-import { Footer, Header } from '@/components/layout';
-
 export default function PublicLayout({
   children,
 }: Readonly<{
@@ -7,11 +5,9 @@ export default function PublicLayout({
 }>) {
   return (
     <>
-      <div className="mx-auto flex min-h-screen max-w-[1440px] flex-col">
-        <Header isMain={false} />
+      <div className="mx-auto flex min-h-screen max-w-screen flex-col">
         <main className="flex-1">{children}</main>
       </div>
-      <Footer />
     </>
   );
 }
