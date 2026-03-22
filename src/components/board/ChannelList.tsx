@@ -21,12 +21,16 @@ interface ChannelListProps extends React.ComponentProps<'ul'> {
  * BoardNav와 CategorySelector에서 공유하는 채널 목록 컴포넌트
  * notice/channel 타입에 따라 아이콘을 분기하고, 타입 경계에 Divider를 렌더링
  */
+const TYPE_ORDER: Record<BoardNavItem['type'], number> = { notice: 0, channel: 1 };
+
 function ChannelList({ className, items, activeId, onItemSelect, ...props }: ChannelListProps) {
+  const sortedItems = [...items].sort((a, b) => TYPE_ORDER[a.type] - TYPE_ORDER[b.type]);
+
   return (
     <ul className={cn('flex flex-col gap-200', className)} role="list" {...props}>
-      {items.map((item, index) => {
+      {sortedItems.map((item, index) => {
         const isActive = item.id === activeId;
-        const prevItem = items[index - 1];
+        const prevItem = sortedItems[index - 1];
         // notice → channel 타입 전환 시 구분선 표시
         const showDivider = prevItem && prevItem.type === 'notice' && item.type === 'channel';
 
