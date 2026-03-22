@@ -56,17 +56,8 @@ function useEditorActiveStates(editor: TiptapEditor): Record<BubbleActiveKey, bo
     const handler = () => {
       const next = getActiveStates(editor);
       setStates((prev) => {
-        if (
-          prev.plainText === next.plainText &&
-          prev.bold === next.bold &&
-          prev.italic === next.italic &&
-          prev.code === next.code &&
-          prev.heading1 === next.heading1 &&
-          prev.heading2 === next.heading2 &&
-          prev.heading3 === next.heading3
-        ) {
-          return prev;
-        }
+        const keys = Object.keys(next) as BubbleActiveKey[];
+        if (keys.every((key) => prev[key] === next[key])) return prev;
         return next;
       });
     };
