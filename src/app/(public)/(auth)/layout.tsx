@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 
-export default function PublicLayout({
+export default function AuthLayout({
   children,
 }: Readonly<{
   children: ReactNode;

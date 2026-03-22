@@ -6,9 +6,14 @@ import { SocialLoginButtons } from '@/components/auth';
 
 function LoginCard({ className }: { className?: string }) {
   return (
-    <div className={cn('shadow-dialog flex overflow-hidden rounded-lg', className)}>
+    <div
+      className={cn(
+        'flex w-[725px] overflow-hidden rounded-lg shadow-[0_5px_20px_0_rgba(0,0,0,0.2)]',
+        className,
+      )}
+    >
       {/* 좌측: 커버 */}
-      <div className="bg-container-neutral-alternative flex h-[427px] flex-1 flex-col items-center justify-center gap-[10px] p-600">
+      <div className="flex h-[427px] flex-1 flex-col items-center justify-center gap-[26px] bg-[#171819] p-600">
         <Image src={LoginCoverIcon} alt="Weeth 서비스 소개" width={259} height={151} />
         <p className="typo-sub2 text-text-alternative text-center">
           우리 동아리를 더 알차게 즐기는
