@@ -5,6 +5,8 @@ interface AttendanceProgressBarProps extends React.HTMLAttributes<HTMLDivElement
   attendanceRate: number;
 }
 
+export type { AttendanceProgressBarProps };
+
 export function AttendanceProgressBar({
   attendanceRate,
   className,
@@ -17,6 +19,11 @@ export function AttendanceProgressBar({
 
   return (
     <div
+      role="progressbar"
+      aria-valuenow={safeAttendanceRate}
+      aria-valuemin={0}
+      aria-valuemax={100}
+      aria-label="출석률"
       className={cn(
         'bg-container-neutral-interaction relative h-[15px] w-full overflow-hidden rounded-[4px]',
         className,

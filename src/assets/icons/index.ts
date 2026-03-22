@@ -28,3 +28,6 @@ export { default as FolderPlusIcon } from './folder_plus.svg';
 export { default as SendIcon } from './send.svg';
 export { default as DownloadIcon } from './download.svg';
 export { default as FolderIcon } from './folder.svg';
+export { default as HomeIcon } from './home.svg';
+export { default as MoreHorizIcon } from './more-horiz.svg';
+export { default as CompleteIcon } from './complete.svg';
