@@ -46,7 +46,7 @@ export const editorExtensions = [
   Dropcursor,
   Gapcursor,
   Typography,
-  Placeholder.configure({ placeholder: "명령어는 '/'를 입력하세요." }),
+  Placeholder.configure({ placeholder: "'/' 키를 눌러서 명령어를 사용해 보세요." }),
   TaskList,
   TaskItem.configure({ nested: true, onReadOnlyChecked: () => false }),
   IndentExtension,

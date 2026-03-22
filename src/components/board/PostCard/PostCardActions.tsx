@@ -1,9 +1,9 @@
 'use client';
 
 import { useState } from 'react';
-import type { StaticImageData } from 'next/image';
 import { cn } from '@/lib/cn';
 import { LikeIcon, LikeFilledIcon, ChatIcon } from '@/assets/icons';
+import { Icon } from '@/components/ui';
 
 interface PostCardActionsProps {
   className?: string;
@@ -40,16 +40,10 @@ function PostCardActions({
         className="focus-visible:outline-ring flex cursor-pointer items-center gap-100 rounded-sm hover:opacity-70 focus-visible:outline-2 focus-visible:outline-offset-2"
         onClick={handleLike}
       >
-        <span
-          aria-hidden
-          className={cn(
-            'block h-[15px] w-[17px] mask-contain mask-no-repeat',
-            isLiked ? 'bg-state-error' : 'bg-icon-alternative',
-          )}
-          style={{
-            maskImage: `url(${(isLiked ? (LikeFilledIcon as StaticImageData) : (LikeIcon as StaticImageData)).src})`,
-            WebkitMaskImage: `url(${(isLiked ? (LikeFilledIcon as StaticImageData) : (LikeIcon as StaticImageData)).src})`,
-          }}
+        <Icon
+          src={isLiked ? LikeFilledIcon : LikeIcon}
+          size={17}
+          className={isLiked ? 'text-state-error' : 'text-icon-alternative'}
         />
         <span className="typo-caption2 text-text-alternative">{likeCount}</span>
       </button>
@@ -59,14 +53,7 @@ function PostCardActions({
         className="focus-visible:outline-ring flex cursor-pointer items-center gap-100 rounded-sm hover:opacity-70 focus-visible:outline-2 focus-visible:outline-offset-2"
         onClick={onComment}
       >
-        <span
-          aria-hidden
-          className="bg-icon-alternative block size-[17px] mask-contain mask-no-repeat"
-          style={{
-            maskImage: `url(${(ChatIcon as StaticImageData).src})`,
-            WebkitMaskImage: `url(${(ChatIcon as StaticImageData).src})`,
-          }}
-        />
+        <Icon src={ChatIcon} size={17} className="text-icon-alternative" />
         <span className="typo-caption2 text-text-alternative">{commentCount}</span>
       </button>
     </div>
