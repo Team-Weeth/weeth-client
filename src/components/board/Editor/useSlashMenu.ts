@@ -1,6 +1,7 @@
 import { Editor as TiptapEditor } from '@tiptap/core';
 import { useEffect, useState, useRef } from 'react';
-import { STYLE_ITEMS } from '@/constants/editor';
+import { STYLE_ITEMS } from '@/constants/slashMenu';
+import { useClickOutside } from '@/hooks/useClickOutside';
 import { MenuItem } from '@/types/editor';
 
 const DEFAULT_GROUPS = [{ title: '기본 블록', items: STYLE_ITEMS }];
@@ -64,18 +65,7 @@ export function useSlashMenu(
 
   const flatItems = filteredGroups.flatMap((group) => group.items);
 
-  const menuRef = useRef<HTMLDivElement>(null);
-
-  // 바깥 클릭 시 메뉴 닫기
-  useEffect(() => {
-    const handleMouseDown = (e: MouseEvent) => {
-      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
-        onClose();
-      }
-    };
-    document.addEventListener('mousedown', handleMouseDown);
-    return () => document.removeEventListener('mousedown', handleMouseDown);
-  }, [onClose]);
+  const menuRef = useClickOutside<HTMLDivElement>(onClose);
 
   // 필터 결과 없으면 메뉴 닫기
   useEffect(() => {
@@ -88,7 +78,7 @@ export function useSlashMenu(
   useEffect(() => {
     const el = menuRef.current?.querySelector(`[data-index="${selectedIndex}"]`);
     el?.scrollIntoView({ block: 'nearest' });
-  }, [selectedIndex]);
+  }, [selectedIndex, menuRef]);
 
   // 메뉴 선택 시 실행 — slash + 쿼리 전체 삭제
   const handleSelect = (item: MenuItem) => {

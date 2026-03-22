@@ -1,8 +1,7 @@
 'use client';
 
-import type { StaticImageData } from 'next/image';
 import { ReplyIcon } from '@/assets/icons';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui';
+import { Avatar, AvatarFallback, AvatarImage, Icon } from '@/components/ui';
 import { cn } from '@/lib/cn';
 import { PostActionMenu } from '@/components/board/PostActionMenu';
 
@@ -30,14 +29,7 @@ function ReplyItem({
 }: ReplyItemProps) {
   return (
     <div className={cn('flex items-start justify-between self-stretch px-450', className)}>
-      <span
-        aria-hidden
-        className="bg-icon-alternative block size-5 shrink-0 mask-contain mask-center mask-no-repeat"
-        style={{
-          maskImage: `url(${(ReplyIcon as StaticImageData).src})`,
-          WebkitMaskImage: `url(${(ReplyIcon as StaticImageData).src})`,
-        }}
-      />
+      <Icon src={ReplyIcon} size={20} className="text-icon-alternative" />
       <div className="bg-container-neutral-alternative relative flex-1 rounded-lg p-400">
         <div className="flex flex-col gap-200">
           <div className="flex items-center gap-[5px]">

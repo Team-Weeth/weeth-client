@@ -1,7 +1,7 @@
 'use client';
 
-import type { StaticImageData } from 'next/image';
 import { CloseCircleIcon } from '@/assets/icons';
+import { Icon } from '@/components/ui';
 import { cn } from '@/lib/cn';
 import type { FileItem } from '@/stores/usePostStore';
 
@@ -31,14 +31,7 @@ function RemoveButton({
       aria-label={`${fileName} 삭제`}
       className="absolute top-1 right-1 flex h-5 w-5 items-center justify-center"
     >
-      <span
-        aria-hidden="true"
-        className="bg-icon-normal block h-5 w-5 mask-contain mask-center mask-no-repeat"
-        style={{
-          maskImage: `url(${(CloseCircleIcon as StaticImageData).src})`,
-          WebkitMaskImage: `url(${(CloseCircleIcon as StaticImageData).src})`,
-        }}
-      />
+      <Icon src={CloseCircleIcon} size={20} className="text-icon-normal" />
     </button>
   );
 }
