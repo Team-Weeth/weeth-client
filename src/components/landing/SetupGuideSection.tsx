@@ -18,18 +18,18 @@ function SetupGuideSection({ className }: SetupGuideSectionProps) {
     >
       <Image
         src={LandingGuideTitle}
-        alt="LandingGuideTitle"
+        alt="서비스 시작 가이드"
         width={508}
         height={148}
         className="mx-auto mb-[106px]"
       />
 
-      <div className="mb-[66px] flex items-center justify-center gap-4">
+      <div className="mb-[66px] flex flex-wrap items-center justify-center gap-4">
         {SETUP_GUIDE_STEPS.map(({ number, title, description, bg }) => (
           <div
             key={number}
             className={cn(
-              'flex h-[340px] w-[345px] rounded-[10px] pt-[29px] pr-[23px] pb-[37px] pl-[24px]',
+              'flex min-h-[340px] w-full max-w-[345px] rounded-[10px] pt-[29px] pr-[23px] pb-[37px] pl-[24px]',
               bg,
             )}
           >
