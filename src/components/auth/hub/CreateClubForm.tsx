@@ -2,10 +2,14 @@
 
 import { useState } from 'react';
 
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Controller, useForm } from 'react-hook-form';
+
 import { ArrowDownIcon, ArrowRightIcon, CheckRoundIcon } from '@/assets/icons';
 import { TermsAgreementModal } from '@/components/auth';
 import { Button, Icon, Input, Textarea } from '@/components/ui';
 import { cn } from '@/lib/cn';
+import { createClubSchema, type CreateClubFormData } from '@/lib/schemas/createClub';
 
 function formatPhone(value: string) {
   const digits = value.replace(/\D/g, '').slice(0, 11);
@@ -22,18 +26,42 @@ function FieldLabel({ children }: { children: React.ReactNode }) {
   );
 }
 
+function FieldError({ message }: { message?: string }) {
+  if (!message) return null;
+  return <span className="typo-caption2 text-state-error">{message}</span>;
+}
+
 function CreateClubForm() {
-  const [school, setSchool] = useState('');
-  const [name, setName] = useState('');
-  const [description, setDescription] = useState('');
-  const [generation, setGeneration] = useState('');
-  const [phone, setPhone] = useState('');
-  const [email, setEmail] = useState('');
-  const [contactType, setContactType] = useState<'phone' | 'email'>('phone');
-  const [termsAgreed, setTermsAgreed] = useState(false);
   const [termsModalOpen, setTermsModalOpen] = useState(false);
 
-  const isValid = !!school && !!name && !!generation && !!phone && termsAgreed;
+  const {
+    register,
+    control,
+    handleSubmit,
+    setValue,
+    watch,
+    formState: { errors, isValid },
+  } = useForm<CreateClubFormData>({
+    resolver: zodResolver(createClubSchema),
+    defaultValues: {
+      school: '',
+      name: '',
+      description: '',
+      generation: '',
+      phone: '',
+      email: '',
+      contactType: 'phone',
+    },
+    mode: 'onBlur',
+  });
+
+  const school = watch('school');
+  const contactType = watch('contactType');
+  const termsAgreed = watch('termsAgreed');
+
+  function onSubmit(data: CreateClubFormData) {
+    console.log(data);
+  }
 
   return (
     <div className="mx-auto flex w-full max-w-145 flex-col gap-700 px-400 py-700">
@@ -46,14 +74,13 @@ function CreateClubForm() {
         </p>
       </div>
 
-      <form className="flex flex-col gap-500" onSubmit={(e) => e.preventDefault()}>
+      <form className="flex flex-col gap-500" onSubmit={handleSubmit(onSubmit)}>
         {/* 소속 학교 */}
         <div className="flex flex-col gap-200">
           <FieldLabel>소속 학교</FieldLabel>
           <div className="relative">
             <select
-              value={school}
-              onChange={(e) => setSchool(e.target.value)}
+              {...register('school')}
               className={cn(
                 'bg-container-neutral typo-body2 w-full cursor-pointer appearance-none',
                 'rounded-lg border border-transparent px-300 py-200',
@@ -70,39 +97,35 @@ function CreateClubForm() {
               <Icon src={ArrowDownIcon} size={16} alt="" />
             </div>
           </div>
+          <FieldError message={errors.school?.message} />
         </div>
 
         {/* 동아리 이름 */}
         <div className="flex flex-col gap-200">
           <FieldLabel>동아리 이름</FieldLabel>
-          <Input
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            clearable
-            className="rounded-lg"
-          />
+          <Input {...register('name')} clearable className="rounded-lg" />
+          <FieldError message={errors.name?.message} />
         </div>
 
         {/* 동아리 소개 */}
         <div className="flex flex-col gap-200">
           <FieldLabel>동아리 소개</FieldLabel>
           <Textarea
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
+            {...register('description')}
             maxLength={30}
             rows={3}
             clearable
             className="rounded-lg"
           />
           <span className="typo-caption2 text-text-alternative">30자 제한</span>
+          <FieldError message={errors.description?.message} />
         </div>
 
         {/* 동아리 기수 */}
         <div className="flex flex-col gap-200">
           <FieldLabel>동아리 기수</FieldLabel>
           <Input
-            value={generation}
-            onChange={(e) => setGeneration(e.target.value)}
+            {...register('generation')}
             placeholder="예 : 10"
             clearable
             className="rounded-lg"
@@ -112,30 +135,38 @@ function CreateClubForm() {
             <br />
             현재 또는 지금까지 운영한 기수만 입력해주세요.
           </p>
+          <FieldError message={errors.generation?.message} />
         </div>
 
         {/* 대표 전화번호 */}
         <div className="flex flex-col gap-200">
           <FieldLabel>대표 전화번호</FieldLabel>
-          <Input
-            type="tel"
-            value={phone}
-            onChange={(e) => setPhone(formatPhone(e.target.value))}
-            clearable
-            className="rounded-lg"
+          <Controller
+            name="phone"
+            control={control}
+            render={({ field }) => (
+              <Input
+                {...field}
+                type="tel"
+                onChange={(e) => field.onChange(formatPhone(e.target.value))}
+                clearable
+                className="rounded-lg"
+              />
+            )}
           />
+          <FieldError message={errors.phone?.message} />
         </div>
 
         {/* 대표 이메일 (선택) */}
         <div className="flex flex-col gap-200">
           <FieldLabel>대표 이메일 (선택)</FieldLabel>
           <Input
+            {...register('email')}
             type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
             clearable
             className="rounded-lg"
           />
+          <FieldError message={errors.email?.message} />
         </div>
 
         {/* 주 연락처 */}
@@ -146,10 +177,9 @@ function CreateClubForm() {
               <label key={type} className="flex cursor-pointer items-center gap-200">
                 <input
                   type="radio"
-                  name="contactType"
                   value={type}
                   checked={contactType === type}
-                  onChange={() => setContactType(type)}
+                  {...register('contactType')}
                   className="sr-only"
                 />
                 <div
@@ -171,34 +201,39 @@ function CreateClubForm() {
         </div>
 
         {/* 약관 동의 */}
-        <div className="flex items-center justify-between py-200">
-          <div className="flex items-center gap-300">
-            <Icon
-              src={CheckRoundIcon}
-              size={24}
-              className={termsAgreed ? 'text-brand-primary' : 'text-icon-disabled'}
-              alt="약관 동의 여부"
-            />
-            <span className="typo-sub2 text-text-strong">Weeth 동아리 개설 이용 약관 (필수)</span>
+        <div className="flex flex-col gap-200">
+          <div className="flex items-center justify-between py-200">
+            <div className="flex items-center gap-300">
+              <Icon
+                src={CheckRoundIcon}
+                size={24}
+                className={termsAgreed ? 'text-brand-primary' : 'text-icon-disabled'}
+                alt="약관 동의 여부"
+              />
+              <span className="typo-sub2 text-text-strong">
+                Weeth 동아리 개설 이용 약관 (필수)
+              </span>
+            </div>
+            <button
+              type="button"
+              onClick={() => setTermsModalOpen(true)}
+              className="cursor-pointer p-100"
+            >
+              <Icon
+                src={ArrowRightIcon}
+                size={12}
+                className="text-icon-alternative"
+                alt="약관 보기"
+              />
+            </button>
           </div>
-          <button
-            type="button"
-            onClick={() => setTermsModalOpen(true)}
-            className="cursor-pointer p-100"
-          >
-            <Icon
-              src={ArrowRightIcon}
-              size={12}
-              className="text-icon-alternative"
-              alt="약관 보기"
-            />
-          </button>
+          <FieldError message={errors.termsAgreed?.message} />
         </div>
 
         <TermsAgreementModal
           open={termsModalOpen}
           onOpenChange={setTermsModalOpen}
-          onAgree={() => setTermsAgreed(true)}
+          onAgree={() => setValue('termsAgreed', true, { shouldValidate: true })}
         />
 
         <Button type="submit" variant="primary" size="lg" disabled={!isValid} className="w-full">
