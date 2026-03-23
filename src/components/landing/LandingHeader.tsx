@@ -20,16 +20,14 @@ function LandingHeader({ className }: LandingHeaderProps) {
   useEffect(() => {
     const handleScroll = () => {
       const currentY = window.scrollY;
-
-      if (currentY < 10) {
-        setVisible(true);
-      } else if (currentY < lastScrollY.current) {
-        setVisible(true);
-      } else {
-        setVisible(false);
-      }
+      const shouldShow = currentY < 10 || currentY < lastScrollY.current;
 
       lastScrollY.current = currentY;
+
+      setVisible((prev) => {
+        if (prev === shouldShow) return prev;
+        return shouldShow;
+      });
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
