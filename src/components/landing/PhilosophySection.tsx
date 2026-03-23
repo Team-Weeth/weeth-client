@@ -30,19 +30,27 @@ function PhilosophySection() {
 
   useEffect(() => {
     const ctx = gsap.context(() => {
+      const spans = spanRefs.current.filter(Boolean) as HTMLSpanElement[];
+
+      spans.forEach((span) => gsap.set(span, { color: '#B0B0B0' }));
+
       const tl = gsap.timeline({
         scrollTrigger: {
           trigger: pinRef.current,
           start: 'top top',
+          end: `+=${spans.length * 500}`,
           pin: true,
-          scrub: 5,
+          scrub: true,
+          snap: {
+            snapTo: 1 / spans.length,
+            duration: { min: 0.3, max: 0.5 },
+            ease: 'linear',
+          },
         },
       });
 
-      spanRefs.current.forEach((span) => {
-        if (!span) return;
-        tl.to(span, { color: '#434343', duration: 1.5 });
-        tl.to({}, { duration: 100 });
+      spans.forEach((span) => {
+        tl.to(span, { color: '#434343', duration: 1, ease: 'steps(1)' });
       });
     });
 
