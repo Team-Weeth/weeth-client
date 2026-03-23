@@ -130,6 +130,7 @@ function HeroSection({ className }: HeroSectionProps) {
               alt="landing-image"
               width={430}
               height={510}
+              priority
               className="relative z-10 h-[510px] w-[430px] -rotate-5 rounded-3xl"
             />
           </div>
