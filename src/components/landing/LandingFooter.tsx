@@ -17,7 +17,7 @@ function LandingFooter({ className }: LandingFooterProps) {
             <div key={title} className="flex w-[160px] flex-col gap-200">
               <p className="typo-caption1 text-[#1E2021]">{title}</p>
               {items.map((item) => (
-                <Link key={item.label} href={item.href} className="typo-body2 text-token-class">
+                <Link key={item.label} href={item.href} className="typo-body2 text-[#909599]">
                   {item.label}
                 </Link>
               ))}
