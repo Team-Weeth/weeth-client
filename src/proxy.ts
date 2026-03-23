@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { ACCESS_TOKEN_KEY } from '@/lib/apis/cookies';
 
-const PUBLIC_PATHS = ['/', '/login', '/signup'];
+const PUBLIC_PATHS = ['/', '/login', '/signup', '/landing'];
 
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
