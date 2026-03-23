@@ -51,6 +51,22 @@ export default function Header({ isMain = true }: HeaderProps) {
         <div className="flex items-center gap-300">
           <Logo href={isMain ? '/home' : '/'} />
 
+          {!isMain && (
+            <>
+              <Link
+                href="#"
+                className="typo-button1 text-text-alternative transition-colors hover:text-text-normal"
+              >
+                서비스소개
+              </Link>
+              <Link
+                href="#"
+                className="typo-button1 text-text-alternative transition-colors hover:text-text-normal"
+              >
+                가입문의
+              </Link>
+            </>
+          )}
           {isMain &&
             navItems.map(({ id, label, href }) => {
               const isActive = pathname.startsWith(href);

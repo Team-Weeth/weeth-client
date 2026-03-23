@@ -62,11 +62,14 @@ function HubActionCard({ variant, href, onAction, className, ...props }: HubActi
   );
 
   return (
-    <Item className={cn('bg-background-2 gap-300 rounded-lg p-300', className)} {...props}>
+    <Item
+      className={cn('bg-background-2 flex-nowrap gap-400 rounded-lg p-300', className)}
+      {...props}
+    >
       <ItemMedia>
         <Image src={config.icon} alt={config.title} width={40} height={40} />
       </ItemMedia>
-      <ItemContent>
+      <ItemContent className="min-w-0">
         <ItemTitle className="typo-sub1 text-text-strong">{config.title}</ItemTitle>
         <ItemDescription className="typo-body2 text-text-normal">
           {config.description}

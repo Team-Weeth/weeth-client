@@ -1,3 +1,4 @@
+export { default as ArrowDownIcon } from './arrow_down.svg';
 export { default as ArrowLeftIcon } from './arrow_left.svg';
 export { default as ArrowRightIcon } from './arrow_right.svg';
 export { default as ChatIcon } from './chat.svg';
