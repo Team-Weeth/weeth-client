@@ -1,6 +1,7 @@
 'use client';
 
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 import { CompleteIcon } from '@/assets/icons';
@@ -43,6 +44,7 @@ function AttendanceTodayCard({
   isChecked = false,
   onAttendanceComplete,
 }: AttendanceTodayCardProps) {
+  const router = useRouter();
   const [codeModalOpen, setCodeModalOpen] = useState(false);
   const [completeModalOpen, setCompleteModalOpen] = useState(false);
 
@@ -61,8 +63,7 @@ function AttendanceTodayCard({
         showArrow={false}
         onPrimaryClick={isChecked ? () => setCompleteModalOpen(true) : () => setCodeModalOpen(true)}
         primaryButtonText={isChecked ? '출석 완료' : '출석하기'}
-        // TODO: 관리자 출석코드 확인 기능 별도 브랜치에서 구현 예정
-        onSecondaryClick={isAdmin ? () => {} : undefined}
+        onSecondaryClick={isAdmin ? () => router.push('/attendance/qr') : undefined}
         secondaryButtonText="출석코드 확인"
       >
         {isChecked && <AttendanceCompleteBanner />}
