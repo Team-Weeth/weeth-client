@@ -83,10 +83,10 @@ function ServiceSection({
               key={f.chipLabel}
               onClick={() => handleChipClick(i)}
               className={cn(
-                'typo-button2 h-[40px] min-w-[40px] rounded-3xl px-[15px] py-2 transition-colors',
+                'typo-button2 h-[40px] min-w-[40px] cursor-pointer rounded-3xl px-[15px] py-2 transition-colors',
                 i === activeIndex
-                  ? 'bg-[#00C8AA] text-white'
-                  : 'border border-[#00C8AA] text-[#00C8AA]',
+                  ? 'bg-[#00C8AA] text-white hover:bg-[#00b89c]'
+                  : 'border border-[#00C8AA] text-[#00C8AA] hover:bg-[#00C8AA] hover:text-white',
               )}
             >
               {f.chipLabel}
