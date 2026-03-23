@@ -18,7 +18,7 @@ function CTASection({ className }: CTASectionProps) {
       <div className="relative flex h-[397px] max-w-[1408px] items-center rounded-[40px] bg-[#FFFFFF] px-[160px] pt-[90px] pb-[78px]">
         <Image
           src={LandingMockUp}
-          alt="LandingMockUp"
+          alt="Weeth 홈페이지"
           width={495}
           height={519}
           className="absolute bottom-0 left-[86px] h-[519px] w-auto"

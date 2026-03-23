@@ -92,7 +92,11 @@ export const SETUP_GUIDE_STEPS = [
 export const FOOTER_MENUS = [
   {
     title: 'Weeth 서비스',
-    items: ['서비스 소개', '관리자 서비스', '문의 메일'],
+    items: [
+      { label: '서비스 소개', href: '/landing#service' },
+      { label: '관리자 서비스', href: '/landing#admin-service' },
+      { label: '문의 메일', href: 'mailto:contact@weeth.kr' },
+    ],
   },
 ];
 
