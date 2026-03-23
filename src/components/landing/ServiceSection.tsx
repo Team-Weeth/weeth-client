@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import Image from 'next/image';
 import type { StaticImageData } from 'next/image';
 import { cn } from '@/lib/cn';
@@ -36,6 +36,19 @@ function ServiceSection({
 
   const CARD_WIDTH = 1123;
   const CARD_GAP = 22;
+
+  useEffect(() => {
+    const container = scrollRef.current;
+    if (!container) return;
+
+    const handleScroll = () => {
+      const index = Math.round(container.scrollLeft / (CARD_WIDTH + CARD_GAP));
+      setActiveIndex(index);
+    };
+
+    container.addEventListener('scroll', handleScroll, { passive: true });
+    return () => container.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const handleChipClick = (i: number) => {
     setActiveIndex(i);
