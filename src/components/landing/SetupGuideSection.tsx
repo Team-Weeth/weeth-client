@@ -47,7 +47,7 @@ function SetupGuideSection({ className }: SetupGuideSectionProps) {
 
       <Link
         href="/login"
-        className="typo-button1 mx-auto block w-fit rounded-md bg-[#00C8AA] px-400 py-300 text-white hover:bg-[#A3FFE0] hover:text-[#1E2021]"
+        className="typo-button1 mx-auto block w-fit rounded-md bg-[#00C8AA] px-400 py-300 text-white hover:bg-[#00877a]"
       >
         지금 무료로 시작하기
       </Link>

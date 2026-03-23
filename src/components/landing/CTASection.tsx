@@ -35,7 +35,7 @@ function CTASection({ className }: CTASectionProps) {
           </p>
           <Link
             href="/login"
-            className="typo-button1 block w-fit rounded-md bg-[#00C8AA] px-400 py-300 text-white hover:bg-[#A3FFE0] hover:text-[#1E2021]"
+            className="typo-button1 block w-fit rounded-md bg-[#00C8AA] px-400 py-300 text-white hover:bg-[#00877a]"
           >
             동아리 사이트 개설 시작하기
           </Link>
