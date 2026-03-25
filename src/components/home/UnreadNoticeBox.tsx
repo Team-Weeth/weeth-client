@@ -4,7 +4,7 @@ import { NewIcon, DeleteIcon } from '@/assets/icons';
 export function UnreadNoticeBox() {
   return (
     <div className="flex flex-col rounded-lg shadow-[0_5px_20px_0_rgba(17,33,49,0.2)]">
-      <div className="bg-container-primary text-icon-inverse flex items-center justify-between rounded-t-lg px-450 pt-450 pb-300">
+      <div className="bg-icon-normal text-icon-inverse flex items-center justify-between rounded-t-lg px-450 pt-450 pb-300">
         <p className="typo-sub1 text-icon-inverse">읽지 않은 최근 공지가 있어요</p>
         <Image src={DeleteIcon} alt="delete" width={16} height={16} className="cursor-pointer" />
       </div>
