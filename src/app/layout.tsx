@@ -3,6 +3,7 @@ import type { ReactNode } from 'react';
 import { QueryProvider } from '@/providers';
 import { Inter } from 'next/font/google';
 import { ThemeProvider } from '@/providers/theme-provider';
+import { cn } from '@/lib/cn';
 import './globals.css';
 
 const inter = Inter({
@@ -33,7 +34,7 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className={`${inter.variable} w-full antialiased`}>
+      <body className={cn(inter.variable, 'w-full antialiased')}>
         <QueryProvider>
           <ThemeProvider>{children}</ThemeProvider>
         </QueryProvider>
