@@ -19,7 +19,7 @@ import { ProfileSection } from './ProfileSection';
 import { SupportListItem } from './SupportListItem';
 import { ThemeToggle } from './ThemeToggle';
 import { MyPageDropdownMenu } from './MyPageDropdownMenu';
-import { MOCK_CLUBS, MOCK_USER } from '@/constants/mock';
+import { MOCK_AVAILABLE_CARDINALS, MOCK_CLUBS, MOCK_USER } from '@/constants/mock';
 import { ClubInfoCard } from './ClubInfoCard';
 
 type MyPageContentProps = React.HTMLAttributes<HTMLDivElement>;
@@ -95,7 +95,11 @@ function MyPageContent({ className, ...props }: MyPageContentProps) {
         <InfoSection title="활동정보">
           <div className="flex flex-row gap-300">
             {MOCK_CLUBS.map((club) => (
-              <ClubInfoCard key={club.id} club={club} />
+              <ClubInfoCard
+                key={club.id}
+                club={club}
+                availableCardinals={MOCK_AVAILABLE_CARDINALS}
+              />
             ))}
           </div>
         </InfoSection>
