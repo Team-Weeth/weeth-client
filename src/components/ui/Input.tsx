@@ -10,7 +10,7 @@ const baseStyles = cn(
   'w-full bg-container-neutral text-text-normal typo-body2',
   'rounded-sm border border-transparent px-300 py-200',
   'placeholder:text-text-alternative',
-  'focus:outline-none focus:border-brand-secondary',
+  'focus:outline-none focus:border-brand-primary',
   'disabled:bg-container-neutral-alternative disabled:text-text-disabled disabled:cursor-not-allowed',
   'transition-colors',
 );
