@@ -33,12 +33,7 @@ function ClubWelcomePage({ userName }: ClubWelcomePageProps) {
           </h1>
           <p className="typo-body2 text-text-alternative">3초 뒤에 자동으로 이동합니다.</p>
         </div>
-        <Button
-          variant="primary"
-          size="lg"
-          className="w-full"
-          onClick={() => router.push('/home')}
-        >
+        <Button variant="primary" size="lg" className="w-full" onClick={() => router.push('/home')}>
           바로 사이트로 이동하기
         </Button>
       </div>

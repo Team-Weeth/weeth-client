@@ -11,7 +11,7 @@ interface ClubSelectedCardProps {
 
 function ClubSelectedCard({ club, onRemove }: ClubSelectedCardProps) {
   return (
-    <div className="border-line flex items-center justify-between rounded-[10px] border bg-container-neutral px-400 py-200">
+    <div className="border-line bg-container-neutral flex items-center justify-between rounded-[10px] border px-400 py-200">
       <div className="flex items-center gap-400">
         {club.logoUrl ? (
           <Image
@@ -32,7 +32,7 @@ function ClubSelectedCard({ club, onRemove }: ClubSelectedCardProps) {
       <button
         type="button"
         onClick={onRemove}
-        className="flex cursor-pointer items-center p-100 text-icon-alternative transition-colors hover:text-icon-normal"
+        className="text-icon-alternative hover:text-icon-normal flex cursor-pointer items-center p-100 transition-colors"
         aria-label="선택 취소"
       >
         <Icon src={CloseCircleIcon} size={20} alt="선택 취소" className="text-icon-alternative" />

@@ -33,7 +33,12 @@ function ClubAccessPage({ club }: ClubAccessPageProps) {
           <span className="typo-h3 text-text-strong">{club.name}</span>
           <span className="typo-body2 text-text-normal">{club.description}</span>
         </div>
-        <Button variant="primary" size="lg" className="w-full" onClick={() => router.push('/login')}>
+        <Button
+          variant="primary"
+          size="lg"
+          className="w-full"
+          onClick={() => router.push('/login')}
+        >
           로그인하고 들어가기
         </Button>
       </div>

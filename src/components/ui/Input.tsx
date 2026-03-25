@@ -41,7 +41,11 @@ function Input({ className, clearable, error, wrapperClassName, ref, ...props }:
     return (
       <input
         ref={setRef}
-        className={cn(baseStyles, error && 'border-state-error focus:border-state-error', className)}
+        className={cn(
+          baseStyles,
+          error && 'border-state-error focus:border-state-error',
+          className,
+        )}
         {...props}
       />
     );
@@ -70,7 +74,12 @@ function Input({ className, clearable, error, wrapperClassName, ref, ...props }:
     <div className={cn('relative w-full', wrapperClassName)}>
       <input
         ref={setRef}
-        className={cn(baseStyles, error && 'border-state-error focus:border-state-error', className, showClear && 'pr-9')}
+        className={cn(
+          baseStyles,
+          error && 'border-state-error focus:border-state-error',
+          className,
+          showClear && 'pr-9',
+        )}
         {...props}
         onChange={handleChange}
       />
@@ -87,7 +96,12 @@ function Input({ className, clearable, error, wrapperClassName, ref, ...props }:
           )}
           aria-label="입력 내용 지우기"
         >
-          <Icon src={CloseCircleIcon} size={20} alt="텍스트 지우기 버튼" className="text-icon-alternative" />
+          <Icon
+            src={CloseCircleIcon}
+            size={20}
+            alt="텍스트 지우기 버튼"
+            className="text-icon-alternative"
+          />
         </button>
       )}
     </div>

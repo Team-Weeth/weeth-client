@@ -87,11 +87,7 @@ function TermsAgreementModal({ open, onOpenChange, onAgree }: TermsAgreementModa
             </p>
           </DialogBody>
           <DialogFooter showDivider>
-            <Button
-              variant="secondary"
-              size="lg"
-              onClick={() => setSelectedTermId(null)}
-            >
+            <Button variant="secondary" size="lg" onClick={() => setSelectedTermId(null)}>
               확인
             </Button>
           </DialogFooter>
@@ -131,36 +127,36 @@ function TermsAgreementModal({ open, onOpenChange, onAgree }: TermsAgreementModa
               <div key={item.id} className="flex flex-col gap-300">
                 {index > 0 && <Divider />}
                 <div className="flex items-center justify-between">
-                <button
-                  type="button"
-                  onClick={() => handleToggleItem(item.id)}
-                  className="flex cursor-pointer items-center gap-300"
-                >
-                  <Icon
-                    src={CheckRoundIcon}
-                    size={24}
-                    alt={isChecked ? '선택됨' : '선택 안됨'}
-                    className={cn(isChecked ? 'text-brand-primary' : 'text-icon-disabled')}
-                  />
-                  <span className="typo-sub2 text-text-normal">
-                    {item.label}
-                    {item.required && (
-                      <span className="text-text-normal typo-sub2 ml-100">(필수)</span>
-                    )}
-                  </span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setSelectedTermId(item.id)}
-                  className="cursor-pointer p-100"
-                >
-                  <Icon
-                    src={ArrowRightIcon}
-                    size={12}
-                    alt="상세 보기"
-                    className="text-icon-alternative"
-                  />
-                </button>
+                  <button
+                    type="button"
+                    onClick={() => handleToggleItem(item.id)}
+                    className="flex cursor-pointer items-center gap-300"
+                  >
+                    <Icon
+                      src={CheckRoundIcon}
+                      size={24}
+                      alt={isChecked ? '선택됨' : '선택 안됨'}
+                      className={cn(isChecked ? 'text-brand-primary' : 'text-icon-disabled')}
+                    />
+                    <span className="typo-sub2 text-text-normal">
+                      {item.label}
+                      {item.required && (
+                        <span className="text-text-normal typo-sub2 ml-100">(필수)</span>
+                      )}
+                    </span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setSelectedTermId(item.id)}
+                    className="cursor-pointer p-100"
+                  >
+                    <Icon
+                      src={ArrowRightIcon}
+                      size={12}
+                      alt="상세 보기"
+                      className="text-icon-alternative"
+                    />
+                  </button>
                 </div>
               </div>
             );
