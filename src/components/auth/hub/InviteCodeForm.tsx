@@ -2,6 +2,8 @@
 
 import { useState } from 'react';
 
+import { useRouter } from 'next/navigation';
+
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -19,6 +21,7 @@ const inviteCodeSchema = z.object({
 type InviteCodeFormData = z.infer<typeof inviteCodeSchema>;
 
 function InviteCodeForm() {
+  const router = useRouter();
   const [searchResults, setSearchResults] = useState<Club[]>([]);
   const [selectedClub, setSelectedClub] = useState<Club | null>(null);
   const [serverError, setServerError] = useState<string | null>(null);
@@ -62,6 +65,8 @@ function InviteCodeForm() {
 
   function onSubmit(_data: InviteCodeFormData) {
     // TODO: API call
+    const clubName = selectedClub?.name ?? '동아리';
+    router.push(`/hub/joining?clubName=${encodeURIComponent(clubName)}`);
   }
 
   return (
