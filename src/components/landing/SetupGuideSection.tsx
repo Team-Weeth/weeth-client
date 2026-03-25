@@ -23,7 +23,6 @@ function SetupGuideSection({ className }: SetupGuideSectionProps) {
         height={148}
         className="mx-auto mb-[106px]"
       />
-
       <div className="mb-[66px] flex flex-wrap items-center justify-center gap-4">
         {SETUP_GUIDE_STEPS.map(({ number, title, description, bg }) => (
           <div
