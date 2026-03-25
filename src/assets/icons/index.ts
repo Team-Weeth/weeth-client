@@ -38,3 +38,4 @@ export { default as LoginCoverIcon } from './login_cover.svg';
 export { default as HubCreateIcon } from './hub_create.svg';
 export { default as HubJoinIcon } from './hub_join.svg';
 export { default as HubGoIcon } from './hub_go.svg';
+export { default as TooltipIcon } from './tooltip.svg';

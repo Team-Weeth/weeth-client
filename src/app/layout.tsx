@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
 import { QueryProvider } from '@/providers';
 import { ThemeProvider } from '@/providers/theme-provider';
+import { TooltipProvider } from '@/components/ui';
 import './globals.css';
 
 export const metadata: Metadata = {
@@ -28,7 +29,9 @@ export default function RootLayout({
       </head>
       <body className="w-full antialiased">
         <QueryProvider>
-          <ThemeProvider>{children}</ThemeProvider>
+          <ThemeProvider>
+            <TooltipProvider>{children}</TooltipProvider>
+          </ThemeProvider>
         </QueryProvider>
       </body>
     </html>

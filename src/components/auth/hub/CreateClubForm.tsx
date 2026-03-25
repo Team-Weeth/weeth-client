@@ -1,13 +1,20 @@
 'use client';
 
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Controller, useForm } from 'react-hook-form';
 
-import { ArrowDownIcon, ArrowRightIcon, CheckRoundIcon } from '@/assets/icons';
-import { TermsAgreementModal } from '@/components/auth';
-import { Button, Icon, Input, Textarea } from '@/components/ui';
+import { ArrowDownIcon, ArrowRightIcon, CheckRoundIcon, TooltipIcon } from '@/assets/icons';
+import {
+  Button,
+  Icon,
+  Input,
+  Textarea,
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/ui';
 import { cn } from '@/lib/cn';
 import { createClubSchema, type CreateClubFormData } from '@/lib/schemas/createClub';
 
@@ -32,8 +39,6 @@ function FieldError({ message }: { message?: string }) {
 }
 
 function CreateClubForm() {
-  const [termsModalOpen, setTermsModalOpen] = useState(false);
-
   const {
     register,
     control,
@@ -57,7 +62,6 @@ function CreateClubForm() {
 
   const school = watch('school');
   const contactType = watch('contactType');
-  const termsAgreed = watch('termsAgreed');
 
   function onSubmit(data: CreateClubFormData) {
     console.log(data);
@@ -94,7 +98,7 @@ function CreateClubForm() {
               </option>
             </select>
             <div className="text-icon-alternative pointer-events-none absolute top-1/2 right-300 -translate-y-1/2">
-              <Icon src={ArrowDownIcon} size={16} alt="" />
+              <Icon src={ArrowDownIcon} size={12} alt="" className="text-text-normal" />
             </div>
           </div>
           <FieldError message={errors.school?.message} />
@@ -123,18 +127,32 @@ function CreateClubForm() {
 
         {/* 동아리 기수 */}
         <div className="flex flex-col gap-200">
-          <FieldLabel>동아리 기수</FieldLabel>
+          <div className="flex items-center gap-100">
+            <FieldLabel>동아리 기수</FieldLabel>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button type="button" className="flex items-center">
+                  <Icon
+                    src={TooltipIcon}
+                    size={16}
+                    className="text-icon-disabled"
+                    alt="기수 안내"
+                  />
+                </button>
+              </TooltipTrigger>
+              <TooltipContent side="bottom" align="start">
+                기수는 동아리 멤버 관리와 출석 기록에 사용됩니다.
+                <br />
+                현재 또는 지금까지 운영한 기수만 입력해주세요.
+              </TooltipContent>
+            </Tooltip>
+          </div>
           <Input
             {...register('generation')}
             placeholder="예 : 10"
             clearable
             className="rounded-lg"
           />
-          <p className="typo-caption2 text-text-alternative">
-            기수는 동아리 멤버 관리와 출석 기록에 사용됩니다.
-            <br />
-            현재 또는 지금까지 운영한 기수만 입력해주세요.
-          </p>
           <FieldError message={errors.generation?.message} />
         </div>
 
@@ -160,12 +178,7 @@ function CreateClubForm() {
         {/* 대표 이메일 (선택) */}
         <div className="flex flex-col gap-200">
           <FieldLabel>대표 이메일 (선택)</FieldLabel>
-          <Input
-            {...register('email')}
-            type="email"
-            clearable
-            className="rounded-lg"
-          />
+          <Input {...register('email')} type="email" clearable className="rounded-lg" />
           <FieldError message={errors.email?.message} />
         </div>
 
@@ -199,42 +212,6 @@ function CreateClubForm() {
             ))}
           </div>
         </div>
-
-        {/* 약관 동의 */}
-        <div className="flex flex-col gap-200">
-          <div className="flex items-center justify-between py-200">
-            <div className="flex items-center gap-300">
-              <Icon
-                src={CheckRoundIcon}
-                size={24}
-                className={termsAgreed ? 'text-brand-primary' : 'text-icon-disabled'}
-                alt="약관 동의 여부"
-              />
-              <span className="typo-sub2 text-text-strong">
-                Weeth 동아리 개설 이용 약관 (필수)
-              </span>
-            </div>
-            <button
-              type="button"
-              onClick={() => setTermsModalOpen(true)}
-              className="cursor-pointer p-100"
-            >
-              <Icon
-                src={ArrowRightIcon}
-                size={12}
-                className="text-icon-alternative"
-                alt="약관 보기"
-              />
-            </button>
-          </div>
-          <FieldError message={errors.termsAgreed?.message} />
-        </div>
-
-        <TermsAgreementModal
-          open={termsModalOpen}
-          onOpenChange={setTermsModalOpen}
-          onAgree={() => setValue('termsAgreed', true, { shouldValidate: true })}
-        />
 
         <Button type="submit" variant="primary" size="lg" disabled={!isValid} className="w-full">
           사이트 개설하기

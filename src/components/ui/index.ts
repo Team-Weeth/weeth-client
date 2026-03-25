@@ -114,3 +114,5 @@ export {
 } from './item';
 
 export { Separator } from './separator';
+
+export { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from './Tooltip';
