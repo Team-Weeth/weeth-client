@@ -28,7 +28,7 @@ function PostCardContent({
 
   useEffect(() => {
     const el = contentRef.current;
-    if (!el || !expandable || isExpanded) return;
+    if (!el || !expandable) return;
 
     const check = () => {
       setIsClamped(el.scrollHeight > el.clientHeight);
@@ -39,7 +39,7 @@ function PostCardContent({
     const ro = new ResizeObserver(check);
     ro.observe(el);
     return () => ro.disconnect();
-  }, [content, expandable, isExpanded]);
+  }, [content, expandable]);
 
   return (
     <div className={cn('flex flex-col gap-200 self-stretch', className)}>

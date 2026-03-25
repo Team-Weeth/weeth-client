@@ -2,18 +2,17 @@
 
 import * as React from 'react';
 import { cva, type VariantProps } from 'class-variance-authority';
-import type { StaticImageData } from 'next/image';
 
+import { ArrowRightIcon } from '@/assets/icons';
 import { cn } from '@/lib/cn';
 import { Button } from '@/components/ui/Button';
-import arrowRightIcon from '@/assets/icons/arrow_right.svg';
+import { Icon } from '@/components/ui/Icon';
 
 const cardVariants = cva('bg-container-neutral flex rounded-lg p-400 transition-colors', {
   variants: {
     variant: {
       default: 'flex-col gap-6 rounded-xl border py-6 shadow-sm',
-      onlyText:
-        'cursor-pointer items-center justify-between hover:bg-container-neutral-interaction',
+      onlyText: 'cursor-pointer items-start justify-between hover:bg-container-neutral-interaction',
       buttonSet: 'flex-col gap-500',
     },
   },
@@ -68,19 +67,7 @@ function Card({
             <p className="typo-body2 text-text-alternative whitespace-pre-line">{description}</p>
           )}
         </div>
-        {showArrow && (
-          <span
-            aria-hidden
-            className="block h-3 w-3 shrink-0 cursor-pointer bg-neutral-800"
-            style={{
-              maskImage: `url(${(arrowRightIcon as StaticImageData).src})`,
-              WebkitMaskImage: `url(${(arrowRightIcon as StaticImageData).src})`,
-              maskRepeat: 'no-repeat',
-              maskPosition: 'center',
-              maskSize: 'contain',
-            }}
-          />
-        )}
+        {showArrow && <Icon src={ArrowRightIcon} size={12} className="text-icon-normal" />}
       </div>
     );
   }
@@ -89,36 +76,33 @@ function Card({
   if (variant === 'buttonSet' && title) {
     return (
       <div data-slot="card" className={cn(cardVariants({ variant }), className)} {...props}>
-        <div className="flex items-start justify-between gap-300">
-          <div className="flex flex-col gap-200">
-            {overline && <p className="typo-caption1 text-text-alternative">{overline}</p>}
-            <h3 className="typo-sub1 text-text-strong">{title}</h3>
-            {description && (
-              <p className="typo-body2 text-text-alternative whitespace-pre-line">{description}</p>
-            )}
+        <div className="flex flex-col gap-300">
+          <div className="flex items-start justify-between gap-300">
+            <div className="flex flex-col gap-200">
+              {overline && <p className="typo-caption1 text-text-alternative">{overline}</p>}
+              <h3 className="typo-sub1 text-text-strong">{title}</h3>
+              {description && (
+                <p className="typo-body2 text-text-alternative whitespace-pre-line">
+                  {description}
+                </p>
+              )}
+            </div>
+            {showArrow && <Icon src={ArrowRightIcon} size={12} className="text-icon-normal" />}
           </div>
-          {showArrow && (
-            <span
-              aria-hidden
-              className="block h-3 w-3 shrink-0 cursor-pointer bg-neutral-800"
-              style={{
-                maskImage: `url(${(arrowRightIcon as StaticImageData).src})`,
-                WebkitMaskImage: `url(${(arrowRightIcon as StaticImageData).src})`,
-                maskRepeat: 'no-repeat',
-                maskPosition: 'center',
-                maskSize: 'contain',
-              }}
-            />
-          )}
+          {children}
         </div>
 
         <div className="flex flex-col gap-200">
-          <Button variant="primary" size="lg" onClick={onPrimaryClick} className="w-full">
-            {primaryButtonText}
-          </Button>
-          <Button variant="secondary" size="lg" onClick={onSecondaryClick} className="w-full">
-            {secondaryButtonText}
-          </Button>
+          {onPrimaryClick && (
+            <Button variant="primary" size="lg" onClick={onPrimaryClick} className="w-full">
+              {primaryButtonText}
+            </Button>
+          )}
+          {onSecondaryClick && (
+            <Button variant="secondary" size="lg" onClick={onSecondaryClick} className="w-full">
+              {secondaryButtonText}
+            </Button>
+          )}
         </div>
       </div>
     );

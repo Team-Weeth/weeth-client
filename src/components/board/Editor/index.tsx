@@ -2,12 +2,39 @@
 
 import { EditorContent, FloatingMenu } from '@tiptap/react';
 import { usePostEditor } from './usePostEditor';
-import { BubbleMenuBar } from './EditorBubbleMenu';
+import { BubbleMenuBar } from './BubbleMenu';
 import { SlashMenuContent } from './SlashMenu';
 import { ImageList } from '../ImageList';
 import { FileList } from '../FileList';
 import { useFileUpload } from '@/hooks/useFileUpload';
-import { createMediaItems } from '@/constants/editor';
+import { createMediaItems } from '@/constants/slashMenu';
+
+const floatingMenuTippyOptions = {
+  duration: 100,
+  placement: 'bottom-start' as const,
+  appendTo: () => document.body,
+  popperOptions: {
+    modifiers: [
+      {
+        name: 'flip',
+        options: {
+          boundary: 'clippingParents',
+          rootBoundary: 'viewport',
+          fallbackPlacements: ['top-start'],
+          padding: 16,
+        },
+      },
+      {
+        name: 'preventOverflow',
+        options: {
+          boundary: 'clippingParents',
+          rootBoundary: 'viewport',
+          padding: 16,
+        },
+      },
+    ],
+  },
+};
 
 /**
  * 주요 기능:
@@ -24,10 +51,6 @@ export default function Editor() {
   const { editor, showSlashMenu, closeSlashMenu, containerRef } = usePostEditor({
     processFiles,
   });
-
-  const mediaGroups = [
-    { title: '미디어', items: createMediaItems(picker.openImagePicker, picker.openFilePicker) },
-  ];
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
@@ -73,32 +96,7 @@ export default function Editor() {
 
       <FloatingMenu
         editor={editor}
-        tippyOptions={{
-          duration: 100,
-          placement: 'bottom-start',
-          appendTo: () => document.body,
-          popperOptions: {
-            modifiers: [
-              {
-                name: 'flip',
-                options: {
-                  boundary: 'clippingParents',
-                  rootBoundary: 'viewport',
-                  fallbackPlacements: ['top-start'],
-                  padding: 16,
-                },
-              },
-              {
-                name: 'preventOverflow',
-                options: {
-                  boundary: 'clippingParents',
-                  rootBoundary: 'viewport',
-                  padding: 16,
-                },
-              },
-            ],
-          },
-        }}
+        tippyOptions={floatingMenuTippyOptions}
         shouldShow={({ state }) => {
           const { $from } = state.selection;
           const text = $from.nodeBefore?.textContent ?? '';
@@ -106,15 +104,21 @@ export default function Editor() {
         }}
       >
         {showSlashMenu && (
-          <SlashMenuContent editor={editor} onClose={closeSlashMenu} extraGroups={mediaGroups} />
+          <SlashMenuContent
+            editor={editor}
+            onClose={closeSlashMenu}
+            extraGroups={[
+              {
+                title: '미디어',
+                items: createMediaItems(picker.openImagePicker, picker.openFilePicker),
+              },
+            ]}
+          />
         )}
       </FloatingMenu>
 
-      <div className="relative px-500">
-        <EditorContent
-          editor={editor}
-          className="prose prose-gray max-w-none [&_.ProseMirror]:min-h-[400px] [&_.ProseMirror]:focus:outline-none [&_.ProseMirror_h1]:leading-(--h1-line-height) [&_.ProseMirror_h1]:text-(--h1-size) [&_.ProseMirror_h2]:leading-(--h2-line-height) [&_.ProseMirror_h2]:text-(--h2-size) [&_.ProseMirror_h3]:leading-(--h3-line-height) [&_.ProseMirror_h3]:text-(--h3-size) [&_.ProseMirror_p.is-empty::before]:pointer-events-none [&_.ProseMirror_p.is-empty::before]:float-left [&_.ProseMirror_p.is-empty::before]:h-0 [&_.ProseMirror_p.is-empty::before]:text-gray-400 [&_.ProseMirror_p.is-empty::before]:content-[attr(data-placeholder)] [&_.ProseMirror_ul[data-type=taskList]]:my-0 [&_.ProseMirror_ul[data-type=taskList]]:list-none [&_.ProseMirror_ul[data-type=taskList]_li]:my-0 [&_.ProseMirror_ul[data-type=taskList]_li]:flex [&_.ProseMirror_ul[data-type=taskList]_li]:items-center [&_.ProseMirror_ul[data-type=taskList]_li]:gap-300 [&_.ProseMirror>*]:my-300"
-        />
+      <div className="relative">
+        <EditorContent editor={editor} className="max-w-none" />
 
         {/* 게시글 하단 첨부 영역 */}
         <div className="flex flex-col gap-400">

@@ -1,10 +1,9 @@
 'use client';
 
 import { useRef, useState } from 'react';
-import type { StaticImageData } from 'next/image';
 import { FolderPlusIcon, SendIcon } from '@/assets/icons';
 import { FileList } from '@/components/board/FileList';
-import { Button, Textarea } from '@/components/ui';
+import { Button, Icon, Textarea } from '@/components/ui';
 import { useFileAttach } from '@/hooks';
 import { cn } from '@/lib/cn';
 import type { FileItem } from '@/stores/usePostStore';
@@ -48,16 +47,7 @@ function CommentInput({
           disabled={disabled}
           aria-label="파일 첨부"
         >
-          <span className="flex h-600 w-600 items-center justify-center">
-            <span
-              aria-hidden
-              className="bg-icon-normal block h-4 w-5 mask-contain mask-center mask-no-repeat"
-              style={{
-                maskImage: `url(${(FolderPlusIcon as StaticImageData).src})`,
-                WebkitMaskImage: `url(${(FolderPlusIcon as StaticImageData).src})`,
-              }}
-            />
-          </span>
+          <Icon src={FolderPlusIcon} size={20} className="text-icon-normal" />
         </Button>
 
         <Textarea
@@ -81,19 +71,11 @@ function CommentInput({
           disabled={disabled || !value.trim()}
           aria-label="댓글 전송"
         >
-          <span className="flex h-600 w-600 items-center justify-center">
-            <span
-              aria-hidden
-              className={cn(
-                'block h-4 w-5 mask-contain mask-center mask-no-repeat',
-                disabled || !value.trim() ? 'bg-icon-disabled' : 'bg-icon-normal',
-              )}
-              style={{
-                maskImage: `url(${(SendIcon as StaticImageData).src})`,
-                WebkitMaskImage: `url(${(SendIcon as StaticImageData).src})`,
-              }}
-            />
-          </span>
+          <Icon
+            src={SendIcon}
+            size={20}
+            className={disabled || !value.trim() ? 'text-icon-disabled' : 'text-icon-normal'}
+          />
         </Button>
       </div>
 
