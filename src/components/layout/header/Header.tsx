@@ -4,7 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { usePathname } from 'next/navigation';
-import { Button } from '../ui';
+import { Button } from '../../ui';
 import {
   MenuIcon,
   EditIcon,

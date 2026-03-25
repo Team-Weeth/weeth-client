@@ -1,5 +1,4 @@
 import {
-  LandingHeader,
   FeatureIntroSection,
   ServiceSection,
   SetupGuideSection,
@@ -9,12 +8,13 @@ import {
   LandingFooter,
 } from '@/components/landing';
 import { HeroSection, PhilosophySection } from '@/components/landing/DynamicSections';
+import { PublicHeader } from '@/components/layout';
 import { USER_FEATURES, ADMIN_FEATURES } from '@/constants/landing';
 
 export default function LandingPage() {
   return (
     <>
-      <LandingHeader />
+      <PublicHeader showAuthButtons />
       <main className="flex min-h-screen w-full flex-col overflow-x-clip">
         <HeroSection />
         <PhilosophySection />

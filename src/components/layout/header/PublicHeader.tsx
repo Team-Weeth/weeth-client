@@ -9,11 +9,12 @@ import { buttonVariants } from '@/components/ui';
 import { cn } from '@/lib/cn';
 import { NAV_ITEMS } from '@/constants/landing';
 
-interface LandingHeaderProps {
+interface PublicHeaderProps {
   className?: string;
+  showAuthButtons?: boolean;
 }
 
-function LandingHeader({ className }: LandingHeaderProps) {
+export default function PublicHeader({ className, showAuthButtons = false }: PublicHeaderProps) {
   const [visible, setVisible] = useState(true);
   const lastScrollY = useRef(0);
 
@@ -70,30 +71,32 @@ function LandingHeader({ className }: LandingHeaderProps) {
               ))}
             </nav>
           </div>
-          <div className="flex items-center gap-200">
-            <Link
-              href="/login"
-              className={cn(
-                buttonVariants({ variant: 'secondary', size: 'md' }),
-                'bg-[#E6EAED] text-black',
-              )}
-            >
-              로그인
-            </Link>
-            <Link
-              href="/signup"
-              className={cn(
-                buttonVariants({ variant: 'primary', size: 'md' }),
-                'bg-[#00C8AA] text-white',
-              )}
-            >
-              지금 무료로 시작하기
-            </Link>
-          </div>
+          {showAuthButtons && (
+            <div className="flex items-center gap-200">
+              <Link
+                href="/login"
+                className={cn(
+                  buttonVariants({ variant: 'secondary', size: 'md' }),
+                  'bg-[#E6EAED] text-black',
+                )}
+              >
+                로그인
+              </Link>
+              <Link
+                href="/signup"
+                className={cn(
+                  buttonVariants({ variant: 'primary', size: 'md' }),
+                  'bg-[#00C8AA] text-white',
+                )}
+              >
+                지금 무료로 시작하기
+              </Link>
+            </div>
+          )}
         </motion.header>
       )}
     </AnimatePresence>
   );
 }
 
-export { LandingHeader };
+export { PublicHeader };

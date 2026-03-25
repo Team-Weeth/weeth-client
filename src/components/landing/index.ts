@@ -1,4 +1,3 @@
-export { LandingHeader } from './LandingHeader';
 export { HeroSection } from './HeroSection';
 export { PhilosophySection } from './PhilosophySection';
 export { FeatureIntroSection } from './FeatureIntroSection';
