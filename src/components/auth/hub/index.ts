@@ -1,4 +1,6 @@
 export { ClubCreatingPage } from './ClubCreatingPage';
+export { ClubJoiningPage } from './ClubJoiningPage';
+export { ClubWelcomePage } from './ClubWelcomePage';
 export { ClubList } from './ClubList';
 export { ClubSearchDropdown } from './ClubSearchDropdown';
 export { ClubSelectedCard } from './ClubSelectedCard';
