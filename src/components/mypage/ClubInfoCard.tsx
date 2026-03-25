@@ -1,11 +1,11 @@
 'use client';
 
 import { useState } from 'react';
-import Image from 'next/image';
+
 import Link from 'next/link';
 
 import { cn } from '@/lib/cn';
-import { Button, Icon, Tag } from '@/components/ui';
+import { Avatar, AvatarFallback, AvatarImage, Button, Icon, Tag } from '@/components/ui';
 import { ExitIcon, PeopleIcon } from '@/assets/icons';
 import type { ClubDto } from '@/types/mypage';
 import { cardClass } from './InfoCard';
@@ -33,13 +33,12 @@ function ClubInfoCard({ club, availableCardinals = [], className }: ClubInfoCard
           <div className="flex items-start justify-between">
             <div className="flex items-center gap-400">
               {club.profileImageUrl && (
-                <Image
-                  src={club.profileImageUrl}
-                  alt={club.name}
-                  width={56}
-                  height={56}
-                  className="rounded-full object-cover"
-                />
+                <Avatar size={64} type="square" className="border-line border">
+                  {club.profileImageUrl && (
+                    <AvatarImage src={club.profileImageUrl} alt={club.name} />
+                  )}
+                  <AvatarFallback>{club.name.charAt(0)}</AvatarFallback>
+                </Avatar>
               )}
             </div>
             <Link
