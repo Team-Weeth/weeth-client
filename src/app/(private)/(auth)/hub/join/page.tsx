@@ -1,4 +1,13 @@
-// 초대 코드 입력 → 동아리 가입 페이지
+import { HubProfile, InviteCodeForm } from '@/components/auth/hub';
+
 export default function JoinClubPage() {
-  return <div>동아리 가입</div>;
+  return (
+    <div className="flex min-h-screen flex-col items-center justify-center gap-[40px] px-400">
+      <HubProfile
+        className="flex flex-col items-center gap-400"
+        description="즐거운 동아리 활동을 이어나가요"
+      />
+      <InviteCodeForm />
+    </div>
+  );
 }

@@ -10,18 +10,19 @@ const baseStyles = cn(
   'w-full bg-container-neutral text-text-normal typo-body2',
   'rounded-sm border border-transparent px-300 py-200',
   'placeholder:text-text-alternative',
-  'focus:outline-none focus:border-brand-primary',
+  'focus:outline-none focus:border-brand-secondary',
   'disabled:bg-container-neutral-alternative disabled:text-text-disabled disabled:cursor-not-allowed',
   'transition-colors',
 );
 
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   clearable?: boolean;
+  error?: boolean;
   wrapperClassName?: string;
   ref?: React.Ref<HTMLInputElement>;
 }
 
-function Input({ className, clearable, wrapperClassName, ref, ...props }: InputProps) {
+function Input({ className, clearable, error, wrapperClassName, ref, ...props }: InputProps) {
   const innerRef = useRef<HTMLInputElement>(null);
   const [internalValue, setInternalValue] = useState(() => String(props.defaultValue ?? ''));
 
@@ -37,7 +38,13 @@ function Input({ className, clearable, wrapperClassName, ref, ...props }: InputP
   };
 
   if (!clearable) {
-    return <input ref={setRef} className={cn(baseStyles, className)} {...props} />;
+    return (
+      <input
+        ref={setRef}
+        className={cn(baseStyles, error && 'border-state-error focus:border-state-error', className)}
+        {...props}
+      />
+    );
   }
 
   const showClear = isControlled ? String(props.value).length > 0 : internalValue.length > 0;
@@ -63,7 +70,7 @@ function Input({ className, clearable, wrapperClassName, ref, ...props }: InputP
     <div className={cn('relative w-full', wrapperClassName)}>
       <input
         ref={setRef}
-        className={cn(baseStyles, className, showClear && 'pr-9')}
+        className={cn(baseStyles, error && 'border-state-error focus:border-state-error', className, showClear && 'pr-9')}
         {...props}
         onChange={handleChange}
       />

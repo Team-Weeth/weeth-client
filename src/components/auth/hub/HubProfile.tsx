@@ -6,7 +6,11 @@ import { AvatarIcon } from '@/assets/icons';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui';
 import { useAuthName, useAuthProfileImage } from '@/stores';
 
-function HubProfile({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
+interface HubProfileProps extends React.HTMLAttributes<HTMLDivElement> {
+  description?: string;
+}
+
+function HubProfile({ className, description, ...props }: HubProfileProps) {
   const name = useAuthName();
   const profileImage = useAuthProfileImage();
 
@@ -24,7 +28,7 @@ function HubProfile({ className, ...props }: React.HTMLAttributes<HTMLDivElement
       <div className="typo-h3 text-text-strong text-center">
         {name ?? '00'}님, 반가워요!
         <br />
-        어떤 동아리 활동을 시작할까요?
+        {description ?? '어떤 동아리 활동을 시작할까요?'}
       </div>
     </div>
   );
