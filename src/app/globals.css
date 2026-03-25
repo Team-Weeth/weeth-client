@@ -294,6 +294,7 @@
 
 @theme inline {
   --font-pretendard: 'Pretendard Variable', sans-serif;
+  --font-inter: var(--font-inter), sans-serif;
 
   --color-background: var(--background);
   --color-line: var(--line);
@@ -686,6 +687,15 @@ select:focus {
 .ProseMirror pre code .hljs-built_in,
 .ProseMirror pre code .hljs-type {
   color: var(--code-built-in);
+}
+
+@keyframes gallery-scroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-1698px);
+  }
 }
 
 @layer base {
