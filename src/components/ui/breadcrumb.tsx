@@ -1,14 +1,20 @@
 import * as React from 'react';
-import { ChevronRight, MoreHorizontal } from 'lucide-react';
+import Link from 'next/link';
 import { Slot } from 'radix-ui';
 
+import { ArrowRightIcon, HomeIcon, MoreHorizIcon } from '@/assets/icons';
 import { cn } from '@/lib/cn';
+import { Icon } from '@/components/ui/Icon';
 
 function Breadcrumb({ ...props }: React.ComponentProps<'nav'>) {
   return <nav aria-label="breadcrumb" data-slot="breadcrumb" {...props} />;
 }
 
-function BreadcrumbList({ className, ...props }: React.ComponentProps<'ol'>) {
+interface BreadcrumbListProps extends React.ComponentProps<'ol'> {
+  showHome?: boolean;
+}
+
+function BreadcrumbList({ className, showHome = true, children, ...props }: BreadcrumbListProps) {
   return (
     <ol
       data-slot="breadcrumb-list"
@@ -17,7 +23,21 @@ function BreadcrumbList({ className, ...props }: React.ComponentProps<'ol'>) {
         className,
       )}
       {...props}
-    />
+    >
+      {showHome && (
+        <>
+          <BreadcrumbItem>
+            <BreadcrumbLink asChild>
+              <Link href="/" className="flex items-center">
+                <Icon src={HomeIcon} size={16} className="text-icon-alternative" aria-label="홈" />
+              </Link>
+            </BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator />
+        </>
+      )}
+      {children}
+    </ol>
   );
 }
 
@@ -68,10 +88,10 @@ function BreadcrumbSeparator({ children, className, ...props }: React.ComponentP
       data-slot="breadcrumb-separator"
       role="presentation"
       aria-hidden="true"
-      className={cn('[&>svg]:size-3.5', className)}
+      className={cn(className)}
       {...props}
     >
-      {children ?? <ChevronRight />}
+      {children ?? <Icon src={ArrowRightIcon} size={8} className="text-icon-alternative" />}
     </li>
   );
 }
@@ -85,7 +105,7 @@ function BreadcrumbEllipsis({ className, ...props }: React.ComponentProps<'span'
       className={cn('flex size-9 items-center justify-center', className)}
       {...props}
     >
-      <MoreHorizontal className="size-4" />
+      <Icon src={MoreHorizIcon} size={16} className="text-icon-alternative" />
       <span className="sr-only">More</span>
     </span>
   );

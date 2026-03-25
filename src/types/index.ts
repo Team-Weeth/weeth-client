@@ -1,2 +1,2 @@
 // types index file
-export type { MutationCallbacks } from './common';
+export type { ApiResponse, MutationCallbacks } from './common';
