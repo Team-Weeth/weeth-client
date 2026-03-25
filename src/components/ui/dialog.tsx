@@ -9,7 +9,6 @@ import { cn } from '@/lib/cn';
 import { Button } from '@/components/ui/Button';
 import { Divider } from '@/components/ui/Divider';
 import { Icon } from '@/components/ui/Icon';
-import { Icon } from './Icon';
 
 function Dialog({ ...props }: React.ComponentProps<typeof DialogPrimitive.Root>) {
   return <DialogPrimitive.Root data-slot="dialog" {...props} />;
@@ -116,7 +115,7 @@ function DialogHeader({
       >
         <DialogPrimitive.Title className="sr-only">Dialog</DialogPrimitive.Title>
         <div className="flex items-center gap-300">{children}</div>
-        {showClose && onClose && <Icon src={deleteIcon} className="bg-neutral-800" />}
+        {showClose && onClose && <Icon src={DeleteIcon} className="bg-neutral-800" />}
       </div>
     );
   }
@@ -138,7 +137,7 @@ function DialogHeader({
         )}
         {description && <p className="typo-body2 text-text-alternative">{description}</p>}
       </div>
-      {showClose && onClose && <Icon src={deleteIcon} className="bg-neutral-800" />}
+      {showClose && onClose && <Icon src={DeleteIcon} className="bg-neutral-800" />}
     </div>
   );
 }
