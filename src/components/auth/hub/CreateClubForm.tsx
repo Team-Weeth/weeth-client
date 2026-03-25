@@ -1,20 +1,11 @@
 'use client';
 
-import { useRef, useState } from 'react';
-
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useRouter } from 'next/navigation';
 import { Controller, useForm } from 'react-hook-form';
 
-import { ArrowDownIcon, ArrowRightIcon, CheckRoundIcon, TooltipIcon } from '@/assets/icons';
-import {
-  Button,
-  Icon,
-  Input,
-  Textarea,
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from '@/components/ui';
+import { ArrowDownIcon, TooltipIcon } from '@/assets/icons';
+import { Button, Icon, Input, Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui';
 import { cn } from '@/lib/cn';
 import { createClubSchema, type CreateClubFormData } from '@/lib/schemas/createClub';
 
@@ -26,11 +17,7 @@ function formatPhone(value: string) {
 }
 
 function FieldLabel({ children }: { children: React.ReactNode }) {
-  return (
-    <span className="typo-caption1" style={{ color: '#a6a6a6' }}>
-      {children}
-    </span>
-  );
+  return <span className="typo-caption1 text-text-alternative">{children}</span>;
 }
 
 function FieldError({ message }: { message?: string }) {
@@ -63,13 +50,15 @@ function CreateClubForm() {
   const school = watch('school');
   const contactType = watch('contactType');
 
-  function onSubmit(data: CreateClubFormData) {
-    console.log(data);
+  const router = useRouter();
+
+  function onSubmit(_data: CreateClubFormData) {
+    router.push('/hub/loading');
   }
 
   return (
-    <div className="mx-auto flex w-full max-w-145 flex-col gap-700 px-400 py-700">
-      <div className="flex flex-col gap-200">
+    <div className="mx-auto flex w-full max-w-145 flex-col px-400 pt-450 pb-600">
+      <div className="mb-600 flex flex-col gap-200">
         <h1 className="typo-sub1 text-text-strong">동아리 정보 입력</h1>
         <p className="typo-body2 text-text-alternative">
           동아리의 기본 정보를 입력하면
@@ -78,7 +67,7 @@ function CreateClubForm() {
         </p>
       </div>
 
-      <form className="flex flex-col gap-500" onSubmit={handleSubmit(onSubmit)}>
+      <form className="flex flex-col gap-400" onSubmit={handleSubmit(onSubmit)}>
         {/* 소속 학교 */}
         <div className="flex flex-col gap-200">
           <FieldLabel>소속 학교</FieldLabel>
@@ -107,19 +96,18 @@ function CreateClubForm() {
         {/* 동아리 이름 */}
         <div className="flex flex-col gap-200">
           <FieldLabel>동아리 이름</FieldLabel>
-          <Input {...register('name')} clearable className="rounded-lg" />
+          <Input {...register('name')} clearable className="rounded-lg px-400 py-300" />
           <FieldError message={errors.name?.message} />
         </div>
 
         {/* 동아리 소개 */}
         <div className="flex flex-col gap-200">
           <FieldLabel>동아리 소개</FieldLabel>
-          <Textarea
+          <Input
             {...register('description')}
             maxLength={30}
-            rows={3}
             clearable
-            className="rounded-lg"
+            className="rounded-lg px-400 py-300"
           />
           <span className="typo-caption2 text-text-alternative">30자 제한</span>
           <FieldError message={errors.description?.message} />
@@ -151,7 +139,7 @@ function CreateClubForm() {
             {...register('generation')}
             placeholder="예 : 10"
             clearable
-            className="rounded-lg"
+            className="rounded-lg px-400 py-300"
           />
           <FieldError message={errors.generation?.message} />
         </div>
@@ -168,7 +156,7 @@ function CreateClubForm() {
                 type="tel"
                 onChange={(e) => field.onChange(formatPhone(e.target.value))}
                 clearable
-                className="rounded-lg"
+                className="rounded-lg px-400 py-300"
               />
             )}
           />
@@ -178,14 +166,19 @@ function CreateClubForm() {
         {/* 대표 이메일 (선택) */}
         <div className="flex flex-col gap-200">
           <FieldLabel>대표 이메일 (선택)</FieldLabel>
-          <Input {...register('email')} type="email" clearable className="rounded-lg" />
+          <Input
+            {...register('email')}
+            type="email"
+            clearable
+            className="rounded-lg px-400 py-300"
+          />
           <FieldError message={errors.email?.message} />
         </div>
 
         {/* 주 연락처 */}
         <div className="flex flex-col gap-200">
           <FieldLabel>주 연락처</FieldLabel>
-          <div className="flex gap-400">
+          <div className="flex gap-200">
             {(['phone', 'email'] as const).map((type) => (
               <label key={type} className="flex cursor-pointer items-center gap-200">
                 <input
@@ -213,7 +206,13 @@ function CreateClubForm() {
           </div>
         </div>
 
-        <Button type="submit" variant="primary" size="lg" disabled={!isValid} className="w-full">
+        <Button
+          type="submit"
+          variant="primary"
+          size="lg"
+          disabled={!isValid}
+          className="mt-600 w-full"
+        >
           사이트 개설하기
         </Button>
       </form>

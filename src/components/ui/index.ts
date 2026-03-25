@@ -115,4 +115,7 @@ export {
 
 export { Separator } from './separator';
 
+export { Progress } from './progress';
+export { ProgressBar, type ProgressBarProps } from './ProgressBar';
+
 export { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from './Tooltip';

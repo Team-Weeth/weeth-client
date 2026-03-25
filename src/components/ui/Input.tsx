@@ -1,9 +1,10 @@
 'use client';
 
 import { type ChangeEvent, type InputHTMLAttributes, useRef, useState } from 'react';
-import Image from 'next/image';
-import closeCircleIcon from '@/assets/icons/close_circle.svg';
+
+import { CloseCircleIcon } from '@/assets/icons';
 import { cn } from '@/lib/cn';
+import { Icon } from '@/components/ui/Icon';
 
 const baseStyles = cn(
   'w-full bg-container-neutral text-text-normal typo-body2',
@@ -62,7 +63,7 @@ function Input({ className, clearable, wrapperClassName, ref, ...props }: InputP
     <div className={cn('relative w-full', wrapperClassName)}>
       <input
         ref={setRef}
-        className={cn(baseStyles, showClear && 'pr-9', className)}
+        className={cn(baseStyles, className, showClear && 'pr-9')}
         {...props}
         onChange={handleChange}
       />
@@ -73,12 +74,13 @@ function Input({ className, clearable, wrapperClassName, ref, ...props }: InputP
           onMouseDown={(e) => e.preventDefault()}
           className={cn(
             'absolute top-1/2 right-200 -translate-y-1/2',
+            'flex items-center',
             'text-icon-alternative hover:text-icon-normal',
             'cursor-pointer transition-colors',
           )}
           aria-label="입력 내용 지우기"
         >
-          <Image src={closeCircleIcon} alt="텍스트 지우기 버튼" width={16} height={16} />
+          <Icon src={CloseCircleIcon} size={20} alt="텍스트 지우기 버튼" className="text-icon-alternative" />
         </button>
       )}
     </div>
