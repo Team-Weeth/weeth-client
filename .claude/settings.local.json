@@ -14,7 +14,8 @@
       "Bash(find D:projectweeth-clientsrccomponentsmypage -type f -name *.tsx -o -name *.ts)",
       "Bash(ls -la \"D:\\\\project\\\\weeth-client\\\\src\\\\app\\\\\\(private\\)\\\\\\(main\\)\\\\mypage\")",
       "Bash(ls -la \"D:\\\\project\\\\weeth-client\\\\src\\\\app\\\\\\(private\\)\\\\\\(main\\)\\\\mypage\\\\edit\")",
-      "Bash(find D:projectweeth-clientsrccomponentsui -type f \\\\\\(-name *.tsx -o -name *.ts \\\\\\))"
+      "Bash(find D:projectweeth-clientsrccomponentsui -type f \\\\\\(-name *.tsx -o -name *.ts \\\\\\))",
+      "Bash(find D:/project/weeth-client/src/constants -name *.ts)"
     ]
   }
 }

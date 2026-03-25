@@ -11,15 +11,11 @@ interface InfoCardProps extends React.HTMLAttributes<HTMLDivElement> {
   items: InfoCardItem[];
 }
 
+export const cardClass = 'bg-container-neutral flex flex-col gap-400 rounded-lg p-450';
+
 function InfoCard({ items, className, ...props }: InfoCardProps) {
   return (
-    <div
-      className={cn(
-        'bg-container-neutral flex w-full flex-col gap-400 rounded-lg p-450',
-        className,
-      )}
-      {...props}
-    >
+    <div className={cn(cardClass, className, 'w-full')} {...props}>
       {items.map((item) => (
         <div key={item.label} className="flex items-center gap-400">
           <span className="typo-sub2 text-text-alternative w-[78px] shrink-0">{item.label}</span>

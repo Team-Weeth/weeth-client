@@ -1,6 +1,6 @@
 'use client';
 
-import { Home, MoreHorizontal } from 'lucide-react';
+import { Home } from 'lucide-react';
 import Link from 'next/link';
 
 import {
@@ -10,7 +10,6 @@ import {
   BreadcrumbLink,
   BreadcrumbPage,
   BreadcrumbSeparator,
-  Tag,
 } from '@/components/ui';
 import { cn } from '@/lib/cn';
 
@@ -20,7 +19,8 @@ import { ProfileSection } from './ProfileSection';
 import { SupportListItem } from './SupportListItem';
 import { ThemeToggle } from './ThemeToggle';
 import { MyPageDropdownMenu } from './MyPageDropdownMenu';
-import { MOCK_USER } from '@/constants/mock';
+import { MOCK_CLUBS, MOCK_USER } from '@/constants/mock';
+import { ClubInfoCard } from './ClubInfoCard';
 
 type MyPageContentProps = React.HTMLAttributes<HTMLDivElement>;
 
@@ -93,31 +93,11 @@ function MyPageContent({ className, ...props }: MyPageContentProps) {
 
         {/* 활동정보 */}
         <InfoSection title="활동정보">
-          {user.clubs.map((club) => (
-            <InfoCard
-              key={club.clubName}
-              items={[
-                { label: '동아리', value: club.clubName },
-                {
-                  label: '활동 기수',
-                  value:
-                    club.generations.length > 0 ? (
-                      <div className="flex items-center gap-100">
-                        {club.generations.map((gen) => (
-                          <Tag key={gen} className="text-brand-primary bg-brand-primary/10">
-                            {gen}기
-                          </Tag>
-                        ))}
-                      </div>
-                    ) : (
-                      <Tag className="bg-container-neutral-interaction text-text-alternative px-200 py-100">
-                        기수정보 없음
-                      </Tag>
-                    ),
-                },
-              ]}
-            />
-          ))}
+          <div className="flex flex-row gap-300">
+            {MOCK_CLUBS.map((club) => (
+              <ClubInfoCard key={club.id} club={club} />
+            ))}
+          </div>
         </InfoSection>
 
         {/* 서비스 설정 */}
