@@ -6,3 +6,4 @@ export { useGenerationConfirm } from './useGenerationConfirm';
 export { useFileAttach } from './useFileAttach';
 export { useScrollIntoView } from './useScrollIntoView';
 export { useScrollOnGrow } from './useScrollOnGrow';
+export { useAdminMembers } from './useAdminMemberQuery';

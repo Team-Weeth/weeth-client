@@ -72,6 +72,7 @@ export const STATUS_BAR_COLOR: Record<MemberStatus, string> = {
   approved: 'bg-brand-primary',
   pending: 'bg-state-caution',
   banned: 'bg-state-error',
+  left: 'bg-container-neutral-alternative',
 };
 
 export const COLUMNS: { label: string; key: keyof Member }[] = [

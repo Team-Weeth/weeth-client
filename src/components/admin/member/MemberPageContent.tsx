@@ -14,20 +14,21 @@ import {
 import { toMemberDetail } from '@/utils/admin/memberMapper';
 import { Card } from '@/components/ui';
 import { useDragScroll } from '@/hooks';
-import { Member, MemberDetail } from '@/types/admin/member';
-import { MOCK_MEMBERS } from '@/constants/admin/memberTable.constants';
+import { useAdminMembers } from '@/hooks/useAdminMemberQuery';
+import type { Member, MemberDetail } from '@/types/admin/member';
 
 function MemberPageContent() {
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [searchValue, setSearchValue] = useState('');
   const [detailMember, setDetailMember] = useState<MemberDetail | null>(null);
   const { ref: dragScrollRef, onMouseDown } = useDragScroll();
+  const { data: members = [] } = useAdminMembers();
 
   const handleMemberAction = (m: Member) => {
     setDetailMember(toMemberDetail(m));
   };
 
-  const selectedMembers = MOCK_MEMBERS.filter((m) => selectedIds.has(m.id));
+  const selectedMembers = members.filter((m) => selectedIds.has(m.id));
   const selectedCount = selectedMembers.length;
 
   const allUsers = selectedCount > 0 && selectedMembers.every((m) => m.position === '사용자');
@@ -93,6 +94,7 @@ function MemberPageContent() {
         {/* Member table */}
         <Card>
           <MemberTable
+            members={members}
             selectedIds={selectedIds}
             onSelectionChange={setSelectedIds}
             onMemberAction={handleMemberAction}

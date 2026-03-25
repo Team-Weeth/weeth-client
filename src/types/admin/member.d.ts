@@ -1,3 +1,6 @@
+export type MemberStatus = 'approved' | 'pending' | 'banned' | 'left';
+export type MemberDetailStatus = 'approved' | 'pending' | 'banned' | 'left';
+
 export interface Member {
   id: string;
   name: string;
@@ -11,10 +14,6 @@ export interface Member {
   absence: number;
   status: MemberStatus;
 }
-
-export type MemberStatus = 'approved' | 'pending' | 'banned';
-
-export type MemberDetailStatus = 'approved' | 'pending' | 'banned';
 
 export interface MemberDetail {
   name: string;
@@ -31,4 +30,26 @@ export interface MemberDetail {
   joinDate: string;
   attendance: number;
   absence: number;
+}
+
+// API response types
+export type ClubMemberStatus = 'WAITING' | 'ACTIVE' | 'BANNED' | 'LEFT';
+export type ClubMemberRole = 'USER' | 'ADMIN' | 'LEAD';
+
+export interface ClubMember {
+  userId: number;
+  clubMemberId: number;
+  name: string;
+  email: string;
+  tel: string;
+  school: string;
+  department: string;
+  studentId: string;
+  cardinals: number[];
+  memberStatus: ClubMemberStatus;
+  memberRole: ClubMemberRole;
+  attendanceCount: number;
+  absenceCount: number;
+  attendanceRate: number;
+  penaltyCount: number;
 }
