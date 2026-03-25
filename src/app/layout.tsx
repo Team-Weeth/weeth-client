@@ -1,15 +1,23 @@
 import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
 import { QueryProvider } from '@/providers';
+import { Inter } from 'next/font/google';
 import { ThemeProvider } from '@/providers/theme-provider';
+import { cn } from '@/lib/cn';
 import { TooltipProvider } from '@/components/ui';
 import './globals.css';
+
+const inter = Inter({
+  subsets: ['latin'],
+  variable: '--font-inter',
+  display: 'swap',
+});
 
 export const metadata: Metadata = {
   title: 'Weeth',
   description: '동아리는 우리 모두가 함께 하는 것! with, Weeth!',
   icons: {
-    icon: '/icons/favicon/favicon.svg',
+    icon: '/assets/favicon/favicon.svg',
   },
 };
 
@@ -27,7 +35,7 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className="w-full antialiased">
+      <body className={cn(inter.variable, 'w-full antialiased')}>
         <QueryProvider>
           <ThemeProvider>
             <TooltipProvider>{children}</TooltipProvider>

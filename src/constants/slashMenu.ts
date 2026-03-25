@@ -40,19 +40,19 @@ export const STYLE_ITEMS: MenuItem[] = [
     command: (editor: TiptapEditor) => editor.chain().focus().toggleHeading({ level: 3 }).run(),
   },
   {
-    label: '글머리 기호 목록',
+    label: '글머리 목록',
     description: '-',
     icon: List,
     command: (editor: TiptapEditor) => editor.chain().focus().toggleBulletList().run(),
   },
   {
-    label: '번호 매기기 목록',
+    label: '번호 목록',
     description: '1.',
     icon: ListOrdered,
     command: (editor: TiptapEditor) => editor.chain().focus().toggleOrderedList().run(),
   },
   {
-    label: '할 일 목록',
+    label: '체크리스트',
     description: '[]',
     icon: ListTodo,
     command: (editor: TiptapEditor) => editor.chain().focus().toggleTaskList().run(),
@@ -64,7 +64,7 @@ export const STYLE_ITEMS: MenuItem[] = [
     command: (editor: TiptapEditor) => editor.chain().focus().toggleBlockquote().run(),
   },
   {
-    label: '코드',
+    label: '코드 블록',
     description: '```',
     icon: Code2,
     command: (editor: TiptapEditor) => editor.chain().focus().toggleCodeBlock().run(),

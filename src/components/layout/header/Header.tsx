@@ -4,15 +4,8 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { usePathname } from 'next/navigation';
-import { Button } from '../ui';
-import {
-  MenuIcon,
-  EditIcon,
-  CheckRoundIcon,
-  ExitToAppIcon,
-  AvatarIcon,
-  LogoIcon,
-} from '@/assets/icons';
+import { Button, Icon } from '../../ui';
+import { MenuIcon, EditIcon, SendIcon, ExitToAppIcon, AvatarIcon, LogoIcon } from '@/assets/icons';
 
 interface HeaderProps {
   isMain?: boolean;
@@ -99,7 +92,7 @@ export default function Header({ isMain = true }: HeaderProps) {
                   작성 취소
                 </Button>
                 <Button variant="primary" size="md" type="submit" className="typo-button1 gap-100">
-                  <Image src={CheckRoundIcon} alt="check" width={20} height={20} />
+                  <Icon src={SendIcon} size={20} alt="send" className="text-icon-inverse" />
                   게시하기
                 </Button>
               </>
@@ -123,7 +116,7 @@ export default function Header({ isMain = true }: HeaderProps) {
                   className="typo-button1 text-text-strong gap-100"
                 >
                   <Image src={ExitToAppIcon} alt="exit" width={20} height={20} />
-                  관리자 서비스
+                  관리자
                 </Button>
                 <button
                   type="button"

@@ -3,12 +3,12 @@
 import * as React from 'react';
 import type { ReactNode } from 'react';
 import { Dialog as DialogPrimitive } from 'radix-ui';
-import type { StaticImageData } from 'next/image';
 
+import { DeleteIcon } from '@/assets/icons';
 import { cn } from '@/lib/cn';
 import { Button } from '@/components/ui/Button';
 import { Divider } from '@/components/ui/Divider';
-import deleteIcon from '@/assets/icons/delete.svg';
+import { Icon } from '@/components/ui/Icon';
 import { Icon } from './Icon';
 
 function Dialog({ ...props }: React.ComponentProps<typeof DialogPrimitive.Root>) {
@@ -35,7 +35,7 @@ function DialogOverlay({
     <DialogPrimitive.Overlay
       data-slot="dialog-overlay"
       className={cn(
-        'data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 z-50 bg-black/50',
+        'data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 z-50 bg-black/60',
         className,
       )}
       {...props}
@@ -69,18 +69,7 @@ function DialogContent({
             data-slot="dialog-close"
             className="ring-offset-background focus:ring-ring data-[state=open]:bg-accent data-[state=open]:text-muted-foreground absolute top-4 right-4 cursor-pointer rounded-xs opacity-70 transition-opacity hover:opacity-100 focus:ring-2 focus:ring-offset-2 focus:outline-hidden disabled:pointer-events-none"
           >
-            <span
-              aria-hidden
-              className="block h-6 w-6 shrink-0 bg-neutral-800"
-              style={{
-                maskImage: `url(${(deleteIcon as StaticImageData).src})`,
-                WebkitMaskImage: `url(${(deleteIcon as StaticImageData).src})`,
-                maskRepeat: 'no-repeat',
-                maskPosition: 'center',
-                maskSize: 'contain',
-              }}
-            />
-            <span className="sr-only">Close</span>
+            <Icon src={DeleteIcon} size={24} className="text-icon-normal" alt="Close" />
           </DialogPrimitive.Close>
         )}
       </DialogPrimitive.Content>
@@ -89,6 +78,7 @@ function DialogContent({
 }
 
 interface DialogHeaderProps extends React.HTMLAttributes<HTMLDivElement> {
+  icon?: ReactNode;
   overline?: string;
   title?: string;
   description?: string;
@@ -98,6 +88,7 @@ interface DialogHeaderProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 function DialogHeader({
+  icon,
   overline,
   title,
   description,
@@ -107,6 +98,14 @@ function DialogHeader({
   className,
   ...props
 }: DialogHeaderProps) {
+  const closeButton = showClose && (
+    <DialogPrimitive.Close asChild onClick={onClose}>
+      <button type="button" className="cursor-pointer">
+        <Icon src={DeleteIcon} size={24} className="text-icon-normal" alt="Close" />
+      </button>
+    </DialogPrimitive.Close>
+  );
+
   // If children provided, use custom content mode
   if (children) {
     return (
@@ -125,7 +124,7 @@ function DialogHeader({
   return (
     <div
       data-slot="dialog-header"
-      className={cn('flex items-start justify-between pb-400', className)}
+      className={cn('flex items-start justify-between gap-300 pb-400', className)}
       {...props}
     >
       <div className="flex flex-col">
@@ -176,10 +175,10 @@ function DialogFooter({
   return (
     <div data-slot="dialog-footer" className={cn('flex flex-col', className)} {...props}>
       {showDivider && <Divider />}
-      <div className="flex flex-col gap-[10px] pt-300">
+      <div className="flex flex-col gap-[10px] pt-[10px]">
         {children}
         {description && (
-          <p className="typo-caption2 text-text-alternative mt-200 text-center">{description}</p>
+          <p className="typo-caption2 text-text-alternative text-center">{description}</p>
         )}
         {showCloseButton && (
           <DialogPrimitive.Close asChild>

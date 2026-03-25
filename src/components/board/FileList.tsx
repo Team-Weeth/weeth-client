@@ -1,7 +1,7 @@
 'use client';
 
-import type { StaticImageData } from 'next/image';
 import { DeleteIcon, DownloadIcon, FolderIcon } from '@/assets/icons';
+import { Icon } from '@/components/ui';
 import { cn } from '@/lib/cn';
 import type { FileItem } from '@/stores/usePostStore';
 
@@ -16,30 +16,11 @@ function FileListItem({ item, showDownload = true }: { item: FileItem; showDownl
   return (
     <>
       <div className="flex items-center gap-200">
-        <span
-          aria-hidden="true"
-          className="bg-icon-alternative block h-4 w-5 shrink-0 mask-contain mask-center mask-no-repeat"
-          style={{
-            maskImage: `url(${(FolderIcon as StaticImageData).src})`,
-            WebkitMaskImage: `url(${(FolderIcon as StaticImageData).src})`,
-          }}
-        />
+        <Icon src={FolderIcon} size={20} className="text-icon-alternative" />
         <span className="text-text-normal typo-button2 min-w-0 truncate">{item.fileName}</span>
       </div>
 
-      {showDownload && (
-        <span
-          aria-hidden="true"
-          className="bg-icon-normal block h-6 w-6 shrink-0"
-          style={{
-            maskImage: `url(${(DownloadIcon as StaticImageData).src})`,
-            WebkitMaskImage: `url(${(DownloadIcon as StaticImageData).src})`,
-            maskRepeat: 'no-repeat',
-            maskPosition: 'center',
-            maskSize: 'contain',
-          }}
-        />
-      )}
+      {showDownload && <Icon src={DownloadIcon} size={24} className="text-icon-normal" />}
     </>
   );
 }
@@ -62,14 +43,7 @@ function FileList({ files, editable, onRemove }: FileListProps) {
               aria-label={`${item.fileName} 삭제`}
               className="text-state-error hover:text-state-error/80 shrink-0"
             >
-              <span
-                aria-hidden="true"
-                className="block h-4 w-4 bg-current mask-contain mask-center mask-no-repeat"
-                style={{
-                  maskImage: `url(${(DeleteIcon as StaticImageData).src})`,
-                  WebkitMaskImage: `url(${(DeleteIcon as StaticImageData).src})`,
-                }}
-              />
+              <Icon src={DeleteIcon} size={16} />
             </button>
           </div>
         ) : (

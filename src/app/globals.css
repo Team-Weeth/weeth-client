@@ -300,6 +300,7 @@
 
 @theme inline {
   --font-pretendard: 'Pretendard Variable', sans-serif;
+  --font-inter: var(--font-inter), sans-serif;
 
   --color-background: var(--background);
   --color-background-2: var(--background-2);
@@ -505,7 +506,7 @@ select:focus {
 
 .scrollbar-custom {
   scrollbar-width: thin;
-  scrollbar-color: var(--neutral-500) transparent;
+  scrollbar-color: var(--neutral-400) transparent;
 }
 
 .scrollbar-custom::-webkit-scrollbar {
@@ -517,36 +518,105 @@ select:focus {
 }
 
 .scrollbar-custom::-webkit-scrollbar-thumb {
-  background-color: var(--neutral-500);
+  background-color: var(--neutral-400);
   border-radius: 9999px;
-  border: 2px solid transparent;
-  background-clip: content-box;
 }
 
 .ProseMirror {
-  color: var(--text-normal);
+  @apply text-text-strong min-h-[400px] focus:outline-none;
+}
+
+.ProseMirror > * {
+  @apply my-100;
+}
+
+/* placeholder */
+.ProseMirror p.is-empty::before {
+  @apply text-text-alternative pointer-events-none float-left h-0 content-[attr(data-placeholder)];
+}
+
+/* 리스트 */
+.ProseMirror li p {
+  @apply my-0;
 }
 
 .ProseMirror h1 {
-  @apply typo-h1;
+  @apply typo-h3 mt-300;
 }
 
 .ProseMirror h2 {
-  @apply typo-h2;
+  @apply typo-sub1 mt-300;
 }
 
 .ProseMirror h3 {
-  @apply typo-h3;
+  @apply typo-sub2 mt-300;
+}
+
+.ProseMirror ul {
+  @apply text-text-alternative my-0 list-disc py-0 pl-500;
+}
+
+.ProseMirror ol {
+  @apply text-text-alternative my-0 list-decimal py-0 pl-500;
+}
+
+.ProseMirror ul li,
+.ProseMirror ol li {
+  @apply my-0 py-0;
+  padding-inline-start: 8px;
+}
+
+.ProseMirror ul li > p,
+.ProseMirror ol li > p {
+  @apply text-text-strong;
+}
+
+/* 체크리스트 */
+.ProseMirror ul[data-type='taskList'] {
+  @apply text-text-strong list-none pl-0;
+}
+
+.ProseMirror ul[data-type='taskList'] > li {
+  @apply flex items-start gap-300;
+  padding-inline-start: 0;
+}
+
+.ProseMirror ul[data-type='taskList'] > li > label {
+  @apply mt-100 flex items-center self-start;
+}
+
+.ProseMirror ul[data-type='taskList'] li > div {
+  @apply min-h-[1.5em] flex-1;
+}
+
+.ProseMirror ul[data-type='taskList'] li input[type='checkbox'] {
+  @apply border-icon-alternative size-[16px] shrink-0 cursor-pointer appearance-none rounded-[4px] border;
+}
+
+.ProseMirror ul[data-type='taskList'] li input[type='checkbox']:checked {
+  @apply border-button-primary bg-button-primary;
+}
+
+.ProseMirror ul[data-type='taskList'] li input[type='checkbox']:checked::after {
+  content: '';
+  @apply bg-text-inverse block size-full;
+  mask-image: url('@/assets/icons/check.svg');
+  mask-size: 12px;
+  mask-position: center;
+  mask-repeat: no-repeat;
 }
 
 /* 인용 */
 .ProseMirror blockquote {
-  font-style: italic;
-  border-left: 3px solid var(--line);
+  @apply typo-body1 text-text-alternative;
+  font-style: normal;
+  @apply border-l-text-alternative border-l-4;
   padding-left: var(--padding-400);
   margin: var(--margin-300) 0;
-  font-weight: normal;
-  color: var(--text-alternative);
+}
+
+.ProseMirror blockquote > * {
+  @apply my-100;
 }
 
 .ProseMirror blockquote p::before,
@@ -560,6 +630,7 @@ select:focus {
   color: var(--text-normal);
   padding: var(--padding-100) var(--padding-200);
   border-radius: var(--radius-sm);
+  font-size: 0.9em;
   font-weight: normal;
 }
 
@@ -578,6 +649,7 @@ select:focus {
 .ProseMirror pre code {
   background-color: transparent;
   color: var(--text-normal);
+  font-size: 0.9em;
   padding: 0;
 }
 
@@ -622,6 +694,15 @@ select:focus {
 .ProseMirror pre code .hljs-built_in,
 .ProseMirror pre code .hljs-type {
   color: var(--code-built-in);
+}
+
+@keyframes gallery-scroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-1698px);
+  }
 }
 
 @layer base {
