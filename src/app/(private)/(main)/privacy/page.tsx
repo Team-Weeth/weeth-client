@@ -58,8 +58,8 @@ export default function PrivacyPage() {
 
       <PolicySection heading="6. 개인정보 보호 책임자">
         <p>
-          개인정보 관련 문의는{' '}
-          <span className="text-brand-primary">help@weeth.kr</span>로 연락해 주세요.
+          개인정보 관련 문의는 <span className="text-brand-primary">help@weeth.kr</span>로 연락해
+          주세요.
         </p>
       </PolicySection>
     </PolicyContent>

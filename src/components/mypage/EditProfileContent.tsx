@@ -49,7 +49,6 @@ function EditProfileContent({ className, ...props }: EditProfileContentProps) {
     console.log({ name, bio, phone, email, university, department, studentId });
   };
 
-
   return (
     <div
       className={cn(
