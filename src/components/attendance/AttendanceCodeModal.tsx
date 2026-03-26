@@ -77,7 +77,7 @@ function AttendanceCodeModal({
           {!isExpired ? (
             <p className="typo-caption2 text-text-strong text-center">
               출석 가능 시간{' '}
-              <span className="text-brand-primary">
+              <span className="text-brand-primary tabular-nums">
                 {minutes}:{seconds}
               </span>
             </p>

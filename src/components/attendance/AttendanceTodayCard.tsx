@@ -8,6 +8,7 @@ import { CompleteIcon } from '@/assets/icons';
 import { Card } from '@/components/ui';
 import { AttendanceCodeModal } from '@/components/attendance/AttendanceCodeModal';
 import { AttendanceCompleteModal } from '@/components/attendance/AttendanceCompleteModal';
+import { toastError } from '@/stores/useToastStore';
 
 interface AttendanceTodayCardProps {
   overline: string;
@@ -63,7 +64,7 @@ function AttendanceTodayCard({
         showArrow={false}
         onPrimaryClick={isChecked ? () => setCompleteModalOpen(true) : () => setCodeModalOpen(true)}
         primaryButtonText={isChecked ? '출석 완료' : '출석하기'}
-        onSecondaryClick={isAdmin ? () => router.push('/attendance/qr') : undefined}
+        onSecondaryClick={isAdmin ? () => router.push('/attendance/qr') : () => toastError('관리자만 사용할 수 있는 기능입니다.')}
         secondaryButtonText="출석코드 확인"
       >
         {isChecked && <AttendanceCompleteBanner />}
