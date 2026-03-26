@@ -52,8 +52,7 @@ function ToastViewport({
 }
 
 interface ToastProps
-  extends React.ComponentProps<typeof ToastPrimitive.Root>,
-    VariantProps<typeof toastVariants> {}
+  extends React.ComponentProps<typeof ToastPrimitive.Root>, VariantProps<typeof toastVariants> {}
 
 function Toast({ className, variant = 'success', children, ...props }: ToastProps) {
   const icon = iconMap[variant!];
@@ -64,10 +63,15 @@ function Toast({ className, variant = 'success', children, ...props }: ToastProp
       className={cn(toastVariants({ variant }), className)}
       {...props}
     >
-      <Image src={icon.src} alt="" width={20} height={20} aria-hidden="true" className={icon.className} />
-      <ToastPrimitive.Title className="typo-caption1 text-center">
-        {children}
-      </ToastPrimitive.Title>
+      <Image
+        src={icon.src}
+        alt=""
+        width={20}
+        height={20}
+        aria-hidden="true"
+        className={icon.className}
+      />
+      <ToastPrimitive.Title className="typo-caption1 text-center">{children}</ToastPrimitive.Title>
     </ToastPrimitive.Root>
   );
 }
