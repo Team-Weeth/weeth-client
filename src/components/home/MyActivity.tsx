@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import { PeopleIcon, CopyIcon } from '@/assets/icons';
 import { Avatar, AvatarFallback, AvatarImage, Divider, Button, Icon } from '../ui';
+import { AlertBanner } from './AlertBanner';
 
 export function MyActivity() {
   return (
@@ -29,6 +30,7 @@ export function MyActivity() {
       <Button variant="secondary" size="md" className="w-full">
         글쓰기
       </Button>
+      <AlertBanner />
     </>
   );
 }

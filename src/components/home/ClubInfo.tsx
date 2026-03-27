@@ -1,6 +1,7 @@
-import { Avatar, AvatarImage, AvatarFallback, Button, Divider } from '@/components/ui';
-import { PeopleIcon } from '@/assets/icons';
+import { Avatar, AvatarImage, AvatarFallback, Button, Divider, Icon } from '@/components/ui';
+import { PeopleIcon, CopyIcon } from '@/assets/icons';
 import Image from 'next/image';
+import { AlertBanner } from './AlertBanner';
 
 export function ClubInfo() {
   return (
@@ -21,13 +22,15 @@ export function ClubInfo() {
           <Image src={PeopleIcon} alt="people" width={20} height={20} />
           <p className="typo-button2 text-text-normal">368명</p>
         </div>
-        <a className="typo-button2 text-text-alternative cursor-pointer underline underline-offset-2">
+        <a className="typo-button2 text-text-alternative flex cursor-pointer gap-200 underline underline-offset-2">
           초대
+          <Icon src={CopyIcon} alt="copy" className="text-icon-alternative" />
         </a>
       </div>
       <Button variant="secondary" size="md" className="w-full">
         글쓰기
       </Button>
+      <AlertBanner />
     </>
   );
 }

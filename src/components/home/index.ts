@@ -10,3 +10,4 @@ export * from './MyActivity';
 export * from './NoticeBoardBox';
 export * from './TodayScheduleBox';
 export * from './UnreadNoticeBox';
+export * from './AlertBanner';
