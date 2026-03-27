@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react';
 import { useShallow } from 'zustand/react/shallow';
 import { usePostStore } from '@/stores/usePostStore';
-import { MAX_FILES, MAX_FILE_SIZE } from '@/constants/file';
+import { MAX_FILES, MAX_FILE_SIZE } from '@/constants/board/file';
 
 const IMAGE_EXTENSIONS = /\.(jpe?g|png|gif|webp|svg|bmp|ico|avif)$/i;
 
