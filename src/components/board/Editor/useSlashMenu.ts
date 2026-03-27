@@ -1,6 +1,6 @@
 import { Editor as TiptapEditor } from '@tiptap/core';
 import { useEffect, useState, useRef } from 'react';
-import { STYLE_ITEMS } from '@/constants/slashMenu';
+import { STYLE_ITEMS } from '@/constants/board/slashMenu';
 import { useClickOutside } from '@/hooks/useClickOutside';
 import { MenuItem } from '@/types/editor';
 

@@ -2,7 +2,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { cn } from '@/lib/cn';
 import { LandingGuideTitle } from '@/assets/icons/landing';
-import { SETUP_GUIDE_STEPS } from '@/constants/landing';
+import { SETUP_GUIDE_STEPS } from '@/constants/landing/landing';
 
 interface SetupGuideSectionProps {
   className?: string;
