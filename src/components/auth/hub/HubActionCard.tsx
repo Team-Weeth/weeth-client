@@ -29,7 +29,7 @@ function HubActionCard({ variant, href, onAction, className, ...props }: HubActi
       variant={config.buttonVariant}
       size="md"
       onClick={href ? undefined : onAction}
-      className="w-19 whitespace-nowrap justify-center px-400 py-300"
+      className="w-19 justify-center px-400 py-300 whitespace-nowrap"
     >
       {config.buttonText}
     </Button>
@@ -49,7 +49,9 @@ function HubActionCard({ variant, href, onAction, className, ...props }: HubActi
           {config.description}
         </ItemDescription>
       </ItemContent>
-      <ItemActions className="shrink-0">{href ? <Link href={href}>{button}</Link> : button}</ItemActions>
+      <ItemActions className="shrink-0">
+        {href ? <Link href={href}>{button}</Link> : button}
+      </ItemActions>
     </Item>
   );
 }
