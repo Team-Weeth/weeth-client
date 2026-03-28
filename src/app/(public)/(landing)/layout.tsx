@@ -8,12 +8,10 @@ export default function LandingLayout({
   children: ReactNode;
 }>) {
   return (
-    <>
-      <div className="mx-auto flex min-h-screen max-w-[1440px] flex-col">
-        <Header isMain={false} />
-        <main className="flex-1">{children}</main>
-      </div>
+    <div className="mx-auto flex min-h-screen max-w-[1440px] flex-col">
+      <Header isMain={false} />
+      <main className="flex-1">{children}</main>
       <Footer />
-    </>
+    </div>
   );
 }

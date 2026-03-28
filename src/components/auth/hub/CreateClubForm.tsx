@@ -30,7 +30,6 @@ function CreateClubForm() {
     register,
     control,
     handleSubmit,
-    setValue,
     watch,
     formState: { errors, isValid },
   } = useForm<CreateClubFormData>({

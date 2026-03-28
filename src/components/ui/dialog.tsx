@@ -115,7 +115,7 @@ function DialogHeader({
       >
         <DialogPrimitive.Title className="sr-only">Dialog</DialogPrimitive.Title>
         <div className="flex items-center gap-300">{children}</div>
-        {showClose && onClose && <Icon src={DeleteIcon} className="bg-neutral-800" />}
+        {closeButton}
       </div>
     );
   }
@@ -137,7 +137,7 @@ function DialogHeader({
         )}
         {description && <p className="typo-body2 text-text-alternative">{description}</p>}
       </div>
-      {showClose && onClose && <Icon src={DeleteIcon} className="bg-neutral-800" />}
+      {closeButton}
     </div>
   );
 }

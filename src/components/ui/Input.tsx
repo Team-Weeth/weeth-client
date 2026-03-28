@@ -26,6 +26,8 @@ function Input({ className, clearable, error, wrapperClassName, ref, ...props }:
   const innerRef = useRef<HTMLInputElement>(null);
   const [internalValue, setInternalValue] = useState(() => String(props.defaultValue ?? ''));
 
+  const ariaInvalid = props['aria-invalid'] ?? (error ? true : undefined);
+
   const isControlled = props.value !== undefined;
 
   const setRef = (el: HTMLInputElement | null) => {
@@ -41,6 +43,7 @@ function Input({ className, clearable, error, wrapperClassName, ref, ...props }:
     return (
       <input
         ref={setRef}
+        aria-invalid={ariaInvalid}
         className={cn(
           baseStyles,
           error && 'border-state-error focus:border-state-error',
@@ -96,12 +99,7 @@ function Input({ className, clearable, error, wrapperClassName, ref, ...props }:
           )}
           aria-label="입력 내용 지우기"
         >
-          <Icon
-            src={CloseCircleIcon}
-            size={20}
-            alt="텍스트 지우기 버튼"
-            className="text-icon-alternative"
-          />
+          <Icon src={CloseCircleIcon} size={20} alt="텍스트 지우기 버튼" />
         </button>
       )}
     </div>

@@ -9,7 +9,7 @@ export const createClubSchema = z.object({
     .string()
     .min(1, '대표 전화번호를 입력해주세요')
     .regex(/^\d{3}-\d{3,4}-\d{4}$/, '올바른 전화번호 형식이 아닙니다'),
-  email: z.union([z.string().email('올바른 이메일 형식이 아닙니다'), z.literal('')]),
+  email: z.union([z.email('올바른 이메일 형식이 아닙니다'), z.literal('')]),
   contactType: z.enum(['phone', 'email']),
   termsAgreed: z.literal(true, '약관에 동의해주세요'),
 });

@@ -15,7 +15,7 @@ function ClubWelcomePage({ userName }: ClubWelcomePageProps) {
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      router.push('/home');
+      router.replace('/home');
     }, 3000);
     return () => clearTimeout(timer);
   }, [router]);
