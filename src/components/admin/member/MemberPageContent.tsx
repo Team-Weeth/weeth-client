@@ -15,6 +15,7 @@ import { Card } from '@/components/ui';
 import { useDragScroll } from '@/hooks';
 import type { Member } from '@/types/admin/member';
 import { useAdminMembers } from '@/hooks/queries/admin';
+import { useCardinals } from '@/hooks/queries';
 import { useBanMember, useChangeMemberRole, useRestoreMember } from '@/hooks/mutations/admin';
 
 function MemberPageContent() {
@@ -23,6 +24,7 @@ function MemberPageContent() {
   const [detailMember, setDetailMember] = useState<Member | null>(null);
   const { ref: dragScrollRef, onMouseDown } = useDragScroll();
   const { data: members = [] } = useAdminMembers();
+  const { data: cardinals = [] } = useCardinals();
   const { mutate: changeMemberRole } = useChangeMemberRole();
   const { mutate: banMember } = useBanMember();
   const { mutate: restoreMember } = useRestoreMember();
@@ -88,32 +90,15 @@ function MemberPageContent() {
           <AddGenerationModal>
             <AddGenerationButton />
           </AddGenerationModal>
-          <GenerationCard variant="active" title="전체" description="총 100명" />
-          {/* TODO: api 연결시 하드 코딩 제거 */}
-          <GenerationCard
-            variant="normal"
-            title="4기"
-            subtitle="24년 2학기 (현재)"
-            description="노정완 외 25명"
-          />
-          <GenerationCard
-            variant="normal"
-            title="3기"
-            subtitle="24년 1학기"
-            description="김성민 외 25명"
-          />
-          <GenerationCard
-            variant="normal"
-            title="2기"
-            subtitle="23년 2학기"
-            description="김성민 외 25명"
-          />
-          <GenerationCard
-            variant="normal"
-            title="1기"
-            subtitle="23년 1학기"
-            description="김성민 외 25명"
-          />
+          {/* <GenerationCard variant="normal" title="전체" /> */}
+          {cardinals.map((c) => (
+            <GenerationCard
+              key={c.id}
+              variant={c.status === 'IN_PROGRESS' ? 'active' : 'normal'}
+              title={`${c.cardinalNumber}기`}
+              subtitle={`${c.year}년 ${c.semester}학기${c.status === 'IN_PROGRESS' ? ' (현재)' : ''}`}
+            />
+          ))}
         </div>
 
         {/* Member table */}
@@ -148,7 +133,11 @@ function MemberPageContent() {
             ? () => {
                 const nextRole = detailMember.memberRole === 'ADMIN' ? 'USER' : 'ADMIN';
                 const ROLE_LABEL = { USER: '사용자', ADMIN: '관리자', LEAD: '리더' } as const;
-                setDetailMember({ ...detailMember, memberRole: nextRole, position: ROLE_LABEL[nextRole] });
+                setDetailMember({
+                  ...detailMember,
+                  memberRole: nextRole,
+                  position: ROLE_LABEL[nextRole],
+                });
                 changeMemberRole({ clubMemberId: detailMember.clubMemberId, memberRole: nextRole });
               }
             : undefined
