@@ -14,8 +14,8 @@ import {
 import { toMemberDetail } from '@/utils/admin/memberMapper';
 import { Card } from '@/components/ui';
 import { useDragScroll } from '@/hooks';
-import { useAdminMembers } from '@/hooks/useAdminMemberQuery';
 import type { Member, MemberDetail } from '@/types/admin/member';
+import { useAdminMembers } from '@/hooks/queries/admin';
 
 function MemberPageContent() {
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
