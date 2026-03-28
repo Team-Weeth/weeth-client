@@ -9,6 +9,7 @@ const ROLE_MAP: Record<ClubMemberRole, string> = {
 export function toMember(cm: ClubMember): Member {
   return {
     id: String(cm.userId),
+    clubMemberId: cm.clubMemberId,
     name: cm.name,
     email: cm.email,
     role: '',

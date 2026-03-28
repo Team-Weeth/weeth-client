@@ -2,6 +2,7 @@ export type MemberStatus = 'WAITING' | 'ACTIVE' | 'BANNED' | 'LEFT';
 
 export interface Member {
   id: string;
+  clubMemberId: number;
   name: string;
   email: string;
   role: string;

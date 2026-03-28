@@ -1,0 +1,1 @@
+export { useChangeToAdmin } from './useAdminMemberMutation';
