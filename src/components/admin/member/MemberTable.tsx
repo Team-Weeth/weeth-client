@@ -16,7 +16,6 @@ import { cn } from '@/lib/cn';
 import type { Member } from '@/types/admin/member';
 import {
   COLUMNS,
-  MOCK_MEMBERS,
   SORT_LABEL,
   STATUS_BAR_COLOR,
   STATUS_LEGEND,
