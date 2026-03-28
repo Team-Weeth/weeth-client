@@ -1,1 +1,1 @@
-export { useAdminMembers } from './useAdminMemberQuery';
+export { useAdminMembers } from './useAdminMemberQueries';

@@ -3,19 +3,23 @@ import type { ClubMemberRole } from '@/types/admin/member';
 interface TopBarActionParams {
   selectedCount: number;
   targetRole: ClubMemberRole | null; // null = 혼합 선택
+  allBanned: boolean;
   onApprove?: () => void;
   onChangeRole?: () => void;
   onResetPassword?: () => void;
   onBan?: () => void;
+  onRestore?: () => void;
 }
 
 export function getTopBarActions({
   selectedCount,
   targetRole,
+  allBanned,
   onApprove,
   onChangeRole,
   onResetPassword,
   onBan,
+  onRestore,
 }: TopBarActionParams) {
   const roleLabel = targetRole === 'ADMIN' ? '관리자로 변경' : '사용자로 변경';
   const roleTitle =
@@ -42,11 +46,18 @@ export function getTopBarActions({
       handler: onResetPassword,
       disabled: !onResetPassword,
     },
-    {
-      label: '유저 추방',
-      title: `${selectedCount}명의 멤버를 추방하시겠습니까?`,
-      handler: onBan,
-      disabled: !onBan,
-    },
+    allBanned
+      ? {
+          label: '멤버 복구',
+          title: `${selectedCount}명의 멤버를 복구하시겠습니까?`,
+          handler: onRestore,
+          disabled: !onRestore,
+        }
+      : {
+          label: '유저 추방',
+          title: `${selectedCount}명의 멤버를 추방하시겠습니까?`,
+          handler: onBan,
+          disabled: !onBan,
+        },
   ];
 }

@@ -47,6 +47,7 @@ function MemberPageContent() {
   const allUsers = selectedCount > 0 && selectedMembers.every((m) => m.memberRole === 'USER');
   const allAdmins = selectedCount > 0 && selectedMembers.every((m) => m.memberRole === 'ADMIN');
   const targetRole = allUsers ? 'ADMIN' : allAdmins ? 'USER' : null;
+  const allBanned = selectedCount > 0 && selectedMembers.every((m) => m.status === 'BANNED');
 
   const handleClearSelection = () => setSelectedIds(new Set());
 
@@ -57,6 +58,7 @@ function MemberPageContent() {
         className="sticky top-0 z-10 -mt-15"
         selectedCount={selectedCount}
         targetRole={targetRole}
+        allBanned={allBanned}
         onBack={handleClearSelection}
         onChangeRole={
           targetRole
@@ -66,6 +68,8 @@ function MemberPageContent() {
                 )
             : undefined
         }
+        onBan={() => selectedMembers.forEach((m) => banMember(m.clubMemberId))}
+        onRestore={() => selectedMembers.forEach((m) => restoreMember(m.clubMemberId))}
       />
 
       {/* Main content */}

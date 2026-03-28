@@ -1,1 +1,1 @@
-export { useChangeMemberRole, useBanMember, useRestoreMember } from './useAdminMemberMutation';
+export { useChangeMemberRole, useBanMember, useRestoreMember } from './useAdminMemberMutations';
