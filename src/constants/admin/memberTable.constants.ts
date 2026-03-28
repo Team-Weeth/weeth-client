@@ -4,32 +4,37 @@ export const MOCK_MEMBERS: Member[] = [
   {
     id: '1',
     name: '김위드니',
+    email: 'weeth1@example.com',
     role: '프론트엔드',
     department: '컴퓨터공학과',
-    generation: '4.3.2.1.',
+    generation: '4, 3, 2, 1',
     phone: '01000009999',
     studentId: '202036123',
     position: '사용자',
     attendance: 12,
     absence: 12,
-    status: 'approved',
+    penaltyCount: 0,
+    status: 'ACTIVE',
   },
   {
     id: '2',
     name: '김위드니',
+    email: 'weeth2@example.com',
     role: '프론트엔드',
     department: '미디어커뮤니케이션학과',
-    generation: '8.7.6.5.4.3.2.1.',
+    generation: '8, 7, 6, 5, 4, 3, 2, 1',
     phone: '01000009999',
     studentId: '202036123',
     position: '사용자',
     attendance: 12,
     absence: 12,
-    status: 'pending',
+    penaltyCount: 1,
+    status: 'WAITING',
   },
   {
     id: '3',
     name: '김위드니',
+    email: 'weeth3@example.com',
     role: '디자인',
     department: '시각디자인학과',
     generation: '3',
@@ -38,41 +43,46 @@ export const MOCK_MEMBERS: Member[] = [
     position: '관리자',
     attendance: 12,
     absence: 12,
-    status: 'banned',
+    penaltyCount: 0,
+    status: 'BANNED',
   },
   {
     id: '4',
     name: '김위드니',
+    email: 'weeth4@example.com',
     role: '백엔드',
     department: '소프트웨어학과',
-    generation: '5.4.3.',
+    generation: '5, 4, 3',
     phone: '01011112222',
     studentId: '202112345',
     position: '사용자',
     attendance: 12,
     absence: 12,
-    status: 'approved',
+    penaltyCount: 0,
+    status: 'ACTIVE',
   },
   {
     id: '5',
     name: '김위드니',
+    email: 'weeth5@example.com',
     role: '기획',
     department: '경영학과',
-    generation: '6.5.',
+    generation: '6, 5',
     phone: '01033334444',
     studentId: '202298765',
     position: '사용자',
     attendance: 12,
     absence: 12,
-    status: 'pending',
+    penaltyCount: 2,
+    status: 'WAITING',
   },
 ];
 
 export const STATUS_BAR_COLOR: Record<MemberStatus, string> = {
-  approved: 'bg-brand-primary',
-  pending: 'bg-state-caution',
-  banned: 'bg-state-error',
-  left: 'bg-container-neutral-alternative',
+  ACTIVE: 'bg-brand-primary',
+  WAITING: 'bg-state-caution',
+  BANNED: 'bg-state-error',
+  LEFT: 'bg-container-neutral-alternative',
 };
 
 export const COLUMNS: { label: string; key: keyof Member }[] = [
@@ -88,9 +98,10 @@ export const COLUMNS: { label: string; key: keyof Member }[] = [
 ];
 
 export const STATUS_LEGEND = [
-  { label: '승인 완료', color: 'bg-brand-primary' },
-  { label: '대기 중', color: 'bg-state-caution' },
-  { label: '추방', color: 'bg-state-error' },
+  { label: 'ACTIVE', color: 'bg-brand-primary' },
+  { label: 'WAITING', color: 'bg-state-caution' },
+  { label: 'BANNED', color: 'bg-state-error' },
+  { label: 'LEFT', color: 'bg-container-neutral-alternative' },
 ] as const;
 
 export type SortBy = 'generation' | 'name';
@@ -103,9 +114,7 @@ export const SORT_LABEL: Record<SortBy, string> = {
 export function sortMembers(members: Member[], sortBy: SortBy): Member[] {
   return [...members].sort((a, b) => {
     if (sortBy === 'generation') {
-      const aNum = parseInt(a.generation.split('.')[0], 10);
-      const bNum = parseInt(b.generation.split('.')[0], 10);
-      return bNum - aNum;
+      return parseInt(b.generation, 10) - parseInt(a.generation, 10);
     }
     return a.name.localeCompare(b.name, 'ko');
   });

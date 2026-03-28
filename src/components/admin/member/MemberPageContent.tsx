@@ -11,21 +11,20 @@ import {
   MemberTable,
   MemberTopBar,
 } from '@/components/admin';
-import { toMemberDetail } from '@/utils/admin/memberMapper';
 import { Card } from '@/components/ui';
 import { useDragScroll } from '@/hooks';
-import type { Member, MemberDetail } from '@/types/admin/member';
+import type { Member } from '@/types/admin/member';
 import { useAdminMembers } from '@/hooks/queries/admin';
 
 function MemberPageContent() {
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [searchValue, setSearchValue] = useState('');
-  const [detailMember, setDetailMember] = useState<MemberDetail | null>(null);
+  const [detailMember, setDetailMember] = useState<Member | null>(null);
   const { ref: dragScrollRef, onMouseDown } = useDragScroll();
   const { data: members = [] } = useAdminMembers();
 
   const handleMemberAction = (m: Member) => {
-    setDetailMember(toMemberDetail(m));
+    setDetailMember(m);
   };
 
   const selectedMembers = members.filter((m) => selectedIds.has(m.id));

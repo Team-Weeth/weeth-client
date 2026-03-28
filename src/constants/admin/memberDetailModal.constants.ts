@@ -1,18 +1,20 @@
-import { MemberDetail, MemberDetailStatus } from '@/types/admin/member';
+import type { Member, MemberStatus } from '@/types/admin/member';
 
-export const STATUS_LABEL: Record<MemberDetailStatus, string> = {
-  approved: '승인 완료',
-  pending: '대기 중',
-  banned: '추방',
+export const STATUS_LABEL: Record<MemberStatus, string> = {
+  ACTIVE: 'ACTIVE',
+  WAITING: 'WAITING',
+  BANNED: 'BANNED',
+  LEFT: 'LEFT',
 };
 
-export const STATUS_DOT_COLOR: Record<MemberDetailStatus, string> = {
-  approved: 'bg-container-primary',
-  pending: 'bg-state-caution',
-  banned: 'bg-state-error',
+export const STATUS_DOT_COLOR: Record<MemberStatus, string> = {
+  ACTIVE: 'bg-container-primary',
+  WAITING: 'bg-state-caution',
+  BANNED: 'bg-state-error',
+  LEFT: 'bg-container-neutral-alternative',
 };
 
-export function getPersonalInfo(member: MemberDetail) {
+export function getPersonalInfo(member: Member) {
   return [
     { label: '직급', value: member.position },
     { label: '역할', value: member.role },
@@ -23,23 +25,19 @@ export function getPersonalInfo(member: MemberDetail) {
   ];
 }
 
-export function getActivityInfo(member: MemberDetail) {
-  return [
-    { label: '활동기수', value: member.activeGenerations },
-    { label: '상태', value: member.memberStatus },
-    { label: '가입일', value: member.joinDate },
-  ];
+export function getActivityInfo(member: Member) {
+  return [{ label: '활동기수', value: member.generation }];
 }
 
-export function getActivityStats(member: MemberDetail) {
+export function getActivityStats(member: Member) {
   return [
     { label: '출석', value: member.attendance, color: 'text-text-strong' },
     { label: '결석', value: member.absence, color: 'text-text-strong' },
-    // {
-    //   label: '패널티',
-    //   value: member.penalty,
-    //   color: member.penalty > 0 ? 'text-state-error' : 'text-text-strong',
-    // },
+    {
+      label: '패널티',
+      value: member.penaltyCount,
+      color: member.penaltyCount > 0 ? 'text-state-error' : 'text-text-strong',
+    },
   ];
 }
 
@@ -51,23 +49,25 @@ interface FooterActionHandlers {
 }
 
 export function getFooterActions({
-  onApprove,
+  //  onApprove,
   onChangeToAdmin,
-  onResetPassword,
+  //  onResetPassword,
   onBan,
 }: FooterActionHandlers) {
   return [
-    { label: '가입 승인', title: '1명의 멤버 가입을 승인하시겠습니까?', handler: onApprove },
+    // TODO: 가입 승인 api 열리면 열기
+    // { label: '가입 승인', title: '1명의 멤버 가입을 승인하시겠습니까?', handler: onApprove },
     {
       label: '관리자로 변경',
       title: '1명의 멤버 역할을 관리자로\n변경하시겠습니까?',
       handler: onChangeToAdmin,
     },
-    {
-      label: '비밀번호 초기화',
-      title: '1명의 멤버 비밀번호를 초기화\n시키시겠습니까?',
-      handler: onResetPassword,
-    },
+    // TODO: 비번 변경 api 열리면 열기
+    // {
+    //   label: '비밀번호 초기화',
+    //   title: '1명의 멤버 비밀번호를 초기화\n시키시겠습니까?',
+    //   handler: onResetPassword,
+    // },
     { label: '유저 추방', title: '1명의 멤버를 추방하시겠습니까?', handler: onBan },
   ];
 }

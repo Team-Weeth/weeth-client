@@ -1,39 +1,22 @@
-export type MemberStatus = 'approved' | 'pending' | 'banned' | 'left';
-export type MemberDetailStatus = 'approved' | 'pending' | 'banned' | 'left';
+export type MemberStatus = 'WAITING' | 'ACTIVE' | 'BANNED' | 'LEFT';
 
 export interface Member {
   id: string;
   name: string;
+  email: string;
   role: string;
   department: string;
-  generation: string;
+  generation: string; // 활동기수 전체, e.g. "1, 2"
   phone: string;
   studentId: string;
   position: string;
   attendance: number;
   absence: number;
+  penaltyCount: number;
   status: MemberStatus;
 }
 
-export interface MemberDetail {
-  name: string;
-  generation: number;
-  status: MemberDetailStatus;
-  position: string;
-  role: string;
-  department: string;
-  phone: string;
-  studentId: string;
-  email: string;
-  activeGenerations: string;
-  memberStatus: string;
-  joinDate: string;
-  attendance: number;
-  absence: number;
-}
-
 // API response types
-export type ClubMemberStatus = 'WAITING' | 'ACTIVE' | 'BANNED' | 'LEFT';
 export type ClubMemberRole = 'USER' | 'ADMIN' | 'LEAD';
 
 export interface ClubMember {
@@ -46,7 +29,7 @@ export interface ClubMember {
   department: string;
   studentId: string;
   cardinals: number[];
-  memberStatus: ClubMemberStatus;
+  memberStatus: MemberStatus;
   memberRole: ClubMemberRole;
   attendanceCount: number;
   absenceCount: number;
