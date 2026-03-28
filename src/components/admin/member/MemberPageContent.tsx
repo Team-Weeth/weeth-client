@@ -40,7 +40,8 @@ function MemberPageContent() {
         (m) =>
           m.name.toLowerCase().includes(query) ||
           m.department.toLowerCase().includes(query) ||
-          m.studentId.includes(query),
+          m.studentId.includes(query) ||
+          m.generation.includes(query),
       )
     : members;
 
