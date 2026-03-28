@@ -27,7 +27,17 @@ function MemberPageContent() {
     setDetailMember(m);
   };
 
-  const selectedMembers = members.filter((m) => selectedIds.has(m.id));
+  const query = searchValue.trim().toLowerCase();
+  const filteredMembers = query
+    ? members.filter(
+        (m) =>
+          m.name.toLowerCase().includes(query) ||
+          m.department.toLowerCase().includes(query) ||
+          m.studentId.includes(query),
+      )
+    : members;
+
+  const selectedMembers = filteredMembers.filter((m) => selectedIds.has(m.id));
   const selectedCount = selectedMembers.length;
 
   const allUsers = selectedCount > 0 && selectedMembers.every((m) => m.position === '사용자');
@@ -93,7 +103,7 @@ function MemberPageContent() {
         {/* Member table */}
         <Card>
           <MemberTable
-            members={members}
+            members={filteredMembers}
             selectedIds={selectedIds}
             onSelectionChange={setSelectedIds}
             onMemberAction={handleMemberAction}
