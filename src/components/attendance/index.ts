@@ -1,5 +1,8 @@
 export { AttendanceContent } from './AttendanceContent';
 
+export { AttendanceQRContent } from './AttendanceQRContent';
+export type { AttendanceQRContentProps } from './AttendanceQRContent';
+
 export { AttendanceProgressBar } from './AttendanceProgressBar';
 export type { AttendanceProgressBarProps } from './AttendanceProgressBar';
 

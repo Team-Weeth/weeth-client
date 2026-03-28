@@ -14,7 +14,7 @@ interface AttendanceContentProps {
   isAdmin?: boolean;
 }
 
-function AttendanceContent({ name, attendance, isAdmin = false }: AttendanceContentProps) {
+function AttendanceContent({ name, attendance, isAdmin = true }: AttendanceContentProps) {
   const [isChecked, setIsChecked] = useState(false);
   const { attendanceRate, title, start, end, location } = attendance;
   const description = formatAttendanceDescription(start, end, location);

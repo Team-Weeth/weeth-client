@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
+import { Toaster } from '@/components/ui';
 import { QueryProvider } from '@/providers';
 import { Inter } from 'next/font/google';
 import { ThemeProvider } from '@/providers/theme-provider';
@@ -38,7 +39,10 @@ export default function RootLayout({
       <body className={cn(inter.variable, 'w-full antialiased')}>
         <QueryProvider>
           <ThemeProvider>
-            <TooltipProvider>{children}</TooltipProvider>
+            <TooltipProvider>
+              {children}
+              <Toaster />
+            </TooltipProvider>
           </ThemeProvider>
         </QueryProvider>
       </body>
