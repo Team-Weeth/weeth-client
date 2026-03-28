@@ -45,20 +45,25 @@ import type { ClubMemberRole } from '@/types/admin/member';
 
 interface FooterActionHandlers {
   memberRole: ClubMemberRole;
+  status: MemberStatus;
   onApprove?: () => void;
   onChangeRole?: () => void;
   onResetPassword?: () => void;
   onBan?: () => void;
+  onRestore?: () => void;
 }
 
 export function getFooterActions({
   memberRole,
+  status,
   //  onApprove,
   onChangeRole,
   //  onResetPassword,
   onBan,
+  onRestore,
 }: FooterActionHandlers) {
   const isAdmin = memberRole === 'ADMIN';
+  const isBanned = status === 'BANNED';
   return [
     // TODO: 가입 승인 api 열리면 열기
     // { label: '가입 승인', title: '1명의 멤버 가입을 승인하시겠습니까?', handler: onApprove },
@@ -75,6 +80,8 @@ export function getFooterActions({
     //   title: '1명의 멤버 비밀번호를 초기화\n시키시겠습니까?',
     //   handler: onResetPassword,
     // },
-    { label: '유저 추방', title: '1명의 멤버를 추방하시겠습니까?', handler: onBan },
+    isBanned
+      ? { label: '멤버 복구', title: '1명의 멤버를 복구하시겠습니까?', handler: onRestore }
+      : { label: '유저 추방', title: '1명의 멤버를 추방하시겠습니까?', handler: onBan },
   ];
 }

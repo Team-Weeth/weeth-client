@@ -48,7 +48,7 @@ export function useChangeMemberRole() {
   });
 }
 
-//멤버 추방
+// 멤버 추방
 export function useBanMember() {
   const queryClient = useQueryClient();
   const queryKey = ['admin', 'members', CLUB_ID];
@@ -61,6 +61,34 @@ export function useBanMember() {
 
       queryClient.setQueryData<Member[]>(queryKey, (old = []) =>
         old.map((m) => (m.clubMemberId === clubMemberId ? { ...m, status: 'BANNED' } : m)),
+      );
+
+      return { previous };
+    },
+    onError: (_err, _vars, context) => {
+      if (context?.previous) {
+        queryClient.setQueryData(queryKey, context.previous);
+      }
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey });
+    },
+  });
+}
+
+// 추방 멤버 복구
+export function useRestoreMember() {
+  const queryClient = useQueryClient();
+  const queryKey = ['admin', 'members', CLUB_ID];
+
+  return useMutation({
+    mutationFn: (clubMemberId: number) => adminMemberApi.restoreMember(CLUB_ID, clubMemberId),
+    onMutate: async (clubMemberId) => {
+      await queryClient.cancelQueries({ queryKey });
+      const previous = queryClient.getQueryData<Member[]>(queryKey);
+
+      queryClient.setQueryData<Member[]>(queryKey, (old = []) =>
+        old.map((m) => (m.clubMemberId === clubMemberId ? { ...m, status: 'ACTIVE' } : m)),
       );
 
       return { previous };

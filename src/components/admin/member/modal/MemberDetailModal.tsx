@@ -35,6 +35,7 @@ interface MemberDetailModalProps {
   onChangeRole?: () => void;
   onResetPassword?: () => void;
   onBan?: () => void;
+  onRestore?: () => void;
   onChangeGeneration?: (generation: number) => void;
 }
 
@@ -46,6 +47,7 @@ function MemberDetailModal({
   onChangeRole,
   onResetPassword,
   onBan,
+  onRestore,
   onChangeGeneration,
 }: MemberDetailModalProps) {
   const {
@@ -63,7 +65,7 @@ function MemberDetailModal({
   const personalInfo = getPersonalInfo(member);
   const activityInfo = getActivityInfo(member);
   const activityStats = getActivityStats(member);
-  const footerActions = getFooterActions({ memberRole: member.memberRole, onApprove, onChangeRole, onResetPassword, onBan });
+  const footerActions = getFooterActions({ memberRole: member.memberRole, status: member.status, onApprove, onChangeRole, onResetPassword, onBan, onRestore });
 
   return (
     <>

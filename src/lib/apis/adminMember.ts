@@ -9,4 +9,6 @@ export const adminMemberApi = {
     apiClient.patch(`/api/v4/admin/clubs/${clubId}/members/${clubMemberId}/role`, { memberRole }),
   banMember: (clubId: string, clubMemberId: number) =>
     apiClient.delete(`/api/v4/admin/clubs/${clubId}/members/${clubMemberId}/ban`),
+  restoreMember: (clubId: string, clubMemberId: number) =>
+    apiClient.patch(`/api/v4/admin/clubs/${clubId}/members/${clubMemberId}/restore`),
 };
