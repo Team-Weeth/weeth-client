@@ -15,7 +15,7 @@ import { Card } from '@/components/ui';
 import { useDragScroll } from '@/hooks';
 import type { Member } from '@/types/admin/member';
 import { useAdminMembers } from '@/hooks/queries/admin';
-import { useChangeMemberRole } from '@/hooks/mutations/admin';
+import { useBanMember, useChangeMemberRole } from '@/hooks/mutations/admin';
 
 function MemberPageContent() {
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
@@ -24,6 +24,7 @@ function MemberPageContent() {
   const { ref: dragScrollRef, onMouseDown } = useDragScroll();
   const { data: members = [] } = useAdminMembers();
   const { mutate: changeMemberRole } = useChangeMemberRole();
+  const { mutate: banMember } = useBanMember();
 
   const handleMemberAction = (m: Member) => {
     setDetailMember(m);
@@ -128,6 +129,7 @@ function MemberPageContent() {
           if (!open) setDetailMember(null);
         }}
         member={detailMember}
+        onBan={detailMember ? () => banMember(detailMember.clubMemberId) : undefined}
         onChangeRole={
           detailMember
             ? () => {

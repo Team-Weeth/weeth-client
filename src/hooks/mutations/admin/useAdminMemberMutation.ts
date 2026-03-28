@@ -10,6 +10,7 @@ const ROLE_LABEL: Record<ClubMemberRole, string> = {
   LEAD: '리더',
 };
 
+// 멤버 권한 변경
 export function useChangeMemberRole() {
   const queryClient = useQueryClient();
   const queryKey = ['admin', 'members', CLUB_ID];
@@ -32,6 +33,34 @@ export function useChangeMemberRole() {
             ? { ...m, memberRole, position: ROLE_LABEL[memberRole] }
             : m,
         ),
+      );
+
+      return { previous };
+    },
+    onError: (_err, _vars, context) => {
+      if (context?.previous) {
+        queryClient.setQueryData(queryKey, context.previous);
+      }
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey });
+    },
+  });
+}
+
+//멤버 추방
+export function useBanMember() {
+  const queryClient = useQueryClient();
+  const queryKey = ['admin', 'members', CLUB_ID];
+
+  return useMutation({
+    mutationFn: (clubMemberId: number) => adminMemberApi.banMember(CLUB_ID, clubMemberId),
+    onMutate: async (clubMemberId) => {
+      await queryClient.cancelQueries({ queryKey });
+      const previous = queryClient.getQueryData<Member[]>(queryKey);
+
+      queryClient.setQueryData<Member[]>(queryKey, (old = []) =>
+        old.map((m) => (m.clubMemberId === clubMemberId ? { ...m, status: 'BANNED' } : m)),
       );
 
       return { previous };
