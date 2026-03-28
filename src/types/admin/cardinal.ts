@@ -7,3 +7,10 @@ export interface Cardinal {
   createdAt: string;
   modifiedAt: string;
 }
+
+export interface CreateCardinalBody {
+  cardinalNumber: number;
+  year: number;
+  semester: number;
+  inProgress: boolean;
+}

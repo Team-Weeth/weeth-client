@@ -16,7 +16,7 @@ import { useDragScroll } from '@/hooks';
 import type { Member } from '@/types/admin/member';
 import { useAdminMembers } from '@/hooks/queries/admin';
 import { useCardinals } from '@/hooks/queries';
-import { useBanMember, useChangeMemberRole, useRestoreMember } from '@/hooks/mutations/admin';
+import { useBanMember, useChangeMemberRole, useCreateCardinal, useRestoreMember } from '@/hooks/mutations/admin';
 
 function MemberPageContent() {
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
@@ -28,6 +28,7 @@ function MemberPageContent() {
   const { mutate: changeMemberRole } = useChangeMemberRole();
   const { mutate: banMember } = useBanMember();
   const { mutate: restoreMember } = useRestoreMember();
+  const { mutate: createCardinal } = useCreateCardinal();
 
   const handleMemberAction = (m: Member) => {
     setDetailMember(m);
@@ -87,7 +88,11 @@ function MemberPageContent() {
           className="scrollbar-none flex cursor-grab gap-400 overflow-x-auto select-none active:cursor-grabbing"
           onMouseDown={onMouseDown}
         >
-          <AddGenerationModal>
+          <AddGenerationModal
+            onSubmit={({ generation, year, semester, isCurrent }) =>
+              createCardinal({ cardinalNumber: generation, year, semester, inProgress: isCurrent })
+            }
+          >
             <AddGenerationButton />
           </AddGenerationModal>
           {/* <GenerationCard variant="normal" title="전체" /> */}
