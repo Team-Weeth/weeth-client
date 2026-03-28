@@ -40,7 +40,7 @@ function ThemeToggle({ className, ...props }: ThemeToggleProps) {
   return (
     <div
       className={cn(
-        'bg-container-neutral-interaction flex w-full overflow-hidden rounded-md p-[2px]',
+        'flex w-full overflow-hidden rounded-md bg-container-neutral-interaction p-[2px]',
         className,
       )}
       {...props}

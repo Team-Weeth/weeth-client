@@ -10,7 +10,7 @@ interface ThemeStore {
 export const useThemeStore = create<ThemeStore>()(
   persist(
     (set) => ({
-      isDark: true,
+      isDark: false,
       toggle: () => set((state) => ({ isDark: !state.isDark })),
       setDark: (isDark) => set({ isDark }),
     }),

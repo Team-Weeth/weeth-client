@@ -21,9 +21,7 @@ export default function TermsPage() {
             <li>파일 업로드 기능</li>
           </ul>
         </div>
-        <p>
-          서비스는 현재 비상업적으로 운영되고 있으며, 향후 기능이 변경되거나 종료될 수 있습니다.
-        </p>
+        <p>서비스는 현재 비상업적으로 운영되고 있으며, 향후 기능이 변경되거나 종료될 수 있습니다.</p>
       </PolicySection>
 
       <PolicySection heading="2. 회원가입과 계정">
@@ -62,8 +60,8 @@ export default function TermsPage() {
 
       <PolicySection heading="6. 문의">
         <p>
-          서비스 이용에 관한 문의는 <span className="text-brand-primary">help@weeth.kr</span>로
-          연락해 주세요.
+          서비스 이용에 관한 문의는{' '}
+          <span className="text-brand-primary">help@weeth.kr</span>로 연락해 주세요.
         </p>
       </PolicySection>
     </PolicyContent>

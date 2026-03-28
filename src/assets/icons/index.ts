@@ -1,6 +1,8 @@
+export { default as ArrowDownIcon } from './arrow_down.svg';
 export { default as ArrowLeftIcon } from './arrow_left.svg';
 export { default as ArrowRightIcon } from './arrow_right.svg';
 export { default as ChatIcon } from './chat.svg';
+export { default as CheckIcon } from './check.svg';
 export { default as BackIcon } from './back.svg';
 export { default as LikeIcon } from './like.svg';
 export { default as LikeFilledIcon } from './like_filled.svg';
@@ -18,12 +20,7 @@ export { default as PaperclipIcon } from './paperclip.svg';
 export { default as NewIcon } from './new.svg';
 export { default as DeleteIcon } from './delete.svg';
 export { default as PeopleIcon } from './people.svg';
-
 export { default as SearchIcon } from './search.svg';
-export { default as MegaphoneDarkIcon } from './megaphone_dark.svg';
-export { default as MegaphoneDarkActiveIcon } from './megaphone_dark_active.svg';
-export { default as MegaphoneWhiteIcon } from './megaphone_white.svg';
-export { default as MegaphoneWhiteActiveIcon } from './megaphone_white_active.svg';
 export { default as PinIcon } from './pin.svg';
 export { default as MoreVerticalIcon } from './more_vertical.svg';
 export { default as ReplyIcon } from './reply.svg';
@@ -34,3 +31,6 @@ export { default as FolderIcon } from './folder.svg';
 
 export { default as CopyIcon } from './copy.svg';
 export { default as ExitIcon } from './exit.svg';
+export { default as HomeIcon } from './home.svg';
+export { default as MoreHorizIcon } from './more-horiz.svg';
+export { default as CompleteIcon } from './complete.svg';

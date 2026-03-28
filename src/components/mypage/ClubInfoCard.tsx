@@ -69,7 +69,7 @@ function ClubInfoCard({ club, availableCardinals = [], className }: ClubInfoCard
               {club.cardinals.length > 0 ? (
                 <div className="flex items-center gap-100">
                   {club.cardinals.map((gen) => (
-                    <Tag key={gen} className="bg-brand-primary/10 text-brand-primary">
+                    <Tag key={gen} variant={'primary'}>
                       {gen}기
                     </Tag>
                   ))}
