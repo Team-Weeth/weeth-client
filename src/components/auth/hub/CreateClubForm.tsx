@@ -2,35 +2,21 @@
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
-import { Controller, useForm } from 'react-hook-form';
+import { Controller, useForm, useWatch } from 'react-hook-form';
 
 import { ArrowDownIcon, TooltipIcon } from '@/assets/icons';
 import { Button, Icon, Input, Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui';
 import { cn } from '@/lib/cn';
 import { createClubSchema, type CreateClubFormData } from '@/lib/schemas/createClub';
+import { formatPhone } from '@/utils';
 
-function formatPhone(value: string) {
-  const digits = value.replace(/\D/g, '').slice(0, 11);
-  if (digits.length <= 3) return digits;
-  if (digits.length <= 7) return `${digits.slice(0, 3)}-${digits.slice(3)}`;
-  return `${digits.slice(0, 3)}-${digits.slice(3, 7)}-${digits.slice(7)}`;
-}
-
-function FieldLabel({ children }: { children: React.ReactNode }) {
-  return <span className="typo-caption1 text-text-alternative">{children}</span>;
-}
-
-function FieldError({ message }: { message?: string }) {
-  if (!message) return null;
-  return <span className="typo-caption2 text-state-error">{message}</span>;
-}
+import { FieldError, FieldLabel, FormFieldWrapper } from './FormFieldWrapper';
 
 function CreateClubForm() {
   const {
     register,
     control,
     handleSubmit,
-    watch,
     formState: { errors, isValid },
   } = useForm<CreateClubFormData>({
     resolver: zodResolver(createClubSchema),
@@ -46,8 +32,8 @@ function CreateClubForm() {
     mode: 'onBlur',
   });
 
-  const school = watch('school');
-  const contactType = watch('contactType');
+  const school = useWatch({ control, name: 'school' });
+  const contactType = useWatch({ control, name: 'contactType' });
 
   const router = useRouter();
 
@@ -68,11 +54,11 @@ function CreateClubForm() {
 
       <form className="flex flex-col gap-400" onSubmit={handleSubmit(onSubmit)}>
         {/* 소속 학교 */}
-        <div className="flex flex-col gap-200">
-          <FieldLabel>소속 학교</FieldLabel>
+        <FormFieldWrapper label="소속 학교" error={errors.school?.message}>
           <div className="relative">
             <select
               {...register('school')}
+              autoComplete="organization"
               className={cn(
                 'bg-container-neutral typo-body2 w-full cursor-pointer appearance-none',
                 'rounded-lg border border-transparent px-300 py-200',
@@ -89,19 +75,15 @@ function CreateClubForm() {
               <Icon src={ArrowDownIcon} size={12} alt="" className="text-text-normal" />
             </div>
           </div>
-          <FieldError message={errors.school?.message} />
-        </div>
+        </FormFieldWrapper>
 
         {/* 동아리 이름 */}
-        <div className="flex flex-col gap-200">
-          <FieldLabel>동아리 이름</FieldLabel>
+        <FormFieldWrapper label="동아리 이름" error={errors.name?.message}>
           <Input {...register('name')} clearable className="rounded-lg px-400 py-300" />
-          <FieldError message={errors.name?.message} />
-        </div>
+        </FormFieldWrapper>
 
         {/* 동아리 소개 */}
-        <div className="flex flex-col gap-200">
-          <FieldLabel>동아리 소개</FieldLabel>
+        <FormFieldWrapper label="동아리 소개" error={errors.description?.message}>
           <Input
             {...register('description')}
             maxLength={30}
@@ -109,8 +91,7 @@ function CreateClubForm() {
             className="rounded-lg px-400 py-300"
           />
           <span className="typo-caption2 text-text-alternative">30자 제한</span>
-          <FieldError message={errors.description?.message} />
-        </div>
+        </FormFieldWrapper>
 
         {/* 동아리 기수 */}
         <div className="flex flex-col gap-200">
@@ -144,8 +125,7 @@ function CreateClubForm() {
         </div>
 
         {/* 대표 전화번호 */}
-        <div className="flex flex-col gap-200">
-          <FieldLabel>대표 전화번호</FieldLabel>
+        <FormFieldWrapper label="대표 전화번호" error={errors.phone?.message}>
           <Controller
             name="phone"
             control={control}
@@ -159,24 +139,21 @@ function CreateClubForm() {
               />
             )}
           />
-          <FieldError message={errors.phone?.message} />
-        </div>
+        </FormFieldWrapper>
 
         {/* 대표 이메일 (선택) */}
-        <div className="flex flex-col gap-200">
-          <FieldLabel>대표 이메일 (선택)</FieldLabel>
+        <FormFieldWrapper label="대표 이메일 (선택)" error={errors.email?.message}>
           <Input
             {...register('email')}
             type="email"
             clearable
+            spellCheck={false}
             className="rounded-lg px-400 py-300"
           />
-          <FieldError message={errors.email?.message} />
-        </div>
+        </FormFieldWrapper>
 
         {/* 주 연락처 */}
-        <div className="flex flex-col gap-200">
-          <FieldLabel>주 연락처</FieldLabel>
+        <FormFieldWrapper label="주 연락처">
           <div className="flex gap-200">
             {(['phone', 'email'] as const).map((type) => (
               <label key={type} className="flex cursor-pointer items-center gap-200">
@@ -203,7 +180,7 @@ function CreateClubForm() {
               </label>
             ))}
           </div>
-        </div>
+        </FormFieldWrapper>
 
         <Button
           type="submit"

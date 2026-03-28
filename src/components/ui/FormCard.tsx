@@ -1,6 +1,7 @@
 import { cn } from '@/lib/cn';
 
 import { Card } from './card';
+import { Divider } from './Divider';
 
 interface FormCardProps {
   label?: string;
@@ -18,7 +19,7 @@ function FormCard({ label, title, children, footer, className }: FormCardProps) 
       <div className="flex flex-col gap-200">{children}</div>
       {footer && (
         <>
-          <hr className="border-container-neutral-alternative my-300 border-t" />
+          <Divider className="my-300" />
           {footer}
         </>
       )}

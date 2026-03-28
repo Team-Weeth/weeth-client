@@ -6,19 +6,13 @@ import { useRouter } from 'next/navigation';
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import { z } from 'zod';
 
 import { Button, FormCard, Input } from '@/components/ui';
+import { inviteCodeSchema, type InviteCodeFormData } from '@/lib/schemas/inviteCode';
 import type { Club } from '@/types';
 
 import { ClubSearchDropdown } from './ClubSearchDropdown';
 import { ClubSelectedCard } from './ClubSelectedCard';
-
-const inviteCodeSchema = z.object({
-  inviteCode: z.string().min(1, '초대 링크를 입력해주세요'),
-});
-
-type InviteCodeFormData = z.infer<typeof inviteCodeSchema>;
 
 function InviteCodeForm() {
   const router = useRouter();
