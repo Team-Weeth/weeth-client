@@ -1,1 +1,1 @@
-export { useChangeToAdmin } from './useAdminMemberMutation';
+export { useChangeMemberRole } from './useAdminMemberMutation';

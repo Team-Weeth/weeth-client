@@ -15,7 +15,7 @@ import { Card } from '@/components/ui';
 import { useDragScroll } from '@/hooks';
 import type { Member } from '@/types/admin/member';
 import { useAdminMembers } from '@/hooks/queries/admin';
-import { useChangeToAdmin } from '@/hooks/mutations/admin';
+import { useChangeMemberRole } from '@/hooks/mutations/admin';
 
 function MemberPageContent() {
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
@@ -23,7 +23,7 @@ function MemberPageContent() {
   const [detailMember, setDetailMember] = useState<Member | null>(null);
   const { ref: dragScrollRef, onMouseDown } = useDragScroll();
   const { data: members = [] } = useAdminMembers();
-  const { mutate: changeToAdmin } = useChangeToAdmin();
+  const { mutate: changeMemberRole } = useChangeMemberRole();
 
   const handleMemberAction = (m: Member) => {
     setDetailMember(m);
@@ -121,7 +121,13 @@ function MemberPageContent() {
         }}
         member={detailMember}
         onChangeToAdmin={
-          detailMember ? () => changeToAdmin(detailMember.clubMemberId) : undefined
+          detailMember
+            ? () =>
+                changeMemberRole({
+                  clubMemberId: detailMember.clubMemberId,
+                  memberRole: detailMember.memberRole === 'ADMIN' ? 'USER' : 'ADMIN',
+                })
+            : undefined
         }
       />
     </div>

@@ -11,6 +11,7 @@ export interface Member {
   phone: string;
   studentId: string;
   position: string;
+  memberRole: ClubMemberRole;
   attendance: number;
   absence: number;
   penaltyCount: number;
