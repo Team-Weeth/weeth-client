@@ -7,17 +7,17 @@ import {
   AlertDialog,
   AlertDialogAction,
   AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
+  // AlertDialogContent,
+  // AlertDialogFooter,
+  // AlertDialogHeader,
+  // AlertDialogTitle,
   Button,
   Icon,
 } from '@/components/ui';
-import { ChangeGenerationModal } from '@/components/admin/member/modal/ChangeGenerationModal';
+// import { ChangeGenerationModal } from '@/components/admin/member/modal/ChangeGenerationModal';
 import { cn } from '@/lib/cn';
 import { getTopBarActions } from '@/constants/admin/memberTopBar.constants';
-import { useGenerationConfirm } from '@/hooks';
+// import { useGenerationConfirm } from '@/hooks';
 
 import type { ClubMemberRole } from '@/types/admin/member';
 
@@ -46,17 +46,18 @@ function MemberTopBar({
   onResetPassword,
   onBan,
   onRestore,
-  onChangeGeneration,
+  // onChangeGeneration,
   ref,
   ...props
 }: MemberTopBarProps) {
-  const {
-    genConfirmOpen,
-    setGenConfirmOpen,
-    pendingGeneration,
-    handleGenSubmit,
-    handleGenConfirm,
-  } = useGenerationConfirm(onChangeGeneration);
+  // TODO: 기수변경 추후 연결
+  // const {
+  //   genConfirmOpen,
+  //   setGenConfirmOpen,
+  //   pendingGeneration,
+  //   handleGenSubmit,
+  //   handleGenConfirm,
+  // } = useGenerationConfirm(onChangeGeneration);
 
   if (selectedCount === 0) return null;
 
@@ -105,16 +106,16 @@ function MemberTopBar({
               <AlertDialogCancel>취소</AlertDialogCancel>
             </AlertDialog>
           ))}
-          <ChangeGenerationModal onSubmit={handleGenSubmit}>
+          {/* <ChangeGenerationModal onSubmit={handleGenSubmit}>
             <Button variant="secondary" size="lg" className="py-200">
               기수 변경
             </Button>
-          </ChangeGenerationModal>
+          </ChangeGenerationModal> */}
         </div>
       </div>
 
       {/* Generation confirm alert */}
-      <AlertDialog open={genConfirmOpen} onOpenChange={setGenConfirmOpen}>
+      {/* <AlertDialog open={genConfirmOpen} onOpenChange={setGenConfirmOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>
@@ -126,7 +127,7 @@ function MemberTopBar({
             <AlertDialogCancel>취소</AlertDialogCancel>
           </AlertDialogFooter>
         </AlertDialogContent>
-      </AlertDialog>
+      </AlertDialog> */}
     </>
   );
 }
