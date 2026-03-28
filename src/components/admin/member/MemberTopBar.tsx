@@ -19,14 +19,14 @@ import { cn } from '@/lib/cn';
 import { getTopBarActions } from '@/constants/admin/memberTopBar.constants';
 import { useGenerationConfirm } from '@/hooks';
 
+import type { ClubMemberRole } from '@/types/admin/member';
+
 interface MemberTopBarProps extends React.HTMLAttributes<HTMLDivElement> {
   selectedCount: number;
-  canChangeToAdmin: boolean;
-  canChangeToUser: boolean;
+  targetRole: ClubMemberRole | null;
   onBack: () => void;
   onApprove?: () => void;
-  onChangeToAdmin?: () => void;
-  onChangeToUser?: () => void;
+  onChangeRole?: () => void;
   onResetPassword?: () => void;
   onBan?: () => void;
   onChangeGeneration?: (generation: number) => void;
@@ -36,12 +36,10 @@ interface MemberTopBarProps extends React.HTMLAttributes<HTMLDivElement> {
 function MemberTopBar({
   className,
   selectedCount,
-  canChangeToAdmin,
-  canChangeToUser,
+  targetRole,
   onBack,
   onApprove,
-  onChangeToAdmin,
-  onChangeToUser,
+  onChangeRole,
   onResetPassword,
   onBan,
   onChangeGeneration,
@@ -60,11 +58,9 @@ function MemberTopBar({
 
   const topBarActions = getTopBarActions({
     selectedCount,
-    canChangeToAdmin,
-    canChangeToUser,
+    targetRole,
     onApprove,
-    onChangeToAdmin,
-    onChangeToUser,
+    onChangeRole,
     onResetPassword,
     onBan,
   });

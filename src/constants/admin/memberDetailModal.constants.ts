@@ -41,26 +41,33 @@ export function getActivityStats(member: Member) {
   ];
 }
 
+import type { ClubMemberRole } from '@/types/admin/member';
+
 interface FooterActionHandlers {
+  memberRole: ClubMemberRole;
   onApprove?: () => void;
-  onChangeToAdmin?: () => void;
+  onChangeRole?: () => void;
   onResetPassword?: () => void;
   onBan?: () => void;
 }
 
 export function getFooterActions({
+  memberRole,
   //  onApprove,
-  onChangeToAdmin,
+  onChangeRole,
   //  onResetPassword,
   onBan,
 }: FooterActionHandlers) {
+  const isAdmin = memberRole === 'ADMIN';
   return [
     // TODO: 가입 승인 api 열리면 열기
     // { label: '가입 승인', title: '1명의 멤버 가입을 승인하시겠습니까?', handler: onApprove },
     {
-      label: '관리자로 변경',
-      title: '1명의 멤버 역할을 관리자로\n변경하시겠습니까?',
-      handler: onChangeToAdmin,
+      label: isAdmin ? '사용자로 변경' : '관리자로 변경',
+      title: isAdmin
+        ? '1명의 멤버 역할을 사용자로\n변경하시겠습니까?'
+        : '1명의 멤버 역할을 관리자로\n변경하시겠습니까?',
+      handler: onChangeRole,
     },
     // TODO: 비번 변경 api 열리면 열기
     // {

@@ -42,8 +42,9 @@ function MemberPageContent() {
   const selectedMembers = filteredMembers.filter((m) => selectedIds.has(m.id));
   const selectedCount = selectedMembers.length;
 
-  const allUsers = selectedCount > 0 && selectedMembers.every((m) => m.position === '사용자');
-  const allAdmins = selectedCount > 0 && selectedMembers.every((m) => m.position === '관리자');
+  const allUsers = selectedCount > 0 && selectedMembers.every((m) => m.memberRole === 'USER');
+  const allAdmins = selectedCount > 0 && selectedMembers.every((m) => m.memberRole === 'ADMIN');
+  const targetRole = allUsers ? 'ADMIN' : allAdmins ? 'USER' : null;
 
   const handleClearSelection = () => setSelectedIds(new Set());
 
@@ -53,9 +54,16 @@ function MemberPageContent() {
       <MemberTopBar
         className="sticky top-0 z-10 -mt-15"
         selectedCount={selectedCount}
-        canChangeToAdmin={allUsers}
-        canChangeToUser={allAdmins}
+        targetRole={targetRole}
         onBack={handleClearSelection}
+        onChangeRole={
+          targetRole
+            ? () =>
+                selectedMembers.forEach((m) =>
+                  changeMemberRole({ clubMemberId: m.clubMemberId, memberRole: targetRole }),
+                )
+            : undefined
+        }
       />
 
       {/* Main content */}
@@ -120,13 +128,14 @@ function MemberPageContent() {
           if (!open) setDetailMember(null);
         }}
         member={detailMember}
-        onChangeToAdmin={
+        onChangeRole={
           detailMember
-            ? () =>
-                changeMemberRole({
-                  clubMemberId: detailMember.clubMemberId,
-                  memberRole: detailMember.memberRole === 'ADMIN' ? 'USER' : 'ADMIN',
-                })
+            ? () => {
+                const nextRole = detailMember.memberRole === 'ADMIN' ? 'USER' : 'ADMIN';
+                const ROLE_LABEL = { USER: '사용자', ADMIN: '관리자', LEAD: '리더' } as const;
+                setDetailMember({ ...detailMember, memberRole: nextRole, position: ROLE_LABEL[nextRole] });
+                changeMemberRole({ clubMemberId: detailMember.clubMemberId, memberRole: nextRole });
+              }
             : undefined
         }
       />

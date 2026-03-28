@@ -2,10 +2,17 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { CLUB_ID } from '@/hooks/queries/admin/useAdminMemberQuery';
 import { adminMemberApi } from '@/lib/apis';
-import type { ClubMemberRole } from '@/types/admin/member';
+import type { ClubMemberRole, Member } from '@/types/admin/member';
+
+const ROLE_LABEL: Record<ClubMemberRole, string> = {
+  USER: '사용자',
+  ADMIN: '관리자',
+  LEAD: '리더',
+};
 
 export function useChangeMemberRole() {
   const queryClient = useQueryClient();
+  const queryKey = ['admin', 'members', CLUB_ID];
 
   return useMutation({
     mutationFn: ({
@@ -15,8 +22,27 @@ export function useChangeMemberRole() {
       clubMemberId: number;
       memberRole: ClubMemberRole;
     }) => adminMemberApi.updateMemberRole(CLUB_ID, clubMemberId, memberRole),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin', 'members', CLUB_ID] });
+    onMutate: async ({ clubMemberId, memberRole }) => {
+      await queryClient.cancelQueries({ queryKey });
+      const previous = queryClient.getQueryData<Member[]>(queryKey);
+
+      queryClient.setQueryData<Member[]>(queryKey, (old = []) =>
+        old.map((m) =>
+          m.clubMemberId === clubMemberId
+            ? { ...m, memberRole, position: ROLE_LABEL[memberRole] }
+            : m,
+        ),
+      );
+
+      return { previous };
+    },
+    onError: (_err, _vars, context) => {
+      if (context?.previous) {
+        queryClient.setQueryData(queryKey, context.previous);
+      }
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey });
     },
   });
 }

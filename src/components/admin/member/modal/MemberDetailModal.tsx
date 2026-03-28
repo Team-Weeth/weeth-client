@@ -32,7 +32,7 @@ interface MemberDetailModalProps {
   onOpenChange: (open: boolean) => void;
   member: Member | null;
   onApprove?: () => void;
-  onChangeToAdmin?: () => void;
+  onChangeRole?: () => void;
   onResetPassword?: () => void;
   onBan?: () => void;
   onChangeGeneration?: (generation: number) => void;
@@ -43,7 +43,7 @@ function MemberDetailModal({
   onOpenChange,
   member,
   onApprove,
-  onChangeToAdmin,
+  onChangeRole,
   onResetPassword,
   onBan,
   onChangeGeneration,
@@ -63,7 +63,7 @@ function MemberDetailModal({
   const personalInfo = getPersonalInfo(member);
   const activityInfo = getActivityInfo(member);
   const activityStats = getActivityStats(member);
-  const footerActions = getFooterActions({ onApprove, onChangeToAdmin, onResetPassword, onBan });
+  const footerActions = getFooterActions({ memberRole: member.memberRole, onApprove, onChangeRole, onResetPassword, onBan });
 
   return (
     <>
