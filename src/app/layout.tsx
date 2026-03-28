@@ -5,6 +5,7 @@ import { QueryProvider } from '@/providers';
 import { Inter } from 'next/font/google';
 import { ThemeProvider } from '@/providers/theme-provider';
 import { cn } from '@/lib/cn';
+import { TooltipProvider } from '@/components/ui';
 import './globals.css';
 
 const inter = Inter({
@@ -38,8 +39,10 @@ export default function RootLayout({
       <body className={cn(inter.variable, 'w-full antialiased')}>
         <QueryProvider>
           <ThemeProvider>
-            {children}
-            <Toaster />
+            <TooltipProvider>
+              {children}
+              <Toaster />
+            </TooltipProvider>
           </ThemeProvider>
         </QueryProvider>
       </body>

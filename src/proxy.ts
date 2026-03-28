@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { ACCESS_TOKEN_KEY } from '@/lib/apis/cookies';
 
-const PUBLIC_PATHS = ['/', '/login', '/signup', '/landing'];
+// TODO: 추후 '/hub' 제거
+const PUBLIC_PATHS = ['/', '/login', '/terms', '/hub', '/landing'];
 
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -22,7 +23,7 @@ export function proxy(request: NextRequest) {
     return response;
   }
 
-  if (PUBLIC_PATHS.some((path) => pathname === path)) {
+  if (PUBLIC_PATHS.some((path) => pathname === path) || pathname.startsWith('/invite/')) {
     return NextResponse.next();
   }
 
