@@ -1,9 +1,8 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import type { StaticImageData } from 'next/image';
 import { BackIcon } from '@/assets/icons';
-import { Button } from '@/components/ui';
+import { Button, Icon } from '@/components/ui';
 import { cn } from '@/lib/cn';
 
 interface PostDetailHeaderProps {
@@ -23,14 +22,7 @@ function PostDetailHeader({ className }: PostDetailHeaderProps) {
         onClick={() => router.back()}
         aria-label="뒤로 가기"
       >
-        <span
-          aria-hidden
-          className="bg-icon-alternative block h-[12.51px] w-[7.16px] mask-contain mask-center mask-no-repeat"
-          style={{
-            maskImage: `url(${(BackIcon as StaticImageData).src})`,
-            WebkitMaskImage: `url(${(BackIcon as StaticImageData).src})`,
-          }}
-        />
+        <Icon src={BackIcon} size={13} className="text-icon-alternative" />
       </Button>
     </div>
   );

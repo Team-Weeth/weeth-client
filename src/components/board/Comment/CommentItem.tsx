@@ -1,9 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import type { StaticImageData } from 'next/image';
 import { ChatIcon } from '@/assets/icons';
-import { Avatar, AvatarFallback, AvatarImage, Button } from '@/components/ui';
+import { Avatar, AvatarFallback, AvatarImage, Button, Icon } from '@/components/ui';
 import { useScrollIntoView } from '@/hooks';
 import { cn } from '@/lib/cn';
 import { PostActionMenu } from '@/components/board/PostActionMenu';
@@ -67,14 +66,7 @@ function CommentItem({
             onClick={() => setReplyOpen((prev) => !prev)}
             aria-label="답글"
           >
-            <span
-              aria-hidden
-              className="bg-icon-normal block h-[13px] w-[13px] mask-contain mask-center mask-no-repeat"
-              style={{
-                maskImage: `url(${(ChatIcon as StaticImageData).src})`,
-                WebkitMaskImage: `url(${(ChatIcon as StaticImageData).src})`,
-              }}
-            />
+            <Icon src={ChatIcon} size={13} className="text-icon-normal" />
           </Button>
           {isAuthor && (
             <PostActionMenu

@@ -1,6 +1,5 @@
 'use client';
 
-import type { StaticImageData } from 'next/image';
 import { MoreVerticalIcon } from '@/assets/icons';
 import {
   Button,
@@ -9,6 +8,7 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
+  Icon,
 } from '@/components/ui';
 import { cn } from '@/lib/cn';
 import type { ButtonProps } from '@/components/ui';
@@ -43,14 +43,7 @@ function PostActionMenu({
           aria-label="더보기"
           onClick={onClick}
         >
-          <span
-            aria-hidden
-            className="bg-icon-normal block h-4 w-1 mask-contain mask-center mask-no-repeat"
-            style={{
-              maskImage: `url(${(MoreVerticalIcon as StaticImageData).src})`,
-              WebkitMaskImage: `url(${(MoreVerticalIcon as StaticImageData).src})`,
-            }}
-          />
+          <Icon src={MoreVerticalIcon} size={16} className="text-icon-normal" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-[144px]">
