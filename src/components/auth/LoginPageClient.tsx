@@ -1,0 +1,34 @@
+'use client';
+
+import { useState } from 'react';
+
+import { agreeTermsAction } from '@/lib/actions/auth';
+
+import { LoginCard } from './LoginCard';
+import { TermsAgreementModal } from './TermsAgreementModal';
+
+interface LoginPageClientProps {
+  defaultTermsOpen?: boolean;
+}
+
+function LoginPageClient({ defaultTermsOpen = false }: LoginPageClientProps) {
+  const [termsOpen, setTermsOpen] = useState(defaultTermsOpen);
+
+  return (
+    <div className="flex min-h-screen flex-col items-center justify-center gap-10">
+      <div className="typo-h3 text-text-strong text-center">
+        우리 동아리만의 공간을 만들어보세요
+        <br />
+        Weeth에서 함께 활동을 이어가세요
+      </div>
+      <LoginCard />
+      <TermsAgreementModal
+        open={termsOpen}
+        onOpenChange={setTermsOpen}
+        onAgree={agreeTermsAction}
+      />
+    </div>
+  );
+}
+
+export { LoginPageClient };

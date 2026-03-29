@@ -35,6 +35,33 @@ export async function loginAction(formData: FormData) {
   redirect('/home');
 }
 
+export async function agreeTermsAction() {
+  const cookieStore = await cookies();
+  const accessToken = cookieStore.get(ACCESS_TOKEN_KEY)?.value;
+
+  const response = await fetch(`${BASE_URL}/api/v4/users/terms`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${accessToken}`,
+    },
+    body: JSON.stringify({ termsAgreed: true, privacyAgreed: true }),
+  });
+
+  if (!response.ok) {
+    const error = await response.json().catch(() => null);
+    return { error: error?.message ?? '약관 동의에 실패했습니다.' };
+  }
+
+  const json = await response.json();
+  const { accessToken: newAccessToken, refreshToken } = json.data;
+
+  cookieStore.set(ACCESS_TOKEN_KEY, newAccessToken, ACCESS_COOKIE_OPTIONS);
+  cookieStore.set(REFRESH_TOKEN_KEY, refreshToken, REFRESH_COOKIE_OPTIONS);
+
+  redirect('/hub');
+}
+
 export async function logoutAction() {
   const cookieStore = await cookies();
   cookieStore.delete(ACCESS_TOKEN_KEY);
