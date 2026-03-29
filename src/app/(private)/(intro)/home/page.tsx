@@ -10,7 +10,7 @@ export default function HomePage() {
         <div className="flex flex-col gap-300">
           <LeftContainer />
         </div>
-        <div className="flex flex-col gap-300">
+        <div className="flex w-full flex-col gap-300">
           <MainContainer />
         </div>
         <div className="flex flex-col gap-300">
