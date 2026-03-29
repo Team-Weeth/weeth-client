@@ -5,40 +5,11 @@ import Image from 'next/image';
 import { NewIcon, ArrowRightIcon } from '@/assets/icons';
 import { Divider } from '@/components/ui';
 import { useRouter } from 'next/navigation';
-
-interface NoticeItem {
-  id: number;
-  title: string;
-  content: string;
-  isNew: boolean;
-}
-
-const MOCK_NOTICES: NoticeItem[] = [
-  {
-    id: 1,
-    title: '이번주는 중간고사로 쉬어갑니다',
-    content:
-      '여러분 벌써 중간고사가 다가왔습니다. 다들 열심히 시험공부 잘 하고 계신가요? 릿츠 4기와 함께한지도 벌써 4주가 지났습니다. 앞으로도 응원',
-    isNew: true,
-  },
-  {
-    id: 2,
-    title: '이번주는 중간고사로 쉬어갑니다',
-    content:
-      '여러분 벌써 중간고사가 다가왔습니다. 다들 열심히 시험공부 잘 하고 계신가요? 릿츠 4기와 함께한지도 벌써 4주가 지났습니다. 앞으로도 응원',
-    isNew: true,
-  },
-  {
-    id: 3,
-    title: '이번주는 중간고사로 쉬어갑니다',
-    content:
-      '여러분 벌써 중간고사가 다가왔습니다. 다들 열심히 시험공부 잘 하고 계신가요? 릿츠 4기와 함께한지도 벌써 4주가 지났습니다. 앞으로도 응원',
-    isNew: false,
-  },
-];
+import { useRecentNoticesQuery } from '@/hooks/home';
 
 export function NoticeBoardBox() {
   const router = useRouter();
+  const { data: notices = [] } = useRecentNoticesQuery();
 
   return (
     <div className="bg-container-neutral flex flex-col rounded-lg pb-300">
@@ -56,7 +27,7 @@ export function NoticeBoardBox() {
         </button>
       </div>
       <div className="flex flex-col px-450">
-        {MOCK_NOTICES.map((notice, index) => (
+        {notices.map((notice, index) => (
           <React.Fragment key={notice.id}>
             {index > 0 && <Divider />}
             <div className="flex flex-col items-start gap-300 py-400">
