@@ -8,7 +8,7 @@ import {
   DialogHeader,
   Icon,
 } from '@/components/ui';
-import type { TermsItem } from '@/constants';
+import type { TermsItem } from '@/constants/login';
 
 interface TermsDetailViewProps {
   term: TermsItem;
