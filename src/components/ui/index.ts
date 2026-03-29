@@ -125,3 +125,5 @@ export { ProgressBar, type ProgressBarProps } from './ProgressBar';
 export { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from './Tooltip';
 
 export { FormCard, type FormCardProps } from './FormCard';
+
+export { Loading, type LoadingProps } from './Loading';

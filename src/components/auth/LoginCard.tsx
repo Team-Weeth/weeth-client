@@ -2,9 +2,16 @@ import Image from 'next/image';
 
 import { cn } from '@/lib/cn';
 import { LoginCoverIcon } from '@/assets/icons';
+import { Loading } from '@/components/ui';
 import { SocialLoginButtons } from '@/components/auth';
 
-function LoginCard({ className }: { className?: string }) {
+interface LoginCardProps {
+  className?: string;
+  isLoading?: boolean;
+  onKakaoLogin?: () => void;
+}
+
+function LoginCard({ className, isLoading = false, onKakaoLogin }: LoginCardProps) {
   return (
     <div
       className={cn(
@@ -21,9 +28,16 @@ function LoginCard({ className }: { className?: string }) {
           커뮤니티 플랫폼 Weeth
         </p>
       </div>
-      {/* 우측: 소셜 로그인 */}
+      {/* 우측: 소셜 로그인 / 로딩 */}
       <div className="bg-container-neutral flex h-[427px] flex-1 flex-col items-center justify-center p-600">
-        <SocialLoginButtons className="w-full" />
+        {isLoading ? (
+          <div className="flex flex-col items-center gap-400">
+            <Loading />
+            <p className="typo-body2 text-text-alternative">진행 중 입니다...</p>
+          </div>
+        ) : (
+          <SocialLoginButtons className="w-full" onKakaoLogin={onKakaoLogin} />
+        )}
       </div>
     </div>
   );

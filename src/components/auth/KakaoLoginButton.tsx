@@ -7,7 +7,7 @@ import { KakaoLogoIcon } from '@/assets/icons';
 
 type KakaoLoginButtonProps = Omit<ButtonProps, 'variant' | 'size'>;
 
-function KakaoLoginButton({ className, ...props }: KakaoLoginButtonProps) {
+function KakaoLoginButton({ className, onClick, ...props }: KakaoLoginButtonProps) {
   function handleKakaoLogin() {
     const clientId = process.env.NEXT_PUBLIC_KAKAO_CLIENT_ID;
     const redirectUri = process.env.NEXT_PUBLIC_KAKAO_REDIRECT_URI;
@@ -19,10 +19,16 @@ function KakaoLoginButton({ className, ...props }: KakaoLoginButtonProps) {
       variant="kakao"
       size="social"
       className={cn('w-full', className)}
-      onClick={handleKakaoLogin}
+      onClick={onClick ?? handleKakaoLogin}
       {...props}
     >
-      <Image src={KakaoLogoIcon} alt="" width={18} height={18} className="absolute left-[14px]" />
+      <Image
+        src={KakaoLogoIcon}
+        alt="kakao-login"
+        width={18}
+        height={18}
+        className="absolute left-[14px]"
+      />
       카카오로 시작하기
     </Button>
   );

@@ -13,6 +13,14 @@ interface LoginPageClientProps {
 
 function LoginPageClient({ defaultTermsOpen = false }: LoginPageClientProps) {
   const [termsOpen, setTermsOpen] = useState(defaultTermsOpen);
+  const [isLoading, setIsLoading] = useState(false);
+
+  function handleKakaoLoginStart() {
+    const clientId = process.env.NEXT_PUBLIC_KAKAO_CLIENT_ID;
+    const redirectUri = process.env.NEXT_PUBLIC_KAKAO_REDIRECT_URI;
+    setIsLoading(true);
+    window.location.href = `https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=${clientId}&redirect_uri=${redirectUri}`;
+  }
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center gap-10">
@@ -21,7 +29,7 @@ function LoginPageClient({ defaultTermsOpen = false }: LoginPageClientProps) {
         <br />
         Weeth에서 함께 활동을 이어가세요
       </div>
-      <LoginCard />
+      <LoginCard isLoading={isLoading} onKakaoLogin={handleKakaoLoginStart} />
       <TermsAgreementModal
         open={termsOpen}
         onOpenChange={setTermsOpen}
