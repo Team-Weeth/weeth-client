@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Controller, useForm, useWatch } from 'react-hook-form';
@@ -10,26 +10,37 @@ import { Button, Icon, Input, Tooltip, TooltipContent, TooltipTrigger } from '@/
 import { cn } from '@/lib/cn';
 import { createClubAction } from '@/lib/actions/club';
 import { createClubSchema, type CreateClubFormData } from '@/lib/schemas/createClub';
+import { useCreateClubDraftStore } from '@/stores';
 import { formatPhone } from '@/utils';
 
 import { FieldError, FieldLabel, FormFieldWrapper } from './FormFieldWrapper';
 
 function CreateClubForm() {
+  const schoolDraft = useCreateClubDraftStore((state) => state.school);
+  const nameDraft = useCreateClubDraftStore((state) => state.name);
+  const descriptionDraft = useCreateClubDraftStore((state) => state.description);
+  const generationDraft = useCreateClubDraftStore((state) => state.generation);
+  const phoneDraft = useCreateClubDraftStore((state) => state.phone);
+  const emailDraft = useCreateClubDraftStore((state) => state.email);
+  const contactTypeDraft = useCreateClubDraftStore((state) => state.contactType);
+  const setDraft = useCreateClubDraftStore((state) => state.setDraft);
+
   const {
     register,
     control,
     handleSubmit,
+    watch,
     formState: { errors, isValid },
   } = useForm<CreateClubFormData>({
     resolver: zodResolver(createClubSchema),
     defaultValues: {
-      school: '',
-      name: '',
-      description: '',
-      generation: '',
-      phone: '',
-      email: '',
-      contactType: 'phone',
+      school: schoolDraft,
+      name: nameDraft,
+      description: descriptionDraft,
+      generation: generationDraft,
+      phone: phoneDraft,
+      email: emailDraft,
+      contactType: contactTypeDraft,
     },
     mode: 'onBlur',
   });
@@ -38,6 +49,22 @@ function CreateClubForm() {
   const contactType = useWatch({ control, name: 'contactType' });
 
   const [serverError, setServerError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const subscription = watch((values) => {
+      setDraft({
+        school: values.school ?? '',
+        name: values.name ?? '',
+        description: values.description ?? '',
+        generation: values.generation ?? '',
+        phone: values.phone ?? '',
+        email: values.email ?? '',
+        contactType: values.contactType ?? 'phone',
+      });
+    });
+
+    return () => subscription.unsubscribe();
+  }, [setDraft, watch]);
 
   async function onSubmit(data: CreateClubFormData) {
     console.log('createClub form submit:', data);
