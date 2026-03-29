@@ -32,4 +32,4 @@ export { default as HomeIcon } from './home.svg';
 export { default as MoreHorizIcon } from './more-horiz.svg';
 export { default as CompleteIcon } from './complete.svg';
 export { default as CopyIcon } from './copy.svg';
-export { default as AlertBannerCharIcon } from './alert_banner_char.svg';
+export { default as BasicAvatarIcon } from './basic_avatar.svg';
