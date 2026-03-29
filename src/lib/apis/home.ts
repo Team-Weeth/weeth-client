@@ -20,10 +20,9 @@ export const homeApi = {
     ),
 
   getRecentNotices: (clubId: string, params?: { size?: number }) =>
-    apiClient.get<ApiResponse<RecentNotice[]>>(
-      `/api/v4/clubs/${clubId}/dashboard/recent-notices`,
-      { params },
-    ),
+    apiClient.get<ApiResponse<RecentNotice[]>>(`/api/v4/clubs/${clubId}/dashboard/recent-notices`, {
+      params,
+    }),
 
   getMonthlySchedules: (clubId: string) =>
     apiClient.get<ApiResponse<MonthlySchedule[]>>(
@@ -37,7 +36,5 @@ export const homeApi = {
     ),
 
   getProfileStatus: (clubId: string) =>
-    apiClient.get<ApiResponse<ProfileStatus>>(
-      `/api/v4/clubs/${clubId}/members/me/profile-status`,
-    ),
+    apiClient.get<ApiResponse<ProfileStatus>>(`/api/v4/clubs/${clubId}/members/me/profile-status`),
 };

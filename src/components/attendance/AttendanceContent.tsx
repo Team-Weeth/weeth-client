@@ -17,7 +17,7 @@ interface AttendanceContentProps {
 function AttendanceContent({ name, attendance, isAdmin = true }: AttendanceContentProps) {
   const [isChecked, setIsChecked] = useState(false);
   const { attendanceRate, title, start, end, location } = attendance;
-  const description = formatAttendanceDescription(start, end, location);
+  const description = formatAttendanceDescription(start ?? '', end ?? '', location ?? '');
 
   function handleAttendanceComplete(_code: string) {
     // TODO: API 연결 시 출석 코드 검증 로직 추가
@@ -39,11 +39,11 @@ function AttendanceContent({ name, attendance, isAdmin = true }: AttendanceConte
       <div className="flex flex-col gap-300 px-450">
         <AttendanceTodayCard
           overline="오늘의 출석"
-          title={title}
+          title={title ?? ''}
           description={description}
-          start={start}
-          endTime={end}
-          location={location}
+          start={start ?? ''}
+          endTime={end ?? ''}
+          location={location ?? ''}
           isAdmin={isAdmin}
           isChecked={isChecked}
           onAttendanceComplete={handleAttendanceComplete}
