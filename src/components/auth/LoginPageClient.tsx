@@ -9,17 +9,22 @@ import { TermsAgreementModal } from './TermsAgreementModal';
 
 interface LoginPageClientProps {
   defaultTermsOpen?: boolean;
+  intent?: string;
 }
 
-function LoginPageClient({ defaultTermsOpen = false }: LoginPageClientProps) {
+function LoginPageClient({ defaultTermsOpen = false, intent }: LoginPageClientProps) {
   const [termsOpen, setTermsOpen] = useState(defaultTermsOpen);
   const [isLoading, setIsLoading] = useState(false);
 
   function handleKakaoLoginStart() {
     const clientId = process.env.NEXT_PUBLIC_KAKAO_CLIENT_ID;
     const redirectUri = process.env.NEXT_PUBLIC_KAKAO_REDIRECT_URI;
+    const params = new URLSearchParams({ response_type: 'code' });
+    if (clientId) params.set('client_id', clientId);
+    if (redirectUri) params.set('redirect_uri', redirectUri);
+    if (intent) params.set('state', intent);
     setIsLoading(true);
-    window.location.href = `https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=${clientId}&redirect_uri=${redirectUri}`;
+    window.location.href = `https://kauth.kakao.com/oauth/authorize?${params}`;
   }
 
   return (
@@ -33,7 +38,7 @@ function LoginPageClient({ defaultTermsOpen = false }: LoginPageClientProps) {
       <TermsAgreementModal
         open={termsOpen}
         onOpenChange={setTermsOpen}
-        onAgree={agreeTermsAction}
+        onAgree={() => agreeTermsAction(intent)}
       />
     </div>
   );

@@ -34,7 +34,7 @@ function CTASection({ className }: CTASectionProps) {
             3분 만에 사이트를 개설해보세요.
           </p>
           <Link
-            href="/login"
+            href="/login?intent=create"
             className="typo-button1 block w-fit rounded-md bg-[#00C8AA] px-400 py-300 text-white hover:bg-[#00877a]"
           >
             동아리 사이트 개설 시작하기

@@ -23,7 +23,11 @@ export function proxy(request: NextRequest) {
     return response;
   }
 
-  if (PUBLIC_PATHS.some((path) => pathname === path) || pathname.startsWith('/invite/')) {
+  if (
+    PUBLIC_PATHS.some((path) => pathname === path) ||
+    pathname.startsWith('/invite/') ||
+    pathname.startsWith('/kakao/')
+  ) {
     return NextResponse.next();
   }
 

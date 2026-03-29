@@ -35,7 +35,7 @@ export async function loginAction(formData: FormData) {
   redirect('/home');
 }
 
-export async function agreeTermsAction() {
+export async function agreeTermsAction(intent?: string) {
   const cookieStore = await cookies();
   const accessToken = cookieStore.get(ACCESS_TOKEN_KEY)?.value;
 
@@ -59,7 +59,7 @@ export async function agreeTermsAction() {
   cookieStore.set(ACCESS_TOKEN_KEY, newAccessToken, ACCESS_COOKIE_OPTIONS);
   cookieStore.set(REFRESH_TOKEN_KEY, refreshToken, REFRESH_COOKIE_OPTIONS);
 
-  redirect('/hub');
+  redirect(intent ? `/hub?intent=${intent}` : '/hub');
 }
 
 export async function logoutAction() {

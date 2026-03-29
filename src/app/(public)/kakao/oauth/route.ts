@@ -29,7 +29,10 @@ export async function GET(request: NextRequest) {
   const json = await response.json();
   const { accessToken, refreshToken, registered } = json.data;
 
-  const redirectUrl = registered ? '/hub' : '/login?terms=true';
+  const state = request.nextUrl.searchParams.get('state');
+  const redirectUrl = registered
+    ? `/hub${state ? `?intent=${state}` : ''}`
+    : `/login?terms=true${state ? `&intent=${state}` : ''}`;
   const redirectResponse = NextResponse.redirect(new URL(redirectUrl, origin));
 
   redirectResponse.cookies.set(ACCESS_TOKEN_KEY, accessToken, ACCESS_COOKIE_OPTIONS);

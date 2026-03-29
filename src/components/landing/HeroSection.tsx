@@ -123,7 +123,7 @@ function HeroSection({ className }: HeroSectionProps) {
           </motion.p>
           <motion.div variants={ctaVariants}>
             <Link
-              href="/signup"
+              href="/login?intent=create"
               className={cn(
                 buttonVariants({ variant: 'primary', size: 'lg' }),
                 'bg-[#00C8AA] text-white',
