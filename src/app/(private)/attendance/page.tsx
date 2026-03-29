@@ -11,7 +11,7 @@ function createMockAttendance(): AttendanceData {
     attendanceRate: 80,
     title: '1주차 정기모임',
     status: 'ATTEND',
-    code: '123456',
+    code: 123456,
     start: start.toISOString(),
     end: end.toISOString(),
     location: '공학관 401호',
