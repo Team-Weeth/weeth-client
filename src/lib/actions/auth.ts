@@ -2,7 +2,7 @@
 
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
-import { BASE_URL } from '@/constants';
+import { API_URL } from '@/constants';
 import {
   ACCESS_TOKEN_KEY,
   REFRESH_TOKEN_KEY,
@@ -14,7 +14,7 @@ export async function loginAction(formData: FormData) {
   const email = formData.get('email') as string;
   const password = formData.get('password') as string;
 
-  const response = await fetch(`${BASE_URL}/api/v4/users/login`, {
+  const response = await fetch(`${API_URL}/users/login`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ email, password }),
@@ -39,7 +39,7 @@ export async function agreeTermsAction() {
   const cookieStore = await cookies();
   const accessToken = cookieStore.get(ACCESS_TOKEN_KEY)?.value;
 
-  const response = await fetch(`${BASE_URL}/api/v4/users/terms`, {
+  const response = await fetch(`${API_URL}/users/terms`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
