@@ -1,4 +1,5 @@
 import { apiClient } from '@/lib/apis/client';
+import { API_BASE_PATH } from '@/constants/api';
 import type {
   HomeDashboardResponse,
   UnreadNotice,
@@ -12,29 +13,29 @@ import type { ApiResponse } from '@/types/common';
 
 export const homeApi = {
   getDashboard: (clubId: string) =>
-    apiClient.get<HomeDashboardResponse>(`/api/v4/clubs/${clubId}/dashboard/home`),
+    apiClient.get<HomeDashboardResponse>(`${API_BASE_PATH}/clubs/${clubId}/dashboard/home`),
 
   getUnreadNotice: (clubId: string) =>
     apiClient.get<ApiResponse<UnreadNotice | null>>(
-      `/api/v4/clubs/${clubId}/dashboard/unread-notice`,
+      `${API_BASE_PATH}/clubs/${clubId}/dashboard/unread-notice`,
     ),
 
   getRecentNotices: (clubId: string, params?: { size?: number }) =>
-    apiClient.get<ApiResponse<RecentNotice[]>>(`/api/v4/clubs/${clubId}/dashboard/recent-notices`, {
+    apiClient.get<ApiResponse<RecentNotice[]>>(`${API_BASE_PATH}/clubs/${clubId}/dashboard/recent-notices`, {
       params,
     }),
 
   getMonthlySchedules: (clubId: string) =>
     apiClient.get<ApiResponse<MonthlySchedule[]>>(
-      `/api/v4/clubs/${clubId}/dashboard/monthly-schedules`,
+      `${API_BASE_PATH}/clubs/${clubId}/dashboard/monthly-schedules`,
     ),
 
   getRecentPosts: (clubId: string, params?: { pageNumber?: number; pageSize?: number }) =>
     apiClient.get<ApiResponse<PageData<RecentPost>>>(
-      `/api/v4/clubs/${clubId}/dashboard/recent-posts`,
+      `${API_BASE_PATH}/clubs/${clubId}/dashboard/recent-posts`,
       { params },
     ),
 
   getProfileStatus: (clubId: string) =>
-    apiClient.get<ApiResponse<ProfileStatus>>(`/api/v4/clubs/${clubId}/members/me/profile-status`),
+    apiClient.get<ApiResponse<ProfileStatus>>(`${API_BASE_PATH}/clubs/${clubId}/members/me/profile-status`),
 };
