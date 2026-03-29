@@ -88,6 +88,14 @@ async function request<T>(
   }
 
   if (!response.ok) {
+    const errorBody = await response.text();
+    console.error('apiServer request failed:', {
+      method,
+      url,
+      status: response.status,
+      statusText: response.statusText,
+      responseBody: errorBody,
+    });
     throw new Error(`API Error: ${response.status} ${response.statusText}`);
   }
 

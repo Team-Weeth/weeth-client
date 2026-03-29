@@ -1,13 +1,19 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 import { useProgressAnimation } from '@/hooks';
 import { ProgressBar } from '@/components/ui';
 
 function ClubCreatingPage() {
   const router = useRouter();
-  const progress = useProgressAnimation({ duration: 5000 });
+  const searchParams = useSearchParams();
+  const intent = searchParams.get('intent');
+  const nextPath = intent === 'create' ? '/home' : '/hub/welcome';
+  const progress = useProgressAnimation({
+    duration: 5000,
+    onComplete: () => router.push(nextPath),
+  });
 
   return (
     <div className="flex min-h-screen items-center justify-center px-400">

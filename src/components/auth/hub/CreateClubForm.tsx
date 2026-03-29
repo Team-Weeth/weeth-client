@@ -1,12 +1,14 @@
 'use client';
 
+import { useState } from 'react';
+
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useRouter } from 'next/navigation';
 import { Controller, useForm, useWatch } from 'react-hook-form';
 
 import { ArrowDownIcon, TooltipIcon } from '@/assets/icons';
 import { Button, Icon, Input, Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui';
 import { cn } from '@/lib/cn';
+import { createClubAction } from '@/lib/actions/club';
 import { createClubSchema, type CreateClubFormData } from '@/lib/schemas/createClub';
 import { formatPhone } from '@/utils';
 
@@ -35,10 +37,14 @@ function CreateClubForm() {
   const school = useWatch({ control, name: 'school' });
   const contactType = useWatch({ control, name: 'contactType' });
 
-  const router = useRouter();
+  const [serverError, setServerError] = useState<string | null>(null);
 
-  function onSubmit(_data: CreateClubFormData) {
-    router.push('/hub/loading');
+  async function onSubmit(data: CreateClubFormData) {
+    console.log('createClub form submit:', data);
+    const result = await createClubAction(data);
+    if (result?.error) {
+      setServerError(result.error);
+    }
   }
 
   return (
@@ -67,9 +73,9 @@ function CreateClubForm() {
                 school ? 'text-text-normal' : 'text-text-alternative',
               )}
             >
-              <option value="" disabled>
-                학교
-              </option>
+              <option value="가천대학교">가천대학교</option>
+              <option value="서울대학교">서울대학교</option>
+              <option value="부산대학교">부산대학교</option>
             </select>
             <div className="text-icon-alternative pointer-events-none absolute top-1/2 right-300 -translate-y-1/2">
               <Icon src={ArrowDownIcon} size={12} alt="" className="text-text-normal" />
@@ -181,6 +187,8 @@ function CreateClubForm() {
             ))}
           </div>
         </FormFieldWrapper>
+
+        {serverError && <p className="typo-caption1 text-state-error text-center">{serverError}</p>}
 
         <Button
           type="submit"
