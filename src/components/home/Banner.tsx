@@ -1,6 +1,22 @@
+'use client';
+
 import Image from 'next/image';
-import MockBanner from '@/assets/image/mock-banner.png';
+import { useHomeQuery } from '@/hooks/home';
 
 export function Banner() {
-  return <Image src={MockBanner} alt="banner" width={1440} height={364} />;
+  const { data } = useHomeQuery();
+  const backgroundImageUrl = data?.club.backgroundImageUrl;
+
+  if (backgroundImageUrl) {
+    return <Image src={backgroundImageUrl} alt="banner" width={1440} height={364} />;
+  }
+
+  return (
+    <div
+      className="h-[364px] w-full"
+      style={{
+        background: `linear-gradient(30deg, rgba(30, 32, 33, 0) 0%, rgba(30, 32, 33, 0.8) 100%), var(--neutral-700)`,
+      }}
+    />
+  );
 }
