@@ -56,6 +56,7 @@
   --pink-900: #280526;
 
   --background: var(--neutral-200);
+  --background-2: var(--neutral-300);
   --foreground: var(--text-normal);
   --line: var(--neutral-400);
 
@@ -103,6 +104,8 @@
   --state-success: #2370f9;
   --state-caution: #ffb202;
   --state-error: #ff5857;
+
+  --kakao-bg: #fee500;
 
   --font-weight-medium: 500;
   --font-weight-semibold: 600;
@@ -156,6 +159,9 @@
   --radius: 0.625rem;
 
   --shadow-dialog: 0 10px 40px 0 rgba(0, 0, 0, 0.4);
+  --shadow-sm: 0 1px 5px 0 rgba(17, 33, 49, 0.15);
+  --shadow-lg: 0 10px 30px 0 rgba(17, 33, 49, 0.3);
+
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
@@ -297,6 +303,7 @@
   --font-inter: var(--font-inter), sans-serif;
 
   --color-background: var(--background);
+  --color-background-2: var(--background-2);
   --color-line: var(--line);
 
   --color-text-normal: var(--text-normal);

@@ -14,3 +14,4 @@ export type {
   RecentPost,
   PageData,
 } from './home';
+export type { Club } from './club';
