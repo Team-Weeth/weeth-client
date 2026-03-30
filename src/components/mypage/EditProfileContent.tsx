@@ -25,14 +25,9 @@ import { cn } from '@/lib/cn';
 import { FormField } from './FormField';
 import { SearchSelect } from './SearchSelect';
 import { MOCK_DEPARTMENTS, MOCK_UNIVERSITIES, MOCK_USER } from '@/constants/mock';
+import { formatPhone } from '@/utils';
 
 // TODO: API 연동 시 실제 데이터로 교체
-function formatPhone(value: string) {
-  const digits = value.replace(/\D/g, '').slice(0, 11);
-  if (digits.length <= 3) return digits;
-  if (digits.length <= 7) return `${digits.slice(0, 3)}-${digits.slice(3)}`;
-  return `${digits.slice(0, 3)}-${digits.slice(3, 7)}-${digits.slice(7)}`;
-}
 
 type EditProfileContentProps = React.HTMLAttributes<HTMLDivElement>;
 
