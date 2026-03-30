@@ -6,11 +6,12 @@ export interface FileItem {
   file: File;
   fileName: string;
   fileUrl: string;
+  storageKey: string;
   uploaded: boolean;
 }
 
 const initialState = {
-  board: '',
+  board: null as number | null,
   title: '',
   generationNumber: 0,
   part: '',
@@ -27,7 +28,7 @@ export type PostState = typeof initialState;
 export const usePostStore = create(
   devtools(
     combine(initialState, (set, get) => ({
-      setBoard: (board: string) => set({ board }, false, 'setBoard'),
+      setBoard: (board: number | null) => set({ board }, false, 'setBoard'),
       setTitle: (title: string) => set({ title }, false, 'setTitle'),
       setGenerationNumber: (generationNumber: number) =>
         set({ generationNumber }, false, 'setgenerationNumber'),
@@ -46,13 +47,17 @@ export const usePostStore = create(
       removeFile: (id: string) =>
         set((state) => ({ files: state.files.filter((f) => f.id !== id) }), false, 'removeFile'),
 
-      updateFileUrl: (id: string, fileUrl: string) =>
+      markUploaded: (id: string, storageKey: string, fileUrl: string) =>
         set(
           (state) => ({
-            files: state.files.map((f) => (f.id === id ? { ...f, fileUrl, uploaded: true } : f)),
+            files: state.files.map((f) => {
+              if (f.id !== id) return f;
+              if (f.fileUrl.startsWith('blob:')) URL.revokeObjectURL(f.fileUrl);
+              return { ...f, storageKey, fileUrl, uploaded: true };
+            }),
           }),
           false,
-          'updateFileUrl',
+          'markUploaded',
         ),
 
       setStatus: (status: 'DRAFT' | 'PUBLISHED') => set({ status }, false, 'setStatus'),
@@ -77,7 +82,7 @@ export const usePostStore = create(
           generationNumber: state.generationNumber,
           files: state.files
             .filter((f) => f.uploaded)
-            .map(({ fileName, fileUrl }) => ({ fileName, fileUrl })),
+            .map(({ storageKey }) => storageKey),
         };
       },
     })),
