@@ -4,7 +4,6 @@ import { useState } from 'react';
 import { Home } from 'lucide-react';
 import Link from 'next/link';
 
-import { Avatar, AvatarFallback, AvatarImage, Button, Input } from '@/components/ui';
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -12,8 +11,14 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
+  Icon,
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+  Button,
+  Input,
 } from '@/components/ui';
-import { Icon } from '@/components/ui';
+
 import { EditIcon } from '@/assets/icons';
 import { cn } from '@/lib/cn';
 
@@ -48,7 +53,6 @@ function EditProfileContent({ className, ...props }: EditProfileContentProps) {
     // TODO: API 연동
     console.log({ name, bio, phone, email, university, department, studentId });
   };
-
 
   return (
     <div

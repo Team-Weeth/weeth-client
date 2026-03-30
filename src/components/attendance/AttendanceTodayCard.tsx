@@ -1,12 +1,20 @@
 'use client';
 
 import Image from 'next/image';
+<<<<<<< HEAD
+=======
+import { useRouter } from 'next/navigation';
+>>>>>>> 55270ca518462724f147c59353b2be6794ced138
 import { useState } from 'react';
 
 import { CompleteIcon } from '@/assets/icons';
 import { Card } from '@/components/ui';
 import { AttendanceCodeModal } from '@/components/attendance/AttendanceCodeModal';
 import { AttendanceCompleteModal } from '@/components/attendance/AttendanceCompleteModal';
+<<<<<<< HEAD
+=======
+import { toastError } from '@/stores/useToastStore';
+>>>>>>> 55270ca518462724f147c59353b2be6794ced138
 
 interface AttendanceTodayCardProps {
   overline: string;
@@ -43,6 +51,10 @@ function AttendanceTodayCard({
   isChecked = false,
   onAttendanceComplete,
 }: AttendanceTodayCardProps) {
+<<<<<<< HEAD
+=======
+  const router = useRouter();
+>>>>>>> 55270ca518462724f147c59353b2be6794ced138
   const [codeModalOpen, setCodeModalOpen] = useState(false);
   const [completeModalOpen, setCompleteModalOpen] = useState(false);
 
@@ -61,8 +73,16 @@ function AttendanceTodayCard({
         showArrow={false}
         onPrimaryClick={isChecked ? () => setCompleteModalOpen(true) : () => setCodeModalOpen(true)}
         primaryButtonText={isChecked ? '출석 완료' : '출석하기'}
+<<<<<<< HEAD
         // TODO: 관리자 출석코드 확인 기능 별도 브랜치에서 구현 예정
         onSecondaryClick={isAdmin ? () => {} : undefined}
+=======
+        onSecondaryClick={
+          isAdmin
+            ? () => router.push('/attendance/qr')
+            : () => toastError('관리자만 사용할 수 있는 기능입니다.')
+        }
+>>>>>>> 55270ca518462724f147c59353b2be6794ced138
         secondaryButtonText="출석코드 확인"
       >
         {isChecked && <AttendanceCompleteBanner />}

@@ -1,9 +1,14 @@
 import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
+import { Toaster } from '@/components/ui';
 import { QueryProvider } from '@/providers';
 import { Inter } from 'next/font/google';
 import { ThemeProvider } from '@/providers/theme-provider';
 import { cn } from '@/lib/cn';
+<<<<<<< HEAD
+=======
+import { TooltipProvider } from '@/components/ui';
+>>>>>>> 55270ca518462724f147c59353b2be6794ced138
 import './globals.css';
 
 const inter = Inter({
@@ -36,7 +41,12 @@ export default function RootLayout({
       </head>
       <body className={cn(inter.variable, 'w-full antialiased')}>
         <QueryProvider>
-          <ThemeProvider>{children}</ThemeProvider>
+          <ThemeProvider>
+            <TooltipProvider>
+              {children}
+              <Toaster />
+            </TooltipProvider>
+          </ThemeProvider>
         </QueryProvider>
       </body>
     </html>
