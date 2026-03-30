@@ -9,7 +9,7 @@ async function handler(request: NextRequest, { params }: { params: Promise<{ pat
   }
 
   const { path } = await params;
-  const url = new URL(`/${path.join('/')}`, API_BASE_PATH);
+  const url = new URL(`${API_BASE_PATH}/${path.join('/')}`);
   url.search = request.nextUrl.search;
 
   const cookieStore = await cookies();
