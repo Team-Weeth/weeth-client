@@ -1,6 +1,6 @@
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
-import { API_URL } from '@/constants';
+import { API_BASE_PATH } from '@/constants/api';
 import {
   ACCESS_TOKEN_KEY,
   REFRESH_TOKEN_KEY,
@@ -13,7 +13,7 @@ interface RequestOptions extends Omit<RequestInit, 'method' | 'body'> {
 }
 
 function buildUrl(path: string, params?: Record<string, string | number>): string {
-  let url = `${API_URL}${path}`;
+  let url = `${API_BASE_PATH}${path}`;
   if (params) {
     const searchParams = new URLSearchParams();
     Object.entries(params).forEach(([key, value]) => {
@@ -31,7 +31,7 @@ async function refreshTokens(cookieStore: Awaited<ReturnType<typeof cookies>>): 
     redirect('/login');
   }
 
-  const refreshResponse = await fetch(`${API_URL}/users/refresh`, {
+  const refreshResponse = await fetch(`${API_BASE_PATH}/users/refresh`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

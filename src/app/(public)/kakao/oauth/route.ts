@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-import { API_URL } from '@/constants';
+import { API_BASE_PATH } from '@/constants/api';
 import {
   ACCESS_COOKIE_OPTIONS,
   ACCESS_TOKEN_KEY,
@@ -16,7 +16,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.redirect(new URL('/login', origin));
   }
 
-  const response = await fetch(`${API_URL}/users/social/kakao`, {
+  const response = await fetch(`${API_BASE_PATH}/users/social/kakao`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ authCode: code }),

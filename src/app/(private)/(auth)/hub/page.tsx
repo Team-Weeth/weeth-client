@@ -3,8 +3,12 @@ import { apiServer } from '@/lib/apis/server';
 
 type CardVariant = 'create' | 'join' | 'go';
 
-interface ClubsResponse {
-  data: { id: string }[];
+interface MembershipStatusResponse {
+  data: {
+    hasActiveClub: boolean;
+    hasWaitingClub: boolean;
+    activeClub: { id: string } | null;
+  };
 }
 
 export default async function HubPage({
@@ -20,9 +24,10 @@ export default async function HubPage({
   if (intent === 'create') {
     cardOrder = ['create', 'join', 'go'];
   } else {
-    const clubs = await apiServer.get<ClubsResponse>('/clubs').catch(() => null);
-    const firstClub = clubs?.data?.[0];
-    if (firstClub) {
+    const status = await apiServer
+      .get<MembershipStatusResponse>('/clubs/membership-status')
+      .catch(() => null);
+    if (status?.data?.hasActiveClub) {
       goHref = '/home';
       cardOrder = ['go', 'create', 'join'];
     } else {
