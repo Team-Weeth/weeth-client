@@ -11,7 +11,9 @@ function KakaoLoginButton({ className, onClick, ...props }: KakaoLoginButtonProp
   function handleKakaoLogin() {
     const clientId = process.env.NEXT_PUBLIC_KAKAO_CLIENT_ID;
     const redirectUri = process.env.NEXT_PUBLIC_KAKAO_REDIRECT_URI;
-    window.location.href = `https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=${clientId}&redirect_uri=${redirectUri}`;
+    const fullRedirectUri = `${window.location.origin}${redirectUri}`;
+
+    window.location.href = `https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=${clientId}&redirect_uri=${fullRedirectUri}`;
   }
 
   return (

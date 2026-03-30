@@ -21,7 +21,8 @@ function LoginPageClient({ defaultTermsOpen = false, intent }: LoginPageClientPr
     const redirectUri = process.env.NEXT_PUBLIC_KAKAO_REDIRECT_URI;
     const params = new URLSearchParams({ response_type: 'code' });
     if (clientId) params.set('client_id', clientId);
-    if (redirectUri) params.set('redirect_uri', redirectUri);
+    if (redirectUri)
+      params.set('redirect_uri', `${window.location.origin}${redirectUri}`);
     if (intent) params.set('state', intent);
     setIsLoading(true);
     window.location.href = `https://kauth.kakao.com/oauth/authorize?${params}`;
