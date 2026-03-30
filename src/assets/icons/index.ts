@@ -33,6 +33,8 @@ export { default as CopyIcon } from './copy.svg';
 export { default as ExitIcon } from './exit.svg';
 export { default as HomeIcon } from './home.svg';
 export { default as MoreHorizIcon } from './more-horiz.svg';
+export { default as CompleteIcon } from './complete.svg';
+
 export { default as AttendanceQRIcon } from './attendance/ic_attendance_qr.svg';
 export { default as InfoCircleIcon } from './info_circle.svg';
 export { default as CautionIcon } from './caution.svg';
