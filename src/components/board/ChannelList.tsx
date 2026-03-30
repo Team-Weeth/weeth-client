@@ -6,36 +6,34 @@ import { PinIcon } from '@/assets/icons';
 import { MegaphoneIcon } from '@/components/board/MegaphoneIcon';
 
 interface BoardNavItem {
-  id: string;
+  id: number | null;
   label: string;
-  type: 'notice' | 'channel';
+  type: 'NOTICE' | 'ALL' | 'GENERAL';
 }
 
 interface ChannelListProps extends React.ComponentProps<'ul'> {
   items: BoardNavItem[];
-  activeId: string;
-  onItemSelect?: (id: string) => void;
+  activeId: number | null;
+  onItemSelect?: (id: number | null) => void;
 }
 
 /**
  * BoardNav와 CategorySelector에서 공유하는 채널 목록 컴포넌트
  * notice/channel 타입에 따라 아이콘을 분기하고, 타입 경계에 Divider를 렌더링
+ * 정렬은 useBoardList의 select에서 처리됨 (매 렌더 정렬 방지)
  */
-const TYPE_ORDER: Record<BoardNavItem['type'], number> = { notice: 0, channel: 1 };
-
 function ChannelList({ className, items, activeId, onItemSelect, ...props }: ChannelListProps) {
-  const sortedItems = [...items].sort((a, b) => TYPE_ORDER[a.type] - TYPE_ORDER[b.type]);
 
   return (
     <ul className={cn('flex flex-col gap-200', className)} role="list" {...props}>
-      {sortedItems.map((item, index) => {
+      {items.map((item, index) => {
         const isActive = item.id === activeId;
-        const prevItem = sortedItems[index - 1];
-        // notice → channel 타입 전환 시 구분선 표시
-        const showDivider = prevItem && prevItem.type === 'notice' && item.type === 'channel';
+        const prevItem = items[index - 1];
+        // NOTICE/ALL → GENERAL 타입 전환 시 구분선 표시
+        const showDivider = prevItem && prevItem.type !== 'GENERAL' && item.type === 'GENERAL';
 
         return (
-          <li key={item.id} className="flex w-full flex-col gap-200">
+          <li key={item.id ?? item.type} className="flex w-full flex-col gap-200">
             {showDivider && <Divider className="my-100" />}
             <button
               type="button"
@@ -49,7 +47,7 @@ function ChannelList({ className, items, activeId, onItemSelect, ...props }: Cha
               aria-current={isActive ? 'page' : undefined}
               onClick={() => onItemSelect?.(item.id)}
             >
-              {item.type === 'notice' ? (
+              {item.type === 'NOTICE' ? (
                 <MegaphoneIcon
                   accentColor={isActive ? 'var(--color-text-strong)' : 'var(--color-brand-primary)'}
                 />

@@ -1,6 +1,6 @@
 import { cn } from '@/lib/cn';
 import { ImageList } from '@/components/board/ImageList';
-import type { FileItem } from '@/stores/usePostStore';
+import type { DisplayFile } from '@/types/board';
 import { PostAuthorInfo } from './PostAuthorInfo';
 import { PostCardContent } from './PostCardContent';
 import { PostCardActions, type PostCardActionsProps } from './PostCardActions';
@@ -29,7 +29,7 @@ function PostCardHeader({ className, children, ...props }: React.ComponentProps<
 
 interface PostCardImagesProps {
   className?: string;
-  files: FileItem[];
+  files: DisplayFile[];
 }
 
 function PostCardImages({ className, files }: PostCardImagesProps) {

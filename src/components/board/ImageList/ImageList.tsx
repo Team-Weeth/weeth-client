@@ -2,13 +2,13 @@
 
 import { cn } from '@/lib/cn';
 import { useDragScroll, useScrollOnGrow } from '@/hooks';
-import type { FileItem } from '@/stores/usePostStore';
+import type { DisplayFile } from '@/types/board';
 import { ImageCard } from './ImageCard';
 
 type ImageListProps = {
-  files: FileItem[];
+  files: DisplayFile[];
 } & (
-  | { removable: true; onRemove: (id: string, fileUrl: string) => void }
+  | { removable: true; onRemove: (id: string | number, fileUrl: string) => void }
   | { removable?: false; onRemove?: never }
 );
 

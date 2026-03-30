@@ -3,16 +3,16 @@
 import { DeleteIcon, DownloadIcon, FolderIcon } from '@/assets/icons';
 import { Icon } from '@/components/ui';
 import { cn } from '@/lib/cn';
-import type { FileItem } from '@/stores/usePostStore';
+import type { DisplayFile } from '@/types/board';
 
 type FileListProps = {
-  files: FileItem[];
+  files: DisplayFile[];
 } & (
-  | { editable: true; onRemove: (id: string, fileUrl: string) => void }
+  | { editable: true; onRemove: (id: string | number, fileUrl: string) => void }
   | { editable?: false; onRemove?: never }
 );
 
-function FileListItem({ item, showDownload = true }: { item: FileItem; showDownload?: boolean }) {
+function FileListItem({ item, showDownload = true }: { item: DisplayFile; showDownload?: boolean }) {
   return (
     <>
       <div className="flex items-center gap-200">
@@ -35,7 +35,7 @@ function FileList({ files, editable, onRemove }: FileListProps) {
     <div className="flex flex-col items-start gap-200">
       {files.map((item) =>
         editable ? (
-          <div key={item.id} className={cn(rowStyles, !item.uploaded && 'opacity-60')}>
+          <div key={item.id} className={cn(rowStyles, item.uploaded === false && 'opacity-60')}>
             <FileListItem item={item} showDownload={false} />
             <button
               type="button"
@@ -54,9 +54,9 @@ function FileList({ files, editable, onRemove }: FileListProps) {
             className={cn(
               rowStyles,
               'cursor-pointer',
-              !item.uploaded && 'pointer-events-none opacity-60',
+              item.uploaded === false && 'pointer-events-none opacity-60',
             )}
-            {...(!item.uploaded && { tabIndex: -1, 'aria-disabled': true })}
+            {...(item.uploaded === false && { tabIndex: -1, 'aria-disabled': true })}
           >
             <FileListItem item={item} />
           </a>

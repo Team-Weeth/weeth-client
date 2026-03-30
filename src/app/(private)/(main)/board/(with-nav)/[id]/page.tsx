@@ -7,5 +7,5 @@ interface PostDetailPageProps {
 export default async function PostDetailPage({ params }: PostDetailPageProps) {
   const { id } = await params;
 
-  return <PostDetailContent id={id} />;
+  return <PostDetailContent postId={Number(id)} />;
 }

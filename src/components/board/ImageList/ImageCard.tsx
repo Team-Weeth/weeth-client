@@ -3,7 +3,7 @@
 import { CloseCircleIcon } from '@/assets/icons';
 import { Icon } from '@/components/ui';
 import { cn } from '@/lib/cn';
-import type { FileItem } from '@/stores/usePostStore';
+import type { DisplayFile } from '@/types/board';
 
 function LoadingOverlay() {
   return (
@@ -19,10 +19,10 @@ function RemoveButton({
   fileUrl,
   onRemove,
 }: {
-  id: string;
+  id: string | number;
   fileName: string;
   fileUrl: string;
-  onRemove: (id: string, fileUrl: string) => void;
+  onRemove: (id: string | number, fileUrl: string) => void;
 }) {
   return (
     <button
@@ -37,25 +37,24 @@ function RemoveButton({
 }
 
 interface ImageCardProps {
-  item: FileItem;
+  item: DisplayFile;
   className?: string;
   imgClassName?: string;
   removable?: boolean;
-  onRemove?: (id: string, fileUrl: string) => void;
+  onRemove?: (id: string | number, fileUrl: string) => void;
 }
 
 function ImageCard({ item, className, imgClassName, removable, onRemove }: ImageCardProps) {
   return (
     <div className={cn('relative overflow-hidden rounded-sm', className)}>
-      {/* TODO: API 연결 후 blob URL → 실제 URL로 변경되면 next/image로 교체 */}
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         src={item.fileUrl}
         alt={item.fileName}
-        className={cn(imgClassName, !item.uploaded && 'opacity-50')}
+        className={cn(imgClassName, item.uploaded === false && 'opacity-50')}
         draggable={false}
       />
-      {!item.uploaded && <LoadingOverlay />}
+      {item.uploaded === false && <LoadingOverlay />}
       {removable && onRemove && (
         <RemoveButton
           id={item.id}
