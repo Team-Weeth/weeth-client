@@ -4,12 +4,17 @@ import { useState } from 'react';
 
 import Link from 'next/link';
 
+import dynamic from 'next/dynamic';
+
 import { cn } from '@/lib/cn';
 import { Avatar, AvatarFallback, AvatarImage, Button, Icon, Tag } from '@/components/ui';
 import { ExitIcon, PeopleIcon } from '@/assets/icons';
 import type { ClubDto } from '@/types/mypage';
 import { cardClass } from './InfoCard';
-import { SetCardinalModal } from './SetCardinalModal';
+
+const SetCardinalModal = dynamic(() =>
+  import('./SetCardinalModal').then((m) => ({ default: m.SetCardinalModal })),
+);
 
 interface ClubInfoCardProps extends React.HTMLAttributes<HTMLDivElement> {
   club: ClubDto;
