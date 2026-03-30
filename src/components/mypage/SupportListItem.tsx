@@ -1,8 +1,8 @@
 import Link from 'next/link';
 import { cn } from '@/lib/cn';
-import { Icon, Toast } from '@/components/ui';
+import { Icon } from '@/components/ui';
 import { ArrowRightIcon, CopyIcon } from '@/assets/icons';
-import { toast } from '@/stores/useToastStore';
+import { toastSuccess } from '@/stores/useToastStore';
 
 interface SupportListItemProps extends React.HTMLAttributes<HTMLButtonElement> {
   title: string;
@@ -25,12 +25,15 @@ function SupportListItem({
     <>
       <div className="flex w-full flex-col gap-100">
         <span className="typo-button1 text-text-strong">{title}</span>
-        {description && <p className="typo-body2 text-text-alternative">{description}</p>}
+        <div className="flex flex-row items-center gap-200">
+          {description && <p className="typo-body2 text-text-alternative">{description}</p>}
+          {variant === 'copy' && (
+            <Icon src={CopyIcon} size={16} className="text-icon-alternative" alt="복사버튼" />
+          )}
+        </div>
       </div>
       <span className="text-icon-alternative absolute top-3.75 right-300">
-        {variant === 'copy' ? (
-          <Icon src={CopyIcon} size={24} className="text-icon-normal" alt="복사버튼" />
-        ) : (
+        {variant === 'link' && (
           <Icon src={ArrowRightIcon} size={12} className="text-icon-normal" alt="페이지 이동버튼" />
         )}
       </span>
@@ -51,8 +54,10 @@ function SupportListItem({
   }
 
   const handleClick = () => {
-    if (copyText) navigator.clipboard.writeText(copyText);
-    <Toast>복사되었습니다!</Toast>;
+    if (copyText) {
+      navigator.clipboard.writeText(copyText);
+      toastSuccess('복사되었습니다!');
+    }
   };
 
   return (

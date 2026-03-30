@@ -28,10 +28,6 @@ function BreadcrumbList({ className, showHome = true, children, ...props }: Brea
         <>
           <BreadcrumbItem>
             <BreadcrumbLink asChild>
-<<<<<<< HEAD
-              <Link href="/" className="flex items-center">
-                <Icon src={HomeIcon} size={16} className="text-icon-alternative" aria-label="홈" />
-=======
               <Link href="/home" className="flex items-center">
                 <Icon
                   src={HomeIcon}
@@ -39,7 +35,6 @@ function BreadcrumbList({ className, showHome = true, children, ...props }: Brea
                   className="text-icon-alternative hover:text-icon-strong transition-colors"
                   aria-label="홈"
                 />
->>>>>>> 55270ca518462724f147c59353b2be6794ced138
               </Link>
             </BreadcrumbLink>
           </BreadcrumbItem>

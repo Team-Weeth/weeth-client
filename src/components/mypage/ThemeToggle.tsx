@@ -19,7 +19,7 @@ function ThemeToggle({ className, ...props }: ThemeToggleProps) {
   const setDark = useThemeStore((state) => state.setDark);
 
   const [mode, setMode] = useState<ThemeMode>(() => {
-    if (typeof window === 'undefined') return 'dark';
+    if (typeof window === 'undefined') return 'light';
     return useThemeStore.getState().isDark ? 'dark' : 'light';
   });
 
@@ -39,7 +39,7 @@ function ThemeToggle({ className, ...props }: ThemeToggleProps) {
   return (
     <div
       className={cn(
-        'flex w-full overflow-hidden rounded-md bg-container-neutral-interaction p-[2px]',
+        'bg-container-neutral-interaction flex w-full overflow-hidden rounded-md p-[2px]',
         className,
       )}
       {...props}
@@ -50,7 +50,7 @@ function ThemeToggle({ className, ...props }: ThemeToggleProps) {
           type="button"
           onClick={() => handleSelect(option.value)}
           className={cn(
-            'typo-caption1 relative h-[28px] flex-1 rounded-[10px] transition-colors focus-visible:outline-none',
+            'typo-caption1 relative h-[28px] flex-1 cursor-pointer rounded-[10px] transition-colors focus-visible:outline-none',
             mode === option.value
               ? 'bg-button-primary text-text-inverse shadow-sm'
               : 'text-text-alternative hover:text-text-normal',

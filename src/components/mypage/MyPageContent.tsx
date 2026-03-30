@@ -55,11 +55,10 @@ function MyPageContent({ className, ...props }: MyPageContentProps) {
                 { label: '이름', value: user.name },
                 { label: '소개글', value: user.introduction },
                 {
-                  label: '연락처',
+                  label: '전화번호',
                   value: user.phone?.replace(/(\d{3})(\d{4})(\d{4})/, '$1-$2-$3') ?? '-',
                 },
                 { label: '이메일', value: user.email },
-                { label: '이미지', value: user.image },
                 { label: '로그인 정보', value: user.loginInfo },
               ]}
             />

@@ -28,17 +28,11 @@ export { default as FolderPlusIcon } from './folder_plus.svg';
 export { default as SendIcon } from './send.svg';
 export { default as DownloadIcon } from './download.svg';
 export { default as FolderIcon } from './folder.svg';
-<<<<<<< HEAD
 
 export { default as CopyIcon } from './copy.svg';
 export { default as ExitIcon } from './exit.svg';
 export { default as HomeIcon } from './home.svg';
 export { default as MoreHorizIcon } from './more-horiz.svg';
-export { default as CompleteIcon } from './complete.svg';
-=======
-export { default as HomeIcon } from './home.svg';
-export { default as MoreHorizIcon } from './more-horiz.svg';
-export { default as CompleteIcon } from './complete.svg';
 export { default as AttendanceQRIcon } from './attendance/ic_attendance_qr.svg';
 export { default as InfoCircleIcon } from './info_circle.svg';
 export { default as CautionIcon } from './caution.svg';
@@ -49,4 +43,3 @@ export { default as HubCreateIcon } from './hub_create.svg';
 export { default as HubJoinIcon } from './hub_join.svg';
 export { default as HubGoIcon } from './hub_go.svg';
 export { default as TooltipIcon } from './tooltip.svg';
->>>>>>> 55270ca518462724f147c59353b2be6794ced138
