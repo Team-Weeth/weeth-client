@@ -1,6 +1,7 @@
 import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
 import { BASE_URL } from '@/constants';
+import { API_BASE_PATH } from '@/constants/api';
 import {
   ACCESS_TOKEN_KEY,
   REFRESH_TOKEN_KEY,
@@ -21,7 +22,7 @@ export async function POST() {
       return NextResponse.json({ error: 'No refresh token' }, { status: 401 });
     }
 
-    const response = await fetch(`${BASE_URL}/api/v4/users/refresh`, {
+    const response = await fetch(`${BASE_URL}${API_BASE_PATH}/users/refresh`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
