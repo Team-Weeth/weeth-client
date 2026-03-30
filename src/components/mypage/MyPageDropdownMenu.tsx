@@ -19,10 +19,6 @@ function MyPageDropdownMenu() {
   const [withdrawOpen, setWithdrawOpen] = useState(false);
   const [logoutOpen, setLogoutOpen] = useState(false);
 
-  const handleEditActivity = () => {
-    // TODO: 활동정보 수정 페이지 이동
-  };
-
   return (
     <>
       <DropdownMenu>
@@ -40,7 +36,6 @@ function MyPageDropdownMenu() {
             <Link href="/mypage/edit">개인정보 수정</Link>
           </DropdownMenuItem>
           <DropdownMenuSeparator />
-          <DropdownMenuItem onSelect={handleEditActivity}>활동정보 수정</DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem onSelect={() => setLogoutOpen(true)}>로그아웃</DropdownMenuItem>
           <DropdownMenuSeparator />
