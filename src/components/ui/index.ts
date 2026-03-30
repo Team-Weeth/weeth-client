@@ -103,3 +103,5 @@ export {
 export { ToastProvider, ToastViewport, Toast, toastVariants, type ToastProps } from './Toast';
 
 export { Toaster } from './Toaster';
+
+export { Skeleton, type SkeletonProps } from './Skeleton';

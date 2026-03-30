@@ -14,3 +14,6 @@ export { FileList, type FileListProps } from './FileList';
 export { ImageList, type ImageListProps } from './ImageList';
 export { TitleInput, type TitleInputProps } from './TitleInput';
 export { CategorySelector, type CategorySelectorProps } from './CategorySelector';
+export { BoardNavSkeleton } from './BoardNavSkeleton';
+export { BoardContentSkeleton } from './BoardContentSkeleton';
+export { PostDetailSkeleton } from './PostDetailSkeleton';
