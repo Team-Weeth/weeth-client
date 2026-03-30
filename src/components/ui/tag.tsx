@@ -8,6 +8,7 @@ const tagVariants = cva(
     variants: {
       variant: {
         notice: 'text-state-error bg-state-error/10',
+        primary: 'bg-brand-primary/10 text-brand-primary',
       },
     },
     defaultVariants: {
