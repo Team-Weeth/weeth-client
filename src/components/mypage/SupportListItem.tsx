@@ -4,7 +4,7 @@ import { Icon, Toast } from '@/components/ui';
 import { ArrowRightIcon, CopyIcon } from '@/assets/icons';
 import { toast } from '@/stores/useToastStore';
 
-interface SupportListItemProps extends React.HTMLAttributes<HTMLDivElement> {
+interface SupportListItemProps extends React.HTMLAttributes<HTMLButtonElement> {
   title: string;
   description?: string;
   variant?: 'link' | 'copy';
@@ -56,18 +56,9 @@ function SupportListItem({
   };
 
   return (
-    <div
-      role="button"
-      tabIndex={0}
-      onClick={handleClick}
-      onKeyDown={(e) => {
-        if (e.key === 'Enter' || e.key === ' ') handleClick();
-      }}
-      className={baseClass}
-      {...props}
-    >
+    <button type="button" onClick={handleClick} className={baseClass} {...props}>
       {content}
-    </div>
+    </button>
   );
 }
 

@@ -17,11 +17,10 @@ type ThemeToggleProps = React.HTMLAttributes<HTMLDivElement>;
 
 function ThemeToggle({ className, ...props }: ThemeToggleProps) {
   const setDark = useThemeStore((state) => state.setDark);
-  const isDark = useThemeStore((state) => state.isDark);
 
   const [mode, setMode] = useState<ThemeMode>(() => {
     if (typeof window === 'undefined') return 'dark';
-    return isDark ? 'dark' : 'light';
+    return useThemeStore.getState().isDark ? 'dark' : 'light';
   });
 
   const handleSelect = (value: ThemeMode) => {
@@ -51,10 +50,10 @@ function ThemeToggle({ className, ...props }: ThemeToggleProps) {
           type="button"
           onClick={() => handleSelect(option.value)}
           className={cn(
-            'typo-caption1 relative h-[28px] flex-1 rounded-[10px] transition-colors',
+            'typo-caption1 relative h-[28px] flex-1 rounded-[10px] transition-colors focus-visible:outline-none',
             mode === option.value
               ? 'bg-button-primary text-text-inverse shadow-sm'
-              : 'text-text-alternative',
+              : 'text-text-alternative hover:text-text-normal',
           )}
         >
           {option.label}
