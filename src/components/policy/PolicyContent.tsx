@@ -1,10 +1,6 @@
-import { Home } from 'lucide-react';
-import Link from 'next/link';
-
 import {
   Breadcrumb,
   BreadcrumbItem,
-  BreadcrumbLink,
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
@@ -28,14 +24,6 @@ function PolicyContent({ title, className, children }: PolicyContentProps) {
       {/* Breadcrumb */}
       <Breadcrumb>
         <BreadcrumbList>
-          <BreadcrumbItem>
-            <BreadcrumbLink asChild>
-              <Link href="/home">
-                <Home size={16} />
-              </Link>
-            </BreadcrumbLink>
-          </BreadcrumbItem>
-          <BreadcrumbSeparator />
           <BreadcrumbItem>
             <BreadcrumbPage className="typo-caption1 text-text-alternative">
               서비스 정책

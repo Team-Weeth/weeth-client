@@ -1,16 +1,6 @@
 'use client';
 
-import { Home } from 'lucide-react';
-import Link from 'next/link';
-
-import {
-  Breadcrumb,
-  BreadcrumbList,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from '@/components/ui';
+import { Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbPage } from '@/components/ui';
 import { cn } from '@/lib/cn';
 
 import { InfoCard } from './InfoCard';
@@ -40,14 +30,6 @@ function MyPageContent({ className, ...props }: MyPageContentProps) {
       <div className="flex w-full flex-col gap-200">
         <Breadcrumb>
           <BreadcrumbList>
-            <BreadcrumbItem>
-              <BreadcrumbLink asChild>
-                <Link href="/home">
-                  <Home size={16} />
-                </Link>
-              </BreadcrumbLink>
-            </BreadcrumbItem>
-            <BreadcrumbSeparator />
             <BreadcrumbItem>
               <BreadcrumbPage>My</BreadcrumbPage>
             </BreadcrumbItem>

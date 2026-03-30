@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { Home } from 'lucide-react';
 import Link from 'next/link';
 
 import {
@@ -61,14 +60,6 @@ function EditProfileContent({ className, ...props }: EditProfileContentProps) {
       <div className="flex w-full flex-col gap-200">
         <Breadcrumb>
           <BreadcrumbList>
-            <BreadcrumbItem>
-              <BreadcrumbLink asChild>
-                <Link href="/home">
-                  <Home size={16} />
-                </Link>
-              </BreadcrumbLink>
-            </BreadcrumbItem>
-            <BreadcrumbSeparator />
             <BreadcrumbItem>
               <BreadcrumbLink asChild>
                 <Link href="/mypage" className="typo-caption1 text-text-alternative">
