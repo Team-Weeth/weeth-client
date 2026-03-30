@@ -1,16 +1,18 @@
 'use client';
 
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 
 import { useProgressAnimation } from '@/hooks';
 import { useCreateClubDraftStore } from '@/stores';
 import { ProgressBar } from '@/components/ui';
 
-function ClubCreatingPage() {
+interface ClubCreatingPageProps {
+  intent?: string;
+}
+
+function ClubCreatingPage({ intent }: ClubCreatingPageProps) {
   const router = useRouter();
-  const searchParams = useSearchParams();
   const resetDraft = useCreateClubDraftStore((state) => state.reset);
-  const intent = searchParams.get('intent');
   const nextPath = intent === 'create' ? '/home' : '/hub/welcome';
   const progress = useProgressAnimation({
     duration: 5000,
