@@ -8,7 +8,10 @@ function StepIndicator({ current, total }: { current: number; total: number }) {
       {Array.from({ length: total }).map((_, i) => (
         <div
           key={i}
-          className={cn('h-1 flex-1 rounded-full', i < current ? 'bg-button-primary' : 'bg-button-neutral')}
+          className={cn(
+            'h-1 flex-1 rounded-full',
+            i < current ? 'bg-button-primary' : 'bg-button-neutral',
+          )}
         />
       ))}
     </div>

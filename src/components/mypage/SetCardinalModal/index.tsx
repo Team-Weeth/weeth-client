@@ -30,15 +30,8 @@ function SetCardinalModal({
   availableCardinals,
   onSave,
 }: SetCardinalModalProps) {
-  const {
-    step,
-    setStep,
-    selected,
-    handleOpenChange,
-    handleClose,
-    handleToggle,
-    handleSave,
-  } = useCardinalModal({ onOpenChange, onSave });
+  const { step, setStep, selected, handleOpenChange, handleClose, handleToggle, handleSave } =
+    useCardinalModal({ onOpenChange, onSave });
 
   const selectedArray = [...selected];
 
@@ -97,7 +90,13 @@ function SetCardinalModal({
         showCloseButton={false}
         className="bg-container-neutral-alternative border-line flex h-[481px] w-full max-w-[540px] flex-col gap-0 rounded-lg p-0"
       >
-        <ModalHeader step={step} total={3} overline={overline} title={title} onClose={handleClose} />
+        <ModalHeader
+          step={step}
+          total={3}
+          overline={overline}
+          title={title}
+          onClose={handleClose}
+        />
         {body}
         <ModalFooter {...footer} />
       </DialogContent>
