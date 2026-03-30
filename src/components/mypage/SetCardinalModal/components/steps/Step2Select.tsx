@@ -29,7 +29,7 @@ function Step2Select({ availableCardinals, selected, onToggle }: Step2SelectProp
             type="button"
             onClick={() => onToggle(cardinal)}
             className={cn(
-              'typo-button2 flex min-w-[40px] items-center justify-center rounded-[10px] px-400 py-200 transition-colors',
+              'typo-button2 flex min-w-[40px] cursor-pointer items-center justify-center rounded-[10px] px-400 py-200 transition-colors',
               selected.has(cardinal)
                 ? 'bg-button-primary text-text-inverse'
                 : 'border-line bg-button-neutral text-text-normal border',

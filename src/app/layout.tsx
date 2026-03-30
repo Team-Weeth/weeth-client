@@ -5,10 +5,7 @@ import { QueryProvider } from '@/providers';
 import { Inter } from 'next/font/google';
 import { ThemeProvider } from '@/providers/theme-provider';
 import { cn } from '@/lib/cn';
-<<<<<<< HEAD
-=======
 import { TooltipProvider } from '@/components/ui';
->>>>>>> 55270ca518462724f147c59353b2be6794ced138
 import './globals.css';
 
 const inter = Inter({

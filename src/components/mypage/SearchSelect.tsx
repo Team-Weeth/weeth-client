@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState } from 'react';
 import { cn } from '@/lib/cn';
 import { Input } from '@/components/ui';
 import { useClickOutside } from '@/hooks';
@@ -17,7 +17,7 @@ function SearchSelect({ value, onChange, options, placeholder, className }: Sear
   const [query, setQuery] = useState('');
   const [open, setOpen] = useState(false);
 
-  const close = useCallback(() => setOpen(false), []);
+  const close = () => setOpen(false);
   const ref = useClickOutside<HTMLDivElement>(close);
 
   const filtered = options.filter((o) => o.toLowerCase().includes(query.toLowerCase()));

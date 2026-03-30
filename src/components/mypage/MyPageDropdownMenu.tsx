@@ -50,6 +50,7 @@ function MyPageDropdownMenu() {
         </DropdownMenuContent>
       </DropdownMenu>
 
+      {/* TODO: "탈퇴하기"와 "로그아웃" 버튼에 onClick 핸들러 */}
       <AlertDialog
         open={withdrawOpen}
         onOpenChange={setWithdrawOpen}
