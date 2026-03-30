@@ -179,6 +179,8 @@ function CreateClubForm() {
           <Input
             {...register('email')}
             type="email"
+            name="email"
+            autoComplete="email"
             clearable
             spellCheck={false}
             className="rounded-lg px-400 py-300"
