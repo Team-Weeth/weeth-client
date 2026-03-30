@@ -21,9 +21,8 @@ export const COLUMNS: { label: string; key: keyof Member }[] = [
 
 export const STATUS_LEGEND = [
   { label: '활동중', color: 'bg-brand-primary' },
-  { label: '경고', color: 'bg-state-caution' },
-  { label: '강퇴', color: 'bg-state-error' },
-  { label: '탈퇴', color: 'bg-button-neutral' },
+  { label: '추방', color: 'bg-state-error' },
+  { label: '탈퇴', color: 'bg-text-alternative' },
 ] as const;
 
 export type SortBy = 'generation' | 'name';

@@ -125,7 +125,14 @@ function MemberPageContent() {
           if (!open) setDetailMember(null);
         }}
         member={detailMember}
-        onBan={detailMember ? () => banMember(detailMember.clubMemberId) : undefined}
+        onBan={
+          detailMember
+            ? () => {
+                setDetailMember({ ...detailMember, status: 'BANNED' });
+                banMember(detailMember.clubMemberId);
+              }
+            : undefined
+        }
         onRestore={
           detailMember
             ? () => {

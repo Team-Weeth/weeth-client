@@ -48,7 +48,7 @@ export function getTopBarActions({
     },
     allBanned
       ? {
-          label: '멤버 복구',
+          label: '유저 복구',
           title: `${selectedCount}명의 멤버를 복구하시겠습니까?`,
           handler: onRestore,
           disabled: !onRestore,

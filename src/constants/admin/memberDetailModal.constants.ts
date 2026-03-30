@@ -81,7 +81,7 @@ export function getFooterActions({
     //   handler: onResetPassword,
     // },
     isBanned
-      ? { label: '멤버 복구', title: '1명의 멤버를 복구하시겠습니까?', handler: onRestore }
+      ? { label: '유저 복구', title: '1명의 멤버를 복구하시겠습니까?', handler: onRestore }
       : { label: '유저 추방', title: '1명의 멤버를 추방하시겠습니까?', handler: onBan },
   ];
 }

@@ -76,7 +76,7 @@ export function useBanMember() {
   });
 }
 
-// 추방 멤버 복구
+// 추방 유저 복구
 export function useRestoreMember() {
   const queryClient = useQueryClient();
   const queryKey = ['admin', 'members', CLUB_ID];
