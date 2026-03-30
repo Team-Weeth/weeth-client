@@ -34,12 +34,13 @@ function SetCardinalModal({
     step,
     setStep,
     selected,
-    selectedArray,
     handleOpenChange,
     handleClose,
     handleToggle,
     handleSave,
   } = useCardinalModal({ onOpenChange, onSave });
+
+  const selectedArray = [...selected];
 
   const STEPS: StepConfig[] = [
     {

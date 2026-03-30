@@ -40,7 +40,6 @@ function useCardinalModal({ onOpenChange, onSave }: UseCardinalModalProps) {
     step,
     setStep,
     selected,
-    selectedArray: [...selected],
     handleOpenChange,
     handleClose,
     handleToggle,

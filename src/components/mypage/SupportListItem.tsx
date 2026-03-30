@@ -1,7 +1,8 @@
 import Link from 'next/link';
 import { cn } from '@/lib/cn';
-import { Icon } from '@/components/ui';
+import { Icon, Toast } from '@/components/ui';
 import { ArrowRightIcon, CopyIcon } from '@/assets/icons';
+import { toast } from '@/stores/useToastStore';
 
 interface SupportListItemProps extends React.HTMLAttributes<HTMLDivElement> {
   title: string;
@@ -50,9 +51,8 @@ function SupportListItem({
   }
 
   const handleClick = () => {
-    // TODO: 토스트 메세지로 복사 됐다고 알려주기
     if (copyText) navigator.clipboard.writeText(copyText);
-    alert('복사 되었습니다.');
+    <Toast>복사되었습니다!</Toast>;
   };
 
   return (
