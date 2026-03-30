@@ -90,7 +90,7 @@ function EditProfileContent({ className, ...props }: EditProfileContentProps) {
           <button
             type="button"
             aria-label="프로필 이미지 수정"
-            className="bg-button-neutral absolute right-0 bottom-0 flex size-[40px] cursor-pointer items-center justify-center rounded-sm"
+            className="bg-button-neutral hover:bg-button-neutral-interaction absolute right-0 bottom-0 flex size-[40px] cursor-pointer items-center justify-center rounded-sm transition-all duration-200 hover:scale-110"
           >
             <Icon src={EditIcon} size={24} className="text-icon-normal" alt="편집 아이콘" />
           </button>
@@ -133,6 +133,8 @@ function EditProfileContent({ className, ...props }: EditProfileContentProps) {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 type="email"
+                name="email"
+                autoComplete="email"
                 placeholder="이메일을 입력하세요"
                 className="rounded-lg"
               />
