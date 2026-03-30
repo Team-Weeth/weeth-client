@@ -1,6 +1,7 @@
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { BASE_URL } from '@/constants';
+import { API_BASE_PATH } from '@/constants/api';
 import {
   ACCESS_TOKEN_KEY,
   REFRESH_TOKEN_KEY,
@@ -31,7 +32,7 @@ async function refreshTokens(cookieStore: Awaited<ReturnType<typeof cookies>>): 
     redirect('/login');
   }
 
-  const refreshResponse = await fetch(`${BASE_URL}/api/v4/users/refresh`, {
+  const refreshResponse = await fetch(`${BASE_URL}${API_BASE_PATH}/users/refresh`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
