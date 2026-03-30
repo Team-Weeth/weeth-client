@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useMemo } from 'react';
 
 import Lottie from 'lottie-react';
 
@@ -45,24 +45,21 @@ interface LoadingProps {
 }
 
 function Loading({ className }: LoadingProps) {
-  const [animationData, setAnimationData] = useState<LottieData>(loadingData as LottieData);
-
-  useEffect(() => {
-    const hex = getComputedStyle(document.documentElement)
-      .getPropertyValue('--icon-normal')
-      .trim();
-    if (hex) {
-      setAnimationData(applyColor(loadingData as LottieData, hexToLottieColor(hex)));
+  const animationData = useMemo(() => {
+    if (typeof document === 'undefined') {
+      return loadingData as LottieData;
     }
+
+    const hex = getComputedStyle(document.documentElement).getPropertyValue('--icon-normal').trim();
+    if (!hex) {
+      return loadingData as LottieData;
+    }
+
+    return applyColor(loadingData as LottieData, hexToLottieColor(hex));
   }, []);
 
   return (
-    <Lottie
-      animationData={animationData}
-      loop
-      autoplay
-      className={cn('size-20', className)}
-    />
+    <Lottie animationData={animationData} loop autoplay className={cn('size-20', className)} />
   );
 }
 

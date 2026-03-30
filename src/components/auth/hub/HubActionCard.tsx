@@ -22,7 +22,14 @@ interface HubActionCardProps extends React.HTMLAttributes<HTMLDivElement> {
   isPrimary?: boolean;
 }
 
-function HubActionCard({ variant, href, onAction, isPrimary, className, ...props }: HubActionCardProps) {
+function HubActionCard({
+  variant,
+  href,
+  onAction,
+  isPrimary,
+  className,
+  ...props
+}: HubActionCardProps) {
   const config = HUB_ACTION_CONFIG[variant];
 
   const button = (

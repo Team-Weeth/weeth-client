@@ -46,7 +46,12 @@ export default async function HubPage({
       <HubProfile className="flex flex-col items-center gap-600" />
       <div className="flex w-full max-w-[520px] flex-col gap-300 px-400">
         {cardOrder.map((variant, index) => (
-          <HubActionCard key={variant} variant={variant} href={hrefMap[variant]} isPrimary={index === 0} />
+          <HubActionCard
+            key={variant}
+            variant={variant}
+            href={hrefMap[variant]}
+            isPrimary={index === 0}
+          />
         ))}
       </div>
     </div>
