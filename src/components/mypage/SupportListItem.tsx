@@ -41,7 +41,7 @@ function SupportListItem({
   );
 
   const baseClass = cn(
-    'bg-container-neutral relative flex w-full cursor-pointer flex-col items-start rounded-lg p-400',
+    'bg-container-neutral relative flex w-full cursor-pointer flex-col items-start rounded-lg p-400 text-left',
     className,
   );
 
