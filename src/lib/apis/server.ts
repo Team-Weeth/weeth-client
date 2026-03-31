@@ -12,6 +12,18 @@ interface RequestOptions extends Omit<RequestInit, 'method' | 'body'> {
   params?: Record<string, string | number>;
 }
 
+export class ApiError extends Error {
+  status: number;
+  code: number;
+
+  constructor(status: number, code: number, message: string) {
+    super(message);
+    this.name = 'ApiError';
+    this.status = status;
+    this.code = code;
+  }
+}
+
 function buildUrl(path: string, params?: Record<string, string | number>): string {
   let url = `${BASE_URL}${path}`;
   if (params) {
@@ -88,7 +100,16 @@ async function request<T>(
   }
 
   if (!response.ok) {
-    throw new Error(`API Error: ${response.status} ${response.statusText}`);
+    let code = 0;
+    let message = `API Error: ${response.status} ${response.statusText}`;
+    try {
+      const body = await response.json();
+      if (body.code) code = body.code;
+      if (body.message) message = body.message;
+    } catch {
+      // JSON 파싱 실패 시 기본 메시지 사용
+    }
+    throw new ApiError(response.status, code, `[${response.status}:${code}] ${message}`);
   }
 
   if (response.status === 204) {
