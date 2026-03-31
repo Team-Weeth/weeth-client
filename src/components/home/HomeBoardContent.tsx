@@ -2,15 +2,9 @@
 
 import Link from 'next/link';
 import { useRecentPostsQuery, useHomeQuery } from '@/hooks/home';
+import { formatMonthDay } from '@/lib/formatTime';
 import { fileAttachmentToFileItem } from '@/utils/shared/file';
 import { PostActionMenu, PostCard } from '../board';
-
-function formatPostDate(isoString: string): string {
-  const d = new Date(isoString);
-  const month = String(d.getMonth() + 1).padStart(2, '0');
-  const day = String(d.getDate()).padStart(2, '0');
-  return `${month}/${day}`;
-}
 
 function HomeBoardContent() {
   const { data: postsData } = useRecentPostsQuery();
@@ -18,7 +12,6 @@ function HomeBoardContent() {
   const { data: myUserId } = useHomeQuery({
     select: (data) => data.myInfo.userInfo.id,
   });
-
   const posts = postsData?.content ?? [];
 
   return (
@@ -37,7 +30,7 @@ function HomeBoardContent() {
                     ...post.author,
                     profileImageUrl: post.author.profileImageUrl ?? undefined,
                   }}
-                  date={formatPostDate(post.time)}
+                  date={formatMonthDay(post.time)}
                   dateTime={post.time}
                   hasAttachment={hasAttachment}
                 />
