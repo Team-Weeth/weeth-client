@@ -18,6 +18,10 @@ function isImageFile(file: File): boolean {
   return IMAGE_EXTENSIONS.test(file.name);
 }
 
+function isImageFileName(fileName: string): boolean {
+  return IMAGE_EXTENSIONS.test(fileName);
+}
+
 function getExtension(fileName: string): string {
   return fileName.split('.').pop()?.toLowerCase() ?? '';
 }
@@ -60,9 +64,13 @@ export function useFileUpload(ownerType: OwnerType = 'POST') {
       return;
     }
 
+    // fileName 기반 매칭 (인덱스 순서 의존 제거)
+    const remaining = [...presignedUrls];
     const results = await Promise.allSettled(
-      filesToUpload.map(async ({ id, file }, index) => {
-        const presigned = presignedUrls[index];
+      filesToUpload.map(async ({ id, file }) => {
+        const idx = remaining.findIndex((p) => p.fileName === file.name);
+        if (idx === -1) throw new Error(`No presigned URL for ${file.name}`);
+        const presigned = remaining.splice(idx, 1)[0];
         const res = await fetch(presigned.putUrl, {
           method: 'PUT',
           body: file,
@@ -108,8 +116,8 @@ export function useFileUpload(ownerType: OwnerType = 'POST') {
     const incomingImages = valid.filter((f) => isImageFile(f));
     const incomingNonImages = valid.filter((f) => !isImageFile(f));
 
-    const currentImageCount = files.filter((f) => f.file && isImageFile(f.file)).length;
-    const currentNonImageCount = files.filter((f) => f.file && !isImageFile(f.file)).length;
+    const currentImageCount = files.filter((f) => isImageFileName(f.fileName)).length;
+    const currentNonImageCount = files.filter((f) => !isImageFileName(f.fileName)).length;
 
     const imageSlots = MAX_IMAGE_FILES - currentImageCount;
     const nonImageSlots = MAX_NON_IMAGE_FILES - currentNonImageCount;
@@ -160,8 +168,8 @@ export function useFileUpload(ownerType: OwnerType = 'POST') {
     removeFile(id);
   };
 
-  const imageFiles = files.filter((f) => f.file && isImageFile(f.file));
-  const nonImageFiles = files.filter((f) => f.file && !isImageFile(f.file));
+  const imageFiles = files.filter((f) => isImageFileName(f.fileName));
+  const nonImageFiles = files.filter((f) => !isImageFileName(f.fileName));
 
   return {
     imageInputRef,
