@@ -1,5 +1,4 @@
 import {
-  FeatureIntroSection,
   ServiceSection,
   SetupGuideSection,
   TestimonialSection,
@@ -18,9 +17,6 @@ export default function LandingPage() {
       <main className="flex min-h-screen w-full flex-col overflow-x-clip">
         <HeroSection />
         <PhilosophySection />
-        <div className="[content-visibility:auto]">
-          <FeatureIntroSection />
-        </div>
         <div className="[content-visibility:auto]">
           <ServiceSection
             variant="user"
