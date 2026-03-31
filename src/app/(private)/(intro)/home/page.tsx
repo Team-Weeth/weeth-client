@@ -1,9 +1,9 @@
-import { HomePageSections } from '@/components/home/HomePageSections';
+import { HomePageEntry } from '@/components/home/HomePageEntry';
 
 export default function HomePage() {
   return (
     <div>
-      <HomePageSections />
+      <HomePageEntry />
     </div>
   );
 }
