@@ -3,14 +3,10 @@
 import dynamic from 'next/dynamic';
 import { TitleInput, CategorySelector } from '@/components/board';
 import { useBoardList } from '@/hooks';
+import { toBoardNavItem } from '@/lib/board';
 import { usePostStore } from '@/stores/usePostStore';
-import type { BoardNavItem } from '@/components/board';
 
 const Editor = dynamic(() => import('@/components/board/Editor'), { ssr: false });
-
-function toBoardNavItem(board: { id: number; name: string; type: 'ALL' | 'NOTICE' | 'GENERAL' }): BoardNavItem {
-  return { id: board.id, label: board.name, type: board.type };
-}
 
 export default function ClientEditor() {
   const { data: boards } = useBoardList();

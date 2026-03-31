@@ -93,6 +93,17 @@ export interface SlicePageable {
   paged: boolean;
 }
 
+/** mapComment 변환 결과 (UI 표시용) */
+export interface MappedComment {
+  id: number;
+  profileImage: string;
+  name: string;
+  content: string;
+  date: string;
+  isAuthor: boolean;
+  replies: MappedComment[];
+}
+
 export interface Slice<T> {
   size: number;
   content: T[];

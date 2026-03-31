@@ -142,9 +142,9 @@ export function useFileUpload(ownerType: OwnerType = 'POST') {
   const openImagePicker = () => imageInputRef.current?.click();
   const openFilePicker = () => fileInputRef.current?.click();
 
-  const handleRemoveFile = (id: string, fileUrl: string) => {
+  const handleRemoveFile = (id: string | number, fileUrl: string) => {
     if (fileUrl.startsWith('blob:')) URL.revokeObjectURL(fileUrl);
-    removeFile(id);
+    removeFile(String(id));
   };
 
   const imageFiles = files.filter((f) => isImageFile(f.file));
