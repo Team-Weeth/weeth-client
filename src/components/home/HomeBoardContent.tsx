@@ -2,19 +2,8 @@
 
 import Link from 'next/link';
 import { useRecentPostsQuery, useHomeQuery } from '@/hooks/home';
-import type { FileAttachment } from '@/types/home';
-import type { FileItem } from '@/stores/usePostStore';
+import { fileAttachmentToFileItem } from '@/utils/shared/file';
 import { PostActionMenu, PostCard } from '../board';
-
-function toFileItem(f: FileAttachment): FileItem {
-  return {
-    id: String(f.fileId),
-    file: new File([], f.fileName),
-    fileName: f.fileName,
-    fileUrl: f.fileUrl,
-    uploaded: true,
-  };
-}
 
 function formatPostDate(isoString: string): string {
   const d = new Date(isoString);
@@ -36,7 +25,7 @@ function HomeBoardContent() {
     <main className="flex min-w-0 flex-1 flex-col gap-400">
       {posts.map((post) => {
         const isMyPost = myUserId !== undefined && post.author.id === myUserId;
-        const images = post.fileUrls.map(toFileItem);
+        const images = post.fileUrls.map(fileAttachmentToFileItem);
         const hasAttachment = post.fileUrls.length > 0;
 
         return (
