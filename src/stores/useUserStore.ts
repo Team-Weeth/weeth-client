@@ -19,8 +19,7 @@ export const useUserStore = create(
         name: string;
         profileImageUrl: string | null;
         role: 'LEAD' | 'USER';
-      }) =>
-        set(user, false, 'setUser'),
+      }) => set(user, false, 'setUser'),
       reset: () => set(initialState, false, 'reset'),
     })),
     { name: 'UserStore' },
