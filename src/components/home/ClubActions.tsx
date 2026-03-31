@@ -3,9 +3,14 @@
 import Image from 'next/image';
 import { PeopleIcon, CopyIcon } from '@/assets/icons';
 import { Button, Divider, Icon } from '@/components/ui';
+import dynamic from 'next/dynamic';
 import { AlertBanner } from './AlertBanner';
-import { CardinalMissingModal } from './CardinalMissingModal';
-import { ProfileIncompleteModal } from './ProfileIncompleteModal';
+const CardinalMissingModal = dynamic(() =>
+  import('./CardinalMissingModal').then((m) => m.CardinalMissingModal),
+);
+const ProfileIncompleteModal = dynamic(() =>
+  import('./ProfileIncompleteModal').then((m) => m.ProfileIncompleteModal),
+);
 import { useWritePost } from '@/hooks/home/useWritePost';
 
 interface ClubActionsProps {
