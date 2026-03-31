@@ -4,12 +4,7 @@ import { cn } from '@/lib/cn';
 import { Divider, Icon } from '@/components/ui';
 import { PinIcon } from '@/assets/icons';
 import { MegaphoneIcon } from '@/components/board/MegaphoneIcon';
-
-interface BoardNavItem {
-  id: number | null;
-  label: string;
-  type: 'NOTICE' | 'ALL' | 'GENERAL';
-}
+import type { BoardNavItem } from '@/types/board';
 
 interface ChannelListProps extends React.ComponentProps<'ul'> {
   items: BoardNavItem[];

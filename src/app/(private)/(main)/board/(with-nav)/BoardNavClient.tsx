@@ -2,7 +2,7 @@
 
 import { BoardNav } from '@/components/board';
 import { useActiveBoardId, useSetActiveBoardId } from '@/stores/useBoardNavStore';
-import type { BoardNavItem } from '@/components/board';
+import type { BoardNavItem } from '@/types/board';
 
 interface BoardNavClientProps {
   items: BoardNavItem[];

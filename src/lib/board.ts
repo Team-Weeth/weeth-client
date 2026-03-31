@@ -1,6 +1,5 @@
 import { formatShortDateTime } from '@/lib/formatTime';
-import type { FileItem, DisplayFile, PostComment, MappedComment } from '@/types/board';
-import type { BoardNavItem } from '@/components/board';
+import type { FileItem, DisplayFile, PostComment, MappedComment, BoardNavItem } from '@/types/board';
 
 function toDisplayFile(file: FileItem): DisplayFile {
   return {

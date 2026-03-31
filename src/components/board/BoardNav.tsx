@@ -2,7 +2,7 @@
 
 import { cn } from '@/lib/cn';
 import { ChannelList } from '@/components/board/ChannelList';
-import type { BoardNavItem } from '@/components/board/ChannelList';
+import type { BoardNavItem } from '@/types/board';
 
 interface BoardNavProps extends React.ComponentProps<'nav'> {
   items: BoardNavItem[];

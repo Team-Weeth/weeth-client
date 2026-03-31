@@ -14,7 +14,7 @@ import {
   Icon,
 } from '@/components/ui';
 import { ChannelList } from '@/components/board/ChannelList';
-import type { BoardNavItem } from '@/components/board/ChannelList';
+import type { BoardNavItem } from '@/types/board';
 
 interface CategorySelectorProps {
   className?: string;

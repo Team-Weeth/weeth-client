@@ -1,3 +1,9 @@
+export interface BoardNavItem {
+  id: number | null;
+  label: string;
+  type: 'NOTICE' | 'ALL' | 'GENERAL';
+}
+
 export type BoardType = 'ALL' | 'NOTICE' | 'GENERAL';
 
 export interface Board {
