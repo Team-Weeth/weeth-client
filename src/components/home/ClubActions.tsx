@@ -4,6 +4,7 @@ import Image from 'next/image';
 import { PeopleIcon, CopyIcon } from '@/assets/icons';
 import { Button, Divider, Icon } from '@/components/ui';
 import dynamic from 'next/dynamic';
+import { copyTextToClipboard } from '@/utils/shared/clipboard';
 import { AlertBanner } from './AlertBanner';
 const CardinalMissingModal = dynamic(() =>
   import('./CardinalMissingModal').then((m) => m.CardinalMissingModal),
@@ -20,8 +21,15 @@ interface ClubActionsProps {
 }
 
 export function ClubActions({ memberCount, clubName, clubCode }: ClubActionsProps) {
-  const handleCopyInvite = () =>
-    navigator.clipboard.writeText(`${window.location.origin}/${clubName}/code?${clubCode}`);
+  const handleCopyInvite = () => {
+    if (!clubName || !clubCode) return;
+
+    return copyTextToClipboard(`${window.location.origin}/${clubName}/code?${clubCode}`, {
+      successMessage: '초대 링크가 복사되었습니다.',
+      errorMessage: '초대 링크 복사에 실패했습니다.',
+    });
+  };
+
   const {
     handleWriteClick,
     handleSkipProfile,
