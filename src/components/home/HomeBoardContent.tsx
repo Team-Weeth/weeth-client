@@ -26,9 +26,10 @@ function formatPostDate(isoString: string): string {
 function HomeBoardContent() {
   const { data: postsData } = useRecentPostsQuery();
   // TODO: 이건 나중에 로컬 스토리지에나 뭐에 저장해서 비교하는 걸로 바꿔야 할 듯
-  const { data: homeData } = useHomeQuery();
+  const { data: myUserId } = useHomeQuery({
+    select: (data) => data.myInfo.userInfo.id,
+  });
 
-  const myUserId = homeData?.myInfo.userInfo.id;
   const posts = postsData?.content ?? [];
 
   return (

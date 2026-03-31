@@ -4,8 +4,9 @@ import Image from 'next/image';
 import { useHomeQuery } from '@/hooks/home';
 
 export function Banner() {
-  const { data } = useHomeQuery();
-  const backgroundImageUrl = data?.club.backgroundImageUrl;
+  const { data: backgroundImageUrl } = useHomeQuery({
+    select: (data) => data.club.backgroundImageUrl,
+  });
 
   if (backgroundImageUrl) {
     return <Image src={backgroundImageUrl} alt="banner" width={1440} height={364} />;

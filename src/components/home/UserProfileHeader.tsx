@@ -4,8 +4,10 @@ import { useHomeQuery } from '@/hooks/home';
 import Image from 'next/image';
 
 export function UserProfileHeader() {
-  const { data } = useHomeQuery();
-  const { userInfo, bio } = data?.myInfo ?? {};
+  const { data: myInfo } = useHomeQuery({
+    select: (data) => data.myInfo,
+  });
+  const { userInfo, bio } = myInfo ?? {};
 
   return (
     <div className="flex items-center gap-4 px-200 py-300">

@@ -7,7 +7,13 @@ import { ClubProfileHeader } from './ClubProfileHeader';
 import { UserProfileHeader } from './UserProfileHeader';
 
 export function ClubInfoBox() {
-  const { data } = useHomeQuery();
+  const { data: clubInfo } = useHomeQuery({
+    select: (data) => ({
+      memberCount: data.club.memberCount,
+      name: data.club.name,
+      code: data.club.code,
+    }),
+  });
 
   return (
     <div className="bg-container-neutral flex w-full flex-col rounded-lg px-450 pt-[22px] pb-450">
@@ -24,9 +30,9 @@ export function ClubInfoBox() {
         </TabsContent>
       </Tabs>
       <ClubActions
-        memberCount={data?.club.memberCount}
-        clubName={data?.club.name}
-        clubCode={data?.club.code}
+        memberCount={clubInfo?.memberCount}
+        clubName={clubInfo?.name}
+        clubCode={clubInfo?.code}
       />
     </div>
   );
