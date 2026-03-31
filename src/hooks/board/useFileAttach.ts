@@ -52,12 +52,14 @@ export function useFileAttach() {
 
     const { data } = await fileApi.getPresignedUrls(ownerType, [file.file.name]);
     const presigned = data.data[0];
+    if (!presigned) throw new Error('Presigned URL을 받지 못했습니다');
 
-    await fetch(presigned.putUrl, {
+    const res = await fetch(presigned.putUrl, {
       method: 'PUT',
       body: file.file,
       headers: { 'Content-Type': file.file.type },
     });
+    if (!res.ok) throw new Error(`파일 업로드 실패 (${res.status})`);
 
     return presigned.storageKey;
   };

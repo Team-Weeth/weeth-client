@@ -1,71 +1,150 @@
-import { useRef, useState } from 'react';
+import { useRef } from 'react';
 import { useShallow } from 'zustand/react/shallow';
+import {
+  MAX_IMAGE_FILES,
+  MAX_NON_IMAGE_FILES,
+  MAX_FILE_SIZE,
+  ALLOWED_EXTENSIONS,
+} from '@/constants/board/file';
+import { fileApi } from '@/lib/apis/file';
+import type { OwnerType } from '@/lib/apis/file';
 import { usePostStore } from '@/stores/usePostStore';
-import type { FileItem } from '@/stores/usePostStore';
-import { MAX_FILES, MAX_FILE_SIZE } from '@/constants/board/file';
+import { toast } from '@/stores/useToastStore';
 
 const IMAGE_EXTENSIONS = /\.(jpe?g|png|gif|webp|svg|bmp|ico|avif)$/i;
 
-// 파일이 이미지인지 판별
 function isImageFile(file: File): boolean {
   if (file.type.startsWith('image/')) return true;
   return IMAGE_EXTENSIONS.test(file.name);
 }
 
-function hasFile(item: FileItem): item is FileItem & { file: File } {
-  return item.file instanceof File;
+function getExtension(fileName: string): string {
+  return fileName.split('.').pop()?.toLowerCase() ?? '';
+}
+
+function isAllowedExtension(fileName: string): boolean {
+  const ext = getExtension(fileName);
+  return (ALLOWED_EXTENSIONS as readonly string[]).includes(ext);
 }
 
 /**
  * 게시글 파일 첨부를 관리하는 훅
  *
+ * - 허용 확장자 검증 (png, jpg, jpeg, pdf, webp)
  * - 이미지/일반 파일 분류
- * - 파일 선택 input (picker) 제어
  * - 파일 크기 및 개수 제한 검증
- * - blob preview URL 생성 및 해제
+ * - presigned URL 요청 → S3 업로드 → storageKey 저장
  */
-
-export function useFileUpload() {
-  const { files, addFiles, removeFile } = usePostStore(
-    useShallow((s) => ({ files: s.files, addFiles: s.addFiles, removeFile: s.removeFile })),
+export function useFileUpload(ownerType: OwnerType = 'POST') {
+  const { files, addFiles, markUploaded, removeFile } = usePostStore(
+    useShallow((s) => ({
+      files: s.files,
+      addFiles: s.addFiles,
+      markUploaded: s.markUploaded,
+      removeFile: s.removeFile,
+    })),
   );
 
   const imageInputRef = useRef<HTMLInputElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  // TODO: toast 시스템 구축 후 setWarning 대신 toast 호출로 교체
-  const [warning, setWarning] = useState<string | null>(null);
 
-  const clearWarning = () => setWarning(null);
-
-  const processFiles = (incoming: File[]) => {
-    const warnings: string[] = [];
-
-    const oversized = incoming.filter((f) => f.size > MAX_FILE_SIZE);
-    if (oversized.length > 0) {
-      warnings.push(`${oversized.length}개 파일이 10MB를 초과하여 제외되었습니다.`);
+  const uploadToS3 = async (filesToUpload: { id: string; file: File }[]) => {
+    let presignedUrls;
+    try {
+      const fileNames = filesToUpload.map((f) => f.file.name);
+      const { data } = await fileApi.getPresignedUrls(ownerType, fileNames);
+      presignedUrls = data.data;
+    } catch {
+      toast({ title: '파일 업로드에 실패했습니다.', variant: 'error' });
+      filesToUpload.forEach(({ id }) => removeFile(id));
+      return;
     }
 
-    const valid = incoming.filter((f) => f.size <= MAX_FILE_SIZE);
-    const slots = MAX_FILES - files.length;
-
-    if (valid.length > slots) {
-      warnings.push(`최대 ${MAX_FILES}개까지 첨부할 수 있습니다. (${valid.length - slots}개 제외)`);
-    }
-
-    const toProcess = valid.slice(0, Math.max(0, slots));
-
-    // TODO: 실제 업로드 API 연동 후 uploaded를 false → true로 전환
-    addFiles(
-      toProcess.map((file) => ({
-        id: crypto.randomUUID(),
-        file,
-        fileName: file.name,
-        fileUrl: URL.createObjectURL(file),
-        uploaded: true,
-      })),
+    const results = await Promise.allSettled(
+      filesToUpload.map(async ({ id, file }, index) => {
+        const presigned = presignedUrls[index];
+        const res = await fetch(presigned.putUrl, {
+          method: 'PUT',
+          body: file,
+          headers: { 'Content-Type': file.type },
+        });
+        if (!res.ok) throw new Error(`Upload failed (${res.status})`);
+        const fileUrl = presigned.putUrl.split('?')[0];
+        markUploaded(id, presigned.storageKey, fileUrl);
+      }),
     );
 
-    setWarning(warnings.length > 0 ? warnings.join(' ') : null);
+    const failedIds = results
+      .map((r, i) => (r.status === 'rejected' ? filesToUpload[i].id : null))
+      .filter(Boolean) as string[];
+
+    if (failedIds.length > 0) {
+      failedIds.forEach((id) => removeFile(id));
+      toast({ title: `${failedIds.length}개 파일 업로드에 실패했습니다.`, variant: 'error' });
+    }
+  };
+
+  const processFiles = (incoming: File[]) => {
+    // 확장자 검증
+    const invalidExt = incoming.filter((f) => !isAllowedExtension(f.name));
+    if (invalidExt.length > 0) {
+      toast({
+        title: `허용되지 않는 파일 형식입니다. (${ALLOWED_EXTENSIONS.join(', ')})`,
+        variant: 'error',
+      });
+    }
+    const extValid = incoming.filter((f) => isAllowedExtension(f.name));
+
+    // 파일 크기 검증
+    const oversized = extValid.filter((f) => f.size > MAX_FILE_SIZE);
+    if (oversized.length > 0) {
+      toast({
+        title: `${oversized.length}개 파일이 10MB를 초과합니다.`,
+        variant: 'error',
+      });
+    }
+    const valid = extValid.filter((f) => f.size <= MAX_FILE_SIZE);
+
+    const incomingImages = valid.filter((f) => isImageFile(f));
+    const incomingNonImages = valid.filter((f) => !isImageFile(f));
+
+    const currentImageCount = files.filter((f) => f.file && isImageFile(f.file)).length;
+    const currentNonImageCount = files.filter((f) => f.file && !isImageFile(f.file)).length;
+
+    const imageSlots = MAX_IMAGE_FILES - currentImageCount;
+    const nonImageSlots = MAX_NON_IMAGE_FILES - currentNonImageCount;
+
+    if (incomingImages.length > imageSlots) {
+      toast({
+        title: `이미지는 최대 ${MAX_IMAGE_FILES}개까지 첨부할 수 있습니다.`,
+        variant: 'error',
+      });
+    }
+
+    if (incomingNonImages.length > nonImageSlots) {
+      toast({
+        title: `파일은 최대 ${MAX_NON_IMAGE_FILES}개까지 첨부할 수 있습니다.`,
+        variant: 'error',
+      });
+    }
+
+    const acceptedImages = incomingImages.slice(0, Math.max(0, imageSlots));
+    const acceptedNonImages = incomingNonImages.slice(0, Math.max(0, nonImageSlots));
+    const toProcess = [...acceptedImages, ...acceptedNonImages];
+
+    if (toProcess.length === 0) return;
+
+    const newFiles = toProcess.map((file) => ({
+      id: crypto.randomUUID(),
+      file,
+      fileName: file.name,
+      fileUrl: URL.createObjectURL(file),
+      storageKey: '',
+      uploaded: false,
+    }));
+
+    addFiles(newFiles);
+    uploadToS3(newFiles.map(({ id, file }) => ({ id, file })));
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -76,16 +155,13 @@ export function useFileUpload() {
   const openImagePicker = () => imageInputRef.current?.click();
   const openFilePicker = () => fileInputRef.current?.click();
 
-  // 파일 제거 시 blob URL 해제
   const handleRemoveFile = (id: string | number, fileUrl: string) => {
     if (fileUrl.startsWith('blob:')) URL.revokeObjectURL(fileUrl);
     removeFile(id);
   };
 
-  // 이미지 파일 / 일반 파일 분리 (UI 표시용)
-  const localFiles = files.filter(hasFile);
-  const imageFiles = localFiles.filter((f) => isImageFile(f.file));
-  const nonImageFiles = localFiles.filter((f) => !isImageFile(f.file));
+  const imageFiles = files.filter((f) => f.file && isImageFile(f.file));
+  const nonImageFiles = files.filter((f) => f.file && !isImageFile(f.file));
 
   return {
     imageInputRef,
@@ -99,10 +175,6 @@ export function useFileUpload() {
       imageFiles,
       nonImageFiles,
       handleRemoveFile,
-    },
-    warning: {
-      message: warning,
-      clear: clearWarning,
     },
     handlers: {
       handleInputChange,
