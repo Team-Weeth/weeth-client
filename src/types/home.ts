@@ -11,12 +11,14 @@ interface ClubInfo {
   backgroundImageUrl: string | null;
 }
 
-interface UserInfo {
+type UserSummary = {
   id: number;
   name: string;
   profileImageUrl: string | null;
   role: 'LEAD' | 'USER';
-}
+};
+
+type UserInfo = UserSummary;
 
 interface MyInfo {
   userInfo: UserInfo;
@@ -34,10 +36,7 @@ interface UnreadNotice {
   content: string;
 }
 
-interface RecentNotice {
-  id: number;
-  title: string;
-  content: string;
+interface RecentNotice extends UnreadNotice {
   time: string;
   isNew: boolean;
 }
@@ -60,12 +59,7 @@ interface FileAttachment {
   status: string;
 }
 
-interface PostAuthor {
-  id: number;
-  name: string;
-  profileImageUrl: string | null;
-  role: 'LEAD' | 'USER';
-}
+type PostAuthor = UserSummary;
 
 interface RecentPost {
   id: number;
@@ -116,6 +110,7 @@ type HomeDashboardResponse = ApiResponse<HomeDashboard>;
 
 export type {
   ClubInfo,
+  UserSummary,
   UserInfo,
   MyInfo,
   HomeDashboard,
