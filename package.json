@@ -50,7 +50,7 @@
     "@tiptap/extension-typography": "2.4.0",
     "@tiptap/pm": "2.4.0",
     "@tiptap/react": "2.4.0",
-    "axios": "^1.13.6",
+    "axios": "1.13.6",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "framer-motion": "^12.35.2",
