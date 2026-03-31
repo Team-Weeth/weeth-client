@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { combine, devtools } from 'zustand/middleware';
+import { useShallow } from 'zustand/react/shallow';
 
 const initialState = {
   id: null as number | null,
@@ -31,7 +32,9 @@ export const useUserName = () => useUserStore((store) => store.name);
 export const useUserProfileImageUrl = () => useUserStore((store) => store.profileImageUrl);
 export const useUserRole = () => useUserStore((store) => store.role);
 export const useUserActions = () =>
-  useUserStore((store) => ({
-    setUser: store.setUser,
-    reset: store.reset,
-  }));
+  useUserStore(
+    useShallow((store) => ({
+      setUser: store.setUser,
+      reset: store.reset,
+    })),
+  );
