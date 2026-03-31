@@ -5,10 +5,12 @@ import { useEffect, useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Controller, useForm, useWatch } from 'react-hook-form';
 
-import { ArrowDownIcon, TooltipIcon } from '@/assets/icons';
+import { TooltipIcon } from '@/assets/icons';
 import { Button, Icon, Input, Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui';
+import { SearchSelect } from '@/components/mypage';
 import { cn } from '@/lib/cn';
 import { createClubAction } from '@/lib/actions/club';
+import { universityApi } from '@/lib/apis/university';
 import { createClubSchema, type CreateClubFormData } from '@/lib/schemas/createClub';
 import { useCreateClubDraftStore } from '@/stores';
 import { formatPhone } from '@/utils/shared';
@@ -18,6 +20,14 @@ import { FieldError, FieldLabel, FormFieldWrapper } from './FormFieldWrapper';
 
 function CreateClubForm() {
   const [isCreating, setIsCreating] = useState(false);
+  const [schoolNames, setSchoolNames] = useState<string[]>([]);
+
+  useEffect(() => {
+    universityApi.getSchools().then((res) => {
+      setSchoolNames(res.data.data.map((s) => `${s.schoolName}(${s.region})`));
+    });
+  }, []);
+
   const schoolDraft = useCreateClubDraftStore((state) => state.school);
   const nameDraft = useCreateClubDraftStore((state) => state.name);
   const descriptionDraft = useCreateClubDraftStore((state) => state.description);
@@ -47,7 +57,6 @@ function CreateClubForm() {
     mode: 'onBlur',
   });
 
-  const school = useWatch({ control, name: 'school' });
   const contactType = useWatch({ control, name: 'contactType' });
 
   const [serverError, setServerError] = useState<string | null>(null);
@@ -95,26 +104,18 @@ function CreateClubForm() {
       <form className="flex flex-col gap-400" onSubmit={handleSubmit(onSubmit)}>
         {/* 소속 학교 */}
         <FormFieldWrapper label="소속 학교" error={errors.school?.message}>
-          <div className="relative">
-            <select
-              {...register('school')}
-              autoComplete="organization"
-              className={cn(
-                'bg-container-neutral typo-body2 w-full cursor-pointer appearance-none',
-                'rounded-lg border border-transparent px-300 py-200',
-                'focus:border-brand-primary focus:outline-none',
-                'transition-colors',
-                school ? 'text-text-normal' : 'text-text-alternative',
-              )}
-            >
-              <option value="가천대학교">가천대학교</option>
-              <option value="서울대학교">서울대학교</option>
-              <option value="부산대학교">부산대학교</option>
-            </select>
-            <div className="text-icon-alternative pointer-events-none absolute top-1/2 right-300 -translate-y-1/2">
-              <Icon src={ArrowDownIcon} size={12} alt="" className="text-text-normal" />
-            </div>
-          </div>
+          <Controller
+            name="school"
+            control={control}
+            render={({ field }) => (
+              <SearchSelect
+                value={field.value}
+                onChange={field.onChange}
+                options={schoolNames}
+                placeholder="학교명을 검색하세요"
+              />
+            )}
+          />
         </FormFieldWrapper>
 
         {/* 동아리 이름 */}

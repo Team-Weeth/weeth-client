@@ -6,7 +6,7 @@ import type { CreateClubFormData } from '@/lib/schemas/createClub';
 export async function createClubAction(data: CreateClubFormData) {
   const payload = {
     name: data.name,
-    schoolName: data.school,
+    schoolName: data.school.replace(/\(.*\)$/, ''),
     description: data.description,
     contactEmail: data.email || null,
     contactPhoneNumber: data.phone.replace(/-/g, ''),
