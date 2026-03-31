@@ -9,7 +9,7 @@ import {
   Divider,
   Icon,
 } from '@/components/ui';
-import { TERMS_DESCRIPTION, TERMS_ITEMS, type TermsItem } from '@/constants';
+import { TERMS_DESCRIPTION, TERMS_ITEMS, type TermsItem } from '@/constants/login';
 import { cn } from '@/lib/cn';
 
 interface TermsListViewProps {

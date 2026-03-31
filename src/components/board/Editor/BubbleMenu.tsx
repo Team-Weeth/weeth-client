@@ -10,7 +10,7 @@ import {
   HEADING_BUTTONS,
   BubbleMenuItem,
   BubbleActiveKey,
-} from '@/constants/bubbleMenu';
+} from '@/constants/board/bubbleMenu';
 
 const ICON_SIZE = 15;
 

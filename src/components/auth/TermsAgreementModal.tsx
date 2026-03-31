@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 
-import { TERMS_ITEMS } from '@/constants';
+import { TERMS_ITEMS } from '@/constants/login';
 
 import { TermsDetailView } from './TermsDetailView';
 import { TermsListView } from './TermsListView';

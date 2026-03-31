@@ -29,7 +29,6 @@ export { default as SendIcon } from './send.svg';
 export { default as DownloadIcon } from './download.svg';
 export { default as FolderIcon } from './folder.svg';
 
-export { default as CopyIcon } from './copy.svg';
 export { default as ExitIcon } from './exit.svg';
 export { default as HomeIcon } from './home.svg';
 export { default as MoreHorizIcon } from './more-horiz.svg';
@@ -45,3 +44,5 @@ export { default as HubCreateIcon } from './hub_create.svg';
 export { default as HubJoinIcon } from './hub_join.svg';
 export { default as HubGoIcon } from './hub_go.svg';
 export { default as TooltipIcon } from './tooltip.svg';
+export { default as CopyIcon } from './copy.svg';
+export { default as BasicAvatarIcon } from './basic_avatar.svg';

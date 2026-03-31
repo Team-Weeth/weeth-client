@@ -1,5 +1,6 @@
 import { Footer } from '@/components/layout';
-import { NoticeBoardBox, CalendarBox } from '@/components/home';
+import { NoticeBoardBox } from './NoticeBoardBox';
+import { CalendarBox } from './CalendarBox';
 
 export function RightContainer() {
   return (

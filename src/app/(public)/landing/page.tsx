@@ -9,7 +9,7 @@ import {
 } from '@/components/landing';
 import { HeroSection, PhilosophySection } from '@/components/landing/DynamicSections';
 import { PublicHeader } from '@/components/layout';
-import { USER_FEATURES, ADMIN_FEATURES } from '@/constants/landing';
+import { USER_FEATURES, ADMIN_FEATURES } from '@/constants/landing/landing';
 
 export default function LandingPage() {
   return (

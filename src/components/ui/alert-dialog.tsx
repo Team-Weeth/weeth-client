@@ -204,7 +204,7 @@ function AlertDialogDescription({
   return (
     <AlertDialogPrimitive.Description
       data-slot="alert-dialog-description"
-      className={cn('typo-body2 text-text-alternative mb-500', className)}
+      className={cn('typo-body2 text-text-alternative mb-1', className)}
       {...props}
     />
   );

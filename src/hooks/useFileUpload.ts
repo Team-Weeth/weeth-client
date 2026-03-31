@@ -1,7 +1,8 @@
 import { useRef, useState } from 'react';
 import { useShallow } from 'zustand/react/shallow';
 import { usePostStore } from '@/stores/usePostStore';
-import { MAX_FILES, MAX_FILE_SIZE } from '@/constants/file';
+import type { FileItem } from '@/stores/usePostStore';
+import { MAX_FILES, MAX_FILE_SIZE } from '@/constants/board/file';
 
 const IMAGE_EXTENSIONS = /\.(jpe?g|png|gif|webp|svg|bmp|ico|avif)$/i;
 
@@ -9,6 +10,10 @@ const IMAGE_EXTENSIONS = /\.(jpe?g|png|gif|webp|svg|bmp|ico|avif)$/i;
 function isImageFile(file: File): boolean {
   if (file.type.startsWith('image/')) return true;
   return IMAGE_EXTENSIONS.test(file.name);
+}
+
+function hasFile(item: FileItem): item is FileItem & { file: File } {
+  return item.file instanceof File;
 }
 
 /**
@@ -78,8 +83,9 @@ export function useFileUpload() {
   };
 
   // 이미지 파일 / 일반 파일 분리 (UI 표시용)
-  const imageFiles = files.filter((f) => isImageFile(f.file));
-  const nonImageFiles = files.filter((f) => !isImageFile(f.file));
+  const localFiles = files.filter(hasFile);
+  const imageFiles = localFiles.filter((f) => isImageFile(f.file));
+  const nonImageFiles = localFiles.filter((f) => !isImageFile(f.file));
 
   return {
     imageInputRef,
