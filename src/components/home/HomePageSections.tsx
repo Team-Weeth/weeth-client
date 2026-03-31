@@ -1,6 +1,6 @@
 'use client';
 
-import { Suspense } from 'react';
+import { Suspense, useEffect } from 'react';
 import {
   BannerSkeleton,
   LeftContainerSkeleton,
@@ -13,9 +13,21 @@ import {
   MainContainer,
   RightContainer,
 } from '@/components/home/DynamicSections';
+import { useHomeQuery } from '@/hooks/home';
 import { Header } from '@/components/layout';
+import { useUserActions } from '@/stores';
 
 export function HomePageSections() {
+  const { setUser } = useUserActions();
+  const { data: myUserInfo } = useHomeQuery({
+    select: (data) => data.myInfo.userInfo,
+  });
+
+  useEffect(() => {
+    if (!myUserInfo) return;
+    setUser(myUserInfo);
+  }, [myUserInfo, setUser]);
+
   return (
     <>
       <Suspense fallback={<BannerSkeleton />}>
