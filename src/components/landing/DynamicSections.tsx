@@ -11,3 +11,21 @@ export const PhilosophySection = dynamic(() =>
     default: m.PhilosophySection,
   })),
 );
+
+export const ServiceSection = dynamic(() =>
+  import('@/components/landing/ServiceSection').then((m) => ({
+    default: m.ServiceSection,
+  })),
+);
+
+export const SetupGuideSection = dynamic(() =>
+  import('@/components/landing/SetupGuideSection').then((m) => ({
+    default: m.SetupGuideSection,
+  })),
+);
+
+export const CTASection = dynamic(() =>
+  import('@/components/landing/CTASection').then((m) => ({
+    default: m.CTASection,
+  })),
+);

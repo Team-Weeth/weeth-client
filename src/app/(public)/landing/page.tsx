@@ -1,13 +1,11 @@
+import { TestimonialSection, ClubTypesSection, LandingFooter } from '@/components/landing';
 import {
-  FeatureIntroSection,
+  HeroSection,
+  PhilosophySection,
   ServiceSection,
   SetupGuideSection,
-  TestimonialSection,
-  ClubTypesSection,
   CTASection,
-  LandingFooter,
-} from '@/components/landing';
-import { HeroSection, PhilosophySection } from '@/components/landing/DynamicSections';
+} from '@/components/landing/DynamicSections';
 import { PublicHeader } from '@/components/layout';
 import { USER_FEATURES, ADMIN_FEATURES } from '@/constants/landing/landing';
 
@@ -18,9 +16,6 @@ export default function LandingPage() {
       <main className="flex min-h-screen w-full flex-col overflow-x-clip">
         <HeroSection />
         <PhilosophySection />
-        <div className="[content-visibility:auto]">
-          <FeatureIntroSection />
-        </div>
         <div className="[content-visibility:auto]">
           <ServiceSection
             variant="user"

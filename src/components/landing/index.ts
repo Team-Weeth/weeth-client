@@ -1,6 +1,5 @@
 export { HeroSection } from './HeroSection';
 export { PhilosophySection } from './PhilosophySection';
-export { FeatureIntroSection } from './FeatureIntroSection';
 export { ServiceSection } from './ServiceSection';
 export type { Feature } from './ServiceSection';
 export { SetupGuideSection } from './SetupGuideSection';
