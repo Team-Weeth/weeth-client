@@ -127,15 +127,18 @@ function DialogHeader({
       {...props}
     >
       <div className="flex flex-col">
-        {overline && <p className="typo-caption1 text-text-alternative mb-200">{overline}</p>}
-        {title ? (
-          <DialogPrimitive.Title asChild>
-            <h2 className="typo-sub1 text-text-strong mb-200">{title}</h2>
-          </DialogPrimitive.Title>
-        ) : (
-          <DialogPrimitive.Title className="sr-only">Dialog</DialogPrimitive.Title>
-        )}
-        {description && <p className="typo-body2 text-text-alternative">{description}</p>}
+        {icon && <div className="mb-300">{icon}</div>}
+        <div className="flex flex-col gap-200">
+          {overline && <p className="typo-caption1 text-text-alternative">{overline}</p>}
+          {title ? (
+            <DialogPrimitive.Title asChild>
+              <h2 className="typo-sub1 text-text-strong">{title}</h2>
+            </DialogPrimitive.Title>
+          ) : (
+            <DialogPrimitive.Title className="sr-only">Dialog</DialogPrimitive.Title>
+          )}
+          {description && <p className="typo-body2 text-text-alternative">{description}</p>}
+        </div>
       </div>
       {closeButton}
     </div>
