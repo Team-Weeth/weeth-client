@@ -9,6 +9,6 @@ export function useAttendanceQuery() {
     queryKey: ['attendance', clubId],
     queryFn: () => attendanceApi.getAttendance(clubId!).then((res) => res.data.data),
     enabled: !!clubId,
-    staleTime: 0, // 출석 상태는 실시간 반영?
+    staleTime: Infinity, // 출석 제출 mutation에서 invalidate해 갱신
   });
 }
