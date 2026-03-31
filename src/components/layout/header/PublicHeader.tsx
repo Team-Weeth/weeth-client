@@ -7,7 +7,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { LogoIcon } from '@/assets/icons';
 import { buttonVariants } from '@/components/ui';
 import { cn } from '@/lib/cn';
-import { NAV_ITEMS } from '@/constants/landing';
+import { NAV_ITEMS } from '@/constants/landing/landing';
 
 interface PublicHeaderProps {
   className?: string;

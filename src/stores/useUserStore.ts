@@ -1,0 +1,39 @@
+import { create } from 'zustand';
+import { combine, devtools } from 'zustand/middleware';
+import { useShallow } from 'zustand/react/shallow';
+
+const initialState = {
+  id: null as number | null,
+  name: null as string | null,
+  profileImageUrl: null as string | null,
+  role: null as 'LEAD' | 'USER' | null,
+};
+
+export type UserState = typeof initialState;
+
+export const useUserStore = create(
+  devtools(
+    combine(initialState, (set) => ({
+      setUser: (user: {
+        id: number;
+        name: string;
+        profileImageUrl: string | null;
+        role: 'LEAD' | 'USER';
+      }) => set(user, false, 'setUser'),
+      reset: () => set(initialState, false, 'reset'),
+    })),
+    { name: 'UserStore' },
+  ),
+);
+
+export const useUserId = () => useUserStore((store) => store.id);
+export const useUserName = () => useUserStore((store) => store.name);
+export const useUserProfileImageUrl = () => useUserStore((store) => store.profileImageUrl);
+export const useUserRole = () => useUserStore((store) => store.role);
+export const useUserActions = () =>
+  useUserStore(
+    useShallow((store) => ({
+      setUser: store.setUser,
+      reset: store.reset,
+    })),
+  );

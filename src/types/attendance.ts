@@ -4,12 +4,12 @@ type AttendanceStatus = 'ATTEND' | 'ABSENT' | 'PENDING';
 
 interface AttendanceData {
   attendanceRate: number;
-  title: string;
-  status: AttendanceStatus;
-  code: string;
-  start: string;
-  end: string;
-  location: string;
+  title: string | null;
+  status: AttendanceStatus | null;
+  code: number | null;
+  start: string | null;
+  end: string | null;
+  location: string | null;
 }
 
 type AttendanceResponse = ApiResponse<AttendanceData>;

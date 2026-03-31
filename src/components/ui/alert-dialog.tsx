@@ -75,31 +75,29 @@ function AlertDialog({
   return (
     <AlertDialogContext.Provider value={{ status: resolvedStatus }}>
       <AlertDialogPrimitive.Root data-slot="alert-dialog" {...props}>
-        {trigger != null ? (
-          <>
-            <AlertDialogTrigger asChild>{trigger}</AlertDialogTrigger>
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>
-                  {resolvedTitle.split('\n').map((line, i, arr) => (
-                    <React.Fragment key={i}>
-                      {line}
-                      {i < arr.length - 1 && <br />}
-                    </React.Fragment>
-                  ))}
-                </AlertDialogTitle>
-                <AlertDialogDescription>
-                  {resolvedDescription.split('\n').map((line, i, arr) => (
-                    <React.Fragment key={i}>
-                      {line}
-                      {i < arr.length - 1 && <br />}
-                    </React.Fragment>
-                  ))}
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>{children}</AlertDialogFooter>
-            </AlertDialogContent>
-          </>
+        {trigger != null && <AlertDialogTrigger asChild>{trigger}</AlertDialogTrigger>}
+        {trigger != null || title != null || description != null ? (
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>
+                {resolvedTitle.split('\n').map((line, i, arr) => (
+                  <React.Fragment key={i}>
+                    {line}
+                    {i < arr.length - 1 && <br />}
+                  </React.Fragment>
+                ))}
+              </AlertDialogTitle>
+              <AlertDialogDescription>
+                {resolvedDescription.split('\n').map((line, i, arr) => (
+                  <React.Fragment key={i}>
+                    {line}
+                    {i < arr.length - 1 && <br />}
+                  </React.Fragment>
+                ))}
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>{children}</AlertDialogFooter>
+          </AlertDialogContent>
         ) : (
           children
         )}
@@ -206,7 +204,7 @@ function AlertDialogDescription({
   return (
     <AlertDialogPrimitive.Description
       data-slot="alert-dialog-description"
-      className={cn('typo-body2 text-text-alternative mb-500', className)}
+      className={cn('typo-body2 text-text-alternative mb-1', className)}
       {...props}
     />
   );

@@ -8,7 +8,7 @@ import { ArrowDownIcon, TooltipIcon } from '@/assets/icons';
 import { Button, Icon, Input, Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui';
 import { cn } from '@/lib/cn';
 import { createClubSchema, type CreateClubFormData } from '@/lib/schemas/createClub';
-import { formatPhone } from '@/utils';
+import { formatPhone } from '@/utils/shared';
 
 import { FieldError, FieldLabel, FormFieldWrapper } from './FormFieldWrapper';
 
@@ -146,6 +146,8 @@ function CreateClubForm() {
           <Input
             {...register('email')}
             type="email"
+            name="email"
+            autoComplete="email"
             clearable
             spellCheck={false}
             className="rounded-lg px-400 py-300"

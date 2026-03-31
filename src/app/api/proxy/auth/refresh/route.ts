@@ -1,6 +1,6 @@
 import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
-import { BASE_URL } from '@/constants';
+import { BASE_URL } from '@/constants/api';
 import {
   ACCESS_TOKEN_KEY,
   REFRESH_TOKEN_KEY,

@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import { cn } from '@/lib/cn';
-import { CLUB_TYPES } from '@/constants/landing';
+import { CLUB_TYPES } from '@/constants/landing/landing';
 
 interface ClubTypesSectionProps {
   className?: string;
