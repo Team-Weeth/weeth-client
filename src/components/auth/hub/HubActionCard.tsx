@@ -12,7 +12,7 @@ import {
   ItemMedia,
   ItemTitle,
 } from '@/components/ui';
-import { HUB_ACTION_CONFIG } from '@/constants/hub';
+import { HUB_ACTION_CONFIG } from '@/constants/login/hub';
 import { cn } from '@/lib/cn';
 
 interface HubActionCardProps extends React.HTMLAttributes<HTMLDivElement> {

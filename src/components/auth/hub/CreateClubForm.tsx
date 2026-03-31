@@ -11,7 +11,7 @@ import { cn } from '@/lib/cn';
 import { createClubAction } from '@/lib/actions/club';
 import { createClubSchema, type CreateClubFormData } from '@/lib/schemas/createClub';
 import { useCreateClubDraftStore } from '@/stores';
-import { formatPhone } from '@/utils';
+import { formatPhone } from '@/utils/shared';
 
 import { FieldError, FieldLabel, FormFieldWrapper } from './FormFieldWrapper';
 

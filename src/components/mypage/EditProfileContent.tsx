@@ -24,7 +24,7 @@ import { cn } from '@/lib/cn';
 import { FormField } from './FormField';
 import { SearchSelect } from './SearchSelect';
 import { MOCK_DEPARTMENTS, MOCK_UNIVERSITIES, MOCK_USER } from '@/constants/mock';
-import { formatPhone } from '@/utils';
+import { formatPhone } from '@/utils/shared';
 
 // TODO: API 연동 시 실제 데이터로 교체
 
