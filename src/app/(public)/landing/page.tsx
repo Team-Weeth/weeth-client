@@ -1,12 +1,11 @@
+import { TestimonialSection, ClubTypesSection, LandingFooter } from '@/components/landing';
 import {
+  HeroSection,
+  PhilosophySection,
   ServiceSection,
   SetupGuideSection,
-  TestimonialSection,
-  ClubTypesSection,
   CTASection,
-  LandingFooter,
-} from '@/components/landing';
-import { HeroSection, PhilosophySection } from '@/components/landing/DynamicSections';
+} from '@/components/landing/DynamicSections';
 import { PublicHeader } from '@/components/layout';
 import { USER_FEATURES, ADMIN_FEATURES } from '@/constants/landing';
 
