@@ -1,6 +1,6 @@
 import { useRef, useState, useEffect } from 'react';
 import { fileApi, type OwnerType } from '@/lib/apis/file';
-import type { FileItem } from '@/stores/usePostStore';
+import type { UploadFileItem } from '@/stores/usePostStore';
 
 /**
  * 단일 파일 첨부를 관리하는 훅
@@ -13,7 +13,7 @@ import type { FileItem } from '@/stores/usePostStore';
  */
 export function useFileAttach() {
   const inputRef = useRef<HTMLInputElement>(null);
-  const [file, setFile] = useState<FileItem | null>(null);
+  const [file, setFile] = useState<UploadFileItem | null>(null);
 
   useEffect(() => {
     return () => {

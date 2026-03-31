@@ -6,12 +6,12 @@ import { FileList } from '@/components/board/FileList';
 import { Button, Icon, Textarea } from '@/components/ui';
 import { useFileAttach } from '@/hooks';
 import { cn } from '@/lib/cn';
-import type { FileItem } from '@/stores/usePostStore';
+import type { UploadFileItem } from '@/stores/usePostStore';
 
 interface CommentInputProps {
   className?: string;
   placeholder?: string;
-  onSubmit?: (value: string, file: FileItem | null) => void;
+  onSubmit?: (value: string, file: UploadFileItem | null) => void;
   disabled?: boolean;
 }
 

@@ -6,7 +6,7 @@ import { Avatar, AvatarFallback, AvatarImage, Button, Icon } from '@/components/
 import { useScrollIntoView } from '@/hooks';
 import { cn } from '@/lib/cn';
 import { PostActionMenu } from '@/components/board/PostActionMenu';
-import type { FileItem } from '@/stores/usePostStore';
+import type { UploadFileItem } from '@/stores/usePostStore';
 import { CommentInput } from './CommentInput';
 import { ReplyItem, type ReplyItemProps } from './ReplyItem';
 
@@ -18,7 +18,7 @@ interface CommentItemProps {
   date: string;
   isAuthor?: boolean;
   replies?: ReplyItemProps[];
-  onReply?: (value: string, file: FileItem | null) => void;
+  onReply?: (value: string, file: UploadFileItem | null) => void;
   onEdit?: () => void;
   onDelete?: () => void;
 }
@@ -38,7 +38,7 @@ function CommentItem({
   const [replyOpen, setReplyOpen] = useState(false);
   const replyInputRef = useScrollIntoView<HTMLDivElement>(replyOpen);
 
-  const handleReplySubmit = (value: string, file: FileItem | null) => {
+  const handleReplySubmit = (value: string, file: UploadFileItem | null) => {
     onReply?.(value, file);
     setReplyOpen(false);
   };

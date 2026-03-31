@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { combine, devtools } from 'zustand/middleware';
 
-export interface FileItem {
+export interface UploadFileItem {
   id: string;
   file: File;
   fileName: string;
@@ -19,7 +19,7 @@ const initialState = {
   studyName: '',
   week: 0,
   content: '',
-  files: [] as FileItem[],
+  files: [] as UploadFileItem[],
   status: 'DRAFT' as 'DRAFT' | 'PUBLISHED',
 };
 
@@ -38,10 +38,10 @@ export const usePostStore = create(
       setWeek: (week: number) => set({ week }, false, 'setWeek'),
       setContent: (content: string) => set({ content }, false, 'setContent'),
 
-      addFile: (file: FileItem) =>
+      addFile: (file: UploadFileItem) =>
         set((state) => ({ files: [...state.files, file] }), false, 'addFile'),
 
-      addFiles: (newFiles: FileItem[]) =>
+      addFiles: (newFiles: UploadFileItem[]) =>
         set((state) => ({ files: [...state.files, ...newFiles] }), false, 'addFiles'),
 
       removeFile: (id: string) =>

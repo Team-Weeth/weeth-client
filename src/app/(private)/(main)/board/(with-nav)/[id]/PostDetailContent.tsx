@@ -13,7 +13,7 @@ import { formatShortDateTime } from '@/lib/formatTime';
 import { toDisplayFile, isImageFileByType, mapComment } from '@/lib/board';
 import { useUserId } from '@/stores/useUserStore';
 import type { PostDetail } from '@/types/board';
-import type { FileItem as StoreFileItem } from '@/stores/usePostStore';
+import type { UploadFileItem } from '@/stores/usePostStore';
 
 interface PostDetailContentProps {
   post: PostDetail;
@@ -31,7 +31,7 @@ function PostDetailContent({ post }: PostDetailContentProps) {
     .filter((f) => !isImageFileByType(f.contentType))
     .map(toDisplayFile);
 
-  const handleCommentSubmit = (_value: string, _file: StoreFileItem | null) => {
+  const handleCommentSubmit = (_value: string, _file: UploadFileItem | null) => {
     // TODO: 댓글 작성 API 연동
   };
 
