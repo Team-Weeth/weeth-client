@@ -1,4 +1,5 @@
 // shadcn/ui가 설치되는 곳
+import { Skeleton } from '@/components/ui';
 // 어떤 페이지에서든 재사용 가능한 기본 빌딩 블록
 //  비즈니스 로직이 없고, 스타일과 인터랙션만 담당
 
@@ -104,4 +105,26 @@ export { ToastProvider, ToastViewport, Toast, toastVariants, type ToastProps } f
 
 export { Toaster } from './Toaster';
 
-export { Skeleton, type SkeletonProps } from './Skeleton';
+export {
+  Item,
+  ItemMedia,
+  ItemContent,
+  ItemActions,
+  ItemGroup,
+  ItemSeparator,
+  ItemTitle,
+  ItemDescription,
+  ItemHeader,
+  ItemFooter,
+} from './item';
+
+export { Separator } from './separator';
+
+export { Progress } from './progress';
+export { ProgressBar, type ProgressBarProps } from './ProgressBar';
+
+export { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from './Tooltip';
+
+export { FormCard, type FormCardProps } from './FormCard';
+
+export { Skeleton } from './skeleton';

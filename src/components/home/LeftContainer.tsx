@@ -1,4 +1,5 @@
-import { ClubInfoBox, TodayScheduleBox } from '@/components/home';
+import { ClubInfoBox } from './ClubInfoBox';
+import { TodayScheduleBox } from './TodayScheduleBox';
 
 export function LeftContainer() {
   return (

@@ -1,47 +1,84 @@
+'use client';
+
 import Link from 'next/link';
-import { cn } from '@/lib/cn';
-import Image from 'next/image';
-import { LandingMockUp } from '@/assets/icons/landing';
+import { useRef } from 'react';
+import { useGSAP } from '@gsap/react';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { useWindowSize } from 'react-use';
 
-interface CTASectionProps {
-  className?: string;
-}
+gsap.registerPlugin(ScrollTrigger);
 
-function CTASection({ className }: CTASectionProps) {
+const CARD_BORDER_RADIUS = '40px';
+const TARGET_WIDTH = 1122;
+const TARGET_HEIGHT = 499;
+const SIDE_MARGIN = 18;
+
+function CTASection({ className }: { className?: string }) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const cardRef = useRef<HTMLDivElement>(null);
+  const { width: windowWidth, height: windowHeight } = useWindowSize();
+
+  useGSAP(
+    () => {
+      const container = containerRef.current;
+      const card = cardRef.current;
+      if (!container || !card) return;
+
+      const sideInset = Math.max((windowWidth - TARGET_WIDTH) / 2, SIDE_MARGIN);
+      const topInset = Math.max((windowHeight - TARGET_HEIGHT) / 2, 0);
+
+      gsap.fromTo(
+        card,
+        { clipPath: `inset(101px 18px 101px 18px round ${CARD_BORDER_RADIUS})` },
+        {
+          clipPath: `inset(${topInset}px ${sideInset}px ${topInset}px ${sideInset}px round ${CARD_BORDER_RADIUS})`,
+          ease: 'none',
+          scrollTrigger: {
+            trigger: container,
+            start: 'top top',
+            end: '+=600',
+            scrub: 1,
+          },
+        },
+      );
+    },
+    { scope: containerRef, dependencies: [windowWidth, windowHeight], revertOnUpdate: true },
+  );
+
   return (
-    <section
-      className={cn(
-        'flex w-full items-center justify-center bg-[#F3F5F7] pt-[207px] pb-[131px]',
-        className,
-      )}
-    >
-      <div className="relative flex h-[397px] max-w-[1408px] items-center rounded-[40px] bg-[#FFFFFF] px-[160px] pt-[90px] pb-[78px]">
-        <Image
-          src={LandingMockUp}
-          alt="Weeth 홈페이지"
-          width={495}
-          height={519}
-          className="absolute bottom-0 left-[86px] h-[519px] w-auto"
-        />
-        <div className="w-[495px] shrink-0" />
-        <div className="flex flex-col">
-          <h2 className="mb-[19px] text-center text-[40px] leading-[48px] font-bold tracking-[-0.005em] text-[#1E2021]">
-            함께하는 순간이 더 오래 이어지도록
+    <div ref={containerRef} className={className} style={{ height: 'calc(100vh + 600px)' }}>
+      <section className="sticky top-0 flex min-h-screen w-full items-center justify-center bg-[#00C8AA]">
+        <div
+          ref={cardRef}
+          className="flex h-screen w-full flex-col items-center justify-center bg-white"
+        >
+          <h2 className="mb-[14px] text-center text-[64px] leading-[130%] font-bold tracking-[-0.005em] text-[#1E2021]">
+            함께하는 순간이
+            <br />더 오래 이어지도록
           </h2>
-          <p className="mb-[66px] text-[16px] leading-[24px] font-[470] tracking-[-0.005em] text-[#1E2021]">
+          <p className="mb-[63px] text-center text-[16px] leading-[24px] font-semibold tracking-[-0.005em] text-black">
             동아리 정보를 입력하고,
             <br />
             3분 만에 사이트를 개설해보세요.
           </p>
-          <Link
-            href="/login"
-            className="typo-button1 block w-fit rounded-md bg-[#00C8AA] px-400 py-300 text-white hover:bg-[#00877a]"
-          >
-            동아리 사이트 개설 시작하기
-          </Link>
+          <div className="flex gap-3">
+            <Link
+              href="/login"
+              className="typo-button1 block w-fit rounded-md bg-[#00C8AA] px-400 py-300 text-white hover:bg-[#00877a]"
+            >
+              지금 무료로 시작하기
+            </Link>
+            <Link
+              href="/contact"
+              className="typo-button1 block w-fit rounded-md bg-[#E6EAED] px-400 py-300 text-black hover:bg-[#b7bcbf]"
+            >
+              가입 문의
+            </Link>
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
+    </div>
   );
 }
 

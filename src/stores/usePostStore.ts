@@ -3,7 +3,7 @@ import { combine, devtools } from 'zustand/middleware';
 
 export interface UploadFileItem {
   id: string;
-  file: File;
+  file?: File;
   fileName: string;
   fileUrl: string;
   storageKey: string;

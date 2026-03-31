@@ -6,8 +6,8 @@ import { BubbleMenuBar } from './BubbleMenu';
 import { SlashMenuContent } from './SlashMenu';
 import { ImageList } from '../ImageList';
 import { FileList } from '../FileList';
-import { useFileUpload } from '@/hooks/board/useFileUpload';
-import { createMediaItems } from '@/constants/slashMenu';
+import { useFileUpload } from '@/hooks/useFileUpload';
+import { createMediaItems } from '@/constants/board/slashMenu';
 
 const floatingMenuTippyOptions = {
   duration: 100,

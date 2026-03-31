@@ -5,61 +5,67 @@ export const DELAY = {
   wrappers: 1.0,
   leftText: 1.4,
   rightText: 1.95,
-  bounce: 2.5,
-  final: 3.25,
+  bounce: 3.1,
+  final: 4.2,
+};
+
+export const heroImageVariants: Variants = {
+  hidden: { rotate: -16.38 },
+  visible: {
+    rotate: -5.61,
+    x: 0,
+    y: 0,
+    transition: {
+      duration: 0.5,
+      ease: [0.15, 0.89, 1, 1],
+      delay: 0.001,
+    },
+  },
 };
 
 export const whiteCardVariants: Variants = {
-  hidden: { opacity: 0, x: '-60vw', y: '60vh', rotate: -68 },
+  hidden: { opacity: 0, x: '-60vw', y: '60vh', rotate: -68.21 },
   visible: {
     opacity: 1,
     x: 0,
     y: 0,
-    rotate: -17,
-    transition: { duration: 1.0, ease: 'easeOut', delay: DELAY.cards },
+    rotate: -17.21,
+    transition: {
+      duration: 0.5,
+      ease: [0.15, 0.89, 1, 1],
+      delay: 0.001,
+    },
   },
 };
 
 export const greenCardVariants: Variants = {
-  hidden: { opacity: 0, x: '60vw', y: '-60vh', rotate: 24 },
+  hidden: { opacity: 0, x: '60vw', y: '-60vh', rotate: 24.18 },
   visible: {
     opacity: 1,
     x: 0,
     y: 0,
-    rotate: -10,
-    transition: { duration: 1.0, ease: 'easeOut', delay: DELAY.cards },
+    rotate: -10.76,
+    transition: {
+      duration: 0.5,
+      ease: [0.15, 0.89, 1, 1],
+      delay: 0.001,
+    },
   },
 };
 
 export const leftWrapperVariants: Variants = {
-  hidden: { width: 0 },
+  hidden: { opacity: 0 },
   visible: {
-    width: 'auto',
-    transition: { duration: 0.4, ease: 'easeOut', delay: DELAY.wrappers },
+    opacity: 1,
+    transition: { duration: 1.2, ease: 'easeOut', delay: 0.5 },
   },
 };
 
 export const rightWrapperVariants: Variants = {
-  hidden: { width: 0 },
+  hidden: { opacity: 0 },
   visible: {
-    width: 'auto',
-    transition: { duration: 0.4, ease: 'easeOut', delay: DELAY.wrappers },
-  },
-};
-
-export const leftTextVariants: Variants = {
-  hidden: { y: '100%' },
-  visible: {
-    y: 0,
-    transition: { duration: 0.55, ease: 'easeOut', delay: DELAY.leftText },
-  },
-};
-
-export const rightTextVariants: Variants = {
-  hidden: { y: '100%' },
-  visible: {
-    y: 0,
-    transition: { duration: 0.55, ease: 'easeOut', delay: DELAY.rightText },
+    opacity: 1,
+    transition: { duration: 1.2, ease: 'easeOut', delay: 0.7 },
   },
 };
 
