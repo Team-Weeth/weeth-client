@@ -9,7 +9,6 @@ import { TooltipIcon } from '@/assets/icons';
 import { Button, Icon, Input, Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui';
 import { SearchSelect } from '@/components/mypage';
 import { cn } from '@/lib/cn';
-import { createClubAction } from '@/lib/actions/club';
 import { universityApi } from '@/lib/apis/university';
 import { createClubSchema, type CreateClubFormData } from '@/lib/schemas/createClub';
 import { useCreateClubDraftStore } from '@/stores';
@@ -59,8 +58,6 @@ function CreateClubForm() {
 
   const contactType = useWatch({ control, name: 'contactType' });
 
-  const [serverError, setServerError] = useState<string | null>(null);
-
   useEffect(() => {
     const subscription = watch((values) => {
       setDraft({
@@ -77,17 +74,12 @@ function CreateClubForm() {
     return () => subscription.unsubscribe();
   }, [setDraft, watch]);
 
-  async function onSubmit(data: CreateClubFormData) {
-    const result = await createClubAction(data);
-    if (result?.error) {
-      setServerError(result.error);
-      return;
-    }
+  function onSubmit(data: CreateClubFormData) {
     setIsCreating(true);
   }
 
   if (isCreating) {
-    return <ClubCreatingPage intent="create" />;
+    return <ClubCreatingPage intent="create" onCancel={() => setIsCreating(false)} />;
   }
 
   return (
@@ -224,8 +216,6 @@ function CreateClubForm() {
             ))}
           </div>
         </FormFieldWrapper>
-
-        {serverError && <p className="typo-caption1 text-state-error text-center">{serverError}</p>}
 
         <Button
           type="submit"

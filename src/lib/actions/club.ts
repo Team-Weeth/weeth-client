@@ -19,8 +19,8 @@ export async function createClubAction(data: CreateClubFormData) {
   try {
     await apiServer.post('/clubs', payload);
   } catch (error) {
-    console.error('createClubAction failed:', error);
-    return { error: '동아리 개설에 실패했습니다.' };
+    const message = error instanceof Error ? error.message : '동아리 개설에 실패했습니다.';
+    return { error: message };
   }
 
   return { success: true };

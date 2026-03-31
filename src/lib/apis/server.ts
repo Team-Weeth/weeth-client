@@ -96,7 +96,14 @@ async function request<T>(
       statusText: response.statusText,
       responseBody: errorBody,
     });
-    throw new Error(`API Error: ${response.status} ${response.statusText}`);
+    let serverMessage: string | undefined;
+    try {
+      const parsed = JSON.parse(errorBody);
+      serverMessage = parsed?.message;
+    } catch {
+      // not JSON
+    }
+    throw new Error(serverMessage ?? `API Error: ${response.status} ${response.statusText}`);
   }
 
   if (response.status === 204) {
