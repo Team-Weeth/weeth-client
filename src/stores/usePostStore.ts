@@ -45,7 +45,15 @@ export const usePostStore = create(
         set((state) => ({ files: [...state.files, ...newFiles] }), false, 'addFiles'),
 
       removeFile: (id: string | number) =>
-        set((state) => ({ files: state.files.filter((f) => f.id !== id) }), false, 'removeFile'),
+        set(
+          (state) => {
+            const target = state.files.find((f) => f.id === id);
+            if (target?.fileUrl.startsWith('blob:')) URL.revokeObjectURL(target.fileUrl);
+            return { files: state.files.filter((f) => f.id !== id) };
+          },
+          false,
+          'removeFile',
+        ),
 
       markUploaded: (id: string, storageKey: string, fileUrl: string) =>
         set(
