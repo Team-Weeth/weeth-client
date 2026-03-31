@@ -38,7 +38,7 @@ function ClubCreatingPage({ intent }: ClubCreatingPageProps) {
 
         <button
           type="button"
-          onClick={() => router.push('/hub/create')}
+          onClick={() => router.push('/club/create')}
           className="typo-button2 text-text-alternative cursor-pointer"
         >
           개설 중단하기

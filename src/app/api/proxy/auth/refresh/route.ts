@@ -21,7 +21,7 @@ export async function POST() {
       return NextResponse.json({ error: 'No refresh token' }, { status: 401 });
     }
 
-    const response = await fetch(`${API_BASE_PATH}/users/refresh`, {
+    const response = await fetch(`${API_BASE_PATH}/users/social/refresh`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

@@ -13,9 +13,11 @@ import { createClubSchema, type CreateClubFormData } from '@/lib/schemas/createC
 import { useCreateClubDraftStore } from '@/stores';
 import { formatPhone } from '@/utils/shared';
 
+import { ClubCreatingPage } from './ClubCreatingPage';
 import { FieldError, FieldLabel, FormFieldWrapper } from './FormFieldWrapper';
 
 function CreateClubForm() {
+  const [isCreating, setIsCreating] = useState(false);
   const schoolDraft = useCreateClubDraftStore((state) => state.school);
   const nameDraft = useCreateClubDraftStore((state) => state.name);
   const descriptionDraft = useCreateClubDraftStore((state) => state.description);
@@ -67,11 +69,16 @@ function CreateClubForm() {
   }, [setDraft, watch]);
 
   async function onSubmit(data: CreateClubFormData) {
-    console.log('createClub form submit:', data);
     const result = await createClubAction(data);
     if (result?.error) {
       setServerError(result.error);
+      return;
     }
+    setIsCreating(true);
+  }
+
+  if (isCreating) {
+    return <ClubCreatingPage intent="create" />;
   }
 
   return (

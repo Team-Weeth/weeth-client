@@ -36,8 +36,8 @@ export default async function HubPage({
   }
 
   const hrefMap: Record<CardVariant, string | undefined> = {
-    create: '/hub/create',
-    join: '/hub/join',
+    create: '/club/create',
+    join: '/club/join',
     go: goHref,
   };
 
