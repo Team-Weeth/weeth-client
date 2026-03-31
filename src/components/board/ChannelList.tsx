@@ -18,7 +18,6 @@ interface ChannelListProps extends React.ComponentProps<'ul'> {
  * 정렬은 useBoardList의 select에서 처리됨 (매 렌더 정렬 방지)
  */
 function ChannelList({ className, items, activeId, onItemSelect, ...props }: ChannelListProps) {
-
   return (
     <ul className={cn('flex flex-col gap-200', className)} role="list" {...props}>
       {items.map((item, index) => {

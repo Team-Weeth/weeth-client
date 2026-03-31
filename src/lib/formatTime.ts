@@ -44,4 +44,10 @@ function formatShortDateTime(time: string) {
   return `${month}/${day} ${hours}:${minutes}`;
 }
 
-export { formatTime, formatKoreanDate, formatAttendanceDescription, formatModalDescription, formatShortDateTime };
+export {
+  formatTime,
+  formatKoreanDate,
+  formatAttendanceDescription,
+  formatModalDescription,
+  formatShortDateTime,
+};

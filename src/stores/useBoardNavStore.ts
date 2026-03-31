@@ -10,7 +10,8 @@ export type BoardNavState = typeof initialState;
 export const useBoardNavStore = create(
   devtools(
     combine(initialState, (set) => ({
-      setActiveBoardId: (id: number | null) => set({ activeBoardId: id }, false, 'setActiveBoardId'),
+      setActiveBoardId: (id: number | null) =>
+        set({ activeBoardId: id }, false, 'setActiveBoardId'),
       reset: () => set(initialState, false, 'reset'),
     })),
     { name: 'BoardNavStore' },
@@ -18,7 +19,5 @@ export const useBoardNavStore = create(
 );
 
 export const useActiveBoardId = () => useBoardNavStore((store) => store.activeBoardId);
-export const useSetActiveBoardId = () =>
-  useBoardNavStore((store) => store.setActiveBoardId);
-export const useBoardNavReset = () =>
-  useBoardNavStore((store) => store.reset);
+export const useSetActiveBoardId = () => useBoardNavStore((store) => store.setActiveBoardId);
+export const useBoardNavReset = () => useBoardNavStore((store) => store.reset);

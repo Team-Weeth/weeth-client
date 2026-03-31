@@ -12,13 +12,7 @@ function BoardNavClient({ items }: BoardNavClientProps) {
   const activeBoardId = useActiveBoardId();
   const setActiveBoardId = useSetActiveBoardId();
 
-  return (
-    <BoardNav
-      items={items}
-      activeId={activeBoardId}
-      onItemSelect={setActiveBoardId}
-    />
-  );
+  return <BoardNav items={items} activeId={activeBoardId} onItemSelect={setActiveBoardId} />;
 }
 
 export { BoardNavClient };

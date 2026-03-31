@@ -1,5 +1,11 @@
 import { formatShortDateTime } from '@/lib/formatTime';
-import type { FileItem, DisplayFile, PostComment, MappedComment, BoardNavItem } from '@/types/board';
+import type {
+  FileItem,
+  DisplayFile,
+  PostComment,
+  MappedComment,
+  BoardNavItem,
+} from '@/types/board';
 
 function toDisplayFile(file: FileItem): DisplayFile {
   return {
@@ -13,10 +19,7 @@ function isImageFileByType(contentType: string): boolean {
   return contentType.startsWith('image/');
 }
 
-function mapComment(
-  comment: PostComment,
-  currentUserId: number | null,
-): MappedComment {
+function mapComment(comment: PostComment, currentUserId: number | null): MappedComment {
   return {
     id: comment.id,
     profileImage: comment.author.profileImageUrl,

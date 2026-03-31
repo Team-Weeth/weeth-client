@@ -22,8 +22,7 @@ interface PostDetailContentProps {
 function PostDetailContent({ post }: PostDetailContentProps) {
   const currentUserId = useUserId();
 
-  const isPostAuthor =
-    currentUserId !== null && post.author.id === currentUserId;
+  const isPostAuthor = currentUserId !== null && post.author.id === currentUserId;
   const imageFiles = post.fileUrls
     .filter((f) => isImageFileByType(f.contentType))
     .map(toDisplayFile);
@@ -82,10 +81,7 @@ function PostDetailContent({ post }: PostDetailContentProps) {
 
           <div className="flex flex-col gap-200 self-stretch pb-400">
             {post.comments.map((comment) => (
-              <CommentItem
-                key={comment.id}
-                {...mapComment(comment, currentUserId)}
-              />
+              <CommentItem key={comment.id} {...mapComment(comment, currentUserId)} />
             ))}
           </div>
         </>

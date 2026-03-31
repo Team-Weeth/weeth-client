@@ -12,7 +12,13 @@ type FileListProps = {
   | { editable?: false; onRemove?: never }
 );
 
-function FileListItem({ item, showDownload = true }: { item: DisplayFile; showDownload?: boolean }) {
+function FileListItem({
+  item,
+  showDownload = true,
+}: {
+  item: DisplayFile;
+  showDownload?: boolean;
+}) {
   return (
     <>
       <div className="flex items-center gap-200">

@@ -16,7 +16,11 @@ export const boardApi = {
     ),
 
   /** 게시판별 게시글 목록 조회 (React Query) */
-  getPosts: (clubId: string, boardId: number, params?: { pageNumber?: number; pageSize?: number }) =>
+  getPosts: (
+    clubId: string,
+    boardId: number,
+    params?: { pageNumber?: number; pageSize?: number },
+  ) =>
     apiClient.get<ApiResponse<Slice<PostListItem>>>(
       `${API_BASE_PATH}/clubs/${clubId}/boards/${boardId}/posts`,
       { params },
@@ -24,5 +28,7 @@ export const boardApi = {
 
   /** 게시글 상세 조회 (React Query) */
   getPostById: (clubId: string, postId: number) =>
-    apiClient.get<ApiResponse<PostDetail>>(`${API_BASE_PATH}/clubs/${clubId}/boards/posts/${postId}`),
+    apiClient.get<ApiResponse<PostDetail>>(
+      `${API_BASE_PATH}/clubs/${clubId}/boards/posts/${postId}`,
+    ),
 };

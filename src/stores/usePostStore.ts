@@ -80,9 +80,7 @@ export const usePostStore = create(
           week: state.week,
           part: state.part,
           generationNumber: state.generationNumber,
-          files: state.files
-            .filter((f) => f.uploaded)
-            .map(({ storageKey }) => storageKey),
+          files: state.files.filter((f) => f.uploaded).map(({ storageKey }) => storageKey),
         };
       },
     })),
