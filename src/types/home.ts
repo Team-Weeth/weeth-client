@@ -1,5 +1,24 @@
 import type { ApiResponse } from '@/types/common';
 
+type Role = 'LEAD' | 'USER';
+type NullableImage = string | null;
+
+interface Identifiable<T = number> {
+  id: T;
+}
+
+interface Named {
+  name: string;
+}
+
+interface WithProfileImage {
+  profileImageUrl: NullableImage;
+}
+
+interface WithRole {
+  role: Role;
+}
+
 interface ClubInfo {
   id: string;
   name: string;
@@ -7,16 +26,11 @@ interface ClubInfo {
   schoolName: string;
   description: string;
   memberCount: number;
-  profileImageUrl: string | null;
-  backgroundImageUrl: string | null;
+  profileImageUrl: NullableImage;
+  backgroundImageUrl: NullableImage;
 }
 
-type UserSummary = {
-  id: number;
-  name: string;
-  profileImageUrl: string | null;
-  role: 'LEAD' | 'USER';
-};
+type UserSummary = Identifiable & Named & WithProfileImage & WithRole;
 
 type UserInfo = UserSummary;
 
@@ -109,7 +123,13 @@ interface ProfileStatus {
 type HomeDashboardResponse = ApiResponse<HomeDashboard>;
 
 export type {
+  Role,
+  NullableImage,
   ClubInfo,
+  Identifiable,
+  Named,
+  WithProfileImage,
+  WithRole,
   UserSummary,
   UserInfo,
   MyInfo,
