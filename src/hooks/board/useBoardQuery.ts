@@ -1,12 +1,12 @@
 import { useQuery, useInfiniteQuery } from '@tanstack/react-query';
 import { boardApi } from '@/lib/apis/board';
+import {
+  BOARD_TYPE_ORDER,
+  BOARD_STALE_TIME,
+  BOARD_GC_TIME,
+  DEFAULT_PAGE_SIZE,
+} from '@/constants/board/type';
 import { useClubId } from '@/stores/useClubStore';
-
-const BOARD_STALE_TIME = 5 * 60 * 1000;
-const BOARD_GC_TIME = 10 * 60 * 1000;
-const DEFAULT_PAGE_SIZE = 10;
-
-const TYPE_ORDER = { NOTICE: 0, ALL: 1, GENERAL: 2 } as const;
 
 export function useBoardList() {
   const clubId = useClubId();
@@ -16,7 +16,7 @@ export function useBoardList() {
     queryFn: () => boardApi.getBoards(clubId!),
     select: (response) =>
       [...response.data.data].sort(
-        (a, b) => (TYPE_ORDER[a.type] ?? 99) - (TYPE_ORDER[b.type] ?? 99),
+        (a, b) => (BOARD_TYPE_ORDER[a.type] ?? 99) - (BOARD_TYPE_ORDER[b.type] ?? 99),
       ),
     enabled: !!clubId,
     staleTime: BOARD_STALE_TIME,

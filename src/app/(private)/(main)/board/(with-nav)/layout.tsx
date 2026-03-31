@@ -1,9 +1,8 @@
 import type { ReactNode } from 'react';
 import { boardServerApi } from '@/lib/apis/board.server';
 import { toBoardNavItem } from '@/lib/board';
+import { BOARD_TYPE_ORDER } from '@/constants/board/type';
 import { BoardNavClient } from './BoardNavClient';
-
-const TYPE_ORDER = { NOTICE: 0, ALL: 1, GENERAL: 2 } as const;
 
 interface BoardLayoutProps {
   children: ReactNode;
@@ -13,7 +12,7 @@ interface BoardLayoutProps {
 export default async function BoardLayout({ children, footer }: BoardLayoutProps) {
   const response = await boardServerApi.getBoards('YUNJcjFKMO');
   const boards = [...response.data].sort(
-    (a, b) => (TYPE_ORDER[a.type] ?? 99) - (TYPE_ORDER[b.type] ?? 99),
+    (a, b) => (BOARD_TYPE_ORDER[a.type] ?? 99) - (BOARD_TYPE_ORDER[b.type] ?? 99),
   );
   const items = boards.map(toBoardNavItem);
 
