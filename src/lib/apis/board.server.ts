@@ -10,11 +10,11 @@ export const boardServerApi = {
       next: { revalidate: 1800, tags: ['boards'] },
     }),
 
-  /** 게시글 상세 조회 (RSC) — 5분 캐싱, 게시글별 태그 */
+  /** 게시글 상세 조회 (RSC)*/
   getPostById: (clubId: string, postId: number) =>
     apiServer.get<ApiResponse<PostDetail>>(
       `${API_BASE_PATH}/clubs/${clubId}/boards/posts/${postId}`,
-      { next: { revalidate: 300, tags: ['posts', `post-${postId}`] } },
+      { cache: 'no-store' },
     ),
 
   /** 공지 읽음 처리 (Server Action) */
