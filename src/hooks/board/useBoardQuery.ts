@@ -47,15 +47,3 @@ export function useBoardPosts(
   });
 }
 
-export function usePostDetail(postId: number) {
-  const clubId = useClubId();
-
-  return useQuery({
-    queryKey: ['posts', clubId, postId],
-    queryFn: () => boardApi.getPostById(clubId!, postId),
-    select: (response) => response.data.data,
-    enabled: !!clubId,
-    staleTime: BOARD_STALE_TIME,
-    gcTime: BOARD_GC_TIME,
-  });
-}

@@ -8,24 +8,19 @@ import {
   CommentInput,
   CommentItem,
   FileList,
-  PostDetailSkeleton,
 } from '@/components/board';
-import { usePostDetail } from '@/hooks';
 import { formatShortDateTime } from '@/lib/formatTime';
 import { toDisplayFile, isImageFileByType, mapComment } from '@/lib/board';
 import { useUserId } from '@/stores/useUserStore';
+import type { PostDetail } from '@/types/board';
 import type { FileItem as StoreFileItem } from '@/stores/usePostStore';
 
 interface PostDetailContentProps {
-  postId: number;
+  post: PostDetail;
 }
 
-function PostDetailContent({ postId }: PostDetailContentProps) {
-  const { data: post, isLoading } = usePostDetail(postId);
+function PostDetailContent({ post }: PostDetailContentProps) {
   const currentUserId = useUserId();
-
-  if (isLoading) return <PostDetailSkeleton />;
-  if (!post) return null;
 
   const isPostAuthor =
     currentUserId !== null && post.author.id === currentUserId;
@@ -79,18 +74,22 @@ function PostDetailContent({ postId }: PostDetailContentProps) {
         <CommentInput placeholder="댓글을 입력하세요." onSubmit={handleCommentSubmit} />
       </div>
 
-      <div className="self-stretch px-450">
-        <Divider />
-      </div>
+      {post.comments.length > 0 && (
+        <>
+          <div className="self-stretch px-450">
+            <Divider />
+          </div>
 
-      <div className="flex flex-col gap-200 self-stretch pb-400">
-        {post.comments.map((comment) => (
-          <CommentItem
-            key={comment.id}
-            {...mapComment(comment, currentUserId)}
-          />
-        ))}
-      </div>
+          <div className="flex flex-col gap-200 self-stretch pb-400">
+            {post.comments.map((comment) => (
+              <CommentItem
+                key={comment.id}
+                {...mapComment(comment, currentUserId)}
+              />
+            ))}
+          </div>
+        </>
+      )}
     </div>
   );
 }
