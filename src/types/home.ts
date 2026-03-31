@@ -79,10 +79,27 @@ interface RecentPost {
   isNew: boolean;
 }
 
+interface SortInfo {
+  empty: boolean;
+  unsorted: boolean;
+  sorted: boolean;
+}
+
+interface PageableInfo {
+  offset: number;
+  sort: SortInfo;
+  pageNumber: number;
+  pageSize: number;
+  paged: boolean;
+  unpaged: boolean;
+}
+
 interface PageData<T> {
   size: number;
   content: T[];
   number: number;
+  sort: SortInfo;
+  pageable: PageableInfo;
   numberOfElements: number;
   first: boolean;
   last: boolean;
@@ -109,6 +126,8 @@ export type {
   FileAttachment,
   PostAuthor,
   RecentPost,
+  SortInfo,
+  PageableInfo,
   PageData,
   ProfileStatus,
 };
