@@ -1,6 +1,8 @@
 'use client';
 
 import dynamic from 'next/dynamic';
+import { useEffect } from 'react';
+
 import { TitleInput, CategorySelector } from '@/components/board';
 import { useBoardList } from '@/hooks';
 import { toBoardNavItem } from '@/lib/board';
@@ -15,7 +17,15 @@ export default function ClientEditor() {
   const board = usePostStore((s) => s.board);
   const setBoard = usePostStore((s) => s.setBoard);
 
-  const activeId = board ?? items.find((item) => item.type === 'ALL')?.id ?? items[0]?.id ?? 0;
+  const defaultId = items.find((item) => item.type === 'ALL')?.id ?? items[0]?.id ?? null;
+
+  useEffect(() => {
+    if (board === null && defaultId !== null) {
+      setBoard(defaultId);
+    }
+  }, [board, defaultId, setBoard]);
+
+  const activeId = board ?? defaultId;
 
   return (
     <div className="mx-auto flex max-w-[1200px] flex-1 flex-col items-center gap-400 p-450">
