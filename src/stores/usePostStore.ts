@@ -44,7 +44,7 @@ export const usePostStore = create(
       addFiles: (newFiles: UploadFileItem[]) =>
         set((state) => ({ files: [...state.files, ...newFiles] }), false, 'addFiles'),
 
-      removeFile: (id: string) =>
+      removeFile: (id: string | number) =>
         set((state) => ({ files: state.files.filter((f) => f.id !== id) }), false, 'removeFile'),
 
       markUploaded: (id: string, storageKey: string, fileUrl: string) =>
