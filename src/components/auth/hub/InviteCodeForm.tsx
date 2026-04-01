@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 
 import { useRouter } from 'next/navigation';
 
@@ -36,6 +36,7 @@ function InviteCodeForm() {
     clubId: string;
     code: string;
   } | null>(null);
+  const abortControllerRef = useRef<AbortController | null>(null);
 
   const {
     register,
@@ -47,6 +48,7 @@ function InviteCodeForm() {
   });
 
   async function handleInviteCodeChange(value: string) {
+    abortControllerRef.current?.abort();
     setServerError(null);
     setSelectedClub(null);
     setParsedLink(null);
@@ -55,11 +57,16 @@ function InviteCodeForm() {
     const parsed = parseInviteLink(value.trim());
     if (!parsed) return;
 
+    const controller = new AbortController();
+    abortControllerRef.current = controller;
+
     try {
       const { data } = await clubApi.getById(parsed.clubId);
+      if (controller.signal.aborted) return;
       setParsedLink(parsed);
       setSearchResults([data.data]);
     } catch (error) {
+      if (controller.signal.aborted) return;
       const axiosError = error as import('axios').AxiosError<{ message?: string }>;
       setServerError(axiosError.response?.data?.message ?? '동아리를 찾을 수 없습니다.');
     }

@@ -3,6 +3,7 @@
 import { useState } from 'react';
 
 import { agreeTermsAction } from '@/lib/actions/auth';
+import { toastError } from '@/stores/useToastStore';
 
 import { LoginCard } from './LoginCard';
 import { TermsAgreementModal } from './TermsAgreementModal';
@@ -51,7 +52,10 @@ function LoginPageClient({
       <TermsAgreementModal
         open={termsOpen}
         onOpenChange={setTermsOpen}
-        onAgree={() => agreeTermsAction(intent, clubId, code)}
+        onAgree={async () => {
+          const result = await agreeTermsAction(intent, clubId, code);
+          if (result?.error) toastError(result.error);
+        }}
       />
     </div>
   );

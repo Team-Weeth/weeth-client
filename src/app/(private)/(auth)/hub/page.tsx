@@ -1,3 +1,5 @@
+import { unstable_rethrow } from 'next/navigation';
+
 import { HubActionCard, HubProfile } from '@/components/auth/hub';
 import { apiServer } from '@/lib/apis/server';
 
@@ -26,7 +28,10 @@ export default async function HubPage({
   } else {
     const status = await apiServer
       .get<MembershipStatusResponse>('/clubs/membership-status')
-      .catch(() => null);
+      .catch((err) => {
+        unstable_rethrow(err);
+        return null;
+      });
     if (status?.data?.hasActiveClub) {
       goHref = '/home';
       cardOrder = ['go', 'create', 'join'];
@@ -45,14 +50,16 @@ export default async function HubPage({
     <div className="flex min-h-screen flex-col items-center justify-center gap-600">
       <HubProfile className="flex flex-col items-center gap-600" />
       <div className="flex w-full max-w-[520px] flex-col gap-300 px-400">
-        {cardOrder.map((variant, index) => (
-          <HubActionCard
-            key={variant}
-            variant={variant}
-            href={hrefMap[variant]}
-            isPrimary={index === 0}
-          />
-        ))}
+        {cardOrder
+          .filter((variant) => variant !== 'go' || goHref)
+          .map((variant, index) => (
+            <HubActionCard
+              key={variant}
+              variant={variant}
+              href={hrefMap[variant]}
+              isPrimary={index === 0}
+            />
+          ))}
       </div>
     </div>
   );

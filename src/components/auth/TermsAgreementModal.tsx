@@ -10,7 +10,7 @@ import { TermsListView } from './TermsListView';
 interface TermsAgreementModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onAgree: () => void;
+  onAgree: () => void | Promise<void>;
 }
 
 function TermsAgreementModal({ open, onOpenChange, onAgree }: TermsAgreementModalProps) {
@@ -49,8 +49,8 @@ function TermsAgreementModal({ open, onOpenChange, onAgree }: TermsAgreementModa
     setSelectedTermId(null);
   }
 
-  function handleAgree() {
-    onAgree();
+  async function handleAgree() {
+    await onAgree();
     onOpenChange(false);
   }
 
