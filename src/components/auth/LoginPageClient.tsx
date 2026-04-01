@@ -15,12 +15,7 @@ interface LoginPageClientProps {
   code?: string;
 }
 
-function LoginPageClient({
-  defaultTermsOpen = false,
-  intent,
-  clubId,
-  code,
-}: LoginPageClientProps) {
+function LoginPageClient({ defaultTermsOpen = false, intent, clubId, code }: LoginPageClientProps) {
   const [termsOpen, setTermsOpen] = useState(defaultTermsOpen);
   const [isLoading, setIsLoading] = useState(false);
 
