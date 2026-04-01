@@ -46,38 +46,6 @@ function ServiceSection({
 
   const totalVirtualScroll = STEP_SCROLL * (features.length - 1);
 
-  // useGSAP(() => {
-  //   const container = containerRef.current;
-  //   const track = trackRef.current;
-  //   if (!container || !track) return;
-
-  //   const totalTrackScroll = (CARD_WIDTH + CARD_GAP) * (features.length - 1);
-
-  //   const tl = gsap.timeline({
-  //     scrollTrigger: {
-  //       trigger: container,
-  //       start: 'top top',
-  //       end: `+=${STEP_SCROLL * (features.length - 1)}`,
-  //       scrub: true,
-  //       snap: {
-  //         snapTo: 1 / (features.length - 1),
-  //         duration: { min: 0.3, max: 0.5 },
-  //         ease: 'expo.out',
-  //         delay: 0,
-  //       },
-  //       onUpdate: (self) => {
-  //         const index = Math.round(self.progress * (features.length - 1));
-  //         setActiveIndex(index);
-  //       },
-  //     },
-  //   });
-
-  //   tl.to(track, {
-  //     x: -totalTrackScroll,
-  //     ease: 'none',
-  //   });
-  // });
-
   useGSAP(() => {
     const container = containerRef.current;
     const track = trackRef.current;
@@ -89,21 +57,27 @@ function ServiceSection({
       trigger: container,
       start: 'top top',
       end: `+=${STEP_SCROLL * (features.length - 1)}`,
+      scrub: 0.6,
       snap: {
         snapTo: 1 / (features.length - 1),
-        duration: { min: 0.1, max: 0.3 },
-        ease: 'expo.out',
+        duration: { min: 0.4, max: 0.8 },
+        ease: 'power2.out',
         delay: 0,
       },
       onUpdate: (self) => {
         const index = Math.round(self.progress * (features.length - 1));
         setActiveIndex(index);
-        gsap.to(track, {
-          x: -((totalTrackScroll * index) / (features.length - 1)),
-          duration: 0.1,
-          ease: 'expo.out',
-          overwrite: true,
-        });
+      },
+    });
+
+    gsap.to(track, {
+      x: -totalTrackScroll,
+      ease: 'none',
+      scrollTrigger: {
+        trigger: container,
+        start: 'top top',
+        end: `+=${STEP_SCROLL * (features.length - 1)}`,
+        scrub: 0.6,
       },
     });
   });
