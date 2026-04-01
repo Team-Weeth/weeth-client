@@ -5,7 +5,7 @@ import { useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 
 import { Button, FormCard, Input } from '@/components/ui';
 import { clubApi } from '@/lib/apis/club';
@@ -39,16 +39,12 @@ function InviteCodeForm() {
   const abortControllerRef = useRef<AbortController | null>(null);
 
   const {
-    register,
+    control,
     handleSubmit,
     formState: { isValid, isSubmitting },
   } = useForm<InviteCodeFormData>({
     resolver: zodResolver(inviteCodeSchema),
     mode: 'onChange',
-  });
-
-  const { ref: inviteCodeRef, ...inviteCodeField } = register('inviteCode', {
-    onChange: (e) => handleInviteCodeChange(e.target.value),
   });
 
   async function handleInviteCodeChange(value: string) {
@@ -118,13 +114,22 @@ function InviteCodeForm() {
         <div className="flex flex-col gap-300">
           <span className="typo-caption1 text-text-alternative">동아리 초대 링크</span>
           <div className="relative">
-            <Input
-              {...inviteCodeField}
-              ref={inviteCodeRef}
-              error={!!serverError}
-              clearable
-              placeholder="https://weeth.kr/clubId=TSID?code=UUID"
-              className="bg-container-neutral-alternative px-300 py-400"
+            <Controller
+              name="inviteCode"
+              control={control}
+              render={({ field }) => (
+                <Input
+                  {...field}
+                  error={!!serverError}
+                  clearable
+                  placeholder="https://weeth.kr/clubId=TSID?code=UUID"
+                  className="bg-container-neutral-alternative px-300 py-400"
+                  onChange={(e) => {
+                    field.onChange(e);
+                    void handleInviteCodeChange(e.target.value);
+                  }}
+                />
+              )}
             />
             {!selectedClub && <ClubSearchDropdown clubs={searchResults} onSelect={handleSelect} />}
           </div>
