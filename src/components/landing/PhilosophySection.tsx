@@ -7,6 +7,16 @@ import Marquee from 'react-fast-marquee';
 import { useRef } from 'react';
 import { Centered } from './Centered';
 import Image from 'next/image';
+import {
+  LandingCard1,
+  LandingCard2,
+  LandingCard3,
+  LandingCard4,
+  LandingCard5,
+  LandingCard6,
+  LandingCard7,
+  LandingCard8,
+} from '@/assets/image/landing/card';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -19,14 +29,14 @@ const sentences = [
 ];
 
 const images = [
-  { id: 1, src: '../../assets/image/landing/card/landing_card_1.svg' },
-  { id: 2, src: '../../assets/image/landing/card/landing_card_2.svg' },
-  { id: 3, src: '../../assets/image/landing/card/landing_card_3.svg' },
-  { id: 4, src: '../../assets/image/landing/card/landing_card_4.svg' },
-  { id: 5, src: '../../assets/image/landing/card/landing_card_5.svg' },
-  { id: 6, src: '../../assets/image/landing/card/landing_card_6.svg' },
-  { id: 7, src: '../../assets/image/landing/card/landing_card_7.svg' },
-  { id: 8, src: '../../assets/image/landing/card/landing_card_8.svg' },
+  LandingCard1,
+  LandingCard2,
+  LandingCard3,
+  LandingCard4,
+  LandingCard5,
+  LandingCard6,
+  LandingCard7,
+  LandingCard8,
 ];
 
 function PhilosophySection() {
