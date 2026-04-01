@@ -13,7 +13,7 @@ import {
 } from '@/components/ui';
 import { Icon } from '@/components/ui/Icon';
 import { InfoCircleIcon } from '@/assets/icons';
-import { inquiryApi } from '@/lib/apis';
+import { inquiryApi } from '@/lib/apis/inquiry';
 import { toastSuccess, toastError } from '@/stores/useToastStore';
 
 interface InquiryDialogProps {
@@ -51,7 +51,10 @@ function InquiryDialog({ open, onOpenChange }: InquiryDialogProps) {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent showCloseButton={false} className="flex h-[583px] w-[640px] flex-col">
+      <DialogContent
+        showCloseButton={false}
+        className="bg-background flex h-[583px] w-[640px] flex-col"
+      >
         <DialogHeader
           icon={
             <Icon src={InfoCircleIcon} size={24} className="text-brand-primary" alt="정보 아이콘" />
@@ -68,6 +71,7 @@ function InquiryDialog({ open, onOpenChange }: InquiryDialogProps) {
               <label className="typo-caption1 text-text-alternative">연락 가능한 이메일</label>
               <Input
                 type="email"
+                autoComplete="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="example@email.com"
@@ -78,6 +82,7 @@ function InquiryDialog({ open, onOpenChange }: InquiryDialogProps) {
               <label className="typo-caption1 text-text-alternative">문의사항</label>
               <Textarea
                 value={message}
+                maxLength={1000}
                 onChange={(e) => setMessage(e.target.value)}
                 placeholder="문의 내용을 작성해주세요."
                 rows={6}

@@ -1,4 +1,5 @@
-import { apiClient } from './client';
+import axios from 'axios';
+import { BASE_URL } from '@/constants/api';
 
 interface InquiryBody {
   email: string;
@@ -6,5 +7,6 @@ interface InquiryBody {
 }
 
 export const inquiryApi = {
-  create: (body: InquiryBody) => apiClient.post('/v4/users/inquiries', body),
+  create: (body: InquiryBody) =>
+    axios.post(`${BASE_URL}/api/v4/users/inquiries`, body),
 };
