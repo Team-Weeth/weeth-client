@@ -27,7 +27,7 @@ export async function GET(request: NextRequest) {
   }
 
   const json = await response.json();
-  const { accessToken, refreshToken, registered } = json.data;
+  const { accessToken, refreshToken, registered, name } = json.data;
 
   const state = request.nextUrl.searchParams.get('state');
 
@@ -47,6 +47,13 @@ export async function GET(request: NextRequest) {
 
   redirectResponse.cookies.set(ACCESS_TOKEN_KEY, accessToken, ACCESS_COOKIE_OPTIONS);
   redirectResponse.cookies.set(REFRESH_TOKEN_KEY, refreshToken, REFRESH_COOKIE_OPTIONS);
+
+  if (name) {
+    redirectResponse.cookies.set('userName', name, {
+      path: '/',
+      maxAge: 60 * 5,
+    });
+  }
 
   return redirectResponse;
 }

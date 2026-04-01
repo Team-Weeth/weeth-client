@@ -1,3 +1,4 @@
+export { AuthStoreInitializer } from './AuthStoreInitializer';
 export { KakaoLoginButton } from './KakaoLoginButton';
 export { AppleLoginButton } from './AppleLoginButton';
 export { SocialLoginButtons } from './SocialLoginButtons';

@@ -5,13 +5,11 @@ import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
 import { Button } from '@/components/ui';
+import { useAuthName } from '@/stores';
 
-interface ClubWelcomePageProps {
-  userName: string;
-}
-
-function ClubWelcomePage({ userName }: ClubWelcomePageProps) {
+function ClubWelcomePage() {
   const router = useRouter();
+  const name = useAuthName();
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -27,7 +25,7 @@ function ClubWelcomePage({ userName }: ClubWelcomePageProps) {
         <div className="bg-container-neutral-alternative h-20 w-20 rounded-full" />
         <div className="flex flex-col items-center gap-200 text-center">
           <h1 className="typo-h3 text-text-strong">
-            {userName}님, 반가워요!
+            {name ? `${name}님, ` : ''}반가워요!
             <br />
             즐거운 동아리 활동을 이어나가요
           </h1>

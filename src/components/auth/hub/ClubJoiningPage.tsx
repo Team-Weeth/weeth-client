@@ -31,7 +31,7 @@ function ClubJoiningPage({ clubName, clubId, code }: ClubJoiningPageProps) {
     duration: 3000,
     onComplete: () => {
       animationDoneRef.current = true;
-      if (apiDone) router.push('/home');
+      if (apiDone) router.push('/welcome');
     },
   });
 
@@ -73,7 +73,7 @@ function ClubJoiningPage({ clubName, clubId, code }: ClubJoiningPageProps) {
 
   // API가 애니메이션 이후에 완료된 경우 즉시 navigate
   useEffect(() => {
-    if (apiDone && animationDoneRef.current) router.push('/home');
+    if (apiDone && animationDoneRef.current) router.push('/welcome');
   }, [apiDone, router]);
 
   if (errorState) {
