@@ -1,11 +1,12 @@
 'use client';
 
 import { motion, LayoutGroup } from 'framer-motion';
-import Link from 'next/link';
-import Image from 'next/image';
+// import Link from 'next/link';
+// import Image from 'next/image';
+// import { buttonVariants } from '@/components/ui';
 import { useEffect, useRef, useState } from 'react';
 import { cn } from '@/lib/cn';
-import { buttonVariants } from '@/components/ui';
+
 import {
   whiteCardVariants,
   greenCardVariants,

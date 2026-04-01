@@ -13,6 +13,7 @@ import {
 } from '@/components/ui';
 import { Icon } from '@/components/ui/Icon';
 import { InfoCircleIcon } from '@/assets/icons';
+import { inquiryApi } from '@/lib/apis';
 import { toastSuccess, toastError } from '@/stores/useToastStore';
 
 interface InquiryDialogProps {
@@ -38,7 +39,7 @@ function InquiryDialog({ open, onOpenChange }: InquiryDialogProps) {
 
     setIsSubmitting(true);
     try {
-      // TODO: API 연동
+      await inquiryApi.create({ email: email.trim(), message: message.trim() });
       toastSuccess('문의가 전송되었습니다!');
       handleClose();
     } catch {
@@ -50,9 +51,11 @@ function InquiryDialog({ open, onOpenChange }: InquiryDialogProps) {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent showCloseButton={false} className="flex max-h-[80vh] flex-col">
+      <DialogContent showCloseButton={false} className="flex h-[583px] w-[640px] flex-col">
         <DialogHeader
-          icon={<Icon src={InfoCircleIcon} size={24} className="text-brand-primary" alt="" />}
+          icon={
+            <Icon src={InfoCircleIcon} size={24} className="text-brand-primary" alt="정보 아이콘" />
+          }
           title="가입문의"
           description={`Weeth 도입이 궁금하신가요?\n가입 문의를 남겨주시면 안내해드릴게요.`}
           showClose
