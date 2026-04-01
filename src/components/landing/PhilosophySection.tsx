@@ -5,8 +5,8 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Marquee from 'react-fast-marquee';
 import { useRef } from 'react';
-import { cn } from '@/lib/cn';
 import { Centered } from './Centered';
+import Image from 'next/image';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -19,12 +19,14 @@ const sentences = [
 ];
 
 const images = [
-  { id: 1, color: 'bg-brand-primary', type: 'horizontal' as const },
-  { id: 2, color: 'bg-brand-secondary', type: 'vertical' as const },
-  { id: 3, color: 'bg-container-neutral-interaction', type: 'square' as const },
-  { id: 4, color: 'bg-container-primary-alternative', type: 'vertical' as const },
-  { id: 5, color: 'bg-container-secondary-alternative', type: 'square' as const },
-  { id: 6, color: 'bg-brand-purple', type: 'vertical' as const },
+  { id: 1, src: '../../assets/image/landing/card/landing_card_1.svg' },
+  { id: 2, src: '../../assets/image/landing/card/landing_card_2.svg' },
+  { id: 3, src: '../../assets/image/landing/card/landing_card_3.svg' },
+  { id: 4, src: '../../assets/image/landing/card/landing_card_4.svg' },
+  { id: 5, src: '../../assets/image/landing/card/landing_card_5.svg' },
+  { id: 6, src: '../../assets/image/landing/card/landing_card_6.svg' },
+  { id: 7, src: '../../assets/image/landing/card/landing_card_7.svg' },
+  { id: 8, src: '../../assets/image/landing/card/landing_card_8.svg' },
 ];
 
 function PhilosophySection() {
@@ -105,16 +107,7 @@ function PhilosophySection() {
         <Marquee className="flex h-[504px] min-h-[504px]">
           <div className="ml-[18px] flex h-[504px] flex-row gap-4">
             {images.map((image, i) => (
-              <div
-                key={image.id}
-                className={cn(
-                  'h-[391px] w-[269px] flex-shrink-0 overflow-hidden',
-                  image.color,
-                  i % 3 === 0 && 'self-center',
-                  i % 3 === 1 && 'self-start',
-                  i % 3 === 2 && 'self-end',
-                )}
-              />
+              <Image key={image.src + i} src={image.src} alt={`${i}번째 카드 이미지`} />
             ))}
           </div>
         </Marquee>

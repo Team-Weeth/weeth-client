@@ -1,4 +1,10 @@
-import { TestimonialSection, ClubTypesSection, LandingFooter } from '@/components/landing';
+import { Suspense } from 'react';
+import {
+  TestimonialSection,
+  ClubTypesSection,
+  LandingFooter,
+  BlockedToast,
+} from '@/components/landing';
 import {
   HeroSection,
   PhilosophySection,
@@ -12,6 +18,9 @@ import { USER_FEATURES, ADMIN_FEATURES } from '@/constants/landing/landing';
 export default function LandingPage() {
   return (
     <>
+      <Suspense>
+        <BlockedToast />
+      </Suspense>
       <PublicHeader showAuthButtons />
       <main className="flex min-h-screen w-full flex-col overflow-x-clip">
         <HeroSection />
