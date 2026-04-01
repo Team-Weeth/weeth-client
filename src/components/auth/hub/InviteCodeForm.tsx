@@ -47,6 +47,10 @@ function InviteCodeForm() {
     mode: 'onChange',
   });
 
+  const { ref: inviteCodeRef, ...inviteCodeField } = register('inviteCode', {
+    onChange: (e) => handleInviteCodeChange(e.target.value),
+  });
+
   async function handleInviteCodeChange(value: string) {
     abortControllerRef.current?.abort();
     setServerError(null);
@@ -115,9 +119,8 @@ function InviteCodeForm() {
           <span className="typo-caption1 text-text-alternative">동아리 초대 링크</span>
           <div className="relative">
             <Input
-              {...register('inviteCode', {
-                onChange: (e) => handleInviteCodeChange(e.target.value),
-              })}
+              {...inviteCodeField}
+              ref={inviteCodeRef}
               error={!!serverError}
               clearable
               placeholder="https://weeth.kr/clubId=TSID?code=UUID"
