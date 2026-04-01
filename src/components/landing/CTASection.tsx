@@ -1,12 +1,12 @@
 'use client';
 
-import Link from 'next/link';
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useWindowSize } from 'react-use';
-import { Button } from '../ui';
+import { Button } from '@/components/ui';
+import { InquiryDialog } from '@/components/landing';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -47,7 +47,7 @@ function CTASection({ className }: { className?: string }) {
     { scope: containerRef, dependencies: [windowWidth, windowHeight], revertOnUpdate: true },
   );
 
-  const handleInquiries = () => {};
+  const [inquiryOpen, setInquiryOpen] = useState(false);
 
   return (
     <div ref={containerRef} className={className} style={{ height: 'calc(100vh + 600px)' }}>
@@ -66,24 +66,13 @@ function CTASection({ className }: { className?: string }) {
             3분 만에 사이트를 개설해보세요.
           </p>
           <div className="flex gap-3">
-            <Button variant={'primary'} onClick={handleInquiries}>
-              가입문의
+            <Button variant="primary" size="lg" onClick={() => setInquiryOpen(true)}>
+              가입 문의하기
             </Button>
-            {/* <Link
-              href="/login?intent=create"
-              className="typo-button1 block w-fit rounded-md bg-[#00C8AA] px-400 py-300 text-white hover:bg-[#00877a]"
-            >
-              지금 무료로 시작하기
-            </Link>
-            <Link
-              href="/contact"
-              className="typo-button1 block w-fit rounded-md bg-[#E6EAED] px-400 py-300 text-black hover:bg-[#b7bcbf]"
-            >
-              가입 문의
-            </Link> */}
           </div>
         </div>
       </section>
+      <InquiryDialog open={inquiryOpen} onOpenChange={setInquiryOpen} />
     </div>
   );
 }
