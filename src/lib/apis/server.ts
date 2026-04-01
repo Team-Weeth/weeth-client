@@ -1,6 +1,6 @@
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
-import { BASE_URL } from '@/constants/api';
+import { API_BASE_PATH } from '@/constants/api';
 import {
   ACCESS_TOKEN_KEY,
   REFRESH_TOKEN_KEY,
@@ -25,7 +25,7 @@ export class ApiError extends Error {
 }
 
 function buildUrl(path: string, params?: Record<string, string | number>): string {
-  let url = `${BASE_URL}${path}`;
+  let url = `${API_BASE_PATH}${path}`;
   if (params) {
     const searchParams = new URLSearchParams();
     Object.entries(params).forEach(([key, value]) => {
@@ -43,7 +43,7 @@ async function refreshTokens(cookieStore: Awaited<ReturnType<typeof cookies>>): 
     redirect('/login');
   }
 
-  const refreshResponse = await fetch(`${BASE_URL}${BASE_URL}/users/refresh`, {
+  const refreshResponse = await fetch(`${API_BASE_PATH}/users/refresh`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -100,16 +100,22 @@ async function request<T>(
   }
 
   if (!response.ok) {
-    let code = 0;
-    let message = `API Error: ${response.status} ${response.statusText}`;
+    const errorBody = await response.text();
+    console.error('apiServer request failed:', {
+      method,
+      url,
+      status: response.status,
+      statusText: response.statusText,
+      responseBody: errorBody,
+    });
+    let serverMessage: string | undefined;
     try {
-      const body = await response.json();
-      if (body.code) code = body.code;
-      if (body.message) message = body.message;
+      const parsed = JSON.parse(errorBody);
+      serverMessage = parsed?.message;
     } catch {
-      // JSON 파싱 실패 시 기본 메시지 사용
+      // not JSON
     }
-    throw new ApiError(response.status, code, `[${response.status}:${code}] ${message}`);
+    throw new Error(serverMessage ?? `API Error: ${response.status} ${response.statusText}`);
   }
 
   if (response.status === 204) {

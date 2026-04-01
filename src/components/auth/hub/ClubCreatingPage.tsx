@@ -1,13 +1,66 @@
 'use client';
 
+import { useEffect, useRef, useState } from 'react';
+
 import { useRouter } from 'next/navigation';
 
-import { useProgressAnimation } from '@/hooks';
 import { ProgressBar } from '@/components/ui';
+import { createClubAction } from '@/lib/actions/club';
+import { useProgressAnimation } from '@/hooks';
+import { useCreateClubDraftStore } from '@/stores';
+import { toastError } from '@/stores/useToastStore';
+import type { CreateClubDraftState } from '@/stores/useCreateClubDraftStore';
 
-function ClubCreatingPage() {
+interface ClubCreatingPageProps {
+  intent?: string;
+  onCancel?: () => void;
+}
+
+function ClubCreatingPage({ intent, onCancel }: ClubCreatingPageProps) {
   const router = useRouter();
-  const progress = useProgressAnimation({ duration: 5000 });
+  const resetDraft = useCreateClubDraftStore((state) => state.reset);
+  const [apiDone, setApiDone] = useState(false);
+  const apiCalledRef = useRef(false);
+  const animationDoneRef = useRef(false);
+
+  const nextPath = intent === 'create' ? '/home' : '/hub/welcome';
+
+  const navigate = () => {
+    if (intent === 'create') resetDraft();
+    router.push(nextPath);
+  };
+
+  const progress = useProgressAnimation({
+    duration: 5000,
+    onComplete: () => {
+      animationDoneRef.current = true;
+      if (apiDone) navigate();
+    },
+  });
+
+  // 프로그레스 80% 시점에 API 호출
+  useEffect(() => {
+    if (progress < 80 || apiCalledRef.current) return;
+    apiCalledRef.current = true;
+
+    const { school, name, description, generation, phone, email, contactType } =
+      useCreateClubDraftStore.getState() as CreateClubDraftState & Record<string, unknown>;
+    createClubAction({ school, name, description, generation, phone, email, contactType }).then(
+      (result) => {
+        if (result?.error) {
+          toastError(result.error);
+          onCancel?.();
+          return;
+        }
+        setApiDone(true);
+      },
+    );
+  }, [progress, onCancel]);
+
+  // API가 애니메이션 이후에 완료된 경우 즉시 navigate
+  useEffect(() => {
+    if (apiDone && animationDoneRef.current) navigate();
+  }, [apiDone]);
 
   return (
     <div className="flex min-h-screen items-center justify-center px-400">
@@ -23,7 +76,7 @@ function ClubCreatingPage() {
 
         <button
           type="button"
-          onClick={() => router.push('/hub/create')}
+          onClick={onCancel ?? (() => router.push('/club/create'))}
           className="typo-button2 text-text-alternative cursor-pointer"
         >
           개설 중단하기

@@ -2,10 +2,19 @@ import { NextRequest, NextResponse } from 'next/server';
 import { ACCESS_TOKEN_KEY } from '@/lib/apis/cookies';
 
 // TODO: 추후 '/hub' 제거
-const PUBLIC_PATHS = ['/', '/login', '/terms', '/hub', '/landing', '/landing'];
+const PUBLIC_PATHS = ['/', '/login', '/terms', '/hub', '/landing'];
 
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
+
+  // /clubId=XXX 패턴 → /club/XXX로 리다이렉트 (초대 링크)
+  const clubIdMatch = pathname.match(/^\/clubId=([^?/]+)/);
+  if (clubIdMatch) {
+    const clubId = clubIdMatch[1];
+    const url = new URL(`/club/${clubId}`, request.url);
+    url.search = request.nextUrl.search;
+    return NextResponse.redirect(url);
+  }
 
   // Preview / Amplify 개발 배포 환경에서 토큰 자동 주입
   // VERCEL_ENV: Vercel이 자동 주입 ('preview' | 'production' | 'development')
@@ -27,7 +36,11 @@ export function proxy(request: NextRequest) {
     return response;
   }
 
-  if (PUBLIC_PATHS.some((path) => pathname === path)) {
+  if (
+    PUBLIC_PATHS.some((path) => pathname === path) ||
+    pathname.startsWith('/club/') ||
+    pathname.startsWith('/kakao/')
+  ) {
     return NextResponse.next();
   }
 

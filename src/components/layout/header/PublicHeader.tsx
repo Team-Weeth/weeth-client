@@ -83,7 +83,7 @@ export default function PublicHeader({ className, showAuthButtons = false }: Pub
                 로그인
               </Link>
               <Link
-                href="/signup"
+                href="/login?intent=create"
                 className={cn(
                   buttonVariants({ variant: 'primary', size: 'md' }),
                   'bg-[#00C8AA] text-white',

@@ -26,7 +26,7 @@ function HubProfile({ className, description, ...props }: HubProfileProps) {
         )}
       </Avatar>
       <div className="typo-h3 text-text-strong text-center">
-        {name ?? '00'}님, 반가워요!
+        {name ? `${name}님, ` : ''}반가워요!
         <br />
         {description ?? '어떤 동아리 활동을 시작할까요?'}
       </div>

@@ -19,14 +19,22 @@ interface HubActionCardProps extends React.HTMLAttributes<HTMLDivElement> {
   variant: 'create' | 'join' | 'go';
   href?: string;
   onAction?: () => void;
+  isPrimary?: boolean;
 }
 
-function HubActionCard({ variant, href, onAction, className, ...props }: HubActionCardProps) {
+function HubActionCard({
+  variant,
+  href,
+  onAction,
+  isPrimary,
+  className,
+  ...props
+}: HubActionCardProps) {
   const config = HUB_ACTION_CONFIG[variant];
 
   const button = (
     <Button
-      variant={config.buttonVariant}
+      variant={isPrimary ? 'primary' : config.buttonVariant}
       size="md"
       onClick={href ? undefined : onAction}
       className="w-19 justify-center px-400 py-300 whitespace-nowrap"

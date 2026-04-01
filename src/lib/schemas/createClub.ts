@@ -12,7 +12,6 @@ export const createClubSchema = z
       .regex(/^\d{3}-\d{3,4}-\d{4}$/, '올바른 전화번호 형식이 아닙니다'),
     email: z.union([z.email('올바른 이메일 형식이 아닙니다'), z.literal('')]),
     contactType: z.enum(['phone', 'email']),
-    termsAgreed: z.literal(true, '약관에 동의해주세요'),
   })
   .superRefine((data, ctx) => {
     if (data.contactType === 'email' && !data.email) {

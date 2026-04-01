@@ -13,14 +13,15 @@ function useProgressAnimation({ duration, onComplete }: UseProgressAnimationOpti
     let startTime: number | null = null;
     let rafId: number;
 
-    function easeOut(t: number) {
-      return 1 - Math.pow(1 - t, 2.5);
+    // Slow at the beginning and end, faster through the middle.
+    function easeInOut(t: number) {
+      return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
     }
 
     function animate(timestamp: number) {
       if (!startTime) startTime = timestamp;
       const t = Math.min((timestamp - startTime) / duration, 1);
-      setProgress(easeOut(t) * TARGET);
+      setProgress(easeInOut(t) * TARGET);
       if (t < 1) {
         rafId = requestAnimationFrame(animate);
       } else {
