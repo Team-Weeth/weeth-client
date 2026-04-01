@@ -10,9 +10,16 @@ import { TermsAgreementModal } from './TermsAgreementModal';
 interface LoginPageClientProps {
   defaultTermsOpen?: boolean;
   intent?: string;
+  clubId?: string;
+  code?: string;
 }
 
-function LoginPageClient({ defaultTermsOpen = false, intent }: LoginPageClientProps) {
+function LoginPageClient({
+  defaultTermsOpen = false,
+  intent,
+  clubId,
+  code,
+}: LoginPageClientProps) {
   const [termsOpen, setTermsOpen] = useState(defaultTermsOpen);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -22,7 +29,13 @@ function LoginPageClient({ defaultTermsOpen = false, intent }: LoginPageClientPr
     const params = new URLSearchParams({ response_type: 'code' });
     if (clientId) params.set('client_id', clientId);
     if (redirectUri) params.set('redirect_uri', `${window.location.origin}${redirectUri}`);
-    if (intent) params.set('state', intent);
+
+    if (intent === 'join' && clubId && code) {
+      params.set('state', `join:${clubId}:${code}`);
+    } else if (intent) {
+      params.set('state', intent);
+    }
+
     setIsLoading(true);
     window.location.href = `https://kauth.kakao.com/oauth/authorize?${params}`;
   }
@@ -38,7 +51,7 @@ function LoginPageClient({ defaultTermsOpen = false, intent }: LoginPageClientPr
       <TermsAgreementModal
         open={termsOpen}
         onOpenChange={setTermsOpen}
-        onAgree={() => agreeTermsAction(intent)}
+        onAgree={() => agreeTermsAction(intent, clubId, code)}
       />
     </div>
   );

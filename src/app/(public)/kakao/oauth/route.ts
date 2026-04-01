@@ -30,9 +30,19 @@ export async function GET(request: NextRequest) {
   const { accessToken, refreshToken, registered } = json.data;
 
   const state = request.nextUrl.searchParams.get('state');
-  const redirectUrl = registered
-    ? `/hub${state ? `?intent=${state}` : ''}`
-    : `/login?terms=true${state ? `&intent=${state}` : ''}`;
+
+  let redirectUrl: string;
+  if (state?.startsWith('join:')) {
+    const [, clubId, inviteCode] = state.split(':');
+    redirectUrl = registered
+      ? `/joining?clubId=${clubId}&code=${inviteCode}`
+      : `/login?terms=true&intent=join&clubId=${clubId}&code=${inviteCode}`;
+  } else {
+    redirectUrl = registered
+      ? `/hub${state ? `?intent=${state}` : ''}`
+      : `/login?terms=true${state ? `&intent=${state}` : ''}`;
+  }
+
   const redirectResponse = NextResponse.redirect(new URL(redirectUrl, origin));
 
   redirectResponse.cookies.set(ACCESS_TOKEN_KEY, accessToken, ACCESS_COOKIE_OPTIONS);

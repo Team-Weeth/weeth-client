@@ -3,8 +3,15 @@ import { LoginPageClient } from '@/components/auth/LoginPageClient';
 export default async function LoginPage({
   searchParams,
 }: {
-  searchParams: Promise<{ terms?: string; intent?: string }>;
+  searchParams: Promise<{ terms?: string; intent?: string; clubId?: string; code?: string }>;
 }) {
-  const { terms, intent } = await searchParams;
-  return <LoginPageClient defaultTermsOpen={terms === 'true'} intent={intent} />;
+  const { terms, intent, clubId, code } = await searchParams;
+  return (
+    <LoginPageClient
+      defaultTermsOpen={terms === 'true'}
+      intent={intent}
+      clubId={clubId}
+      code={code}
+    />
+  );
 }

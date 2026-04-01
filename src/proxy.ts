@@ -7,6 +7,15 @@ const PUBLIC_PATHS = ['/', '/login', '/terms', '/hub', '/landing'];
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
+  // /clubId=XXX 패턴 → /club/XXX로 리다이렉트 (초대 링크)
+  const clubIdMatch = pathname.match(/^\/clubId=([^?/]+)/);
+  if (clubIdMatch) {
+    const clubId = clubIdMatch[1];
+    const url = new URL(`/club/${clubId}`, request.url);
+    url.search = request.nextUrl.search;
+    return NextResponse.redirect(url);
+  }
+
   // Preview / Amplify 개발 배포 환경에서 토큰 자동 주입
   // VERCEL_ENV: Vercel이 자동 주입 ('preview' | 'production' | 'development')
   // AWS_BRANCH: Amplify가 자동 주입 (배포된 브랜치명)
@@ -29,7 +38,7 @@ export function proxy(request: NextRequest) {
 
   if (
     PUBLIC_PATHS.some((path) => pathname === path) ||
-    pathname.startsWith('/invite/') ||
+    pathname.startsWith('/club/') ||
     pathname.startsWith('/kakao/')
   ) {
     return NextResponse.next();

@@ -1,14 +1,16 @@
 import Image from 'next/image';
+import Link from 'next/link';
 
-import { Button } from '@/components/ui';
+import { buttonVariants } from '@/components/ui';
+import { cn } from '@/lib/cn';
 import type { Club } from '@/types';
 
 interface ClubConfirmCardProps {
   club: Club;
-  onConfirm: () => void;
+  confirmHref: string;
 }
 
-function ClubConfirmCard({ club, onConfirm }: ClubConfirmCardProps) {
+function ClubConfirmCard({ club, confirmHref }: ClubConfirmCardProps) {
   return (
     <div className="flex flex-col items-center gap-400">
       <span className="typo-h3 text-text-strong">가입하려는 동아리가 맞나요?</span>
@@ -27,9 +29,12 @@ function ClubConfirmCard({ club, onConfirm }: ClubConfirmCardProps) {
         <span className="typo-h3 text-text-strong">{club.name}</span>
         <span className="typo-body2 text-text-normal">{club.description}</span>
       </div>
-      <Button variant="primary" size="lg" className="w-full" onClick={onConfirm}>
+      <Link
+        href={confirmHref}
+        className={cn(buttonVariants({ variant: 'primary', size: 'lg' }), 'w-full')}
+      >
         가입 시작하기
-      </Button>
+      </Link>
     </div>
   );
 }

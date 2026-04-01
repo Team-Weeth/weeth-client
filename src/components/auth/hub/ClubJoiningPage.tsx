@@ -1,21 +1,105 @@
 'use client';
 
+import { useEffect, useRef, useState } from 'react';
+
+import { isAxiosError } from 'axios';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
+import { buttonVariants, ProgressBar } from '@/components/ui';
 import { useProgressAnimation } from '@/hooks';
-import { ProgressBar } from '@/components/ui';
+import { clubApi } from '@/lib/apis/club';
+import { cn } from '@/lib/cn';
+import { toastError } from '@/stores/useToastStore';
 
 interface ClubJoiningPageProps {
   clubName: string;
+  clubId: string;
+  code: string;
 }
 
-function ClubJoiningPage({ clubName }: ClubJoiningPageProps) {
+type ErrorState = { code: number; message: string } | null;
+
+function ClubJoiningPage({ clubName, clubId, code }: ClubJoiningPageProps) {
   const router = useRouter();
+  const [apiDone, setApiDone] = useState(false);
+  const [errorState, setErrorState] = useState<ErrorState>(null);
+  const apiCalledRef = useRef(false);
+  const animationDoneRef = useRef(false);
+
   const progress = useProgressAnimation({
     duration: 3000,
-    // TODO: 실제 가입 API 완료 시점으로 교체
-    onComplete: () => router.push('/hub/welcome?userName=OOO'),
+    onComplete: () => {
+      animationDoneRef.current = true;
+      if (apiDone) router.push('/home');
+    },
   });
+
+  useEffect(() => {
+    if (apiCalledRef.current) return;
+    apiCalledRef.current = true;
+
+    clubApi
+      .join(clubId, code)
+      .then(() => {
+        setApiDone(true);
+      })
+      .catch((error) => {
+        if (isAxiosError(error)) {
+          const errorCode = error.response?.data?.code;
+          if (errorCode === 21101) {
+            setErrorState({ code: 21101, message: '잘못된 가입 링크입니다.' });
+            return;
+          }
+          if (errorCode === 21102) {
+            setErrorState({
+              code: 21102,
+              message: '이미 가입된 동아리입니다. 동아리로 이동할까요?',
+            });
+            return;
+          }
+          if (errorCode === 21110) {
+            setErrorState({
+              code: 21110,
+              message: '가입 가능한 동아리 수를 초과했습니다.',
+            });
+            return;
+          }
+        }
+        toastError();
+        router.push('/hub');
+      });
+  }, [clubId, code, router]);
+
+  // API가 애니메이션 이후에 완료된 경우 즉시 navigate
+  useEffect(() => {
+    if (apiDone && animationDoneRef.current) router.push('/home');
+  }, [apiDone, router]);
+
+  if (errorState) {
+    return (
+      <div className="flex min-h-screen items-center justify-center px-400">
+        <div className="flex w-full max-w-[520px] flex-col items-center gap-500">
+          <h1 className="typo-h3 text-text-strong text-center">{errorState.message}</h1>
+          {errorState.code === 21102 ? (
+            <Link
+              href="/home"
+              className={cn(buttonVariants({ variant: 'primary', size: 'lg' }), 'w-full')}
+            >
+              홈으로 이동
+            </Link>
+          ) : (
+            <Link
+              href="/hub"
+              className={cn(buttonVariants({ variant: 'primary', size: 'lg' }), 'w-full')}
+            >
+              허브로 이동
+            </Link>
+          )}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex min-h-screen items-center justify-center px-400">

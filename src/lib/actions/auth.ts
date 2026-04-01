@@ -35,7 +35,7 @@ export async function loginAction(formData: FormData) {
   redirect('/home');
 }
 
-export async function agreeTermsAction(intent?: string) {
+export async function agreeTermsAction(intent?: string, clubId?: string, code?: string) {
   const cookieStore = await cookies();
   const accessToken = cookieStore.get(ACCESS_TOKEN_KEY)?.value;
 
@@ -59,6 +59,9 @@ export async function agreeTermsAction(intent?: string) {
   cookieStore.set(ACCESS_TOKEN_KEY, newAccessToken, ACCESS_COOKIE_OPTIONS);
   cookieStore.set(REFRESH_TOKEN_KEY, refreshToken, REFRESH_COOKIE_OPTIONS);
 
+  if (intent === 'join' && clubId && code) {
+    redirect(`/joining?clubId=${clubId}&code=${code}`);
+  }
   redirect(intent ? `/hub?intent=${intent}` : '/hub');
 }
 
