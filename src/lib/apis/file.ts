@@ -1,5 +1,4 @@
 import { apiClient } from '@/lib/apis/client';
-import { API_BASE_PATH } from '@/constants/api';
 import type { ApiResponse } from '@/types/common';
 
 export type OwnerType =
@@ -19,7 +18,7 @@ export interface PresignedUrl {
 export const fileApi = {
   /** presigned URL 요청 */
   getPresignedUrls: (ownerType: OwnerType, fileNames: string[]) =>
-    apiClient.get<ApiResponse<PresignedUrl[]>>(`${API_BASE_PATH}/files`, {
+    apiClient.get<ApiResponse<PresignedUrl[]>>(`/files`, {
       params: { ownerType, fileNames },
     }),
 };

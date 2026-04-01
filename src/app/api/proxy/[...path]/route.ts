@@ -8,48 +8,58 @@ async function handler(request: NextRequest, { params }: { params: Promise<{ pat
     return NextResponse.json({ error: 'API URL not configured' }, { status: 500 });
   }
 
-  const { path } = await params;
-  const url = new URL(`${API_BASE_PATH}/${path.join('/')}`);
-  url.search = request.nextUrl.search;
+  try {
+    const { path } = await params;
+    const url = new URL(`${API_BASE_PATH}/${path.join('/')}`);
+    url.search = request.nextUrl.search;
 
-  const cookieStore = await cookies();
-  const accessToken = cookieStore.get(ACCESS_TOKEN_KEY)?.value;
+    const cookieStore = await cookies();
+    const accessToken = cookieStore.get(ACCESS_TOKEN_KEY)?.value;
 
-  const headers = new Headers(request.headers);
-  headers.delete('cookie');
-  headers.set('host', new URL(API_BASE_PATH).host);
+    const headers = new Headers(request.headers);
+    headers.delete('cookie');
+    headers.set('host', new URL(API_BASE_PATH).host);
 
-  if (accessToken) {
-    headers.set('Authorization', `Bearer ${accessToken}`);
-  }
+    if (accessToken) {
+      headers.set('Authorization', `Bearer ${accessToken}`);
+    }
 
-  const body =
-    request.method !== 'GET' && request.method !== 'HEAD' ? await request.arrayBuffer() : undefined;
+    const body =
+      request.method !== 'GET' && request.method !== 'HEAD'
+        ? await request.arrayBuffer()
+        : undefined;
 
-  const response = await fetch(url.toString(), {
-    method: request.method,
-    headers,
-    body: body?.byteLength ? body : undefined,
-  });
+    const response = await fetch(url.toString(), {
+      method: request.method,
+      headers,
+      body: body?.byteLength ? body : undefined,
+    });
 
-  const responseHeaders = new Headers(response.headers);
-  responseHeaders.delete('transfer-encoding');
-  responseHeaders.delete('set-cookie');
+    const responseHeaders = new Headers(response.headers);
+    responseHeaders.delete('transfer-encoding');
+    responseHeaders.delete('set-cookie');
 
-  if (response.status === 204) {
-    return new NextResponse(null, {
-      status: 204,
+    if (response.status === 204) {
+      return new NextResponse(null, {
+        status: 204,
+        headers: responseHeaders,
+      });
+    }
+
+    const responseBody = await response.arrayBuffer();
+
+    return new NextResponse(responseBody, {
+      status: response.status,
+      statusText: response.statusText,
       headers: responseHeaders,
     });
+  } catch (error) {
+    console.error('[Proxy Error]', error);
+    return NextResponse.json(
+      { error: 'Proxy request failed', detail: String(error) },
+      { status: 502 },
+    );
   }
-
-  const responseBody = await response.arrayBuffer();
-
-  return new NextResponse(responseBody, {
-    status: response.status,
-    statusText: response.statusText,
-    headers: responseHeaders,
-  });
 }
 
 export const GET = handler;
