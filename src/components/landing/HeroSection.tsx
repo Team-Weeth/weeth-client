@@ -6,7 +6,6 @@ import Image from 'next/image';
 import { useEffect, useRef, useState } from 'react';
 import { cn } from '@/lib/cn';
 import { buttonVariants } from '@/components/ui';
-import { LandingHeroCard } from '@/assets/image/landing/card';
 import {
   whiteCardVariants,
   greenCardVariants,
@@ -113,14 +112,35 @@ function HeroSection({ className }: HeroSectionProps) {
                   variants={greenCardVariants}
                   className="absolute inset-0 z-0 h-[510px] w-[430px] rounded-3xl bg-[#00C8AA]"
                 />
-                <motion.div variants={heroImageVariants} className="relative z-10">
-                  <Image
-                    src={LandingHeroCard}
-                    alt="landing-image"
-                    width={430}
-                    height={510}
-                    priority
-                  />
+                <motion.div
+                  variants={heroImageVariants}
+                  className="relative z-10 flex h-[510px] w-[430px] flex-col rounded-3xl bg-[#DDFFF8] p-[32px]"
+                >
+                  {/* TODO: svg 교체 */}
+                  <svg
+                    width="140"
+                    height="150"
+                    viewBox="0 0 33 34"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                    aria-label="Weeth 로고"
+                  >
+                    <path
+                      d="M8.42176 33.1933L4.0278 17.0821H10.0695V23.1238L12.0834 17.0821L16.1112 13.0543L20.139 21.1099L21.6036 4.99876L28.1945 2.98486L26.1807 23.1238L23.8006 33.1933L16.1112 31.1794L14.0973 23.1238L12.0834 33.1933H8.42176Z"
+                      fill="#00C8AA"
+                    />
+                    <circle cx="9.39819" cy="6.34158" r="5.37039" fill="#00C8AA" />
+                  </svg>
+                  <div className="mt-auto flex flex-col gap-[6px]">
+                    <p className="text-4xl leading-[62px] font-bold tracking-[-0.4px] text-[#00C8AA]">
+                      우리 동아리만의 공간,
+                      <br />
+                      동아리 관리 서비스
+                    </p>
+                    <p className="text-4xl leading-[62px] font-bold tracking-[-0.4px] text-[#00C8AA]">
+                      Weeth에서 시작해요
+                    </p>
+                  </div>
                 </motion.div>
               </motion.div>
 

@@ -15,6 +15,7 @@ export { default as ExitToAppIcon } from './exit_to_app.svg';
 export { default as InfoIcon } from './info.svg';
 export { default as MenuIcon } from './menu.svg';
 export { default as LogoIcon } from './logo/logo_full_Origin.svg';
+export { default as LogoInitialIcon } from './logo/logo_initial_Origin.svg';
 export { default as FooterLogoIcon } from './logo/logo_full_Footer.svg';
 export { default as PaperclipIcon } from './paperclip.svg';
 export { default as NewIcon } from './new.svg';
