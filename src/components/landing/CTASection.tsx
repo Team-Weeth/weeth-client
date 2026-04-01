@@ -6,6 +6,7 @@ import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useWindowSize } from 'react-use';
+import { Button } from '../ui';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -46,6 +47,8 @@ function CTASection({ className }: { className?: string }) {
     { scope: containerRef, dependencies: [windowWidth, windowHeight], revertOnUpdate: true },
   );
 
+  const handleAsk = () => {};
+
   return (
     <div ref={containerRef} className={className} style={{ height: 'calc(100vh + 600px)' }}>
       <section className="sticky top-0 flex min-h-screen w-full items-center justify-center bg-[#00C8AA]">
@@ -63,7 +66,10 @@ function CTASection({ className }: { className?: string }) {
             3분 만에 사이트를 개설해보세요.
           </p>
           <div className="flex gap-3">
-            <Link
+            <Button variant={'primary'} onClick={handleAsk}>
+              가입문의
+            </Button>
+            {/* <Link
               href="/login?intent=create"
               className="typo-button1 block w-fit rounded-md bg-[#00C8AA] px-400 py-300 text-white hover:bg-[#00877a]"
             >
@@ -74,7 +80,7 @@ function CTASection({ className }: { className?: string }) {
               className="typo-button1 block w-fit rounded-md bg-[#E6EAED] px-400 py-300 text-black hover:bg-[#b7bcbf]"
             >
               가입 문의
-            </Link>
+            </Link> */}
           </div>
         </div>
       </section>
