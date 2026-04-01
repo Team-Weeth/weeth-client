@@ -47,7 +47,7 @@ function CTASection({ className }: { className?: string }) {
     { scope: containerRef, dependencies: [windowWidth, windowHeight], revertOnUpdate: true },
   );
 
-  const handleAsk = () => {};
+  const handleInquiries = () => {};
 
   return (
     <div ref={containerRef} className={className} style={{ height: 'calc(100vh + 600px)' }}>
@@ -66,7 +66,7 @@ function CTASection({ className }: { className?: string }) {
             3분 만에 사이트를 개설해보세요.
           </p>
           <div className="flex gap-3">
-            <Button variant={'primary'} onClick={handleAsk}>
+            <Button variant={'primary'} onClick={handleInquiries}>
               가입문의
             </Button>
             {/* <Link

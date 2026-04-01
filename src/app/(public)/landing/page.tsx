@@ -21,7 +21,8 @@ export default function LandingPage() {
       <Suspense>
         <BlockedToast />
       </Suspense>
-      <PublicHeader showAuthButtons />
+      {/* TODO: showAuthButtons 추가하기 */}
+      <PublicHeader />
       <main className="flex min-h-screen w-full flex-col overflow-x-clip">
         <HeroSection />
         <PhilosophySection />

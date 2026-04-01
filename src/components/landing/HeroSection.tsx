@@ -6,7 +6,7 @@ import Image from 'next/image';
 import { useEffect, useRef, useState } from 'react';
 import { cn } from '@/lib/cn';
 import { buttonVariants } from '@/components/ui';
-import LandingHeroImageIcon from '@/assets/icons/landing/landing_hero_image.svg';
+import { LandingHeroCard } from '@/assets/image/landing/card';
 import {
   whiteCardVariants,
   greenCardVariants,
@@ -115,12 +115,11 @@ function HeroSection({ className }: HeroSectionProps) {
                 />
                 <motion.div variants={heroImageVariants} className="relative z-10">
                   <Image
-                    src={LandingHeroImageIcon}
+                    src={LandingHeroCard}
                     alt="landing-image"
                     width={430}
                     height={510}
                     priority
-                    className="h-[510px] w-[430px] rounded-3xl"
                   />
                 </motion.div>
               </motion.div>
@@ -173,7 +172,7 @@ function HeroSection({ className }: HeroSectionProps) {
             Weeth에서 동아리의 추억을 쌓아보세요
           </motion.p>
           <motion.div variants={ctaVariants}>
-            <Link
+            {/* <Link
               href="/login?intent=create"
               className={cn(
                 buttonVariants({ variant: 'primary', size: 'lg' }),
@@ -181,7 +180,7 @@ function HeroSection({ className }: HeroSectionProps) {
               )}
             >
               지금 무료로 시작하기
-            </Link>
+            </Link> */}
           </motion.div>
         </div>
       </motion.div>

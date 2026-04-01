@@ -116,8 +116,8 @@ function PhilosophySection() {
       <div className="h-[504px] min-h-[504px]">
         <Marquee className="flex h-[504px] min-h-[504px]">
           <div className="ml-[18px] flex h-[504px] flex-row gap-4">
-            {images.map((image, i) => (
-              <Image key={image.src + i} src={image.src} alt={`${i}번째 카드 이미지`} />
+            {images.map((src, i) => (
+              <Image key={i} src={src} alt={`${i + 1}번째 카드 이미지`} width={269} height={391} />
             ))}
           </div>
         </Marquee>

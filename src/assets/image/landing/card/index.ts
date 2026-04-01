@@ -6,3 +6,5 @@ export { default as LandingCard5 } from './landing_card_5.svg';
 export { default as LandingCard6 } from './landing_card_6.svg';
 export { default as LandingCard7 } from './landing_card_7.svg';
 export { default as LandingCard8 } from './landing_card_8.svg';
+
+export { default as LandingHeroCard } from './landing_hero_card.svg';
