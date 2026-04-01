@@ -24,9 +24,7 @@ async function handler(request: NextRequest, { params }: { params: Promise<{ pat
   }
 
   const body =
-    request.method !== 'GET' && request.method !== 'HEAD'
-      ? await request.arrayBuffer()
-      : undefined;
+    request.method !== 'GET' && request.method !== 'HEAD' ? await request.arrayBuffer() : undefined;
 
   const response = await fetch(url.toString(), {
     method: request.method,
