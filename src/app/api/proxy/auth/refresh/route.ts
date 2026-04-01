@@ -1,6 +1,6 @@
 import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
-import { BASE_URL } from '@/constants/api';
+import { API_BASE_PATH } from '@/constants/api';
 import {
   ACCESS_TOKEN_KEY,
   REFRESH_TOKEN_KEY,
@@ -10,7 +10,7 @@ import {
 
 export async function POST() {
   try {
-    if (!BASE_URL) {
+    if (!API_BASE_PATH) {
       return NextResponse.json({ error: 'API URL not configured' }, { status: 500 });
     }
 
@@ -21,7 +21,7 @@ export async function POST() {
       return NextResponse.json({ error: 'No refresh token' }, { status: 401 });
     }
 
-    const response = await fetch(`${BASE_URL}/api/v4/users/refresh`, {
+    const response = await fetch(`${API_BASE_PATH}/users/social/refresh`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

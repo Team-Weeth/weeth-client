@@ -7,7 +7,7 @@ export const HUB_ACTION_CONFIG = {
     title: '사이트 새로 개설하기',
     description: '새로운 동아리 사이트를 개설하고 싶은 리더님은 여기!',
     buttonText: '개설',
-    buttonVariant: 'primary' as ButtonProps['variant'],
+    buttonVariant: 'secondary' as ButtonProps['variant'],
   },
   join: {
     icon: HubJoinIcon,

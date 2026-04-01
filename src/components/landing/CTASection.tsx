@@ -64,7 +64,7 @@ function CTASection({ className }: { className?: string }) {
           </p>
           <div className="flex gap-3">
             <Link
-              href="/login"
+              href="/login?intent=create"
               className="typo-button1 block w-fit rounded-md bg-[#00C8AA] px-400 py-300 text-white hover:bg-[#00877a]"
             >
               지금 무료로 시작하기

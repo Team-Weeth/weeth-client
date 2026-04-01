@@ -1,3 +1,27 @@
 'use server';
 
-// club 관련 Server Actions
+import { apiServer } from '@/lib/apis/server';
+import type { CreateClubFormData } from '@/lib/schemas/createClub';
+
+export async function createClubAction(data: CreateClubFormData) {
+  const payload = {
+    name: data.name,
+    schoolName: data.school.replace(/\(.*\)$/, ''),
+    description: data.description,
+    contactEmail: data.email || null,
+    contactPhoneNumber: data.phone.replace(/-/g, ''),
+    primaryContact: data.contactType.toUpperCase(),
+    currentCardinal: Number(data.generation),
+    profileImage: null,
+    backgroundImage: null,
+  };
+
+  try {
+    await apiServer.post('/clubs', payload);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : '동아리 개설에 실패했습니다.';
+    return { error: message };
+  }
+
+  return { success: true };
+}

@@ -20,7 +20,9 @@ function SearchSelect({ value, onChange, options, placeholder, className }: Sear
   const close = () => setOpen(false);
   const ref = useClickOutside<HTMLDivElement>(close);
 
-  const filtered = options.filter((o) => o.toLowerCase().includes(query.toLowerCase()));
+  const filtered = [
+    ...new Set(options.filter((o) => o.toLowerCase().includes(query.toLowerCase()))),
+  ];
 
   const handleSelect = (option: string) => {
     onChange(option);

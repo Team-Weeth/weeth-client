@@ -127,3 +127,5 @@ export { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from './Tool
 export { FormCard, type FormCardProps } from './FormCard';
 
 export { Skeleton } from './skeleton';
+
+export { Loading, type LoadingProps } from './Loading';

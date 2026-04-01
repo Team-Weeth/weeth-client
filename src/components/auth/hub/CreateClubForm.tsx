@@ -1,44 +1,85 @@
 'use client';
 
+import { useEffect, useState } from 'react';
+
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useRouter } from 'next/navigation';
 import { Controller, useForm, useWatch } from 'react-hook-form';
 
-import { ArrowDownIcon, TooltipIcon } from '@/assets/icons';
+import { TooltipIcon } from '@/assets/icons';
 import { Button, Icon, Input, Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui';
+import { SearchSelect } from '@/components/mypage';
 import { cn } from '@/lib/cn';
+import { universityApi } from '@/lib/apis/university';
 import { createClubSchema, type CreateClubFormData } from '@/lib/schemas/createClub';
+import { useCreateClubDraftStore } from '@/stores';
 import { formatPhone } from '@/utils/shared';
 
+import { ClubCreatingPage } from './ClubCreatingPage';
 import { FieldError, FieldLabel, FormFieldWrapper } from './FormFieldWrapper';
 
 function CreateClubForm() {
+  const [isCreating, setIsCreating] = useState(false);
+  const [schoolNames, setSchoolNames] = useState<string[]>([]);
+
+  useEffect(() => {
+    universityApi.getSchools().then((res) => {
+      setSchoolNames(res.data.data.map((s) => `${s.schoolName}(${s.region})`));
+    });
+  }, []);
+
+  const schoolDraft = useCreateClubDraftStore((state) => state.school);
+  const nameDraft = useCreateClubDraftStore((state) => state.name);
+  const descriptionDraft = useCreateClubDraftStore((state) => state.description);
+  const generationDraft = useCreateClubDraftStore((state) => state.generation);
+  const phoneDraft = useCreateClubDraftStore((state) => state.phone);
+  const emailDraft = useCreateClubDraftStore((state) => state.email);
+  const contactTypeDraft = useCreateClubDraftStore((state) => state.contactType);
+  const setDraft = useCreateClubDraftStore((state) => state.setDraft);
+
   const {
     register,
     control,
     handleSubmit,
+    watch,
     formState: { errors, isValid },
   } = useForm<CreateClubFormData>({
     resolver: zodResolver(createClubSchema),
     defaultValues: {
-      school: '',
-      name: '',
-      description: '',
-      generation: '',
-      phone: '',
-      email: '',
-      contactType: 'phone',
+      school: schoolDraft,
+      name: nameDraft,
+      description: descriptionDraft,
+      generation: generationDraft,
+      phone: phoneDraft,
+      email: emailDraft,
+      contactType: contactTypeDraft,
     },
     mode: 'onBlur',
   });
 
-  const school = useWatch({ control, name: 'school' });
   const contactType = useWatch({ control, name: 'contactType' });
 
-  const router = useRouter();
+  useEffect(() => {
+    const subscription = watch((values) => {
+      setDraft({
+        school: values.school ?? '',
+        name: values.name ?? '',
+        description: values.description ?? '',
+        generation: values.generation ?? '',
+        phone: values.phone ?? '',
+        email: values.email ?? '',
+        contactType: values.contactType ?? 'phone',
+      });
+    });
 
-  function onSubmit(_data: CreateClubFormData) {
-    router.push('/hub/loading');
+    return () => subscription.unsubscribe();
+  }, [setDraft, watch]);
+
+  function onSubmit(data: CreateClubFormData) {
+    setIsCreating(true);
+  }
+
+  if (isCreating) {
+    return <ClubCreatingPage intent="create" onCancel={() => setIsCreating(false)} />;
   }
 
   return (
@@ -55,26 +96,18 @@ function CreateClubForm() {
       <form className="flex flex-col gap-400" onSubmit={handleSubmit(onSubmit)}>
         {/* 소속 학교 */}
         <FormFieldWrapper label="소속 학교" error={errors.school?.message}>
-          <div className="relative">
-            <select
-              {...register('school')}
-              autoComplete="organization"
-              className={cn(
-                'bg-container-neutral typo-body2 w-full cursor-pointer appearance-none',
-                'rounded-lg border border-transparent px-300 py-200',
-                'focus:border-brand-primary focus:outline-none',
-                'transition-colors',
-                school ? 'text-text-normal' : 'text-text-alternative',
-              )}
-            >
-              <option value="" disabled>
-                학교
-              </option>
-            </select>
-            <div className="text-icon-alternative pointer-events-none absolute top-1/2 right-300 -translate-y-1/2">
-              <Icon src={ArrowDownIcon} size={12} alt="" className="text-text-normal" />
-            </div>
-          </div>
+          <Controller
+            name="school"
+            control={control}
+            render={({ field }) => (
+              <SearchSelect
+                value={field.value}
+                onChange={field.onChange}
+                options={schoolNames}
+                placeholder="학교명을 검색하세요"
+              />
+            )}
+          />
         </FormFieldWrapper>
 
         {/* 동아리 이름 */}

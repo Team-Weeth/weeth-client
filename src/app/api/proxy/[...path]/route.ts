@@ -1,15 +1,15 @@
 import { cookies } from 'next/headers';
 import { NextRequest, NextResponse } from 'next/server';
-import { BASE_URL } from '@/constants/api';
+import { API_BASE_PATH } from '@/constants/api';
 import { ACCESS_TOKEN_KEY } from '@/lib/apis/cookies';
 
 async function handler(request: NextRequest, { params }: { params: Promise<{ path: string[] }> }) {
-  if (!BASE_URL) {
+  if (!API_BASE_PATH) {
     return NextResponse.json({ error: 'API URL not configured' }, { status: 500 });
   }
 
   const { path } = await params;
-  const url = new URL(`/${path.join('/')}`, BASE_URL);
+  const url = new URL(`${API_BASE_PATH}/${path.join('/')}`);
   url.search = request.nextUrl.search;
 
   const cookieStore = await cookies();
@@ -17,7 +17,7 @@ async function handler(request: NextRequest, { params }: { params: Promise<{ pat
 
   const headers = new Headers(request.headers);
   headers.delete('cookie');
-  headers.set('host', new URL(BASE_URL).host);
+  headers.set('host', new URL(API_BASE_PATH).host);
 
   if (accessToken) {
     headers.set('Authorization', `Bearer ${accessToken}`);

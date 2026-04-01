@@ -1,10 +1,8 @@
-'use client';
-
 import Image from 'next/image';
+import Link from 'next/link';
 
-import { useRouter } from 'next/navigation';
-
-import { Button } from '@/components/ui';
+import { buttonVariants } from '@/components/ui';
+import { cn } from '@/lib/cn';
 import type { Club } from '@/types';
 
 interface ClubAccessPageProps {
@@ -12,8 +10,6 @@ interface ClubAccessPageProps {
 }
 
 function ClubAccessPage({ club }: ClubAccessPageProps) {
-  const router = useRouter();
-
   return (
     <div className="flex min-h-screen flex-col items-center justify-center">
       <div className="flex flex-col items-center gap-400">
@@ -33,14 +29,12 @@ function ClubAccessPage({ club }: ClubAccessPageProps) {
           <span className="typo-h3 text-text-strong">{club.name}</span>
           <span className="typo-body2 text-text-normal">{club.description}</span>
         </div>
-        <Button
-          variant="primary"
-          size="lg"
-          className="w-full"
-          onClick={() => router.push('/login')}
+        <Link
+          href="/login"
+          className={cn(buttonVariants({ variant: 'primary', size: 'lg' }), 'w-full')}
         >
           로그인하고 들어가기
-        </Button>
+        </Link>
       </div>
     </div>
   );
