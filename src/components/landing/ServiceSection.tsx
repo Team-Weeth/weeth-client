@@ -113,7 +113,7 @@ function ServiceSection({
     >
       <section
         className={cn(
-          'sticky top-0 h-screen w-full overflow-hidden pt-[86px] pl-[306px]',
+          'sticky top-0 h-screen min-h-[1227px] w-full overflow-hidden pt-[86px] pl-[306px]',
           variant === 'user' ? 'bg-[#F3F5F7]' : 'bg-[#E6EAED]',
         )}
       >
@@ -133,7 +133,7 @@ function ServiceSection({
           {title}
         </h2>
 
-        <div className="mt-[48px] mb-[102px] flex w-[1123px] justify-between">
+        <div className="mt-[48px] mb-[86px] flex w-[1123px] justify-between">
           <p className="typo-body1 text-[#1E2021]">
             {subtitle.split('<br/>').map((line, i, arr) => (
               <span key={i}>
@@ -188,22 +188,22 @@ function ServiceSection({
                     <Image src={f.image} alt={f.chipLabel} width={945} height={523} />
                   ) : null}
                 </div>
-                <p className="mt-[22px] text-[24px] leading-[30px] font-semibold tracking-[-0.005em] text-[#1E2021]">
+                <p className="mt-[22px] text-[18px] leading-[30px] font-semibold tracking-[-0.005em] text-[#909599]">
                   {f.highlightKeyword
                     ? (() => {
-                        const idx = f.cardTitle.indexOf(f.highlightKeyword);
-                        if (idx === -1) return f.cardTitle;
+                        const idx = f.description.indexOf(f.highlightKeyword);
+                        if (idx === -1) return f.description;
                         return (
                           <>
-                            {f.cardTitle.slice(0, idx)}
-                            <span className="text-[#00C8AA]">
+                            {f.description.slice(0, idx)}
+                            <span className="text-[#000]">
                               {f.highlightKeyword}
                             </span>
-                            {f.cardTitle.slice(idx + f.highlightKeyword.length)}
+                            {f.description.slice(idx + f.highlightKeyword.length)}
                           </>
                         );
                       })()
-                    : f.cardTitle}
+                    : f.description}
                 </p>
               </div>
             ))}
