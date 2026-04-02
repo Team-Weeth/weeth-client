@@ -196,9 +196,7 @@ function ServiceSection({
                         return (
                           <>
                             {f.description.slice(0, idx)}
-                            <span className="text-[#000]">
-                              {f.highlightKeyword}
-                            </span>
+                            <span className="text-[#000]">{f.highlightKeyword}</span>
                             {f.description.slice(idx + f.highlightKeyword.length)}
                           </>
                         );
