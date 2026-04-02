@@ -51,40 +51,68 @@ export function useFileUpload(ownerType: OwnerType = 'POST') {
 
   const imageInputRef = useRef<HTMLInputElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const uploadAbortMap = useRef<Map<string, AbortController>>(new Map());
+
+  const isFileInStore = (id: string) => usePostStore.getState().files.some((f) => f.id === id);
 
   const uploadToS3 = async (filesToUpload: { id: string; file: File }[]) => {
+    // presigned URL 요청 전에 이미 삭제된 파일 제외
+    const alive = filesToUpload.filter(({ id }) => isFileInStore(id));
+    if (alive.length === 0) return;
+
     let presignedUrls;
     try {
-      const fileNames = filesToUpload.map((f) => f.file.name);
+      const fileNames = alive.map((f) => f.file.name);
       const { data } = await fileApi.getPresignedUrls(ownerType, fileNames);
       presignedUrls = data.data;
     } catch {
       toast({ title: '파일 업로드에 실패했습니다.', variant: 'error' });
-      filesToUpload.forEach(({ id }) => removeFile(id));
+      alive.forEach(({ id }) => removeFile(id));
       return;
     }
 
     // fileName 기반 매칭 (인덱스 순서 의존 제거)
     const remaining = [...presignedUrls];
     const results = await Promise.allSettled(
-      filesToUpload.map(async ({ id, file }) => {
+      alive.map(async ({ id, file }) => {
+        // PUT 직전 store 존재 여부 재확인
+        if (!isFileInStore(id)) return;
+
         const idx = remaining.findIndex((p) => p.fileName === file.name);
         if (idx === -1) throw new Error(`No presigned URL for ${file.name}`);
         const presigned = remaining.splice(idx, 1)[0];
-        const res = await fetch(presigned.putUrl, {
-          method: 'PUT',
-          body: file,
-          headers: { 'Content-Type': file.type },
-        });
-        if (!res.ok) throw new Error(`Upload failed (${res.status})`);
-        const fileUrl = presigned.putUrl.split('?')[0];
-        markUploaded(id, presigned.storageKey, fileUrl);
+
+        const controller = new AbortController();
+        uploadAbortMap.current.set(id, controller);
+
+        try {
+          const res = await fetch(presigned.putUrl, {
+            method: 'PUT',
+            body: file,
+            headers: { 'Content-Type': file.type },
+            signal: controller.signal,
+          });
+          if (!res.ok) throw new Error(`Upload failed (${res.status})`);
+
+          // 업로드 완료 후에도 store에 남아있는지 확인
+          if (isFileInStore(id)) {
+            const fileUrl = presigned.putUrl.split('?')[0];
+            markUploaded(id, presigned.storageKey, fileUrl);
+          }
+        } finally {
+          uploadAbortMap.current.delete(id);
+        }
       }),
     );
 
     const failedIds = results
-      .map((r, i) => (r.status === 'rejected' ? filesToUpload[i].id : null))
-      .filter(Boolean) as string[];
+      .map((r, i) => {
+        if (r.status === 'rejected' && r.reason?.name !== 'AbortError') {
+          return alive[i].id;
+        }
+        return null;
+      })
+      .filter((id): id is string => id !== null && isFileInStore(id));
 
     if (failedIds.length > 0) {
       failedIds.forEach((id) => removeFile(id));
@@ -116,8 +144,9 @@ export function useFileUpload(ownerType: OwnerType = 'POST') {
     const incomingImages = valid.filter((f) => isImageFile(f));
     const incomingNonImages = valid.filter((f) => !isImageFile(f));
 
-    const currentImageCount = files.filter((f) => isImageFileName(f.fileName)).length;
-    const currentNonImageCount = files.filter((f) => !isImageFileName(f.fileName)).length;
+    const currentFiles = usePostStore.getState().files;
+    const currentImageCount = currentFiles.filter((f) => isImageFileName(f.fileName)).length;
+    const currentNonImageCount = currentFiles.filter((f) => !isImageFileName(f.fileName)).length;
 
     const imageSlots = MAX_IMAGE_FILES - currentImageCount;
     const nonImageSlots = MAX_NON_IMAGE_FILES - currentNonImageCount;
@@ -164,6 +193,12 @@ export function useFileUpload(ownerType: OwnerType = 'POST') {
   const openFilePicker = () => fileInputRef.current?.click();
 
   const handleRemoveFile = (id: string | number, fileUrl: string) => {
+    // 진행 중인 업로드가 있으면 중단
+    const controller = uploadAbortMap.current.get(String(id));
+    if (controller) {
+      controller.abort();
+      uploadAbortMap.current.delete(String(id));
+    }
     if (fileUrl.startsWith('blob:')) URL.revokeObjectURL(fileUrl);
     removeFile(id);
   };
