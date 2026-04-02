@@ -14,6 +14,7 @@ import {
 } from '@/components/ui';
 import { cn } from '@/lib/cn';
 import { formatKoreanDate, formatTime } from '@/lib/formatTime';
+import { ATTENDANCE_ATTENDANCE_STATUS_CONFIG } from '@/constants/attendance';
 import type { AttendanceSummary } from '@/types/attendance';
 
 interface AttendanceHistoryContentProps {
@@ -66,19 +67,18 @@ function AttendanceHistoryContent({ summary }: AttendanceHistoryContentProps) {
                 const startDate = new Date(record.start);
                 const endDate = new Date(record.end);
 
+                const statusConfig = ATTENDANCE_STATUS_CONFIG[record.status];
+
                 return (
                   <div key={record.id} className="flex flex-col gap-200">
                     <div className="flex items-center gap-200">
                       <Tag
-                        variant={record.status === 'ATTEND' ? 'primary' : 'notice'}
                         className={cn(
                           'w-[49px] justify-center rounded-full py-[2px]',
-                          record.status === 'ATTEND'
-                            ? 'bg-container-primary text-text-inverse'
-                            : 'bg-state-error text-text-inverse',
+                          statusConfig.className,
                         )}
                       >
-                        {record.status === 'ATTEND' ? '출석' : '결석'}
+                        {statusConfig.label}
                       </Tag>
                       <span className="typo-sub2 text-text-strong">{record.title}</span>
                     </div>
