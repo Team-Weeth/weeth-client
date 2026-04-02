@@ -1,6 +1,7 @@
 // board components index file
 
-export { ChannelList, type ChannelListProps, type BoardNavItem } from './ChannelList';
+export { ChannelList, type ChannelListProps } from './ChannelList';
+export type { BoardNavItem } from '@/types/board';
 export { MegaphoneIcon, type MegaphoneIconProps } from './MegaphoneIcon';
 export { BoardNav, type BoardNavProps } from './BoardNav';
 export { BoardContent } from './BoardContent';
@@ -14,3 +15,6 @@ export { FileList, type FileListProps } from './FileList';
 export { ImageList, type ImageListProps } from './ImageList';
 export { TitleInput, type TitleInputProps } from './TitleInput';
 export { CategorySelector, type CategorySelectorProps } from './CategorySelector';
+export { BoardNavSkeleton } from './BoardNavSkeleton';
+export { BoardContentSkeleton } from './BoardContentSkeleton';
+export { PostDetailSkeleton } from './PostDetailSkeleton';

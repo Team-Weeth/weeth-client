@@ -33,6 +33,16 @@ function formatModalDescription(start: string, location: string) {
 }
 
 /**
+ * ISO 문자열을 "MM/DD HH:mm" 형식으로 변환
+ */
+function formatShortDateTime(time: string) {
+  const date = new Date(time);
+  const hours = String(date.getHours()).padStart(2, '0');
+  const minutes = String(date.getMinutes()).padStart(2, '0');
+  return `${formatMonthDay(time)} ${hours}:${minutes}`;
+}
+
+/**
  * ISO 날짜 문자열을 "MM/DD" 형식으로 변환
  * 예: "2026-03-20T12:30:00.000Z" -> "03/20"
  */
@@ -48,5 +58,6 @@ export {
   formatKoreanDate,
   formatAttendanceDescription,
   formatModalDescription,
+  formatShortDateTime,
   formatMonthDay,
 };

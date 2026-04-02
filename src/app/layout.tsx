@@ -36,7 +36,7 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className={cn(inter.variable, 'w-full antialiased')}>
+      <body className={cn(inter.variable, 'w-full antialiased')} suppressHydrationWarning>
         <QueryProvider>
           <ThemeProvider>
             <TooltipProvider>

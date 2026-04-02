@@ -11,5 +11,10 @@ export {
   useUserRole,
   useUserActions,
 } from './useUserStore';
-
+export {
+  useBoardNavStore,
+  useActiveBoardId,
+  useSetActiveBoardId,
+  useBoardNavReset,
+} from './useBoardNavStore';
 export { useCreateClubDraftStore } from './useCreateClubDraftStore';

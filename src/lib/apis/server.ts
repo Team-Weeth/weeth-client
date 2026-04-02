@@ -12,6 +12,18 @@ interface RequestOptions extends Omit<RequestInit, 'method' | 'body'> {
   params?: Record<string, string | number>;
 }
 
+export class ApiError extends Error {
+  status: number;
+  code: number;
+
+  constructor(status: number, code: number, message: string) {
+    super(message);
+    this.name = 'ApiError';
+    this.status = status;
+    this.code = code;
+  }
+}
+
 function buildUrl(path: string, params?: Record<string, string | number>): string {
   let url = `${API_BASE_PATH}${path}`;
   if (params) {
