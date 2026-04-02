@@ -14,4 +14,29 @@ interface AttendanceData {
 
 type AttendanceResponse = ApiResponse<AttendanceData>;
 
-export type { AttendanceStatus, AttendanceData, AttendanceResponse };
+interface AttendanceRecord {
+  id: number;
+  status: AttendanceStatus;
+  title: string;
+  start: string;
+  end: string;
+  location: string;
+}
+
+interface AttendanceSummary {
+  attendanceCount: number | null;
+  total: number | null;
+  absenceCount: number | null;
+  attendances: AttendanceRecord[];
+}
+
+type AttendanceSummaryResponse = ApiResponse<AttendanceSummary>;
+
+export type {
+  AttendanceStatus,
+  AttendanceData,
+  AttendanceResponse,
+  AttendanceRecord,
+  AttendanceSummary,
+  AttendanceSummaryResponse,
+};
