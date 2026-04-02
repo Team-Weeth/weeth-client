@@ -56,6 +56,12 @@ function AttendanceContent({ name, attendance, isAdmin = false }: AttendanceCont
           overline="출석"
           title="출석 기록"
           onClick={() => router.push('/attendance/history')}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              router.push('/attendance/history');
+            }
+          }}
         />
       </div>
     </div>
