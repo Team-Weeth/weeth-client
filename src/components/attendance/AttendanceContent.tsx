@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 import { Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbPage, Card } from '@/components/ui';
 import { AttendanceStatus } from '@/components/attendance/AttendanceStatus';
@@ -15,6 +16,7 @@ interface AttendanceContentProps {
 }
 
 function AttendanceContent({ name, attendance, isAdmin = false }: AttendanceContentProps) {
+  const router = useRouter();
   const [isChecked, setIsChecked] = useState(false);
   const { attendanceRate, title, start, end, location } = attendance;
   const description = formatAttendanceDescription(start ?? '', end ?? '', location ?? '');
@@ -49,7 +51,12 @@ function AttendanceContent({ name, attendance, isAdmin = false }: AttendanceCont
           onAttendanceComplete={handleAttendanceComplete}
         />
 
-        <Card variant="onlyText" overline="출석" title="출석 기록" />
+        <Card
+          variant="onlyText"
+          overline="출석"
+          title="출석 기록"
+          onClick={() => router.push('/attendance/history')}
+        />
       </div>
     </div>
   );
