@@ -1,6 +1,4 @@
 import {
-  LandingServiceBoardImage,
-  LandingServiceMemberImage,
   AdviceImage,
   BicycleImage,
   YogaImage,
@@ -11,49 +9,55 @@ import type { Feature } from '@/components/landing';
 
 export const USER_FEATURES: Feature[] = [
   {
+    chipLabel: '홈',
+    cardTitle: '정기모임을 놓치지 않고 출석하며 동아리 활동을 이어나가세요',
+    description: '간편하게 출석을 확인해요.',
+    bgColor: 'bg-[#00877A]',
+    video: '/videos/landing/user_home.mp4',
+    highlightKeyword: '출석',
+  },
+  {
     chipLabel: '게시판',
     cardTitle: '게시판에서 우리 동아리의 활동을 확인하고 나의 활동을 공유해보세요',
     description: '동아리 게시판으로 활동을 공유해요.',
     bgColor: 'bg-[#00877A]',
-    image: LandingServiceBoardImage,
-  },
-  {
-    chipLabel: '출석',
-    cardTitle: '정기모임을 놓치지 않고 출석하며 동아리 활동을 이어나가세요',
-    description: '간편하게 출석을 확인해요.',
-    bgColor: 'bg-[#00877A]',
-    image: LandingServiceBoardImage,
-  },
-  {
-    chipLabel: '모바일',
-    cardTitle: '모바일에서도 동아리와 연결되어 보세요.',
-    description: '언제 어디서나 동아리와 함께해요.',
-    bgColor: 'bg-[#00877A]',
-    image: LandingServiceBoardImage,
+    video: '/videos/landing/user_board.mp4',
+    highlightKeyword: '게시판',
   },
 ];
 
 export const ADMIN_FEATURES: Feature[] = [
   {
-    chipLabel: '멤버 관리',
+    chipLabel: '멤버',
     cardTitle: '기수별로 멤버 가입을 관리해보세요',
     description: '기수별 멤버를 효율적으로 관리해요.',
     bgColor: 'bg-[#00877A]',
-    image: LandingServiceMemberImage,
+    video: '/videos/landing/admin_member.mp4',
+    highlightKeyword: '멤버',
   },
   {
-    chipLabel: '일정 관리',
+    chipLabel: '일정',
     cardTitle: '정기모임 일정을 한번에 저장하고, 부원과 공유해보세요',
     description: '일정을 한눈에 관리해요.',
     bgColor: 'bg-[#00877A]',
-    image: LandingServiceBoardImage,
+    video: '/videos/landing/admin_schedule.mp4',
+    highlightKeyword: '일정',
   },
   {
-    chipLabel: '출석 관리',
-    cardTitle: '출석과 페널티를 일괄 처리하여 운영의 효율을 높이세요.',
+    chipLabel: '출석',
+    cardTitle: '출석으로 운영의 효율을 높이세요.',
     description: '출석 관리를 자동화해요.',
     bgColor: 'bg-[#00877A]',
-    image: LandingServiceBoardImage,
+    video: '/videos/landing/admin_member.mp4',
+    highlightKeyword: '출석',
+  },
+  {
+    chipLabel: '게시판',
+    cardTitle: '게시판을 생성하고 관리해보세요.',
+    description: '게시판을 만들고 관리해요.',
+    bgColor: 'bg-[#00877A]',
+    video: '/videos/landing/admin_board.mp4',
+    highlightKeyword: '게시판',
   },
 ];
 

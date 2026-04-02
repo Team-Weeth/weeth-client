@@ -16,7 +16,9 @@ interface Feature {
   cardTitle: string;
   description: string;
   bgColor: string;
-  image: StaticImageData;
+  image?: StaticImageData;
+  video?: string;
+  highlightKeyword?: string;
 }
 
 interface ServiceSectionProps {
@@ -39,6 +41,7 @@ function ServiceSection({
   const [activeIndex, setActiveIndex] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
+  const videoRefs = useRef<(HTMLVideoElement | null)[]>([]);
 
   const CARD_WIDTH = 1123;
   const CARD_GAP = 22;
@@ -67,6 +70,14 @@ function ServiceSection({
       onUpdate: (self) => {
         const index = Math.round(self.progress * (features.length - 1));
         setActiveIndex(index);
+        videoRefs.current.forEach((video, idx) => {
+          if (!video) return;
+          if (idx === index) {
+            video.play();
+          } else {
+            video.pause();
+          }
+        });
       },
     });
 
@@ -152,18 +163,47 @@ function ServiceSection({
         {/* 카드 트랙 */}
         <div className="-ml-[306px] w-screen overflow-hidden pl-[306px]">
           <div ref={trackRef} className="flex gap-[22px]">
-            {features.map((f) => (
+            {features.map((f, i) => (
               <div key={f.chipLabel} className="w-[1123px] flex-shrink-0">
                 <div
                   className={cn(
-                    'h-[510px] w-full overflow-hidden rounded-[30px] px-[93px] pt-[91px]',
-                    f.bgColor,
+                    'h-[510px] w-full overflow-hidden rounded-[30px]',
+                    f.video ? '' : cn('px-[93px] pt-[91px]', f.bgColor),
                   )}
                 >
-                  <Image src={f.image} alt={f.chipLabel} width={945} height={523} />
+                  {f.video ? (
+                    <video
+                      ref={(el) => {
+                        videoRefs.current[i] = el;
+                      }}
+                      src={f.video}
+                      autoPlay={i === 0}
+                      loop
+                      muted
+                      playsInline
+                      preload="metadata"
+                      className="h-full w-full object-cover"
+                    />
+                  ) : f.image ? (
+                    <Image src={f.image} alt={f.chipLabel} width={945} height={523} />
+                  ) : null}
                 </div>
                 <p className="mt-[22px] text-[24px] leading-[30px] font-semibold tracking-[-0.005em] text-[#1E2021]">
-                  {f.cardTitle}
+                  {f.highlightKeyword
+                    ? (() => {
+                        const idx = f.cardTitle.indexOf(f.highlightKeyword);
+                        if (idx === -1) return f.cardTitle;
+                        return (
+                          <>
+                            {f.cardTitle.slice(0, idx)}
+                            <span className="text-[#00C8AA]">
+                              {f.highlightKeyword}
+                            </span>
+                            {f.cardTitle.slice(idx + f.highlightKeyword.length)}
+                          </>
+                        );
+                      })()
+                    : f.cardTitle}
                 </p>
               </div>
             ))}
