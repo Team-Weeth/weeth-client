@@ -26,7 +26,7 @@ export default function LandingPage() {
       <main className="flex min-h-screen w-full flex-col overflow-x-clip">
         <HeroSection />
         <PhilosophySection />
-        <div className="[content-visibility:auto]">
+        <div className="[contain-intrinsic-size:auto_1680px] [content-visibility:auto]">
           <ServiceSection
             variant="user"
             title={`쉽고 직관적인\n동아리 참여 서비스`}
@@ -35,7 +35,7 @@ export default function LandingPage() {
             features={USER_FEATURES}
           />
         </div>
-        <div className="[content-visibility:auto]">
+        <div className="[contain-intrinsic-size:auto_1680px] [content-visibility:auto]">
           <ServiceSection
             variant="admin"
             title={`동아리 운영에 특화된\n운영 관리 서비스`}
@@ -53,7 +53,7 @@ export default function LandingPage() {
         <div className="[content-visibility:auto]">
           <ClubTypesSection />
         </div>
-        <div className="[content-visibility:auto]">
+        <div className="[contain-intrinsic-size:auto_1680px] [content-visibility:auto]">
           <CTASection />
         </div>
         <LandingFooter />
