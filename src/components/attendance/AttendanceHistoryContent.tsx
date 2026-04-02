@@ -47,7 +47,6 @@ function AttendanceHistoryContent({ summary }: AttendanceHistoryContentProps) {
       </div>
 
       <div className="flex flex-col gap-700 px-450">
-
         <div className="bg-container-neutral flex flex-col gap-400 rounded-lg p-400">
           <div className="flex gap-200">
             <StatBox label="정기 모임" value={`${total}회`} />
