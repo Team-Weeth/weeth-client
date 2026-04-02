@@ -1,18 +1,24 @@
-export interface BoardNavItem {
-  id: number | null;
-  label: string;
-  type: 'NOTICE' | 'ALL' | 'GENERAL';
-}
+// 페이지네이션 타입은 common.ts에서 관리, 하위 호환을 위해 re-export
+export type { Slice, SliceSort, SlicePageable } from '@/types/common';
 
 export type BoardType = 'ALL' | 'NOTICE' | 'GENERAL';
 
-export interface Board {
+export type UserRole = 'USER' | 'ADMIN';
+
+export type FileStatus = 'UPLOADED' | 'PENDING' | 'DELETED';
+
+interface BoardBase {
   id: number | null;
-  name: string;
   type: BoardType;
 }
 
-export type UserRole = 'USER' | 'ADMIN';
+export interface BoardNavItem extends BoardBase {
+  label: string;
+}
+
+export interface Board extends BoardBase {
+  name: string;
+}
 
 export interface PostAuthor {
   id: number;
@@ -26,7 +32,7 @@ export interface PostLike {
   likeCount: number;
 }
 
-export interface PostListItem {
+interface PostBase {
   id: number;
   author: PostAuthor;
   boardId: number;
@@ -36,11 +42,12 @@ export interface PostListItem {
   time: string;
   commentCount: number;
   like: PostLike;
+}
+
+export interface PostListItem extends PostBase {
   hasFile: boolean;
   isNew: boolean;
 }
-
-export type FileStatus = 'UPLOADED' | 'PENDING' | 'DELETED';
 
 /** API 응답 파일 (서버에서 받은 원본) */
 export interface FileItem {
@@ -70,33 +77,9 @@ export interface PostComment {
   children: PostComment[];
 }
 
-export interface PostDetail {
-  id: number;
-  boardId: number;
-  boardName: string;
-  author: PostAuthor;
-  title: string;
-  content: string;
-  time: string;
-  commentCount: number;
-  like: PostLike;
+export interface PostDetail extends PostBase {
   comments: PostComment[];
   fileUrls: FileItem[];
-}
-
-export interface SliceSort {
-  empty: boolean;
-  unsorted: boolean;
-  sorted: boolean;
-}
-
-export interface SlicePageable {
-  offset: number;
-  sort: SliceSort;
-  unpaged: boolean;
-  pageNumber: number;
-  pageSize: number;
-  paged: boolean;
 }
 
 /** mapComment 변환 결과 (UI 표시용) */
@@ -108,16 +91,4 @@ export interface MappedComment {
   date: string;
   isAuthor: boolean;
   replies: MappedComment[];
-}
-
-export interface Slice<T> {
-  size: number;
-  content: T[];
-  number: number;
-  sort: SliceSort;
-  pageable: SlicePageable;
-  numberOfElements: number;
-  first: boolean;
-  last: boolean;
-  empty: boolean;
 }
