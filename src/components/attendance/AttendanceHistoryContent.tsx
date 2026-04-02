@@ -14,7 +14,7 @@ import {
 } from '@/components/ui';
 import { cn } from '@/lib/cn';
 import { formatKoreanDate, formatTime } from '@/lib/formatTime';
-import { ATTENDANCE_ATTENDANCE_STATUS_CONFIG } from '@/constants/attendance';
+import { ATTENDANCE_STATUS_CONFIG } from '@/constants/attendance';
 import type { AttendanceSummary } from '@/types/attendance';
 
 interface AttendanceHistoryContentProps {
