@@ -26,16 +26,20 @@ function InquiryDialog({ open, onOpenChange }: InquiryDialogProps) {
   const [message, setMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const isValid = email.trim().length > 0 && message.trim().length > 0;
-
   const handleClose = () => {
+    if (isSubmitting) return;
     onOpenChange(false);
     setEmail('');
     setMessage('');
   };
 
-  const handleSubmit = async () => {
-    if (!isValid || isSubmitting) return;
+  const handleOpenChange = (next: boolean) => {
+    if (!next) handleClose();
+  };
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (isSubmitting) return;
 
     setIsSubmitting(true);
     try {
@@ -50,7 +54,7 @@ function InquiryDialog({ open, onOpenChange }: InquiryDialogProps) {
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent
         showCloseButton={false}
         className="bg-background flex h-[583px] w-[640px] flex-col"
@@ -65,47 +69,57 @@ function InquiryDialog({ open, onOpenChange }: InquiryDialogProps) {
           onClose={handleClose}
         />
 
-        <DialogBody className="flex-1">
-          <div className="flex flex-col gap-400">
-            <div className="flex flex-col gap-200">
-              <label className="typo-caption1 text-text-alternative">연락 가능한 이메일</label>
-              <Input
-                type="email"
-                autoComplete="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="example@email.com"
-              />
-            </div>
+        <form onSubmit={handleSubmit}>
+          <DialogBody className="flex-1">
+            <div className="flex flex-col gap-400">
+              <div className="flex flex-col gap-200">
+                <label htmlFor="inquiry-email" className="typo-caption1 text-text-alternative">
+                  연락 가능한 이메일
+                </label>
+                <Input
+                  id="inquiry-email"
+                  type="email"
+                  required
+                  autoComplete="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="example@email.com"
+                />
+              </div>
 
-            <div className="flex flex-col gap-200">
-              <label className="typo-caption1 text-text-alternative">문의사항</label>
-              <Textarea
-                value={message}
-                maxLength={1000}
-                onChange={(e) => setMessage(e.target.value)}
-                placeholder="문의 내용을 작성해주세요."
-                rows={6}
-              />
+              <div className="flex flex-col gap-200">
+                <label htmlFor="inquiry-message" className="typo-caption1 text-text-alternative">
+                  문의사항
+                </label>
+                <Textarea
+                  id="inquiry-message"
+                  required
+                  value={message}
+                  maxLength={1000}
+                  onChange={(e) => setMessage(e.target.value)}
+                  placeholder="문의 내용을 작성해주세요."
+                  rows={6}
+                />
+              </div>
             </div>
-          </div>
-        </DialogBody>
+          </DialogBody>
 
-        <DialogFooter showDivider>
-          <div className="flex gap-200">
-            <Button variant="secondary" className="flex-1" onClick={handleClose}>
-              취소
-            </Button>
-            <Button
-              variant="primary"
-              className="flex-1"
-              disabled={!isValid || isSubmitting}
-              onClick={handleSubmit}
-            >
-              전송
-            </Button>
-          </div>
-        </DialogFooter>
+          <DialogFooter showDivider>
+            <div className="flex gap-200">
+              <Button type="button" variant="secondary" className="flex-1" onClick={handleClose}>
+                취소
+              </Button>
+              <Button
+                type="submit"
+                variant="primary"
+                className="flex-1"
+                disabled={isSubmitting}
+              >
+                전송
+              </Button>
+            </div>
+          </DialogFooter>
+        </form>
       </DialogContent>
     </Dialog>
   );

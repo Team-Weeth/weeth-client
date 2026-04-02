@@ -7,5 +7,8 @@ interface InquiryBody {
 }
 
 export const inquiryApi = {
-  create: (body: InquiryBody) => axios.post(`${BASE_URL}/api/v4/users/inquiries`, body),
+  create: (body: InquiryBody) => {
+    if (!BASE_URL) throw new Error('BASE_URL이 설정되지 않았습니다');
+    return axios.post(`${BASE_URL}/api/v4/users/inquiries`, body);
+  },
 };
