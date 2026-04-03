@@ -129,3 +129,11 @@ export { FormCard, type FormCardProps } from './FormCard';
 export { Skeleton } from './skeleton';
 
 export { Loading, type LoadingProps } from './Loading';
+
+export {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  useCarousel,
+  type CarouselApi,
+} from './carousel';

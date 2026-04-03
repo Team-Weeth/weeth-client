@@ -23,7 +23,7 @@ function ClubCreatingPage({ intent, onCancel }: ClubCreatingPageProps) {
   const apiCalledRef = useRef(false);
   const animationDoneRef = useRef(false);
 
-  const nextPath = intent === 'create' ? '/home' : '/hub/welcome';
+  const nextPath = intent === 'create' ? '/home?onboarding=club-created' : '/hub/welcome';
 
   const navigate = () => {
     if (intent === 'create') resetDraft();

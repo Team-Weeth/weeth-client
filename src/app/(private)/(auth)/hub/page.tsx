@@ -1,6 +1,7 @@
 import { unstable_rethrow } from 'next/navigation';
 
 import { HubActionCard, HubProfile } from '@/components/auth/hub';
+import { HomeOnboardingPreviewButton } from '@/components/home/HomeOnboardingPreviewButton';
 import { apiServer } from '@/lib/apis/server';
 
 type CardVariant = 'create' | 'join' | 'go';
@@ -49,6 +50,7 @@ export default async function HubPage({
   return (
     <div className="flex min-h-screen flex-col items-center justify-center gap-600">
       <HubProfile className="flex flex-col items-center gap-600" />
+      <HomeOnboardingPreviewButton />
       <div className="flex w-full max-w-[620px] flex-col gap-300 px-400">
         {cardOrder.map((variant, index) => (
           <HubActionCard
