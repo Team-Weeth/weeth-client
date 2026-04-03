@@ -18,15 +18,14 @@ import {
   DialogHeader,
   type CarouselApi,
 } from '@/components/ui';
+import { PaginationButton } from './PaginationButton';
 
-import { HomeOnboardingPagination } from './PaginationButton';
-
-interface HomeOnboardingDialogProps {
+interface HomeTutorialDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
 
-function HomeOnboardingDialog({ open, onOpenChange }: HomeOnboardingDialogProps) {
+function HomeTutorialDialog({ open, onOpenChange }: HomeTutorialDialogProps) {
   const router = useRouter();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [api, setApi] = useState<CarouselApi>();
@@ -100,7 +99,7 @@ function HomeOnboardingDialog({ open, onOpenChange }: HomeOnboardingDialogProps)
           showDivider
           className="gap-2.5 pt-400"
           pagination={
-            <HomeOnboardingPagination
+            <PaginationButton
               currentIndex={currentIndex}
               total={HOME_TUTORIAL_SLIDES.length}
               onPrevious={handlePrevious}
@@ -120,4 +119,4 @@ function HomeOnboardingDialog({ open, onOpenChange }: HomeOnboardingDialogProps)
   );
 }
 
-export { HomeOnboardingDialog };
+export { HomeTutorialDialog };

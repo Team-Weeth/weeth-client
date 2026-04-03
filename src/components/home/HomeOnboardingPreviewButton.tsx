@@ -4,7 +4,7 @@ import { useState } from 'react';
 
 import { Button } from '@/components/ui';
 
-import { HomeOnboardingDialog } from './HomeTutorialDialog';
+import { HomeTutorialDialog } from './HomeTutorialDialog';
 
 function HomeOnboardingPreviewButton() {
   const [open, setOpen] = useState(false);
@@ -14,7 +14,7 @@ function HomeOnboardingPreviewButton() {
       <Button variant="secondary" size="lg" onClick={() => setOpen(true)}>
         온보딩 모달 보기
       </Button>
-      <HomeOnboardingDialog open={open} onOpenChange={setOpen} />
+      <HomeTutorialDialog open={open} onOpenChange={setOpen} />
     </>
   );
 }

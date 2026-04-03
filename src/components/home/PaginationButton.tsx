@@ -3,19 +3,19 @@
 import { ArrowLeftIcon, ArrowRightIcon } from '@/assets/icons';
 import { Button, Icon } from '@/components/ui';
 
-interface HomeOnboardingPaginationProps {
+interface HomeTutorialPaginationProps {
   currentIndex: number;
   total: number;
   onPrevious: () => void;
   onNext: () => void;
 }
 
-function HomeOnboardingPagination({
+function PaginationButton({
   currentIndex,
   total,
   onPrevious,
   onNext,
-}: HomeOnboardingPaginationProps) {
+}: HomeTutorialPaginationProps) {
   return (
     <div className="flex items-center justify-center gap-200">
       <Button
@@ -47,4 +47,4 @@ function HomeOnboardingPagination({
   );
 }
 
-export { HomeOnboardingPagination };
+export { PaginationButton };

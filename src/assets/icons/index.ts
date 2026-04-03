@@ -46,3 +46,4 @@ export { default as HubGoIcon } from './hub_go.svg';
 export { default as TooltipIcon } from './tooltip.svg';
 export { default as CopyIcon } from './copy.svg';
 export { default as BasicAvatarIcon } from './basic_avatar.svg';
+export { default as QuestionMarkIcon } from './question_mark.svg';

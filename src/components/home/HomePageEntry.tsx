@@ -1,7 +1,7 @@
 'use client';
 
 import dynamic from 'next/dynamic';
-import { HomeOnboardingModal } from '@/components/home/HomeOnboardingModal';
+import { HomeTutorialLauncher } from '@/components/home/HomeTutorialLauncher';
 import { BannerSkeleton } from '@/components/home/skeleton';
 import {
   LeftContainerSkeleton,
@@ -40,7 +40,7 @@ function HomePageSkeleton() {
 export function HomePageEntry() {
   return (
     <>
-      <HomeOnboardingModal />
+      <HomeTutorialLauncher />
       <HomePageSections />
     </>
   );
