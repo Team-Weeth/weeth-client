@@ -1,7 +1,6 @@
-import Image from 'next/image';
 import Link from 'next/link';
 
-import { buttonVariants } from '@/components/ui';
+import { Avatar, AvatarFallback, AvatarImage, buttonVariants } from '@/components/ui';
 import { cn } from '@/lib/cn';
 import type { Club } from '@/types';
 
@@ -14,23 +13,20 @@ function ClubAccessPage({ club }: ClubAccessPageProps) {
     <div className="flex min-h-screen flex-col items-center justify-center">
       <div className="flex flex-col items-center gap-400">
         <h1 className="typo-h3 text-text-strong">이 사이트는 동아리 회원만 이용할 수 있어요.</h1>
-        {club.logoUrl ? (
-          <Image
-            src={club.logoUrl}
-            alt={club.name}
-            width={80}
-            height={80}
-            className="rounded-full object-cover"
-          />
-        ) : (
-          <div className="bg-container-neutral-alternative h-20 w-20 rounded-full" />
-        )}
+        <Avatar size={128} type="square" className="border-line h-20 w-20 rounded-[32px] border-2">
+          {club.logoUrl && (
+            <AvatarImage src={club.logoUrl} alt={club.name} className="object-cover" />
+          )}
+          <AvatarFallback className="bg-container-neutral-alternative text-text-alternative rounded-lg">
+            {club.name.charAt(0)}
+          </AvatarFallback>
+        </Avatar>
         <div className="flex flex-col items-center gap-200">
           <span className="typo-h3 text-text-strong">{club.name}</span>
           <span className="typo-body2 text-text-normal">{club.description}</span>
         </div>
         <Link
-          href="/login"
+          href={`/login?intent=join-no-code&clubId=${club.id}`}
           className={cn(buttonVariants({ variant: 'primary', size: 'lg' }), 'w-full')}
         >
           로그인하고 들어가기

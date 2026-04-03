@@ -32,7 +32,12 @@ export async function GET(request: NextRequest) {
   const state = request.nextUrl.searchParams.get('state');
 
   let redirectUrl: string;
-  if (state?.startsWith('join:')) {
+  if (state?.startsWith('join-no-code:')) {
+    const clubId = state.split(':')[1];
+    redirectUrl = registered
+      ? `/club/join?clubId=${clubId}`
+      : `/login?terms=true&intent=join-no-code&clubId=${clubId}`;
+  } else if (state?.startsWith('join:')) {
     const [, clubId, inviteCode] = state.split(':');
     redirectUrl = registered
       ? `/joining?clubId=${clubId}&code=${inviteCode}`

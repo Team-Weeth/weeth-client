@@ -45,6 +45,9 @@ function InviteCodeForm() {
   } = useForm<InviteCodeFormData>({
     resolver: zodResolver(inviteCodeSchema),
     mode: 'onChange',
+    defaultValues: {
+      inviteCode: '',
+    },
   });
 
   async function handleInviteCodeChange(value: string) {

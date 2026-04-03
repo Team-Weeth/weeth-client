@@ -28,6 +28,8 @@ function LoginPageClient({ defaultTermsOpen = false, intent, clubId, code }: Log
 
     if (intent === 'join' && clubId && code) {
       params.set('state', `join:${clubId}:${code}`);
+    } else if (intent === 'join-no-code' && clubId) {
+      params.set('state', `join-no-code:${clubId}`);
     } else if (intent) {
       params.set('state', intent);
     }

@@ -62,6 +62,9 @@ export async function agreeTermsAction(intent?: string, clubId?: string, code?: 
   if (intent === 'join' && clubId && code) {
     redirect(`/joining?clubId=${clubId}&code=${code}`);
   }
+  if (intent === 'join-no-code' && clubId) {
+    redirect(`/club/join?clubId=${clubId}`);
+  }
   redirect(intent ? `/hub?intent=${intent}` : '/hub');
 }
 
