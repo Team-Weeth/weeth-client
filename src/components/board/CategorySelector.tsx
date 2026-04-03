@@ -66,7 +66,7 @@ function CategorySelector({ className, items, activeId, onItemSelect }: Category
       >
         <ChannelList
           className="w-full"
-          items={items}
+          items={items.filter((item) => item.type !== 'ALL')}
           activeId={activeId}
           onItemSelect={handleItemSelect}
         />

@@ -36,6 +36,8 @@ export function useFileAttach() {
       file: selected,
       fileName: selected.name,
       fileUrl: URL.createObjectURL(selected),
+      fileSize: selected.size,
+      contentType: selected.type,
       storageKey: '',
       uploaded: false,
     });

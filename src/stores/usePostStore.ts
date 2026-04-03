@@ -7,6 +7,8 @@ export interface UploadFileItem {
   fileName: string;
   fileUrl: string;
   storageKey: string;
+  fileSize: number;
+  contentType: string;
   uploaded: boolean;
 }
 
@@ -83,12 +85,14 @@ export const usePostStore = create(
         return {
           title: state.title,
           content: state.content,
-          category: state.category,
-          studyName: state.studyName,
-          week: state.week,
-          part: state.part,
-          generationNumber: state.generationNumber,
-          files: state.files.filter((f) => f.uploaded).map(({ storageKey }) => storageKey),
+          files: state.files
+            .filter((f) => f.uploaded)
+            .map((f) => ({
+              fileName: f.fileName,
+              storageKey: f.storageKey,
+              fileSize: f.fileSize,
+              contentType: f.contentType,
+            })),
         };
       },
     })),
