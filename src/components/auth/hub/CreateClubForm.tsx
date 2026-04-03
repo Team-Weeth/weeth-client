@@ -11,7 +11,10 @@ import { SearchSelect } from '@/components/mypage';
 import { cn } from '@/lib/cn';
 import { universityApi } from '@/lib/apis/university';
 import { createClubSchema, type CreateClubFormData } from '@/lib/schemas/createClub';
-import { useCreateClubDraftActions, useCreateClubDraftValues } from '@/stores/useCreateClubDraftStore';
+import {
+  useCreateClubDraftActions,
+  useCreateClubDraftValues,
+} from '@/stores/useCreateClubDraftStore';
 import { formatPhone } from '@/utils/shared';
 
 import { ClubCreatingPage } from './ClubCreatingPage';

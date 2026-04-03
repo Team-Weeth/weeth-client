@@ -1,8 +1,4 @@
-import {
-  PRIVACY_DATA,
-  TERMS_DATA,
-  type PolicyData,
-} from '@/constants/term';
+import { PRIVACY_DATA, TERMS_DATA, type PolicyData } from '@/constants/term';
 
 interface TermsItem {
   id: string;
