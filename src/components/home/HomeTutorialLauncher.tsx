@@ -39,7 +39,7 @@ function HomeTutorialLauncher() {
 
   return (
     <>
-      <HomeTutorialButton onClick={() => setOpen(true)} />
+      {role === 'LEAD' && <HomeTutorialButton onClick={() => setOpen(true)} />}
 
       <HomeTutorialDialog open={open} onOpenChange={handleOpenChange} />
     </>

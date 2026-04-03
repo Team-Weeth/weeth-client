@@ -3,6 +3,7 @@ export { KakaoLoginButton } from './KakaoLoginButton';
 export { AppleLoginButton } from './AppleLoginButton';
 export { SocialLoginButtons } from './SocialLoginButtons';
 export { TermsAgreementModal } from './TermsAgreementModal';
+export { TermsAgreementPreviewButton } from './TermsAgreementPreviewButton';
 export { TermsListView } from './TermsListView';
 export { TermsDetailView } from './TermsDetailView';
 export { InviteClubInfo } from './InviteClubInfo';
