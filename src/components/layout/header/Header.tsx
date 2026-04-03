@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { usePathname } from 'next/navigation';
 import { Button, Icon } from '../../ui';
 import { MenuIcon, EditIcon, SendIcon, ExitToAppIcon, AvatarIcon, LogoIcon } from '@/assets/icons';
+import { useCreatePost } from '@/hooks';
 
 interface HeaderProps {
   isMain?: boolean;
@@ -26,12 +27,12 @@ const Logo = ({ width = 76, href }: { width?: number; href: string }) => (
 export default function Header({ isMain = true }: HeaderProps) {
   const pathname = usePathname();
   const router = useRouter();
+  const isWritePage = pathname.includes('/write');
+  const { submit, isPending } = useCreatePost();
   const navItems = [
     { id: 'board', label: '게시판', href: '/board' },
     { id: 'attendance', label: '출석', href: '/attendance' },
   ];
-  const isWritePage = pathname.includes('/write');
-
   return (
     <>
       <header className="tablet:hidden flex gap-100 py-3 pr-450 pl-200">
@@ -91,9 +92,15 @@ export default function Header({ isMain = true }: HeaderProps) {
                 >
                   작성 취소
                 </Button>
-                <Button variant="primary" size="md" type="submit" className="typo-button1 gap-100">
+                <Button
+                  variant="primary"
+                  size="md"
+                  disabled={isPending}
+                  onClick={submit}
+                  className="typo-button1 gap-100"
+                >
                   <Icon src={SendIcon} size={20} alt="send" className="text-icon-inverse" />
-                  게시하기
+                  {isPending ? '게시 중...' : '게시하기'}
                 </Button>
               </>
             ) : (

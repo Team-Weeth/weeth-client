@@ -78,8 +78,29 @@ export interface PostComment {
 }
 
 export interface PostDetail extends PostBase {
+  isNew?: boolean;
   comments: PostComment[];
   fileUrls: FileItem[];
+}
+
+/** 게시글 작성 요청 파일 */
+export interface CreatePostFile {
+  fileName: string;
+  storageKey: string;
+  fileSize: number;
+  contentType: string;
+}
+
+/** 게시글 작성 요청 body */
+export interface CreatePostBody {
+  title: string;
+  content: string;
+  files: CreatePostFile[];
+}
+
+/** 게시글 작성 응답 data */
+export interface CreatePostData {
+  id: number;
 }
 
 /** mapComment 변환 결과 (UI 표시용) */
