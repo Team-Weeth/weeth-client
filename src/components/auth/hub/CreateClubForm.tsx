@@ -23,7 +23,18 @@ function CreateClubForm() {
 
   useEffect(() => {
     universityApi.getSchools().then((res) => {
-      setSchoolNames(res.data.data.map((s) => `${s.schoolName}(${s.region})`));
+      const schoolNameCounts = res.data.data.reduce<Record<string, number>>((acc, school) => {
+        acc[school.schoolName] = (acc[school.schoolName] ?? 0) + 1;
+        return acc;
+      }, {});
+
+      setSchoolNames(
+        res.data.data.map((school) =>
+          schoolNameCounts[school.schoolName] > 1
+            ? `${school.schoolName}(${school.region})`
+            : school.schoolName,
+        ),
+      );
     });
   }, []);
 
