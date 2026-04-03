@@ -2,6 +2,7 @@
 
 import { useRef, useState } from 'react';
 
+import type { AxiosError } from 'axios';
 import { useRouter } from 'next/navigation';
 
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -36,7 +37,7 @@ function InviteCodeForm() {
     clubId: string;
     code: string;
   } | null>(null);
-  const abortControllerRef = useRef<AbortController | null>(null);
+  const latestRequestIdRef = useRef(0);
 
   const {
     control,
@@ -51,7 +52,8 @@ function InviteCodeForm() {
   });
 
   async function handleInviteCodeChange(value: string) {
-    abortControllerRef.current?.abort();
+    latestRequestIdRef.current += 1;
+    const requestId = latestRequestIdRef.current;
     setServerError(null);
     setSelectedClub(null);
     setParsedLink(null);
@@ -60,17 +62,14 @@ function InviteCodeForm() {
     const parsed = parseInviteLink(value.trim());
     if (!parsed) return;
 
-    const controller = new AbortController();
-    abortControllerRef.current = controller;
-
     try {
       const { data } = await clubApi.getById(parsed.clubId);
-      if (controller.signal.aborted) return;
+      if (requestId !== latestRequestIdRef.current) return;
       setParsedLink(parsed);
       setSearchResults([data.data]);
     } catch (error) {
-      if (controller.signal.aborted) return;
-      const axiosError = error as import('axios').AxiosError<{ message?: string }>;
+      if (requestId !== latestRequestIdRef.current) return;
+      const axiosError = error as AxiosError<{ message?: string }>;
       setServerError(axiosError.response?.data?.message ?? '동아리를 찾을 수 없습니다.');
     }
   }
@@ -85,14 +84,14 @@ function InviteCodeForm() {
     setSelectedClub(null);
   }
 
-  async function onSubmit(_data: InviteCodeFormData) {
-    if (!parsedLink || !selectedClub) return;
+  async function onSubmit() {
+    if (!parsedLink || !selectedClub || selectedClub.id !== parsedLink.clubId) return;
 
     try {
       await clubApi.join(parsedLink.clubId, parsedLink.code);
       router.push('/home');
     } catch (error) {
-      const axiosError = error as import('axios').AxiosError<{ message?: string }>;
+      const axiosError = error as AxiosError<{ message?: string }>;
       setServerError(axiosError.response?.data?.message ?? '가입에 실패했습니다.');
     }
   }

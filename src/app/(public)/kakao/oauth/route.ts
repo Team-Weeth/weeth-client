@@ -29,6 +29,10 @@ export async function GET(request: NextRequest) {
   const json = await response.json();
   const { accessToken, refreshToken, registered, name } = json.data;
 
+  if (!accessToken || !refreshToken) {
+    return NextResponse.redirect(new URL('/login', origin));
+  }
+
   const state = request.nextUrl.searchParams.get('state');
 
   let redirectUrl: string;

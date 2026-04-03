@@ -31,7 +31,7 @@ function ClubJoiningPage({ clubName, clubId, code }: ClubJoiningPageProps) {
     duration: 3000,
     onComplete: () => {
       animationDoneRef.current = true;
-      if (apiDone) router.push('/welcome');
+      if (apiDone) router.replace('/welcome');
     },
   });
 
@@ -67,13 +67,13 @@ function ClubJoiningPage({ clubName, clubId, code }: ClubJoiningPageProps) {
           }
         }
         toastError();
-        router.push('/hub');
+        router.replace('/hub');
       });
   }, [clubId, code, router]);
 
   // API가 애니메이션 이후에 완료된 경우 즉시 navigate
   useEffect(() => {
-    if (apiDone && animationDoneRef.current) router.push('/welcome');
+    if (apiDone && animationDoneRef.current) router.replace('/welcome');
   }, [apiDone, router]);
 
   if (errorState) {

@@ -11,7 +11,8 @@ interface AuthStoreInitializerProps {
 function AuthStoreInitializer({ name }: AuthStoreInitializerProps) {
   useEffect(() => {
     if (name) {
-      useAuthStore.getState().setProfile(name, null);
+      const { profileImage, setProfile } = useAuthStore.getState();
+      setProfile(name, profileImage);
     }
   }, [name]);
 

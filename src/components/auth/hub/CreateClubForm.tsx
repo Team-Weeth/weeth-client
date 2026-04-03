@@ -11,7 +11,7 @@ import { SearchSelect } from '@/components/mypage';
 import { cn } from '@/lib/cn';
 import { universityApi } from '@/lib/apis/university';
 import { createClubSchema, type CreateClubFormData } from '@/lib/schemas/createClub';
-import { useCreateClubDraftStore } from '@/stores';
+import { useCreateClubDraftActions, useCreateClubDraftValues } from '@/stores/useCreateClubDraftStore';
 import { formatPhone } from '@/utils/shared';
 
 import { ClubCreatingPage } from './ClubCreatingPage';
@@ -38,14 +38,16 @@ function CreateClubForm() {
     });
   }, []);
 
-  const schoolDraft = useCreateClubDraftStore((state) => state.school);
-  const nameDraft = useCreateClubDraftStore((state) => state.name);
-  const descriptionDraft = useCreateClubDraftStore((state) => state.description);
-  const generationDraft = useCreateClubDraftStore((state) => state.generation);
-  const phoneDraft = useCreateClubDraftStore((state) => state.phone);
-  const emailDraft = useCreateClubDraftStore((state) => state.email);
-  const contactTypeDraft = useCreateClubDraftStore((state) => state.contactType);
-  const setDraft = useCreateClubDraftStore((state) => state.setDraft);
+  const {
+    school: schoolDraft,
+    name: nameDraft,
+    description: descriptionDraft,
+    generation: generationDraft,
+    phone: phoneDraft,
+    email: emailDraft,
+    contactType: contactTypeDraft,
+  } = useCreateClubDraftValues();
+  const { setDraft } = useCreateClubDraftActions();
 
   const {
     register,

@@ -1,7 +1,5 @@
 'use client';
 
-import { useMemo } from 'react';
-
 import Lottie from 'lottie-react';
 
 import { cn } from '@/lib/cn';
@@ -45,18 +43,14 @@ interface LoadingProps {
 }
 
 function Loading({ className }: LoadingProps) {
-  const animationData = useMemo(() => {
-    if (typeof document === 'undefined') {
-      return loadingData as LottieData;
-    }
+  let animationData = loadingData as LottieData;
 
+  if (typeof document !== 'undefined') {
     const hex = getComputedStyle(document.documentElement).getPropertyValue('--icon-normal').trim();
-    if (!hex) {
-      return loadingData as LottieData;
+    if (hex) {
+      animationData = applyColor(loadingData as LottieData, hexToLottieColor(hex));
     }
-
-    return applyColor(loadingData as LottieData, hexToLottieColor(hex));
-  }, []);
+  }
 
   return (
     <Lottie animationData={animationData} loop autoplay className={cn('size-20', className)} />

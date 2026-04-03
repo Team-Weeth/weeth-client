@@ -2,31 +2,31 @@
 
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
-import { API_BASE_PATH } from '@/constants/api';
 import {
   ACCESS_TOKEN_KEY,
   REFRESH_TOKEN_KEY,
   ACCESS_COOKIE_OPTIONS,
   REFRESH_COOKIE_OPTIONS,
 } from '@/lib/apis/cookies';
+import { authApi, type AgreeTermsResponse, type LoginResponse } from '@/lib/apis';
 
 export async function loginAction(formData: FormData) {
   const email = formData.get('email') as string;
   const password = formData.get('password') as string;
 
-  const response = await fetch(`${API_BASE_PATH}/users/login`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email, password }),
-  });
+  const response = await authApi.login(email, password);
 
   if (!response.ok) {
     const error = await response.json().catch(() => null);
     return { error: error?.message ?? '로그인에 실패했습니다.' };
   }
 
-  const json = await response.json();
+  const json = (await response.json()) as LoginResponse;
   const { accessToken, refreshToken } = json.data;
+
+  if (!accessToken || !refreshToken) {
+    return { error: '로그인 토큰을 확인할 수 없습니다.' };
+  }
 
   const cookieStore = await cookies();
   cookieStore.set(ACCESS_TOKEN_KEY, accessToken, ACCESS_COOKIE_OPTIONS);
@@ -39,22 +39,23 @@ export async function agreeTermsAction(intent?: string, clubId?: string, code?: 
   const cookieStore = await cookies();
   const accessToken = cookieStore.get(ACCESS_TOKEN_KEY)?.value;
 
-  const response = await fetch(`${API_BASE_PATH}/users/terms`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${accessToken}`,
-    },
-    body: JSON.stringify({ termsAgreed: true, privacyAgreed: true }),
-  });
+  if (!accessToken) {
+    redirect('/login');
+  }
+
+  const response = await authApi.agreeTerms(accessToken);
 
   if (!response.ok) {
     const error = await response.json().catch(() => null);
     return { error: error?.message ?? '약관 동의에 실패했습니다.' };
   }
 
-  const json = await response.json();
+  const json = (await response.json()) as AgreeTermsResponse;
   const { accessToken: newAccessToken, refreshToken } = json.data;
+
+  if (!newAccessToken || !refreshToken) {
+    return { error: '약관 동의 후 토큰을 확인할 수 없습니다.' };
+  }
 
   cookieStore.set(ACCESS_TOKEN_KEY, newAccessToken, ACCESS_COOKIE_OPTIONS);
   cookieStore.set(REFRESH_TOKEN_KEY, refreshToken, REFRESH_COOKIE_OPTIONS);

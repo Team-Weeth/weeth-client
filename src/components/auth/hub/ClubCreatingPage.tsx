@@ -27,7 +27,7 @@ function ClubCreatingPage({ intent, onCancel }: ClubCreatingPageProps) {
 
   const navigate = () => {
     if (intent === 'create') resetDraft();
-    router.push(nextPath);
+    router.replace(nextPath);
   };
 
   const progress = useProgressAnimation({
@@ -60,7 +60,7 @@ function ClubCreatingPage({ intent, onCancel }: ClubCreatingPageProps) {
   // API가 애니메이션 이후에 완료된 경우 즉시 navigate
   useEffect(() => {
     if (apiDone && animationDoneRef.current) navigate();
-  }, [apiDone]);
+  }, [apiDone, intent, nextPath, resetDraft, router]);
 
   return (
     <div className="flex min-h-screen items-center justify-center px-400">
