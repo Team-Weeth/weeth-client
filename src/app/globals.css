@@ -523,11 +523,11 @@ select:focus {
 }
 
 .ProseMirror {
-  @apply text-text-strong min-h-[400px] focus:outline-none;
+  @apply text-text-strong focus:outline-none;
 }
 
-.ProseMirror > * {
-  @apply my-100;
+.ProseMirror:not(.prose-readonly) {
+  @apply min-h-[400px];
 }
 
 /* placeholder */
@@ -541,23 +541,23 @@ select:focus {
 }
 
 .ProseMirror h1 {
-  @apply typo-h3 mt-300;
+  @apply typo-h3 mt-300 mb-100;
 }
 
 .ProseMirror h2 {
-  @apply typo-sub1 mt-300;
+  @apply typo-sub1 mt-300 mb-100;
 }
 
 .ProseMirror h3 {
-  @apply typo-sub2 mt-300;
+  @apply typo-sub2 mt-300 mb-100;
 }
 
 .ProseMirror ul {
-  @apply text-text-alternative my-0 list-disc py-0 pl-500;
+  @apply text-text-alternative my-0 list-disc py-100 pl-500;
 }
 
 .ProseMirror ol {
-  @apply text-text-alternative my-0 list-decimal py-0 pl-500;
+  @apply text-text-alternative my-0 list-decimal py-100 pl-500;
 }
 
 .ProseMirror ul li,
@@ -625,6 +625,10 @@ select:focus {
 }
 
 /* 인라인 코드 */
+.ProseMirror p:has(> code:not(pre code)) {
+  @apply py-100;
+}
+
 .ProseMirror code:not(pre code) {
   background-color: var(--container-code);
   color: var(--text-normal);

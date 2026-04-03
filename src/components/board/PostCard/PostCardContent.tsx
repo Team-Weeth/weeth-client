@@ -22,7 +22,7 @@ function PostCardContent({
   expandable = true,
   variant = 'list',
 }: PostCardContentProps) {
-  const contentRef = useRef<HTMLParagraphElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
   const [isClamped, setIsClamped] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
 
@@ -31,7 +31,14 @@ function PostCardContent({
     if (!el || !expandable) return;
 
     const check = () => {
-      setIsClamped(el.scrollHeight > el.clientHeight);
+      const prevDisplay = el.style.display;
+      const prevClamp = el.style.webkitLineClamp;
+      el.style.display = 'block';
+      el.style.webkitLineClamp = 'unset';
+      const fullHeight = el.scrollHeight;
+      el.style.display = prevDisplay;
+      el.style.webkitLineClamp = prevClamp;
+      setIsClamped(fullHeight > el.clientHeight);
     };
 
     check();
@@ -40,6 +47,16 @@ function PostCardContent({
     ro.observe(el);
     return () => ro.disconnect();
   }, [content, expandable]);
+
+  const plainContent =
+    variant === 'list'
+      ? content
+          .replace(/<br\s*\/?>/gi, '\n')
+          .replace(/<\/(p|h[1-6]|li|div|blockquote)>/gi, '\n')
+          .replace(/<[^>]*>/g, '')
+          .replace(/\n{3,}/g, '\n\n')
+          .trim()
+      : content;
 
   return (
     <div className={cn('flex flex-col gap-200 self-stretch', className)}>
@@ -54,16 +71,26 @@ function PostCardContent({
           </>
         )}
       </div>
-      <p
-        ref={expandable ? contentRef : undefined}
-        className={cn(
-          'text-text-normal whitespace-pre-line',
-          variant === 'detail' ? 'typo-body1' : 'typo-body2',
-          expandable && !isExpanded && 'line-clamp-8',
-        )}
-      >
-        {content}
-      </p>
+      {variant === 'list' ? (
+        <p
+          ref={expandable ? contentRef : undefined}
+          className={cn(
+            'text-text-normal typo-body2 whitespace-pre-line',
+            expandable && !isExpanded && 'line-clamp-8 overflow-hidden',
+          )}
+        >
+          {plainContent}
+        </p>
+      ) : (
+        <div
+          ref={expandable ? contentRef : undefined}
+          className={cn(
+            'ProseMirror prose-readonly text-text-normal typo-body1 whitespace-pre-line',
+            expandable && !isExpanded && 'line-clamp-8 overflow-hidden',
+          )}
+          dangerouslySetInnerHTML={{ __html: content }}
+        />
+      )}
       {expandable && isClamped && !isExpanded && (
         <button
           type="button"
