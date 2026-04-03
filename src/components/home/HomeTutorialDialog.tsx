@@ -87,7 +87,7 @@ function HomeOnboardingDialog({ open, onOpenChange }: HomeOnboardingDialogProps)
                   <Image
                     src={slide.image}
                     alt="홈 온보딩 예시 화면"
-                    className="h-auto w-full rounded-[20px]"
+                    className="h-auto w-full rounded-sm"
                     priority={index === 0}
                   />
                 </CarouselItem>
@@ -98,7 +98,7 @@ function HomeOnboardingDialog({ open, onOpenChange }: HomeOnboardingDialogProps)
 
         <DialogFooter
           showDivider
-          className="pt-400"
+          className="gap-2.5 pt-400"
           pagination={
             <HomeOnboardingPagination
               currentIndex={currentIndex}

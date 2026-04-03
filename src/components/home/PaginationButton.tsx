@@ -17,19 +17,21 @@ function HomeOnboardingPagination({
   onNext,
 }: HomeOnboardingPaginationProps) {
   return (
-    <div className="flex items-center justify-center gap-600">
+    <div className="flex items-center justify-center gap-200">
       <Button
         variant="tertiary"
         size="icon-sm"
         onClick={onPrevious}
         disabled={currentIndex === 0}
         aria-label="이전 온보딩"
-        className="text-icon-alternative h-10 w-10 rounded-full"
+        className="text-icon-alternative"
       >
-        <Icon src={ArrowLeftIcon} size={24} />
+        <Icon src={ArrowLeftIcon} size={12} />
       </Button>
-      <div className="typo-h3 text-text-strong min-w-[92px] text-center">
-        {currentIndex + 1} / {total}
+      <div className="typo-caption1 text-text-normal flex items-center gap-100 px-200 py-100">
+        <span>{currentIndex + 1}</span>
+        <span>/</span>
+        <span>{total}</span>
       </div>
       <Button
         variant="tertiary"
@@ -37,9 +39,9 @@ function HomeOnboardingPagination({
         onClick={onNext}
         disabled={currentIndex === total - 1}
         aria-label="다음 온보딩"
-        className="text-icon-alternative h-10 w-10 rounded-full"
+        className="text-icon-alternative"
       >
-        <Icon src={ArrowRightIcon} size={24} />
+        <Icon src={ArrowRightIcon} size={12} />
       </Button>
     </div>
   );
