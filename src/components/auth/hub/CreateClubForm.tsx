@@ -64,7 +64,8 @@ function CreateClubForm() {
       email: emailDraft,
       contactType: contactTypeDraft,
     },
-    mode: 'onBlur',
+    mode: 'onChange',
+    reValidateMode: 'onChange',
   });
 
   const contactType = useWatch({ control, name: 'contactType' });
@@ -159,11 +160,20 @@ function CreateClubForm() {
               </TooltipContent>
             </Tooltip>
           </div>
-          <Input
-            {...register('generation')}
-            placeholder="예 : 10"
-            clearable
-            className="rounded-lg px-400 py-300"
+          <Controller
+            name="generation"
+            control={control}
+            render={({ field }) => (
+              <Input
+                {...field}
+                inputMode="numeric"
+                pattern="[0-9]*"
+                placeholder="예 : 10"
+                clearable
+                onChange={(e) => field.onChange(e.target.value.replace(/\D/g, ''))}
+                className="rounded-lg px-400 py-300"
+              />
+            )}
           />
           <FieldError message={errors.generation?.message} />
         </div>

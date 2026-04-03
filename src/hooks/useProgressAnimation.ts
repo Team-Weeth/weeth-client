@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 interface UseProgressAnimationOptions {
   duration: number;
@@ -7,11 +7,18 @@ interface UseProgressAnimationOptions {
 
 function useProgressAnimation({ duration, onComplete }: UseProgressAnimationOptions) {
   const [progress, setProgress] = useState(0);
+  const onCompleteRef = useRef(onComplete);
+
+  useEffect(() => {
+    onCompleteRef.current = onComplete;
+  }, [onComplete]);
 
   useEffect(() => {
     const TARGET = 100;
     let startTime: number | null = null;
     let rafId: number;
+
+    setProgress(0);
 
     // Slow at the beginning and end, faster through the middle.
     function easeInOut(t: number) {
@@ -25,13 +32,13 @@ function useProgressAnimation({ duration, onComplete }: UseProgressAnimationOpti
       if (t < 1) {
         rafId = requestAnimationFrame(animate);
       } else {
-        onComplete?.();
+        onCompleteRef.current?.();
       }
     }
 
     rafId = requestAnimationFrame(animate);
     return () => cancelAnimationFrame(rafId);
-  }, [duration, onComplete]);
+  }, [duration]);
 
   return progress;
 }

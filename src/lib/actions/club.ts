@@ -16,10 +16,15 @@ export async function createClubAction(data: CreateClubFormData) {
     backgroundImage: null,
   };
 
+  console.log('createClubAction payload:', payload);
+
   try {
     await apiServer.post('/clubs', payload);
   } catch (error) {
-    const message = error instanceof Error ? error.message : '동아리 개설에 실패했습니다.';
+    const rawMessage = error instanceof Error ? error.message : '동아리 개설에 실패했습니다.';
+    const message = rawMessage.includes('club.uk_club_school_name_club_name')
+      ? '이미 해당 학교에 같은 이름의 동아리가 있습니다'
+      : rawMessage;
     return { error: message };
   }
 
