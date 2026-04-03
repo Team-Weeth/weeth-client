@@ -29,7 +29,8 @@ function HomeTutorialDialog({ open, onOpenChange }: HomeTutorialDialogProps) {
   const router = useRouter();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [api, setApi] = useState<CarouselApi>();
-  const currentSlide = HOME_TUTORIAL_SLIDES[currentIndex];
+  const displayIndex = open ? currentIndex : 0;
+  const currentSlide = HOME_TUTORIAL_SLIDES[displayIndex];
 
   useEffect(() => {
     if (!api) return;
@@ -47,7 +48,6 @@ function HomeTutorialDialog({ open, onOpenChange }: HomeTutorialDialogProps) {
   useEffect(() => {
     if (!open) {
       api?.scrollTo(0, true);
-      setCurrentIndex(0);
     }
   }, [open, api]);
 
@@ -61,7 +61,7 @@ function HomeTutorialDialog({ open, onOpenChange }: HomeTutorialDialogProps) {
   };
 
   const handleNext = () => {
-    if (currentIndex === HOME_TUTORIAL_SLIDES.length - 1) {
+    if (displayIndex === HOME_TUTORIAL_SLIDES.length - 1) {
       onOpenChange(false);
       return;
     }
@@ -100,7 +100,7 @@ function HomeTutorialDialog({ open, onOpenChange }: HomeTutorialDialogProps) {
           className="gap-2.5 pt-400"
           pagination={
             <PaginationButton
-              currentIndex={currentIndex}
+              currentIndex={displayIndex}
               total={HOME_TUTORIAL_SLIDES.length}
               onPrevious={handlePrevious}
               onNext={handleNext}
@@ -111,7 +111,7 @@ function HomeTutorialDialog({ open, onOpenChange }: HomeTutorialDialogProps) {
             설정하러 가기
           </Button>
           <Button variant="primary" size="lg" className="w-full" onClick={handleNext}>
-            {currentIndex === HOME_TUTORIAL_SLIDES.length - 1 ? '닫기' : '다음'}
+            {displayIndex === HOME_TUTORIAL_SLIDES.length - 1 ? '닫기' : '다음'}
           </Button>
         </DialogFooter>
       </DialogContent>

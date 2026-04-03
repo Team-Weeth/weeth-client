@@ -17,8 +17,7 @@ function useProgressAnimation({ duration, onComplete }: UseProgressAnimationOpti
     const TARGET = 100;
     let startTime: number | null = null;
     let rafId: number;
-
-    setProgress(0);
+    let cancelled = false;
 
     // Slow at the beginning and end, faster through the middle.
     function easeInOut(t: number) {
@@ -26,6 +25,7 @@ function useProgressAnimation({ duration, onComplete }: UseProgressAnimationOpti
     }
 
     function animate(timestamp: number) {
+      if (cancelled) return;
       if (!startTime) startTime = timestamp;
       const t = Math.min((timestamp - startTime) / duration, 1);
       setProgress(easeInOut(t) * TARGET);
@@ -36,8 +36,18 @@ function useProgressAnimation({ duration, onComplete }: UseProgressAnimationOpti
       }
     }
 
-    rafId = requestAnimationFrame(animate);
-    return () => cancelAnimationFrame(rafId);
+    // Reset progress on first frame, then start animation
+    rafId = requestAnimationFrame((timestamp) => {
+      if (cancelled) return;
+      setProgress(0);
+      startTime = timestamp;
+      rafId = requestAnimationFrame(animate);
+    });
+
+    return () => {
+      cancelled = true;
+      cancelAnimationFrame(rafId);
+    };
   }, [duration]);
 
   return progress;

@@ -14,23 +14,23 @@ const HOME_TUTORIAL_SEEN_KEY = 'home-tutorial-seen';
 function HomeTutorialLauncher() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(() => {
+    if (typeof window === 'undefined') return false;
+    const onboarding = searchParams.get('onboarding');
+    if (onboarding !== 'club-created') return false;
+    if (window.localStorage.getItem(HOME_TUTORIAL_SEEN_KEY) === 'true') return false;
+    window.localStorage.setItem(HOME_TUTORIAL_SEEN_KEY, 'true');
+    return true;
+  });
   const { data: role } = useHomeQuery({
     select: (data) => data.myInfo.userInfo.role,
   });
 
   useEffect(() => {
     const onboarding = searchParams.get('onboarding');
-    const hasSeenOnboarding = window.localStorage.getItem(HOME_TUTORIAL_SEEN_KEY) === 'true';
-
     if (onboarding === 'club-created') {
       router.replace('/home', { scroll: false });
     }
-
-    if (onboarding !== 'club-created' || hasSeenOnboarding) return;
-
-    setOpen(true);
-    window.localStorage.setItem(HOME_TUTORIAL_SEEN_KEY, 'true');
   }, [router, searchParams]);
 
   const handleOpenChange = (nextOpen: boolean) => {
