@@ -1,77 +1,10 @@
 import type { Member, MemberStatus } from '@/types/admin/member';
 
-export const MOCK_MEMBERS: Member[] = [
-  {
-    id: '1',
-    name: '김위드니',
-    role: '프론트엔드',
-    department: '컴퓨터공학과',
-    generation: '4.3.2.1.',
-    phone: '01000009999',
-    studentId: '202036123',
-    position: '사용자',
-    attendance: 12,
-    absence: 12,
-    status: 'approved',
-  },
-  {
-    id: '2',
-    name: '김위드니',
-    role: '프론트엔드',
-    department: '미디어커뮤니케이션학과',
-    generation: '8.7.6.5.4.3.2.1.',
-    phone: '01000009999',
-    studentId: '202036123',
-    position: '사용자',
-    attendance: 12,
-    absence: 12,
-    status: 'pending',
-  },
-  {
-    id: '3',
-    name: '김위드니',
-    role: '디자인',
-    department: '시각디자인학과',
-    generation: '3',
-    phone: '01000009999',
-    studentId: '202036123',
-    position: '관리자',
-    attendance: 12,
-    absence: 12,
-    status: 'banned',
-  },
-  {
-    id: '4',
-    name: '김위드니',
-    role: '백엔드',
-    department: '소프트웨어학과',
-    generation: '5.4.3.',
-    phone: '01011112222',
-    studentId: '202112345',
-    position: '사용자',
-    attendance: 12,
-    absence: 12,
-    status: 'approved',
-  },
-  {
-    id: '5',
-    name: '김위드니',
-    role: '기획',
-    department: '경영학과',
-    generation: '6.5.',
-    phone: '01033334444',
-    studentId: '202298765',
-    position: '사용자',
-    attendance: 12,
-    absence: 12,
-    status: 'pending',
-  },
-];
-
 export const STATUS_BAR_COLOR: Record<MemberStatus, string> = {
-  approved: 'bg-brand-primary',
-  pending: 'bg-state-caution',
-  banned: 'bg-state-error',
+  ACTIVE: 'bg-brand-primary',
+  WAITING: 'bg-state-caution',
+  BANNED: 'bg-state-error',
+  LEFT: 'bg-container-neutral-alternative',
 };
 
 export const COLUMNS: { label: string; key: keyof Member }[] = [
@@ -87,9 +20,9 @@ export const COLUMNS: { label: string; key: keyof Member }[] = [
 ];
 
 export const STATUS_LEGEND = [
-  { label: '승인 완료', color: 'bg-brand-primary' },
-  { label: '대기 중', color: 'bg-state-caution' },
+  { label: '활동중', color: 'bg-brand-primary' },
   { label: '추방', color: 'bg-state-error' },
+  { label: '탈퇴', color: 'bg-text-alternative' },
 ] as const;
 
 export type SortBy = 'generation' | 'name';
@@ -102,9 +35,7 @@ export const SORT_LABEL: Record<SortBy, string> = {
 export function sortMembers(members: Member[], sortBy: SortBy): Member[] {
   return [...members].sort((a, b) => {
     if (sortBy === 'generation') {
-      const aNum = parseInt(a.generation.split('.')[0], 10);
-      const bNum = parseInt(b.generation.split('.')[0], 10);
-      return bNum - aNum;
+      return parseInt(b.generation, 10) - parseInt(a.generation, 10);
     }
     return a.name.localeCompare(b.name, 'ko');
   });

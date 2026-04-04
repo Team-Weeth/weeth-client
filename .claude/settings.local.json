@@ -3,6 +3,7 @@
     "allow": [
       "Bash(gh pr:*)",
       "Bash(git push:*)",
+<<<<<<< HEAD
       "mcp__figma__get_design_context",
       "Bash(grep -E \"\\\\.tsx$\")",
       "Bash(find \"D:\\\\project\\\\weeth-client\\\\src\\\\app\\\\\\(private\\)\" -name \"layout.tsx\" -type f)",
@@ -16,6 +17,10 @@
       "Bash(ls -la \"D:\\\\project\\\\weeth-client\\\\src\\\\app\\\\\\(private\\)\\\\\\(main\\)\\\\mypage\\\\edit\")",
       "Bash(find D:projectweeth-clientsrccomponentsui -type f \\\\\\(-name *.tsx -o -name *.ts \\\\\\))",
       "Bash(find D:/project/weeth-client/src/constants -name *.ts)"
+=======
+      "Bash(ls \"D:/project/weeth-client/src/app/\\(public\\)/\\(landing\\)/\")",
+      "Bash(git fetch:*)"
+>>>>>>> feat/WTH-215-멤버-어드민-API-연결
     ]
   }
 }

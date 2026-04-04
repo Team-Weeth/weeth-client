@@ -72,7 +72,9 @@ async function request<T>(
   _retried = false,
 ): Promise<T> {
   const cookieStore = await cookies();
-  const accessToken = cookieStore.get(ACCESS_TOKEN_KEY)?.value;
+  const accessToken =
+    cookieStore.get(ACCESS_TOKEN_KEY)?.value ??
+    (process.env.NODE_ENV === 'development' ? process.env.DEV_ACCESS_TOKEN : undefined);
 
   const { params, ...fetchOptions } = options;
   const url = buildUrl(path, params);

@@ -8,3 +8,5 @@ export { homeApi } from './home';
 export { attendanceApi } from './attendance';
 export { universityApi } from './university';
 export { mypageApi } from './mypage';
+export { adminMemberApi } from './adminMember';
+export { cardinalApi } from './cardinal';
