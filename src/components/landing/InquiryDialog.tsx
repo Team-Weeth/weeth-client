@@ -59,10 +59,7 @@ function InquiryDialog({ children }: InquiryDialogProps) {
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>{children}</DialogTrigger>
-      <DialogContent
-        showCloseButton={false}
-        className="bg-background flex h-[583px] w-[640px] flex-col"
-      >
+      <DialogContent showCloseButton={false} className="bg-background flex w-[640px] flex-col">
         <DialogHeader
           icon={
             <Icon src={InfoCircleIcon} size={24} className="text-brand-primary" alt="정보 아이콘" />
@@ -113,12 +110,7 @@ function InquiryDialog({ children }: InquiryDialogProps) {
               <Button type="button" variant="secondary" className="flex-1" onClick={handleClose}>
                 취소
               </Button>
-              <Button
-                type="submit"
-                variant="primary"
-                className="flex-1"
-                disabled={isSubmitting}
-              >
+              <Button type="submit" variant="primary" className="flex-1" disabled={isSubmitting}>
                 전송
               </Button>
             </div>

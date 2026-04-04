@@ -8,6 +8,7 @@ import { LogoIcon } from '@/assets/icons';
 import { buttonVariants } from '@/components/ui';
 import { cn } from '@/lib/cn';
 import { NAV_ITEMS } from '@/constants/landing/landing';
+import { InquiryDialog } from '@/components/landing/InquiryDialog';
 
 interface PublicHeaderProps {
   className?: string;
@@ -60,15 +61,26 @@ export default function PublicHeader({ className, showAuthButtons = false }: Pub
               />
             </Link>
             <nav className="flex items-center gap-300">
-              {NAV_ITEMS.map(({ id, label, href }) => (
-                <Link
-                  key={id}
-                  href={href}
-                  className="typo-button1 text-[#909599] transition-colors hover:text-black"
-                >
-                  {label}
-                </Link>
-              ))}
+              {NAV_ITEMS.map(({ id, label, href }) =>
+                id === 'contact' ? (
+                  <InquiryDialog key={id}>
+                    <button
+                      type="button"
+                      className="typo-button1 cursor-pointer text-[#909599] transition-colors hover:text-black"
+                    >
+                      {label}
+                    </button>
+                  </InquiryDialog>
+                ) : (
+                  <Link
+                    key={id}
+                    href={href}
+                    className="typo-button1 text-[#909599] transition-colors hover:text-black"
+                  >
+                    {label}
+                  </Link>
+                ),
+              )}
             </nav>
           </div>
           {showAuthButtons && (

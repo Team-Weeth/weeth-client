@@ -108,6 +108,6 @@ export const FOOTER_MENUS = [
 ];
 
 export const NAV_ITEMS = [
-  { id: 'service', label: '서비스 소개', href: '#service' },
+  // { id: 'service', label: '서비스 소개', href: '#service' },
   { id: 'contact', label: '가입 문의', href: '#contact' },
 ];
