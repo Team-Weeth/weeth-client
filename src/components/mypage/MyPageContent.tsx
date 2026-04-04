@@ -9,14 +9,15 @@ import { ProfileSection } from './ProfileSection';
 import { SupportListItem } from './SupportListItem';
 import { ThemeToggle } from './ThemeToggle';
 import { MyPageDropdownMenu } from './MyPageDropdownMenu';
-import { MOCK_AVAILABLE_CARDINALS, MOCK_CLUBS } from '@/constants/mock';
 import { ClubInfoCard } from './ClubInfoCard';
 import { useMyMemberQuery } from '@/hooks/mypage/useMyMemberQuery';
+import { useMyClubsQuery } from '@/hooks/queries/mypage/useMyClubsQuery';
 
 type MyPageContentProps = React.HTMLAttributes<HTMLDivElement>;
 
 function MyPageContent({ className, ...props }: MyPageContentProps) {
   const { data: me, isLoading, isError } = useMyMemberQuery();
+  const { data: clubs = [] } = useMyClubsQuery();
 
   if (isLoading) {
     return (
@@ -90,12 +91,8 @@ function MyPageContent({ className, ...props }: MyPageContentProps) {
         {/* 활동정보 */}
         <InfoSection title="활동정보">
           <div className="flex flex-row gap-300">
-            {MOCK_CLUBS.map((club) => (
-              <ClubInfoCard
-                key={club.id}
-                club={club}
-                availableCardinals={MOCK_AVAILABLE_CARDINALS}
-              />
+            {clubs.map((club) => (
+              <ClubInfoCard key={club.id} club={club} availableCardinals={club.cardinals} />
             ))}
           </div>
         </InfoSection>
