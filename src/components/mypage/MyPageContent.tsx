@@ -9,14 +9,30 @@ import { ProfileSection } from './ProfileSection';
 import { SupportListItem } from './SupportListItem';
 import { ThemeToggle } from './ThemeToggle';
 import { MyPageDropdownMenu } from './MyPageDropdownMenu';
-import { MOCK_AVAILABLE_CARDINALS, MOCK_CLUBS, MOCK_USER } from '@/constants/mock';
+import { MOCK_AVAILABLE_CARDINALS, MOCK_CLUBS } from '@/constants/mock';
 import { ClubInfoCard } from './ClubInfoCard';
+import { useMyMemberQuery } from '@/hooks/mypage/useMyMemberQuery';
 
 type MyPageContentProps = React.HTMLAttributes<HTMLDivElement>;
 
 function MyPageContent({ className, ...props }: MyPageContentProps) {
-  // TODO: API 연동 시 실제 데이터로 교체
-  const user = MOCK_USER;
+  const { data: me, isLoading, isError } = useMyMemberQuery();
+
+  if (isLoading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <p className="typo-body1 text-text-alternative">로딩 중...</p>
+      </div>
+    );
+  }
+
+  if (isError || !me) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <p className="typo-body1 text-state-error">내 정보를 불러올 수 없습니다.</p>
+      </div>
+    );
+  }
 
   return (
     <div
@@ -45,28 +61,27 @@ function MyPageContent({ className, ...props }: MyPageContentProps) {
       {/* Main Content */}
       <div className="flex w-full flex-col gap-700">
         {/* 프로필 */}
-        <ProfileSection name={user.name} bio={user.bio} profileImageUrl={user.profileImageUrl} />
+        <ProfileSection name={me.name} bio={me.bio} profileImageUrl={me.profileImageUrl} />
 
         {/* 개인정보 */}
         <InfoSection title="개인정보">
           <div className="flex flex-col gap-300">
             <InfoCard
               items={[
-                { label: '이름', value: user.name },
-                { label: '소개글', value: user.introduction },
+                { label: '이름', value: me.name },
+                { label: '소개글', value: me.bio },
                 {
                   label: '전화번호',
-                  value: user.phone?.replace(/(\d{3})(\d{4})(\d{4})/, '$1-$2-$3') ?? '-',
+                  value: me.tel?.replace(/(\d{3})(\d{4})(\d{4})/, '$1-$2-$3') ?? '-',
                 },
-                { label: '이메일', value: user.email },
-                { label: '로그인 정보', value: user.loginInfo },
+                { label: '이메일', value: me.email },
               ]}
             />
             <InfoCard
               items={[
-                { label: '학교', value: user.university },
-                { label: '학과', value: user.department },
-                { label: '학번', value: user.studentId },
+                { label: '학교', value: me.school },
+                { label: '학과', value: me.department },
+                { label: '학번', value: me.studentId },
               ]}
             />
           </div>
