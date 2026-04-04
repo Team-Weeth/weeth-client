@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useForm, useWatch } from 'react-hook-form';
@@ -33,7 +33,7 @@ function EditProfileContent({ className, ...props }: EditProfileContentProps) {
   const router = useRouter();
   const { data: me } = useMyMemberQuery();
   const { mutate: updateProfile, isPending } = useUpdateProfileMutation();
-  const selectedFileRef = useRef<File | null>(null);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
   const {
     register,
@@ -85,6 +85,7 @@ function EditProfileContent({ className, ...props }: EditProfileContentProps) {
         clubProfile: {
           bio: data.bio ?? '',
         },
+        profileImageFile: selectedFile,
       },
       {
         onSuccess: () => {
@@ -138,9 +139,7 @@ function EditProfileContent({ className, ...props }: EditProfileContentProps) {
         <ProfileImageEditor
           name={name}
           profileImageUrl={me.profileImageUrl}
-          onFileChange={(file) => {
-            selectedFileRef.current = file;
-          }}
+          onFileChange={setSelectedFile}
         />
 
         <div className="flex w-full max-w-[640px] flex-col gap-700">
