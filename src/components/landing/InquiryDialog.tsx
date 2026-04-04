@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { type ReactNode } from 'react';
 import {
   Button,
   Dialog,
@@ -8,6 +9,7 @@ import {
   DialogContent,
   DialogFooter,
   DialogHeader,
+  DialogTrigger,
   Input,
   Textarea,
 } from '@/components/ui';
@@ -17,24 +19,25 @@ import { inquiryApi } from '@/lib/apis/inquiry';
 import { toastSuccess, toastError } from '@/stores/useToastStore';
 
 interface InquiryDialogProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
+  children: ReactNode;
 }
 
-function InquiryDialog({ open, onOpenChange }: InquiryDialogProps) {
+function InquiryDialog({ children }: InquiryDialogProps) {
+  const [open, setOpen] = useState(false);
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleClose = () => {
     if (isSubmitting) return;
-    onOpenChange(false);
+    setOpen(false);
     setEmail('');
     setMessage('');
   };
 
   const handleOpenChange = (next: boolean) => {
     if (!next) handleClose();
+    else setOpen(true);
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -55,6 +58,7 @@ function InquiryDialog({ open, onOpenChange }: InquiryDialogProps) {
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
+      <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent
         showCloseButton={false}
         className="bg-background flex h-[583px] w-[640px] flex-col"

@@ -15,6 +15,8 @@ import {
   ctaVariants,
   heroImageVariants,
 } from '@/components/landing/heroSection.variants';
+import { InquiryDialog } from './InquiryDialog';
+import { Button } from '../ui';
 
 interface HeroSectionProps {
   className?: string;
@@ -193,6 +195,13 @@ function HeroSection({ className }: HeroSectionProps) {
             Weeth에서 동아리의 추억을 쌓아보세요
           </motion.p>
           <motion.div variants={ctaVariants}>
+            <div className="flex gap-3">
+              <InquiryDialog>
+                <Button variant="primary" size="lg">
+                  가입 문의하기
+                </Button>
+              </InquiryDialog>
+            </div>
             {/* <Link
               href="/login?intent=create"
               className={cn(

@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useRef } from 'react';
 import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -47,8 +47,6 @@ function CTASection({ className }: { className?: string }) {
     { scope: containerRef, dependencies: [windowWidth, windowHeight], revertOnUpdate: true },
   );
 
-  const [inquiryOpen, setInquiryOpen] = useState(false);
-
   return (
     <div ref={containerRef} className={className} style={{ height: 'calc(100vh + 600px)' }}>
       <section className="sticky top-0 flex min-h-screen w-full items-center justify-center bg-[#00C8AA]">
@@ -66,13 +64,14 @@ function CTASection({ className }: { className?: string }) {
             3분 만에 사이트를 개설해보세요.
           </p>
           <div className="flex gap-3">
-            <Button variant="primary" size="lg" onClick={() => setInquiryOpen(true)}>
-              가입 문의하기
-            </Button>
+            <InquiryDialog>
+              <Button variant="primary" size="lg">
+                가입 문의하기
+              </Button>
+            </InquiryDialog>
           </div>
         </div>
       </section>
-      <InquiryDialog open={inquiryOpen} onOpenChange={setInquiryOpen} />
     </div>
   );
 }
