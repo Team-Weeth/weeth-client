@@ -65,7 +65,7 @@ function EditProfileContent({ className, ...props }: EditProfileContentProps) {
         school: me.school,
         department: me.department,
         studentId: me.studentId,
-      });
+      }, { keepDirtyValues: true });
     }
   }, [me, reset]);
 
