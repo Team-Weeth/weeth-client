@@ -13,11 +13,7 @@ import {
   topWrapperVariants,
   whiteCardVariants,
 } from '@/components/landing/heroSection.variants';
-import {
-  HeroSectionCTA,
-  TEXT_STYLE,
-  type HeroSectionProps,
-} from './heroSection.shared';
+import { HeroSectionCTA, TEXT_STYLE, type HeroSectionProps } from './heroSection.shared';
 
 function HeroSectionDesktop({ className }: HeroSectionProps) {
   const sectionRef = useRef<HTMLElement>(null);

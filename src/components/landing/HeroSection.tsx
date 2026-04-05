@@ -9,7 +9,7 @@ function HeroSection({ className }: HeroSectionProps) {
   return (
     <>
       <HeroSectionMobile className={cn('tablet:hidden', className)} />
-      <HeroSectionDesktop className={cn('hidden tablet:flex', className)} />
+      <HeroSectionDesktop className={cn('tablet:flex hidden', className)} />
     </>
   );
 }
