@@ -49,7 +49,10 @@ function ClubJoiningPage({ clubName, clubId, code }: ClubJoiningPageProps) {
         if (isAxiosError(error)) {
           const errorCode = error.response?.data?.code;
           if (errorCode === CLUB_JOIN_ERROR_CODE.INVALID_INVITE_LINK) {
-            setErrorState({ code: CLUB_JOIN_ERROR_CODE.INVALID_INVITE_LINK, message: '잘못된 가입 링크입니다.' });
+            setErrorState({
+              code: CLUB_JOIN_ERROR_CODE.INVALID_INVITE_LINK,
+              message: '잘못된 가입 링크입니다.',
+            });
             return;
           }
           if (errorCode === CLUB_JOIN_ERROR_CODE.ALREADY_JOINED) {

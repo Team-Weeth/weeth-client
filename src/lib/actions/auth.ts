@@ -11,7 +11,12 @@ import {
 import { authApi, type AgreeTermsResponse } from '@/lib/apis';
 import { getPostLoginUrl } from '@/lib/auth/redirectPaths';
 
-export async function agreeTermsAction(intent?: string, clubId?: string, code?: string, redirectPath?: string) {
+export async function agreeTermsAction(
+  intent?: string,
+  clubId?: string,
+  code?: string,
+  redirectPath?: string,
+) {
   const cookieStore = await cookies();
   const accessToken = cookieStore.get(ACCESS_TOKEN_KEY)?.value;
 

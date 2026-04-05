@@ -17,7 +17,13 @@ interface LoginPageClientProps {
   redirectPath?: string;
 }
 
-function LoginPageClient({ defaultTermsOpen = false, intent, clubId, code, redirectPath }: LoginPageClientProps) {
+function LoginPageClient({
+  defaultTermsOpen = false,
+  intent,
+  clubId,
+  code,
+  redirectPath,
+}: LoginPageClientProps) {
   const [termsOpen, setTermsOpen] = useState(defaultTermsOpen);
   const [isLoading, setIsLoading] = useState(false);
 

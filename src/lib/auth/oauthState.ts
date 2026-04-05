@@ -5,7 +5,12 @@ interface OAuthStateParams {
   redirectPath?: string;
 }
 
-export function encodeOAuthState({ intent, clubId, code, redirectPath }: OAuthStateParams): string | undefined {
+export function encodeOAuthState({
+  intent,
+  clubId,
+  code,
+  redirectPath,
+}: OAuthStateParams): string | undefined {
   if (intent === 'join' && clubId && code) return `join:${clubId}:${code}`;
   if (intent === 'join-no-code' && clubId) return `join-no-code:${clubId}`;
   if (intent) return intent;
