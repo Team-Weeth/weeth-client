@@ -1,27 +1,11 @@
 import { API_BASE_PATH } from '@/constants/api';
 
-interface LoginResponse {
-  data: {
-    accessToken?: string;
-    refreshToken?: string;
-  };
-  message?: string;
-}
-
 interface AgreeTermsResponse {
   data: {
     accessToken?: string;
     refreshToken?: string;
   };
   message?: string;
-}
-
-async function login(email: string, password: string) {
-  return fetch(`${API_BASE_PATH}/users/login`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email, password }),
-  });
 }
 
 async function agreeTerms(accessToken: string) {
@@ -36,8 +20,7 @@ async function agreeTerms(accessToken: string) {
 }
 
 export const authApi = {
-  login,
   agreeTerms,
 };
 
-export type { LoginResponse, AgreeTermsResponse };
+export type { AgreeTermsResponse };

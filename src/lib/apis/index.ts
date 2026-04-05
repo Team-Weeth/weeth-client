@@ -1,6 +1,6 @@
 export { apiClient } from './client';
 export { authApi } from './auth';
-export type { AgreeTermsResponse, LoginResponse } from './auth';
+export type { AgreeTermsResponse } from './auth';
 export { clubApi } from './club';
 export { apiServer } from './server';
 export { boardApi } from './board';
