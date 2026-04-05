@@ -46,6 +46,7 @@ function ServiceSection({
   const CARD_WIDTH = 1123;
   const CARD_GAP = 22;
   const STEP_SCROLL = 1000;
+  const START_DELAY = 500;
 
   const totalVirtualScroll = STEP_SCROLL * (features.length - 1);
 
@@ -58,7 +59,7 @@ function ServiceSection({
 
     ScrollTrigger.create({
       trigger: container,
-      start: 'top top',
+      start: `top+=${START_DELAY} 64px`,
       end: `+=${STEP_SCROLL * (features.length - 1)}`,
       scrub: 0.6,
       snap: {
@@ -86,9 +87,9 @@ function ServiceSection({
       ease: 'none',
       scrollTrigger: {
         trigger: container,
-        start: 'top top',
+        start: `top+=${START_DELAY} 64px`,
         end: `+=${STEP_SCROLL * (features.length - 1)}`,
-        scrub: 0.6,
+        scrub: 1,
       },
     });
   });
@@ -108,12 +109,12 @@ function ServiceSection({
   return (
     <div
       ref={containerRef}
-      style={{ height: `calc(100vh + ${totalVirtualScroll}px)` }}
+      style={{ height: `calc(100vh + ${totalVirtualScroll + START_DELAY}px)` }}
       className={className}
     >
       <section
         className={cn(
-          'sticky top-0 h-screen min-h-[1227px] w-full overflow-hidden pt-[86px] pl-[306px]',
+          'sticky top-[64px] h-[calc(100vh-64px)] w-full overflow-hidden pt-[clamp(40px,5vh,86px)] pl-[306px]',
           variant === 'user' ? 'bg-[#F3F5F7]' : 'bg-[#E6EAED]',
         )}
       >
@@ -129,11 +130,11 @@ function ServiceSection({
           </span>
         </div>
 
-        <h2 className="mt-[54px] mb-300 text-[48px] font-bold whitespace-pre-line text-[#1E2021]">
+        <h2 className="mt-[clamp(20px,3vh,54px)] mb-300 text-[48px] font-bold whitespace-pre-line text-[#1E2021]">
           {title}
         </h2>
 
-        <div className="mt-[48px] mb-[86px] flex w-[1123px] justify-between">
+        <div className="mt-[clamp(20px,3vh,48px)] mb-[clamp(40px,5vh,86px)] flex w-[1123px] justify-between">
           <p className="typo-body1 text-[#1E2021]">
             {subtitle.split('<br/>').map((line, i, arr) => (
               <span key={i}>
