@@ -18,17 +18,10 @@ const SetCardinalModal = dynamic(() =>
 
 interface ClubInfoCardProps extends React.HTMLAttributes<HTMLDivElement> {
   club: ClubDto;
-  /** 선택 가능한 기수 목록 (API 연동 전 mock) */
-  availableCardinals?: number[];
 }
 
-function ClubInfoCard({ club, availableCardinals = [], className }: ClubInfoCardProps) {
+function ClubInfoCard({ club, className }: ClubInfoCardProps) {
   const [modalOpen, setModalOpen] = useState(false);
-
-  const handleSave = (selected: number[]) => {
-    // TODO: API 연동 — 선택된 기수 저장
-    console.log('저장할 기수:', selected);
-  };
 
   return (
     <>
@@ -94,13 +87,7 @@ function ClubInfoCard({ club, availableCardinals = [], className }: ClubInfoCard
         </div>
       </div>
 
-      <SetCardinalModal
-        open={modalOpen}
-        onOpenChange={setModalOpen}
-        club={club}
-        availableCardinals={availableCardinals}
-        onSave={handleSave}
-      />
+      <SetCardinalModal open={modalOpen} onOpenChange={setModalOpen} club={club} />
     </>
   );
 }

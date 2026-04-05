@@ -92,7 +92,7 @@ function MyPageContent({ className, ...props }: MyPageContentProps) {
         <InfoSection title="활동정보">
           <div className="flex flex-row gap-300">
             {clubs.map((club) => (
-              <ClubInfoCard key={club.id} club={club} availableCardinals={club.cardinals} />
+              <ClubInfoCard key={club.id} club={club} />
             ))}
           </div>
         </InfoSection>

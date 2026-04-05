@@ -3,7 +3,7 @@ import { combine, devtools, persist } from 'zustand/middleware';
 
 const initialState = {
   // TODO: 로그인 API 연결 후 제거
-  clubId: 'YUNJcjFKMO' as string | null,
+  clubId: 'ZcsAEuGfHQ' as string | null,
 };
 
 export type ClubState = typeof initialState;

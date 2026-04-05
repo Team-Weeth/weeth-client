@@ -38,15 +38,15 @@ function MyPageDropdownMenu() {
           <DropdownMenuSeparator />
           <DropdownMenuSeparator />
           <DropdownMenuItem onSelect={() => setLogoutOpen(true)}>로그아웃</DropdownMenuItem>
-          <DropdownMenuSeparator />
+          {/* <DropdownMenuSeparator />
           <DropdownMenuItem destructive onSelect={() => setWithdrawOpen(true)}>
             서비스 탈퇴
-          </DropdownMenuItem>
+          </DropdownMenuItem> */}
         </DropdownMenuContent>
       </DropdownMenu>
 
       {/* TODO: "탈퇴하기"와 "로그아웃" 버튼에 onClick 핸들러 */}
-      <AlertDialog
+      {/* <AlertDialog
         open={withdrawOpen}
         onOpenChange={setWithdrawOpen}
         status="danger"
@@ -55,7 +55,7 @@ function MyPageDropdownMenu() {
       >
         <AlertDialogAction>탈퇴하기</AlertDialogAction>
         <AlertDialogCancel>취소</AlertDialogCancel>
-      </AlertDialog>
+      </AlertDialog> */}
 
       <AlertDialog
         open={logoutOpen}

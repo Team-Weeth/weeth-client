@@ -2,17 +2,18 @@ import { useQuery } from '@tanstack/react-query';
 
 import { adminMemberApi } from '@/lib/apis/adminMember';
 import { toMember } from '@/utils/admin/memberMapper';
-
-// TODO: clubId store에서 가져오도로 변경
-export const CLUB_ID = 'YUNJcjFKMO';
+import { useClubId } from '@/stores';
 
 export function useAdminMembers() {
+  const clubId = useClubId();
+
   return useQuery({
-    queryKey: ['admin', 'members', CLUB_ID],
+    queryKey: ['admin', 'members', clubId],
     queryFn: async () => {
-      const res = await adminMemberApi.getMembers(CLUB_ID);
+      const res = await adminMemberApi.getMembers(clubId!);
       return res.data.data.map(toMember);
     },
+    enabled: !!clubId,
     staleTime: 30 * 60 * 1000,
     gcTime: 60 * 60 * 1000,
   });

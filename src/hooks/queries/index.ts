@@ -1,1 +1,1 @@
-export { useCardinals } from './useCommoneQUeries';
+export { useCardinals } from './useCardinals';

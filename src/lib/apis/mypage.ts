@@ -28,4 +28,6 @@ export const mypageApi = {
   updateUser: (body: UpdateUserBody) => apiClient.patch('/users', body),
   updateClubProfile: (body: UpdateClubProfileBody) =>
     apiClient.patch('/clubs/members/me', body),
+  initCardinals: (clubId: string, cardinals: number[]) =>
+    apiClient.post(`/clubs/${clubId}/members/me/cardinals`, { cardinals }),
 };
