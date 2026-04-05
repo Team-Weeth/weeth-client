@@ -1,12 +1,12 @@
 import { Suspense } from 'react';
 import {
+  HeroSection,
   TestimonialSection,
   ClubTypesSection,
   LandingFooter,
   BlockedToast,
 } from '@/components/landing';
 import {
-  HeroSection,
   PhilosophySection,
   ServiceSection,
   SetupGuideSection,
@@ -24,7 +24,7 @@ export default function LandingPage() {
       {/* TODO: showAuthButtons 추가하기 */}
       <PublicHeader />
       <main className="flex min-h-screen w-full flex-col">
-        <div className="overflow-x-clip">
+        <div>
           <HeroSection />
           <PhilosophySection />
           <ServiceSection
@@ -37,7 +37,7 @@ export default function LandingPage() {
           <ServiceSection
             variant="admin"
             title={`동아리 운영에 특화된\n운영 관리 서비스`}
-            subtitle="기수별 멤버 관리와 정기모임 출석을 하나의 흐름 안에서 운영할 수 있습니다."
+            subtitle="기수별 멤버 관리와 정기모임 출석을 <br/>하나의 흐름 안에서 운영할 수 있습니다."
             serviceLabel="관리자 서비스"
             features={ADMIN_FEATURES}
           />
