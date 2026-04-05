@@ -13,9 +13,10 @@ interface LoginPageClientProps {
   intent?: string;
   clubId?: string;
   code?: string;
+  redirectPath?: string;
 }
 
-function LoginPageClient({ defaultTermsOpen = false, intent, clubId, code }: LoginPageClientProps) {
+function LoginPageClient({ defaultTermsOpen = false, intent, clubId, code, redirectPath }: LoginPageClientProps) {
   const [termsOpen, setTermsOpen] = useState(defaultTermsOpen);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -32,6 +33,8 @@ function LoginPageClient({ defaultTermsOpen = false, intent, clubId, code }: Log
       params.set('state', `join-no-code:${clubId}`);
     } else if (intent) {
       params.set('state', intent);
+    } else if (redirectPath) {
+      params.set('state', redirectPath);
     }
 
     setIsLoading(true);
@@ -50,7 +53,7 @@ function LoginPageClient({ defaultTermsOpen = false, intent, clubId, code }: Log
         open={termsOpen}
         onOpenChange={setTermsOpen}
         onAgree={async () => {
-          const result = await agreeTermsAction(intent, clubId, code);
+          const result = await agreeTermsAction(intent, clubId, code, redirectPath);
           if (result?.error) toastError(result.error);
         }}
       />

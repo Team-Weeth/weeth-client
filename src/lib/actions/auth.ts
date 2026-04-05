@@ -35,7 +35,7 @@ export async function loginAction(formData: FormData) {
   redirect('/home');
 }
 
-export async function agreeTermsAction(intent?: string, clubId?: string, code?: string) {
+export async function agreeTermsAction(intent?: string, clubId?: string, code?: string, redirectPath?: string) {
   const cookieStore = await cookies();
   const accessToken = cookieStore.get(ACCESS_TOKEN_KEY)?.value;
 
@@ -64,7 +64,10 @@ export async function agreeTermsAction(intent?: string, clubId?: string, code?: 
     redirect(`/joining?clubId=${clubId}&code=${code}`);
   }
   if (intent === 'join-no-code' && clubId) {
-    redirect(`/club/join?clubId=${clubId}`);
+    redirect('/club/join');
+  }
+  if (redirectPath) {
+    redirect(redirectPath);
   }
   redirect(intent ? `/hub?intent=${intent}` : '/hub');
 }

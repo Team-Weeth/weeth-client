@@ -16,8 +16,6 @@ export async function createClubAction(data: CreateClubFormData) {
     backgroundImage: null,
   };
 
-  console.log('createClubAction payload:', payload);
-
   try {
     await apiServer.post('/clubs', payload);
   } catch (error) {

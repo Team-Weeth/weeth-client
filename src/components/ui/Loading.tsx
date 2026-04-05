@@ -16,8 +16,9 @@ type LottieLayer = {
 
 type LottieData = typeof loadingData & { layers: LottieLayer[] };
 
-function hexToLottieColor(hex: string): [number, number, number] {
+function hexToLottieColor(hex: string): [number, number, number] | null {
   const cleaned = hex.replace('#', '').trim();
+  if (!/^[0-9a-fA-F]{6}$/.test(cleaned)) return null;
   const r = parseInt(cleaned.slice(0, 2), 16) / 255;
   const g = parseInt(cleaned.slice(2, 4), 16) / 255;
   const b = parseInt(cleaned.slice(4, 6), 16) / 255;
@@ -47,8 +48,9 @@ function Loading({ className }: LoadingProps) {
 
   if (typeof document !== 'undefined') {
     const hex = getComputedStyle(document.documentElement).getPropertyValue('--icon-normal').trim();
-    if (hex) {
-      animationData = applyColor(loadingData as LottieData, hexToLottieColor(hex));
+    const color = hexToLottieColor(hex);
+    if (color) {
+      animationData = applyColor(loadingData as LottieData, color);
     }
   }
 

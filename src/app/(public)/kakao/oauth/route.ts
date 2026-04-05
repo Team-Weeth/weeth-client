@@ -37,15 +37,24 @@ export async function GET(request: NextRequest) {
 
   let redirectUrl: string;
   if (state?.startsWith('join-no-code:')) {
-    const clubId = state.split(':')[1];
+    const clubId = state.slice('join-no-code:'.length);
+    if (!clubId) return NextResponse.redirect(new URL('/login', origin));
+    const params = new URLSearchParams({ clubId });
     redirectUrl = registered
-      ? `/club/join?clubId=${clubId}`
-      : `/login?terms=true&intent=join-no-code&clubId=${clubId}`;
+      ? `/club/join?${params.toString()}`
+      : `/login?terms=true&intent=join-no-code&${params.toString()}`;
   } else if (state?.startsWith('join:')) {
     const [, clubId, inviteCode] = state.split(':');
+    if (!clubId || !inviteCode) return NextResponse.redirect(new URL('/login', origin));
+    const params = new URLSearchParams({ clubId, code: inviteCode });
     redirectUrl = registered
-      ? `/joining?clubId=${clubId}&code=${inviteCode}`
-      : `/login?terms=true&intent=join&clubId=${clubId}&code=${inviteCode}`;
+      ? `/joining?${params.toString()}`
+      : `/login?terms=true&intent=join&${params.toString()}`;
+  } else if (state?.startsWith('/')) {
+    // proxy.ts가 redirect param으로 설정한 원래 경로
+    redirectUrl = registered
+      ? state
+      : `/login?terms=true&redirect=${encodeURIComponent(state)}`;
   } else {
     redirectUrl = registered
       ? `/hub${state ? `?intent=${state}` : ''}`
