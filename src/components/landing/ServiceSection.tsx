@@ -47,6 +47,7 @@ function ServiceSection({
   const CARD_GAP = 22;
   const STEP_SCROLL = 1000;
   const START_DELAY = 500;
+  const END_DELAY = 600;
 
   const totalVirtualScroll = STEP_SCROLL * (features.length - 1);
 
@@ -109,7 +110,7 @@ function ServiceSection({
   return (
     <div
       ref={containerRef}
-      style={{ height: `calc(100vh + ${totalVirtualScroll + START_DELAY}px)` }}
+      style={{ height: `calc(100vh + ${totalVirtualScroll + START_DELAY + END_DELAY}px)` }}
       className={className}
     >
       <section
