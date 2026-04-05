@@ -15,7 +15,8 @@
       "Bash(ls -la \"D:\\\\project\\\\weeth-client\\\\src\\\\app\\\\\\(private\\)\\\\\\(main\\)\\\\mypage\")",
       "Bash(ls -la \"D:\\\\project\\\\weeth-client\\\\src\\\\app\\\\\\(private\\)\\\\\\(main\\)\\\\mypage\\\\edit\")",
       "Bash(find D:projectweeth-clientsrccomponentsui -type f \\\\\\(-name *.tsx -o -name *.ts \\\\\\))",
-      "Bash(find D:/project/weeth-client/src/constants -name *.ts)"
+      "Bash(find D:/project/weeth-client/src/constants -name *.ts)",
+      "Bash(grep -r \"POSTHOG\\\\|PostHog\" D:projectweeth-client/.env*)"
     ]
   }
 }

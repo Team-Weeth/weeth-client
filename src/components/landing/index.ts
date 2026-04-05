@@ -7,3 +7,5 @@ export { TestimonialSection } from './TestimonialSection';
 export { ClubTypesSection } from './ClubTypesSection';
 export { CTASection } from './CTASection';
 export { LandingFooter } from './LandingFooter';
+export { BlockedToast } from './BlockedToast';
+export { InquiryDialog } from './InquiryDialog';
