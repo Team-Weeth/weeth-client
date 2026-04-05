@@ -13,7 +13,7 @@ function ClubAccessPage({ club }: ClubAccessPageProps) {
     <div className="flex min-h-screen flex-col items-center justify-center">
       <div className="flex flex-col items-center gap-400">
         <h1 className="typo-h3 text-text-strong">이 사이트는 동아리 회원만 이용할 수 있어요.</h1>
-        <Avatar size={128} type="square" className="border-line h-20 w-20 rounded-[32px] border-2">
+        <Avatar size={128} type="square" className="border-line rounded-[32px] border-2">
           {club.logoUrl && (
             <AvatarImage src={club.logoUrl} alt={club.name} className="object-cover" />
           )}

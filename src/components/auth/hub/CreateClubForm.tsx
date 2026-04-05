@@ -9,7 +9,6 @@ import { TooltipIcon } from '@/assets/icons';
 import { Button, Icon, Input, Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui';
 import { SearchSelect } from '@/components/mypage';
 import { cn } from '@/lib/cn';
-import { universityApi } from '@/lib/apis/university';
 import { createClubSchema, type CreateClubFormData } from '@/lib/schemas/createClub';
 import {
   useCreateClubDraftActions,
@@ -20,26 +19,12 @@ import { formatPhone } from '@/utils/shared';
 import { ClubCreatingPage } from './ClubCreatingPage';
 import { FieldError, FieldLabel, FormFieldWrapper } from './FormFieldWrapper';
 
-function CreateClubForm() {
+interface CreateClubFormProps {
+  schoolNames: string[];
+}
+
+function CreateClubForm({ schoolNames }: CreateClubFormProps) {
   const [isCreating, setIsCreating] = useState(false);
-  const [schoolNames, setSchoolNames] = useState<string[]>([]);
-
-  useEffect(() => {
-    universityApi.getSchools().then((res) => {
-      const schoolNameCounts = res.data.data.reduce<Record<string, number>>((acc, school) => {
-        acc[school.schoolName] = (acc[school.schoolName] ?? 0) + 1;
-        return acc;
-      }, {});
-
-      setSchoolNames(
-        res.data.data.map((school) =>
-          schoolNameCounts[school.schoolName] > 1
-            ? `${school.schoolName}(${school.region})`
-            : school.schoolName,
-        ),
-      );
-    });
-  }, []);
 
   const {
     school: schoolDraft,

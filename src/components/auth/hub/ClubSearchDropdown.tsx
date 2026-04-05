@@ -29,11 +29,7 @@ function ClubSearchDropdown({ clubs, onSelect, className }: ClubSearchDropdownPr
             onClick={() => onSelect(club)}
             className="border-line bg-container-neutral flex w-full cursor-pointer items-center gap-400 rounded-[10px] border px-200 py-200 transition-colors"
           >
-            <Avatar
-              size={64}
-              type="square"
-              className="border-line h-10 w-10 shrink-0 rounded-lg border"
-            >
+            <Avatar size={64} type="square" className="border-line shrink-0 rounded-lg border">
               {club.logoUrl && (
                 <AvatarImage src={club.logoUrl} alt={club.name} className="object-cover" />
               )}

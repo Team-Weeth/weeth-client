@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 import { API_BASE_PATH } from '@/constants/api';
+import { getPostLoginUrl } from '@/lib/auth/redirectPaths';
 import {
   ACCESS_COOKIE_OPTIONS,
   ACCESS_TOKEN_KEY,
@@ -41,23 +42,23 @@ export async function GET(request: NextRequest) {
     if (!clubId) return NextResponse.redirect(new URL('/login', origin));
     const params = new URLSearchParams({ clubId });
     redirectUrl = registered
-      ? `/club/join?${params.toString()}`
+      ? getPostLoginUrl({ intent: 'join-no-code', clubId })
       : `/login?terms=true&intent=join-no-code&${params.toString()}`;
   } else if (state?.startsWith('join:')) {
     const [, clubId, inviteCode] = state.split(':');
     if (!clubId || !inviteCode) return NextResponse.redirect(new URL('/login', origin));
     const params = new URLSearchParams({ clubId, code: inviteCode });
     redirectUrl = registered
-      ? `/joining?${params.toString()}`
+      ? getPostLoginUrl({ intent: 'join', clubId, code: inviteCode })
       : `/login?terms=true&intent=join&${params.toString()}`;
   } else if (state?.startsWith('/')) {
     // proxy.ts가 redirect param으로 설정한 원래 경로
     redirectUrl = registered
-      ? state
+      ? getPostLoginUrl({ redirectPath: state })
       : `/login?terms=true&redirect=${encodeURIComponent(state)}`;
   } else {
     redirectUrl = registered
-      ? `/hub${state ? `?intent=${state}` : ''}`
+      ? getPostLoginUrl({ intent: state ?? undefined })
       : `/login?terms=true${state ? `&intent=${state}` : ''}`;
   }
 

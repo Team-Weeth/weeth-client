@@ -9,6 +9,7 @@ import {
   REFRESH_COOKIE_OPTIONS,
 } from '@/lib/apis/cookies';
 import { authApi, type AgreeTermsResponse } from '@/lib/apis';
+import { getPostLoginUrl } from '@/lib/auth/redirectPaths';
 
 export async function agreeTermsAction(intent?: string, clubId?: string, code?: string, redirectPath?: string) {
   const cookieStore = await cookies();
@@ -35,16 +36,7 @@ export async function agreeTermsAction(intent?: string, clubId?: string, code?: 
   cookieStore.set(ACCESS_TOKEN_KEY, newAccessToken, ACCESS_COOKIE_OPTIONS);
   cookieStore.set(REFRESH_TOKEN_KEY, refreshToken, REFRESH_COOKIE_OPTIONS);
 
-  if (intent === 'join' && clubId && code) {
-    redirect(`/joining?clubId=${clubId}&code=${code}`);
-  }
-  if (intent === 'join-no-code' && clubId) {
-    redirect('/club/join');
-  }
-  if (redirectPath) {
-    redirect(redirectPath);
-  }
-  redirect(intent ? `/hub?intent=${intent}` : '/hub');
+  redirect(getPostLoginUrl({ intent, clubId, code, redirectPath }));
 }
 
 export async function logoutAction() {

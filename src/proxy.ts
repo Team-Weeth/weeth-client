@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { ACCESS_TOKEN_KEY } from '@/lib/apis/cookies';
 
-// TODO: 추후 '/hub' 제거
 const PUBLIC_PATHS = ['/', '/login', '/terms', '/landing'];
 
 export function proxy(request: NextRequest) {
