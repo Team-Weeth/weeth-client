@@ -18,7 +18,7 @@ import {
 
 import { cn } from '@/lib/cn';
 import { editProfileSchema, type EditProfileFormData } from '@/lib/schemas/editProfile';
-import { useMyMemberQuery } from '@/hooks/mypage/useMyMemberQuery';
+import { useMyMemberQuery } from '@/hooks/queries/mypage/useMyMemberQuery';
 import { useUpdateProfileMutation } from '@/hooks/mutations/mypage/useUpdateProfileMutation';
 import { toastSuccess, toastError } from '@/stores/useToastStore';
 import { formatPhone } from '@/utils/shared';
@@ -57,15 +57,18 @@ function EditProfileContent({ className, ...props }: EditProfileContentProps) {
 
   useEffect(() => {
     if (me) {
-      reset({
-        name: me.name,
-        bio: me.bio ?? '',
-        tel: me.tel ? formatPhone(me.tel) : '',
-        email: me.email,
-        school: me.school,
-        department: me.department,
-        studentId: me.studentId,
-      }, { keepDirtyValues: true });
+      reset(
+        {
+          name: me.name,
+          bio: me.bio ?? '',
+          tel: me.tel ? formatPhone(me.tel) : '',
+          email: me.email,
+          school: me.school,
+          department: me.department,
+          studentId: me.studentId,
+        },
+        { keepDirtyValues: true },
+      );
     }
   }, [me, reset]);
 

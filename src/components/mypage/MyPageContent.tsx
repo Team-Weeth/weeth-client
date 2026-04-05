@@ -10,7 +10,7 @@ import { SupportListItem } from './SupportListItem';
 import { ThemeToggle } from './ThemeToggle';
 import { MyPageDropdownMenu } from './MyPageDropdownMenu';
 import { ClubInfoCard } from './ClubInfoCard';
-import { useMyMemberQuery } from '@/hooks/mypage/useMyMemberQuery';
+import { useMyMemberQuery } from '@/hooks/queries/mypage/useMyMemberQuery';
 import { useMyClubsQuery } from '@/hooks/queries/mypage/useMyClubsQuery';
 
 type MyPageContentProps = React.HTMLAttributes<HTMLDivElement>;
