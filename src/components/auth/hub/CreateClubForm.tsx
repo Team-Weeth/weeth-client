@@ -100,7 +100,7 @@ function CreateClubForm({ schoolNames, schoolLoadError = false }: CreateClubForm
         {/* 소속 학교 */}
         <FormFieldWrapper label="소속 학교" error={errors.school?.message}>
           {schoolLoadError && (
-            <div className="mb-200 flex items-center justify-between gap-200 rounded-lg bg-background-2 px-300 py-200">
+            <div className="bg-background-2 mb-200 flex items-center justify-between gap-200 rounded-lg px-300 py-200">
               <p className="typo-caption2 text-text-alternative">
                 학교 목록을 불러오지 못했습니다. 새로고침 후 다시 시도해주세요.
               </p>

@@ -7,6 +7,9 @@ interface School {
 }
 
 export default async function CreateClubPage() {
+  let schoolNames: string[] = [];
+  let schoolLoadError = false;
+
   try {
     const json = await apiServer.get<{ data: School[] }>('/university/schools');
     const schools = json.data;
@@ -14,12 +17,12 @@ export default async function CreateClubPage() {
       acc[s.schoolName] = (acc[s.schoolName] ?? 0) + 1;
       return acc;
     }, {});
-    const schoolNames = schools.map((s) =>
+    schoolNames = schools.map((s) =>
       counts[s.schoolName] > 1 ? `${s.schoolName}(${s.region})` : s.schoolName,
     );
-
-    return <CreateClubForm schoolNames={schoolNames} />;
   } catch {
-    return <CreateClubForm schoolNames={[]} schoolLoadError />;
+    schoolLoadError = true;
   }
+
+  return <CreateClubForm schoolNames={schoolNames} schoolLoadError={schoolLoadError} />;
 }
