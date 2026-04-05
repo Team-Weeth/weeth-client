@@ -45,6 +45,10 @@ function SchoolInfoFields({ register, control, errors, setValue }: SchoolInfoFie
           {...register('studentId')}
           placeholder="학번을 입력하세요"
           inputMode="numeric"
+          onInput={(e) => {
+            const target = e.currentTarget;
+            target.value = target.value.replace(/\D/g, '');
+          }}
           className="rounded-lg"
         />
       </FormField>

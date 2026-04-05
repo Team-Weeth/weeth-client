@@ -44,6 +44,7 @@ function EditProfileContent({ className, ...props }: EditProfileContentProps) {
     formState: { errors },
   } = useForm<EditProfileFormData>({
     resolver: zodResolver(editProfileSchema),
+    mode: 'onBlur',
     defaultValues: {
       name: '',
       bio: '',
