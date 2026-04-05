@@ -21,7 +21,7 @@ function HeroSectionMobile({ className }: HeroSectionProps) {
         className="flex flex-col items-center text-center"
       >
         <span
-          className="block font-[family-name:var(--font-inter)] text-black select-none"
+          className="block text-center font-[family-name:var(--font-inter)] text-black select-none"
           style={{
             fontSize: '64px',
             lineHeight: '100%',
@@ -29,18 +29,7 @@ function HeroSectionMobile({ className }: HeroSectionProps) {
             letterSpacing: '-0.005em',
           }}
         >
-          함께
-        </span>
-        <span
-          className="block font-[family-name:var(--font-inter)] text-black select-none"
-          style={{
-            fontSize: '64px',
-            lineHeight: '100%',
-            fontWeight: 700,
-            letterSpacing: '-0.005em',
-          }}
-        >
-          더 오래
+          함께 더 오래
         </span>
       </motion.div>
 
