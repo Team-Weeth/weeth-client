@@ -122,7 +122,7 @@ function ServiceSectionMobile({
     >
       <section
         className={cn(
-          'tablet:px-[40px] tablet:pt-[56px] sticky top-[64px] h-[calc(100vh-64px)] w-full overflow-hidden px-600 pt-[40px] pb-[48px]',
+          'tablet:pt-[56px] sticky top-[64px] h-[calc(100vh-64px)] w-full overflow-hidden px-600 pt-[20px] pb-[48px]',
           variant === 'user' ? 'bg-[#F3F5F7]' : 'bg-[#E6EAED]',
         )}
       >
@@ -156,7 +156,6 @@ function ServiceSectionMobile({
                     videoRefs.current[activeIndex] = el;
                   }}
                   src={active.video}
-                  autoPlay
                   loop
                   muted
                   playsInline

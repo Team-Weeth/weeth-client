@@ -24,7 +24,7 @@ interface ServiceSectionProps {
   features: Feature[];
 }
 
-const DESKTOP_BP = 1032;
+const DESKTOP_BP = 1440;
 
 function ServiceSection(props: ServiceSectionProps) {
   const [isDesktop, setIsDesktop] = useState(false);

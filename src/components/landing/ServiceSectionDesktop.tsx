@@ -6,16 +6,15 @@ import { cn } from '@/lib/cn';
 import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { AnimatePresence, motion } from 'framer-motion';
 import type { Feature } from './ServiceSection';
 import { LandingUserFaceIcon, LandingAdminFaceIcon } from '@/assets/icons/landing';
 
 gsap.registerPlugin(ScrollTrigger);
 
-const STEP_SCROLL = 1000;
+const STEP_SCROLL = 1500;
 const START_DELAY = 500;
 const END_DELAY = 600;
-const CARD_WIDTH = 1123;
-const CARD_GAP = 22;
 
 interface ServiceSectionDesktopProps {
   className?: string;
@@ -36,17 +35,14 @@ function ServiceSectionDesktop({
 }: ServiceSectionDesktopProps) {
   const [activeIndex, setActiveIndex] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
-  const trackRef = useRef<HTMLDivElement>(null);
   const videoRefs = useRef<(HTMLVideoElement | null)[]>([]);
 
   const totalVirtualScroll = STEP_SCROLL * (features.length - 1);
-  const totalTrackScroll = (CARD_WIDTH + CARD_GAP) * (features.length - 1);
 
   useGSAP(
     () => {
       const container = containerRef.current;
-      const track = trackRef.current;
-      if (!container || !track) return;
+      if (!container) return;
 
       ScrollTrigger.create({
         trigger: container,
@@ -54,7 +50,13 @@ function ServiceSectionDesktop({
         end: `+=${STEP_SCROLL * (features.length - 1)}`,
         scrub: 0.6,
         snap: {
-          snapTo: 1 / (features.length - 1),
+          snapTo: (value, self) => {
+            const step = 1 / (features.length - 1);
+            const currentSnap = Math.round((self?.progress ?? 0) / step) * step;
+            if (Math.abs(value - currentSnap) < step * 0.01) return currentSnap;
+            const direction = value > currentSnap ? 1 : -1;
+            return Math.max(0, Math.min(1, currentSnap + direction * step));
+          },
           duration: { min: 0.4, max: 0.8 },
           ease: 'power2.out',
           delay: 0,
@@ -64,20 +66,9 @@ function ServiceSectionDesktop({
           setActiveIndex(index);
           videoRefs.current.forEach((video, idx) => {
             if (!video) return;
-            if (idx === index) video.play();
+            if (idx === index) video.play().catch(() => {});
             else video.pause();
           });
-        },
-      });
-
-      gsap.to(track, {
-        x: -totalTrackScroll,
-        ease: 'none',
-        scrollTrigger: {
-          trigger: container,
-          start: `top+=${START_DELAY} 64px`,
-          end: `+=${STEP_SCROLL * (features.length - 1)}`,
-          scrub: 1,
         },
       });
     },
@@ -93,6 +84,8 @@ function ServiceSectionDesktop({
     const targetScroll = trigger.start + (trigger.end - trigger.start) * progress;
     window.scrollTo({ top: targetScroll, behavior: 'instant' });
   };
+
+  const active = features[activeIndex];
 
   return (
     <div
@@ -148,52 +141,55 @@ function ServiceSectionDesktop({
             ))}
           </div>
         </div>
-        <div className="-ml-[306px] w-screen overflow-hidden pl-[306px]">
-          <div ref={trackRef} className="flex gap-[22px]">
-            {features.map((f, i) => (
-              <div key={f.chipLabel} className="w-[1123px] flex-shrink-0">
-                <div
-                  className={cn(
-                    'h-[510px] w-full overflow-hidden rounded-[30px]',
-                    f.video ? '' : cn('px-[93px] pt-[91px]', f.bgColor),
-                  )}
-                >
-                  {f.video ? (
-                    <video
-                      ref={(el) => {
-                        videoRefs.current[i] = el;
-                      }}
-                      src={f.video}
-                      autoPlay={i === 0}
-                      loop
-                      muted
-                      playsInline
-                      preload="metadata"
-                      className="h-full w-full object-cover"
-                    />
-                  ) : f.image ? (
-                    <Image src={f.image} alt={f.chipLabel} width={945} height={523} />
-                  ) : null}
-                </div>
-                <p className="mt-[22px] text-[18px] leading-[30px] font-semibold tracking-[-0.005em] text-[#909599]">
-                  {f.highlightKeyword
-                    ? (() => {
-                        const idx = f.description.indexOf(f.highlightKeyword);
-                        if (idx === -1) return f.description;
-                        return (
-                          <>
-                            {f.description.slice(0, idx)}
-                            <span className="text-[#000]">{f.highlightKeyword}</span>
-                            {f.description.slice(idx + f.highlightKeyword.length)}
-                          </>
-                        );
-                      })()
-                    : f.description}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
+
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={activeIndex}
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -16 }}
+            transition={{ duration: 0.25, ease: 'easeOut' }}
+            className="w-[1123px]"
+          >
+            <div
+              className={cn(
+                'h-[510px] w-full overflow-hidden rounded-[30px]',
+                active.video ? '' : cn('px-[93px] pt-[91px]', active.bgColor),
+              )}
+            >
+              {active.video ? (
+                <video
+                  ref={(el) => {
+                    videoRefs.current[activeIndex] = el;
+                  }}
+                  src={active.video}
+                  loop
+                  muted
+                  playsInline
+                  preload="metadata"
+                  className="h-full w-full object-cover"
+                />
+              ) : active.image ? (
+                <Image src={active.image} alt={active.chipLabel} width={945} height={523} />
+              ) : null}
+            </div>
+            <p className="mt-[22px] text-[18px] leading-[30px] font-semibold tracking-[-0.005em] text-[#909599]">
+              {active.highlightKeyword
+                ? (() => {
+                    const idx = active.description.indexOf(active.highlightKeyword);
+                    if (idx === -1) return active.description;
+                    return (
+                      <>
+                        {active.description.slice(0, idx)}
+                        <span className="text-[#000]">{active.highlightKeyword}</span>
+                        {active.description.slice(idx + active.highlightKeyword.length)}
+                      </>
+                    );
+                  })()
+                : active.description}
+            </p>
+          </motion.div>
+        </AnimatePresence>
       </section>
     </div>
   );
