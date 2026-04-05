@@ -14,18 +14,17 @@ function TestimonialSection({ className }: TestimonialSectionProps) {
         className,
       )}
     >
-      <div className="flex min-w-[648px] items-center gap-[173px]">
+      <div className="flex w-full max-w-[900px] flex-col items-center gap-[60px] px-600 tablet:flex-row tablet:gap-[80px] desktop:gap-[173px]">
         <div className="flex flex-col gap-5">
           <Image src={Ldquo} alt="여는 따옴표" width={48} height={48} className="self-start" />
           <div className="text-2xl leading-[1.6] font-bold text-[#FFFFFF]">
-            Weeth는 우리 동아리가 나아가야할 방향을 제시하는 데 <br /> 큰 도움이 되었어요. 동아리의
-            열정이 이어질 수 있는 공 <br />
-            간이에요.
+            Weeth는 우리 동아리가 나아가야할 방향을 제시하는 데 큰 도움이 되었어요. 동아리의 열정이
+            이어질 수 있는 공간이에요.
           </div>
           <Image src={LdquoBack} alt="닫는 따옴표" width={48} height={48} className="self-end" />
         </div>
 
-        <div className="flex items-center gap-100">
+        <div className="flex shrink-0 items-center gap-100">
           <Image
             src={LeetsAvatar}
             alt="Leets Avatar"
