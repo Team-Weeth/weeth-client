@@ -10,7 +10,7 @@ interface LandingFooterProps {
 
 function LandingFooter({ className }: LandingFooterProps) {
   return (
-    <footer className={cn('flex w-full flex-col items-center bg-[#EEF2F5] px-[160px]', className)}>
+    <footer className={cn('flex w-full flex-col items-center bg-[#EEF2F5] px-600 tablet:px-[80px] desktop:px-[160px]', className)}>
       <div className="flex w-full max-w-[1088px] flex-col gap-[67px] px-[18px] py-[26px]">
         <div className="flex gap-200">
           {FOOTER_MENUS.map(({ title, items }) => (
