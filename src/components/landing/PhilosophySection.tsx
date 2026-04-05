@@ -117,7 +117,8 @@ function PhilosophySection() {
         <Marquee className="flex h-[504px] min-h-[504px]">
           <div className="ml-[18px] flex h-[504px] flex-row gap-4">
             {images.map((src, i) => {
-              const alignClass = i % 3 === 0 ? 'self-end' : i % 3 === 1 ? 'self-center' : 'self-start';
+              const alignClass =
+                i % 3 === 0 ? 'self-end' : i % 3 === 1 ? 'self-center' : 'self-start';
               return (
                 <div key={i} className={alignClass}>
                   <Image src={src} alt={`${i + 1}번째 카드 이미지`} width={269} height={391} />
