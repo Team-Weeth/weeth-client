@@ -59,13 +59,7 @@ function PostDetailContent({ post }: PostDetailContentProps) {
           )}
         </PostCard.Header>
 
-        <PostCard.Content
-          title={post.title}
-          content={post.content}
-          isNew={post.isNew}
-          expandable={false}
-          variant="detail"
-        />
+        <PostCard.DetailContent title={post.title} content={post.content} isNew={post.isNew} />
 
         <PostCard.Images files={imageFiles} />
 

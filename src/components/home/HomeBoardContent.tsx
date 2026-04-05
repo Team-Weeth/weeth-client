@@ -34,9 +34,11 @@ function HomeBoardContent() {
                   dateTime={post.time}
                   hasAttachment={hasAttachment}
                 />
-                {isMyPost && <PostActionMenu onClick={(e) => e.preventDefault()} />}
+                {isMyPost && (
+                  <PostActionMenu postId={post.id} onClick={(e) => e.preventDefault()} />
+                )}
               </PostCard.Header>
-              <PostCard.Content title={post.title} content={post.content} isNew={post.isNew} />
+              <PostCard.ListContent title={post.title} content={post.content} isNew={post.isNew} />
               <PostCard.Images files={images} />
               <PostCard.Actions likeCount={post.likeCount} commentCount={post.commentCount} />
             </PostCard.Root>

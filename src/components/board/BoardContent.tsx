@@ -57,10 +57,10 @@ function BoardContent() {
                 hasAttachment={post.hasFile}
               />
               {currentUserId === post.author.id && (
-                <PostActionMenu onClick={(e) => e.preventDefault()} />
+                <PostActionMenu postId={post.id} onClick={(e) => e.preventDefault()} />
               )}
             </PostCard.Header>
-            <PostCard.Content title={post.title} content={post.content} isNew={post.isNew} />
+            <PostCard.ListContent title={post.title} content={post.content} isNew={post.isNew} />
             <PostCard.Actions likeCount={post.like.likeCount} commentCount={post.commentCount} />
           </PostCard.Root>
         </Link>
