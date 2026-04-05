@@ -14,13 +14,13 @@ import {
   Icon,
 } from '@/components/ui';
 import { ChannelList } from '@/components/board/ChannelList';
-import type { BoardNavItem } from '@/components/board/ChannelList';
+import type { BoardNavItem } from '@/types/board';
 
 interface CategorySelectorProps {
   className?: string;
   items: BoardNavItem[];
-  activeId: string;
-  onItemSelect?: (id: string) => void;
+  activeId: number | null;
+  onItemSelect?: (id: number | null) => void;
 }
 
 /**
@@ -36,7 +36,7 @@ function CategorySelector({ className, items, activeId, onItemSelect }: Category
   const channelName = activeItem?.label ?? '';
 
   // 아이템 선택 후 드롭다운 닫기
-  const handleItemSelect = (id: string) => {
+  const handleItemSelect = (id: number | null) => {
     onItemSelect?.(id);
     setOpen(false);
   };

@@ -23,29 +23,21 @@ async function handler(request: NextRequest, { params }: { params: Promise<{ pat
     headers.set('Authorization', `Bearer ${accessToken}`);
   }
 
-  const body =
-    request.method !== 'GET' && request.method !== 'HEAD' ? await request.arrayBuffer() : undefined;
+  const hasBody = request.method !== 'GET' && request.method !== 'HEAD';
 
   const response = await fetch(url.toString(), {
     method: request.method,
     headers,
-    body: body?.byteLength ? body : undefined,
-  });
+    body: hasBody ? request.body : undefined,
+    signal: request.signal,
+    duplex: 'half',
+  } as RequestInit);
 
   const responseHeaders = new Headers(response.headers);
   responseHeaders.delete('transfer-encoding');
   responseHeaders.delete('set-cookie');
 
-  if (response.status === 204) {
-    return new NextResponse(null, {
-      status: 204,
-      headers: responseHeaders,
-    });
-  }
-
-  const responseBody = await response.arrayBuffer();
-
-  return new NextResponse(responseBody, {
+  return new NextResponse(response.body, {
     status: response.status,
     statusText: response.statusText,
     headers: responseHeaders,

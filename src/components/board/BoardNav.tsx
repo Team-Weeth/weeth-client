@@ -2,12 +2,12 @@
 
 import { cn } from '@/lib/cn';
 import { ChannelList } from '@/components/board/ChannelList';
-import type { BoardNavItem } from '@/components/board/ChannelList';
+import type { BoardNavItem } from '@/types/board';
 
 interface BoardNavProps extends React.ComponentProps<'nav'> {
   items: BoardNavItem[];
-  activeId: string;
-  onItemSelect?: (id: string) => void;
+  activeId: number | null;
+  onItemSelect?: (id: number | null) => void;
 }
 
 function BoardNav({ className, items, activeId, onItemSelect, ...props }: BoardNavProps) {
