@@ -5,8 +5,18 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Marquee from 'react-fast-marquee';
 import { useRef } from 'react';
-import { cn } from '@/lib/cn';
 import { Centered } from './Centered';
+import Image from 'next/image';
+import {
+  LandingCard1,
+  LandingCard2,
+  LandingCard3,
+  LandingCard4,
+  LandingCard5,
+  LandingCard6,
+  LandingCard7,
+  LandingCard8,
+} from '@/assets/image/landing/card';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -19,12 +29,14 @@ const sentences = [
 ];
 
 const images = [
-  { id: 1, color: 'bg-brand-primary', type: 'horizontal' as const },
-  { id: 2, color: 'bg-brand-secondary', type: 'vertical' as const },
-  { id: 3, color: 'bg-container-neutral-interaction', type: 'square' as const },
-  { id: 4, color: 'bg-container-primary-alternative', type: 'vertical' as const },
-  { id: 5, color: 'bg-container-secondary-alternative', type: 'square' as const },
-  { id: 6, color: 'bg-brand-purple', type: 'vertical' as const },
+  LandingCard1,
+  LandingCard2,
+  LandingCard3,
+  LandingCard4,
+  LandingCard5,
+  LandingCard6,
+  LandingCard7,
+  LandingCard8,
 ];
 
 function PhilosophySection() {
@@ -78,7 +90,10 @@ function PhilosophySection() {
   });
 
   return (
-    <div ref={rootRef} className="flex w-full flex-col gap-[196px] bg-white pt-[176px] pb-[135px]">
+    <div
+      ref={rootRef}
+      className="tablet:gap-[196px] tablet:pt-[176px] flex w-full flex-col gap-[96px] bg-white pt-[160px] pb-[135px]"
+    >
       <Centered>
         <div className="w-full max-w-[1152px]">
           <div className="tablet:text-[24px] tablet:leading-[38px] mobile:text-[20px] mobile:leading-[30px] text-[28px] leading-[44px] font-bold tracking-[-0.6px] break-keep text-black">
@@ -104,18 +119,15 @@ function PhilosophySection() {
       <div className="h-[504px] min-h-[504px]">
         <Marquee className="flex h-[504px] min-h-[504px]">
           <div className="ml-[18px] flex h-[504px] flex-row gap-4">
-            {images.map((image, i) => (
-              <div
-                key={image.id}
-                className={cn(
-                  'h-[391px] w-[269px] flex-shrink-0 overflow-hidden',
-                  image.color,
-                  i % 3 === 0 && 'self-center',
-                  i % 3 === 1 && 'self-start',
-                  i % 3 === 2 && 'self-end',
-                )}
-              />
-            ))}
+            {images.map((src, i) => {
+              const alignClass =
+                i % 3 === 0 ? 'self-end' : i % 3 === 1 ? 'self-center' : 'self-start';
+              return (
+                <div key={i} className={alignClass}>
+                  <Image src={src} alt={`${i + 1}번째 카드 이미지`} width={269} height={391} />
+                </div>
+              );
+            })}
           </div>
         </Marquee>
       </div>

@@ -1,11 +1,12 @@
 'use client';
 
-import Link from 'next/link';
 import { useRef } from 'react';
 import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useWindowSize } from 'react-use';
+import { Button } from '@/components/ui';
+import { InquiryDialog } from './InquiryDialog';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -17,7 +18,10 @@ const SIDE_MARGIN = 18;
 function CTASection({ className }: { className?: string }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const cardRef = useRef<HTMLDivElement>(null);
-  const { width: windowWidth, height: windowHeight } = useWindowSize();
+  const { width: windowWidth, height: windowHeight } = useWindowSize({
+    initialWidth: typeof window !== 'undefined' ? window.innerWidth : 0,
+    initialHeight: typeof window !== 'undefined' ? window.innerHeight : 0,
+  });
 
   useGSAP(
     () => {
@@ -42,6 +46,9 @@ function CTASection({ className }: { className?: string }) {
           },
         },
       );
+
+      const raf = requestAnimationFrame(() => ScrollTrigger.refresh());
+      return () => cancelAnimationFrame(raf);
     },
     { scope: containerRef, dependencies: [windowWidth, windowHeight], revertOnUpdate: true },
   );
@@ -53,28 +60,21 @@ function CTASection({ className }: { className?: string }) {
           ref={cardRef}
           className="flex h-screen w-full flex-col items-center justify-center bg-white"
         >
-          <h2 className="mb-[14px] text-center text-[64px] leading-[130%] font-bold tracking-[-0.005em] text-[#1E2021]">
+          <h2 className="tablet:text-[48px] desktop:text-[64px] mb-[14px] text-center text-[32px] leading-[130%] font-bold tracking-[-0.005em] text-[#1E2021]">
             함께하는 순간이
             <br />더 오래 이어지도록
           </h2>
-          <p className="mb-[63px] text-center text-[16px] leading-[24px] font-semibold tracking-[-0.005em] text-black">
+          <p className="tablet:text-[16px] tablet:leading-[24px] desktop:mb-[63px] mb-[40px] text-center text-[14px] leading-[22px] font-semibold tracking-[-0.005em] text-black">
             동아리 정보를 입력하고,
             <br />
             3분 만에 사이트를 개설해보세요.
           </p>
           <div className="flex gap-3">
-            <Link
-              href="/login?intent=create"
-              className="typo-button1 block w-fit rounded-md bg-[#00C8AA] px-400 py-300 text-white hover:bg-[#00877a]"
-            >
-              지금 무료로 시작하기
-            </Link>
-            <Link
-              href="/contact"
-              className="typo-button1 block w-fit rounded-md bg-[#E6EAED] px-400 py-300 text-black hover:bg-[#b7bcbf]"
-            >
-              가입 문의
-            </Link>
+            <InquiryDialog>
+              <Button variant="primary" size="lg">
+                가입 문의하기
+              </Button>
+            </InquiryDialog>
           </div>
         </div>
       </section>

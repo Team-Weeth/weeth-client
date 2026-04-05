@@ -1,22 +1,18 @@
 'use client';
 
-import { useRef, useState } from 'react';
-import Image from 'next/image';
+import { useEffect, useState } from 'react';
 import type { StaticImageData } from 'next/image';
-import { cn } from '@/lib/cn';
-import { LandingUserFaceIcon, LandingAdminFaceIcon } from '@/assets/icons/landing';
-import { useGSAP } from '@gsap/react';
-import gsap from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
-
-gsap.registerPlugin(ScrollTrigger);
+import { ServiceSectionDesktop } from './ServiceSectionDesktop';
+import { ServiceSectionMobile } from './ServiceSectionMobile';
 
 interface Feature {
   chipLabel: string;
   cardTitle: string;
   description: string;
   bgColor: string;
-  image: StaticImageData;
+  image?: StaticImageData;
+  video?: string;
+  highlightKeyword?: string;
 }
 
 interface ServiceSectionProps {
@@ -28,150 +24,20 @@ interface ServiceSectionProps {
   features: Feature[];
 }
 
-function ServiceSection({
-  className,
-  variant,
-  title,
-  subtitle,
-  serviceLabel,
-  features,
-}: ServiceSectionProps) {
-  const [activeIndex, setActiveIndex] = useState(0);
-  const containerRef = useRef<HTMLDivElement>(null);
-  const trackRef = useRef<HTMLDivElement>(null);
+const DESKTOP_BP = 1440;
 
-  const CARD_WIDTH = 1123;
-  const CARD_GAP = 22;
-  const STEP_SCROLL = 1000;
+function ServiceSection(props: ServiceSectionProps) {
+  const [isDesktop, setIsDesktop] = useState(false);
 
-  const totalVirtualScroll = STEP_SCROLL * (features.length - 1);
+  useEffect(() => {
+    const check = () => setIsDesktop(window.innerWidth >= DESKTOP_BP);
+    check();
+    window.addEventListener('resize', check);
+    return () => window.removeEventListener('resize', check);
+  }, []);
 
-  useGSAP(() => {
-    const container = containerRef.current;
-    const track = trackRef.current;
-    if (!container || !track) return;
-
-    const totalTrackScroll = (CARD_WIDTH + CARD_GAP) * (features.length - 1);
-
-    ScrollTrigger.create({
-      trigger: container,
-      start: 'top top',
-      end: `+=${STEP_SCROLL * (features.length - 1)}`,
-      scrub: 0.6,
-      snap: {
-        snapTo: 1 / (features.length - 1),
-        duration: { min: 0.4, max: 0.8 },
-        ease: 'power2.out',
-        delay: 0,
-      },
-      onUpdate: (self) => {
-        const index = Math.round(self.progress * (features.length - 1));
-        setActiveIndex(index);
-      },
-    });
-
-    gsap.to(track, {
-      x: -totalTrackScroll,
-      ease: 'none',
-      scrollTrigger: {
-        trigger: container,
-        start: 'top top',
-        end: `+=${STEP_SCROLL * (features.length - 1)}`,
-        scrub: 0.6,
-      },
-    });
-  });
-
-  const handleChipClick = (i: number) => {
-    const container = containerRef.current;
-    if (!container) return;
-
-    const trigger = ScrollTrigger.getAll().find((t) => t.trigger === container);
-    if (!trigger) return;
-
-    const progress = i / (features.length - 1);
-    const targetScroll = trigger.start + (trigger.end - trigger.start) * progress;
-    window.scrollTo({ top: targetScroll, behavior: 'instant' });
-  };
-
-  return (
-    <div
-      ref={containerRef}
-      style={{ height: `calc(100vh + ${totalVirtualScroll}px)` }}
-      className={className}
-    >
-      <section
-        className={cn(
-          'sticky top-0 h-screen w-full overflow-hidden pt-[86px] pl-[306px]',
-          variant === 'user' ? 'bg-[#F3F5F7]' : 'bg-[#E6EAED]',
-        )}
-      >
-        <div className="mb-400 flex items-center gap-200">
-          <span className="typo-sub2 flex items-center gap-[13px] text-[#1E2021]">
-            <Image
-              src={variant === 'user' ? LandingUserFaceIcon : LandingAdminFaceIcon}
-              alt="face-icon"
-              width={24}
-              height={24}
-            />
-            {serviceLabel}
-          </span>
-        </div>
-
-        <h2 className="mt-[54px] mb-300 text-[48px] font-bold whitespace-pre-line text-[#1E2021]">
-          {title}
-        </h2>
-
-        <div className="mt-[48px] mb-[102px] flex w-[1123px] justify-between">
-          <p className="typo-body1 text-[#1E2021]">
-            {subtitle.split('<br/>').map((line, i, arr) => (
-              <span key={i}>
-                {line}
-                {i < arr.length - 1 && <br />}
-              </span>
-            ))}
-          </p>
-          <div className="flex gap-2">
-            {features.map((f, i) => (
-              <button
-                key={f.chipLabel}
-                onClick={() => handleChipClick(i)}
-                className={cn(
-                  'typo-button2 h-[40px] min-w-[40px] cursor-pointer rounded-3xl px-[15px] py-2 transition-colors',
-                  i === activeIndex
-                    ? 'bg-[#00C8AA] text-white hover:bg-[#00b89c]'
-                    : 'border border-[#00C8AA] text-[#00C8AA] hover:bg-[#00C8AA] hover:text-white',
-                )}
-              >
-                {f.chipLabel}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* 카드 트랙 */}
-        <div className="-ml-[306px] w-screen overflow-hidden pl-[306px]">
-          <div ref={trackRef} className="flex gap-[22px]">
-            {features.map((f) => (
-              <div key={f.chipLabel} className="w-[1123px] flex-shrink-0">
-                <div
-                  className={cn(
-                    'h-[510px] w-full overflow-hidden rounded-[30px] px-[93px] pt-[91px]',
-                    f.bgColor,
-                  )}
-                >
-                  <Image src={f.image} alt={f.chipLabel} width={945} height={523} />
-                </div>
-                <p className="mt-[22px] text-[24px] leading-[30px] font-semibold tracking-[-0.005em] text-[#1E2021]">
-                  {f.cardTitle}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-    </div>
-  );
+  if (isDesktop) return <ServiceSectionDesktop {...props} />;
+  return <ServiceSectionMobile {...props} />;
 }
 
 export { ServiceSection };
