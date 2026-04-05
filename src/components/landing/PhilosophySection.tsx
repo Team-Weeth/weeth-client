@@ -90,7 +90,10 @@ function PhilosophySection() {
   });
 
   return (
-    <div ref={rootRef} className="flex w-full flex-col gap-[196px] bg-white pt-[176px] pb-[135px]">
+    <div
+      ref={rootRef}
+      className="tablet:gap-[196px] tablet:pt-[176px] flex w-full flex-col gap-[96px] bg-white pt-[160px] pb-[135px]"
+    >
       <Centered>
         <div className="w-full max-w-[1152px]">
           <div className="tablet:text-[24px] tablet:leading-[38px] mobile:text-[20px] mobile:leading-[30px] text-[28px] leading-[44px] font-bold tracking-[-0.6px] break-keep text-black">
