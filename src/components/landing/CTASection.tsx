@@ -18,7 +18,10 @@ const SIDE_MARGIN = 18;
 function CTASection({ className }: { className?: string }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const cardRef = useRef<HTMLDivElement>(null);
-  const { width: windowWidth, height: windowHeight } = useWindowSize();
+  const { width: windowWidth, height: windowHeight } = useWindowSize({
+    initialWidth: typeof window !== 'undefined' ? window.innerWidth : 0,
+    initialHeight: typeof window !== 'undefined' ? window.innerHeight : 0,
+  });
 
   useGSAP(
     () => {
@@ -43,6 +46,9 @@ function CTASection({ className }: { className?: string }) {
           },
         },
       );
+
+      const raf = requestAnimationFrame(() => ScrollTrigger.refresh());
+      return () => cancelAnimationFrame(raf);
     },
     { scope: containerRef, dependencies: [windowWidth, windowHeight], revertOnUpdate: true },
   );

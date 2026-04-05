@@ -23,10 +23,10 @@ export default function LandingPage() {
       </Suspense>
       {/* TODO: showAuthButtons 추가하기 */}
       <PublicHeader />
-      <main className="flex min-h-screen w-full flex-col overflow-x-clip">
-        <HeroSection />
-        <PhilosophySection />
-        <div className="[contain-intrinsic-size:auto_1680px] [content-visibility:auto]">
+      <main className="flex min-h-screen w-full flex-col">
+        <div className="overflow-x-clip">
+          <HeroSection />
+          <PhilosophySection />
           <ServiceSection
             variant="user"
             title={`쉽고 직관적인\n동아리 참여 서비스`}
@@ -34,8 +34,6 @@ export default function LandingPage() {
             serviceLabel="유저 서비스"
             features={USER_FEATURES}
           />
-        </div>
-        <div className="[contain-intrinsic-size:auto_1680px] [content-visibility:auto]">
           <ServiceSection
             variant="admin"
             title={`동아리 운영에 특화된\n운영 관리 서비스`}
@@ -43,19 +41,11 @@ export default function LandingPage() {
             serviceLabel="관리자 서비스"
             features={ADMIN_FEATURES}
           />
-        </div>
-        <div className="[content-visibility:auto]">
           <SetupGuideSection />
-        </div>
-        <div className="[content-visibility:auto]">
           <TestimonialSection />
-        </div>
-        <div className="[content-visibility:auto]">
           <ClubTypesSection />
         </div>
-        <div className="[contain-intrinsic-size:auto_1680px] [content-visibility:auto]">
-          <CTASection />
-        </div>
+        <CTASection />
         <LandingFooter />
       </main>
     </>
