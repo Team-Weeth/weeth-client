@@ -31,11 +31,11 @@ function ServiceSectionHeader({
         </span>
       </div>
 
-      <h2 className="desktop:text-[48px] tablet:mb-[48px] mt-[clamp(20px,3vh,54px)] mb-[24px] text-[32px] font-extrabold whitespace-pre-line text-[#1E2021]">
+      <h2 className="desktop:text-[48px] tablet:mb-[48px] mt-[clamp(20px,3vh,54px)] mb-[24px] text-[32px] leading-[130%] font-extrabold tracking-[-0.005em] whitespace-pre-line text-[#1E2021]">
         {title}
       </h2>
 
-      <div className="tablet:justify-between tablet:flex-row mt-[clamp(20px,3vh,48px)] mb-[clamp(24px,5vh,86px)] flex w-full max-w-[1123px] flex-col gap-300">
+      <div className="tablet:justify-between tablet:flex-row mt-[clamp(20px,3vh,48px)] mb-[clamp(24px,5vh,86px)] flex w-full max-w-[1123px] flex-col gap-[64px]">
         <p className="tablet:text-[24px] tablet:leading-[32px] text-[14px] leading-[18px] font-semibold text-[#888A8C]">
           {subtitle.split('<br/>').map((line, i, arr) => (
             <span key={i}>

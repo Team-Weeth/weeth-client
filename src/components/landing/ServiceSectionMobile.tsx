@@ -13,7 +13,6 @@ import { ServiceSectionHeader } from './ServiceSectionHeader';
 gsap.registerPlugin(ScrollTrigger);
 
 const STEP_SCROLL = 800;
-const START_DELAY = 400;
 const END_DELAY = 500;
 
 interface ServiceSectionMobileProps {
@@ -57,7 +56,7 @@ function ServiceSectionMobile({
 
       ScrollTrigger.create({
         trigger: container,
-        start: `top+=${START_DELAY} 64px`,
+        start: `top 64px`,
         end: `+=${STEP_SCROLL * (features.length - 1)}`,
         scrub: 0.6,
         snap: {
@@ -117,9 +116,9 @@ function ServiceSectionMobile({
     <div
       ref={containerRef}
       style={{
-        height: `calc(100vh + ${STEP_SCROLL * (features.length - 1) + START_DELAY + END_DELAY}px)`,
+        height: `calc(100vh + ${STEP_SCROLL * (features.length - 1) + END_DELAY}px)`,
       }}
-      className={className}
+      className={cn(variant === 'user' ? 'bg-[#F3F5F7]' : 'bg-[#E6EAED]', className)}
     >
       <section
         className={cn(
@@ -145,8 +144,10 @@ function ServiceSectionMobile({
           >
             <div
               className={cn(
-                'tablet:h-[420px] tablet:rounded-[25px] h-[280px] w-full overflow-hidden rounded-[20px]',
-                active.video ? '' : cn('px-[24px] pt-[24px]', active.bgColor),
+                'tablet:rounded-[8px] w-full overflow-hidden rounded-[8px]',
+                active.video
+                  ? ''
+                  : cn('tablet:h-[420px] h-[280px] px-[24px] pt-[24px]', active.bgColor),
               )}
             >
               {active.video ? (
@@ -160,7 +161,7 @@ function ServiceSectionMobile({
                   muted
                   playsInline
                   preload="metadata"
-                  className="h-full w-full object-cover"
+                  className="h-auto w-full"
                 />
               ) : active.image ? (
                 <Image src={active.image} alt={active.chipLabel} width={945} height={523} />
