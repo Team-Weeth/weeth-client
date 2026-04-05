@@ -60,11 +60,11 @@ function CTASection({ className }: { className?: string }) {
           ref={cardRef}
           className="flex h-screen w-full flex-col items-center justify-center bg-white"
         >
-          <h2 className="mb-[14px] text-center text-[32px] leading-[130%] font-bold tracking-[-0.005em] text-[#1E2021] tablet:text-[48px] desktop:text-[64px]">
+          <h2 className="tablet:text-[48px] desktop:text-[64px] mb-[14px] text-center text-[32px] leading-[130%] font-bold tracking-[-0.005em] text-[#1E2021]">
             함께하는 순간이
             <br />더 오래 이어지도록
           </h2>
-          <p className="mb-[40px] text-center text-[14px] leading-[22px] font-semibold tracking-[-0.005em] text-black tablet:text-[16px] tablet:leading-[24px] desktop:mb-[63px]">
+          <p className="tablet:text-[16px] tablet:leading-[24px] desktop:mb-[63px] mb-[40px] text-center text-[14px] leading-[22px] font-semibold tracking-[-0.005em] text-black">
             동아리 정보를 입력하고,
             <br />
             3분 만에 사이트를 개설해보세요.

@@ -14,7 +14,7 @@ function TestimonialSection({ className }: TestimonialSectionProps) {
         className,
       )}
     >
-      <div className="flex w-full max-w-[900px] flex-col items-center gap-[60px] px-600 tablet:flex-row tablet:gap-[80px] desktop:gap-[173px]">
+      <div className="tablet:flex-row tablet:gap-[80px] desktop:gap-[173px] flex w-full max-w-[900px] flex-col items-center gap-[60px] px-600">
         <div className="flex flex-col gap-5">
           <Image src={Ldquo} alt="여는 따옴표" width={48} height={48} className="self-start" />
           <div className="text-2xl leading-[1.6] font-bold text-[#FFFFFF]">
