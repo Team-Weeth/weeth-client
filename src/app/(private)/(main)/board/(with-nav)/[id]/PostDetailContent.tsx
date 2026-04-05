@@ -1,5 +1,6 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
 import { Divider } from '@/components/ui';
 import {
   PostCard,
@@ -20,6 +21,7 @@ interface PostDetailContentProps {
 }
 
 function PostDetailContent({ post }: PostDetailContentProps) {
+  const router = useRouter();
   const currentUserId = useUserId();
 
   const isPostAuthor = currentUserId !== null && post.author.id === currentUserId;
@@ -48,7 +50,7 @@ function PostDetailContent({ post }: PostDetailContentProps) {
             date={formatShortDateTime(post.time)}
             hasAttachment={post.fileUrls.length > 0}
           />
-          {isPostAuthor && <PostActionMenu />}
+          {isPostAuthor && <PostActionMenu onEdit={() => router.push(`/board/edit/${post.id}`)} />}
         </PostCard.Header>
 
         <PostCard.Content

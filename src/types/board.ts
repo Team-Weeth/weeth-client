@@ -103,6 +103,14 @@ export interface CreatePostData {
   id: number;
 }
 
+/** 게시글 수정 요청 body */
+export type UpdatePostBody = CreatePostBody;
+
+/** 게시글 수정 응답 data */
+export interface UpdatePostData {
+  id: number;
+}
+
 /** mapComment 변환 결과 (UI 표시용) */
 export interface MappedComment {
   id: number;

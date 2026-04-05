@@ -2,7 +2,7 @@
 
 import { revalidatePath } from 'next/cache';
 import { boardServerApi } from '@/lib/apis/board.server';
-import type { CreatePostBody } from '@/types/board';
+import type { CreatePostBody, UpdatePostBody } from '@/types/board';
 
 export async function readAllNotices(clubId: string, boardId: number) {
   await boardServerApi.readAllNotices(clubId, boardId);
@@ -12,6 +12,12 @@ export async function readAllNotices(clubId: string, boardId: number) {
 export async function createPost(clubId: string, boardId: number, body: CreatePostBody) {
   const response = await boardServerApi.createPost(clubId, boardId, body);
   revalidatePath('/board', 'layout');
-  console.log('Post created:', response.data);
+  return response.data;
+}
+
+export async function updatePost(clubId: string, postId: number, body: UpdatePostBody) {
+  const response = await boardServerApi.updatePost(clubId, postId, body);
+  revalidatePath('/board', 'layout');
+  revalidatePath(`/board/${postId}`);
   return response.data;
 }

@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { usePathname } from 'next/navigation';
 import { Button, Icon } from '../../ui';
 import { MenuIcon, EditIcon, SendIcon, ExitToAppIcon, AvatarIcon, LogoIcon } from '@/assets/icons';
-import { useCreatePost } from '@/hooks';
+import { useCreatePost, useUpdatePost } from '@/hooks';
 
 interface HeaderProps {
   isMain?: boolean;
@@ -28,7 +28,20 @@ export default function Header({ isMain = true }: HeaderProps) {
   const pathname = usePathname();
   const router = useRouter();
   const isWritePage = pathname.includes('/write');
-  const { submit, isPending } = useCreatePost();
+  const editMatch = pathname.match(/^\/board\/edit\/(\d+)$/);
+  const editPostId = editMatch ? Number(editMatch[1]) : null;
+  const isEditPage = editPostId !== null;
+  const { submit: submitCreate, isPending: isCreating } = useCreatePost();
+  const { submit: submitUpdate, isPending: isUpdating } = useUpdatePost();
+  const isPostingPage = isWritePage || isEditPage;
+  const isPending = isCreating || isUpdating;
+  const handleSubmit = () => {
+    if (isEditPage && editPostId !== null) {
+      submitUpdate(editPostId);
+    } else {
+      submitCreate();
+    }
+  };
   const navItems = [
     { id: 'board', label: '게시판', href: '/board' },
     { id: 'attendance', label: '출석', href: '/attendance' },
@@ -82,7 +95,7 @@ export default function Header({ isMain = true }: HeaderProps) {
         </div>
         {isMain && (
           <div className="flex items-center gap-200">
-            {isWritePage ? (
+            {isPostingPage ? (
               <>
                 <Button
                   variant="secondary"
@@ -90,17 +103,23 @@ export default function Header({ isMain = true }: HeaderProps) {
                   onClick={() => router.back()}
                   className="typo-button1 text-text-strong px-4"
                 >
-                  작성 취소
+                  {isEditPage ? '수정 취소' : '작성 취소'}
                 </Button>
                 <Button
                   variant="primary"
                   size="md"
                   disabled={isPending}
-                  onClick={submit}
+                  onClick={handleSubmit}
                   className="typo-button1 gap-100"
                 >
                   <Icon src={SendIcon} size={20} alt="send" className="text-icon-inverse" />
-                  {isPending ? '게시 중...' : '게시하기'}
+                  {isEditPage
+                    ? isPending
+                      ? '수정 중...'
+                      : '수정 완료'
+                    : isPending
+                      ? '게시 중...'
+                      : '게시하기'}
                 </Button>
               </>
             ) : (

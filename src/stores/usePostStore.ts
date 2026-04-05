@@ -1,6 +1,8 @@
 import { create } from 'zustand';
 import { combine, devtools } from 'zustand/middleware';
 
+import type { PostDetail } from '@/types/board';
+
 export interface UploadFileItem {
   id: string;
   file?: File;
@@ -78,6 +80,36 @@ export const usePostStore = create(
           if (f.fileUrl.startsWith('blob:')) URL.revokeObjectURL(f.fileUrl);
         }
         set(initialState, false, 'reset');
+      },
+
+      /**
+       * 기존 게시글 상세 데이터로 스토어를 초기화 (수정 페이지 진입 시 사용)
+       * - 내부적으로 reset을 수행한 뒤 PostDetail의 필드를 스토어 상태로 매핑
+       */
+      initFromDetail: (post: PostDetail) => {
+        const { files } = get();
+        for (const f of files) {
+          if (f.fileUrl.startsWith('blob:')) URL.revokeObjectURL(f.fileUrl);
+        }
+        set(
+          {
+            ...initialState,
+            board: post.boardId,
+            title: post.title,
+            content: post.content,
+            files: post.fileUrls.map((f) => ({
+              id: String(f.fileId),
+              fileName: f.fileName,
+              fileUrl: f.fileUrl,
+              storageKey: f.storageKey,
+              fileSize: f.fileSize,
+              contentType: f.contentType,
+              uploaded: true,
+            })),
+          },
+          false,
+          'initFromDetail',
+        );
       },
 
       getPayload: () => {

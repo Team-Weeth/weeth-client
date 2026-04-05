@@ -46,10 +46,15 @@ const floatingMenuTippyOptions = {
  * - 이미지 붙여넣기 (Ctrl+V) 및 드래그앤드롭
  */
 
-export default function Editor() {
+interface EditorProps {
+  initialContent?: string;
+}
+
+export default function Editor({ initialContent }: EditorProps = {}) {
   const { imageInputRef, fileInputRef, processFiles, picker, files, handlers } = useFileUpload();
   const { editor, showSlashMenu, closeSlashMenu, containerRef } = usePostEditor({
     processFiles,
+    initialContent,
   });
 
   if (!editor) return null;
