@@ -50,7 +50,13 @@ function PostDetailContent({ post }: PostDetailContentProps) {
             date={formatShortDateTime(post.time)}
             hasAttachment={post.fileUrls.length > 0}
           />
-          {isPostAuthor && <PostActionMenu onEdit={() => router.push(`/board/edit/${post.id}`)} />}
+          {isPostAuthor && (
+            <PostActionMenu
+              postId={post.id}
+              onEdit={() => router.push(`/board/edit/${post.id}`)}
+              onDeleted={() => router.push('/board')}
+            />
+          )}
         </PostCard.Header>
 
         <PostCard.Content

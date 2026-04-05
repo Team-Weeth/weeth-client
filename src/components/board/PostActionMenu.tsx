@@ -1,59 +1,45 @@
 'use client';
 
-import { MoreVerticalIcon } from '@/assets/icons';
-import {
-  Button,
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-  Icon,
-} from '@/components/ui';
-import { cn } from '@/lib/cn';
-import type { ButtonProps } from '@/components/ui';
+import { useState } from 'react';
+import dynamic from 'next/dynamic';
+import { ActionMenu, type ActionMenuProps } from './ActionMenu';
 
-interface PostActionMenuProps {
-  className?: string;
-  onEdit?: () => void;
-  onDelete?: () => void;
-  onClick?: React.MouseEventHandler<HTMLButtonElement>;
-  triggerVariant?: ButtonProps['variant'];
-  triggerSize?: ButtonProps['size'];
-  triggerClassName?: string;
+const PostDeleteDialog = dynamic(() =>
+  import('./PostDeleteDialog').then((mod) => mod.PostDeleteDialog),
+);
+
+interface PostActionMenuProps extends Omit<ActionMenuProps, 'onDeleteSelect'> {
+  postId: number;
+  onDeleted?: () => void;
 }
 
-function PostActionMenu({
-  className,
-  onEdit,
-  onDelete,
-  onClick,
-  triggerVariant = 'tertiary',
-  triggerSize = 'icon-md',
-  triggerClassName,
-}: PostActionMenuProps) {
+/**
+ * 게시글 전용 수정/삭제 메뉴
+ *
+ * 삭제 선택 시 확인 다이얼로그를 띄우고 내부에서 deletePost API를 호출
+ * 댓글/답글 등 범용 용도에는 `ActionMenu`를 사용
+ */
+function PostActionMenu({ postId, onDeleted, ...rest }: PostActionMenuProps) {
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+
+  const handleDeleteSelect = (event: Event) => {
+    event.preventDefault();
+    setDeleteDialogOpen(true);
+  };
+
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button
-          type="button"
-          variant={triggerVariant}
-          size={triggerSize}
-          className={cn('h-600 w-600', triggerClassName, className)}
-          aria-label="더보기"
-          onClick={onClick}
-        >
-          <Icon src={MoreVerticalIcon} size={16} className="text-icon-normal" />
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-[144px]">
-        <DropdownMenuItem onSelect={onEdit}>수정</DropdownMenuItem>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem destructive onSelect={onDelete}>
-          삭제
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+    <>
+      <ActionMenu {...rest} onDeleteSelect={handleDeleteSelect} />
+
+      {deleteDialogOpen ? (
+        <PostDeleteDialog
+          postId={postId}
+          open={deleteDialogOpen}
+          onOpenChange={setDeleteDialogOpen}
+          onDeleted={onDeleted}
+        />
+      ) : null}
+    </>
   );
 }
 

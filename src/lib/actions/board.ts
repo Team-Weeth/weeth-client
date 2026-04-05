@@ -21,3 +21,8 @@ export async function updatePost(clubId: string, postId: number, body: UpdatePos
   revalidatePath(`/board/${postId}`);
   return response.data;
 }
+
+export async function deletePost(clubId: string, postId: number) {
+  await boardServerApi.deletePost(clubId, postId);
+  revalidatePath('/board', 'layout');
+}

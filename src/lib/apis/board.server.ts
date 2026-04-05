@@ -33,4 +33,8 @@ export const boardServerApi = {
   /** 게시글 수정 (Server Action) */
   updatePost: (clubId: string, postId: number, body: UpdatePostBody) =>
     apiServer.patch<ApiResponse<UpdatePostData>>(`/clubs/${clubId}/boards/posts/${postId}`, body),
+
+  /** 게시글 삭제 (Server Action) */
+  deletePost: (clubId: string, postId: number) =>
+    apiServer.delete<ApiResponse<void>>(`/clubs/${clubId}/boards/posts/${postId}`),
 };

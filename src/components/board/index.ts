@@ -9,6 +9,7 @@ export { PostCard } from './PostCard';
 export { CommentInput, type CommentInputProps } from './Comment';
 export { CommentItem, type CommentItemProps } from './Comment';
 export { ReplyItem, type ReplyItemProps } from './Comment';
+export { ActionMenu, type ActionMenuProps } from './ActionMenu';
 export { PostActionMenu, type PostActionMenuProps } from './PostActionMenu';
 export { PostDetailHeader, type PostDetailHeaderProps } from './PostDetailHeader';
 export { FileList, type FileListProps } from './FileList';

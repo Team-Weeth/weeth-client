@@ -3,7 +3,7 @@
 import { ReplyIcon } from '@/assets/icons';
 import { Avatar, AvatarFallback, AvatarImage, Icon } from '@/components/ui';
 import { cn } from '@/lib/cn';
-import { PostActionMenu } from '@/components/board/PostActionMenu';
+import { ActionMenu } from '@/components/board/ActionMenu';
 
 interface ReplyItemProps {
   id: number | string;
@@ -43,11 +43,11 @@ function ReplyItem({
           <p className="typo-caption2 text-text-alternative">{date}</p>
         </div>
         {isAuthor && (
-          <PostActionMenu
+          <ActionMenu
             triggerVariant="secondary"
             triggerClassName="absolute top-400 right-400 size-6"
             onEdit={onEdit}
-            onDelete={onDelete}
+            onDeleteSelect={onDelete}
           />
         )}
       </div>

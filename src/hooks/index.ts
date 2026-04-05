@@ -10,5 +10,6 @@ export { useScrollOnGrow } from './useScrollOnGrow';
 export { useBoardList, useBoardPosts } from './board/useBoardQuery';
 export { useCreatePost } from './board/useCreatePost';
 export { useUpdatePost } from './board/useUpdatePost';
+export { useDeletePost } from './board/useDeletePost';
 export { useIntersectionObserver } from './board/useIntersectionObserver';
 export { useProgressAnimation } from './useProgressAnimation';
