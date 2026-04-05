@@ -8,7 +8,7 @@ import {
   ACCESS_COOKIE_OPTIONS,
   REFRESH_COOKIE_OPTIONS,
 } from '@/lib/apis/cookies';
-import { authApi, type AgreeTermsResponse } from '@/lib/apis';
+import { authApi } from '@/lib/apis';
 import { getPostLoginUrl } from '@/lib/auth/redirectPaths';
 
 export async function agreeTermsAction(
@@ -24,27 +24,25 @@ export async function agreeTermsAction(
     redirect('/login');
   }
 
-  let response: Response;
   try {
-    response = await authApi.agreeTerms(accessToken);
-  } catch {
+    const json = await authApi.agreeTerms();
+    const tokens = json?.data;
+    const newAccessToken = tokens?.accessToken;
+    const refreshToken = tokens?.refreshToken;
+
+    if (!newAccessToken || !refreshToken) {
+      return { error: '약관 동의 후 토큰을 확인할 수 없습니다.' };
+    }
+
+    cookieStore.set(ACCESS_TOKEN_KEY, newAccessToken, ACCESS_COOKIE_OPTIONS);
+    cookieStore.set(REFRESH_TOKEN_KEY, refreshToken, REFRESH_COOKIE_OPTIONS);
+  } catch (error) {
+    if (error instanceof Error) {
+      return { error: error.message || '약관 동의에 실패했습니다.' };
+    }
+
     return { error: '네트워크 오류로 약관 동의 요청에 실패했습니다.' };
   }
-
-  if (!response.ok) {
-    const error = await response.json().catch(() => null);
-    return { error: error?.message ?? '약관 동의에 실패했습니다.' };
-  }
-
-  const json = (await response.json()) as AgreeTermsResponse;
-  const { accessToken: newAccessToken, refreshToken } = json.data;
-
-  if (!newAccessToken || !refreshToken) {
-    return { error: '약관 동의 후 토큰을 확인할 수 없습니다.' };
-  }
-
-  cookieStore.set(ACCESS_TOKEN_KEY, newAccessToken, ACCESS_COOKIE_OPTIONS);
-  cookieStore.set(REFRESH_TOKEN_KEY, refreshToken, REFRESH_COOKIE_OPTIONS);
 
   redirect(getPostLoginUrl({ intent, clubId, code, redirectPath }));
 }

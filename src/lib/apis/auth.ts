@@ -1,4 +1,4 @@
-import { API_BASE_PATH } from '@/constants/api';
+import { apiServer } from './server';
 
 interface AgreeTermsResponse {
   data: {
@@ -8,14 +8,10 @@ interface AgreeTermsResponse {
   message?: string;
 }
 
-async function agreeTerms(accessToken: string) {
-  return fetch(`${API_BASE_PATH}/users/terms`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${accessToken}`,
-    },
-    body: JSON.stringify({ termsAgreed: true, privacyAgreed: true }),
+async function agreeTerms() {
+  return apiServer.post<AgreeTermsResponse>('/users/terms', {
+    termsAgreed: true,
+    privacyAgreed: true,
   });
 }
 

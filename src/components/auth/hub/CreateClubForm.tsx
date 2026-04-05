@@ -21,9 +21,10 @@ import { FieldError, FieldLabel, FormFieldWrapper } from './FormFieldWrapper';
 
 interface CreateClubFormProps {
   schoolNames: string[];
+  schoolLoadError?: boolean;
 }
 
-function CreateClubForm({ schoolNames }: CreateClubFormProps) {
+function CreateClubForm({ schoolNames, schoolLoadError = false }: CreateClubFormProps) {
   const [isCreating, setIsCreating] = useState(false);
 
   const {
@@ -98,6 +99,21 @@ function CreateClubForm({ schoolNames }: CreateClubFormProps) {
       <form className="flex flex-col gap-400" onSubmit={handleSubmit(onSubmit)}>
         {/* 소속 학교 */}
         <FormFieldWrapper label="소속 학교" error={errors.school?.message}>
+          {schoolLoadError && (
+            <div className="mb-200 flex items-center justify-between gap-200 rounded-lg bg-background-2 px-300 py-200">
+              <p className="typo-caption2 text-text-alternative">
+                학교 목록을 불러오지 못했습니다. 새로고침 후 다시 시도해주세요.
+              </p>
+              <Button
+                type="button"
+                variant="secondary"
+                size="sm"
+                onClick={() => window.location.reload()}
+              >
+                다시 시도
+              </Button>
+            </div>
+          )}
           <Controller
             name="school"
             control={control}
@@ -106,7 +122,9 @@ function CreateClubForm({ schoolNames }: CreateClubFormProps) {
                 value={field.value}
                 onChange={field.onChange}
                 options={schoolNames}
-                placeholder="학교명을 검색하세요"
+                placeholder={
+                  schoolLoadError ? '학교 목록을 불러오지 못했습니다' : '학교명을 검색하세요'
+                }
               />
             )}
           />

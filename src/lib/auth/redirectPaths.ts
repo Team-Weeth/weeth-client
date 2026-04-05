@@ -16,5 +16,10 @@ export function getPostLoginUrl({ intent, clubId, code, redirectPath }: PostLogi
   if (redirectPath?.startsWith('/')) {
     return redirectPath;
   }
-  return intent ? `/hub?intent=${intent}` : '/hub';
+  if (intent) {
+    const params = new URLSearchParams({ intent });
+    return `/hub?${params.toString()}`;
+  }
+
+  return '/hub';
 }
