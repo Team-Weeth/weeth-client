@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { combine, devtools, persist } from 'zustand/middleware';
+import { useShallow } from 'zustand/react/shallow';
 
 const initialState = {
   clubId: null as string | null,
@@ -22,7 +23,4 @@ export const useClubStore = create(
 
 export const useClubId = () => useClubStore((store) => store.clubId);
 export const useClubActions = () =>
-  useClubStore((store) => ({
-    setClubId: store.setClubId,
-    reset: store.reset,
-  }));
+  useClubStore(useShallow((store) => ({ setClubId: store.setClubId, reset: store.reset })));

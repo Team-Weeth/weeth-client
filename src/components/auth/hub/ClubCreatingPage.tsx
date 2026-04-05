@@ -59,7 +59,10 @@ function ClubCreatingPage({ intent, onCancel }: ClubCreatingPageProps) {
 
   // API가 애니메이션 이후에 완료된 경우 즉시 navigate
   useEffect(() => {
-    if (apiDone && animationDoneRef.current) navigate();
+    if (apiDone && animationDoneRef.current) {
+      if (intent === 'create') resetDraft();
+      router.replace(nextPath);
+    }
   }, [apiDone, intent, nextPath, resetDraft, router]);
 
   return (

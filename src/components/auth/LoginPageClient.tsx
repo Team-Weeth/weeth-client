@@ -3,6 +3,7 @@
 import { useState } from 'react';
 
 import { agreeTermsAction } from '@/lib/actions/auth';
+import { encodeOAuthState } from '@/lib/auth/oauthState';
 import { toastError } from '@/stores/useToastStore';
 
 import { LoginCard } from './LoginCard';
@@ -27,15 +28,8 @@ function LoginPageClient({ defaultTermsOpen = false, intent, clubId, code, redir
     if (clientId) params.set('client_id', clientId);
     if (redirectUri) params.set('redirect_uri', `${window.location.origin}${redirectUri}`);
 
-    if (intent === 'join' && clubId && code) {
-      params.set('state', `join:${clubId}:${code}`);
-    } else if (intent === 'join-no-code' && clubId) {
-      params.set('state', `join-no-code:${clubId}`);
-    } else if (intent) {
-      params.set('state', intent);
-    } else if (redirectPath) {
-      params.set('state', redirectPath);
-    }
+    const state = encodeOAuthState({ intent, clubId, code, redirectPath });
+    if (state) params.set('state', state);
 
     setIsLoading(true);
     window.location.href = `https://kauth.kakao.com/oauth/authorize?${params}`;

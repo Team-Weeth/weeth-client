@@ -7,7 +7,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
 import { buttonVariants, ProgressBar } from '@/components/ui';
-import { ERROR_CODE } from '@/constants/errorCode';
+import { CLUB_JOIN_ERROR_CODE } from '@/constants/errorCode';
 import { useProgressAnimation } from '@/hooks';
 import { clubApi } from '@/lib/apis/club';
 import { cn } from '@/lib/cn';
@@ -48,20 +48,20 @@ function ClubJoiningPage({ clubName, clubId, code }: ClubJoiningPageProps) {
       .catch((error) => {
         if (isAxiosError(error)) {
           const errorCode = error.response?.data?.code;
-          if (errorCode === ERROR_CODE.INVALID_INVITE_LINK) {
-            setErrorState({ code: ERROR_CODE.INVALID_INVITE_LINK, message: '잘못된 가입 링크입니다.' });
+          if (errorCode === CLUB_JOIN_ERROR_CODE.INVALID_INVITE_LINK) {
+            setErrorState({ code: CLUB_JOIN_ERROR_CODE.INVALID_INVITE_LINK, message: '잘못된 가입 링크입니다.' });
             return;
           }
-          if (errorCode === ERROR_CODE.ALREADY_JOINED) {
+          if (errorCode === CLUB_JOIN_ERROR_CODE.ALREADY_JOINED) {
             setErrorState({
-              code: ERROR_CODE.ALREADY_JOINED,
+              code: CLUB_JOIN_ERROR_CODE.ALREADY_JOINED,
               message: '이미 가입된 동아리입니다. 동아리로 이동할까요?',
             });
             return;
           }
-          if (errorCode === ERROR_CODE.CLUB_MEMBER_LIMIT_EXCEEDED) {
+          if (errorCode === CLUB_JOIN_ERROR_CODE.CLUB_MEMBER_LIMIT_EXCEEDED) {
             setErrorState({
-              code: ERROR_CODE.CLUB_MEMBER_LIMIT_EXCEEDED,
+              code: CLUB_JOIN_ERROR_CODE.CLUB_MEMBER_LIMIT_EXCEEDED,
               message: '가입 가능한 동아리 수를 초과했습니다.',
             });
             return;
@@ -82,7 +82,7 @@ function ClubJoiningPage({ clubName, clubId, code }: ClubJoiningPageProps) {
       <div className="flex min-h-screen items-center justify-center px-400">
         <div className="flex w-full max-w-[520px] flex-col items-center gap-500">
           <h1 className="typo-h3 text-text-strong text-center">{errorState.message}</h1>
-          {errorState.code === ERROR_CODE.ALREADY_JOINED ? (
+          {errorState.code === CLUB_JOIN_ERROR_CODE.ALREADY_JOINED ? (
             <Link
               href="/home"
               className={cn(buttonVariants({ variant: 'primary', size: 'lg' }), 'w-full')}

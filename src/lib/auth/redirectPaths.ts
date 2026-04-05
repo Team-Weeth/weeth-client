@@ -13,7 +13,7 @@ export function getPostLoginUrl({ intent, clubId, code, redirectPath }: PostLogi
   if (intent === 'join-no-code' && clubId) {
     return '/club/join';
   }
-  if (redirectPath) {
+  if (redirectPath?.startsWith('/')) {
     return redirectPath;
   }
   return intent ? `/hub?intent=${intent}` : '/hub';

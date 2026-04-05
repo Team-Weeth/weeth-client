@@ -19,7 +19,12 @@ export async function agreeTermsAction(intent?: string, clubId?: string, code?: 
     redirect('/login');
   }
 
-  const response = await authApi.agreeTerms(accessToken);
+  let response: Response;
+  try {
+    response = await authApi.agreeTerms(accessToken);
+  } catch {
+    return { error: '네트워크 오류로 약관 동의 요청에 실패했습니다.' };
+  }
 
   if (!response.ok) {
     const error = await response.json().catch(() => null);
