@@ -22,21 +22,22 @@ export default async function HubPage({
   let cardOrder: CardVariant[];
   let goHref: string | undefined;
 
+  const status = await apiServer
+    .get<MembershipStatusResponse>('/clubs/membership-status')
+    .catch((err) => {
+      unstable_rethrow(err);
+      return null;
+    });
+
+  const hasActiveClub = status?.data?.hasActiveClub ?? false;
+  if (hasActiveClub) goHref = '/home';
+
   if (intent === 'create') {
     cardOrder = ['create', 'join', 'go'];
+  } else if (hasActiveClub) {
+    cardOrder = ['go', 'create', 'join'];
   } else {
-    const status = await apiServer
-      .get<MembershipStatusResponse>('/clubs/membership-status')
-      .catch((err) => {
-        unstable_rethrow(err);
-        return null;
-      });
-    if (status?.data?.hasActiveClub) {
-      goHref = '/home';
-      cardOrder = ['go', 'create', 'join'];
-    } else {
-      cardOrder = ['join', 'create', 'go'];
-    }
+    cardOrder = ['join', 'create', 'go'];
   }
 
   const hrefMap: Record<CardVariant, string | undefined> = {
