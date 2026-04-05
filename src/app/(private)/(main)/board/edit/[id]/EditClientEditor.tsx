@@ -1,17 +1,10 @@
 'use client';
 
 import { useRef } from 'react';
-import Link from 'next/link';
 
-import { PostEditorShell } from '@/components/board';
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from '@/components/ui';
+import { CategorySelector, PostEditorShell } from '@/components/board';
+import { useBoardList } from '@/hooks';
+import { toBoardNavItem } from '@/lib/board';
 import { usePostStore } from '@/stores/usePostStore';
 import type { PostDetail } from '@/types/board';
 
@@ -26,34 +19,19 @@ function EditClientEditor({ post }: EditClientEditorProps) {
     usePostStore.getState().initFromDetail(post);
   }
 
+  const { data: boards } = useBoardList();
+  const items = boards?.map(toBoardNavItem) ?? [];
+
+  const board = usePostStore((s) => s.board);
+  const setBoard = usePostStore((s) => s.setBoard);
+
+  const activeId = board ?? post.boardId;
+
   return (
     <PostEditorShell
+      align="center"
       initialContent={post.content}
-      header={
-        <Breadcrumb>
-          <BreadcrumbList>
-            <BreadcrumbItem>
-              <BreadcrumbLink asChild>
-                <Link href="/board">게시판</Link>
-              </BreadcrumbLink>
-            </BreadcrumbItem>
-            <BreadcrumbSeparator />
-            <BreadcrumbItem className="typo-caption1 text-text-alternative">
-              {post.boardName}
-            </BreadcrumbItem>
-            <BreadcrumbSeparator />
-            <BreadcrumbItem>
-              <BreadcrumbLink asChild>
-                <Link href={`/board/${post.id}`} className="typo-caption1 text-text-alternative">
-                  {post.title}
-                </Link>
-              </BreadcrumbLink>
-            </BreadcrumbItem>
-            <BreadcrumbSeparator />
-            <BreadcrumbPage className="typo-caption1">수정</BreadcrumbPage>
-          </BreadcrumbList>
-        </Breadcrumb>
-      }
+      header={<CategorySelector items={items} activeId={activeId} onItemSelect={setBoard} />}
     />
   );
 }

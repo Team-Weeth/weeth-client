@@ -10,12 +10,18 @@ import { usePostStore } from '@/stores/usePostStore';
 const Editor = dynamic(() => import('./Editor'), { ssr: false });
 
 interface PostEditorShellProps {
-  /** 상단 영역 (글쓰기: CategorySelector, 수정: Breadcrumb 등) */
   header: ReactNode;
-  /** 수정 페이지에서 Editor에 주입할 초기 콘텐츠 */
   initialContent?: string;
-  /** 외곽 컨테이너의 cross-axis 정렬 (기본값: start) */
   align?: 'start' | 'center';
+}
+
+/**
+ * title 구독을 shell 밖으로 격리
+ */
+function BoundTitleInput() {
+  const title = usePostStore((s) => s.title);
+  const setTitle = usePostStore((s) => s.setTitle);
+  return <TitleInput value={title} onChange={(e) => setTitle(e.target.value)} />;
 }
 
 /**
@@ -26,9 +32,6 @@ interface PostEditorShellProps {
  * - Store 초기화는 사용하는 쪽에서 책임 (write: reset, edit: 기존 데이터 복원)
  */
 function PostEditorShell({ header, initialContent, align = 'start' }: PostEditorShellProps) {
-  const title = usePostStore((s) => s.title);
-  const setTitle = usePostStore((s) => s.setTitle);
-
   return (
     <div
       className={cn(
@@ -38,7 +41,7 @@ function PostEditorShell({ header, initialContent, align = 'start' }: PostEditor
     >
       {header}
       <div className="flex w-full flex-col items-start">
-        <TitleInput value={title} onChange={(e) => setTitle(e.target.value)} />
+        <BoundTitleInput />
         <div className="flex w-full items-center gap-200 rounded-lg p-100">
           <Editor initialContent={initialContent} />
         </div>
