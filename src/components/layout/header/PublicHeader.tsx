@@ -9,7 +9,6 @@ import { buttonVariants } from '@/components/ui';
 import { cn } from '@/lib/cn';
 import { NAV_ITEMS } from '@/constants/landing/landing';
 import { InquiryDialog } from '@/components/landing/InquiryDialog';
-
 interface PublicHeaderProps {
   className?: string;
   showAuthButtons?: boolean;
@@ -58,6 +57,9 @@ export default function PublicHeader({ className, showAuthButtons = false }: Pub
                 width={90}
                 height={40}
                 className="h-[40px] w-[90px]"
+                onClick={() => {
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
               />
             </Link>
             <nav className="flex items-center gap-300">
