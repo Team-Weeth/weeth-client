@@ -62,7 +62,11 @@ function MyPageContent({ className, ...props }: MyPageContentProps) {
       {/* Main Content */}
       <div className="flex w-full flex-col gap-700">
         {/* 프로필 */}
-        <ProfileSection name={me.name} bio={me.bio} profileImageUrl={me.profileImageUrl} />
+        <ProfileSection
+          name={me.name}
+          bio={me.bio ?? undefined}
+          profileImageUrl={me.profileImageUrl ?? undefined}
+        />
 
         {/* 개인정보 */}
         <InfoSection title="개인정보">

@@ -22,12 +22,10 @@ export interface UpdateClubProfileBody {
 }
 
 export const mypageApi = {
-  getMe: (clubId: string) =>
-    apiClient.get<ApiResponse<MyMember>>(`/clubs/${clubId}/members/me`),
+  getMe: (clubId: string) => apiClient.get<ApiResponse<MyMember>>(`/clubs/${clubId}/members/me`),
   getMyClubs: () => apiClient.get<ApiResponse<ClubDto[]>>('/clubs'),
   updateUser: (body: UpdateUserBody) => apiClient.patch('/users', body),
-  updateClubProfile: (body: UpdateClubProfileBody) =>
-    apiClient.patch('/clubs/members/me', body),
+  updateClubProfile: (body: UpdateClubProfileBody) => apiClient.patch('/clubs/members/me', body),
   initCardinals: (clubId: string, cardinals: number[]) =>
     apiClient.post(`/clubs/${clubId}/members/me/cardinals`, { cardinals }),
 };

@@ -65,7 +65,15 @@ function MemberDetailModal({
   const personalInfo = getPersonalInfo(member);
   const activityInfo = getActivityInfo(member);
   const activityStats = getActivityStats(member);
-  const footerActions = getFooterActions({ memberRole: member.memberRole, status: member.status, onApprove, onChangeRole, onResetPassword, onBan, onRestore });
+  const footerActions = getFooterActions({
+    memberRole: member.memberRole,
+    status: member.status,
+    onApprove,
+    onChangeRole,
+    onResetPassword,
+    onBan,
+    onRestore,
+  });
 
   return (
     <>
@@ -95,7 +103,9 @@ function MemberDetailModal({
 
               <div className="mb-200 flex items-baseline gap-200">
                 <span className="typo-h3 text-text-strong">{member.name}</span>
-                <span className="typo-h3 text-text-strong">{parseInt(member.generation, 10)}기</span>
+                <span className="typo-h3 text-text-strong">
+                  {parseInt(member.generation, 10)}기
+                </span>
               </div>
 
               <div className="mb-400 flex items-center gap-200">

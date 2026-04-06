@@ -16,7 +16,12 @@ import { useDragScroll } from '@/hooks';
 import type { Member } from '@/types/admin/member';
 import { useAdminMembers } from '@/hooks/queries/admin';
 import { useCardinals } from '@/hooks/queries';
-import { useBanMember, useChangeMemberRole, useCreateCardinal, useRestoreMember } from '@/hooks/mutations/admin';
+import {
+  useBanMember,
+  useChangeMemberRole,
+  useCreateCardinal,
+  useRestoreMember,
+} from '@/hooks/mutations/admin';
 
 function MemberPageContent() {
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
@@ -102,7 +107,7 @@ function MemberPageContent() {
               key={c.id}
               variant={c.status === 'IN_PROGRESS' ? 'active' : 'normal'}
               title={`${c.cardinalNumber}기`}
-              subtitle={`${c.year}년 ${c.semester}학기${c.status === 'IN_PROGRESS' ? ' (현재)' : ''}`}
+              subtitle={c.status === 'IN_PROGRESS' ? '현재' : undefined}
             />
           ))}
         </div>

@@ -1,16 +1,21 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
-import { CLUB_ID } from '@/hooks/queries/admin/useAdminMemberQueries';
-import { cardinalApi } from '@/lib/apis';
+import { cardinalApi } from '@/lib/apis/cardinal';
+import { useClubId } from '@/stores';
 
 export function useCreateCardinal() {
+  const clubId = useClubId();
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (body: { cardinalNumber: number; year: number; semester: number; inProgress: boolean }) =>
-      cardinalApi.createCardinal(CLUB_ID, body),
+    mutationFn: (body: {
+      cardinalNumber: number;
+      year: number;
+      semester: number;
+      inProgress: boolean;
+    }) => cardinalApi.createCardinal(clubId!, body),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['cardinals', CLUB_ID] });
+      queryClient.invalidateQueries({ queryKey: ['cardinals', clubId] });
     },
   });
 }
