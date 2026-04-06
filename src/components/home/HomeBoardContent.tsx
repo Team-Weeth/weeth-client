@@ -35,7 +35,7 @@ function HomeBoardContent() {
                   hasAttachment={hasAttachment}
                 />
                 {isMyPost && (
-                  <PostActionMenu postId={post.id} onClick={(e) => e.preventDefault()} />
+                  <PostActionMenu postId={post.id} />
                 )}
               </PostCard.Header>
               <PostCard.ListContent title={post.title} content={post.content} isNew={post.isNew} />

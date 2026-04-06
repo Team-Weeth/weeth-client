@@ -17,7 +17,6 @@ interface ActionMenuProps {
   className?: string;
   onEdit?: () => void;
   onDeleteSelect?: (event: Event) => void;
-  onClick?: React.MouseEventHandler<HTMLButtonElement>;
   triggerVariant?: ButtonProps['variant'];
   triggerSize?: ButtonProps['size'];
   triggerClassName?: string;
@@ -33,25 +32,31 @@ function ActionMenu({
   className,
   onEdit,
   onDeleteSelect,
-  onClick,
   triggerVariant = 'tertiary',
   triggerSize = 'icon-md',
   triggerClassName,
 }: ActionMenuProps) {
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button
-          type="button"
-          variant={triggerVariant}
-          size={triggerSize}
-          className={cn('h-600 w-600', triggerClassName, className)}
-          aria-label="더보기"
-          onClick={onClick}
-        >
-          <Icon src={MoreVerticalIcon} size={16} className="text-icon-normal" />
-        </Button>
-      </DropdownMenuTrigger>
+    <DropdownMenu modal>
+      {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions */}
+      <span
+        onClick={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+        }}
+      >
+        <DropdownMenuTrigger asChild>
+          <Button
+            type="button"
+            variant={triggerVariant}
+            size={triggerSize}
+            className={cn('h-600 w-600', triggerClassName, className)}
+            aria-label="더보기"
+          >
+            <Icon src={MoreVerticalIcon} size={16} className="text-icon-normal" />
+          </Button>
+        </DropdownMenuTrigger>
+      </span>
       <DropdownMenuContent align="end" className="w-[144px]">
         <DropdownMenuItem onSelect={onEdit}>수정</DropdownMenuItem>
         <DropdownMenuSeparator />
