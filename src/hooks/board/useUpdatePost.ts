@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useQueryClient } from '@tanstack/react-query';
 import { updatePost } from '@/lib/actions/board';
 import { useClubId } from '@/stores/useClubStore';
 import { usePostStore } from '@/stores/usePostStore';
@@ -15,6 +16,7 @@ import { toast } from '@/stores/useToastStore';
 export function useUpdatePost() {
   const router = useRouter();
   const clubId = useClubId();
+  const queryClient = useQueryClient();
   const [isPending, setIsPending] = useState(false);
 
   const submit = async (postId: number) => {
@@ -44,6 +46,8 @@ export function useUpdatePost() {
     setIsPending(true);
     try {
       await updatePost(clubId, postId, getPayload());
+      await queryClient.invalidateQueries({ queryKey: ['posts'] });
+      toast({ title: '게시글이 수정되었습니다.', variant: 'success' });
       reset();
       router.push(`/board/${postId}`);
     } catch {
