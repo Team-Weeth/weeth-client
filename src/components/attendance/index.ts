@@ -23,3 +23,6 @@ export type { InputOTPProps } from './InputOTP';
 
 export { AttendanceStatus } from './AttendanceStatus';
 export type { AttendanceStatusProps } from './AttendanceStatus';
+
+export { StatBox } from './StatBox';
+export type { StatBoxProps } from './StatBox';
