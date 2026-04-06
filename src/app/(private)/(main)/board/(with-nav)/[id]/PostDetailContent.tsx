@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Divider } from '@/components/ui';
 import {
@@ -12,6 +13,7 @@ import {
 } from '@/components/board';
 import { formatShortDateTime } from '@/lib/formatTime';
 import { toDisplayFile, isImageFileByType, mapComment } from '@/lib/board';
+import { useSetActiveBoardId } from '@/stores/useBoardNavStore';
 import { useUserId } from '@/stores/useUserStore';
 import type { PostDetail } from '@/types/board';
 import type { UploadFileItem } from '@/stores/usePostStore';
@@ -23,6 +25,11 @@ interface PostDetailContentProps {
 function PostDetailContent({ post }: PostDetailContentProps) {
   const router = useRouter();
   const currentUserId = useUserId();
+  const setActiveBoardId = useSetActiveBoardId();
+
+  useEffect(() => {
+    setActiveBoardId(post.boardId);
+  }, [post.boardId, setActiveBoardId]);
 
   const isPostAuthor = currentUserId !== null && post.author.id === currentUserId;
   const imageFiles = post.fileUrls

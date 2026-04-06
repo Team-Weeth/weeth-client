@@ -4,7 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { usePathname } from 'next/navigation';
-import { Button, Icon } from '../../ui';
+import { Button, Icon } from '@/components/ui';
 import { MenuIcon, EditIcon, SendIcon, ExitToAppIcon, AvatarIcon, LogoIcon } from '@/assets/icons';
 import { useCreatePost, useUpdatePost } from '@/hooks';
 
@@ -100,8 +100,8 @@ export default function Header({ isMain = true }: HeaderProps) {
                 <Button
                   variant="secondary"
                   size="md"
-                  onClick={() => router.back()}
                   className="typo-button1 text-text-strong px-4"
+                  onClick={() => router.back()}
                 >
                   {isEditPage ? '수정 취소' : '작성 취소'}
                 </Button>
