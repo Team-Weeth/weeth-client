@@ -7,7 +7,12 @@ interface SocialLoginButtonsProps extends React.HTMLAttributes<HTMLDivElement> {
   onAppleLogin?: () => void;
 }
 
-function SocialLoginButtons({ className, onKakaoLogin, onAppleLogin, ...props }: SocialLoginButtonsProps) {
+function SocialLoginButtons({
+  className,
+  onKakaoLogin,
+  onAppleLogin,
+  ...props
+}: SocialLoginButtonsProps) {
   return (
     <div className={cn('flex flex-col gap-300', className)} {...props}>
       <KakaoLoginButton onClick={onKakaoLogin} />

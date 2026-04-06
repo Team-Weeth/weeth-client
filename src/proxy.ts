@@ -50,7 +50,7 @@ export function proxy(request: NextRequest) {
     PUBLIC_PATHS.some((path) => pathname === path) ||
     pathname.startsWith('/club/') ||
     pathname.startsWith('/kakao/') ||
-    pathname.startsWith('/apple/')
+    pathname === '/apple/oauth'
   ) {
     return NextResponse.next();
   }

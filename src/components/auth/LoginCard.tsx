@@ -37,7 +37,11 @@ function LoginCard({ className, isLoading = false, onKakaoLogin, onAppleLogin }:
             <p className="typo-body2 text-text-alternative">진행 중 입니다...</p>
           </div>
         ) : (
-          <SocialLoginButtons className="w-full" onKakaoLogin={onKakaoLogin} onAppleLogin={onAppleLogin} />
+          <SocialLoginButtons
+            className="w-full"
+            onKakaoLogin={onKakaoLogin}
+            onAppleLogin={onAppleLogin}
+          />
         )}
       </div>
     </div>

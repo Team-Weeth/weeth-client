@@ -30,13 +30,15 @@ function LoginPageClient({
   function handleAppleLoginStart() {
     const clientId = process.env.NEXT_PUBLIC_APPLE_CLIENT_ID;
     const redirectUri = process.env.NEXT_PUBLIC_APPLE_REDIRECT_URI;
+    if (!clientId || !redirectUri) return;
+
     const params = new URLSearchParams({
       response_type: 'code id_token',
       response_mode: 'form_post',
       scope: 'name email',
+      client_id: clientId,
+      redirect_uri: redirectUri,
     });
-    if (clientId) params.set('client_id', clientId);
-    if (redirectUri) params.set('redirect_uri', redirectUri);
 
     setIsLoading(true);
     window.location.href = `https://appleid.apple.com/auth/authorize?${params}`;
@@ -63,7 +65,11 @@ function LoginPageClient({
         <br />
         Weeth에서 함께 활동을 이어가세요
       </div>
-      <LoginCard isLoading={isLoading} onKakaoLogin={handleKakaoLoginStart} onAppleLogin={handleAppleLoginStart} />
+      <LoginCard
+        isLoading={isLoading}
+        onKakaoLogin={handleKakaoLoginStart}
+        onAppleLogin={handleAppleLoginStart}
+      />
       <TermsAgreementModal
         open={termsOpen}
         onOpenChange={setTermsOpen}
