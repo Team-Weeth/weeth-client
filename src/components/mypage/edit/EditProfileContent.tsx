@@ -150,7 +150,7 @@ function EditProfileContent({ className, ...props }: EditProfileContentProps) {
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col items-center gap-700 pt-450">
         <ProfileImageEditor
           name={name}
-          profileImageUrl={me.profileImageUrl}
+          profileImageUrl={me.profileImageUrl ?? undefined}
           onFileChange={setSelectedFile}
         />
 

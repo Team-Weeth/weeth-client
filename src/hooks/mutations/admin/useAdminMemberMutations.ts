@@ -1,8 +1,8 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
-import { CLUB_ID } from '@/hooks/queries/admin/useAdminMemberQueries';
 import { adminMemberApi } from '@/lib/apis';
 import type { ClubMemberRole, Member } from '@/types/admin/member';
+import { useClubId } from '@/stores';
 
 const ROLE_LABEL: Record<ClubMemberRole, string> = {
   USER: '사용자',
@@ -13,7 +13,8 @@ const ROLE_LABEL: Record<ClubMemberRole, string> = {
 // 멤버 권한 변경
 export function useChangeMemberRole() {
   const queryClient = useQueryClient();
-  const queryKey = ['admin', 'members', CLUB_ID];
+  const clubId = useClubId();
+  const queryKey = ['admin', 'members', clubId];
 
   return useMutation({
     mutationFn: ({
@@ -22,7 +23,10 @@ export function useChangeMemberRole() {
     }: {
       clubMemberId: number;
       memberRole: ClubMemberRole;
-    }) => adminMemberApi.updateMemberRole(CLUB_ID, clubMemberId, memberRole),
+    }) => {
+      if (!clubId) throw new Error('clubId가 없습니다');
+      return adminMemberApi.updateMemberRole(clubId, clubMemberId, memberRole);
+    },
     onMutate: async ({ clubMemberId, memberRole }) => {
       await queryClient.cancelQueries({ queryKey });
       const previous = queryClient.getQueryData<Member[]>(queryKey);
@@ -51,10 +55,14 @@ export function useChangeMemberRole() {
 // 멤버 추방
 export function useBanMember() {
   const queryClient = useQueryClient();
-  const queryKey = ['admin', 'members', CLUB_ID];
+  const clubId = useClubId();
+  const queryKey = ['admin', 'members', clubId];
 
   return useMutation({
-    mutationFn: (clubMemberId: number) => adminMemberApi.banMember(CLUB_ID, clubMemberId),
+    mutationFn: (clubMemberId: number) => {
+      if (!clubId) throw new Error('clubId가 없습니다');
+      return adminMemberApi.banMember(clubId, clubMemberId);
+    },
     onMutate: async (clubMemberId) => {
       await queryClient.cancelQueries({ queryKey });
       const previous = queryClient.getQueryData<Member[]>(queryKey);
@@ -79,10 +87,14 @@ export function useBanMember() {
 // 추방 유저 복구
 export function useRestoreMember() {
   const queryClient = useQueryClient();
-  const queryKey = ['admin', 'members', CLUB_ID];
+  const clubId = useClubId();
+  const queryKey = ['admin', 'members', clubId];
 
   return useMutation({
-    mutationFn: (clubMemberId: number) => adminMemberApi.restoreMember(CLUB_ID, clubMemberId),
+    mutationFn: (clubMemberId: number) => {
+      if (!clubId) throw new Error('clubId가 없습니다');
+      return adminMemberApi.restoreMember(clubId, clubMemberId);
+    },
     onMutate: async (clubMemberId) => {
       await queryClient.cancelQueries({ queryKey });
       const previous = queryClient.getQueryData<Member[]>(queryKey);
