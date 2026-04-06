@@ -9,32 +9,34 @@ import { TooltipIcon } from '@/assets/icons';
 import { Button, Icon, Input, Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui';
 import { SearchSelect } from '@/components/mypage';
 import { cn } from '@/lib/cn';
-import { universityApi } from '@/lib/apis/university';
 import { createClubSchema, type CreateClubFormData } from '@/lib/schemas/createClub';
-import { useCreateClubDraftStore } from '@/stores';
+import {
+  useCreateClubDraftActions,
+  useCreateClubDraftValues,
+} from '@/stores/useCreateClubDraftStore';
 import { formatPhone } from '@/utils/shared';
 
 import { ClubCreatingPage } from './ClubCreatingPage';
 import { FieldError, FieldLabel, FormFieldWrapper } from './FormFieldWrapper';
 
-function CreateClubForm() {
+interface CreateClubFormProps {
+  schoolNames: string[];
+  schoolLoadError?: boolean;
+}
+
+function CreateClubForm({ schoolNames, schoolLoadError = false }: CreateClubFormProps) {
   const [isCreating, setIsCreating] = useState(false);
-  const [schoolNames, setSchoolNames] = useState<string[]>([]);
 
-  useEffect(() => {
-    universityApi.getSchools().then((res) => {
-      setSchoolNames(res.data.data.map((s) => `${s.schoolName}(${s.region})`));
-    });
-  }, []);
-
-  const schoolDraft = useCreateClubDraftStore((state) => state.school);
-  const nameDraft = useCreateClubDraftStore((state) => state.name);
-  const descriptionDraft = useCreateClubDraftStore((state) => state.description);
-  const generationDraft = useCreateClubDraftStore((state) => state.generation);
-  const phoneDraft = useCreateClubDraftStore((state) => state.phone);
-  const emailDraft = useCreateClubDraftStore((state) => state.email);
-  const contactTypeDraft = useCreateClubDraftStore((state) => state.contactType);
-  const setDraft = useCreateClubDraftStore((state) => state.setDraft);
+  const {
+    school: schoolDraft,
+    name: nameDraft,
+    description: descriptionDraft,
+    generation: generationDraft,
+    phone: phoneDraft,
+    email: emailDraft,
+    contactType: contactTypeDraft,
+  } = useCreateClubDraftValues();
+  const { setDraft } = useCreateClubDraftActions();
 
   const {
     register,
@@ -53,7 +55,8 @@ function CreateClubForm() {
       email: emailDraft,
       contactType: contactTypeDraft,
     },
-    mode: 'onBlur',
+    mode: 'onChange',
+    reValidateMode: 'onChange',
   });
 
   const contactType = useWatch({ control, name: 'contactType' });
@@ -96,6 +99,21 @@ function CreateClubForm() {
       <form className="flex flex-col gap-400" onSubmit={handleSubmit(onSubmit)}>
         {/* 소속 학교 */}
         <FormFieldWrapper label="소속 학교" error={errors.school?.message}>
+          {schoolLoadError && (
+            <div className="bg-background-2 mb-200 flex items-center justify-between gap-200 rounded-lg px-300 py-200">
+              <p className="typo-caption2 text-text-alternative">
+                학교 목록을 불러오지 못했습니다. 새로고침 후 다시 시도해주세요.
+              </p>
+              <Button
+                type="button"
+                variant="secondary"
+                size="sm"
+                onClick={() => window.location.reload()}
+              >
+                다시 시도
+              </Button>
+            </div>
+          )}
           <Controller
             name="school"
             control={control}
@@ -104,7 +122,9 @@ function CreateClubForm() {
                 value={field.value}
                 onChange={field.onChange}
                 options={schoolNames}
-                placeholder="학교명을 검색하세요"
+                placeholder={
+                  schoolLoadError ? '학교 목록을 불러오지 못했습니다' : '학교명을 검색하세요'
+                }
               />
             )}
           />
@@ -148,11 +168,20 @@ function CreateClubForm() {
               </TooltipContent>
             </Tooltip>
           </div>
-          <Input
-            {...register('generation')}
-            placeholder="예 : 10"
-            clearable
-            className="rounded-lg px-400 py-300"
+          <Controller
+            name="generation"
+            control={control}
+            render={({ field }) => (
+              <Input
+                {...field}
+                inputMode="numeric"
+                pattern="[0-9]*"
+                placeholder="예 : 10"
+                clearable
+                onChange={(e) => field.onChange(e.target.value.replace(/\D/g, ''))}
+                className="rounded-lg px-400 py-300"
+              />
+            )}
           />
           <FieldError message={errors.generation?.message} />
         </div>

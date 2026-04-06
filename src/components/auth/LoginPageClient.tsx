@@ -3,6 +3,7 @@
 import { useState } from 'react';
 
 import { agreeTermsAction } from '@/lib/actions/auth';
+import { encodeOAuthState } from '@/lib/auth/oauthState';
 import { toastError } from '@/stores/useToastStore';
 
 import { LoginCard } from './LoginCard';
@@ -13,9 +14,16 @@ interface LoginPageClientProps {
   intent?: string;
   clubId?: string;
   code?: string;
+  redirectPath?: string;
 }
 
-function LoginPageClient({ defaultTermsOpen = false, intent, clubId, code }: LoginPageClientProps) {
+function LoginPageClient({
+  defaultTermsOpen = false,
+  intent,
+  clubId,
+  code,
+  redirectPath,
+}: LoginPageClientProps) {
   const [termsOpen, setTermsOpen] = useState(defaultTermsOpen);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -26,11 +34,8 @@ function LoginPageClient({ defaultTermsOpen = false, intent, clubId, code }: Log
     if (clientId) params.set('client_id', clientId);
     if (redirectUri) params.set('redirect_uri', `${window.location.origin}${redirectUri}`);
 
-    if (intent === 'join' && clubId && code) {
-      params.set('state', `join:${clubId}:${code}`);
-    } else if (intent) {
-      params.set('state', intent);
-    }
+    const state = encodeOAuthState({ intent, clubId, code, redirectPath });
+    if (state) params.set('state', state);
 
     setIsLoading(true);
     window.location.href = `https://kauth.kakao.com/oauth/authorize?${params}`;
@@ -48,7 +53,7 @@ function LoginPageClient({ defaultTermsOpen = false, intent, clubId, code }: Log
         open={termsOpen}
         onOpenChange={setTermsOpen}
         onAgree={async () => {
-          const result = await agreeTermsAction(intent, clubId, code);
+          const result = await agreeTermsAction(intent, clubId, code, redirectPath);
           if (result?.error) toastError(result.error);
         }}
       />

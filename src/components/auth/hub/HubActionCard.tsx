@@ -31,11 +31,13 @@ function HubActionCard({
   ...props
 }: HubActionCardProps) {
   const config = HUB_ACTION_CONFIG[variant];
+  const isDisabled = !href && !onAction;
 
   const button = (
     <Button
       variant={isPrimary ? 'primary' : config.buttonVariant}
       size="md"
+      disabled={isDisabled}
       onClick={href ? undefined : onAction}
       className="w-19 justify-center px-400 py-300 whitespace-nowrap"
     >
