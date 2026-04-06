@@ -6,7 +6,8 @@ import { useWatch } from 'react-hook-form';
 import { Input } from '@/components/ui';
 import { FormField } from '@/components/mypage/FormField';
 import { SearchSelect } from '@/components/mypage/SearchSelect';
-import { MOCK_DEPARTMENTS, MOCK_UNIVERSITIES } from '@/constants/mock';
+import { useSchoolsQuery } from '@/hooks/queries/mypage/useSchoolsQuery';
+import { MOCK_DEPARTMENTS } from '@/constants/mock';
 import type { EditProfileFormData } from '@/lib/schemas/editProfile';
 
 interface SchoolInfoFieldsProps {
@@ -19,6 +20,8 @@ interface SchoolInfoFieldsProps {
 function SchoolInfoFields({ register, control, errors, setValue }: SchoolInfoFieldsProps) {
   const school = useWatch({ control, name: 'school' });
   const department = useWatch({ control, name: 'department' });
+  const { data: schools = [] } = useSchoolsQuery();
+  const schoolNames = schools.map((s) => s.schoolName);
 
   return (
     <div className="flex flex-col gap-400">
@@ -26,7 +29,7 @@ function SchoolInfoFields({ register, control, errors, setValue }: SchoolInfoFie
         <SearchSelect
           value={school}
           onChange={(v) => setValue('school', v, { shouldValidate: true })}
-          options={MOCK_UNIVERSITIES}
+          options={schoolNames}
           placeholder="학교 선택"
         />
       </FormField>
