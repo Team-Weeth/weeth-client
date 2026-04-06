@@ -18,7 +18,7 @@ function ProfileImageEditor({ name, profileImageUrl, onFileChange }: ProfileImag
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-
+    if (previewUrl) URL.revokeObjectURL(previewUrl);
     setPreviewUrl(URL.createObjectURL(file));
     onFileChange?.(file);
   };
@@ -27,7 +27,7 @@ function ProfileImageEditor({ name, profileImageUrl, onFileChange }: ProfileImag
     return () => {
       if (previewUrl) URL.revokeObjectURL(previewUrl);
     };
-  }, [previewUrl]);
+  }, []);
 
   const displayUrl = previewUrl ?? profileImageUrl;
 

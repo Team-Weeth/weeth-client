@@ -1,4 +1,4 @@
-import type { Control, FieldErrors, UseFormRegister, UseFormSetValue } from 'react-hook-form';
+import type { FieldErrors, UseFormRegister, UseFormSetValue } from 'react-hook-form';
 
 import { Input } from '@/components/ui';
 import { FormField } from '@/components/mypage/FormField';
@@ -12,11 +12,8 @@ interface PersonalInfoFieldsProps {
 }
 
 function PersonalInfoFields({ register, errors, setValue }: PersonalInfoFieldsProps) {
-  const { onChange: telOnChange, ...telRest } = register('tel');
-
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setValue('tel', formatPhone(e.target.value), { shouldValidate: true });
-    telOnChange(e);
   };
 
   return (
@@ -36,7 +33,7 @@ function PersonalInfoFields({ register, errors, setValue }: PersonalInfoFieldsPr
 
       <FormField label="연락처" error={errors.tel?.message}>
         <Input
-          {...telRest}
+          name="tel"
           onChange={handlePhoneChange}
           placeholder="010-0000-0000"
           inputMode="numeric"
