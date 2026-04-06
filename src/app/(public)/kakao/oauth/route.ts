@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 import { API_BASE_PATH } from '@/constants/api';
+import { decodeOAuthState } from '@/lib/auth/oauthState';
+import { getPostLoginUrl } from '@/lib/auth/redirectPaths';
 import {
   ACCESS_COOKIE_OPTIONS,
   ACCESS_TOKEN_KEY,
@@ -29,18 +31,40 @@ export async function GET(request: NextRequest) {
   const json = await response.json();
   const { accessToken, refreshToken, registered, name } = json.data;
 
+  if (!accessToken || !refreshToken) {
+    return NextResponse.redirect(new URL('/login', origin));
+  }
+
   const state = request.nextUrl.searchParams.get('state');
+  const decoded = decodeOAuthState(state);
+
+  if (decoded.type === 'invalid') {
+    return NextResponse.redirect(new URL('/login', origin));
+  }
 
   let redirectUrl: string;
-  if (state?.startsWith('join:')) {
-    const [, clubId, inviteCode] = state.split(':');
+  if (decoded.type === 'join-no-code') {
+    const params = new URLSearchParams({ clubId: decoded.clubId });
     redirectUrl = registered
-      ? `/joining?clubId=${clubId}&code=${inviteCode}`
-      : `/login?terms=true&intent=join&clubId=${clubId}&code=${inviteCode}`;
+      ? getPostLoginUrl({ intent: 'join-no-code', clubId: decoded.clubId })
+      : `/login?terms=true&intent=join-no-code&${params.toString()}`;
+  } else if (decoded.type === 'join') {
+    const params = new URLSearchParams({ clubId: decoded.clubId, code: decoded.code });
+    redirectUrl = registered
+      ? getPostLoginUrl({ intent: 'join', clubId: decoded.clubId, code: decoded.code })
+      : `/login?terms=true&intent=join&${params.toString()}`;
+  } else if (decoded.type === 'redirect') {
+    // proxy.ts가 redirect param으로 설정한 원래 경로
+    redirectUrl = registered
+      ? getPostLoginUrl({ redirectPath: decoded.path })
+      : `/login?terms=true&redirect=${encodeURIComponent(decoded.path)}`;
+  } else if (decoded.type === 'intent') {
+    redirectUrl = registered
+      ? getPostLoginUrl({ intent: decoded.intent })
+      : `/login?terms=true&intent=${decoded.intent}`;
   } else {
-    redirectUrl = registered
-      ? `/hub${state ? `?intent=${state}` : ''}`
-      : `/login?terms=true${state ? `&intent=${state}` : ''}`;
+    // type === 'none'
+    redirectUrl = registered ? '/hub' : '/login?terms=true';
   }
 
   const redirectResponse = NextResponse.redirect(new URL(redirectUrl, origin));

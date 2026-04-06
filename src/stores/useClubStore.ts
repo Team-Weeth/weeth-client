@@ -1,9 +1,9 @@
 import { create } from 'zustand';
 import { combine, devtools, persist } from 'zustand/middleware';
+import { useShallow } from 'zustand/react/shallow';
 
 const initialState = {
-  // TODO: 로그인 API 연결 후 제거
-  clubId: 'YUNJcjFKMO' as string | null,
+  clubId: null as string | null,
 };
 
 export type ClubState = typeof initialState;
@@ -23,7 +23,4 @@ export const useClubStore = create(
 
 export const useClubId = () => useClubStore((store) => store.clubId);
 export const useClubActions = () =>
-  useClubStore((store) => ({
-    setClubId: store.setClubId,
-    reset: store.reset,
-  }));
+  useClubStore(useShallow((store) => ({ setClubId: store.setClubId, reset: store.reset })));

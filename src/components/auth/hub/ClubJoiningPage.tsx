@@ -7,6 +7,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
 import { buttonVariants, ProgressBar } from '@/components/ui';
+import { CLUB_JOIN_ERROR_CODE } from '@/constants/errorCode';
 import { useProgressAnimation } from '@/hooks';
 import { clubApi } from '@/lib/apis/club';
 import { cn } from '@/lib/cn';
@@ -31,7 +32,7 @@ function ClubJoiningPage({ clubName, clubId, code }: ClubJoiningPageProps) {
     duration: 3000,
     onComplete: () => {
       animationDoneRef.current = true;
-      if (apiDone) router.push('/welcome');
+      if (apiDone) router.replace('/welcome');
     },
   });
 
@@ -47,33 +48,36 @@ function ClubJoiningPage({ clubName, clubId, code }: ClubJoiningPageProps) {
       .catch((error) => {
         if (isAxiosError(error)) {
           const errorCode = error.response?.data?.code;
-          if (errorCode === 21101) {
-            setErrorState({ code: 21101, message: '잘못된 가입 링크입니다.' });
+          if (errorCode === CLUB_JOIN_ERROR_CODE.INVALID_INVITE_LINK) {
+            setErrorState({
+              code: CLUB_JOIN_ERROR_CODE.INVALID_INVITE_LINK,
+              message: '잘못된 가입 링크입니다.',
+            });
             return;
           }
-          if (errorCode === 21102) {
+          if (errorCode === CLUB_JOIN_ERROR_CODE.ALREADY_JOINED) {
             setErrorState({
-              code: 21102,
+              code: CLUB_JOIN_ERROR_CODE.ALREADY_JOINED,
               message: '이미 가입된 동아리입니다. 동아리로 이동할까요?',
             });
             return;
           }
-          if (errorCode === 21110) {
+          if (errorCode === CLUB_JOIN_ERROR_CODE.CLUB_MEMBER_LIMIT_EXCEEDED) {
             setErrorState({
-              code: 21110,
+              code: CLUB_JOIN_ERROR_CODE.CLUB_MEMBER_LIMIT_EXCEEDED,
               message: '가입 가능한 동아리 수를 초과했습니다.',
             });
             return;
           }
         }
         toastError();
-        router.push('/hub');
+        router.replace('/hub');
       });
   }, [clubId, code, router]);
 
   // API가 애니메이션 이후에 완료된 경우 즉시 navigate
   useEffect(() => {
-    if (apiDone && animationDoneRef.current) router.push('/welcome');
+    if (apiDone && animationDoneRef.current) router.replace('/welcome');
   }, [apiDone, router]);
 
   if (errorState) {
@@ -81,7 +85,7 @@ function ClubJoiningPage({ clubName, clubId, code }: ClubJoiningPageProps) {
       <div className="flex min-h-screen items-center justify-center px-400">
         <div className="flex w-full max-w-[520px] flex-col items-center gap-500">
           <h1 className="typo-h3 text-text-strong text-center">{errorState.message}</h1>
-          {errorState.code === 21102 ? (
+          {errorState.code === CLUB_JOIN_ERROR_CODE.ALREADY_JOINED ? (
             <Link
               href="/home"
               className={cn(buttonVariants({ variant: 'primary', size: 'lg' }), 'w-full')}

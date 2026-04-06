@@ -2,67 +2,49 @@
 
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
-import { API_BASE_PATH } from '@/constants/api';
 import {
   ACCESS_TOKEN_KEY,
   REFRESH_TOKEN_KEY,
   ACCESS_COOKIE_OPTIONS,
   REFRESH_COOKIE_OPTIONS,
 } from '@/lib/apis/cookies';
+import { authApi } from '@/lib/apis';
+import { getPostLoginUrl } from '@/lib/auth/redirectPaths';
 
-export async function loginAction(formData: FormData) {
-  const email = formData.get('email') as string;
-  const password = formData.get('password') as string;
-
-  const response = await fetch(`${API_BASE_PATH}/users/login`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email, password }),
-  });
-
-  if (!response.ok) {
-    const error = await response.json().catch(() => null);
-    return { error: error?.message ?? '로그인에 실패했습니다.' };
-  }
-
-  const json = await response.json();
-  const { accessToken, refreshToken } = json.data;
-
-  const cookieStore = await cookies();
-  cookieStore.set(ACCESS_TOKEN_KEY, accessToken, ACCESS_COOKIE_OPTIONS);
-  cookieStore.set(REFRESH_TOKEN_KEY, refreshToken, REFRESH_COOKIE_OPTIONS);
-
-  redirect('/home');
-}
-
-export async function agreeTermsAction(intent?: string, clubId?: string, code?: string) {
+export async function agreeTermsAction(
+  intent?: string,
+  clubId?: string,
+  code?: string,
+  redirectPath?: string,
+) {
   const cookieStore = await cookies();
   const accessToken = cookieStore.get(ACCESS_TOKEN_KEY)?.value;
 
-  const response = await fetch(`${API_BASE_PATH}/users/terms`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${accessToken}`,
-    },
-    body: JSON.stringify({ termsAgreed: true, privacyAgreed: true }),
-  });
-
-  if (!response.ok) {
-    const error = await response.json().catch(() => null);
-    return { error: error?.message ?? '약관 동의에 실패했습니다.' };
+  if (!accessToken) {
+    redirect('/login');
   }
 
-  const json = await response.json();
-  const { accessToken: newAccessToken, refreshToken } = json.data;
+  try {
+    const json = await authApi.agreeTerms();
+    const tokens = json?.data;
+    const newAccessToken = tokens?.accessToken;
+    const refreshToken = tokens?.refreshToken;
 
-  cookieStore.set(ACCESS_TOKEN_KEY, newAccessToken, ACCESS_COOKIE_OPTIONS);
-  cookieStore.set(REFRESH_TOKEN_KEY, refreshToken, REFRESH_COOKIE_OPTIONS);
+    if (!newAccessToken || !refreshToken) {
+      return { error: '약관 동의 후 토큰을 확인할 수 없습니다.' };
+    }
 
-  if (intent === 'join' && clubId && code) {
-    redirect(`/joining?clubId=${clubId}&code=${code}`);
+    cookieStore.set(ACCESS_TOKEN_KEY, newAccessToken, ACCESS_COOKIE_OPTIONS);
+    cookieStore.set(REFRESH_TOKEN_KEY, refreshToken, REFRESH_COOKIE_OPTIONS);
+  } catch (error) {
+    if (error instanceof Error) {
+      return { error: error.message || '약관 동의에 실패했습니다.' };
+    }
+
+    return { error: '네트워크 오류로 약관 동의 요청에 실패했습니다.' };
   }
-  redirect(intent ? `/hub?intent=${intent}` : '/hub');
+
+  redirect(getPostLoginUrl({ intent, clubId, code, redirectPath }));
 }
 
 export async function logoutAction() {

@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { ACCESS_TOKEN_KEY } from '@/lib/apis/cookies';
 
-// TODO: 추후 '/hub' 제거
-const PUBLIC_PATHS = ['/', '/login', '/terms', '/hub', '/landing'];
+const PUBLIC_PATHS = ['/', '/login', '/terms', '/landing'];
 
 // TODO: 런칭 후 PRE_LAUNCH 플래그 및 관련 분기 제거
 const PRE_LAUNCH = true;
@@ -58,6 +57,10 @@ export function proxy(request: NextRequest) {
   const accessToken = request.cookies.get(ACCESS_TOKEN_KEY)?.value;
 
   if (!accessToken) {
+    const clubId = process.env.CLUB_ID;
+    if (clubId) {
+      return NextResponse.redirect(new URL(`/club/${clubId}`, request.url));
+    }
     const loginUrl = new URL('/login', request.url);
     loginUrl.searchParams.set('redirect', pathname);
     return NextResponse.redirect(loginUrl);
