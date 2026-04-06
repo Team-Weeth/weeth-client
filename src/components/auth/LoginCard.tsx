@@ -9,9 +9,10 @@ interface LoginCardProps {
   className?: string;
   isLoading?: boolean;
   onKakaoLogin?: () => void;
+  onAppleLogin?: () => void;
 }
 
-function LoginCard({ className, isLoading = false, onKakaoLogin }: LoginCardProps) {
+function LoginCard({ className, isLoading = false, onKakaoLogin, onAppleLogin }: LoginCardProps) {
   return (
     <div
       className={cn(
@@ -36,7 +37,7 @@ function LoginCard({ className, isLoading = false, onKakaoLogin }: LoginCardProp
             <p className="typo-body2 text-text-alternative">진행 중 입니다...</p>
           </div>
         ) : (
-          <SocialLoginButtons className="w-full" onKakaoLogin={onKakaoLogin} />
+          <SocialLoginButtons className="w-full" onKakaoLogin={onKakaoLogin} onAppleLogin={onAppleLogin} />
         )}
       </div>
     </div>

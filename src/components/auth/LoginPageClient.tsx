@@ -27,6 +27,21 @@ function LoginPageClient({
   const [termsOpen, setTermsOpen] = useState(defaultTermsOpen);
   const [isLoading, setIsLoading] = useState(false);
 
+  function handleAppleLoginStart() {
+    const clientId = process.env.NEXT_PUBLIC_APPLE_CLIENT_ID;
+    const redirectUri = process.env.NEXT_PUBLIC_APPLE_REDIRECT_URI;
+    const params = new URLSearchParams({
+      response_type: 'code id_token',
+      response_mode: 'form_post',
+      scope: 'name email',
+    });
+    if (clientId) params.set('client_id', clientId);
+    if (redirectUri) params.set('redirect_uri', redirectUri);
+
+    setIsLoading(true);
+    window.location.href = `https://appleid.apple.com/auth/authorize?${params}`;
+  }
+
   function handleKakaoLoginStart() {
     const clientId = process.env.NEXT_PUBLIC_KAKAO_CLIENT_ID;
     const redirectUri = process.env.NEXT_PUBLIC_KAKAO_REDIRECT_URI;
@@ -48,7 +63,7 @@ function LoginPageClient({
         <br />
         Weeth에서 함께 활동을 이어가세요
       </div>
-      <LoginCard isLoading={isLoading} onKakaoLogin={handleKakaoLoginStart} />
+      <LoginCard isLoading={isLoading} onKakaoLogin={handleKakaoLoginStart} onAppleLogin={handleAppleLoginStart} />
       <TermsAgreementModal
         open={termsOpen}
         onOpenChange={setTermsOpen}
