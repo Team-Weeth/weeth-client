@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
-import { adminMemberApi } from '@/lib/apis';
+import { adminMemberApi } from '@/lib/apis/adminMember';
 import type { ClubMemberRole, Member } from '@/types/admin/member';
 import { useClubId } from '@/stores';
 
