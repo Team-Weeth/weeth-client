@@ -4,9 +4,18 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { usePathname } from 'next/navigation';
+import dynamic from 'next/dynamic';
 import { Button, Icon } from '@/components/ui';
 import { MenuIcon, EditIcon, SendIcon, ExitToAppIcon, AvatarIcon, LogoIcon } from '@/assets/icons';
 import { useCreatePost, useUpdatePost } from '@/hooks';
+import { useWritePost } from '@/hooks/home/useWritePost';
+
+const CardinalMissingModal = dynamic(() =>
+  import('@/components/home/CardinalMissingModal').then((m) => m.CardinalMissingModal),
+);
+const ProfileIncompleteModal = dynamic(() =>
+  import('@/components/home/ProfileIncompleteModal').then((m) => m.ProfileIncompleteModal),
+);
 
 interface HeaderProps {
   isMain?: boolean;
@@ -33,6 +42,14 @@ export default function Header({ isMain = true }: HeaderProps) {
   const isEditPage = editPostId !== null;
   const { submit: submitCreate, isPending: isCreating } = useCreatePost();
   const { submit: submitUpdate, isPending: isUpdating } = useUpdatePost();
+  const {
+    handleWriteClick,
+    handleSkipProfile,
+    cardinalModalOpen,
+    setCardinalModalOpen,
+    profileModalOpen,
+    setProfileModalOpen,
+  } = useWritePost();
   const isPostingPage = isWritePage || isEditPage;
   const isPending = isCreating || isUpdating;
   const handleSubmit = () => {
@@ -128,7 +145,7 @@ export default function Header({ isMain = true }: HeaderProps) {
                   <Button
                     variant="primary"
                     size="md"
-                    onClick={() => router.push('/board/write')}
+                    onClick={handleWriteClick}
                     className="typo-button1 gap-100"
                   >
                     <Image src={EditIcon} alt="edit" width={20} height={20} />
@@ -157,6 +174,13 @@ export default function Header({ isMain = true }: HeaderProps) {
           </div>
         )}
       </header>
+
+      <CardinalMissingModal open={cardinalModalOpen} onClose={() => setCardinalModalOpen(false)} />
+      <ProfileIncompleteModal
+        open={profileModalOpen}
+        onClose={() => setProfileModalOpen(false)}
+        onSkip={handleSkipProfile}
+      />
     </>
   );
 }
