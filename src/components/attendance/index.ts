@@ -1,5 +1,8 @@
 export { AttendanceContent } from './AttendanceContent';
 
+export { AttendanceHistoryContent } from './AttendanceHistoryContent';
+export type { AttendanceHistoryContentProps } from './AttendanceHistoryContent';
+
 export { AttendanceQRContent } from './AttendanceQRContent';
 export type { AttendanceQRContentProps } from './AttendanceQRContent';
 
@@ -20,3 +23,6 @@ export type { InputOTPProps } from './InputOTP';
 
 export { AttendanceStatus } from './AttendanceStatus';
 export type { AttendanceStatusProps } from './AttendanceStatus';
+
+export { StatBox } from './StatBox';
+export type { StatBoxProps } from './StatBox';
