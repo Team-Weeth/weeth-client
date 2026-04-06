@@ -59,7 +59,12 @@ function InquiryDialog({ children }: InquiryDialogProps) {
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>{children}</DialogTrigger>
-      <DialogContent showCloseButton={false} className="bg-background flex w-[640px] flex-col">
+      <DialogContent
+        showCloseButton={false}
+        className="bg-background flex w-[640px] flex-col"
+        onPointerDownOutside={(e) => e.preventDefault()}
+        onInteractOutside={(e) => e.preventDefault()}
+      >
         <DialogHeader
           icon={
             <Icon src={InfoCircleIcon} size={24} className="text-brand-primary" alt="정보 아이콘" />
