@@ -13,12 +13,19 @@ interface UpdateProfileParams {
 async function uploadProfileImage(file: File) {
   const res = await fileApi.getPresignedUrls('CLUB_MEMBER_PROFILE', [file.name]);
   const presigned = res.data.data[0];
+  if (!presigned) {
+    throw new Error('Presigned URL을 받지 못했습니다.');
+  }
 
-  await fetch(presigned.putUrl, {
+  const uploadRes = await fetch(presigned.putUrl, {
     method: 'PUT',
     body: file,
     headers: { 'Content-Type': file.type },
   });
+
+  if (!uploadRes.ok) {
+    throw new Error('프로필 이미지 업로드에 실패했습니다.');
+  }
 
   return {
     fileName: file.name,
@@ -36,7 +43,9 @@ export function useUpdateProfileMutation() {
     mutationFn: async ({ user, clubProfile, profileImageFile }: UpdateProfileParams) => {
       await mypageApi.updateUser(user);
 
-      const profileImage = profileImageFile ? await uploadProfileImage(profileImageFile) : undefined;
+      const profileImage = profileImageFile
+        ? await uploadProfileImage(profileImageFile)
+        : undefined;
 
       await mypageApi.updateClubProfile({
         bio: clubProfile.bio,

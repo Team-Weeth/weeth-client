@@ -6,15 +6,15 @@ export interface MyMember {
   clubMemberId: number;
   name: string;
   email: string;
-  tel: string;
+  tel: string | null;
   school: string;
   department: string;
   studentId: string;
   cardinals: number[];
   memberRole: MemberRole;
   memberStatus: MemberStatus;
-  profileImageUrl: string;
-  bio: string;
+  profileImageUrl: string | null;
+  bio: string | null;
 }
 
 export interface ClubDto {

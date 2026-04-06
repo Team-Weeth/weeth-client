@@ -27,6 +27,7 @@ function ProfileImageEditor({ name, profileImageUrl, onFileChange }: ProfileImag
     return () => {
       if (previewUrl) URL.revokeObjectURL(previewUrl);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const displayUrl = previewUrl ?? profileImageUrl;
