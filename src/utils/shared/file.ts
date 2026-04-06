@@ -7,6 +7,8 @@ export function fileAttachmentToFileItem(file: FileAttachment): UploadFileItem {
     fileName: file.fileName,
     fileUrl: file.fileUrl,
     storageKey: file.storageKey,
+    fileSize: file.fileSize,
+    contentType: file.contentType,
     uploaded: true,
   };
 }
