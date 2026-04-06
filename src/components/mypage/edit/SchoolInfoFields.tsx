@@ -7,7 +7,7 @@ import { Input } from '@/components/ui';
 import { FormField } from '@/components/mypage/FormField';
 import { SearchSelect } from '@/components/mypage/SearchSelect';
 import { useSchoolsQuery } from '@/hooks/queries/mypage/useSchoolsQuery';
-import { MOCK_DEPARTMENTS } from '@/constants/mock';
+import { useMajorsQuery } from '@/hooks/queries/mypage/useMajorsQuery';
 import type { EditProfileFormData } from '@/lib/schemas/editProfile';
 
 interface SchoolInfoFieldsProps {
@@ -21,7 +21,9 @@ function SchoolInfoFields({ register, control, errors, setValue }: SchoolInfoFie
   const school = useWatch({ control, name: 'school' });
   const department = useWatch({ control, name: 'department' });
   const { data: schools = [] } = useSchoolsQuery();
+  const { data: majors = [] } = useMajorsQuery();
   const schoolNames = schools.map((s) => s.schoolName);
+  const majorNames = majors.map((m) => m.majorName);
 
   return (
     <div className="flex flex-col gap-400">
@@ -38,7 +40,7 @@ function SchoolInfoFields({ register, control, errors, setValue }: SchoolInfoFie
         <SearchSelect
           value={department}
           onChange={(v) => setValue('department', v, { shouldValidate: true })}
-          options={MOCK_DEPARTMENTS}
+          options={majorNames}
           placeholder="학과 선택"
         />
       </FormField>
