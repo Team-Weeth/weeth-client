@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import Image from 'next/image';
 import { cn } from '@/lib/cn';
 import { useGSAP } from '@gsap/react';
@@ -8,7 +8,7 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { AnimatePresence, motion } from 'framer-motion';
 import type { Feature } from './ServiceSection';
-import { LandingUserFaceIcon, LandingAdminFaceIcon } from '@/assets/icons/landing';
+import { ServiceSectionHeader } from './ServiceSectionHeader';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -56,7 +56,7 @@ function ServiceSectionMobile({
 
       ScrollTrigger.create({
         trigger: container,
-        start: 'top 64px',
+        start: `top 64px`,
         end: `+=${STEP_SCROLL * (features.length - 1)}`,
         scrub: 0.6,
         snap: {
@@ -91,12 +91,26 @@ function ServiceSectionMobile({
     });
   };
 
-  useEffect(() => {
-    const video = videoRefs.current[activeIndex];
-    if (video) video.play().catch(() => {});
-  }, [activeIndex]);
-
   const active = features[activeIndex];
+
+  const chips = (
+    <div className="flex shrink-0 gap-1">
+      {features.map((f, i) => (
+        <button
+          key={f.chipLabel}
+          onClick={() => handleChipClick(i)}
+          className={cn(
+            'h-[40px] min-w-[30px] cursor-pointer rounded-3xl px-[15px] py-2 text-[12px] leading-[20px] font-semibold tracking-[-0.005em] transition-colors',
+            i === activeIndex
+              ? 'bg-[#00C8AA] text-white hover:bg-[#00b89c]'
+              : 'border border-[#00C8AA] text-[#00C8AA] hover:bg-[#00C8AA] hover:text-white',
+          )}
+        >
+          {f.chipLabel}
+        </button>
+      ))}
+    </div>
+  );
 
   return (
     <div
@@ -108,52 +122,17 @@ function ServiceSectionMobile({
     >
       <section
         className={cn(
-          'sticky top-[64px] flex h-[calc(100vh-64px)] w-full flex-col overflow-hidden px-600 pt-[20px]',
+          'tablet:pt-[56px] sticky top-[64px] h-[calc(100vh-64px)] w-full overflow-hidden px-600 pt-[20px] pb-[48px]',
           variant === 'user' ? 'bg-[#F3F5F7]' : 'bg-[#E6EAED]',
         )}
       >
-        <div className="flex shrink-0 items-center gap-200">
-          <span className="typo-sub2 flex items-center gap-[13px] text-[#1E2021]">
-            <Image
-              src={variant === 'user' ? LandingUserFaceIcon : LandingAdminFaceIcon}
-              alt="face-icon"
-              width={24}
-              height={24}
-            />
-            {serviceLabel}
-          </span>
-        </div>
-
-        <h2 className="mt-[clamp(20px,3vh,54px)] shrink-0 text-[32px] leading-[130%] font-extrabold tracking-[-0.005em] whitespace-pre-line text-[#1E2021]">
-          {title}
-        </h2>
-
-        <div className="mt-[clamp(24px,3vh,48px)] mb-[clamp(24px,5vh,86px)] flex w-full shrink-0 flex-col gap-[64px]">
-          <p className="text-[14px] leading-[18px] font-semibold text-[#888A8C]">
-            {subtitle.split('<br/>').map((line, i, arr) => (
-              <span key={i}>
-                {line}
-                {i < arr.length - 1 && <br />}
-              </span>
-            ))}
-          </p>
-          <div className="flex shrink-0 gap-1">
-            {features.map((f, i) => (
-              <button
-                key={f.chipLabel}
-                onClick={() => handleChipClick(i)}
-                className={cn(
-                  'h-[40px] min-w-[30px] cursor-pointer rounded-3xl px-[15px] py-2 text-[12px] leading-[20px] font-semibold tracking-[-0.005em] transition-colors',
-                  i === activeIndex
-                    ? 'bg-[#00C8AA] text-white hover:bg-[#00b89c]'
-                    : 'border border-[#00C8AA] text-[#00C8AA] hover:bg-[#00C8AA] hover:text-white',
-                )}
-              >
-                {f.chipLabel}
-              </button>
-            ))}
-          </div>
-        </div>
+        <ServiceSectionHeader
+          variant={variant}
+          serviceLabel={serviceLabel}
+          title={title}
+          subtitle={subtitle}
+          chips={chips}
+        />
 
         <AnimatePresence mode="wait">
           <motion.div
@@ -162,37 +141,32 @@ function ServiceSectionMobile({
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -16 }}
             transition={{ duration: 0.25, ease: 'easeOut' }}
-            className="w-full"
           >
             <div
               className={cn(
-                'w-full',
+                'tablet:rounded-[8px] w-full overflow-hidden rounded-[8px]',
                 active.video
                   ? ''
-                  : cn(
-                      'h-[clamp(150px,28vh,280px)] overflow-hidden rounded-[30px] px-[24px] pt-[24px]',
-                      active.bgColor,
-                    ),
+                  : cn('tablet:h-[420px] h-[280px] px-[24px] pt-[24px]', active.bgColor),
               )}
             >
               {active.video ? (
                 <video
                   ref={(el) => {
                     videoRefs.current[activeIndex] = el;
-                    if (el) el.play().catch(() => {});
                   }}
                   src={active.video}
                   loop
                   muted
                   playsInline
                   preload="metadata"
-                  className="h-auto w-full rounded-[30px]"
+                  className="h-auto w-full"
                 />
               ) : active.image ? (
                 <Image src={active.image} alt={active.chipLabel} width={945} height={523} />
               ) : null}
             </div>
-            <p className="mt-[16px] pb-[clamp(16px,3vh,32px)] text-[15px] leading-[24px] font-semibold tracking-[-0.005em] text-[#909599]">
+            <p className="mt-[16px] text-[15px] leading-[24px] font-semibold tracking-[-0.005em] text-[#909599]">
               {renderDescription(active)}
             </p>
           </motion.div>

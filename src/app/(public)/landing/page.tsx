@@ -1,8 +1,10 @@
+import { Suspense } from 'react';
 import {
   HeroSection,
   TestimonialSection,
   ClubTypesSection,
   LandingFooter,
+  BlockedToast,
 } from '@/components/landing';
 import {
   PhilosophySection,
@@ -16,6 +18,9 @@ import { USER_FEATURES, ADMIN_FEATURES } from '@/constants/landing/landing';
 export default function LandingPage() {
   return (
     <>
+      <Suspense>
+        <BlockedToast />
+      </Suspense>
       {/* TODO: showAuthButtons 추가하기 */}
       <PublicHeader />
       <main className="flex min-h-screen w-full flex-col">
