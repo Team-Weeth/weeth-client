@@ -31,7 +31,7 @@ function PersonalInfoFields({ register, errors, setValue }: PersonalInfoFieldsPr
         />
       </FormField>
 
-      <FormField label="연락처 (선택)" error={errors.tel?.message}>
+      <FormField label="연락처" error={errors.tel?.message}>
         <Input
           {...register('tel')}
           onChange={handlePhoneChange}

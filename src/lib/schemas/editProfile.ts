@@ -5,7 +5,8 @@ export const editProfileSchema = z.object({
   bio: z.string().max(30, '30자 이내로 입력해주세요'),
   tel: z
     .string()
-    .refine((v) => !v || /^\d{3}-\d{3,4}-\d{4}$/.test(v), '올바른 전화번호 형식이 아닙니다'),
+    .min(1, '연락처를 입력해주세요')
+    .regex(/^\d{3}-\d{3,4}-\d{4}$/, '올바른 전화번호 형식이 아닙니다'),
   email: z
     .string()
     .min(1, '이메일을 입력해주세요')
