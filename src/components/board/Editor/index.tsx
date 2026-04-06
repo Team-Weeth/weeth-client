@@ -60,7 +60,7 @@ export default function Editor({ initialContent }: EditorProps = {}) {
   if (!editor) return null;
 
   return (
-    <div ref={containerRef} className="relative w-full">
+    <div ref={containerRef} className="relative flex min-h-[400px] w-full flex-col">
       {/* 숨겨진 파일 input — 슬래시 메뉴에서 각 ref를 통해 트리거 */}
       <input
         ref={imageInputRef}
@@ -107,12 +107,12 @@ export default function Editor({ initialContent }: EditorProps = {}) {
 
       <div className="relative">
         <EditorContent editor={editor} className="max-w-none" />
+      </div>
 
-        {/* 게시글 하단 첨부 영역 */}
-        <div className="flex flex-col gap-400">
-          <ImageList files={files.imageFiles} removable onRemove={files.handleRemoveFile} />
-          <FileList files={files.nonImageFiles} onRemove={files.handleRemoveFile} editable />
-        </div>
+      {/* 게시글 하단 첨부 영역 */}
+      <div className="mt-auto flex flex-col gap-400 pt-400">
+        <ImageList files={files.imageFiles} removable onRemove={files.handleRemoveFile} />
+        <FileList files={files.nonImageFiles} onRemove={files.handleRemoveFile} editable />
       </div>
     </div>
   );

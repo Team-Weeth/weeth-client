@@ -527,7 +527,7 @@ select:focus {
 }
 
 .ProseMirror:not(.prose-readonly) {
-  @apply min-h-[400px];
+  @apply flex-1;
 }
 
 /* placeholder */

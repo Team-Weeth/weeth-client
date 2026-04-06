@@ -12,6 +12,8 @@ export interface UploadFileItem {
   fileSize: number;
   contentType: string;
   uploaded: boolean;
+  /** 서버에서 불러온 기존 파일인지 여부 (수정 시 재전송 방지) */
+  isExisting?: boolean;
 }
 
 const initialState = {
@@ -105,6 +107,7 @@ export const usePostStore = create(
               fileSize: f.fileSize,
               contentType: f.contentType,
               uploaded: true,
+              isExisting: true,
             })),
           },
           false,
