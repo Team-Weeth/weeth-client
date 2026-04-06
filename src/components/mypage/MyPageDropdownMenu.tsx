@@ -36,7 +36,6 @@ function MyPageDropdownMenu() {
             <Link href="/mypage/edit">개인정보 수정</Link>
           </DropdownMenuItem>
           <DropdownMenuSeparator />
-          <DropdownMenuSeparator />
           <DropdownMenuItem onSelect={() => setLogoutOpen(true)}>로그아웃</DropdownMenuItem>
           {/* <DropdownMenuSeparator />
           <DropdownMenuItem destructive onSelect={() => setWithdrawOpen(true)}>
