@@ -45,7 +45,7 @@ export function useUpdatePost() {
 
     setIsPending(true);
     try {
-      await updatePost(clubId, postId, getPayload());
+      await updatePost(clubId, postId, getPayload(true));
       await queryClient.invalidateQueries({ queryKey: ['posts'] });
       toast({ title: '게시글이 수정되었습니다.', variant: 'success' });
       reset();

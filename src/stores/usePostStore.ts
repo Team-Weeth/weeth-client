@@ -115,13 +115,13 @@ export const usePostStore = create(
         );
       },
 
-      getPayload: () => {
+      getPayload: (isEdit = false) => {
         const state = get();
         return {
           title: state.title,
           content: state.content,
           files: state.files
-            .filter((f) => f.uploaded)
+            .filter((f) => f.uploaded && !(isEdit && f.isExisting))
             .map((f) => ({
               fileName: f.fileName,
               storageKey: f.storageKey,
