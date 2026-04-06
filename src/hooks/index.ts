@@ -12,4 +12,5 @@ export { useCreatePost } from './board/useCreatePost';
 export { useUpdatePost } from './board/useUpdatePost';
 export { useDeletePost } from './board/useDeletePost';
 export { useIntersectionObserver } from './board/useIntersectionObserver';
+export { useNavigationGuard } from './useNavigationGuard';
 export { useProgressAnimation } from './useProgressAnimation';
