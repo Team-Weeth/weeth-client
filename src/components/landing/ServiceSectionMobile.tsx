@@ -184,8 +184,9 @@ function ServiceSectionMobile({
                   src={active.video}
                   loop
                   muted
+                  autoPlay
                   playsInline
-                  preload="metadata"
+                  preload="auto"
                   className="h-auto w-full rounded-[30px]"
                 />
               ) : active.image ? (
