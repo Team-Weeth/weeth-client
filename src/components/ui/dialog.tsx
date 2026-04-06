@@ -76,10 +76,10 @@ function DialogContent({
   );
 }
 
-interface DialogHeaderProps extends React.HTMLAttributes<HTMLDivElement> {
+interface DialogHeaderProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'title'> {
   icon?: ReactNode;
   overline?: string;
-  title?: string;
+  title?: ReactNode;
   description?: string;
   showClose?: boolean;
   onClose?: () => void;

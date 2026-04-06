@@ -1,8 +1,10 @@
+import { PRIVACY_DATA, TERMS_DATA, type PolicyData } from '@/constants/term';
+
 interface TermsItem {
   id: string;
   label: string;
   required: boolean;
-  content: string;
+  policy: PolicyData;
 }
 
 const TERMS_ITEMS: TermsItem[] = [
@@ -10,15 +12,13 @@ const TERMS_ITEMS: TermsItem[] = [
     id: 'weeth-terms',
     label: 'Weeth 이용 약관',
     required: true,
-    content:
-      'Weeth 서비스 이용 약관 내용이 여기에 표시됩니다. 추후 실제 약관 내용으로 교체될 예정입니다.',
+    policy: TERMS_DATA,
   },
   {
     id: 'privacy',
     label: '개인정보 수집 및 이용 동의',
     required: true,
-    content:
-      '개인정보 수집 및 이용 동의 내용이 여기에 표시됩니다. 추후 실제 약관 내용으로 교체될 예정입니다.',
+    policy: PRIVACY_DATA,
   },
 ];
 

@@ -103,12 +103,13 @@ async function request<T>(
 
   if (!response.ok) {
     const errorBody = await response.text();
+    const responsePreview = errorBody.length > 200 ? `${errorBody.slice(0, 200)}...` : errorBody;
     console.error('apiServer request failed:', {
       method,
       url,
       status: response.status,
       statusText: response.statusText,
-      responseBody: errorBody,
+      responseBodyPreview: responsePreview,
     });
     let serverMessage: string | undefined;
     try {

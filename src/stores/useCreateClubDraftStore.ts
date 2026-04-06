@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { combine, devtools } from 'zustand/middleware';
+import { useShallow } from 'zustand/react/shallow';
 
 const initialState = {
   school: '',
@@ -22,3 +23,24 @@ export const useCreateClubDraftStore = create(
     { name: 'CreateClubDraftStore' },
   ),
 );
+
+export const useCreateClubDraftValues = () =>
+  useCreateClubDraftStore(
+    useShallow((state) => ({
+      school: state.school,
+      name: state.name,
+      description: state.description,
+      generation: state.generation,
+      phone: state.phone,
+      email: state.email,
+      contactType: state.contactType,
+    })),
+  );
+
+export const useCreateClubDraftActions = () =>
+  useCreateClubDraftStore(
+    useShallow((state) => ({
+      setDraft: state.setDraft,
+      reset: state.reset,
+    })),
+  );

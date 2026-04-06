@@ -1,4 +1,6 @@
 export { apiClient } from './client';
+export { authApi } from './auth';
+export type { AgreeTermsResponse } from './auth';
 export { clubApi } from './club';
 export { apiServer } from './server';
 export { boardApi } from './board';
@@ -10,3 +12,4 @@ export { universityApi } from './university';
 export { mypageApi } from './mypage';
 export { adminMemberApi } from './adminMember';
 export { cardinalApi } from './cardinal';
+export { inquiryApi } from './inquiry';

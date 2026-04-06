@@ -8,6 +8,7 @@ import {
   DialogHeader,
   Icon,
 } from '@/components/ui';
+import { PolicyBody } from '@/components/policy';
 import type { TermsItem } from '@/constants/login';
 
 interface TermsDetailViewProps {
@@ -27,8 +28,8 @@ function TermsDetailView({ term, onBack, open, onOpenChange }: TermsDetailViewPr
           </button>
         </DialogHeader>
         <DialogBody className="max-h-[400px]">
-          <h2 className="typo-h3 text-text-strong">{term.label}</h2>
-          <p className="typo-body2 text-text-normal whitespace-pre-wrap">{term.content}</p>
+          <h2 className="typo-h3 text-text-strong">{term.policy.title}</h2>
+          <PolicyBody data={term.policy} />
         </DialogBody>
         <DialogFooter showDivider>
           <Button variant="secondary" size="lg" onClick={onBack}>
