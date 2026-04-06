@@ -1,25 +1,18 @@
 import { AttendanceContent } from '@/components/attendance';
+import { attendanceServerApi } from '@/lib/apis/attendance';
 import type { AttendanceData } from '@/types/attendance';
 
-// TODO: API 연동 시 실제 데이터로 교체
-function createMockAttendance(): AttendanceData {
-  const now = new Date();
-  const start = now;
-  const end = new Date(now.getTime() + 10 * 60 * 1000); // 10분 후
+export default async function AttendancePage() {
+  // TODO: 하드코딩된 clubId 추후 동적으로 변경
+  let attendance: AttendanceData | undefined;
+  let errorMessage: string | undefined;
 
-  return {
-    attendanceRate: 80,
-    title: '1주차 정기모임',
-    status: 'ATTEND',
-    code: 123456,
-    start: start.toISOString(),
-    end: end.toISOString(),
-    location: '공학관 401호',
-  };
-}
+  try {
+    const response = await attendanceServerApi.getAttendance('YUNJcjFKMO');
+    attendance = response.data;
+  } catch {
+    errorMessage = '출석 정보를 불러오지 못했습니다.';
+  }
 
-export default function AttendancePage() {
-  // TODO: API 연동 시 실제 사용자 이름으로 교체
-  const displayName = '사용자';
-  return <AttendanceContent name={displayName} attendance={createMockAttendance()} />;
+  return <AttendanceContent attendance={attendance} errorMessage={errorMessage} />;
 }

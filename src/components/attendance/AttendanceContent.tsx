@@ -1,29 +1,54 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 import { Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbPage, Card } from '@/components/ui';
 import { AttendanceStatus } from '@/components/attendance/AttendanceStatus';
 import { AttendanceTodayCard } from '@/components/attendance/AttendanceTodayCard';
+import { ATTENDANCE_ERROR_MESSAGE } from '@/constants/attendance';
+import { attendanceApi } from '@/lib/apis/attendance';
 import { formatAttendanceDescription } from '@/lib/formatTime';
+import { toastError } from '@/stores/useToastStore';
+import { useUserName } from '@/stores/useUserStore';
 import type { AttendanceData } from '@/types/attendance';
 
 interface AttendanceContentProps {
-  name: string;
-  attendance: AttendanceData;
+  attendance?: AttendanceData;
+  errorMessage?: string;
   isAdmin?: boolean;
 }
 
-function AttendanceContent({ name, attendance, isAdmin = false }: AttendanceContentProps) {
+function AttendanceContent({ attendance, errorMessage, isAdmin = false }: AttendanceContentProps) {
+  const name = useUserName() ?? '';
   const router = useRouter();
   const [isChecked, setIsChecked] = useState(false);
-  const { attendanceRate, title, start, end, location } = attendance;
+
+  useEffect(() => {
+    if (errorMessage) toastError(errorMessage);
+  }, [errorMessage]);
+
+  const {
+    sessionId = null,
+    attendanceRate = 0,
+    title = null,
+    start = null,
+    end = null,
+    location = null,
+  } = attendance ?? {};
   const description = formatAttendanceDescription(start ?? '', end ?? '', location ?? '');
 
-  function handleAttendanceComplete(_code: string) {
-    // TODO: API 연결 시 출석 코드 검증 로직 추가
-    setIsChecked(true);
+  async function handleAttendanceComplete(code: string) {
+    if (!sessionId) return;
+
+    try {
+      // TODO: 하드코딩된 clubId 추후 동적으로 변경
+      await attendanceApi.checkIn('YUNJcjFKMO', sessionId, Number(code));
+      setIsChecked(true);
+    } catch (error) {
+      const errorCode = (error as { response?: { data?: { code?: number } } }).response?.data?.code;
+      toastError(errorCode ? ATTENDANCE_ERROR_MESSAGE[errorCode] : undefined);
+    }
   }
 
   return (
@@ -39,17 +64,26 @@ function AttendanceContent({ name, attendance, isAdmin = false }: AttendanceCont
       <AttendanceStatus name={name} attendanceRate={attendanceRate} className="px-450" />
 
       <div className="flex flex-col gap-300 px-450">
-        <AttendanceTodayCard
-          overline="오늘의 출석"
-          title={title ?? ''}
-          description={description}
-          start={start ?? ''}
-          endTime={end ?? ''}
-          location={location ?? ''}
-          isAdmin={isAdmin}
-          isChecked={isChecked}
-          onAttendanceComplete={handleAttendanceComplete}
-        />
+        {title ? (
+          <AttendanceTodayCard
+            overline="오늘의 출석"
+            title={title}
+            description={description}
+            start={start ?? ''}
+            endTime={end ?? ''}
+            location={location ?? ''}
+            isAdmin={isAdmin}
+            isChecked={isChecked}
+            onAttendanceComplete={handleAttendanceComplete}
+          />
+        ) : (
+          <Card
+            variant="onlyText"
+            overline="오늘의 출석"
+            title="오늘은 출석 일정이 없어요"
+            showArrow={false}
+          />
+        )}
 
         <Card
           variant="onlyText"

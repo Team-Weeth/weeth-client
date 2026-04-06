@@ -3,6 +3,7 @@ import type { ApiResponse } from '@/types/common';
 type AttendanceStatus = 'ATTEND' | 'ABSENT' | 'PENDING';
 
 interface AttendanceData {
+  sessionId: number | null;
   attendanceRate: number;
   title: string | null;
   status: AttendanceStatus | null;
