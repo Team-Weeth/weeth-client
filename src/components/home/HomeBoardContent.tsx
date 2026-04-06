@@ -34,9 +34,7 @@ function HomeBoardContent() {
                   dateTime={post.time}
                   hasAttachment={hasAttachment}
                 />
-                {isMyPost && (
-                  <PostActionMenu postId={post.id} />
-                )}
+                {isMyPost && <PostActionMenu postId={post.id} />}
               </PostCard.Header>
               <PostCard.ListContent title={post.title} content={post.content} isNew={post.isNew} />
               <PostCard.Images files={images} />

@@ -56,9 +56,7 @@ function BoardContent() {
                 date={formatShortDateTime(post.time)}
                 hasAttachment={post.hasFile}
               />
-              {currentUserId === post.author.id && (
-                <PostActionMenu postId={post.id} />
-              )}
+              {currentUserId === post.author.id && <PostActionMenu postId={post.id} />}
             </PostCard.Header>
             <PostCard.ListContent title={post.title} content={post.content} isNew={post.isNew} />
             <PostCard.Actions likeCount={post.like.likeCount} commentCount={post.commentCount} />
