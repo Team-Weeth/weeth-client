@@ -3,35 +3,32 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
-  Calendar,
-  CheckCircle,
-  CircleUserRound,
-  ExternalLink,
-  FileText,
-  Info,
-  MessageSquare,
-  Users,
-} from 'lucide-react';
+  AdminForumIcon,
+  AdminCalendarIcon,
+  AdminSettingIcon,
+  AdminFileoutIcon,
+} from '@/assets/icons/admin';
+import { CheckRoundIcon, ExitToAppIcon, NavToggleIcon, PeopleIcon } from '@/assets/icons';
 
 import { cn } from '@/lib/cn';
 import { ThemeModeSelector } from '@/components/admin/layout/ThemeModeSelector';
 
 const managementNavItems = [
-  { id: 'member', icon: Users, label: '멤버 관리', path: '/admin/member' },
-  { id: 'schedule', icon: Calendar, label: '일정 관리', path: '/admin/schedule' },
-  { id: 'attendance', icon: CheckCircle, label: '출석 관리', path: '/admin/attendance' },
-  { id: 'board', icon: MessageSquare, label: '게시판 관리', path: '/admin/board' },
+  { id: 'member', icon: PeopleIcon, label: '멤버 관리', path: '/admin/member' },
+  { id: 'schedule', icon: AdminCalendarIcon, label: '일정 관리', path: '/admin/schedule' },
+  { id: 'attendance', icon: CheckRoundIcon, label: '출석 관리', path: '/admin/attendance' },
+  { id: 'board', icon: AdminForumIcon, label: '게시판 관리', path: '/admin/board' },
 ];
 
 const infoNavItems = [
-  { id: 'club-info', icon: Info, label: '동아리 정보', path: '/admin/club-info' },
+  { id: 'club-info', icon: AdminSettingIcon, label: '동아리 정보', path: '/admin/club-info' },
 ];
 
 const moveNavItems = [
-  { id: 'service', icon: ExternalLink, label: 'Weeth로 이동', path: 'https://weeth.kr' },
+  { id: 'service', icon: ExitToAppIcon, label: 'Weeth로 이동', path: 'https://weeth.kr' },
   {
     id: 'manual',
-    icon: FileText,
+    icon: AdminFileoutIcon,
     label: '관리자 매뉴얼',
     path: 'https://weeth-develop-2.s3.ap-northeast-2.amazonaws.com/Weeth_%E1%84%80%E1%85%AA%E1%86%AB%E1%84%85%E1%85%B5%E1%84%8C%E1%85%A1_%E1%84%86%E1%85%A6%E1%84%82%E1%85%B2%E1%84%8B%E1%85%A5%E1%86%AF_v3.pdf',
   },
@@ -69,7 +66,9 @@ function InternalNavItem({ icon: Icon, label, path, isActive }: InternalNavItemP
       href={path}
       className={cn(navItemClass, isActive && 'bg-container-neutral-interaction text-text-strong')}
     >
-      <Icon className={cn('h-6 w-6 shrink-0', isActive ? 'text-text-strong' : 'text-icon-alternative')} />
+      <Icon
+        className={cn('h-6 w-6 shrink-0', isActive ? 'text-text-strong' : 'text-icon-alternative')}
+      />
       {label}
     </Link>
   );
@@ -110,7 +109,7 @@ function LNB() {
     <nav className="border-line bg-background flex h-full w-60 shrink-0 flex-col border-r">
       {/* 헤더 */}
       <div className="flex items-center gap-300 px-300 py-400">
-        <CircleUserRound className="text-icon-alternative h-10 w-10 shrink-0" />
+        <NavToggleIcon className="text-icon-alternative h-10 w-10 shrink-0" />
         <span className="typo-sub2 text-text-normal">Weeth admin</span>
       </div>
 
@@ -161,9 +160,7 @@ function LNB() {
 
       {/* 모드 */}
       <div className="border-line mt-auto border-t">
-        <span className="typo-caption1 text-text-alternative block px-400 pt-400 pb-200">
-          모드
-        </span>
+        <span className="typo-caption1 text-text-alternative block px-400 pt-400 pb-200">모드</span>
         <ThemeModeSelector />
       </div>
     </nav>
