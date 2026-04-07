@@ -33,6 +33,14 @@ interface AttendanceSummary {
 
 type AttendanceSummaryResponse = ApiResponse<AttendanceSummary>;
 
+interface QRCodeData {
+  sessionId: number;
+  code: number;
+  expiredAt: string;
+}
+
+type QRCodeResponse = ApiResponse<QRCodeData>;
+
 export type {
   AttendanceStatus,
   AttendanceData,
@@ -40,4 +48,6 @@ export type {
   AttendanceRecord,
   AttendanceSummary,
   AttendanceSummaryResponse,
+  QRCodeData,
+  QRCodeResponse,
 };

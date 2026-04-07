@@ -1,18 +1,17 @@
+import { redirect } from 'next/navigation';
+
 import { AttendanceQRContent } from '@/components/attendance';
 
-// TODO: API 연동 시 실제 데이터로 교체
-function createMockQRData() {
-  const now = new Date();
-  const end = new Date(now.getTime() + 10 * 60 * 1000); // 10분 후
-
-  return {
-    title: '1주차 정기모임',
-    code: '123456',
-    endTime: end.toISOString(),
-  };
+interface AttendanceQRPageProps {
+  searchParams: Promise<{ sessionId?: string }>;
 }
 
-export default function AttendanceQRPage() {
-  const { title, code, endTime } = createMockQRData();
-  return <AttendanceQRContent title={title} code={code} endTime={endTime} />;
+export default async function AttendanceQRPage({ searchParams }: AttendanceQRPageProps) {
+  const { sessionId } = await searchParams;
+
+  if (!sessionId) {
+    redirect('/attendance');
+  }
+
+  return <AttendanceQRContent sessionId={Number(sessionId)} />;
 }
