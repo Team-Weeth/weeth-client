@@ -1,6 +1,6 @@
 import type { UploadFileItem } from '@/stores/usePostStore';
 import { toast } from '@/stores/useToastStore';
-import { isHtmlEmpty } from '@/utils/shared';
+import { isHtmlEmpty } from '@/utils/board/isHtmlEmpty';
 
 interface ValidatePostParams {
   clubId: string | null;
