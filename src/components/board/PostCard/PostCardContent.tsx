@@ -1,81 +1,10 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
-import Image from 'next/image';
-import { NewIcon } from '@/assets/icons';
 import { cn } from '@/lib/cn';
+import { useLineClamp } from '@/hooks/useLineClamp';
 
-interface PostCardTitleProps {
-  title: string;
-  isNew?: boolean;
-  size: 'list' | 'detail';
-}
-
-function PostCardTitle({ title, isNew, size }: PostCardTitleProps) {
-  return (
-    <div className="flex items-center gap-[5px]">
-      <h3 className={cn('text-text-strong', size === 'detail' ? 'typo-h3' : 'typo-sub2')}>
-        {title}
-      </h3>
-      {isNew && (
-        <>
-          <Image src={NewIcon} alt="" width={7} height={9} aria-hidden />
-          <span className="sr-only">새 글</span>
-        </>
-      )}
-    </div>
-  );
-}
-
-function useLineClamp<T extends HTMLElement>(enabled: boolean, deps: unknown[]) {
-  const ref = useRef<T>(null);
-  const [isClamped, setIsClamped] = useState(false);
-  const [isExpanded, setIsExpanded] = useState(false);
-
-  useEffect(() => {
-    const el = ref.current;
-    if (!el || !enabled) return;
-
-    const check = () => {
-      const prevDisplay = el.style.display;
-      const prevClamp = el.style.webkitLineClamp;
-      el.style.display = 'block';
-      el.style.webkitLineClamp = 'unset';
-      const fullHeight = el.scrollHeight;
-      el.style.display = prevDisplay;
-      el.style.webkitLineClamp = prevClamp;
-      setIsClamped(fullHeight > el.clientHeight);
-    };
-
-    check();
-
-    const ro = new ResizeObserver(check);
-    ro.observe(el);
-    return () => ro.disconnect();
-  }, [enabled, ...deps]);
-
-  return { ref, isClamped, isExpanded, setIsExpanded };
-}
-
-interface ExpandButtonProps {
-  onExpand: () => void;
-}
-
-function ExpandButton({ onExpand }: ExpandButtonProps) {
-  return (
-    <button
-      type="button"
-      className="typo-body2 text-text-alternative hover:text-text-normal focus-visible:outline-ring cursor-pointer self-start rounded-sm focus-visible:outline-2 focus-visible:outline-offset-2"
-      onClick={(e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        onExpand();
-      }}
-    >
-      이어서 보기
-    </button>
-  );
-}
+import { PostCardTitle } from './PostCardTitle';
+import { ExpandButton } from './ExpandButton';
 
 interface PostCardListContentProps {
   className?: string;
@@ -94,7 +23,7 @@ function PostCardListContent({
 }: PostCardListContentProps) {
   const { ref, isClamped, isExpanded, setIsExpanded } = useLineClamp<HTMLParagraphElement>(
     expandable,
-    [content],
+    content,
   );
 
   const plainContent = content
@@ -138,9 +67,10 @@ function PostCardDetailContent({
   isNew,
   expandable = false,
 }: PostCardDetailContentProps) {
-  const { ref, isClamped, isExpanded, setIsExpanded } = useLineClamp<HTMLDivElement>(expandable, [
+  const { ref, isClamped, isExpanded, setIsExpanded } = useLineClamp<HTMLDivElement>(
+    expandable,
     content,
-  ]);
+  );
 
   return (
     <div className={cn('flex flex-col gap-200 self-stretch', className)}>
