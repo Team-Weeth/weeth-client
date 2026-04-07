@@ -48,7 +48,7 @@ export const ADMIN_FEATURES: Feature[] = [
     cardTitle: '출석으로 운영의 효율을 높이세요.',
     description: '출석으로 운영의 효율을 높이세요.',
     bgColor: 'bg-[#00877A]',
-    video: '/videos/landing/admin_member.mp4',
+    video: '/videos/landing/admin_attendance.mp4',
     highlightKeyword: '출석',
   },
   {
