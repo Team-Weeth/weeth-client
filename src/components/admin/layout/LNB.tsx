@@ -10,9 +10,10 @@ import {
 } from '@/assets/icons/admin';
 import { CheckRoundIcon, ExitIcon, NavToggleIcon, PeopleIcon } from '@/assets/icons';
 
-import { Avatar, Icon } from '@/components/ui';
+import { Avatar, AvatarFallback, AvatarImage, Icon } from '@/components/ui';
 import { cn } from '@/lib/cn';
 import { ThemeModeSelector } from '@/components/admin/layout/ThemeModeSelector';
+import { useAdminClubQuery } from '@/hooks/queries/admin/useAdminClubQuery';
 
 const managementNavItems = [
   { id: 'member', icon: PeopleIcon, label: '멤버 관리', path: '/admin/member' },
@@ -107,19 +108,26 @@ function ExternalNavItem({ icon, label, path, openInWindow }: ExternalNavItemPro
 
 function LNB() {
   const pathname = usePathname();
+  const { data: club } = useAdminClubQuery();
 
   return (
     <nav className="border-line bg-background flex h-full w-60 shrink-0 flex-col border-r">
       {/* 헤더 */}
       <div className="flex items-center gap-300 px-300 py-400">
         <Icon src={NavToggleIcon} size={40} className="text-icon-alternative" />
-        <span className="typo-sub2 text-text-normal">Weeth admin</span>
+        <span className="typo-sub2 text-icon-alternative">Weeth admin</span>
       </div>
 
       {/* 동아리 정보 */}
-      <div className="flex flex-col gap-100 px-400 pb-400">
-        <Avatar></Avatar>
-        <span className="typo-sub2 text-text-strong">가천대 검도부</span>
+      <div className="flex items-center gap-300 px-400 pb-400">
+        <Avatar size={24} type="square">
+          {club?.profileImageUrl && <AvatarImage src={club.profileImageUrl} alt={club.name} />}
+          <AvatarFallback>{club?.name?.charAt(0)}</AvatarFallback>
+        </Avatar>
+        <div className="flex flex-col gap-100">
+          <span className="typo-caption2 text-text-alternative">{club?.schoolName}</span>
+          <span className="typo-sub2 text-text-strong">{club?.name}</span>
+        </div>
       </div>
 
       {/* 관리 메뉴 */}

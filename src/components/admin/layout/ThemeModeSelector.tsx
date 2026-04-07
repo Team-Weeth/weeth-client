@@ -55,7 +55,7 @@ function ThemeModeSelector() {
       <DropdownMenuTrigger asChild>
         <button
           className={cn(
-            'typo-sub1 brand- text-text-alternative flex h-12 w-full cursor-pointer items-center gap-300 px-300 transition-colors',
+            'typo-sub1 brand- text-text-alternative flex h-12 w-full cursor-pointer items-center gap-300 border-none px-300 transition-colors',
             'hover:bg-container-neutral-interaction',
           )}
         >
@@ -65,7 +65,7 @@ function ThemeModeSelector() {
         </button>
       </DropdownMenuTrigger>
 
-      <DropdownMenuContent side="top" align="start" sideOffset={4} className="w-[200px]">
+      <DropdownMenuContent side="bottom" align="end" sideOffset={4} className="w-[200px]">
         {THEME_OPTIONS.map(({ value, label }) => (
           <DropdownMenuItem key={value} onSelect={() => handleSelect(value)}>
             {label}

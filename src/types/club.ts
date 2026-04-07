@@ -1,8 +1,12 @@
-// club 관련 타입 정의
-
 export interface Club {
   id: string;
   name: string;
+  code: string;
+  schoolName: string;
   description: string;
-  logoUrl?: string;
+  contactEmail: string;
+  contactPhoneNumber: string;
+  primaryContact: 'PHONE' | 'EMAIL';
+  profileImageUrl: string;
+  backgroundImageUrl: string;
 }
