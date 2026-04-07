@@ -96,7 +96,7 @@ function ServiceSectionDesktop({
     <div
       ref={containerRef}
       style={{ height: `calc(100vh + ${totalVirtualScroll + START_DELAY + END_DELAY}px)` }}
-      className={className}
+      className={cn(variant === 'user' ? 'bg-[#F3F5F7]' : 'bg-[#E6EAED]', className)}
     >
       <section
         className={cn(
@@ -104,8 +104,8 @@ function ServiceSectionDesktop({
           variant === 'user' ? 'bg-[#F3F5F7]' : 'bg-[#E6EAED]',
         )}
       >
-        <div className="mx-auto flex min-h-0 w-full max-w-[1123px] flex-1 flex-col px-600">
-          <div className="flex shrink-0 items-center gap-200">
+        <div className="mx-auto flex min-h-0 w-full max-w-[1123px] flex-1 flex-col gap-[80px]">
+          {/* <div className="flex shrink-0 items-center gap-200">
             <span className="typo-sub2 flex items-center gap-[13px] text-[#1E2021]">
               <Image
                 src={variant === 'user' ? LandingUserFaceIcon : LandingAdminFaceIcon}
@@ -115,22 +115,25 @@ function ServiceSectionDesktop({
               />
               {serviceLabel}
             </span>
-          </div>
+          </div> */}
 
-          <h2 className="mt-[clamp(20px,3vh,54px)] shrink-0 text-[48px] leading-[130%] font-extrabold tracking-[-0.005em] whitespace-pre-line text-[#1E2021]">
+          {/* <h2 className="mt-[clamp(20px,3vh,54px)] shrink-0 text-[48px] leading-[130%] font-extrabold tracking-[-0.005em] whitespace-pre-line text-[#1E2021]">
             {title}
-          </h2>
+          </h2> */}
 
-          <div className="mt-[clamp(20px,3vh,48px)] mb-[clamp(40px,5vh,86px)] flex w-full shrink-0 justify-between">
-            <p className="desktop:text-[24px] desktop:leading-[32px] text-[16px] leading-[24px] font-semibold tracking-[-0.005em] text-[#8E8F90]">
+          <div className="flex w-full shrink-0 justify-between">
+            {/* <p className="desktop:text-[24px] desktop:leading-[32px] text-[16px] leading-[24px] font-semibold tracking-[-0.005em] text-[#8E8F90]">
               {subtitle.split('<br/>').map((line, i, arr) => (
                 <span key={i}>
                   {line}
                   {i < arr.length - 1 && <br />}
                 </span>
               ))}
-            </p>
-            <div className="flex gap-2">
+            </p> */}
+            <h2 className="mt-[clamp(20px,3vh,54px)] shrink-0 text-[48px] leading-[130%] font-extrabold tracking-[-0.005em] whitespace-pre-line text-[#1E2021]">
+              {title}
+            </h2>
+            <div className="flex items-end gap-2">
               {features.map((f, i) => (
                 <button
                   key={f.chipLabel}
