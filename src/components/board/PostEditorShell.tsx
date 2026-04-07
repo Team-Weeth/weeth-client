@@ -3,11 +3,12 @@
 import dynamic from 'next/dynamic';
 import type { ReactNode } from 'react';
 
-import { TitleInput } from './TitleInput';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel } from '@/components/ui';
 import { useNavigationGuard } from '@/hooks';
 import { cn } from '@/lib/cn';
 import { usePostStore } from '@/stores/usePostStore';
+
+import { BoundTitleInput } from './BoundTitleInput';
 
 const Editor = dynamic(() => import('./Editor'), { ssr: false });
 
@@ -15,12 +16,6 @@ interface PostEditorShellProps {
   header: ReactNode;
   initialContent?: string;
   align?: 'start' | 'center';
-}
-
-function BoundTitleInput() {
-  const title = usePostStore((s) => s.title);
-  const setTitle = usePostStore((s) => s.setTitle);
-  return <TitleInput value={title} onChange={(e) => setTitle(e.target.value)} />;
 }
 
 /**
