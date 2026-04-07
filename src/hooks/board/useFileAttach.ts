@@ -37,7 +37,7 @@ export function useFileAttach() {
       fileName: selected.name,
       fileUrl: URL.createObjectURL(selected),
       fileSize: selected.size,
-      contentType: selected.type,
+      contentType: selected.type || 'application/octet-stream',
       storageKey: '',
       uploaded: false,
     });
