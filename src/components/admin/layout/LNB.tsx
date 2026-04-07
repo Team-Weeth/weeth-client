@@ -8,8 +8,9 @@ import {
   AdminSettingIcon,
   AdminFileoutIcon,
 } from '@/assets/icons/admin';
-import { CheckRoundIcon, ExitToAppIcon, NavToggleIcon, PeopleIcon } from '@/assets/icons';
+import { CheckRoundIcon, ExitIcon, NavToggleIcon, PeopleIcon } from '@/assets/icons';
 
+import { Avatar, Icon } from '@/components/ui';
 import { cn } from '@/lib/cn';
 import { ThemeModeSelector } from '@/components/admin/layout/ThemeModeSelector';
 
@@ -25,7 +26,7 @@ const infoNavItems = [
 ];
 
 const moveNavItems = [
-  { id: 'service', icon: ExitToAppIcon, label: 'Weeth로 이동', path: 'https://weeth.kr' },
+  { id: 'service', icon: ExitIcon, label: 'Weeth로 이동', path: 'https://weeth.kr' },
   {
     id: 'manual',
     icon: AdminFileoutIcon,
@@ -54,20 +55,22 @@ function NavSection({ label, children }: NavSectionProps) {
 }
 
 interface InternalNavItemProps {
-  icon: React.ElementType;
+  icon: typeof PeopleIcon;
   label: string;
   path: string;
   isActive: boolean;
 }
 
-function InternalNavItem({ icon: Icon, label, path, isActive }: InternalNavItemProps) {
+function InternalNavItem({ icon, label, path, isActive }: InternalNavItemProps) {
   return (
     <Link
       href={path}
       className={cn(navItemClass, isActive && 'bg-container-neutral-interaction text-text-strong')}
     >
       <Icon
-        className={cn('h-6 w-6 shrink-0', isActive ? 'text-text-strong' : 'text-icon-alternative')}
+        src={icon}
+        size={24}
+        className={isActive ? 'text-brand-primary' : 'text-icon-alternative'}
       />
       {label}
     </Link>
@@ -75,20 +78,20 @@ function InternalNavItem({ icon: Icon, label, path, isActive }: InternalNavItemP
 }
 
 interface ExternalNavItemProps {
-  icon: React.ElementType;
+  icon: typeof PeopleIcon;
   label: string;
   path: string;
   openInWindow?: boolean;
 }
 
-function ExternalNavItem({ icon: Icon, label, path, openInWindow }: ExternalNavItemProps) {
+function ExternalNavItem({ icon, label, path, openInWindow }: ExternalNavItemProps) {
   if (openInWindow) {
     return (
       <button
         className={cn(navItemClass, 'w-full cursor-pointer')}
         onClick={() => window.open(path, '_blank', 'noopener,noreferrer')}
       >
-        <Icon className="text-icon-alternative h-6 w-6 shrink-0" />
+        <Icon src={icon} size={24} className="text-icon-alternative" />
         {label}
       </button>
     );
@@ -96,7 +99,7 @@ function ExternalNavItem({ icon: Icon, label, path, openInWindow }: ExternalNavI
 
   return (
     <Link href={path} className={navItemClass} target="_blank" rel="noopener noreferrer">
-      <Icon className="text-icon-alternative h-6 w-6 shrink-0" />
+      <Icon src={icon} size={24} className="text-icon-alternative" />
       {label}
     </Link>
   );
@@ -109,13 +112,13 @@ function LNB() {
     <nav className="border-line bg-background flex h-full w-60 shrink-0 flex-col border-r">
       {/* 헤더 */}
       <div className="flex items-center gap-300 px-300 py-400">
-        <NavToggleIcon className="text-icon-alternative h-10 w-10 shrink-0" />
+        <Icon src={NavToggleIcon} size={40} className="text-icon-alternative" />
         <span className="typo-sub2 text-text-normal">Weeth admin</span>
       </div>
 
       {/* 동아리 정보 */}
       <div className="flex flex-col gap-100 px-400 pb-400">
-        <span className="typo-caption2 text-text-alternative">가입대학교</span>
+        <Avatar></Avatar>
         <span className="typo-sub2 text-text-strong">가천대 검도부</span>
       </div>
 
@@ -156,13 +159,8 @@ function LNB() {
             openInWindow={id === 'manual'}
           />
         ))}
-      </NavSection>
-
-      {/* 모드 */}
-      <div className="border-line mt-auto border-t">
-        <span className="typo-caption1 text-text-alternative block px-400 pt-400 pb-200">모드</span>
         <ThemeModeSelector />
-      </div>
+      </NavSection>
     </nav>
   );
 }

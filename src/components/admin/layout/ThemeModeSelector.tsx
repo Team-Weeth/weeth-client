@@ -55,7 +55,7 @@ function ThemeModeSelector() {
       <DropdownMenuTrigger asChild>
         <button
           className={cn(
-            'typo-sub1 flex h-12 w-full cursor-pointer items-center gap-300 px-300 text-text-alternative transition-colors',
+            'typo-sub1 brand- text-text-alternative flex h-12 w-full cursor-pointer items-center gap-300 px-300 transition-colors',
             'hover:bg-container-neutral-interaction',
           )}
         >
