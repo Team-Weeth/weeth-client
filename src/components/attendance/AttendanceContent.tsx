@@ -72,6 +72,7 @@ function AttendanceContent({ attendance, errorMessage, isAdmin = false }: Attend
             start={start ?? ''}
             endTime={end ?? ''}
             location={location ?? ''}
+            sessionId={sessionId}
             isAdmin={isAdmin}
             isChecked={isChecked}
             onAttendanceComplete={handleAttendanceComplete}

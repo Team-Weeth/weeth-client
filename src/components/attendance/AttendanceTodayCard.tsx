@@ -17,6 +17,7 @@ interface AttendanceTodayCardProps {
   start: string;
   endTime: string;
   location: string;
+  sessionId?: number | null;
   isAdmin?: boolean;
   isChecked?: boolean;
   onAttendanceComplete?: (code: string) => void;
@@ -41,6 +42,7 @@ function AttendanceTodayCard({
   start,
   endTime,
   location,
+  sessionId,
   isAdmin = false,
   isChecked = false,
   onAttendanceComplete,
@@ -66,7 +68,7 @@ function AttendanceTodayCard({
         primaryButtonText={isChecked ? '출석 완료' : '출석하기'}
         onSecondaryClick={
           isAdmin
-            ? () => router.push('/attendance/qr')
+            ? () => router.push(`/attendance/qr?sessionId=${sessionId}`)
             : () => toastError('관리자만 사용할 수 있는 기능입니다.')
         }
         secondaryButtonText="출석코드 확인"

@@ -1,5 +1,5 @@
 import { AttendanceContent } from '@/components/attendance';
-import { attendanceServerApi } from '@/lib/apis/attendance';
+import { attendanceServerApi } from '@/lib/apis/attendance.server';
 import type { AttendanceData } from '@/types/attendance';
 
 export default async function AttendancePage() {
