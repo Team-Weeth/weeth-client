@@ -17,12 +17,12 @@ export default function ClientEditor() {
   const setBoard = usePostStore((s) => s.setBoard);
   const reset = usePostStore((s) => s.reset);
 
-  // 글쓰기 페이지 진입 시 store 초기화 후 현재 게시판으로 설정
   useEffect(() => {
     reset();
     if (activeBoardId !== null) {
       setBoard(activeBoardId);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- 마운트 시 1회만 실행
   }, []);
 
   const activeId = board ?? activeBoardId ?? items.find((item) => item.type !== 'ALL')?.id ?? null;
