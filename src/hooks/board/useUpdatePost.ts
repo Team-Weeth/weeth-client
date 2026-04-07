@@ -5,6 +5,7 @@ import { updatePost } from '@/lib/actions/board';
 import { useClubId } from '@/stores/useClubStore';
 import { usePostStore } from '@/stores/usePostStore';
 import { toast } from '@/stores/useToastStore';
+import { validatePost } from './validatePost';
 
 /**
  * 게시글 수정 Server Action 호출 훅
@@ -22,30 +23,11 @@ export function useUpdatePost() {
   const submit = async (postId: number) => {
     const { title, content, files, getPayload, reset } = usePostStore.getState();
 
-    if (!clubId) {
-      toast({ title: '클럽 정보를 불러올 수 없습니다.', variant: 'error' });
-      return;
-    }
-
-    if (!title.trim()) {
-      toast({ title: '제목을 입력해주세요.', variant: 'error' });
-      return;
-    }
-
-    if (!content.trim()) {
-      toast({ title: '내용을 입력해주세요.', variant: 'error' });
-      return;
-    }
-
-    const uploading = files.some((f) => !f.uploaded && f.file);
-    if (uploading) {
-      toast({ title: '파일 업로드가 진행 중입니다.', variant: 'error' });
-      return;
-    }
+    if (!validatePost({ clubId, title, content, files })) return;
 
     setIsPending(true);
     try {
-      await updatePost(clubId, postId, getPayload(true));
+      await updatePost(clubId!, postId, getPayload(true));
       await queryClient.invalidateQueries({ queryKey: ['posts'] });
       toast({ title: '게시글이 수정되었습니다.', variant: 'success' });
       reset();
