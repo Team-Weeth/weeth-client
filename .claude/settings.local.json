@@ -16,7 +16,8 @@
       "Bash(ls -la \"D:\\\\project\\\\weeth-client\\\\src\\\\app\\\\\\(private\\)\\\\\\(main\\)\\\\mypage\\\\edit\")",
       "Bash(find D:projectweeth-clientsrccomponentsui -type f \\\\\\(-name *.tsx -o -name *.ts \\\\\\))",
       "Bash(find D:/project/weeth-client/src/constants -name *.ts)",
-      "Bash(grep -r \"POSTHOG\\\\|PostHog\" D:projectweeth-client/.env*)"
+      "Bash(grep -r \"POSTHOG\\\\|PostHog\" D:projectweeth-client/.env*)",
+      "Bash(find D:/project/weeth-client -type f -name *.css -o -name tailwind.config.* -o -name global.css)"
     ]
   }
 }

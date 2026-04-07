@@ -1,136 +1,173 @@
 'use client';
 
 import Link from 'next/link';
-import type { StaticImageData } from 'next/image';
 import { usePathname } from 'next/navigation';
-
-import logoIcon from '@/assets/icons/logo/logo_initial_Origin.svg';
-import userIcon from '@/assets/icons/admin/ic_admin_user.svg';
-import checkIcon from '@/assets/icons/admin/ic_admin_attendance.svg';
-//import penaltyIcon from '@/assets/icons/admin/ic_admin_penalty.svg';
-// import dueIcon from '@/assets/icons/admin/ic_admin_due.svg';
-import arrowIcon from '@/assets/icons/admin/ic_admin_service_transfer.svg';
-import manualIcon from '@/assets/icons/admin/ic_admin_manual.svg';
+import {
+  Calendar,
+  CheckCircle,
+  CircleUserRound,
+  ExternalLink,
+  FileText,
+  Info,
+  MessageSquare,
+  Users,
+} from 'lucide-react';
 
 import { cn } from '@/lib/cn';
+import { ThemeModeSelector } from '@/components/admin/layout/ThemeModeSelector';
 
-const mainNavItems = [
-  { id: 'member', icon: userIcon, label: '멤버 관리', path: '/admin/member' },
-  { id: 'attendance', icon: checkIcon, label: '출석 관리', path: '/admin/attendance' },
-  // { id: 'penalty', icon: penaltyIcon, label: '페널티 관리', path: '/admin/penalty' },
-  // { id: 'dues', icon: dueIcon, label: '회비 관리', path: '/admin/dues' },
+const managementNavItems = [
+  { id: 'member', icon: Users, label: '멤버 관리', path: '/admin/member' },
+  { id: 'schedule', icon: Calendar, label: '일정 관리', path: '/admin/schedule' },
+  { id: 'attendance', icon: CheckCircle, label: '출석 관리', path: '/admin/attendance' },
+  { id: 'board', icon: MessageSquare, label: '게시판 관리', path: '/admin/board' },
+];
+
+const infoNavItems = [
+  { id: 'club-info', icon: Info, label: '동아리 정보', path: '/admin/club-info' },
 ];
 
 const moveNavItems = [
-  { id: 'service', icon: arrowIcon, label: '서비스로 이동', path: 'https://weeth.kr' },
+  { id: 'service', icon: ExternalLink, label: 'Weeth로 이동', path: 'https://weeth.kr' },
   {
     id: 'manual',
-    icon: manualIcon,
+    icon: FileText,
     label: '관리자 매뉴얼',
     path: 'https://weeth-develop-2.s3.ap-northeast-2.amazonaws.com/Weeth_%E1%84%80%E1%85%AA%E1%86%AB%E1%84%85%E1%85%B5%E1%84%8C%E1%85%A1_%E1%84%86%E1%85%A6%E1%84%82%E1%85%B2%E1%84%8B%E1%85%A5%E1%86%AF_v3.pdf',
   },
 ];
 
-function NavIcon({ src, isActive }: { src: StaticImageData | string; isActive: boolean }) {
-  const url = typeof src === 'string' ? src : (src as StaticImageData).src;
-  return (
-    <span
-      aria-hidden
-      className={cn('block h-6 w-6 shrink-0', isActive ? 'bg-button-primary' : 'bg-icon-disabled')}
-      style={{
-        maskImage: `url(${url})`,
-        WebkitMaskImage: `url(${url})`,
-        maskRepeat: 'no-repeat',
-        maskPosition: 'center',
-        maskSize: 'contain',
-      }}
-    />
-  );
-}
-
 const navItemClass =
   'typo-sub1 flex h-12 items-center gap-300 px-300 transition-colors text-text-alternative hover:bg-container-neutral-interaction';
 
-export function LNB() {
+interface NavSectionProps {
+  label?: string;
+  children: React.ReactNode;
+}
+
+function NavSection({ label, children }: NavSectionProps) {
+  return (
+    <div className="flex flex-col">
+      {label && (
+        <span className="typo-caption1 text-text-alternative px-400 pt-500 pb-300">{label}</span>
+      )}
+      {children}
+    </div>
+  );
+}
+
+interface InternalNavItemProps {
+  icon: React.ElementType;
+  label: string;
+  path: string;
+  isActive: boolean;
+}
+
+function InternalNavItem({ icon: Icon, label, path, isActive }: InternalNavItemProps) {
+  return (
+    <Link
+      href={path}
+      className={cn(navItemClass, isActive && 'bg-container-neutral-interaction text-text-strong')}
+    >
+      <Icon className={cn('h-6 w-6 shrink-0', isActive ? 'text-text-strong' : 'text-icon-alternative')} />
+      {label}
+    </Link>
+  );
+}
+
+interface ExternalNavItemProps {
+  icon: React.ElementType;
+  label: string;
+  path: string;
+  openInWindow?: boolean;
+}
+
+function ExternalNavItem({ icon: Icon, label, path, openInWindow }: ExternalNavItemProps) {
+  if (openInWindow) {
+    return (
+      <button
+        className={cn(navItemClass, 'w-full cursor-pointer')}
+        onClick={() => window.open(path, '_blank', 'noopener,noreferrer')}
+      >
+        <Icon className="text-icon-alternative h-6 w-6 shrink-0" />
+        {label}
+      </button>
+    );
+  }
+
+  return (
+    <Link href={path} className={navItemClass} target="_blank" rel="noopener noreferrer">
+      <Icon className="text-icon-alternative h-6 w-6 shrink-0" />
+      {label}
+    </Link>
+  );
+}
+
+function LNB() {
   const pathname = usePathname();
 
   return (
     <nav className="border-line bg-background flex h-full w-60 shrink-0 flex-col border-r">
-      {/* LNB 헤더 */}
-      <div className="flex items-center gap-300 px-300 pt-200">
-        <span
-          aria-label="Weeth"
-          className="bg-text-alternative block h-10 w-10 shrink-0"
-          style={{
-            maskImage: `url(${(logoIcon as StaticImageData).src})`,
-            WebkitMaskImage: `url(${(logoIcon as StaticImageData).src})`,
-            maskRepeat: 'no-repeat',
-            maskPosition: 'center',
-            maskSize: 'contain',
-          }}
-        />
-        <span className="typo-sub2 text-text-alternative">ADMIN</span>
+      {/* 헤더 */}
+      <div className="flex items-center gap-300 px-300 py-400">
+        <CircleUserRound className="text-icon-alternative h-10 w-10 shrink-0" />
+        <span className="typo-sub2 text-text-normal">Weeth admin</span>
+      </div>
+
+      {/* 동아리 정보 */}
+      <div className="flex flex-col gap-100 px-400 pb-400">
+        <span className="typo-caption2 text-text-alternative">가입대학교</span>
+        <span className="typo-sub2 text-text-strong">가천대 검도부</span>
       </div>
 
       {/* 관리 메뉴 */}
-      <div className="flex flex-col">
-        <span className="typo-caption1 text-text-alternative px-400 pt-500 pb-300">관리 메뉴</span>
-        {mainNavItems.map(({ id, icon, label, path }) => {
-          const isActive = pathname.startsWith(path);
-          return (
-            <Link
-              key={id}
-              href={path}
-              className={cn(
-                navItemClass,
-                isActive && 'bg-container-neutral-interaction text-text-strong',
-              )}
-            >
-              <NavIcon src={icon} isActive={isActive} />
-              {label}
-            </Link>
-          );
-        })}
+      <NavSection label="관리 메뉴">
+        {managementNavItems.map(({ id, icon, label, path }) => (
+          <InternalNavItem
+            key={id}
+            icon={icon}
+            label={label}
+            path={path}
+            isActive={pathname.startsWith(path)}
+          />
+        ))}
+      </NavSection>
 
-        {/* 이동 */}
-        <div>
-          <span className="typo-caption1 text-text-alternative block px-400 pt-500 pb-300">
-            이동
-          </span>
-          {moveNavItems.map(({ id, icon, label, path }) => {
-            const inner = (
-              <>
-                <NavIcon src={icon} isActive={false} />
-                {label}
-              </>
-            );
+      {/* 동아리 정보 메뉴 */}
+      <NavSection>
+        {infoNavItems.map(({ id, icon, label, path }) => (
+          <InternalNavItem
+            key={id}
+            icon={icon}
+            label={label}
+            path={path}
+            isActive={pathname.startsWith(path)}
+          />
+        ))}
+      </NavSection>
 
-            if (id === 'manual') {
-              return (
-                <button
-                  key={id}
-                  className={cn(navItemClass, 'w-full cursor-pointer')}
-                  onClick={() => window.open(path, '_blank', 'noopener,noreferrer')}
-                >
-                  {inner}
-                </button>
-              );
-            }
+      {/* 이동 */}
+      <NavSection label="이동">
+        {moveNavItems.map(({ id, icon, label, path }) => (
+          <ExternalNavItem
+            key={id}
+            icon={icon}
+            label={label}
+            path={path}
+            openInWindow={id === 'manual'}
+          />
+        ))}
+      </NavSection>
 
-            return (
-              <Link
-                key={id}
-                href={path}
-                className={navItemClass}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                {inner}
-              </Link>
-            );
-          })}
-        </div>
+      {/* 모드 */}
+      <div className="border-line mt-auto border-t">
+        <span className="typo-caption1 text-text-alternative block px-400 pt-400 pb-200">
+          모드
+        </span>
+        <ThemeModeSelector />
       </div>
     </nav>
   );
 }
+
+export { LNB };
