@@ -17,9 +17,6 @@ interface PostEditorShellProps {
   align?: 'start' | 'center';
 }
 
-/**
- * title 구독을 shell 밖으로 격리
- */
 function BoundTitleInput() {
   const title = usePostStore((s) => s.title);
   const setTitle = usePostStore((s) => s.setTitle);
@@ -28,18 +25,18 @@ function BoundTitleInput() {
 
 /**
  * 게시글 작성/수정 페이지 공통 레이아웃 Shell
- *
- * - 외곽 레이아웃 + TitleInput + Editor 렌더링을 담당
- * - 상단 영역(header)과 Editor 초기 콘텐츠는 주입
- * - Store 초기화는 사용하는 쪽에서 책임 (write: reset, edit: 기존 데이터 복원)
- * - 브라우저 뒤로가기 / 탭 닫기 시 navigation guard 제공
  */
 function PostEditorShell({ header, initialContent, align = 'start' }: PostEditorShellProps) {
   const title = usePostStore((s) => s.title);
   const content = usePostStore((s) => s.content);
   const files = usePostStore((s) => s.files);
+  const snapshot = usePostStore((s) => s._snapshot);
 
-  const hasChanges = title.length > 0 || content.length > 0 || files.length > 0;
+  const hasChanges = snapshot
+    ? title !== snapshot.title ||
+      content !== snapshot.content ||
+      files.map((f) => f.id).join(',') !== snapshot.fileIds.join(',')
+    : title.length > 0 || content.length > 0 || files.length > 0;
   const { open, onConfirm, onCancel } = useNavigationGuard({ enabled: hasChanges });
 
   return (
