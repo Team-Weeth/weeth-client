@@ -12,8 +12,13 @@ export interface UploadFileItem {
   fileSize: number;
   contentType: string;
   uploaded: boolean;
-  /** 서버에서 불러온 기존 파일인지 여부 (수정 시 재전송 방지) */
   isExisting?: boolean;
+}
+
+interface Snapshot {
+  title: string;
+  content: string;
+  fileIds: string[];
 }
 
 const initialState = {
@@ -27,6 +32,7 @@ const initialState = {
   content: '',
   files: [] as UploadFileItem[],
   status: 'DRAFT' as 'DRAFT' | 'PUBLISHED',
+  _snapshot: null as Snapshot | null,
 };
 
 export type PostState = typeof initialState;
@@ -84,15 +90,13 @@ export const usePostStore = create(
         set(initialState, false, 'reset');
       },
 
-      /**
-       * 기존 게시글 상세 데이터로 스토어를 초기화 (수정 페이지 진입 시 사용)
-       * - 내부적으로 reset을 수행한 뒤 PostDetail의 필드를 스토어 상태로 매핑
-       */
       initFromDetail: (post: PostDetail) => {
         const { files } = get();
         for (const f of files) {
           if (f.fileUrl.startsWith('blob:')) URL.revokeObjectURL(f.fileUrl);
         }
+
+        const fileIds = post.fileUrls.map((f) => String(f.fileId));
         set(
           {
             ...initialState,
@@ -109,6 +113,7 @@ export const usePostStore = create(
               uploaded: true,
               isExisting: true,
             })),
+            _snapshot: { title: post.title, content: post.content, fileIds },
           },
           false,
           'initFromDetail',
