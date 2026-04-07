@@ -38,25 +38,18 @@ function ActionMenu({
 }: ActionMenuProps) {
   return (
     <DropdownMenu modal>
-      {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions */}
-      <span
-        onClick={(e) => {
-          e.preventDefault();
-          e.stopPropagation();
-        }}
-      >
-        <DropdownMenuTrigger asChild>
-          <Button
-            type="button"
-            variant={triggerVariant}
-            size={triggerSize}
-            className={cn('h-600 w-600', triggerClassName, className)}
-            aria-label="더보기"
-          >
-            <Icon src={MoreVerticalIcon} size={16} className="text-icon-normal" />
-          </Button>
-        </DropdownMenuTrigger>
-      </span>
+      <DropdownMenuTrigger asChild>
+        <Button
+          type="button"
+          variant={triggerVariant}
+          size={triggerSize}
+          className={cn('h-600 w-600', triggerClassName, className)}
+          aria-label="더보기"
+          onClickCapture={(e) => e.stopPropagation()}
+        >
+          <Icon src={MoreVerticalIcon} size={16} className="text-icon-normal" />
+        </Button>
+      </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-[144px]">
         <DropdownMenuItem onSelect={onEdit}>수정</DropdownMenuItem>
         <DropdownMenuSeparator />
