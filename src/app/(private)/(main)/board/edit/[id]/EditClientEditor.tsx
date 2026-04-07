@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef } from 'react';
+import { useEffect, useRef } from 'react';
 
 import { CategorySelector, PostEditorShell } from '@/components/board';
 import { useBoardList } from '@/hooks';
@@ -14,10 +14,12 @@ interface EditClientEditorProps {
 
 function EditClientEditor({ post }: EditClientEditorProps) {
   const initializedRef = useRef(false);
-  if (!initializedRef.current) {
+
+  useEffect(() => {
+    if (initializedRef.current) return;
     initializedRef.current = true;
     usePostStore.getState().initFromDetail(post);
-  }
+  }, [post]);
 
   const { data: boards } = useBoardList();
   const items = boards?.map(toBoardNavItem) ?? [];
