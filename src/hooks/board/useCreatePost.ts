@@ -7,9 +7,6 @@ import { usePostStore } from '@/stores/usePostStore';
 import { toast } from '@/stores/useToastStore';
 import { validatePost } from './validatePost';
 
-/**
- * 게시글 작성 Server Action 호출 훅
- */
 export function useCreatePost() {
   const router = useRouter();
   const clubId = useClubId();

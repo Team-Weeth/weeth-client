@@ -24,10 +24,6 @@ export function useBoardList() {
   });
 }
 
-/**
- * activeBoardId가 null이면 전체 게시글, 아니면 게시판별 게시글 조회.
- * useInfiniteQuery로 무한스크롤 지원.
- */
 export function useBoardPosts(activeBoardId: number | null) {
   const clubId = useClubId();
   const isAll = activeBoardId === null;
