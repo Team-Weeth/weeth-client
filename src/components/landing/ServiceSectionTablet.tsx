@@ -108,7 +108,7 @@ function ServiceSectionTablet({
     >
       <section
         className={cn(
-          'sticky top-[64px] flex w-full flex-col',
+          'sticky top-[64px] mt-[8px] flex w-full flex-col',
           variant === 'user' ? 'bg-[#F3F5F7]' : 'bg-[#E6EAED]',
         )}
       >
