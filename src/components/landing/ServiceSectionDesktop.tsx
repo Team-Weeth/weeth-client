@@ -36,6 +36,8 @@ function ServiceSectionDesktop({
   const [videoReady, setVideoReady] = useState<Set<number>>(new Set());
   const videoRefs = useRef<(HTMLVideoElement | null)[]>([]);
   const sectionActiveRef = useRef(false);
+  const contentTriggerRef = useRef<ScrollTrigger | null>(null);
+  const syncActiveVideoRef = useRef<(index: number, reset?: boolean) => void>(() => {});
 
   const totalVirtualScroll = STEP_SCROLL * (features.length - 1);
 
@@ -67,6 +69,7 @@ function ServiceSectionDesktop({
           }
         });
       };
+      syncActiveVideoRef.current = syncActiveVideo;
 
       const contentTrigger = ScrollTrigger.create({
         trigger: container,
@@ -91,6 +94,7 @@ function ServiceSectionDesktop({
           syncActiveVideo(index);
         },
       });
+      contentTriggerRef.current = contentTrigger;
 
       ScrollTrigger.create({
         trigger: container,
@@ -118,10 +122,9 @@ function ServiceSectionDesktop({
   );
 
   const handleChipClick = (i: number) => {
-    const container = containerRef.current;
-    if (!container) return;
-    const trigger = ScrollTrigger.getAll().find((t) => t.trigger === container);
+    const trigger = contentTriggerRef.current;
     if (!trigger) return;
+    syncActiveVideoRef.current(i, true);
     const progress = features.length > 1 ? i / (features.length - 1) : 0;
     const targetScroll = trigger.start + (trigger.end - trigger.start) * progress;
     window.scrollTo({ top: targetScroll, behavior: 'instant' });
