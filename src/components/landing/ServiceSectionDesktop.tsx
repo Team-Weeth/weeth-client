@@ -8,7 +8,6 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { AnimatePresence, motion } from 'framer-motion';
 import type { Feature } from './ServiceSection';
-import { LandingUserFaceIcon, LandingAdminFaceIcon } from '@/assets/icons/landing';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -29,8 +28,6 @@ function ServiceSectionDesktop({
   className,
   variant,
   title,
-  subtitle,
-  serviceLabel,
   features,
 }: ServiceSectionDesktopProps) {
   const [activeIndex, setActiveIndex] = useState(0);
@@ -100,11 +97,11 @@ function ServiceSectionDesktop({
     >
       <section
         className={cn(
-          'sticky top-[64px] flex h-[calc(100vh-64px)] w-full flex-col overflow-hidden pt-[clamp(40px,5vh,86px)]',
+          'sticky top-[64px] flex w-full flex-col pt-[clamp(40px,5vh,86px)]',
           variant === 'user' ? 'bg-[#F3F5F7]' : 'bg-[#FFFFFF]',
         )}
       >
-        <div className="mx-auto flex min-h-0 w-full max-w-[1123px] flex-1 flex-col gap-[80px]">
+        <div className="mx-auto flex w-full max-w-[1123px] flex-col gap-[clamp(40px,6vh,80px)]">
           {/* <div className="flex shrink-0 items-center gap-200">
             <span className="typo-sub2 flex items-center gap-[13px] text-[#1E2021]">
               <Image
@@ -166,7 +163,7 @@ function ServiceSectionDesktop({
                   active.video
                     ? ''
                     : cn(
-                        'h-[clamp(300px,45vh,510px)] overflow-hidden rounded-[30px] px-[93px] pt-[91px]',
+                        'items-start overflow-hidden rounded-[30px] pt-[91px]',
                         active.bgColor,
                       ),
                 )}
@@ -183,7 +180,7 @@ function ServiceSectionDesktop({
                     autoPlay
                     playsInline
                     preload="auto"
-                    className="h-auto w-full rounded-[30px]"
+                    className="w-full rounded-[30px]"
                   />
                 ) : active.image ? (
                   <Image src={active.image} alt={active.chipLabel} width={945} height={523} />
