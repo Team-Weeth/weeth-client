@@ -47,17 +47,20 @@ function ServiceSectionDesktop({
         end: `+=${STEP_SCROLL * (features.length - 1)}`,
         scrub: 0.6,
         snap: {
-          snapTo: (value, self) => {
-            const step = 1 / (features.length - 1);
-            const currentSnap = Math.round((self?.progress ?? 0) / step) * step;
-            if (Math.abs(value - currentSnap) < step * 0.01) return currentSnap;
-            const direction = value > currentSnap ? 1 : -1;
-            return Math.max(0, Math.min(1, currentSnap + direction * step));
-          },
-          duration: { min: 0.4, max: 0.8 },
+          snapTo: 1 / (features.length - 1),
+          duration: { min: 0.3, max: 0.6 },
           ease: 'power2.out',
           delay: 0,
         },
+        // snap: {
+        //   snapTo: (value) => {
+        //     const step = 1 / (features.length - 1);
+        //     return Math.round(value / step) * step;
+        //   },
+        //   duration: { min: 0.4, max: 0.8 },
+        //   ease: 'power2.out',
+        //   delay: 0,
+        // },
         onUpdate: (self) => {
           const index = Math.round(self.progress * (features.length - 1));
           setActiveIndex(index);
