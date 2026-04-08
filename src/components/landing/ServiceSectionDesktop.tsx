@@ -52,15 +52,6 @@ function ServiceSectionDesktop({
           ease: 'power2.out',
           delay: 0,
         },
-        // snap: {
-        //   snapTo: (value) => {
-        //     const step = 1 / (features.length - 1);
-        //     return Math.round(value / step) * step;
-        //   },
-        //   duration: { min: 0.4, max: 0.8 },
-        //   ease: 'power2.out',
-        //   delay: 0,
-        // },
         onUpdate: (self) => {
           const index = Math.round(self.progress * (features.length - 1));
           setActiveIndex(index);
@@ -175,6 +166,7 @@ function ServiceSectionDesktop({
                       if (el) el.play().catch(() => {});
                     }}
                     src={active.video}
+                    poster={active.poster?.src}
                     loop
                     muted
                     autoPlay

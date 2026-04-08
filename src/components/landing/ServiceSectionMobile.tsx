@@ -182,6 +182,7 @@ function ServiceSectionMobile({
                     if (el) el.play().catch(() => {});
                   }}
                   src={active.video}
+                  poster={active.poster?.src}
                   loop
                   muted
                   autoPlay

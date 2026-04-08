@@ -156,7 +156,6 @@ function ServiceSectionTablet({
             </div>
           </div>
 
-          {/* Content */}
           <AnimatePresence mode="wait">
             <motion.div
               key={activeIndex}
@@ -184,6 +183,7 @@ function ServiceSectionTablet({
                       if (el) el.play().catch(() => {});
                     }}
                     src={active.video}
+                    poster={active.poster?.src}
                     loop
                     muted
                     autoPlay

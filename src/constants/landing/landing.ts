@@ -4,6 +4,12 @@ import {
   YogaImage,
   RunningImage,
   StudyImage,
+  PosterUserHomeImage,
+  PosterUserBoardImage,
+  PosterAdminMemberImage,
+  PosterAdminScheduleImage,
+  PosterAdminAttendanceImage,
+  PosterAdminBoardImage,
 } from '@/assets/icons/landing';
 import type { Feature } from '@/components/landing';
 
@@ -14,6 +20,7 @@ export const USER_FEATURES: Feature[] = [
     description: '정기모임을 놓치지 않고 출석하며 동아리 활동을 이어나가세요.',
     bgColor: 'bg-[#00877A]',
     video: '/videos/landing/user_home.mp4',
+    poster: PosterUserHomeImage,
     highlightKeyword: '출석',
   },
   {
@@ -22,6 +29,7 @@ export const USER_FEATURES: Feature[] = [
     description: '게시판에서 우리 동아리의 활동을 확인하고 나의 활동을 공유해보세요.',
     bgColor: 'bg-[#00877A]',
     video: '/videos/landing/user_board.mp4',
+    poster: PosterUserBoardImage,
     highlightKeyword: '게시판',
   },
 ];
@@ -33,6 +41,7 @@ export const ADMIN_FEATURES: Feature[] = [
     description: '기수별로 멤버 가입을 관리해보세요.',
     bgColor: 'bg-[#00877A]',
     video: '/videos/landing/admin_member.mp4',
+    poster: PosterAdminMemberImage,
     highlightKeyword: '멤버',
   },
   {
@@ -41,6 +50,7 @@ export const ADMIN_FEATURES: Feature[] = [
     description: '정기모임 일정을 한번에 저장하고, 부원과 공유해보세요.',
     bgColor: 'bg-[#00877A]',
     video: '/videos/landing/admin_schedule.mp4',
+    poster: PosterAdminScheduleImage,
     highlightKeyword: '일정',
   },
   {
@@ -49,6 +59,7 @@ export const ADMIN_FEATURES: Feature[] = [
     description: '출석으로 운영의 효율을 높이세요.',
     bgColor: 'bg-[#00877A]',
     video: '/videos/landing/admin_attendance.mp4',
+    poster: PosterAdminAttendanceImage,
     highlightKeyword: '출석',
   },
   {
@@ -57,6 +68,7 @@ export const ADMIN_FEATURES: Feature[] = [
     description: '게시판을 생성하고 관리해보세요.',
     bgColor: 'bg-[#00877A]',
     video: '/videos/landing/admin_board.mp4',
+    poster: PosterAdminBoardImage,
     highlightKeyword: '게시판',
   },
 ];
