@@ -119,14 +119,14 @@ function LNB() {
       </div>
 
       {/* 동아리 정보 */}
-      <div className="flex items-center gap-300 px-400 pb-400">
-        <Avatar size={24} type="square">
+      <div className="bg-background-2 flex flex-col items-start gap-300 px-400 py-400">
+        <Avatar size={40} type="square" color="primary">
           {club?.profileImageUrl && <AvatarImage src={club.profileImageUrl} alt={club.name} />}
           <AvatarFallback>{club?.name?.charAt(0)}</AvatarFallback>
         </Avatar>
         <div className="flex flex-col gap-100">
           <span className="typo-caption2 text-text-alternative">{club?.schoolName}</span>
-          <span className="typo-sub2 text-text-strong">{club?.name}</span>
+          <span className="typo-sub1 text-text-strong">{club?.name}</span>
         </div>
       </div>
 
