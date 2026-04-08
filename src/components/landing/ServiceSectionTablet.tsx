@@ -108,13 +108,13 @@ function ServiceSectionTablet({
     >
       <section
         className={cn(
-          'sticky top-[64px] mt-[8px] flex w-full flex-col',
+          'sticky top-[64px] flex w-full flex-col',
           variant === 'user' ? 'bg-[#F3F5F7]' : 'bg-[#E6EAED]',
         )}
       >
         <div className="mx-auto flex w-full max-w-[1300px] flex-col px-600">
           <div className="flex shrink-0 items-center gap-200">
-            <span className="typo-sub2 flex items-center gap-[13px] text-[#1E2021]">
+            <span className="typo-sub2 mt-[16px] flex items-center gap-[13px] text-[#1E2021]">
               <Image
                 src={variant === 'user' ? LandingUserFaceIcon : LandingAdminFaceIcon}
                 alt="face-icon"
