@@ -162,10 +162,7 @@ function ServiceSectionDesktop({
                   'w-full',
                   active.video
                     ? ''
-                    : cn(
-                        'items-start overflow-hidden rounded-[30px] pt-[91px]',
-                        active.bgColor,
-                      ),
+                    : cn('items-start overflow-hidden rounded-[30px] pt-[91px]', active.bgColor),
                 )}
               >
                 {active.video ? (
