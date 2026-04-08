@@ -9,6 +9,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { AnimatePresence, motion } from 'framer-motion';
 import type { Feature } from './ServiceSection';
 import { LandingUserFaceIcon, LandingAdminFaceIcon } from '@/assets/icons/landing';
+import { Skeleton } from '@/components/ui';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -49,14 +50,11 @@ function ServiceSectionTablet({
   const [videoReady, setVideoReady] = useState<Set<number>>(new Set());
   const containerRef = useRef<HTMLDivElement>(null);
   const videoRefs = useRef<(HTMLVideoElement | null)[]>([]);
-  const lastSnappedRef = useRef(0);
 
   useGSAP(
     () => {
       const container = containerRef.current;
       if (!container || features.length <= 1) return;
-
-      const step = 1 / (features.length - 1);
 
       ScrollTrigger.create({
         trigger: container,
@@ -65,12 +63,8 @@ function ServiceSectionTablet({
         scrub: 0.6,
         snap: {
           snapTo: (value) => {
-            const last = lastSnappedRef.current;
-            const direction = value > last ? 1 : -1;
-            const next = Math.max(0, Math.min(1, last + direction * step));
-            if (Math.abs(value - last) < step * 0.05) return last;
-            lastSnappedRef.current = next;
-            return next;
+            const step = 1 / (features.length - 1);
+            return Math.round(value / step) * step;
           },
           duration: { min: 0.4, max: 0.8 },
           ease: 'power2.out',
@@ -189,9 +183,9 @@ function ServiceSectionTablet({
               >
                 {active.video ? (
                   <div className="relative w-full">
-                    {!videoReady.has(activeIndex) && (
-                      <div className="absolute inset-0 animate-pulse rounded-[30px] bg-[#E0E0E0]" />
-                    )}
+                    {!videoReady.has(activeIndex) ? (
+                      <Skeleton className="aspect-video w-full animate-pulse rounded-[30px] bg-[#E6EAED]" />
+                    ) : null}
                     <video
                       ref={(el) => {
                         videoRefs.current[activeIndex] = el;
@@ -204,7 +198,10 @@ function ServiceSectionTablet({
                       autoPlay
                       playsInline
                       preload="auto"
-                      className="h-auto w-full rounded-[30px]"
+                      className={cn(
+                        'h-auto w-full rounded-[30px]',
+                        !videoReady.has(activeIndex) && 'invisible absolute',
+                      )}
                     />
                   </div>
                 ) : active.image ? (

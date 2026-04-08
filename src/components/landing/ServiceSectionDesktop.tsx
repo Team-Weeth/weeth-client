@@ -8,6 +8,7 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { AnimatePresence, motion } from 'framer-motion';
 import type { Feature } from './ServiceSection';
+import { Skeleton } from '../ui';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -31,10 +32,9 @@ function ServiceSectionDesktop({
   features,
 }: ServiceSectionDesktopProps) {
   const [activeIndex, setActiveIndex] = useState(0);
-  const [videoReady, setVideoReady] = useState<Set<number>>(new Set());
   const containerRef = useRef<HTMLDivElement>(null);
+  const [videoReady, setVideoReady] = useState<Set<number>>(new Set());
   const videoRefs = useRef<(HTMLVideoElement | null)[]>([]);
-  const lastSnappedRef = useRef(0);
 
   const totalVirtualScroll = STEP_SCROLL * (features.length - 1);
 
@@ -43,8 +43,6 @@ function ServiceSectionDesktop({
       const container = containerRef.current;
       if (!container) return;
 
-      const step = 1 / (features.length - 1);
-
       ScrollTrigger.create({
         trigger: container,
         start: `top+=${START_DELAY} 64px`,
@@ -52,12 +50,8 @@ function ServiceSectionDesktop({
         scrub: 0.6,
         snap: {
           snapTo: (value) => {
-            const last = lastSnappedRef.current;
-            const direction = value > last ? 1 : -1;
-            const next = Math.max(0, Math.min(1, last + direction * step));
-            if (Math.abs(value - last) < step * 0.05) return last;
-            lastSnappedRef.current = next;
-            return next;
+            const step = 1 / (features.length - 1);
+            return Math.round(value / step) * step;
           },
           duration: { min: 0.4, max: 0.8 },
           ease: 'power2.out',
@@ -171,10 +165,10 @@ function ServiceSectionDesktop({
                 )}
               >
                 {active.video ? (
-                  <div className="relative w-full">
-                    {!videoReady.has(activeIndex) && (
-                      <div className="absolute inset-0 animate-pulse rounded-[30px] bg-[#E0E0E0]" />
-                    )}
+                  <div className="w-full">
+                    {!videoReady.has(activeIndex) ? (
+                      <Skeleton className="aspect-video w-full animate-pulse rounded-[30px] bg-[#E6EAED]" />
+                    ) : null}
                     <video
                       ref={(el) => {
                         videoRefs.current[activeIndex] = el;
@@ -187,7 +181,10 @@ function ServiceSectionDesktop({
                       autoPlay
                       playsInline
                       preload="auto"
-                      className="w-full rounded-[30px]"
+                      className={cn(
+                        'w-full rounded-[30px]',
+                        !videoReady.has(activeIndex) && 'invisible absolute',
+                      )}
                     />
                   </div>
                 ) : active.image ? (
