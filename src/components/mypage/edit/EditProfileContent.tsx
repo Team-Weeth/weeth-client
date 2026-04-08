@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useForm, useWatch } from 'react-hook-form';
@@ -39,39 +39,21 @@ function EditProfileContent({ className, ...props }: EditProfileContentProps) {
     register,
     handleSubmit,
     setValue,
-    reset,
     control,
     formState: { errors },
   } = useForm<EditProfileFormData>({
     resolver: zodResolver(editProfileSchema),
     mode: 'onBlur',
-    defaultValues: {
-      name: '',
-      bio: '',
-      tel: '',
-      email: '',
-      school: '',
-      department: '',
-      studentId: '',
+    values: {
+      name: me.name,
+      bio: me.bio ?? '',
+      tel: me.tel ? formatPhone(me.tel) : '',
+      email: me.email,
+      school: me.school,
+      department: me.department,
+      studentId: me.studentId,
     },
   });
-
-  useEffect(() => {
-    if (me) {
-      reset(
-        {
-          name: me.name,
-          bio: me.bio ?? '',
-          tel: me.tel ? formatPhone(me.tel) : '',
-          email: me.email,
-          school: me.school,
-          department: me.department,
-          studentId: me.studentId,
-        },
-        { keepDirtyValues: true },
-      );
-    }
-  }, [me, reset]);
 
   const name = useWatch({ control, name: 'name' });
 
