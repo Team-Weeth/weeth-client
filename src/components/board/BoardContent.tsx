@@ -69,7 +69,12 @@ function BoardContent() {
                   hasAttachment={post.fileUrls.length > 0}
                 />
                 {currentUserId === post.author.id && (
-                  <div onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}>
+                  <div
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                    }}
+                  >
                     <PostActionMenu postId={post.id} />
                   </div>
                 )}
