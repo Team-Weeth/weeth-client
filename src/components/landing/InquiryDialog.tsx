@@ -62,8 +62,8 @@ function InquiryDialog({ children }: InquiryDialogProps) {
       <DialogContent
         showCloseButton={false}
         className="bg-background flex w-[640px] flex-col"
-        onPointerDownOutside={(e) => e.preventDefault()}
-        onInteractOutside={(e) => e.preventDefault()}
+        onPointerDownOutside={isSubmitting ? (e) => e.preventDefault() : undefined}
+        onInteractOutside={isSubmitting ? (e) => e.preventDefault() : undefined}
       >
         <DialogHeader
           icon={
