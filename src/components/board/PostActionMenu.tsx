@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { ActionMenu, type ActionMenuProps } from './ActionMenu';
 import { PostDeleteDialog } from './PostDeleteDialog';
 
@@ -9,11 +10,13 @@ interface PostActionMenuProps extends Omit<ActionMenuProps, 'onDeleteSelect'> {
   onDeleted?: () => void;
 }
 
-/**
- * 게시글 전용 수정/삭제 메뉴
- */
 function PostActionMenu({ postId, onDeleted, ...rest }: PostActionMenuProps) {
+  const router = useRouter();
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+
+  const handleEdit = () => {
+    router.push(`/board/edit/${postId}`);
+  };
 
   const handleDeleteSelect = (event: Event) => {
     event.preventDefault();
@@ -22,7 +25,7 @@ function PostActionMenu({ postId, onDeleted, ...rest }: PostActionMenuProps) {
 
   return (
     <>
-      <ActionMenu {...rest} onDeleteSelect={handleDeleteSelect} />
+      <ActionMenu {...rest} onEdit={handleEdit} onDeleteSelect={handleDeleteSelect} />
 
       {deleteDialogOpen ? (
         <PostDeleteDialog

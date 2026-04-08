@@ -68,7 +68,11 @@ function BoardContent() {
                   date={formatShortDateTime(post.time)}
                   hasAttachment={post.fileUrls.length > 0}
                 />
-                {currentUserId === post.author.id && <PostActionMenu postId={post.id} />}
+                {currentUserId === post.author.id && (
+                  <div onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}>
+                    <PostActionMenu postId={post.id} />
+                  </div>
+                )}
               </PostCard.Header>
               <PostCard.ListContent title={post.title} content={post.content} isNew={post.isNew} />
               <div
