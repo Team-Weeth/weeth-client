@@ -4,18 +4,18 @@ import { ACCESS_TOKEN_KEY } from '@/lib/apis/cookies';
 const PUBLIC_PATHS = ['/', '/login', '/terms', '/landing'];
 
 // TODO: 런칭 후 PRE_LAUNCH 플래그 및 관련 분기 제거
-// const PRE_LAUNCH = true;
+const PRE_LAUNCH = true;
 
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // // 런칭 전: /landing 외 모든 경로 차단
-  // if (PRE_LAUNCH && pathname !== '/landing') {
-  //   const url = request.nextUrl.clone();
-  //   url.pathname = '/landing';
-  //   url.searchParams.set('blocked', 'true');
-  //   return NextResponse.redirect(url);
-  // }
+  // 런칭 전: /landing 외 모든 경로 차단
+  if (PRE_LAUNCH && pathname !== '/landing') {
+    const url = request.nextUrl.clone();
+    url.pathname = '/landing';
+    url.searchParams.set('blocked', 'true');
+    return NextResponse.redirect(url);
+  }
 
   // /clubId=XXX 패턴 → /club/XXX로 리다이렉트 (초대 링크)
   const clubIdMatch = pathname.match(/^\/clubId=([^?/]+)/);
