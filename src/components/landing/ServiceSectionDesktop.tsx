@@ -35,8 +35,16 @@ function ServiceSectionDesktop({
   const containerRef = useRef<HTMLDivElement>(null);
   const [videoReady, setVideoReady] = useState<Set<number>>(new Set());
   const videoRefs = useRef<(HTMLVideoElement | null)[]>([]);
+  const sectionActiveRef = useRef(false);
 
   const totalVirtualScroll = STEP_SCROLL * (features.length - 1);
+
+  const markVideoReady = (index: number) => {
+    setVideoReady((prev) => {
+      if (prev.has(index)) return prev;
+      return new Set(prev).add(index);
+    });
+  };
 
   useGSAP(
     () => {
@@ -88,12 +96,22 @@ function ServiceSectionDesktop({
         trigger: container,
         start: 'top 64px',
         end: 'bottom 64px',
-        onEnter: () =>
-          syncActiveVideo(Math.round(contentTrigger.progress * (features.length - 1)), true),
-        onEnterBack: () =>
-          syncActiveVideo(Math.round(contentTrigger.progress * (features.length - 1)), true),
-        onLeave: pauseAllVideos,
-        onLeaveBack: pauseAllVideos,
+        onEnter: () => {
+          sectionActiveRef.current = true;
+          syncActiveVideo(Math.round(contentTrigger.progress * (features.length - 1)), true);
+        },
+        onEnterBack: () => {
+          sectionActiveRef.current = true;
+          syncActiveVideo(Math.round(contentTrigger.progress * (features.length - 1)), true);
+        },
+        onLeave: () => {
+          sectionActiveRef.current = false;
+          pauseAllVideos();
+        },
+        onLeaveBack: () => {
+          sectionActiveRef.current = false;
+          pauseAllVideos();
+        },
       });
     },
     { dependencies: [], revertOnUpdate: true },
@@ -195,9 +213,13 @@ function ServiceSectionDesktop({
                     <video
                       ref={(el) => {
                         videoRefs.current[activeIndex] = el;
+                        if (!el) return;
+                        if (el.readyState >= 2) markVideoReady(activeIndex);
+                        if (sectionActiveRef.current) el.play().catch(() => {});
                       }}
                       src={active.video}
-                      onLoadedData={() => setVideoReady((prev) => new Set(prev).add(activeIndex))}
+                      onLoadedData={() => markVideoReady(activeIndex)}
+                      onCanPlay={() => markVideoReady(activeIndex)}
                       loop
                       muted
                       playsInline
