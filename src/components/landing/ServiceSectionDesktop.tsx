@@ -96,12 +96,12 @@ function ServiceSectionDesktop({
     <div
       ref={containerRef}
       style={{ height: `calc(100vh + ${totalVirtualScroll + START_DELAY + END_DELAY}px)` }}
-      className={cn(variant === 'user' ? 'bg-[#F3F5F7]' : 'bg-[#E6EAED]', className)}
+      className={cn(variant === 'user' ? 'bg-[#F3F5F7]' : 'bg-[#FFFFFF]', className)}
     >
       <section
         className={cn(
           'sticky top-[64px] flex h-[calc(100vh-64px)] w-full flex-col overflow-hidden pt-[clamp(40px,5vh,86px)]',
-          variant === 'user' ? 'bg-[#F3F5F7]' : 'bg-[#E6EAED]',
+          variant === 'user' ? 'bg-[#F3F5F7]' : 'bg-[#FFFFFF]',
         )}
       >
         <div className="mx-auto flex min-h-0 w-full max-w-[1123px] flex-1 flex-col gap-[80px]">
