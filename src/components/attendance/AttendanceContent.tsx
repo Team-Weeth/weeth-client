@@ -10,17 +10,18 @@ import { ATTENDANCE_ERROR_MESSAGE } from '@/constants/attendance';
 import { attendanceApi } from '@/lib/apis/attendance';
 import { formatAttendanceDescription } from '@/lib/formatTime';
 import { toastError } from '@/stores/useToastStore';
-import { useUserName } from '@/stores/useUserStore';
+import { useUserName, useUserRole } from '@/stores/useUserStore';
 import type { AttendanceData } from '@/types/attendance';
 
 interface AttendanceContentProps {
   attendance?: AttendanceData;
   errorMessage?: string;
-  isAdmin?: boolean;
 }
 
-function AttendanceContent({ attendance, errorMessage, isAdmin = false }: AttendanceContentProps) {
+function AttendanceContent({ attendance, errorMessage }: AttendanceContentProps) {
   const name = useUserName() ?? '';
+  const role = useUserRole();
+  const isAdmin = role === 'LEAD' || role === 'ADMIN';
   const router = useRouter();
   const [isChecked, setIsChecked] = useState(false);
 

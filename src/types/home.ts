@@ -1,6 +1,6 @@
 import type { ApiResponse } from '@/types/common';
 
-type Role = 'LEAD' | 'USER';
+type Role = 'LEAD' | 'ADMIN' | 'USER';
 type NullableImage = string | null;
 
 interface Identifiable<T = number> {

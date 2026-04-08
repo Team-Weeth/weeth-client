@@ -6,7 +6,7 @@ const initialState = {
   id: null as number | null,
   name: null as string | null,
   profileImageUrl: null as string | null,
-  role: null as 'LEAD' | 'USER' | null,
+  role: null as 'LEAD' | 'ADMIN' | 'USER' | null,
 };
 
 export type UserState = typeof initialState;
@@ -18,7 +18,7 @@ export const useUserStore = create(
         id: number;
         name: string;
         profileImageUrl: string | null;
-        role: 'LEAD' | 'USER';
+        role: 'LEAD' | 'ADMIN' | 'USER';
       }) => set(user, false, 'setUser'),
       reset: () => set(initialState, false, 'reset'),
     })),
