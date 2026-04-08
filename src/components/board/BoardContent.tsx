@@ -47,22 +47,31 @@ function BoardContent() {
 
   return (
     <main className="flex min-w-0 flex-1 flex-col gap-400">
-      {(posts ?? []).map((post) => (
-        <Link key={post.id} href={`/board/${post.id}`}>
-          <PostCard.Root>
-            <PostCard.Header>
-              <PostCard.Author
-                author={post.author}
-                date={formatShortDateTime(post.time)}
-                hasAttachment={post.hasFile}
-              />
-              {currentUserId === post.author.id && <PostActionMenu postId={post.id} />}
-            </PostCard.Header>
-            <PostCard.ListContent title={post.title} content={post.content} isNew={post.isNew} />
-            <PostCard.Actions likeCount={post.like.likeCount} commentCount={post.commentCount} />
-          </PostCard.Root>
-        </Link>
-      ))}
+      {(posts ?? []).map((post) => {
+        const imageFiles = post.fileUrls
+          .filter((f) => f.contentType.startsWith('image/'))
+          .map((f) => ({ id: f.fileId, fileName: f.fileName, fileUrl: f.fileUrl, uploaded: true }));
+
+        return (
+          <Link key={post.id} href={`/board/${post.id}`}>
+            <PostCard.Root>
+              <PostCard.Header>
+                <PostCard.Author
+                  author={post.author}
+                  date={formatShortDateTime(post.time)}
+                  hasAttachment={post.fileUrls.length > 0}
+                />
+                {currentUserId === post.author.id && <PostActionMenu postId={post.id} />}
+              </PostCard.Header>
+              <PostCard.ListContent title={post.title} content={post.content} isNew={post.isNew} />
+              <div onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}>
+                <PostCard.Images files={imageFiles} />
+              </div>
+              <PostCard.Actions likeCount={post.like.likeCount} commentCount={post.commentCount} />
+            </PostCard.Root>
+          </Link>
+        );
+      })}
       {isFetchingNextPage && <BoardContentSkeleton />}
       <div ref={sentinelRef} />
     </main>

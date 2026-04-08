@@ -45,7 +45,7 @@ interface PostBase {
 }
 
 export interface PostListItem extends PostBase {
-  hasFile: boolean;
+  fileUrls: FileItem[];
   isNew: boolean;
 }
 
@@ -103,8 +103,12 @@ export interface CreatePostData {
   id: number;
 }
 
-/** 게시글 수정 요청 body */
-export type UpdatePostBody = CreatePostBody;
+/** 게시글 수정 요청 body — files: null=변경 없음, []=전체 삭제, 배열=교체 */
+export interface UpdatePostBody {
+  title: string;
+  content: string;
+  files: CreatePostFile[] | null;
+}
 
 /** 게시글 수정 응답 data */
 export interface UpdatePostData {
