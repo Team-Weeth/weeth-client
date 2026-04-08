@@ -13,7 +13,6 @@ interface Feature {
   bgColor: string;
   image?: StaticImageData;
   video?: string;
-  poster?: StaticImageData;
   highlightKeyword?: string;
 }
 

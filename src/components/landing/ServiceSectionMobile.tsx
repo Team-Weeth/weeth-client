@@ -46,13 +46,17 @@ function ServiceSectionMobile({
   features,
 }: ServiceSectionMobileProps) {
   const [activeIndex, setActiveIndex] = useState(0);
+  const [videoReady, setVideoReady] = useState<Set<number>>(new Set());
   const containerRef = useRef<HTMLDivElement>(null);
   const videoRefs = useRef<(HTMLVideoElement | null)[]>([]);
+  const lastSnappedRef = useRef(0);
 
   useGSAP(
     () => {
       const container = containerRef.current;
       if (!container || features.length <= 1) return;
+
+      const step = 1 / (features.length - 1);
 
       ScrollTrigger.create({
         trigger: container,
@@ -60,8 +64,15 @@ function ServiceSectionMobile({
         end: `+=${STEP_SCROLL * (features.length - 1)}`,
         scrub: 0.6,
         snap: {
-          snapTo: 1 / (features.length - 1),
-          duration: { min: 0.3, max: 0.6 },
+          snapTo: (value) => {
+            const last = lastSnappedRef.current;
+            const direction = value > last ? 1 : -1;
+            const next = Math.max(0, Math.min(1, last + direction * step));
+            if (Math.abs(value - last) < step * 0.05) return last;
+            lastSnappedRef.current = next;
+            return next;
+          },
+          duration: { min: 0.4, max: 0.8 },
           ease: 'power2.out',
           delay: 0,
         },
@@ -176,20 +187,25 @@ function ServiceSectionMobile({
               )}
             >
               {active.video ? (
-                <video
-                  ref={(el) => {
-                    videoRefs.current[activeIndex] = el;
-                    if (el) el.play().catch(() => {});
-                  }}
-                  src={active.video}
-                  poster={active.poster?.src}
-                  loop
-                  muted
-                  autoPlay
-                  playsInline
-                  preload="auto"
-                  className="h-auto w-full rounded-[30px]"
-                />
+                <div className="relative w-full">
+                  {!videoReady.has(activeIndex) && (
+                    <div className="absolute inset-0 animate-pulse rounded-[30px] bg-[#E0E0E0]" />
+                  )}
+                  <video
+                    ref={(el) => {
+                      videoRefs.current[activeIndex] = el;
+                      if (el) el.play().catch(() => {});
+                    }}
+                    src={active.video}
+                    onPlaying={() => setVideoReady((prev) => new Set(prev).add(activeIndex))}
+                    loop
+                    muted
+                    autoPlay
+                    playsInline
+                    preload="auto"
+                    className="h-auto w-full rounded-[30px]"
+                  />
+                </div>
               ) : active.image ? (
                 <Image src={active.image} alt={active.chipLabel} width={945} height={523} />
               ) : null}
