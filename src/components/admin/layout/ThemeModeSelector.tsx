@@ -8,6 +8,9 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
 } from '@/components/ui';
 import { cn } from '@/lib/cn';
 import { useThemeStore } from '@/stores/theme-store';
@@ -26,7 +29,11 @@ const TRIGGER_LABELS: Record<ThemeMode, string> = {
   dark: '다크 모드',
 };
 
-function ThemeModeSelector() {
+interface ThemeModeSelectorProps {
+  collapsed?: boolean;
+}
+
+function ThemeModeSelector({ collapsed }: ThemeModeSelectorProps) {
   const setDark = useThemeStore((state) => state.setDark);
 
   const [mode, setMode] = useState<ThemeMode>(() => {
@@ -50,20 +57,36 @@ function ThemeModeSelector() {
   const currentOption = THEME_OPTIONS.find((o) => o.value === mode)!;
   const TriggerIcon = currentOption.icon;
 
+  const trigger = (
+    <DropdownMenuTrigger asChild>
+      <button
+        className={cn(
+          'text-text-alternative flex h-12 w-full cursor-pointer items-center border-none transition-colors',
+          'hover:bg-container-neutral-interaction',
+          collapsed ? 'justify-center px-200' : 'gap-300 px-300',
+        )}
+      >
+        <TriggerIcon className="h-6 w-6 shrink-0" />
+        {!collapsed && (
+          <>
+            <span className="typo-sub1 flex-1 text-left">{TRIGGER_LABELS[mode]}</span>
+            <ChevronDown className="h-5 w-5 shrink-0" />
+          </>
+        )}
+      </button>
+    </DropdownMenuTrigger>
+  );
+
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <button
-          className={cn(
-            'typo-sub1 brand- text-text-alternative flex h-12 w-full cursor-pointer items-center gap-300 border-none px-300 transition-colors',
-            'hover:bg-container-neutral-interaction',
-          )}
-        >
-          <TriggerIcon className="h-6 w-6 shrink-0" />
-          <span className="flex-1 text-left">{TRIGGER_LABELS[mode]}</span>
-          <ChevronDown className="h-5 w-5 shrink-0" />
-        </button>
-      </DropdownMenuTrigger>
+      {collapsed ? (
+        <Tooltip>
+          <TooltipTrigger asChild>{trigger}</TooltipTrigger>
+          <TooltipContent side="right">{TRIGGER_LABELS[mode]}</TooltipContent>
+        </Tooltip>
+      ) : (
+        trigger
+      )}
 
       <DropdownMenuContent side="bottom" align="end" sideOffset={4} className="w-[200px]">
         {THEME_OPTIONS.map(({ value, label }) => (
