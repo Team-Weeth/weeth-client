@@ -56,7 +56,24 @@ function ServiceSectionTablet({
       const container = containerRef.current;
       if (!container || features.length <= 1) return;
 
-      ScrollTrigger.create({
+      const pauseAllVideos = () => {
+        videoRefs.current.forEach((video) => video?.pause());
+      };
+
+      const syncActiveVideo = (index: number, reset = false) => {
+        setActiveIndex(index);
+        videoRefs.current.forEach((video, idx) => {
+          if (!video) return;
+          if (idx === index) {
+            if (reset) video.currentTime = 0;
+            video.play().catch(() => {});
+          } else {
+            video.pause();
+          }
+        });
+      };
+
+      const contentTrigger = ScrollTrigger.create({
         trigger: container,
         start: 'top 64px',
         end: `+=${STEP_SCROLL * (features.length - 1)}`,
@@ -72,13 +89,24 @@ function ServiceSectionTablet({
         },
         onUpdate: (self) => {
           const index = Math.round(self.progress * (features.length - 1));
-          setActiveIndex(index);
-          videoRefs.current.forEach((video, idx) => {
-            if (!video) return;
-            if (idx === index) video.play().catch(() => {});
-            else video.pause();
-          });
+          syncActiveVideo(index);
         },
+        onRefresh: (self) => {
+          const index = Math.round(self.progress * (features.length - 1));
+          syncActiveVideo(index);
+        },
+      });
+
+      ScrollTrigger.create({
+        trigger: container,
+        start: 'top 64px',
+        end: 'bottom 64px',
+        onEnter: () =>
+          syncActiveVideo(Math.round(contentTrigger.progress * (features.length - 1)), true),
+        onEnterBack: () =>
+          syncActiveVideo(Math.round(contentTrigger.progress * (features.length - 1)), true),
+        onLeave: pauseAllVideos,
+        onLeaveBack: pauseAllVideos,
       });
     },
     { dependencies: [], revertOnUpdate: true },
