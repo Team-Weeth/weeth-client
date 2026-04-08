@@ -104,12 +104,12 @@ function ServiceSectionTablet({
       style={{
         height: `calc(100vh + ${STEP_SCROLL * (features.length - 1) + END_DELAY}px)`,
       }}
-      className={cn(variant === 'user' ? 'bg-[#F3F5F7]' : 'bg-[#E6EAED]', className)}
+      className={cn(variant === 'user' ? 'bg-[#F3F5F7]' : 'bg-[#ffffff]', className)}
     >
       <section
         className={cn(
           'sticky top-[64px] flex w-full flex-col',
-          variant === 'user' ? 'bg-[#F3F5F7]' : 'bg-[#E6EAED]',
+          variant === 'user' ? 'bg-[#F3F5F7]' : 'bg-[#ffffff]',
         )}
       >
         <div className="mx-auto flex w-full max-w-[1300px] flex-col px-600">

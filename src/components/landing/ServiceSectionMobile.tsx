@@ -104,12 +104,12 @@ function ServiceSectionMobile({
       style={{
         height: `calc(100vh + ${STEP_SCROLL * (features.length - 1) + END_DELAY}px)`,
       }}
-      className={cn(variant === 'user' ? 'bg-[#F3F5F7]' : 'bg-[#E6EAED]', className)}
+      className={cn(variant === 'user' ? 'bg-[#F3F5F7]' : 'bg-[#ffffff]', className)}
     >
       <section
         className={cn(
           'sticky top-[64px] flex h-[calc(100vh-64px)] w-full flex-col overflow-hidden px-600 pt-[20px]',
-          variant === 'user' ? 'bg-[#F3F5F7]' : 'bg-[#E6EAED]',
+          variant === 'user' ? 'bg-[#F3F5F7]' : 'bg-[#ffffff]',
         )}
       >
         <div className="flex shrink-0 items-center gap-200">
