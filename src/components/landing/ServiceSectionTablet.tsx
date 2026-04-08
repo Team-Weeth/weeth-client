@@ -15,6 +15,7 @@ gsap.registerPlugin(ScrollTrigger);
 
 const STEP_SCROLL = 1000;
 const END_DELAY = 500;
+const FIRST_CHIP_OFFSET = 1;
 
 interface ServiceSectionTabletProps {
   className?: string;
@@ -137,11 +138,16 @@ function ServiceSectionTablet({
   const handleChipClick = (i: number) => {
     const trigger = contentTriggerRef.current;
     if (!trigger) return;
-    syncActiveVideoRef.current(i, true);
+    sectionActiveRef.current = true;
     const progress = features.length > 1 ? i / (features.length - 1) : 0;
+    const targetScroll = trigger.start + (trigger.end - trigger.start) * progress;
     window.scrollTo({
-      top: trigger.start + (trigger.end - trigger.start) * progress,
-      behavior: 'instant',
+      top: i === 0 ? targetScroll + FIRST_CHIP_OFFSET : targetScroll,
+      behavior: 'auto',
+    });
+    window.requestAnimationFrame(() => {
+      sectionActiveRef.current = true;
+      syncActiveVideoRef.current(i, true);
     });
   };
 

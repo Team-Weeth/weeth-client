@@ -15,6 +15,7 @@ gsap.registerPlugin(ScrollTrigger);
 
 const STEP_SCROLL = 800;
 const END_DELAY = 500;
+const FIRST_CHIP_OFFSET = 1;
 
 interface ServiceSectionMobileProps {
   className?: string;
@@ -137,11 +138,16 @@ function ServiceSectionMobile({
   const handleChipClick = (i: number) => {
     const trigger = contentTriggerRef.current;
     if (!trigger) return;
-    syncActiveVideoRef.current(i, true);
+    sectionActiveRef.current = true;
     const progress = features.length > 1 ? i / (features.length - 1) : 0;
+    const targetScroll = trigger.start + (trigger.end - trigger.start) * progress;
     window.scrollTo({
-      top: trigger.start + (trigger.end - trigger.start) * progress,
-      behavior: 'instant',
+      top: i === 0 ? targetScroll + FIRST_CHIP_OFFSET : targetScroll,
+      behavior: 'auto',
+    });
+    window.requestAnimationFrame(() => {
+      sectionActiveRef.current = true;
+      syncActiveVideoRef.current(i, true);
     });
   };
 
@@ -226,15 +232,15 @@ function ServiceSectionMobile({
             >
               {active.video ? (
                 <div className="relative w-full">
-                  {!videoReady.has(activeIndex) ? (
-                    <Skeleton className="aspect-[3840/1888] w-full animate-pulse rounded-[30px] bg-[#E6EAED]" />
-                  ) : null}
-                  <video
-                    ref={(el) => {
-                      videoRefs.current[activeIndex] = el;
-                      if (!el) return;
-                      if (el.readyState >= 2) markVideoReady(activeIndex);
-                      if (sectionActiveRef.current) el.play().catch(() => {});
+                    {!videoReady.has(activeIndex) ? (
+                      <Skeleton className="aspect-[3840/1888] w-full animate-pulse rounded-[30px] bg-[#E6EAED]" />
+                    ) : null}
+                    <video
+                      ref={(el) => {
+                        videoRefs.current[activeIndex] = el;
+                        if (!el) return;
+                        if (el.readyState >= 2) markVideoReady(activeIndex);
+                        if (sectionActiveRef.current) el.play().catch(() => {});
                     }}
                     src={active.video}
                     onLoadedData={() => markVideoReady(activeIndex)}
