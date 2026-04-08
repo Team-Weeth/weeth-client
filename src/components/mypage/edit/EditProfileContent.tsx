@@ -19,7 +19,7 @@ import {
 import { cn } from '@/lib/cn';
 import { editProfileSchema, type EditProfileFormData } from '@/lib/schemas/editProfile';
 import { useMyMemberQuery } from '@/hooks/queries/mypage/useMyMemberQuery';
-import { useUpdateProfileMutation } from '@/hooks/mutations/mypage/useUpdateProfileMutation';
+import { useUpdateProfileMutation } from '@/hooks/mutations/useUpdateProfileMutation';
 import { toastSuccess, toastError } from '@/stores/useToastStore';
 import { formatPhone } from '@/utils/shared';
 

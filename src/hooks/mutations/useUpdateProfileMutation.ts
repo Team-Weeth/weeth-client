@@ -41,11 +41,10 @@ export function useUpdateProfileMutation() {
 
   return useMutation({
     mutationFn: async ({ user, clubProfile, profileImageFile }: UpdateProfileParams) => {
-      await mypageApi.updateUser(user);
-
-      const profileImage = profileImageFile
-        ? await uploadProfileImage(profileImageFile)
-        : undefined;
+      const [, profileImage] = await Promise.all([
+        mypageApi.updateUser(user),
+        profileImageFile ? uploadProfileImage(profileImageFile) : undefined,
+      ]);
 
       await mypageApi.updateClubProfile({
         bio: clubProfile.bio,
