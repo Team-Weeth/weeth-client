@@ -30,6 +30,8 @@ interface CardProps extends React.ComponentProps<'div'>, VariantProps<typeof car
   onPrimaryClick?: () => void;
   secondaryButtonText?: string;
   onSecondaryClick?: () => void;
+  primaryButtonDisabled?: boolean;
+  secondaryButtonDisabled?: boolean;
   /** arrow 아이콘 표시 여부 (기본값: true) */
   showArrow?: boolean;
 }
@@ -45,6 +47,8 @@ function Card({
   onPrimaryClick,
   secondaryButtonText = '출석코드 확인',
   onSecondaryClick,
+  primaryButtonDisabled,
+  secondaryButtonDisabled,
   showArrow = true,
   children,
   ...props
@@ -94,12 +98,24 @@ function Card({
 
         <div className="flex flex-col gap-200">
           {onPrimaryClick && (
-            <Button variant="primary" size="lg" onClick={onPrimaryClick} className="w-full">
+            <Button
+              variant="primary"
+              size="lg"
+              onClick={onPrimaryClick}
+              disabled={primaryButtonDisabled}
+              className="w-full"
+            >
               {primaryButtonText}
             </Button>
           )}
           {onSecondaryClick && (
-            <Button variant="secondary" size="lg" onClick={onSecondaryClick} className="w-full">
+            <Button
+              variant="secondary"
+              size="lg"
+              onClick={onSecondaryClick}
+              disabled={secondaryButtonDisabled}
+              className="w-full"
+            >
               {secondaryButtonText}
             </Button>
           )}

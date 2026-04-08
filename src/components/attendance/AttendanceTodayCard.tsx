@@ -20,6 +20,7 @@ interface AttendanceTodayCardProps {
   sessionId?: number | null;
   isAdmin?: boolean;
   isChecked?: boolean;
+  disabled?: boolean;
   onAttendanceComplete?: (code: string) => void;
 }
 
@@ -45,6 +46,7 @@ function AttendanceTodayCard({
   sessionId,
   isAdmin = false,
   isChecked = false,
+  disabled = false,
   onAttendanceComplete,
 }: AttendanceTodayCardProps) {
   const router = useRouter();
@@ -66,12 +68,14 @@ function AttendanceTodayCard({
         showArrow={false}
         onPrimaryClick={isChecked ? () => setCompleteModalOpen(true) : () => setCodeModalOpen(true)}
         primaryButtonText={isChecked ? '출석 완료' : '출석하기'}
+        primaryButtonDisabled={disabled}
         onSecondaryClick={
           isAdmin
             ? () => router.push(`/attendance/qr?sessionId=${sessionId}`)
             : () => toastError('관리자만 사용할 수 있는 기능입니다.')
         }
         secondaryButtonText="출석코드 확인"
+        secondaryButtonDisabled={disabled}
       >
         {isChecked && <AttendanceCompleteBanner />}
       </Card>

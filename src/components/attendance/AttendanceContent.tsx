@@ -64,27 +64,19 @@ function AttendanceContent({ attendance, errorMessage, isAdmin = false }: Attend
       <AttendanceStatus name={name} attendanceRate={attendanceRate} className="px-450" />
 
       <div className="flex flex-col gap-300 px-450">
-        {title ? (
-          <AttendanceTodayCard
-            overline="오늘의 출석"
-            title={title}
-            description={description}
-            start={start ?? ''}
-            endTime={end ?? ''}
-            location={location ?? ''}
-            sessionId={sessionId}
-            isAdmin={isAdmin}
-            isChecked={isChecked}
-            onAttendanceComplete={handleAttendanceComplete}
-          />
-        ) : (
-          <Card
-            variant="onlyText"
-            overline="오늘의 출석"
-            title="오늘은 출석 일정이 없어요"
-            showArrow={false}
-          />
-        )}
+        <AttendanceTodayCard
+          overline="오늘의 출석"
+          title={title ?? '오늘은 일정이 없어요'}
+          description={title ? description : '동아리원과 스터디를 해보는 건 어때요?'}
+          start={start ?? ''}
+          endTime={end ?? ''}
+          location={location ?? ''}
+          sessionId={sessionId}
+          isAdmin={isAdmin}
+          isChecked={isChecked}
+          disabled={!title}
+          onAttendanceComplete={handleAttendanceComplete}
+        />
 
         <Card
           variant="onlyText"
