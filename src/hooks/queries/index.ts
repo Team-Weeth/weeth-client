@@ -1,1 +1,1 @@
-export { useCardinals } from './useCardinals';
+export { useCardinals } from './useCardinalsQuery';

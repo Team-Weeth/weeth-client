@@ -2,7 +2,7 @@
 
 import { Dialog, DialogContent } from '@/components/ui';
 import type { ClubDto } from '@/types/mypage';
-import { useCardinals } from '@/hooks/queries/useCardinals';
+import { useCardinals } from '@/hooks/queries/useCardinalsQuery';
 import { useCardinalModal } from './useCardinalModal';
 import { ModalHeader } from './components/ModalHeader';
 import { ModalFooter } from './components/ModalFooter';

@@ -1,3 +1,4 @@
+import { ApiResponse } from '@/types';
 import { apiClient } from './client';
 
 interface School {
@@ -10,21 +11,9 @@ interface Major {
   category: string;
 }
 
-interface SchoolsResponse {
-  code: number;
-  message: string;
-  data: School[];
-}
-
-interface MajorsResponse {
-  code: number;
-  message: string;
-  data: Major[];
-}
-
 export const universityApi = {
-  getSchools: () => apiClient.get<SchoolsResponse>('/university/schools'),
-  getMajors: () => apiClient.get<MajorsResponse>('/university/majors'),
+  getSchools: () => apiClient.get<ApiResponse<School[]>>('/university/schools'),
+  getMajors: () => apiClient.get<ApiResponse<Major[]>>('/university/majors'),
 };
 
-export type { School, Major, SchoolsResponse, MajorsResponse };
+export type { School, Major };
