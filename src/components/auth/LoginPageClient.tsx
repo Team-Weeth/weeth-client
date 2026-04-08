@@ -6,8 +6,13 @@ import { agreeTermsAction } from '@/lib/actions/auth';
 import { encodeOAuthState } from '@/lib/auth/oauthState';
 import { toastError } from '@/stores/useToastStore';
 
+import dynamic from 'next/dynamic';
+
 import { LoginCard } from './LoginCard';
-import { TermsAgreementModal } from './TermsAgreementModal';
+
+const TermsAgreementModal = dynamic(() =>
+  import('./TermsAgreementModal').then((m) => m.TermsAgreementModal),
+);
 
 interface LoginPageClientProps {
   defaultTermsOpen?: boolean;
