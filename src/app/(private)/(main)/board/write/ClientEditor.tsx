@@ -27,6 +27,12 @@ export default function ClientEditor() {
 
   const activeId = board ?? activeBoardId ?? items.find((item) => item.type !== 'ALL')?.id ?? null;
 
+  useEffect(() => {
+    if (board === null && activeId !== null) {
+      setBoard(activeId);
+    }
+  }, [board, activeId, setBoard]);
+
   return (
     <PostEditorShell
       align="center"
