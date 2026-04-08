@@ -28,7 +28,7 @@ function ReplyItem({
   onDelete,
 }: ReplyItemProps) {
   return (
-    <div className={cn('flex items-start justify-between self-stretch px-450', className)}>
+    <div className={cn('flex items-start justify-between gap-100 self-stretch px-450', className)}>
       <Icon src={ReplyIcon} size={20} className="text-icon-alternative" />
       <div className="bg-container-neutral-alternative relative flex-1 rounded-lg p-400">
         <div className="flex flex-col gap-200">
