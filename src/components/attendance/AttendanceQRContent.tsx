@@ -38,6 +38,8 @@ function AttendanceQRContent({ sessionId }: AttendanceQRContentProps) {
         height: 256,
         data: checkInUrl,
         type: 'svg',
+        dotsOptions: { type: 'dots' },
+        cornersSquareOptions: { type: 'extra-rounded' },
       });
       qrCodeRef.current.append(qrRef.current);
     } else {
@@ -92,9 +94,7 @@ function AttendanceQRContent({ sessionId }: AttendanceQRContentProps) {
                       {isExpired ? '마감' : `${minutes}:${seconds}`}
                     </span>
                   </div>
-                  <p className="typo-body2 text-text-strong">
-                    QR코드는 모바일만 제공하고 있어요.
-                  </p>
+                  <p className="typo-body2 text-text-strong">QR코드는 모바일만 제공하고 있어요.</p>
                 </div>
 
                 <p className="typo-h1 text-text-strong">{qrData?.code}</p>
