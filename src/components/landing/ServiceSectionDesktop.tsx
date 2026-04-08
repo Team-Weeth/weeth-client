@@ -97,7 +97,7 @@ function ServiceSectionDesktop({
     >
       <section
         className={cn(
-          'sticky top-[64px] flex w-full flex-col pt-[clamp(40px,5vh,86px)]',
+          'sticky top-[64px] flex w-full flex-col',
           variant === 'user' ? 'bg-[#F3F5F7]' : 'bg-[#FFFFFF]',
         )}
       >
