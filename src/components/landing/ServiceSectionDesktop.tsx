@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import Image from 'next/image';
 import { cn } from '@/lib/cn';
 import { useGSAP } from '@gsap/react';
@@ -81,11 +81,6 @@ function ServiceSectionDesktop({
     window.scrollTo({ top: targetScroll, behavior: 'instant' });
   };
 
-  useEffect(() => {
-    const video = videoRefs.current[activeIndex];
-    if (video) video.play().catch(() => {});
-  }, [activeIndex]);
-
   const active = features[activeIndex];
 
   return (
@@ -165,20 +160,18 @@ function ServiceSectionDesktop({
                 )}
               >
                 {active.video ? (
-                  <div className="w-full">
+                  <div className="relative w-full">
                     {!videoReady.has(activeIndex) ? (
                       <Skeleton className="aspect-[3840/1888] w-full animate-pulse rounded-[30px] bg-[#E6EAED]" />
                     ) : null}
                     <video
                       ref={(el) => {
                         videoRefs.current[activeIndex] = el;
-                        if (el) el.play().catch(() => {});
                       }}
                       src={active.video}
-                      onPlaying={() => setVideoReady((prev) => new Set(prev).add(activeIndex))}
+                      onLoadedData={() => setVideoReady((prev) => new Set(prev).add(activeIndex))}
                       loop
                       muted
-                      autoPlay
                       playsInline
                       preload="auto"
                       className={cn(
