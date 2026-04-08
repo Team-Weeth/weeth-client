@@ -184,7 +184,7 @@ function ServiceSectionTablet({
                 {active.video ? (
                   <div className="relative w-full">
                     {!videoReady.has(activeIndex) ? (
-                      <Skeleton className="aspect-video w-full animate-pulse rounded-[30px] bg-[#E6EAED]" />
+                      <Skeleton className="aspect-[3840/1888] w-full animate-pulse rounded-[30px] bg-[#E6EAED]" />
                     ) : null}
                     <video
                       ref={(el) => {
