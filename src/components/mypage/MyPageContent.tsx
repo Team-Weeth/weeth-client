@@ -16,24 +16,8 @@ import { useMyClubsQuery } from '@/hooks/queries/mypage/useMyClubsQuery';
 type MyPageContentProps = React.HTMLAttributes<HTMLDivElement>;
 
 function MyPageContent({ className, ...props }: MyPageContentProps) {
-  const { data: me, isLoading, isError } = useMyMemberQuery();
+  const { data: me } = useMyMemberQuery();
   const { data: clubs = [] } = useMyClubsQuery();
-
-  if (isLoading) {
-    return (
-      <div className="flex min-h-screen items-center justify-center">
-        <p className="typo-body1 text-text-alternative">로딩 중...</p>
-      </div>
-    );
-  }
-
-  if (isError || !me) {
-    return (
-      <div className="flex min-h-screen items-center justify-center">
-        <p className="typo-body1 text-state-error">내 정보를 불러올 수 없습니다.</p>
-      </div>
-    );
-  }
 
   return (
     <div

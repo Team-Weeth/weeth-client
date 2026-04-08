@@ -16,7 +16,7 @@ import {
 import { AdminMeatballIcon } from '@/assets/icons/admin';
 
 function MyPageDropdownMenu() {
-  const [withdrawOpen, setWithdrawOpen] = useState(false);
+  // const [withdrawOpen, setWithdrawOpen] = useState(false);
   const [logoutOpen, setLogoutOpen] = useState(false);
 
   return (

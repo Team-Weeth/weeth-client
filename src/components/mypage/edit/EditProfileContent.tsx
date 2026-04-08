@@ -31,7 +31,7 @@ type EditProfileContentProps = React.HTMLAttributes<HTMLDivElement>;
 
 function EditProfileContent({ className, ...props }: EditProfileContentProps) {
   const router = useRouter();
-  const { data: me, isLoading, isError } = useMyMemberQuery();
+  const { data: me } = useMyMemberQuery();
   const { mutate: updateProfile, isPending } = useUpdateProfileMutation();
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
@@ -102,22 +102,6 @@ function EditProfileContent({ className, ...props }: EditProfileContentProps) {
       },
     );
   };
-
-  if (isLoading) {
-    return (
-      <div className="flex min-h-screen items-center justify-center">
-        <p className="typo-body1 text-text-alternative">로딩 중...</p>
-      </div>
-    );
-  }
-
-  if (isError || !me) {
-    return (
-      <div className="flex min-h-screen items-center justify-center">
-        <p className="typo-body1 text-state-error">내 정보를 불러올 수 없습니다.</p>
-      </div>
-    );
-  }
 
   return (
     <div
