@@ -62,7 +62,8 @@ export function proxy(request: NextRequest) {
       return NextResponse.redirect(new URL(`/club/${clubId}`, request.url));
     }
     const loginUrl = new URL('/login', request.url);
-    loginUrl.searchParams.set('redirect', pathname);
+    const redirect = request.nextUrl.search ? `${pathname}${request.nextUrl.search}` : pathname;
+    loginUrl.searchParams.set('redirect', redirect);
     return NextResponse.redirect(loginUrl);
   }
 

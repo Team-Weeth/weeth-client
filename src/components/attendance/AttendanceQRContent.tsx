@@ -37,9 +37,11 @@ function AttendanceQRContent({ sessionId }: AttendanceQRContentProps) {
         width: 256,
         height: 256,
         data: checkInUrl,
+        qrOptions: { errorCorrectionLevel: 'L' },
         type: 'svg',
         dotsOptions: { type: 'dots' },
         cornersSquareOptions: { type: 'extra-rounded' },
+        cornersDotOptions: { type: 'extra-rounded' },
       });
       qrCodeRef.current.append(qrRef.current);
     } else {

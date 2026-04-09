@@ -15,9 +15,16 @@ import {
 interface AttendanceCompleteModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  title?: string;
+  description?: string;
 }
 
-function AttendanceCompleteModal({ open, onOpenChange }: AttendanceCompleteModalProps) {
+function AttendanceCompleteModal({
+  open,
+  onOpenChange,
+  title = '이미 출석을 완료했네요!',
+  description = '오늘도 즐거운 활동을 이어가세요.',
+}: AttendanceCompleteModalProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
@@ -29,8 +36,8 @@ function AttendanceCompleteModal({ open, onOpenChange }: AttendanceCompleteModal
         <DialogBody className="flex-1 items-center justify-center gap-300 p-400">
           <Image src={CompleteIcon} alt="출석 완료" width={120} height={120} />
           <div className="flex flex-col gap-200 text-center">
-            <h2 className="typo-sub1 text-text-strong">이미 출석을 완료했네요!</h2>
-            <p className="typo-body2 text-text-alternative">오늘도 즐거운 활동을 이어가세요.</p>
+            <h2 className="typo-sub1 text-text-strong">{title}</h2>
+            <p className="typo-body2 text-text-alternative">{description}</p>
           </div>
         </DialogBody>
 
