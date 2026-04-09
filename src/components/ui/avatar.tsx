@@ -17,7 +17,7 @@ const avatarVariants = cva('group/avatar relative flex shrink-0 overflow-hidden 
       40: 'size-10',
       24: 'size-6',
     },
-    color: {
+    colorScheme: {
       default: '',
       primary: '',
       secondary: '',
@@ -26,21 +26,21 @@ const avatarVariants = cva('group/avatar relative flex shrink-0 overflow-hidden 
   defaultVariants: {
     type: 'round',
     size: 64,
-    color: 'default',
+    colorScheme: 'default',
   },
 });
 
 interface AvatarProps
   extends React.ComponentProps<typeof AvatarPrimitive.Root>, VariantProps<typeof avatarVariants> {}
 
-function Avatar({ className, type, size, color, ...props }: AvatarProps) {
+function Avatar({ className, type, size, colorScheme, ...props }: AvatarProps) {
   return (
     <AvatarPrimitive.Root
       data-slot="avatar"
       data-type={type ?? 'round'}
       data-size={size ?? 64}
-      data-color={color ?? 'default'}
-      className={cn(avatarVariants({ type, size, color }), className)}
+      data-color={colorScheme ?? 'default'}
+      className={cn(avatarVariants({ type, size, colorScheme }), className)}
       {...props}
     />
   );
