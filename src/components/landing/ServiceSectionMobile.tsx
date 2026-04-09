@@ -232,15 +232,15 @@ function ServiceSectionMobile({
             >
               {active.video ? (
                 <div className="relative w-full">
-                    {!videoReady.has(activeIndex) ? (
-                      <Skeleton className="aspect-[3840/1888] w-full animate-pulse rounded-[30px] bg-[#E6EAED]" />
-                    ) : null}
-                    <video
-                      ref={(el) => {
-                        videoRefs.current[activeIndex] = el;
-                        if (!el) return;
-                        if (el.readyState >= 2) markVideoReady(activeIndex);
-                        if (sectionActiveRef.current) el.play().catch(() => {});
+                  {!videoReady.has(activeIndex) ? (
+                    <Skeleton className="aspect-[3840/1888] w-full animate-pulse rounded-[30px] bg-[#E6EAED]" />
+                  ) : null}
+                  <video
+                    ref={(el) => {
+                      videoRefs.current[activeIndex] = el;
+                      if (!el) return;
+                      if (el.readyState >= 2) markVideoReady(activeIndex);
+                      if (sectionActiveRef.current) el.play().catch(() => {});
                     }}
                     src={active.video}
                     onLoadedData={() => markVideoReady(activeIndex)}
