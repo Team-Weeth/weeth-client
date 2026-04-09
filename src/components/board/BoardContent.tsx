@@ -7,9 +7,16 @@ import { useIntersectionObserver } from '@/hooks/board/useIntersectionObserver';
 import { useUserId } from '@/stores/useUserStore';
 import { useActiveBoardId } from '@/stores/useBoardNavStore';
 import { formatShortDateTime } from '@/lib/formatTime';
+import type { FileItem } from '@/types/file';
 import { PostActionMenu } from './PostActionMenu';
 import { PostCard } from './PostCard';
 import { BoardContentSkeleton } from './BoardContentSkeleton';
+
+function toDisplayImages(files: FileItem[]) {
+  return files
+    .filter((f) => f.contentType.startsWith('image/'))
+    .map((f) => ({ id: f.fileId, fileName: f.fileName, fileUrl: f.fileUrl, uploaded: true }));
+}
 
 function BoardContent() {
   const activeBoardId = useActiveBoardId();
@@ -54,12 +61,7 @@ function BoardContent() {
 
   return (
     <main className="flex min-w-0 flex-1 flex-col gap-400">
-      {posts.map((post) => {
-        const imageFiles = post.fileUrls
-          .filter((f) => f.contentType.startsWith('image/'))
-          .map((f) => ({ id: f.fileId, fileName: f.fileName, fileUrl: f.fileUrl, uploaded: true }));
-
-        return (
+      {posts.map((post) => (
           <Link key={post.id} href={`/board/${post.id}`}>
             <PostCard.Root>
               <PostCard.Header>
@@ -86,13 +88,12 @@ function BoardContent() {
                   e.stopPropagation();
                 }}
               >
-                <PostCard.Images files={imageFiles} />
+                <PostCard.Images files={toDisplayImages(post.fileUrls)} />
               </div>
               <PostCard.Actions likeCount={post.like.likeCount} commentCount={post.commentCount} />
             </PostCard.Root>
           </Link>
-        );
-      })}
+      ))}
       {isFetchingNextPage && <BoardContentSkeleton />}
       <div ref={sentinelRef} />
     </main>

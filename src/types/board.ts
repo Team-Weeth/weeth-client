@@ -1,11 +1,13 @@
+import { CreatePostFile, FileItem } from './file';
+
 // 페이지네이션 타입은 common.ts에서 관리, 하위 호환을 위해 re-export
 export type { Slice, SliceSort, SlicePageable } from '@/types/common';
+// 파일 타입은 file.ts에서 관리, 하위 호환을 위해 re-export
+export type { FileStatus, FileItem, DisplayFile, CreatePostFile } from '@/types/file';
 
 export type BoardType = 'ALL' | 'NOTICE' | 'GENERAL';
 
 export type UserRole = 'USER' | 'ADMIN';
-
-export type FileStatus = 'UPLOADED' | 'PENDING' | 'DELETED';
 
 interface BoardBase {
   id: number | null;
@@ -49,25 +51,6 @@ export interface PostListItem extends PostBase {
   isNew: boolean;
 }
 
-/** API 응답 파일 (서버에서 받은 원본) */
-export interface FileItem {
-  fileId: number;
-  fileName: string;
-  fileUrl: string;
-  storageKey: string;
-  fileSize: number;
-  contentType: string;
-  status: FileStatus;
-}
-
-/** 조회용 파일 (컴포넌트 표시 전용) */
-export interface DisplayFile {
-  id: string | number;
-  fileName: string;
-  fileUrl: string;
-  uploaded?: boolean;
-}
-
 export interface PostComment {
   id: number;
   author: PostAuthor;
@@ -81,14 +64,6 @@ export interface PostDetail extends PostBase {
   isNew?: boolean;
   comments: PostComment[];
   fileUrls: FileItem[];
-}
-
-/** 게시글 작성 요청 파일 */
-export interface CreatePostFile {
-  fileName: string;
-  storageKey: string;
-  fileSize: number;
-  contentType: string;
 }
 
 /** 게시글 작성 요청 body */
