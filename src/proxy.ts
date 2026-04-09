@@ -49,7 +49,8 @@ export function proxy(request: NextRequest) {
   if (
     PUBLIC_PATHS.some((path) => pathname === path) ||
     pathname.startsWith('/club/') ||
-    pathname.startsWith('/kakao/')
+    pathname.startsWith('/kakao/') ||
+    pathname === '/apple/oauth'
   ) {
     return NextResponse.next();
   }

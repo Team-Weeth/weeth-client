@@ -14,7 +14,7 @@ function TestimonialSection({ className }: TestimonialSectionProps) {
         className,
       )}
     >
-      <div className="tablet:flex-row tablet:gap-[80px] desktop:gap-[173px] desktop:max-w-[1109px] desktop:mx-auto flex w-full flex-col items-center gap-[60px] px-600">
+      <div className="tablet:flex-row tablet:gap-[80px] tablet:justify-center desktop:gap-[173px] desktop:max-w-[1109px] tablet:mx-auto flex w-full flex-col items-center gap-[60px] px-600">
         <div className="tablet:w-[692px] flex flex-col gap-5">
           <Image
             src={Ldquo}

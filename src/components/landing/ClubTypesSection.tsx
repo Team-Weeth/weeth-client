@@ -63,7 +63,7 @@ function ClubTypesSection({ className }: ClubTypesSectionProps) {
         ))}
       </div>
 
-      <div className="tablet:text-[20px] desktop:text-[24px] desktop:leading-[30px] hidden px-600 text-center text-[18px] leading-[26px] font-semibold tracking-[-0.005em]">
+      <div className="tablet:text-[20px] desktop:text-[24px] tablet:flex desktop:leading-[30px] hidden px-600 text-center text-[18px] leading-[26px] font-semibold tracking-[-0.005em]">
         Weeth는 모든 동아리가 사용할 수 있는 환경을 지향합니다
       </div>
       <div className="tablet:hidden flex px-600 text-center text-[18px] leading-[26px] font-semibold tracking-[-0.005em]">

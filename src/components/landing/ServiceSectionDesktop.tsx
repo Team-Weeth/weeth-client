@@ -8,7 +8,7 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { AnimatePresence, motion } from 'framer-motion';
 import type { Feature } from './ServiceSection';
-import { LandingUserFaceIcon, LandingAdminFaceIcon } from '@/assets/icons/landing';
+import { Skeleton } from '../ui';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -29,33 +29,57 @@ function ServiceSectionDesktop({
   className,
   variant,
   title,
-  subtitle,
-  serviceLabel,
   features,
 }: ServiceSectionDesktopProps) {
   const [activeIndex, setActiveIndex] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
+  const [videoReady, setVideoReady] = useState<Set<number>>(new Set());
   const videoRefs = useRef<(HTMLVideoElement | null)[]>([]);
+  const sectionActiveRef = useRef(false);
+  const contentTriggerRef = useRef<ScrollTrigger | null>(null);
+  const syncActiveVideoRef = useRef<(index: number, reset?: boolean) => void>(() => {});
 
   const totalVirtualScroll = STEP_SCROLL * (features.length - 1);
+
+  const markVideoReady = (index: number) => {
+    setVideoReady((prev) => {
+      if (prev.has(index)) return prev;
+      return new Set(prev).add(index);
+    });
+  };
 
   useGSAP(
     () => {
       const container = containerRef.current;
       if (!container) return;
 
-      ScrollTrigger.create({
+      const pauseAllVideos = () => {
+        videoRefs.current.forEach((video) => video?.pause());
+      };
+
+      const syncActiveVideo = (index: number, reset = false) => {
+        setActiveIndex(index);
+        videoRefs.current.forEach((video, idx) => {
+          if (!video) return;
+          if (idx === index) {
+            if (reset) video.currentTime = 0;
+            video.play().catch(() => {});
+          } else {
+            video.pause();
+          }
+        });
+      };
+      syncActiveVideoRef.current = syncActiveVideo;
+
+      const contentTrigger = ScrollTrigger.create({
         trigger: container,
         start: `top+=${START_DELAY} 64px`,
         end: `+=${STEP_SCROLL * (features.length - 1)}`,
         scrub: 0.6,
         snap: {
-          snapTo: (value, self) => {
+          snapTo: (value) => {
             const step = 1 / (features.length - 1);
-            const currentSnap = Math.round((self?.progress ?? 0) / step) * step;
-            if (Math.abs(value - currentSnap) < step * 0.01) return currentSnap;
-            const direction = value > currentSnap ? 1 : -1;
-            return Math.max(0, Math.min(1, currentSnap + direction * step));
+            return Math.round(value / step) * step;
           },
           duration: { min: 0.4, max: 0.8 },
           ease: 'power2.out',
@@ -63,12 +87,34 @@ function ServiceSectionDesktop({
         },
         onUpdate: (self) => {
           const index = Math.round(self.progress * (features.length - 1));
-          setActiveIndex(index);
-          videoRefs.current.forEach((video, idx) => {
-            if (!video) return;
-            if (idx === index) video.play().catch(() => {});
-            else video.pause();
-          });
+          syncActiveVideo(index);
+        },
+        onRefresh: (self) => {
+          const index = Math.round(self.progress * (features.length - 1));
+          syncActiveVideo(index);
+        },
+      });
+      contentTriggerRef.current = contentTrigger;
+
+      ScrollTrigger.create({
+        trigger: container,
+        start: 'top 64px',
+        end: 'bottom 64px',
+        onEnter: () => {
+          sectionActiveRef.current = true;
+          syncActiveVideo(Math.round(contentTrigger.progress * (features.length - 1)), true);
+        },
+        onEnterBack: () => {
+          sectionActiveRef.current = true;
+          syncActiveVideo(Math.round(contentTrigger.progress * (features.length - 1)), true);
+        },
+        onLeave: () => {
+          sectionActiveRef.current = false;
+          pauseAllVideos();
+        },
+        onLeaveBack: () => {
+          sectionActiveRef.current = false;
+          pauseAllVideos();
         },
       });
     },
@@ -76,10 +122,9 @@ function ServiceSectionDesktop({
   );
 
   const handleChipClick = (i: number) => {
-    const container = containerRef.current;
-    if (!container) return;
-    const trigger = ScrollTrigger.getAll().find((t) => t.trigger === container);
+    const trigger = contentTriggerRef.current;
     if (!trigger) return;
+    syncActiveVideoRef.current(i, true);
     const progress = features.length > 1 ? i / (features.length - 1) : 0;
     const targetScroll = trigger.start + (trigger.end - trigger.start) * progress;
     window.scrollTo({ top: targetScroll, behavior: 'instant' });
@@ -91,105 +136,125 @@ function ServiceSectionDesktop({
     <div
       ref={containerRef}
       style={{ height: `calc(100vh + ${totalVirtualScroll + START_DELAY + END_DELAY}px)` }}
-      className={className}
+      className={cn(variant === 'user' ? 'bg-[#F3F5F7]' : 'bg-[#FFFFFF]', className)}
     >
       <section
         className={cn(
-          'sticky top-[64px] h-[calc(100vh-64px)] w-full overflow-hidden pt-[clamp(40px,5vh,86px)] pl-[306px]',
-          variant === 'user' ? 'bg-[#F3F5F7]' : 'bg-[#E6EAED]',
+          'sticky top-[64px] flex w-full flex-col',
+          variant === 'user' ? 'bg-[#F3F5F7]' : 'bg-[#FFFFFF]',
         )}
       >
-        <div className="mb-400 flex items-center gap-200">
-          <span className="typo-sub2 flex items-center gap-[13px] text-[#1E2021]">
-            <Image
-              src={variant === 'user' ? LandingUserFaceIcon : LandingAdminFaceIcon}
-              alt="face-icon"
-              width={24}
-              height={24}
-            />
-            {serviceLabel}
-          </span>
-        </div>
+        <div className="mx-auto flex w-full max-w-[1123px] flex-col gap-[clamp(40px,6vh,80px)]">
+          {/* <div className="flex shrink-0 items-center gap-200">
+            <span className="typo-sub2 flex items-center gap-[13px] text-[#1E2021]">
+              <Image
+                src={variant === 'user' ? LandingUserFaceIcon : LandingAdminFaceIcon}
+                alt="face-icon"
+                width={24}
+                height={24}
+              />
+              {serviceLabel}
+            </span>
+          </div> */}
 
-        <h2 className="mt-[clamp(20px,3vh,54px)] mb-300 text-[48px] font-bold whitespace-pre-line text-[#1E2021]">
-          {title}
-        </h2>
+          {/* <h2 className="mt-[clamp(20px,3vh,54px)] shrink-0 text-[48px] leading-[130%] font-extrabold tracking-[-0.005em] whitespace-pre-line text-[#1E2021]">
+            {title}
+          </h2> */}
 
-        <div className="mt-[clamp(20px,3vh,48px)] mb-[clamp(40px,5vh,86px)] flex w-[1123px] justify-between">
-          <p className="typo-body1 text-[#1E2021]">
-            {subtitle.split('<br/>').map((line, i, arr) => (
-              <span key={i}>
-                {line}
-                {i < arr.length - 1 && <br />}
-              </span>
-            ))}
-          </p>
-          <div className="flex gap-2">
-            {features.map((f, i) => (
-              <button
-                key={f.chipLabel}
-                onClick={() => handleChipClick(i)}
+          <div className="flex w-full shrink-0 justify-between">
+            {/* <p className="desktop:text-[24px] desktop:leading-[32px] text-[16px] leading-[24px] font-semibold tracking-[-0.005em] text-[#8E8F90]">
+              {subtitle.split('<br/>').map((line, i, arr) => (
+                <span key={i}>
+                  {line}
+                  {i < arr.length - 1 && <br />}
+                </span>
+              ))}
+            </p> */}
+            <h2 className="mt-[clamp(20px,3vh,54px)] shrink-0 text-[48px] leading-[130%] font-extrabold tracking-[-0.005em] whitespace-pre-line text-[#1E2021]">
+              {title}
+            </h2>
+            <div className="flex items-end gap-2">
+              {features.map((f, i) => (
+                <button
+                  key={f.chipLabel}
+                  onClick={() => handleChipClick(i)}
+                  className={cn(
+                    'typo-button2 h-[40px] min-w-[40px] cursor-pointer rounded-3xl px-[15px] py-2 transition-colors',
+                    i === activeIndex
+                      ? 'bg-[#00C8AA] text-white hover:bg-[#00b89c]'
+                      : 'border border-[#00C8AA] text-[#00C8AA] hover:bg-[#00C8AA] hover:text-white',
+                  )}
+                >
+                  {f.chipLabel}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={activeIndex}
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -16 }}
+              transition={{ duration: 0.25, ease: 'easeOut' }}
+              className="w-full"
+            >
+              <div
                 className={cn(
-                  'typo-button2 h-[40px] min-w-[40px] cursor-pointer rounded-3xl px-[15px] py-2 transition-colors',
-                  i === activeIndex
-                    ? 'bg-[#00C8AA] text-white hover:bg-[#00b89c]'
-                    : 'border border-[#00C8AA] text-[#00C8AA] hover:bg-[#00C8AA] hover:text-white',
+                  'w-full',
+                  active.video
+                    ? ''
+                    : cn('items-start overflow-hidden rounded-[30px] pt-[91px]', active.bgColor),
                 )}
               >
-                {f.chipLabel}
-              </button>
-            ))}
-          </div>
+                {active.video ? (
+                  <div className="relative w-full">
+                    {!videoReady.has(activeIndex) ? (
+                      <Skeleton className="aspect-[3840/1888] w-full animate-pulse rounded-[30px] bg-[#E6EAED]" />
+                    ) : null}
+                    <video
+                      ref={(el) => {
+                        videoRefs.current[activeIndex] = el;
+                        if (!el) return;
+                        if (el.readyState >= 2) markVideoReady(activeIndex);
+                        if (sectionActiveRef.current) el.play().catch(() => {});
+                      }}
+                      src={active.video}
+                      onLoadedData={() => markVideoReady(activeIndex)}
+                      onCanPlay={() => markVideoReady(activeIndex)}
+                      loop
+                      muted
+                      playsInline
+                      preload="auto"
+                      className={cn(
+                        'w-full rounded-[30px]',
+                        !videoReady.has(activeIndex) && 'invisible absolute',
+                      )}
+                    />
+                  </div>
+                ) : active.image ? (
+                  <Image src={active.image} alt={active.chipLabel} width={945} height={523} />
+                ) : null}
+              </div>
+              <p className="mt-[22px] pb-[clamp(16px,3vh,32px)] text-[18px] leading-[30px] font-semibold tracking-[-0.005em] text-[#909599]">
+                {active.highlightKeyword
+                  ? (() => {
+                      const idx = active.description.indexOf(active.highlightKeyword);
+                      if (idx === -1) return active.description;
+                      return (
+                        <>
+                          {active.description.slice(0, idx)}
+                          <span className="text-[#000]">{active.highlightKeyword}</span>
+                          {active.description.slice(idx + active.highlightKeyword.length)}
+                        </>
+                      );
+                    })()
+                  : active.description}
+              </p>
+            </motion.div>
+          </AnimatePresence>
         </div>
-
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={activeIndex}
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -16 }}
-            transition={{ duration: 0.25, ease: 'easeOut' }}
-            className="w-[1123px]"
-          >
-            <div
-              className={cn(
-                'h-[510px] w-full overflow-hidden rounded-[30px]',
-                active.video ? '' : cn('px-[93px] pt-[91px]', active.bgColor),
-              )}
-            >
-              {active.video ? (
-                <video
-                  ref={(el) => {
-                    videoRefs.current[activeIndex] = el;
-                  }}
-                  src={active.video}
-                  loop
-                  muted
-                  playsInline
-                  preload="metadata"
-                  className="h-full w-full object-cover"
-                />
-              ) : active.image ? (
-                <Image src={active.image} alt={active.chipLabel} width={945} height={523} />
-              ) : null}
-            </div>
-            <p className="mt-[22px] text-[18px] leading-[30px] font-semibold tracking-[-0.005em] text-[#909599]">
-              {active.highlightKeyword
-                ? (() => {
-                    const idx = active.description.indexOf(active.highlightKeyword);
-                    if (idx === -1) return active.description;
-                    return (
-                      <>
-                        {active.description.slice(0, idx)}
-                        <span className="text-[#000]">{active.highlightKeyword}</span>
-                        {active.description.slice(idx + active.highlightKeyword.length)}
-                      </>
-                    );
-                  })()
-                : active.description}
-            </p>
-          </motion.div>
-        </AnimatePresence>
       </section>
     </div>
   );
