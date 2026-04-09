@@ -1,7 +1,6 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 
 import { Button, Icon } from '@/components/ui';
 import { SendIcon } from '@/assets/icons';
@@ -15,15 +14,15 @@ function PostingActions() {
   const editPostId = editMatch ? Number(editMatch[1]) : null;
   const isEditPage = editPostId !== null;
 
-  const { submit: submitCreate, isPending: isCreating } = useCreatePost();
-  const { submit: submitUpdate, isPending: isUpdating } = useUpdatePost();
+  const { createPost, isPending: isCreating } = useCreatePost();
+  const { updatePost, isPending: isUpdating } = useUpdatePost();
   const isPending = isCreating || isUpdating;
 
   const handleSubmit = () => {
-    if (isEditPage && editPostId !== null) {
-      submitUpdate(editPostId);
+    if (isEditPage) {
+      updatePost(editPostId);
     } else {
-      submitCreate();
+      createPost();
     }
   };
 

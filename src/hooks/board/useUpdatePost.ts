@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useQueryClient } from '@tanstack/react-query';
-import { updatePost } from '@/lib/actions/board';
+import { updatePost as updatePostApi } from '@/lib/actions/board';
 import { resolveFilesPayload } from './resolveFilesPayload';
 import { useClubId } from '@/stores/useClubStore';
 import { usePostStore } from '@/stores/usePostStore';
@@ -14,7 +14,7 @@ export function useUpdatePost() {
   const queryClient = useQueryClient();
   const [isPending, setIsPending] = useState(false);
 
-  const submit = async (postId: number) => {
+  const updatePost = async (postId: number) => {
     const { title, content, files, _snapshot, reset } = usePostStore.getState();
 
     if (!validatePost({ clubId, title, content, files })) return;
@@ -24,8 +24,10 @@ export function useUpdatePost() {
 
     setIsPending(true);
     try {
-      await updatePost(clubId!, postId, { title, content, files: filesPayload });
+      await updatePostApi(clubId!, postId, { title, content, files: filesPayload });
+
       await queryClient.invalidateQueries({ queryKey: ['posts'] });
+
       toast({ title: '게시글이 수정되었습니다.', variant: 'success' });
       reset();
       router.push(`/board/${postId}`);
@@ -36,5 +38,5 @@ export function useUpdatePost() {
     }
   };
 
-  return { submit, isPending };
+  return { updatePost, isPending };
 }

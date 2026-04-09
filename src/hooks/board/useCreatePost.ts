@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useQueryClient } from '@tanstack/react-query';
-import { createPost } from '@/lib/actions/board';
+import { createPost as createPostApi } from '@/lib/actions/board';
 import { useClubId } from '@/stores/useClubStore';
 import { usePostStore } from '@/stores/usePostStore';
 import { toast } from '@/stores/useToastStore';
@@ -13,7 +13,7 @@ export function useCreatePost() {
   const queryClient = useQueryClient();
   const [isPending, setIsPending] = useState(false);
 
-  const submit = async () => {
+  const createPost = async () => {
     const { board, title, content, files, getPayload, reset } = usePostStore.getState();
 
     if (!board) {
@@ -26,8 +26,10 @@ export function useCreatePost() {
     setIsPending(true);
     try {
       const payload = getPayload();
-      const result = await createPost(clubId!, board, payload);
+      const result = await createPostApi(clubId!, board, payload);
+
       await queryClient.invalidateQueries({ queryKey: ['posts'] });
+
       toast({ title: '게시글이 작성되었습니다.', variant: 'success' });
       reset();
       router.push(`/board/${result.id}`);
@@ -38,5 +40,5 @@ export function useCreatePost() {
     }
   };
 
-  return { submit, isPending };
+  return { createPost, isPending };
 }
