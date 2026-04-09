@@ -32,7 +32,7 @@ function MemberSearchBar({
         type="text"
         value={value}
         onChange={(e) => onValueChange(e.target.value)}
-        placeholder="Search for name"
+        placeholder="기수, 학번, 이름으로 검색이 가능합니다."
         className="typo-body1 placeholder:text-text-alternative focus:outline-line focus:border-accent-foreground h-12 w-full rounded-sm border py-300 pr-300 pl-13 focus:outline-[1.5px]"
       />
     </div>

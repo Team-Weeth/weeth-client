@@ -16,7 +16,6 @@ import { cn } from '@/lib/cn';
 import type { Member } from '@/types/admin/member';
 import {
   COLUMNS,
-  MOCK_MEMBERS,
   SORT_LABEL,
   STATUS_BAR_COLOR,
   STATUS_LEGEND,
@@ -25,6 +24,7 @@ import {
 } from '@/constants/admin/memberTable.constants';
 
 interface MemberTableProps extends React.HTMLAttributes<HTMLDivElement> {
+  members: Member[];
   selectedIds?: Set<string>;
   onSelectionChange?: (ids: Set<string>) => void;
   onMemberAction?: (member: Member) => void;
@@ -32,6 +32,7 @@ interface MemberTableProps extends React.HTMLAttributes<HTMLDivElement> {
 
 function MemberTable({
   className,
+  members,
   selectedIds: controlledSelectedIds,
   onSelectionChange,
   onMemberAction,
@@ -43,13 +44,13 @@ function MemberTable({
   const selectedIds = controlledSelectedIds ?? internalSelectedIds;
   const setSelectedIds = onSelectionChange ?? setInternalSelectedIds;
 
-  const sortedMembers = sortMembers(MOCK_MEMBERS, sortBy);
+  const sortedMembers = sortMembers(members, sortBy);
 
-  const isAllSelected = selectedIds.size === MOCK_MEMBERS.length;
+  const isAllSelected = selectedIds.size === members.length;
   const isIndeterminate = selectedIds.size > 0 && !isAllSelected;
 
   const toggleAll = () => {
-    setSelectedIds(isAllSelected ? new Set() : new Set(MOCK_MEMBERS.map((m) => m.id)));
+    setSelectedIds(isAllSelected ? new Set() : new Set(members.map((m) => m.id)));
   };
 
   const toggleOne = (id: string) => {

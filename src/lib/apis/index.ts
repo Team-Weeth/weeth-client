@@ -8,4 +8,7 @@ export { boardServerApi } from './board.server';
 export { fileApi } from './file';
 export { homeApi } from './home';
 export { attendanceApi } from './attendance';
+export { mypageApi } from './mypage';
+export { adminMemberApi } from './adminMember';
+export { cardinalApi } from './cardinal';
 export { inquiryApi } from './inquiry';
