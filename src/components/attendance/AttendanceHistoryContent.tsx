@@ -38,7 +38,7 @@ function toDisplayRecord(record: AttendanceSummary['attendances'][number]) {
 }
 
 function AttendanceHistoryContent({ summary }: AttendanceHistoryContentProps) {
-  const { total = 0, attendanceCount = 0, absenceCount = 0, attendances = [] } = summary;
+  const { total, attendanceCount, absenceCount, attendances = [] } = summary;
   const records = attendances.map(toDisplayRecord);
 
   return (
@@ -67,9 +67,9 @@ function AttendanceHistoryContent({ summary }: AttendanceHistoryContentProps) {
       <div className="flex flex-col gap-700 px-450">
         <div className="bg-container-neutral flex flex-col gap-400 rounded-lg p-400">
           <div className="flex gap-200">
-            <StatBox label="정기 모임" value={`${total}회`} />
-            <StatBox label="출석" value={`${attendanceCount}회`} />
-            <StatBox label="결석" value={`${absenceCount}회`} />
+            <StatBox label="정기 모임" value={`${total ?? 0}회`} />
+            <StatBox label="출석" value={`${attendanceCount ?? 0}회`} />
+            <StatBox label="결석" value={`${absenceCount ?? 0}회`} />
           </div>
 
           <Divider />
