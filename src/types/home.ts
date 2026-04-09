@@ -1,4 +1,5 @@
 import type { ApiResponse } from '@/types/common';
+
 import type {
   Identifiable,
   Named,
@@ -9,6 +10,8 @@ import type {
   WithProfileImage,
   WithRole,
 } from '@/types/user';
+
+import type { FileItem } from '@/types/file';
 
 interface ClubInfo {
   id: string;
@@ -50,16 +53,6 @@ interface MonthlySchedule {
   type: string;
 }
 
-interface FileAttachment {
-  fileId: number;
-  fileName: string;
-  fileUrl: string;
-  storageKey: string;
-  fileSize: number;
-  contentType: string;
-  status: string;
-}
-
 type PostAuthor = UserSummary;
 
 interface RecentPost {
@@ -70,7 +63,7 @@ interface RecentPost {
   time: string;
   commentCount: number;
   likeCount: number;
-  fileUrls: FileAttachment[];
+  fileUrls: FileItem[];
   isNew: boolean;
 }
 
@@ -125,7 +118,6 @@ export type {
   UnreadNotice,
   RecentNotice,
   MonthlySchedule,
-  FileAttachment,
   PostAuthor,
   RecentPost,
   SortInfo,

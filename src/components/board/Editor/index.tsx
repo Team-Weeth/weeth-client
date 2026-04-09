@@ -46,33 +46,21 @@ const floatingMenuTippyOptions = {
  * - 이미지 붙여넣기 (Ctrl+V) 및 드래그앤드롭
  */
 
-export default function Editor() {
+interface EditorProps {
+  initialContent?: string;
+}
+
+export default function Editor({ initialContent }: EditorProps = {}) {
   const { imageInputRef, fileInputRef, processFiles, picker, files, handlers } = useFileUpload();
   const { editor, showSlashMenu, closeSlashMenu, containerRef } = usePostEditor({
     processFiles,
+    initialContent,
   });
-
-  const handleDragOver = (e: React.DragEvent) => {
-    e.preventDefault();
-  };
-
-  const handleDrop = (e: React.DragEvent) => {
-    e.preventDefault();
-    const droppedFiles = Array.from(e.dataTransfer.files);
-    if (droppedFiles.length > 0) {
-      processFiles(droppedFiles);
-    }
-  };
 
   if (!editor) return null;
 
   return (
-    <div
-      ref={containerRef}
-      className="relative w-full"
-      onDragOver={handleDragOver}
-      onDrop={handleDrop}
-    >
+    <div ref={containerRef} className="relative flex min-h-[400px] w-full flex-col">
       {/* 숨겨진 파일 input — 슬래시 메뉴에서 각 ref를 통해 트리거 */}
       <input
         ref={imageInputRef}
@@ -119,12 +107,12 @@ export default function Editor() {
 
       <div className="relative">
         <EditorContent editor={editor} className="max-w-none" />
+      </div>
 
-        {/* 게시글 하단 첨부 영역 */}
-        <div className="flex flex-col gap-400">
-          <ImageList files={files.imageFiles} removable onRemove={files.handleRemoveFile} />
-          <FileList files={files.nonImageFiles} onRemove={files.handleRemoveFile} editable />
-        </div>
+      {/* 게시글 하단 첨부 영역 */}
+      <div className="mt-auto flex flex-col gap-400 pt-400">
+        <ImageList files={files.imageFiles} removable onRemove={files.handleRemoveFile} />
+        <FileList files={files.nonImageFiles} onRemove={files.handleRemoveFile} editable />
       </div>
     </div>
   );

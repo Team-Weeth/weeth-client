@@ -8,11 +8,11 @@ export type {
   UnreadNotice,
   RecentNotice,
   MonthlySchedule,
-  FileAttachment,
   PostAuthor,
   RecentPost,
   PageData,
 } from './home';
+
 export type { Club, ClubIdentifier } from './club';
 export type {
   Role,
@@ -24,3 +24,5 @@ export type {
   UserSummary,
   UserInfo,
 } from './user';
+
+export type { FileStatus, FileItem, DisplayFile, CreatePostFile } from './file';

@@ -2,10 +2,12 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { usePathname } from 'next/navigation';
-import { Button, Icon } from '../../ui';
-import { MenuIcon, EditIcon, SendIcon, ExitToAppIcon, AvatarIcon, LogoIcon } from '@/assets/icons';
+
+import { MenuIcon, LogoIcon } from '@/assets/icons';
+
+import { PostingActions } from './PostingActions';
+import { DefaultActions } from './DefaultActions';
 
 interface HeaderProps {
   isMain?: boolean;
@@ -23,14 +25,14 @@ const Logo = ({ width = 76, href }: { width?: number; href: string }) => (
   </Link>
 );
 
+const NAV_ITEMS = [
+  { id: 'board', label: '게시판', href: '/board' },
+  { id: 'attendance', label: '출석', href: '/attendance' },
+];
+
 export default function Header({ isMain = true }: HeaderProps) {
   const pathname = usePathname();
-  const router = useRouter();
-  const navItems = [
-    { id: 'board', label: '게시판', href: '/board' },
-    { id: 'attendance', label: '출석', href: '/attendance' },
-  ];
-  const isWritePage = pathname.includes('/write');
+  const isPostingPage = pathname.includes('/write') || /^\/board\/edit\/\d+$/.test(pathname);
 
   return (
     <>
@@ -62,7 +64,7 @@ export default function Header({ isMain = true }: HeaderProps) {
             </>
           )}
           {isMain &&
-            navItems.map(({ id, label, href }) => {
+            NAV_ITEMS.map(({ id, label, href }) => {
               const isActive = pathname.startsWith(href);
               return (
                 <Link
@@ -79,57 +81,7 @@ export default function Header({ isMain = true }: HeaderProps) {
               );
             })}
         </div>
-        {isMain && (
-          <div className="flex items-center gap-200">
-            {isWritePage ? (
-              <>
-                <Button
-                  variant="secondary"
-                  size="md"
-                  onClick={() => router.back()}
-                  className="typo-button1 text-text-strong px-4"
-                >
-                  작성 취소
-                </Button>
-                <Button variant="primary" size="md" type="submit" className="typo-button1 gap-100">
-                  <Icon src={SendIcon} size={20} alt="send" className="text-icon-inverse" />
-                  게시하기
-                </Button>
-              </>
-            ) : (
-              <>
-                {pathname.startsWith('/board') && (
-                  <Button
-                    variant="primary"
-                    size="md"
-                    onClick={() => router.push('/board/write')}
-                    className="typo-button1 gap-100"
-                  >
-                    <Image src={EditIcon} alt="edit" width={20} height={20} />
-                    글쓰기
-                  </Button>
-                )}
-                <Button
-                  variant="secondary"
-                  size="md"
-                  onClick={() => router.push('/admin')}
-                  className="typo-button1 text-text-strong gap-100"
-                >
-                  <Image src={ExitToAppIcon} alt="exit" width={20} height={20} />
-                  관리자
-                </Button>
-                <button
-                  type="button"
-                  aria-label="마이페이지로 이동"
-                  onClick={() => router.push('/mypage')}
-                  className="cursor-pointer rounded-full"
-                >
-                  <Image src={AvatarIcon} alt="avatar" width={40} height={40} />
-                </button>
-              </>
-            )}
-          </div>
-        )}
+        {isMain && (isPostingPage ? <PostingActions /> : <DefaultActions />)}
       </header>
     </>
   );

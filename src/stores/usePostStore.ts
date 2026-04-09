@@ -1,13 +1,24 @@
 import { create } from 'zustand';
 import { combine, devtools } from 'zustand/middleware';
 
+import type { PostDetail } from '@/types/board';
+
 export interface UploadFileItem {
   id: string;
   file?: File;
   fileName: string;
   fileUrl: string;
   storageKey: string;
+  fileSize: number;
+  contentType: string;
   uploaded: boolean;
+  isExisting?: boolean;
+}
+
+interface Snapshot {
+  title: string;
+  content: string;
+  fileIds: string[];
 }
 
 const initialState = {
@@ -21,6 +32,7 @@ const initialState = {
   content: '',
   files: [] as UploadFileItem[],
   status: 'DRAFT' as 'DRAFT' | 'PUBLISHED',
+  _snapshot: null as Snapshot | null,
 };
 
 export type PostState = typeof initialState;
@@ -78,17 +90,49 @@ export const usePostStore = create(
         set(initialState, false, 'reset');
       },
 
-      getPayload: () => {
+      initFromDetail: (post: PostDetail) => {
+        const { files } = get();
+        for (const f of files) {
+          if (f.fileUrl.startsWith('blob:')) URL.revokeObjectURL(f.fileUrl);
+        }
+
+        const fileIds = post.fileUrls.map((f) => String(f.fileId));
+        set(
+          {
+            ...initialState,
+            board: post.boardId,
+            title: post.title,
+            content: post.content,
+            files: post.fileUrls.map((f) => ({
+              id: String(f.fileId),
+              fileName: f.fileName,
+              fileUrl: f.fileUrl,
+              storageKey: f.storageKey,
+              fileSize: f.fileSize,
+              contentType: f.contentType,
+              uploaded: true,
+              isExisting: true,
+            })),
+            _snapshot: { title: post.title, content: post.content, fileIds },
+          },
+          false,
+          'initFromDetail',
+        );
+      },
+
+      getPayload: (isEdit = false) => {
         const state = get();
         return {
           title: state.title,
           content: state.content,
-          category: state.category,
-          studyName: state.studyName,
-          week: state.week,
-          part: state.part,
-          generationNumber: state.generationNumber,
-          files: state.files.filter((f) => f.uploaded).map(({ storageKey }) => storageKey),
+          files: state.files
+            .filter((f) => f.uploaded && !(isEdit && f.isExisting))
+            .map((f) => ({
+              fileName: f.fileName,
+              storageKey: f.storageKey,
+              fileSize: f.fileSize,
+              contentType: f.contentType,
+            })),
         };
       },
     })),
