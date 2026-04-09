@@ -6,8 +6,6 @@ import { useWatch } from 'react-hook-form';
 import { Input } from '@/components/ui';
 import { FormField } from '@/components/mypage/FormField';
 import { SearchSelect } from '@/components/mypage/SearchSelect';
-import { useSchoolsQuery } from '@/hooks/queries/mypage/useSchoolsQuery';
-import { useMajorsQuery } from '@/hooks/queries/mypage/useMajorsQuery';
 import type { EditProfileFormData } from '@/lib/schemas/editProfile';
 
 interface SchoolInfoFieldsProps {
@@ -15,15 +13,20 @@ interface SchoolInfoFieldsProps {
   control: Control<EditProfileFormData>;
   errors: FieldErrors<EditProfileFormData>;
   setValue: UseFormSetValue<EditProfileFormData>;
+  schools: string[];
+  majors: string[];
 }
 
-function SchoolInfoFields({ register, control, errors, setValue }: SchoolInfoFieldsProps) {
+function SchoolInfoFields({
+  register,
+  control,
+  errors,
+  setValue,
+  schools,
+  majors,
+}: SchoolInfoFieldsProps) {
   const school = useWatch({ control, name: 'school' });
   const department = useWatch({ control, name: 'department' });
-  const { data: schools = [] } = useSchoolsQuery();
-  const { data: majors = [] } = useMajorsQuery();
-  const schoolNames = schools.map((s) => s.schoolName);
-  const majorNames = majors.map((m) => m.majorName);
 
   return (
     <div className="flex flex-col gap-400">
@@ -31,7 +34,7 @@ function SchoolInfoFields({ register, control, errors, setValue }: SchoolInfoFie
         <SearchSelect
           value={school}
           onChange={(v) => setValue('school', v, { shouldValidate: true })}
-          options={schoolNames}
+          options={schools}
           placeholder="학교 선택"
         />
       </FormField>
@@ -40,7 +43,7 @@ function SchoolInfoFields({ register, control, errors, setValue }: SchoolInfoFie
         <SearchSelect
           value={department}
           onChange={(v) => setValue('department', v, { shouldValidate: true })}
-          options={majorNames}
+          options={majors}
           placeholder="학과 선택"
         />
       </FormField>

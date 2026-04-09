@@ -27,9 +27,12 @@ import { ProfileImageEditor } from './ProfileImageEditor';
 import { PersonalInfoFields } from './PersonalInfoFields';
 import { SchoolInfoFields } from './SchoolInfoFields';
 
-type EditProfileContentProps = React.HTMLAttributes<HTMLDivElement>;
+interface EditProfileContentProps extends React.HTMLAttributes<HTMLDivElement> {
+  schools: string[];
+  majors: string[];
+}
 
-function EditProfileContent({ className, ...props }: EditProfileContentProps) {
+function EditProfileContent({ className, schools, majors, ...props }: EditProfileContentProps) {
   const router = useRouter();
   const { data: me } = useMyMemberQuery();
   const { mutate: updateProfile, isPending } = useUpdateProfileMutation();
@@ -127,6 +130,8 @@ function EditProfileContent({ className, ...props }: EditProfileContentProps) {
             control={control}
             errors={errors}
             setValue={setValue}
+            schools={schools}
+            majors={majors}
           />
 
           <Button type="submit" size="lg" disabled={isPending} className="w-full">
