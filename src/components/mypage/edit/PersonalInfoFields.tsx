@@ -1,4 +1,4 @@
-import type { FieldErrors, UseFormRegister, UseFormSetValue } from 'react-hook-form';
+import type { FieldErrors, UseFormRegister } from 'react-hook-form';
 
 import { Input } from '@/components/ui';
 import { FormField } from '@/components/mypage/FormField';
@@ -8,13 +8,10 @@ import type { EditProfileFormData } from '@/lib/schemas/editProfile';
 interface PersonalInfoFieldsProps {
   register: UseFormRegister<EditProfileFormData>;
   errors: FieldErrors<EditProfileFormData>;
-  setValue: UseFormSetValue<EditProfileFormData>;
 }
 
-function PersonalInfoFields({ register, errors, setValue }: PersonalInfoFieldsProps) {
-  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setValue('tel', formatPhone(e.target.value), { shouldValidate: true });
-  };
+function PersonalInfoFields({ register, errors }: PersonalInfoFieldsProps) {
+  const telRegister = register('tel');
 
   return (
     <div className="flex flex-col gap-400">
@@ -33,8 +30,11 @@ function PersonalInfoFields({ register, errors, setValue }: PersonalInfoFieldsPr
 
       <FormField label="연락처" error={errors.tel?.message}>
         <Input
-          name="tel"
-          onChange={handlePhoneChange}
+          {...telRegister}
+          onChange={(e) => {
+            e.target.value = formatPhone(e.target.value);
+            telRegister.onChange(e);
+          }}
           placeholder="010-0000-0000"
           inputMode="numeric"
           className="rounded-lg"

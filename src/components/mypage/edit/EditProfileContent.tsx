@@ -121,7 +121,7 @@ function EditProfileContent({ className, ...props }: EditProfileContentProps) {
         />
 
         <div className="flex w-full max-w-[640px] flex-col gap-700">
-          <PersonalInfoFields register={register} errors={errors} setValue={setValue} />
+          <PersonalInfoFields register={register} errors={errors} />
           <SchoolInfoFields
             register={register}
             control={control}
