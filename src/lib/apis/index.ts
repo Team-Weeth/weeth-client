@@ -9,3 +9,4 @@ export { fileApi } from './file';
 export { homeApi } from './home';
 export { attendanceApi } from './attendance';
 export { inquiryApi } from './inquiry';
+export { adminClubApi } from './adminClub';
