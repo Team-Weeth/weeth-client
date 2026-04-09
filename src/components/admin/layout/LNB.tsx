@@ -31,7 +31,13 @@ const infoNavItems = [
 ];
 
 const moveNavItems = [
-  { id: 'service', icon: ExitIcon, label: 'Weeth로 이동', path: 'https://weeth.kr', external: true },
+  {
+    id: 'service',
+    icon: ExitIcon,
+    label: 'Weeth로 이동',
+    path: 'https://weeth.kr',
+    external: true,
+  },
   {
     id: 'manual',
     icon: AdminFileoutIcon,

@@ -11,9 +11,7 @@ interface LNBHeaderProps {
 
 function LNBHeader({ collapsed, onToggle }: LNBHeaderProps) {
   return (
-    <div
-      className={cn('flex h-12 items-center', collapsed ? 'justify-center' : 'gap-100 px-300')}
-    >
+    <div className={cn('flex h-12 items-center', collapsed ? 'justify-center' : 'gap-100 px-300')}>
       <Tooltip>
         <TooltipTrigger asChild>
           <button
