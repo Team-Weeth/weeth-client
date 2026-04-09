@@ -62,37 +62,37 @@ function BoardContent() {
   return (
     <main className="flex min-w-0 flex-1 flex-col gap-400">
       {posts.map((post) => (
-          <Link key={post.id} href={`/board/${post.id}`}>
-            <PostCard.Root>
-              <PostCard.Header>
-                <PostCard.Author
-                  author={post.author}
-                  date={formatShortDateTime(post.time)}
-                  hasAttachment={post.fileUrls.length > 0}
-                />
-                {currentUserId === post.author.id && (
-                  <div
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                    }}
-                  >
-                    <PostActionMenu postId={post.id} />
-                  </div>
-                )}
-              </PostCard.Header>
-              <PostCard.ListContent title={post.title} content={post.content} isNew={post.isNew} />
-              <div
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                }}
-              >
-                <PostCard.Images files={toDisplayImages(post.fileUrls)} />
-              </div>
-              <PostCard.Actions likeCount={post.like.likeCount} commentCount={post.commentCount} />
-            </PostCard.Root>
-          </Link>
+        <Link key={post.id} href={`/board/${post.id}`}>
+          <PostCard.Root>
+            <PostCard.Header>
+              <PostCard.Author
+                author={post.author}
+                date={formatShortDateTime(post.time)}
+                hasAttachment={post.fileUrls.length > 0}
+              />
+              {currentUserId === post.author.id && (
+                <div
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                  }}
+                >
+                  <PostActionMenu postId={post.id} />
+                </div>
+              )}
+            </PostCard.Header>
+            <PostCard.ListContent title={post.title} content={post.content} isNew={post.isNew} />
+            <div
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+              }}
+            >
+              <PostCard.Images files={toDisplayImages(post.fileUrls)} />
+            </div>
+            <PostCard.Actions likeCount={post.like.likeCount} commentCount={post.commentCount} />
+          </PostCard.Root>
+        </Link>
       ))}
       {isFetchingNextPage && <BoardContentSkeleton />}
       <div ref={sentinelRef} />
