@@ -177,6 +177,8 @@ export function useFileUpload(ownerType: OwnerType = 'POST') {
       fileName: file.name,
       fileUrl: URL.createObjectURL(file),
       storageKey: '',
+      fileSize: file.size,
+      contentType: file.type || 'application/octet-stream',
       uploaded: false,
     }));
 

@@ -1,4 +1,5 @@
 import type { ApiResponse } from '@/types/common';
+import type { FileItem } from '@/types/file';
 
 type Role = 'LEAD' | 'USER';
 type NullableImage = string | null;
@@ -63,16 +64,6 @@ interface MonthlySchedule {
   type: string;
 }
 
-interface FileAttachment {
-  fileId: number;
-  fileName: string;
-  fileUrl: string;
-  storageKey: string;
-  fileSize: number;
-  contentType: string;
-  status: string;
-}
-
 type PostAuthor = UserSummary;
 
 interface RecentPost {
@@ -83,7 +74,7 @@ interface RecentPost {
   time: string;
   commentCount: number;
   likeCount: number;
-  fileUrls: FileAttachment[];
+  fileUrls: FileItem[];
   isNew: boolean;
 }
 
@@ -138,7 +129,6 @@ export type {
   UnreadNotice,
   RecentNotice,
   MonthlySchedule,
-  FileAttachment,
   PostAuthor,
   RecentPost,
   SortInfo,

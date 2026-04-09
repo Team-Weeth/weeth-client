@@ -19,7 +19,7 @@ function PostDetailHeader({ className }: PostDetailHeaderProps) {
         variant="tertiary"
         size="icon-md"
         className="h-600 w-600"
-        onClick={() => router.back()}
+        onClick={() => router.push('/board')}
         aria-label="뒤로 가기"
       >
         <Icon src={BackIcon} size={13} className="text-icon-alternative" />

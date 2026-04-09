@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
+import { usePathname, useRouter } from 'next/navigation';
 
 import { BoardNav } from '@/components/board';
 import { useActiveBoardId, useSetActiveBoardId } from '@/stores/useBoardNavStore';
@@ -13,6 +14,10 @@ interface BoardNavClientProps {
 function BoardNavClient({ items }: BoardNavClientProps) {
   const activeBoardId = useActiveBoardId();
   const setActiveBoardId = useSetActiveBoardId();
+  const pathname = usePathname();
+  const router = useRouter();
+
+  const isDetailPage = /^\/board\/\d+$/.test(pathname);
 
   useEffect(() => {
     if (activeBoardId === null) return;
@@ -22,7 +27,14 @@ function BoardNavClient({ items }: BoardNavClientProps) {
     }
   }, [items, activeBoardId, setActiveBoardId]);
 
-  return <BoardNav items={items} activeId={activeBoardId} onItemSelect={setActiveBoardId} />;
+  const handleItemSelect = (id: number | null) => {
+    setActiveBoardId(id);
+    if (isDetailPage) {
+      router.push('/board');
+    }
+  };
+
+  return <BoardNav items={items} activeId={activeBoardId} onItemSelect={handleItemSelect} />;
 }
 
 export { BoardNavClient };

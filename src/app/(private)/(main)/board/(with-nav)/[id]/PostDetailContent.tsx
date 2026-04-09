@@ -1,5 +1,7 @@
 'use client';
 
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { Divider } from '@/components/ui';
 import {
   PostCard,
@@ -11,6 +13,7 @@ import {
 } from '@/components/board';
 import { formatShortDateTime } from '@/lib/formatTime';
 import { toDisplayFile, isImageFileByType, mapComment } from '@/lib/board';
+import { useSetActiveBoardId } from '@/stores/useBoardNavStore';
 import { useUserId } from '@/stores/useUserStore';
 import type { PostDetail } from '@/types/board';
 import type { UploadFileItem } from '@/stores/usePostStore';
@@ -20,7 +23,13 @@ interface PostDetailContentProps {
 }
 
 function PostDetailContent({ post }: PostDetailContentProps) {
+  const router = useRouter();
   const currentUserId = useUserId();
+  const setActiveBoardId = useSetActiveBoardId();
+
+  useEffect(() => {
+    setActiveBoardId(post.boardId);
+  }, [post.boardId, setActiveBoardId]);
 
   const isPostAuthor = currentUserId !== null && post.author.id === currentUserId;
   const imageFiles = post.fileUrls
@@ -48,15 +57,16 @@ function PostDetailContent({ post }: PostDetailContentProps) {
             date={formatShortDateTime(post.time)}
             hasAttachment={post.fileUrls.length > 0}
           />
-          {isPostAuthor && <PostActionMenu />}
+          {isPostAuthor && (
+            <PostActionMenu
+              postId={post.id}
+              onEdit={() => router.push(`/board/edit/${post.id}`)}
+              onDeleted={() => router.push('/board')}
+            />
+          )}
         </PostCard.Header>
 
-        <PostCard.Content
-          title={post.title}
-          content={post.content}
-          expandable={false}
-          variant="detail"
-        />
+        <PostCard.DetailContent title={post.title} content={post.content} isNew={post.isNew} />
 
         <PostCard.Images files={imageFiles} />
 
