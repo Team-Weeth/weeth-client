@@ -1,6 +1,8 @@
 import { EditProfileContent } from '@/components/mypage';
 import { universityServerApi } from '@/lib/apis/university.server';
 
+export const dynamic = 'force-dynamic';
+
 export default async function EditProfilePage() {
   const [schoolsRes, majorsRes] = await Promise.all([
     universityServerApi.getSchools(),
