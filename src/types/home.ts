@@ -1,23 +1,14 @@
 import type { ApiResponse } from '@/types/common';
-
-type Role = 'LEAD' | 'ADMIN' | 'USER';
-type NullableImage = string | null;
-
-interface Identifiable<T = number> {
-  id: T;
-}
-
-interface Named {
-  name: string;
-}
-
-interface WithProfileImage {
-  profileImageUrl: NullableImage;
-}
-
-interface WithRole {
-  role: Role;
-}
+import type {
+  Identifiable,
+  Named,
+  NullableImage,
+  Role,
+  UserInfo,
+  UserSummary,
+  WithProfileImage,
+  WithRole,
+} from '@/types/user';
 
 interface ClubInfo {
   id: string;
@@ -29,10 +20,6 @@ interface ClubInfo {
   profileImageUrl: NullableImage;
   backgroundImageUrl: NullableImage;
 }
-
-type UserSummary = Identifiable & Named & WithProfileImage & WithRole;
-
-type UserInfo = UserSummary;
 
 interface MyInfo {
   userInfo: UserInfo;

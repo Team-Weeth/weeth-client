@@ -4,22 +4,12 @@ import { useEffect } from 'react';
 
 import { useClubActions } from '@/stores/useClubStore';
 import { useUserActions } from '@/stores/useUserStore';
-
-interface UserInfo {
-  id: number;
-  name: string;
-  profileImageUrl: string | null;
-  role: 'LEAD' | 'ADMIN' | 'USER';
-}
-
-interface ClubInfo {
-  clubId: string;
-  clubName: string;
-}
+import type { ClubIdentifier } from '@/types/club';
+import type { UserInfo } from '@/types/user';
 
 interface UserHydratorProps {
   userInfo: UserInfo;
-  clubInfo: ClubInfo;
+  clubInfo: ClubIdentifier;
   children: React.ReactNode;
 }
 

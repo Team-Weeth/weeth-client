@@ -2,7 +2,6 @@
 export type { ApiResponse, MutationCallbacks } from './common';
 export type {
   ClubInfo,
-  UserInfo,
   MyInfo,
   HomeDashboard,
   HomeDashboardResponse,
@@ -14,4 +13,14 @@ export type {
   RecentPost,
   PageData,
 } from './home';
-export type { Club } from './club';
+export type { Club, ClubIdentifier } from './club';
+export type {
+  Role,
+  NullableImage,
+  Identifiable,
+  Named,
+  WithProfileImage,
+  WithRole,
+  UserSummary,
+  UserInfo,
+} from './user';
