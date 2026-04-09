@@ -1,11 +1,13 @@
+import { CreatePostFile, FileItem } from './file';
+
 // 페이지네이션 타입은 common.ts에서 관리, 하위 호환을 위해 re-export
 export type { Slice, SliceSort, SlicePageable } from '@/types/common';
+// 파일 타입은 file.ts에서 관리, 하위 호환을 위해 re-export
+export type { FileStatus, FileItem, DisplayFile, CreatePostFile } from '@/types/file';
 
 export type BoardType = 'ALL' | 'NOTICE' | 'GENERAL';
 
 export type UserRole = 'USER' | 'ADMIN';
-
-export type FileStatus = 'UPLOADED' | 'PENDING' | 'DELETED';
 
 interface BoardBase {
   id: number | null;
@@ -45,27 +47,8 @@ interface PostBase {
 }
 
 export interface PostListItem extends PostBase {
-  hasFile: boolean;
+  fileUrls: FileItem[];
   isNew: boolean;
-}
-
-/** API 응답 파일 (서버에서 받은 원본) */
-export interface FileItem {
-  fileId: number;
-  fileName: string;
-  fileUrl: string;
-  storageKey: string;
-  fileSize: number;
-  contentType: string;
-  status: FileStatus;
-}
-
-/** 조회용 파일 (컴포넌트 표시 전용) */
-export interface DisplayFile {
-  id: string | number;
-  fileName: string;
-  fileUrl: string;
-  uploaded?: boolean;
 }
 
 export interface PostComment {
@@ -78,8 +61,33 @@ export interface PostComment {
 }
 
 export interface PostDetail extends PostBase {
+  isNew?: boolean;
   comments: PostComment[];
   fileUrls: FileItem[];
+}
+
+/** 게시글 작성 요청 body */
+export interface CreatePostBody {
+  title: string;
+  content: string;
+  files: CreatePostFile[];
+}
+
+/** 게시글 작성 응답 data */
+export interface CreatePostData {
+  id: number;
+}
+
+/** 게시글 수정 요청 body — files: null=변경 없음, []=전체 삭제, 배열=교체 */
+export interface UpdatePostBody {
+  title: string;
+  content: string;
+  files: CreatePostFile[] | null;
+}
+
+/** 게시글 수정 응답 data */
+export interface UpdatePostData {
+  id: number;
 }
 
 /** mapComment 변환 결과 (UI 표시용) */

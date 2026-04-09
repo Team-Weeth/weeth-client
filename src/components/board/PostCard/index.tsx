@@ -2,7 +2,8 @@ import { cn } from '@/lib/cn';
 import { ImageList } from '@/components/board/ImageList';
 import type { DisplayFile } from '@/types/board';
 import { PostAuthorInfo } from './PostAuthorInfo';
-import { PostCardContent } from './PostCardContent';
+import { PostCardListContent } from './PostCardListContent';
+import { PostCardDetailContent } from './PostCardDetailContent';
 import { PostCardActions, type PostCardActionsProps } from './PostCardActions';
 
 function PostCardRoot({ className, children, ...props }: React.ComponentProps<'article'>) {
@@ -45,7 +46,8 @@ const PostCard = {
   Root: PostCardRoot,
   Header: PostCardHeader,
   Author: PostAuthorInfo,
-  Content: PostCardContent,
+  ListContent: PostCardListContent,
+  DetailContent: PostCardDetailContent,
   Images: PostCardImages,
   Actions: PostCardActions,
 };
