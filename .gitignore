@@ -10,6 +10,9 @@
 !.yarn/releases
 !.yarn/versions
 
+
+.claude/settings.local.json
+
 # testing
 /coverage
 
@@ -33,9 +36,13 @@ yarn-error.log*
 # env files (can opt-in for committing if needed)
 .env*
 
+# claude code local settings
+.claude/settings.local.json
+
 # vercel
 .vercel
 
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+.env.local

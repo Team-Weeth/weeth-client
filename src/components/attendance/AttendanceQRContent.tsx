@@ -1,0 +1,78 @@
+'use client';
+
+import Image from 'next/image';
+import Link from 'next/link';
+
+import { AttendanceQRIcon } from '@/assets/icons';
+import {
+  Breadcrumb,
+  BreadcrumbList,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from '@/components/ui';
+import { useRemainingTime } from '@/hooks/useRemainingTime';
+
+interface AttendanceQRContentProps {
+  title: string;
+  code: string;
+  endTime: string;
+}
+
+function AttendanceQRContent({ title, code, endTime }: AttendanceQRContentProps) {
+  const { minutes, seconds, isExpired } = useRemainingTime(endTime);
+
+  return (
+    <div className="mx-auto flex w-full max-w-[1025px] flex-col gap-700 pt-600">
+      <Breadcrumb className="px-450">
+        <BreadcrumbList>
+          <BreadcrumbItem>
+            <BreadcrumbLink asChild>
+              <Link href="/attendance" className="typo-caption1 text-text-alternative">
+                출석
+              </Link>
+            </BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator />
+          <BreadcrumbItem>
+            <BreadcrumbPage className="typo-caption1 text-text-alternative">
+              오늘의 출석
+            </BreadcrumbPage>
+          </BreadcrumbItem>
+        </BreadcrumbList>
+      </Breadcrumb>
+
+      <div className="flex flex-col gap-300 px-450">
+        <div className="flex w-full flex-col items-center gap-200 text-center">
+          <h1 className="typo-h3 text-text-strong">
+            QR코드를 카메라로 스캔하여 빠르게 출석해보세요.
+          </h1>
+          <p className="typo-body2 text-text-alternative">
+            QR 스캔이 정상적으로 진행되지 않으면 하단의 출석 코드를 입력해주세요.
+          </p>
+        </div>
+
+        <div className="bg-container-neutral flex w-full flex-col items-center gap-400 rounded-lg p-400">
+          <div className="flex w-full flex-col items-center gap-600 p-400">
+            <Image src={AttendanceQRIcon} alt="QR 코드" width={256} height={256} />
+
+            <div className="flex w-full flex-col items-center gap-200">
+              <div className="flex items-center gap-200">
+                <span className="typo-sub2 text-text-strong">출석 가능 시간</span>
+                <span className="typo-sub2 text-state-error tabular-nums">
+                  {isExpired ? '마감' : `${minutes}:${seconds}`}
+                </span>
+              </div>
+              <p className="typo-body2 text-text-strong">QR코드는 모바일만 제공하고 있어요.</p>
+            </div>
+
+            <p className="typo-h1 text-text-strong">{code}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export { AttendanceQRContent, type AttendanceQRContentProps };

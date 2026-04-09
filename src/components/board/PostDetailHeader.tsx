@@ -1,0 +1,31 @@
+'use client';
+
+import { useRouter } from 'next/navigation';
+import { BackIcon } from '@/assets/icons';
+import { Button, Icon } from '@/components/ui';
+import { cn } from '@/lib/cn';
+
+interface PostDetailHeaderProps {
+  className?: string;
+}
+
+function PostDetailHeader({ className }: PostDetailHeaderProps) {
+  const router = useRouter();
+
+  return (
+    <div className={cn('flex items-start gap-200 self-stretch px-450 pt-450 pb-300', className)}>
+      <Button
+        type="button"
+        variant="tertiary"
+        size="icon-md"
+        className="h-600 w-600"
+        onClick={() => router.back()}
+        aria-label="뒤로 가기"
+      >
+        <Icon src={BackIcon} size={13} className="text-icon-alternative" />
+      </Button>
+    </div>
+  );
+}
+
+export { PostDetailHeader, type PostDetailHeaderProps };

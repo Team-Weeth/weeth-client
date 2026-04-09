@@ -1,21 +1,29 @@
 'use client';
 
 import { useEditor } from '@tiptap/react';
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { usePostStore } from '@/stores/usePostStore';
 import { editorExtensions } from './extensions';
 
-export function usePostEditor() {
+interface UsePostEditorOptions {
+  processFiles?: (files: File[]) => void;
+}
+
+export function usePostEditor({ processFiles }: UsePostEditorOptions = {}) {
   const setContent = usePostStore((state) => state.setContent);
   const [showSlashMenu, setShowSlashMenu] = useState(false);
   // ref로 최신 상태 유지 → useEditor 내부 handleKeyDown stale closure 방지
   const showSlashMenuRef = useRef(false);
   const containerRef = useRef<HTMLDivElement>(null);
+  const processFilesRef = useRef(processFiles);
+  useEffect(() => {
+    processFilesRef.current = processFiles;
+  });
 
-  const closeSlashMenu = useCallback(() => {
+  const closeSlashMenu = () => {
     showSlashMenuRef.current = false;
     setShowSlashMenu(false);
-  }, []);
+  };
 
   const updateSlashMenuState = (isSlash: boolean) => {
     showSlashMenuRef.current = isSlash;
@@ -29,19 +37,40 @@ export function usePostEditor() {
     onUpdate: ({ editor }) => {
       setContent(editor.getHTML());
       const { $from } = editor.state.selection;
-      updateSlashMenuState(($from.nodeBefore?.textContent ?? '').endsWith('/'));
+      const text = $from.nodeBefore?.textContent ?? '';
+      updateSlashMenuState(/\/[^\s]*$/.test(text));
     },
 
     // 커서 이동만으로 '/' 뒤를 벗어났을 때도 메뉴를 닫기 위해 추적
     onSelectionUpdate: ({ editor }) => {
       if (!showSlashMenuRef.current) return;
       const { $from } = editor.state.selection;
-      if (!($from.nodeBefore?.textContent ?? '').endsWith('/')) {
+      const text = $from.nodeBefore?.textContent ?? '';
+      if (!/\/[^\s]*$/.test(text)) {
         closeSlashMenu();
       }
     },
 
     editorProps: {
+      handlePaste: (_view, event) => {
+        const clipboardFiles = event.clipboardData?.files;
+        if (clipboardFiles && clipboardFiles.length > 0) {
+          processFilesRef.current?.(Array.from(clipboardFiles));
+          return true;
+        }
+        return false;
+      },
+
+      handleDrop: (_view, event) => {
+        const droppedFiles = event.dataTransfer?.files;
+        if (droppedFiles && droppedFiles.length > 0) {
+          event.preventDefault();
+          processFilesRef.current?.(Array.from(droppedFiles));
+          return true;
+        }
+        return false;
+      },
+
       handleKeyDown: (view, event) => {
         // 슬래시 메뉴 우선 처리 (ref로 stale closure 없이 최신 값 참조)
         if (showSlashMenuRef.current) {

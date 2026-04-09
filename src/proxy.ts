@@ -1,0 +1,75 @@
+import { NextRequest, NextResponse } from 'next/server';
+import { ACCESS_TOKEN_KEY } from '@/lib/apis/cookies';
+
+const PUBLIC_PATHS = ['/', '/login', '/terms', '/landing'];
+
+// TODO: 런칭 후 PRE_LAUNCH 플래그 및 관련 분기 제거
+const PRE_LAUNCH = true;
+
+export function proxy(request: NextRequest) {
+  const { pathname } = request.nextUrl;
+
+  // 런칭 전: /landing 외 모든 경로 차단
+  if (PRE_LAUNCH && pathname !== '/landing') {
+    const url = request.nextUrl.clone();
+    url.pathname = '/landing';
+    url.searchParams.set('blocked', 'true');
+    return NextResponse.redirect(url);
+  }
+
+  // /clubId=XXX 패턴 → /club/XXX로 리다이렉트 (초대 링크)
+  const clubIdMatch = pathname.match(/^\/clubId=([^?/]+)/);
+  if (clubIdMatch) {
+    const clubId = clubIdMatch[1];
+    const url = new URL(`/club/${clubId}`, request.url);
+    url.search = request.nextUrl.search;
+    return NextResponse.redirect(url);
+  }
+
+  // Preview / Amplify 개발 배포 환경에서 토큰 자동 주입
+  // VERCEL_ENV: Vercel이 자동 주입 ('preview' | 'production' | 'development')
+  // AWS_BRANCH: Amplify가 자동 주입 (배포된 브랜치명)
+  const isPreview =
+    process.env.VERCEL_ENV === 'preview' ||
+    (!!process.env.AWS_BRANCH && process.env.AWS_BRANCH !== 'main');
+  const previewToken = process.env.PREVIEW_ACCESS_TOKEN;
+
+  if (isPreview && previewToken && !request.cookies.has(ACCESS_TOKEN_KEY)) {
+    const response = NextResponse.next();
+    response.cookies.set(ACCESS_TOKEN_KEY, previewToken, {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'lax',
+      path: '/',
+      maxAge: 60 * 60 * 24 * 7,
+    });
+    return response;
+  }
+
+  if (
+    PUBLIC_PATHS.some((path) => pathname === path) ||
+    pathname.startsWith('/club/') ||
+    pathname.startsWith('/kakao/') ||
+    pathname === '/apple/oauth'
+  ) {
+    return NextResponse.next();
+  }
+
+  const accessToken = request.cookies.get(ACCESS_TOKEN_KEY)?.value;
+
+  if (!accessToken) {
+    const clubId = process.env.CLUB_ID;
+    if (clubId) {
+      return NextResponse.redirect(new URL(`/club/${clubId}`, request.url));
+    }
+    const loginUrl = new URL('/login', request.url);
+    loginUrl.searchParams.set('redirect', pathname);
+    return NextResponse.redirect(loginUrl);
+  }
+
+  return NextResponse.next();
+}
+
+export const config = {
+  matcher: ['/((?!_next/static|_next/image|icons|videos|api|favicon\\.ico).*)'],
+};

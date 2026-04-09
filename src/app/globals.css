@@ -15,7 +15,7 @@
   --breakpoint-*: initial;
   --breakpoint-mobile: 360px;
   --breakpoint-tablet: 696px;
-  --breakpoint-desktop: 1032px;
+  --breakpoint-desktop: 1440px;
 }
 
 :root {
@@ -54,6 +54,10 @@
   --pink-500: #ed72e7;
   --pink-700: #8e448a;
   --pink-900: #280526;
+
+  --background: var(--neutral-200);
+  --background-2: var(--neutral-300);
+  --foreground: var(--text-normal);
   --line: var(--neutral-400);
 
   --text-normal: var(--neutral-800);
@@ -61,6 +65,15 @@
   --text-alternative: var(--neutral-600);
   --text-disabled: var(--neutral-500);
   --text-inverse: var(--neutral-0);
+  --container-code: var(--neutral-400);
+
+  --code-keyword: #d73a49;
+  --code-string: #032f62;
+  --code-comment: #6a737d;
+  --code-function: #6f42c1;
+  --code-number: #005cc5;
+  --code-attr: #e36209;
+  --code-built-in: #22863a;
 
   --container-neutral: var(--neutral-300);
   --container-neutral-interaction: var(--neutral-400);
@@ -91,6 +104,8 @@
   --state-success: #2370f9;
   --state-caution: #ffb202;
   --state-error: #ff5857;
+
+  --kakao-bg: #fee500;
 
   --font-weight-medium: 500;
   --font-weight-semibold: 600;
@@ -142,9 +157,11 @@
   --radius-md: 12px;
   --radius-lg: 16px;
   --radius: 0.625rem;
+
   --shadow-dialog: 0 10px 40px 0 rgba(0, 0, 0, 0.4);
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
+  --shadow-sm: 0 1px 5px 0 rgba(17, 33, 49, 0.15);
+  --shadow-lg: 0 10px 30px 0 rgba(17, 33, 49, 0.3);
+
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
@@ -204,6 +221,16 @@
 }
 
 .dark {
+  --container-code: var(--neutral-100);
+
+  --code-keyword: #ff7b72;
+  --code-string: #a5d6ff;
+  --code-comment: #8b949e;
+  --code-function: #d2a8ff;
+  --code-number: #79c0ff;
+  --code-attr: #ffa657;
+  --code-built-in: #7ee787;
+
   --neutral-0: #000000;
   --neutral-100: #171819;
   --neutral-200: #1e2021;
@@ -239,8 +266,7 @@
   --pink-500: #ed72e7;
   --pink-700: #f3a7f0;
   --pink-900: #faddf9;
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
+
   --card: oklch(0.205 0 0);
   --card-foreground: oklch(0.985 0 0);
   --popover: oklch(0.205 0 0);
@@ -274,8 +300,10 @@
 
 @theme inline {
   --font-pretendard: 'Pretendard Variable', sans-serif;
+  --font-inter: var(--font-inter), sans-serif;
 
   --color-background: var(--background);
+  --color-background-2: var(--background-2);
   --color-line: var(--line);
 
   --color-text-normal: var(--text-normal);
@@ -468,9 +496,17 @@ select:focus {
   letter-spacing: var(--letter-spacing);
 }
 
+.scrollbar-none {
+  scrollbar-width: none;
+}
+
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+
 .scrollbar-custom {
   scrollbar-width: thin;
-  scrollbar-color: var(--neutral-500) transparent;
+  scrollbar-color: var(--neutral-400) transparent;
 }
 
 .scrollbar-custom::-webkit-scrollbar {
@@ -482,35 +518,105 @@ select:focus {
 }
 
 .scrollbar-custom::-webkit-scrollbar-thumb {
-  background-color: var(--neutral-500);
+  background-color: var(--neutral-400);
   border-radius: 9999px;
-  border: 2px solid transparent;
-  background-clip: content-box;
 }
 
 .ProseMirror {
-  color: var(--text-normal);
+  @apply text-text-strong min-h-[400px] focus:outline-none;
+}
+
+.ProseMirror > * {
+  @apply my-100;
+}
+
+/* placeholder */
+.ProseMirror p.is-empty::before {
+  @apply text-text-alternative pointer-events-none float-left h-0 content-[attr(data-placeholder)];
+}
+
+/* 리스트 */
+.ProseMirror li p {
+  @apply my-0;
 }
 
 .ProseMirror h1 {
-  @apply typo-h1;
+  @apply typo-h3 mt-300;
 }
 
 .ProseMirror h2 {
-  @apply typo-h2;
+  @apply typo-sub1 mt-300;
 }
 
 .ProseMirror h3 {
-  @apply typo-h3;
+  @apply typo-sub2 mt-300;
+}
+
+.ProseMirror ul {
+  @apply text-text-alternative my-0 list-disc py-0 pl-500;
+}
+
+.ProseMirror ol {
+  @apply text-text-alternative my-0 list-decimal py-0 pl-500;
+}
+
+.ProseMirror ul li,
+.ProseMirror ol li {
+  @apply my-0 py-0;
+  padding-inline-start: 8px;
+}
+
+.ProseMirror ul li > p,
+.ProseMirror ol li > p {
+  @apply text-text-strong;
+}
+
+/* 체크리스트 */
+.ProseMirror ul[data-type='taskList'] {
+  @apply text-text-strong list-none pl-0;
+}
+
+.ProseMirror ul[data-type='taskList'] > li {
+  @apply flex items-start gap-300;
+  padding-inline-start: 0;
+}
+
+.ProseMirror ul[data-type='taskList'] > li > label {
+  @apply mt-100 flex items-center self-start;
+}
+
+.ProseMirror ul[data-type='taskList'] li > div {
+  @apply min-h-[1.5em] flex-1;
+}
+
+.ProseMirror ul[data-type='taskList'] li input[type='checkbox'] {
+  @apply border-icon-alternative size-[16px] shrink-0 cursor-pointer appearance-none rounded-[4px] border;
+}
+
+.ProseMirror ul[data-type='taskList'] li input[type='checkbox']:checked {
+  @apply border-button-primary bg-button-primary;
+}
+
+.ProseMirror ul[data-type='taskList'] li input[type='checkbox']:checked::after {
+  content: '';
+  @apply bg-text-inverse block size-full;
+  mask-image: url('@/assets/icons/check.svg');
+  mask-size: 12px;
+  mask-position: center;
+  mask-repeat: no-repeat;
 }
 
 /* 인용 */
 .ProseMirror blockquote {
-  font-style: italic;
-  border-left: 3px solid var(--line);
+  @apply typo-body1 text-text-alternative;
+  font-style: normal;
+  @apply border-l-text-alternative border-l-4;
   padding-left: var(--padding-400);
   margin: var(--margin-300) 0;
-  font-weight: normal;
+}
+
+.ProseMirror blockquote > * {
+  @apply my-100;
 }
 
 .ProseMirror blockquote p::before,
@@ -520,10 +626,11 @@ select:focus {
 
 /* 인라인 코드 */
 .ProseMirror code:not(pre code) {
-  background-color: var(--container-neutral-alternative);
+  background-color: var(--container-code);
   color: var(--text-normal);
   padding: var(--padding-100) var(--padding-200);
   border-radius: var(--radius-sm);
+  font-size: 0.9em;
   font-weight: normal;
 }
 
@@ -534,7 +641,7 @@ select:focus {
 
 /* 코드 블록 */
 .ProseMirror pre {
-  background-color: var(--container-neutral-alternative);
+  background-color: var(--container-code);
   border-radius: var(--radius-sm);
   padding: var(--padding-300) var(--padding-400);
 }
@@ -542,7 +649,60 @@ select:focus {
 .ProseMirror pre code {
   background-color: transparent;
   color: var(--text-normal);
+  font-size: 0.9em;
   padding: 0;
+}
+
+/* 코드 블록 syntax highlighting */
+.ProseMirror pre code .hljs-keyword,
+.ProseMirror pre code .hljs-selector-tag,
+.ProseMirror pre code .hljs-deletion {
+  color: var(--code-keyword);
+}
+
+.ProseMirror pre code .hljs-string,
+.ProseMirror pre code .hljs-regexp,
+.ProseMirror pre code .hljs-addition {
+  color: var(--code-string);
+}
+
+.ProseMirror pre code .hljs-comment,
+.ProseMirror pre code .hljs-quote {
+  color: var(--code-comment);
+  font-style: italic;
+}
+
+.ProseMirror pre code .hljs-title,
+.ProseMirror pre code .hljs-section,
+.ProseMirror pre code .hljs-title.function_ {
+  color: var(--code-function);
+}
+
+.ProseMirror pre code .hljs-number,
+.ProseMirror pre code .hljs-literal,
+.ProseMirror pre code .hljs-variable,
+.ProseMirror pre code .hljs-template-variable {
+  color: var(--code-number);
+}
+
+.ProseMirror pre code .hljs-attr,
+.ProseMirror pre code .hljs-tag,
+.ProseMirror pre code .hljs-name {
+  color: var(--code-attr);
+}
+
+.ProseMirror pre code .hljs-built_in,
+.ProseMirror pre code .hljs-type {
+  color: var(--code-built-in);
+}
+
+@keyframes gallery-scroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-1698px);
+  }
 }
 
 @layer base {
@@ -551,5 +711,19 @@ select:focus {
   }
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+@layer utilities {
+  .scrollbar-none {
+    /* IE and Edge */
+    -ms-overflow-style: none;
+    /* Firefox */
+    scrollbar-width: none;
+  }
+
+  /* Chrome, Safari and Opera */
+  .scrollbar-none::-webkit-scrollbar {
+    display: none;
   }
 }
