@@ -1,16 +1,25 @@
 import type { ReactNode } from 'react';
 
 import { Header } from '@/components/layout';
+import { homeServerApi } from '@/lib/apis/home.server';
+import { UserHydrator } from '@/providers/user-hydrator';
 
-export default function MainLayout({
+// TODO: 하드코딩된 clubId 추후 동적으로 변경
+export default async function MainLayout({
   children,
 }: Readonly<{
   children: ReactNode;
 }>) {
+  const { data } = await homeServerApi.getDashboard('YUNJcjFKMO');
+  const { userInfo } = data.myInfo;
+  const { id: clubId, name: clubName } = data.club;
+
   return (
-    <div className="mx-auto flex h-screen max-w-[1440px] flex-col">
-      <Header />
-      {children}
-    </div>
+    <UserHydrator userInfo={userInfo} clubInfo={{ clubId, clubName }}>
+      <div className="mx-auto flex h-screen max-w-[1440px] flex-col">
+        <Header />
+        {children}
+      </div>
+    </UserHydrator>
   );
 }

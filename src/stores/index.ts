@@ -2,7 +2,7 @@
 
 export { useThemeStore } from './theme-store';
 export { useAuthStore, useAuthName, useAuthProfileImage, useAuthActions } from './useAuthStore';
-export { useClubStore, useClubId, useClubActions } from './useClubStore';
+export { useClubStore, useClubId, useClubName, useClubActions } from './useClubStore';
 export {
   useUserStore,
   useUserId,
