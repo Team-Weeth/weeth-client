@@ -1,20 +1,27 @@
-import { Member, MemberDetail } from '@/types/admin/member.d';
+import type { ClubMember, ClubMemberRole, Member } from '@/types/admin/member';
 
-export function toMemberDetail(m: Member): MemberDetail {
+const ROLE_MAP: Record<ClubMemberRole, string> = {
+  USER: '사용자',
+  ADMIN: '관리자',
+  LEAD: '리더',
+};
+
+export function toMember(cm: ClubMember): Member {
   return {
-    name: m.name,
-    generation: parseInt(m.generation.split('.')[0], 10),
-    status: m.status,
-    position: m.position,
-    role: m.role,
-    department: m.department,
-    phone: m.phone,
-    studentId: m.studentId,
-    email: 'weeth123@gmail.com',
-    activeGenerations: m.generation,
-    memberStatus: '알럼나이',
-    joinDate: '2024.12.03.',
-    attendance: m.attendance,
-    absence: m.absence,
+    id: String(cm.userId),
+    clubMemberId: cm.clubMemberId,
+    name: cm.name,
+    email: cm.email,
+    role: '',
+    department: cm.department,
+    studentId: cm.studentId,
+    phone: cm.tel,
+    position: ROLE_MAP[cm.memberRole],
+    memberRole: cm.memberRole,
+    generation: cm.cardinals.join(', '),
+    attendance: cm.attendanceCount,
+    absence: cm.absenceCount,
+    penaltyCount: cm.penaltyCount,
+    status: cm.memberStatus,
   };
 }

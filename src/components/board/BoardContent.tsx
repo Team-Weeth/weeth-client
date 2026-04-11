@@ -7,9 +7,16 @@ import { useIntersectionObserver } from '@/hooks/board/useIntersectionObserver';
 import { useUserId } from '@/stores/useUserStore';
 import { useActiveBoardId } from '@/stores/useBoardNavStore';
 import { formatShortDateTime } from '@/lib/formatTime';
+import type { FileItem } from '@/types/file';
 import { PostActionMenu } from './PostActionMenu';
 import { PostCard } from './PostCard';
 import { BoardContentSkeleton } from './BoardContentSkeleton';
+
+function toDisplayImages(files: FileItem[]) {
+  return files
+    .filter((f) => f.contentType.startsWith('image/'))
+    .map((f) => ({ id: f.fileId, fileName: f.fileName, fileUrl: f.fileUrl, uploaded: true }));
+}
 
 function BoardContent() {
   const activeBoardId = useActiveBoardId();
@@ -45,22 +52,44 @@ function BoardContent() {
       </main>
     );
 
+  if (!posts || posts.length === 0)
+    return (
+      <main className="flex min-w-0 flex-1 flex-col items-center justify-center py-800">
+        <p className="typo-body1 text-text-alternative">아직 게시글이 없습니다.</p>
+      </main>
+    );
+
   return (
     <main className="flex min-w-0 flex-1 flex-col gap-400">
-      {(posts ?? []).map((post) => (
+      {posts.map((post) => (
         <Link key={post.id} href={`/board/${post.id}`}>
           <PostCard.Root>
             <PostCard.Header>
               <PostCard.Author
                 author={post.author}
                 date={formatShortDateTime(post.time)}
-                hasAttachment={post.hasFile}
+                hasAttachment={post.fileUrls.length > 0}
               />
               {currentUserId === post.author.id && (
-                <PostActionMenu onClick={(e) => e.preventDefault()} />
+                <div
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                  }}
+                >
+                  <PostActionMenu postId={post.id} />
+                </div>
               )}
             </PostCard.Header>
-            <PostCard.Content title={post.title} content={post.content} isNew={post.isNew} />
+            <PostCard.ListContent title={post.title} content={post.content} isNew={post.isNew} />
+            <div
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+              }}
+            >
+              <PostCard.Images files={toDisplayImages(post.fileUrls)} />
+            </div>
             <PostCard.Actions likeCount={post.like.likeCount} commentCount={post.commentCount} />
           </PostCard.Root>
         </Link>

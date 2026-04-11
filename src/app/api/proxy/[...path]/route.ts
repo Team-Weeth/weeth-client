@@ -35,6 +35,7 @@ async function handler(request: NextRequest, { params }: { params: Promise<{ pat
 
   const responseHeaders = new Headers(response.headers);
   responseHeaders.delete('transfer-encoding');
+  responseHeaders.delete('content-encoding');
   responseHeaders.delete('set-cookie');
 
   return new NextResponse(response.body, {

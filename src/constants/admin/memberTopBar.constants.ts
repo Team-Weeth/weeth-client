@@ -1,24 +1,32 @@
+import type { ClubMemberRole } from '@/types/admin/member';
+
 interface TopBarActionParams {
   selectedCount: number;
-  canChangeToAdmin: boolean;
-  canChangeToUser: boolean;
+  targetRole: ClubMemberRole | null; // null = 혼합 선택
+  allBanned: boolean;
   onApprove?: () => void;
-  onChangeToAdmin?: () => void;
-  onChangeToUser?: () => void;
+  onChangeRole?: () => void;
   onResetPassword?: () => void;
   onBan?: () => void;
+  onRestore?: () => void;
 }
 
 export function getTopBarActions({
   selectedCount,
-  canChangeToAdmin,
-  canChangeToUser,
+  targetRole,
+  allBanned,
   onApprove,
-  onChangeToAdmin,
-  onChangeToUser,
+  onChangeRole,
   onResetPassword,
   onBan,
+  onRestore,
 }: TopBarActionParams) {
+  const roleLabel = targetRole === 'ADMIN' ? '관리자로 변경' : '사용자로 변경';
+  const roleTitle =
+    targetRole === 'ADMIN'
+      ? `${selectedCount}명의 멤버 역할을 관리자로\n변경하시겠습니까?`
+      : `${selectedCount}명의 멤버 역할을 사용자로\n변경하시겠습니까?`;
+
   return [
     {
       label: '가입 승인',
@@ -27,16 +35,10 @@ export function getTopBarActions({
       disabled: !onApprove,
     },
     {
-      label: '관리자로 변경',
-      title: `${selectedCount}명의 멤버 역할을 관리자로\n변경하시겠습니까?`,
-      handler: onChangeToAdmin,
-      disabled: !canChangeToAdmin,
-    },
-    {
-      label: '사용자로 변경',
-      title: `${selectedCount}명의 멤버 역할을 사용자로\n변경하시겠습니까?`,
-      handler: onChangeToUser,
-      disabled: !canChangeToUser,
+      label: roleLabel,
+      title: roleTitle,
+      handler: onChangeRole,
+      disabled: !onChangeRole || targetRole === null,
     },
     {
       label: '비밀번호 초기화',
@@ -44,11 +46,18 @@ export function getTopBarActions({
       handler: onResetPassword,
       disabled: !onResetPassword,
     },
-    {
-      label: '유저 추방',
-      title: `${selectedCount}명의 멤버를 추방하시겠습니까?`,
-      handler: onBan,
-      disabled: !onBan,
-    },
+    allBanned
+      ? {
+          label: '유저 복구',
+          title: `${selectedCount}명의 멤버를 복구하시겠습니까?`,
+          handler: onRestore,
+          disabled: !onRestore,
+        }
+      : {
+          label: '유저 추방',
+          title: `${selectedCount}명의 멤버를 추방하시겠습니까?`,
+          handler: onBan,
+          disabled: !onBan,
+        },
   ];
 }

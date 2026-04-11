@@ -61,7 +61,7 @@ function HeroSectionDesktop({ className }: HeroSectionProps) {
     <section
       ref={sectionRef}
       className={cn(
-        'relative flex min-h-[calc(100vh+64px)] max-w-full flex-col overflow-hidden bg-[#D5E4FF]',
+        'relative flex min-h-[calc(100vh+64px)] max-w-full flex-col overflow-hidden bg-[#D5E4FF] pt-[96px]',
         className,
       )}
     >

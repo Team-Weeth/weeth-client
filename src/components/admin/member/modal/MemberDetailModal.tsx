@@ -25,16 +25,17 @@ import {
   getActivityStats,
   getFooterActions,
 } from '@/constants/admin/memberDetailModal.constants';
-import { MemberDetail } from '@/types/admin/member';
+import type { Member } from '@/types/admin/member';
 
 interface MemberDetailModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  member: MemberDetail | null;
+  member: Member | null;
   onApprove?: () => void;
-  onChangeToAdmin?: () => void;
+  onChangeRole?: () => void;
   onResetPassword?: () => void;
   onBan?: () => void;
+  onRestore?: () => void;
   onChangeGeneration?: (generation: number) => void;
 }
 
@@ -43,9 +44,10 @@ function MemberDetailModal({
   onOpenChange,
   member,
   onApprove,
-  onChangeToAdmin,
+  onChangeRole,
   onResetPassword,
   onBan,
+  onRestore,
   onChangeGeneration,
 }: MemberDetailModalProps) {
   const {
@@ -63,7 +65,15 @@ function MemberDetailModal({
   const personalInfo = getPersonalInfo(member);
   const activityInfo = getActivityInfo(member);
   const activityStats = getActivityStats(member);
-  const footerActions = getFooterActions({ onApprove, onChangeToAdmin, onResetPassword, onBan });
+  const footerActions = getFooterActions({
+    memberRole: member.memberRole,
+    status: member.status,
+    onApprove,
+    onChangeRole,
+    onResetPassword,
+    onBan,
+    onRestore,
+  });
 
   return (
     <>
@@ -93,7 +103,9 @@ function MemberDetailModal({
 
               <div className="mb-200 flex items-baseline gap-200">
                 <span className="typo-h3 text-text-strong">{member.name}</span>
-                <span className="typo-h3 text-text-strong">{member.generation}기</span>
+                <span className="typo-h3 text-text-strong">
+                  {parseInt(member.generation, 10)}기
+                </span>
               </div>
 
               <div className="mb-400 flex items-center gap-200">
@@ -140,22 +152,20 @@ function MemberDetailModal({
           {/* Footer */}
           <div className="bg-container-neutral flex items-center justify-between rounded-b-sm px-400 pt-400 pb-500">
             <div className="flex items-center gap-200">
-              {footerActions
-                .filter(({ handler }) => handler !== undefined)
-                .map(({ label, title, handler }) => (
-                  <AlertDialog
-                    key={label}
-                    title={title}
-                    trigger={
-                      <Button variant="secondary" size="lg">
-                        {label}
-                      </Button>
-                    }
-                  >
-                    <AlertDialogAction onClick={handler}>확인</AlertDialogAction>
-                    <AlertDialogCancel>취소</AlertDialogCancel>
-                  </AlertDialog>
-                ))}
+              {footerActions.map(({ label, title, handler }) => (
+                <AlertDialog
+                  key={label}
+                  title={title}
+                  trigger={
+                    <Button variant="secondary" size="lg">
+                      {label}
+                    </Button>
+                  }
+                >
+                  <AlertDialogAction onClick={handler}>확인</AlertDialogAction>
+                  <AlertDialogCancel>취소</AlertDialogCancel>
+                </AlertDialog>
+              ))}
               {onChangeGeneration && (
                 <ChangeGenerationModal onSubmit={handleGenSubmit}>
                   <Button variant="secondary" size="lg">

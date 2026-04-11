@@ -1,59 +1,41 @@
 'use client';
 
-import { MoreVerticalIcon } from '@/assets/icons';
-import {
-  Button,
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-  Icon,
-} from '@/components/ui';
-import { cn } from '@/lib/cn';
-import type { ButtonProps } from '@/components/ui';
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { ActionMenu, type ActionMenuProps } from './ActionMenu';
+import { PostDeleteDialog } from './PostDeleteDialog';
 
-interface PostActionMenuProps {
-  className?: string;
-  onEdit?: () => void;
-  onDelete?: () => void;
-  onClick?: React.MouseEventHandler<HTMLButtonElement>;
-  triggerVariant?: ButtonProps['variant'];
-  triggerSize?: ButtonProps['size'];
-  triggerClassName?: string;
+interface PostActionMenuProps extends Omit<ActionMenuProps, 'onDeleteSelect'> {
+  postId: number;
+  onDeleted?: () => void;
 }
 
-function PostActionMenu({
-  className,
-  onEdit,
-  onDelete,
-  onClick,
-  triggerVariant = 'tertiary',
-  triggerSize = 'icon-md',
-  triggerClassName,
-}: PostActionMenuProps) {
+function PostActionMenu({ postId, onDeleted, ...rest }: PostActionMenuProps) {
+  const router = useRouter();
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+
+  const handleEdit = () => {
+    router.push(`/board/edit/${postId}`);
+  };
+
+  const handleDeleteSelect = (event: Event) => {
+    event.preventDefault();
+    setDeleteDialogOpen(true);
+  };
+
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button
-          type="button"
-          variant={triggerVariant}
-          size={triggerSize}
-          className={cn('h-600 w-600', triggerClassName, className)}
-          aria-label="더보기"
-          onClick={onClick}
-        >
-          <Icon src={MoreVerticalIcon} size={16} className="text-icon-normal" />
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-[144px]">
-        <DropdownMenuItem onSelect={onEdit}>수정</DropdownMenuItem>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem destructive onSelect={onDelete}>
-          삭제
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+    <>
+      <ActionMenu {...rest} onEdit={handleEdit} onDeleteSelect={handleDeleteSelect} />
+
+      {deleteDialogOpen ? (
+        <PostDeleteDialog
+          postId={postId}
+          open={deleteDialogOpen}
+          onOpenChange={setDeleteDialogOpen}
+          onDeleted={onDeleted}
+        />
+      ) : null}
+    </>
   );
 }
 

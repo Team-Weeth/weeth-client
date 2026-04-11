@@ -1,6 +1,13 @@
 import { apiServer } from '@/lib/apis/server';
 import type { ApiResponse } from '@/types/common';
-import type { Board, PostDetail } from '@/types/board';
+import type {
+  Board,
+  CreatePostBody,
+  CreatePostData,
+  PostDetail,
+  UpdatePostBody,
+  UpdatePostData,
+} from '@/types/board';
 
 export const boardServerApi = {
   /** 게시판 목록 조회 (RSC) — 거의 변하지 않으므로 30분 캐싱 */
@@ -18,4 +25,16 @@ export const boardServerApi = {
   /** 공지 읽음 처리 (Server Action) */
   readAllNotices: (clubId: string, boardId: number) =>
     apiServer.post<ApiResponse<void>>(`/clubs/${clubId}/boards/${boardId}/notices/read-all`),
+
+  /** 게시글 작성 (Server Action) */
+  createPost: (clubId: string, boardId: number, body: CreatePostBody) =>
+    apiServer.post<ApiResponse<CreatePostData>>(`/clubs/${clubId}/boards/${boardId}/posts`, body),
+
+  /** 게시글 수정 (Server Action) */
+  updatePost: (clubId: string, postId: number, body: UpdatePostBody) =>
+    apiServer.patch<ApiResponse<UpdatePostData>>(`/clubs/${clubId}/boards/posts/${postId}`, body),
+
+  /** 게시글 삭제 (Server Action) */
+  deletePost: (clubId: string, postId: number) =>
+    apiServer.delete<ApiResponse<void>>(`/clubs/${clubId}/boards/posts/${postId}`),
 };

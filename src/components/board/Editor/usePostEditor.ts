@@ -7,10 +7,13 @@ import { editorExtensions } from './extensions';
 
 interface UsePostEditorOptions {
   processFiles?: (files: File[]) => void;
+  initialContent?: string;
 }
 
-export function usePostEditor({ processFiles }: UsePostEditorOptions = {}) {
+export function usePostEditor({ processFiles, initialContent }: UsePostEditorOptions = {}) {
   const setContent = usePostStore((state) => state.setContent);
+  // 마운트 시점에 한 번만 초기 content 고정 (수정 페이지용)
+  const [initialContentValue] = useState(() => initialContent ?? '');
   const [showSlashMenu, setShowSlashMenu] = useState(false);
   // ref로 최신 상태 유지 → useEditor 내부 handleKeyDown stale closure 방지
   const showSlashMenuRef = useRef(false);
@@ -32,7 +35,7 @@ export function usePostEditor({ processFiles }: UsePostEditorOptions = {}) {
 
   const editor = useEditor({
     extensions: editorExtensions,
-    content: '',
+    content: initialContentValue,
 
     onUpdate: ({ editor }) => {
       setContent(editor.getHTML());

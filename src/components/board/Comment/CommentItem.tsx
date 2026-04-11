@@ -5,7 +5,7 @@ import { ChatIcon } from '@/assets/icons';
 import { Avatar, AvatarFallback, AvatarImage, Button, Icon } from '@/components/ui';
 import { useScrollIntoView } from '@/hooks';
 import { cn } from '@/lib/cn';
-import { PostActionMenu } from '@/components/board/PostActionMenu';
+import { ActionMenu } from '@/components/board/ActionMenu';
 import type { UploadFileItem } from '@/stores/usePostStore';
 import { CommentInput } from './CommentInput';
 import { ReplyItem, type ReplyItemProps } from './ReplyItem';
@@ -69,19 +69,23 @@ function CommentItem({
             <Icon src={ChatIcon} size={13} className="text-icon-normal" />
           </Button>
           {isAuthor && (
-            <PostActionMenu
+            <ActionMenu
               triggerVariant="secondary"
               triggerClassName="size-6"
               onEdit={onEdit}
-              onDelete={onDelete}
+              onDeleteSelect={onDelete}
             />
           )}
         </div>
       </div>
 
-      {replies?.map((reply) => (
-        <ReplyItem key={reply.id} {...reply} />
-      ))}
+      {replies && replies.length > 0 && (
+        <div className="flex flex-col gap-200">
+          {replies.map((reply) => (
+            <ReplyItem key={reply.id} {...reply} />
+          ))}
+        </div>
+      )}
 
       {replyOpen && (
         <div ref={replyInputRef}>
