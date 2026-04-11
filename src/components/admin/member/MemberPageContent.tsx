@@ -82,7 +82,14 @@ function MemberPageContent() {
   const allUsers = selectedCount > 0 && selectedMembers.every((m) => m.memberRole === 'USER');
   const allAdmins = selectedCount > 0 && selectedMembers.every((m) => m.memberRole === 'ADMIN');
   const targetRole = allUsers ? 'ADMIN' : allAdmins ? 'USER' : null;
+
   const allBanned = selectedCount > 0 && selectedMembers.every((m) => m.status === 'BANNED');
+  const noneBanned = selectedCount > 0 && selectedMembers.every((m) => m.status !== 'BANNED');
+  const targetBanAction: 'ban' | 'restore' | null = allBanned
+    ? 'restore'
+    : noneBanned
+      ? 'ban'
+      : null;
 
   const handleClearSelection = () => setSelectedIds(new Set());
 
@@ -150,7 +157,7 @@ function MemberPageContent() {
         className="sticky top-0 z-10 -mt-15"
         selectedCount={selectedCount}
         targetRole={targetRole}
-        allBanned={allBanned}
+        targetBanAction={targetBanAction}
         onBack={handleClearSelection}
         onChangeRole={
           targetRole
@@ -160,8 +167,16 @@ function MemberPageContent() {
                 )
             : undefined
         }
-        onBan={() => selectedMembers.forEach((m) => banMember(m.clubMemberId))}
-        onRestore={() => selectedMembers.forEach((m) => restoreMember(m.clubMemberId))}
+        onBan={
+          targetBanAction === 'ban'
+            ? () => selectedMembers.forEach((m) => banMember(m.clubMemberId))
+            : undefined
+        }
+        onRestore={
+          targetBanAction === 'restore'
+            ? () => selectedMembers.forEach((m) => restoreMember(m.clubMemberId))
+            : undefined
+        }
         onChangeCardinals={handleChangeCardinalsForBulk}
       />
 

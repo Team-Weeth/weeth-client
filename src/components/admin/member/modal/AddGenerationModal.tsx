@@ -78,7 +78,7 @@ function AddGenerationModal({ children, onSubmit }: AddGenerationModalProps) {
         </DialogBody>
 
         <DialogFooter>
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between pt-400">
             <button
               aria-pressed={isCurrent}
               aria-label="현재 진행 중 여부 토글"

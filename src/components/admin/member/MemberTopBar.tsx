@@ -13,7 +13,7 @@ import type { ClubMemberRole } from '@/types/admin/member';
 interface MemberTopBarProps extends React.HTMLAttributes<HTMLDivElement> {
   selectedCount: number;
   targetRole: ClubMemberRole | null;
-  allBanned: boolean;
+  targetBanAction: 'ban' | 'restore' | null;
   onBack: () => void;
   onApprove?: () => void;
   onChangeRole?: () => void;
@@ -28,7 +28,7 @@ function MemberTopBar({
   className,
   selectedCount,
   targetRole,
-  allBanned,
+  targetBanAction,
   onBack,
   onApprove,
   onChangeRole,
@@ -44,7 +44,7 @@ function MemberTopBar({
   const topBarActions = getTopBarActions({
     selectedCount,
     targetRole,
-    allBanned,
+    targetBanAction,
     onApprove,
     onChangeRole,
     onResetPassword,
