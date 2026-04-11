@@ -20,7 +20,8 @@ const generationCardVariants = cva(
 );
 
 interface GenerationCardProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement>,
+  extends
+    React.ButtonHTMLAttributes<HTMLButtonElement>,
     VariantProps<typeof generationCardVariants> {
   title: string;
   ref?: React.Ref<HTMLButtonElement>;

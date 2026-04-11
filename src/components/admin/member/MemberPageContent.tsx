@@ -47,7 +47,9 @@ function MemberPageContent() {
   const { mutateAsync: changeMemberCardinalsAsync } = useChangeMemberCardinals();
   const [forceConfirm, setForceConfirm] = useState<ForceConfirmState | null>(null);
 
-  const detailMember = detailMemberId ? (members.find((m) => m.id === detailMemberId) ?? null) : null;
+  const detailMember = detailMemberId
+    ? (members.find((m) => m.id === detailMemberId) ?? null)
+    : null;
 
   const handleMemberAction = (m: Member) => {
     setDetailMemberId(m.id);
