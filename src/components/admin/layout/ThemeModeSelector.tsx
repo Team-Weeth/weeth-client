@@ -61,7 +61,7 @@ function ThemeModeSelector({ collapsed }: ThemeModeSelectorProps) {
     <DropdownMenuTrigger asChild>
       <button
         className={cn(
-          'text-text-alternative flex h-12 w-full cursor-pointer items-center border-none transition-colors',
+          'text-text-normal flex h-12 w-full cursor-pointer items-center border-none transition-colors',
           'hover:bg-container-neutral-interaction',
           collapsed ? 'justify-center px-200' : 'gap-300 px-300',
         )}
@@ -69,7 +69,7 @@ function ThemeModeSelector({ collapsed }: ThemeModeSelectorProps) {
         <TriggerIcon className="h-6 w-6 shrink-0" />
         {!collapsed && (
           <>
-            <span className="typo-sub1 flex-1 text-left">{TRIGGER_LABELS[mode]}</span>
+            <span className="typo-button2 flex-1 text-left">{TRIGGER_LABELS[mode]}</span>
             <ChevronDown className="h-5 w-5 shrink-0" />
           </>
         )}

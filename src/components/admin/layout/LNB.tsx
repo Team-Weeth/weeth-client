@@ -34,7 +34,7 @@ const moveNavItems = [
   {
     id: 'service',
     icon: ExitIcon,
-    label: 'Weeth로 이동',
+    label: '서비스로 이동',
     path: 'https://weeth.kr',
     external: true,
   },
@@ -78,7 +78,7 @@ function LNB() {
 
         <CollapsedDivider collapsed={collapsed} />
 
-        <NavSection collapsed={collapsed}>
+        <NavSection label="설정" collapsed={collapsed}>
           {infoNavItems.map(({ id, icon, label, path }) => (
             <NavItem
               key={id}
@@ -105,7 +105,9 @@ function LNB() {
               openInWindow={openInWindow}
             />
           ))}
-          <CollapsedDivider collapsed={collapsed} />
+        </NavSection>
+        <CollapsedDivider collapsed={collapsed} />
+        <NavSection label="모드" collapsed={collapsed}>
           <ThemeModeSelector collapsed={collapsed} />
         </NavSection>
       </nav>

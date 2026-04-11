@@ -15,6 +15,7 @@ function LNBHeader({ collapsed, onToggle }: LNBHeaderProps) {
       <Tooltip>
         <TooltipTrigger asChild>
           <button
+            type="button"
             className="flex shrink-0 cursor-pointer items-center justify-center"
             onClick={onToggle}
           >

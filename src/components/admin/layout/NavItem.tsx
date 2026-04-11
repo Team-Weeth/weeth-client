@@ -4,10 +4,10 @@ import Link from 'next/link';
 
 import { Icon, Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui';
 import { cn } from '@/lib/cn';
-import type { PeopleIcon } from '@/assets/icons';
+import { PeopleIcon } from '@/assets/icons';
 
 const baseClass =
-  'flex h-12 items-center transition-colors text-text-alternative hover:bg-container-neutral-interaction';
+  'flex h-12 items-center transition-colors text-text-normal hover:bg-container-neutral-interaction';
 
 interface NavItemProps {
   icon: typeof PeopleIcon;
@@ -38,7 +38,7 @@ function NavItem({
 
   const cls = cn(
     baseClass,
-    collapsed ? 'justify-center px-200' : 'gap-300 px-300',
+    collapsed ? 'justify-center px-400' : 'gap-300 px-400',
     isActive && 'bg-container-neutral-interaction text-text-strong',
   );
 
@@ -51,21 +51,21 @@ function NavItem({
         onClick={() => window.open(path, '_blank', 'noopener,noreferrer')}
       >
         {iconEl}
-        {!collapsed && <span className="typo-sub1">{label}</span>}
+        {!collapsed && <span className="typo-sub2">{label}</span>}
       </button>
     );
   } else if (external) {
     el = (
       <Link href={path} className={cls} target="_blank" rel="noopener noreferrer">
         {iconEl}
-        {!collapsed && <span className="typo-sub1">{label}</span>}
+        {!collapsed && <span className="typo-sub2">{label}</span>}
       </Link>
     );
   } else {
     el = (
       <Link href={path} className={cls}>
         {iconEl}
-        {!collapsed && <span className="typo-sub1">{label}</span>}
+        {!collapsed && <span className="typo-sub2">{label}</span>}
       </Link>
     );
   }
