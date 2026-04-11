@@ -14,25 +14,33 @@ const avatarVariants = cva('group/avatar relative flex shrink-0 overflow-hidden 
     size: {
       128: 'size-32',
       64: 'size-16',
+      40: 'size-10',
       24: 'size-6',
+    },
+    colorScheme: {
+      default: '',
+      primary: '',
+      secondary: '',
     },
   },
   defaultVariants: {
     type: 'round',
     size: 64,
+    colorScheme: 'default',
   },
 });
 
 interface AvatarProps
   extends React.ComponentProps<typeof AvatarPrimitive.Root>, VariantProps<typeof avatarVariants> {}
 
-function Avatar({ className, type, size, ...props }: AvatarProps) {
+function Avatar({ className, type, size, colorScheme, ...props }: AvatarProps) {
   return (
     <AvatarPrimitive.Root
       data-slot="avatar"
       data-type={type ?? 'round'}
       data-size={size ?? 64}
-      className={cn(avatarVariants({ type, size }), className)}
+      data-color={colorScheme ?? 'default'}
+      className={cn(avatarVariants({ type, size, colorScheme }), className)}
       {...props}
     />
   );
@@ -56,10 +64,14 @@ function AvatarFallback({
     <AvatarPrimitive.Fallback
       data-slot="avatar-fallback"
       className={cn(
-        'bg-container-neutral text-text-alternative flex size-full items-center justify-center',
+        'flex size-full items-center justify-center',
+        'group-data-[color=default]/avatar:bg-container-neutral group-data-[color=default]/avatar:text-text-alternative',
+        'group-data-[color=primary]/avatar:bg-container-primary group-data-[color=primary]/avatar:text-text-inverse',
+        'group-data-[color=secondary]/avatar:bg-container-secondary group-data-[color=secondary]/avatar:text-text-inverse',
         'group-data-[type=round]/avatar:rounded-full',
         'group-data-[type=square]/avatar:rounded-md',
         'group-data-[size="24"]/avatar:text-xs',
+        'group-data-[size="40"]/avatar:text-sm',
         'group-data-[size="64"]/avatar:text-sm',
         'group-data-[size="128"]/avatar:text-base',
         className,
