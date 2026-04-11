@@ -56,11 +56,9 @@ function ChangeCardinalsModal({
 
       <DialogContent
         showCloseButton={false}
-        className="bg-container-neutral-alternative border-line flex h-[481px] w-full max-w-[540px] flex-col gap-0 rounded-lg p-0"
+        className="bg-container-neutral-alternative border-line flex h-120.25 w-full max-w-135 flex-col gap-0 rounded-lg p-0"
       >
         <ModalHeader
-          step={1}
-          total={1}
           overline={overline}
           title="활동한 기수를 모두 선택해주세요."
           onClose={handleClose}
