@@ -35,7 +35,7 @@ interface ForceConfirmState {
 function MemberPageContent() {
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [searchValue, setSearchValue] = useState('');
-  const [detailMember, setDetailMember] = useState<Member | null>(null);
+  const [detailMemberId, setDetailMemberId] = useState<string | null>(null);
   const [selectedCardinal, setSelectedCardinal] = useState<number | 'all'>('all');
   const { ref: dragScrollRef, onMouseDown } = useDragScroll();
   const { data: members = [] } = useAdminMembers();
@@ -47,8 +47,10 @@ function MemberPageContent() {
   const { mutateAsync: changeMemberCardinalsAsync } = useChangeMemberCardinals();
   const [forceConfirm, setForceConfirm] = useState<ForceConfirmState | null>(null);
 
+  const detailMember = detailMemberId ? (members.find((m) => m.id === detailMemberId) ?? null) : null;
+
   const handleMemberAction = (m: Member) => {
-    setDetailMember(m);
+    setDetailMemberId(m.id);
   };
 
   const cardinalFilteredMembers =
@@ -211,35 +213,15 @@ function MemberPageContent() {
       <MemberDetailModal
         open={detailMember !== null}
         onOpenChange={(open) => {
-          if (!open) setDetailMember(null);
+          if (!open) setDetailMemberId(null);
         }}
         member={detailMember}
-        onBan={
-          detailMember
-            ? () => {
-                setDetailMember({ ...detailMember, status: 'BANNED' });
-                banMember(detailMember.clubMemberId);
-              }
-            : undefined
-        }
-        onRestore={
-          detailMember
-            ? () => {
-                setDetailMember({ ...detailMember, status: 'ACTIVE' });
-                restoreMember(detailMember.clubMemberId);
-              }
-            : undefined
-        }
+        onBan={detailMember ? () => banMember(detailMember.clubMemberId) : undefined}
+        onRestore={detailMember ? () => restoreMember(detailMember.clubMemberId) : undefined}
         onChangeRole={
           detailMember
             ? () => {
                 const nextRole = detailMember.memberRole === 'ADMIN' ? 'USER' : 'ADMIN';
-                const ROLE_LABEL = { USER: '사용자', ADMIN: '관리자', LEAD: '리더' } as const;
-                setDetailMember({
-                  ...detailMember,
-                  memberRole: nextRole,
-                  position: ROLE_LABEL[nextRole],
-                });
                 changeMemberRole({ clubMemberId: detailMember.clubMemberId, memberRole: nextRole });
               }
             : undefined

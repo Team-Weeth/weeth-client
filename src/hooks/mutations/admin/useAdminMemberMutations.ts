@@ -103,6 +103,24 @@ export function useChangeMemberCardinals() {
       if (!clubId) throw new Error('clubId가 없습니다');
       return adminMemberApi.updateMemberCardinals(clubId, clubMemberId, { cardinalIds, force });
     },
+    onMutate: async ({ clubMemberId, cardinalIds }) => {
+      await queryClient.cancelQueries({ queryKey });
+      const previous = queryClient.getQueryData<Member[]>(queryKey);
+      const nextGeneration = [...cardinalIds].sort((a, b) => a - b).join(', ');
+
+      queryClient.setQueryData<Member[]>(queryKey, (old = []) =>
+        old.map((m) =>
+          m.clubMemberId === clubMemberId ? { ...m, generation: nextGeneration } : m,
+        ),
+      );
+
+      return { previous };
+    },
+    onError: (_err, _vars, context) => {
+      if (context?.previous) {
+        queryClient.setQueryData(queryKey, context.previous);
+      }
+    },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey });
     },
