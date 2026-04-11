@@ -9,10 +9,6 @@ export {
   type ChangeCardinalsModalProps,
 } from './member/modal/ChangeCardinalsModal';
 export {
-  ChangeGenerationModal,
-  type ChangeGenerationModalProps,
-} from './member/modal/ChangeGenerationModal';
-export {
   GenerationCard,
   generationCardVariants,
   type GenerationCardProps,

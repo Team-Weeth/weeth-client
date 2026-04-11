@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { isAxiosError } from 'axios';
 
 import {
   AddGenerationButton,
@@ -11,7 +12,8 @@ import {
   MemberTable,
   MemberTopBar,
 } from '@/components/admin';
-import { Card } from '@/components/ui';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, Card } from '@/components/ui';
+import { MEMBER_CARDINAL_ERROR_CODE } from '@/constants/errorCode';
 import { useDragScroll } from '@/hooks';
 import type { Member } from '@/types/admin/member';
 import { useAdminMembers } from '@/hooks/queries/admin';
@@ -23,6 +25,12 @@ import {
   useCreateCardinal,
   useRestoreMember,
 } from '@/hooks/mutations/admin';
+import { toastError, toastSuccess } from '@/stores/useToastStore';
+
+interface ForceConfirmState {
+  clubMemberIds: number[];
+  cardinalIds: number[];
+}
 
 function MemberPageContent() {
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
@@ -36,7 +44,8 @@ function MemberPageContent() {
   const { mutate: banMember } = useBanMember();
   const { mutate: restoreMember } = useRestoreMember();
   const { mutate: createCardinal } = useCreateCardinal();
-  const { mutate: changeMemberCardinals } = useChangeMemberCardinals();
+  const { mutateAsync: changeMemberCardinalsAsync } = useChangeMemberCardinals();
+  const [forceConfirm, setForceConfirm] = useState<ForceConfirmState | null>(null);
 
   const handleMemberAction = (m: Member) => {
     setDetailMember(m);
@@ -73,6 +82,63 @@ function MemberPageContent() {
 
   const handleClearSelection = () => setSelectedIds(new Set());
 
+  const submitCardinalsChange = async (
+    clubMemberIds: number[],
+    cardinalIds: number[],
+    force = false,
+  ) => {
+    const results = await Promise.allSettled(
+      clubMemberIds.map((clubMemberId) =>
+        changeMemberCardinalsAsync({ clubMemberId, cardinalIds, force }),
+      ),
+    );
+
+    const attendanceFailedIds: number[] = [];
+    let otherErrorCount = 0;
+
+    results.forEach((result, idx) => {
+      if (result.status !== 'rejected') return;
+      const err = result.reason;
+      const code = isAxiosError(err) ? err.response?.data?.code : undefined;
+      if (code === MEMBER_CARDINAL_ERROR_CODE.REMOVAL_HAS_ATTENDANCE) {
+        attendanceFailedIds.push(clubMemberIds[idx]);
+      } else {
+        otherErrorCount += 1;
+      }
+    });
+
+    if (attendanceFailedIds.length > 0) {
+      setForceConfirm({ clubMemberIds: attendanceFailedIds, cardinalIds });
+      return;
+    }
+
+    if (otherErrorCount > 0) {
+      toastError('기수 변경에 실패했습니다.');
+      return;
+    }
+
+    toastSuccess('기수가 변경되었습니다.');
+  };
+
+  const handleChangeCardinalsForDetail = (cardinalIds: number[]) => {
+    if (!detailMember) return;
+    submitCardinalsChange([detailMember.clubMemberId], cardinalIds);
+  };
+
+  const handleChangeCardinalsForBulk = (cardinalIds: number[]) => {
+    submitCardinalsChange(
+      selectedMembers.map((m) => m.clubMemberId),
+      cardinalIds,
+    );
+  };
+
+  const handleForceConfirm = () => {
+    if (!forceConfirm) return;
+    const { clubMemberIds, cardinalIds } = forceConfirm;
+    setForceConfirm(null);
+    submitCardinalsChange(clubMemberIds, cardinalIds, true);
+  };
+
   return (
     <div className="flex min-w-3xl flex-col">
       {/* Selection top bar */}
@@ -92,11 +158,7 @@ function MemberPageContent() {
         }
         onBan={() => selectedMembers.forEach((m) => banMember(m.clubMemberId))}
         onRestore={() => selectedMembers.forEach((m) => restoreMember(m.clubMemberId))}
-        onChangeCardinals={(cardinalIds) =>
-          selectedMembers.forEach((m) =>
-            changeMemberCardinals({ clubMemberId: m.clubMemberId, cardinalIds }),
-          )
-        }
+        onChangeCardinals={handleChangeCardinalsForBulk}
       />
 
       {/* Main content */}
@@ -182,16 +244,22 @@ function MemberPageContent() {
               }
             : undefined
         }
-        onChangeCardinals={
-          detailMember
-            ? (cardinalIds) =>
-                changeMemberCardinals({
-                  clubMemberId: detailMember.clubMemberId,
-                  cardinalIds,
-                })
-            : undefined
-        }
+        onChangeCardinals={detailMember ? handleChangeCardinalsForDetail : undefined}
       />
+
+      {/* 출석 기록이 있는 기수 삭제 확인 */}
+      <AlertDialog
+        open={forceConfirm !== null}
+        onOpenChange={(open) => {
+          if (!open) setForceConfirm(null);
+        }}
+        status="danger"
+        title={`출석 기록이 있는\n기수가 포함되어 있습니다.`}
+        description={'그래도 변경하시겠어요?\n출석/결석 기록도 함께 삭제됩니다.'}
+      >
+        <AlertDialogAction onClick={handleForceConfirm}>변경</AlertDialogAction>
+        <AlertDialogCancel>취소</AlertDialogCancel>
+      </AlertDialog>
     </div>
   );
 }
