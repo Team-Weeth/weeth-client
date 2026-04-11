@@ -15,25 +15,16 @@ import {
 
 interface AddGenerationModalProps {
   children: ReactNode;
-  onSubmit?: (data: {
-    generation: number;
-    year: number;
-    semester: number;
-    isCurrent: boolean;
-  }) => void;
+  onSubmit?: (data: { generation: number; isCurrent: boolean }) => void;
 }
 
 function AddGenerationModal({ children, onSubmit }: AddGenerationModalProps) {
   const [open, setOpen] = useState(false);
   const [generation, setGeneration] = useState('');
-  const [year, setYear] = useState('');
-  const [semester, setSemester] = useState('');
   const [isCurrent, setIsCurrent] = useState(false);
 
   const resetForm = () => {
     setGeneration('');
-    setYear('');
-    setSemester('');
     setIsCurrent(false);
   };
 
@@ -42,14 +33,12 @@ function AddGenerationModal({ children, onSubmit }: AddGenerationModalProps) {
     if (!next) resetForm();
   };
 
-  const isValid = generation !== '' && year !== '' && semester !== '';
+  const isValid = generation !== '';
 
   const handleSubmit = () => {
     if (!isValid) return;
     onSubmit?.({
       generation: Number(generation),
-      year: Number(year),
-      semester: Number(semester),
       isCurrent,
     });
     handleOpenChange(false);
@@ -84,47 +73,6 @@ function AddGenerationModal({ children, onSubmit }: AddGenerationModalProps) {
               <span className="typo-body2 text-text-alternative pointer-events-none absolute top-1/2 right-400 -translate-y-1/2">
                 기
               </span>
-            </div>
-          </div>
-
-          {/* 활동 시기 */}
-          <div className="flex flex-col">
-            <p className="typo-sub2 text-text-normal py-300">활동 시기</p>
-            <div className="flex gap-200">
-              <div className="relative flex-1">
-                <Input
-                  aria-label="연도"
-                  type="number"
-                  min={1}
-                  value={year}
-                  onChange={(e) => {
-                    const v = (e.target as HTMLInputElement).value;
-                    if (v === '' || Number(v) > 0) setYear(v);
-                  }}
-                  className="pr-10"
-                  placeholder=" "
-                />
-                <span className="typo-body2 text-text-alternative pointer-events-none absolute top-1/2 right-400 -translate-y-1/2">
-                  년
-                </span>
-              </div>
-              <div className="relative flex-1">
-                <Input
-                  aria-label="학기"
-                  type="number"
-                  min={1}
-                  value={semester}
-                  onChange={(e) => {
-                    const v = (e.target as HTMLInputElement).value;
-                    if (v === '' || Number(v) > 0) setSemester(v);
-                  }}
-                  className="pr-10"
-                  placeholder=" "
-                />
-                <span className="typo-body2 text-text-alternative pointer-events-none absolute top-1/2 right-400 -translate-y-1/2">
-                  학기
-                </span>
-              </div>
             </div>
           </div>
         </DialogBody>

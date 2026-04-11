@@ -5,12 +5,12 @@ import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@/lib/cn';
 
 const generationCardVariants = cva(
-  'flex h-[164px] w-[234px] shrink-0 flex-col justify-between rounded-sm p-400 text-left',
+  'typo-button2 inline-flex h-10 min-w-10 shrink-0 cursor-pointer items-center justify-center rounded-md px-400 py-200 whitespace-nowrap',
   {
     variants: {
       variant: {
         active: 'bg-button-primary text-text-inverse',
-        normal: 'bg-container-neutral text-text-strong',
+        normal: 'bg-button-neutral border-line text-text-strong border',
       },
     },
     defaultVariants: {
@@ -20,12 +20,9 @@ const generationCardVariants = cva(
 );
 
 interface GenerationCardProps
-  extends
-    React.ButtonHTMLAttributes<HTMLButtonElement>,
+  extends React.ButtonHTMLAttributes<HTMLButtonElement>,
     VariantProps<typeof generationCardVariants> {
   title: string;
-  subtitle?: string;
-  description?: string;
   ref?: React.Ref<HTMLButtonElement>;
 }
 
@@ -33,18 +30,18 @@ function GenerationCard({
   className,
   variant,
   title,
-  subtitle,
-  description,
   ref,
+  type = 'button',
   ...props
 }: GenerationCardProps) {
   return (
-    <button ref={ref} className={cn(generationCardVariants({ variant }), className)} {...props}>
-      <span className="typo-sub2">{subtitle}</span>
-      <div className="flex flex-col gap-100">
-        <p className="typo-h3">{title}</p>
-        {description && <p className="typo-caption2 opacity-50">{description}</p>}
-      </div>
+    <button
+      ref={ref}
+      type={type}
+      className={cn(generationCardVariants({ variant }), className)}
+      {...props}
+    >
+      {title}
     </button>
   );
 }

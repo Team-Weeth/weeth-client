@@ -19,7 +19,7 @@ function AddGenerationButton({
       ref={ref}
       type={type}
       className={cn(
-        'bg-container-neutral flex h-[164px] w-[80px] shrink-0 cursor-pointer items-center justify-center rounded-lg shadow-sm',
+        'bg-button-neutral border-line flex h-10 w-10 shrink-0 cursor-pointer items-center justify-center rounded-md border',
         className,
       )}
       {...props}

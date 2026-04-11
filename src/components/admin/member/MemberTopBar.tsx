@@ -106,28 +106,12 @@ function MemberTopBar({
               <AlertDialogCancel>취소</AlertDialogCancel>
             </AlertDialog>
           ))}
-          {/* <ChangeGenerationModal onSubmit={handleGenSubmit}>
-            <Button variant="secondary" size="lg" className="py-200">
-              기수 변경
-            </Button>
-          </ChangeGenerationModal> */}
+
+          <Button variant="secondary" size="lg" className="py-200">
+            기수 변경
+          </Button>
         </div>
       </div>
-
-      {/* Generation confirm alert */}
-      {/* <AlertDialog open={genConfirmOpen} onOpenChange={setGenConfirmOpen}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>
-              {selectedCount}명의 멤버를 {pendingGeneration}기로 변경하시겠습니까?
-            </AlertDialogTitle>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogAction onClick={handleGenConfirm}>확인</AlertDialogAction>
-            <AlertDialogCancel>취소</AlertDialogCancel>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog> */}
     </>
   );
 }

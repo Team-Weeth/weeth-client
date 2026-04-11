@@ -27,6 +27,7 @@ function MemberPageContent() {
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [searchValue, setSearchValue] = useState('');
   const [detailMember, setDetailMember] = useState<Member | null>(null);
+  const [selectedCardinal, setSelectedCardinal] = useState<number | 'all'>('all');
   const { ref: dragScrollRef, onMouseDown } = useDragScroll();
   const { data: members = [] } = useAdminMembers();
   const { data: cardinals = [] } = useCardinals();
@@ -39,16 +40,26 @@ function MemberPageContent() {
     setDetailMember(m);
   };
 
+  const cardinalFilteredMembers =
+    selectedCardinal === 'all'
+      ? members
+      : members.filter((m) =>
+          m.generation
+            .split(',')
+            .map((g) => g.trim())
+            .includes(String(selectedCardinal)),
+        );
+
   const query = searchValue.trim().toLowerCase();
   const filteredMembers = query
-    ? members.filter(
+    ? cardinalFilteredMembers.filter(
         (m) =>
           m.name.toLowerCase().includes(query) ||
           m.department.toLowerCase().includes(query) ||
           m.studentId.includes(query) ||
           m.generation.includes(query),
       )
-    : members;
+    : cardinalFilteredMembers;
 
   const selectedMembers = filteredMembers.filter((m) => selectedIds.has(m.id));
   const selectedCount = selectedMembers.length;
@@ -83,34 +94,38 @@ function MemberPageContent() {
 
       {/* Main content */}
       <div className="flex flex-col gap-400 p-700">
-        {/* Search bar */}
-        <Card>
-          <MemberSearchBar isWrapped={false} value={searchValue} onValueChange={setSearchValue} />
-        </Card>
-
-        {/* Generation cards */}
+        {/* Generation pills */}
         <div
           ref={dragScrollRef}
-          className="scrollbar-none flex cursor-grab gap-400 overflow-x-auto select-none active:cursor-grabbing"
+          className="scrollbar-none flex cursor-grab items-center gap-200 overflow-x-auto select-none active:cursor-grabbing"
           onMouseDown={onMouseDown}
         >
+          <GenerationCard
+            variant={selectedCardinal === 'all' ? 'active' : 'normal'}
+            title="전체"
+            onClick={() => setSelectedCardinal('all')}
+          />
+          {cardinals.map((c) => (
+            <GenerationCard
+              key={c.id}
+              variant={selectedCardinal === c.cardinalNumber ? 'active' : 'normal'}
+              title={`${c.cardinalNumber}기`}
+              onClick={() => setSelectedCardinal(c.cardinalNumber)}
+            />
+          ))}
           <AddGenerationModal
-            onSubmit={({ generation, year, semester, isCurrent }) =>
-              createCardinal({ cardinalNumber: generation, year, semester, inProgress: isCurrent })
+            onSubmit={({ generation, isCurrent }) =>
+              createCardinal({ cardinalNumber: generation, inProgress: isCurrent })
             }
           >
             <AddGenerationButton />
           </AddGenerationModal>
-          {/* <GenerationCard variant="normal" title="전체" /> */}
-          {cardinals.map((c) => (
-            <GenerationCard
-              key={c.id}
-              variant={c.status === 'IN_PROGRESS' ? 'active' : 'normal'}
-              title={`${c.cardinalNumber}기`}
-              subtitle={c.status === 'IN_PROGRESS' ? '현재' : undefined}
-            />
-          ))}
         </div>
+
+        {/* Search bar */}
+        <Card>
+          <MemberSearchBar isWrapped={false} value={searchValue} onValueChange={setSearchValue} />
+        </Card>
 
         {/* Member table */}
         <Card>
