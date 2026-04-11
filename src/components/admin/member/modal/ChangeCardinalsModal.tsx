@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, type ReactNode } from 'react';
+import { useState, type ReactNode } from 'react';
 
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
 import { ModalFooter } from '@/components/mypage/SetCardinalModal/components/ModalFooter';
@@ -27,9 +27,12 @@ function ChangeCardinalsModal({
   const { data: cardinalsData = [] } = useCardinals();
   const availableCardinals = cardinalsData.map((c) => c.cardinalNumber);
 
-  useEffect(() => {
-    if (!open) setSelected(new Set());
-  }, [open]);
+  const handleOpenChange = (next: boolean) => {
+    setOpen(next);
+    if (!next) setSelected(new Set());
+  };
+
+  const handleClose = () => handleOpenChange(false);
 
   const handleToggle = (n: number) => {
     setSelected((prev) => {
@@ -40,8 +43,6 @@ function ChangeCardinalsModal({
     });
   };
 
-  const handleClose = () => setOpen(false);
-
   const selectedArray = [...selected].sort((a, b) => a - b);
 
   const handleSave = () => {
@@ -51,7 +52,7 @@ function ChangeCardinalsModal({
   };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>{children}</DialogTrigger>
 
       <DialogContent

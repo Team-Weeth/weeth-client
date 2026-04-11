@@ -1,10 +1,10 @@
 import type { Member, MemberStatus } from '@/types/admin/member';
 
 export const STATUS_LABEL: Record<MemberStatus, string> = {
-  ACTIVE: 'ACTIVE',
-  WAITING: 'WAITING',
-  BANNED: 'BANNED',
-  LEFT: 'LEFT',
+  ACTIVE: '활동중',
+  WAITING: '가입 대기',
+  BANNED: '추방',
+  LEFT: '탈퇴',
 };
 
 export const STATUS_DOT_COLOR: Record<MemberStatus, string> = {
@@ -33,11 +33,11 @@ export function getActivityStats(member: Member) {
   return [
     { label: '출석', value: member.attendance, color: 'text-text-strong' },
     { label: '결석', value: member.absence, color: 'text-text-strong' },
-    {
-      label: '패널티',
-      value: member.penaltyCount,
-      color: member.penaltyCount > 0 ? 'text-state-error' : 'text-text-strong',
-    },
+    // {
+    //   label: '패널티',
+    //   value: member.penaltyCount,
+    //   color: member.penaltyCount > 0 ? 'text-state-error' : 'text-text-strong',
+    // },
   ];
 }
 
