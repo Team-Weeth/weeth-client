@@ -11,4 +11,13 @@ export const adminMemberApi = {
     apiClient.delete(`/admin/clubs/${clubId}/members/${clubMemberId}/ban`),
   restoreMember: (clubId: string, clubMemberId: number) =>
     apiClient.patch(`/admin/clubs/${clubId}/members/${clubMemberId}/restore`),
+  updateMemberCardinals: (
+    clubId: string,
+    clubMemberId: number,
+    body: { cardinalIds: number[]; force?: boolean },
+  ) =>
+    apiClient.patch(`/admin/clubs/${clubId}/members/${clubMemberId}/cardinals`, {
+      cardinalIds: body.cardinalIds,
+      force: body.force ?? false,
+    }),
 };

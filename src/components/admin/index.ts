@@ -5,6 +5,10 @@ export {
   type AddGenerationModalProps,
 } from './member/modal/AddGenerationModal';
 export {
+  ChangeCardinalsModal,
+  type ChangeCardinalsModalProps,
+} from './member/modal/ChangeCardinalsModal';
+export {
   ChangeGenerationModal,
   type ChangeGenerationModalProps,
 } from './member/modal/ChangeGenerationModal';

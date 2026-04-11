@@ -84,6 +84,31 @@ export function useBanMember() {
   });
 }
 
+// 멤버 기수 수정
+export function useChangeMemberCardinals() {
+  const queryClient = useQueryClient();
+  const clubId = useClubId();
+  const queryKey = ['admin', 'members', clubId];
+
+  return useMutation({
+    mutationFn: ({
+      clubMemberId,
+      cardinalIds,
+      force,
+    }: {
+      clubMemberId: number;
+      cardinalIds: number[];
+      force?: boolean;
+    }) => {
+      if (!clubId) throw new Error('clubId가 없습니다');
+      return adminMemberApi.updateMemberCardinals(clubId, clubMemberId, { cardinalIds, force });
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey });
+    },
+  });
+}
+
 // 추방 유저 복구
 export function useRestoreMember() {
   const queryClient = useQueryClient();

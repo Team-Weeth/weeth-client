@@ -1,20 +1,14 @@
 'use client';
 
-import { useGenerationConfirm } from '@/hooks';
-
 import {
   AlertDialog,
   AlertDialogAction,
   AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
   Button,
   Icon,
 } from '@/components/ui';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
-import { ChangeGenerationModal } from '@/components/admin/member/modal/ChangeGenerationModal';
+import { ChangeCardinalsModal } from '@/components/admin/member/modal/ChangeCardinalsModal';
 import { cn } from '@/lib/cn';
 import { AdminCloseIcon } from '@/assets/icons/admin';
 import {
@@ -36,7 +30,7 @@ interface MemberDetailModalProps {
   onResetPassword?: () => void;
   onBan?: () => void;
   onRestore?: () => void;
-  onChangeGeneration?: (generation: number) => void;
+  onChangeCardinals?: (cardinalIds: number[]) => void;
 }
 
 function MemberDetailModal({
@@ -48,16 +42,8 @@ function MemberDetailModal({
   onResetPassword,
   onBan,
   onRestore,
-  onChangeGeneration,
+  onChangeCardinals,
 }: MemberDetailModalProps) {
-  const {
-    genConfirmOpen,
-    setGenConfirmOpen,
-    pendingGeneration,
-    handleGenSubmit,
-    handleGenConfirm,
-  } = useGenerationConfirm(onChangeGeneration);
-
   if (!member) return null;
 
   const handleClose = () => onOpenChange(false);
@@ -76,8 +62,7 @@ function MemberDetailModal({
   });
 
   return (
-    <>
-      <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={onOpenChange}>
         <DialogContent
           className="bg-background flex w-215 max-w-[860px] flex-col gap-0 rounded-sm p-0"
           showCloseButton={false}
@@ -166,12 +151,12 @@ function MemberDetailModal({
                   <AlertDialogCancel>취소</AlertDialogCancel>
                 </AlertDialog>
               ))}
-              {onChangeGeneration && (
-                <ChangeGenerationModal onSubmit={handleGenSubmit}>
+              {onChangeCardinals && (
+                <ChangeCardinalsModal onSubmit={onChangeCardinals}>
                   <Button variant="secondary" size="lg">
                     기수 변경
                   </Button>
-                </ChangeGenerationModal>
+                </ChangeCardinalsModal>
               )}
             </div>
 
@@ -181,22 +166,6 @@ function MemberDetailModal({
           </div>
         </DialogContent>
       </Dialog>
-
-      {/* Generation confirm alert */}
-      <AlertDialog open={genConfirmOpen} onOpenChange={setGenConfirmOpen}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>
-              1명의 멤버를 {pendingGeneration}기로 변경하시겠습니까?
-            </AlertDialogTitle>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogAction onClick={handleGenConfirm}>확인</AlertDialogAction>
-            <AlertDialogCancel>취소</AlertDialogCancel>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-    </>
   );
 }
 

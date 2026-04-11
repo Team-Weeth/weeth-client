@@ -1,5 +1,9 @@
 export { AddGenerationButton, type AddGenerationButtonProps } from './AddGenerationButton';
 export {
+  ChangeCardinalsModal,
+  type ChangeCardinalsModalProps,
+} from './modal/ChangeCardinalsModal';
+export {
   ChangeGenerationModal,
   type ChangeGenerationModalProps,
 } from './modal/ChangeGenerationModal';

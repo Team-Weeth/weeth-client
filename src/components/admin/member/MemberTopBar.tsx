@@ -3,21 +3,10 @@
 import React from 'react';
 
 import { ArrowLeftIcon } from '@/assets/icons';
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  // AlertDialogContent,
-  // AlertDialogFooter,
-  // AlertDialogHeader,
-  // AlertDialogTitle,
-  Button,
-  Icon,
-} from '@/components/ui';
-// import { ChangeGenerationModal } from '@/components/admin/member/modal/ChangeGenerationModal';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, Button, Icon } from '@/components/ui';
+import { ChangeCardinalsModal } from '@/components/admin/member/modal/ChangeCardinalsModal';
 import { cn } from '@/lib/cn';
 import { getTopBarActions } from '@/constants/admin/memberTopBar.constants';
-// import { useGenerationConfirm } from '@/hooks';
 
 import type { ClubMemberRole } from '@/types/admin/member';
 
@@ -31,7 +20,7 @@ interface MemberTopBarProps extends React.HTMLAttributes<HTMLDivElement> {
   onResetPassword?: () => void;
   onBan?: () => void;
   onRestore?: () => void;
-  onChangeGeneration?: (generation: number) => void;
+  onChangeCardinals?: (cardinalIds: number[]) => void;
   ref?: React.Ref<HTMLDivElement>;
 }
 
@@ -46,19 +35,10 @@ function MemberTopBar({
   onResetPassword,
   onBan,
   onRestore,
-  // onChangeGeneration,
+  onChangeCardinals,
   ref,
   ...props
 }: MemberTopBarProps) {
-  // TODO: 기수변경 추후 연결
-  // const {
-  //   genConfirmOpen,
-  //   setGenConfirmOpen,
-  //   pendingGeneration,
-  //   handleGenSubmit,
-  //   handleGenConfirm,
-  // } = useGenerationConfirm(onChangeGeneration);
-
   if (selectedCount === 0) return null;
 
   const topBarActions = getTopBarActions({
@@ -73,12 +53,11 @@ function MemberTopBar({
   });
 
   return (
-    <>
-      <div
-        ref={ref}
-        className={cn('bg-container-primary flex h-15 items-center px-500', className)}
-        {...props}
-      >
+    <div
+      ref={ref}
+      className={cn('bg-container-primary flex h-15 items-center px-500', className)}
+      {...props}
+    >
         <button
           type="button"
           onClick={onBack}
@@ -107,12 +86,15 @@ function MemberTopBar({
             </AlertDialog>
           ))}
 
-          <Button variant="secondary" size="lg" className="py-200">
-            기수 변경
-          </Button>
-        </div>
+          {onChangeCardinals && (
+            <ChangeCardinalsModal onSubmit={onChangeCardinals}>
+              <Button variant="secondary" size="lg" className="py-200">
+                기수 변경
+              </Button>
+            </ChangeCardinalsModal>
+          )}
       </div>
-    </>
+    </div>
   );
 }
 

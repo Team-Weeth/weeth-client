@@ -18,6 +18,7 @@ import { useAdminMembers } from '@/hooks/queries/admin';
 import { useCardinals } from '@/hooks/queries';
 import {
   useBanMember,
+  useChangeMemberCardinals,
   useChangeMemberRole,
   useCreateCardinal,
   useRestoreMember,
@@ -35,6 +36,7 @@ function MemberPageContent() {
   const { mutate: banMember } = useBanMember();
   const { mutate: restoreMember } = useRestoreMember();
   const { mutate: createCardinal } = useCreateCardinal();
+  const { mutate: changeMemberCardinals } = useChangeMemberCardinals();
 
   const handleMemberAction = (m: Member) => {
     setDetailMember(m);
@@ -90,6 +92,11 @@ function MemberPageContent() {
         }
         onBan={() => selectedMembers.forEach((m) => banMember(m.clubMemberId))}
         onRestore={() => selectedMembers.forEach((m) => restoreMember(m.clubMemberId))}
+        onChangeCardinals={(cardinalIds) =>
+          selectedMembers.forEach((m) =>
+            changeMemberCardinals({ clubMemberId: m.clubMemberId, cardinalIds }),
+          )
+        }
       />
 
       {/* Main content */}
@@ -173,6 +180,15 @@ function MemberPageContent() {
                 });
                 changeMemberRole({ clubMemberId: detailMember.clubMemberId, memberRole: nextRole });
               }
+            : undefined
+        }
+        onChangeCardinals={
+          detailMember
+            ? (cardinalIds) =>
+                changeMemberCardinals({
+                  clubMemberId: detailMember.clubMemberId,
+                  cardinalIds,
+                })
             : undefined
         }
       />
