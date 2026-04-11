@@ -2,8 +2,11 @@
   "permissions": {
     "allow": [
       "Bash(gh pr:*)",
+      "Bash(gh run:*)",
       "Bash(git push:*)",
-      "Bash(git fetch:*)"
+      "Bash(git fetch:*)",
+      "mcp__figma__get_design_context",
+      "mcp__figma__get_screenshot"
     ]
   }
 }
