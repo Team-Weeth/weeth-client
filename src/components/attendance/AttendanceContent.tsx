@@ -35,12 +35,13 @@ function AttendanceContent({
   const isAdmin = role === 'LEAD' || role === 'ADMIN';
   const router = useRouter();
   const [isManualChecked, setIsManualChecked] = useState(false);
+  const [completeModalOpen, setCompleteModalOpen] = useState(false);
 
-  const {
-    isChecked: isQRChecked,
-    completeModalOpen: qrCompleteModalOpen,
-    setCompleteModalOpen: setQrCompleteModalOpen,
-  } = useQRCheckIn({ qrSessionId, qrCode });
+  const { isChecked: isQRChecked } = useQRCheckIn({
+    qrSessionId,
+    qrCode,
+    onSuccess: () => setCompleteModalOpen(true),
+  });
 
   const isChecked = isManualChecked || isQRChecked;
 
@@ -64,6 +65,7 @@ function AttendanceContent({
     try {
       await attendanceApi.checkIn(clubId, sessionId, Number(code));
       setIsManualChecked(true);
+      setCompleteModalOpen(true);
     } catch (error) {
       const errorCode = (error as { response?: { data?: { code?: number } } }).response?.data?.code;
       toastError(errorCode ? ATTENDANCE_ERROR_MESSAGE[errorCode] : undefined);
@@ -114,8 +116,8 @@ function AttendanceContent({
       </div>
 
       <AttendanceCompleteModal
-        open={qrCompleteModalOpen}
-        onOpenChange={setQrCompleteModalOpen}
+        open={completeModalOpen}
+        onOpenChange={setCompleteModalOpen}
         title="출석이 완료되었어요!"
       />
     </>

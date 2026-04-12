@@ -9,24 +9,27 @@ import { toastError } from '@/stores/useToastStore';
 interface UseQRCheckInParams {
   qrSessionId?: string;
   qrCode?: string;
+  onSuccess?: () => void;
 }
 
-function useQRCheckIn({ qrSessionId, qrCode }: UseQRCheckInParams) {
+function useQRCheckIn({ qrSessionId, qrCode, onSuccess }: UseQRCheckInParams) {
   const router = useRouter();
   const clubId = useClubId();
   const [isChecked, setIsChecked] = useState(false);
-  const [completeModalOpen, setCompleteModalOpen] = useState(false);
-  const hasCheckedIn = useRef(false);
+  const checkedKey = useRef<string | null>(null);
 
   useEffect(() => {
-    if (!clubId || !qrSessionId || !qrCode || hasCheckedIn.current) return;
-    hasCheckedIn.current = true;
+    if (!clubId || !qrSessionId || !qrCode) return;
+
+    const key = `${qrSessionId}:${qrCode}`;
+    if (checkedKey.current === key) return;
 
     const checkIn = async () => {
       try {
         await attendanceApi.checkIn(clubId, Number(qrSessionId), Number(qrCode));
+        checkedKey.current = key;
         setIsChecked(true);
-        setCompleteModalOpen(true);
+        onSuccess?.();
       } catch (error) {
         const errorCode = (error as { response?: { data?: { code?: number } } }).response?.data
           ?.code;
@@ -36,14 +39,9 @@ function useQRCheckIn({ qrSessionId, qrCode }: UseQRCheckInParams) {
     };
 
     checkIn();
-  }, [clubId, qrSessionId, qrCode, router]);
+  }, [clubId, qrSessionId, qrCode, router, onSuccess]);
 
-  function handleModalOpenChange(open: boolean) {
-    setCompleteModalOpen(open);
-    if (!open) router.replace('/attendance');
-  }
-
-  return { isChecked, completeModalOpen, setCompleteModalOpen: handleModalOpenChange };
+  return { isChecked };
 }
 
 export { useQRCheckIn };
