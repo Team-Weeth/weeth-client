@@ -29,9 +29,9 @@ interface CreateScheduleModalProps {
 function CreateScheduleModal({ open, onOpenChange, cardinalNumber }: CreateScheduleModalProps) {
   const [activeTab, setActiveTab] = useState<ScheduleFormTab>('GENERAL');
   const [title, setTitle] = useState('');
-  const [startDate, setStartDate] = useState(getDefaultDate);
+  const [startDate, setStartDate] = useState(getDefaultDate());
   const [startTime, setStartTime] = useState('00:00');
-  const [endDate, setEndDate] = useState(getDefaultDate);
+  const [endDate, setEndDate] = useState(getDefaultDate());
   const [endTime, setEndTime] = useState('23:59');
   const [location, setLocation] = useState('');
   const [content, setContent] = useState('');

@@ -1,5 +1,3 @@
-'use client';
-
 import { cn } from '@/lib/cn';
 
 interface ScheduleFormFieldProps extends React.HTMLAttributes<HTMLDivElement> {

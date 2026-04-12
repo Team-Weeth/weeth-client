@@ -114,9 +114,8 @@ function SchedulePageContent() {
     }
   };
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const handleDelete = (schedule?: Schedule) => {
-    // TODO: API 연동 시 deleteSchedule 호출
+  const handleDelete = (_schedule: Schedule) => {
+    // TODO: API 연동 시 deleteSchedule(_schedule) 호출
   };
 
   return (

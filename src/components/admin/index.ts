@@ -37,3 +37,5 @@ export {
 } from './schedule/CreateScheduleModal';
 export { ScheduleFormField, type ScheduleFormFieldProps } from './schedule/ScheduleFormField';
 export { DateTimeInput, type DateTimeInputProps } from './schedule/DateTimeInput';
+export { CalendarPicker, type CalendarPickerProps } from './schedule/CalendarPicker';
+export { TimePicker, type TimePickerProps } from './schedule/TimePicker';
