@@ -42,7 +42,7 @@ export function useBoardPosts(activeBoardId: number | null) {
       if (!slice) return undefined;
       return slice.last ? undefined : slice.number + 1;
     },
-    select: (data) => data.pages.flatMap((page) => page.data.data.content),
+    select: (data) => data.pages.flatMap((page) => page.data?.data?.content ?? []),
     enabled: !!clubId,
     staleTime: BOARD_STALE_TIME,
     gcTime: BOARD_GC_TIME,

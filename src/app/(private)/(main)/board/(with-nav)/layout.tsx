@@ -14,8 +14,8 @@ interface BoardLayoutProps {
 export default async function BoardLayout({ children, footer }: BoardLayoutProps) {
   const clubId = (await cookies()).get(CLUB_ID_KEY)?.value;
   if (!clubId) return null;
-  const response = await boardServerApi.getBoards(clubId);
-  const boards = [...response.data].sort(
+  const response = await boardServerApi.getBoards(clubId).catch(() => null);
+  const boards = [...(response?.data ?? [])].sort(
     (a, b) => (BOARD_TYPE_ORDER[a.type] ?? 99) - (BOARD_TYPE_ORDER[b.type] ?? 99),
   );
   const items = boards.map(toBoardNavItem);
