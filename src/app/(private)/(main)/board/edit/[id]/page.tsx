@@ -1,6 +1,8 @@
+import { cookies } from 'next/headers';
 import { notFound } from 'next/navigation';
 
 import { boardServerApi } from '@/lib/apis/board.server';
+import { CLUB_ID_KEY } from '@/lib/apis/cookies';
 import { EditClientEditor } from './EditClientEditor';
 
 interface PostEditPageProps {
@@ -15,8 +17,9 @@ export default async function PostEditPage({ params }: PostEditPageProps) {
     notFound();
   }
 
-  // TODO: 추후 하드코딩된 clubId 제거 예정
-  const response = await boardServerApi.getPostById('YUNJcjFKMO', postId).catch(() => null);
+  const clubId = (await cookies()).get(CLUB_ID_KEY)?.value;
+  if (!clubId) return null;
+  const response = await boardServerApi.getPostById(clubId, postId).catch(() => null);
 
   if (!response?.data) {
     notFound();

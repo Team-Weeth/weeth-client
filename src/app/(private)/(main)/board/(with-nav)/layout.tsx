@@ -1,5 +1,7 @@
 import type { ReactNode } from 'react';
+import { cookies } from 'next/headers';
 import { boardServerApi } from '@/lib/apis/board.server';
+import { CLUB_ID_KEY } from '@/lib/apis/cookies';
 import { toBoardNavItem } from '@/lib/board';
 import { BOARD_TYPE_ORDER } from '@/constants/board/type';
 import { BoardNavClient } from './BoardNavClient';
@@ -10,8 +12,10 @@ interface BoardLayoutProps {
 }
 
 export default async function BoardLayout({ children, footer }: BoardLayoutProps) {
-  const response = await boardServerApi.getBoards('YUNJcjFKMO');
-  const boards = [...response.data].sort(
+  const clubId = (await cookies()).get(CLUB_ID_KEY)?.value;
+  if (!clubId) return null;
+  const response = await boardServerApi.getBoards(clubId).catch(() => null);
+  const boards = [...(response?.data ?? [])].sort(
     (a, b) => (BOARD_TYPE_ORDER[a.type] ?? 99) - (BOARD_TYPE_ORDER[b.type] ?? 99),
   );
   const items = boards.map(toBoardNavItem);

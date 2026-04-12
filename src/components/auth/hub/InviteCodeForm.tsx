@@ -9,8 +9,10 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Controller, useForm } from 'react-hook-form';
 
 import { Button, FormCard, Input } from '@/components/ui';
+import { setClubCookie } from '@/lib/actions/club';
 import { clubApi } from '@/lib/apis/club';
 import { inviteCodeSchema, type InviteCodeFormData } from '@/lib/schemas/inviteCode';
+import { useClubActions } from '@/stores';
 import type { Club } from '@/types';
 
 import { ClubSearchDropdown } from './ClubSearchDropdown';
@@ -30,6 +32,7 @@ function parseInviteLink(url: string): { clubId: string; code: string } | null {
 
 function InviteCodeForm() {
   const router = useRouter();
+  const { setClub } = useClubActions();
   const [searchResults, setSearchResults] = useState<Club[]>([]);
   const [selectedClub, setSelectedClub] = useState<Club | null>(null);
   const [serverError, setServerError] = useState<string | null>(null);
@@ -89,6 +92,8 @@ function InviteCodeForm() {
 
     try {
       await clubApi.join(parsedLink.clubId, parsedLink.code);
+      await setClubCookie(selectedClub.id, selectedClub.name);
+      setClub(selectedClub.id, selectedClub.name);
       router.push('/home');
     } catch (error) {
       const axiosError = error as AxiosError<{ message?: string }>;

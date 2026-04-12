@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { NewIcon, DeleteIcon } from '@/assets/icons';
 import { useUnreadNoticeQuery } from '@/hooks/home';
 import { cn } from '@/lib/cn';
+import { stripHtml } from '@/lib/stripHtml';
 
 export function UnreadNoticeBox() {
   const { data } = useUnreadNoticeQuery();
@@ -30,9 +31,9 @@ export function UnreadNoticeBox() {
       <div className="bg-container-neutral flex flex-col gap-[5px] rounded-b-lg px-450 py-400">
         <div className="flex gap-[5px]">
           <p className="typo-sub2 text-text-strong">{data.title}</p>
-          <Image src={NewIcon} alt="new" width={9} height={12} />
+          <Image src={NewIcon} alt="new" width={7} height={9} />
         </div>
-        <p className="typo-button2 text-text-normal w-[604px]">{data.content}</p>
+        <p className="typo-body2 text-text-normal w-[604px]">{stripHtml(data.content)}</p>
       </div>
     </div>
   );

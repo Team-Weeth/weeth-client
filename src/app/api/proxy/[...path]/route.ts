@@ -17,6 +17,7 @@ async function handler(request: NextRequest, { params }: { params: Promise<{ pat
 
   const headers = new Headers(request.headers);
   headers.delete('cookie');
+  headers.delete('accept-encoding');
   headers.set('host', new URL(API_BASE_PATH).host);
 
   if (accessToken) {
@@ -33,12 +34,14 @@ async function handler(request: NextRequest, { params }: { params: Promise<{ pat
     duplex: 'half',
   } as RequestInit);
 
+  const body = await response.arrayBuffer();
+
   const responseHeaders = new Headers(response.headers);
   responseHeaders.delete('transfer-encoding');
   responseHeaders.delete('content-encoding');
   responseHeaders.delete('set-cookie');
 
-  return new NextResponse(response.body, {
+  return new NextResponse(body, {
     status: response.status,
     statusText: response.statusText,
     headers: responseHeaders,
