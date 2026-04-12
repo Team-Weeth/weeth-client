@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
+import { useRouter } from 'next/navigation';
 
 import { setClubCookie } from '@/lib/actions/club';
 import { apiClient } from '@/lib/apis/client';
@@ -10,16 +11,19 @@ interface ClubGuardProps {
   children: React.ReactNode;
 }
 
-interface MembershipStatusResponse {
-  data: {
-    hasActiveClub: boolean;
-    activeClub: { id: string; name: string } | null;
-  };
+interface Club {
+  id: string;
+  name: string;
+}
+
+interface MyClubsResponse {
+  data: Club[];
 }
 
 function ClubGuard({ children }: ClubGuardProps) {
   const clubId = useClubId();
   const { setClub } = useClubActions();
+  const router = useRouter();
   const fetchingRef = useRef(false);
 
   useEffect(() => {
@@ -27,12 +31,13 @@ function ClubGuard({ children }: ClubGuardProps) {
     fetchingRef.current = true;
 
     apiClient
-      .get<MembershipStatusResponse>('/clubs/membership-status')
+      .get<MyClubsResponse>('/clubs')
       .then(async (res) => {
-        const activeClub = res.data?.data?.activeClub;
-        if (activeClub) {
-          await setClubCookie(activeClub.id, activeClub.name);
-          setClub(activeClub.id, activeClub.name);
+        const club = res.data?.data?.[0];
+        if (club) {
+          await setClubCookie(club.id, club.name);
+          setClub(club.id, club.name);
+          router.refresh();
         }
       })
       .catch(() => {
@@ -41,7 +46,7 @@ function ClubGuard({ children }: ClubGuardProps) {
       .finally(() => {
         fetchingRef.current = false;
       });
-  }, [clubId, setClub]);
+  }, [clubId, setClub, router]);
 
   return <>{children}</>;
 }
