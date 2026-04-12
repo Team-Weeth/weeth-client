@@ -6,6 +6,7 @@ import { NewIcon, ArrowRightIcon } from '@/assets/icons';
 import { Divider } from '@/components/ui';
 import { useRouter } from 'next/navigation';
 import { useRecentNoticesQuery } from '@/hooks/home';
+import { stripHtml } from '@/lib/stripHtml';
 
 export function NoticeBoardBox() {
   const router = useRouter();
@@ -37,7 +38,7 @@ export function NoticeBoardBox() {
                   {notice.isNew && <Image src={NewIcon} alt="new" width={9} height={12} />}
                 </div>
                 <p className="typo-body2 text-icon-normal line-clamp-2 max-w-[268px]">
-                  {notice.content}
+                  {stripHtml(notice.content)}
                 </p>
                 <button
                   type="button"
