@@ -33,9 +33,7 @@ export function UnreadNoticeBox() {
           <p className="typo-sub2 text-text-strong">{data.title}</p>
           <Image src={NewIcon} alt="new" width={7} height={9} />
         </div>
-        <p className="typo-body2 text-text-normal w-[604px]">
-          {stripHtml(data.content)}
-        </p>
+        <p className="typo-body2 text-text-normal w-[604px]">{stripHtml(data.content)}</p>
       </div>
     </div>
   );
