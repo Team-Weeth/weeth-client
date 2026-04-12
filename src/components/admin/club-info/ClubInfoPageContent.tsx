@@ -19,7 +19,7 @@ function FieldBlock({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex flex-col gap-200">
+    <div className="flex flex-col gap-300">
       <span className="typo-caption1 text-text-normal">{label}</span>
       {children}
       {helper && <span className="typo-caption2 text-text-alternative">{helper}</span>}
@@ -42,16 +42,18 @@ function ClubInfoPageContent({ schoolNames }: ClubInfoPageContentProps) {
         <ClubInfoTopBar className="sticky top-0 z-10 -mt-15" onBack={() => setIsEditMode(false)} />
       )}
 
-      <div className="flex flex-col items-center gap-400 px-400 py-600">
-        <AdminInfoCard title="이미지">
-          <div className="flex gap-400">
+      <div className="flex flex-col items-start gap-400 px-400 py-600">
+        <AdminInfoCard title="이미지" titleGapClassName="mt-400" contentClassName="gap-0">
+          <div className="flex w-full gap-500">
             <ImageUploadField
+              className="w-47 shrink-0"
               label="프로필 이미지"
               title="파일 업로드"
               description="정사각형 권장"
               aspectRatio="1/1"
             />
             <ImageUploadField
+              className="min-w-0 flex-1"
               label="배경 이미지"
               title="클릭 혹은 파일을 이곳에 드롭하세요"
               description="1440 × 364 px 권장"
@@ -59,7 +61,7 @@ function ClubInfoPageContent({ schoolNames }: ClubInfoPageContentProps) {
           </div>
         </AdminInfoCard>
 
-        <AdminInfoCard title="기본 정보">
+        <AdminInfoCard title="기본 정보" titleGapClassName="mt-[58px]" contentClassName="gap-0">
           <div className="flex flex-col gap-400">
             <FieldBlock label="소속 학교">
               <SearchSelect
@@ -76,7 +78,7 @@ function ClubInfoPageContent({ schoolNames }: ClubInfoPageContentProps) {
               <Input
                 value="WEETH"
                 readOnly
-                className="rounded-sm border-transparent bg-container-neutral-alternative px-400 py-300"
+                className="bg-container-neutral-alternative rounded-sm border-transparent px-400 py-300"
               />
             </FieldBlock>
 
@@ -84,19 +86,19 @@ function ClubInfoPageContent({ schoolNames }: ClubInfoPageContentProps) {
               <Input
                 value="동아리를 소개하는 짧은 글을 작성해주세요"
                 readOnly
-                className="rounded-sm border-transparent bg-container-neutral-alternative px-400 py-300"
+                className="bg-container-neutral-alternative rounded-sm border-transparent px-400 py-300"
               />
             </FieldBlock>
           </div>
         </AdminInfoCard>
 
-        <AdminInfoCard title="연락처">
+        <AdminInfoCard title="연락처" titleGapClassName="mt-[58px]" contentClassName="gap-0">
           <div className="flex flex-col gap-400">
             <FieldBlock label="대표 전화번호">
               <Input
                 value="010-1234-1234"
                 readOnly
-                className="rounded-sm border-transparent bg-container-neutral-alternative px-400 py-300"
+                className="bg-container-neutral-alternative rounded-sm border-transparent px-400 py-300"
               />
             </FieldBlock>
 
@@ -104,7 +106,7 @@ function ClubInfoPageContent({ schoolNames }: ClubInfoPageContentProps) {
               <Input
                 value="대표 이메일을 작성해주세요"
                 readOnly
-                className="rounded-sm border-transparent bg-container-neutral-alternative px-400 py-300"
+                className="bg-container-neutral-alternative rounded-sm border-transparent px-400 py-300"
               />
             </FieldBlock>
 

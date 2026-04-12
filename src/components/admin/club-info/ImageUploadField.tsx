@@ -58,7 +58,7 @@ function ImageUploadField({
   };
 
   return (
-    <div className={cn('flex min-w-0 flex-col gap-400', className)} {...props}>
+    <div className={cn('flex min-w-0 flex-col gap-300', className)} {...props}>
       <span className="typo-caption1 text-text-normal">{label}</span>
       <button
         type="button"
