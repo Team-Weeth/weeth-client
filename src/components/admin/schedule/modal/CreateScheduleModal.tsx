@@ -6,7 +6,7 @@ import { Button, Icon, Tabs, TabsList, TabsTrigger, TabsContent } from '@/compon
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { AdminCloseIcon } from '@/assets/icons/admin';
 import { ScheduleFormField } from '@/components/admin/schedule/ScheduleFormField';
-import { DateTimeInput } from '@/components/admin/schedule/DateTimeInput';
+import { DateTimeInput } from '@/components/ui/DateTimeInput';
 
 type ScheduleFormTab = 'GENERAL' | 'SESSION';
 

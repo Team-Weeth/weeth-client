@@ -20,8 +20,8 @@ import { AdminCalendarEditIcon } from '@/assets/icons/admin';
 import { ArrowDownIcon, SearchIcon } from '@/assets/icons';
 import { MonthNavigator } from '@/components/admin/schedule/MonthNavigator';
 import { ScheduleList } from '@/components/admin/schedule/ScheduleList';
-import { CreateScheduleModal } from '@/components/admin/schedule/CreateScheduleModal';
-import { EditScheduleModal } from '@/components/admin/schedule/EditScheduleModal';
+import { CreateScheduleModal } from '@/components/admin/schedule/modal/CreateScheduleModal';
+import { EditScheduleModal } from '@/components/admin/schedule/modal/EditScheduleModal';
 import { useCardinals } from '@/hooks/queries';
 import type { Schedule } from '@/types/admin/schedule';
 

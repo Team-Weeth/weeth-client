@@ -30,12 +30,9 @@ export { SchedulePageContent } from './schedule/SchedulePageContent';
 export {
   EditScheduleModal,
   type EditScheduleModalProps,
-} from './schedule/EditScheduleModal';
+} from './schedule/modal/EditScheduleModal';
 export {
   CreateScheduleModal,
   type CreateScheduleModalProps,
-} from './schedule/CreateScheduleModal';
+} from './schedule/modal/CreateScheduleModal';
 export { ScheduleFormField, type ScheduleFormFieldProps } from './schedule/ScheduleFormField';
-export { DateTimeInput, type DateTimeInputProps } from './schedule/DateTimeInput';
-export { CalendarPicker, type CalendarPickerProps } from './schedule/CalendarPicker';
-export { TimePicker, type TimePickerProps } from './schedule/TimePicker';

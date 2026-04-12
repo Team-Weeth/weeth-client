@@ -17,7 +17,7 @@ import { CustomAlertDialog } from '@/components/alert';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { AdminCloseIcon, AdminMeatballIcon } from '@/assets/icons/admin';
 import { ScheduleFormField } from '@/components/admin/schedule/ScheduleFormField';
-import { DateTimeInput } from '@/components/admin/schedule/DateTimeInput';
+import { DateTimeInput } from '@/components/ui/DateTimeInput';
 import type { Schedule } from '@/types/admin/schedule';
 
 function toDateStr(iso: string): string {

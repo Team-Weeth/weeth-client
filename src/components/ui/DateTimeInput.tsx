@@ -1,8 +1,8 @@
 'use client';
 
 import { cn } from '@/lib/cn';
-import { CalendarPicker } from '@/components/admin/schedule/CalendarPicker';
-import { TimePicker } from '@/components/admin/schedule/TimePicker';
+import { CalendarPicker } from '@/components/ui/CalendarPicker';
+import { TimePicker } from '@/components/ui/TimePicker';
 
 interface DateTimeInputProps extends React.HTMLAttributes<HTMLDivElement> {
   label: string;
