@@ -14,6 +14,7 @@ import {
   Icon,
 } from '@/components/ui';
 import { ChannelList } from '@/components/board/ChannelList';
+import { useClubName } from '@/stores';
 import type { BoardNavItem } from '@/types/board';
 
 interface CategorySelectorProps {
@@ -30,9 +31,9 @@ interface CategorySelectorProps {
 function CategorySelector({ className, items, activeId, onItemSelect }: CategorySelectorProps) {
   const [open, setOpen] = useState(false);
   const activeItem = items.find((item) => item.id === activeId);
+  const clubName = useClubName();
 
-  // TODO: 실제 게시판 이름은 API 연동 시 props로 전달
-  const boardName = '가천대 검도부';
+  const boardName = clubName ?? '게시판';
   const channelName = activeItem?.label ?? '';
 
   // 아이템 선택 후 드롭다운 닫기

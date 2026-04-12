@@ -38,7 +38,8 @@ export function useBoardPosts(activeBoardId: number | null) {
     },
     initialPageParam: 0,
     getNextPageParam: (lastPage) => {
-      const slice = lastPage.data.data;
+      const slice = lastPage.data?.data;
+      if (!slice) return undefined;
       return slice.last ? undefined : slice.number + 1;
     },
     select: (data) => data.pages.flatMap((page) => page.data.data.content),

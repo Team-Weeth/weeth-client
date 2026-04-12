@@ -1,4 +1,8 @@
+import { cookies } from 'next/headers';
+import { redirect } from 'next/navigation';
+
 import { boardServerApi } from '@/lib/apis/board.server';
+import { CLUB_ID_KEY } from '@/lib/apis/cookies';
 import { PostDetailContent } from './PostDetailContent';
 
 interface PostDetailPageProps {
@@ -7,8 +11,9 @@ interface PostDetailPageProps {
 
 export default async function PostDetailPage({ params }: PostDetailPageProps) {
   const { id } = await params;
-  //TODO:"추후 하드코딩된 clubId 제거 예정
-  const response = await boardServerApi.getPostById('YUNJcjFKMO', Number(id));
+  const clubId = (await cookies()).get(CLUB_ID_KEY)?.value;
+  if (!clubId) redirect('/hub');
+  const response = await boardServerApi.getPostById(clubId, Number(id));
 
   return <PostDetailContent post={response.data} />;
 }
