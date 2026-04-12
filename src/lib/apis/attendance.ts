@@ -6,7 +6,7 @@ export const attendanceApi = {
     apiClient.get<AttendanceResponse>(`/clubs/${clubId}/attendances`),
 
   checkIn: (clubId: string, sessionId: number, code: number) =>
-    apiClient.post(`/clubs/${clubId}/attendances/check-in`, { sessionId, code }),
+    apiClient.post(`/clubs/${clubId}/attendances/sessions/${sessionId}/check-in`, { code }),
 
   generateQR: (clubId: string, sessionId: number) =>
     apiClient.post<QRCodeResponse>(`/admin/clubs/${clubId}/attendances/${sessionId}/qr`),

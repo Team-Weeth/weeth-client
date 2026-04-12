@@ -10,9 +10,10 @@ interface AttendanceQRPageProps {
 }
 
 export default async function AttendanceQRPage({ searchParams }: AttendanceQRPageProps) {
-  const { sessionId } = await searchParams;
+  const { sessionId: rawSessionId } = await searchParams;
+  const sessionId = Number(rawSessionId);
 
-  if (!sessionId) {
+  if (!Number.isInteger(sessionId) || sessionId <= 0) {
     redirect('/attendance');
   }
 
@@ -26,5 +27,5 @@ export default async function AttendanceQRPage({ searchParams }: AttendanceQRPag
     redirect('/attendance');
   }
 
-  return <AttendanceQRContent sessionId={Number(sessionId)} />;
+  return <AttendanceQRContent sessionId={sessionId} />;
 }
