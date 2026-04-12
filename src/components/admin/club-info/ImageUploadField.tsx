@@ -30,7 +30,6 @@ function ImageUploadField({
   const handleClick = () => {
     inputRef.current?.click();
   };
-
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -70,7 +69,7 @@ function ImageUploadField({
           'bg-container-neutral-alternative flex flex-1 flex-col items-center justify-center rounded-sm p-400',
           aspectRatio === '1/1' && 'aspect-square',
           isDragging
-            ? 'border border-dashed border-brand-primary bg-container-neutral-interaction shadow-weeth'
+            ? 'border-brand-primary bg-container-neutral-interaction shadow-weeth border border-dashed'
             : 'border border-transparent',
         )}
       >

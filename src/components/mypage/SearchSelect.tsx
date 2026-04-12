@@ -1,8 +1,9 @@
 'use client';
 
 import { useState } from 'react';
+import { ArrowDownIcon } from '@/assets/icons';
 import { cn } from '@/lib/cn';
-import { Input } from '@/components/ui';
+import { Icon, Input } from '@/components/ui';
 import { useClickOutside } from '@/hooks';
 
 interface SearchSelectProps {
@@ -12,6 +13,7 @@ interface SearchSelectProps {
   placeholder?: string;
   className?: string;
   inputClassName?: string;
+  showArrow?: boolean;
 }
 
 function SearchSelect({
@@ -21,6 +23,7 @@ function SearchSelect({
   placeholder,
   className,
   inputClassName,
+  showArrow = false,
 }: SearchSelectProps) {
   const [query, setQuery] = useState('');
   const [open, setOpen] = useState(false);
@@ -45,8 +48,13 @@ function SearchSelect({
         onChange={(e) => setQuery(e.target.value)}
         onFocus={() => setOpen(true)}
         placeholder={open ? '검색...' : placeholder}
-        className={cn('rounded-lg', inputClassName)}
+        className={cn('rounded-lg', showArrow && 'pr-10', inputClassName)}
       />
+      {showArrow && (
+        <div className="pointer-events-none absolute top-1/2 right-300 -translate-y-1/2">
+          <Icon src={ArrowDownIcon} size={20} alt="" className="text-icon-normal" />
+        </div>
+      )}
       {open && filtered.length > 0 && (
         <ul className="bg-container-neutral border-container-neutral-interaction absolute z-10 mt-100 max-h-[200px] w-full overflow-y-auto rounded-lg border shadow-md">
           {filtered.map((option) => (
