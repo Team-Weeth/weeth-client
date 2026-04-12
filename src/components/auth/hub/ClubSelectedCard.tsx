@@ -16,8 +16,8 @@ function ClubSelectedCard({ club, onRemove }: ClubSelectedCardProps) {
           type="square"
           className="border-line h-10 w-10 shrink-0 rounded-lg border"
         >
-          {club.logoUrl && (
-            <AvatarImage src={club.logoUrl} alt={club.name} className="object-cover" />
+          {club.profileImageUrl && (
+            <AvatarImage src={club.profileImageUrl} alt={club.name} className="object-cover" />
           )}
           <AvatarFallback className="bg-container-neutral-alternative text-text-alternative rounded-lg">
             {club.name.charAt(0)}

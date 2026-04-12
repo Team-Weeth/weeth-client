@@ -15,7 +15,8 @@ export const useClubStore = create(
   devtools(
     persist(
       combine(initialState, (set) => ({
-        setClub: (club: ClubIdentifier) => set(club, false, 'setClub'),
+        setClubId: (clubId: string) => set({ clubId, clubName: null }, false, 'setClubId'),
+        setClub: (clubId: string, clubName: string) => set({ clubId, clubName }, false, 'setClub'),
         reset: () => set(initialState, false, 'reset'),
       })),
       { name: 'clubId' },
@@ -27,4 +28,10 @@ export const useClubStore = create(
 export const useClubId = () => useClubStore((store) => store.clubId);
 export const useClubName = () => useClubStore((store) => store.clubName);
 export const useClubActions = () =>
-  useClubStore(useShallow((store) => ({ setClub: store.setClub, reset: store.reset })));
+  useClubStore(
+    useShallow((store) => ({
+      setClubId: store.setClubId,
+      setClub: store.setClub,
+      reset: store.reset,
+    })),
+  );

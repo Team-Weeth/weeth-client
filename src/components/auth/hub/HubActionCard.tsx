@@ -2,6 +2,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 import {
   Button,
@@ -13,13 +14,17 @@ import {
   ItemTitle,
 } from '@/components/ui';
 import { HUB_ACTION_CONFIG } from '@/constants/login/hub';
+import { setClubCookie } from '@/lib/actions/club';
 import { cn } from '@/lib/cn';
+import { useClubActions } from '@/stores';
 
 interface HubActionCardProps extends React.HTMLAttributes<HTMLDivElement> {
   variant: 'create' | 'join' | 'go';
   href?: string;
   onAction?: () => void;
   isPrimary?: boolean;
+  clubId?: string;
+  clubName?: string;
 }
 
 function HubActionCard({
@@ -27,18 +32,32 @@ function HubActionCard({
   href,
   onAction,
   isPrimary,
+  clubId,
+  clubName,
   className,
   ...props
 }: HubActionCardProps) {
   const config = HUB_ACTION_CONFIG[variant];
   const isDisabled = !href && !onAction;
+  const router = useRouter();
+  const { setClub } = useClubActions();
+
+  async function handleGoClick() {
+    if (variant === 'go' && clubId && clubName) {
+      await setClubCookie(clubId, clubName);
+      setClub(clubId, clubName);
+    }
+    if (href) router.push(href);
+  }
+
+  const useClickHandler = variant === 'go' && clubId;
 
   const button = (
     <Button
       variant={isPrimary ? 'primary' : config.buttonVariant}
       size="md"
       disabled={isDisabled}
-      onClick={href ? undefined : onAction}
+      onClick={useClickHandler ? handleGoClick : href ? undefined : onAction}
       className="w-19 justify-center px-400 py-300 whitespace-nowrap"
     >
       {config.buttonText}
@@ -60,7 +79,7 @@ function HubActionCard({
         </ItemDescription>
       </ItemContent>
       <ItemActions className="shrink-0">
-        {href ? <Link href={href}>{button}</Link> : button}
+        {href && !useClickHandler ? <Link href={href}>{button}</Link> : button}
       </ItemActions>
     </Item>
   );

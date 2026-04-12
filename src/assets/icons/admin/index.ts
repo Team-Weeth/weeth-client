@@ -6,6 +6,12 @@ export { default as AdminColumnMeatballIcon } from './ic_admin_column_meatball.s
 export { default as AdminChangeIcon } from './ic_admin_change.svg';
 export { default as AdminGenerationIcon } from './ic_admin_generation.svg';
 export { default as AdminCheckboxIcon } from './ic_admin_checkbox.svg';
+export { default as AdminCheckIcon } from './ic_admin_check.svg';
 export { default as AdminUncheckboxIcon } from './ic_admin_uncheckbox.svg';
 export { default as AdminUserIcon } from './ic_admin_user.svg';
 export { default as AdminCloseIcon } from './ic_admin_close.svg';
+export { default as AdminSettingIcon } from './ic_admin_setting.svg';
+export { default as AdminFileoutIcon } from './ic_admin_fileout.svg';
+export { default as AdminLightIcon } from './ic_admin_light.svg';
+export { default as AdminForumIcon } from './ic_admin_forum.svg';
+export { default as AdminCalendarIcon } from './ic_admin_calendar.svg';

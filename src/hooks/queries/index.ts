@@ -1,0 +1,1 @@
+export { useCardinals } from './useCardinalsQuery';

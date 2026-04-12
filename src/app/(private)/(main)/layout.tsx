@@ -1,8 +1,8 @@
 import type { ReactNode } from 'react';
 
-import { Header } from '@/components/layout';
 import { homeServerApi } from '@/lib/apis/home.server';
 import { UserHydrator } from '@/providers/user-hydrator';
+import { ClubGuard, Header } from '@/components/layout';
 
 // TODO: 하드코딩된 clubId 추후 동적으로 변경
 export default async function MainLayout({
@@ -15,11 +15,13 @@ export default async function MainLayout({
   const { id: clubId, name: clubName } = data.club;
 
   return (
-    <UserHydrator userInfo={userInfo} clubInfo={{ clubId, clubName }}>
-      <div className="mx-auto flex h-screen max-w-[1440px] flex-col">
-        <Header />
-        {children}
-      </div>
-    </UserHydrator>
+    <ClubGuard>
+      <UserHydrator userInfo={userInfo} clubInfo={{ clubId, clubName }}>
+        <div className="mx-auto flex h-screen max-w-[1440px] flex-col">
+          <Header />
+          {children}
+        </div>
+      </UserHydrator>
+    </ClubGuard>
   );
 }

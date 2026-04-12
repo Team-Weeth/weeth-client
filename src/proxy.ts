@@ -4,7 +4,7 @@ import { ACCESS_TOKEN_KEY } from '@/lib/apis/cookies';
 const PUBLIC_PATHS = ['/', '/login', '/terms', '/landing'];
 
 // TODO: 런칭 후 PRE_LAUNCH 플래그 및 관련 분기 제거
-const PRE_LAUNCH = true;
+const PRE_LAUNCH = false;
 
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;

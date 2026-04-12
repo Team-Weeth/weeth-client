@@ -25,7 +25,6 @@ export function useWritePost() {
 
   const handleSkipProfile = () => {
     setProfileModalOpen(false);
-    router.push('/board/write');
   };
 
   const isProfileIncomplete = !profileStatus?.cardinalAssigned || !profileStatus?.profileCompleted;

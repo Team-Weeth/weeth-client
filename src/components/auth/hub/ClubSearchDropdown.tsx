@@ -30,8 +30,8 @@ function ClubSearchDropdown({ clubs, onSelect, className }: ClubSearchDropdownPr
             className="border-line bg-container-neutral flex w-full cursor-pointer items-center gap-400 rounded-[10px] border px-200 py-200 transition-colors"
           >
             <Avatar size={64} type="square" className="border-line shrink-0 rounded-lg border">
-              {club.logoUrl && (
-                <AvatarImage src={club.logoUrl} alt={club.name} className="object-cover" />
+              {club.profileImageUrl && (
+                <AvatarImage src={club.profileImageUrl} alt={club.name} className="object-cover" />
               )}
               <AvatarFallback className="bg-container-neutral-alternative text-text-alternative rounded-lg">
                 {club.name.charAt(0)}
