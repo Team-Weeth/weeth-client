@@ -4,14 +4,14 @@ import { attendanceApi } from '@/lib/apis/attendance';
 
 function useQRCode(clubId: string | null, sessionId: number) {
   return useQuery({
-    queryKey: ['attendance', 'qr', sessionId],
+    queryKey: ['attendance', 'qr', clubId, sessionId],
     queryFn: async () => {
       const response = await attendanceApi.generateQR(clubId!, sessionId);
       return response.data.data;
     },
     enabled: !!clubId,
-    staleTime: 10 * 60 * 1000,
-    gcTime: 10 * 60 * 1000,
+    staleTime: 0,
+    gcTime: 0,
   });
 }
 

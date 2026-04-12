@@ -1,8 +1,6 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
 import Link from 'next/link';
-import QRCodeStyling from 'qr-code-styling';
 
 import {
   Breadcrumb,
@@ -12,8 +10,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from '@/components/ui';
-import { useRemainingTime } from '@/hooks/useRemainingTime';
-import { useQRCode } from '@/hooks/useQRCode';
+import { useAttendanceQR } from '@/hooks/useAttendanceQR';
 import { useClubId } from '@/stores/useClubStore';
 
 interface AttendanceQRContentProps {
@@ -22,32 +19,10 @@ interface AttendanceQRContentProps {
 
 function AttendanceQRContent({ sessionId }: AttendanceQRContentProps) {
   const clubId = useClubId();
-  const { data: qrData, isLoading } = useQRCode(clubId, sessionId);
-  const qrRef = useRef<HTMLDivElement>(null);
-  const qrCodeRef = useRef<QRCodeStyling | null>(null);
-  const { minutes, seconds, isExpired } = useRemainingTime(qrData?.expiredAt ?? '');
-
-  useEffect(() => {
-    if (!qrData || !qrRef.current) return;
-
-    const checkInUrl = `${window.location.origin}/attendance?sessionId=${qrData.sessionId}&code=${qrData.code}`;
-
-    if (!qrCodeRef.current) {
-      qrCodeRef.current = new QRCodeStyling({
-        width: 256,
-        height: 256,
-        data: checkInUrl,
-        qrOptions: { errorCorrectionLevel: 'L' },
-        type: 'svg',
-        dotsOptions: { type: 'dots' },
-        cornersSquareOptions: { type: 'extra-rounded' },
-        cornersDotOptions: { type: 'extra-rounded' },
-      });
-      qrCodeRef.current.append(qrRef.current);
-    } else {
-      qrCodeRef.current.update({ data: checkInUrl });
-    }
-  }, [qrData]);
+  const { qrRef, qrData, isLoading, minutes, seconds, isExpired } = useAttendanceQR(
+    clubId,
+    sessionId,
+  );
 
   return (
     <div className="mx-auto flex w-full max-w-[1025px] flex-col gap-700 pt-600">
