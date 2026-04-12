@@ -20,6 +20,8 @@ function useRemainingTime(endTime: string) {
   const [remaining, setRemaining] = useState(() => getRemainingSeconds(endTime));
 
   useEffect(() => {
+    if (!endTime) return;
+
     const interval = setInterval(() => {
       const seconds = getRemainingSeconds(endTime);
       setRemaining(seconds);
