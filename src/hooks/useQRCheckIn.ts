@@ -3,6 +3,7 @@ import { useRouter } from 'next/navigation';
 
 import { ATTENDANCE_ERROR_MESSAGE } from '@/constants/attendance';
 import { attendanceApi } from '@/lib/apis/attendance';
+import { useClubId } from '@/stores/useClubStore';
 import { toastError } from '@/stores/useToastStore';
 
 interface UseQRCheckInParams {
@@ -12,18 +13,18 @@ interface UseQRCheckInParams {
 
 function useQRCheckIn({ qrSessionId, qrCode }: UseQRCheckInParams) {
   const router = useRouter();
+  const clubId = useClubId();
   const [isChecked, setIsChecked] = useState(false);
   const [completeModalOpen, setCompleteModalOpen] = useState(false);
   const hasCheckedIn = useRef(false);
 
   useEffect(() => {
-    if (!qrSessionId || !qrCode || hasCheckedIn.current) return;
+    if (!clubId || !qrSessionId || !qrCode || hasCheckedIn.current) return;
     hasCheckedIn.current = true;
 
     const checkIn = async () => {
       try {
-        // TODO: 하드코딩된 clubId 추후 동적으로 변경
-        await attendanceApi.checkIn('YUNJcjFKMO', Number(qrSessionId), Number(qrCode));
+        await attendanceApi.checkIn(clubId, Number(qrSessionId), Number(qrCode));
         setIsChecked(true);
         setCompleteModalOpen(true);
       } catch (error) {
@@ -35,7 +36,7 @@ function useQRCheckIn({ qrSessionId, qrCode }: UseQRCheckInParams) {
     };
 
     checkIn();
-  }, [qrSessionId, qrCode, router]);
+  }, [clubId, qrSessionId, qrCode, router]);
 
   function handleModalOpenChange(open: boolean) {
     setCompleteModalOpen(open);

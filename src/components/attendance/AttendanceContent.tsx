@@ -11,6 +11,7 @@ import { ATTENDANCE_ERROR_MESSAGE } from '@/constants/attendance';
 import { attendanceApi } from '@/lib/apis/attendance';
 import { formatAttendanceDescription } from '@/lib/formatTime';
 import { useQRCheckIn } from '@/hooks/useQRCheckIn';
+import { useClubId } from '@/stores/useClubStore';
 import { toastError } from '@/stores/useToastStore';
 import { useUserName, useUserRole } from '@/stores/useUserStore';
 import type { AttendanceData } from '@/types/attendance';
@@ -30,6 +31,7 @@ function AttendanceContent({
 }: AttendanceContentProps) {
   const name = useUserName() ?? '';
   const role = useUserRole();
+  const clubId = useClubId();
   const isAdmin = role === 'LEAD' || role === 'ADMIN';
   const router = useRouter();
   const [isManualChecked, setIsManualChecked] = useState(false);
@@ -57,11 +59,10 @@ function AttendanceContent({
   const description = formatAttendanceDescription(start ?? '', end ?? '', location ?? '');
 
   async function handleAttendanceComplete(code: string) {
-    if (!sessionId) return;
+    if (!clubId || !sessionId) return;
 
     try {
-      // TODO: 하드코딩된 clubId 추후 동적으로 변경
-      await attendanceApi.checkIn('YUNJcjFKMO', sessionId, Number(code));
+      await attendanceApi.checkIn(clubId, sessionId, Number(code));
       setIsManualChecked(true);
     } catch (error) {
       const errorCode = (error as { response?: { data?: { code?: number } } }).response?.data?.code;
