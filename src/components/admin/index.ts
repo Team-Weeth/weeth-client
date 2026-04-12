@@ -28,6 +28,10 @@ export { ScheduleItem, type ScheduleItemProps } from './schedule/ScheduleItem';
 export { ScheduleList, type ScheduleListProps } from './schedule/ScheduleList';
 export { SchedulePageContent } from './schedule/SchedulePageContent';
 export {
+  EditScheduleModal,
+  type EditScheduleModalProps,
+} from './schedule/EditScheduleModal';
+export {
   CreateScheduleModal,
   type CreateScheduleModalProps,
 } from './schedule/CreateScheduleModal';

@@ -4,9 +4,6 @@ import { useState } from 'react';
 import Image from 'next/image';
 
 import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
   Button,
   Card,
   DropdownMenu,
@@ -24,6 +21,7 @@ import { ArrowDownIcon, SearchIcon } from '@/assets/icons';
 import { MonthNavigator } from '@/components/admin/schedule/MonthNavigator';
 import { ScheduleList } from '@/components/admin/schedule/ScheduleList';
 import { CreateScheduleModal } from '@/components/admin/schedule/CreateScheduleModal';
+import { EditScheduleModal } from '@/components/admin/schedule/EditScheduleModal';
 import { useCardinals } from '@/hooks/queries';
 import type { Schedule } from '@/types/admin/schedule';
 
@@ -41,16 +39,16 @@ const MOCK_SCHEDULES: Schedule[] = [
   },
   {
     scheduleId: 2,
-    title: '7기 1차 정기모임',
+    title: '중간고사 기간',
     type: 'GENERAL',
     startDateTime: '2026-04-14T20:00:00',
     endDateTime: '2026-04-14T22:00:00',
-    location: '가천대 체육관',
+    location: '가천관 123호',
     cardinalNumber: 7,
   },
   {
     scheduleId: 3,
-    title: '7기 1차 정기모임',
+    title: '7기 2차 정기모임',
     type: 'SESSION',
     startDateTime: '2026-04-15T20:00:00',
     endDateTime: '2026-04-15T22:00:00',
@@ -66,8 +64,8 @@ function SchedulePageContent() {
   const [currentMonth, setCurrentMonth] = useState(() => new Date().getMonth() + 1);
   const [searchValue, setSearchValue] = useState('');
   const [activeTab, setActiveTab] = useState<ScheduleTab>('all');
-  const [deleteTarget, setDeleteTarget] = useState<Schedule | null>(null);
   const [createModalOpen, setCreateModalOpen] = useState(false);
+  const [editTarget, setEditTarget] = useState<Schedule | null>(null);
 
   const activeCardinal = selectedCardinalId
     ? cardinals.find((c) => c.id === selectedCardinalId)
@@ -116,14 +114,9 @@ function SchedulePageContent() {
     }
   };
 
-  const handleDelete = (schedule: Schedule) => {
-    setDeleteTarget(schedule);
-  };
-
-  const handleConfirmDelete = () => {
-    if (!deleteTarget) return;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const handleDelete = (schedule?: Schedule) => {
     // TODO: API 연동 시 deleteSchedule 호출
-    setDeleteTarget(null);
   };
 
   return (
@@ -202,6 +195,7 @@ function SchedulePageContent() {
             {/* Schedule list */}
             <ScheduleList
               schedules={sortedSchedules}
+              onEdit={setEditTarget}
               onDelete={handleDelete}
               onCreateClick={() => setCreateModalOpen(true)}
             />
@@ -216,19 +210,18 @@ function SchedulePageContent() {
         cardinalNumber={activeCardinal?.cardinalNumber ?? null}
       />
 
-      {/* Delete confirmation */}
-      <AlertDialog
-        open={deleteTarget !== null}
-        onOpenChange={(open) => {
-          if (!open) setDeleteTarget(null);
-        }}
-        status="danger"
-        title="일정을 삭제하시겠습니까?"
-        description="삭제된 일정은 복구할 수 없습니다."
-      >
-        <AlertDialogAction onClick={handleConfirmDelete}>삭제</AlertDialogAction>
-        <AlertDialogCancel>취소</AlertDialogCancel>
-      </AlertDialog>
+      {/* Edit schedule modal */}
+      {editTarget && (
+        <EditScheduleModal
+          key={editTarget.scheduleId}
+          open
+          onOpenChange={(open) => {
+            if (!open) setEditTarget(null);
+          }}
+          schedule={editTarget}
+          onDelete={handleDelete}
+        />
+      )}
     </div>
   );
 }
