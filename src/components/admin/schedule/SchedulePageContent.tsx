@@ -54,17 +54,13 @@ function SchedulePageContent() {
 
   // 탭 필터링
   const tabFiltered =
-    activeTab === 'session'
-      ? monthFiltered.filter((s) => s.type === 'SESSION')
-      : monthFiltered;
+    activeTab === 'session' ? monthFiltered.filter((s) => s.type === 'SESSION') : monthFiltered;
 
   // 검색 필터링
   const query = searchValue.trim().toLowerCase();
   const filteredSchedules = query
     ? tabFiltered.filter(
-        (s) =>
-          s.title.toLowerCase().includes(query) ||
-          s.location.toLowerCase().includes(query),
+        (s) => s.title.toLowerCase().includes(query) || s.location.toLowerCase().includes(query),
       )
     : tabFiltered;
 
@@ -109,10 +105,12 @@ function SchedulePageContent() {
           <DropdownMenuTrigger asChild>
             <button
               type="button"
-              className="border-line flex cursor-pointer items-center gap-700 rounded-sm border py-300 pl-400 pr-300"
+              className="border-line flex cursor-pointer items-center gap-700 rounded-sm border py-300 pr-300 pl-400"
             >
-              <span className="typo-sub2 text-text-normal">
-                {activeCardinal ? `${activeCardinal.cardinalNumber}기` : '기수'}
+              <span className="typo-sub2 text-text-normal w-12 text-left">
+                {selectedCardinalId !== null && activeCardinal
+                  ? `${activeCardinal.cardinalNumber}기`
+                  : '기수'}
               </span>
               <Image src={ArrowDownIcon} alt="기수 선택" width={24} height={24} />
             </button>
@@ -173,10 +171,7 @@ function SchedulePageContent() {
             </div>
 
             {/* Schedule list */}
-            <ScheduleList
-              schedules={sortedSchedules}
-              onDelete={handleDelete}
-            />
+            <ScheduleList schedules={sortedSchedules} onDelete={handleDelete} />
           </Card>
         </TabsContent>
       </Tabs>
