@@ -34,7 +34,7 @@ function ClubGuard({ children }: ClubGuardProps) {
       .get<MyClubsResponse>('/clubs')
       .then(async (res) => {
         const club = res.data?.data?.[0];
-        if (club) {
+        if (club?.id && club?.name) {
           await setClubCookie(club.id, club.name);
           setClub(club.id, club.name);
           router.refresh();
@@ -42,9 +42,6 @@ function ClubGuard({ children }: ClubGuardProps) {
       })
       .catch(() => {
         // 실패 시 무시 — 개별 쿼리들이 enabled: !!clubId로 게이팅됨
-      })
-      .finally(() => {
-        fetchingRef.current = false;
       });
   }, [clubId, setClub, router]);
 
