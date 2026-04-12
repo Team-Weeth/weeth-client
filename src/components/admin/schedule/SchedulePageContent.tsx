@@ -19,7 +19,7 @@ import {
   TabsTrigger,
 } from '@/components/ui';
 import { Icon } from '@/components/ui';
-import { AdminCalendarIcon } from '@/assets/icons/admin';
+import { AdminCalendarEditIcon } from '@/assets/icons/admin';
 import { ArrowDownIcon, SearchIcon } from '@/assets/icons';
 import { MonthNavigator } from '@/components/admin/schedule/MonthNavigator';
 import { ScheduleList } from '@/components/admin/schedule/ScheduleList';
@@ -165,7 +165,7 @@ function SchedulePageContent() {
                 />
               </div>
               <Button variant="primary" size="lg">
-                <Icon src={AdminCalendarIcon} size={20} className="text-text-inverse" />
+                <Icon src={AdminCalendarEditIcon} size={20} className="text-text-inverse mr-1" />
                 일반 일정 생성
               </Button>
             </div>
