@@ -5,6 +5,8 @@ import { usePathname, useRouter } from 'next/navigation';
 
 import { BoardNav } from '@/components/board';
 import { useActiveBoardId, useSetActiveBoardId } from '@/stores/useBoardNavStore';
+import { useClubId } from '@/stores/useClubStore';
+import { boardApi } from '@/lib/apis/board';
 import type { BoardNavItem } from '@/types/board';
 
 interface BoardNavClientProps {
@@ -17,6 +19,7 @@ function BoardNavClient({ items }: BoardNavClientProps) {
   const pathname = usePathname();
   const router = useRouter();
 
+  const clubId = useClubId();
   const isDetailPage = /^\/board\/\d+$/.test(pathname);
 
   useEffect(() => {
@@ -29,6 +32,12 @@ function BoardNavClient({ items }: BoardNavClientProps) {
 
   const handleItemSelect = (id: number | null) => {
     setActiveBoardId(id);
+
+    const selected = items.find((item) => item.id === id);
+    if (selected?.type === 'NOTICE' && clubId && id !== null) {
+      boardApi.readAllNotices(clubId, id);
+    }
+
     if (isDetailPage) {
       router.push('/board');
     }

@@ -25,4 +25,8 @@ export const boardApi = {
   /** 게시글 상세 조회 (React Query) */
   getPostById: (clubId: string, postId: number) =>
     apiClient.get<ApiResponse<PostDetail>>(`/clubs/${clubId}/boards/posts/${postId}`),
+
+  /** 공지 게시판 읽음 처리 */
+  readAllNotices: (clubId: string, boardId: number) =>
+    apiClient.post<ApiResponse<void>>(`/clubs/${clubId}/boards/${boardId}/notices/read-all`),
 };
