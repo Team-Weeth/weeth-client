@@ -23,12 +23,43 @@ import { AdminCalendarEditIcon } from '@/assets/icons/admin';
 import { ArrowDownIcon, SearchIcon } from '@/assets/icons';
 import { MonthNavigator } from '@/components/admin/schedule/MonthNavigator';
 import { ScheduleList } from '@/components/admin/schedule/ScheduleList';
-import { useAdminSchedules } from '@/hooks/queries/admin/useAdminScheduleQueries';
+// TODO: API 연동 시 활성화
+// import { useAdminSchedules } from '@/hooks/queries/admin/useAdminScheduleQueries';
 import { useDeleteSchedule } from '@/hooks/mutations/admin/useAdminScheduleMutations';
 import { useCardinals } from '@/hooks/queries';
 import type { Schedule } from '@/types/admin/schedule';
 
 type ScheduleTab = 'all' | 'session';
+
+const MOCK_SCHEDULES: Schedule[] = [
+  {
+    scheduleId: 1,
+    title: '7기 1차 정기모임',
+    type: 'SESSION',
+    startDateTime: '2026-04-12T20:00:00',
+    endDateTime: '2026-04-12T22:00:00',
+    location: '가천대 체육관',
+    cardinalNumber: 7,
+  },
+  {
+    scheduleId: 2,
+    title: '7기 1차 정기모임',
+    type: 'GENERAL',
+    startDateTime: '2026-04-14T20:00:00',
+    endDateTime: '2026-04-14T22:00:00',
+    location: '가천대 체육관',
+    cardinalNumber: 7,
+  },
+  {
+    scheduleId: 3,
+    title: '7기 1차 정기모임',
+    type: 'SESSION',
+    startDateTime: '2026-04-15T20:00:00',
+    endDateTime: '2026-04-15T22:00:00',
+    location: '종합경기장',
+    cardinalNumber: 7,
+  },
+];
 
 function SchedulePageContent() {
   const { data: cardinals = [] } = useCardinals();
@@ -43,7 +74,8 @@ function SchedulePageContent() {
   const activeCardinalId = selectedCardinalId ?? cardinals[0]?.id ?? null;
   const activeCardinal = cardinals.find((c) => c.id === activeCardinalId);
 
-  const { data: schedules = [] } = useAdminSchedules(activeCardinalId);
+  // TODO: API 연동 후 useAdminSchedules(activeCardinalId)로 교체
+  const schedules = MOCK_SCHEDULES;
   const { mutate: deleteSchedule } = useDeleteSchedule();
 
   // 월 필터링

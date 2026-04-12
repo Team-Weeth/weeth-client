@@ -2,11 +2,7 @@ import { cn } from '@/lib/cn';
 import { Button } from '@/components/ui';
 import { ScheduleTag } from '@/components/admin/schedule/ScheduleTag';
 import type { Schedule } from '@/types/admin/schedule';
-import {
-  getDayLabel,
-  getDayOfMonth,
-  formatScheduleDateTime,
-} from '@/utils/admin/scheduleUtils';
+import { getDayLabel, getDayOfMonth, formatScheduleDateTime } from '@/utils/admin/scheduleUtils';
 
 const SCHEDULE_TYPE_LABEL: Record<Schedule['type'], string> = {
   SESSION: '세션',
@@ -42,29 +38,27 @@ function ScheduleItem({
       {...props}
     >
       {/* Date column */}
-      <div className="flex w-11 shrink-0 flex-col items-center gap-100 self-stretch justify-center">
+      <div className="flex w-11 shrink-0 flex-col items-center justify-center gap-100 self-stretch">
         <span className="typo-h3 text-text-alternative">{day}</span>
         <span className="typo-body2 text-text-alternative">{dayLabel}</span>
       </div>
 
       {/* Content column */}
-      <div className="flex flex-1 flex-col gap-200 justify-center self-stretch">
+      <div className="flex flex-1 flex-col justify-center gap-200 self-stretch">
         <span className="typo-sub2 text-text-strong">{schedule.title}</span>
         <div className="flex flex-wrap items-center gap-200">
           <ScheduleTag variant="type">{SCHEDULE_TYPE_LABEL[schedule.type]}</ScheduleTag>
           <ScheduleTag icon="calendar">{dateTimeText}</ScheduleTag>
-          {schedule.location && (
-            <ScheduleTag icon="location">{schedule.location}</ScheduleTag>
-          )}
+          {schedule.location && <ScheduleTag icon="location">{schedule.location}</ScheduleTag>}
         </div>
       </div>
 
       {/* Action buttons */}
       <div className="flex shrink-0 items-center gap-200">
-        <Button variant="secondary" size="sm" onClick={onEdit}>
+        <Button variant="secondary" size="md" onClick={onEdit}>
           수정
         </Button>
-        <Button variant="danger" size="sm" onClick={onDelete}>
+        <Button variant="danger" size="md" onClick={onDelete}>
           삭제
         </Button>
       </div>
