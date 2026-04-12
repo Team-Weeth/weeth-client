@@ -54,10 +54,13 @@ function ClubCreatingPage({ intent, onCancel }: ClubCreatingPageProps) {
           onCancel?.();
           return;
         }
-        if (result.clubId) {
-          createdClubIdRef.current = result.clubId;
-          setClub(result.clubId, name);
+        if (!result.clubId) {
+          toastError('동아리 생성에 실패했습니다. 다시 시도해주세요.');
+          onCancel?.();
+          return;
         }
+        createdClubIdRef.current = result.clubId;
+        setClub(result.clubId, name);
         setApiDone(true);
       },
     );
