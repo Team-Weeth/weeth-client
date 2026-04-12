@@ -3,6 +3,9 @@
 import { useState } from 'react';
 
 import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
   Button,
   DropdownMenu,
   DropdownMenuContent,
@@ -46,7 +49,7 @@ function EditScheduleModal({ open, onOpenChange, schedule, onDelete }: EditSched
   const [location, setLocation] = useState(schedule.location);
   const [content, setContent] = useState('');
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
-  const [discardConfirmOpen, setDiscardConfirmOpen] = useState(false);
+  const [discardSource, setDiscardSource] = useState<'close' | 'cancel' | null>(null);
 
   const hasChanges =
     title !== schedule.title ||
@@ -59,9 +62,9 @@ function EditScheduleModal({ open, onOpenChange, schedule, onDelete }: EditSched
 
   const handleClose = () => onOpenChange(false);
 
-  const handleTryClose = () => {
+  const handleTryClose = (source: 'close' | 'cancel') => {
     if (hasChanges) {
-      setDiscardConfirmOpen(true);
+      setDiscardSource(source);
     } else {
       handleClose();
     }
@@ -80,7 +83,7 @@ function EditScheduleModal({ open, onOpenChange, schedule, onDelete }: EditSched
   };
 
   const handleDiscardConfirm = () => {
-    setDiscardConfirmOpen(false);
+    setDiscardSource(null);
     handleClose();
   };
 
@@ -90,7 +93,7 @@ function EditScheduleModal({ open, onOpenChange, schedule, onDelete }: EditSched
         open={open}
         onOpenChange={(nextOpen) => {
           if (!nextOpen) {
-            handleTryClose();
+            handleTryClose('close');
           }
         }}
       >
@@ -129,7 +132,7 @@ function EditScheduleModal({ open, onOpenChange, schedule, onDelete }: EditSched
               {/* Close button */}
               <button
                 type="button"
-                onClick={handleTryClose}
+                onClick={() => handleTryClose('close')}
                 className="flex cursor-pointer items-center justify-center rounded-sm p-200"
                 aria-label="닫기"
               >
@@ -197,7 +200,7 @@ function EditScheduleModal({ open, onOpenChange, schedule, onDelete }: EditSched
 
           {/* Footer */}
           <div className="bg-container-neutral flex items-center justify-end gap-200 px-400 pt-400 pb-500">
-            <Button variant="secondary" size="lg" onClick={handleTryClose}>
+            <Button variant="secondary" size="lg" onClick={() => handleTryClose('cancel')}>
               취소
             </Button>
             <Button variant="primary" size="lg" disabled={!title.trim()} onClick={handleSubmit}>
@@ -209,22 +212,27 @@ function EditScheduleModal({ open, onOpenChange, schedule, onDelete }: EditSched
 
       {/* Discard changes confirmation */}
       <CustomAlertDialog
-        open={discardConfirmOpen}
-        onOpenChange={setDiscardConfirmOpen}
+        open={discardSource !== null}
+        onOpenChange={(open) => {
+          if (!open) setDiscardSource(null);
+        }}
         title={'변경사항이 있어요.\n변경사항을 폐기할까요?'}
         actionLabel="변경사항 폐기"
         onAction={handleDiscardConfirm}
+        position={discardSource === 'close' ? 'top-right' : 'bottom-right'}
       />
 
       {/* Delete confirmation */}
-      <CustomAlertDialog
+      <AlertDialog
         open={deleteConfirmOpen}
         onOpenChange={setDeleteConfirmOpen}
+        status="danger"
         title="이 일정을 삭제하시겠어요?"
         description={'삭제된 일정은 복구할 수 없습니다.\n신중히 확인 후 진행해 주세요.'}
-        actionLabel="삭제"
-        onAction={handleDeleteConfirm}
-      />
+      >
+        <AlertDialogAction onClick={handleDeleteConfirm}>삭제</AlertDialogAction>
+        <AlertDialogCancel>취소</AlertDialogCancel>
+      </AlertDialog>
     </>
   );
 }

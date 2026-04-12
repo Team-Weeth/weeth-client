@@ -7,6 +7,16 @@ import { cn } from '@/lib/cn';
 import { Icon } from '@/components/ui';
 import { InfoCircleIcon } from '@/assets/icons';
 
+type Position = 'center' | 'top-right' | 'top-left' | 'bottom-right' | 'bottom-left';
+
+const POSITION_CLASS: Record<Position, string> = {
+  center: 'top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2',
+  'top-right': 'top-35 right-60',
+  'top-left': 'top-8 left-8',
+  'bottom-right': 'bottom-35 right-72',
+  'bottom-left': 'bottom-8 left-8',
+};
+
 interface CustomAlertDialogProps extends React.ComponentProps<typeof AlertDialogPrimitive.Root> {
   title: string;
   description?: string;
@@ -14,6 +24,7 @@ interface CustomAlertDialogProps extends React.ComponentProps<typeof AlertDialog
   cancelLabel?: string;
   onAction: () => void;
   onCancel?: () => void;
+  position?: Position;
 }
 
 function CustomAlertDialog({
@@ -23,6 +34,7 @@ function CustomAlertDialog({
   cancelLabel,
   onAction,
   onCancel,
+  position = 'center',
   children,
   ...props
 }: CustomAlertDialogProps) {
@@ -31,9 +43,14 @@ function CustomAlertDialog({
       {children}
 
       <AlertDialogPrimitive.Portal>
-        <AlertDialogPrimitive.Overlay className="data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 z-50 bg-black/50" />
+        <AlertDialogPrimitive.Overlay className="data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 z-50" />
 
-        <AlertDialogPrimitive.Content className="bg-background border-line data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 fixed top-1/2 left-1/2 z-50 w-[339px] -translate-x-1/2 -translate-y-1/2 rounded-lg border shadow-[0px_10px_40px_0px_rgba(0,0,0,0.4)] duration-200">
+        <AlertDialogPrimitive.Content
+          className={cn(
+            'bg-background border-line data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 fixed z-50 w-[339px] rounded-lg border shadow-[0px_10px_40px_0px_rgba(0,0,0,0.5)] duration-200',
+            POSITION_CLASS[position],
+          )}
+        >
           {/* Content area */}
           <div className="flex flex-col items-center gap-600 px-400 py-400">
             {/* Icon */}

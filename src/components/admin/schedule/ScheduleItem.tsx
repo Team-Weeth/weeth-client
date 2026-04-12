@@ -1,5 +1,10 @@
 import { cn } from '@/lib/cn';
-import { Button } from '@/components/ui';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  Button,
+} from '@/components/ui';
 import { ScheduleTag } from '@/components/admin/schedule/ScheduleTag';
 import type { Schedule } from '@/types/admin/schedule';
 import { getDayLabel, getDayOfMonth, formatScheduleDateTime } from '@/utils/admin/scheduleUtils';
@@ -58,9 +63,19 @@ function ScheduleItem({
         <Button variant="secondary" size="md" onClick={onEdit}>
           수정
         </Button>
-        <Button variant="danger" size="md" onClick={onDelete}>
-          삭제
-        </Button>
+        <AlertDialog
+          status="danger"
+          title="이 일정을 삭제하시겠어요?"
+          description={'삭제된 일정은 복구할 수 없습니다.\n신중히 확인 후 진행해 주세요.'}
+          trigger={
+            <Button variant="danger" size="md">
+              삭제
+            </Button>
+          }
+        >
+          <AlertDialogAction onClick={onDelete}>삭제</AlertDialogAction>
+          <AlertDialogCancel>취소</AlertDialogCancel>
+        </AlertDialog>
       </div>
     </div>
   );
