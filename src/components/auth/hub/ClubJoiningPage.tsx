@@ -9,8 +9,10 @@ import { useRouter } from 'next/navigation';
 import { buttonVariants, ProgressBar } from '@/components/ui';
 import { CLUB_JOIN_ERROR_CODE } from '@/constants/errorCode';
 import { useProgressAnimation } from '@/hooks';
+import { setClubCookie } from '@/lib/actions/club';
 import { clubApi } from '@/lib/apis/club';
 import { cn } from '@/lib/cn';
+import { useClubActions } from '@/stores';
 import { toastError } from '@/stores/useToastStore';
 
 interface ClubJoiningPageProps {
@@ -23,10 +25,16 @@ type ErrorState = { code: number; message: string } | null;
 
 function ClubJoiningPage({ clubName, clubId, code }: ClubJoiningPageProps) {
   const router = useRouter();
+  const { setClub } = useClubActions();
   const [apiDone, setApiDone] = useState(false);
   const [errorState, setErrorState] = useState<ErrorState>(null);
   const apiCalledRef = useRef(false);
   const animationDoneRef = useRef(false);
+
+  const setClubInfo = async () => {
+    await setClubCookie(clubId, clubName);
+    setClub(clubId, clubName);
+  };
 
   const progress = useProgressAnimation({
     duration: 3000,
@@ -42,10 +50,11 @@ function ClubJoiningPage({ clubName, clubId, code }: ClubJoiningPageProps) {
 
     clubApi
       .join(clubId, code)
-      .then(() => {
+      .then(async () => {
+        await setClubInfo();
         setApiDone(true);
       })
-      .catch((error) => {
+      .catch(async (error) => {
         if (isAxiosError(error)) {
           const errorCode = error.response?.data?.code;
           if (errorCode === CLUB_JOIN_ERROR_CODE.INVALID_INVITE_LINK) {
@@ -56,6 +65,8 @@ function ClubJoiningPage({ clubName, clubId, code }: ClubJoiningPageProps) {
             return;
           }
           if (errorCode === CLUB_JOIN_ERROR_CODE.ALREADY_JOINED) {
+            // 이미 가입된 경우에도 clubId를 세팅
+            await setClubInfo();
             setErrorState({
               code: CLUB_JOIN_ERROR_CODE.ALREADY_JOINED,
               message: '이미 가입된 동아리입니다. 동아리로 이동할까요?',
@@ -73,7 +84,8 @@ function ClubJoiningPage({ clubName, clubId, code }: ClubJoiningPageProps) {
         toastError();
         router.replace('/hub');
       });
-  }, [clubId, code, router]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // API가 애니메이션 이후에 완료된 경우 즉시 navigate
   useEffect(() => {

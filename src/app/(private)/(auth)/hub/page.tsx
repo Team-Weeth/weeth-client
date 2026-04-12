@@ -8,7 +8,7 @@ interface MembershipStatusResponse {
   data: {
     hasActiveClub: boolean;
     hasWaitingClub: boolean;
-    activeClub: { id: string } | null;
+    activeClub: { id: string; name: string } | null;
   };
 }
 
@@ -30,6 +30,7 @@ export default async function HubPage({
     });
 
   const hasActiveClub = status?.data?.hasActiveClub ?? false;
+  const activeClub = status?.data?.activeClub ?? null;
   if (hasActiveClub) goHref = '/home';
 
   if (intent === 'create') {
@@ -56,6 +57,8 @@ export default async function HubPage({
             variant={variant}
             href={hrefMap[variant]}
             isPrimary={index === 0}
+            clubId={activeClub?.id}
+            clubName={activeClub?.name}
           />
         ))}
       </div>
