@@ -13,7 +13,7 @@ export const useClubStore = create(
   devtools(
     persist(
       combine(initialState, (set) => ({
-        setClubId: (clubId: string) => set({ clubId }, false, 'setClubId'),
+        setClubId: (clubId: string) => set({ clubId, clubName: null }, false, 'setClubId'),
         setClub: (clubId: string, clubName: string) => set({ clubId, clubName }, false, 'setClub'),
         reset: () => set(initialState, false, 'reset'),
       })),
