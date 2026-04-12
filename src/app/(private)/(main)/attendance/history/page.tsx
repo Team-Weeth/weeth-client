@@ -9,21 +9,18 @@ export default async function AttendanceHistoryPage() {
   const clubId = (await cookies()).get(CLUB_ID_KEY)?.value;
 
   let summary: AttendanceSummary | undefined;
+  let errorMessage: string | undefined;
 
-  if (clubId) {
+  if (!clubId) {
+    errorMessage = '동아리 정보를 찾을 수 없습니다.';
+  } else {
     try {
       const response = await attendanceServerApi.getDetail(clubId);
       summary = response.data;
     } catch {
-      // 에러 시 빈 상태로 렌더링
+      errorMessage = '출석 기록을 불러오지 못했습니다.';
     }
   }
 
-  return (
-    <AttendanceHistoryContent
-      summary={
-        summary ?? { attendanceCount: null, total: null, absenceCount: null, attendances: [] }
-      }
-    />
-  );
+  return <AttendanceHistoryContent summary={summary} errorMessage={errorMessage} />;
 }

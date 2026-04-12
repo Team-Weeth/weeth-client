@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect } from 'react';
 import Link from 'next/link';
 
 import {
@@ -15,11 +16,13 @@ import {
 import { cn } from '@/lib/cn';
 import { formatKoreanDate, formatTime } from '@/lib/formatTime';
 import { ATTENDANCE_STATUS_CONFIG } from '@/constants/attendance';
+import { toastError } from '@/stores/useToastStore';
 import type { AttendanceSummary } from '@/types/attendance';
 import { StatBox } from './StatBox';
 
 interface AttendanceHistoryContentProps {
-  summary: AttendanceSummary;
+  summary?: AttendanceSummary;
+  errorMessage?: string;
 }
 
 function toDisplayRecord(record: AttendanceSummary['attendances'][number]) {
@@ -37,9 +40,13 @@ function toDisplayRecord(record: AttendanceSummary['attendances'][number]) {
   };
 }
 
-function AttendanceHistoryContent({ summary }: AttendanceHistoryContentProps) {
-  const { total, attendanceCount, absenceCount, attendances = [] } = summary;
+function AttendanceHistoryContent({ summary, errorMessage }: AttendanceHistoryContentProps) {
+  const { total, attendanceCount, absenceCount, attendances = [] } = summary ?? {};
   const records = attendances.map(toDisplayRecord);
+
+  useEffect(() => {
+    if (errorMessage) toastError(errorMessage);
+  }, [errorMessage]);
 
   return (
     <div className="mx-auto flex w-full max-w-[1025px] flex-col gap-700 pt-600 pb-800">
