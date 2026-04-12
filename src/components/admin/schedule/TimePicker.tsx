@@ -40,7 +40,9 @@ function TimePicker({ value, onChange }: TimePickerProps) {
     setOpen(nextOpen);
     if (nextOpen) {
       requestAnimationFrame(() => {
-        hourRef.current?.querySelector('[data-selected="true"]')?.scrollIntoView({ block: 'center' });
+        hourRef.current
+          ?.querySelector('[data-selected="true"]')
+          ?.scrollIntoView({ block: 'center' });
         minuteRef.current
           ?.querySelector('[data-selected="true"]')
           ?.scrollIntoView({ block: 'center' });

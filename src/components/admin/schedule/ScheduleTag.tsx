@@ -21,8 +21,7 @@ const scheduleTagVariants = cva(
 );
 
 interface ScheduleTagProps
-  extends React.HTMLAttributes<HTMLSpanElement>,
-    VariantProps<typeof scheduleTagVariants> {
+  extends React.HTMLAttributes<HTMLSpanElement>, VariantProps<typeof scheduleTagVariants> {
   icon?: 'calendar' | 'location';
 }
 
@@ -32,9 +31,7 @@ function ScheduleTag({ className, variant, icon, children, ...props }: ScheduleT
       {icon === 'calendar' && (
         <Icon src={AdminCalendarIcon} size={16} className="text-text-alternative" />
       )}
-      {icon === 'location' && (
-        <Icon src={PinIcon} size={16} className="text-text-alternative" />
-      )}
+      {icon === 'location' && <Icon src={PinIcon} size={16} className="text-text-alternative" />}
       {children}
     </span>
   );

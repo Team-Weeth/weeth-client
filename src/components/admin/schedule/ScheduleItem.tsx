@@ -1,10 +1,5 @@
 import { cn } from '@/lib/cn';
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  Button,
-} from '@/components/ui';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, Button } from '@/components/ui';
 import { ScheduleTag } from '@/components/admin/schedule/ScheduleTag';
 import type { Schedule } from '@/types/admin/schedule';
 import { getDayLabel, getDayOfMonth, formatScheduleDateTime } from '@/utils/admin/scheduleUtils';

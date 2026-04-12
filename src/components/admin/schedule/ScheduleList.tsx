@@ -20,7 +20,10 @@ function ScheduleList({
 }: ScheduleListProps) {
   return (
     <div
-      className={cn('border-line bg-container-neutral overflow-hidden rounded-sm border', className)}
+      className={cn(
+        'border-line bg-container-neutral overflow-hidden rounded-sm border',
+        className,
+      )}
       {...props}
     >
       {/* Table header */}
@@ -32,12 +35,7 @@ function ScheduleList({
       {schedules.length === 0 ? (
         <div className="border-line flex h-[150px] flex-col items-center justify-center gap-200 border-b p-400">
           <p className="typo-body2 text-text-alternative">일정이 없습니다</p>
-          <Button
-            variant="secondary"
-            size="lg"
-            className="w-[308px]"
-            onClick={onCreateClick}
-          >
+          <Button variant="secondary" size="lg" className="w-[308px]" onClick={onCreateClick}>
             일반 일정 생성하기
           </Button>
         </div>
