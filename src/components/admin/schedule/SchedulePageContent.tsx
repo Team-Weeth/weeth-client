@@ -200,7 +200,11 @@ function SchedulePageContent() {
             </div>
 
             {/* Schedule list */}
-            <ScheduleList schedules={sortedSchedules} onDelete={handleDelete} />
+            <ScheduleList
+              schedules={sortedSchedules}
+              onDelete={handleDelete}
+              onCreateClick={() => setCreateModalOpen(true)}
+            />
           </Card>
         </TabsContent>
       </Tabs>
