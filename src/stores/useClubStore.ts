@@ -2,8 +2,6 @@ import { create } from 'zustand';
 import { combine, devtools, persist } from 'zustand/middleware';
 import { useShallow } from 'zustand/react/shallow';
 
-import type { ClubIdentifier } from '@/types/club';
-
 const initialState = {
   clubId: null as string | null,
   clubName: null as string | null,
