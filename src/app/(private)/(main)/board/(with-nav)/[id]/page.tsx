@@ -16,7 +16,10 @@ export default async function PostDetailPage({ params }: PostDetailPageProps) {
   const postId = Number(id);
   if (!Number.isInteger(postId)) notFound();
 
-  const response = await boardServerApi.getPostById(clubId, postId).catch(() => null);
+  const response = await boardServerApi.getPostById(clubId, postId).catch((error) => {
+    if (error?.response?.status === 404) return null;
+    throw error;
+  });
   if (!response?.data) notFound();
 
   return <PostDetailContent post={response.data} />;
