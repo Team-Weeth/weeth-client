@@ -38,7 +38,11 @@ function HomeBoardContent() {
               </PostCard.Header>
               <PostCard.ListContent title={post.title} content={post.content} isNew={post.isNew} />
               <PostCard.Images files={images} />
-              <PostCard.Actions likeCount={post.likeCount} commentCount={post.commentCount} />
+              <PostCard.Actions
+                postId={post.id}
+                likeCount={post.likeCount}
+                commentCount={post.commentCount}
+              />
             </PostCard.Root>
           </Link>
         );

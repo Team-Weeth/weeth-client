@@ -73,6 +73,7 @@ function PostDetailContent({ post }: PostDetailContentProps) {
         <FileList files={nonImageFiles} />
 
         <PostCard.Actions
+          postId={post.id}
           likeCount={post.like.likeCount}
           commentCount={post.commentCount}
           isLiked={post.like.isLiked}

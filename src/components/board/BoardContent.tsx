@@ -90,7 +90,19 @@ function BoardContent() {
             >
               <PostCard.Images files={toDisplayImages(post.fileUrls)} />
             </div>
-            <PostCard.Actions likeCount={post.like.likeCount} commentCount={post.commentCount} />
+            <div
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+              }}
+            >
+              <PostCard.Actions
+                postId={post.id}
+                likeCount={post.like.likeCount}
+                commentCount={post.commentCount}
+                isLiked={post.like.isLiked}
+              />
+            </div>
           </PostCard.Root>
         </Link>
       ))}

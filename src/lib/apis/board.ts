@@ -1,6 +1,6 @@
 import { apiClient } from '@/lib/apis/client';
 import type { ApiResponse } from '@/types/common';
-import type { Board, PostDetail, PostListItem, Slice } from '@/types/board';
+import type { Board, PostDetail, PostLike, PostListItem, Slice } from '@/types/board';
 
 export const boardApi = {
   /** 게시판 목록 조회 (React Query) */
@@ -29,4 +29,8 @@ export const boardApi = {
   /** 공지 게시판 읽음 처리 */
   readAllNotices: (clubId: string, boardId: number) =>
     apiClient.post<ApiResponse<void>>(`/clubs/${clubId}/boards/${boardId}/notices/read-all`),
+
+  /** 좋아요 토글 */
+  toggleLike: (clubId: string, postId: number) =>
+    apiClient.post<ApiResponse<PostLike>>(`/clubs/${clubId}/boards/posts/${postId}/like`),
 };

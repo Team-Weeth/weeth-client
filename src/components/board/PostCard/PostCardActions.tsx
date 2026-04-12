@@ -2,34 +2,50 @@
 
 import { useState } from 'react';
 import { cn } from '@/lib/cn';
+import { boardApi } from '@/lib/apis/board';
+import { useClubId } from '@/stores/useClubStore';
 import { LikeIcon, LikeFilledIcon, ChatIcon } from '@/assets/icons';
 import { Icon } from '@/components/ui';
 
 interface PostCardActionsProps {
   className?: string;
+  postId: number;
   likeCount?: number;
   commentCount?: number;
   isLiked?: boolean;
-  onLike?: () => void;
   onComment?: () => void;
 }
 
 function PostCardActions({
   className,
-  likeCount = 0,
+  postId,
+  likeCount: initialLikeCount = 0,
   commentCount = 0,
   isLiked: initialIsLiked = false,
-  onLike,
   onComment,
 }: PostCardActionsProps) {
+  const clubId = useClubId();
   const [isLiked, setIsLiked] = useState(initialIsLiked);
+  const [likeCount, setLikeCount] = useState(initialLikeCount);
 
-  const handleLike = () => {
-    const next = !isLiked;
-    setIsLiked(next);
-    // TODO: API 연동 시 제거
-    console.log(next ? '좋아요' : '좋아요 취소');
-    onLike?.();
+  const handleLike = async () => {
+    if (!clubId) return;
+
+    const prevIsLiked = isLiked;
+    const prevLikeCount = likeCount;
+
+    setIsLiked(!isLiked);
+    setLikeCount(isLiked ? likeCount - 1 : likeCount + 1);
+
+    try {
+      const res = await boardApi.toggleLike(clubId, postId);
+      const { isLiked: serverIsLiked, likeCount: serverLikeCount } = res.data.data;
+      setIsLiked(serverIsLiked);
+      setLikeCount(serverLikeCount);
+    } catch {
+      setIsLiked(prevIsLiked);
+      setLikeCount(prevLikeCount);
+    }
   };
 
   return (
