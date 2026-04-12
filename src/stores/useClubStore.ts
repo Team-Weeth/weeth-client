@@ -4,6 +4,7 @@ import { useShallow } from 'zustand/react/shallow';
 
 const initialState = {
   clubId: null as string | null,
+  clubName: null as string | null,
 };
 
 export type ClubState = typeof initialState;
@@ -13,14 +14,23 @@ export const useClubStore = create(
     persist(
       combine(initialState, (set) => ({
         setClubId: (clubId: string) => set({ clubId }, false, 'setClubId'),
+        setClub: (clubId: string, clubName: string) =>
+          set({ clubId, clubName }, false, 'setClub'),
         reset: () => set(initialState, false, 'reset'),
       })),
       { name: 'clubId' },
     ),
-    { name: 'ClubIdStore' },
+    { name: 'ClubStore' },
   ),
 );
 
 export const useClubId = () => useClubStore((store) => store.clubId);
+export const useClubName = () => useClubStore((store) => store.clubName);
 export const useClubActions = () =>
-  useClubStore(useShallow((store) => ({ setClubId: store.setClubId, reset: store.reset })));
+  useClubStore(
+    useShallow((store) => ({
+      setClubId: store.setClubId,
+      setClub: store.setClub,
+      reset: store.reset,
+    })),
+  );
