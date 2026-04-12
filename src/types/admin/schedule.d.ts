@@ -10,6 +10,11 @@ export interface Schedule {
   cardinalNumber: number;
 }
 
-export interface ScheduleListResponse {
-  schedules: Schedule[];
+export interface CreateScheduleBody {
+  title: string;
+  content: string;
+  location: string;
+  cardinal: number;
+  start: string;
+  end: string;
 }

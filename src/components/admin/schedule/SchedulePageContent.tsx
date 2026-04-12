@@ -23,9 +23,7 @@ import { AdminCalendarEditIcon } from '@/assets/icons/admin';
 import { ArrowDownIcon, SearchIcon } from '@/assets/icons';
 import { MonthNavigator } from '@/components/admin/schedule/MonthNavigator';
 import { ScheduleList } from '@/components/admin/schedule/ScheduleList';
-// TODO: API 연동 시 활성화
-// import { useAdminSchedules } from '@/hooks/queries/admin/useAdminScheduleQueries';
-import { useDeleteSchedule } from '@/hooks/mutations/admin/useAdminScheduleMutations';
+import { CreateScheduleModal } from '@/components/admin/schedule/CreateScheduleModal';
 import { useCardinals } from '@/hooks/queries';
 import type { Schedule } from '@/types/admin/schedule';
 
@@ -69,14 +67,13 @@ function SchedulePageContent() {
   const [searchValue, setSearchValue] = useState('');
   const [activeTab, setActiveTab] = useState<ScheduleTab>('all');
   const [deleteTarget, setDeleteTarget] = useState<Schedule | null>(null);
+  const [createModalOpen, setCreateModalOpen] = useState(false);
 
-  // 기수 선택이 없으면 첫 번째 기수 사용
-  const activeCardinalId = selectedCardinalId ?? cardinals[0]?.id ?? null;
-  const activeCardinal = cardinals.find((c) => c.id === activeCardinalId);
+  const activeCardinal = selectedCardinalId
+    ? cardinals.find((c) => c.id === selectedCardinalId)
+    : undefined;
 
-  // TODO: API 연동 후 useAdminSchedules(activeCardinalId)로 교체
   const schedules = MOCK_SCHEDULES;
-  const { mutate: deleteSchedule } = useDeleteSchedule();
 
   // 월 필터링
   const monthFiltered = schedules.filter((s) => {
@@ -125,7 +122,7 @@ function SchedulePageContent() {
 
   const handleConfirmDelete = () => {
     if (!deleteTarget) return;
-    deleteSchedule(deleteTarget.scheduleId);
+    // TODO: API 연동 시 deleteSchedule 호출
     setDeleteTarget(null);
   };
 
@@ -196,7 +193,7 @@ function SchedulePageContent() {
                   className="bg-container-neutral-alternative typo-body1 placeholder:text-text-alternative h-12 w-full rounded-sm py-300 pr-300 pl-14 focus:outline-none"
                 />
               </div>
-              <Button variant="primary" size="lg">
+              <Button variant="primary" size="lg" onClick={() => setCreateModalOpen(true)}>
                 <Icon src={AdminCalendarEditIcon} size={20} className="text-text-inverse mr-1" />
                 일반 일정 생성
               </Button>
@@ -207,6 +204,13 @@ function SchedulePageContent() {
           </Card>
         </TabsContent>
       </Tabs>
+
+      {/* Create schedule modal */}
+      <CreateScheduleModal
+        open={createModalOpen}
+        onOpenChange={setCreateModalOpen}
+        cardinalNumber={activeCardinal?.cardinalNumber ?? null}
+      />
 
       {/* Delete confirmation */}
       <AlertDialog
