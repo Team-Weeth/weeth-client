@@ -3,9 +3,6 @@
 import { useState } from 'react';
 
 import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
   Button,
   DropdownMenu,
   DropdownMenuContent,
@@ -13,6 +10,7 @@ import {
   DropdownMenuTrigger,
   Icon,
 } from '@/components/ui';
+import { CustomAlertDialog } from '@/components/alert';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { AdminCloseIcon, AdminMeatballIcon } from '@/assets/icons/admin';
 import { ScheduleFormField } from '@/components/admin/schedule/ScheduleFormField';
@@ -35,16 +33,39 @@ interface EditScheduleModalProps {
 }
 
 function EditScheduleModal({ open, onOpenChange, schedule, onDelete }: EditScheduleModalProps) {
+  const initDate = toDateStr(schedule.startDateTime);
+  const initTime = toTimeStr(schedule.startDateTime);
+  const initEndDate = toDateStr(schedule.endDateTime);
+  const initEndTime = toTimeStr(schedule.endDateTime);
+
   const [title, setTitle] = useState(schedule.title);
-  const [startDate, setStartDate] = useState(toDateStr(schedule.startDateTime));
-  const [startTime, setStartTime] = useState(toTimeStr(schedule.startDateTime));
-  const [endDate, setEndDate] = useState(toDateStr(schedule.endDateTime));
-  const [endTime, setEndTime] = useState(toTimeStr(schedule.endDateTime));
+  const [startDate, setStartDate] = useState(initDate);
+  const [startTime, setStartTime] = useState(initTime);
+  const [endDate, setEndDate] = useState(initEndDate);
+  const [endTime, setEndTime] = useState(initEndTime);
   const [location, setLocation] = useState(schedule.location);
   const [content, setContent] = useState('');
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const [discardConfirmOpen, setDiscardConfirmOpen] = useState(false);
+
+  const hasChanges =
+    title !== schedule.title ||
+    startDate !== initDate ||
+    startTime !== initTime ||
+    endDate !== initEndDate ||
+    endTime !== initEndTime ||
+    location !== schedule.location ||
+    content !== '';
 
   const handleClose = () => onOpenChange(false);
+
+  const handleTryClose = () => {
+    if (hasChanges) {
+      setDiscardConfirmOpen(true);
+    } else {
+      handleClose();
+    }
+  };
 
   const handleSubmit = () => {
     if (!title.trim()) return;
@@ -58,12 +79,27 @@ function EditScheduleModal({ open, onOpenChange, schedule, onDelete }: EditSched
     onDelete?.(schedule);
   };
 
+  const handleDiscardConfirm = () => {
+    setDiscardConfirmOpen(false);
+    handleClose();
+  };
+
   return (
     <>
-      <Dialog open={open} onOpenChange={onOpenChange}>
+      <Dialog
+        open={open}
+        onOpenChange={(nextOpen) => {
+          if (!nextOpen) {
+            handleTryClose();
+          }
+        }}
+      >
         <DialogContent
           className="bg-background flex w-215 max-w-[860px] flex-col gap-0 overflow-hidden rounded-lg p-0"
           showCloseButton={false}
+          onPointerDownOutside={(e) => {
+            if (hasChanges) e.preventDefault();
+          }}
         >
           {/* Header */}
           <div className="flex items-start justify-between px-700 pt-700">
@@ -93,7 +129,7 @@ function EditScheduleModal({ open, onOpenChange, schedule, onDelete }: EditSched
               {/* Close button */}
               <button
                 type="button"
-                onClick={handleClose}
+                onClick={handleTryClose}
                 className="flex cursor-pointer items-center justify-center rounded-sm p-200"
                 aria-label="닫기"
               >
@@ -161,7 +197,7 @@ function EditScheduleModal({ open, onOpenChange, schedule, onDelete }: EditSched
 
           {/* Footer */}
           <div className="bg-container-neutral flex items-center justify-end gap-200 px-400 pt-400 pb-500">
-            <Button variant="secondary" size="lg" onClick={handleClose}>
+            <Button variant="secondary" size="lg" onClick={handleTryClose}>
               취소
             </Button>
             <Button variant="primary" size="lg" disabled={!title.trim()} onClick={handleSubmit}>
@@ -171,17 +207,24 @@ function EditScheduleModal({ open, onOpenChange, schedule, onDelete }: EditSched
         </DialogContent>
       </Dialog>
 
+      {/* Discard changes confirmation */}
+      <CustomAlertDialog
+        open={discardConfirmOpen}
+        onOpenChange={setDiscardConfirmOpen}
+        title={'변경사항이 있어요.\n변경사항을 폐기할까요?'}
+        actionLabel="변경사항 폐기"
+        onAction={handleDiscardConfirm}
+      />
+
       {/* Delete confirmation */}
-      <AlertDialog
+      <CustomAlertDialog
         open={deleteConfirmOpen}
         onOpenChange={setDeleteConfirmOpen}
-        status="danger"
         title="이 일정을 삭제하시겠어요?"
         description={'삭제된 일정은 복구할 수 없습니다.\n신중히 확인 후 진행해 주세요.'}
-      >
-        <AlertDialogAction onClick={handleDeleteConfirm}>삭제</AlertDialogAction>
-        <AlertDialogCancel>취소</AlertDialogCancel>
-      </AlertDialog>
+        actionLabel="삭제"
+        onAction={handleDeleteConfirm}
+      />
     </>
   );
 }
