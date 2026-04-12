@@ -1,4 +1,14 @@
 // admin components index file
+export { AdminInfoCard, type AdminInfoCardProps } from './club-info/AdminInfoCard';
+export {
+  ClubInfoPageContent,
+  type ClubInfoPageContentProps,
+} from './club-info/ClubInfoPageContent';
+export { ClubInfoTopBar, type ClubInfoTopBarProps } from './club-info/ClubInfoTopBar';
+export {
+  ImageUploadField,
+  type ImageUploadFieldProps,
+} from './club-info/ImageUploadField';
 export { AddGenerationButton, type AddGenerationButtonProps } from './member/AddGenerationButton';
 export {
   AddGenerationModal,

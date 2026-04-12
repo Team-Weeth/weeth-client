@@ -8,6 +8,10 @@ const PAGE_METADATA: Record<string, { title: string; description: string }> = {
     description:
       '가입 승인 등 멤버를 관리하는 페이지입니다. 정기모임을 모두 입력하신 후에 가입 승인을 해주시길 바랍니다.',
   },
+  '/admin/club-info': {
+    title: '동아리 정보',
+    description: '부원에게 공유할 동아리의 프로필과 그 외의 정보를 수정하는 페이지입니다.',
+  },
   '/admin/attendance': {
     title: '출석 관리',
     description: '기수를 선택하고, 해당 모임에 대한 출석을 수정하는 페이지입니다.',

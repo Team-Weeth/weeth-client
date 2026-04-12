@@ -11,9 +11,17 @@ interface SearchSelectProps {
   options: string[];
   placeholder?: string;
   className?: string;
+  inputClassName?: string;
 }
 
-function SearchSelect({ value, onChange, options, placeholder, className }: SearchSelectProps) {
+function SearchSelect({
+  value,
+  onChange,
+  options,
+  placeholder,
+  className,
+  inputClassName,
+}: SearchSelectProps) {
   const [query, setQuery] = useState('');
   const [open, setOpen] = useState(false);
 
@@ -37,7 +45,7 @@ function SearchSelect({ value, onChange, options, placeholder, className }: Sear
         onChange={(e) => setQuery(e.target.value)}
         onFocus={() => setOpen(true)}
         placeholder={open ? '검색...' : placeholder}
-        className="rounded-lg"
+        className={cn('rounded-lg', inputClassName)}
       />
       {open && filtered.length > 0 && (
         <ul className="bg-container-neutral border-container-neutral-interaction absolute z-10 mt-100 max-h-[200px] w-full overflow-y-auto rounded-lg border shadow-md">

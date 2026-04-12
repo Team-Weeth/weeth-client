@@ -15,3 +15,4 @@ export { default as AdminFileoutIcon } from './ic_admin_fileout.svg';
 export { default as AdminLightIcon } from './ic_admin_light.svg';
 export { default as AdminForumIcon } from './ic_admin_forum.svg';
 export { default as AdminCalendarIcon } from './ic_admin_calendar.svg';
+export { default as AdminCloudUploadIcon } from './ic_admin_cloud_upload.svg';
