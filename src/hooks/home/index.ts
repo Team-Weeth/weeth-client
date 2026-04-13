@@ -4,4 +4,5 @@ export { useRecentNoticesQuery } from './useRecentNoticesQuery';
 export { useMonthlySchedulesQuery } from './useMonthlySchedulesQuery';
 export { useRecentPostsQuery } from './useRecentPostsQuery';
 export { useProfileStatusQuery } from './useProfileStatusQuery';
+export { useIsAdmin } from './useIsAdmin';
 export { useWritePost } from './useWritePost';
