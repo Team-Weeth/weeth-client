@@ -18,7 +18,7 @@ export function NoticeBoardBox() {
     <div className="bg-container-neutral flex flex-col rounded-lg pb-300">
       <div className="flex items-center justify-between p-450">
         <p className="typo-sub1 text-text-strong">공지</p>
-        <button type="button" aria-label="공지 전체보기" onClick={() => router.push('/notice')}>
+        <button type="button" aria-label="공지 전체보기" onClick={() => router.push('/board')}>
           <Image
             src={ArrowRightIcon}
             alt=""
@@ -57,7 +57,7 @@ export function NoticeBoardBox() {
         ) : isAdmin ? (
           <EmptyBox
             description="아직 공지 게시글이 없습니다."
-            button={{ label: '공지 작성하기', onClick: () => router.push('/notice') }}
+            button={{ label: '공지 작성하기', onClick: () => router.push('/board') }}
           />
         ) : (
           <EmptyBox description="공지 게시글이 없습니다" />

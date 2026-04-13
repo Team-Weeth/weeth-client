@@ -10,9 +10,11 @@ import { PostActionMenu, PostCard } from '../board';
 import { Avatar, AvatarFallback, Button } from '../ui';
 import { AvatarIcon } from '@/assets/icons';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 
 function HomeBoardContent() {
   const isAdmin = useIsAdmin();
+  const router = useRouter();
   const { data: posts, fetchNextPage, hasNextPage, isFetchingNextPage } = useRecentPostsQuery();
   const { data: myUserId } = useHomeQuery({
     select: (data) => data.myInfo.userInfo.id,
@@ -43,7 +45,7 @@ function HomeBoardContent() {
           <br />첫 게시글을 작성해서 커뮤니티를 활성화해보세요.
         </p>
         <div className="bg-background flex h-[182px] w-full items-center justify-center rounded-md p-300">
-          <Button variant="primary" size="lg">
+          <Button variant="primary" size="lg" onClick={() => router.push('/board/write')}>
             게시글 작성하기
           </Button>
         </div>
