@@ -27,7 +27,6 @@ function mapComment(comment: PostComment, currentUserId: number | null): MappedC
     content: comment.content,
     date: formatShortDateTime(comment.time),
     isAuthor: currentUserId !== null && comment.author.id === currentUserId,
-    files: comment.fileUrls.map(toDisplayFile),
     replies: comment.children.map((child) => mapComment(child, currentUserId)),
   };
 }

@@ -111,6 +111,5 @@ export interface MappedComment {
   content: string;
   date: string;
   isAuthor: boolean;
-  files: DisplayFile[];
   replies: MappedComment[];
 }

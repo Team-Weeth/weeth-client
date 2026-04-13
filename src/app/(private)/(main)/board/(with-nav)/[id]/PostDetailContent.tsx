@@ -100,9 +100,7 @@ function PostDetailContent({ post }: PostDetailContentProps) {
               <CommentItem
                 key={comment.id}
                 {...mapComment(comment, currentUserId)}
-                onEdit={(content, file, existingFilesRemoved) =>
-                  updateComment(comment.id, content, file, existingFilesRemoved)
-                }
+                onEdit={(content) => updateComment(comment.id, content)}
                 onDelete={() => deleteComment(comment.id)}
               />
             ))}

@@ -4,8 +4,6 @@ import { ReplyIcon } from '@/assets/icons';
 import { Avatar, AvatarFallback, AvatarImage, Icon } from '@/components/ui';
 import { cn } from '@/lib/cn';
 import { ActionMenu } from '@/components/board/ActionMenu';
-import { FileList } from '@/components/board/FileList';
-import type { DisplayFile } from '@/types/board';
 
 interface ReplyItemProps {
   id: number | string;
@@ -15,7 +13,6 @@ interface ReplyItemProps {
   content: string;
   date: string;
   isAuthor?: boolean;
-  files?: DisplayFile[];
   onEdit?: () => void;
   onDelete?: () => void;
 }
@@ -27,7 +24,6 @@ function ReplyItem({
   content,
   date,
   isAuthor,
-  files,
   onEdit,
   onDelete,
 }: ReplyItemProps) {
@@ -44,7 +40,6 @@ function ReplyItem({
             <span className="typo-sub2 text-text-strong">{name}</span>
           </div>
           <p className="typo-body1 text-text-normal whitespace-pre-wrap">{content}</p>
-          {files && files.length > 0 && <FileList files={files} />}
           <p className="typo-caption2 text-text-alternative">{date}</p>
         </div>
         {isAuthor && (
