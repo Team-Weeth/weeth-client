@@ -13,10 +13,11 @@ import {
 } from '@/components/board';
 import { formatShortDateTime } from '@/lib/formatTime';
 import { toDisplayFile, isImageFileByType, mapComment } from '@/lib/board';
+import { useCreateComment } from '@/hooks/board/useCreateComment';
+import { useUpdateComment } from '@/hooks/board/useUpdateComment';
 import { useSetActiveBoardId } from '@/stores/useBoardNavStore';
 import { useUserId } from '@/stores/useUserStore';
 import type { PostDetail } from '@/types/board';
-import type { UploadFileItem } from '@/stores/usePostStore';
 
 interface PostDetailContentProps {
   post: PostDetail;
@@ -26,6 +27,8 @@ function PostDetailContent({ post }: PostDetailContentProps) {
   const router = useRouter();
   const currentUserId = useUserId();
   const setActiveBoardId = useSetActiveBoardId();
+  const { createComment, isPending } = useCreateComment(post.id);
+  const { updateComment } = useUpdateComment(post.id);
 
   useEffect(() => {
     setActiveBoardId(post.boardId);
@@ -38,10 +41,6 @@ function PostDetailContent({ post }: PostDetailContentProps) {
   const nonImageFiles = post.fileUrls
     .filter((f) => !isImageFileByType(f.contentType))
     .map(toDisplayFile);
-
-  const handleCommentSubmit = (_value: string, _file: UploadFileItem | null) => {
-    // TODO: 댓글 작성 API 연동
-  };
 
   return (
     <div className="bg-container-neutral flex flex-1 flex-col items-center overflow-hidden rounded-(--radius-lg)">
@@ -81,7 +80,11 @@ function PostDetailContent({ post }: PostDetailContentProps) {
       </div>
 
       <div className="self-stretch px-450 py-400">
-        <CommentInput placeholder="댓글을 입력하세요." onSubmit={handleCommentSubmit} />
+        <CommentInput
+          placeholder="댓글을 입력하세요."
+          onSubmit={createComment}
+          disabled={isPending}
+        />
       </div>
 
       {post.comments.length > 0 && (
@@ -92,7 +95,13 @@ function PostDetailContent({ post }: PostDetailContentProps) {
 
           <div className="flex flex-col gap-200 self-stretch pb-400">
             {post.comments.map((comment) => (
-              <CommentItem key={comment.id} {...mapComment(comment, currentUserId)} />
+              <CommentItem
+                key={comment.id}
+                {...mapComment(comment, currentUserId)}
+                onEdit={(content, file, existingFilesRemoved) =>
+                  updateComment(comment.id, content, file, existingFilesRemoved)
+                }
+              />
             ))}
           </div>
         </>
