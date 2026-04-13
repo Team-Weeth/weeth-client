@@ -15,3 +15,15 @@ export const BOARD_ACTION_ERRORS: Record<number, string> = {
   20409: '이미 존재하는 게시판 이름입니다',
   20413: '잠시 후 다시 시도해주세요',
 };
+
+/**
+ * Comment 도메인 에러 코드
+ * @see /api/v1/docs/exceptions/comment
+ */
+
+/** 액션 에러 — 토스트로 처리 */
+export const COMMENT_ACTION_ERRORS: Record<number, string> = {
+  20500: '존재하지 않는 댓글입니다.',
+  20501: '댓글 작성자만 수정/삭제할 수 있습니다.',
+  20502: '이미 삭제된 댓글입니다.',
+};
