@@ -6,6 +6,8 @@ import { Avatar, AvatarFallback, AvatarImage, Button, Icon } from '@/components/
 import { useScrollIntoView } from '@/hooks';
 import { cn } from '@/lib/cn';
 import { ActionMenu } from '@/components/board/ActionMenu';
+import { FileList } from '@/components/board/FileList';
+import type { DisplayFile } from '@/types/board';
 import type { UploadFileItem } from '@/stores/usePostStore';
 import { CommentInput } from './CommentInput';
 import { ReplyItem, type ReplyItemProps } from './ReplyItem';
@@ -17,9 +19,10 @@ interface CommentItemProps {
   content: string;
   date: string;
   isAuthor?: boolean;
+  files?: DisplayFile[];
   replies?: ReplyItemProps[];
   onReply?: (value: string, file: UploadFileItem | null) => void;
-  onEdit?: () => void;
+  onEdit?: (content: string, file: UploadFileItem | null, existingFilesRemoved: boolean) => void;
   onDelete?: () => void;
 }
 
@@ -30,17 +33,28 @@ function CommentItem({
   content,
   date,
   isAuthor,
+  files,
   replies,
   onReply,
   onEdit,
   onDelete,
 }: CommentItemProps) {
   const [replyOpen, setReplyOpen] = useState(false);
+  const [editing, setEditing] = useState(false);
   const replyInputRef = useScrollIntoView<HTMLDivElement>(replyOpen);
 
   const handleReplySubmit = (value: string, file: UploadFileItem | null) => {
     onReply?.(value, file);
     setReplyOpen(false);
+  };
+
+  const handleEditSubmit = (
+    value: string,
+    file: UploadFileItem | null,
+    existingFilesRemoved: boolean,
+  ) => {
+    onEdit?.(value, file, existingFilesRemoved);
+    setEditing(false);
   };
 
   return (
@@ -54,29 +68,45 @@ function CommentItem({
             </Avatar>
             <span className="typo-sub2 text-text-strong">{name}</span>
           </div>
-          <p className="typo-body1 text-text-normal">{content}</p>
-          <p className="typo-caption2 text-text-alternative">{date}</p>
-        </div>
-        <div className="flex gap-100">
-          <Button
-            type="button"
-            variant="secondary"
-            size="icon-sm"
-            className="size-6"
-            onClick={() => setReplyOpen((prev) => !prev)}
-            aria-label="답글"
-          >
-            <Icon src={ChatIcon} size={13} className="text-icon-normal" />
-          </Button>
-          {isAuthor && (
-            <ActionMenu
-              triggerVariant="secondary"
-              triggerClassName="size-6"
-              onEdit={onEdit}
-              onDeleteSelect={onDelete}
+          {editing ? (
+            <CommentInput
+              className="mt-100"
+              defaultValue={content}
+              defaultFiles={files}
+              placeholder="댓글을 수정하세요"
+              onSubmit={handleEditSubmit}
+              onCancel={() => setEditing(false)}
             />
+          ) : (
+            <>
+              <p className="typo-body1 text-text-normal whitespace-pre-wrap">{content}</p>
+              {files && files.length > 0 && <FileList files={files} />}
+              <p className="typo-caption2 text-text-alternative">{date}</p>
+            </>
           )}
         </div>
+        {!editing && (
+          <div className="flex gap-100">
+            <Button
+              type="button"
+              variant="secondary"
+              size="icon-sm"
+              className="size-6"
+              onClick={() => setReplyOpen((prev) => !prev)}
+              aria-label="답글"
+            >
+              <Icon src={ChatIcon} size={13} className="text-icon-normal" />
+            </Button>
+            {isAuthor && (
+              <ActionMenu
+                triggerVariant="secondary"
+                triggerClassName="size-6"
+                onEdit={() => setEditing(true)}
+                onDeleteSelect={onDelete}
+              />
+            )}
+          </div>
+        )}
       </div>
 
       {replies && replies.length > 0 && (

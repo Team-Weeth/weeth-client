@@ -6,29 +6,46 @@ import { FileList } from '@/components/board/FileList';
 import { Button, Icon, Textarea } from '@/components/ui';
 import { useFileAttach } from '@/hooks';
 import { cn } from '@/lib/cn';
+import type { DisplayFile } from '@/types/board';
 import type { UploadFileItem } from '@/stores/usePostStore';
 
 interface CommentInputProps {
   className?: string;
   placeholder?: string;
-  onSubmit?: (value: string, file: UploadFileItem | null) => void;
+  defaultValue?: string;
+  defaultFiles?: DisplayFile[];
+  onSubmit?: (value: string, file: UploadFileItem | null, existingFilesRemoved: boolean) => void;
+  onCancel?: () => void;
   disabled?: boolean;
 }
 
 function CommentInput({
   className,
   placeholder = '댓글을 입력하세요',
+  defaultValue = '',
+  defaultFiles = [],
   onSubmit,
+  onCancel,
   disabled = false,
 }: CommentInputProps) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const [value, setValue] = useState('');
-  const { inputRef, file, open, handleChange, remove, reset } = useFileAttach();
+  const [value, setValue] = useState(defaultValue);
+  const [existingFiles, setExistingFiles] = useState<DisplayFile[]>(defaultFiles);
+  const { inputRef, file, open, handleChange, remove, reset, upload } = useFileAttach();
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const trimmed = value.trim();
     if (!trimmed) return;
-    onSubmit?.(trimmed, file);
+
+    let uploadedFile: UploadFileItem | null = null;
+    if (file) {
+      const storageKey = await upload('COMMENT');
+      if (!storageKey) return;
+      uploadedFile = { ...file, storageKey, uploaded: true };
+    }
+
+    const filesRemoved = defaultFiles.length > 0 && existingFiles.length === 0;
+    onSubmit?.(trimmed, uploadedFile, filesRemoved);
     setValue('');
     reset();
   };
@@ -68,24 +85,50 @@ function CommentInput({
           </p>
         </div>
 
-        <Button
-          type="button"
-          variant="secondary"
-          size="icon-md"
-          className="shrink-0"
-          onClick={handleSubmit}
-          disabled={disabled || !value.trim()}
-          aria-label="댓글 전송"
-        >
-          <Icon
-            src={SendIcon}
-            size={20}
-            className={disabled || !value.trim() ? 'text-icon-disabled' : 'text-icon-normal'}
-          />
-        </Button>
+        {!onCancel && (
+          <Button
+            type="button"
+            variant="secondary"
+            size="icon-md"
+            className="shrink-0"
+            onClick={handleSubmit}
+            disabled={disabled || !value.trim()}
+            aria-label="댓글 전송"
+          >
+            <Icon
+              src={SendIcon}
+              size={20}
+              className={disabled || !value.trim() ? 'text-icon-disabled' : 'text-icon-normal'}
+            />
+          </Button>
+        )}
       </div>
 
-      {file && <FileList files={[file]} editable onRemove={remove} />}
+      {existingFiles.length > 0 && (
+        <FileList
+          files={existingFiles}
+          editable
+          onRemove={(id) => setExistingFiles((prev) => prev.filter((f) => f.id !== id))}
+        />
+      )}
+
+      {file && <FileList files={[{ ...file, uploaded: true }]} editable onRemove={remove} />}
+
+      {onCancel && (
+        <div className="flex justify-end gap-200 pr-200">
+          <button type="button" className="typo-button2 text-text-alternative" onClick={onCancel}>
+            취소
+          </button>
+          <button
+            type="button"
+            className="typo-button2 text-brand-primary disabled:text-text-disabled"
+            onClick={handleSubmit}
+            disabled={disabled || !value.trim()}
+          >
+            저장
+          </button>
+        </div>
+      )}
     </div>
   );
 }
