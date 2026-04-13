@@ -2,9 +2,10 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 
-import { MenuIcon, LogoIcon } from '@/assets/icons';
+import { MenuIcon, LogoGrayIcon, AvatarIcon } from '@/assets/icons';
+import { useClubName } from '@/stores';
 
 import { PostingActions } from './PostingActions';
 import { DefaultActions } from './DefaultActions';
@@ -13,15 +14,9 @@ interface HeaderProps {
   isMain?: boolean;
 }
 
-const Logo = ({ width = 76, href }: { width?: number; href: string }) => (
+const Logo = ({ width = 32, href }: { width?: number; href: string }) => (
   <Link href={href} aria-label="홈으로 이동" className="inline-flex">
-    <Image
-      src={LogoIcon}
-      alt="logo"
-      width={width}
-      height={40}
-      className="mt-[2px] mr-1 mb-[6px] cursor-pointer"
-    />
+    <Image src={LogoGrayIcon} alt="logo" width={width} height={32} className="cursor-pointer" />
   </Link>
 );
 
@@ -31,19 +26,37 @@ const NAV_ITEMS = [
 ];
 
 export default function Header({ isMain = true }: HeaderProps) {
+  const router = useRouter();
   const pathname = usePathname();
+  const clubName = useClubName();
   const isPostingPage = pathname.includes('/write') || /^\/board\/edit\/\d+$/.test(pathname);
 
   return (
     <>
-      <header className="tablet:hidden flex gap-100 py-3 pr-450 pl-200">
+      <header className="tablet:hidden flex items-center justify-between gap-100 py-3 pr-450 pl-200">
         {isMain && (
-          <Image src={MenuIcon} alt="menu" width={40} height={40} className="cursor-pointer p-2" />
+          <div className="flex items-center gap-100">
+            <Image
+              src={MenuIcon}
+              alt="menu"
+              width={40}
+              height={40}
+              className="cursor-pointer p-2"
+            />
+            <span className="typo-sub2 px-1 text-neutral-700">{clubName}</span>
+          </div>
         )}
-        <Logo width={90} href={isMain ? '/home' : '/'} />
+        <button
+          type="button"
+          aria-label="마이페이지로 이동"
+          onClick={() => router.push('/mypage')}
+          className="cursor-pointer rounded-full"
+        >
+          <Image src={AvatarIcon} alt="avatar" width={40} height={40} />
+        </button>
       </header>
-      <header className="tablet:flex flex hidden w-full items-center justify-between px-5 py-3">
-        <div className="flex items-center gap-300">
+      <header className="tablet:flex relative flex hidden w-full items-center justify-between px-5 py-3">
+        <div className="flex items-center gap-4">
           <Logo href={isMain ? '/home' : '/'} />
 
           {!isMain && (
@@ -81,6 +94,11 @@ export default function Header({ isMain = true }: HeaderProps) {
               );
             })}
         </div>
+        {isMain && (
+          <span className="typo-sub2 absolute left-1/2 -translate-x-1/2 text-neutral-700">
+            {clubName}
+          </span>
+        )}
         {isMain && (isPostingPage ? <PostingActions /> : <DefaultActions />)}
       </header>
     </>
