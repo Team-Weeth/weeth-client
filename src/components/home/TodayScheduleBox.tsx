@@ -1,11 +1,16 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
 import { Button, Chip, ChipList } from '@/components/ui';
 import { useAttendanceQuery } from '@/hooks/attendance';
+import { useIsAdmin } from '@/hooks/home';
 import { formatDateWithTimeRange } from '@/utils/shared/date';
+import { EmptyBox } from './EmptyBox';
 
 export function TodayScheduleBox() {
+  const router = useRouter();
   const { data } = useAttendanceQuery();
+  const isAdmin = useIsAdmin();
 
   return (
     <div className="bg-container-neutral rounded-lg">
@@ -26,8 +31,17 @@ export function TodayScheduleBox() {
             {data.status === 'ATTEND' ? '출석 완료' : '출석하기'}
           </Button>
         </div>
+      ) : isAdmin ? (
+        <div className="px-450 pb-450">
+          <EmptyBox
+            description="출석이 필요한 정기모임 정보가 없습니다"
+            button={{ label: '출석 일정 추가하기', onClick: () => router.push('/admin') }}
+          />
+        </div>
       ) : (
-        <p className="typo-body2 text-text-alternative px-450 pb-450">오늘 출석 일정이 없습니다.</p>
+        <div className="px-450 pb-450">
+          <EmptyBox description="출석할 일정이 없습니다" />
+        </div>
       )}
     </div>
   );
