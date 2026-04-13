@@ -96,14 +96,23 @@ function PostDetailContent({ post }: PostDetailContentProps) {
           </div>
 
           <div className="flex flex-col gap-200 self-stretch pb-400">
-            {post.comments.map((comment) => (
-              <CommentItem
-                key={comment.id}
-                {...mapComment(comment, currentUserId)}
-                onEdit={(content) => updateComment(comment.id, content)}
-                onDelete={() => deleteComment(comment.id)}
-              />
-            ))}
+            {post.comments.map((comment) => {
+              const mapped = mapComment(comment, currentUserId);
+              return (
+                <CommentItem
+                  key={comment.id}
+                  {...mapped}
+                  replies={mapped.replies.map((reply) => ({
+                    ...reply,
+                    onEdit: (content: string) => updateComment(reply.id, content),
+                    onDelete: () => deleteComment(reply.id),
+                  }))}
+                  onReply={(content) => createComment(content, comment.id)}
+                  onEdit={(content) => updateComment(comment.id, content)}
+                  onDelete={() => deleteComment(comment.id)}
+                />
+              );
+            })}
           </div>
         </>
       )}

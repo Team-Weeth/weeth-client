@@ -6,6 +6,7 @@ import { Avatar, AvatarFallback, AvatarImage, Button, Icon } from '@/components/
 import { useScrollIntoView } from '@/hooks';
 import { cn } from '@/lib/cn';
 import { ActionMenu } from '@/components/board/ActionMenu';
+import { CommentDeleteDialog } from './CommentDeleteDialog';
 import { CommentInput } from './CommentInput';
 import { ReplyItem, type ReplyItemProps } from './ReplyItem';
 
@@ -36,6 +37,7 @@ function CommentItem({
 }: CommentItemProps) {
   const [replyOpen, setReplyOpen] = useState(false);
   const [editing, setEditing] = useState(false);
+  const [deleteOpen, setDeleteOpen] = useState(false);
   const replyInputRef = useScrollIntoView<HTMLDivElement>(replyOpen);
 
   const handleReplySubmit = (value: string) => {
@@ -91,7 +93,7 @@ function CommentItem({
                 triggerVariant="secondary"
                 triggerClassName="size-6"
                 onEdit={() => setEditing(true)}
-                onDeleteSelect={onDelete}
+                onDeleteSelect={() => setDeleteOpen(true)}
               />
             )}
           </div>
@@ -105,6 +107,15 @@ function CommentItem({
           ))}
         </div>
       )}
+
+      <CommentDeleteDialog
+        open={deleteOpen}
+        onOpenChange={setDeleteOpen}
+        onConfirm={() => {
+          onDelete?.();
+          setDeleteOpen(false);
+        }}
+      />
 
       {replyOpen && (
         <div ref={replyInputRef}>

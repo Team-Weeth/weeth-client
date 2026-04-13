@@ -1,9 +1,12 @@
 'use client';
 
+import { useState } from 'react';
 import { ReplyIcon } from '@/assets/icons';
 import { Avatar, AvatarFallback, AvatarImage, Icon } from '@/components/ui';
 import { cn } from '@/lib/cn';
 import { ActionMenu } from '@/components/board/ActionMenu';
+import { CommentDeleteDialog } from './CommentDeleteDialog';
+import { CommentInput } from './CommentInput';
 
 interface ReplyItemProps {
   id: number | string;
@@ -13,7 +16,7 @@ interface ReplyItemProps {
   content: string;
   date: string;
   isAuthor?: boolean;
-  onEdit?: () => void;
+  onEdit?: (content: string) => void;
   onDelete?: () => void;
 }
 
@@ -27,6 +30,14 @@ function ReplyItem({
   onEdit,
   onDelete,
 }: ReplyItemProps) {
+  const [editing, setEditing] = useState(false);
+  const [deleteOpen, setDeleteOpen] = useState(false);
+
+  const handleEditSubmit = (value: string) => {
+    onEdit?.(value);
+    setEditing(false);
+  };
+
   return (
     <div className={cn('flex items-start justify-between gap-100 self-stretch px-450', className)}>
       <Icon src={ReplyIcon} size={20} className="text-icon-alternative" />
@@ -39,18 +50,38 @@ function ReplyItem({
             </Avatar>
             <span className="typo-sub2 text-text-strong">{name}</span>
           </div>
-          <p className="typo-body1 text-text-normal whitespace-pre-wrap">{content}</p>
-          <p className="typo-caption2 text-text-alternative">{date}</p>
+          {editing ? (
+            <CommentInput
+              defaultValue={content}
+              placeholder="답글을 수정하세요"
+              onSubmit={handleEditSubmit}
+              onCancel={() => setEditing(false)}
+            />
+          ) : (
+            <>
+              <p className="typo-body1 text-text-normal whitespace-pre-wrap">{content}</p>
+              <p className="typo-caption2 text-text-alternative">{date}</p>
+            </>
+          )}
         </div>
-        {isAuthor && (
+        {isAuthor && !editing && (
           <ActionMenu
             triggerVariant="secondary"
             triggerClassName="absolute top-400 right-400 size-6"
-            onEdit={onEdit}
-            onDeleteSelect={onDelete}
+            onEdit={() => setEditing(true)}
+            onDeleteSelect={() => setDeleteOpen(true)}
           />
         )}
       </div>
+
+      <CommentDeleteDialog
+        open={deleteOpen}
+        onOpenChange={setDeleteOpen}
+        onConfirm={() => {
+          onDelete?.();
+          setDeleteOpen(false);
+        }}
+      />
     </div>
   );
 }

@@ -7,12 +7,12 @@ export function useCreateComment(postId: number) {
   const router = useRouter();
   const [isPending, setIsPending] = useState(false);
 
-  const createComment = async (content: string) => {
+  const createComment = async (content: string, parentCommentId?: number) => {
     if (isPending) return;
 
     setIsPending(true);
     try {
-      await commentApi.create(postId, { content, files: [] });
+      await commentApi.create(postId, { content, files: [], parentCommentId });
       router.refresh();
       toast({ title: '댓글이 작성되었습니다.', variant: 'success' });
     } catch {
