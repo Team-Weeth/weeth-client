@@ -15,6 +15,7 @@ import { formatShortDateTime } from '@/lib/formatTime';
 import { toDisplayFile, isImageFileByType, mapComment } from '@/lib/board';
 import { useCreateComment } from '@/hooks/board/useCreateComment';
 import { useUpdateComment } from '@/hooks/board/useUpdateComment';
+import { useDeleteComment } from '@/hooks/board/useDeleteComment';
 import { useSetActiveBoardId } from '@/stores/useBoardNavStore';
 import { useUserId } from '@/stores/useUserStore';
 import type { PostDetail } from '@/types/board';
@@ -29,6 +30,7 @@ function PostDetailContent({ post }: PostDetailContentProps) {
   const setActiveBoardId = useSetActiveBoardId();
   const { createComment, isPending } = useCreateComment(post.id);
   const { updateComment } = useUpdateComment(post.id);
+  const { deleteComment } = useDeleteComment(post.id);
 
   useEffect(() => {
     setActiveBoardId(post.boardId);
@@ -101,6 +103,7 @@ function PostDetailContent({ post }: PostDetailContentProps) {
                 onEdit={(content, file, existingFilesRemoved) =>
                   updateComment(comment.id, content, file, existingFilesRemoved)
                 }
+                onDelete={() => deleteComment(comment.id)}
               />
             ))}
           </div>
