@@ -37,7 +37,7 @@ function CommentInput({
     <div className={cn('flex flex-col gap-200', className)}>
       <input ref={inputRef} type="file" className="hidden" onChange={handleChange} />
 
-      <div className="bg-container-neutral-alternative flex items-end gap-300 rounded-lg p-300">
+      <div className="bg-container-neutral-alternative flex items-start gap-300 rounded-lg p-300">
         <Button
           type="button"
           variant="secondary"
@@ -50,17 +50,23 @@ function CommentInput({
           <Icon src={FolderPlusIcon} size={20} className="text-icon-normal" />
         </Button>
 
-        <Textarea
-          ref={textareaRef}
-          autoGrow
-          clearable
-          rows={1}
-          value={value}
-          onChange={(e) => setValue(e.target.value)}
-          placeholder={placeholder}
-          disabled={disabled}
-          wrapperClassName="min-h-800 min-w-0 flex-1 rounded-lg px-400 py-200"
-        />
+        <div className="min-w-0 flex-1">
+          <Textarea
+            ref={textareaRef}
+            autoGrow
+            clearable
+            rows={1}
+            maxLength={300}
+            value={value}
+            onChange={(e) => setValue(e.target.value)}
+            placeholder={placeholder}
+            disabled={disabled}
+            wrapperClassName="min-h-800 rounded-lg px-400 py-200"
+          />
+          <p className="typo-caption2 text-text-alternative mt-100 text-right">
+            {value.length}/300
+          </p>
+        </div>
 
         <Button
           type="button"
