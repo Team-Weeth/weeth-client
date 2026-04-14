@@ -7,13 +7,8 @@ import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { AdminCloseIcon } from '@/assets/icons/admin';
 import { ScheduleFormField } from '@/components/admin/schedule/ScheduleFormField';
 import { DateTimeInput } from '@/components/ui/DateTimeInput';
-
-type ScheduleFormTab = 'GENERAL' | 'SESSION';
-
-const TAB_TITLE: Record<ScheduleFormTab, string> = {
-  GENERAL: '일반 일정 생성',
-  SESSION: '세션 생성',
-};
+import { SCHEDULE_TYPE_LABEL } from '@/constants/admin/schedule.constants';
+import type { ScheduleType } from '@/types/admin/schedule';
 
 function getDefaultDate(): string {
   const d = new Date();
@@ -27,7 +22,7 @@ interface CreateScheduleModalProps {
 }
 
 function CreateScheduleModal({ open, onOpenChange, cardinalNumber }: CreateScheduleModalProps) {
-  const [activeTab, setActiveTab] = useState<ScheduleFormTab>('GENERAL');
+  const [activeTab, setActiveTab] = useState<ScheduleType>('GENERAL');
   const [title, setTitle] = useState('');
   const [startDate, setStartDate] = useState(getDefaultDate());
   const [startTime, setStartTime] = useState('00:00');
@@ -69,12 +64,12 @@ function CreateScheduleModal({ open, onOpenChange, cardinalNumber }: CreateSched
         <div className="flex items-start justify-between px-700 pt-700">
           <Tabs
             value={activeTab}
-            onValueChange={(v) => setActiveTab(v as ScheduleFormTab)}
+            onValueChange={(v) => setActiveTab(v as ScheduleType)}
             className="gap-0"
           >
             <TabsList variant="line" className="h-8">
-              <TabsTrigger value="GENERAL">일반 일정</TabsTrigger>
-              <TabsTrigger value="SESSION">세션</TabsTrigger>
+              <TabsTrigger value="GENERAL">{SCHEDULE_TYPE_LABEL.GENERAL}</TabsTrigger>
+              <TabsTrigger value="SESSION">{SCHEDULE_TYPE_LABEL.SESSION}</TabsTrigger>
             </TabsList>
             <TabsContent value={activeTab} className="hidden" />
           </Tabs>
@@ -90,7 +85,7 @@ function CreateScheduleModal({ open, onOpenChange, cardinalNumber }: CreateSched
 
         {/* Scrollable body */}
         <div className="scrollbar-custom max-h-[700px] overflow-y-auto px-700">
-          <h2 className="typo-h3 text-text-normal py-400">{TAB_TITLE[activeTab]}</h2>
+          <h2 className="typo-h3 text-text-normal py-400">{`${SCHEDULE_TYPE_LABEL[activeTab]} 생성`}</h2>
 
           <div className="flex flex-col gap-400 py-400">
             {/* Title */}
