@@ -8,12 +8,7 @@ interface AddCardinalButtonProps extends React.ButtonHTMLAttributes<HTMLButtonEl
   ref?: React.Ref<HTMLButtonElement>;
 }
 
-function AddCardinalButton({
-  className,
-  ref,
-  type = 'button',
-  ...props
-}: AddCardinalButtonProps) {
+function AddCardinalButton({ className, ref, type = 'button', ...props }: AddCardinalButtonProps) {
   return (
     <button
       ref={ref}

@@ -20,9 +20,7 @@ const cardinalCardVariants = cva(
 );
 
 interface CardinalCardProps
-  extends
-    React.ButtonHTMLAttributes<HTMLButtonElement>,
-    VariantProps<typeof cardinalCardVariants> {
+  extends React.ButtonHTMLAttributes<HTMLButtonElement>, VariantProps<typeof cardinalCardVariants> {
   title: string;
   ref?: React.Ref<HTMLButtonElement>;
 }

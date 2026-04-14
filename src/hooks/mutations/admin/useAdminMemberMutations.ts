@@ -109,9 +109,7 @@ export function useChangeMemberCardinals() {
       const nextCardinal = [...cardinalIds].sort((a, b) => a - b).join(', ');
 
       queryClient.setQueryData<Member[]>(queryKey, (old = []) =>
-        old.map((m) =>
-          m.clubMemberId === clubMemberId ? { ...m, cardinal: nextCardinal } : m,
-        ),
+        old.map((m) => (m.clubMemberId === clubMemberId ? { ...m, cardinal: nextCardinal } : m)),
       );
 
       return { previous };
