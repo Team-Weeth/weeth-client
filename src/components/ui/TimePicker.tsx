@@ -4,17 +4,8 @@ import { useRef, useState } from 'react';
 import { Popover as PopoverPrimitive } from 'radix-ui';
 
 import { cn } from '@/lib/cn';
-
-const HOURS = Array.from({ length: 24 }, (_, i) => i);
-const MINUTES = [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55];
-
-function formatTimeDisplay(timeStr: string): string {
-  if (!timeStr) return '';
-  const [h, m] = timeStr.split(':').map(Number);
-  const period = h < 12 ? '오전' : '오후';
-  const displayHour = h % 12 || 12;
-  return `${period} ${displayHour}:${String(m).padStart(2, '0')}`;
-}
+import { HOURS, MINUTES } from '@/constants/shared/date';
+import { formatTimeDisplay } from '@/utils/shared/date';
 
 interface TimePickerProps {
   value: string;
@@ -55,7 +46,7 @@ function TimePicker({ value, onChange }: TimePickerProps) {
       <PopoverPrimitive.Trigger asChild>
         <button
           type="button"
-          className="bg-container-neutral flex h-10 cursor-pointer items-center rounded-sm px-300"
+          className="bg-container-neutral border border-transparent data-[state=open]:border-brand-primary data-[state=open]:ring-4 data-[state=open]:ring-brand-primary/15 flex h-10 cursor-pointer items-center rounded-sm px-300 transition-shadow"
         >
           <span className="typo-body1 text-text-normal">
             {value ? formatTimeDisplay(value) : '시간 선택'}

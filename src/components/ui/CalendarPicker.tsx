@@ -68,11 +68,11 @@ function CalendarPicker({ value, onChange }: CalendarPickerProps) {
   const todayDay = today.getDate();
 
   return (
-    <PopoverPrimitive.Root open={open} onOpenChange={setOpen}>
+    <PopoverPrimitive.Root open={open} onOpenChange={handleOpenChange}>
       <PopoverPrimitive.Trigger asChild>
         <button
           type="button"
-          className="bg-container-neutral focus:border-primary focus:shadow-primary-foreground flex h-10 w-30 cursor-pointer items-center rounded-sm px-300"
+          className="bg-container-neutral border border-transparent data-[state=open]:border-brand-primary data-[state=open]:ring-4 data-[state=open]:ring-brand-primary/15 flex h-10 w-30 cursor-pointer items-center rounded-sm px-300 transition-shadow"
         >
           <span className="typo-body1 text-text-normal">
             {value ? formatDateDisplay(value) : '날짜 선택'}

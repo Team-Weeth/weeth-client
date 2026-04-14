@@ -66,3 +66,11 @@ export function formatDateDisplay(dateStr: string): string {
   const [year, month, day] = dateStr.split('-');
   return `${year}. ${month}. ${day}.`;
 }
+
+export function formatTimeDisplay(timeStr: string): string {
+  if (!timeStr) return '';
+  const [h, m] = timeStr.split(':').map(Number);
+  const period = h < 12 ? '오전' : '오후';
+  const displayHour = h % 12 || 12;
+  return `${period} ${displayHour}:${String(m).padStart(2, '0')}`;
+}
