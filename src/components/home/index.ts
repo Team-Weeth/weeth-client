@@ -14,3 +14,4 @@ export * from './ClubProfileHeader';
 export * from './UserProfileHeader';
 export * from './CardinalMissingModal';
 export * from './ProfileIncompleteModal';
+export * from './EmptyBox';
