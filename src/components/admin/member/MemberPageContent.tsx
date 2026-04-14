@@ -26,6 +26,7 @@ import {
   useRestoreMember,
 } from '@/hooks/mutations/admin';
 import { toastError, toastSuccess } from '@/stores/useToastStore';
+import { getBulkBanAction, getBulkTargetRole } from '@/utils/admin/memberBulkActions';
 
 interface ForceConfirmState {
   clubMemberIds: number[];
@@ -79,17 +80,8 @@ function MemberPageContent() {
   const selectedMembers = filteredMembers.filter((m) => selectedIds.has(m.id));
   const selectedCount = selectedMembers.length;
 
-  const allUsers = selectedCount > 0 && selectedMembers.every((m) => m.memberRole === 'USER');
-  const allAdmins = selectedCount > 0 && selectedMembers.every((m) => m.memberRole === 'ADMIN');
-  const targetRole = allUsers ? 'ADMIN' : allAdmins ? 'USER' : null;
-
-  const allBanned = selectedCount > 0 && selectedMembers.every((m) => m.status === 'BANNED');
-  const noneBanned = selectedCount > 0 && selectedMembers.every((m) => m.status !== 'BANNED');
-  const targetBanAction: 'ban' | 'restore' | null = allBanned
-    ? 'restore'
-    : noneBanned
-      ? 'ban'
-      : null;
+  const targetRole = getBulkTargetRole(selectedMembers);
+  const targetBanAction = getBulkBanAction(selectedMembers);
 
   const handleClearSelection = () => setSelectedIds(new Set());
 
