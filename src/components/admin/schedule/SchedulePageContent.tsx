@@ -73,8 +73,13 @@ function SchedulePageContent() {
 
   const schedules = MOCK_SCHEDULES;
 
+  // 기수 필터링
+  const cardinalFiltered =
+    selectedCardinalId === null
+      ? schedules
+      : schedules.filter((s) => s.cardinalNumber === activeCardinal?.cardinalNumber);
   // 월 필터링
-  const monthFiltered = schedules.filter((s) => {
+  const monthFiltered = cardinalFiltered.filter((s) => {
     const date = new Date(s.startDateTime);
     return date.getFullYear() === currentYear && date.getMonth() + 1 === currentMonth;
   });

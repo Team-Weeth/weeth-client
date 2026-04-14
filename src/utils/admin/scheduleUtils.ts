@@ -1,25 +1,34 @@
 const DAY_LABELS = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'] as const;
+const INVALID_DATE_FALLBACK = '-';
 
-export function getDayLabel(dateString: string): string {
+function parseDate(dateString: string): Date | null {
   const date = new Date(dateString);
-  return DAY_LABELS[date.getDay()];
+  return Number.isNaN(date.getTime()) ? null : date;
 }
 
-export function getDayOfMonth(dateString: string): number {
-  return new Date(dateString).getDate();
+export function getDayLabel(dateString: string): string {
+  const date = parseDate(dateString);
+  return date ? DAY_LABELS[date.getDay()] : INVALID_DATE_FALLBACK;
+}
+
+export function getDayOfMonth(dateString: string): number | null {
+  const date = parseDate(dateString);
+  return date ? date.getDate() : null;
 }
 
 export function formatScheduleDateTime(dateString: string): string {
-  const date = new Date(dateString);
+  const date = parseDate(dateString);
+  if (!date) return INVALID_DATE_FALLBACK;
+
   const month = date.getMonth() + 1;
   const day = date.getDate();
   const hours = date.getHours();
   const minutes = date.getMinutes();
   const period = hours < 12 ? '오전' : '오후';
   const displayHours = hours % 12 || 12;
-  const displayMinutes = minutes === 0 ? '' : `:${String(minutes).padStart(2, '0')}`;
+  const displayMinutes = String(minutes).padStart(2, '0');
 
-  return `${month}월 ${day}일 ${period} ${displayHours}${displayMinutes}`;
+  return `${month}월 ${day}일 ${period} ${displayHours}:${displayMinutes}`;
 }
 
 export function formatYearMonth(year: number, month: number): string {

@@ -35,7 +35,7 @@ function ScheduleItem({
     >
       {/* Date column */}
       <div className="flex w-11 shrink-0 flex-col items-center justify-center gap-100 self-stretch">
-        <span className="typo-h3 text-text-alternative">{day}</span>
+        <span className="typo-h3 text-text-alternative">{day ?? '-'}</span>
         <span className="typo-body2 text-text-alternative">{dayLabel}</span>
       </div>
 
