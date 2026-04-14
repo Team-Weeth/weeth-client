@@ -14,7 +14,7 @@ import { useRouter } from 'next/navigation';
 import { useIsAdmin } from '@/hooks/shared';
 
 function HomeBoardContent() {
-  const isAdmin = useIsAdmin();
+  const { isAdmin } = useIsAdmin();
   const router = useRouter();
   const { data: posts, fetchNextPage, hasNextPage, isFetchingNextPage } = useRecentPostsQuery();
   const { data: myUserId } = useHomeQuery({

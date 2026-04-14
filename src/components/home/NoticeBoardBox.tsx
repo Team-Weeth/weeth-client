@@ -13,7 +13,7 @@ import { useIsAdmin } from '@/hooks/shared';
 export function NoticeBoardBox() {
   const router = useRouter();
   const { data: notices = [] } = useRecentNoticesQuery();
-  const isAdmin = useIsAdmin();
+  const { isAdmin } = useIsAdmin();
 
   return (
     <div className="bg-container-neutral flex flex-col rounded-lg pb-300">

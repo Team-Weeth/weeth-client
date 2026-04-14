@@ -10,7 +10,7 @@ import { EmptyBox } from '@/components/home/EmptyBox';
 export function TodayScheduleBox() {
   const router = useRouter();
   const { data } = useAttendanceQuery();
-  const isAdmin = useIsAdmin();
+  const { isAdmin } = useIsAdmin();
 
   return (
     <div className="bg-container-neutral rounded-lg">

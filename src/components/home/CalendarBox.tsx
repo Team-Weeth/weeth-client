@@ -10,12 +10,13 @@ import { useIsAdmin } from '@/hooks/shared';
 
 export function CalendarBox() {
   const router = useRouter();
-  const { data: schedules = [] } = useMonthlySchedulesQuery();
-  const isAdmin = useIsAdmin();
+  const { data: schedules, isPending: isSchedulesPending } = useMonthlySchedulesQuery();
+  const { isAdmin, isPending: isAdminPending } = useIsAdmin();
 
   const now = new Date();
   const monthLabel = `${now.getMonth() + 1}월 캘린더`;
-  const dateGrouped = groupByStartDate(schedules);
+  const dateGrouped = groupByStartDate(schedules ?? []);
+  const isLoading = isSchedulesPending || isAdminPending;
 
   return (
     <div className="bg-container-neutral rounded-lg">
@@ -33,7 +34,7 @@ export function CalendarBox() {
         </button> */}
       </div>
       <div className="flex flex-col gap-400 p-450">
-        {dateGrouped.length > 0 ? (
+        {isLoading ? null : dateGrouped.length > 0 ? (
           dateGrouped.map(([dateKey, daySchedules]) => (
             <div key={dateKey} className="flex flex-col gap-200">
               <p className="typo-sub2 text-text-strong">
