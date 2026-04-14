@@ -28,26 +28,39 @@ async function handler(request: NextRequest, { params }: { params: Promise<{ pat
 
   const hasBody = request.method !== 'GET' && request.method !== 'HEAD';
 
-  const response = await fetch(url.toString(), {
-    method: request.method,
-    headers,
-    body: hasBody ? request.body : undefined,
-    signal: request.signal,
-    duplex: 'half',
-  } as RequestInit);
+  const timeout = AbortSignal.timeout(10_000);
+  const signal = AbortSignal.any([timeout, request.signal]);
 
-  const body = await response.arrayBuffer();
+  try {
+    const response = await fetch(url.toString(), {
+      method: request.method,
+      headers,
+      body: hasBody ? request.body : undefined,
+      signal,
+      duplex: 'half',
+    } as RequestInit);
 
-  const responseHeaders = new Headers(response.headers);
-  responseHeaders.delete('transfer-encoding');
-  responseHeaders.delete('content-encoding');
-  responseHeaders.delete('set-cookie');
+    const body = await response.arrayBuffer();
 
-  return new NextResponse(body, {
-    status: response.status,
-    statusText: response.statusText,
-    headers: responseHeaders,
-  });
+    const responseHeaders = new Headers(response.headers);
+    responseHeaders.delete('transfer-encoding');
+    responseHeaders.delete('content-encoding');
+    responseHeaders.delete('set-cookie');
+
+    return new NextResponse(body, {
+      status: response.status,
+      statusText: response.statusText,
+      headers: responseHeaders,
+    });
+  } catch (error) {
+    if (error instanceof DOMException && error.name === 'TimeoutError') {
+      return NextResponse.json({ error: 'Upstream timeout' }, { status: 504 });
+    }
+    if (error instanceof DOMException && error.name === 'AbortError') {
+      return NextResponse.json({ error: 'Request aborted' }, { status: 499 });
+    }
+    return NextResponse.json({ error: 'Upstream unreachable' }, { status: 502 });
+  }
 }
 
 export const GET = handler;
