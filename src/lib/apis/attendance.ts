@@ -1,7 +1,13 @@
 import { apiClient } from '@/lib/apis/client';
-import type { AttendanceResponse } from '@/types/attendance';
+import type { AttendanceResponse, QRCodeResponse } from '@/types/attendance';
 
 export const attendanceApi = {
   getAttendance: (clubId: string) =>
     apiClient.get<AttendanceResponse>(`/clubs/${clubId}/attendances`),
+
+  checkIn: (clubId: string, sessionId: number, code: number) =>
+    apiClient.post(`/clubs/${clubId}/attendances/sessions/${sessionId}/check-in`, { code }),
+
+  generateQR: (clubId: string, sessionId: number) =>
+    apiClient.post<QRCodeResponse>(`/admin/clubs/${clubId}/attendances/${sessionId}/qr`),
 };

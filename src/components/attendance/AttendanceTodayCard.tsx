@@ -7,7 +7,6 @@ import { useState } from 'react';
 import { CompleteIcon } from '@/assets/icons';
 import { Card } from '@/components/ui';
 import { AttendanceCodeModal } from '@/components/attendance/AttendanceCodeModal';
-import { AttendanceCompleteModal } from '@/components/attendance/AttendanceCompleteModal';
 import { toastError } from '@/stores/useToastStore';
 
 interface AttendanceTodayCardProps {
@@ -17,8 +16,10 @@ interface AttendanceTodayCardProps {
   start: string;
   endTime: string;
   location: string;
+  sessionId?: number | null;
   isAdmin?: boolean;
   isChecked?: boolean;
+  disabled?: boolean;
   onAttendanceComplete?: (code: string) => void;
 }
 
@@ -41,17 +42,22 @@ function AttendanceTodayCard({
   start,
   endTime,
   location,
+  sessionId,
   isAdmin = false,
   isChecked = false,
+  disabled = false,
   onAttendanceComplete,
 }: AttendanceTodayCardProps) {
   const router = useRouter();
   const [codeModalOpen, setCodeModalOpen] = useState(false);
-  const [completeModalOpen, setCompleteModalOpen] = useState(false);
 
-  function handleCodeConfirm(code: string) {
-    onAttendanceComplete?.(code);
-    setCompleteModalOpen(true);
+  function handleSecondaryClick() {
+    if (!isAdmin) {
+      toastError('관리자만 사용할 수 있는 기능입니다.');
+      return;
+    }
+    if (sessionId == null) return;
+    router.push(`/attendance/qr?sessionId=${sessionId}`);
   }
 
   return (
@@ -62,14 +68,12 @@ function AttendanceTodayCard({
         title={title}
         description={description}
         showArrow={false}
-        onPrimaryClick={isChecked ? () => setCompleteModalOpen(true) : () => setCodeModalOpen(true)}
+        onPrimaryClick={() => setCodeModalOpen(true)}
         primaryButtonText={isChecked ? '출석 완료' : '출석하기'}
-        onSecondaryClick={
-          isAdmin
-            ? () => router.push('/attendance/qr')
-            : () => toastError('관리자만 사용할 수 있는 기능입니다.')
-        }
+        primaryButtonDisabled={disabled || isChecked}
+        onSecondaryClick={handleSecondaryClick}
         secondaryButtonText="출석코드 확인"
+        secondaryButtonDisabled={disabled || sessionId == null}
       >
         {isChecked && <AttendanceCompleteBanner />}
       </Card>
@@ -77,14 +81,12 @@ function AttendanceTodayCard({
       <AttendanceCodeModal
         open={codeModalOpen}
         onOpenChange={setCodeModalOpen}
-        onConfirm={handleCodeConfirm}
+        onConfirm={(code) => onAttendanceComplete?.(code)}
         title={title}
         start={start}
         endTime={endTime}
         location={location}
       />
-
-      <AttendanceCompleteModal open={completeModalOpen} onOpenChange={setCompleteModalOpen} />
     </>
   );
 }

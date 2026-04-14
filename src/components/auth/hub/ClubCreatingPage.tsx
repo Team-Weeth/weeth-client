@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation';
 import { ProgressBar } from '@/components/ui';
 import { createClubAction } from '@/lib/actions/club';
 import { useProgressAnimation } from '@/hooks';
-import { useCreateClubDraftStore } from '@/stores';
+import { useClubActions, useCreateClubDraftStore } from '@/stores';
 import { toastError } from '@/stores/useToastStore';
 import type { CreateClubDraftState } from '@/stores/useCreateClubDraftStore';
 
@@ -19,9 +19,11 @@ interface ClubCreatingPageProps {
 function ClubCreatingPage({ intent, onCancel }: ClubCreatingPageProps) {
   const router = useRouter();
   const resetDraft = useCreateClubDraftStore((state) => state.reset);
+  const { setClub } = useClubActions();
   const [apiDone, setApiDone] = useState(false);
   const apiCalledRef = useRef(false);
   const animationDoneRef = useRef(false);
+  const createdClubIdRef = useRef<string | null>(null);
 
   const nextPath = intent === 'create' ? '/home?onboarding=club-created' : '/hub/welcome';
 
@@ -52,10 +54,17 @@ function ClubCreatingPage({ intent, onCancel }: ClubCreatingPageProps) {
           onCancel?.();
           return;
         }
+        if (!result.clubId) {
+          toastError('동아리 생성에 실패했습니다. 다시 시도해주세요.');
+          onCancel?.();
+          return;
+        }
+        createdClubIdRef.current = result.clubId;
+        setClub(result.clubId, name);
         setApiDone(true);
       },
     );
-  }, [progress, onCancel]);
+  }, [progress, onCancel, setClub]);
 
   // API가 애니메이션 이후에 완료된 경우 즉시 navigate
   useEffect(() => {

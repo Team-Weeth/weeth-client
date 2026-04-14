@@ -1,18 +1,31 @@
+import { cookies } from 'next/headers';
+import { redirect } from 'next/navigation';
+
 import { AttendanceQRContent } from '@/components/attendance';
+import { CLUB_ID_KEY } from '@/lib/apis/cookies';
+import { homeServerApi } from '@/lib/apis/home.server';
 
-// TODO: API 연동 시 실제 데이터로 교체
-function createMockQRData() {
-  const now = new Date();
-  const end = new Date(now.getTime() + 10 * 60 * 1000); // 10분 후
-
-  return {
-    title: '1주차 정기모임',
-    code: '123456',
-    endTime: end.toISOString(),
-  };
+interface AttendanceQRPageProps {
+  searchParams: Promise<{ sessionId?: string }>;
 }
 
-export default function AttendanceQRPage() {
-  const { title, code, endTime } = createMockQRData();
-  return <AttendanceQRContent title={title} code={code} endTime={endTime} />;
+export default async function AttendanceQRPage({ searchParams }: AttendanceQRPageProps) {
+  const { sessionId: rawSessionId } = await searchParams;
+  const sessionId = Number(rawSessionId);
+
+  if (!Number.isInteger(sessionId) || sessionId <= 0) {
+    redirect('/attendance');
+  }
+
+  const clubId = (await cookies()).get(CLUB_ID_KEY)?.value;
+  if (!clubId) redirect('/attendance');
+
+  const { data } = await homeServerApi.getDashboard(clubId);
+  const role = data.myInfo.userInfo.role;
+
+  if (role !== 'LEAD' && role !== 'ADMIN') {
+    redirect('/attendance');
+  }
+
+  return <AttendanceQRContent sessionId={sessionId} />;
 }

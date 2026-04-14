@@ -1,0 +1,42 @@
+import { useEffect, useRef } from 'react';
+import QRCodeStyling from 'qr-code-styling';
+
+import { useRemainingTime } from '@/hooks/useRemainingTime';
+import { useQRCode } from '@/hooks/useQRCode';
+
+function useAttendanceQR(clubId: string | null, sessionId: number) {
+  const { data: qrData, isLoading, refetch } = useQRCode(clubId, sessionId);
+  const qrRef = useRef<HTMLDivElement>(null);
+  const qrCodeRef = useRef<QRCodeStyling | null>(null);
+  const { minutes, seconds, isExpired } = useRemainingTime(qrData?.expiredAt ?? '');
+
+  useEffect(() => {
+    if (isExpired && qrData) refetch();
+  }, [isExpired, qrData, refetch]);
+
+  useEffect(() => {
+    if (!qrData || !qrRef.current) return;
+
+    const checkInUrl = `${window.location.origin}/attendance?sessionId=${qrData.sessionId}&code=${qrData.code}`;
+
+    if (!qrCodeRef.current) {
+      qrCodeRef.current = new QRCodeStyling({
+        width: 256,
+        height: 256,
+        data: checkInUrl,
+        qrOptions: { errorCorrectionLevel: 'L' },
+        type: 'svg',
+        dotsOptions: { type: 'dots' },
+        cornersSquareOptions: { type: 'extra-rounded' },
+        cornersDotOptions: { type: 'extra-rounded' },
+      });
+      qrCodeRef.current.append(qrRef.current);
+    } else {
+      qrCodeRef.current.update({ data: checkInUrl });
+    }
+  }, [qrData]);
+
+  return { qrRef, qrData, isLoading, minutes, seconds, isExpired };
+}
+
+export { useAttendanceQR };

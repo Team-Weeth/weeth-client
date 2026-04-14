@@ -1,7 +1,16 @@
 'use server';
 
+import { cookies } from 'next/headers';
+
 import { apiServer } from '@/lib/apis/server';
+import { CLUB_COOKIE_OPTIONS, CLUB_ID_KEY, CLUB_NAME_KEY } from '@/lib/apis/cookies';
 import type { CreateClubFormData } from '@/lib/schemas/createClub';
+
+export async function setClubCookie(clubId: string, clubName: string) {
+  const cookieStore = await cookies();
+  cookieStore.set(CLUB_ID_KEY, clubId, CLUB_COOKIE_OPTIONS);
+  cookieStore.set(CLUB_NAME_KEY, clubName, CLUB_COOKIE_OPTIONS);
+}
 
 export async function createClubAction(data: CreateClubFormData) {
   const payload = {
@@ -17,7 +26,14 @@ export async function createClubAction(data: CreateClubFormData) {
   };
 
   try {
-    await apiServer.post('/clubs', payload);
+    const result = await apiServer.post<{ data: { id: string } }>('/clubs', payload);
+    const clubId = result?.data?.id;
+
+    if (clubId) {
+      await setClubCookie(clubId, data.name);
+    }
+
+    return { success: true, clubId: clubId ?? null };
   } catch (error) {
     const rawMessage = error instanceof Error ? error.message : '동아리 개설에 실패했습니다.';
     const message = rawMessage.includes('club.uk_club_school_name_club_name')
@@ -25,6 +41,4 @@ export async function createClubAction(data: CreateClubFormData) {
       : rawMessage;
     return { error: message };
   }
-
-  return { success: true };
 }
