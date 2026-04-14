@@ -30,12 +30,10 @@ export { default as FolderPlusIcon } from './folder_plus.svg';
 export { default as SendIcon } from './send.svg';
 export { default as DownloadIcon } from './download.svg';
 export { default as FolderIcon } from './folder.svg';
-
 export { default as ExitIcon } from './exit.svg';
 export { default as HomeIcon } from './home.svg';
 export { default as MoreHorizIcon } from './more-horiz.svg';
 export { default as CompleteIcon } from './complete.svg';
-
 export { default as InfoCircleIcon } from './info_circle.svg';
 export { default as CautionIcon } from './caution.svg';
 export { default as KakaoLogoIcon } from './kakao_logo.svg';
@@ -48,5 +46,4 @@ export { default as TooltipIcon } from './tooltip.svg';
 export { default as CopyIcon } from './copy.svg';
 export { default as BasicAvatarIcon } from './basic_avatar.svg';
 export { default as QuestionMarkIcon } from './question_mark.svg';
-
 export { default as NavToggleIcon } from './nav_toggle.svg';
