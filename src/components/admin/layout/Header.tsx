@@ -8,10 +8,25 @@ const PAGE_METADATA: Record<string, { title: string; description: string }> = {
     description:
       '가입 승인 등 멤버를 관리하는 페이지입니다. 정기모임을 모두 입력하신 후에 가입 승인을 해주시길 바랍니다.',
   },
+  '/admin/schedule': {
+    title: '일정 관리',
+    description:
+      '일반 일정과 세션 일정을 추가하고 수정하는 페이지입니다. 동아리 활동과 정기 모임 일정을 관리할 수 있습니다.',
+  },
   '/admin/attendance': {
     title: '출석 관리',
     description: '기수를 선택하고, 해당 모임에 대한 출석을 수정하는 페이지입니다.',
   },
+  '/admin/board': {
+    title: '게시판 관리',
+    description:
+      '게시판을 관리하는 페이지입니다. 유저 서비스에서 사용할 게시판을 설정할 수 있습니다.',
+  },
+  '/admin/club-info': {
+    title: '동아리 관리',
+    description: '부원에게 공유할 동아리의 프로필과 그 외의 정보를 수정하는 페이지입니다.',
+  },
+
   // '/admin/penalty': {
   //   title: '페널티 관리',
   //   description: '기수를 선택하고, 해당 멤버에 대한 페널티를 수정하는 페이지입니다.',
