@@ -2,15 +2,16 @@
 
 import { useEffect } from 'react';
 import Link from 'next/link';
-import { useRecentPostsQuery, useHomeQuery, useIsAdmin } from '@/hooks/home';
+import { useRecentPostsQuery, useHomeQuery } from '@/hooks/home';
 import { useIntersectionObserver } from '@/hooks/board/useIntersectionObserver';
 import { formatMonthDay } from '@/lib/formatTime';
 import { fileAttachmentToFileItem } from '@/utils/shared/file';
 import { PostActionMenu, PostCard } from '../board';
-import { Avatar, AvatarFallback, Button } from '../ui';
+import { Avatar, AvatarFallback, Button } from '@/components/ui';
 import { AvatarIcon } from '@/assets/icons';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
+import { useIsAdmin } from '@/hooks/shared';
 
 function HomeBoardContent() {
   const isAdmin = useIsAdmin();

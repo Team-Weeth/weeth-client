@@ -3,9 +3,10 @@
 // import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 // import { ArrowRightIcon } from '@/assets/icons';
-import { useMonthlySchedulesQuery, useIsAdmin } from '@/hooks/home';
-import { EmptyBox } from './EmptyBox';
+import { useMonthlySchedulesQuery } from '@/hooks/home';
+import { EmptyBox } from '@/components/home/EmptyBox';
 import { formatKoreanDate, formatKoreanTimeRange, groupByStartDate } from '@/utils/shared/date';
+import { useIsAdmin } from '@/hooks/shared';
 
 export function CalendarBox() {
   const router = useRouter();

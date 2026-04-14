@@ -1,4 +1,4 @@
-import { useHomeQuery } from './useHomeQuery';
+import { useHomeQuery } from '../home/useHomeQuery';
 
 export function useIsAdmin() {
   const { data: role } = useHomeQuery({

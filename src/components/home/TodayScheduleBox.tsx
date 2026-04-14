@@ -3,9 +3,9 @@
 import { useRouter } from 'next/navigation';
 import { Button, Chip, ChipList } from '@/components/ui';
 import { useAttendanceQuery } from '@/hooks/attendance';
-import { useIsAdmin } from '@/hooks/home';
+import { useIsAdmin } from '@/hooks/shared';
 import { formatDateWithTimeRange } from '@/utils/shared/date';
-import { EmptyBox } from './EmptyBox';
+import { EmptyBox } from '@/components/home/EmptyBox';
 
 export function TodayScheduleBox() {
   const router = useRouter();

@@ -5,9 +5,10 @@ import Image from 'next/image';
 import { NewIcon, ArrowRightIcon } from '@/assets/icons';
 import { Divider } from '@/components/ui';
 import { useRouter } from 'next/navigation';
-import { useRecentNoticesQuery, useIsAdmin } from '@/hooks/home';
+import { useRecentNoticesQuery } from '@/hooks/home';
 import { stripHtml } from '@/lib/stripHtml';
 import { EmptyBox } from './EmptyBox';
+import { useIsAdmin } from '@/hooks/shared';
 
 export function NoticeBoardBox() {
   const router = useRouter();
