@@ -75,9 +75,11 @@ function ClubInfoPageContent({ schoolNames }: ClubInfoPageContentProps) {
 
   return (
     <div className="flex min-w-3xl flex-col">
-      {isEditMode && <ClubInfoTopBar className="sticky top-0 z-10 -mt-15" onBack={handleResetChanges} />}
+      {isEditMode && (
+        <ClubInfoTopBar className="sticky top-0 z-10 -mt-15" onBack={handleResetChanges} />
+      )}
 
-      <div className="flex flex-col items-start gap-400 px-400 py-600">
+      <div className="flex flex-col items-start gap-400 px-8 py-12">
         <AdminInfoCard title="이미지" titleGapClassName="mt-400" contentClassName="gap-0">
           <div className="flex w-full gap-500">
             <ImageUploadField
@@ -86,6 +88,7 @@ function ClubInfoPageContent({ schoolNames }: ClubInfoPageContentProps) {
               title="클릭하여 업로드"
               description="정사각형 권장"
               aspectRatio="1/1"
+              file={profileImage}
               onFileSelect={setProfileImage}
             />
             <ImageUploadField
@@ -93,6 +96,7 @@ function ClubInfoPageContent({ schoolNames }: ClubInfoPageContentProps) {
               label="배경 이미지"
               title="클릭 혹은 파일을 이곳에 드롭하세요"
               description="1440 × 364 px 권장"
+              file={backgroundImage}
               onFileSelect={setBackgroundImage}
             />
           </div>

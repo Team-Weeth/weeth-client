@@ -12,10 +12,7 @@ interface ClubInfoTopBarProps extends HTMLAttributes<HTMLDivElement> {
 
 function ClubInfoTopBar({ className, onBack, ...props }: ClubInfoTopBarProps) {
   return (
-    <div
-      className={cn('bg-container-primary flex h-15 items-center px-500', className)}
-      {...props}
-    >
+    <div className={cn('bg-container-primary flex h-15 items-center px-500', className)} {...props}>
       <button
         type="button"
         onClick={onBack}
@@ -26,9 +23,12 @@ function ClubInfoTopBar({ className, onBack, ...props }: ClubInfoTopBarProps) {
 
       <span className="typo-sub1 text-text-inverse ml-200 shrink-0">수정 모드</span>
 
-      <div className="ml-auto">
-        <Button variant="secondary" size="lg" className="py-200">
-          저장하기
+      <div className="ml-auto flex gap-200">
+        <Button variant="secondary" size="md" className="py-200" onClick={onBack}>
+          취소
+        </Button>
+        <Button variant="secondary" size="md" className="py-200">
+          저장
         </Button>
       </div>
     </div>
