@@ -16,15 +16,17 @@ function useToggleLike({
   const clubId = useClubId();
   const [isLiked, setIsLiked] = useState(initialIsLiked);
   const [likeCount, setLikeCount] = useState(initialLikeCount);
+  const [isPending, setIsPending] = useState(false);
 
   const toggleLike = async () => {
-    if (!clubId) return;
+    if (!clubId || isPending) return;
 
     const prevIsLiked = isLiked;
     const prevLikeCount = likeCount;
 
     setIsLiked(!isLiked);
     setLikeCount(isLiked ? likeCount - 1 : likeCount + 1);
+    setIsPending(true);
 
     try {
       const res = await boardApi.toggleLike(clubId, postId);
@@ -34,10 +36,12 @@ function useToggleLike({
     } catch {
       setIsLiked(prevIsLiked);
       setLikeCount(prevLikeCount);
+    } finally {
+      setIsPending(false);
     }
   };
 
-  return { isLiked, likeCount, toggleLike };
+  return { isLiked, likeCount, toggleLike, isPending };
 }
 
 export { useToggleLike, type UseToggleLikeParams };
