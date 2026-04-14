@@ -35,7 +35,7 @@ export function TodayScheduleBox() {
         <div className="px-450 pb-450">
           <EmptyBox
             description="출석이 필요한 정기모임 정보가 없습니다"
-            button={{ label: '출석 일정 추가하기', onClick: () => router.push('/admin') }}
+            button={{ label: '출석 일정 추가하기', onClick: () => router.push('/admin/schedule') }}
           />
         </div>
       ) : (

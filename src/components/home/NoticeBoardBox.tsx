@@ -58,7 +58,10 @@ export function NoticeBoardBox() {
         ) : isAdmin ? (
           <EmptyBox
             description="아직 공지 게시글이 없습니다."
-            button={{ label: '공지 작성하기', onClick: () => router.push('/board') }}
+            button={{
+              label: '공지 작성하기',
+              onClick: () => router.push('/board/write?type=NOTICE'),
+            }}
           />
         ) : (
           <EmptyBox description="공지 게시글이 없습니다" />

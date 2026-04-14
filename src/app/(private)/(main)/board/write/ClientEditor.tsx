@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useLayoutEffect } from 'react';
-
+import { useSearchParams } from 'next/navigation';
 import { CategorySelector, PostEditorShell } from '@/components/board';
 import { useBoardList } from '@/hooks';
 import { toBoardNavItem } from '@/lib/board';
@@ -14,6 +14,13 @@ export default function ClientEditor() {
   const writableItems = items.filter((item) => item.type !== 'ALL');
   const activeBoardId = useActiveBoardId();
 
+  const searchParams = useSearchParams();
+  const typeParam = searchParams.get('type');
+  const preferredByType =
+    typeParam === 'NOTICE' || typeParam === 'GENERAL'
+      ? (writableItems.find((item) => item.type === typeParam)?.id ?? null)
+      : null;
+
   const board = usePostStore((s) => s.board);
   const setBoard = usePostStore((s) => s.setBoard);
   const reset = usePostStore((s) => s.reset);
@@ -23,7 +30,9 @@ export default function ClientEditor() {
 
   useLayoutEffect(() => {
     reset();
-    if (isWritable(activeBoardId)) {
+    if (preferredByType !== null) {
+      setBoard(preferredByType);
+    } else if (isWritable(activeBoardId)) {
       setBoard(activeBoardId);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps -- 마운트 시 1회만 실행
@@ -31,9 +40,11 @@ export default function ClientEditor() {
 
   const activeId = isWritable(board)
     ? board
-    : isWritable(activeBoardId)
-      ? activeBoardId
-      : (writableItems[0]?.id ?? null);
+    : preferredByType !== null
+      ? preferredByType
+      : isWritable(activeBoardId)
+        ? activeBoardId
+        : (writableItems[0]?.id ?? null);
 
   useEffect(() => {
     if (board !== activeId && activeId !== null) {

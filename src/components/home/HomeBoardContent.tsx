@@ -46,7 +46,11 @@ function HomeBoardContent() {
           <br />첫 게시글을 작성해서 커뮤니티를 활성화해보세요.
         </p>
         <div className="bg-background flex h-[182px] w-full items-center justify-center rounded-md p-300">
-          <Button variant="primary" size="lg" onClick={() => router.push('/board/write')}>
+          <Button
+            variant="primary"
+            size="lg"
+            onClick={() => router.push('/board/write?type=GENERAL')}
+          >
             게시글 작성하기
           </Button>
         </div>

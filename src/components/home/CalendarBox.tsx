@@ -59,7 +59,7 @@ export function CalendarBox() {
         ) : isAdmin ? (
           <EmptyBox
             description="아직 일정 정보가 없습니다."
-            button={{ label: '일정 추가하기', onClick: () => router.push('/admin') }}
+            button={{ label: '일정 추가하기', onClick: () => router.push('/admin/schedule') }}
           />
         ) : (
           <EmptyBox description="일정이 없습니다." />
