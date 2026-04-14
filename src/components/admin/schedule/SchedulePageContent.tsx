@@ -184,6 +184,8 @@ function SchedulePageContent() {
                 />
                 <input
                   type="text"
+                  name=""
+                  autoComplete="off"
                   value={searchValue}
                   onChange={(e) => setSearchValue(e.target.value)}
                   placeholder="Search for name"

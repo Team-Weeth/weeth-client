@@ -9,11 +9,7 @@ import { ScheduleFormField } from '@/components/admin/schedule/ScheduleFormField
 import { DateTimeInput } from '@/components/ui/DateTimeInput';
 import { SCHEDULE_TYPE_LABEL } from '@/constants/admin/schedule.constants';
 import type { ScheduleType } from '@/types/admin/schedule';
-
-function getDefaultDate(): string {
-  const d = new Date();
-  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-}
+import { toDateInputValue } from '@/utils/shared/date';
 
 interface CreateScheduleModalProps {
   open: boolean;
@@ -24,18 +20,18 @@ interface CreateScheduleModalProps {
 function CreateScheduleModal({ open, onOpenChange, cardinalNumber }: CreateScheduleModalProps) {
   const [activeTab, setActiveTab] = useState<ScheduleType>('GENERAL');
   const [title, setTitle] = useState('');
-  const [startDate, setStartDate] = useState(getDefaultDate());
+  const [startDate, setStartDate] = useState(toDateInputValue());
   const [startTime, setStartTime] = useState('00:00');
-  const [endDate, setEndDate] = useState(getDefaultDate());
-  const [endTime, setEndTime] = useState('23:59');
+  const [endDate, setEndDate] = useState(toDateInputValue());
+  const [endTime, setEndTime] = useState('23:55');
   const [location, setLocation] = useState('');
   const [content, setContent] = useState('');
 
   const resetForm = () => {
     setTitle('');
-    setStartDate(getDefaultDate());
+    setStartDate(toDateInputValue());
     setStartTime('00:00');
-    setEndDate(getDefaultDate());
+    setEndDate(toDateInputValue());
     setEndTime('23:59');
     setLocation('');
     setContent('');
@@ -52,10 +48,15 @@ function CreateScheduleModal({ open, onOpenChange, cardinalNumber }: CreateSched
     handleClose();
   };
 
-  const isValid = title.trim().length > 0 && cardinalNumber !== null;
+  const isValid = title.trim().length > 0 && startDate < endDate && cardinalNumber !== null;
+
+  const handleDialogOpenChange = (nextOpen: boolean) => {
+    onOpenChange(nextOpen);
+    if (!nextOpen) resetForm();
+  };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={handleDialogOpenChange}>
       <DialogContent
         className="bg-background flex w-215 max-w-[860px] flex-col gap-0 overflow-hidden rounded-lg p-0"
         showCloseButton={false}

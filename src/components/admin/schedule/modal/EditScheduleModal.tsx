@@ -20,12 +20,30 @@ import { ScheduleFormField } from '@/components/admin/schedule/ScheduleFormField
 import { DateTimeInput } from '@/components/ui/DateTimeInput';
 import type { Schedule } from '@/types/admin/schedule';
 
-function toDateStr(iso: string): string {
-  return iso.slice(0, 10);
+interface ScheduleFormState {
+  title: string;
+  startDate: string;
+  startTime: string;
+  endDate: string;
+  endTime: string;
+  location: string;
+  content: string;
 }
 
-function toTimeStr(iso: string): string {
-  return iso.slice(11, 16);
+function toInitialForm(schedule: Schedule): ScheduleFormState {
+  return {
+    title: schedule.title,
+    startDate: schedule.startDateTime.slice(0, 10),
+    startTime: schedule.startDateTime.slice(11, 16),
+    endDate: schedule.endDateTime.slice(0, 10),
+    endTime: schedule.endDateTime.slice(11, 16),
+    location: schedule.location,
+    content: '',
+  };
+}
+
+function isFormChanged(a: ScheduleFormState, b: ScheduleFormState): boolean {
+  return (Object.keys(a) as (keyof ScheduleFormState)[]).some((key) => a[key] !== b[key]);
 }
 
 interface EditScheduleModalProps {
@@ -36,29 +54,16 @@ interface EditScheduleModalProps {
 }
 
 function EditScheduleModal({ open, onOpenChange, schedule, onDelete }: EditScheduleModalProps) {
-  const initDate = toDateStr(schedule.startDateTime);
-  const initTime = toTimeStr(schedule.startDateTime);
-  const initEndDate = toDateStr(schedule.endDateTime);
-  const initEndTime = toTimeStr(schedule.endDateTime);
-
-  const [title, setTitle] = useState(schedule.title);
-  const [startDate, setStartDate] = useState(initDate);
-  const [startTime, setStartTime] = useState(initTime);
-  const [endDate, setEndDate] = useState(initEndDate);
-  const [endTime, setEndTime] = useState(initEndTime);
-  const [location, setLocation] = useState(schedule.location);
-  const [content, setContent] = useState('');
+  const initialForm = toInitialForm(schedule);
+  const [form, setForm] = useState<ScheduleFormState>(initialForm);
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const [discardSource, setDiscardSource] = useState<'close' | 'cancel' | null>(null);
 
-  const hasChanges =
-    title !== schedule.title ||
-    startDate !== initDate ||
-    startTime !== initTime ||
-    endDate !== initEndDate ||
-    endTime !== initEndTime ||
-    location !== schedule.location ||
-    content !== '';
+  const updateField = <K extends keyof ScheduleFormState>(key: K, value: ScheduleFormState[K]) => {
+    setForm((prev) => ({ ...prev, [key]: value }));
+  };
+
+  const hasChanges = isFormChanged(form, initialForm);
 
   const handleClose = () => onOpenChange(false);
 
@@ -71,7 +76,7 @@ function EditScheduleModal({ open, onOpenChange, schedule, onDelete }: EditSched
   };
 
   const handleSubmit = () => {
-    if (!title.trim()) return;
+    if (!form.title.trim()) return;
     // TODO: API 연동 시 수정 요청
     handleClose();
   };
@@ -150,8 +155,8 @@ function EditScheduleModal({ open, onOpenChange, schedule, onDelete }: EditSched
               <ScheduleFormField label="일정 제목">
                 <input
                   type="text"
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
+                  value={form.title}
+                  onChange={(e) => updateField('title', e.target.value)}
                   placeholder="예 : 중간고사 기간"
                   className="bg-container-neutral typo-body1 placeholder:text-text-alternative text-text-normal h-12 w-full rounded-sm px-400 py-300 focus:outline-none"
                 />
@@ -161,17 +166,17 @@ function EditScheduleModal({ open, onOpenChange, schedule, onDelete }: EditSched
               <div className="flex gap-600">
                 <DateTimeInput
                   label="시작 일자"
-                  dateValue={startDate}
-                  timeValue={startTime}
-                  onDateChange={setStartDate}
-                  onTimeChange={setStartTime}
+                  dateValue={form.startDate}
+                  timeValue={form.startTime}
+                  onDateChange={(v) => updateField('startDate', v)}
+                  onTimeChange={(v) => updateField('startTime', v)}
                 />
                 <DateTimeInput
                   label="종료 일자"
-                  dateValue={endDate}
-                  timeValue={endTime}
-                  onDateChange={setEndDate}
-                  onTimeChange={setEndTime}
+                  dateValue={form.endDate}
+                  timeValue={form.endTime}
+                  onDateChange={(v) => updateField('endDate', v)}
+                  onTimeChange={(v) => updateField('endTime', v)}
                 />
               </div>
 
@@ -179,8 +184,8 @@ function EditScheduleModal({ open, onOpenChange, schedule, onDelete }: EditSched
               <ScheduleFormField label="모임 장소 (선택)">
                 <input
                   type="text"
-                  value={location}
-                  onChange={(e) => setLocation(e.target.value)}
+                  value={form.location}
+                  onChange={(e) => updateField('location', e.target.value)}
                   placeholder="장소를 입력해주세요."
                   className="bg-container-neutral typo-body1 placeholder:text-text-alternative text-text-normal h-12 w-full rounded-sm px-400 py-300 focus:outline-none"
                 />
@@ -189,8 +194,8 @@ function EditScheduleModal({ open, onOpenChange, schedule, onDelete }: EditSched
               {/* Content */}
               <ScheduleFormField label="일정 설명 (선택)">
                 <textarea
-                  value={content}
-                  onChange={(e) => setContent(e.target.value)}
+                  value={form.content}
+                  onChange={(e) => updateField('content', e.target.value)}
                   placeholder="일정에 대한 설명을 입력해주세요."
                   className="bg-container-neutral typo-body1 placeholder:text-text-alternative text-text-normal h-[150px] w-full resize-none rounded-sm px-400 py-300 focus:outline-none"
                 />
@@ -203,7 +208,7 @@ function EditScheduleModal({ open, onOpenChange, schedule, onDelete }: EditSched
             <Button variant="secondary" size="lg" onClick={() => handleTryClose('cancel')}>
               취소
             </Button>
-            <Button variant="primary" size="lg" disabled={!title.trim()} onClick={handleSubmit}>
+            <Button variant="primary" size="lg" disabled={!form.title.trim()} onClick={handleSubmit}>
               저장
             </Button>
           </div>

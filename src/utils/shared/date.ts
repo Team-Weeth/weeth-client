@@ -1,5 +1,13 @@
 import { DAY_NAMES } from '@/constants/shared/date';
 
+// '2026-03-09' (HTML <input type="date"> value 포맷)
+export function toDateInputValue(date: Date = new Date()): string {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
 // '2026년 3월 9일 (월)'
 export function formatKoreanDate(isoString: string): string {
   const date = new Date(isoString);
