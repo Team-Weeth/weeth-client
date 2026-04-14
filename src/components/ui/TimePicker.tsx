@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Popover as PopoverPrimitive } from 'radix-ui';
 
 import { cn } from '@/lib/cn';
@@ -12,12 +12,52 @@ interface TimePickerProps {
   onChange: (value: string) => void;
 }
 
+const MINUTE_STEP = 5;
+
+function parseTimeValue(value: string): { h: number; m: number } {
+  if (!value) return { h: 0, m: 0 };
+  const [hRaw, mRaw] = value.split(':').map(Number);
+  const h = Number.isFinite(hRaw) && hRaw >= 0 && hRaw <= 23 ? hRaw : 0;
+  const mValid = Number.isFinite(mRaw) && mRaw >= 0 && mRaw <= 59 ? mRaw : 0;
+  // 5분 단위 리스트와 정렬되도록 floor 스냅 (예: 23:59 → 23:55)
+  const m = Math.floor(mValid / MINUTE_STEP) * MINUTE_STEP;
+  return { h, m };
+}
+
 function TimePicker({ value, onChange }: TimePickerProps) {
   const [open, setOpen] = useState(false);
+  const contentRef = useRef<HTMLDivElement>(null);
   const hourRef = useRef<HTMLDivElement>(null);
   const minuteRef = useRef<HTMLDivElement>(null);
 
-  const [h, m] = value ? value.split(':').map(Number) : [0, 0];
+  const { h, m } = parseTimeValue(value);
+
+  // 팝오버 전체 영역에서 wheel 스크롤을 받아 커서가 위치한 컬럼(또는 둘 다)을 스크롤
+  useEffect(() => {
+    if (!open) return;
+    const content = contentRef.current;
+    if (!content) return;
+
+    const handleWheel = (e: WheelEvent) => {
+      e.preventDefault();
+      const target = e.target as Node;
+      const overHour = hourRef.current?.contains(target);
+      const overMinute = minuteRef.current?.contains(target);
+
+      if (overHour && hourRef.current) {
+        hourRef.current.scrollTop += e.deltaY;
+      } else if (overMinute && minuteRef.current) {
+        minuteRef.current.scrollTop += e.deltaY;
+      } else {
+        // divider/padding 영역 → 양쪽 컬럼 동시 스크롤
+        if (hourRef.current) hourRef.current.scrollTop += e.deltaY;
+        if (minuteRef.current) minuteRef.current.scrollTop += e.deltaY;
+      }
+    };
+
+    content.addEventListener('wheel', handleWheel, { passive: false });
+    return () => content.removeEventListener('wheel', handleWheel);
+  }, [open]);
 
   const handleSelect = (hour: number, minute: number) => {
     const hh = String(hour).padStart(2, '0');
@@ -46,7 +86,7 @@ function TimePicker({ value, onChange }: TimePickerProps) {
       <PopoverPrimitive.Trigger asChild>
         <button
           type="button"
-          className="bg-container-neutral border border-transparent data-[state=open]:border-brand-primary data-[state=open]:ring-4 data-[state=open]:ring-brand-primary/15 flex h-10 cursor-pointer items-center rounded-sm px-300 transition-shadow"
+          className="bg-container-neutral data-[state=open]:border-brand-primary data-[state=open]:ring-brand-primary/15 flex h-10 cursor-pointer items-center rounded-sm border border-transparent px-300 transition-shadow data-[state=open]:ring-4"
         >
           <span className="typo-body1 text-text-normal">
             {value ? formatTimeDisplay(value) : '시간 선택'}
@@ -56,6 +96,7 @@ function TimePicker({ value, onChange }: TimePickerProps) {
 
       <PopoverPrimitive.Portal>
         <PopoverPrimitive.Content
+          ref={contentRef}
           sideOffset={4}
           align="start"
           className="bg-container-neutral z-50 flex h-60 rounded-md shadow-[0px_4px_14px_0px_rgba(0,0,0,0.25)]"

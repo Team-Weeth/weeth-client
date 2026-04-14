@@ -72,7 +72,7 @@ function CalendarPicker({ value, onChange }: CalendarPickerProps) {
       <PopoverPrimitive.Trigger asChild>
         <button
           type="button"
-          className="bg-container-neutral border border-transparent data-[state=open]:border-brand-primary data-[state=open]:ring-4 data-[state=open]:ring-brand-primary/15 flex h-10 w-30 cursor-pointer items-center rounded-sm px-300 transition-shadow"
+          className="bg-container-neutral data-[state=open]:border-brand-primary data-[state=open]:ring-brand-primary/15 flex h-10 w-30 cursor-pointer items-center rounded-sm border border-transparent px-300 transition-shadow data-[state=open]:ring-4"
         >
           <span className="typo-body1 text-text-normal">
             {value ? formatDateDisplay(value) : '날짜 선택'}

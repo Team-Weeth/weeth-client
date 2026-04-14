@@ -47,56 +47,56 @@ function CustomAlertDialog({
           PLACEMENT_CLASS[placement],
         )}
       >
-          {/* Content area */}
-          <div className="flex flex-col items-center gap-600 px-400 py-400">
-            {/* Icon */}
-            <div className="bg-state-error/10 flex items-center rounded-full p-300">
-              <Icon src={InfoCircleIcon} size={24} className="text-state-error" />
-            </div>
-
-            {/* Text */}
-            <div className="flex flex-col items-center gap-200 text-center">
-              <AlertDialogPrimitive.Title className="typo-sub1 text-text-strong whitespace-pre-line">
-                {title}
-              </AlertDialogPrimitive.Title>
-              {description && (
-                <AlertDialogPrimitive.Description className="typo-body2 text-text-alternative whitespace-pre-line">
-                  {description}
-                </AlertDialogPrimitive.Description>
-              )}
-            </div>
+        {/* Content area */}
+        <div className="flex flex-col items-center gap-600 px-400 py-400">
+          {/* Icon */}
+          <div className="bg-state-error/10 flex items-center rounded-full p-300">
+            <Icon src={InfoCircleIcon} size={24} className="text-state-error" />
           </div>
 
-          {/* Action area */}
-          <div className="flex flex-col gap-200 p-400">
-            <div className="border-line border-t" />
-            <div className="flex flex-col gap-200">
-              <AlertDialogPrimitive.Action asChild>
+          {/* Text */}
+          <div className="flex flex-col items-center gap-200 text-center">
+            <AlertDialogPrimitive.Title className="typo-sub1 text-text-strong whitespace-pre-line">
+              {title}
+            </AlertDialogPrimitive.Title>
+            {description && (
+              <AlertDialogPrimitive.Description className="typo-body2 text-text-alternative whitespace-pre-line">
+                {description}
+              </AlertDialogPrimitive.Description>
+            )}
+          </div>
+        </div>
+
+        {/* Action area */}
+        <div className="flex flex-col gap-200 p-400">
+          <div className="border-line border-t" />
+          <div className="flex flex-col gap-200">
+            <AlertDialogPrimitive.Action asChild>
+              <button
+                type="button"
+                onClick={onAction}
+                className={cn(
+                  'typo-button1 bg-button-neutral text-state-error w-full cursor-pointer rounded-md px-400 py-300 transition-colors',
+                  'hover:bg-state-error/10 active:bg-state-error/15',
+                )}
+              >
+                {actionLabel}
+              </button>
+            </AlertDialogPrimitive.Action>
+
+            {cancelLabel && (
+              <AlertDialogPrimitive.Cancel asChild>
                 <button
                   type="button"
-                  onClick={onAction}
-                  className={cn(
-                    'typo-button1 bg-button-neutral text-state-error w-full cursor-pointer rounded-md px-400 py-300 transition-colors',
-                    'hover:bg-state-error/10 active:bg-state-error/15',
-                  )}
+                  onClick={onCancel}
+                  className="typo-button1 text-text-alternative hover:bg-container-neutral-interaction w-full cursor-pointer rounded-md px-400 py-300 transition-colors"
                 >
-                  {actionLabel}
+                  {cancelLabel}
                 </button>
-              </AlertDialogPrimitive.Action>
-
-              {cancelLabel && (
-                <AlertDialogPrimitive.Cancel asChild>
-                  <button
-                    type="button"
-                    onClick={onCancel}
-                    className="typo-button1 text-text-alternative hover:bg-container-neutral-interaction w-full cursor-pointer rounded-md px-400 py-300 transition-colors"
-                  >
-                    {cancelLabel}
-                  </button>
-                </AlertDialogPrimitive.Cancel>
-              )}
-            </div>
+              </AlertDialogPrimitive.Cancel>
+            )}
           </div>
+        </div>
       </AlertDialogPrimitive.Content>
     </AlertDialogPrimitive.Root>
   );

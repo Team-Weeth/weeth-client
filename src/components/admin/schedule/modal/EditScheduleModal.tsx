@@ -232,7 +232,12 @@ function EditScheduleModal({ open, onOpenChange, schedule, onDelete }: EditSched
                 placement="above-right"
               />
             </div>
-            <Button variant="primary" size="lg" disabled={!form.title.trim()} onClick={handleSubmit}>
+            <Button
+              variant="primary"
+              size="lg"
+              disabled={!form.title.trim()}
+              onClick={handleSubmit}
+            >
               저장
             </Button>
           </div>
