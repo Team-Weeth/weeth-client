@@ -1,4 +1,4 @@
-import { DAY_NAMES } from '@/constants/shared/date';
+import { DAY_META } from '@/constants/shared/date';
 
 // '2026-03-09' (HTML <input type="date"> value 포맷)
 export function toDateInputValue(date: Date = new Date()): string {
@@ -14,7 +14,7 @@ export function formatKoreanDate(isoString: string): string {
   const year = date.getFullYear();
   const month = date.getMonth() + 1;
   const day = date.getDate();
-  const dayOfWeek = DAY_NAMES[date.getDay()];
+  const dayOfWeek = DAY_META[date.getDay()].ko;
   return `${year}년 ${month}월 ${day}일 (${dayOfWeek})`;
 }
 
@@ -23,7 +23,7 @@ export function formatKoreanTimeRange(start: string, end: string): string {
   const toLabel = (date: Date) => {
     const month = date.getMonth() + 1;
     const day = date.getDate();
-    const dayOfWeek = DAY_NAMES[date.getDay()];
+    const dayOfWeek = DAY_META[date.getDay()].ko;
     const hours = String(date.getHours()).padStart(2, '0');
     const minutes = String(date.getMinutes()).padStart(2, '0');
     return `${month}월 ${day}일 (${dayOfWeek}) ${hours}:${minutes}`;

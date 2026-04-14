@@ -6,7 +6,7 @@ import Image from 'next/image';
 
 import { cn } from '@/lib/cn';
 import { AdminSquareLeftIcon, AdminSquareRightIcon } from '@/assets/icons/admin';
-import { DAY_NAMES } from '@/constants/shared/date';
+import { DAY_META } from '@/constants/shared/date';
 import { formatDateDisplay, getDaysInMonth, getFirstDayOfMonth } from '@/utils/shared/date';
 
 interface CalendarPickerProps {
@@ -109,12 +109,12 @@ function CalendarPicker({ value, onChange }: CalendarPickerProps) {
 
           {/* Day of week headers */}
           <div className="mb-100 grid grid-cols-7">
-            {DAY_NAMES.map((d) => (
+            {DAY_META.map((d) => (
               <div
-                key={d}
+                key={d.en}
                 className="typo-caption2 text-text-alternative flex h-8 items-center justify-center"
               >
-                {d}
+                {d.ko}
               </div>
             ))}
           </div>

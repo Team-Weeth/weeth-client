@@ -1,4 +1,5 @@
-const DAY_LABELS = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'] as const;
+import { DAY_META } from '@/constants/shared/date';
+
 const INVALID_DATE_FALLBACK = '-';
 
 function parseDate(dateString: string): Date | null {
@@ -8,7 +9,7 @@ function parseDate(dateString: string): Date | null {
 
 export function getDayLabel(dateString: string): string {
   const date = parseDate(dateString);
-  return date ? DAY_LABELS[date.getDay()] : INVALID_DATE_FALLBACK;
+  return date ? DAY_META[date.getDay()].en : INVALID_DATE_FALLBACK;
 }
 
 export function getDayOfMonth(dateString: string): number | null {
