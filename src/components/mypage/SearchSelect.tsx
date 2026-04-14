@@ -43,18 +43,20 @@ function SearchSelect({
 
   return (
     <div ref={ref} className={cn('relative', className)}>
-      <Input
-        value={open ? query : value}
-        onChange={(e) => setQuery(e.target.value)}
-        onFocus={() => setOpen(true)}
-        placeholder={open ? '검색...' : placeholder}
-        className={cn('rounded-lg', showArrow && 'pr-10', inputClassName)}
-      />
-      {showArrow && (
-        <div className="pointer-events-none absolute top-1/2 right-300 -translate-y-1/2">
-          <Icon src={ArrowDownIcon} size={20} alt="" className="text-icon-normal" />
-        </div>
-      )}
+      <div className="relative">
+        <Input
+          value={open ? query : value}
+          onChange={(e) => setQuery(e.target.value)}
+          onFocus={() => setOpen(true)}
+          placeholder={open ? '검색...' : placeholder}
+          className={cn('rounded-lg', showArrow && 'pr-10', inputClassName)}
+        />
+        {showArrow && (
+          <div className="pointer-events-none absolute top-1/2 right-300 flex -translate-y-1/2 items-center">
+            <Icon src={ArrowDownIcon} size={20} alt="" className="text-icon-normal" />
+          </div>
+        )}
+      </div>
       {open && filtered.length > 0 && (
         <ul className="bg-container-neutral border-container-neutral-interaction absolute z-10 mt-100 max-h-[200px] w-full overflow-y-auto rounded-lg border shadow-md">
           {filtered.map((option) => (
