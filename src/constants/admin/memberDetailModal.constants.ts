@@ -26,7 +26,7 @@ export function getPersonalInfo(member: Member) {
 }
 
 export function getActivityInfo(member: Member) {
-  return [{ label: '활동기수', value: member.generation }];
+  return [{ label: '활동기수', value: member.cardinal }];
 }
 
 export function getActivityStats(member: Member) {

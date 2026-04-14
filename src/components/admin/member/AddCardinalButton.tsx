@@ -4,16 +4,16 @@ import { AdminPlusIcon } from '@/assets/icons/admin';
 import { Icon } from '@/components/ui';
 import { cn } from '@/lib/cn';
 
-interface AddGenerationButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+interface AddCardinalButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   ref?: React.Ref<HTMLButtonElement>;
 }
 
-function AddGenerationButton({
+function AddCardinalButton({
   className,
   ref,
   type = 'button',
   ...props
-}: AddGenerationButtonProps) {
+}: AddCardinalButtonProps) {
   return (
     <button
       ref={ref}
@@ -29,4 +29,4 @@ function AddGenerationButton({
   );
 }
 
-export { AddGenerationButton, type AddGenerationButtonProps };
+export { AddCardinalButton, type AddCardinalButtonProps };

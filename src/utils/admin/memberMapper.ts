@@ -18,7 +18,7 @@ export function toMember(cm: ClubMember): Member {
     phone: cm.tel ?? '',
     position: ROLE_MAP[cm.memberRole],
     memberRole: cm.memberRole,
-    generation: cm.cardinals?.join(', ') ?? '',
+    cardinal: cm.cardinals?.join(', ') ?? '',
     attendance: cm.attendanceCount ?? 0,
     absence: cm.absenceCount ?? 0,
     penaltyCount: cm.penaltyCount ?? 0,

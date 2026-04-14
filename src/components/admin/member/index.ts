@@ -1,6 +1,6 @@
-export { AddGenerationButton, type AddGenerationButtonProps } from './AddGenerationButton';
+export { AddCardinalButton, type AddCardinalButtonProps } from './AddCardinalButton';
 export { ChangeCardinalsModal, type ChangeCardinalsModalProps } from './modal/ChangeCardinalsModal';
-export { GenerationCard, generationCardVariants, type GenerationCardProps } from './GenerationCard';
+export { CardinalCard, cardinalCardVariants, type CardinalCardProps } from './CardinalCard';
 export { MemberPageContent } from './MemberPageContent';
 export { MemberSearchBar, type MemberSearchBarProps } from './MemberSearchBar';
 export { MemberTopBar, type MemberTopBarProps } from './MemberTopBar';

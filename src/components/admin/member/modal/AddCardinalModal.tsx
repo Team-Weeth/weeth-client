@@ -13,18 +13,18 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 
-interface AddGenerationModalProps {
+interface AddCardinalModalProps {
   children: ReactNode;
-  onSubmit?: (data: { generation: number; isCurrent: boolean }) => void;
+  onSubmit?: (data: { cardinal: number; isCurrent: boolean }) => void;
 }
 
-function AddGenerationModal({ children, onSubmit }: AddGenerationModalProps) {
+function AddCardinalModal({ children, onSubmit }: AddCardinalModalProps) {
   const [open, setOpen] = useState(false);
-  const [generation, setGeneration] = useState('');
+  const [cardinal, setCardinal] = useState('');
   const [isCurrent, setIsCurrent] = useState(false);
 
   const resetForm = () => {
-    setGeneration('');
+    setCardinal('');
     setIsCurrent(false);
   };
 
@@ -33,12 +33,12 @@ function AddGenerationModal({ children, onSubmit }: AddGenerationModalProps) {
     if (!next) resetForm();
   };
 
-  const isValid = generation !== '';
+  const isValid = cardinal !== '';
 
   const handleSubmit = () => {
     if (!isValid) return;
     onSubmit?.({
-      generation: Number(generation),
+      cardinal: Number(cardinal),
       isCurrent,
     });
     handleOpenChange(false);
@@ -62,10 +62,10 @@ function AddGenerationModal({ children, onSubmit }: AddGenerationModalProps) {
                 aria-label="기수"
                 type="number"
                 min={1}
-                value={generation}
+                value={cardinal}
                 onChange={(e) => {
                   const v = (e.target as HTMLInputElement).value;
-                  if (v === '' || Number(v) > 0) setGeneration(v);
+                  if (v === '' || Number(v) > 0) setCardinal(v);
                 }}
                 className="pr-10"
                 placeholder=" "
@@ -103,4 +103,4 @@ function AddGenerationModal({ children, onSubmit }: AddGenerationModalProps) {
   );
 }
 
-export { AddGenerationModal, type AddGenerationModalProps };
+export { AddCardinalModal, type AddCardinalModalProps };

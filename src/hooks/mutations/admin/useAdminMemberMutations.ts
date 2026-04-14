@@ -106,11 +106,11 @@ export function useChangeMemberCardinals() {
     onMutate: async ({ clubMemberId, cardinalIds }) => {
       await queryClient.cancelQueries({ queryKey });
       const previous = queryClient.getQueryData<Member[]>(queryKey);
-      const nextGeneration = [...cardinalIds].sort((a, b) => a - b).join(', ');
+      const nextCardinal = [...cardinalIds].sort((a, b) => a - b).join(', ');
 
       queryClient.setQueryData<Member[]>(queryKey, (old = []) =>
         old.map((m) =>
-          m.clubMemberId === clubMemberId ? { ...m, generation: nextGeneration } : m,
+          m.clubMemberId === clubMemberId ? { ...m, cardinal: nextCardinal } : m,
         ),
       );
 

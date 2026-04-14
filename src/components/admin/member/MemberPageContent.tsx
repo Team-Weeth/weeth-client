@@ -4,9 +4,9 @@ import { useState } from 'react';
 import { isAxiosError } from 'axios';
 
 import {
-  AddGenerationButton,
-  AddGenerationModal,
-  GenerationCard,
+  AddCardinalButton,
+  AddCardinalModal,
+  CardinalCard,
   MemberDetailModal,
   MemberSearchBar,
   MemberTable,
@@ -60,9 +60,9 @@ function MemberPageContent() {
     selectedCardinal === 'all'
       ? members
       : members.filter((m) =>
-          m.generation
+          m.cardinal
             .split(',')
-            .map((g) => g.trim())
+            .map((c) => c.trim())
             .includes(String(selectedCardinal)),
         );
 
@@ -73,7 +73,7 @@ function MemberPageContent() {
           m.name.toLowerCase().includes(query) ||
           m.department.toLowerCase().includes(query) ||
           m.studentId.includes(query) ||
-          m.generation.includes(query),
+          m.cardinal.includes(query),
       )
     : cardinalFilteredMembers;
 
@@ -174,32 +174,32 @@ function MemberPageContent() {
 
       {/* Main content */}
       <div className="flex flex-col gap-400 p-700">
-        {/* Generation pills */}
+        {/* Cardinal pills */}
         <div
           ref={dragScrollRef}
           className="scrollbar-none flex cursor-grab items-center gap-200 overflow-x-auto select-none active:cursor-grabbing"
           onMouseDown={onMouseDown}
         >
-          <GenerationCard
+          <CardinalCard
             variant={selectedCardinal === 'all' ? 'active' : 'normal'}
             title="전체"
             onClick={() => setSelectedCardinal('all')}
           />
           {cardinals.map((c) => (
-            <GenerationCard
+            <CardinalCard
               key={c.id}
               variant={selectedCardinal === c.cardinalNumber ? 'active' : 'normal'}
               title={`${c.cardinalNumber}기`}
               onClick={() => setSelectedCardinal(c.cardinalNumber)}
             />
           ))}
-          <AddGenerationModal
-            onSubmit={({ generation, isCurrent }) =>
-              createCardinal({ cardinalNumber: generation, inProgress: isCurrent })
+          <AddCardinalModal
+            onSubmit={({ cardinal, isCurrent }) =>
+              createCardinal({ cardinalNumber: cardinal, inProgress: isCurrent })
             }
           >
-            <AddGenerationButton />
-          </AddGenerationModal>
+            <AddCardinalButton />
+          </AddCardinalModal>
         </div>
 
         {/* Search bar */}

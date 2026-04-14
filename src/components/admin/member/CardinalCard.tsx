@@ -4,7 +4,7 @@ import { cva, type VariantProps } from 'class-variance-authority';
 
 import { cn } from '@/lib/cn';
 
-const generationCardVariants = cva(
+const cardinalCardVariants = cva(
   'typo-button2 inline-flex h-10 min-w-10 shrink-0 cursor-pointer items-center justify-center rounded-md px-400 py-200 whitespace-nowrap',
   {
     variants: {
@@ -19,27 +19,27 @@ const generationCardVariants = cva(
   },
 );
 
-interface GenerationCardProps
+interface CardinalCardProps
   extends
     React.ButtonHTMLAttributes<HTMLButtonElement>,
-    VariantProps<typeof generationCardVariants> {
+    VariantProps<typeof cardinalCardVariants> {
   title: string;
   ref?: React.Ref<HTMLButtonElement>;
 }
 
-function GenerationCard({
+function CardinalCard({
   className,
   variant,
   title,
   ref,
   type = 'button',
   ...props
-}: GenerationCardProps) {
+}: CardinalCardProps) {
   return (
     <button
       ref={ref}
       type={type}
-      className={cn(generationCardVariants({ variant }), className)}
+      className={cn(cardinalCardVariants({ variant }), className)}
       {...props}
     >
       {title}
@@ -47,4 +47,4 @@ function GenerationCard({
   );
 }
 
-export { GenerationCard, generationCardVariants, type GenerationCardProps };
+export { CardinalCard, cardinalCardVariants, type CardinalCardProps };
