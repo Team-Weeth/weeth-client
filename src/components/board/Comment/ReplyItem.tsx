@@ -33,9 +33,10 @@ function ReplyItem({
   const [editing, setEditing] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
 
-  const handleEditSubmit = (value: string) => {
-    onEdit?.(value);
+  const handleEditSubmit = async (value: string) => {
+    await onEdit?.(value);
     setEditing(false);
+    return true;
   };
 
   return (
