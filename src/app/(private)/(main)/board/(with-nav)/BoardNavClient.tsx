@@ -1,11 +1,12 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 
-import { BoardNav } from '@/components/board';
+import { BoardNav, CommentDirtyGuardDialog } from '@/components/board';
 import { useActiveBoardId, useSetActiveBoardId } from '@/stores/useBoardNavStore';
 import { useClubId } from '@/stores/useClubStore';
+import { useCommentDirty, useSetCommentDirty } from '@/stores/useCommentDirtyStore';
 import { boardApi } from '@/lib/apis/board';
 import type { BoardNavItem } from '@/types/board';
 
@@ -22,6 +23,11 @@ function BoardNavClient({ items }: BoardNavClientProps) {
   const clubId = useClubId();
   const isDetailPage = /^\/board\/\d+$/.test(pathname);
 
+  const commentDirty = useCommentDirty();
+  const setCommentDirty = useSetCommentDirty();
+  const [guardOpen, setGuardOpen] = useState(false);
+  const pendingSelect = useRef<number | null>(null);
+
   useEffect(() => {
     if (activeBoardId === null) return;
     const exists = items.some((item) => item.id === activeBoardId);
@@ -30,12 +36,12 @@ function BoardNavClient({ items }: BoardNavClientProps) {
     }
   }, [items, activeBoardId, setActiveBoardId]);
 
-  const handleItemSelect = (id: number | null) => {
+  const executeSelect = (id: number | null) => {
     setActiveBoardId(id);
 
     const selected = items.find((item) => item.id === id);
     if (selected?.type === 'NOTICE' && clubId && id !== null) {
-      boardApi.readAllNotices(clubId, id);
+      boardApi.readAllNotices(clubId, id).catch(() => {});
     }
 
     if (isDetailPage) {
@@ -43,7 +49,39 @@ function BoardNavClient({ items }: BoardNavClientProps) {
     }
   };
 
-  return <BoardNav items={items} activeId={activeBoardId} onItemSelect={handleItemSelect} />;
+  const handleItemSelect = (id: number | null) => {
+    if (isDetailPage && commentDirty) {
+      pendingSelect.current = id;
+      setGuardOpen(true);
+      return;
+    }
+
+    executeSelect(id);
+  };
+
+  const handleGuardConfirm = () => {
+    setCommentDirty(false);
+    setGuardOpen(false);
+    executeSelect(pendingSelect.current);
+    pendingSelect.current = null;
+  };
+
+  const handleGuardCancel = () => {
+    setGuardOpen(false);
+    pendingSelect.current = null;
+  };
+
+  return (
+    <>
+      <BoardNav items={items} activeId={activeBoardId} onItemSelect={handleItemSelect} />
+
+      <CommentDirtyGuardDialog
+        open={guardOpen}
+        onConfirm={handleGuardConfirm}
+        onCancel={handleGuardCancel}
+      />
+    </>
+  );
 }
 
 export { BoardNavClient };

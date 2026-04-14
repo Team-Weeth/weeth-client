@@ -18,8 +18,11 @@ interface CommentItemProps {
   date: string;
   isAuthor?: boolean;
   replies?: ReplyItemProps[];
-  onReply?: (value: string) => void;
-  onEdit?: (content: string) => void;
+  replyOpen?: boolean;
+  onReplyToggle?: () => void;
+  onReplyDirtyChange?: (dirty: boolean) => void;
+  onReply?: (value: string) => Promise<boolean> | boolean;
+  onEdit?: (content: string) => Promise<boolean> | boolean;
   onDelete?: () => void;
 }
 
@@ -31,23 +34,30 @@ function CommentItem({
   date,
   isAuthor,
   replies,
+  replyOpen = false,
+  onReplyToggle,
+  onReplyDirtyChange,
   onReply,
   onEdit,
   onDelete,
 }: CommentItemProps) {
-  const [replyOpen, setReplyOpen] = useState(false);
   const [editing, setEditing] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const replyInputRef = useScrollIntoView<HTMLDivElement>(replyOpen);
 
-  const handleReplySubmit = (value: string) => {
-    onReply?.(value);
-    setReplyOpen(false);
+  const handleReplySubmit = async (value: string) => {
+    const ok = await onReply?.(value);
+    if (ok !== false) {
+      onReplyDirtyChange?.(false);
+      onReplyToggle?.();
+    }
+    return ok ?? true;
   };
 
-  const handleEditSubmit = (value: string) => {
-    onEdit?.(value);
-    setEditing(false);
+  const handleEditSubmit = async (value: string) => {
+    const ok = await onEdit?.(value);
+    if (ok !== false) setEditing(false);
+    return ok ?? true;
   };
 
   return (
@@ -83,7 +93,7 @@ function CommentItem({
               variant="secondary"
               size="icon-sm"
               className="size-6"
-              onClick={() => setReplyOpen((prev) => !prev)}
+              onClick={onReplyToggle}
               aria-label="답글"
             >
               <Icon src={ChatIcon} size={13} className="text-icon-normal" />
@@ -123,6 +133,7 @@ function CommentItem({
             className="mt-200 mr-450 ml-[38px]"
             placeholder="답글을 입력하세요"
             onSubmit={handleReplySubmit}
+            onValueChange={(v) => onReplyDirtyChange?.(v.trim().length > 0)}
           />
         </div>
       )}

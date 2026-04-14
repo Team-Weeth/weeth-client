@@ -9,6 +9,7 @@ import {
   PostActionMenu,
   CommentInput,
   CommentItem,
+  CommentDirtyGuardDialog,
   FileList,
 } from '@/components/board';
 import { formatShortDateTime } from '@/lib/formatTime';
@@ -16,6 +17,7 @@ import { toDisplayFile, isImageFileByType, mapComment } from '@/lib/board';
 import { useCreateComment } from '@/hooks/board/useCreateComment';
 import { useUpdateComment } from '@/hooks/board/useUpdateComment';
 import { useDeleteComment } from '@/hooks/board/useDeleteComment';
+import { useReplyForm } from '@/hooks/board/useReplyForm';
 import { useSetActiveBoardId } from '@/stores/useBoardNavStore';
 import { useUserId } from '@/stores/useUserStore';
 import type { PostDetail } from '@/types/board';
@@ -31,6 +33,19 @@ function PostDetailContent({ post }: PostDetailContentProps) {
   const { createComment, isPending } = useCreateComment(post.id);
   const { updateComment } = useUpdateComment(post.id);
   const { deleteComment } = useDeleteComment(post.id);
+
+  const {
+    activeReplyId,
+    setIsReplyDirty,
+    setIsCommentDirty,
+    handleReplyToggle,
+    switchGuardOpen,
+    onSwitchConfirm,
+    onSwitchCancel,
+    navGuardOpen,
+    onNavGuardConfirm,
+    onNavGuardCancel,
+  } = useReplyForm();
 
   useEffect(() => {
     setActiveBoardId(post.boardId);
@@ -81,10 +96,14 @@ function PostDetailContent({ post }: PostDetailContentProps) {
         />
       </div>
 
-      <div className="self-stretch px-450 py-400">
+      <div id="comments" className="self-stretch px-450 py-400">
         <CommentInput
           placeholder="댓글을 입력하세요."
-          onSubmit={createComment}
+          onSubmit={async (v) => {
+            await createComment(v);
+            return true;
+          }}
+          onValueChange={(v) => setIsCommentDirty(v.trim().length > 0)}
           disabled={isPending}
         />
       </div>
@@ -102,13 +121,25 @@ function PostDetailContent({ post }: PostDetailContentProps) {
                 <CommentItem
                   key={comment.id}
                   {...mapped}
+                  replyOpen={activeReplyId === comment.id}
+                  onReplyToggle={() => handleReplyToggle(comment.id)}
+                  onReplyDirtyChange={setIsReplyDirty}
                   replies={mapped.replies.map((reply) => ({
                     ...reply,
-                    onEdit: (content: string) => updateComment(reply.id, content),
+                    onEdit: async (content: string) => {
+                      await updateComment(reply.id, content);
+                      return true;
+                    },
                     onDelete: () => deleteComment(reply.id),
                   }))}
-                  onReply={(content) => createComment(content, comment.id)}
-                  onEdit={(content) => updateComment(comment.id, content)}
+                  onReply={async (content) => {
+                    await createComment(content, comment.id);
+                    return true;
+                  }}
+                  onEdit={async (content) => {
+                    await updateComment(comment.id, content);
+                    return true;
+                  }}
                   onDelete={() => deleteComment(comment.id)}
                 />
               );
@@ -116,6 +147,18 @@ function PostDetailContent({ post }: PostDetailContentProps) {
           </div>
         </>
       )}
+
+      <CommentDirtyGuardDialog
+        open={switchGuardOpen}
+        onConfirm={onSwitchConfirm}
+        onCancel={onSwitchCancel}
+      />
+
+      <CommentDirtyGuardDialog
+        open={navGuardOpen}
+        onConfirm={onNavGuardConfirm}
+        onCancel={onNavGuardCancel}
+      />
     </div>
   );
 }

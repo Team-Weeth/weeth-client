@@ -13,6 +13,8 @@ export { useDeletePost } from './board/useDeletePost';
 export { useIntersectionObserver } from './board/useIntersectionObserver';
 export { useUpdateComment } from './board/useUpdateComment';
 export { useDeleteComment } from './board/useDeleteComment';
+export { useDirtyActionGuard } from './board/useDirtyActionGuard';
+export { useReplyForm } from './board/useReplyForm';
 export { useLineClamp } from './useLineClamp';
 export { useNavigationGuard } from './useNavigationGuard';
 export { useProgressAnimation } from './useProgressAnimation';

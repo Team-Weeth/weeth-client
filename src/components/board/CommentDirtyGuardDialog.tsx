@@ -1,0 +1,25 @@
+import { AlertDialog, AlertDialogAction, AlertDialogCancel } from '@/components/ui';
+
+interface CommentDirtyGuardDialogProps {
+  open: boolean;
+  onConfirm: () => void;
+  onCancel: () => void;
+}
+
+function CommentDirtyGuardDialog({ open, onConfirm, onCancel }: CommentDirtyGuardDialogProps) {
+  return (
+    <AlertDialog
+      open={open}
+      onOpenChange={(isOpen) => {
+        if (!isOpen) onCancel();
+      }}
+      title="작성 중인 댓글이 있어요"
+      description="저장하지 않고 이동하면 작성한 내용이 사라져요."
+    >
+      <AlertDialogAction onClick={onConfirm}>이동</AlertDialogAction>
+      <AlertDialogCancel onClick={onCancel}>취소</AlertDialogCancel>
+    </AlertDialog>
+  );
+}
+
+export { CommentDirtyGuardDialog, type CommentDirtyGuardDialogProps };

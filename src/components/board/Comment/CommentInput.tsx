@@ -9,8 +9,9 @@ interface CommentInputProps {
   className?: string;
   placeholder?: string;
   defaultValue?: string;
-  onSubmit?: (value: string) => void;
+  onSubmit?: (value: string) => Promise<boolean> | boolean;
   onCancel?: () => void;
+  onValueChange?: (value: string) => void;
   disabled?: boolean;
 }
 
@@ -20,16 +21,24 @@ function CommentInput({
   defaultValue = '',
   onSubmit,
   onCancel,
+  onValueChange,
   disabled = false,
 }: CommentInputProps) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [value, setValue] = useState(defaultValue);
 
-  const handleSubmit = () => {
+  const handleChange = (newValue: string) => {
+    setValue(newValue);
+    onValueChange?.(newValue);
+  };
+
+  const handleSubmit = async () => {
     const trimmed = value.trim();
-    if (!trimmed) return;
-    onSubmit?.(trimmed);
-    setValue('');
+    if (!trimmed || !onSubmit) return;
+    const ok = await onSubmit(trimmed);
+    if (ok !== false) {
+      handleChange('');
+    }
   };
 
   return (
@@ -43,7 +52,7 @@ function CommentInput({
             rows={1}
             maxLength={300}
             value={value}
-            onChange={(e) => setValue(e.target.value)}
+            onChange={(e) => handleChange(e.target.value)}
             placeholder={placeholder}
             disabled={disabled}
             wrapperClassName="min-h-800 rounded-lg px-400 py-200"
