@@ -7,7 +7,7 @@ export interface Member {
   email: string;
   role: string;
   department: string;
-  generation: string; // 활동기수 전체, e.g. "1, 2"
+  cardinal: string; // 활동기수 전체, e.g. "1, 2"
   phone: string;
   studentId: string;
   position: string;

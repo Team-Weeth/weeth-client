@@ -1,18 +1,11 @@
 // admin components index file
-export { AddGenerationButton, type AddGenerationButtonProps } from './member/AddGenerationButton';
+export { AddCardinalButton, type AddCardinalButtonProps } from './member/AddCardinalButton';
+export { AddCardinalModal, type AddCardinalModalProps } from './member/modal/AddCardinalModal';
 export {
-  AddGenerationModal,
-  type AddGenerationModalProps,
-} from './member/modal/AddGenerationModal';
-export {
-  ChangeGenerationModal,
-  type ChangeGenerationModalProps,
-} from './member/modal/ChangeGenerationModal';
-export {
-  GenerationCard,
-  generationCardVariants,
-  type GenerationCardProps,
-} from './member/GenerationCard';
+  ChangeCardinalsModal,
+  type ChangeCardinalsModalProps,
+} from './member/modal/ChangeCardinalsModal';
+export { CardinalCard, cardinalCardVariants, type CardinalCardProps } from './member/CardinalCard';
 export { MemberDetailModal, type MemberDetailModalProps } from './member/modal/MemberDetailModal';
 export { MemberPageContent } from './member/MemberPageContent';
 export { MemberSearchBar, type MemberSearchBarProps } from './member/MemberSearchBar';
