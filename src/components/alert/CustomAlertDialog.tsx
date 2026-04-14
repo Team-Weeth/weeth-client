@@ -7,14 +7,13 @@ import { cn } from '@/lib/cn';
 import { Icon } from '@/components/ui';
 import { InfoCircleIcon } from '@/assets/icons';
 
-type Position = 'center' | 'top-right' | 'top-left' | 'bottom-right' | 'bottom-left';
+type Placement = 'above-right' | 'below-right' | 'above-left' | 'below-left';
 
-const POSITION_CLASS: Record<Position, string> = {
-  center: 'top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2',
-  'top-right': 'top-35 right-60',
-  'top-left': 'top-8 left-8',
-  'bottom-right': 'bottom-35 right-72',
-  'bottom-left': 'bottom-8 left-8',
+const PLACEMENT_CLASS: Record<Placement, string> = {
+  'above-right': 'bottom-full right-0 mb-200',
+  'below-right': 'top-full right-0 mt-200',
+  'above-left': 'bottom-full left-0 mb-200',
+  'below-left': 'top-full left-0 mt-200',
 };
 
 interface CustomAlertDialogProps extends React.ComponentProps<typeof AlertDialogPrimitive.Root> {
@@ -24,7 +23,7 @@ interface CustomAlertDialogProps extends React.ComponentProps<typeof AlertDialog
   cancelLabel?: string;
   onAction: () => void;
   onCancel?: () => void;
-  position?: Position;
+  placement?: Placement;
 }
 
 function CustomAlertDialog({
@@ -34,7 +33,7 @@ function CustomAlertDialog({
   cancelLabel,
   onAction,
   onCancel,
-  position = 'center',
+  placement = 'above-right',
   children,
   ...props
 }: CustomAlertDialogProps) {
@@ -42,15 +41,12 @@ function CustomAlertDialog({
     <AlertDialogPrimitive.Root {...props}>
       {children}
 
-      <AlertDialogPrimitive.Portal>
-        <AlertDialogPrimitive.Overlay className="data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 z-50" />
-
-        <AlertDialogPrimitive.Content
-          className={cn(
-            'bg-background border-line data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 fixed z-50 w-[339px] rounded-lg border shadow-[0px_10px_40px_0px_rgba(0,0,0,0.5)] duration-200',
-            POSITION_CLASS[position],
-          )}
-        >
+      <AlertDialogPrimitive.Content
+        className={cn(
+          'bg-background border-line data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 absolute z-50 w-[339px] rounded-lg border shadow-[0px_10px_40px_0px_rgba(0,0,0,0.5)] duration-200',
+          PLACEMENT_CLASS[placement],
+        )}
+      >
           {/* Content area */}
           <div className="flex flex-col items-center gap-600 px-400 py-400">
             {/* Icon */}
@@ -101,8 +97,7 @@ function CustomAlertDialog({
               )}
             </div>
           </div>
-        </AlertDialogPrimitive.Content>
-      </AlertDialogPrimitive.Portal>
+      </AlertDialogPrimitive.Content>
     </AlertDialogPrimitive.Root>
   );
 }

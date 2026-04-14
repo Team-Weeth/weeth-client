@@ -6,22 +6,8 @@ import Image from 'next/image';
 
 import { cn } from '@/lib/cn';
 import { AdminSquareLeftIcon, AdminSquareRightIcon } from '@/assets/icons/admin';
-
-const DAYS_OF_WEEK = ['일', '월', '화', '수', '목', '금', '토'] as const;
-
-function getDaysInMonth(year: number, month: number): number {
-  return new Date(year, month, 0).getDate();
-}
-
-function getFirstDayOfMonth(year: number, month: number): number {
-  return new Date(year, month - 1, 1).getDay();
-}
-
-function formatDateDisplay(dateStr: string): string {
-  if (!dateStr) return '';
-  const [year, month, day] = dateStr.split('-');
-  return `${year}. ${month}. ${day}.`;
-}
+import { DAY_NAMES } from '@/constants/shared/date';
+import { formatDateDisplay, getDaysInMonth, getFirstDayOfMonth } from '@/utils/shared/date';
 
 interface CalendarPickerProps {
   value: string;
@@ -29,11 +15,20 @@ interface CalendarPickerProps {
 }
 
 function CalendarPicker({ value, onChange }: CalendarPickerProps) {
-  const [open, setOpen] = useState(false);
-
   const parsedDate = value ? new Date(value) : new Date();
+
+  const [open, setOpen] = useState(false);
   const [viewYear, setViewYear] = useState(parsedDate.getFullYear());
   const [viewMonth, setViewMonth] = useState(parsedDate.getMonth() + 1);
+
+  const handleOpenChange = (next: boolean) => {
+    if (next) {
+      const base = value ? new Date(value) : new Date();
+      setViewYear(base.getFullYear());
+      setViewMonth(base.getMonth() + 1);
+    }
+    setOpen(next);
+  };
 
   const selectedYear = value ? parsedDate.getFullYear() : null;
   const selectedMonth = value ? parsedDate.getMonth() + 1 : null;
@@ -77,7 +72,7 @@ function CalendarPicker({ value, onChange }: CalendarPickerProps) {
       <PopoverPrimitive.Trigger asChild>
         <button
           type="button"
-          className="bg-container-neutral flex h-10 w-30 cursor-pointer items-center rounded-sm px-300"
+          className="bg-container-neutral focus:border-primary focus:shadow-primary-foreground flex h-10 w-30 cursor-pointer items-center rounded-sm px-300"
         >
           <span className="typo-body1 text-text-normal">
             {value ? formatDateDisplay(value) : '날짜 선택'}
@@ -114,7 +109,7 @@ function CalendarPicker({ value, onChange }: CalendarPickerProps) {
 
           {/* Day of week headers */}
           <div className="mb-100 grid grid-cols-7">
-            {DAYS_OF_WEEK.map((d) => (
+            {DAY_NAMES.map((d) => (
               <div
                 key={d}
                 className="typo-caption2 text-text-alternative flex h-8 items-center justify-center"

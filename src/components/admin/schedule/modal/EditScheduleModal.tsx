@@ -135,14 +135,26 @@ function EditScheduleModal({ open, onOpenChange, schedule, onDelete }: EditSched
               </DropdownMenu>
 
               {/* Close button */}
-              <button
-                type="button"
-                onClick={() => handleTryClose('close')}
-                className="flex cursor-pointer items-center justify-center rounded-sm p-200"
-                aria-label="닫기"
-              >
-                <Icon src={AdminCloseIcon} size={24} alt="닫기" />
-              </button>
+              <div className="relative">
+                <button
+                  type="button"
+                  onClick={() => handleTryClose('close')}
+                  className="flex cursor-pointer items-center justify-center rounded-sm p-200"
+                  aria-label="닫기"
+                >
+                  <Icon src={AdminCloseIcon} size={24} alt="닫기" />
+                </button>
+                <CustomAlertDialog
+                  open={discardSource === 'close'}
+                  onOpenChange={(open) => {
+                    if (!open && discardSource === 'close') setDiscardSource(null);
+                  }}
+                  title={'변경사항이 있어요.\n변경사항을 폐기할까요?'}
+                  actionLabel="변경사항 폐기"
+                  onAction={handleDiscardConfirm}
+                  placement="below-right"
+                />
+              </div>
             </div>
           </div>
 
@@ -205,27 +217,27 @@ function EditScheduleModal({ open, onOpenChange, schedule, onDelete }: EditSched
 
           {/* Footer */}
           <div className="bg-container-neutral flex items-center justify-end gap-200 px-400 pt-400 pb-500">
-            <Button variant="secondary" size="lg" onClick={() => handleTryClose('cancel')}>
-              취소
-            </Button>
+            <div className="relative">
+              <Button variant="secondary" size="lg" onClick={() => handleTryClose('cancel')}>
+                취소
+              </Button>
+              <CustomAlertDialog
+                open={discardSource === 'cancel'}
+                onOpenChange={(open) => {
+                  if (!open && discardSource === 'cancel') setDiscardSource(null);
+                }}
+                title={'변경사항이 있어요.\n변경사항을 폐기할까요?'}
+                actionLabel="변경사항 폐기"
+                onAction={handleDiscardConfirm}
+                placement="above-right"
+              />
+            </div>
             <Button variant="primary" size="lg" disabled={!form.title.trim()} onClick={handleSubmit}>
               저장
             </Button>
           </div>
         </DialogContent>
       </Dialog>
-
-      {/* Discard changes confirmation */}
-      <CustomAlertDialog
-        open={discardSource !== null}
-        onOpenChange={(open) => {
-          if (!open) setDiscardSource(null);
-        }}
-        title={'변경사항이 있어요.\n변경사항을 폐기할까요?'}
-        actionLabel="변경사항 폐기"
-        onAction={handleDiscardConfirm}
-        position={discardSource === 'close' ? 'top-right' : 'bottom-right'}
-      />
 
       {/* Delete confirmation */}
       <AlertDialog

@@ -52,3 +52,17 @@ export function groupByStartDate<T extends { start: string }>(items: T[]): [stri
   }
   return Array.from(groupedByDate.entries());
 }
+
+export function getDaysInMonth(year: number, month: number): number {
+  return new Date(year, month, 0).getDate();
+}
+
+export function getFirstDayOfMonth(year: number, month: number): number {
+  return new Date(year, month - 1, 1).getDay();
+}
+
+export function formatDateDisplay(dateStr: string): string {
+  if (!dateStr) return '';
+  const [year, month, day] = dateStr.split('-');
+  return `${year}. ${month}. ${day}.`;
+}
