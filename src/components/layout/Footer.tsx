@@ -1,6 +1,7 @@
 'use client';
 
 import Image from 'next/image';
+import Link from 'next/link';
 import { FooterLogoIcon } from '@/assets/icons';
 
 interface FooterProps {
@@ -36,8 +37,17 @@ export default function Footer({ isSmall = false }: FooterProps) {
         <footer className="bg-container-neutral-alternative flex w-[304px] flex-col gap-[67px] rounded-lg px-[18px] py-[26px]">
           <div className="flex flex-col gap-200">
             <p className="typo-caption1 text-text-normal">Weeth 서비스</p>
-            <p className="typo-body2 text-text-alternative">서비스 소개</p>
-            <p className="typo-body2 text-text-alternative">관리자 서비스</p>
+            <a
+              href="https://landing.weeth.kr"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="typo-body2 text-text-alternative"
+            >
+              서비스 소개
+            </a>
+            <Link href="/admin" className="typo-body2 text-text-alternative">
+              관리자 서비스
+            </Link>
             <a href="mailto:weeth.site@gmail.com" className="typo-body2 text-text-alternative">
               문의 메일
             </a>

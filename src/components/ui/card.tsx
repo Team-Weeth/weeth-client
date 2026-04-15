@@ -66,7 +66,7 @@ function Card({
       >
         <div className="flex flex-col gap-200">
           {overline && <p className="typo-caption1 text-text-alternative">{overline}</p>}
-          <h3 className="typo-sub1 text-text-strong">{title}</h3>
+          <h3 className="typo-sub2 text-text-strong">{title}</h3>
           {description && (
             <p className="typo-body2 text-text-alternative whitespace-pre-line">{description}</p>
           )}
@@ -84,7 +84,7 @@ function Card({
           <div className="flex items-start justify-between gap-300">
             <div className="flex flex-col gap-200">
               {overline && <p className="typo-caption1 text-text-alternative">{overline}</p>}
-              <h3 className="typo-sub1 text-text-strong">{title}</h3>
+              <h3 className="typo-sub2 text-text-strong">{title}</h3>
               {description && (
                 <p className="typo-body2 text-text-alternative whitespace-pre-line">
                   {description}

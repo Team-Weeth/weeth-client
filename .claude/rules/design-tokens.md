@@ -36,8 +36,9 @@ Composite classes defined with `@utility`. Includes font-size + line-height + fo
 | `typo-h1` | Heading 1 | 40px / bold |
 | `typo-h2` | Heading 2 | 32px / bold |
 | `typo-h3` | Heading 3 | 24px / semibold |
-| `typo-sub1` | Subheading 1 | 18px / semibold |
-| `typo-sub2` | Subheading 2 | 16px / semibold |
+| `typo-sub1` | Subheading 1 | 16px / black |
+| `typo-sub2` | Subheading 2 | 18px / semibold |
+| `typo-sub3` | Subheading 3 | 16px / semibold |
 | `typo-body1` | Body text 1 | 16px / 470 |
 | `typo-body2` | Body text 2 | 14px / 450 |
 | `typo-caption1` | Caption 1 | 12px / semibold |

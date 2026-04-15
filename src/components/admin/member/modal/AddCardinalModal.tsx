@@ -54,7 +54,7 @@ function AddCardinalModal({ children, onSubmit }: AddCardinalModalProps) {
         <DialogBody className="gap-400 py-0">
           {/* 기수 입력 */}
           <div className="flex flex-col">
-            <p className="typo-sub2 text-text-normal bg-background py-300">
+            <p className="typo-sub3 text-text-normal bg-background py-300">
               추가할 새로운 기수를 작성해주세요
             </p>
             <div className="relative">

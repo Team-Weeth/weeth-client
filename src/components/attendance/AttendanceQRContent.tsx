@@ -66,8 +66,8 @@ function AttendanceQRContent({ sessionId }: AttendanceQRContentProps) {
 
                 <div className="flex w-full flex-col items-center gap-200">
                   <div className="flex items-center gap-200">
-                    <span className="typo-sub2 text-text-strong">출석 가능 시간</span>
-                    <span className="typo-sub2 text-state-error tabular-nums">
+                    <span className="typo-sub3 text-text-strong">출석 가능 시간</span>
+                    <span className="typo-sub3 text-state-error tabular-nums">
                       {isExpired ? '마감' : `${minutes}:${seconds}`}
                     </span>
                   </div>

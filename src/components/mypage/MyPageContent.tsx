@@ -90,7 +90,7 @@ function MyPageContent({ className, ...props }: MyPageContentProps) {
           <div className="bg-container-neutral flex flex-col gap-300 rounded-lg p-400">
             <div className="flex flex-col gap-100">
               <span className="typo-caption1 text-text-alternative">모드 설정</span>
-              <span className="typo-sub1 text-text-strong">다크/라이트 모드</span>
+              <span className="typo-sub2 text-text-strong">다크/라이트 모드</span>
             </div>
             <ThemeToggle />
           </div>

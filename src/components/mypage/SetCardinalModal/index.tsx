@@ -68,7 +68,7 @@ function SetCardinalModal({ open, onOpenChange, club, onSave }: SetCardinalModal
         primaryDisabled: selected.size === 0,
         children: selected.size > 0 && (
           <div className="flex items-center gap-400 px-2.5 pt-200">
-            <span className="typo-sub2 text-text-alternative shrink-0">선택됨</span>
+            <span className="typo-sub3 text-text-alternative shrink-0">선택됨</span>
             <CardinalTags cardinals={selectedArray} />
           </div>
         ),

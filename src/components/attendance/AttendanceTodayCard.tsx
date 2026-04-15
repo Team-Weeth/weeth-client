@@ -28,7 +28,7 @@ function AttendanceCompleteBanner() {
     <div className="bg-background flex items-start gap-[10px] rounded-md p-300">
       <Image src={CompleteIcon} alt="출석 완료" width={40} height={40} />
       <div className="flex min-h-px min-w-px flex-1 flex-col gap-100">
-        <p className="typo-sub2 text-text-normal">출석이 완료되었어요!</p>
+        <p className="typo-sub3 text-text-normal">출석이 완료되었어요!</p>
         <p className="typo-body2 text-text-alternative">오늘도 즐거운 활동을 이어가세요.</p>
       </div>
     </div>

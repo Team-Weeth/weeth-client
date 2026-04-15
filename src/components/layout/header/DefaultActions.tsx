@@ -7,6 +7,7 @@ import dynamic from 'next/dynamic';
 import { Button } from '@/components/ui';
 import { EditIcon, ExitToAppIcon, AvatarIcon } from '@/assets/icons';
 import { useWritePost } from '@/hooks/home/useWritePost';
+import { useIsAdmin } from '@/hooks/shared';
 
 const CardinalMissingModal = dynamic(() =>
   import('@/components/home/CardinalMissingModal').then((m) => m.CardinalMissingModal),
@@ -26,6 +27,7 @@ function DefaultActions() {
     profileModalOpen,
     setProfileModalOpen,
   } = useWritePost();
+  const { isAdmin } = useIsAdmin();
 
   return (
     <>
@@ -41,15 +43,17 @@ function DefaultActions() {
             글쓰기
           </Button>
         )}
-        <Button
-          variant="secondary"
-          size="md"
-          onClick={() => router.push('/admin')}
-          className="typo-button1 text-text-strong gap-100"
-        >
-          <Image src={ExitToAppIcon} alt="exit" width={20} height={20} />
-          관리자
-        </Button>
+        {isAdmin && (
+          <Button
+            variant="secondary"
+            size="md"
+            onClick={() => router.push('/admin')}
+            className="typo-button1 text-text-strong gap-100"
+          >
+            <Image src={ExitToAppIcon} alt="exit" width={20} height={20} />
+            관리자
+          </Button>
+        )}
         <button
           type="button"
           aria-label="마이페이지로 이동"

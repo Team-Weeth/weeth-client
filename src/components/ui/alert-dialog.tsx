@@ -191,7 +191,7 @@ function AlertDialogTitle({
   return (
     <AlertDialogPrimitive.Title
       data-slot="alert-dialog-title"
-      className={cn('typo-sub1 text-text-strong', className)}
+      className={cn('typo-sub2 text-text-strong', className)}
       {...props}
     />
   );
