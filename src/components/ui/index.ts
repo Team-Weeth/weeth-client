@@ -131,3 +131,7 @@ export { Skeleton } from './skeleton';
 export { Loading, type LoadingProps } from './Loading';
 
 export { Carousel, CarouselContent, CarouselItem, useCarousel, type CarouselApi } from './carousel';
+
+export { CalendarPicker, type CalendarPickerProps } from './CalendarPicker';
+export { TimePicker, type TimePickerProps } from './TimePicker';
+export { DateTimeInput, type DateTimeInputProps } from './DateTimeInput';

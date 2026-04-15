@@ -4,22 +4,17 @@ import { AdminPlusIcon } from '@/assets/icons/admin';
 import { Icon } from '@/components/ui';
 import { cn } from '@/lib/cn';
 
-interface AddGenerationButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+interface AddCardinalButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   ref?: React.Ref<HTMLButtonElement>;
 }
 
-function AddGenerationButton({
-  className,
-  ref,
-  type = 'button',
-  ...props
-}: AddGenerationButtonProps) {
+function AddCardinalButton({ className, ref, type = 'button', ...props }: AddCardinalButtonProps) {
   return (
     <button
       ref={ref}
       type={type}
       className={cn(
-        'bg-container-neutral flex h-[164px] w-[80px] shrink-0 cursor-pointer items-center justify-center rounded-lg shadow-sm',
+        'bg-button-neutral border-line flex h-10 w-10 shrink-0 cursor-pointer items-center justify-center rounded-md border',
         className,
       )}
       {...props}
@@ -29,4 +24,4 @@ function AddGenerationButton({
   );
 }
 
-export { AddGenerationButton, type AddGenerationButtonProps };
+export { AddCardinalButton, type AddCardinalButtonProps };

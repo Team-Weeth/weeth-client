@@ -39,7 +39,7 @@ function MemberTable({
   ...props
 }: MemberTableProps) {
   const [internalSelectedIds, setInternalSelectedIds] = useState<Set<string>>(new Set());
-  const [sortBy, setSortBy] = useState<SortBy>('generation');
+  const [sortBy, setSortBy] = useState<SortBy>('cardinal');
 
   const selectedIds = controlledSelectedIds ?? internalSelectedIds;
   const setSelectedIds = onSelectionChange ?? setInternalSelectedIds;
@@ -64,7 +64,7 @@ function MemberTable({
   };
 
   const toggleSort = () => {
-    setSortBy((prev) => (prev === 'generation' ? 'name' : 'generation'));
+    setSortBy((prev) => (prev === 'cardinal' ? 'name' : 'cardinal'));
   };
 
   return (
