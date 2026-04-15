@@ -1,3 +1,4 @@
+import { useRef } from 'react';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel } from '@/components/ui';
 
 interface CommentDirtyGuardDialogProps {
@@ -7,17 +8,32 @@ interface CommentDirtyGuardDialogProps {
 }
 
 function CommentDirtyGuardDialog({ open, onConfirm, onCancel }: CommentDirtyGuardDialogProps) {
+  const confirmingRef = useRef(false);
+
   return (
     <AlertDialog
       open={open}
       onOpenChange={(isOpen) => {
-        if (!isOpen) onCancel();
+        if (!isOpen) {
+          if (confirmingRef.current) {
+            confirmingRef.current = false;
+            return;
+          }
+          onCancel();
+        }
       }}
       title="작성 중인 댓글이 있어요"
       description="저장하지 않고 이동하면 작성한 내용이 사라져요."
     >
-      <AlertDialogAction onClick={onConfirm}>이동</AlertDialogAction>
-      <AlertDialogCancel onClick={onCancel}>취소</AlertDialogCancel>
+      <AlertDialogAction
+        onClick={() => {
+          confirmingRef.current = true;
+          onConfirm();
+        }}
+      >
+        이동
+      </AlertDialogAction>
+      <AlertDialogCancel>취소</AlertDialogCancel>
     </AlertDialog>
   );
 }
