@@ -30,17 +30,21 @@ export function useUpdateProfileMutation() {
     onSuccess: async () => {
       if (!clubId) return;
 
-      const res = await queryClient.fetchQuery({
-        queryKey: ['mypage', 'me', clubId],
-        queryFn: () => mypageApi.getMe(clubId).then((r) => r.data.data),
-        staleTime: 0,
-      });
+      try {
+        const res = await queryClient.fetchQuery({
+          queryKey: ['mypage', 'me', clubId],
+          queryFn: () => mypageApi.getMe(clubId).then((r) => r.data.data),
+          staleTime: 0,
+        });
 
-      useUserStore.setState(
-        { name: res.name, profileImageUrl: res.profileImageUrl },
-        false,
-        'syncProfile',
-      );
+        useUserStore.setState(
+          { name: res.name, profileImageUrl: res.profileImageUrl },
+          false,
+          'syncProfile',
+        );
+      } catch {
+        void queryClient.invalidateQueries({ queryKey: ['mypage', 'me', clubId] });
+      }
     },
   });
 }
