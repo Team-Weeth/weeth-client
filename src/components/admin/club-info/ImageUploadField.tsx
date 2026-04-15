@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import Image from 'next/image';
 
@@ -46,37 +46,42 @@ function PreviewContent({
   previewUrl,
   aspectRatio,
   onReupload,
+  onReset,
 }: {
   previewUrl: string;
   aspectRatio: '1/1' | 'auto';
   onReupload: () => void;
+  onReset: () => void;
 }) {
-  const [isHovered, setIsHovered] = useState(false);
-
   return (
     <div
       className={cn(
-        'relative flex w-full flex-1 overflow-hidden rounded-sm',
+        'group relative flex w-full flex-1 overflow-hidden rounded-sm',
         aspectRatio === '1/1' && 'aspect-square',
       )}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
     >
       <Image src={previewUrl} alt="preview" fill className="object-cover" unoptimized />
-      {isHovered && (
-        <div className="absolute inset-0 flex items-center justify-center bg-black/50">
-          <Button
-            type="button"
-            variant="secondary"
-            size="md"
-            className="typo-button1 gap-100 px-400 py-200"
-            onClick={onReupload}
-          >
-            <Icon src={AdminCloudUploadIcon} alt="upload" size={16} className="text-icon-strong" />
-            이미지 업로드
-          </Button>
-        </div>
-      )}
+      <div className="absolute inset-0 hidden items-center justify-center gap-200 bg-black/50 group-hover:flex">
+        <Button
+          type="button"
+          variant="secondary"
+          size="md"
+          className="typo-button1 gap-100 px-400 py-200"
+          onClick={onReupload}
+        >
+          <Icon src={AdminCloudUploadIcon} alt="upload" size={16} className="text-icon-strong" />
+          이미지 업로드
+        </Button>
+        <Button
+          type="button"
+          variant="secondary"
+          size="md"
+          className="typo-button1 px-400 py-200"
+          onClick={onReset}
+        >
+          기본 이미지로 변경
+        </Button>
+      </div>
     </div>
   );
 }
@@ -109,14 +114,21 @@ function useS3Upload(
     }
   };
 
+  const prevObjectUrlRef = useRef<string | null>(null);
+
   const startUpload = async (file: File) => {
+    if (isUploading) return;
     uploadDoneRef.current = false;
     animationDoneRef.current = false;
     setIsUploading(true);
 
     try {
       const result = await uploadFile(file, ownerType);
+      if (prevObjectUrlRef.current) {
+        URL.revokeObjectURL(prevObjectUrlRef.current);
+      }
       const objectUrl = URL.createObjectURL(file);
+      prevObjectUrlRef.current = objectUrl;
       onUploadComplete?.({ storageKey: result.storageKey, fileUrl: objectUrl });
       uploadDoneRef.current = true;
       tryFinish();
@@ -131,6 +143,14 @@ function useS3Upload(
     animationDoneRef.current = true;
     tryFinish();
   };
+
+  useEffect(() => {
+    return () => {
+      if (prevObjectUrlRef.current) {
+        URL.revokeObjectURL(prevObjectUrlRef.current);
+      }
+    };
+  }, []);
 
   return { isUploading, startUpload, onAnimationComplete };
 }
@@ -175,6 +195,7 @@ function ImageUploadField({
           previewUrl={previewUrl}
           aspectRatio={aspectRatio}
           onReupload={openFileDialog}
+          onReset={() => onReset?.()}
         />
       ) : (
         <button

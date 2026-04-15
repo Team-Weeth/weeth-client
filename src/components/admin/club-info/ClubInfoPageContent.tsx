@@ -5,6 +5,7 @@ import { useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
 import { AdminInfoCard } from '@/components/admin/club-info/AdminInfoCard';
+import { FieldBlock } from '@/components/admin/club-info/FieldBlock';
 import { ImageUploadField } from '@/components/admin/club-info/ImageUploadField';
 import type { UploadResult } from '@/components/admin/club-info/ImageUploadField';
 import { ClubInfoTopBar } from '@/components/admin/club-info/ClubInfoTopBar';
@@ -13,27 +14,14 @@ import { Input } from '@/components/ui';
 import { cn } from '@/lib/cn';
 import { clubInfoSchema, type ClubInfoFormData } from '@/lib/schemas/clubInfo';
 
-function FieldBlock({
-  label,
-  helper,
-  children,
-}: {
-  label: string;
-  helper?: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <div className="flex flex-col gap-300">
-      <span className="typo-caption1 text-text-normal">{label}</span>
-      {children}
-      {helper && <span className="typo-caption2 text-text-alternative">{helper}</span>}
-    </div>
-  );
-}
-
 interface ClubInfoPageContentProps {
   schoolNames: string[];
 }
+
+const PRIMARY_CONTACT_OPTIONS = [
+  { value: 'phone', label: '전화번호' },
+  { value: 'email', label: '이메일' },
+] as const;
 
 const INITIAL_FORM_VALUES: ClubInfoFormData = {
   school: '가천대학교',
@@ -49,25 +37,30 @@ function ClubInfoPageContent({ schoolNames }: ClubInfoPageContentProps) {
     setValue,
     reset,
     control,
-    formState: { isDirty },
+    formState: { isDirty, errors },
   } = useForm<ClubInfoFormData>({
     resolver: zodResolver(clubInfoSchema),
     defaultValues: INITIAL_FORM_VALUES,
+    mode: 'onBlur',
   });
 
-  const formValues = useWatch({ control });
-  const { school, name: clubName, description, phone, email, primaryContact } = formValues;
+  const school = useWatch({ control, name: 'school' });
+  const clubName = useWatch({ control, name: 'name' });
+  const description = useWatch({ control, name: 'description' });
+  const phone = useWatch({ control, name: 'phone' });
+  const email = useWatch({ control, name: 'email' });
+  const primaryContact = useWatch({ control, name: 'primaryContact' });
 
   const [profileUpload, setProfileUpload] = useState<UploadResult | null>(null);
   const [backgroundUpload, setBackgroundUpload] = useState<UploadResult | null>(null);
 
   const isEditMode = isDirty || profileUpload !== null || backgroundUpload !== null;
 
-  function handleResetChanges() {
+  const handleResetChanges = () => {
     reset();
     setProfileUpload(null);
     setBackgroundUpload(null);
-  }
+  };
 
   return (
     <div className="flex min-w-3xl flex-col">
@@ -124,10 +117,13 @@ function ClubInfoPageContent({ schoolNames }: ClubInfoPageContentProps) {
               />
             </FieldBlock>
 
-            <FieldBlock label="동아리 소개" helper="최대 30자">
+            <FieldBlock label="동아리 소개" helper="최대 30자" error={errors.description?.message}>
               <Input
                 value={description ?? ''}
-                onChange={(e) => setValue('description', e.target.value, { shouldDirty: true })}
+                onChange={(e) => {
+                  const value = e.target.value.slice(0, 30);
+                  setValue('description', value, { shouldDirty: true });
+                }}
                 placeholder="동아리를 소개하는 짧은 글을 작성해주세요"
                 className="bg-container-neutral-alternative rounded-sm border-transparent px-400 py-300"
               />
@@ -142,7 +138,7 @@ function ClubInfoPageContent({ schoolNames }: ClubInfoPageContentProps) {
           className="pb-[70px]"
         >
           <div className="flex flex-col gap-400">
-            <FieldBlock label="대표 전화번호">
+            <FieldBlock label="대표 전화번호" error={errors.phone?.message}>
               <Input
                 value={phone ?? ''}
                 onChange={(e) => setValue('phone', e.target.value, { shouldDirty: true })}
@@ -161,30 +157,30 @@ function ClubInfoPageContent({ schoolNames }: ClubInfoPageContentProps) {
 
             <FieldBlock label="주 연락처">
               <div className="flex gap-200">
-                {(['phone', 'email'] as const).map((type) => (
-                  <label key={type} className="flex cursor-pointer items-center gap-200">
+                {PRIMARY_CONTACT_OPTIONS.map((option) => (
+                  <label key={option.value} className="flex cursor-pointer items-center gap-200">
                     <input
                       type="radio"
-                      value={type}
-                      checked={primaryContact === type}
-                      onChange={() => setValue('primaryContact', type, { shouldDirty: true })}
+                      value={option.value}
+                      checked={primaryContact === option.value}
+                      onChange={() =>
+                        setValue('primaryContact', option.value, { shouldDirty: true })
+                      }
                       className="sr-only"
                     />
                     <div
                       className={cn(
                         'flex h-5 w-5 items-center justify-center rounded-full border-2 transition-colors',
-                        primaryContact === type
+                        primaryContact === option.value
                           ? 'border-brand-primary'
                           : 'border-text-alternative',
                       )}
                     >
-                      {primaryContact === type && (
+                      {primaryContact === option.value && (
                         <div className="bg-brand-primary h-2.5 w-2.5 rounded-full" />
                       )}
                     </div>
-                    <span className="typo-body2 text-text-normal">
-                      {type === 'phone' ? '전화번호' : '이메일'}
-                    </span>
+                    <span className="typo-body2 text-text-normal">{option.label}</span>
                   </label>
                 ))}
               </div>

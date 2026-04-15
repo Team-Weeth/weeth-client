@@ -19,8 +19,8 @@ export default async function ClubInfoPage() {
     schoolNames = schools.map((s) =>
       counts[s.schoolName] > 1 ? `${s.schoolName}(${s.region})` : s.schoolName,
     );
-  } catch {
-    // 학교 목록 로드 실패 시 빈 배열 유지
+  } catch (error) {
+    console.error('학교 목록 로드 실패:', error);
   }
 
   return <ClubInfoPageContent schoolNames={schoolNames} />;
