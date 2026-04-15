@@ -25,10 +25,12 @@ function DiscardAlertDialog({
   children: React.ReactNode;
 }) {
   const triggerRef = useRef<HTMLDivElement>(null);
+  const [open, setOpen] = useState(false);
   const [position, setPosition] = useState<{ top: number; left: number } | null>(null);
 
-  const handleOpenChange = (open: boolean) => {
-    if (open && triggerRef.current) {
+  const handleOpenChange = (nextOpen: boolean) => {
+    setOpen(nextOpen);
+    if (nextOpen && triggerRef.current) {
       const rect = triggerRef.current.getBoundingClientRect();
       const top = rect.bottom + 8;
       const left = placement === 'below-right' ? rect.left : rect.right - 339;
@@ -37,10 +39,14 @@ function DiscardAlertDialog({
   };
 
   return (
-    <AlertDialogPrimitive.Root onOpenChange={handleOpenChange}>
+    <AlertDialogPrimitive.Root open={open} onOpenChange={handleOpenChange}>
       <div ref={triggerRef}>{children}</div>
 
       <AlertDialogPrimitive.Portal>
+        <AlertDialogPrimitive.Overlay
+          className="fixed inset-0 z-40"
+          onClick={() => setOpen(false)}
+        />
         <AlertDialogPrimitive.Content
           style={position ? { top: position.top, left: position.left } : undefined}
           className="bg-background border-line data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 fixed z-50 w-[339px] rounded-lg border shadow-[0px_10px_40px_0px_rgba(0,0,0,0.5)] duration-200"

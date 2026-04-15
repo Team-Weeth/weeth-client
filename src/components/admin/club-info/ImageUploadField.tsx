@@ -25,7 +25,7 @@ function UploadingContent({ onComplete, compact }: { onComplete: () => void; com
     <div className="flex w-full flex-col items-center gap-300 px-400">
       <Image src={AdminCloudUploadIcon} alt="upload" width={32} height={32} />
       <span className="typo-sub1 text-text-strong">업로드 중...</span>
-      <ProgressBar value={progress} className={cn('h-2 w-full', compact && 'max-w-32')} />
+      <ProgressBar value={progress} className={cn('h-2 w-full max-w-80', compact && 'max-w-32')} />
     </div>
   );
 }
