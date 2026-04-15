@@ -24,8 +24,13 @@ function useReplyForm() {
   // 대댓글 폼 전환 guard
   const switchGuard = useDirtyActionGuard(isReplyDirty);
 
+  // 닫기 액션을 구분하기 위한 sentinel
+  const CLOSE_SENTINEL = -1;
+
   const handleReplyToggle = (commentId: number) => {
     if (activeReplyId === commentId) {
+      if (switchGuard.requestAction(CLOSE_SENTINEL)) return;
+
       setActiveReplyId(null);
       setIsReplyDirty(false);
       return;
@@ -39,7 +44,7 @@ function useReplyForm() {
 
   const onSwitchConfirm = () => {
     const id = switchGuard.confirm();
-    setActiveReplyId(id);
+    setActiveReplyId(id === CLOSE_SENTINEL ? null : id);
     setIsReplyDirty(false);
   };
 
