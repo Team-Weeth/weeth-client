@@ -9,11 +9,6 @@ import { ClubInfoContactSection } from '@/components/admin/club-info/ClubInfoCon
 import { ClubInfoImageSection } from '@/components/admin/club-info/ClubInfoImageSection';
 import { ClubInfoTopBar } from '@/components/admin/club-info/ClubInfoTopBar';
 import {
-  buildUpdateClubBody,
-  getClubFormValues,
-  getImagePreviewUrl,
-} from '@/components/admin/club-info/clubInfoForm.utils';
-import {
   useUpdateClub,
   useDeleteClubProfileImage,
   useDeleteClubBackgroundImage,
@@ -22,6 +17,11 @@ import { useAdminClubQuery } from '@/hooks/queries/admin/useAdminClubQuery';
 import { clubInfoSchema, type ClubInfoFormData } from '@/lib/schemas/clubInfo';
 import { toastSuccess, toastError } from '@/stores/useToastStore';
 import type { ImageState } from '@/types/admin/clubInfo';
+import {
+  buildUpdateClubBody,
+  getClubFormValues,
+  getImagePreviewUrl,
+} from '@/utils/admin/clubInfoFormUtils';
 
 interface ClubInfoPageContentProps {
   schoolNames: string[];
