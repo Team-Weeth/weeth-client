@@ -9,7 +9,15 @@ export function Banner() {
   });
 
   if (backgroundImageUrl) {
-    return <Image src={backgroundImageUrl} alt="banner" width={1440} height={364} />;
+    return (
+      <Image
+        src={backgroundImageUrl}
+        alt="banner"
+        width={1440}
+        height={364}
+        className="h-[364px] w-full"
+      />
+    );
   }
 
   return (

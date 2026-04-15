@@ -58,7 +58,7 @@ function DiscardAlertDialog({
               <Icon src={InfoCircleIcon} size={24} className="text-state-error" />
             </div>
             <div className="flex flex-col items-center gap-200 text-center">
-              <AlertDialogPrimitive.Title className="typo-sub1 text-text-strong whitespace-pre-line">
+              <AlertDialogPrimitive.Title className="typo-sub2 text-text-strong whitespace-pre-line">
                 {'변경사항이 있어요.\n변경사항을 폐기할까요?'}
               </AlertDialogPrimitive.Title>
             </div>
@@ -98,7 +98,7 @@ function ClubInfoTopBar({ className, onBack, onSave, isSaving, ...props }: ClubI
         </AlertDialogPrimitive.Trigger>
       </DiscardAlertDialog>
 
-      <span className="typo-sub1 text-text-inverse ml-200 shrink-0">수정 모드</span>
+      <span className="typo-sub2 text-text-inverse ml-200 shrink-0">수정 모드</span>
 
       <div className="ml-auto flex gap-200">
         <DiscardAlertDialog onAction={onBack} placement="below-left">
