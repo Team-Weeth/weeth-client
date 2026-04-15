@@ -38,26 +38,25 @@ interface ClubInfoPageContentProps {
 const INITIAL_FORM_VALUES: ClubInfoFormData = {
   school: '가천대학교',
   name: 'WEETH',
-  description: '동아리를 소개하는 짧은 글을 작성해주세요',
+  description: '',
   phone: '010-1234-1234',
-  email: '대표 이메일을 작성해주세요',
+  email: '',
   primaryContact: 'phone',
 };
 
 function ClubInfoPageContent({ schoolNames }: ClubInfoPageContentProps) {
   const {
-    register,
     setValue,
     reset,
     control,
     formState: { isDirty },
   } = useForm<ClubInfoFormData>({
     resolver: zodResolver(clubInfoSchema),
-    values: INITIAL_FORM_VALUES,
+    defaultValues: INITIAL_FORM_VALUES,
   });
 
-  const school = useWatch({ control, name: 'school' });
-  const primaryContact = useWatch({ control, name: 'primaryContact' });
+  const formValues = useWatch({ control });
+  const { school, name: clubName, description, phone, email, primaryContact } = formValues;
 
   const [profileUpload, setProfileUpload] = useState<UploadResult | null>(null);
   const [backgroundUpload, setBackgroundUpload] = useState<UploadResult | null>(null);
@@ -107,7 +106,7 @@ function ClubInfoPageContent({ schoolNames }: ClubInfoPageContentProps) {
           <div className="flex flex-col gap-400">
             <FieldBlock label="소속 학교">
               <SearchSelect
-                value={school}
+                value={school ?? ''}
                 onChange={(v) => setValue('school', v, { shouldDirty: true })}
                 options={schoolNames}
                 placeholder="학교명을 검색하세요"
@@ -119,32 +118,43 @@ function ClubInfoPageContent({ schoolNames }: ClubInfoPageContentProps) {
 
             <FieldBlock label="동아리 이름">
               <Input
-                {...register('name')}
+                value={clubName ?? ''}
+                onChange={(e) => setValue('name', e.target.value, { shouldDirty: true })}
                 className="bg-container-neutral-alternative rounded-sm border-transparent px-400 py-300"
               />
             </FieldBlock>
 
             <FieldBlock label="동아리 소개" helper="최대 30자">
               <Input
-                {...register('description')}
+                value={description ?? ''}
+                onChange={(e) => setValue('description', e.target.value, { shouldDirty: true })}
+                placeholder="동아리를 소개하는 짧은 글을 작성해주세요"
                 className="bg-container-neutral-alternative rounded-sm border-transparent px-400 py-300"
               />
             </FieldBlock>
           </div>
         </AdminInfoCard>
 
-        <AdminInfoCard title="연락처" titleGapClassName="mt-[58px]" contentClassName="gap-0">
+        <AdminInfoCard
+          title="연락처"
+          titleGapClassName="mt-[58px]"
+          contentClassName="gap-0"
+          className="pb-[70px]"
+        >
           <div className="flex flex-col gap-400">
             <FieldBlock label="대표 전화번호">
               <Input
-                {...register('phone')}
+                value={phone ?? ''}
+                onChange={(e) => setValue('phone', e.target.value, { shouldDirty: true })}
                 className="bg-container-neutral-alternative rounded-sm border-transparent px-400 py-300"
               />
             </FieldBlock>
 
             <FieldBlock label="대표 이메일">
               <Input
-                {...register('email')}
+                value={email ?? ''}
+                onChange={(e) => setValue('email', e.target.value, { shouldDirty: true })}
+                placeholder="대표 이메일을 작성해주세요"
                 className="bg-container-neutral-alternative rounded-sm border-transparent px-400 py-300"
               />
             </FieldBlock>

@@ -5,7 +5,7 @@ import { useRef, useState } from 'react';
 import Image from 'next/image';
 
 import { AdminCloudUploadIcon } from '@/assets/icons/admin';
-import { Button, ProgressBar } from '@/components/ui';
+import { Button, Icon, ProgressBar } from '@/components/ui';
 import { useProgressAnimation } from '@/hooks/useProgressAnimation';
 import type { OwnerType } from '@/lib/apis/file';
 import { uploadFile } from '@/lib/apis/upload';
@@ -19,14 +19,14 @@ interface UploadResult {
   fileUrl: string;
 }
 
-function UploadingContent({ onComplete }: { onComplete: () => void }) {
+function UploadingContent({ onComplete, compact }: { onComplete: () => void; compact?: boolean }) {
   const progress = useProgressAnimation({ duration: 1500, onComplete });
 
   return (
-    <div className="flex w-full flex-col items-center gap-300">
+    <div className="flex w-full flex-col items-center gap-300 px-400">
       <Image src={AdminCloudUploadIcon} alt="upload" width={32} height={32} />
       <span className="typo-sub1 text-text-strong">업로드 중...</span>
-      <ProgressBar value={progress} className="h-2 w-1/2" />
+      <ProgressBar value={progress} className={cn('h-2 w-full', compact && 'max-w-32')} />
     </div>
   );
 }
@@ -54,14 +54,14 @@ function PreviewContent({
       <Image src={previewUrl} alt="preview" fill className="object-cover" unoptimized />
       {isHovered && (
         <div className="absolute inset-0 flex items-center justify-center bg-black/50">
-          <Button type="button" variant="secondary" size="md" onClick={onReupload}>
-            <Image
-              src={AdminCloudUploadIcon}
-              alt="upload"
-              width={16}
-              height={16}
-              className="mr-200"
-            />
+          <Button
+            type="button"
+            variant="secondary"
+            size="md"
+            className="typo-button1 gap-100 px-400 py-200"
+            onClick={onReupload}
+          >
+            <Icon src={AdminCloudUploadIcon} alt="upload" size={16} className="text-icon-strong" />
             이미지 업로드
           </Button>
         </div>
@@ -189,10 +189,13 @@ function ImageUploadField({
           )}
         >
           {phase === 'uploading' ? (
-            <UploadingContent onComplete={handleAnimationComplete} />
+            <UploadingContent
+              onComplete={handleAnimationComplete}
+              compact={aspectRatio === '1/1'}
+            />
           ) : (
             <div className="flex flex-col items-center gap-300">
-              <Image src={AdminCloudUploadIcon} alt="upload" width={32} height={32} />
+              <Image src={AdminCloudUploadIcon} alt="upload" width={36} height={36} />
               <div className="flex flex-col items-center gap-200">
                 <span className="typo-sub1 text-text-normal">{title}</span>
                 <span className="typo-caption2 text-text-alternative">{description}</span>
