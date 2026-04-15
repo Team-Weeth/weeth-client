@@ -31,7 +31,7 @@ export function useDeletePost() {
   });
 
   const deletePost = (postId: number, onSuccess?: () => void) => {
-    mutation.mutate(postId, { onSuccess: () => onSuccess?.() });
+    return mutation.mutateAsync(postId, { onSuccess: () => onSuccess?.() });
   };
 
   return { deletePost, isPending: mutation.isPending };
