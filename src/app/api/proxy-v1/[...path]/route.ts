@@ -1,12 +1,13 @@
-// Comment 부분에 v4 api가 나오기 전까지 임시 사용 (v4 나오면 제거될 예정)
-
 import { cookies } from 'next/headers';
 import { NextRequest, NextResponse } from 'next/server';
 import { API_V1_BASE_PATH } from '@/constants/api';
 import { ACCESS_TOKEN_KEY } from '@/lib/apis/cookies';
 
 async function handler(request: NextRequest, { params }: { params: Promise<{ path: string[] }> }) {
-  if (!API_V1_BASE_PATH) {
+  let baseUrl: URL;
+  try {
+    baseUrl = new URL(API_V1_BASE_PATH);
+  } catch {
     return NextResponse.json({ error: 'API URL not configured' }, { status: 500 });
   }
 
@@ -15,7 +16,6 @@ async function handler(request: NextRequest, { params }: { params: Promise<{ pat
     return NextResponse.json({ error: 'Invalid path' }, { status: 400 });
   }
 
-  const baseUrl = new URL(API_V1_BASE_PATH);
   const encodedPath = path.map((segment) => encodeURIComponent(segment)).join('/');
   const url = new URL(baseUrl);
   url.pathname = `${baseUrl.pathname.replace(/\/$/, '')}/${encodedPath}`;
@@ -53,6 +53,7 @@ async function handler(request: NextRequest, { params }: { params: Promise<{ pat
     const responseHeaders = new Headers(response.headers);
     responseHeaders.delete('transfer-encoding');
     responseHeaders.delete('content-encoding');
+    responseHeaders.delete('content-length');
     responseHeaders.delete('set-cookie');
 
     return new NextResponse(body, {
