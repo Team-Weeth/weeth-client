@@ -42,12 +42,13 @@ function FileList({ files, editable, onRemove }: FileListProps) {
       {files.map((item) =>
         editable ? (
           <div key={item.id} className={cn(rowStyles, item.uploaded === false && 'opacity-60')}>
-            <FileListItem item={item} showDownload={false} />
+            <Icon src={FolderIcon} size={20} className="text-icon-alternative shrink-0" />
+            <span className="text-text-normal typo-button2 min-w-0 truncate">{item.fileName}</span>
             <button
               type="button"
               onClick={() => onRemove(item.id, item.fileUrl)}
               aria-label={`${item.fileName} 삭제`}
-              className="text-state-error hover:text-state-error/80 shrink-0"
+              className="text-state-error hover:text-state-error/80 flex shrink-0 items-center"
             >
               <Icon src={DeleteIcon} size={16} />
             </button>

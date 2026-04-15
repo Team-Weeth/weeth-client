@@ -8,6 +8,8 @@ import { apiClient } from '@/lib/apis/client';
 import { useClubActions, useClubId } from '@/stores';
 
 interface ClubGuardProps {
+  /** 서버에서 쿠키 누락을 감지한 경우 true */
+  cookieMissing?: boolean;
   children: React.ReactNode;
 }
 
@@ -20,14 +22,16 @@ interface MyClubsResponse {
   data: Club[];
 }
 
-function ClubGuard({ children }: ClubGuardProps) {
+function ClubGuard({ cookieMissing, children }: ClubGuardProps) {
   const clubId = useClubId();
   const { setClub } = useClubActions();
   const router = useRouter();
   const fetchingRef = useRef(false);
 
+  const needsFetch = cookieMissing || !clubId;
+
   useEffect(() => {
-    if (clubId || fetchingRef.current) return;
+    if (!needsFetch || fetchingRef.current) return;
     fetchingRef.current = true;
 
     apiClient
@@ -43,7 +47,7 @@ function ClubGuard({ children }: ClubGuardProps) {
       .catch(() => {
         // 실패 시 무시 — 개별 쿼리들이 enabled: !!clubId로 게이팅됨
       });
-  }, [clubId, setClub, router]);
+  }, [needsFetch, setClub, router]);
 
   return <>{children}</>;
 }

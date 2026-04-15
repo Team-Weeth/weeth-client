@@ -2,6 +2,7 @@
 
 import { useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useBoardPosts } from '@/hooks';
 import { useIntersectionObserver } from '@/hooks/board/useIntersectionObserver';
 import { useUserId } from '@/stores/useUserStore';
@@ -19,11 +20,12 @@ function toDisplayImages(files: FileItem[]) {
 }
 
 function BoardContent() {
+  const router = useRouter();
   const activeBoardId = useActiveBoardId();
   const currentUserId = useUserId();
   const {
     data: posts,
-    isLoading,
+    isPending,
     isError,
     refetch,
     fetchNextPage,
@@ -40,7 +42,7 @@ function BoardContent() {
     }
   }, [isIntersecting, hasNextPage, isFetchingNextPage, fetchNextPage]);
 
-  if (isLoading) return <BoardContentSkeleton />;
+  if (isPending) return <BoardContentSkeleton />;
 
   if (isError)
     return (
@@ -62,37 +64,38 @@ function BoardContent() {
   return (
     <main className="flex min-w-0 flex-1 flex-col gap-400">
       {posts.map((post) => (
-        <Link key={post.id} href={`/board/${post.id}`}>
-          <PostCard.Root>
-            <PostCard.Header>
-              <PostCard.Author
-                author={post.author}
-                date={formatShortDateTime(post.time)}
-                hasAttachment={post.fileUrls.length > 0}
-              />
-              {currentUserId === post.author.id && (
-                <div
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                  }}
-                >
-                  <PostActionMenu postId={post.id} />
-                </div>
-              )}
-            </PostCard.Header>
+        <PostCard.Root key={post.id} className="relative">
+          <PostCard.Header>
+            <PostCard.Author
+              author={post.author}
+              date={formatShortDateTime(post.time)}
+              hasAttachment={post.fileUrls.length > 0}
+            />
+            {currentUserId === post.author.id && (
+              <div className="relative z-10">
+                <PostActionMenu postId={post.id} />
+              </div>
+            )}
+          </PostCard.Header>
+          <Link
+            href={`/board/${post.id}`}
+            className="after:absolute after:inset-0 after:content-['']"
+          >
             <PostCard.ListContent title={post.title} content={post.content} isNew={post.isNew} />
-            <div
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-              }}
-            >
-              <PostCard.Images files={toDisplayImages(post.fileUrls)} />
-            </div>
-            <PostCard.Actions likeCount={post.like.likeCount} commentCount={post.commentCount} />
-          </PostCard.Root>
-        </Link>
+          </Link>
+          <div className="relative z-10">
+            <PostCard.Images files={toDisplayImages(post.fileUrls)} />
+          </div>
+          <div className="relative z-10">
+            <PostCard.Actions
+              postId={post.id}
+              likeCount={post.like.likeCount}
+              commentCount={post.commentCount}
+              isLiked={post.like.isLiked}
+              onComment={() => router.push(`/board/${post.id}#comments`)}
+            />
+          </div>
+        </PostCard.Root>
       ))}
       {isFetchingNextPage && <BoardContentSkeleton />}
       <div ref={sentinelRef} />

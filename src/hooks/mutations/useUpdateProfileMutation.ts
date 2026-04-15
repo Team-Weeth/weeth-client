@@ -3,6 +3,7 @@ import { mypageApi } from '@/lib/apis/mypage';
 import { uploadFile } from '@/lib/apis/upload';
 import type { UpdateUserBody, UpdateClubProfileBody } from '@/lib/apis/mypage';
 import { useClubId } from '@/stores/useClubStore';
+import { useUserStore } from '@/stores/useUserStore';
 
 interface UpdateProfileParams {
   user: UpdateUserBody;
@@ -26,9 +27,23 @@ export function useUpdateProfileMutation() {
         ...(profileImage && { profileImage }),
       });
     },
-    onSuccess: () => {
-      if (clubId) {
-        queryClient.invalidateQueries({ queryKey: ['mypage', 'me', clubId] });
+    onSuccess: async () => {
+      if (!clubId) return;
+
+      try {
+        const res = await queryClient.fetchQuery({
+          queryKey: ['mypage', 'me', clubId],
+          queryFn: () => mypageApi.getMe(clubId).then((r) => r.data.data),
+          staleTime: 0,
+        });
+
+        useUserStore.setState(
+          { name: res.name, profileImageUrl: res.profileImageUrl },
+          false,
+          'syncProfile',
+        );
+      } catch {
+        void queryClient.invalidateQueries({ queryKey: ['mypage', 'me', clubId] });
       }
     },
   });
