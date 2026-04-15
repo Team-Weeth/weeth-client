@@ -25,9 +25,25 @@ function UserHydrator({ userInfo, clubInfo, syncCookies, children }: UserHydrato
   }
 
   useEffect(() => {
-    if (syncCookies) {
-      setClubCookie(clubInfo.clubId, clubInfo.clubName);
+    if (!syncCookies) return;
+
+    let cancelled = false;
+
+    async function sync(retries = 2) {
+      for (let i = 0; i <= retries; i++) {
+        try {
+          await setClubCookie(clubInfo.clubId, clubInfo.clubName);
+          return;
+        } catch {
+          if (cancelled || i === retries) break;
+        }
+      }
     }
+
+    sync();
+    return () => {
+      cancelled = true;
+    };
   }, [syncCookies, clubInfo.clubId, clubInfo.clubName]);
 
   return children;
