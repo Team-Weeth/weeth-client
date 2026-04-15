@@ -26,8 +26,7 @@ export const adminClubApi = {
   update: (clubId: string, body: UpdateClubBody) =>
     apiClient.patch<ApiResponse<Club>>(`/admin/clubs/${clubId}`, body),
 
-  deleteProfileImage: (clubId: string) =>
-    apiClient.delete(`/admin/clubs/${clubId}/profile-image`),
+  deleteProfileImage: (clubId: string) => apiClient.delete(`/admin/clubs/${clubId}/profile-image`),
 
   deleteBackgroundImage: (clubId: string) =>
     apiClient.delete(`/admin/clubs/${clubId}/background-image`),

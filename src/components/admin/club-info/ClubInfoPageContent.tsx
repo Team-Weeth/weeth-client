@@ -76,36 +76,41 @@ function ClubInfoPageContent({ schoolNames }: ClubInfoPageContentProps) {
     setBackgroundImage({ status: 'unchanged' });
   };
 
-  const handleSave = handleSubmit(async (formData) => {
-    try {
-      const deletePromises: Promise<unknown>[] = [];
-      if (profileImage.status === 'deleted') {
-        deletePromises.push(deleteProfileImage.mutateAsync());
-      }
-      if (backgroundImage.status === 'deleted') {
-        deletePromises.push(deleteBackgroundImage.mutateAsync());
-      }
-      if (deletePromises.length > 0) {
-        await Promise.all(deletePromises);
-      }
+  const handleSave = handleSubmit(
+    async (formData) => {
+      try {
+        const deletePromises: Promise<unknown>[] = [];
+        if (profileImage.status === 'deleted') {
+          deletePromises.push(deleteProfileImage.mutateAsync());
+        }
+        if (backgroundImage.status === 'deleted') {
+          deletePromises.push(deleteBackgroundImage.mutateAsync());
+        }
+        if (deletePromises.length > 0) {
+          await Promise.all(deletePromises);
+        }
 
-      const hasFormChanges = isDirty;
-      const hasUploadedImages =
-        profileImage.status === 'uploaded' || backgroundImage.status === 'uploaded';
+        const hasFormChanges = isDirty;
+        const hasUploadedImages =
+          profileImage.status === 'uploaded' || backgroundImage.status === 'uploaded';
 
-      if (hasFormChanges || hasUploadedImages) {
-        await updateClub.mutateAsync(buildUpdateClubBody(formData, profileImage, backgroundImage));
+        if (hasFormChanges || hasUploadedImages) {
+          await updateClub.mutateAsync(
+            buildUpdateClubBody(formData, profileImage, backgroundImage),
+          );
+        }
+
+        toastSuccess('동아리 정보가 저장되었습니다.');
+        setProfileImage({ status: 'unchanged' });
+        setBackgroundImage({ status: 'unchanged' });
+      } catch {
+        toastError('저장에 실패했습니다.');
       }
-
-      toastSuccess('동아리 정보가 저장되었습니다.');
-      setProfileImage({ status: 'unchanged' });
-      setBackgroundImage({ status: 'unchanged' });
-    } catch {
-      toastError('저장에 실패했습니다.');
-    }
-  }, () => {
-    toastError('입력값을 확인해주세요.');
-  });
+    },
+    () => {
+      toastError('입력값을 확인해주세요.');
+    },
+  );
 
   return (
     <div className="flex min-w-3xl flex-col">
