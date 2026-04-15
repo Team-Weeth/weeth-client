@@ -6,13 +6,12 @@ import Image from 'next/image';
 
 import { AdminCloudUploadIcon } from '@/assets/icons/admin';
 import { Button, Icon, ProgressBar } from '@/components/ui';
+import { useImageDrop } from '@/hooks/useImageDrop';
 import { useProgressAnimation } from '@/hooks/useProgressAnimation';
 import type { OwnerType } from '@/lib/apis/file';
 import { uploadFile } from '@/lib/apis/upload';
 import { cn } from '@/lib/cn';
 import { toastError } from '@/stores/useToastStore';
-
-type Phase = 'idle' | 'uploading' | 'preview';
 
 interface UploadResult {
   storageKey: string;
@@ -27,6 +26,18 @@ function UploadingContent({ onComplete, compact }: { onComplete: () => void; com
       <Image src={AdminCloudUploadIcon} alt="upload" width={32} height={32} />
       <span className="typo-sub1 text-text-strong">업로드 중...</span>
       <ProgressBar value={progress} className={cn('h-2 w-full', compact && 'max-w-32')} />
+    </div>
+  );
+}
+
+function IdleContent({ title, description }: { title: string; description: string }) {
+  return (
+    <div className="flex flex-col items-center gap-300">
+      <Image src={AdminCloudUploadIcon} alt="upload" width={36} height={36} />
+      <div className="flex flex-col items-center gap-200">
+        <span className="typo-sub1 text-text-normal">{title}</span>
+        <span className="typo-caption2 text-text-alternative">{description}</span>
+      </div>
     </div>
   );
 }
@@ -81,6 +92,49 @@ interface ImageUploadFieldProps extends React.HTMLAttributes<HTMLDivElement> {
   onReset?: () => void;
 }
 
+function useS3Upload(
+  ownerType: OwnerType,
+  onUploadComplete?: (result: UploadResult) => void,
+  onReset?: () => void,
+) {
+  const [isUploading, setIsUploading] = useState(false);
+  const uploadDoneRef = useRef(false);
+  const animationDoneRef = useRef(false);
+
+  const tryFinish = () => {
+    if (uploadDoneRef.current && animationDoneRef.current) {
+      setIsUploading(false);
+      uploadDoneRef.current = false;
+      animationDoneRef.current = false;
+    }
+  };
+
+  const startUpload = async (file: File) => {
+    uploadDoneRef.current = false;
+    animationDoneRef.current = false;
+    setIsUploading(true);
+
+    try {
+      const result = await uploadFile(file, ownerType);
+      const objectUrl = URL.createObjectURL(file);
+      onUploadComplete?.({ storageKey: result.storageKey, fileUrl: objectUrl });
+      uploadDoneRef.current = true;
+      tryFinish();
+    } catch {
+      toastError('이미지 업로드에 실패했습니다.');
+      onReset?.();
+      setIsUploading(false);
+    }
+  };
+
+  const onAnimationComplete = () => {
+    animationDoneRef.current = true;
+    tryFinish();
+  };
+
+  return { isUploading, startUpload, onAnimationComplete };
+}
+
 function ImageUploadField({
   label,
   title,
@@ -94,73 +148,22 @@ function ImageUploadField({
   ...props
 }: ImageUploadFieldProps) {
   const inputRef = useRef<HTMLInputElement>(null);
-  const [isDragging, setIsDragging] = useState(false);
-  const [isUploading, setIsUploading] = useState(false);
-  const uploadDoneRef = useRef(false);
-  const animationDoneRef = useRef(false);
+  const { isUploading, startUpload, onAnimationComplete } = useS3Upload(
+    ownerType,
+    onUploadComplete,
+    onReset,
+  );
+  const { isDragging, dragHandlers } = useImageDrop({ onDrop: startUpload });
 
-  const phase: Phase = isUploading ? 'uploading' : previewUrl ? 'preview' : 'idle';
+  const phase = isUploading ? 'uploading' : previewUrl ? 'preview' : 'idle';
+  const isCompact = aspectRatio === '1/1';
 
-  const tryFinishUpload = () => {
-    if (uploadDoneRef.current && animationDoneRef.current) {
-      setIsUploading(false);
-      uploadDoneRef.current = false;
-      animationDoneRef.current = false;
-    }
-  };
-
-  const openFileDialog = () => {
-    inputRef.current?.click();
-  };
-
-  const handleFileSelected = async (selectedFile: File) => {
-    uploadDoneRef.current = false;
-    animationDoneRef.current = false;
-    setIsUploading(true);
-
-    try {
-      const result = await uploadFile(selectedFile, ownerType);
-      const objectUrl = URL.createObjectURL(selectedFile);
-      onUploadComplete?.({ storageKey: result.storageKey, fileUrl: objectUrl });
-      uploadDoneRef.current = true;
-      tryFinishUpload();
-    } catch {
-      toastError('이미지 업로드에 실패했습니다.');
-      onReset?.();
-      setIsUploading(false);
-    }
-  };
-
-  const handleAnimationComplete = () => {
-    animationDoneRef.current = true;
-    tryFinishUpload();
-  };
+  const openFileDialog = () => inputRef.current?.click();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const selectedFile = e.target.files?.[0];
-    if (selectedFile) {
-      handleFileSelected(selectedFile);
-    }
+    const file = e.target.files?.[0];
+    if (file) startUpload(file);
     e.target.value = '';
-  };
-
-  const handleDragOver = (e: React.DragEvent) => {
-    e.preventDefault();
-    setIsDragging(true);
-  };
-
-  const handleDragLeave = (e: React.DragEvent) => {
-    e.preventDefault();
-    setIsDragging(false);
-  };
-
-  const handleDrop = (e: React.DragEvent) => {
-    e.preventDefault();
-    setIsDragging(false);
-    const droppedFile = e.dataTransfer.files?.[0];
-    if (droppedFile && droppedFile.type.startsWith('image/')) {
-      handleFileSelected(droppedFile);
-    }
   };
 
   return (
@@ -177,30 +180,19 @@ function ImageUploadField({
         <button
           type="button"
           onClick={openFileDialog}
-          onDragOver={handleDragOver}
-          onDragLeave={handleDragLeave}
-          onDrop={handleDrop}
+          {...dragHandlers}
           className={cn(
             'bg-container-neutral-alternative flex flex-1 cursor-pointer flex-col items-center justify-center rounded-sm p-400',
-            aspectRatio === '1/1' && 'aspect-square',
+            isCompact && 'aspect-square',
             isDragging
               ? 'border-brand-primary bg-container-neutral-interaction shadow-weeth border border-dashed'
               : 'border border-transparent',
           )}
         >
           {phase === 'uploading' ? (
-            <UploadingContent
-              onComplete={handleAnimationComplete}
-              compact={aspectRatio === '1/1'}
-            />
+            <UploadingContent onComplete={onAnimationComplete} compact={isCompact} />
           ) : (
-            <div className="flex flex-col items-center gap-300">
-              <Image src={AdminCloudUploadIcon} alt="upload" width={36} height={36} />
-              <div className="flex flex-col items-center gap-200">
-                <span className="typo-sub1 text-text-normal">{title}</span>
-                <span className="typo-caption2 text-text-alternative">{description}</span>
-              </div>
-            </div>
+            <IdleContent title={title} description={description} />
           )}
         </button>
       )}

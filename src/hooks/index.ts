@@ -13,4 +13,5 @@ export { useDeletePost } from './board/useDeletePost';
 export { useIntersectionObserver } from './board/useIntersectionObserver';
 export { useLineClamp } from './useLineClamp';
 export { useNavigationGuard } from './useNavigationGuard';
+export { useImageDrop } from './useImageDrop';
 export { useProgressAnimation } from './useProgressAnimation';
