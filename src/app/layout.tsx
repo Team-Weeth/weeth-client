@@ -24,10 +24,33 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  title: 'Weeth',
-  description: '동아리는 우리 모두가 함께 하는 것! with, Weeth!',
+  title: '우리 동아리만의 사이트를 원한다면, 위드',
+  description:
+    '동아리의 출석부터 활동 공유까지! 위드에서 동아리만의 사이트를 개설하여 관리해보세요.',
   icons: {
     icon: '/assets/favicon/favicon.svg',
+  },
+  openGraph: {
+    title: '우리 동아리만의 사이트를 원한다면, 위드',
+    description:
+      '동아리의 출석부터 활동 공유까지! 위드에서 동아리만의 사이트를 개설하여 관리해보세요.',
+    images: [
+      {
+        url: '/assets/og/og-image.png',
+        width: 1200,
+        height: 630,
+        alt: 'Weeth',
+      },
+    ],
+    type: 'website',
+    locale: 'ko_KR',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: '우리 동아리만의 사이트를 원한다면, 위드',
+    description:
+      '동아리의 출석부터 활동 공유까지! 위드에서 동아리만의 사이트를 개설하여 관리해보세요.',
+    images: ['/assets/og/og-image.png'],
   },
 };
 
