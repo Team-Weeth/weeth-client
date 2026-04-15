@@ -22,7 +22,7 @@ function AdminInfoCard({
       )}
       {...props}
     >
-      <h3 className="typo-sub1 text-text-normal">{title}</h3>
+      <h3 className="typo-sub2 text-text-normal">{title}</h3>
       <div className={cn('mt-400 flex flex-col gap-300', titleGapClassName, contentClassName)}>
         {children}
       </div>

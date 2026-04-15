@@ -23,7 +23,7 @@ function MonthNavigator({ className, year, month, onPrev, onNext, ...props }: Mo
       >
         <Image src={AdminSquareLeftIcon} alt="이전 달" width={20} height={20} />
       </button>
-      <span className="typo-sub1 text-text-strong">{formatYearMonth(year, month)}</span>
+      <span className="typo-sub2 text-text-strong">{formatYearMonth(year, month)}</span>
       <button
         type="button"
         onClick={onNext}
