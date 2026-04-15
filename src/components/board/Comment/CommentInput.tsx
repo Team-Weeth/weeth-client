@@ -35,9 +35,13 @@ function CommentInput({
   const handleSubmit = async () => {
     const trimmed = value.trim();
     if (!trimmed || !onSubmit) return;
-    const ok = await onSubmit(trimmed);
-    if (ok !== false) {
-      handleChange('');
+    try {
+      const ok = await onSubmit(trimmed);
+      if (ok !== false) {
+        handleChange('');
+      }
+    } catch {
+      // 실패 시 초안 유지
     }
   };
 
