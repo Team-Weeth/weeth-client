@@ -11,7 +11,14 @@ async function handler(request: NextRequest, { params }: { params: Promise<{ pat
   }
 
   const { path } = await params;
-  const url = new URL(`${API_V1_BASE_PATH}/${path.join('/')}`);
+  if (path.some((segment) => segment === '.' || segment === '..')) {
+    return NextResponse.json({ error: 'Invalid path' }, { status: 400 });
+  }
+
+  const baseUrl = new URL(API_V1_BASE_PATH);
+  const encodedPath = path.map((segment) => encodeURIComponent(segment)).join('/');
+  const url = new URL(baseUrl);
+  url.pathname = `${baseUrl.pathname.replace(/\/$/, '')}/${encodedPath}`;
   url.search = request.nextUrl.search;
 
   const cookieStore = await cookies();
@@ -20,6 +27,7 @@ async function handler(request: NextRequest, { params }: { params: Promise<{ pat
   const headers = new Headers(request.headers);
   headers.delete('cookie');
   headers.delete('accept-encoding');
+  headers.delete('authorization');
   headers.set('host', new URL(API_V1_BASE_PATH).host);
 
   if (accessToken) {
