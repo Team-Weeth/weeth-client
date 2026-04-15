@@ -2,6 +2,7 @@
 
 import dynamic from 'next/dynamic';
 import { HomeTutorialLauncher } from '@/components/home/HomeTutorialLauncher';
+import { useHomeGuard } from '@/hooks/home';
 import { BannerSkeleton } from '@/components/home/skeleton';
 import {
   LeftContainerSkeleton,
@@ -38,6 +39,8 @@ function HomePageSkeleton() {
 }
 
 export function HomePageEntry() {
+  useHomeGuard();
+
   return (
     <>
       <HomeTutorialLauncher />
