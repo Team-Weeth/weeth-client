@@ -19,3 +19,4 @@ export { default as AdminCalendarIcon } from './ic_admin_calendar.svg';
 export { default as AdminSquareLeftIcon } from './ic_admin_square_left.svg';
 export { default as AdminSquareRightIcon } from './ic_admin_square_right.svg';
 export { default as AdminCalendarEditIcon } from './ic_admin_calendar_edit.svg';
+export { default as AdminCloudUploadIcon } from './ic_admin_cloud_upload.svg';
