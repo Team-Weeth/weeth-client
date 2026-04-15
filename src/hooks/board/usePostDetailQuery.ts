@@ -8,7 +8,7 @@ export function usePostDetailQuery(postId: number, initialData?: PostDetail) {
   const clubId = useClubId();
 
   return useQuery({
-    queryKey: ['posts', 'detail', postId],
+    queryKey: ['posts', 'detail', clubId, postId],
     queryFn: () => boardApi.getPostById(clubId!, postId).then((res) => res.data.data),
     initialData,
     enabled: !!clubId,

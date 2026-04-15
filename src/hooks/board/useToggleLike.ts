@@ -20,7 +20,7 @@ function useToggleLike({
   const clubId = useClubId();
   const queryClient = useQueryClient();
 
-  const detailKey = ['posts', 'detail', postId] as const;
+  const detailKey = ['posts', 'detail', clubId, postId] as const;
 
   const mutation = useMutation({
     mutationFn: () => boardApi.toggleLike(clubId!, postId),
