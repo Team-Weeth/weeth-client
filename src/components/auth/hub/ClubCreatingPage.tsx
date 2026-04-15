@@ -10,6 +10,7 @@ import { useProgressAnimation } from '@/hooks';
 import { useClubActions, useCreateClubDraftStore } from '@/stores';
 import { toastError } from '@/stores/useToastStore';
 import type { CreateClubDraftState } from '@/stores/useCreateClubDraftStore';
+import { setClubCookie } from '@/lib/actions/club';
 
 interface ClubCreatingPageProps {
   intent?: string;
@@ -47,23 +48,30 @@ function ClubCreatingPage({ intent, onCancel }: ClubCreatingPageProps) {
 
     const { school, name, description, generation, phone, email, contactType } =
       useCreateClubDraftStore.getState() as CreateClubDraftState & Record<string, unknown>;
-    createClubAction({ school, name, description, generation, phone, email, contactType }).then(
-      (result) => {
-        if (result?.error) {
-          toastError(result.error);
-          onCancel?.();
-          return;
-        }
-        if (!result.clubId) {
-          toastError('동아리 생성에 실패했습니다. 다시 시도해주세요.');
-          onCancel?.();
-          return;
-        }
-        createdClubIdRef.current = result.clubId;
-        setClub(result.clubId, name);
-        setApiDone(true);
-      },
-    );
+    createClubAction({
+      school,
+      name,
+      description,
+      generation,
+      phone,
+      email,
+      contactType,
+    }).then(async (result) => {
+      if (result?.error) {
+        toastError(result.error);
+        onCancel?.();
+        return;
+      }
+      if (!result.clubId) {
+        toastError('동아리 생성에 실패했습니다. 다시 시도해주세요.');
+        onCancel?.();
+        return;
+      }
+      createdClubIdRef.current = result.clubId;
+      await setClubCookie(result.clubId, name);
+      setClub(result.clubId, name);
+      setApiDone(true);
+    });
   }, [progress, onCancel, setClub]);
 
   // API가 애니메이션 이후에 완료된 경우 즉시 navigate
