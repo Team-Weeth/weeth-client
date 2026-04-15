@@ -21,7 +21,7 @@ export function useCommentMutation<TVariables>({
   return useMutation({
     mutationFn,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['posts', postId] });
+      queryClient.invalidateQueries({ queryKey: ['posts', 'detail', postId] });
       toast({ title: successMessage, variant: 'success' });
     },
     onError: (error) => {

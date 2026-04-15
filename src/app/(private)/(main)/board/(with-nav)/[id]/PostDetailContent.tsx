@@ -32,8 +32,8 @@ function PostDetailContent({ initialData }: PostDetailContentProps) {
   const currentUserId = useUserId();
   const setActiveBoardId = useSetActiveBoardId();
 
-  const { data: post } = usePostDetailQuery(initialData.id);
-  const currentPost = post ?? initialData;
+  const { data } = usePostDetailQuery(initialData.id, initialData);
+  const currentPost = data ?? initialData;
 
   const { createComment, isPending } = useCreateComment(currentPost.id);
   const { updateComment } = useUpdateComment(currentPost.id);

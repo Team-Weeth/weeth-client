@@ -20,14 +20,16 @@ function useToggleLike({
   const clubId = useClubId();
   const queryClient = useQueryClient();
 
+  const detailKey = ['posts', 'detail', postId] as const;
+
   const mutation = useMutation({
     mutationFn: () => boardApi.toggleLike(clubId!, postId),
     onMutate: async () => {
-      await queryClient.cancelQueries({ queryKey: ['posts', postId] });
+      await queryClient.cancelQueries({ queryKey: detailKey });
 
-      const previousDetail = queryClient.getQueryData<PostDetail>(['posts', postId]);
+      const previousDetail = queryClient.getQueryData<PostDetail>(detailKey);
 
-      queryClient.setQueryData<PostDetail>(['posts', postId], (old) => {
+      queryClient.setQueryData<PostDetail>(detailKey, (old) => {
         if (!old) return old;
         return {
           ...old,
@@ -43,15 +45,15 @@ function useToggleLike({
     onSuccess: (res) => {
       const serverLike = res.data.data;
 
-      queryClient.setQueryData<PostDetail>(['posts', postId], (old) => {
+      queryClient.setQueryData<PostDetail>(detailKey, (old) => {
         if (!old) return old;
         return { ...old, like: serverLike };
       });
 
       queryClient.setQueriesData<
         InfiniteData<AxiosResponse<ApiResponse<{ content: PostListItem[] }>>>
-      >({ queryKey: ['posts'], type: 'all' }, (old) => {
-        if (!old) return old;
+      >({ queryKey: ['posts', clubId], type: 'all' }, (old) => {
+        if (!old?.pages) return old;
         return {
           ...old,
           pages: old.pages.map((page) => ({
@@ -71,12 +73,12 @@ function useToggleLike({
     },
     onError: (_error, _variables, context) => {
       if (context?.previousDetail) {
-        queryClient.setQueryData(['posts', postId], context.previousDetail);
+        queryClient.setQueryData(detailKey, context.previousDetail);
       }
     },
   });
 
-  const detail = queryClient.getQueryData<PostDetail>(['posts', postId]);
+  const detail = queryClient.getQueryData<PostDetail>(detailKey);
   const isLiked = detail?.like.isLiked ?? initialIsLiked;
   const likeCount = detail?.like.likeCount ?? initialLikeCount;
 
