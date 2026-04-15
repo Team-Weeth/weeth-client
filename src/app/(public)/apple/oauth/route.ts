@@ -27,15 +27,19 @@ export async function GET(request: NextRequest) {
 
   // 프론트 쿠키 체계로 변환하여 설정
   if (rawAccessToken) {
-    const accessToken = rawAccessToken.replace(/^Bearer\s+/i, '');
-    redirectResponse.cookies.set(ACCESS_TOKEN_KEY, accessToken, ACCESS_COOKIE_OPTIONS);
+    const accessToken = rawAccessToken.replace(/^Bearer\s+/i, '').trim();
+    if (accessToken) {
+      redirectResponse.cookies.set(ACCESS_TOKEN_KEY, accessToken, ACCESS_COOKIE_OPTIONS);
+    }
     // 백엔드가 설정한 쿠키 삭제
     redirectResponse.cookies.delete('Authorization');
   }
 
   if (rawRefreshToken) {
-    const refreshToken = rawRefreshToken.replace(/^Bearer\s+/i, '');
-    redirectResponse.cookies.set(REFRESH_TOKEN_KEY, refreshToken, REFRESH_COOKIE_OPTIONS);
+    const refreshToken = rawRefreshToken.replace(/^Bearer\s+/i, '').trim();
+    if (refreshToken) {
+      redirectResponse.cookies.set(REFRESH_TOKEN_KEY, refreshToken, REFRESH_COOKIE_OPTIONS);
+    }
     redirectResponse.cookies.delete('Authorization_refresh');
   }
 
