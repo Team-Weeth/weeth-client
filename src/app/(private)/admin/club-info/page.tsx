@@ -1,3 +1,5 @@
+import { unstable_rethrow } from 'next/navigation';
+
 import { ClubInfoPageContent } from '@/components/admin';
 import { apiServer } from '@/lib/apis';
 
@@ -20,6 +22,7 @@ export default async function ClubInfoPage() {
       counts[s.schoolName] > 1 ? `${s.schoolName}(${s.region})` : s.schoolName,
     );
   } catch (error) {
+    unstable_rethrow(error);
     console.error('학교 목록 로드 실패:', error);
   }
 

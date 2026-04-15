@@ -120,10 +120,8 @@ function ClubInfoPageContent({ schoolNames }: ClubInfoPageContentProps) {
             <FieldBlock label="동아리 소개" helper="최대 30자" error={errors.description?.message}>
               <Input
                 value={description ?? ''}
-                onChange={(e) => {
-                  const value = e.target.value.slice(0, 30);
-                  setValue('description', value, { shouldDirty: true });
-                }}
+                onChange={(e) => setValue('description', e.target.value, { shouldDirty: true })}
+                maxLength={30}
                 placeholder="동아리를 소개하는 짧은 글을 작성해주세요"
                 className="bg-container-neutral-alternative rounded-sm border-transparent px-400 py-300"
               />
