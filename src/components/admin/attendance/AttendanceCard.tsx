@@ -137,7 +137,7 @@ function AttendanceCard({
         <div className="bg-container-neutral rounded-sm">
           {/* Header row */}
           <div className="flex">
-            <div className="border-line flex min-w-0 flex-1 items-center rounded-tl-sm border px-400 py-300">
+            <div className="border-line flex h-[48px] min-w-0 flex-1 items-center rounded-tl-sm border px-400 py-300">
               <span className="typo-sub2 text-text-alternative">사용자 정보</span>
             </div>
             {isEditing ? (
@@ -159,7 +159,7 @@ function AttendanceCard({
           {/* Member rows */}
           {filteredMembers.map((member) => (
             <div key={member.id} className="flex">
-              <div className="border-line flex min-w-0 flex-1 flex-col justify-center border px-400 py-300">
+              <div className="border-line flex min-w-0 flex-1 flex-col justify-center gap-200 border px-400 py-300">
                 <span className="typo-sub2 text-text-strong">{member.name}</span>
                 <div className="mt-100 flex items-center gap-200">
                   <span className="typo-body2 text-text-normal">{member.department}</span>
