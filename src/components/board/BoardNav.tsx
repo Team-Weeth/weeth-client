@@ -21,7 +21,7 @@ function BoardNav({ className, items, activeId, onItemSelect, ...props }: BoardN
       {...props}
     >
       {/* 헤더 */}
-      <h2 className="typo-sub1 text-text-strong self-stretch px-450 pt-450 pb-300">게시판</h2>
+      <h2 className="typo-sub2 text-text-strong self-stretch px-450 pt-450 pb-300">게시판</h2>
 
       {/* 채널 목록 */}
       <ChannelList

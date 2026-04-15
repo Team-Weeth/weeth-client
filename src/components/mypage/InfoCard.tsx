@@ -18,7 +18,7 @@ function InfoCard({ items, className, ...props }: InfoCardProps) {
     <div className={cn(cardClass, className, 'w-full')} {...props}>
       {items.map((item) => (
         <div key={item.label} className="flex items-center gap-400">
-          <span className="typo-sub2 text-text-alternative w-[78px] shrink-0">{item.label}</span>
+          <span className="typo-sub3 text-text-alternative w-[78px] shrink-0">{item.label}</span>
           <span className="typo-body1 text-text-strong min-w-0 flex-1">{item.value}</span>
         </div>
       ))}

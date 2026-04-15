@@ -41,7 +41,7 @@ function HomeBoardContent() {
           </Avatar>
           <p className="typo-caption1">Weeth 관리자</p>
         </div>
-        <p className="typo-sub2 text-text-strong">
+        <p className="typo-sub3 text-text-strong">
           {isAdmin ? '사이트 개설을 축하합니다!' : '아직 게시된 글이 없어요!'}
           <br />첫 게시글을 작성해서 커뮤니티를 활성화해보세요.
         </p>

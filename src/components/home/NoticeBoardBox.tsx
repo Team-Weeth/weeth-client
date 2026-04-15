@@ -18,7 +18,7 @@ export function NoticeBoardBox() {
   return (
     <div className="bg-container-neutral flex flex-col rounded-lg pb-300">
       <div className="flex items-center justify-between p-450">
-        <p className="typo-sub1 text-text-strong">공지</p>
+        <p className="typo-sub2 text-text-strong">공지</p>
         <button type="button" aria-label="공지 전체보기" onClick={() => router.push('/board')}>
           <Image
             src={ArrowRightIcon}
@@ -38,7 +38,7 @@ export function NoticeBoardBox() {
               <div className="flex flex-col items-start gap-300 py-400">
                 <div className="flex flex-col gap-200">
                   <div className="flex gap-[5px]">
-                    <p className="typo-sub2 text-text-strong">{notice.title}</p>
+                    <p className="typo-sub3 text-text-strong">{notice.title}</p>
                     {notice.isNew && <Image src={NewIcon} alt="new" width={9} height={12} />}
                   </div>
                   <p className="typo-body2 text-icon-normal line-clamp-2 max-w-[268px]">

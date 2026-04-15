@@ -40,7 +40,7 @@ function GenerationCard({
 }: GenerationCardProps) {
   return (
     <button ref={ref} className={cn(generationCardVariants({ variant }), className)} {...props}>
-      <span className="typo-sub2">{subtitle}</span>
+      <span className="typo-3">{subtitle}</span>
       <div className="flex flex-col gap-100">
         <p className="typo-h3">{title}</p>
         {description && <p className="typo-caption2 opacity-50">{description}</p>}

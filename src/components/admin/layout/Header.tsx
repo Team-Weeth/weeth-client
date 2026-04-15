@@ -33,7 +33,7 @@ export function Header() {
       {metadata && (
         <>
           <div className="border-line h-5 w-px shrink-0" />
-          <span className="typo-sub1 text-text-strong shrink-0">{metadata.title}</span>
+          <span className="typo-sub2 text-text-strong shrink-0">{metadata.title}</span>
           <span className="typo-body2 text-text-alternative min-w-0 truncate">
             {metadata.description}
           </span>

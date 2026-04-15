@@ -48,7 +48,7 @@ function ClubInfoCard({ club, className }: ClubInfoCardProps) {
           </div>
 
           <div className="flex flex-col gap-100 pt-[6px]">
-            <span className="typo-sub1 text-text-strong">{club.name}</span>
+            <span className="typo-sub2 text-text-strong">{club.name}</span>
             {club.description && (
               <p className="typo-body2 text-text-alternative line-clamp-1">{club.description}</p>
             )}

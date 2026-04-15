@@ -10,7 +10,7 @@ interface InfoSectionProps extends React.HTMLAttributes<HTMLElement> {
 function InfoSection({ title, children, className, ...props }: InfoSectionProps) {
   return (
     <section className={cn('flex w-full flex-col gap-400', className)} {...props}>
-      <h2 className="typo-sub1 text-text-alternative">{title}</h2>
+      <h2 className="typo-sub2 text-text-alternative">{title}</h2>
       {children}
     </section>
   );

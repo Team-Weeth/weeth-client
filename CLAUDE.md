@@ -37,7 +37,7 @@ No hardcoded values. Always use token classes first. Ask user before adding new 
 | Text       | `text-text-strong` `text-text-normal` `text-text-alternative` `text-text-disabled` `text-text-inverse` |
 | Background | `bg-container-neutral` `bg-container-neutral-interaction`                                              |
 | Button     | `bg-button-primary` `bg-button-neutral`                                                                |
-| Typography | `typo-h1~h3` `typo-sub1~2` `typo-body1~2` `typo-caption1~2` `typo-button1~2`                           |
+| Typography | `typo-h1~h3` `typo-sub1~3` `typo-body1~2` `typo-caption1~2` `typo-button1~2`                           |
 | Spacing    | `p-100~500` `gap-100~400`                                                                              |
 
 → Full token list: `.claude/rules/design-tokens.md`

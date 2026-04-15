@@ -169,7 +169,7 @@ function ServiceSectionTablet({
       >
         <div className="mx-auto flex w-full max-w-[1300px] flex-col px-600">
           <div className="flex shrink-0 items-center gap-200">
-            <span className="typo-sub2 mt-[16px] flex items-center gap-[13px] text-[#1E2021]">
+            <span className="typo-sub3 mt-[16px] flex items-center gap-[13px] text-[#1E2021]">
               <Image
                 src={variant === 'user' ? LandingUserFaceIcon : LandingAdminFaceIcon}
                 alt="face-icon"

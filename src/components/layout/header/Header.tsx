@@ -43,7 +43,7 @@ export default function Header({ isMain = true }: HeaderProps) {
               height={40}
               className="cursor-pointer p-2"
             />
-            <span className="typo-sub2 px-1 text-neutral-700">{clubName}</span>
+            <span className="typo-sub1 text-text-normal px-1">{clubName}</span>
           </div>
         )}
         <button
@@ -94,7 +94,7 @@ export default function Header({ isMain = true }: HeaderProps) {
               );
             })}
         </div>
-        {isMain && <span className="typo-sub2 text-neutral-700">{clubName}</span>}
+        {isMain && <span className="typo-sub1 text-neutral-700">{clubName}</span>}
         {isMain && (isPostingPage ? <PostingActions /> : <DefaultActions />)}
       </header>
     </>

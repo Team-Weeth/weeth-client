@@ -15,7 +15,7 @@ export function AlertBanner() {
     >
       <Image src={CompleteIcon} width={40} height={40} alt="complete" />
       <div className="flex flex-col gap-100">
-        <p className="typo-sub2 text-text-normal">나의 프로필을 완성하세요!</p>
+        <p className="typo-sub3 text-text-normal">나의 프로필을 완성하세요!</p>
         <p className="typo-body2 text-text-alternative">완성하고 게시글을 작성해요.</p>
       </div>
     </button>

@@ -24,7 +24,7 @@ function ClubSelectedCard({ club, onRemove }: ClubSelectedCardProps) {
           </AvatarFallback>
         </Avatar>
         <div className="flex flex-col gap-0.5">
-          <span className="typo-sub2 text-text-strong">{club.name}</span>
+          <span className="typo-sub3 text-text-strong">{club.name}</span>
           <span className="typo-body2 text-text-alternative">{club.description}</span>
         </div>
       </div>

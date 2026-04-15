@@ -88,7 +88,7 @@ function CreateClubForm({ schoolNames, schoolLoadError = false }: CreateClubForm
   return (
     <div className="mx-auto flex w-full max-w-145 flex-col px-400 pt-450 pb-600">
       <div className="mb-600 flex flex-col gap-200">
-        <h1 className="typo-sub1 text-text-strong">동아리 정보 입력</h1>
+        <h1 className="typo-sub2 text-text-strong">동아리 정보 입력</h1>
         <p className="typo-body2 text-text-alternative">
           동아리의 기본 정보를 입력하면
           <br />

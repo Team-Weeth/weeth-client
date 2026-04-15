@@ -14,10 +14,10 @@ export function TodayScheduleBox() {
 
   return (
     <div className="bg-container-neutral rounded-lg">
-      <p className="typo-sub1 text-text-strong p-450">오늘의 일정</p>
+      <p className="typo-sub2 text-text-strong p-450">오늘의 일정</p>
       {data?.title ? (
         <div className="flex flex-col gap-[14px] p-450">
-          <p className="typo-sub1 text-text-strong">{data.title}</p>
+          <p className="typo-sub2 text-text-strong">{data.title}</p>
           <ChipList>
             <Chip shape="round">{formatDateWithTimeRange(data.start!, data.end!)}</Chip>
             <Chip shape="round">{data.location}</Chip>

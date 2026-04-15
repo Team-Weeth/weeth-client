@@ -43,7 +43,7 @@ function ClubTypesSection({ className }: ClubTypesSectionProps) {
         <div className="animate-marquee flex">
           {[...CLUB_TYPES, ...CLUB_TYPES].map(({ label, image }, i) => (
             <div key={i} className="tablet:w-[348px] flex w-[174px] flex-shrink-0 flex-col">
-              <span className="typo-sub2 text-text-alternative ml-[10px]">{label}</span>
+              <span className="typo-sub3 text-text-alternative ml-[10px]">{label}</span>
               <div className="tablet:h-[501px] relative h-[220px] w-full">
                 <Image src={image} alt={label} fill className="object-cover" />
               </div>
@@ -55,7 +55,7 @@ function ClubTypesSection({ className }: ClubTypesSectionProps) {
       <div className="desktop:flex hidden w-full">
         {CLUB_TYPES.map(({ label, image }) => (
           <div key={label} className="flex flex-1 flex-col gap-[10px]">
-            <span className="typo-sub2 text-text-alternative ml-[10px]">{label}</span>
+            <span className="typo-sub3 text-text-alternative ml-[10px]">{label}</span>
             <div className="desktop:h-[501px] relative h-full w-full">
               <Image src={image} alt={label} fill className="object-cover" />
             </div>
