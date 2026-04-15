@@ -25,7 +25,7 @@ function BoardContent() {
   const currentUserId = useUserId();
   const {
     data: posts,
-    isLoading,
+    isPending,
     isError,
     refetch,
     fetchNextPage,
@@ -42,7 +42,7 @@ function BoardContent() {
     }
   }, [isIntersecting, hasNextPage, isFetchingNextPage, fetchNextPage]);
 
-  if (isLoading) return <BoardContentSkeleton />;
+  if (isPending) return <BoardContentSkeleton />;
 
   if (isError)
     return (
