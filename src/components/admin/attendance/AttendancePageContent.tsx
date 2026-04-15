@@ -14,30 +14,27 @@ import {
 import { useCardinals } from '@/hooks/queries';
 
 import { AttendanceCard } from './AttendanceCard';
-import type { AttendanceMember } from './AttendanceCard';
+import type { AttendanceMember } from '@/types/admin/attendance';
 
 const MOCK_MEMBERS: AttendanceMember[] = [
   {
     id: 1,
     name: '조예진',
-    department: '디자인',
-    major: '시각디자인학과',
+    department: '시각디자인학과',
     studentId: '202036191',
     status: 'PENDING',
   },
   {
     id: 2,
     name: '조예진',
-    department: '디자인',
-    major: '시각디자인학과',
+    department: '시각디자인학과',
     studentId: '202036191',
-    status: 'PRESENT',
+    status: 'ATTEND',
   },
   {
     id: 3,
     name: '조예진',
-    department: '디자인',
-    major: '시각디자인학과',
+    department: '시각디자인학과',
     studentId: '202036191',
     status: 'ABSENT',
   },

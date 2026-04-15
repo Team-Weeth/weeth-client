@@ -1,25 +1,24 @@
 import { useState } from 'react';
 
-import type { AttendanceMember } from './AttendanceCard';
+import type { AttendanceMember } from '@/types/admin/attendance';
 
 type CardState = 'collapsed' | 'expanded' | 'editing';
 
 interface UseAttendanceCardParams {
   members: AttendanceMember[];
-  onSave?: (updates: { id: number; status: 'PRESENT' | 'ABSENT' }[]) => void;
+  onSave?: (updates: { id: number; status: 'ATTEND' | 'ABSENT' }[]) => void;
 }
 
 function useAttendanceCard({ members, onSave }: UseAttendanceCardParams) {
   const [cardState, setCardState] = useState<CardState>('collapsed');
   const [searchQuery, setSearchQuery] = useState('');
-  const [editStatuses, setEditStatuses] = useState<Map<number, 'PRESENT' | 'ABSENT'>>(new Map());
+  const [editStatuses, setEditStatuses] = useState<Map<number, 'ATTEND' | 'ABSENT'>>(new Map());
 
   const filteredMembers = members.filter(
     (m) =>
       m.name.includes(searchQuery) ||
       m.studentId.includes(searchQuery) ||
-      m.department.includes(searchQuery) ||
-      m.major.includes(searchQuery),
+      m.department.includes(searchQuery),
   );
 
   const isEditing = cardState === 'editing';
@@ -29,7 +28,7 @@ function useAttendanceCard({ members, onSave }: UseAttendanceCardParams) {
   const collapse = () => setCardState('collapsed');
 
   const startEdit = () => {
-    const initial = new Map<number, 'PRESENT' | 'ABSENT'>();
+    const initial = new Map<number, 'ATTEND' | 'ABSENT'>();
     members.forEach((m) => {
       if (m.status !== 'PENDING') {
         initial.set(m.id, m.status);
@@ -50,7 +49,7 @@ function useAttendanceCard({ members, onSave }: UseAttendanceCardParams) {
     setCardState('expanded');
   };
 
-  const toggleStatus = (memberId: number, status: 'PRESENT' | 'ABSENT') => {
+  const toggleStatus = (memberId: number, status: 'ATTEND' | 'ABSENT') => {
     setEditStatuses((prev) => {
       const next = new Map(prev);
       if (next.get(memberId) === status) {

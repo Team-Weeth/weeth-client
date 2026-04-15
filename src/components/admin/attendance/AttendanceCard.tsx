@@ -8,30 +8,22 @@ import {
 } from '@/assets/icons/admin';
 import { ArrowDownIcon, CheckRoundIcon, SearchIcon } from '@/assets/icons';
 import { Button, Icon } from '@/components/ui';
+import type { AttendanceMember } from '@/types/admin/attendance';
 import { cn } from '@/lib/cn';
 
 import { useAttendanceCard } from './useAttendanceCard';
-
-interface AttendanceMember {
-  id: number;
-  name: string;
-  department: string;
-  major: string;
-  studentId: string;
-  status: 'PENDING' | 'PRESENT' | 'ABSENT';
-}
 
 interface AttendanceCardProps extends React.HTMLAttributes<HTMLDivElement> {
   date: string;
   title: string;
   isCurrentWeek?: boolean;
   members: AttendanceMember[];
-  onSave?: (updates: { id: number; status: 'PRESENT' | 'ABSENT' }[]) => void;
+  onSave?: (updates: { id: number; status: 'ATTEND' | 'ABSENT' }[]) => void;
 }
 
 const STATUS_CONFIG = {
   PENDING: { src: AdminTimeIcon, label: '미결', className: 'text-text-alternative' },
-  PRESENT: { src: CheckRoundIcon, label: '출석', className: 'text-brand-primary' },
+  ATTEND: { src: CheckRoundIcon, label: '출석', className: 'text-brand-primary' },
   ABSENT: { src: AdminRoundCancelIcon, label: '결석', className: 'text-state-error' },
 } as const;
 
@@ -171,7 +163,6 @@ function AttendanceCard({
                 <span className="typo-sub2 text-text-strong">{member.name}</span>
                 <div className="mt-100 flex items-center gap-200">
                   <span className="typo-body2 text-text-normal">{member.department}</span>
-                  <span className="typo-body2 text-text-alternative">{member.major}</span>
                   <span className="typo-body2 text-text-alternative">{member.studentId}</span>
                 </div>
               </div>
@@ -180,19 +171,19 @@ function AttendanceCard({
                   <div className="border-line flex w-[79px] items-center justify-center border">
                     <button
                       type="button"
-                      onClick={() => toggleStatus(member.id, 'PRESENT')}
+                      onClick={() => toggleStatus(member.id, 'ATTEND')}
                       className="cursor-pointer"
                       aria-label={`${member.name} 출석`}
                     >
                       <Icon
                         src={
-                          getEditStatus(member.id) === 'PRESENT'
+                          getEditStatus(member.id) === 'ATTEND'
                             ? AdminRadioSelectedIcon
                             : AdminRadioUnselectedIcon
                         }
                         size={24}
                         className={
-                          getEditStatus(member.id) === 'PRESENT'
+                          getEditStatus(member.id) === 'ATTEND'
                             ? 'text-state-success'
                             : 'text-icon-alternative'
                         }
