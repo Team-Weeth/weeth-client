@@ -11,6 +11,7 @@ import type { UploadResult } from '@/components/admin/club-info/ImageUploadField
 import { ClubInfoTopBar } from '@/components/admin/club-info/ClubInfoTopBar';
 import { SearchSelect } from '@/components/mypage';
 import { Input } from '@/components/ui';
+import { PRIMARY_CONTACT_OPTIONS } from '@/constants/admin/clubInfo.constants';
 import {
   useUpdateClub,
   useDeleteClubProfileImage,
@@ -21,26 +22,11 @@ import type { ClubImagePayload, UpdateClubBody } from '@/lib/apis/adminClub';
 import { cn } from '@/lib/cn';
 import { clubInfoSchema, type ClubInfoFormData } from '@/lib/schemas/clubInfo';
 import { toastSuccess, toastError } from '@/stores/useToastStore';
+import type { ImageState } from '@/types/admin/clubInfo';
+import { formatPhone } from '@/utils/shared';
 
 interface ClubInfoPageContentProps {
   schoolNames: string[];
-}
-
-const PRIMARY_CONTACT_OPTIONS = [
-  { value: 'phone', label: '전화번호' },
-  { value: 'email', label: '이메일' },
-] as const;
-
-type ImageState =
-  | { status: 'unchanged' }
-  | { status: 'uploaded'; upload: UploadResult }
-  | { status: 'deleted' };
-
-function formatPhoneNumber(raw: string): string {
-  const digits = raw.replace(/\D/g, '');
-  if (digits.length === 11) return `${digits.slice(0, 3)}-${digits.slice(3, 7)}-${digits.slice(7)}`;
-  if (digits.length === 10) return `${digits.slice(0, 3)}-${digits.slice(3, 6)}-${digits.slice(6)}`;
-  return raw;
 }
 
 function toImagePayload(upload: UploadResult): ClubImagePayload {
@@ -81,7 +67,7 @@ function ClubInfoPageContent({ schoolNames }: ClubInfoPageContentProps) {
       school: club.schoolName,
       name: club.name,
       description: club.description ?? '',
-      phone: formatPhoneNumber(club.contactPhoneNumber ?? ''),
+      phone: formatPhone(club.contactPhoneNumber ?? ''),
       email: club.contactEmail ?? '',
       primaryContact: club.primaryContact === 'EMAIL' ? 'email' : 'phone',
     });
@@ -127,7 +113,7 @@ function ClubInfoPageContent({ schoolNames }: ClubInfoPageContentProps) {
         school: club.schoolName,
         name: club.name,
         description: club.description ?? '',
-        phone: formatPhoneNumber(club.contactPhoneNumber ?? ''),
+        phone: formatPhone(club.contactPhoneNumber ?? ''),
         email: club.contactEmail ?? '',
         primaryContact: club.primaryContact === 'EMAIL' ? 'email' : 'phone',
       });
