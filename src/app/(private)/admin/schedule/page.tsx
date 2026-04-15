@@ -1,3 +1,5 @@
+import { SchedulePageContent } from '@/components/admin';
+
 export default function SchedulePage() {
-  return <div>SchedulePage</div>;
+  return <SchedulePageContent />;
 }

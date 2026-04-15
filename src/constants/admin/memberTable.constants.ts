@@ -11,7 +11,7 @@ export const COLUMNS: { label: string; key: keyof Member }[] = [
   { label: '이름', key: 'name' },
   { label: '역할', key: 'role' },
   { label: '학과', key: 'department' },
-  { label: '기수', key: 'generation' },
+  { label: '기수', key: 'cardinal' },
   { label: '전화번호', key: 'phone' },
   { label: '학번', key: 'studentId' },
   { label: '직급', key: 'position' },
@@ -25,17 +25,17 @@ export const STATUS_LEGEND = [
   { label: '탈퇴', color: 'bg-text-alternative' },
 ] as const;
 
-export type SortBy = 'generation' | 'name';
+export type SortBy = 'cardinal' | 'name';
 
 export const SORT_LABEL: Record<SortBy, string> = {
-  generation: '기수',
+  cardinal: '기수',
   name: '이름',
 };
 
 export function sortMembers(members: Member[], sortBy: SortBy): Member[] {
   return [...members].sort((a, b) => {
-    if (sortBy === 'generation') {
-      return parseInt(b.generation, 10) - parseInt(a.generation, 10);
+    if (sortBy === 'cardinal') {
+      return parseInt(b.cardinal, 10) - parseInt(a.cardinal, 10);
     }
     return a.name.localeCompare(b.name, 'ko');
   });

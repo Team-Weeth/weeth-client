@@ -6,5 +6,5 @@ export const cardinalApi = {
   getCardinals: (clubId: string) =>
     apiClient.get<ApiResponse<Cardinal[]>>(`/clubs/${clubId}/cardinals`),
   createCardinal: (clubId: string, body: CreateCardinalBody) =>
-    apiClient.post(`/api/v4/admin/clubs/${clubId}/cardinals`, body),
+    apiClient.post(`/admin/clubs/${clubId}/cardinals`, body),
 };

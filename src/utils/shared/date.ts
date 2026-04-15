@@ -1,4 +1,12 @@
-import { DAY_NAMES } from '@/constants/shared/date';
+import { DAY_META } from '@/constants/shared/date';
+
+// '2026-03-09' (HTML <input type="date"> value 포맷)
+export function toDateInputValue(date: Date = new Date()): string {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
 
 // '2026년 3월 9일 (월)'
 export function formatKoreanDate(isoString: string): string {
@@ -6,7 +14,7 @@ export function formatKoreanDate(isoString: string): string {
   const year = date.getFullYear();
   const month = date.getMonth() + 1;
   const day = date.getDate();
-  const dayOfWeek = DAY_NAMES[date.getDay()];
+  const dayOfWeek = DAY_META[date.getDay()].ko;
   return `${year}년 ${month}월 ${day}일 (${dayOfWeek})`;
 }
 
@@ -15,7 +23,7 @@ export function formatKoreanTimeRange(start: string, end: string): string {
   const toLabel = (date: Date) => {
     const month = date.getMonth() + 1;
     const day = date.getDate();
-    const dayOfWeek = DAY_NAMES[date.getDay()];
+    const dayOfWeek = DAY_META[date.getDay()].ko;
     const hours = String(date.getHours()).padStart(2, '0');
     const minutes = String(date.getMinutes()).padStart(2, '0');
     return `${month}월 ${day}일 (${dayOfWeek}) ${hours}:${minutes}`;
@@ -43,4 +51,26 @@ export function groupByStartDate<T extends { start: string }>(items: T[]): [stri
     groupedByDate.get(dateKey)!.push(item);
   }
   return Array.from(groupedByDate.entries());
+}
+
+export function getDaysInMonth(year: number, month: number): number {
+  return new Date(year, month, 0).getDate();
+}
+
+export function getFirstDayOfMonth(year: number, month: number): number {
+  return new Date(year, month - 1, 1).getDay();
+}
+
+export function formatDateDisplay(dateStr: string): string {
+  if (!dateStr) return '';
+  const [year, month, day] = dateStr.split('-');
+  return `${year}. ${month}. ${day}.`;
+}
+
+export function formatTimeDisplay(timeStr: string): string {
+  if (!timeStr) return '';
+  const [h, m] = timeStr.split(':').map(Number);
+  const period = h < 12 ? '오전' : '오후';
+  const displayHour = h % 12 || 12;
+  return `${period} ${displayHour}:${String(m).padStart(2, '0')}`;
 }

@@ -1,32 +1,43 @@
 'use client';
 
 import { useState } from 'react';
+import { isAxiosError } from 'axios';
 
 import {
-  AddGenerationButton,
-  AddGenerationModal,
-  GenerationCard,
+  AddCardinalButton,
+  AddCardinalModal,
+  CardinalCard,
   MemberDetailModal,
   MemberSearchBar,
   MemberTable,
   MemberTopBar,
 } from '@/components/admin';
-import { Card } from '@/components/ui';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, Card } from '@/components/ui';
+import { MEMBER_CARDINAL_ERROR_CODE } from '@/constants/errorCode';
 import { useDragScroll } from '@/hooks';
 import type { Member } from '@/types/admin/member';
 import { useAdminMembers } from '@/hooks/queries/admin';
 import { useCardinals } from '@/hooks/queries';
 import {
   useBanMember,
+  useChangeMemberCardinals,
   useChangeMemberRole,
   useCreateCardinal,
   useRestoreMember,
 } from '@/hooks/mutations/admin';
+import { toastError, toastSuccess } from '@/stores/useToastStore';
+import { getBulkBanAction, getBulkTargetRole } from '@/utils/admin/memberBulkActions';
+
+interface ForceConfirmState {
+  clubMemberIds: number[];
+  cardinalIds: number[];
+}
 
 function MemberPageContent() {
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [searchValue, setSearchValue] = useState('');
-  const [detailMember, setDetailMember] = useState<Member | null>(null);
+  const [detailMemberId, setDetailMemberId] = useState<string | null>(null);
+  const [selectedCardinal, setSelectedCardinal] = useState<number | 'all'>('all');
   const { ref: dragScrollRef, onMouseDown } = useDragScroll();
   const { data: members = [] } = useAdminMembers();
   const { data: cardinals = [] } = useCardinals();
@@ -34,31 +45,102 @@ function MemberPageContent() {
   const { mutate: banMember } = useBanMember();
   const { mutate: restoreMember } = useRestoreMember();
   const { mutate: createCardinal } = useCreateCardinal();
+  const { mutateAsync: changeMemberCardinalsAsync } = useChangeMemberCardinals();
+  const [forceConfirm, setForceConfirm] = useState<ForceConfirmState | null>(null);
+
+  const detailMember = detailMemberId
+    ? (members.find((m) => m.id === detailMemberId) ?? null)
+    : null;
 
   const handleMemberAction = (m: Member) => {
-    setDetailMember(m);
+    setDetailMemberId(m.id);
   };
+
+  const cardinalFilteredMembers =
+    selectedCardinal === 'all'
+      ? members
+      : members.filter((m) =>
+          m.cardinal
+            .split(',')
+            .map((c) => c.trim())
+            .includes(String(selectedCardinal)),
+        );
 
   const query = searchValue.trim().toLowerCase();
   const filteredMembers = query
-    ? members.filter(
+    ? cardinalFilteredMembers.filter(
         (m) =>
           m.name.toLowerCase().includes(query) ||
           m.department.toLowerCase().includes(query) ||
           m.studentId.includes(query) ||
-          m.generation.includes(query),
+          m.cardinal.includes(query),
       )
-    : members;
+    : cardinalFilteredMembers;
 
   const selectedMembers = filteredMembers.filter((m) => selectedIds.has(m.id));
   const selectedCount = selectedMembers.length;
 
-  const allUsers = selectedCount > 0 && selectedMembers.every((m) => m.memberRole === 'USER');
-  const allAdmins = selectedCount > 0 && selectedMembers.every((m) => m.memberRole === 'ADMIN');
-  const targetRole = allUsers ? 'ADMIN' : allAdmins ? 'USER' : null;
-  const allBanned = selectedCount > 0 && selectedMembers.every((m) => m.status === 'BANNED');
+  const targetRole = getBulkTargetRole(selectedMembers);
+  const targetBanAction = getBulkBanAction(selectedMembers);
 
   const handleClearSelection = () => setSelectedIds(new Set());
+
+  const submitCardinalsChange = async (
+    clubMemberIds: number[],
+    cardinalIds: number[],
+    force = false,
+  ) => {
+    const results = await Promise.allSettled(
+      clubMemberIds.map((clubMemberId) =>
+        changeMemberCardinalsAsync({ clubMemberId, cardinalIds, force }),
+      ),
+    );
+
+    const attendanceFailedIds: number[] = [];
+    let otherErrorCount = 0;
+
+    results.forEach((result, idx) => {
+      if (result.status !== 'rejected') return;
+      const err = result.reason;
+      const code = isAxiosError(err) ? err.response?.data?.code : undefined;
+      if (code === MEMBER_CARDINAL_ERROR_CODE.REMOVAL_HAS_ATTENDANCE) {
+        attendanceFailedIds.push(clubMemberIds[idx]);
+      } else {
+        otherErrorCount += 1;
+      }
+    });
+
+    if (attendanceFailedIds.length > 0) {
+      setForceConfirm({ clubMemberIds: attendanceFailedIds, cardinalIds });
+      return;
+    }
+
+    if (otherErrorCount > 0) {
+      toastError('기수 변경에 실패했습니다.');
+      return;
+    }
+
+    toastSuccess('기수가 변경되었습니다.');
+  };
+
+  const handleChangeCardinalsForDetail = (cardinalIds: number[]) => {
+    if (!detailMember) return;
+    submitCardinalsChange([detailMember.clubMemberId], cardinalIds);
+  };
+
+  const handleChangeCardinalsForBulk = (cardinalIds: number[]) => {
+    submitCardinalsChange(
+      selectedMembers.map((m) => m.clubMemberId),
+      cardinalIds,
+    );
+  };
+
+  const handleForceConfirm = () => {
+    if (!forceConfirm) return;
+    const { clubMemberIds, cardinalIds } = forceConfirm;
+    setForceConfirm(null);
+    submitCardinalsChange(clubMemberIds, cardinalIds, true);
+  };
 
   return (
     <div className="flex min-w-3xl flex-col">
@@ -67,7 +149,7 @@ function MemberPageContent() {
         className="sticky top-0 z-10 -mt-15"
         selectedCount={selectedCount}
         targetRole={targetRole}
-        allBanned={allBanned}
+        targetBanAction={targetBanAction}
         onBack={handleClearSelection}
         onChangeRole={
           targetRole
@@ -77,40 +159,53 @@ function MemberPageContent() {
                 )
             : undefined
         }
-        onBan={() => selectedMembers.forEach((m) => banMember(m.clubMemberId))}
-        onRestore={() => selectedMembers.forEach((m) => restoreMember(m.clubMemberId))}
+        onBan={
+          targetBanAction === 'ban'
+            ? () => selectedMembers.forEach((m) => banMember(m.clubMemberId))
+            : undefined
+        }
+        onRestore={
+          targetBanAction === 'restore'
+            ? () => selectedMembers.forEach((m) => restoreMember(m.clubMemberId))
+            : undefined
+        }
+        onChangeCardinals={handleChangeCardinalsForBulk}
       />
 
       {/* Main content */}
       <div className="flex flex-col gap-400 p-700">
+        {/* Cardinal pills */}
+        <div
+          ref={dragScrollRef}
+          className="scrollbar-none flex cursor-grab items-center gap-200 overflow-x-auto select-none active:cursor-grabbing"
+          onMouseDown={onMouseDown}
+        >
+          <CardinalCard
+            variant={selectedCardinal === 'all' ? 'active' : 'normal'}
+            title="전체"
+            onClick={() => setSelectedCardinal('all')}
+          />
+          {cardinals.map((c) => (
+            <CardinalCard
+              key={c.id}
+              variant={selectedCardinal === c.cardinalNumber ? 'active' : 'normal'}
+              title={`${c.cardinalNumber}기`}
+              onClick={() => setSelectedCardinal(c.cardinalNumber)}
+            />
+          ))}
+          <AddCardinalModal
+            onSubmit={({ cardinal, isCurrent }) =>
+              createCardinal({ cardinalNumber: cardinal, inProgress: isCurrent })
+            }
+          >
+            <AddCardinalButton />
+          </AddCardinalModal>
+        </div>
+
         {/* Search bar */}
         <Card>
           <MemberSearchBar isWrapped={false} value={searchValue} onValueChange={setSearchValue} />
         </Card>
-
-        {/* Generation cards */}
-        <div
-          ref={dragScrollRef}
-          className="scrollbar-none flex cursor-grab gap-400 overflow-x-auto select-none active:cursor-grabbing"
-          onMouseDown={onMouseDown}
-        >
-          <AddGenerationModal
-            onSubmit={({ generation, year, semester, isCurrent }) =>
-              createCardinal({ cardinalNumber: generation, year, semester, inProgress: isCurrent })
-            }
-          >
-            <AddGenerationButton />
-          </AddGenerationModal>
-          {/* <GenerationCard variant="normal" title="전체" /> */}
-          {cardinals.map((c) => (
-            <GenerationCard
-              key={c.id}
-              variant={c.status === 'IN_PROGRESS' ? 'active' : 'normal'}
-              title={`${c.cardinalNumber}기`}
-              subtitle={c.status === 'IN_PROGRESS' ? '현재' : undefined}
-            />
-          ))}
-        </div>
 
         {/* Member table */}
         <Card>
@@ -127,40 +222,35 @@ function MemberPageContent() {
       <MemberDetailModal
         open={detailMember !== null}
         onOpenChange={(open) => {
-          if (!open) setDetailMember(null);
+          if (!open) setDetailMemberId(null);
         }}
         member={detailMember}
-        onBan={
-          detailMember
-            ? () => {
-                setDetailMember({ ...detailMember, status: 'BANNED' });
-                banMember(detailMember.clubMemberId);
-              }
-            : undefined
-        }
-        onRestore={
-          detailMember
-            ? () => {
-                setDetailMember({ ...detailMember, status: 'ACTIVE' });
-                restoreMember(detailMember.clubMemberId);
-              }
-            : undefined
-        }
+        onBan={detailMember ? () => banMember(detailMember.clubMemberId) : undefined}
+        onRestore={detailMember ? () => restoreMember(detailMember.clubMemberId) : undefined}
         onChangeRole={
           detailMember
             ? () => {
                 const nextRole = detailMember.memberRole === 'ADMIN' ? 'USER' : 'ADMIN';
-                const ROLE_LABEL = { USER: '사용자', ADMIN: '관리자', LEAD: '리더' } as const;
-                setDetailMember({
-                  ...detailMember,
-                  memberRole: nextRole,
-                  position: ROLE_LABEL[nextRole],
-                });
                 changeMemberRole({ clubMemberId: detailMember.clubMemberId, memberRole: nextRole });
               }
             : undefined
         }
+        onChangeCardinals={detailMember ? handleChangeCardinalsForDetail : undefined}
       />
+
+      {/* 출석 기록이 있는 기수 삭제 확인 */}
+      <AlertDialog
+        open={forceConfirm !== null}
+        onOpenChange={(open) => {
+          if (!open) setForceConfirm(null);
+        }}
+        status="danger"
+        title={`출석 기록이 있는\n기수가 포함되어 있습니다.`}
+        description={'그래도 변경하시겠어요?\n출석/결석 기록도 함께 삭제됩니다.'}
+      >
+        <AlertDialogAction onClick={handleForceConfirm}>변경</AlertDialogAction>
+        <AlertDialogCancel>취소</AlertDialogCancel>
+      </AlertDialog>
     </div>
   );
 }

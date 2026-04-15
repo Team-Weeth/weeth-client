@@ -3,7 +3,7 @@ import type { ClubMemberRole } from '@/types/admin/member';
 interface TopBarActionParams {
   selectedCount: number;
   targetRole: ClubMemberRole | null; // null = 혼합 선택
-  allBanned: boolean;
+  targetBanAction: 'ban' | 'restore' | null; // null = BANNED와 BANNED 아닌 멤버가 섞임
   onApprove?: () => void;
   onChangeRole?: () => void;
   onResetPassword?: () => void;
@@ -14,7 +14,7 @@ interface TopBarActionParams {
 export function getTopBarActions({
   selectedCount,
   targetRole,
-  allBanned,
+  targetBanAction,
   onApprove,
   onChangeRole,
   onResetPassword,
@@ -46,7 +46,7 @@ export function getTopBarActions({
       handler: onResetPassword,
       disabled: !onResetPassword,
     },
-    allBanned
+    targetBanAction === 'restore'
       ? {
           label: '유저 복구',
           title: `${selectedCount}명의 멤버를 복구하시겠습니까?`,
@@ -57,7 +57,7 @@ export function getTopBarActions({
           label: '유저 추방',
           title: `${selectedCount}명의 멤버를 추방하시겠습니까?`,
           handler: onBan,
-          disabled: !onBan,
+          disabled: !onBan || targetBanAction === null,
         },
   ];
 }
