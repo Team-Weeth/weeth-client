@@ -25,7 +25,10 @@ function useToggleLike({
   const mutation = useMutation({
     mutationFn: () => boardApi.toggleLike(clubId!, postId),
     onMutate: async () => {
-      await queryClient.cancelQueries({ queryKey: detailKey });
+      await Promise.all([
+        queryClient.cancelQueries({ queryKey: detailKey }),
+        queryClient.cancelQueries({ queryKey: ['posts', clubId], type: 'all' }),
+      ]);
 
       const previousDetail = queryClient.getQueryData<PostDetail>(detailKey);
 
