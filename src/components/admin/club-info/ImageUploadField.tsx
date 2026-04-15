@@ -1,15 +1,23 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 
 import Image from 'next/image';
 
 import { AdminCloudUploadIcon } from '@/assets/icons/admin';
 import { Button, ProgressBar } from '@/components/ui';
 import { useProgressAnimation } from '@/hooks/useProgressAnimation';
+import type { OwnerType } from '@/lib/apis/file';
+import { uploadFile } from '@/lib/apis/upload';
 import { cn } from '@/lib/cn';
+import { toastError } from '@/stores/useToastStore';
 
 type Phase = 'idle' | 'uploading' | 'preview';
+
+interface UploadResult {
+  storageKey: string;
+  fileUrl: string;
+}
 
 function UploadingContent({ onComplete }: { onComplete: () => void }) {
   const progress = useProgressAnimation({ duration: 1500, onComplete });
@@ -67,8 +75,10 @@ interface ImageUploadFieldProps extends React.HTMLAttributes<HTMLDivElement> {
   title: string;
   description: string;
   aspectRatio?: '1/1' | 'auto';
-  file?: File | null;
-  onFileSelect?: (file: File) => void;
+  ownerType: OwnerType;
+  previewUrl?: string | null;
+  onUploadComplete?: (result: UploadResult) => void;
+  onReset?: () => void;
 }
 
 function ImageUploadField({
@@ -76,58 +86,54 @@ function ImageUploadField({
   title,
   description,
   aspectRatio = 'auto',
-  file,
+  ownerType,
+  previewUrl,
   className,
-  onFileSelect,
+  onUploadComplete,
+  onReset,
   ...props
 }: ImageUploadFieldProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [isDragging, setIsDragging] = useState(false);
-  const [phase, setPhase] = useState<Phase>('idle');
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-  const prevFileRef = useRef<File | null | undefined>(file);
+  const [isUploading, setIsUploading] = useState(false);
+  const uploadDoneRef = useRef(false);
+  const animationDoneRef = useRef(false);
 
-  if (prevFileRef.current !== file) {
-    prevFileRef.current = file;
-    if (file === null || file === undefined) {
-      if (previewUrl) URL.revokeObjectURL(previewUrl);
-      setPhase('idle');
-      setPreviewUrl(null);
+  const phase: Phase = isUploading ? 'uploading' : previewUrl ? 'preview' : 'idle';
+
+  const tryFinishUpload = () => {
+    if (uploadDoneRef.current && animationDoneRef.current) {
+      setIsUploading(false);
+      uploadDoneRef.current = false;
+      animationDoneRef.current = false;
     }
-  }
-
-  useEffect(() => {
-    return () => {
-      if (previewUrl) URL.revokeObjectURL(previewUrl);
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  };
 
   const openFileDialog = () => {
     inputRef.current?.click();
   };
 
-  const handleFileSelected = (selectedFile: File) => {
-    onFileSelect?.(selectedFile);
-    setPhase('uploading');
-  };
+  const handleFileSelected = async (selectedFile: File) => {
+    uploadDoneRef.current = false;
+    animationDoneRef.current = false;
+    setIsUploading(true);
 
-  const handleUploadComplete = () => {
-    if (file) {
-      setPreviewUrl((prev) => {
-        if (prev) URL.revokeObjectURL(prev);
-        return URL.createObjectURL(file);
-      });
+    try {
+      const result = await uploadFile(selectedFile, ownerType);
+      const objectUrl = URL.createObjectURL(selectedFile);
+      onUploadComplete?.({ storageKey: result.storageKey, fileUrl: objectUrl });
+      uploadDoneRef.current = true;
+      tryFinishUpload();
+    } catch {
+      toastError('이미지 업로드에 실패했습니다.');
+      onReset?.();
+      setIsUploading(false);
     }
-    setPhase('preview');
   };
 
-  const handleReupload = () => {
-    openFileDialog();
-  };
-
-  const handleClick = () => {
-    openFileDialog();
+  const handleAnimationComplete = () => {
+    animationDoneRef.current = true;
+    tryFinishUpload();
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -165,12 +171,12 @@ function ImageUploadField({
         <PreviewContent
           previewUrl={previewUrl}
           aspectRatio={aspectRatio}
-          onReupload={handleReupload}
+          onReupload={openFileDialog}
         />
       ) : (
         <button
           type="button"
-          onClick={handleClick}
+          onClick={openFileDialog}
           onDragOver={handleDragOver}
           onDragLeave={handleDragLeave}
           onDrop={handleDrop}
@@ -183,7 +189,7 @@ function ImageUploadField({
           )}
         >
           {phase === 'uploading' ? (
-            <UploadingContent onComplete={handleUploadComplete} />
+            <UploadingContent onComplete={handleAnimationComplete} />
           ) : (
             <div className="flex flex-col items-center gap-300">
               <Image src={AdminCloudUploadIcon} alt="upload" width={32} height={32} />
@@ -207,4 +213,4 @@ function ImageUploadField({
   );
 }
 
-export { ImageUploadField, type ImageUploadFieldProps };
+export { ImageUploadField, type ImageUploadFieldProps, type UploadResult };

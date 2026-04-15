@@ -7,4 +7,5 @@ export { ClubInfoTopBar, type ClubInfoTopBarProps } from './ClubInfoTopBar';
 export {
   ImageUploadField,
   type ImageUploadFieldProps,
+  type UploadResult,
 } from './ImageUploadField';

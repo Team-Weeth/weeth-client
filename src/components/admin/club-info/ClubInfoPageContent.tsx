@@ -1,13 +1,17 @@
 'use client';
 
 import { useState } from 'react';
+import { useForm, useWatch } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 
 import { AdminInfoCard } from '@/components/admin/club-info/AdminInfoCard';
 import { ImageUploadField } from '@/components/admin/club-info/ImageUploadField';
+import type { UploadResult } from '@/components/admin/club-info/ImageUploadField';
 import { ClubInfoTopBar } from '@/components/admin/club-info/ClubInfoTopBar';
 import { SearchSelect } from '@/components/mypage';
 import { Input } from '@/components/ui';
 import { cn } from '@/lib/cn';
+import { clubInfoSchema, type ClubInfoFormData } from '@/lib/schemas/clubInfo';
 
 function FieldBlock({
   label,
@@ -31,46 +35,39 @@ interface ClubInfoPageContentProps {
   schoolNames: string[];
 }
 
-const INITIAL_FORM_VALUES = {
+const INITIAL_FORM_VALUES: ClubInfoFormData = {
   school: '가천대학교',
   name: 'WEETH',
   description: '동아리를 소개하는 짧은 글을 작성해주세요',
   phone: '010-1234-1234',
   email: '대표 이메일을 작성해주세요',
-  primaryContact: 'phone' as const,
+  primaryContact: 'phone',
 };
 
 function ClubInfoPageContent({ schoolNames }: ClubInfoPageContentProps) {
-  const [school, setSchool] = useState(INITIAL_FORM_VALUES.school);
-  const [clubName, setClubName] = useState(INITIAL_FORM_VALUES.name);
-  const [description, setDescription] = useState(INITIAL_FORM_VALUES.description);
-  const [phone, setPhone] = useState(INITIAL_FORM_VALUES.phone);
-  const [email, setEmail] = useState(INITIAL_FORM_VALUES.email);
-  const [primaryContact, setPrimaryContact] = useState<'phone' | 'email'>(
-    INITIAL_FORM_VALUES.primaryContact,
-  );
-  const [profileImage, setProfileImage] = useState<File | null>(null);
-  const [backgroundImage, setBackgroundImage] = useState<File | null>(null);
+  const {
+    register,
+    setValue,
+    reset,
+    control,
+    formState: { isDirty },
+  } = useForm<ClubInfoFormData>({
+    resolver: zodResolver(clubInfoSchema),
+    values: INITIAL_FORM_VALUES,
+  });
 
-  const isEditMode =
-    school !== INITIAL_FORM_VALUES.school ||
-    clubName !== INITIAL_FORM_VALUES.name ||
-    description !== INITIAL_FORM_VALUES.description ||
-    phone !== INITIAL_FORM_VALUES.phone ||
-    email !== INITIAL_FORM_VALUES.email ||
-    primaryContact !== INITIAL_FORM_VALUES.primaryContact ||
-    profileImage !== null ||
-    backgroundImage !== null;
+  const school = useWatch({ control, name: 'school' });
+  const primaryContact = useWatch({ control, name: 'primaryContact' });
+
+  const [profileUpload, setProfileUpload] = useState<UploadResult | null>(null);
+  const [backgroundUpload, setBackgroundUpload] = useState<UploadResult | null>(null);
+
+  const isEditMode = isDirty || profileUpload !== null || backgroundUpload !== null;
 
   function handleResetChanges() {
-    setSchool(INITIAL_FORM_VALUES.school);
-    setClubName(INITIAL_FORM_VALUES.name);
-    setDescription(INITIAL_FORM_VALUES.description);
-    setPhone(INITIAL_FORM_VALUES.phone);
-    setEmail(INITIAL_FORM_VALUES.email);
-    setPrimaryContact(INITIAL_FORM_VALUES.primaryContact);
-    setProfileImage(null);
-    setBackgroundImage(null);
+    reset();
+    setProfileUpload(null);
+    setBackgroundUpload(null);
   }
 
   return (
@@ -88,16 +85,20 @@ function ClubInfoPageContent({ schoolNames }: ClubInfoPageContentProps) {
               title="클릭하여 업로드"
               description="정사각형 권장"
               aspectRatio="1/1"
-              file={profileImage}
-              onFileSelect={setProfileImage}
+              ownerType="CLUB_PROFILE"
+              previewUrl={profileUpload?.fileUrl}
+              onUploadComplete={setProfileUpload}
+              onReset={() => setProfileUpload(null)}
             />
             <ImageUploadField
               className="min-w-0 flex-1"
               label="배경 이미지"
               title="클릭 혹은 파일을 이곳에 드롭하세요"
               description="1440 × 364 px 권장"
-              file={backgroundImage}
-              onFileSelect={setBackgroundImage}
+              ownerType="CLUB_BACKGROUND"
+              previewUrl={backgroundUpload?.fileUrl}
+              onUploadComplete={setBackgroundUpload}
+              onReset={() => setBackgroundUpload(null)}
             />
           </div>
         </AdminInfoCard>
@@ -107,7 +108,7 @@ function ClubInfoPageContent({ schoolNames }: ClubInfoPageContentProps) {
             <FieldBlock label="소속 학교">
               <SearchSelect
                 value={school}
-                onChange={setSchool}
+                onChange={(v) => setValue('school', v, { shouldDirty: true })}
                 options={schoolNames}
                 placeholder="학교명을 검색하세요"
                 className="w-full"
@@ -118,16 +119,14 @@ function ClubInfoPageContent({ schoolNames }: ClubInfoPageContentProps) {
 
             <FieldBlock label="동아리 이름">
               <Input
-                value={clubName}
-                onChange={(e) => setClubName(e.target.value)}
+                {...register('name')}
                 className="bg-container-neutral-alternative rounded-sm border-transparent px-400 py-300"
               />
             </FieldBlock>
 
             <FieldBlock label="동아리 소개" helper="최대 30자">
               <Input
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
+                {...register('description')}
                 className="bg-container-neutral-alternative rounded-sm border-transparent px-400 py-300"
               />
             </FieldBlock>
@@ -138,16 +137,14 @@ function ClubInfoPageContent({ schoolNames }: ClubInfoPageContentProps) {
           <div className="flex flex-col gap-400">
             <FieldBlock label="대표 전화번호">
               <Input
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
+                {...register('phone')}
                 className="bg-container-neutral-alternative rounded-sm border-transparent px-400 py-300"
               />
             </FieldBlock>
 
             <FieldBlock label="대표 이메일">
               <Input
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                {...register('email')}
                 className="bg-container-neutral-alternative rounded-sm border-transparent px-400 py-300"
               />
             </FieldBlock>
@@ -160,7 +157,7 @@ function ClubInfoPageContent({ schoolNames }: ClubInfoPageContentProps) {
                       type="radio"
                       value={type}
                       checked={primaryContact === type}
-                      onChange={() => setPrimaryContact(type)}
+                      onChange={() => setValue('primaryContact', type, { shouldDirty: true })}
                       className="sr-only"
                     />
                     <div
