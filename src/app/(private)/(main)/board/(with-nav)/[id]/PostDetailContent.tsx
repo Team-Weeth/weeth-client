@@ -14,6 +14,7 @@ import {
 } from '@/components/board';
 import { formatShortDateTime } from '@/lib/formatTime';
 import { toDisplayFile, isImageFileByType, mapComment } from '@/lib/board';
+import { usePostDetailQuery } from '@/hooks/board/usePostDetailQuery';
 import { useCreateComment } from '@/hooks/board/useCreateComment';
 import { useUpdateComment } from '@/hooks/board/useUpdateComment';
 import { useDeleteComment } from '@/hooks/board/useDeleteComment';
@@ -23,16 +24,20 @@ import { useUserId } from '@/stores/useUserStore';
 import type { PostDetail } from '@/types/board';
 
 interface PostDetailContentProps {
-  post: PostDetail;
+  initialData: PostDetail;
 }
 
-function PostDetailContent({ post }: PostDetailContentProps) {
+function PostDetailContent({ initialData }: PostDetailContentProps) {
   const router = useRouter();
   const currentUserId = useUserId();
   const setActiveBoardId = useSetActiveBoardId();
-  const { createComment, isPending } = useCreateComment(post.id);
-  const { updateComment } = useUpdateComment(post.id);
-  const { deleteComment } = useDeleteComment(post.id);
+
+  const { data: post } = usePostDetailQuery(initialData.id);
+  const currentPost = post ?? initialData;
+
+  const { createComment, isPending } = useCreateComment(currentPost.id);
+  const { updateComment } = useUpdateComment(currentPost.id);
+  const { deleteComment } = useDeleteComment(currentPost.id);
 
   const {
     activeReplyId,
@@ -48,14 +53,14 @@ function PostDetailContent({ post }: PostDetailContentProps) {
   } = useReplyForm();
 
   useEffect(() => {
-    setActiveBoardId(post.boardId);
-  }, [post.boardId, setActiveBoardId]);
+    setActiveBoardId(currentPost.boardId);
+  }, [currentPost.boardId, setActiveBoardId]);
 
-  const isPostAuthor = currentUserId !== null && post.author.id === currentUserId;
-  const imageFiles = post.fileUrls
+  const isPostAuthor = currentUserId !== null && currentPost.author.id === currentUserId;
+  const imageFiles = currentPost.fileUrls
     .filter((f) => isImageFileByType(f.contentType))
     .map(toDisplayFile);
-  const nonImageFiles = post.fileUrls
+  const nonImageFiles = currentPost.fileUrls
     .filter((f) => !isImageFileByType(f.contentType))
     .map(toDisplayFile);
 
@@ -67,32 +72,36 @@ function PostDetailContent({ post }: PostDetailContentProps) {
         <PostCard.Header>
           <PostCard.Author
             author={{
-              name: post.author.name,
-              profileImageUrl: post.author.profileImageUrl,
+              name: currentPost.author.name,
+              profileImageUrl: currentPost.author.profileImageUrl,
             }}
-            date={formatShortDateTime(post.time)}
-            hasAttachment={post.fileUrls.length > 0}
+            date={formatShortDateTime(currentPost.time)}
+            hasAttachment={currentPost.fileUrls.length > 0}
           />
           {isPostAuthor && (
             <PostActionMenu
-              postId={post.id}
-              onEdit={() => router.push(`/board/edit/${post.id}`)}
+              postId={currentPost.id}
+              onEdit={() => router.push(`/board/edit/${currentPost.id}`)}
               onDeleted={() => router.push('/board')}
             />
           )}
         </PostCard.Header>
 
-        <PostCard.DetailContent title={post.title} content={post.content} isNew={post.isNew} />
+        <PostCard.DetailContent
+          title={currentPost.title}
+          content={currentPost.content}
+          isNew={currentPost.isNew}
+        />
 
         <PostCard.Images files={imageFiles} />
 
         <FileList files={nonImageFiles} />
 
         <PostCard.Actions
-          postId={post.id}
-          likeCount={post.like.likeCount}
-          commentCount={post.commentCount}
-          isLiked={post.like.isLiked}
+          postId={currentPost.id}
+          likeCount={currentPost.like.likeCount}
+          commentCount={currentPost.commentCount}
+          isLiked={currentPost.like.isLiked}
         />
       </div>
 
@@ -108,14 +117,14 @@ function PostDetailContent({ post }: PostDetailContentProps) {
         />
       </div>
 
-      {post.comments.length > 0 && (
+      {currentPost.comments.length > 0 && (
         <>
           <div className="self-stretch px-450">
             <Divider />
           </div>
 
           <div className="flex flex-col gap-200 self-stretch pb-400">
-            {post.comments.map((comment) => {
+            {currentPost.comments.map((comment) => {
               const mapped = mapComment(comment, currentUserId);
               return (
                 <CommentItem
