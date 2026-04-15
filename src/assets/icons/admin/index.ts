@@ -24,3 +24,5 @@ export { default as AdminTimeIcon } from './ic_admin_time.svg';
 export { default as AdminRadioSelectedIcon } from './ic_admin_radio_selected.svg';
 export { default as AdminRadioUnselectedIcon } from './ic_admin_radio_unselected.svg';
 export { default as AdminRoundCancelIcon } from './ic_admin_round_cancel.svg';
+
+export { default as AdminCloudUploadIcon } from './ic_admin_cloud_upload.svg';

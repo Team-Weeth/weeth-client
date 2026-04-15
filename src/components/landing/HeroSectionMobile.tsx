@@ -53,7 +53,7 @@ function HeroSectionMobile({ className }: HeroSectionProps) {
         transition={{ duration: 0.6, ease: [0.15, 0.89, 1, 1], delay: 0.3 }}
         className="flex flex-col items-center gap-[12px]"
       >
-        <p className="typo-sub2 text-center text-[#434343]">Weeth에서 동아리의 추억을 쌓아보세요</p>
+        <p className="typo-sub3 text-center text-[#434343]">Weeth에서 동아리의 추억을 쌓아보세요</p>
         <HeroSectionCTA />
       </motion.div>
     </section>

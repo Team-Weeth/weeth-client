@@ -35,7 +35,7 @@ function ModalHeader({ step, total, overline, title, onClose }: ModalHeaderProps
         )}
         <div className="flex flex-col gap-200">
           <p className="typo-caption1 text-text-alternative">{overline}</p>
-          <p className="typo-sub1 text-text-strong">{title}</p>
+          <p className="typo-sub2 text-text-strong">{title}</p>
         </div>
       </div>
       <button

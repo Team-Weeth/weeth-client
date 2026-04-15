@@ -24,7 +24,7 @@ export function ClubProfileHeader() {
         )}
       </Avatar>
       <div className="flex w-[172px] flex-col justify-center gap-[2px]">
-        <p className="text-text-strong typo-sub1">{club?.name}</p>
+        <p className="text-text-strong typo-sub2">{club?.name}</p>
         <p className="text-text-normal typo-body2">{club?.description}</p>
       </div>
     </div>

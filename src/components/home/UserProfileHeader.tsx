@@ -21,7 +21,7 @@ export function UserProfileHeader() {
         )}
       </Avatar>
       <div className="flex w-[172px] flex-col justify-center gap-[2px]">
-        <p className="text-text-strong typo-sub1">{userInfo?.name}</p>
+        <p className="text-text-strong typo-sub2">{userInfo?.name}</p>
         <p className="text-text-normal typo-body2">{bio ?? ''}</p>
       </div>
     </div>

@@ -69,7 +69,7 @@ function CommentItem({
               {profileImage && <AvatarImage src={profileImage} alt={name} />}
               <AvatarFallback>{name[0]}</AvatarFallback>
             </Avatar>
-            <span className="typo-sub2 text-text-strong">{name}</span>
+            <span className="typo-sub3 text-text-strong">{name}</span>
           </div>
           {editing ? (
             <CommentInput

@@ -18,13 +18,13 @@ function Step3Confirm({ club, selected }: Step3ConfirmProps) {
             <AvatarFallback>{club.name.charAt(0)}</AvatarFallback>
           </Avatar>
           <div className="flex flex-col gap-[2px]">
-            <p className="typo-sub1 text-text-strong">{club.name}</p>
+            <p className="typo-sub2 text-text-strong">{club.name}</p>
             {club.description && <p className="typo-body2 text-text-normal">{club.description}</p>}
           </div>
         </div>
         <Divider />
         <div className="flex flex-col gap-200 px-2.5">
-          <span className="typo-sub2 text-text-alternative">활동 기수</span>
+          <span className="typo-sub3 text-text-alternative">활동 기수</span>
           <CardinalTags cardinals={selected} />
         </div>
       </div>

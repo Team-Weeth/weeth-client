@@ -23,7 +23,7 @@ function LoginCard({ className, isLoading = false, onKakaoLogin, onAppleLogin }:
       {/* 좌측: 커버 */}
       <div className="flex h-[427px] flex-1 flex-col items-center justify-center gap-[26px] bg-[#171819] p-600">
         <Image src={LoginCoverIcon} alt="Weeth 서비스 소개" width={259} height={151} />
-        <p className="typo-sub2 text-text-alternative text-center">
+        <p className="typo-sub3 text-text-alternative text-center">
           우리 동아리를 더 알차게 즐기는
           <br />
           커뮤니티 플랫폼 Weeth

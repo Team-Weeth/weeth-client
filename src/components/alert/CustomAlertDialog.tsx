@@ -56,7 +56,7 @@ function CustomAlertDialog({
 
           {/* Text */}
           <div className="flex flex-col items-center gap-200 text-center">
-            <AlertDialogPrimitive.Title className="typo-sub1 text-text-strong whitespace-pre-line">
+            <AlertDialogPrimitive.Title className="typo-sub2 text-text-strong whitespace-pre-line">
               {title}
             </AlertDialogPrimitive.Title>
             {description && (

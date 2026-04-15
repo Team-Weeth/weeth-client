@@ -73,7 +73,7 @@ function HubActionCard({
         <Image src={config.icon} alt={config.title} width={40} height={40} />
       </ItemMedia>
       <ItemContent className="min-w-0">
-        <ItemTitle className="typo-sub1 text-text-strong">{config.title}</ItemTitle>
+        <ItemTitle className="typo-sub2 text-text-strong">{config.title}</ItemTitle>
         <ItemDescription className="typo-body2 text-text-normal">
           {config.description}
         </ItemDescription>

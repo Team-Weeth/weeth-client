@@ -6,7 +6,7 @@ function Step1Info() {
       <div className="bg-container-neutral-alternative flex flex-col items-center gap-400 rounded-md p-300">
         <div data-slot="alert-dialog-header" className={'flex flex-col items-center gap-400'}>
           <Image src={InfoIcon} alt="정보 아이콘" width={48} height={48} />
-          <div className="typo-sub2 text-brand-primary flex flex-col items-center gap-200 text-center">
+          <div className="typo-sub3 text-brand-primary flex flex-col items-center gap-200 text-center">
             설정 전 확인해 주세요
           </div>
         </div>

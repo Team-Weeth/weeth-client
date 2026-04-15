@@ -99,7 +99,7 @@ function AttendanceHistoryContent({ summary, errorMessage }: AttendanceHistoryCo
                       >
                         {record.statusLabel}
                       </Tag>
-                      <span className="typo-sub2 text-text-strong">{record.title}</span>
+                      <span className="typo-sub3 text-text-strong">{record.title}</span>
                     </div>
                     <div className="typo-body2 text-text-alternative flex flex-col">
                       <span>날짜 : {record.date}</span>

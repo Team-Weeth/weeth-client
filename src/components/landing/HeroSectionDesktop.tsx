@@ -181,7 +181,7 @@ function HeroSectionDesktop({ className }: HeroSectionProps) {
         </motion.div>
 
         <div className="desktop:mt-[90px] mt-[40px] flex flex-col items-center gap-[15px]">
-          <motion.p variants={subtitleVariants} className="typo-sub1 text-[#434343]">
+          <motion.p variants={subtitleVariants} className="typo-sub2 text-[#434343]">
             Weeth에서 동아리의 추억을 쌓아보세요
           </motion.p>
           <motion.div variants={ctaVariants}>
