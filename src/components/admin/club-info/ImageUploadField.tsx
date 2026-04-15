@@ -16,6 +16,9 @@ import { toastError } from '@/stores/useToastStore';
 interface UploadResult {
   storageKey: string;
   fileUrl: string;
+  fileName: string;
+  fileSize: number;
+  contentType: string;
 }
 
 function UploadingContent({ onComplete, compact }: { onComplete: () => void; compact?: boolean }) {
@@ -131,7 +134,13 @@ function useS3Upload(
       }
       const objectUrl = URL.createObjectURL(file);
       prevObjectUrlRef.current = objectUrl;
-      onUploadComplete?.({ storageKey: result.storageKey, fileUrl: objectUrl });
+      onUploadComplete?.({
+        storageKey: result.storageKey,
+        fileUrl: objectUrl,
+        fileName: result.fileName,
+        fileSize: result.fileSize,
+        contentType: result.contentType,
+      });
       uploadDoneRef.current = true;
       tryFinish();
     } catch {

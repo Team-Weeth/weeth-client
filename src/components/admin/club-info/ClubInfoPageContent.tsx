@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
@@ -11,8 +11,16 @@ import type { UploadResult } from '@/components/admin/club-info/ImageUploadField
 import { ClubInfoTopBar } from '@/components/admin/club-info/ClubInfoTopBar';
 import { SearchSelect } from '@/components/mypage';
 import { Input } from '@/components/ui';
+import {
+  useUpdateClub,
+  useDeleteClubProfileImage,
+  useDeleteClubBackgroundImage,
+} from '@/hooks/mutations/admin';
+import { useAdminClubQuery } from '@/hooks/queries/admin/useAdminClubQuery';
+import type { ClubImagePayload, UpdateClubBody } from '@/lib/apis/adminClub';
 import { cn } from '@/lib/cn';
 import { clubInfoSchema, type ClubInfoFormData } from '@/lib/schemas/clubInfo';
+import { toastSuccess, toastError } from '@/stores/useToastStore';
 
 interface ClubInfoPageContentProps {
   schoolNames: string[];
@@ -23,26 +31,61 @@ const PRIMARY_CONTACT_OPTIONS = [
   { value: 'email', label: '이메일' },
 ] as const;
 
-const INITIAL_FORM_VALUES: ClubInfoFormData = {
-  school: '가천대학교',
-  name: 'WEETH',
-  description: '',
-  phone: '010-1234-1234',
-  email: '',
-  primaryContact: 'phone',
-};
+type ImageState =
+  | { status: 'unchanged' }
+  | { status: 'uploaded'; upload: UploadResult }
+  | { status: 'deleted' };
+
+function formatPhoneNumber(raw: string): string {
+  const digits = raw.replace(/\D/g, '');
+  if (digits.length === 11) return `${digits.slice(0, 3)}-${digits.slice(3, 7)}-${digits.slice(7)}`;
+  if (digits.length === 10) return `${digits.slice(0, 3)}-${digits.slice(3, 6)}-${digits.slice(6)}`;
+  return raw;
+}
+
+function toImagePayload(upload: UploadResult): ClubImagePayload {
+  return {
+    storageKey: upload.storageKey,
+    fileName: upload.fileName,
+    fileSize: upload.fileSize,
+    contentType: upload.contentType,
+  };
+}
 
 function ClubInfoPageContent({ schoolNames }: ClubInfoPageContentProps) {
+  const { data: club } = useAdminClubQuery();
+
   const {
     setValue,
     reset,
     control,
+    handleSubmit,
     formState: { isDirty, errors },
   } = useForm<ClubInfoFormData>({
     resolver: zodResolver(clubInfoSchema),
-    defaultValues: INITIAL_FORM_VALUES,
+    defaultValues: {
+      school: '',
+      name: '',
+      description: '',
+      phone: '',
+      email: '',
+      primaryContact: 'phone',
+    },
     mode: 'onBlur',
   });
+
+  // 서버 데이터로 폼 초기화
+  useEffect(() => {
+    if (!club) return;
+    reset({
+      school: club.schoolName,
+      name: club.name,
+      description: club.description ?? '',
+      phone: formatPhoneNumber(club.contactPhoneNumber ?? ''),
+      email: club.contactEmail ?? '',
+      primaryContact: club.primaryContact === 'EMAIL' ? 'email' : 'phone',
+    });
+  }, [club, reset]);
 
   const school = useWatch({ control, name: 'school' });
   const clubName = useWatch({ control, name: 'name' });
@@ -51,21 +94,108 @@ function ClubInfoPageContent({ schoolNames }: ClubInfoPageContentProps) {
   const email = useWatch({ control, name: 'email' });
   const primaryContact = useWatch({ control, name: 'primaryContact' });
 
-  const [profileUpload, setProfileUpload] = useState<UploadResult | null>(null);
-  const [backgroundUpload, setBackgroundUpload] = useState<UploadResult | null>(null);
+  const [profileImage, setProfileImage] = useState<ImageState>({ status: 'unchanged' });
+  const [backgroundImage, setBackgroundImage] = useState<ImageState>({ status: 'unchanged' });
 
-  const isEditMode = isDirty || profileUpload !== null || backgroundUpload !== null;
+  const isEditMode =
+    isDirty || profileImage.status !== 'unchanged' || backgroundImage.status !== 'unchanged';
+
+  const profilePreviewUrl =
+    profileImage.status === 'uploaded'
+      ? profileImage.upload.fileUrl
+      : profileImage.status === 'deleted'
+        ? null
+        : club?.profileImageUrl ?? null;
+
+  const backgroundPreviewUrl =
+    backgroundImage.status === 'uploaded'
+      ? backgroundImage.upload.fileUrl
+      : backgroundImage.status === 'deleted'
+        ? null
+        : club?.backgroundImageUrl ?? null;
+
+  const updateClub = useUpdateClub();
+  const deleteProfileImage = useDeleteClubProfileImage();
+  const deleteBackgroundImage = useDeleteClubBackgroundImage();
+
+  const isSaving =
+    updateClub.isPending || deleteProfileImage.isPending || deleteBackgroundImage.isPending;
 
   const handleResetChanges = () => {
-    reset();
-    setProfileUpload(null);
-    setBackgroundUpload(null);
+    if (club) {
+      reset({
+        school: club.schoolName,
+        name: club.name,
+        description: club.description ?? '',
+        phone: formatPhoneNumber(club.contactPhoneNumber ?? ''),
+        email: club.contactEmail ?? '',
+        primaryContact: club.primaryContact === 'EMAIL' ? 'email' : 'phone',
+      });
+    } else {
+      reset();
+    }
+    setProfileImage({ status: 'unchanged' });
+    setBackgroundImage({ status: 'unchanged' });
   };
+
+  const handleSave = handleSubmit(async (formData) => {
+    try {
+      // 1. 삭제 API 병렬 호출
+      const deletePromises: Promise<unknown>[] = [];
+      if (profileImage.status === 'deleted') {
+        deletePromises.push(deleteProfileImage.mutateAsync());
+      }
+      if (backgroundImage.status === 'deleted') {
+        deletePromises.push(deleteBackgroundImage.mutateAsync());
+      }
+      if (deletePromises.length > 0) {
+        await Promise.all(deletePromises);
+      }
+
+      // 2. 폼 변경 또는 이미지 업로드가 있으면 PATCH 호출
+      const hasFormChanges = isDirty;
+      const hasUploadedImages =
+        profileImage.status === 'uploaded' || backgroundImage.status === 'uploaded';
+
+      if (hasFormChanges || hasUploadedImages) {
+        const body: UpdateClubBody = {
+          name: formData.name,
+          schoolName: formData.school,
+          description: formData.description,
+          contactPhoneNumber: formData.phone.replace(/-/g, ''),
+          contactEmail: formData.email,
+          primaryContact: formData.primaryContact === 'email' ? 'EMAIL' : 'PHONE',
+        };
+
+        if (profileImage.status === 'uploaded') {
+          body.profileImage = toImagePayload(profileImage.upload);
+        }
+        if (backgroundImage.status === 'uploaded') {
+          body.backgroundImage = toImagePayload(backgroundImage.upload);
+        }
+
+        await updateClub.mutateAsync(body);
+      }
+
+      toastSuccess('동아리 정보가 저장되었습니다.');
+      setProfileImage({ status: 'unchanged' });
+      setBackgroundImage({ status: 'unchanged' });
+    } catch {
+      toastError('저장에 실패했습니다.');
+    }
+  }, () => {
+    toastError('입력값을 확인해주세요.');
+  });
 
   return (
     <div className="flex min-w-3xl flex-col">
       {isEditMode && (
-        <ClubInfoTopBar className="sticky top-0 z-10 -mt-15" onBack={handleResetChanges} />
+        <ClubInfoTopBar
+          className="sticky top-0 z-10 -mt-15"
+          onBack={handleResetChanges}
+          onSave={handleSave}
+          isSaving={isSaving}
+        />
       )}
 
       <div className="flex flex-col items-start gap-400 px-8 py-12">
@@ -78,9 +208,11 @@ function ClubInfoPageContent({ schoolNames }: ClubInfoPageContentProps) {
               description="정사각형 권장"
               aspectRatio="1/1"
               ownerType="CLUB_PROFILE"
-              previewUrl={profileUpload?.fileUrl}
-              onUploadComplete={setProfileUpload}
-              onReset={() => setProfileUpload(null)}
+              previewUrl={profilePreviewUrl}
+              onUploadComplete={(result) =>
+                setProfileImage({ status: 'uploaded', upload: result })
+              }
+              onReset={() => setProfileImage({ status: 'deleted' })}
             />
             <ImageUploadField
               className="min-w-0 flex-1"
@@ -88,9 +220,11 @@ function ClubInfoPageContent({ schoolNames }: ClubInfoPageContentProps) {
               title="클릭 혹은 파일을 이곳에 드롭하세요"
               description="1440 × 364 px 권장"
               ownerType="CLUB_BACKGROUND"
-              previewUrl={backgroundUpload?.fileUrl}
-              onUploadComplete={setBackgroundUpload}
-              onReset={() => setBackgroundUpload(null)}
+              previewUrl={backgroundPreviewUrl}
+              onUploadComplete={(result) =>
+                setBackgroundImage({ status: 'uploaded', upload: result })
+              }
+              onReset={() => setBackgroundImage({ status: 'deleted' })}
             />
           </div>
         </AdminInfoCard>
