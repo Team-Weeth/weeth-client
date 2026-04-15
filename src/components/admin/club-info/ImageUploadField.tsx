@@ -61,26 +61,28 @@ function PreviewContent({
       )}
     >
       <Image src={previewUrl} alt="preview" fill className="object-cover" unoptimized />
-      <div className="absolute inset-0 hidden items-center justify-center gap-200 bg-black/50 group-hover:flex">
-        <Button
-          type="button"
-          variant="secondary"
-          size="md"
-          className="typo-button1 gap-100 px-400 py-200"
-          onClick={onReupload}
-        >
-          <Icon src={AdminCloudUploadIcon} alt="upload" size={16} className="text-icon-strong" />
-          이미지 업로드
-        </Button>
-        <Button
-          type="button"
-          variant="secondary"
-          size="md"
-          className="typo-button1 px-400 py-200"
-          onClick={onReset}
-        >
-          기본 이미지로 변경
-        </Button>
+      <div className="absolute inset-0 hidden flex-col items-center justify-center gap-200 bg-black/50 group-hover:flex">
+        <div className="flex w-full max-w-fit flex-col gap-200">
+          <Button
+            type="button"
+            variant="secondary"
+            size="md"
+            className="typo-button1 w-full gap-100 px-400 py-200"
+            onClick={onReupload}
+          >
+            <Icon src={AdminCloudUploadIcon} alt="upload" size={16} className="text-icon-strong" />
+            이미지 업로드
+          </Button>
+          <Button
+            type="button"
+            variant="secondary"
+            size="md"
+            className="typo-button1 w-full px-400 py-200"
+            onClick={onReset}
+          >
+            기본 이미지로 변경
+          </Button>
+        </div>
       </div>
     </div>
   );
