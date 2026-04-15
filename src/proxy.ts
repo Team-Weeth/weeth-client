@@ -9,6 +9,14 @@ const PRE_LAUNCH = false;
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
+  // TODO: 진단 후 제거
+  console.log('[proxy-debug]', {
+    pathname,
+    appEnv: process.env.NEXT_PUBLIC_APP_ENV,
+    hasPreviewToken: !!process.env.PREVIEW_ACCESS_TOKEN,
+    hasAccessCookie: request.cookies.has(ACCESS_TOKEN_KEY),
+  });
+
   // 런칭 전: /landing 외 모든 경로 차단
   if (PRE_LAUNCH && pathname !== '/landing') {
     const url = request.nextUrl.clone();
