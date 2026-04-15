@@ -1,4 +1,10 @@
 // admin components index file
+export {
+  AttendanceCard,
+  type AttendanceCardProps,
+  type AttendanceMember,
+} from './attendance/AttendanceCard';
+export { AttendancePageContent } from './attendance/AttendancePageContent';
 export { AddCardinalButton, type AddCardinalButtonProps } from './member/AddCardinalButton';
 export { AddCardinalModal, type AddCardinalModalProps } from './member/modal/AddCardinalModal';
 export {
