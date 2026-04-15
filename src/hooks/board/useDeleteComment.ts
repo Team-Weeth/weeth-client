@@ -1,30 +1,18 @@
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { isAxiosError } from 'axios';
-import { COMMENT_ACTION_ERRORS } from '@/constants/board/error';
 import { commentApi } from '@/lib/apis/comment';
-import { toast } from '@/stores/useToastStore';
+import { useCommentMutation } from './useCommentMutation';
 
 export function useDeleteComment(postId: number) {
-  const router = useRouter();
-  const [isPending, setIsPending] = useState(false);
+  const mutation = useCommentMutation({
+    postId,
+    mutationFn: (commentId: number) => commentApi.delete(postId, commentId),
+    successMessage: '댓글이 삭제되었습니다.',
+    errorMessage: '댓글 삭제에 실패했습니다.',
+  });
 
-  const deleteComment = async (commentId: number) => {
-    if (isPending) return;
-
-    setIsPending(true);
-    try {
-      await commentApi.delete(postId, commentId);
-      router.refresh();
-      toast({ title: '댓글이 삭제되었습니다.', variant: 'success' });
-    } catch (error) {
-      const code = isAxiosError(error) ? error.response?.data?.code : undefined;
-      const message = (code && COMMENT_ACTION_ERRORS[code]) || '댓글 삭제에 실패했습니다.';
-      toast({ title: message, variant: 'error' });
-    } finally {
-      setIsPending(false);
-    }
+  const deleteComment = (commentId: number) => {
+    if (mutation.isPending) return;
+    mutation.mutate(commentId);
   };
 
-  return { deleteComment, isPending };
+  return { deleteComment, isPending: mutation.isPending };
 }
