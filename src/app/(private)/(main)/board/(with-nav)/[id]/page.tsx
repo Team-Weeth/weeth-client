@@ -22,5 +22,5 @@ export default async function PostDetailPage({ params }: PostDetailPageProps) {
   });
   if (!response?.data) notFound();
 
-  return <PostDetailContent post={response.data} />;
+  return <PostDetailContent initialData={response.data} />;
 }

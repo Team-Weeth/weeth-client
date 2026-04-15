@@ -1,6 +1,5 @@
-import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { createPost as createPostApi } from '@/lib/actions/board';
 import { useClubId } from '@/stores/useClubStore';
 import { usePostStore } from '@/stores/usePostStore';
@@ -11,34 +10,35 @@ export function useCreatePost() {
   const router = useRouter();
   const clubId = useClubId();
   const queryClient = useQueryClient();
-  const [isPending, setIsPending] = useState(false);
 
-  const createPost = async () => {
-    const { board, title, content, files, getPayload, reset } = usePostStore.getState();
+  const mutation = useMutation({
+    mutationFn: async () => {
+      const { board, title, content, files, getPayload } = usePostStore.getState();
 
-    if (!board) {
-      toast({ title: '게시판을 선택해주세요.', variant: 'error' });
-      return;
-    }
+      if (!board) {
+        toast({ title: '게시판을 선택해주세요.', variant: 'error' });
+        throw new Error('board not selected');
+      }
 
-    if (!validatePost({ clubId, title, content, files })) return;
+      if (!validatePost({ clubId, title, content, files })) {
+        throw new Error('validation failed');
+      }
 
-    setIsPending(true);
-    try {
       const payload = getPayload();
-      const result = await createPostApi(clubId!, board, payload);
-
-      await queryClient.invalidateQueries({ queryKey: ['posts'] });
-
+      return createPostApi(clubId!, board, payload);
+    },
+    onSuccess: (result) => {
+      queryClient.invalidateQueries({ queryKey: ['posts'] });
       toast({ title: '게시글이 작성되었습니다.', variant: 'success' });
-      reset();
+      usePostStore.getState().reset();
       router.push(`/board/${result.id}`);
-    } catch {
-      toast({ title: '게시글 작성에 실패했습니다.', variant: 'error' });
-    } finally {
-      setIsPending(false);
-    }
-  };
+    },
+    onError: (error) => {
+      if (error.message !== 'board not selected' && error.message !== 'validation failed') {
+        toast({ title: '게시글 작성에 실패했습니다.', variant: 'error' });
+      }
+    },
+  });
 
-  return { createPost, isPending };
+  return { createPost: () => mutation.mutate(), isPending: mutation.isPending };
 }

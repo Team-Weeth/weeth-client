@@ -13,27 +13,18 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 
-interface AddGenerationModalProps {
+interface AddCardinalModalProps {
   children: ReactNode;
-  onSubmit?: (data: {
-    generation: number;
-    year: number;
-    semester: number;
-    isCurrent: boolean;
-  }) => void;
+  onSubmit?: (data: { cardinal: number; isCurrent: boolean }) => void;
 }
 
-function AddGenerationModal({ children, onSubmit }: AddGenerationModalProps) {
+function AddCardinalModal({ children, onSubmit }: AddCardinalModalProps) {
   const [open, setOpen] = useState(false);
-  const [generation, setGeneration] = useState('');
-  const [year, setYear] = useState('');
-  const [semester, setSemester] = useState('');
+  const [cardinal, setCardinal] = useState('');
   const [isCurrent, setIsCurrent] = useState(false);
 
   const resetForm = () => {
-    setGeneration('');
-    setYear('');
-    setSemester('');
+    setCardinal('');
     setIsCurrent(false);
   };
 
@@ -42,14 +33,12 @@ function AddGenerationModal({ children, onSubmit }: AddGenerationModalProps) {
     if (!next) resetForm();
   };
 
-  const isValid = generation !== '' && year !== '' && semester !== '';
+  const isValid = cardinal !== '';
 
   const handleSubmit = () => {
     if (!isValid) return;
     onSubmit?.({
-      generation: Number(generation),
-      year: Number(year),
-      semester: Number(semester),
+      cardinal: Number(cardinal),
       isCurrent,
     });
     handleOpenChange(false);
@@ -73,10 +62,10 @@ function AddGenerationModal({ children, onSubmit }: AddGenerationModalProps) {
                 aria-label="기수"
                 type="number"
                 min={1}
-                value={generation}
+                value={cardinal}
                 onChange={(e) => {
                   const v = (e.target as HTMLInputElement).value;
-                  if (v === '' || Number(v) > 0) setGeneration(v);
+                  if (v === '' || Number(v) > 0) setCardinal(v);
                 }}
                 className="pr-10"
                 placeholder=" "
@@ -86,51 +75,10 @@ function AddGenerationModal({ children, onSubmit }: AddGenerationModalProps) {
               </span>
             </div>
           </div>
-
-          {/* 활동 시기 */}
-          <div className="flex flex-col">
-            <p className="typo-sub3 text-text-normal py-300">활동 시기</p>
-            <div className="flex gap-200">
-              <div className="relative flex-1">
-                <Input
-                  aria-label="연도"
-                  type="number"
-                  min={1}
-                  value={year}
-                  onChange={(e) => {
-                    const v = (e.target as HTMLInputElement).value;
-                    if (v === '' || Number(v) > 0) setYear(v);
-                  }}
-                  className="pr-10"
-                  placeholder=" "
-                />
-                <span className="typo-body2 text-text-alternative pointer-events-none absolute top-1/2 right-400 -translate-y-1/2">
-                  년
-                </span>
-              </div>
-              <div className="relative flex-1">
-                <Input
-                  aria-label="학기"
-                  type="number"
-                  min={1}
-                  value={semester}
-                  onChange={(e) => {
-                    const v = (e.target as HTMLInputElement).value;
-                    if (v === '' || Number(v) > 0) setSemester(v);
-                  }}
-                  className="pr-10"
-                  placeholder=" "
-                />
-                <span className="typo-body2 text-text-alternative pointer-events-none absolute top-1/2 right-400 -translate-y-1/2">
-                  학기
-                </span>
-              </div>
-            </div>
-          </div>
         </DialogBody>
 
         <DialogFooter>
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between pt-400">
             <button
               aria-pressed={isCurrent}
               aria-label="현재 진행 중 여부 토글"
@@ -155,4 +103,4 @@ function AddGenerationModal({ children, onSubmit }: AddGenerationModalProps) {
   );
 }
 
-export { AddGenerationModal, type AddGenerationModalProps };
+export { AddCardinalModal, type AddCardinalModalProps };

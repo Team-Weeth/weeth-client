@@ -90,6 +90,19 @@ export interface UpdatePostData {
   id: number;
 }
 
+/** 댓글 작성 요청 body */
+export interface CreateCommentBody {
+  parentCommentId?: number | null;
+  content: string;
+  files: CreatePostFile[];
+}
+
+/** 댓글 수정 요청 body — files: null=기존 유지, []=전체 삭제, 배열=교체 */
+export interface UpdateCommentBody {
+  content: string;
+  files: CreatePostFile[] | null;
+}
+
 /** mapComment 변환 결과 (UI 표시용) */
 export interface MappedComment {
   id: number;

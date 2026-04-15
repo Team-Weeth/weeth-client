@@ -8,12 +8,10 @@ export function useCreateCardinal() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (body: {
-      cardinalNumber: number;
-      year: number;
-      semester: number;
-      inProgress: boolean;
-    }) => cardinalApi.createCardinal(clubId!, body),
+    mutationFn: (body: { cardinalNumber: number; inProgress: boolean }) => {
+      if (!clubId) throw new Error('clubId가 없습니다');
+      return cardinalApi.createCardinal(clubId!, body);
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['cardinals', clubId] });
     },

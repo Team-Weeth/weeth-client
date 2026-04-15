@@ -26,12 +26,11 @@ export function proxy(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  // Preview / Amplify 개발 배포 환경에서 토큰 자동 주입
-  // VERCEL_ENV: Vercel이 자동 주입 ('preview' | 'production' | 'development')
-  // AWS_BRANCH: Amplify가 자동 주입 (배포된 브랜치명)
-  const isPreview =
-    process.env.VERCEL_ENV === 'preview' ||
-    (!!process.env.AWS_BRANCH && process.env.AWS_BRANCH !== 'main');
+  // 개발 배포 환경에서 토큰 자동 주입 (카카오/애플 로그인 없이 페이지 접근)
+  // Amplify/Vercel 환경변수에 NEXT_PUBLIC_APP_ENV를 브랜치별로 등록해야 함
+  // - develop 브랜치 배포: NEXT_PUBLIC_APP_ENV=development
+  // - main 브랜치 배포: NEXT_PUBLIC_APP_ENV=production
+  const isPreview = process.env.NEXT_PUBLIC_APP_ENV !== 'production';
   const previewToken = process.env.PREVIEW_ACCESS_TOKEN;
 
   if (isPreview && previewToken && !request.cookies.has(ACCESS_TOKEN_KEY)) {

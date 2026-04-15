@@ -4,6 +4,7 @@ export type { AgreeTermsResponse } from './auth';
 export { clubApi } from './club';
 export { apiServer } from './server';
 export { boardApi } from './board';
+export { commentApi } from './comment';
 export { boardServerApi } from './board.server';
 export { fileApi } from './file';
 export { homeApi } from './home';
