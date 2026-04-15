@@ -16,8 +16,8 @@ export function useDeletePost() {
       await deletePostApi(clubId, postId);
       return postId;
     },
-    onSuccess: () => {
-      Promise.all([
+    onSuccess: async () => {
+      await Promise.all([
         queryClient.invalidateQueries({ queryKey: ['posts'] }),
         queryClient.invalidateQueries({ queryKey: ['home', 'recent-posts'] }),
       ]);
