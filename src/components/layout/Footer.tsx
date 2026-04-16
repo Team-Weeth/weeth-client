@@ -48,7 +48,7 @@ export default function Footer({ isSmall = false }: FooterProps) {
             <Link href="/admin" className="typo-body2 text-text-alternative">
               관리자 서비스
             </Link>
-            <a href="mailto:weeth.site@gmail.com" className="typo-body2 text-text-alternative">
+            <a href="mailto:contact@weeth.kr" className="typo-body2 text-text-alternative">
               문의 메일
             </a>
           </div>
