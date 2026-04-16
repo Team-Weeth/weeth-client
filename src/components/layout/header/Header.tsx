@@ -4,11 +4,12 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 
-import { MenuIcon, LogoGrayIcon, AvatarIcon } from '@/assets/icons';
+import { LogoGrayIcon, AvatarIcon } from '@/assets/icons';
 import { useClubName } from '@/stores';
 
 import { PostingActions } from './PostingActions';
 import { DefaultActions } from './DefaultActions';
+import { MobileNavSheet } from './MobileNavSheet';
 
 interface HeaderProps {
   isMain?: boolean;
@@ -33,16 +34,10 @@ export default function Header({ isMain = true }: HeaderProps) {
 
   return (
     <>
-      <header className="tablet:hidden flex items-center justify-between gap-100 py-3 pr-450 pl-200">
+      <header className="desktop:hidden bg-background sticky top-0 z-[70] flex items-center justify-between gap-100 py-3 pr-450 pl-200">
         {isMain && (
           <div className="flex items-center gap-100">
-            <Image
-              src={MenuIcon}
-              alt="menu"
-              width={40}
-              height={40}
-              className="cursor-pointer p-2"
-            />
+            <MobileNavSheet />
             <span className="typo-sub1 text-text-normal px-1">{clubName}</span>
           </div>
         )}
@@ -55,7 +50,7 @@ export default function Header({ isMain = true }: HeaderProps) {
           <Image src={AvatarIcon} alt="avatar" width={40} height={40} />
         </button>
       </header>
-      <header className="tablet:flex flex hidden w-full items-center justify-between px-5 py-3">
+      <header className="desktop:flex bg-background flex hidden w-full items-center justify-between px-5 py-3">
         <div className="flex items-center gap-4">
           <Logo href={isMain ? '/home' : '/'} />
 
