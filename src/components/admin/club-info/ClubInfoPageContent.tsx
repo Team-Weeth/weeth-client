@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useQueryClient } from '@tanstack/react-query';
 
 import { ClubInfoBasicSection } from '@/components/admin/club-info/ClubInfoBasicSection';
 import { ClubInfoContactSection } from '@/components/admin/club-info/ClubInfoContactSection';
@@ -28,6 +29,7 @@ interface ClubInfoPageContentProps {
 }
 
 function ClubInfoPageContent({ schoolNames }: ClubInfoPageContentProps) {
+  const queryClient = useQueryClient();
   const { data: club } = useAdminClubQuery();
 
   const {
@@ -104,7 +106,12 @@ function ClubInfoPageContent({ schoolNames }: ClubInfoPageContentProps) {
         setProfileImage({ status: 'unchanged' });
         setBackgroundImage({ status: 'unchanged' });
       } catch {
-        toastError('저장에 실패했습니다.');
+        // 삭제만 성공하고 업데이트가 실패하는 등 부분 실패 시,
+        // 서버 최신 상태로 재동기화하여 UI와 서버 간 불일치를 방지한다.
+        await queryClient.invalidateQueries({ queryKey: ['admin', 'club'] });
+        setProfileImage({ status: 'unchanged' });
+        setBackgroundImage({ status: 'unchanged' });
+        toastError('저장에 실패했습니다. 최신 정보로 다시 불러왔어요.');
       }
     },
     () => {

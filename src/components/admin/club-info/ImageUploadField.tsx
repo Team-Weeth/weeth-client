@@ -64,7 +64,7 @@ function PreviewContent({
       )}
     >
       <Image src={previewUrl} alt="preview" fill className="object-cover" unoptimized />
-      <div className="absolute inset-0 hidden flex-col items-center justify-center gap-200 bg-black/50 group-hover:flex">
+      <div className="absolute inset-0 flex flex-col items-center justify-center gap-200 bg-black/50 opacity-0 transition-opacity group-hover:opacity-100 focus-within:opacity-100">
         <div className="flex w-full max-w-fit flex-col gap-200">
           <Button
             type="button"
