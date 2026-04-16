@@ -20,6 +20,7 @@ import { AdminCalendarEditIcon } from '@/assets/icons/admin';
 import { ArrowDownIcon, SearchIcon } from '@/assets/icons';
 import { MonthNavigator } from '@/components/admin/schedule/MonthNavigator';
 import { ScheduleList } from '@/components/admin/schedule/ScheduleList';
+import { SessionTabContent } from '@/components/admin/schedule/SessionTabContent';
 import { CreateScheduleModal } from '@/components/admin/schedule/modal/CreateScheduleModal';
 import { EditScheduleModal } from '@/components/admin/schedule/modal/EditScheduleModal';
 import { useCardinals } from '@/hooks/queries';
@@ -162,8 +163,8 @@ function SchedulePageContent() {
           <TabsTrigger value="session">세션</TabsTrigger>
         </TabsList>
 
-        <TabsContent value={activeTab}>
-          <Card className="mt-400 gap-700 px-600 pt-600 pb-800">
+        <TabsContent value="all" className="mt-400">
+          <Card className="gap-700 px-600 pt-600 pb-800">
             {/* Month navigator */}
             <MonthNavigator
               year={currentYear}
@@ -206,6 +207,10 @@ function SchedulePageContent() {
               onCreateClick={() => setCreateModalOpen(true)}
             />
           </Card>
+        </TabsContent>
+
+        <TabsContent value="session" className="mt-400">
+          <SessionTabContent onCreateSession={() => setCreateModalOpen(true)} />
         </TabsContent>
       </Tabs>
 

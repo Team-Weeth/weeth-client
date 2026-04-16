@@ -23,6 +23,14 @@ export { ScheduleTag, scheduleTagVariants, type ScheduleTagProps } from './sched
 export { ScheduleItem, type ScheduleItemProps } from './schedule/ScheduleItem';
 export { ScheduleList, type ScheduleListProps } from './schedule/ScheduleList';
 export { SchedulePageContent } from './schedule/SchedulePageContent';
+export {
+  SessionStatusTag,
+  sessionStatusTagVariants,
+  type SessionStatusTagProps,
+} from './schedule/SessionStatusTag';
+export { SessionGroupRow, type SessionGroupRowProps } from './schedule/SessionGroupRow';
+export { SessionTable, type SessionTableProps } from './schedule/SessionTable';
+export { SessionTabContent, type SessionTabContentProps } from './schedule/SessionTabContent';
 export { EditScheduleModal, type EditScheduleModalProps } from './schedule/modal/EditScheduleModal';
 export {
   CreateScheduleModal,
