@@ -18,11 +18,11 @@ import { Header } from '@/components/layout';
 export function HomePageSections() {
   return (
     <>
+      <Header />
       <Suspense fallback={<BannerSkeleton />}>
         <Banner />
       </Suspense>
-      <Header />
-      <div className="flex w-full gap-8 px-16">
+      <div className="tablet:flex-row flex w-full flex-col gap-8 px-[18px] py-450">
         <div className="flex flex-col gap-300">
           <Suspense fallback={<LeftContainerSkeleton />}>
             <LeftContainer />
@@ -33,7 +33,7 @@ export function HomePageSections() {
             <MainContainer />
           </Suspense>
         </div>
-        <div className="flex flex-col gap-300">
+        <div className="desktop:flex hidden flex-col gap-300">
           <Suspense fallback={<RightContainerSkeleton />}>
             <RightContainer />
           </Suspense>

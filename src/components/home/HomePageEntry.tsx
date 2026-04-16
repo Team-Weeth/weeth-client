@@ -23,14 +23,14 @@ function HomePageSkeleton() {
     <>
       <BannerSkeleton />
       <div className="h-[64px]" />
-      <div className="flex w-full gap-8 px-16">
+      <div className="tablet:flex-row flex w-full flex-col gap-8 px-[18px]">
         <div className="flex flex-col gap-300">
           <LeftContainerSkeleton />
         </div>
         <div className="flex w-full flex-col gap-300">
           <MainContainerSkeleton />
         </div>
-        <div className="flex flex-col gap-300">
+        <div className="desktop:flex hidden flex-col gap-300">
           <RightContainerSkeleton />
         </div>
       </div>
