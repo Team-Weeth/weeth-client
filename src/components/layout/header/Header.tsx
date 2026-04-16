@@ -3,13 +3,12 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-
-import { LogoGrayIcon, AvatarIcon } from '@/assets/icons';
+import { LogoGrayIcon, AvatarIcon, ExitToAppIcon } from '@/assets/icons';
 import { useClubName } from '@/stores';
-
 import { PostingActions } from './PostingActions';
 import { DefaultActions } from './DefaultActions';
 import { MobileNavSheet } from './MobileNavSheet';
+import { Icon } from '@/components/ui';
 
 interface HeaderProps {
   isMain?: boolean;
@@ -36,19 +35,29 @@ export default function Header({ isMain = true }: HeaderProps) {
     <>
       <header className="desktop:hidden bg-background sticky top-0 z-[70] flex items-center justify-between gap-100 py-3 pr-450 pl-200">
         {isMain && (
-          <div className="flex items-center gap-100">
+          <div className="flex items-center justify-center gap-100">
             <MobileNavSheet />
             <span className="typo-sub1 text-text-normal px-1">{clubName}</span>
           </div>
         )}
-        <button
-          type="button"
-          aria-label="마이페이지로 이동"
-          onClick={() => router.push('/mypage')}
-          className="cursor-pointer rounded-full"
-        >
-          <Image src={AvatarIcon} alt="avatar" width={40} height={40} />
-        </button>
+        <div className="flex items-center justify-center gap-200">
+          <button
+            type="button"
+            aria-label="관리자 페이지로 이동"
+            onClick={() => router.push('/admin')}
+            className="flex cursor-pointer items-center justify-center rounded-full"
+          >
+            <Icon src={ExitToAppIcon} alt="avatar" size={40} className="text-icon-normal p-2" />
+          </button>
+          <button
+            type="button"
+            aria-label="마이페이지로 이동"
+            onClick={() => router.push('/mypage')}
+            className="cursor-pointer rounded-full"
+          >
+            <Image src={AvatarIcon} alt="avatar" width={40} height={40} />
+          </button>
+        </div>
       </header>
       <header className="desktop:flex bg-background flex hidden w-full items-center justify-between px-5 py-3">
         <div className="flex items-center gap-4">

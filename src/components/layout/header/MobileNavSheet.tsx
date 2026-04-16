@@ -34,9 +34,9 @@ function MobileNavSheet() {
         <button
           type="button"
           aria-label="메뉴 열기"
-          className="cursor-pointer rounded-sm outline-none"
+          className="itmes-center flex cursor-pointer justify-center rounded-sm outline-none"
         >
-          <Image src={MenuIcon} alt="menu" width={40} height={40} className="p-2" />
+          <Icon src={MenuIcon} alt="menu" size={40} className="text-icon-normal p-2" />
         </button>
       </SheetTrigger>
       <SheetContent
