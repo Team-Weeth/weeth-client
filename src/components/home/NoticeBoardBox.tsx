@@ -3,7 +3,7 @@
 import React from 'react';
 import Image from 'next/image';
 import { NewIcon, ArrowRightIcon } from '@/assets/icons';
-import { Divider } from '@/components/ui';
+import { Divider, Icon } from '@/components/ui';
 import { useRouter } from 'next/navigation';
 import { useRecentNoticesQuery } from '@/hooks/home';
 import { stripHtml } from '@/lib/stripHtml';
@@ -19,14 +19,17 @@ export function NoticeBoardBox() {
     <div className="bg-container-neutral flex flex-col rounded-lg pb-300">
       <div className="flex items-center justify-between p-450">
         <p className="typo-sub2 text-text-strong">공지</p>
-        <button type="button" aria-label="공지 전체보기" onClick={() => router.push('/board')}>
-          <Image
+        <button
+          className="p-1"
+          type="button"
+          aria-label="공지 전체보기"
+          onClick={() => router.push('/board')}
+        >
+          <Icon
             src={ArrowRightIcon}
-            alt=""
             aria-hidden="true"
-            width={16}
-            height={16}
-            className="cursor-pointer px-[6px] py-1"
+            size={12}
+            className="cursor-pointer px-1 py-[1px]"
           />
         </button>
       </div>
