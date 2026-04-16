@@ -8,7 +8,11 @@ frontend:
         - pnpm install --frozen-lockfile
     build:
       commands:
-        - env | grep -E '^(PREVIEW_ACCESS_TOKEN|CLUB_ID)=' >> .env.production || true
+        - |
+          set -e
+          matched=$(env | grep -E '^(PREVIEW_ACCESS_TOKEN|CLUB_ID)=') || grep_status=$?
+          if [ "${grep_status:-0}" -gt 1 ]; then exit "$grep_status"; fi
+          if [ -n "$matched" ]; then printf '%s\n' "$matched" >> .env.production; fi
         - pnpm build
   artifacts:
     baseDirectory: .next
