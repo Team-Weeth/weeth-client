@@ -8,6 +8,7 @@ frontend:
         - pnpm install --frozen-lockfile
     build:
       commands:
+        - env | grep -E '^(PREVIEW_ACCESS_TOKEN|CLUB_ID)=' >> .env.production || true
         - pnpm build
   artifacts:
     baseDirectory: .next
