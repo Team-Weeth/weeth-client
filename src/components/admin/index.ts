@@ -34,6 +34,7 @@ export { SessionGroupRow, type SessionGroupRowProps } from './schedule/SessionGr
 export { SessionTable, type SessionTableProps } from './schedule/SessionTable';
 export { SessionTabContent, type SessionTabContentProps } from './schedule/SessionTabContent';
 export { EditScheduleModal, type EditScheduleModalProps } from './schedule/modal/EditScheduleModal';
+export { EditSessionModal, type EditSessionModalProps } from './schedule/modal/EditSessionModal';
 export {
   CreateScheduleModal,
   type CreateScheduleModalProps,
