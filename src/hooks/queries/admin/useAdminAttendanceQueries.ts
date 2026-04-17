@@ -49,7 +49,7 @@ export function useUpdateAttendanceStatus(sessionId: number) {
     },
     onError: (error: AxiosError<ApiResponse<unknown>>) => {
       const code = error.response?.data?.code;
-      const message = code ? ATTENDANCE_ERROR_MESSAGE[code] : undefined;
+      const message = code ? ATTENDANCE_ERROR_MESSAGE[code] : '출석 상태 저장에 실패했습니다.';
       toastError(message);
     },
   });
