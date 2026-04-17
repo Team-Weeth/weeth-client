@@ -1,4 +1,4 @@
-export type AttendanceStatus = 'PENDING' | 'ATTEND' | 'ABSENT';
+import { AttendanceStatus } from '@/constants/attendance';
 
 export interface AttendanceMember {
   id: number;
