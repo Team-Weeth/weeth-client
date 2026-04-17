@@ -42,11 +42,14 @@ export function proxy(request: NextRequest) {
   const previewToken = process.env.PREVIEW_ACCESS_TOKEN;
 
   if (isPreview && previewToken && !request.cookies.has(ACCESS_TOKEN_KEY)) {
-    const response = NextResponse.next();
+    request.cookies.set(ACCESS_TOKEN_KEY, previewToken);
+
+    const response = NextResponse.next({ request });
     response.cookies.set(ACCESS_TOKEN_KEY, previewToken, {
       httpOnly: true,
       secure: true,
       sameSite: 'lax',
+
       path: '/',
       maxAge: 60 * 60 * 24 * 7,
     });
