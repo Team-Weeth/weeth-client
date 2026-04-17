@@ -65,8 +65,8 @@ function SessionTabContent({ onCreateSession, onManageAttendance }: SessionTabCo
             if (!nextOpen) setEditTarget(null);
           }}
           target={editTarget}
-          onDelete={() => {
-            // TODO: API 연동 시 세션 삭제 호출
+          onDelete={(type) => {
+            // TODO: API 연동 시 type에 따라 'this'=단일 삭제, 'all'=이후 모두 삭제 호출
             setEditTarget(null);
           }}
         />

@@ -5,7 +5,10 @@ import { useState } from 'react';
 import {
   AlertDialog,
   AlertDialogAction,
-  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
   Button,
   DropdownMenu,
   DropdownMenuContent,
@@ -53,11 +56,13 @@ function isFormChanged(a: ScheduleFormState, b: ScheduleFormState): boolean {
   return (Object.keys(a) as (keyof ScheduleFormState)[]).some((key) => a[key] !== b[key]);
 }
 
+type SessionDeleteType = 'this' | 'all';
+
 interface EditSessionModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   target: AdminSession | AdminSessionGroup;
-  onDelete?: () => void;
+  onDelete?: (type: SessionDeleteType) => void;
 }
 
 function EditSessionModal({ open, onOpenChange, target, onDelete }: EditSessionModalProps) {
@@ -88,10 +93,10 @@ function EditSessionModal({ open, onOpenChange, target, onDelete }: EditSessionM
     handleClose();
   };
 
-  const handleDeleteConfirm = () => {
+  const handleDeleteConfirm = (type: SessionDeleteType) => {
     setDeleteConfirmOpen(false);
     handleClose();
-    onDelete?.();
+    onDelete?.(type);
   };
 
   const handleDiscardConfirm = () => {
@@ -252,15 +257,28 @@ function EditSessionModal({ open, onOpenChange, target, onDelete }: EditSessionM
       </Dialog>
 
       {/* Delete confirmation */}
-      <AlertDialog
-        open={deleteConfirmOpen}
-        onOpenChange={setDeleteConfirmOpen}
-        status="danger"
-        title="이 세션을 삭제하시겠어요?"
-        description={'삭제된 세션은 복구할 수 없습니다.\n신중히 확인 후 진행해 주세요.'}
-      >
-        <AlertDialogAction onClick={handleDeleteConfirm}>삭제</AlertDialogAction>
-        <AlertDialogCancel>취소</AlertDialogCancel>
+      <AlertDialog status="danger" open={deleteConfirmOpen} onOpenChange={setDeleteConfirmOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              이 세션을 삭제하시겠어요?
+              <br />
+              반복 설정이 되어있는 세션이에요.
+            </AlertDialogTitle>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogAction variant="danger" onClick={() => handleDeleteConfirm('this')}>
+              이 세션 일정만 삭제
+            </AlertDialogAction>
+            <AlertDialogAction
+              variant="secondary"
+              className="text-state-error"
+              onClick={() => handleDeleteConfirm('all')}
+            >
+              이후 모든 세션 일정 삭제
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
       </AlertDialog>
     </>
   );
