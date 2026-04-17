@@ -1,109 +1,75 @@
 'use client';
 
-import { useState } from 'react';
-import Image from 'next/image';
+import { useCallback, useState } from 'react';
 
-import { ArrowDownIcon } from '@/assets/icons';
-import {
-  Card,
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui';
-import { useCardinals } from '@/hooks/queries';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, Card } from '@/components/ui';
+import { CardinalDropdown } from '@/components/admin';
+import { useNavigationGuard, useCardinalSelector } from '@/hooks';
+import { useFlattenedSessions } from '@/hooks/admin';
+import { formatKoreanDate } from '@/lib/formatTime';
 
-import { AttendanceCard } from './AttendanceCard';
-import type { AttendanceMember } from '@/types/admin/attendance';
-
-const MOCK_MEMBERS: AttendanceMember[] = [
-  {
-    id: 1,
-    name: '조예진',
-    department: '시각디자인학과',
-    studentId: '202036191',
-    status: 'PENDING',
-  },
-  {
-    id: 2,
-    name: '조예진',
-    department: '시각디자인학과',
-    studentId: '202036191',
-    status: 'ATTEND',
-  },
-  {
-    id: 3,
-    name: '조예진',
-    department: '시각디자인학과',
-    studentId: '202036191',
-    status: 'ABSENT',
-  },
-];
-
-interface MockSchedule {
-  id: number;
-  date: string;
-  title: string;
-  isCurrentWeek?: boolean;
-}
-
-const MOCK_SCHEDULES: MockSchedule[] = [
-  { id: 1, date: '2024년 11월 25일', title: '1주차 정기모임', isCurrentWeek: true },
-  { id: 2, date: '2024년 11월 25일', title: '1주차 정기모임', isCurrentWeek: true },
-  { id: 3, date: '2024년 11월 25일', title: '1주차 정기모임' },
-  { id: 4, date: '2024년 11월 25일', title: '1주차 정기모임' },
-  { id: 5, date: '2024년 11월 25일', title: '1주차 정기모임' },
-  { id: 6, date: '2024년 11월 25일', title: '1주차 정기모임' },
-];
+import { AttendanceSessionCard } from './AttendanceSessionCard';
 
 function AttendancePageContent() {
-  const { data: cardinals = [] } = useCardinals();
-  const [selectedCardinalId, setSelectedCardinalId] = useState<number | null>(null);
+  const { cardinals, selectedCardinalId, setSelectedCardinalId, activeCardinal } =
+    useCardinalSelector({ autoSelectLatest: true });
+  const [dirtyCardIds, setDirtyCardIds] = useState<Set<number>>(new Set());
 
-  const activeCardinal = selectedCardinalId
-    ? cardinals.find((c) => c.id === selectedCardinalId)
-    : undefined;
+  const isDirty = dirtyCardIds.size > 0;
+  const { open, onConfirm, onCancel } = useNavigationGuard({ enabled: isDirty });
+
+  const handleDirtyChange = useCallback((sessionId: number, dirty: boolean) => {
+    setDirtyCardIds((prev) => {
+      const next = new Set(prev);
+      if (dirty) next.add(sessionId);
+      else next.delete(sessionId);
+      return next;
+    });
+  }, []);
+
+  const cardinalNumber = activeCardinal?.cardinalNumber ?? null;
+  const { sessions } = useFlattenedSessions(cardinalNumber);
 
   return (
     <div className="flex min-w-3xl flex-col gap-400 p-700">
-      {/* Cardinal dropdown */}
-      <Card className="w-fit">
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <button
-              type="button"
-              className="border-line flex cursor-pointer items-center gap-700 rounded-sm border py-300 pr-300 pl-400"
-            >
-              <span className="typo-sub2 text-text-normal w-12 text-left">
-                {selectedCardinalId !== null && activeCardinal
-                  ? `${activeCardinal.cardinalNumber}기`
-                  : '기수'}
-              </span>
-              <Image src={ArrowDownIcon} alt="기수 선택" width={24} height={24} />
-            </button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="start">
-            {cardinals.map((c) => (
-              <DropdownMenuItem key={c.id} onSelect={() => setSelectedCardinalId(c.id)}>
-                {c.cardinalNumber}기
-              </DropdownMenuItem>
-            ))}
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </Card>
+      <CardinalDropdown
+        cardinals={cardinals}
+        activeCardinal={activeCardinal}
+        onSelect={setSelectedCardinalId}
+      />
 
-      {/* Cards */}
-      <Card className="mt-400 gap-400 px-600 pt-600 pb-[64px]">
-        {MOCK_SCHEDULES.map((schedule) => (
-          <AttendanceCard
-            key={schedule.id}
-            date={schedule.date}
-            title={schedule.title}
-            isCurrentWeek={schedule.isCurrentWeek}
-            members={MOCK_MEMBERS}
-          />
-        ))}
-      </Card>
+      {sessions.length > 0 ? (
+        <Card className="mt-400 gap-400 px-600 pt-600 pb-[64px]">
+          {sessions.map((session) => (
+            <AttendanceSessionCard
+              key={session.id}
+              sessionId={session.id}
+              date={formatKoreanDate(new Date(session.start))}
+              title={session.title}
+              isCurrentWeek={session.isCurrentWeek}
+              onDirtyChange={handleDirtyChange}
+            />
+          ))}
+        </Card>
+      ) : (
+        <Card className="mt-400 flex items-center justify-center px-600 py-800">
+          <span className="typo-body1 text-text-alternative">
+            {activeCardinal ? '등록된 정기모임이 없습니다.' : '기수를 선택해 주세요.'}
+          </span>
+        </Card>
+      )}
+
+      <AlertDialog
+        open={open}
+        onOpenChange={(isOpen) => {
+          if (!isOpen) onCancel();
+        }}
+        title="변경 사항이 저장되지 않았어요"
+        description={'지금 나가면 수정 중인 내용이 사라집니다.\n계속하시겠어요?'}
+      >
+        <AlertDialogAction onClick={onConfirm}>나가기</AlertDialogAction>
+        <AlertDialogCancel onClick={onCancel}>계속 수정</AlertDialogCancel>
+      </AlertDialog>
     </div>
   );
 }
