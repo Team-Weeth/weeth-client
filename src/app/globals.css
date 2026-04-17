@@ -119,13 +119,14 @@
   --h2-line-height: 40px;
   --h3-size: 24px;
   --h3-line-height: 30px;
-  --sub1-size: 16px;
-  --sub1-line-height: 20px;
-  --sub2-size: 18px;
-  --sub2-line-height: 22px;
+  --sub1-size: 18px;
+  --sub1-line-height: 22px;
+  --sub1-weight: var(--font-weight-semibold);
+  --sub2-size: 16px;
+  --sub2-line-height: 20px;
+  --sub2-weight: var(--font-weight-black);
   --sub3-size: 16px;
   --sub3-line-height: 20px;
-
   --body1-size: 16px;
   --body1-line-height: 24px;
   --body1-weight: 470;
@@ -205,8 +206,10 @@
   --h2-line-height: 36px;
   --h3-size: 22px;
   --h3-line-height: 28px;
-  --sub2-size: 16px;
-  --sub2-line-height: 20px;
+  --sub1-size: 16px;
+  --sub1-line-height: 20px;
+  --sub2-size: 14px;
+  --sub2-line-height: 18px;
   --sub3-size: 14px;
   --sub3-line-height: 18px;
   --body1-size: 14px;
@@ -488,14 +491,14 @@ select:focus {
 @utility typo-sub1 {
   font-size: var(--sub1-size);
   line-height: var(--sub1-line-height);
-  font-weight: var(--font-weight-black);
+  font-weight: var(--sub1-weight);
   letter-spacing: var(--letter-spacing);
 }
 
 @utility typo-sub2 {
   font-size: var(--sub2-size);
   line-height: var(--sub2-line-height);
-  font-weight: var(--font-weight-semibold);
+  font-weight: var(--sub2-weight);
   letter-spacing: var(--letter-spacing);
 }
 

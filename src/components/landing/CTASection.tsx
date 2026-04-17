@@ -72,7 +72,7 @@ function CTASection({ className }: { className?: string }) {
           <div className="flex gap-3">
             <InquiryDialog>
               <Button variant="primary" size="lg">
-                가입 문의하기
+                사전 예약하기
               </Button>
             </InquiryDialog>
           </div>

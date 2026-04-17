@@ -4,10 +4,9 @@ import * as React from 'react';
 import { AlertDialog as AlertDialogPrimitive } from 'radix-ui';
 import Image from 'next/image';
 import { cva, type VariantProps } from 'class-variance-authority';
-
 import { cn } from '@/lib/cn';
 import { Button, type ButtonProps } from '@/components/ui/Button';
-
+import { AdminScopeBoundary } from '@/providers';
 import InfoIcon from '@/assets/icons/info.svg';
 import DeleteIcon from '@/assets/icons/delete_forever.svg';
 
@@ -112,8 +111,15 @@ function AlertDialogTrigger({
   return <AlertDialogPrimitive.Trigger data-slot="alert-dialog-trigger" {...props} />;
 }
 
-function AlertDialogPortal({ ...props }: React.ComponentProps<typeof AlertDialogPrimitive.Portal>) {
-  return <AlertDialogPrimitive.Portal data-slot="alert-dialog-portal" {...props} />;
+function AlertDialogPortal({
+  children,
+  ...props
+}: React.ComponentProps<typeof AlertDialogPrimitive.Portal>) {
+  return (
+    <AlertDialogPrimitive.Portal data-slot="alert-dialog-portal" {...props}>
+      <AdminScopeBoundary>{children}</AdminScopeBoundary>
+    </AlertDialogPrimitive.Portal>
+  );
 }
 
 function AlertDialogOverlay({

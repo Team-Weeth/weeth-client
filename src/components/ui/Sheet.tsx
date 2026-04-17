@@ -4,6 +4,7 @@ import * as React from 'react';
 import { Dialog as DialogPrimitive } from 'radix-ui';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@/lib/cn';
+import { AdminScopeBoundary } from '@/providers';
 
 const ANIMATION_CLASSES =
   'duration-300 ease-[cubic-bezier(0.15,0.89,1,1)] data-[state=open]:animate-in data-[state=closed]:animate-out';
@@ -20,8 +21,12 @@ function SheetClose(props: React.ComponentProps<typeof DialogPrimitive.Close>) {
   return <DialogPrimitive.Close data-slot="sheet-close" {...props} />;
 }
 
-function SheetPortal(props: React.ComponentProps<typeof DialogPrimitive.Portal>) {
-  return <DialogPrimitive.Portal data-slot="sheet-portal" {...props} />;
+function SheetPortal({ children, ...props }: React.ComponentProps<typeof DialogPrimitive.Portal>) {
+  return (
+    <DialogPrimitive.Portal data-slot="sheet-portal" {...props}>
+      <AdminScopeBoundary>{children}</AdminScopeBoundary>
+    </DialogPrimitive.Portal>
+  );
 }
 
 function SheetOverlay({

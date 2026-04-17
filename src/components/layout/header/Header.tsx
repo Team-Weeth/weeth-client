@@ -76,7 +76,7 @@ export default function Header({ isMain = true }: HeaderProps) {
                 href="#"
                 className="typo-button1 text-text-alternative hover:text-text-normal transition-colors"
               >
-                가입문의
+                사전예약
               </Link>
             </>
           )}
