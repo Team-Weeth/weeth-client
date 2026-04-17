@@ -1,2 +1,6 @@
 export { useAdminMembers } from './useAdminMemberQueries';
-export { useAdminSessions, useAdminAttendance } from './useAdminAttendanceQueries';
+export {
+  useAdminSessions,
+  useAdminAttendance,
+  useUpdateAttendanceStatus,
+} from './useAdminAttendanceQueries';
