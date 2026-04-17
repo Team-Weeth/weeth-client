@@ -4,15 +4,12 @@ import { useState } from 'react';
 
 import { cn } from '@/lib/cn';
 import { Icon } from '@/components/ui';
-import { ArrowDownIcon } from '@/assets/icons';
 import { SessionStatusTag } from '@/components/admin/schedule/SessionStatusTag';
 import { SessionChildTable } from '@/components/admin/schedule/SessionChildTable';
 import { AttendanceLink, MoreButton } from '@/components/admin/schedule/SessionActionButtons';
-import {
-  formatSessionDate,
-  formatSessionDateRange,
-} from '@/utils/admin/sessionUtils';
+import { formatSessionDate, formatSessionDateRange } from '@/utils/admin/sessionUtils';
 import type { AdminSession, AdminSessionGroup } from '@/types/admin/session';
+import { AdminToggleOpenIcon } from '@/assets/icons/admin';
 
 interface SessionGroupRowProps {
   group: AdminSessionGroup;
@@ -32,7 +29,7 @@ function SessionGroupRow({
   const [expanded, setExpanded] = useState(true);
 
   const summaryRow = (
-    <div className="flex h-12 w-full items-center gap-200">
+    <div className="flex h-12 w-full items-center">
       <div className="flex min-w-0 flex-1 items-center px-400 py-300 pr-600">
         <span className="typo-body1 text-text-strong truncate">{group.title}</span>
       </div>
@@ -72,11 +69,11 @@ function SessionGroupRow({
     return (
       <div
         className={cn(
-          'bg-container-neutral flex w-full items-center gap-200',
+          'bg-container-neutral flex w-full items-center',
           bordered && 'border-line border-t',
         )}
       >
-        <div className="flex min-w-0 flex-1 items-center gap-200">{summaryRow}</div>
+        <div className="flex min-w-0 flex-1 items-center">{summaryRow}</div>
       </div>
     );
   }
@@ -94,7 +91,7 @@ function SessionGroupRow({
             className="hover:bg-container-neutral-interaction flex cursor-pointer items-center justify-center rounded-sm p-200"
           >
             <Icon
-              src={ArrowDownIcon}
+              src={AdminToggleOpenIcon}
               size={24}
               className={cn(
                 'text-icon-normal transition-transform duration-200 ease-in',
