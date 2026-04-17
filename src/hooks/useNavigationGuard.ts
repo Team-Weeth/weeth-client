@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 interface UseNavigationGuardOptions {
   enabled: boolean;
@@ -20,6 +21,7 @@ function isGuardEntry() {
  */
 function useNavigationGuard({ enabled }: UseNavigationGuardOptions) {
   const [open, setOpen] = useState(false);
+  const router = useRouter();
   const isLeaving = useRef(false);
   const guardUrl = useRef('');
   const pendingUrl = useRef<string | null>(null);
@@ -46,12 +48,18 @@ function useNavigationGuard({ enabled }: UseNavigationGuardOptions) {
 
     const handleClick = (e: MouseEvent) => {
       if (isLeaving.current) return;
+      if (open) return;
+      if (e.defaultPrevented) return;
+      // 수정 키 또는 비-좌클릭은 브라우저 기본 동작(새 탭/창 등)에 맡김
+      if (e.button !== 0) return;
+      if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
 
       const anchor = (e.target as HTMLElement).closest('a');
       if (!anchor) return;
 
       // 외부 링크, 새 탭, 앵커 링크 무시
       if (anchor.target === '_blank') return;
+      if (anchor.hasAttribute('download')) return;
       const href = anchor.getAttribute('href');
       if (!href || href.startsWith('#')) return;
 
@@ -89,9 +97,9 @@ function useNavigationGuard({ enabled }: UseNavigationGuardOptions) {
     }
 
     if (pendingUrl.current) {
-      const url = pendingUrl.current;
+      const target = new URL(pendingUrl.current);
       pendingUrl.current = null;
-      location.href = url;
+      router.push(target.pathname + target.search + target.hash);
     } else {
       history.back();
     }
