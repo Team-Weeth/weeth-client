@@ -8,10 +8,9 @@ import type {
 
 export const adminAttendanceApi = {
   getSessions: (clubId: string, cardinal: number) =>
-    apiClient.get<ApiResponse<SessionListResponse>>(
-      `/admin/clubs/${clubId}/sessions`,
-      { params: { cardinal } },
-    ),
+    apiClient.get<ApiResponse<SessionListResponse>>(`/admin/clubs/${clubId}/sessions`, {
+      params: { cardinal },
+    }),
 
   getAttendanceBySession: (clubId: string, sessionId: number) =>
     apiClient.get<ApiResponse<AttendanceMember[]>>(
