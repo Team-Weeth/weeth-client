@@ -135,3 +135,5 @@ export { Carousel, CarouselContent, CarouselItem, useCarousel, type CarouselApi 
 export { CalendarPicker, type CalendarPickerProps } from './CalendarPicker';
 export { TimePicker, type TimePickerProps } from './TimePicker';
 export { DateTimeInput, type DateTimeInputProps } from './DateTimeInput';
+
+export { Badge, type BadgeProps } from './Badge';
