@@ -21,60 +21,38 @@ import { useCardinals } from '@/hooks/queries';
 import type { SessionRecurrenceType } from '@/types/admin/session';
 import { addYearsToDateInput } from '@/utils/shared/date';
 
-interface SessionScheduleFormProps {
-  title: string;
-  onTitleChange: (value: string) => void;
-  startDate: string;
-  startTime: string;
-  endDate: string;
-  endTime: string;
-  onStartDateChange: (value: string) => void;
-  onStartTimeChange: (value: string) => void;
-  onEndDateChange: (value: string) => void;
-  onEndTimeChange: (value: string) => void;
-  location: string;
-  onLocationChange: (value: string) => void;
-  content: string;
-  onContentChange: (value: string) => void;
+import type { ScheduleFormState } from './types';
+
+export interface SessionFormState {
   selectedCardinalId: number | null;
-  onCardinalChange: (id: number) => void;
   recurrenceType: SessionRecurrenceType;
-  onRecurrenceTypeChange: (type: SessionRecurrenceType) => void;
   recurrenceEndDate: string;
-  onRecurrenceEndDateChange: (value: string) => void;
+}
+
+interface SessionScheduleFormProps {
+  form: ScheduleFormState;
+  onFormChange: (patch: Partial<ScheduleFormState>) => void;
+  session: SessionFormState;
+  onSessionChange: (patch: Partial<SessionFormState>) => void;
   isRecurrenceEndValid: boolean;
 }
 
 function SessionScheduleForm({
-  title,
-  onTitleChange,
-  startDate,
-  startTime,
-  endDate,
-  endTime,
-  onStartDateChange,
-  onStartTimeChange,
-  onEndDateChange,
-  onEndTimeChange,
-  location,
-  onLocationChange,
-  content,
-  onContentChange,
-  selectedCardinalId,
-  onCardinalChange,
-  recurrenceType,
-  onRecurrenceTypeChange,
-  recurrenceEndDate,
-  onRecurrenceEndDateChange,
+  form,
+  onFormChange,
+  session,
+  onSessionChange,
   isRecurrenceEndValid,
 }: SessionScheduleFormProps) {
   const { data: cardinals = [] } = useCardinals();
   const selectedCardinal =
-    selectedCardinalId !== null ? cardinals.find((c) => c.id === selectedCardinalId) : null;
+    session.selectedCardinalId !== null
+      ? cardinals.find((c) => c.id === session.selectedCardinalId)
+      : null;
 
-  const hasRecurrence = recurrenceType !== 'NONE';
-  const recurrenceMinDate = startDate;
-  const recurrenceMaxDate = addYearsToDateInput(startDate, 1);
+  const hasRecurrence = session.recurrenceType !== 'NONE';
+  const recurrenceMinDate = form.startDate;
+  const recurrenceMaxDate = addYearsToDateInput(form.startDate, 1);
 
   return (
     <div className="flex flex-col gap-400 py-400">
@@ -91,8 +69,8 @@ function SessionScheduleForm({
       <ScheduleFormField label="세션 제목">
         <input
           type="text"
-          value={title}
-          onChange={(e) => onTitleChange(e.target.value)}
+          value={form.title}
+          onChange={(e) => onFormChange({ title: e.target.value })}
           placeholder="예 : 7기 정기 모임"
           className="bg-container-neutral typo-body1 placeholder:text-text-alternative h-12 w-full rounded-sm px-400 py-300 focus:outline-none"
         />
@@ -117,7 +95,10 @@ function SessionScheduleForm({
               <DropdownMenuItem disabled>기수 없음</DropdownMenuItem>
             ) : (
               cardinals.map((c) => (
-                <DropdownMenuItem key={c.id} onSelect={() => onCardinalChange(c.id)}>
+                <DropdownMenuItem
+                  key={c.id}
+                  onSelect={() => onSessionChange({ selectedCardinalId: c.id })}
+                >
                   {c.cardinalNumber}기
                 </DropdownMenuItem>
               ))
@@ -130,17 +111,17 @@ function SessionScheduleForm({
       <div className="flex gap-600">
         <DateTimeInput
           label="시작 일자"
-          dateValue={startDate}
-          timeValue={startTime}
-          onDateChange={onStartDateChange}
-          onTimeChange={onStartTimeChange}
+          dateValue={form.startDate}
+          timeValue={form.startTime}
+          onDateChange={(v) => onFormChange({ startDate: v })}
+          onTimeChange={(v) => onFormChange({ startTime: v })}
         />
         <DateTimeInput
           label="종료 일자"
-          dateValue={endDate}
-          timeValue={endTime}
-          onDateChange={onEndDateChange}
-          onTimeChange={onEndTimeChange}
+          dateValue={form.endDate}
+          timeValue={form.endTime}
+          onDateChange={(v) => onFormChange({ endDate: v })}
+          onTimeChange={(v) => onFormChange({ endTime: v })}
         />
       </div>
 
@@ -153,14 +134,17 @@ function SessionScheduleForm({
               className="bg-container-neutral flex w-[120px] cursor-pointer items-center gap-100 rounded-sm py-200 pr-200 pl-300"
             >
               <span className="typo-button2 text-text-normal flex-1 text-left">
-                {SESSION_RECURRENCE_LABEL[recurrenceType]}
+                {SESSION_RECURRENCE_LABEL[session.recurrenceType]}
               </span>
               <Image src={ArrowDownIcon} alt="" width={20} height={20} />
             </button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="start" className="min-w-[120px]">
             {SESSION_RECURRENCE_OPTIONS.map((type) => (
-              <DropdownMenuItem key={type} onSelect={() => onRecurrenceTypeChange(type)}>
+              <DropdownMenuItem
+                key={type}
+                onSelect={() => onSessionChange({ recurrenceType: type })}
+              >
                 {SESSION_RECURRENCE_LABEL[type]}
               </DropdownMenuItem>
             ))}
@@ -173,13 +157,13 @@ function SessionScheduleForm({
         <ScheduleFormField label="반복 종료">
           <div className="flex flex-col gap-100">
             <CalendarPicker
-              value={recurrenceEndDate}
-              onChange={onRecurrenceEndDateChange}
+              value={session.recurrenceEndDate}
+              onChange={(v) => onSessionChange({ recurrenceEndDate: v })}
               minDate={recurrenceMinDate}
               maxDate={recurrenceMaxDate}
             />
             {!isRecurrenceEndValid && (
-              <p className="typo-caption2 text-state-error px-400">
+              <p className="typo-caption2 text-state-error pt-1">
                 반복 종료 일자는 종료 일자 이후여야 합니다.
               </p>
             )}
@@ -191,8 +175,8 @@ function SessionScheduleForm({
       <ScheduleFormField label="모임 장소 (선택)">
         <input
           type="text"
-          value={location}
-          onChange={(e) => onLocationChange(e.target.value)}
+          value={form.location}
+          onChange={(e) => onFormChange({ location: e.target.value })}
           placeholder="장소를 입력해주세요."
           className="bg-container-neutral typo-body1 placeholder:text-text-alternative h-12 w-full rounded-sm px-400 py-300 focus:outline-none"
         />
@@ -201,8 +185,8 @@ function SessionScheduleForm({
       {/* 일정 설명 */}
       <ScheduleFormField label="일정 설명 (선택)">
         <textarea
-          value={content}
-          onChange={(e) => onContentChange(e.target.value)}
+          value={form.content}
+          onChange={(e) => onFormChange({ content: e.target.value })}
           placeholder="일정에 대한 설명을 입력해주세요."
           className="bg-container-neutral typo-body1 placeholder:text-text-alternative h-[150px] w-full resize-none rounded-sm px-400 py-300 focus:outline-none"
         />

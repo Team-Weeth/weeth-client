@@ -6,7 +6,7 @@ function AttendanceLink({ onClick }: { onClick?: () => void }) {
     <button
       type="button"
       onClick={onClick}
-      className="hover:bg-container-neutral-interaction text-text-alternative flex cursor-pointer items-center gap-100 rounded-sm py-200"
+      className="text-text-alternative flex cursor-pointer items-center gap-100 rounded-sm py-200"
     >
       <span className="typo-button2">출석 관리</span>
       <Icon src={ArrowRightIcon} alt="출석 관리" size={8} />
@@ -20,7 +20,7 @@ function MoreButton({ onClick }: { onClick?: () => void }) {
       type="button"
       onClick={onClick}
       aria-label="더보기"
-      className="hover:bg-container-neutral-interaction flex cursor-pointer items-center justify-center rounded-sm p-200"
+      className="flex cursor-pointer items-center justify-center rounded-sm p-200"
     >
       <Icon src={MoreHorizIcon} alt="더보기" size={24} className="text-text-alternative" />
     </button>

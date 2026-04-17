@@ -125,7 +125,7 @@ function SchedulePageContent() {
   };
 
   return (
-    <div className="flex min-w-3xl flex-col gap-400 p-700">
+    <div className="flex min-w-0 flex-col gap-400 p-700">
       {/* Generation filter */}
       <Card className="w-fit">
         <DropdownMenu>

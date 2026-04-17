@@ -6,12 +6,17 @@ import { Button, Icon, Tabs, TabsContent, TabsList, TabsTrigger } from '@/compon
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { AdminCloseIcon } from '@/assets/icons/admin';
 import { GeneralScheduleForm } from '@/components/admin/schedule/modal/GeneralScheduleForm';
-import { SessionScheduleForm } from '@/components/admin/schedule/modal/SessionScheduleForm';
+import {
+  SessionScheduleForm,
+  type SessionFormState,
+} from '@/components/admin/schedule/modal/SessionScheduleForm';
 import { SCHEDULE_TYPE_LABEL } from '@/constants/admin/schedule.constants';
 import { useCardinals } from '@/hooks/queries';
 import type { ScheduleType } from '@/types/admin/schedule';
-import type { CreateSessionBody, SessionRecurrenceType } from '@/types/admin/session';
+import type { CreateSessionBody } from '@/types/admin/session';
 import { toDateInputValue } from '@/utils/shared/date';
+
+import type { ScheduleFormState } from './types';
 
 interface CreateScheduleModalProps {
   open: boolean;
@@ -23,6 +28,22 @@ interface CreateScheduleModalProps {
   onCreateSession?: (body: CreateSessionBody) => void;
 }
 
+const INITIAL_FORM: ScheduleFormState = {
+  title: '',
+  startDate: toDateInputValue(),
+  startTime: '00:00',
+  endDate: toDateInputValue(),
+  endTime: '23:55',
+  location: '',
+  content: '',
+};
+
+const INITIAL_SESSION: SessionFormState = {
+  selectedCardinalId: null,
+  recurrenceType: 'NONE',
+  recurrenceEndDate: toDateInputValue(),
+};
+
 function CreateScheduleModal({
   open,
   onOpenChange,
@@ -31,35 +52,22 @@ function CreateScheduleModal({
   onCreateSession,
 }: CreateScheduleModalProps) {
   const [activeTab, setActiveTab] = useState<ScheduleType>(initialTab);
-  const [title, setTitle] = useState('');
-  const [startDate, setStartDate] = useState(toDateInputValue());
-  const [startTime, setStartTime] = useState('00:00');
-  const [endDate, setEndDate] = useState(toDateInputValue());
-  const [endTime, setEndTime] = useState('23:55');
-  const [location, setLocation] = useState('');
-  const [content, setContent] = useState('');
+  const [form, setForm] = useState<ScheduleFormState>(INITIAL_FORM);
+  const [session, setSession] = useState<SessionFormState>(INITIAL_SESSION);
 
-  // 세션 탭 전용 state
   const { data: cardinals = [] } = useCardinals();
-  const [selectedCardinalId, setSelectedCardinalId] = useState<number | null>(null);
-  const [recurrenceType, setRecurrenceType] = useState<SessionRecurrenceType>('NONE');
-  const [recurrenceEndDate, setRecurrenceEndDate] = useState(toDateInputValue());
-
   const selectedCardinal =
-    selectedCardinalId !== null ? cardinals.find((c) => c.id === selectedCardinalId) : null;
+    session.selectedCardinalId !== null
+      ? cardinals.find((c) => c.id === session.selectedCardinalId)
+      : null;
+
+  const updateForm = (patch: Partial<ScheduleFormState>) => setForm((prev) => ({ ...prev, ...patch }));
+  const updateSession = (patch: Partial<SessionFormState>) => setSession((prev) => ({ ...prev, ...patch }));
 
   const resetForm = () => {
     setActiveTab(initialTab);
-    setTitle('');
-    setStartDate(toDateInputValue());
-    setStartTime('00:00');
-    setEndDate(toDateInputValue());
-    setEndTime('23:59');
-    setLocation('');
-    setContent('');
-    setSelectedCardinalId(null);
-    setRecurrenceType('NONE');
-    setRecurrenceEndDate(toDateInputValue());
+    setForm({ ...INITIAL_FORM, startDate: toDateInputValue(), endDate: toDateInputValue() });
+    setSession({ ...INITIAL_SESSION, recurrenceEndDate: toDateInputValue() });
   };
 
   const handleClose = () => {
@@ -68,31 +76,31 @@ function CreateScheduleModal({
   };
 
   const isSession = activeTab === 'SESSION';
-  const isDateRangeValid = startDate < endDate;
-  const hasRecurrence = recurrenceType !== 'NONE';
-  const isRecurrenceEndValid = !hasRecurrence || recurrenceEndDate >= endDate;
+  const isDateRangeValid = form.startDate < form.endDate;
+  const hasRecurrence = session.recurrenceType !== 'NONE';
+  const isRecurrenceEndValid = !hasRecurrence || session.recurrenceEndDate >= form.endDate;
 
   const isValid = isSession
-    ? title.trim().length > 0 &&
+    ? form.title.trim().length > 0 &&
       selectedCardinal !== null &&
       selectedCardinal !== undefined &&
       isDateRangeValid &&
       isRecurrenceEndValid
-    : title.trim().length > 0 && isDateRangeValid && cardinalNumber !== null;
+    : form.title.trim().length > 0 && isDateRangeValid && cardinalNumber !== null;
 
   const handleSubmit = () => {
     if (!isValid) return;
 
     if (isSession && selectedCardinal) {
       const body: CreateSessionBody = {
-        title: title.trim(),
-        content: content.trim(),
-        location: location.trim(),
+        title: form.title.trim(),
+        content: form.content.trim(),
+        location: form.location.trim(),
         cardinal: selectedCardinal.cardinalNumber,
-        start: `${startDate}T${startTime}:00`,
-        end: `${endDate}T${endTime}:00`,
-        recurrenceType,
-        recurrenceEndDate: hasRecurrence ? recurrenceEndDate : endDate,
+        start: `${form.startDate}T${form.startTime}:00`,
+        end: `${form.endDate}T${form.endTime}:00`,
+        recurrenceType: session.recurrenceType,
+        recurrenceEndDate: hasRecurrence ? session.recurrenceEndDate : form.endDate,
       };
       onCreateSession?.(body);
     }
@@ -140,45 +148,14 @@ function CreateScheduleModal({
 
           {isSession ? (
             <SessionScheduleForm
-              title={title}
-              onTitleChange={setTitle}
-              startDate={startDate}
-              startTime={startTime}
-              endDate={endDate}
-              endTime={endTime}
-              onStartDateChange={setStartDate}
-              onStartTimeChange={setStartTime}
-              onEndDateChange={setEndDate}
-              onEndTimeChange={setEndTime}
-              location={location}
-              onLocationChange={setLocation}
-              content={content}
-              onContentChange={setContent}
-              selectedCardinalId={selectedCardinalId}
-              onCardinalChange={setSelectedCardinalId}
-              recurrenceType={recurrenceType}
-              onRecurrenceTypeChange={setRecurrenceType}
-              recurrenceEndDate={recurrenceEndDate}
-              onRecurrenceEndDateChange={setRecurrenceEndDate}
+              form={form}
+              onFormChange={updateForm}
+              session={session}
+              onSessionChange={updateSession}
               isRecurrenceEndValid={isRecurrenceEndValid}
             />
           ) : (
-            <GeneralScheduleForm
-              title={title}
-              onTitleChange={setTitle}
-              startDate={startDate}
-              startTime={startTime}
-              endDate={endDate}
-              endTime={endTime}
-              onStartDateChange={setStartDate}
-              onStartTimeChange={setStartTime}
-              onEndDateChange={setEndDate}
-              onEndTimeChange={setEndTime}
-              location={location}
-              onLocationChange={setLocation}
-              content={content}
-              onContentChange={setContent}
-            />
+            <GeneralScheduleForm form={form} onFormChange={updateForm} />
           )}
         </div>
 
