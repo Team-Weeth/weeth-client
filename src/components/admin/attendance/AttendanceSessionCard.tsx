@@ -29,13 +29,20 @@ function AttendanceSessionCard({
     [onDirtyChange, sessionId],
   );
 
+  const handleSave = useCallback(
+    async (updates: { id: number; status: 'ATTEND' | 'ABSENT' }[]) => {
+      await mutateAsync(updates);
+    },
+    [mutateAsync],
+  );
+
   return (
     <AttendanceCard
       date={date}
       title={title}
       isCurrentWeek={isCurrentWeek}
       members={members}
-      onSave={mutateAsync}
+      onSave={handleSave}
       onDirtyChange={handleDirtyChange}
     />
   );

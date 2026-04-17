@@ -23,7 +23,7 @@ interface AttendanceCardProps extends React.HTMLAttributes<HTMLDivElement> {
   title: string;
   isCurrentWeek?: boolean;
   members: AttendanceMember[];
-  onSave?: (updates: { id: number; status: 'ATTEND' | 'ABSENT' }[]) => void;
+  onSave?: (updates: { id: number; status: 'ATTEND' | 'ABSENT' }[]) => void | Promise<void>;
   onDirtyChange?: (dirty: boolean) => void;
 }
 
