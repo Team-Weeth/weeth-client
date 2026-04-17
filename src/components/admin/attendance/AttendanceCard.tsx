@@ -43,22 +43,20 @@ function AttendanceCard({
 
   if (isCollapsed) {
     return (
-      <button
-        type="button"
-        className={cn(
-          'border-line flex h-[72px] w-full cursor-pointer items-center justify-between rounded-md border px-600',
-          className,
-        )}
-        onClick={expand}
-        // collapsed 상태에서는 className만 전달하고 나머지는 div에 적용
-      >
-        <div className="flex items-center gap-300">
-          <span className="typo-sub1 text-text-normal">{date}</span>
-          <span className="typo-sub1 text-text-normal">{title}</span>
-          {isCurrentWeek && <Badge>이번 주</Badge>}
-        </div>
-        <Icon src={ArrowDownIcon} size={24} className="text-icon-normal" />
-      </button>
+      <div className={cn('overflow-hidden rounded-md', className)} {...props}>
+        <button
+          type="button"
+          className="border-line flex h-[72px] w-full cursor-pointer items-center justify-between rounded-md border px-600"
+          onClick={expand}
+        >
+          <div className="flex items-center gap-300">
+            <span className="typo-sub1 text-text-normal">{date}</span>
+            <span className="typo-sub1 text-text-normal">{title}</span>
+            {isCurrentWeek && <Badge>이번 주</Badge>}
+          </div>
+          <Icon src={ArrowDownIcon} size={24} className="text-icon-normal" />
+        </button>
+      </div>
     );
   }
 
