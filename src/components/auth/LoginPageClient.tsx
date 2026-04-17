@@ -1,8 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { agreeTermsAction } from '@/lib/actions/auth';
+import { APPLE_PENDING_STATE_KEY } from '@/constants/apple';
 import { encodeOAuthState } from '@/lib/auth/oauthState';
 import { toastError } from '@/stores/useToastStore';
 
@@ -32,10 +33,29 @@ function LoginPageClient({
   const [termsOpen, setTermsOpen] = useState(defaultTermsOpen);
   const [isLoading, setIsLoading] = useState(false);
 
+  useEffect(() => {
+    const handlePageShow = (event: PageTransitionEvent) => {
+      if (event.persisted) {
+        setIsLoading(false);
+      }
+    };
+    window.addEventListener('pageshow', handlePageShow);
+    return () => window.removeEventListener('pageshow', handlePageShow);
+  }, []);
+
   function handleAppleLoginStart() {
     const clientId = process.env.NEXT_PUBLIC_APPLE_CLIENT_ID;
     const redirectUri = process.env.NEXT_PUBLIC_APPLE_REDIRECT_URI;
     if (!clientId || !redirectUri) return;
+
+    // Apple
+    // intent/clubId/code를 쿠키에 임시 저장해 /apple/oauth route에서 읽어 분기.
+    const pendingState = encodeOAuthState({ intent, clubId, code, redirectPath });
+    if (pendingState) {
+      document.cookie = `${APPLE_PENDING_STATE_KEY}=${encodeURIComponent(pendingState)}; path=/; max-age=600; secure; samesite=lax`;
+    } else {
+      document.cookie = `${APPLE_PENDING_STATE_KEY}=; path=/; max-age=0; secure; samesite=lax`;
+    }
 
     const params = new URLSearchParams({
       response_type: 'code id_token',

@@ -15,7 +15,7 @@ import {
 } from '@/components/ui';
 import { cn } from '@/lib/cn';
 import { formatKoreanDate, formatTime } from '@/lib/formatTime';
-import { ATTENDANCE_STATUS_CONFIG } from '@/constants/attendance';
+import { USER_ATTENDANCE_STATUS_CONFIG } from '@/constants/attendance';
 import { toastError } from '@/stores/useToastStore';
 import type { AttendanceSummary } from '@/types/attendance';
 import { StatBox } from './StatBox';
@@ -28,7 +28,7 @@ interface AttendanceHistoryContentProps {
 function toDisplayRecord(record: AttendanceSummary['attendances'][number]) {
   const startDate = new Date(record.start);
   const endDate = new Date(record.end);
-  const statusConfig = ATTENDANCE_STATUS_CONFIG[record.status];
+  const statusConfig = USER_ATTENDANCE_STATUS_CONFIG[record.status];
 
   return {
     id: record.id,

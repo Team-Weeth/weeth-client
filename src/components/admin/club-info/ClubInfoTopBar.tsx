@@ -11,6 +11,8 @@ import { cn } from '@/lib/cn';
 
 interface ClubInfoTopBarProps extends HTMLAttributes<HTMLDivElement> {
   onBack: () => void;
+  onSave: () => void;
+  isSaving?: boolean;
 }
 
 type Placement = 'below-right' | 'below-left';
@@ -82,7 +84,7 @@ function DiscardAlertDialog({
   );
 }
 
-function ClubInfoTopBar({ className, onBack, ...props }: ClubInfoTopBarProps) {
+function ClubInfoTopBar({ className, onBack, onSave, isSaving, ...props }: ClubInfoTopBarProps) {
   return (
     <div className={cn('bg-container-primary flex h-15 items-center px-500', className)} {...props}>
       <DiscardAlertDialog onAction={onBack} placement="below-right">
@@ -106,8 +108,14 @@ function ClubInfoTopBar({ className, onBack, ...props }: ClubInfoTopBarProps) {
             </Button>
           </AlertDialogPrimitive.Trigger>
         </DiscardAlertDialog>
-        <Button variant="secondary" size="md" className="py-200">
-          저장
+        <Button
+          variant="secondary"
+          size="md"
+          className="py-200"
+          onClick={onSave}
+          disabled={isSaving}
+        >
+          {isSaving ? '저장 중...' : '저장'}
         </Button>
       </div>
     </div>

@@ -1,6 +1,5 @@
 import type { ApiResponse } from '@/types/common';
-
-type AttendanceStatus = 'ATTEND' | 'ABSENT' | 'PENDING';
+import { AttendanceStatus } from '@/constants/attendance';
 
 interface AttendanceData {
   sessionId: number | null;
