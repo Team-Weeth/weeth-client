@@ -14,6 +14,8 @@ function AttendancePageContent() {
   const { cardinals, selectedCardinalId, setSelectedCardinalId, activeCardinal } =
     useCardinalSelector({ autoSelectLatest: true });
   const [dirtyCardIds, setDirtyCardIds] = useState<Set<number>>(new Set());
+  const [pendingCardinalId, setPendingCardinalId] = useState<number | null>(null);
+  const [cardinalDialogOpen, setCardinalDialogOpen] = useState(false);
 
   const isDirty = dirtyCardIds.size > 0;
   const { open, onConfirm, onCancel } = useNavigationGuard({ enabled: isDirty });
@@ -27,6 +29,27 @@ function AttendancePageContent() {
     });
   }, []);
 
+  const handleCardinalSelect = useCallback(
+    (id: number) => {
+      if (isDirty) {
+        setPendingCardinalId(id);
+        setCardinalDialogOpen(true);
+      } else {
+        setSelectedCardinalId(id);
+      }
+    },
+    [isDirty, setSelectedCardinalId],
+  );
+
+  const confirmCardinalChange = () => {
+    setDirtyCardIds(new Set());
+    setCardinalDialogOpen(false);
+    if (pendingCardinalId !== null) {
+      setSelectedCardinalId(pendingCardinalId);
+      setPendingCardinalId(null);
+    }
+  };
+
   const cardinalNumber = activeCardinal?.cardinalNumber ?? null;
   const { sessions } = useFlattenedSessions(cardinalNumber);
 
@@ -35,7 +58,7 @@ function AttendancePageContent() {
       <CardinalDropdown
         cardinals={cardinals}
         activeCardinal={activeCardinal}
-        onSelect={setSelectedCardinalId}
+        onSelect={handleCardinalSelect}
       />
 
       {sessions.length > 0 ? (
@@ -69,6 +92,16 @@ function AttendancePageContent() {
       >
         <AlertDialogAction onClick={onConfirm}>나가기</AlertDialogAction>
         <AlertDialogCancel onClick={onCancel}>계속 수정</AlertDialogCancel>
+      </AlertDialog>
+
+      <AlertDialog
+        open={cardinalDialogOpen}
+        onOpenChange={setCardinalDialogOpen}
+        title="변경 사항이 저장되지 않았어요"
+        description={'기수를 변경하면 수정 중인 내용이 사라집니다.\n계속하시겠어요?'}
+      >
+        <AlertDialogAction onClick={confirmCardinalChange}>변경하기</AlertDialogAction>
+        <AlertDialogCancel>계속 수정</AlertDialogCancel>
       </AlertDialog>
     </div>
   );
