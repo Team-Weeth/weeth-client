@@ -12,10 +12,10 @@ import {
 
 export async function GET(request: NextRequest) {
   const code = request.nextUrl.searchParams.get('code');
-  const origin = request.nextUrl.origin;
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? request.nextUrl.origin;
 
   if (!code) {
-    return NextResponse.redirect(new URL('/login', origin));
+    return NextResponse.redirect(new URL('/login', appUrl));
   }
 
   const response = await fetch(`${API_BASE_PATH}/users/social/kakao`, {
@@ -25,21 +25,21 @@ export async function GET(request: NextRequest) {
   });
 
   if (!response.ok) {
-    return NextResponse.redirect(new URL('/login', origin));
+    return NextResponse.redirect(new URL('/login', appUrl));
   }
 
   const json = await response.json();
   const { accessToken, refreshToken, registered, name } = json.data;
 
   if (!accessToken || !refreshToken) {
-    return NextResponse.redirect(new URL('/login', origin));
+    return NextResponse.redirect(new URL('/login', appUrl));
   }
 
   const state = request.nextUrl.searchParams.get('state');
   const decoded = decodeOAuthState(state);
 
   if (decoded.type === 'invalid') {
-    return NextResponse.redirect(new URL('/login', origin));
+    return NextResponse.redirect(new URL('/login', appUrl));
   }
 
   let redirectUrl: string;
@@ -67,7 +67,7 @@ export async function GET(request: NextRequest) {
     redirectUrl = registered ? '/hub' : '/login?terms=true';
   }
 
-  const redirectResponse = NextResponse.redirect(new URL(redirectUrl, origin));
+  const redirectResponse = NextResponse.redirect(new URL(redirectUrl, appUrl));
 
   redirectResponse.cookies.set(ACCESS_TOKEN_KEY, accessToken, ACCESS_COOKIE_OPTIONS);
   redirectResponse.cookies.set(REFRESH_TOKEN_KEY, refreshToken, REFRESH_COOKIE_OPTIONS);
