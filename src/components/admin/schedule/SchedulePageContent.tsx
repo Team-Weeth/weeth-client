@@ -219,6 +219,7 @@ function SchedulePageContent() {
         open={createModalOpen}
         onOpenChange={setCreateModalOpen}
         cardinalNumber={activeCardinal?.cardinalNumber ?? null}
+        initialTab={activeTab === 'session' ? 'SESSION' : 'GENERAL'}
       />
 
       {/* Edit schedule modal */}

@@ -35,9 +35,10 @@ function SessionTabContent({
       </div>
 
       {/* 세션 카드 */}
-      <div className="bg-container-neutral flex flex-col rounded-lg shadow-sm">
+      <div className="overflow-x-auto">
+      <div className="bg-container-neutral flex min-w-[976px] flex-col rounded-lg shadow-sm">
         {/* 카드 헤더 */}
-        <div className="flex h-[72px] w-full items-center justify-between px-600">
+        <div className="flex h-[72px] items-center justify-between px-600">
           <span className="typo-sub3 text-text-normal">세션</span>
           <Button variant="primary" size="lg" onClick={onCreateSession}>
             <Image src={AdminCalendarEditIcon} alt="" width={20} height={20} className="mr-1" />
@@ -49,6 +50,7 @@ function SessionTabContent({
         <div className="p-600 pt-0">
           <SessionTable groups={sessions} onManageAttendance={onManageAttendance} onMore={onMore} />
         </div>
+      </div>
       </div>
     </div>
   );

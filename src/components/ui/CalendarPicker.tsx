@@ -12,9 +12,13 @@ import { formatDateDisplay, getDaysInMonth, getFirstDayOfMonth } from '@/utils/s
 interface CalendarPickerProps {
   value: string;
   onChange: (value: string) => void;
+  /** 선택 가능한 최소 날짜 (YYYY-MM-DD). 미만 날짜는 비활성화. */
+  minDate?: string;
+  /** 선택 가능한 최대 날짜 (YYYY-MM-DD). 초과 날짜는 비활성화. */
+  maxDate?: string;
 }
 
-function CalendarPicker({ value, onChange }: CalendarPickerProps) {
+function CalendarPicker({ value, onChange, minDate, maxDate }: CalendarPickerProps) {
   const parsedDate = value ? new Date(value) : new Date();
 
   const [open, setOpen] = useState(false);
@@ -55,10 +59,22 @@ function CalendarPicker({ value, onChange }: CalendarPickerProps) {
     }
   };
 
-  const handleSelectDay = (day: number) => {
+  const toDateStr = (day: number) => {
     const m = String(viewMonth).padStart(2, '0');
     const d = String(day).padStart(2, '0');
-    onChange(`${viewYear}-${m}-${d}`);
+    return `${viewYear}-${m}-${d}`;
+  };
+
+  const isDayDisabled = (day: number) => {
+    const dateStr = toDateStr(day);
+    if (minDate && dateStr < minDate) return true;
+    if (maxDate && dateStr > maxDate) return true;
+    return false;
+  };
+
+  const handleSelectDay = (day: number) => {
+    if (isDayDisabled(day)) return;
+    onChange(toDateStr(day));
     setOpen(false);
   };
 
@@ -132,19 +148,23 @@ function CalendarPicker({ value, onChange }: CalendarPickerProps) {
                 selectedYear === viewYear && selectedMonth === viewMonth && selectedDay === day;
               const isToday =
                 todayYear === viewYear && todayMonth === viewMonth && todayDay === day;
+              const disabled = isDayDisabled(day);
 
               return (
                 <button
                   key={day}
                   type="button"
+                  disabled={disabled}
                   onClick={() => handleSelectDay(day)}
                   className={cn(
-                    'typo-caption1 flex h-8 cursor-pointer items-center justify-center rounded-sm transition-colors',
-                    isSelected
-                      ? 'bg-brand-primary text-text-inverse'
-                      : isToday
-                        ? 'text-brand-primary hover:bg-container-neutral-interaction'
-                        : 'text-text-normal hover:bg-container-neutral-interaction',
+                    'typo-caption1 flex h-8 items-center justify-center rounded-sm transition-colors',
+                    disabled
+                      ? 'text-text-disabled cursor-not-allowed'
+                      : isSelected
+                        ? 'bg-brand-primary text-text-inverse cursor-pointer'
+                        : isToday
+                          ? 'text-brand-primary hover:bg-container-neutral-interaction cursor-pointer'
+                          : 'text-text-normal hover:bg-container-neutral-interaction cursor-pointer',
                   )}
                 >
                   {day}

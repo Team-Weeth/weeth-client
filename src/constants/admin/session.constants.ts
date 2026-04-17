@@ -1,4 +1,8 @@
-import type { AdminSessionListData, SessionStatus } from '@/types/admin/session';
+import type {
+  AdminSessionListData,
+  SessionRecurrenceType,
+  SessionStatus,
+} from '@/types/admin/session';
 
 export const SESSION_STATUS_LABEL: Record<SessionStatus, string> = {
   OPEN: '진행 중',
@@ -6,6 +10,20 @@ export const SESSION_STATUS_LABEL: Record<SessionStatus, string> = {
   SCHEDULED: '예정',
   CANCELED: '취소',
 };
+
+export const SESSION_RECURRENCE_LABEL: Record<SessionRecurrenceType, string> = {
+  NONE: '안 함',
+  DAILY: '매일',
+  WEEKLY: '매주',
+  MONTHLY: '매월',
+};
+
+export const SESSION_RECURRENCE_OPTIONS: SessionRecurrenceType[] = [
+  'NONE',
+  'DAILY',
+  'WEEKLY',
+  'MONTHLY',
+];
 
 // API 연결 전 임시 목업 데이터 (API 연결 이슈에서 제거)
 export const MOCK_SESSION_LIST: AdminSessionListData = {

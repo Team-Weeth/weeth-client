@@ -8,6 +8,14 @@ export function toDateInputValue(date: Date = new Date()): string {
   return `${year}-${month}-${day}`;
 }
 
+// 'YYYY-MM-DD' 문자열에 지정한 연수를 더한 날짜를 같은 포맷으로 반환
+export function addYearsToDateInput(dateStr: string, years: number): string {
+  if (!dateStr) return '';
+  const [y, m, d] = dateStr.split('-').map(Number);
+  const next = new Date(y + years, m - 1, d);
+  return toDateInputValue(next);
+}
+
 // '2026년 3월 9일 (월)'
 export function formatKoreanDate(isoString: string): string {
   const date = new Date(isoString);

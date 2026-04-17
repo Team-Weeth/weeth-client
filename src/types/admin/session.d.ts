@@ -34,3 +34,16 @@ export interface AdminSessionListData {
   thisWeek: AdminSession[];
   sessions: AdminSessionGroup[];
 }
+
+export interface CreateSessionBody {
+  title: string;
+  content: string;
+  location: string;
+  cardinal: number;
+  /** ISO 8601 (로컬 타임, 초 포함) — "2026-03-26T10:00:00" */
+  start: string;
+  end: string;
+  recurrenceType: SessionRecurrenceType;
+  /** YYYY-MM-DD. recurrenceType이 NONE이면 end 날짜와 동일하게 전송 */
+  recurrenceEndDate: string;
+}
