@@ -52,7 +52,7 @@ function TermsListView({
               alt="전체 동의"
               className={cn(allChecked ? 'text-brand-primary' : 'text-icon-disabled')}
             />
-            <span className="typo-3 text-text-strong">모두 확인하였고 이에 동의합니다.</span>
+            <span className="typo-sub3 text-text-strong">모두 확인하였고 이에 동의합니다.</span>
           </button>
           <p className="typo-caption2 text-text-alternative pl-[36px]">{TERMS_DESCRIPTION}</p>
 

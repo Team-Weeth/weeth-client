@@ -77,7 +77,7 @@ function CreateClubForm({ schoolNames, schoolLoadError = false }: CreateClubForm
     return () => subscription.unsubscribe();
   }, [setDraft, watch]);
 
-  function onSubmit(data: CreateClubFormData) {
+  function onSubmit() {
     setIsCreating(true);
   }
 

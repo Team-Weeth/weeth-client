@@ -15,7 +15,7 @@ export function Banner() {
         alt="banner"
         width={1440}
         height={364}
-        className="h-[364px] w-full"
+        className="h-[364px] w-full object-cover"
       />
     );
   }
