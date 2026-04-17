@@ -79,4 +79,4 @@ function AttendanceMemberRow({ member, isEditing, status, onToggle }: Attendance
   );
 }
 
-export default AttendanceMemberRow;
+export { AttendanceMemberRow };

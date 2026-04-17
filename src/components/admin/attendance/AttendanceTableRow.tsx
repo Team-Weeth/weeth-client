@@ -8,6 +8,7 @@ interface AttendanceTableRowProps {
 function AttendanceTableRow({ isEditing, position }: AttendanceTableRowProps) {
   return (
     <div className="flex">
+      {/* left cell */}
       <div
         className={cn(
           'border-line flex h-[48px] min-w-0 flex-1 items-center border px-400 py-300',
@@ -18,10 +19,11 @@ function AttendanceTableRow({ isEditing, position }: AttendanceTableRowProps) {
         <span className="typo-sub2 text-text-alternative">사용자 정보</span>
       </div>
 
+      {/* right cells */}
       {isEditing ? (
         <>
           <div className="border-line flex w-[79px] items-center justify-center border px-400 py-300">
-            출석
+            <span className="typo-sub2 text-text-alternative">출석</span>
           </div>
           <div
             className={cn(
@@ -30,7 +32,7 @@ function AttendanceTableRow({ isEditing, position }: AttendanceTableRowProps) {
               position === 'bottom' && 'rounded-br-sm',
             )}
           >
-            결석
+            <span className="typo-sub2 text-text-alternative">결석</span>
           </div>
         </>
       ) : (
@@ -41,11 +43,11 @@ function AttendanceTableRow({ isEditing, position }: AttendanceTableRowProps) {
             position === 'bottom' && 'rounded-br-sm',
           )}
         >
-          출석 정보
+          <span className="typo-sub2 text-text-alternative">출석 정보</span>
         </div>
       )}
     </div>
   );
 }
 
-export default AttendanceTableRow;
+export { AttendanceTableRow };

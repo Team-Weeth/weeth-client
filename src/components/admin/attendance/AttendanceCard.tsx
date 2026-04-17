@@ -6,8 +6,8 @@ import type { AttendanceMember } from '@/types/admin/attendance';
 import { cn } from '@/lib/cn';
 
 import { useAttendanceCard } from './useAttendanceCard';
-import AttendanceMemberRow from './AttendanceMemberRow';
-import AttendanceTableRow from './AttendanceTableRow';
+import { AttendanceMemberRow } from './AttendanceMemberRow';
+import { AttendanceTableRow } from './AttendanceTableRow';
 
 interface AttendanceCardProps extends React.HTMLAttributes<HTMLDivElement> {
   date: string;
