@@ -3,10 +3,10 @@ import { NextRequest, NextResponse } from 'next/server';
 import {
   ACCESS_COOKIE_OPTIONS,
   ACCESS_TOKEN_KEY,
-  APPLE_PENDING_STATE_KEY,
   REFRESH_COOKIE_OPTIONS,
   REFRESH_TOKEN_KEY,
 } from '@/lib/apis/cookies';
+import { APPLE_PENDING_STATE_KEY } from '@/constants/apple';
 import { decodeOAuthState } from '@/lib/auth/oauthState';
 import { getPostLoginUrl } from '@/lib/auth/redirectPaths';
 
@@ -27,7 +27,15 @@ export async function GET(request: NextRequest) {
 
   // Apple은 state를 프론트로 돌려주지 않으므로, 로그인 시작 시점에 심어둔 쿠키에서 읽는다.
   const pendingStateRaw = request.cookies.get(APPLE_PENDING_STATE_KEY)?.value;
-  const pendingState = pendingStateRaw ? decodeURIComponent(pendingStateRaw) : null;
+  let pendingState: string | null = null;
+  try {
+    pendingState = pendingStateRaw ? decodeURIComponent(pendingStateRaw) : null;
+  } catch {
+    // 깨진 쿠키 값 → invalid 처리 후 쿠키 삭제
+    const response = NextResponse.redirect(new URL('/login', appUrl));
+    response.cookies.set(APPLE_PENDING_STATE_KEY, '', { path: '/', maxAge: 0 });
+    return response;
+  }
   const decoded = decodeOAuthState(pendingState);
 
   if (decoded.type === 'invalid') {

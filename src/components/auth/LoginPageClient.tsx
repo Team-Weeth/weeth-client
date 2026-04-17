@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 
 import { agreeTermsAction } from '@/lib/actions/auth';
-import { APPLE_PENDING_STATE_KEY } from '@/lib/apis/cookies';
+import { APPLE_PENDING_STATE_KEY } from '@/constants/apple';
 import { encodeOAuthState } from '@/lib/auth/oauthState';
 import { toastError } from '@/stores/useToastStore';
 
@@ -52,9 +52,9 @@ function LoginPageClient({
     // intent/clubId/code를 쿠키에 임시 저장해 /apple/oauth route에서 읽어 분기.
     const pendingState = encodeOAuthState({ intent, clubId, code, redirectPath });
     if (pendingState) {
-      document.cookie = `${APPLE_PENDING_STATE_KEY}=${encodeURIComponent(pendingState)}; path=/; max-age=600; samesite=lax`;
+      document.cookie = `${APPLE_PENDING_STATE_KEY}=${encodeURIComponent(pendingState)}; path=/; max-age=600; secure; samesite=lax`;
     } else {
-      document.cookie = `${APPLE_PENDING_STATE_KEY}=; path=/; max-age=0; samesite=lax`;
+      document.cookie = `${APPLE_PENDING_STATE_KEY}=; path=/; max-age=0; secure; samesite=lax`;
     }
 
     const params = new URLSearchParams({

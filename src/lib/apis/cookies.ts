@@ -2,7 +2,6 @@ export const ACCESS_TOKEN_KEY = 'access_token';
 export const REFRESH_TOKEN_KEY = 'refresh_token';
 export const CLUB_ID_KEY = 'club_id';
 export const CLUB_NAME_KEY = 'club_name';
-export const APPLE_PENDING_STATE_KEY = 'apple_pending_state';
 
 const COOKIE_BASE = {
   httpOnly: true,

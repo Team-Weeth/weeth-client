@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import type { AxiosResponse } from 'axios';
 import { useQueryClient } from '@tanstack/react-query';
 
 import { ClubInfoBasicSection } from '@/components/admin/club-info/ClubInfoBasicSection';
@@ -81,7 +82,7 @@ function ClubInfoPageContent({ schoolNames }: ClubInfoPageContentProps) {
   const handleSave = handleSubmit(
     async (formData) => {
       try {
-        const deletePromises: Promise<unknown>[] = [];
+        const deletePromises: Promise<AxiosResponse<void>>[] = [];
         if (profileImage.status === 'deleted') {
           deletePromises.push(deleteProfileImage.mutateAsync());
         }
