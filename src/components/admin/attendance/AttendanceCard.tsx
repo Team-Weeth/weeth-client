@@ -1,17 +1,13 @@
 'use client';
 
-import {
-  AdminRadioSelectedIcon,
-  AdminRadioUnselectedIcon,
-  AdminRoundCancelIcon,
-  AdminTimeIcon,
-} from '@/assets/icons/admin';
-import { ArrowDownIcon, CheckRoundIcon, SearchIcon } from '@/assets/icons';
-import { Button, Icon } from '@/components/ui';
+import { ArrowDownIcon, SearchIcon } from '@/assets/icons';
+import { Button, Icon, Badge } from '@/components/ui';
 import type { AttendanceMember } from '@/types/admin/attendance';
 import { cn } from '@/lib/cn';
 
 import { useAttendanceCard } from './useAttendanceCard';
+import AttendanceMemberRow from './AttendanceMemberRow';
+import AttendanceTableRow from './AttendanceTableRow';
 
 interface AttendanceCardProps extends React.HTMLAttributes<HTMLDivElement> {
   date: string;
@@ -20,12 +16,6 @@ interface AttendanceCardProps extends React.HTMLAttributes<HTMLDivElement> {
   members: AttendanceMember[];
   onSave?: (updates: { id: number; status: 'ATTEND' | 'ABSENT' }[]) => void;
 }
-
-const STATUS_CONFIG = {
-  PENDING: { src: AdminTimeIcon, label: '미결', className: 'text-text-alternative' },
-  ATTEND: { src: CheckRoundIcon, label: '출석', className: 'text-brand-primary' },
-  ABSENT: { src: AdminRoundCancelIcon, label: '결석', className: 'text-state-error' },
-} as const;
 
 function AttendanceCard({
   className,
@@ -60,16 +50,12 @@ function AttendanceCard({
           className,
         )}
         onClick={expand}
-        {...(props as React.HTMLAttributes<HTMLButtonElement>)}
+        // collapsed 상태에서는 className만 전달하고 나머지는 div에 적용
       >
         <div className="flex items-center gap-300">
           <span className="typo-sub1 text-text-normal">{date}</span>
           <span className="typo-sub1 text-text-normal">{title}</span>
-          {isCurrentWeek && (
-            <span className="bg-brand-primary/10 text-brand-primary typo-caption1 rounded-[5px] px-200 py-100">
-              이번 주
-            </span>
-          )}
+          {isCurrentWeek && <Badge>이번 주</Badge>}
         </div>
         <Icon src={ArrowDownIcon} size={24} className="text-icon-normal" />
       </button>
@@ -136,122 +122,25 @@ function AttendanceCard({
         {/* Attendance grid */}
         <div className="bg-container-neutral rounded-sm">
           {/* Header row */}
-          <div className="flex">
-            <div className="border-line flex h-[48px] min-w-0 flex-1 items-center rounded-tl-sm border px-400 py-300">
-              <span className="typo-sub2 text-text-alternative">사용자 정보</span>
-            </div>
-            {isEditing ? (
-              <>
-                <div className="border-line flex w-[79px] items-center justify-center border px-400 py-300">
-                  <span className="typo-sub2 text-text-alternative">출석</span>
-                </div>
-                <div className="border-line flex w-[79px] items-center justify-center rounded-tr-sm border px-400 py-300">
-                  <span className="typo-sub2 text-text-alternative">결석</span>
-                </div>
-              </>
-            ) : (
-              <div className="border-line flex w-[158px] items-center justify-center rounded-tr-sm border px-400 py-300">
-                <span className="typo-sub2 text-text-alternative">출석 정보</span>
-              </div>
-            )}
-          </div>
+          <AttendanceTableRow isEditing={isEditing} position="top" />
 
           {/* Member rows */}
           {filteredMembers.map((member) => (
-            <div key={member.id} className="flex">
-              <div className="border-line flex min-w-0 flex-1 flex-col justify-center gap-200 border px-400 py-300">
-                <span className="typo-sub2 text-text-strong">{member.name}</span>
-                <div className="mt-100 flex items-center gap-200">
-                  <span className="typo-body2 text-text-normal">{member.department}</span>
-                  <span className="typo-body2 text-text-alternative">{member.studentId}</span>
-                </div>
-              </div>
-              {isEditing ? (
-                <>
-                  <div className="border-line flex w-[79px] items-center justify-center border">
-                    <button
-                      type="button"
-                      onClick={() => toggleStatus(member.id, 'ATTEND')}
-                      className="cursor-pointer"
-                      aria-label={`${member.name} 출석`}
-                    >
-                      <Icon
-                        src={
-                          getEditStatus(member.id) === 'ATTEND'
-                            ? AdminRadioSelectedIcon
-                            : AdminRadioUnselectedIcon
-                        }
-                        size={24}
-                        className={
-                          getEditStatus(member.id) === 'ATTEND'
-                            ? 'text-state-success'
-                            : 'text-icon-alternative'
-                        }
-                      />
-                    </button>
-                  </div>
-                  <div className="border-line flex w-[79px] items-center justify-center border">
-                    <button
-                      type="button"
-                      onClick={() => toggleStatus(member.id, 'ABSENT')}
-                      className="cursor-pointer"
-                      aria-label={`${member.name} 결석`}
-                    >
-                      <Icon
-                        src={
-                          getEditStatus(member.id) === 'ABSENT'
-                            ? AdminRadioSelectedIcon
-                            : AdminRadioUnselectedIcon
-                        }
-                        size={24}
-                        className={
-                          getEditStatus(member.id) === 'ABSENT'
-                            ? 'text-state-error'
-                            : 'text-icon-alternative'
-                        }
-                      />
-                    </button>
-                  </div>
-                </>
-              ) : (
-                <div className="border-line flex w-[158px] items-center justify-center gap-200 border">
-                  <Icon
-                    src={STATUS_CONFIG[member.status].src}
-                    size={20}
-                    className={STATUS_CONFIG[member.status].className}
-                  />
-                  <span className={cn('typo-body1', STATUS_CONFIG[member.status].className)}>
-                    {STATUS_CONFIG[member.status].label}
-                  </span>
-                </div>
-              )}
-            </div>
+            <AttendanceMemberRow
+              key={member.id}
+              member={member}
+              isEditing={isEditing}
+              status={getEditStatus(member.id) ?? member.status}
+              onToggle={toggleStatus}
+            />
           ))}
 
           {/* Footer row */}
-          <div className="flex">
-            <div className="border-line flex min-w-0 flex-1 items-center rounded-bl-sm border px-400 py-300">
-              <span className="typo-sub2 text-text-alternative">사용자 정보</span>
-            </div>
-            {isEditing ? (
-              <>
-                <div className="border-line flex w-[79px] items-center justify-center border px-400 py-300">
-                  <span className="typo-sub2 text-text-alternative">출석</span>
-                </div>
-                <div className="border-line flex w-[79px] items-center justify-center rounded-br-sm border px-400 py-300">
-                  <span className="typo-sub2 text-text-alternative">결석</span>
-                </div>
-              </>
-            ) : (
-              <div className="border-line flex w-[158px] items-center justify-center rounded-br-sm border px-400 py-300">
-                <span className="typo-sub2 text-text-alternative">출석 정보</span>
-              </div>
-            )}
-          </div>
+          <AttendanceTableRow isEditing={isEditing} position="bottom" />
         </div>
       </div>
     </div>
   );
 }
 
-export { AttendanceCard, type AttendanceCardProps, type AttendanceMember };
+export { AttendanceCard, type AttendanceCardProps };
