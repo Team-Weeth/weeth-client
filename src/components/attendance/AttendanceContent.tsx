@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import dynamic from 'next/dynamic';
+import { useQueryClient } from '@tanstack/react-query';
 
 import { Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbPage, Card } from '@/components/ui';
 import { AttendanceCompleteModal } from '@/components/attendance/AttendanceCompleteModal';
@@ -11,6 +12,7 @@ import { AttendanceTodayCard } from '@/components/attendance/AttendanceTodayCard
 import { ATTENDANCE_ERROR_MESSAGE } from '@/constants/attendance';
 import { attendanceApi } from '@/lib/apis/attendance';
 import { formatAttendanceDescription } from '@/lib/formatTime';
+import { useAttendanceQuery } from '@/hooks/attendance';
 import { useQRCheckIn } from '@/hooks/useQRCheckIn';
 import { useProfileStatusQuery } from '@/hooks/home/useProfileStatusQuery';
 import { useIsAdmin } from '@/hooks/shared';
@@ -40,7 +42,9 @@ function AttendanceContent({
   const clubId = useClubId();
   const { isAdmin } = useIsAdmin();
   const router = useRouter();
-  const { data: profileStatus } = useProfileStatusQuery();
+  const queryClient = useQueryClient();
+  const { data: attendanceData } = useAttendanceQuery();
+  const { data: profileStatus, isLoading: isProfileLoading } = useProfileStatusQuery();
   const [cardinalModalOpen, setCardinalModalOpen] = useState(false);
   const [isManualChecked, setIsManualChecked] = useState(false);
   const [completeModalOpen, setCompleteModalOpen] = useState(false);
@@ -48,12 +52,9 @@ function AttendanceContent({
   const { isChecked: isQRChecked } = useQRCheckIn({
     qrSessionId,
     qrCode,
-    onSuccess: async () => {
+    onSuccess: () => {
       setCompleteModalOpen(true);
-      if (clubId) {
-        const response = await attendanceApi.getAttendance(clubId);
-        setAttendanceRate(response.data.data.attendanceRate);
-      }
+      queryClient.invalidateQueries({ queryKey: ['attendance', clubId] });
     },
   });
 
@@ -66,17 +67,16 @@ function AttendanceContent({
 
   const {
     sessionId = null,
-    attendanceRate: initialAttendanceRate = 0,
     title = null,
     start = null,
     end = null,
     location = null,
   } = attendance ?? {};
-  const [attendanceRate, setAttendanceRate] = useState(initialAttendanceRate);
+  const attendanceRate = attendanceData?.attendanceRate ?? attendance?.attendanceRate ?? 0;
   const description = formatAttendanceDescription(start ?? '', end ?? '', location ?? '');
 
   async function handleAttendanceComplete(code: string) {
-    if (!profileStatus?.cardinalAssigned) {
+    if (!isProfileLoading && profileStatus?.cardinalAssigned === false) {
       setCardinalModalOpen(true);
       return;
     }
@@ -84,15 +84,15 @@ function AttendanceContent({
 
     try {
       await attendanceApi.checkIn(clubId, sessionId, Number(code));
-      setIsManualChecked(true);
-      setCompleteModalOpen(true);
-
-      const response = await attendanceApi.getAttendance(clubId);
-      setAttendanceRate(response.data.data.attendanceRate);
     } catch (error) {
       const errorCode = (error as { response?: { data?: { code?: number } } }).response?.data?.code;
       toastError(errorCode ? ATTENDANCE_ERROR_MESSAGE[errorCode] : undefined);
+      return;
     }
+
+    setIsManualChecked(true);
+    setCompleteModalOpen(true);
+    queryClient.invalidateQueries({ queryKey: ['attendance', clubId] });
   }
 
   return (
