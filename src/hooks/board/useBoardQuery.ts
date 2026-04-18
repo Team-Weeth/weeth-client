@@ -19,6 +19,7 @@ export function useBoardList() {
         (a, b) => (BOARD_TYPE_ORDER[a.type] ?? 99) - (BOARD_TYPE_ORDER[b.type] ?? 99),
       ),
     enabled: !!clubId,
+    refetchOnMount: 'always',
     staleTime: BOARD_STALE_TIME,
     gcTime: BOARD_GC_TIME,
   });
