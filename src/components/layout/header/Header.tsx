@@ -55,7 +55,7 @@ export default function Header({ isMain = true }: HeaderProps) {
           <Image src={AvatarIcon} alt="avatar" width={40} height={40} />
         </button>
       </header>
-      <header className="tablet:flex flex hidden w-full items-center justify-between px-5 py-3">
+      <header className="tablet:flex relative flex hidden w-full items-center justify-between px-5 py-3">
         <div className="flex items-center gap-4">
           <Logo href={isMain ? '/home' : '/'} />
 
@@ -94,7 +94,11 @@ export default function Header({ isMain = true }: HeaderProps) {
               );
             })}
         </div>
-        {isMain && <span className="typo-sub1 text-neutral-700">{clubName}</span>}
+        {isMain && (
+          <span className="typo-sub1 absolute left-1/2 -translate-x-1/2 text-neutral-700">
+            {clubName}
+          </span>
+        )}
         {isMain && (isPostingPage ? <PostingActions /> : <DefaultActions />)}
       </header>
     </>
