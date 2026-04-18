@@ -111,5 +111,6 @@ export interface MappedComment {
   content: string;
   date: string;
   isAuthor: boolean;
+  isDeleted: boolean;
   replies: MappedComment[];
 }

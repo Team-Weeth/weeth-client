@@ -19,14 +19,18 @@ function isImageFileByType(contentType: string): boolean {
   return contentType.startsWith('image/');
 }
 
+const DELETED_COMMENT_CONTENT = '삭제된 댓글입니다.';
+
 function mapComment(comment: PostComment, currentUserId: number | null): MappedComment {
+  const isDeleted = comment.content === DELETED_COMMENT_CONTENT;
   return {
     id: comment.id,
     profileImage: comment.author.profileImageUrl,
     name: comment.author.name,
     content: comment.content,
     date: formatShortDateTime(comment.time),
-    isAuthor: currentUserId !== null && comment.author.id === currentUserId,
+    isAuthor: !isDeleted && currentUserId !== null && comment.author.id === currentUserId,
+    isDeleted,
     replies: comment.children.map((child) => mapComment(child, currentUserId)),
   };
 }
