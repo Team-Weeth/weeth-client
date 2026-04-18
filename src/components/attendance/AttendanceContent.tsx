@@ -40,10 +40,17 @@ function AttendanceContent({
   const { isChecked: isQRChecked } = useQRCheckIn({
     qrSessionId,
     qrCode,
-    onSuccess: () => setCompleteModalOpen(true),
+    onSuccess: async () => {
+      setCompleteModalOpen(true);
+      if (clubId) {
+        const response = await attendanceApi.getAttendance(clubId);
+        setAttendanceRate(response.data.data.attendanceRate);
+      }
+    },
   });
 
-  const isChecked = isManualChecked || isQRChecked;
+  const isAlreadyChecked = attendance?.status === 'ATTEND';
+  const isChecked = isAlreadyChecked || isManualChecked || isQRChecked;
 
   useEffect(() => {
     if (errorMessage) toastError(errorMessage);
@@ -51,12 +58,13 @@ function AttendanceContent({
 
   const {
     sessionId = null,
-    attendanceRate = 0,
+    attendanceRate: initialAttendanceRate = 0,
     title = null,
     start = null,
     end = null,
     location = null,
   } = attendance ?? {};
+  const [attendanceRate, setAttendanceRate] = useState(initialAttendanceRate);
   const description = formatAttendanceDescription(start ?? '', end ?? '', location ?? '');
 
   async function handleAttendanceComplete(code: string) {
@@ -66,6 +74,9 @@ function AttendanceContent({
       await attendanceApi.checkIn(clubId, sessionId, Number(code));
       setIsManualChecked(true);
       setCompleteModalOpen(true);
+
+      const response = await attendanceApi.getAttendance(clubId);
+      setAttendanceRate(response.data.data.attendanceRate);
     } catch (error) {
       const errorCode = (error as { response?: { data?: { code?: number } } }).response?.data?.code;
       toastError(errorCode ? ATTENDANCE_ERROR_MESSAGE[errorCode] : undefined);
