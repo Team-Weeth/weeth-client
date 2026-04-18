@@ -29,7 +29,7 @@ function PostCardActions({
   });
 
   return (
-    <div className={cn('flex items-center gap-300', className)}>
+    <div className={cn('flex items-center gap-400 py-200', className)}>
       <button
         type="button"
         aria-label="좋아요"

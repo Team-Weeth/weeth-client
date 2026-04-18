@@ -27,7 +27,7 @@ function PostCardDetailContent({
   );
 
   return (
-    <div className={cn('flex flex-col gap-200 self-stretch', className)}>
+    <div className={cn('flex flex-col gap-400 self-stretch', className)}>
       <PostCardTitle title={title} isNew={isNew} size="detail" />
       <div
         ref={expandable ? ref : undefined}

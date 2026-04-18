@@ -68,7 +68,7 @@ function PostDetailContent({ initialData }: PostDetailContentProps) {
     <div className="bg-container-neutral flex flex-1 flex-col items-center overflow-hidden rounded-(--radius-lg)">
       <PostDetailHeader />
 
-      <div className="flex flex-col items-start gap-600 self-stretch p-450">
+      <div className="flex flex-col items-start gap-200 self-stretch px-450 pt-450">
         <PostCard.Header>
           <PostCard.Author
             author={{
@@ -98,6 +98,7 @@ function PostDetailContent({ initialData }: PostDetailContentProps) {
         <FileList files={nonImageFiles} />
 
         <PostCard.Actions
+          className="mt-400"
           postId={currentPost.id}
           likeCount={currentPost.like.likeCount}
           commentCount={currentPost.commentCount}
@@ -105,7 +106,7 @@ function PostDetailContent({ initialData }: PostDetailContentProps) {
         />
       </div>
 
-      <div id="comments" className="self-stretch px-450 py-400">
+      <div id="comments" className="self-stretch px-450 pt-200 pb-400">
         <CommentInput
           placeholder="댓글을 입력하세요."
           onSubmit={async (v) => {
