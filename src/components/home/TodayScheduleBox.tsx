@@ -2,10 +2,12 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import dynamic from 'next/dynamic';
 import { useQueryClient } from '@tanstack/react-query';
 import { Button, Chip, ChipList } from '@/components/ui';
 import { AttendanceCodeModal } from '@/components/attendance/AttendanceCodeModal';
 import { useAttendanceQuery } from '@/hooks/attendance';
+import { useProfileStatusQuery } from '@/hooks/home/useProfileStatusQuery';
 import { useIsAdmin } from '@/hooks/shared';
 import { attendanceApi } from '@/lib/apis/attendance';
 import { formatDateWithTimeRange } from '@/utils/shared/date';
@@ -14,28 +16,40 @@ import { useClubId } from '@/stores/useClubStore';
 import { toastError } from '@/stores/useToastStore';
 import { EmptyBox } from '@/components/home/EmptyBox';
 
+const CardinalMissingModal = dynamic(() =>
+  import('@/components/home/CardinalMissingModal').then((m) => m.CardinalMissingModal),
+);
+
 export function TodayScheduleBox() {
   const router = useRouter();
   const queryClient = useQueryClient();
   const clubId = useClubId();
   const { data } = useAttendanceQuery();
+  const { data: profileStatus, isLoading: isProfileLoading } = useProfileStatusQuery();
   const { isAdmin } = useIsAdmin();
   const [codeModalOpen, setCodeModalOpen] = useState(false);
-  const [isManualChecked, setIsManualChecked] = useState(false);
+  const [cardinalModalOpen, setCardinalModalOpen] = useState(false);
+  const [checkedSessionId, setCheckedSessionId] = useState<number | null>(null);
 
-  const isChecked = data?.status === 'ATTEND' || isManualChecked;
+  const isChecked = data?.status === 'ATTEND' || checkedSessionId === data?.sessionId;
 
   async function handleAttendanceComplete(code: string) {
+    if (!isProfileLoading && profileStatus?.cardinalAssigned === false) {
+      setCardinalModalOpen(true);
+      return;
+    }
     if (!clubId || !data?.sessionId) return;
 
     try {
       await attendanceApi.checkIn(clubId, data.sessionId, Number(code));
-      setIsManualChecked(true);
-      queryClient.invalidateQueries({ queryKey: ['attendance', clubId] });
     } catch (error) {
       const errorCode = (error as { response?: { data?: { code?: number } } }).response?.data?.code;
       toastError(errorCode ? ATTENDANCE_ERROR_MESSAGE[errorCode] : undefined);
+      return;
     }
+
+    setCheckedSessionId(data.sessionId);
+    queryClient.invalidateQueries({ queryKey: ['attendance', clubId] });
   }
 
   return (
@@ -80,6 +94,12 @@ export function TodayScheduleBox() {
           <EmptyBox description="출석할 일정이 없습니다" />
         </div>
       )}
+
+      <CardinalMissingModal
+        open={cardinalModalOpen}
+        onClose={() => setCardinalModalOpen(false)}
+        description="출석을 위해 기수 정보가 필요합니다."
+      />
     </div>
   );
 }
