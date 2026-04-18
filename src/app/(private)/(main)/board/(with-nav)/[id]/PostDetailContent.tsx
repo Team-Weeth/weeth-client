@@ -19,7 +19,7 @@ import { useCreateComment } from '@/hooks/board/useCreateComment';
 import { useUpdateComment } from '@/hooks/board/useUpdateComment';
 import { useDeleteComment } from '@/hooks/board/useDeleteComment';
 import { useReplyForm } from '@/hooks/board/useReplyForm';
-import { useSetActiveBoardId, useIsNoticeBoard } from '@/stores/useBoardNavStore';
+import { useSetActiveBoardId, useBoardTypeMap } from '@/stores/useBoardNavStore';
 import { useClubId } from '@/stores/useClubStore';
 import { useUserId } from '@/stores/useUserStore';
 import { boardApi } from '@/lib/apis/board';
@@ -34,7 +34,7 @@ function PostDetailContent({ initialData }: PostDetailContentProps) {
   const currentUserId = useUserId();
   const clubId = useClubId();
   const setActiveBoardId = useSetActiveBoardId();
-  const isNoticeBoard = useIsNoticeBoard();
+  const boardTypeMap = useBoardTypeMap();
 
   const { data } = usePostDetailQuery(initialData.id, initialData);
   const currentPost = data ?? initialData;
@@ -61,10 +61,10 @@ function PostDetailContent({ initialData }: PostDetailContentProps) {
   }, [currentPost.boardId, setActiveBoardId]);
 
   useEffect(() => {
-    if (clubId && isNoticeBoard(currentPost.boardId)) {
+    if (clubId && boardTypeMap[currentPost.boardId] === 'NOTICE') {
       boardApi.readAllNotices(clubId, currentPost.boardId).catch(() => {});
     }
-  }, [clubId, currentPost.boardId, isNoticeBoard]);
+  }, [clubId, currentPost.boardId, boardTypeMap]);
 
   const isPostAuthor = currentUserId !== null && currentPost.author.id === currentUserId;
   const imageFiles = currentPost.fileUrls

@@ -27,5 +27,6 @@ export const useBoardNavStore = create(
 export const useActiveBoardId = () => useBoardNavStore((store) => store.activeBoardId);
 export const useSetActiveBoardId = () => useBoardNavStore((store) => store.setActiveBoardId);
 export const useBoardNavReset = () => useBoardNavStore((store) => store.reset);
+export const useBoardTypeMap = () => useBoardNavStore((store) => store.boardTypeMap);
 export const useIsNoticeBoard = () => useBoardNavStore((store) => store.isNoticeBoard);
 export const useSetBoardTypeMap = () => useBoardNavStore((store) => store.setBoardTypeMap);
