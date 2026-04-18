@@ -16,13 +16,6 @@ export function useDeletePost() {
       await deletePostApi(clubId, postId);
       return postId;
     },
-    onSuccess: async () => {
-      await Promise.all([
-        queryClient.invalidateQueries({ queryKey: ['posts'] }),
-        queryClient.invalidateQueries({ queryKey: ['home', 'recent-posts'] }),
-      ]);
-      toast({ title: '게시글이 삭제되었습니다.', variant: 'success' });
-    },
     onError: (error) => {
       if (error.message !== 'club not found') {
         toast({ title: '게시글 삭제에 실패했습니다.', variant: 'error' });
@@ -30,8 +23,16 @@ export function useDeletePost() {
     },
   });
 
-  const deletePost = (postId: number, onSuccess?: () => void) => {
-    return mutation.mutateAsync(postId, { onSuccess: () => onSuccess?.() });
+  const deletePost = async (postId: number, onSuccess?: () => void) => {
+    await mutation.mutateAsync(postId);
+    // 상세 쿼리 캐시를 즉시 제거해 삭제된 게시글 refetch 방지
+    queryClient.removeQueries({ queryKey: ['posts', 'detail'] });
+    toast({ title: '게시글이 삭제되었습니다.', variant: 'success' });
+    // 리다이렉트 먼저 실행
+    onSuccess?.();
+    // 목록/홈 쿼리는 백그라운드에서 갱신
+    queryClient.invalidateQueries({ queryKey: ['posts'] });
+    queryClient.invalidateQueries({ queryKey: ['home', 'recent-posts'] });
   };
 
   return { deletePost, isPending: mutation.isPending };
