@@ -1,6 +1,7 @@
 'use client';
 
 import { useEditor } from '@tiptap/react';
+import { TextSelection } from '@tiptap/pm/state';
 import { useState, useRef, useEffect } from 'react';
 import { usePostStore } from '@/stores/usePostStore';
 import { editorExtensions } from './extensions';
@@ -110,13 +111,34 @@ export function usePostEditor({ processFiles, initialContent }: UsePostEditorOpt
           }
         }
 
-        // Backspace UX 개선 (빈 헤딩 → 일반 단락으로 전환)
+        // Backspace UX 개선
         if (event.key === 'Backspace') {
           if ($from.parentOffset === 0 && $from.parent.textContent === '') {
+            // 빈 헤딩 → 일반 단락으로 전환
             if ($from.parent.type.name === 'heading') {
               view.dispatch(
                 state.tr.setBlockType($from.pos, $from.pos, state.schema.nodes.paragraph),
               );
+              return true;
+            }
+
+            // 빈 paragraph가 리스트 바로 뒤에 있을 때 리스트 재진입 방지
+            const LIST_TYPES = ['bulletList', 'orderedList', 'taskList'];
+            const resolvedPos = state.doc.resolve($from.before());
+            const nodeBefore = resolvedPos.nodeBefore;
+
+            if (
+              $from.parent.type.name === 'paragraph' &&
+              nodeBefore &&
+              LIST_TYPES.includes(nodeBefore.type.name)
+            ) {
+              const paragraphStart = $from.before();
+              const paragraphEnd = $from.after();
+              const endOfPrevNode = paragraphStart - 1;
+              const tr = state.tr.delete(paragraphStart, paragraphEnd);
+              const mappedPos = tr.mapping.map(endOfPrevNode);
+              tr.setSelection(TextSelection.near(tr.doc.resolve(mappedPos), -1));
+              view.dispatch(tr);
               return true;
             }
           }
