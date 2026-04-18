@@ -144,7 +144,11 @@ function AttendanceContent({
         title="출석이 완료되었어요!"
       />
 
-      <CardinalMissingModal open={cardinalModalOpen} onClose={() => setCardinalModalOpen(false)} />
+      <CardinalMissingModal
+        open={cardinalModalOpen}
+        onClose={() => setCardinalModalOpen(false)}
+        description="출석을 위해 기수 정보가 필요합니다."
+      />
     </>
   );
 }
