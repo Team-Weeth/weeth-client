@@ -18,3 +18,4 @@ export { useLineClamp } from './useLineClamp';
 export { useNavigationGuard } from './useNavigationGuard';
 export { useImageDrop } from './useImageDrop';
 export { useProgressAnimation } from './useProgressAnimation';
+export { useCodeHighlight } from './useCodeHighlight';
