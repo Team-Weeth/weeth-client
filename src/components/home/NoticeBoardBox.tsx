@@ -35,19 +35,21 @@ export function NoticeBoardBox() {
           notices.map((notice, index) => (
             <React.Fragment key={notice.id}>
               {index > 0 && <Divider />}
-              <div className="flex flex-col items-start gap-300 py-400">
+              <div
+                className="flex cursor-pointer flex-col items-start gap-300 py-400"
+                onClick={() => router.push(`/board/${notice.id}`)}
+              >
                 <div className="flex flex-col gap-200">
                   <div className="flex gap-[5px]">
                     <p className="typo-sub3 text-text-strong">{notice.title}</p>
-                    {notice.isNew && <Image src={NewIcon} alt="new" width={9} height={12} />}
+                    {notice.isNew && <Image src={NewIcon} alt="new" width={7} height={9} />}
                   </div>
-                  <p className="typo-body2 text-icon-normal line-clamp-2 max-w-[268px]">
+                  <p className="typo-body2 text-icon-normal line-clamp-2 max-w-[268px] whitespace-pre-line">
                     {stripHtml(notice.content)}
                   </p>
                   <button
                     type="button"
-                    className="typo-body2 text-text-alternative w-fit cursor-pointer text-start"
-                    onClick={() => router.push('/board')}
+                    className="typo-body2 text-text-alternative hover:text-text-normal w-fit cursor-pointer text-start transition-colors"
                   >
                     전체보기
                   </button>
