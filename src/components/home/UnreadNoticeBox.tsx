@@ -2,12 +2,14 @@
 
 import Image from 'next/image';
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { NewIcon, DeleteIcon } from '@/assets/icons';
 import { useUnreadNoticeQuery } from '@/hooks/home';
 import { cn } from '@/lib/cn';
 import { stripHtml } from '@/lib/stripHtml';
 
 export function UnreadNoticeBox() {
+  const router = useRouter();
   const { data } = useUnreadNoticeQuery();
   const [dismissed, setDismissed] = useState(false);
   const [hidden, setHidden] = useState(false);
@@ -17,14 +19,21 @@ export function UnreadNoticeBox() {
   return (
     <div
       className={cn(
-        'flex flex-col rounded-lg shadow-[0_5px_20px_0_rgba(17,33,49,0.2)] transition-all duration-300',
+        'flex cursor-pointer flex-col rounded-lg shadow-[0_5px_20px_0_rgba(17,33,49,0.2)] transition-all duration-300',
         dismissed && 'translate-x-2 opacity-0',
       )}
+      onClick={() => router.push(`/board/${data.id}`)}
       onTransitionEnd={() => dismissed && setHidden(true)}
     >
       <div className="bg-icon-normal text-icon-inverse flex items-center justify-between rounded-t-lg px-450 pt-450 pb-300">
         <p className="typo-sub2 text-icon-inverse">읽지 않은 최근 공지가 있어요</p>
-        <button type="button" onClick={() => setDismissed(true)}>
+        <button
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation();
+            setDismissed(true);
+          }}
+        >
           <Image src={DeleteIcon} alt="delete" width={16} height={16} className="cursor-pointer" />
         </button>
       </div>
@@ -33,7 +42,9 @@ export function UnreadNoticeBox() {
           <p className="typo-sub3 text-text-strong">{data.title}</p>
           <Image src={NewIcon} alt="new" width={7} height={9} />
         </div>
-        <p className="typo-body2 text-text-normal w-[604px]">{stripHtml(data.content)}</p>
+        <p className="typo-body2 text-text-normal line-clamp-2 w-[604px] whitespace-pre-line">
+          {stripHtml(data.content)}
+        </p>
       </div>
     </div>
   );
