@@ -2,6 +2,7 @@
 
 import { DeleteIcon, DownloadIcon, FolderIcon } from '@/assets/icons';
 import { Icon } from '@/components/ui';
+import { stripUuidPrefix } from '@/lib/board';
 import { cn } from '@/lib/cn';
 import type { DisplayFile } from '@/types/board';
 
@@ -57,7 +58,7 @@ function FileList({ files, editable, onRemove }: FileListProps) {
           <a
             key={item.id}
             href={item.fileUrl}
-            download={item.fileName}
+            download={stripUuidPrefix(item.fileName)}
             className={cn(
               rowStyles,
               'cursor-pointer',
