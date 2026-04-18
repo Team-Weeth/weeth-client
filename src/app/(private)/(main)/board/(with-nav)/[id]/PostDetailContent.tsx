@@ -44,6 +44,7 @@ function PostDetailContent({ initialData }: PostDetailContentProps) {
     setIsReplyDirty,
     setIsCommentDirty,
     handleReplyToggle,
+    forceCloseReply,
     switchGuardOpen,
     onSwitchConfirm,
     onSwitchCancel,
@@ -51,6 +52,17 @@ function PostDetailContent({ initialData }: PostDetailContentProps) {
     onNavGuardConfirm,
     onNavGuardCancel,
   } = useReplyForm();
+
+  useEffect(() => {
+    const hash = window.location.hash;
+    if (hash) {
+      // #comments 등 해시가 있으면 해당 요소로 스크롤
+      const el = document.getElementById(hash.slice(1));
+      el?.scrollIntoView({ behavior: 'smooth' });
+    } else {
+      window.scrollTo(0, 0);
+    }
+  }, []);
 
   useEffect(() => {
     setActiveBoardId(currentPost.boardId);
@@ -103,6 +115,9 @@ function PostDetailContent({ initialData }: PostDetailContentProps) {
           likeCount={currentPost.like.likeCount}
           commentCount={currentPost.commentCount}
           isLiked={currentPost.like.isLiked}
+          onComment={() =>
+            document.getElementById('comments')?.scrollIntoView({ behavior: 'smooth' })
+          }
         />
       </div>
 
@@ -133,6 +148,7 @@ function PostDetailContent({ initialData }: PostDetailContentProps) {
                   {...mapped}
                   replyOpen={activeReplyId === comment.id}
                   onReplyToggle={() => handleReplyToggle(comment.id)}
+                  onReplySuccess={forceCloseReply}
                   onReplyDirtyChange={setIsReplyDirty}
                   replies={mapped.replies.map((reply) => ({
                     ...reply,

@@ -20,6 +20,7 @@ interface CommentItemProps {
   replies?: ReplyItemProps[];
   replyOpen?: boolean;
   onReplyToggle?: () => void;
+  onReplySuccess?: () => void;
   onReplyDirtyChange?: (dirty: boolean) => void;
   onReply?: (value: string) => Promise<boolean> | boolean;
   onEdit?: (content: string) => Promise<boolean> | boolean;
@@ -36,6 +37,7 @@ function CommentItem({
   replies,
   replyOpen = false,
   onReplyToggle,
+  onReplySuccess,
   onReplyDirtyChange,
   onReply,
   onEdit,
@@ -49,7 +51,7 @@ function CommentItem({
     const ok = await onReply?.(value);
     if (ok !== false) {
       onReplyDirtyChange?.(false);
-      onReplyToggle?.();
+      onReplySuccess?.();
     }
     return ok ?? true;
   };
@@ -96,7 +98,7 @@ function CommentItem({
               onClick={onReplyToggle}
               aria-label="답글"
             >
-              <Icon src={ChatIcon} size={13} className="text-icon-normal" />
+              <Icon src={ChatIcon} size={16} className="text-icon-normal" />
             </Button>
             {isAuthor && (
               <ActionMenu
