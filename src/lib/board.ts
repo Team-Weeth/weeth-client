@@ -22,7 +22,7 @@ function isImageFileByType(contentType: string): boolean {
 const DELETED_COMMENT_CONTENT = '삭제된 댓글입니다.';
 
 function mapComment(comment: PostComment, currentUserId: number | null): MappedComment {
-  const isDeleted = comment.content === DELETED_COMMENT_CONTENT;
+  const isDeleted = comment.isDeleted ?? comment.content === DELETED_COMMENT_CONTENT;
   return {
     id: comment.id,
     profileImage: comment.author.profileImageUrl,

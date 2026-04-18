@@ -30,8 +30,8 @@ export function useDeletePost() {
     toast({ title: '게시글이 삭제되었습니다.', variant: 'success' });
     // 리다이렉트 먼저 실행
     onSuccess?.();
-    // 목록/홈 쿼리는 백그라운드에서 갱신
-    queryClient.invalidateQueries({ queryKey: ['posts'] });
+    // 목록/홈 쿼리는 백그라운드에서 갱신 (상세 쿼리 제외)
+    queryClient.invalidateQueries({ queryKey: ['posts', clubId] });
     queryClient.invalidateQueries({ queryKey: ['home', 'recent-posts'] });
   };
 
