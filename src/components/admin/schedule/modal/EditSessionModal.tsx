@@ -51,18 +51,27 @@ function isFormChanged(a: ScheduleFormState, b: ScheduleFormState): boolean {
 }
 
 type SessionDeleteType = 'this' | 'all';
+type SessionSaveType = 'this' | 'all';
 
 interface EditSessionModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   target: AdminSession | AdminSessionGroup;
   onDelete?: (type: SessionDeleteType) => void;
+  onSave?: (type: SessionSaveType) => void;
 }
 
-function EditSessionModal({ open, onOpenChange, target, onDelete }: EditSessionModalProps) {
+function EditSessionModal({
+  open,
+  onOpenChange,
+  target,
+  onDelete,
+  onSave,
+}: EditSessionModalProps) {
   const initialForm = toInitialForm(target);
   const [form, setForm] = useState<ScheduleFormState>(initialForm);
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const [saveConfirmOpen, setSaveConfirmOpen] = useState(false);
   const [discardSource, setDiscardSource] = useState<'close' | 'cancel' | null>(null);
 
   const updateField = <K extends keyof ScheduleFormState>(key: K, value: ScheduleFormState[K]) => {
@@ -83,8 +92,18 @@ function EditSessionModal({ open, onOpenChange, target, onDelete }: EditSessionM
 
   const handleSubmit = () => {
     if (!form.title.trim()) return;
-    // TODO: API 연동 시 세션 수정 요청
+    if (isSessionGroup(target)) {
+      setSaveConfirmOpen(true);
+    } else {
+      // TODO: API 연동 시 세션 수정 요청
+      handleClose();
+    }
+  };
+
+  const handleSaveConfirm = (type: SessionSaveType) => {
+    setSaveConfirmOpen(false);
     handleClose();
+    onSave?.(type);
   };
 
   const handleDeleteConfirm = (type: SessionDeleteType) => {
@@ -250,7 +269,20 @@ function EditSessionModal({ open, onOpenChange, target, onDelete }: EditSessionM
         </DialogContent>
       </Dialog>
 
-      {/* Delete confirmation */}
+      {/* 저장 버튼 확인 */}
+      <CustomAlertDialog
+        open={saveConfirmOpen}
+        onOpenChange={setSaveConfirmOpen}
+        title={'이 변경사항을 어떻게 저장할까요?'}
+        actionLabel="이 세션 일정만 저장"
+        onAction={() => handleSaveConfirm('this')}
+        secondActionLabel="이후 모든 세션 일정에 대해 저장"
+        onSecondAction={() => handleSaveConfirm('all')}
+        placement="center"
+        tone="primary"
+      />
+
+      {/*삭제 버튼 확인*/}
       <CustomAlertDialog
         open={deleteConfirmOpen}
         onOpenChange={setDeleteConfirmOpen}
