@@ -13,10 +13,10 @@ import {
   Input,
   Textarea,
 } from '@/components/ui';
-import { Icon } from '@/components/ui/Icon';
-import { InfoCircleIcon } from '@/assets/icons';
+import { TimeIcon } from '@/assets/icons';
 import { inquiryApi } from '@/lib/apis/inquiry';
 import { toastSuccess, toastError } from '@/stores/useToastStore';
+import Image from 'next/image';
 
 interface InquiryDialogProps {
   children: ReactNode;
@@ -66,12 +66,17 @@ function InquiryDialog({ children }: InquiryDialogProps) {
         onInteractOutside={isSubmitting ? (e) => e.preventDefault() : undefined}
       >
         <DialogHeader
-          icon={
-            <Icon src={InfoCircleIcon} size={24} className="text-brand-primary" alt="정보 아이콘" />
+          icon={<Image src={TimeIcon} width={24} height={24} alt="정보 아이콘" />}
+          title={<span className="typo-h2 text-black">사전예약</span>}
+          description={
+            <span className="typo-body2 text-[#909599]">
+              Weeth가 출시되면 메일로 가장 먼저 알려드릴게요!
+              <br />
+              추가 문의사항을 작성해 주시면 빠른 시일 내로 답변드리겠습니다.
+            </span>
           }
-          title="가입문의"
-          description={`Weeth 도입이 궁금하신가요?\n가입 문의를 남겨주시면 안내해드릴게요.`}
           showClose
+          closeClassName="text-[#1E2021]"
           onClose={handleClose}
         />
 
@@ -79,8 +84,8 @@ function InquiryDialog({ children }: InquiryDialogProps) {
           <DialogBody className="flex-1">
             <div className="flex flex-col gap-400">
               <div className="flex flex-col gap-200">
-                <label htmlFor="inquiry-email" className="typo-caption1 text-text-alternative">
-                  연락 가능한 이메일
+                <label htmlFor="inquiry-email" className="typo-caption1 text-[#909599]">
+                  알림 받을 메일
                 </label>
                 <Input
                   id="inquiry-email"
@@ -90,34 +95,43 @@ function InquiryDialog({ children }: InquiryDialogProps) {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="example@email.com"
+                  className="bg-white text-black focus:border-[#00c8aa]"
                 />
               </div>
 
               <div className="flex flex-col gap-200">
-                <label htmlFor="inquiry-message" className="typo-caption1 text-text-alternative">
+                <label htmlFor="inquiry-message" className="typo-caption1 text-[#909599]">
                   문의사항
                 </label>
                 <Textarea
                   id="inquiry-message"
-                  required
                   value={message}
                   maxLength={1000}
                   onChange={(e) => setMessage(e.target.value)}
                   placeholder="문의 내용을 작성해주세요."
                   rows={6}
+                  className="h-[205px] bg-white text-black focus:border-[#00c8aa]"
                 />
               </div>
             </div>
           </DialogBody>
-
-          <DialogFooter showDivider>
+          <div className="h-[1px] w-full bg-[#E6EAED]" />
+          <DialogFooter>
             <div className="flex gap-200">
-              <Button type="button" variant="secondary" className="flex-1" onClick={handleClose}>
+              <button
+                type="button"
+                className="typo-button1 flex-1 rounded-md bg-[#E6EAED] px-400 py-300 text-black hover:bg-[#b7bcbf]"
+                onClick={handleClose}
+              >
                 취소
-              </Button>
-              <Button type="submit" variant="primary" className="flex-1" disabled={isSubmitting}>
-                전송
-              </Button>
+              </button>
+              <button
+                type="submit"
+                className="typo-button1 flex-1 rounded-md bg-[#00C8AA] px-400 py-300 text-white hover:bg-[#00877a]"
+                disabled={isSubmitting}
+              >
+                사전예약 완료
+              </button>
             </div>
           </DialogFooter>
         </form>
