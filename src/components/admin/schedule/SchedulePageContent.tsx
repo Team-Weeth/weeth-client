@@ -49,7 +49,7 @@ const MOCK_SCHEDULES: Schedule[] = [
 
 function SchedulePageContent() {
   const { cardinals, selectedCardinalId, setSelectedCardinalId, activeCardinal } =
-    useCardinalSelector();
+    useCardinalSelector({ autoSelectLatest: true });
   const [currentYear, setCurrentYear] = useState(() => new Date().getFullYear());
   const [currentMonth, setCurrentMonth] = useState(() => new Date().getMonth() + 1);
   const [searchValue, setSearchValue] = useState('');

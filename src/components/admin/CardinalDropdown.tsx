@@ -1,5 +1,3 @@
-import Image from 'next/image';
-
 import { ArrowDownIcon } from '@/assets/icons';
 import {
   Card,
@@ -7,6 +5,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  Icon,
 } from '@/components/ui';
 import type { Cardinal } from '@/types/admin/cardinal';
 
@@ -28,7 +27,7 @@ function CardinalDropdown({ cardinals, activeCardinal, onSelect }: CardinalDropd
             <span className="typo-sub2 text-text-normal w-12 text-left">
               {activeCardinal ? `${activeCardinal.cardinalNumber}기` : '기수'}
             </span>
-            <Image src={ArrowDownIcon} alt="기수 선택" width={24} height={24} />
+            <Icon src={ArrowDownIcon} size={24} className="text-icon-normal" />
           </button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="start">
