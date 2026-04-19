@@ -27,9 +27,28 @@ function useNavigationGuard({ enabled }: UseNavigationGuardOptions) {
   const pendingUrl = useRef<string | null>(null);
   const beforeUnloadRef = useRef<((e: BeforeUnloadEvent) => void) | null>(null);
 
+  // guardUrl을 현재 URL과 동기화 — 같은 페이지 내 쿼리 파라미터 변경 등 반영
   useEffect(() => {
     if (!enabled) return;
 
+    const syncGuardUrl = () => {
+      guardUrl.current = location.href;
+    };
+
+    window.addEventListener('popstate', syncGuardUrl);
+    return () => window.removeEventListener('popstate', syncGuardUrl);
+  }, [enabled]);
+
+  useEffect(() => {
+    if (!enabled) {
+      // enabled가 꺼질 때 guard entry 정리
+      if (isGuardEntry()) {
+        history.back();
+      }
+      return;
+    }
+
+    isLeaving.current = false;
     guardUrl.current = location.href;
 
     if (!isGuardEntry()) {
@@ -55,13 +74,13 @@ function useNavigationGuard({ enabled }: UseNavigationGuardOptions) {
       const anchor = (e.target as HTMLElement).closest('a');
       if (!anchor) return;
 
-      const href = anchor.getAttribute('href');
-      if (!href) return;
+      // anchor.href는 브라우저가 이미 절대 URL로 변환한 값
+      if (!anchor.href) return;
 
       // target="_blank" 등 외부 탭은 무시
       if (anchor.target && anchor.target !== '_self') return;
 
-      const targetUrl = new URL(href, location.origin);
+      const targetUrl = new URL(anchor.href);
       if (targetUrl.origin !== location.origin) return;
       if (targetUrl.href === guardUrl.current) return;
 
@@ -90,7 +109,7 @@ function useNavigationGuard({ enabled }: UseNavigationGuardOptions) {
         return;
       }
 
-      const targetUrl = new URL(String(url), location.origin);
+      const targetUrl = new URL(String(url), location.href);
       if (targetUrl.origin !== location.origin || targetUrl.href === guardUrl.current) {
         original(...args);
         return;
