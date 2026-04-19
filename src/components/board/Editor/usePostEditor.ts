@@ -6,6 +6,8 @@ import { useState, useRef, useEffect } from 'react';
 import { usePostStore } from '@/stores/usePostStore';
 import { editorExtensions } from './extensions';
 
+const LIST_TYPES = ['bulletList', 'orderedList', 'taskList'];
+
 interface UsePostEditorOptions {
   processFiles?: (files: File[]) => void;
   initialContent?: string;
@@ -123,7 +125,6 @@ export function usePostEditor({ processFiles, initialContent }: UsePostEditorOpt
             }
 
             // 빈 paragraph가 리스트 바로 뒤에 있을 때 리스트 재진입 방지
-            const LIST_TYPES = ['bulletList', 'orderedList', 'taskList'];
             const resolvedPos = state.doc.resolve($from.before());
             const nodeBefore = resolvedPos.nodeBefore;
 
