@@ -27,7 +27,7 @@ function UploadingContent({ onComplete, compact }: { onComplete: () => void; com
   return (
     <div className="flex w-full flex-col items-center gap-300 px-400">
       <Image src={AdminCloudUploadIcon} alt="upload" width={32} height={32} />
-      <span className="typo-sub2 text-text-strong">업로드 중...</span>
+      <span className="typo-sub1 text-text-strong">업로드 중...</span>
       <ProgressBar value={progress} className={cn('h-2 w-full max-w-80', compact && 'max-w-32')} />
     </div>
   );
@@ -38,7 +38,7 @@ function IdleContent({ title, description }: { title: string; description: strin
     <div className="flex flex-col items-center gap-300">
       <Image src={AdminCloudUploadIcon} alt="upload" width={36} height={36} />
       <div className="flex flex-col items-center gap-200">
-        <span className="typo-sub2 text-text-normal">{title}</span>
+        <span className="typo-sub1 text-text-normal">{title}</span>
         <span className="typo-caption2 text-text-alternative">{description}</span>
       </div>
     </div>

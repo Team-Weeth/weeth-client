@@ -20,8 +20,8 @@ export function CalendarBox() {
 
   return (
     <div className="bg-container-neutral rounded-lg">
-      <div className="typo-sub2 text-text-strong flex justify-between p-450">
-        <p className="typo-sub2 text-text-strong">{monthLabel}</p>
+      <div className="typo-sub1 text-text-strong flex justify-between p-450">
+        <p className="typo-sub1 text-text-strong">{monthLabel}</p>
         {/* <button type="button" aria-label="캘린더 전체보기" onClick={() => router.push('/calendar')}>
           <Image
             src={ArrowRightIcon}

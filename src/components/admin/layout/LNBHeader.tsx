@@ -26,7 +26,7 @@ function LNBHeader({ collapsed, onToggle }: LNBHeaderProps) {
           {collapsed ? '사이드바 열기' : '사이드바 닫기'}
         </TooltipContent>
       </Tooltip>
-      {!collapsed && <span className="typo-sub3 text-icon-alternative">Weeth admin</span>}
+      {!collapsed && <span className="typo-sub1 text-icon-alternative">Weeth admin</span>}
     </div>
   );
 }

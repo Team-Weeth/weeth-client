@@ -119,6 +119,17 @@ export {
 
 export { Separator } from './separator';
 
+export {
+  Sheet,
+  SheetTrigger,
+  SheetClose,
+  SheetPortal,
+  SheetOverlay,
+  SheetContent,
+  sheetContentVariants,
+  type SheetContentProps,
+} from './Sheet';
+
 export { Progress } from './progress';
 export { ProgressBar, type ProgressBarProps } from './ProgressBar';
 
