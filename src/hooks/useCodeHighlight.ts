@@ -12,13 +12,22 @@ function useCodeHighlight(ref: RefObject<HTMLElement | null>, content: string) {
     const container = ref.current;
     if (!container) return;
 
-    const codeBlocks = container.querySelectorAll('pre code');
+    const codeBlocks = container.querySelectorAll('pre code:not([data-highlighted])');
     codeBlocks.forEach((codeEl) => {
       const text = codeEl.textContent ?? '';
       if (!text.trim()) return;
 
-      const result = lowlight.highlightAuto(text);
+      const lang = [...codeEl.classList]
+        .find((cls) => cls.startsWith('language-'))
+        ?.slice('language-'.length);
+
+      const result =
+        lang && lowlight.registered(lang)
+          ? lowlight.highlight(lang, text)
+          : lowlight.highlightAuto(text);
+
       codeEl.innerHTML = toHtml(result);
+      codeEl.setAttribute('data-highlighted', '');
     });
   }, [ref, content]);
 }
