@@ -90,10 +90,12 @@ function BoardCard({
 
       {/* Visibility tag */}
       <div className="hidden shrink-0 desktop:flex">
-        {visibility === 'PUBLIC' ? (
-          <Tag variant="primary">전체 공개</Tag>
-        ) : (
+        {visibility === 'PUBLIC' && <Tag variant="primary">전체 공개</Tag>}
+        {visibility === 'ADMIN_ONLY' && (
           <Tag className="bg-state-caution/10 text-state-caution">관리자 전용</Tag>
+        )}
+        {visibility === 'PRIVATE' && (
+          <Tag className="bg-text-alternative/10 text-text-alternative">비공개</Tag>
         )}
       </div>
 

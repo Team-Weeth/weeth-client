@@ -14,6 +14,7 @@ import {
 import { ArrowDownIcon, InfoIcon } from '@/assets/icons';
 import { BoardCard } from '@/components/admin/board/BoardCard';
 import { BoardToolbar } from '@/components/admin/board/BoardToolbar';
+import { CreateBoardModal } from '@/components/admin/board/modal/CreateBoardModal';
 import { useCardinals } from '@/hooks/queries';
 import type { Board } from '@/types/admin/board';
 
@@ -70,6 +71,7 @@ function BoardPageContent() {
   const [selectedCardinalId, setSelectedCardinalId] = useState<number | null>(null);
   const [searchValue, setSearchValue] = useState('');
   const [boards, setBoards] = useState<Board[]>(MOCK_BOARDS);
+  const [createModalOpen, setCreateModalOpen] = useState(false);
 
   const activeCardinal = selectedCardinalId
     ? cardinals.find((c) => c.id === selectedCardinalId)
@@ -119,6 +121,7 @@ function BoardPageContent() {
         searchValue={searchValue}
         onSearchChange={setSearchValue}
         trashCount={MOCK_TRASH_COUNT}
+        onCreateClick={reachedLimit ? undefined : () => setCreateModalOpen(true)}
       />
 
       {/* Board list */}
@@ -157,13 +160,32 @@ function BoardPageContent() {
         {/* Limit banner */}
         <div className="bg-container-neutral-alternative flex h-12 items-center gap-200 rounded-md p-300">
           <Icon src={InfoIcon} size={20} className="text-icon-alternative" />
-          <p className="typo-body2 text-text-alternative flex-1 min-w-0">
-            {reachedLimit
-              ? `추가 게시판은 최대 ${MAX_CUSTOM_BOARDS}개입니다.`
-              : `추가 게시판은 최대 ${MAX_CUSTOM_BOARDS}개입니다.`}
+          <p className="typo-body2 text-text-alternative min-w-0 flex-1">
+            추가 게시판은 최대 {MAX_CUSTOM_BOARDS}개입니다.
           </p>
         </div>
       </div>
+
+      {/* Create board modal */}
+      <CreateBoardModal
+        open={createModalOpen}
+        onOpenChange={setCreateModalOpen}
+        onSubmit={(data) => {
+          setBoards((prev) => [
+            ...prev,
+            {
+              boardId: Math.max(0, ...prev.map((b) => b.boardId)) + 1,
+              name: data.name.trim(),
+              description: data.description.trim(),
+              kind: 'CUSTOM',
+              visibility: data.visibility,
+              postCount: 0,
+              commentEnabled: data.commentEnabled,
+              editable: true,
+            },
+          ]);
+        }}
+      />
     </div>
   );
 }

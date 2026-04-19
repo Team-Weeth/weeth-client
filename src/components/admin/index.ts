@@ -34,3 +34,8 @@ export { ScheduleFormField, type ScheduleFormFieldProps } from './schedule/Sched
 export { BoardCard, type BoardCardProps } from './board/BoardCard';
 export { BoardToolbar, type BoardToolbarProps } from './board/BoardToolbar';
 export { BoardPageContent } from './board/BoardPageContent';
+export {
+  CreateBoardModal,
+  type CreateBoardModalProps,
+  type CreateBoardFormData,
+} from './board/modal/CreateBoardModal';

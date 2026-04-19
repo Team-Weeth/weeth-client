@@ -1,5 +1,5 @@
 export type BoardKind = 'ALL' | 'NOTICE' | 'CUSTOM';
-export type BoardVisibility = 'PUBLIC' | 'ADMIN_ONLY';
+export type BoardVisibility = 'PUBLIC' | 'ADMIN_ONLY' | 'PRIVATE';
 
 export interface Board {
   boardId: number;
