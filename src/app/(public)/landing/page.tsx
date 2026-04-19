@@ -16,7 +16,6 @@ import { USER_FEATURES, ADMIN_FEATURES } from '@/constants/landing/landing';
 export default function LandingPage() {
   return (
     <>
-      {/* TODO: showAuthButtons 추가하기 */}
       <PublicHeader />
       <main className="flex min-h-screen w-full flex-col">
         <div>

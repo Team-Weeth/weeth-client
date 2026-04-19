@@ -16,6 +16,7 @@ export { useDirtyActionGuard } from './board/useDirtyActionGuard';
 export { useReplyForm } from './board/useReplyForm';
 export { useLineClamp } from './useLineClamp';
 export { useNavigationGuard } from './useNavigationGuard';
+export { useCardinalSelector } from './useCardinalSelector';
 export { useImageDrop } from './useImageDrop';
 export { useProgressAnimation } from './useProgressAnimation';
 export { useCodeHighlight } from './useCodeHighlight';

@@ -25,7 +25,7 @@ function LNBClubInfo({ collapsed }: LNBClubInfoProps) {
       {!collapsed && (
         <div className="flex flex-col gap-100">
           <span className="typo-caption2 text-text-alternative">{club?.schoolName}</span>
-          <span className="typo-sub2 text-text-strong">{club?.name}</span>
+          <span className="typo-sub1 text-text-strong">{club?.name}</span>
         </div>
       )}
     </div>

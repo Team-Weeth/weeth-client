@@ -18,7 +18,7 @@ function AttendanceMemberRow({ member, isEditing, status, onToggle }: Attendance
   return (
     <div className="flex">
       {/* 사용자 정보 */}
-      <div className="border-line flex min-w-0 flex-1 flex-col justify-center gap-200 border px-400 py-300">
+      <div className="border-line flex min-w-0 flex-1 flex-col justify-center gap-200 border-r border-b border-l px-400 py-300">
         <span className="typo-sub2 text-text-strong">{member.name}</span>
         <div className="mt-100 flex items-center gap-200">
           <span className="typo-body2 text-text-normal">{member.department}</span>
@@ -30,7 +30,7 @@ function AttendanceMemberRow({ member, isEditing, status, onToggle }: Attendance
       {isEditing ? (
         <>
           {/* 출석 */}
-          <div className="border-line flex w-[79px] items-center justify-center border">
+          <div className="border-line flex w-[79px] items-center justify-center border-r border-b">
             <button
               type="button"
               onClick={() => onToggle(member.id, 'ATTEND')}
@@ -46,7 +46,7 @@ function AttendanceMemberRow({ member, isEditing, status, onToggle }: Attendance
           </div>
 
           {/* 결석 */}
-          <div className="border-line flex w-[79px] items-center justify-center border">
+          <div className="border-line flex w-[79px] items-center justify-center border-r border-b">
             <button
               type="button"
               onClick={() => onToggle(member.id, 'ABSENT')}
@@ -62,7 +62,7 @@ function AttendanceMemberRow({ member, isEditing, status, onToggle }: Attendance
           </div>
         </>
       ) : (
-        <div className="border-line flex w-[158px] items-center justify-center gap-200 border">
+        <div className="border-line flex w-[158px] items-center justify-center gap-200 border-r border-b">
           <Icon
             src={ADMIN_ATTENDANCE_STATUS_CONFIG[member.status].src}
             size={20}
