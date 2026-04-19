@@ -103,7 +103,6 @@ function InquiryDialog({ children }: InquiryDialogProps) {
                 </label>
                 <Textarea
                   id="inquiry-message"
-                  required
                   value={message}
                   maxLength={1000}
                   onChange={(e) => setMessage(e.target.value)}
