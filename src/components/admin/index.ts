@@ -31,3 +31,6 @@ export {
   type CreateScheduleModalProps,
 } from './schedule/modal/CreateScheduleModal';
 export { ScheduleFormField, type ScheduleFormFieldProps } from './schedule/ScheduleFormField';
+export { BoardCard, type BoardCardProps } from './board/BoardCard';
+export { BoardToolbar, type BoardToolbarProps } from './board/BoardToolbar';
+export { BoardPageContent } from './board/BoardPageContent';

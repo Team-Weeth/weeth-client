@@ -1,3 +1,5 @@
+import { BoardPageContent } from '@/components/admin';
+
 export default function BoardPage() {
-  return <div>BoardPage</div>;
+  return <BoardPageContent />;
 }
