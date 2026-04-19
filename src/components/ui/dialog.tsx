@@ -85,8 +85,9 @@ interface DialogHeaderProps extends Omit<React.HTMLAttributes<HTMLDivElement>, '
   icon?: ReactNode;
   overline?: string;
   title?: ReactNode;
-  description?: string;
+  description?: ReactNode;
   showClose?: boolean;
+  closeClassName?: string;
   onClose?: () => void;
   children?: ReactNode;
 }
@@ -97,6 +98,7 @@ function DialogHeader({
   title,
   description,
   showClose = false,
+  closeClassName,
   onClose,
   children,
   className,
@@ -105,7 +107,12 @@ function DialogHeader({
   const closeButton = showClose && (
     <DialogPrimitive.Close asChild onClick={onClose}>
       <button type="button" className="cursor-pointer">
-        <Icon src={DeleteIcon} size={24} className="text-icon-normal" alt="Close" />
+        <Icon
+          src={DeleteIcon}
+          size={24}
+          className={cn('text-icon-normal', closeClassName)}
+          alt="Close"
+        />
       </button>
     </DialogPrimitive.Close>
   );

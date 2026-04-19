@@ -18,19 +18,14 @@ export function NoticeBoardBox() {
   return (
     <div className="bg-container-neutral flex flex-col rounded-lg pb-300">
       <div className="flex items-center justify-between p-450">
-        <p className="typo-sub2 text-text-strong">공지</p>
+        <p className="typo-sub1 text-text-strong">공지</p>
         <button
           className="p-1"
           type="button"
           aria-label="공지 전체보기"
           onClick={() => router.push('/board')}
         >
-          <Icon
-            src={ArrowRightIcon}
-            aria-hidden="true"
-            size={12}
-            className="cursor-pointer px-1 py-[1px]"
-          />
+          <Icon src={ArrowRightIcon} size={16} className="cursor-pointer px-1 py-[1px]" />
         </button>
       </div>
       <div className="flex flex-col px-450">
