@@ -17,7 +17,7 @@ const buttonVariants = cva(
         kakao:
           'bg-[var(--kakao-bg)] text-text-strong hover:opacity-90 active:opacity-80 disabled:bg-button-neutral disabled:text-text-disabled',
         apple:
-          'bg-button-neutral text-text-strong border border-line hover:opacity-90 active:opacity-80 disabled:bg-button-neutral disabled:text-text-disabled',
+          'bg-button-neutral text-icon-strong border border-line hover:opacity-90 active:opacity-80 disabled:bg-button-neutral disabled:text-text-disabled',
       },
       size: {
         lg: 'typo-button1 px-400 py-300 rounded-md',

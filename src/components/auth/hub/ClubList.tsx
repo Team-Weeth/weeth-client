@@ -38,7 +38,7 @@ function ClubList({ clubs, className, ...props }: ClubListProps) {
       {clubs.map((club) => (
         <Item
           key={club.id}
-          className="border-line flex-nowrap gap-400 rounded-lg border bg-white p-200"
+          className="border-line bg-background-2 flex-nowrap gap-400 rounded-lg border p-200"
         >
           <ItemMedia>
             <ClubAvatar size={56} src={club.profileImageUrl} name={club.name} />

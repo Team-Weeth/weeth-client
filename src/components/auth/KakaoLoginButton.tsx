@@ -14,7 +14,13 @@ function KakaoLoginButton({ className, onClick, ...props }: KakaoLoginButtonProp
       onClick={onClick}
       {...props}
     >
-      <Image src={KakaoLogoIcon} alt="" width={18} height={18} className="absolute left-[14px]" />
+      <Image
+        src={KakaoLogoIcon}
+        alt="kakao-icon"
+        width={18}
+        height={18}
+        className="absolute left-[14px]"
+      />
       카카오로 시작하기
     </Button>
   );
