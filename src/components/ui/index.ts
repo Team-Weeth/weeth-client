@@ -74,6 +74,8 @@ export {
   type AvatarProps,
 } from './avatar';
 
+export { ClubAvatar, clubAvatarVariants, type ClubAvatarProps } from './ClubAvatar';
+
 export { Chip, chipVariants, ChipList, type ChipProps } from './chips';
 
 export { Tag, tagVariants, type TagProps } from './tag';
