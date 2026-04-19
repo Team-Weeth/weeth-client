@@ -34,12 +34,14 @@ export function useCheckIn() {
       if (errorCode && ATTENDANCE_ERROR_MESSAGE[errorCode]) {
         toastError(ATTENDANCE_ERROR_MESSAGE[errorCode]);
       } else {
+        toastError();
         setCheckInError(true);
       }
       return;
     }
 
     setCheckedSessionId(data.sessionId);
+    setCodeModalOpen(false);
     queryClient.invalidateQueries({ queryKey: ['attendance', clubId] });
   }
 

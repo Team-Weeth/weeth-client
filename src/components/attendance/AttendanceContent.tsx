@@ -58,7 +58,7 @@ function AttendanceContent({
     },
   });
 
-  const isAlreadyChecked = attendance?.status === 'ATTEND';
+  const isAlreadyChecked = attendance?.status === 'ATTEND' || attendanceData?.status === 'ATTEND';
   const isChecked = isAlreadyChecked || isManualChecked || isQRChecked;
 
   useEffect(() => {
@@ -86,7 +86,11 @@ function AttendanceContent({
       await attendanceApi.checkIn(clubId, sessionId, Number(code));
     } catch (error) {
       const errorCode = (error as { response?: { data?: { code?: number } } }).response?.data?.code;
-      toastError(errorCode ? ATTENDANCE_ERROR_MESSAGE[errorCode] : undefined);
+      if (errorCode && ATTENDANCE_ERROR_MESSAGE[errorCode]) {
+        toastError(ATTENDANCE_ERROR_MESSAGE[errorCode]);
+      } else {
+        toastError();
+      }
       return;
     }
 
