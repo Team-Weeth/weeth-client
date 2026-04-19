@@ -1,6 +1,5 @@
 'use client';
 
-import Image from 'next/image';
 import { PeopleIcon, CopyIcon } from '@/assets/icons';
 import { Button, Divider, Icon } from '@/components/ui';
 import dynamic from 'next/dynamic';

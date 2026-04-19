@@ -15,6 +15,7 @@ import {
 import { Icon, Sheet, SheetClose, SheetContent, SheetTrigger } from '@/components/ui';
 import { logoutAction } from '@/lib/actions/auth';
 import { cn } from '@/lib/cn';
+import { useIsAdmin } from '@/hooks/shared';
 
 const NAV_ITEMS = [
   { id: 'home', label: 'HOME', href: '/home', icon: HomeIcon },
@@ -26,6 +27,7 @@ const NAV_ITEMS = [
 
 function MobileNavSheet() {
   const pathname = usePathname();
+  const { isAdmin } = useIsAdmin();
 
   return (
     <Sheet>
@@ -43,33 +45,35 @@ function MobileNavSheet() {
         className="tablet:max-w-[375px] bg-container-neutral top-[64px] h-[calc(100dvh-64px)] w-full max-w-[440px]"
       >
         <nav className="flex flex-1 flex-col gap-200 px-450 py-400" aria-label="주요 메뉴">
-          {NAV_ITEMS.map(({ id, label, href, icon }) => {
-            const isActive = pathname.startsWith(href);
-            return (
-              <Fragment key={id}>
-                {id === 'admin' && <div className="bg-line h-px" />}
-                <SheetClose asChild>
-                  <Link
-                    href={href}
-                    className={cn(
-                      'typo-button1 flex items-center gap-300 rounded-md p-200 px-450 transition-colors',
-                      isActive
-                        ? 'bg-brand-primary text-text-inverse'
-                        : 'text-text-normal hover:bg-container-neutral-interaction',
-                    )}
-                    aria-current={isActive ? 'page' : undefined}
-                  >
-                    <Icon
-                      src={icon}
-                      size={24}
-                      className={isActive ? 'text-text-inverse' : 'text-icon-normal'}
-                    />
-                    {label}
-                  </Link>
-                </SheetClose>
-              </Fragment>
-            );
-          })}
+          {NAV_ITEMS.filter(({ id }) => id !== 'admin' || isAdmin).map(
+            ({ id, label, href, icon }) => {
+              const isActive = pathname.startsWith(href);
+              return (
+                <Fragment key={id}>
+                  {id === 'admin' && <div className="bg-line h-px" />}
+                  <SheetClose asChild>
+                    <Link
+                      href={href}
+                      className={cn(
+                        'typo-button1 flex items-center gap-300 rounded-md p-200 px-450 transition-colors',
+                        isActive
+                          ? 'bg-brand-primary text-text-inverse'
+                          : 'text-text-normal hover:bg-container-neutral-interaction',
+                      )}
+                      aria-current={isActive ? 'page' : undefined}
+                    >
+                      <Icon
+                        src={icon}
+                        size={24}
+                        className={isActive ? 'text-text-inverse' : 'text-icon-normal'}
+                      />
+                      {label}
+                    </Link>
+                  </SheetClose>
+                </Fragment>
+              );
+            },
+          )}
         </nav>
 
         <form action={logoutAction} className="pb-[24px] pl-[18px]">
