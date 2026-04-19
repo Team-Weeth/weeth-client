@@ -3,26 +3,16 @@
 import { useState } from 'react';
 import Image from 'next/image';
 
-import {
-  Button,
-  Card,
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from '@/components/ui';
+import { Button, Card, Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui';
 import { Icon } from '@/components/ui';
 import { AdminCalendarEditIcon } from '@/assets/icons/admin';
-import { ArrowDownIcon, SearchIcon } from '@/assets/icons';
+import { SearchIcon } from '@/assets/icons';
+import { CardinalDropdown } from '@/components/admin';
 import { MonthNavigator } from '@/components/admin/schedule/MonthNavigator';
 import { ScheduleList } from '@/components/admin/schedule/ScheduleList';
 import { CreateScheduleModal } from '@/components/admin/schedule/modal/CreateScheduleModal';
 import { EditScheduleModal } from '@/components/admin/schedule/modal/EditScheduleModal';
-import { useCardinals } from '@/hooks/queries';
+import { useCardinalSelector } from '@/hooks';
 import type { Schedule } from '@/types/admin/schedule';
 
 type ScheduleTab = 'all' | 'session';
@@ -58,18 +48,14 @@ const MOCK_SCHEDULES: Schedule[] = [
 ];
 
 function SchedulePageContent() {
-  const { data: cardinals = [] } = useCardinals();
-  const [selectedCardinalId, setSelectedCardinalId] = useState<number | null>(null);
+  const { cardinals, selectedCardinalId, setSelectedCardinalId, activeCardinal } =
+    useCardinalSelector({ autoSelectLatest: true });
   const [currentYear, setCurrentYear] = useState(() => new Date().getFullYear());
   const [currentMonth, setCurrentMonth] = useState(() => new Date().getMonth() + 1);
   const [searchValue, setSearchValue] = useState('');
   const [activeTab, setActiveTab] = useState<ScheduleTab>('all');
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [editTarget, setEditTarget] = useState<Schedule | null>(null);
-
-  const activeCardinal = selectedCardinalId
-    ? cardinals.find((c) => c.id === selectedCardinalId)
-    : undefined;
 
   const schedules = MOCK_SCHEDULES;
 
@@ -125,31 +111,11 @@ function SchedulePageContent() {
 
   return (
     <div className="flex min-w-3xl flex-col gap-400 p-700">
-      {/* Generation filter */}
-      <Card className="w-fit">
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <button
-              type="button"
-              className="border-line flex cursor-pointer items-center gap-700 rounded-sm border py-300 pr-300 pl-400"
-            >
-              <span className="typo-sub2 text-text-normal w-12 text-left">
-                {selectedCardinalId !== null && activeCardinal
-                  ? `${activeCardinal.cardinalNumber}기`
-                  : '기수'}
-              </span>
-              <Image src={ArrowDownIcon} alt="기수 선택" width={24} height={24} />
-            </button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="start">
-            {cardinals.map((c) => (
-              <DropdownMenuItem key={c.id} onSelect={() => setSelectedCardinalId(c.id)}>
-                {c.cardinalNumber}기
-              </DropdownMenuItem>
-            ))}
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </Card>
+      <CardinalDropdown
+        cardinals={cardinals}
+        activeCardinal={activeCardinal}
+        onSelect={setSelectedCardinalId}
+      />
 
       {/* Tabs */}
       <Tabs

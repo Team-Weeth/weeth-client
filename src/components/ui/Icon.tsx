@@ -18,14 +18,20 @@ function Icon({ src, size = 20, alt, className }: IconProps) {
       style={{
         width: size,
         height: size,
+        backgroundOrigin: 'content-box',
+        backgroundClip: 'content-box',
         maskImage: `url(${src.src})`,
         maskSize: 'contain',
         maskRepeat: 'no-repeat',
         maskPosition: 'center',
+        maskOrigin: 'content-box',
+        maskClip: 'content-box',
         WebkitMaskImage: `url(${src.src})`,
         WebkitMaskSize: 'contain',
         WebkitMaskRepeat: 'no-repeat',
         WebkitMaskPosition: 'center',
+        WebkitMaskOrigin: 'content-box',
+        WebkitMaskClip: 'content-box',
       }}
     />
   );

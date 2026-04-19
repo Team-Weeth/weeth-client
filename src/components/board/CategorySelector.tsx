@@ -46,15 +46,13 @@ function CategorySelector({ className, items, activeId, onItemSelect }: Category
     <DropdownMenu open={open} onOpenChange={setOpen}>
       <DropdownMenuTrigger
         className={cn(
-          'bg-container-neutral flex items-center gap-100 self-stretch rounded-lg py-200 pr-200 pl-300',
+          'bg-container-neutral flex h-[40px] items-center self-stretch rounded-lg py-200 pr-200 pl-300',
           className,
         )}
       >
         <Breadcrumb className="flex-1">
-          <BreadcrumbList className="flex-nowrap gap-100">
-            <BreadcrumbItem className="typo-button2 text-text-strong">{boardName}</BreadcrumbItem>
-            <BreadcrumbSeparator className="[&>svg]:size-4" />
-            <BreadcrumbItem className="typo-button2 text-text-strong">{channelName}</BreadcrumbItem>
+          <BreadcrumbList className="flex-nowrap gap-100" showHome={false}>
+            <BreadcrumbItem className="typo-button1 text-text-strong">{channelName}</BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
         <Icon src={ArrowDownIcon} size={20} className="text-icon-normal" />
