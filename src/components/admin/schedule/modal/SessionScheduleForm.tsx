@@ -18,16 +18,9 @@ import {
   SESSION_RECURRENCE_OPTIONS,
 } from '@/constants/admin/session.constants';
 import { useCardinals } from '@/hooks/queries';
-import type { SessionRecurrenceType } from '@/types/admin/session';
 import { addYearsToDateInput } from '@/utils/shared/date';
 
-import type { ScheduleFormState } from './types';
-
-export interface SessionFormState {
-  selectedCardinalId: number | null;
-  recurrenceType: SessionRecurrenceType;
-  recurrenceEndDate: string;
-}
+import type { ScheduleFormState, SessionFormState } from './types';
 
 interface SessionScheduleFormProps {
   form: ScheduleFormState;

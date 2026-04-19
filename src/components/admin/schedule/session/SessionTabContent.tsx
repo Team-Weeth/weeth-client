@@ -6,7 +6,7 @@ import Image from 'next/image';
 import { Button, Icon } from '@/components/ui';
 import { InfoCircleIcon } from '@/assets/icons';
 import { AdminCalendarEditIcon } from '@/assets/icons/admin';
-import { SessionTable } from '@/components/admin/schedule/SessionTable';
+import { SessionTable } from '@/components/admin/schedule/session/SessionTable';
 import { EditSessionModal } from '@/components/admin/schedule/modal/EditSessionModal';
 import { MOCK_SESSION_LIST } from '@/constants/admin/session.constants';
 import type { AdminSession, AdminSessionGroup } from '@/types/admin/session';

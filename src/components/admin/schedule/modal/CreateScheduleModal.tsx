@@ -5,18 +5,15 @@ import { useState } from 'react';
 import { Button, Icon, Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { AdminCloseIcon } from '@/assets/icons/admin';
-import { GeneralScheduleForm } from '@/components/admin/schedule/modal/GeneralScheduleForm';
-import {
-  SessionScheduleForm,
-  type SessionFormState,
-} from '@/components/admin/schedule/modal/SessionScheduleForm';
+import { ScheduleFormBody } from '@/components/admin/schedule/modal/ScheduleFormBody';
+import { SessionScheduleForm } from '@/components/admin/schedule/modal/SessionScheduleForm';
 import { SCHEDULE_TYPE_LABEL } from '@/constants/admin/schedule.constants';
 import { useCardinals } from '@/hooks/queries';
 import type { ScheduleType } from '@/types/admin/schedule';
 import type { CreateSessionBody } from '@/types/admin/session';
 import { toDateInputValue } from '@/utils/shared/date';
 
-import type { ScheduleFormState } from './types';
+import type { ScheduleFormState, SessionFormState } from './types';
 
 interface CreateScheduleModalProps {
   open: boolean;
@@ -155,7 +152,12 @@ function CreateScheduleModal({
               isRecurrenceEndValid={isRecurrenceEndValid}
             />
           ) : (
-            <GeneralScheduleForm form={form} onFormChange={updateForm} />
+            <ScheduleFormBody
+              form={form}
+              onFormChange={updateForm}
+              titleLabel="일정 제목"
+              titlePlaceholder="예 : 중간고사 기간"
+            />
           )}
         </div>
 

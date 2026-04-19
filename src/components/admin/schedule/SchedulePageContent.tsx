@@ -18,9 +18,9 @@ import {
 import { Icon } from '@/components/ui';
 import { AdminCalendarEditIcon } from '@/assets/icons/admin';
 import { ArrowDownIcon, SearchIcon } from '@/assets/icons';
-import { MonthNavigator } from '@/components/admin/schedule/MonthNavigator';
-import { ScheduleList } from '@/components/admin/schedule/ScheduleList';
-import { SessionTabContent } from '@/components/admin/schedule/SessionTabContent';
+import { MonthNavigator } from '@/components/admin/schedule/general/MonthNavigator';
+import { ScheduleList } from '@/components/admin/schedule/general/ScheduleList';
+import { SessionTabContent } from '@/components/admin/schedule/session/SessionTabContent';
 import { CreateScheduleModal } from '@/components/admin/schedule/modal/CreateScheduleModal';
 import { EditScheduleModal } from '@/components/admin/schedule/modal/EditScheduleModal';
 import { useCardinals } from '@/hooks/queries';

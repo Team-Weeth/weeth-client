@@ -1,6 +1,6 @@
 import { cn } from '@/lib/cn';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, Button } from '@/components/ui';
-import { ScheduleTag } from '@/components/admin/schedule/ScheduleTag';
+import { ScheduleTag } from '@/components/admin/schedule/general/ScheduleTag';
 import { SCHEDULE_TYPE_LABEL } from '@/constants/admin/schedule.constants';
 import type { Schedule } from '@/types/admin/schedule';
 import { getDayLabel, getDayOfMonth, formatScheduleDateTime } from '@/utils/admin/scheduleUtils';

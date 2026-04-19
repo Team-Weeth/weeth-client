@@ -1,5 +1,8 @@
-import { SessionStatusTag } from '@/components/admin/schedule/SessionStatusTag';
-import { AttendanceLink, MoreButton } from '@/components/admin/schedule/SessionActionButtons';
+import { SessionStatusTag } from '@/components/admin/schedule/session/SessionStatusTag';
+import {
+  AttendanceLink,
+  MoreButton,
+} from '@/components/admin/schedule/session/SessionActionButtons';
 import {
   formatSessionDate,
   formatSessionDayLabel,

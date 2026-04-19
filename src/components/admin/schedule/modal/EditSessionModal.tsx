@@ -15,11 +15,10 @@ import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { AdminCloseIcon, AdminMeatballIcon } from '@/assets/icons/admin';
 import type { AdminSession, AdminSessionGroup } from '@/types/admin/session';
 
-import { EditSessionForm } from './EditSessionForm';
-import { isFormChanged, isSessionGroup, toInitialForm } from './editSessionUtils';
+import { DiscardConfirmArea } from './DiscardConfirmArea';
+import { ScheduleFormBody } from './ScheduleFormBody';
+import { isFormChanged, isSessionGroup, toInitialSessionForm } from './scheduleFormUtils';
 import type { ScheduleFormState, SessionDeleteType, SessionSaveType } from './types';
-
-const DISCARD_ALERT_TITLE = '변경사항이 있어요.\n변경사항을 폐기할까요?';
 
 interface EditSessionModalProps {
   open: boolean;
@@ -36,7 +35,7 @@ function EditSessionModal({
   onDelete,
   onSave,
 }: EditSessionModalProps) {
-  const initialForm = toInitialForm(target);
+  const initialForm = toInitialSessionForm(target);
   const [form, setForm] = useState<ScheduleFormState>(initialForm);
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const [saveConfirmOpen, setSaveConfirmOpen] = useState(false);
@@ -129,7 +128,12 @@ function EditSessionModal({
                 </DropdownMenuContent>
               </DropdownMenu>
 
-              <div className="relative">
+              <DiscardConfirmArea
+                open={discardSource === 'close'}
+                onOpenChange={closeDiscardAlert('close')}
+                onConfirm={handleDiscardConfirm}
+                placement="below-right"
+              >
                 <button
                   type="button"
                   onClick={() => handleTryClose('close')}
@@ -138,39 +142,33 @@ function EditSessionModal({
                 >
                   <Icon src={AdminCloseIcon} size={24} alt="닫기" />
                 </button>
-                <CustomAlertDialog
-                  open={discardSource === 'close'}
-                  onOpenChange={closeDiscardAlert('close')}
-                  title={DISCARD_ALERT_TITLE}
-                  actionLabel="변경사항 폐기"
-                  onAction={handleDiscardConfirm}
-                  placement="below-right"
-                />
-              </div>
+              </DiscardConfirmArea>
             </div>
           </div>
 
           {/* Body */}
           <div className="scrollbar-custom max-h-[700px] overflow-y-auto px-[60px]">
             <h2 className="typo-h3 text-text-normal py-400">세션 수정</h2>
-            <EditSessionForm form={form} onFormChange={updateForm} />
+            <ScheduleFormBody
+              form={form}
+              onFormChange={updateForm}
+              titleLabel="세션 제목"
+              titlePlaceholder="예 : 7기 정기 모임"
+            />
           </div>
 
           {/* Footer */}
           <div className="bg-container-neutral flex items-center justify-end gap-200 px-400 pt-400 pb-500">
-            <div className="relative">
+            <DiscardConfirmArea
+              open={discardSource === 'cancel'}
+              onOpenChange={closeDiscardAlert('cancel')}
+              onConfirm={handleDiscardConfirm}
+              placement="above-right"
+            >
               <Button variant="secondary" size="lg" onClick={() => handleTryClose('cancel')}>
                 취소
               </Button>
-              <CustomAlertDialog
-                open={discardSource === 'cancel'}
-                onOpenChange={closeDiscardAlert('cancel')}
-                title={DISCARD_ALERT_TITLE}
-                actionLabel="변경사항 폐기"
-                onAction={handleDiscardConfirm}
-                placement="above-right"
-              />
-            </div>
+            </DiscardConfirmArea>
             <Button
               variant="primary"
               size="lg"

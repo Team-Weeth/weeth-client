@@ -4,9 +4,12 @@ import { useState } from 'react';
 
 import { cn } from '@/lib/cn';
 import { Icon } from '@/components/ui';
-import { SessionStatusTag } from '@/components/admin/schedule/SessionStatusTag';
-import { SessionChildTable } from '@/components/admin/schedule/SessionChildTable';
-import { AttendanceLink, MoreButton } from '@/components/admin/schedule/SessionActionButtons';
+import { SessionStatusTag } from '@/components/admin/schedule/session/SessionStatusTag';
+import { SessionChildTable } from '@/components/admin/schedule/session/SessionChildTable';
+import {
+  AttendanceLink,
+  MoreButton,
+} from '@/components/admin/schedule/session/SessionActionButtons';
 import { formatSessionDate, formatSessionDateRange } from '@/utils/admin/sessionUtils';
 import type { AdminSession, AdminSessionGroup } from '@/types/admin/session';
 import { AdminToggleOpenIcon } from '@/assets/icons/admin';

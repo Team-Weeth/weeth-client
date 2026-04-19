@@ -1,3 +1,4 @@
+import type { Schedule } from '@/types/admin/schedule';
 import type { AdminSession, AdminSessionGroup } from '@/types/admin/session';
 
 import type { ScheduleFormState } from './types';
@@ -8,7 +9,9 @@ export function isSessionGroup(
   return 'groupId' in target;
 }
 
-export function toInitialForm(target: AdminSession | AdminSessionGroup): ScheduleFormState {
+export function toInitialSessionForm(
+  target: AdminSession | AdminSessionGroup,
+): ScheduleFormState {
   if (isSessionGroup(target)) {
     return {
       title: target.title,
@@ -27,6 +30,18 @@ export function toInitialForm(target: AdminSession | AdminSessionGroup): Schedul
     endDate: target.end.slice(0, 10),
     endTime: target.end.slice(11, 16),
     location: '',
+    content: '',
+  };
+}
+
+export function toInitialScheduleForm(schedule: Schedule): ScheduleFormState {
+  return {
+    title: schedule.title,
+    startDate: schedule.startDateTime.slice(0, 10),
+    startTime: schedule.startDateTime.slice(11, 16),
+    endDate: schedule.endDateTime.slice(0, 10),
+    endTime: schedule.endDateTime.slice(11, 16),
+    location: schedule.location,
     content: '',
   };
 }

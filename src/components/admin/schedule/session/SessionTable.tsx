@@ -1,5 +1,5 @@
 import { cn } from '@/lib/cn';
-import { SessionGroupRow } from '@/components/admin/schedule/SessionGroupRow';
+import { SessionGroupRow } from '@/components/admin/schedule/session/SessionGroupRow';
 import type { AdminSession, AdminSessionGroup } from '@/types/admin/session';
 
 interface SessionTableProps extends React.HTMLAttributes<HTMLDivElement> {
