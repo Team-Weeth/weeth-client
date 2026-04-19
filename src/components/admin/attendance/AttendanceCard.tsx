@@ -25,6 +25,7 @@ interface AttendanceCardProps extends React.HTMLAttributes<HTMLDivElement> {
   members: AttendanceMember[];
   onSave?: (updates: { id: number; status: 'ATTEND' | 'ABSENT' }[]) => void | Promise<void>;
   onDirtyChange?: (dirty: boolean) => void;
+  onExpand?: () => void;
 }
 
 function AttendanceCard({
@@ -35,6 +36,7 @@ function AttendanceCard({
   members,
   onSave,
   onDirtyChange,
+  onExpand,
   ...props
 }: AttendanceCardProps) {
   const {
@@ -53,6 +55,11 @@ function AttendanceCard({
     getEditStatus,
   } = useAttendanceCard({ members, onSave, onDirtyChange });
 
+  const handleExpand = () => {
+    onExpand?.();
+    expand();
+  };
+
   const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
 
   const handleCancel = () => {
@@ -69,7 +76,7 @@ function AttendanceCard({
         <button
           type="button"
           className="border-line flex h-[72px] w-full cursor-pointer items-center justify-between rounded-md border px-600"
-          onClick={expand}
+          onClick={handleExpand}
         >
           <div className="flex items-center gap-300">
             <span className="typo-sub1 text-text-normal">{date}</span>
@@ -168,6 +175,7 @@ function AttendanceCard({
 
       <AlertDialog
         open={cancelDialogOpen}
+        status="danger"
         onOpenChange={setCancelDialogOpen}
         title="변경 사항이 저장되지 않았어요"
         description={'지금 취소하면 수정 중인 내용이 사라집니다.\n계속하시겠어요?'}

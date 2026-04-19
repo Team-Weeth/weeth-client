@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback } from 'react';
+import { useState } from 'react';
 
 import { useAdminAttendance, useUpdateAttendanceStatus } from '@/hooks/queries/admin';
 
@@ -21,20 +21,15 @@ function AttendanceSessionCard({
   isCurrentWeek,
   onDirtyChange,
 }: AttendanceSessionCardProps) {
-  const { data: members = [] } = useAdminAttendance(sessionId);
+  const [expanded, setExpanded] = useState(false);
+  const { data: members = [] } = useAdminAttendance(sessionId, { enabled: expanded });
   const { mutateAsync } = useUpdateAttendanceStatus(sessionId);
 
-  const handleDirtyChange = useCallback(
-    (dirty: boolean) => onDirtyChange?.(sessionId, dirty),
-    [onDirtyChange, sessionId],
-  );
+  const handleDirtyChange = (dirty: boolean) => onDirtyChange?.(sessionId, dirty);
 
-  const handleSave = useCallback(
-    async (updates: { id: number; status: 'ATTEND' | 'ABSENT' }[]) => {
-      await mutateAsync(updates);
-    },
-    [mutateAsync],
-  );
+  const handleSave = async (updates: { id: number; status: 'ATTEND' | 'ABSENT' }[]) => {
+    await mutateAsync(updates);
+  };
 
   return (
     <AttendanceCard
@@ -44,6 +39,7 @@ function AttendanceSessionCard({
       members={members}
       onSave={handleSave}
       onDirtyChange={handleDirtyChange}
+      onExpand={() => setExpanded(true)}
     />
   );
 }

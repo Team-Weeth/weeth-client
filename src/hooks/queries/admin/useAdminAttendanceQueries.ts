@@ -20,7 +20,7 @@ export function useAdminSessions(cardinal: number | null) {
   });
 }
 
-export function useAdminAttendance(sessionId: number | null) {
+export function useAdminAttendance(sessionId: number | null, options?: { enabled?: boolean }) {
   const clubId = useClubId();
 
   return useQuery({
@@ -29,7 +29,7 @@ export function useAdminAttendance(sessionId: number | null) {
       const res = await adminAttendanceApi.getAttendanceBySession(clubId!, sessionId!);
       return res.data.data;
     },
-    enabled: !!clubId && sessionId !== null,
+    enabled: !!clubId && sessionId !== null && (options?.enabled ?? true),
   });
 }
 
