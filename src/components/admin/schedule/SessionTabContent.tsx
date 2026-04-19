@@ -34,25 +34,23 @@ function SessionTabContent({ onCreateSession, onManageAttendance }: SessionTabCo
       </div>
 
       {/* 세션 카드 */}
-      <div className="overflow-x-auto">
-        <div className="bg-container-neutral flex min-w-[976px] flex-col rounded-lg shadow-sm">
-          {/* 카드 헤더 */}
-          <div className="flex h-[72px] items-center justify-between px-600">
-            <span className="typo-sub3 text-text-normal">세션</span>
-            <Button variant="primary" size="lg" onClick={onCreateSession}>
-              <Image src={AdminCalendarEditIcon} alt="" width={20} height={20} className="mr-1" />
-              세션 생성
-            </Button>
-          </div>
+      <div className="bg-container-neutral flex flex-col rounded-lg shadow-sm">
+        {/* 카드 헤더 */}
+        <div className="flex h-[72px] items-center justify-between px-600">
+          <span className="typo-sub3 text-text-normal">세션</span>
+          <Button variant="primary" size="lg" onClick={onCreateSession}>
+            <Image src={AdminCalendarEditIcon} alt="" width={20} height={20} className="mr-1" />
+            세션 생성
+          </Button>
+        </div>
 
-          {/* 카드 body */}
-          <div className="p-600 pt-0">
-            <SessionTable
-              groups={sessions}
-              onManageAttendance={onManageAttendance}
-              onMore={setEditTarget}
-            />
-          </div>
+        {/* 카드 body */}
+        <div className="p-600 pt-0">
+          <SessionTable
+            groups={sessions}
+            onManageAttendance={onManageAttendance}
+            onMore={setEditTarget}
+          />
         </div>
       </div>
 

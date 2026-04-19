@@ -28,98 +28,84 @@ function SessionGroupRow({
   const hasChildren = group.sessions.length > 0;
   const [expanded, setExpanded] = useState(true);
 
-  const summaryRow = (
-    <div className="flex h-12 w-full items-center">
-      <div className="flex min-w-0 flex-1 items-center px-400 py-300 pr-600">
-        <span className="typo-body1 text-text-strong truncate">{group.title}</span>
-      </div>
-      <div className="flex w-[206px] items-center px-400 py-300 pr-600">
-        <span className="typo-body1 text-text-strong truncate">
-          {hasChildren
-            ? formatSessionDateRange(group.startDate, group.endDate)
-            : formatSessionDate(group.startDate)}
-        </span>
-      </div>
-      <div className="flex w-[241px] items-center px-400 py-300 pr-600">
-        {hasChildren && (
-          <span className="typo-body1 text-text-strong truncate">
-            {group.recurrenceDescription}
-          </span>
-        )}
-      </div>
-      <div className="flex w-[102px] items-center px-400 py-300 pr-600">
-        <span className="typo-body1 text-text-strong">
-          {group.completedCount}/{group.totalCount}
-        </span>
-      </div>
-      <div className="flex w-[102px] items-center px-400 py-300 pr-600">
-        <SessionStatusTag status={group.status} />
-      </div>
-      <div className="flex w-[112px] items-center px-400 py-300 pr-600">
-        {!hasChildren && <AttendanceLink onClick={() => onManageAttendance?.(group)} />}
-      </div>
-      <div className="flex w-[71px] items-center justify-center">
-        <MoreButton onClick={() => onMore?.(group)} />
-      </div>
-    </div>
-  );
-
-  // 단일 row (하위 세션 없음): 토글 숨김
-  if (!hasChildren) {
-    return (
-      <div
-        className={cn(
-          'bg-container-neutral flex w-full items-center',
-          bordered && 'border-line border-t',
-        )}
-      >
-        <div className="flex min-w-0 flex-1 items-center">{summaryRow}</div>
-      </div>
-    );
-  }
-
-  // 그룹 row: 토글 + 펼침 영역
   return (
     <div className={cn('flex flex-col', bordered && 'border-line border-t')}>
-      <div className="flex w-full items-start gap-200">
-        <div className="flex h-12 items-center pl-200">
-          <button
-            type="button"
-            onClick={() => setExpanded((prev) => !prev)}
-            aria-label={expanded ? '세션 접기' : '세션 펼치기'}
-            aria-expanded={expanded}
-            className="hover:bg-container-neutral-interaction flex cursor-pointer items-center justify-center rounded-sm p-200"
-          >
-            <Icon
-              src={AdminToggleOpenIcon}
-              size={24}
-              className={cn(
-                'text-icon-normal transition-transform duration-200 ease-in',
-                !expanded && '-rotate-90',
-              )}
-            />
-          </button>
-        </div>
-
-        <div className="flex min-w-0 flex-1 flex-col items-start">
-          {summaryRow}
-
-          <div
-            className={cn(
-              'grid w-full overflow-hidden transition-[grid-template-rows] duration-200 ease-in',
-              expanded ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]',
-            )}
-          >
-            <div className="min-h-0">
-              <SessionChildTable
-                sessions={group.sessions}
-                onManageAttendance={onManageAttendance}
-                onMore={onMore}
-              />
-            </div>
+      {/* summary row */}
+      <div className="flex h-12 w-full items-center">
+        {/* sticky: 토글 + 세션 제목 */}
+        <div className="bg-container-neutral sticky left-0 z-10 flex w-[306px] items-center">
+          <div className="flex w-[56px] items-center pl-200">
+            {hasChildren ? (
+              <button
+                type="button"
+                onClick={() => setExpanded((prev) => !prev)}
+                aria-label={expanded ? '세션 접기' : '세션 펼치기'}
+                aria-expanded={expanded}
+                className="hover:bg-container-neutral-interaction flex cursor-pointer items-center justify-center rounded-sm p-200"
+              >
+                <Icon
+                  src={AdminToggleOpenIcon}
+                  size={24}
+                  className={cn(
+                    'text-icon-normal transition-transform duration-200 ease-in',
+                    !expanded && '-rotate-90',
+                  )}
+                />
+              </button>
+            ) : null}
+          </div>
+          <div className="flex min-w-0 flex-1 items-center px-400 py-300 pr-600">
+            <span className="typo-body1 text-text-strong truncate">{group.title}</span>
           </div>
         </div>
+
+        <div className="flex w-[206px] items-center px-400 py-300 pr-600">
+          <span className="typo-body1 text-text-strong truncate">
+            {hasChildren
+              ? formatSessionDateRange(group.startDate, group.endDate)
+              : formatSessionDate(group.startDate)}
+          </span>
+        </div>
+        <div className="flex w-[241px] items-center px-400 py-300 pr-600">
+          {hasChildren && (
+            <span className="typo-body1 text-text-strong truncate">
+              {group.recurrenceDescription}
+            </span>
+          )}
+        </div>
+        <div className="flex w-[102px] items-center px-400 py-300 pr-600">
+          <span className="typo-body1 text-text-strong">
+            {group.completedCount}/{group.totalCount}
+          </span>
+        </div>
+        <div className="flex w-[102px] items-center px-400 py-300 pr-600">
+          <SessionStatusTag status={group.status} />
+        </div>
+        <div className="flex w-[112px] items-center px-400 py-300 pr-600">
+          {!hasChildren && <AttendanceLink onClick={() => onManageAttendance?.(group)} />}
+        </div>
+        <div className="flex w-[71px] items-center justify-center">
+          <MoreButton onClick={() => onMore?.(group)} />
+        </div>
       </div>
+
+      {/* 하위 세션 펼침 영역 */}
+      {hasChildren && (
+        <div
+          className={cn(
+            'grid w-full overflow-hidden transition-[grid-template-rows] duration-200 ease-in',
+            expanded ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]',
+          )}
+        >
+          <div className="min-h-0">
+            <SessionChildTable
+              sessions={group.sessions}
+              onManageAttendance={onManageAttendance}
+              onMore={onMore}
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 }
