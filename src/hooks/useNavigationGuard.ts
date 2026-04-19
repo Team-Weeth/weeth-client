@@ -15,7 +15,7 @@ function isGuardEntry() {
 
 /**
  * 브라우저 뒤로가기(popstate), 탭 닫기/새로고침(beforeunload),
- * 그리고 프로그래매틱 네비게이션(router.push 등)을 가로채서 사용자에게 확인을 요청하는 훅.
+ * 그리고 링크 클릭·프로그래매틱 네비게이션(router.push 등)을 가로채서 사용자에게 확인을 요청하는 훅.
  *
  * 반환값의 open / onConfirm / onCancel 을 AlertDialog에 바인딩하여 사용.
  */
@@ -46,7 +46,32 @@ function useNavigationGuard({ enabled }: UseNavigationGuardOptions) {
     };
     beforeUnloadRef.current = handleBeforeUnload;
 
-    // history.pushState/replaceState 패치 — router.push, Link 클릭 모두 감지
+    // <a> 클릭을 캡처 단계에서 가로채서 Next.js Link 내비게이션을 차단
+    const handleClick = (e: MouseEvent) => {
+      if (isLeaving.current) return;
+      // ctrl/cmd/shift 등 새 탭/새 창 클릭은 무시
+      if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+
+      const anchor = (e.target as HTMLElement).closest('a');
+      if (!anchor) return;
+
+      const href = anchor.getAttribute('href');
+      if (!href) return;
+
+      // target="_blank" 등 외부 탭은 무시
+      if (anchor.target && anchor.target !== '_self') return;
+
+      const targetUrl = new URL(href, location.origin);
+      if (targetUrl.origin !== location.origin) return;
+      if (targetUrl.href === guardUrl.current) return;
+
+      e.preventDefault();
+      e.stopPropagation();
+      pendingUrl.current = targetUrl.href;
+      setOpen(true);
+    };
+
+    // pushState/replaceState 패치 — router.push() 등 프로그래매틱 내비게이션 감지
     const originalPushState = history.pushState.bind(history);
     const originalReplaceState = history.replaceState.bind(history);
 
@@ -78,12 +103,15 @@ function useNavigationGuard({ enabled }: UseNavigationGuardOptions) {
     history.pushState = (...args) => interceptNavigation(originalPushState, ...args);
     history.replaceState = (...args) => interceptNavigation(originalReplaceState, ...args);
 
+    // capture: true — Next.js Link 핸들러보다 먼저 실행
+    document.addEventListener('click', handleClick, true);
     window.addEventListener('popstate', handlePopState);
     window.addEventListener('beforeunload', handleBeforeUnload);
 
     return () => {
       history.pushState = originalPushState;
       history.replaceState = originalReplaceState;
+      document.removeEventListener('click', handleClick, true);
       window.removeEventListener('popstate', handlePopState);
       window.removeEventListener('beforeunload', handleBeforeUnload);
     };
@@ -93,7 +121,6 @@ function useNavigationGuard({ enabled }: UseNavigationGuardOptions) {
     isLeaving.current = true;
     setOpen(false);
 
-    // location.href 이동 시 beforeunload가 트리거되지 않도록 먼저 제거
     if (beforeUnloadRef.current) {
       window.removeEventListener('beforeunload', beforeUnloadRef.current);
       beforeUnloadRef.current = null;
