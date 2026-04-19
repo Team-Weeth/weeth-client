@@ -15,7 +15,7 @@ function isGuardEntry() {
 
 /**
  * 브라우저 뒤로가기(popstate), 탭 닫기/새로고침(beforeunload),
- * 그리고 Next.js Link 클릭(anchor capture)을 가로채서 사용자에게 확인을 요청하는 훅.
+ * 그리고 프로그래매틱 네비게이션(router.push 등)을 가로채서 사용자에게 확인을 요청하는 훅.
  *
  * 반환값의 open / onConfirm / onCancel 을 AlertDialog에 바인딩하여 사용.
  */
@@ -46,41 +46,44 @@ function useNavigationGuard({ enabled }: UseNavigationGuardOptions) {
     };
     beforeUnloadRef.current = handleBeforeUnload;
 
-    const handleClick = (e: MouseEvent) => {
-      if (isLeaving.current) return;
-      if (open) return;
-      if (e.defaultPrevented) return;
-      // 수정 키 또는 비-좌클릭은 브라우저 기본 동작(새 탭/창 등)에 맡김
-      if (e.button !== 0) return;
-      if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+    // history.pushState/replaceState 패치 — router.push, Link 클릭 모두 감지
+    const originalPushState = history.pushState.bind(history);
+    const originalReplaceState = history.replaceState.bind(history);
 
-      const anchor = (e.target as HTMLElement).closest('a');
-      if (!anchor) return;
+    const interceptNavigation = (
+      original: typeof history.pushState,
+      ...args: Parameters<typeof history.pushState>
+    ) => {
+      if (isLeaving.current) {
+        original(...args);
+        return;
+      }
 
-      // 외부 링크, 새 탭, 앵커 링크 무시
-      if (anchor.target === '_blank') return;
-      if (anchor.hasAttribute('download')) return;
-      const href = anchor.getAttribute('href');
-      if (!href || href.startsWith('#')) return;
+      const url = args[2];
+      if (!url) {
+        original(...args);
+        return;
+      }
 
-      const targetUrl = new URL(href, location.origin);
-      if (targetUrl.origin !== location.origin) return;
-      if (targetUrl.href === guardUrl.current) return;
+      const targetUrl = new URL(String(url), location.origin);
+      if (targetUrl.origin !== location.origin || targetUrl.href === guardUrl.current) {
+        original(...args);
+        return;
+      }
 
-      // 네비게이션 차단
-      e.preventDefault();
-      e.stopPropagation();
       pendingUrl.current = targetUrl.href;
       setOpen(true);
     };
 
-    // capture: true — Next.js Link의 onClick보다 먼저 실행
-    document.addEventListener('click', handleClick, true);
+    history.pushState = (...args) => interceptNavigation(originalPushState, ...args);
+    history.replaceState = (...args) => interceptNavigation(originalReplaceState, ...args);
+
     window.addEventListener('popstate', handlePopState);
     window.addEventListener('beforeunload', handleBeforeUnload);
 
     return () => {
-      document.removeEventListener('click', handleClick, true);
+      history.pushState = originalPushState;
+      history.replaceState = originalReplaceState;
       window.removeEventListener('popstate', handlePopState);
       window.removeEventListener('beforeunload', handleBeforeUnload);
     };
