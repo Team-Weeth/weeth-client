@@ -19,3 +19,4 @@ export { useNavigationGuard } from './useNavigationGuard';
 export { useCardinalSelector } from './useCardinalSelector';
 export { useImageDrop } from './useImageDrop';
 export { useProgressAnimation } from './useProgressAnimation';
+export { useCodeHighlight } from './useCodeHighlight';
