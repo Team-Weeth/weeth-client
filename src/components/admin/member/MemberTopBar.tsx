@@ -66,7 +66,7 @@ function MemberTopBar({
         <Icon src={ArrowLeftIcon} alt="뒤로" size={16} className="text-text-inverse" />
       </button>
 
-      <span className="typo-sub2 text-text-inverse ml-200 shrink-0">{selectedCount}명 선택됨</span>
+      <span className="typo-sub1 text-text-inverse ml-200 shrink-0">{selectedCount}명 선택됨</span>
 
       <div className="ml-auto flex items-center gap-200">
         {topBarActions.map(({ label, title, handler, disabled }) => (
