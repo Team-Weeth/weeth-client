@@ -1,7 +1,6 @@
 'use client';
 
 import { Fragment } from 'react';
-import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
@@ -34,7 +33,7 @@ function MobileNavSheet() {
         <button
           type="button"
           aria-label="메뉴 열기"
-          className="itmes-center flex cursor-pointer justify-center rounded-sm outline-none"
+          className="flex cursor-pointer items-center justify-center rounded-sm outline-none"
         >
           <Icon src={MenuIcon} alt="menu" size={40} className="text-icon-normal p-2" />
         </button>
