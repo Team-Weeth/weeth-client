@@ -3,12 +3,6 @@
 import { useState } from 'react';
 
 import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogContent,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
   Button,
   DropdownMenu,
   DropdownMenuContent,
@@ -257,29 +251,16 @@ function EditSessionModal({ open, onOpenChange, target, onDelete }: EditSessionM
       </Dialog>
 
       {/* Delete confirmation */}
-      <AlertDialog status="danger" open={deleteConfirmOpen} onOpenChange={setDeleteConfirmOpen}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>
-              이 세션을 삭제하시겠어요?
-              <br />
-              반복 설정이 되어있는 세션이에요.
-            </AlertDialogTitle>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogAction variant="danger" onClick={() => handleDeleteConfirm('this')}>
-              이 세션 일정만 삭제
-            </AlertDialogAction>
-            <AlertDialogAction
-              variant="secondary"
-              className="text-state-error"
-              onClick={() => handleDeleteConfirm('all')}
-            >
-              이후 모든 세션 일정 삭제
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <CustomAlertDialog
+        open={deleteConfirmOpen}
+        onOpenChange={setDeleteConfirmOpen}
+        title={'이 세션을 삭제하시겠어요?\n반복 설정이 되어있는 세션이에요.'}
+        actionLabel="이 세션 일정만 삭제"
+        onAction={() => handleDeleteConfirm('this')}
+        secondActionLabel="이후 모든 세션 일정 삭제"
+        onSecondAction={() => handleDeleteConfirm('all')}
+        placement="center"
+      />
     </>
   );
 }

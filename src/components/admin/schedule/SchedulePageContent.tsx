@@ -163,8 +163,8 @@ function SchedulePageContent() {
           <TabsTrigger value="session">세션</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="all" className="mt-400">
-          <Card className="gap-700 px-600 pt-600 pb-800">
+        <TabsContent value="all" className="mt-400 overflow-x-auto">
+          <Card className="min-w-[690px] gap-700 px-600 pt-600 pb-800">
             {/* Month navigator */}
             <MonthNavigator
               year={currentYear}
