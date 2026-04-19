@@ -1,4 +1,6 @@
 // admin components index file
+export { AttendanceCard, type AttendanceCardProps } from './attendance/AttendanceCard';
+export { AttendancePageContent } from './attendance/AttendancePageContent';
 export { AdminInfoCard, type AdminInfoCardProps } from './club-info/AdminInfoCard';
 export {
   ClubInfoPageContent,

@@ -15,7 +15,7 @@ export function Banner() {
         alt="banner"
         width={1440}
         height={364}
-        className="tablet:h-[364px] h-[134px] w-full"
+        className="tablet:h-[364px] h-[134px] w-full object-cover"
       />
     );
   }
