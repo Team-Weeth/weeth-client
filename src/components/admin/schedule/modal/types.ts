@@ -7,3 +7,6 @@ export interface ScheduleFormState {
   location: string;
   content: string;
 }
+
+export type SessionDeleteType = 'this' | 'all';
+export type SessionSaveType = 'this' | 'all';
