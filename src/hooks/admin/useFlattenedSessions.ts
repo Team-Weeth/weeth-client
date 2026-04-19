@@ -8,20 +8,15 @@ interface FlattenedSession extends Session {
 function useFlattenedSessions(cardinalNumber: number | null) {
   const { data: sessionData, ...rest } = useAdminSessions(cardinalNumber);
 
-  const sessions: FlattenedSession[] = [];
+  const thisWeekIds = new Set(sessionData?.thisWeek.map((s) => s.id));
 
-  if (sessionData) {
-    const thisWeekIds = new Set(sessionData.thisWeek.map((s) => s.id));
-
-    for (const group of sessionData.sessions) {
-      for (const session of group.sessions) {
-        sessions.push({
-          ...session,
-          isCurrentWeek: thisWeekIds.has(session.id),
-        });
-      }
-    }
-  }
+  const sessions: FlattenedSession[] =
+    sessionData?.sessions.flatMap((group) =>
+      group.sessions.map((session) => ({
+        ...session,
+        isCurrentWeek: thisWeekIds.has(session.id),
+      })),
+    ) ?? [];
 
   return { sessions, ...rest };
 }
