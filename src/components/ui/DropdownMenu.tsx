@@ -2,8 +2,8 @@
 
 import * as React from 'react';
 import { DropdownMenu as DropdownMenuPrimitive } from 'radix-ui';
-
 import { cn } from '@/lib/cn';
+import { AdminScopeBoundary } from '@/providers';
 
 function DropdownMenu({
   modal = false,
@@ -19,9 +19,14 @@ function DropdownMenuTrigger({
 }
 
 function DropdownMenuPortal({
+  children,
   ...props
 }: React.ComponentProps<typeof DropdownMenuPrimitive.Portal>) {
-  return <DropdownMenuPrimitive.Portal data-slot="dropdown-menu-portal" {...props} />;
+  return (
+    <DropdownMenuPrimitive.Portal data-slot="dropdown-menu-portal" {...props}>
+      <AdminScopeBoundary>{children}</AdminScopeBoundary>
+    </DropdownMenuPrimitive.Portal>
+  );
 }
 
 function DropdownMenuContent({

@@ -4,6 +4,7 @@ import { Toaster } from '@/components/ui';
 import { QueryProvider } from '@/providers';
 import { Inter } from 'next/font/google';
 import { ThemeProvider } from '@/providers/theme-provider';
+import { ForceLightMode } from '@/components/landing/ForceLightMode';
 import { cn } from '@/lib/cn';
 import { TooltipProvider } from '@/components/ui';
 import { GoogleAnalytics } from '@next/third-parties/google';
@@ -106,6 +107,7 @@ y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
         )}
         <QueryProvider>
           <ThemeProvider>
+            <ForceLightMode />
             <TooltipProvider>
               {children}
               <Toaster />

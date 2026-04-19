@@ -1,4 +1,5 @@
 export { useHomeQuery } from './useHomeQuery';
+export { useHomeGuard } from './useHomeGuard';
 export { useUnreadNoticeQuery } from './useUnreadNoticeQuery';
 export { useRecentNoticesQuery } from './useRecentNoticesQuery';
 export { useMonthlySchedulesQuery } from './useMonthlySchedulesQuery';

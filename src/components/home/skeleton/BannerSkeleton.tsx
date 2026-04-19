@@ -1,5 +1,5 @@
 import { Skeleton } from '@/components/ui';
 
 export function BannerSkeleton() {
-  return <Skeleton className="h-[364px] w-full rounded-none" />;
+  return <Skeleton className="tablet:h-[364px] h-[134px] w-full rounded-none" />;
 }

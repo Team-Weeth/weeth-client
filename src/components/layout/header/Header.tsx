@@ -3,12 +3,12 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-
-import { MenuIcon, LogoGrayIcon, AvatarIcon } from '@/assets/icons';
+import { LogoGrayIcon, AvatarIcon, ExitToAppIcon } from '@/assets/icons';
 import { useClubName } from '@/stores';
-
 import { PostingActions } from './PostingActions';
 import { DefaultActions } from './DefaultActions';
+import { MobileNavSheet } from './MobileNavSheet';
+import { Icon } from '@/components/ui';
 
 interface HeaderProps {
   isMain?: boolean;
@@ -33,29 +33,33 @@ export default function Header({ isMain = true }: HeaderProps) {
 
   return (
     <>
-      <header className="tablet:hidden flex items-center justify-between gap-100 py-3 pr-450 pl-200">
+      <header className="desktop:hidden bg-background sticky top-0 z-[70] flex items-center justify-between gap-100 py-3 pr-450 pl-200">
         {isMain && (
-          <div className="flex items-center gap-100">
-            <Image
-              src={MenuIcon}
-              alt="menu"
-              width={40}
-              height={40}
-              className="cursor-pointer p-2"
-            />
+          <div className="flex items-center justify-center gap-100">
+            <MobileNavSheet />
             <span className="typo-sub1 text-text-normal px-1">{clubName}</span>
           </div>
         )}
-        <button
-          type="button"
-          aria-label="마이페이지로 이동"
-          onClick={() => router.push('/mypage')}
-          className="cursor-pointer rounded-full"
-        >
-          <Image src={AvatarIcon} alt="avatar" width={40} height={40} />
-        </button>
+        <div className="flex items-center justify-center gap-200">
+          <button
+            type="button"
+            aria-label="관리자 페이지로 이동"
+            onClick={() => router.push('/admin')}
+            className="flex cursor-pointer items-center justify-center rounded-full"
+          >
+            <Icon src={ExitToAppIcon} alt="avatar" size={40} className="text-icon-normal p-2" />
+          </button>
+          <button
+            type="button"
+            aria-label="마이페이지로 이동"
+            onClick={() => router.push('/mypage')}
+            className="cursor-pointer rounded-full"
+          >
+            <Image src={AvatarIcon} alt="avatar" width={40} height={40} />
+          </button>
+        </div>
       </header>
-      <header className="tablet:flex relative flex hidden w-full items-center justify-between px-5 py-3">
+      <header className="desktop:flex bg-background flex hidden w-full items-center justify-between px-5 py-3">
         <div className="flex items-center gap-4">
           <Logo href={isMain ? '/home' : '/'} />
 
@@ -72,7 +76,7 @@ export default function Header({ isMain = true }: HeaderProps) {
                 href="#"
                 className="typo-button1 text-text-alternative hover:text-text-normal transition-colors"
               >
-                가입문의
+                사전예약
               </Link>
             </>
           )}

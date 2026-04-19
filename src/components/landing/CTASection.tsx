@@ -71,9 +71,9 @@ function CTASection({ className }: { className?: string }) {
           </p>
           <div className="flex gap-3">
             <InquiryDialog>
-              <Button variant="primary" size="lg">
-                가입 문의하기
-              </Button>
+              <button className="typo-button1 flex-1 rounded-md bg-[#00C8AA] px-400 py-300 text-white hover:bg-[#00877a]">
+                사전 예약하기
+              </button>
             </InquiryDialog>
           </div>
         </div>

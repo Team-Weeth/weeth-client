@@ -59,40 +59,46 @@ function HomeBoardContent() {
   }
 
   return (
-    <main className="flex min-w-0 flex-1 flex-col gap-400">
-      {posts.map((post) => {
-        const isMyPost = myUserId !== undefined && post.author.id === myUserId;
-        const images = post.fileUrls.map(fileAttachmentToFileItem);
-        const hasAttachment = post.fileUrls.length > 0;
+    <div>
+      <main className="flex min-w-0 flex-1 flex-col gap-400">
+        {posts.map((post) => {
+          const isMyPost = myUserId !== undefined && post.author.id === myUserId;
+          const images = post.fileUrls.map(fileAttachmentToFileItem);
+          const hasAttachment = post.fileUrls.length > 0;
 
-        return (
-          <Link key={post.id} href={`/board/${post.id}`}>
-            <PostCard.Root>
-              <PostCard.Header>
-                <PostCard.Author
-                  author={{
-                    ...post.author,
-                    profileImageUrl: post.author.profileImageUrl ?? undefined,
-                  }}
-                  date={formatMonthDay(post.time)}
-                  dateTime={post.time}
-                  hasAttachment={hasAttachment}
+          return (
+            <Link key={post.id} href={`/board/${post.id}`}>
+              <PostCard.Root>
+                <PostCard.Header>
+                  <PostCard.Author
+                    author={{
+                      ...post.author,
+                      profileImageUrl: post.author.profileImageUrl ?? undefined,
+                    }}
+                    date={formatMonthDay(post.time)}
+                    dateTime={post.time}
+                    hasAttachment={hasAttachment}
+                  />
+                  {isMyPost && <PostActionMenu postId={post.id} />}
+                </PostCard.Header>
+                <PostCard.ListContent
+                  title={post.title}
+                  content={post.content}
+                  isNew={post.isNew}
                 />
-                {isMyPost && <PostActionMenu postId={post.id} />}
-              </PostCard.Header>
-              <PostCard.ListContent title={post.title} content={post.content} isNew={post.isNew} />
-              <PostCard.Images files={images} />
-              <PostCard.Actions
-                postId={post.id}
-                likeCount={post.likeCount}
-                commentCount={post.commentCount}
-              />
-            </PostCard.Root>
-          </Link>
-        );
-      })}
+                <PostCard.Images files={images} />
+                <PostCard.Actions
+                  postId={post.id}
+                  likeCount={post.likeCount}
+                  commentCount={post.commentCount}
+                />
+              </PostCard.Root>
+            </Link>
+          );
+        })}
+      </main>
       <div ref={sentinelRef} />
-    </main>
+    </div>
   );
 }
 
