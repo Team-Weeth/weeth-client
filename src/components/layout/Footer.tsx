@@ -18,7 +18,7 @@ export default function Footer({ isSmall = false }: FooterProps) {
               <p className="typo-caption1 text-text-normal">Leets Makers</p>
               <p className="typo-body2 text-text-alternative">Weeth Admin</p>
               <p className="typo-body2 text-text-alternative">Leets Makers Site</p>
-              <a href="mailto:weeth.site@gmail.com" className="typo-body2 text-text-alternative">
+              <a href="mailto:contact@weeth.kr" className="typo-body2 text-text-alternative">
                 문의 메일
               </a>
             </div>
