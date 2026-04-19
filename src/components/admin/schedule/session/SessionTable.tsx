@@ -16,10 +16,7 @@ function SessionTable({
   ...props
 }: SessionTableProps) {
   return (
-    <div
-      className={cn('border-line overflow-x-auto rounded-sm border', className)}
-      {...props}
-    >
+    <div className={cn('border-line overflow-x-auto rounded-sm border', className)} {...props}>
       <div className="min-w-[1140px]">
         {/* 테이블 헤더 */}
         <div className="bg-container-neutral-alternative border-line flex w-full items-center border-b">

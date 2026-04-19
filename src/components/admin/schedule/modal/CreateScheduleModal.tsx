@@ -58,8 +58,10 @@ function CreateScheduleModal({
       ? cardinals.find((c) => c.id === session.selectedCardinalId)
       : null;
 
-  const updateForm = (patch: Partial<ScheduleFormState>) => setForm((prev) => ({ ...prev, ...patch }));
-  const updateSession = (patch: Partial<SessionFormState>) => setSession((prev) => ({ ...prev, ...patch }));
+  const updateForm = (patch: Partial<ScheduleFormState>) =>
+    setForm((prev) => ({ ...prev, ...patch }));
+  const updateSession = (patch: Partial<SessionFormState>) =>
+    setSession((prev) => ({ ...prev, ...patch }));
 
   const resetForm = () => {
     setActiveTab(initialTab);

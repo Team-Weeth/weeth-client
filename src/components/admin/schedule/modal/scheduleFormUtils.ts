@@ -9,9 +9,7 @@ export function isSessionGroup(
   return 'groupId' in target;
 }
 
-export function toInitialSessionForm(
-  target: AdminSession | AdminSessionGroup,
-): ScheduleFormState {
+export function toInitialSessionForm(target: AdminSession | AdminSessionGroup): ScheduleFormState {
   if (isSessionGroup(target)) {
     return {
       title: target.title,

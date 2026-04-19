@@ -28,13 +28,7 @@ interface EditSessionModalProps {
   onSave?: (type: SessionSaveType) => void;
 }
 
-function EditSessionModal({
-  open,
-  onOpenChange,
-  target,
-  onDelete,
-  onSave,
-}: EditSessionModalProps) {
+function EditSessionModal({ open, onOpenChange, target, onDelete, onSave }: EditSessionModalProps) {
   const initialForm = toInitialSessionForm(target);
   const [form, setForm] = useState<ScheduleFormState>(initialForm);
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
