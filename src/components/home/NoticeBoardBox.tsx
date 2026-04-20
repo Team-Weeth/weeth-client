@@ -18,10 +18,10 @@ export function NoticeBoardBox() {
 
   return (
     <div className="bg-container-neutral flex flex-col rounded-lg pb-300">
-      <div className="flex items-center justify-between p-450">
+      <div className="flex items-center justify-between px-450 pt-450 pb-300">
         <p className="typo-sub1 text-text-strong">공지</p>
         <button
-          className="p-1"
+          className="flex items-center justify-center"
           type="button"
           aria-label="공지 전체보기"
           onClick={() => router.push('/board')}

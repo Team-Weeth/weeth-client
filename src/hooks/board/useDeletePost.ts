@@ -16,6 +16,15 @@ export function useDeletePost() {
       await deletePostApi(clubId, postId);
       return postId;
     },
+    onSuccess: async () => {
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ['posts'] }),
+        queryClient.invalidateQueries({ queryKey: ['home', 'recent-posts', clubId] }),
+        queryClient.invalidateQueries({ queryKey: ['home', 'recent-notices', clubId] }),
+        queryClient.invalidateQueries({ queryKey: ['home', 'unread-notice', clubId] }),
+      ]);
+      toast({ title: '게시글이 삭제되었습니다.', variant: 'success' });
+    },
     onError: (error) => {
       if (error.message !== 'club not found') {
         toast({ title: '게시글 삭제에 실패했습니다.', variant: 'error' });

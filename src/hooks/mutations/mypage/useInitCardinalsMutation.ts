@@ -15,6 +15,7 @@ export function useInitCardinalsMutation() {
       queryClient.invalidateQueries({ queryKey: ['mypage', 'clubs'] });
       if (clubId) {
         queryClient.invalidateQueries({ queryKey: ['mypage', 'me', clubId] });
+        queryClient.invalidateQueries({ queryKey: ['home', 'profile-status', clubId] });
       }
     },
   });
