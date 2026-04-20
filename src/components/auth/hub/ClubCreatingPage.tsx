@@ -2,45 +2,37 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 
+import { isAxiosError } from 'axios';
 import { useRouter } from 'next/navigation';
 
 import { ProgressBar } from '@/components/ui';
-import { createClubAction } from '@/lib/actions/club';
+import { setClubCookie } from '@/lib/actions/club';
 import { useProgressAnimation } from '@/hooks';
+import { clubApi } from '@/lib/apis/club';
 import { useClubActions, useCreateClubDraftStore } from '@/stores';
 import { toastError } from '@/stores/useToastStore';
 import type { CreateClubDraftState } from '@/stores/useCreateClubDraftStore';
 
 interface ClubCreatingPageProps {
-  intent?: string;
   onCancel?: () => void;
 }
 
-function ClubCreatingPage({ intent, onCancel }: ClubCreatingPageProps) {
+function ClubCreatingPage({ onCancel }: ClubCreatingPageProps) {
   const router = useRouter();
   const resetDraft = useCreateClubDraftStore((state) => state.reset);
   const { setClub } = useClubActions();
   const [apiDone, setApiDone] = useState(false);
-  const apiCalledRef = useRef(false);
   const apiDoneRef = useRef(false);
   const animationDoneRef = useRef(false);
-  const isMountedRef = useRef(true);
   const hasNavigatedRef = useRef(false);
-
-  const nextPath = intent === 'create' ? '/home?onboarding=club-created' : '/hub/welcome';
+  const requestStartedRef = useRef(false);
 
   const navigate = useCallback(() => {
     if (hasNavigatedRef.current) return;
     hasNavigatedRef.current = true;
-    if (intent === 'create') resetDraft();
-    router.replace(nextPath);
-  }, [intent, nextPath, resetDraft, router]);
-
-  useEffect(() => {
-    return () => {
-      isMountedRef.current = false;
-    };
-  }, []);
+    resetDraft();
+    router.replace('/home?onboarding=club-created');
+  }, [resetDraft, router]);
 
   const progress = useProgressAnimation({
     duration: 5000,
@@ -50,56 +42,54 @@ function ClubCreatingPage({ intent, onCancel }: ClubCreatingPageProps) {
     },
   });
 
-  // 프로그레스 80% 시점에 API 호출
+  // progress >= 80일 때 API 호출
   useEffect(() => {
-    if (progress < 80 || apiCalledRef.current) return;
-    apiCalledRef.current = true;
+    if (progress < 80 || requestStartedRef.current) return;
+    requestStartedRef.current = true;
 
     const { school, name, description, generation, phone, email, contactType } =
       useCreateClubDraftStore.getState() as CreateClubDraftState & Record<string, unknown>;
+    const schoolName = school.replace(/\(.*\)$/, '').trim();
 
-    createClubAction({
-      school,
+    const payload = {
       name,
+      schoolName,
       description,
-      generation,
-      phone,
-      email,
-      contactType,
-    })
-      .then((result) => {
-        if (!isMountedRef.current) return;
+      contactEmail: email || null,
+      contactPhoneNumber: phone.replace(/-/g, ''),
+      primaryContact: contactType.toUpperCase() as 'PHONE' | 'EMAIL',
+      currentCardinal: Number(generation),
+      profileImage: null,
+      backgroundImage: null,
+    };
 
-        if (result?.error) {
-          toastError(result.error);
-          apiCalledRef.current = false;
+    clubApi
+      .create(payload)
+      .then(async (response) => {
+        const { data, message } = response.data;
+
+        if (!data) {
+          toastError(message || '동아리 생성에 실패했습니다.');
           onCancel?.();
           return;
         }
 
-        if (!result.clubId) {
-          toastError('동아리 생성에 실패했습니다. 다시 시도해주세요.');
-          apiCalledRef.current = false;
-          onCancel?.();
-          return;
-        }
-
+        const clubId = data.clubId;
+        await setClubCookie(clubId, name);
         apiDoneRef.current = true;
-        setClub(result.clubId, name);
+        setClub(clubId, name);
         setApiDone(true);
 
         if (animationDoneRef.current) {
           navigate();
         }
       })
-      .catch(() => {
-        if (!isMountedRef.current) return;
-
-        toastError('동아리 생성에 실패했습니다. 다시 시도해주세요.');
-        apiCalledRef.current = false;
+      .catch((error) => {
+        const message = isAxiosError(error) ? error.response?.data?.message : undefined;
+        toastError(message || '동아리 생성에 실패했습니다.');
         onCancel?.();
       });
-  }, [navigate, onCancel, progress, setClub]);
+  }, [progress, navigate, onCancel, setClub]);
 
   // API가 애니메이션 이후에 완료된 경우 즉시 navigate
   useEffect(() => {

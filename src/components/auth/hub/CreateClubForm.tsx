@@ -97,7 +97,7 @@ function CreateClubForm({ schoolNames, schoolLoadError = false }: CreateClubForm
   }
 
   if (isCreating) {
-    return <ClubCreatingPage intent="create" onCancel={() => setIsCreating(false)} />;
+    return <ClubCreatingPage onCancel={() => setIsCreating(false)} />;
   }
 
   return (
