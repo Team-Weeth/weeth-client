@@ -10,18 +10,12 @@ function KakaoLoginButton({ className, onClick, ...props }: KakaoLoginButtonProp
     <Button
       variant="kakao"
       size="social"
-      className={cn('w-full', className)}
+      className={cn('w-full gap-200', className)}
       onClick={onClick}
       {...props}
     >
-      <Image
-        src={KakaoLogoIcon}
-        alt="kakao-icon"
-        width={18}
-        height={18}
-        className="absolute left-[14px]"
-      />
-      카카오로 시작하기
+      <Image src={KakaoLogoIcon} alt="kakao-icon" width={18} height={18} />
+      카카오로 로그인
     </Button>
   );
 }
