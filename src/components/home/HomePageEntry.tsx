@@ -22,7 +22,6 @@ function HomePageSkeleton() {
   return (
     <>
       <BannerSkeleton />
-      <div className="h-[64px]" />
       <div className="tablet:flex-row desktop:px-16 flex w-full flex-col gap-8 px-[18px]">
         <div className="flex flex-col gap-300">
           <LeftContainerSkeleton />
