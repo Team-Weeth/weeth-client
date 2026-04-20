@@ -89,7 +89,7 @@ function CustomAlertDialog({
                 <button
                   type="button"
                   onClick={onCancel}
-                  className="typo-button1 text-text-alternative hover:bg-container-neutral-interaction w-full cursor-pointer rounded-md px-400 py-300 transition-colors"
+                  className="typo-button1 bg-button-neutral text-text-alternative hover:bg-container-neutral-interaction w-full cursor-pointer rounded-md px-400 py-300 transition-colors"
                 >
                   {cancelLabel}
                 </button>

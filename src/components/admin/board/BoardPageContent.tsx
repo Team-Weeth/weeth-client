@@ -32,6 +32,7 @@ import { ArrowDownIcon, InfoIcon } from '@/assets/icons';
 import { BoardCard } from '@/components/admin/board/BoardCard';
 import { BoardToolbar } from '@/components/admin/board/BoardToolbar';
 import { CreateBoardModal } from '@/components/admin/board/modal/CreateBoardModal';
+import { EditBoardModal } from '@/components/admin/board/modal/EditBoardModal';
 import { useCardinals } from '@/hooks/queries';
 import type { Board } from '@/types/admin/board';
 
@@ -86,9 +87,10 @@ const MOCK_TRASH_COUNT = 1;
 interface SortableBoardCardProps {
   board: Board;
   onToggleComments: (next: boolean) => void;
+  onEdit: () => void;
 }
 
-function SortableBoardCard({ board, onToggleComments }: SortableBoardCardProps) {
+function SortableBoardCard({ board, onToggleComments, onEdit }: SortableBoardCardProps) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: board.boardId,
   });
@@ -98,6 +100,7 @@ function SortableBoardCard({ board, onToggleComments }: SortableBoardCardProps) 
       ref={setNodeRef}
       board={board}
       onToggleComments={onToggleComments}
+      onEdit={onEdit}
       dragHandleProps={{ ...attributes, ...listeners }}
       style={{
         transform: CSS.Transform.toString(transform),
@@ -115,6 +118,7 @@ function BoardPageContent() {
   const [searchValue, setSearchValue] = useState('');
   const [boards, setBoards] = useState<Board[]>(MOCK_BOARDS);
   const [createModalOpen, setCreateModalOpen] = useState(false);
+  const [editingBoardId, setEditingBoardId] = useState<number | null>(null);
 
   const activeCardinal = selectedCardinalId
     ? cardinals.find((c) => c.id === selectedCardinalId)
@@ -242,6 +246,7 @@ function BoardPageContent() {
                     onToggleComments={(next) =>
                       updateBoard(board.boardId, { commentEnabled: next })
                     }
+                    onEdit={() => setEditingBoardId(board.boardId)}
                   />
                 ))}
               </div>
@@ -276,6 +281,24 @@ function BoardPageContent() {
               editable: true,
             },
           ]);
+        }}
+      />
+
+      {/* Edit board modal */}
+      <EditBoardModal
+        open={editingBoardId !== null}
+        onOpenChange={(next) => {
+          if (!next) setEditingBoardId(null);
+        }}
+        board={boards.find((b) => b.boardId === editingBoardId) ?? null}
+        onSubmit={(data) => {
+          if (editingBoardId === null) return;
+          updateBoard(editingBoardId, {
+            name: data.name.trim(),
+            description: data.description.trim(),
+            visibility: data.visibility,
+            commentEnabled: data.commentEnabled,
+          });
         }}
       />
     </div>
