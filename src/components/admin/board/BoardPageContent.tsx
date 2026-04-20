@@ -28,15 +28,12 @@ import {
   DropdownMenuTrigger,
   Icon,
 } from '@/components/ui';
-import { ArrowDownIcon, InfoIcon } from '@/assets/icons';
+import { ArrowDownIcon, InfoCircleIcon, InfoIcon } from '@/assets/icons';
 import { BoardCard } from '@/components/admin/board/BoardCard';
 import { BoardToolbar } from '@/components/admin/board/BoardToolbar';
 import { CreateBoardModal } from '@/components/admin/board/modal/CreateBoardModal';
 import { EditBoardModal } from '@/components/admin/board/modal/EditBoardModal';
-import {
-  TrashBoardModal,
-  type TrashedBoard,
-} from '@/components/admin/board/modal/TrashBoardModal';
+import { TrashBoardModal, type TrashedBoard } from '@/components/admin/board/modal/TrashBoardModal';
 import { useCardinals } from '@/hooks/queries';
 import type { Board } from '@/types/admin/board';
 
@@ -270,7 +267,7 @@ function BoardPageContent() {
 
         {/* Limit banner */}
         <div className="bg-container-neutral-alternative flex h-12 items-center gap-200 rounded-md p-300">
-          <Icon src={InfoIcon} size={20} className="text-icon-alternative" />
+          <Icon src={InfoCircleIcon} size={20} className="text-icon-alternative" />
           <p className="typo-body2 text-text-alternative min-w-0 flex-1">
             추가 게시판은 최대 {MAX_CUSTOM_BOARDS}개입니다.
           </p>

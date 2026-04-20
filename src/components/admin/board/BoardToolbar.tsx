@@ -4,7 +4,7 @@ import Image from 'next/image';
 
 import { Button, Icon } from '@/components/ui';
 import { AdminPlusIcon } from '@/assets/icons/admin';
-import { DeleteForeverIcon, SearchIcon } from '@/assets/icons';
+import { TrashcanIcon, SearchIcon } from '@/assets/icons';
 import { cn } from '@/lib/cn';
 
 interface BoardToolbarProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -27,7 +27,7 @@ function BoardToolbar({
   return (
     <div className={cn('flex flex-wrap items-center gap-300', className)} {...props}>
       {/* Search bar card */}
-      <div className="bg-container-neutral shadow-sm flex h-20 min-w-[260px] flex-1 items-center rounded-lg px-600 py-400">
+      <div className="bg-container-neutral flex h-20 min-w-[260px] flex-1 items-center rounded-lg px-600 py-400 shadow-sm">
         <div className="border-line relative h-12 w-full overflow-hidden rounded-sm border">
           <Image
             src={SearchIcon}
@@ -54,7 +54,7 @@ function BoardToolbar({
           onClick={onTrashClick}
           aria-label={`휴지통 (${trashCount})`}
         >
-          <Icon src={DeleteForeverIcon} size={20} className="text-text-strong mr-1" />
+          <Icon src={TrashcanIcon} size={20} className="text-text-strong mr-1" />
           <span>휴지통 ({trashCount})</span>
         </Button>
         <Button variant="primary" size="lg" onClick={onCreateClick}>

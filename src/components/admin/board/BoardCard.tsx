@@ -52,19 +52,25 @@ function BoardCard({
     >
       {/* Drag handle + icon + title/desc */}
       <div className="tablet:gap-400 flex min-w-0 flex-1 items-center gap-300">
-        {draggable && (
-          <button
-            type="button"
-            aria-label="순서 변경 핸들"
-            {...dragHandleProps}
-            className={cn(
-              'hover:bg-container-neutral-interaction tablet:flex hidden shrink-0 cursor-grab items-center justify-center rounded-sm p-200 touch-none active:cursor-grabbing',
-              dragHandleProps?.className,
-            )}
-          >
-            <Icon src={AdminBoardMoveicon} size={40} className="text-icon-alternative" />
-          </button>
-        )}
+        <button
+          type="button"
+          aria-label="순서 변경 핸들"
+          disabled={!draggable}
+          {...(draggable ? dragHandleProps : {})}
+          className={cn(
+            'tablet:flex hidden shrink-0 items-center justify-center rounded-sm p-200 touch-none',
+            draggable
+              ? 'hover:bg-container-neutral-interaction cursor-grab active:cursor-grabbing'
+              : 'cursor-not-allowed',
+            draggable && dragHandleProps?.className,
+          )}
+        >
+          <Icon
+            src={AdminBoardMoveicon}
+            size={40}
+            className={draggable ? 'text-icon-normal' : 'text-icon-disabled'}
+          />
+        </button>
         <div className="bg-container-neutral-alternative flex size-10 shrink-0 items-center justify-center rounded-sm">
           {board.kind === 'NOTICE' ? (
             <MegaphoneIcon width={24} height={24} className="text-icon-normal" />
