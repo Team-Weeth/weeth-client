@@ -33,6 +33,10 @@ import { BoardCard } from '@/components/admin/board/BoardCard';
 import { BoardToolbar } from '@/components/admin/board/BoardToolbar';
 import { CreateBoardModal } from '@/components/admin/board/modal/CreateBoardModal';
 import { EditBoardModal } from '@/components/admin/board/modal/EditBoardModal';
+import {
+  TrashBoardModal,
+  type TrashedBoard,
+} from '@/components/admin/board/modal/TrashBoardModal';
 import { useCardinals } from '@/hooks/queries';
 import type { Board } from '@/types/admin/board';
 
@@ -82,7 +86,14 @@ const MOCK_BOARDS: Board[] = [
   },
 ];
 
-const MOCK_TRASH_COUNT = 1;
+const MOCK_TRASHED_BOARDS: TrashedBoard[] = [
+  {
+    boardId: 101,
+    name: '자유 게시판',
+    description: '모든 게시글을 확인할 수 있는 게시판입니다.',
+    daysLeft: 30,
+  },
+];
 
 interface SortableBoardCardProps {
   board: Board;
@@ -119,6 +130,8 @@ function BoardPageContent() {
   const [boards, setBoards] = useState<Board[]>(MOCK_BOARDS);
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [editingBoardId, setEditingBoardId] = useState<number | null>(null);
+  const [trashModalOpen, setTrashModalOpen] = useState(false);
+  const [trashedBoards, setTrashedBoards] = useState<TrashedBoard[]>(MOCK_TRASHED_BOARDS);
 
   const activeCardinal = selectedCardinalId
     ? cardinals.find((c) => c.id === selectedCardinalId)
@@ -201,7 +214,8 @@ function BoardPageContent() {
       <BoardToolbar
         searchValue={searchValue}
         onSearchChange={setSearchValue}
-        trashCount={MOCK_TRASH_COUNT}
+        trashCount={trashedBoards.length}
+        onTrashClick={() => setTrashModalOpen(true)}
         onCreateClick={reachedLimit ? undefined : () => setCreateModalOpen(true)}
       />
 
@@ -281,6 +295,19 @@ function BoardPageContent() {
               editable: true,
             },
           ]);
+        }}
+      />
+
+      {/* Trash board modal */}
+      <TrashBoardModal
+        open={trashModalOpen}
+        onOpenChange={setTrashModalOpen}
+        boards={trashedBoards}
+        onRestore={(boardId) => {
+          setTrashedBoards((prev) => prev.filter((b) => b.boardId !== boardId));
+        }}
+        onPermanentDelete={(boardId) => {
+          setTrashedBoards((prev) => prev.filter((b) => b.boardId !== boardId));
         }}
       />
 
