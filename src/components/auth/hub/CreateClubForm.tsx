@@ -42,6 +42,8 @@ function CreateClubForm({ schoolNames, schoolLoadError = false }: CreateClubForm
     register,
     control,
     handleSubmit,
+    setValue,
+    trigger,
     watch,
     formState: { errors, isValid },
   } = useForm<CreateClubFormData>({
@@ -60,6 +62,9 @@ function CreateClubForm({ schoolNames, schoolLoadError = false }: CreateClubForm
   });
 
   const contactType = useWatch({ control, name: 'contactType' });
+  const email = useWatch({ control, name: 'email' });
+  const hasValidEmail = Boolean(email?.trim()) && !errors.email;
+  const isEmailContactDisabled = !hasValidEmail;
 
   useEffect(() => {
     const subscription = watch((values) => {
@@ -76,6 +81,16 @@ function CreateClubForm({ schoolNames, schoolLoadError = false }: CreateClubForm
 
     return () => subscription.unsubscribe();
   }, [setDraft, watch]);
+
+  useEffect(() => {
+    if (contactType === 'email' && isEmailContactDisabled) {
+      setValue('contactType', 'phone', { shouldValidate: true, shouldDirty: true });
+    }
+  }, [contactType, isEmailContactDisabled, setValue]);
+
+  useEffect(() => {
+    void trigger('email');
+  }, [contactType, trigger]);
 
   function onSubmit() {
     setIsCreating(true);
@@ -220,25 +235,45 @@ function CreateClubForm({ schoolNames, schoolLoadError = false }: CreateClubForm
         <FormFieldWrapper label="주 연락처">
           <div className="flex gap-200">
             {(['phone', 'email'] as const).map((type) => (
-              <label key={type} className="flex cursor-pointer items-center gap-200">
+              <label
+                key={type}
+                className={cn(
+                  'flex items-center gap-200',
+                  type === 'email' && isEmailContactDisabled
+                    ? 'cursor-not-allowed'
+                    : 'cursor-pointer',
+                )}
+              >
                 <input
                   type="radio"
                   value={type}
                   checked={contactType === type}
+                  disabled={type === 'email' && isEmailContactDisabled}
                   {...register('contactType')}
                   className="sr-only"
                 />
                 <div
                   className={cn(
                     'flex h-5 w-5 items-center justify-center rounded-full border-2 transition-colors',
-                    contactType === type ? 'border-brand-primary' : 'border-text-alternative',
+                    type === 'email' && isEmailContactDisabled
+                      ? 'border-icon-disabled'
+                      : contactType === type
+                        ? 'border-brand-primary'
+                        : 'border-text-alternative',
                   )}
                 >
                   {contactType === type && (
                     <div className="bg-brand-primary h-2.5 w-2.5 rounded-full" />
                   )}
                 </div>
-                <span className="typo-body2 text-text-normal">
+                <span
+                  className={cn(
+                    'typo-body2',
+                    type === 'email' && isEmailContactDisabled
+                      ? 'text-text-disabled'
+                      : 'text-text-normal',
+                  )}
+                >
                   {type === 'phone' ? '전화번호' : '이메일'}
                 </span>
               </label>
