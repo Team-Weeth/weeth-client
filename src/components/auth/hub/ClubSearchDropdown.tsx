@@ -29,7 +29,7 @@ function ClubSearchDropdown({ clubs, onSelect, className }: ClubSearchDropdownPr
             onClick={() => onSelect(club)}
             className="border-line bg-container-neutral flex w-full cursor-pointer items-center gap-400 rounded-[10px] border px-200 py-200 transition-colors"
           >
-            <ClubAvatar size={40} src={club.profileImageUrl} name={club.name} />
+            <ClubAvatar size={56} src={club.profileImageUrl} name={club.name} />
             <div className="flex flex-col items-start gap-0.5 text-left">
               <span className="typo-sub2 text-text-strong">{club.name}</span>
               <span className="typo-body2 text-text-normal">{club.description}</span>

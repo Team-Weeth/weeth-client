@@ -108,7 +108,7 @@ function InviteCodeForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="w-full max-w-[520px]">
+    <form onSubmit={handleSubmit(onSubmit)} className="w-full max-w-[608px]">
       <FormCard
         label="동아리에 가입하기"
         title="동아리에서 받은 초대 링크를 입력해주세요."

@@ -11,7 +11,7 @@ function ClubSelectedCard({ club, onRemove }: ClubSelectedCardProps) {
   return (
     <div className="border-line bg-container-neutral flex items-center justify-between rounded-[10px] border px-200 py-200">
       <div className="flex items-center gap-400">
-        <ClubAvatar size={40} src={club.profileImageUrl} name={club.name} />
+        <ClubAvatar size={56} src={club.profileImageUrl} name={club.name} />
         <div className="flex flex-col gap-0.5">
           <span className="typo-sub2 text-text-strong">{club.name}</span>
           <span className="typo-body2 text-text-alternative">{club.description}</span>
@@ -20,10 +20,10 @@ function ClubSelectedCard({ club, onRemove }: ClubSelectedCardProps) {
       <button
         type="button"
         onClick={onRemove}
-        className="text-icon-alternative hover:text-icon-normal flex cursor-pointer items-center p-100 transition-colors"
+        className="text-icon-normal flex cursor-pointer items-center p-100 transition-colors"
         aria-label="선택 취소"
       >
-        <Icon src={CloseCircleIcon} size={20} alt="선택 취소" className="text-icon-alternative" />
+        <Icon src={CloseCircleIcon} size={20} alt="선택 취소" />
       </button>
     </div>
   );

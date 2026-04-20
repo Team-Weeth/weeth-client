@@ -94,7 +94,7 @@ function Input({ className, clearable, error, wrapperClassName, ref, ...props }:
           className={cn(
             'absolute top-1/2 right-200 -translate-y-1/2',
             'flex items-center',
-            'text-icon-alternative hover:text-icon-normal',
+            'text-icon-normal',
             'cursor-pointer transition-colors',
           )}
           aria-label="입력 내용 지우기"
