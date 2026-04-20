@@ -4,11 +4,15 @@ import { useEffect, useRef, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 
 import { BoardNav, CommentDirtyGuardDialog } from '@/components/board';
-import { useActiveBoardId, useSetActiveBoardId } from '@/stores/useBoardNavStore';
+import {
+  useActiveBoardId,
+  useSetActiveBoardId,
+  useSetBoardTypeMap,
+} from '@/stores/useBoardNavStore';
 import { useClubId } from '@/stores/useClubStore';
 import { useCommentDirty, useSetCommentDirty } from '@/stores/useCommentDirtyStore';
 import { boardApi } from '@/lib/apis/board';
-import type { BoardNavItem } from '@/types/board';
+import type { BoardNavItem, BoardType } from '@/types/board';
 
 interface BoardNavClientProps {
   items: BoardNavItem[];
@@ -17,6 +21,7 @@ interface BoardNavClientProps {
 function BoardNavClient({ items }: BoardNavClientProps) {
   const activeBoardId = useActiveBoardId();
   const setActiveBoardId = useSetActiveBoardId();
+  const setBoardTypeMap = useSetBoardTypeMap();
   const pathname = usePathname();
   const router = useRouter();
 
@@ -27,6 +32,14 @@ function BoardNavClient({ items }: BoardNavClientProps) {
   const setCommentDirty = useSetCommentDirty();
   const [guardOpen, setGuardOpen] = useState(false);
   const pendingSelect = useRef<number | null>(null);
+
+  useEffect(() => {
+    const map: Record<number, BoardType> = {};
+    items.forEach((item) => {
+      if (item.id !== null) map[item.id] = item.type;
+    });
+    setBoardTypeMap(map);
+  }, [items, setBoardTypeMap]);
 
   useEffect(() => {
     if (activeBoardId === null) return;

@@ -21,7 +21,7 @@ export default async function BoardLayout({ children, footer }: BoardLayoutProps
   const items = boards.map(toBoardNavItem);
 
   return (
-    <div className="flex items-start gap-700 px-800 pt-450 pb-[63px]">
+    <div className="flex items-start gap-700 px-[64px] pt-450 pb-[63px]">
       <aside className="flex shrink-0 flex-col gap-400">
         <BoardNavClient items={items} />
         {footer}
