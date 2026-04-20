@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { useRouter } from 'next/navigation';
 
@@ -22,28 +22,36 @@ function ClubCreatingPage({ intent, onCancel }: ClubCreatingPageProps) {
   const { setClub } = useClubActions();
   const [apiDone, setApiDone] = useState(false);
   const apiCalledRef = useRef(false);
+  const apiDoneRef = useRef(false);
   const animationDoneRef = useRef(false);
-  const createdClubIdRef = useRef<string | null>(null);
+  const isMountedRef = useRef(true);
+  const hasNavigatedRef = useRef(false);
 
   const nextPath = intent === 'create' ? '/home?onboarding=club-created' : '/hub/welcome';
 
-  const navigate = () => {
+  const navigate = useCallback(() => {
+    if (hasNavigatedRef.current) return;
+    hasNavigatedRef.current = true;
     if (intent === 'create') resetDraft();
     router.replace(nextPath);
-  };
+  }, [intent, nextPath, resetDraft, router]);
+
+  useEffect(() => {
+    return () => {
+      isMountedRef.current = false;
+    };
+  }, []);
 
   const progress = useProgressAnimation({
     duration: 5000,
     onComplete: () => {
       animationDoneRef.current = true;
-      if (apiDone) navigate();
+      if (apiDoneRef.current) navigate();
     },
   });
 
   // 프로그레스 80% 시점에 API 호출
   useEffect(() => {
-    let isMounted = true;
-
     if (progress < 80 || apiCalledRef.current) return;
     apiCalledRef.current = true;
 
@@ -60,7 +68,7 @@ function ClubCreatingPage({ intent, onCancel }: ClubCreatingPageProps) {
       contactType,
     })
       .then((result) => {
-        if (!isMounted) return;
+        if (!isMountedRef.current) return;
 
         if (result?.error) {
           toastError(result.error);
@@ -76,30 +84,29 @@ function ClubCreatingPage({ intent, onCancel }: ClubCreatingPageProps) {
           return;
         }
 
-        createdClubIdRef.current = result.clubId;
+        apiDoneRef.current = true;
         setClub(result.clubId, name);
         setApiDone(true);
+
+        if (animationDoneRef.current) {
+          navigate();
+        }
       })
       .catch(() => {
-        if (!isMounted) return;
+        if (!isMountedRef.current) return;
 
         toastError('동아리 생성에 실패했습니다. 다시 시도해주세요.');
         apiCalledRef.current = false;
         onCancel?.();
       });
-
-    return () => {
-      isMounted = false;
-    };
-  }, [progress, onCancel, setClub]);
+  }, [navigate, onCancel, progress, setClub]);
 
   // API가 애니메이션 이후에 완료된 경우 즉시 navigate
   useEffect(() => {
     if (apiDone && animationDoneRef.current) {
-      if (intent === 'create') resetDraft();
-      router.replace(nextPath);
+      navigate();
     }
-  }, [apiDone, intent, nextPath, resetDraft, router]);
+  }, [apiDone, navigate]);
 
   return (
     <div className="flex min-h-screen items-center justify-center px-400">
