@@ -8,6 +8,7 @@ import { Button, Icon } from '@/components/ui';
 import { EditIcon, ExitToAppIcon, AvatarIcon } from '@/assets/icons';
 import { useWritePost } from '@/hooks/home/useWritePost';
 import { useIsAdmin } from '@/hooks/shared';
+import { useUserProfileImageUrl } from '@/stores';
 
 const CardinalMissingModal = dynamic(() =>
   import('@/components/home/CardinalMissingModal').then((m) => m.CardinalMissingModal),
@@ -28,6 +29,7 @@ function DefaultActions() {
     setProfileModalOpen,
   } = useWritePost();
   const { isAdmin } = useIsAdmin();
+  const profileImageUrl = useUserProfileImageUrl();
 
   return (
     <>
@@ -60,7 +62,17 @@ function DefaultActions() {
           onClick={() => router.push('/mypage')}
           className="cursor-pointer rounded-full"
         >
-          <Image src={AvatarIcon} alt="avatar" width={40} height={40} />
+          {profileImageUrl ? (
+            <Image
+              src={profileImageUrl}
+              alt="avatar"
+              width={40}
+              height={40}
+              className="h-10 w-10 rounded-full object-cover"
+            />
+          ) : (
+            <Image src={AvatarIcon} alt="avatar" width={40} height={40} />
+          )}
         </button>
       </div>
 
