@@ -1,14 +1,9 @@
 'use client';
 
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  Button,
-  Icon,
-  Switch,
-  Tag,
-} from '@/components/ui';
+import { useState } from 'react';
+
+import { Button, Icon, Switch, Tag } from '@/components/ui';
+import { CustomAlertDialog } from '@/components/alert';
 import { AdminBoardMoveicon } from '@/assets/icons/admin';
 import { PinIcon } from '@/assets/icons';
 import { cn } from '@/lib/cn';
@@ -41,6 +36,12 @@ function BoardCard({
   ...props
 }: BoardCardProps) {
   const { name, description, visibility, postCount, commentEnabled, editable } = board;
+  const [deleteOpen, setDeleteOpen] = useState(false);
+
+  const handleDeleteConfirm = () => {
+    setDeleteOpen(false);
+    onDelete?.();
+  };
 
   return (
     <div
@@ -92,7 +93,7 @@ function BoardCard({
 
       {/* Comment toggle */}
       <div className="desktop:flex hidden w-[88px] shrink-0 flex-col justify-center gap-100">
-        {commentEnabled !== null ? (
+        {commentEnabled !== null && (
           <>
             <p className="typo-body2 text-text-alternative">댓글 허용</p>
             <Switch
@@ -102,7 +103,7 @@ function BoardCard({
               aria-label="댓글 허용 토글"
             />
           </>
-        ) : null}
+        )}
       </div>
 
       {/* Visibility tag */}
@@ -123,19 +124,22 @@ function BoardCard({
             <Button variant="secondary" size="md" onClick={onEdit}>
               수정
             </Button>
-            <AlertDialog
-              status="danger"
-              title={`'${name}'을 삭제하시겠어요?`}
-              description={'게시판을 삭제해도 휴지통에 30일간 보관됩니다.'}
-              trigger={
-                <Button variant="danger" size="md">
-                  삭제
-                </Button>
-              }
-            >
-              <AlertDialogAction onClick={onDelete}>삭제</AlertDialogAction>
-              <AlertDialogCancel>취소</AlertDialogCancel>
-            </AlertDialog>
+            <div className="relative">
+              <Button variant="danger" size="md" onClick={() => setDeleteOpen(true)}>
+                삭제
+              </Button>
+              <CustomAlertDialog
+                open={deleteOpen}
+                onOpenChange={setDeleteOpen}
+                title={`'${name}'을 삭제하시겠어요?`}
+                description="게시판을 삭제해도 휴지통에 30일간 보관됩니다."
+                actionLabel="삭제"
+                cancelLabel="취소"
+                onAction={handleDeleteConfirm}
+                onDismiss={() => setDeleteOpen(false)}
+                placement="above-right"
+              />
+            </div>
           </>
         ) : (
           <div className="w-[106px]" aria-hidden />

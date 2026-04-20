@@ -1,9 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-
-import { Button, Icon, Switch } from '@/components/ui';
-import { CustomAlertDialog } from '@/components/alert';
+import { Button, Switch } from '@/components/ui';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import {
   DropdownMenu,
@@ -11,8 +8,11 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/DropdownMenu';
+import { DiscardConfirmDialog, type DiscardMessages } from '@/components/admin/modal/DiscardConfirmDialog';
+import { ModalIconButton } from '@/components/admin/modal/ModalIconButton';
 import { AdminCloseIcon, AdminMeatballIcon } from '@/assets/icons/admin';
 import { cn } from '@/lib/cn';
+import { useDiscardableForm } from '@/hooks/useDiscardableForm';
 import type { BoardVisibility } from '@/types/admin/board';
 
 const DESCRIPTION_MAX = 30;
@@ -39,10 +39,7 @@ const DEFAULT_FORM: BoardFormData = {
 
 type BoardFormMode = 'create' | 'edit';
 
-const DISCARD_MESSAGES: Record<
-  BoardFormMode,
-  { title: string; actionLabel: string; cancelLabel?: string }
-> = {
+const DISCARD_MESSAGES: Record<BoardFormMode, DiscardMessages> = {
   create: {
     title: '작성하던 내용이 있어요.\n내용을 폐기하고 나갈까요?',
     actionLabel: '나가기',
@@ -74,42 +71,23 @@ function BoardFormModal({
   onDelete,
 }: BoardFormModalProps) {
   const discardMessages = DISCARD_MESSAGES[mode];
-  const [form, setForm] = useState<BoardFormData>(() => ({ ...DEFAULT_FORM, ...initialValues }));
-  const [baseline, setBaseline] = useState<BoardFormData>(form);
-  const [discardSource, setDiscardSource] = useState<'close' | 'cancel' | null>(null);
-
-  useEffect(() => {
-    if (open) {
-      const next = { ...DEFAULT_FORM, ...initialValues };
-      setForm(next);
-      setBaseline(next);
-      setDiscardSource(null);
-    }
-    // open이 true로 바뀔 때만 초기화 — 모달 열려있는 동안 initialValues 변경으로 유저 입력이 덮이지 않도록
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [open]);
-
-  const updateField = <K extends keyof BoardFormData>(key: K, value: BoardFormData[K]) => {
-    setForm((prev) => ({ ...prev, [key]: value }));
-  };
-
-  const hasChanges =
-    form.name !== baseline.name ||
-    form.description !== baseline.description ||
-    form.visibility !== baseline.visibility ||
-    form.commentEnabled !== baseline.commentEnabled;
+  const {
+    form,
+    updateField,
+    discardSource,
+    setDiscardSource,
+    tryClose,
+    confirmDiscard,
+  } = useDiscardableForm<BoardFormData>({
+    defaultValue: DEFAULT_FORM,
+    initialValues,
+    open,
+  });
 
   const handleClose = () => onOpenChange(false);
-
-  const handleTryClose = (source: 'close' | 'cancel') => {
-    if (hasChanges) setDiscardSource(source);
-    else handleClose();
-  };
-
-  const handleDiscardConfirm = () => {
-    setDiscardSource(null);
-    handleClose();
-  };
+  const handleTryClose = (source: 'close' | 'cancel') => tryClose(source, handleClose);
+  const handleDiscardConfirm = () => confirmDiscard(handleClose);
+  const dismissDiscard = () => setDiscardSource(null);
 
   const handleSubmit = () => {
     if (!form.name.trim()) return;
@@ -143,13 +121,7 @@ function BoardFormModal({
             {onDelete && (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <button
-                    type="button"
-                    className="flex cursor-pointer items-center justify-center rounded-sm p-200"
-                    aria-label="더보기"
-                  >
-                    <Icon src={AdminMeatballIcon} size={24} alt="더보기" />
-                  </button>
+                  <ModalIconButton icon={AdminMeatballIcon} label="더보기" />
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
                   <DropdownMenuItem destructive onSelect={onDelete}>
@@ -159,24 +131,17 @@ function BoardFormModal({
               </DropdownMenu>
             )}
             <div className="relative">
-              <button
-                type="button"
+              <ModalIconButton
+                icon={AdminCloseIcon}
+                label="닫기"
                 onClick={() => handleTryClose('close')}
-                className="flex cursor-pointer items-center justify-center rounded-sm p-200"
-                aria-label="닫기"
-              >
-                <Icon src={AdminCloseIcon} size={24} alt="닫기" />
-              </button>
-              <CustomAlertDialog
-                open={discardSource === 'close'}
-                onOpenChange={(next) => {
-                  if (!next && discardSource === 'close') setDiscardSource(null);
-                }}
-                title={discardMessages.title}
-                actionLabel={discardMessages.actionLabel}
-                cancelLabel={discardMessages.cancelLabel}
-                onAction={handleDiscardConfirm}
-                onDismiss={() => setDiscardSource(null)}
+              />
+              <DiscardConfirmDialog
+                source="close"
+                currentSource={discardSource}
+                messages={discardMessages}
+                onConfirm={handleDiscardConfirm}
+                onDismiss={dismissDiscard}
                 placement="below-right"
               />
             </div>
@@ -184,15 +149,8 @@ function BoardFormModal({
         </div>
 
         {/* Body */}
-        <div className="scrollbar-custom tablet:px-[71px] flex max-h-175 flex-col gap-400 overflow-y-auto px-700 pt-200 pb-400">
-          {/* 게시판 이름 */}
-          <div className="flex flex-col">
-            <label
-              htmlFor="board-name"
-              className="typo-caption1 text-text-normal flex h-12 items-center px-400"
-            >
-              게시판 이름
-            </label>
+        <div className="scrollbar-custom tablet:px-17.75 flex max-h-175 flex-col gap-400 overflow-y-auto px-700 pt-200 pb-400">
+          <BoardFormField label="게시판 이름" htmlFor="board-name">
             <input
               id="board-name"
               type="text"
@@ -201,16 +159,9 @@ function BoardFormModal({
               placeholder="게시판의 이름을 작성해주세요"
               className="bg-container-neutral typo-body1 placeholder:text-text-alternative text-text-normal h-12 w-full rounded-sm px-400 py-300 focus:outline-none"
             />
-          </div>
+          </BoardFormField>
 
-          {/* 설명 */}
-          <div className="flex flex-col">
-            <label
-              htmlFor="board-description"
-              className="typo-caption1 text-text-normal flex h-12 items-center px-400"
-            >
-              설명
-            </label>
+          <BoardFormField label="설명" htmlFor="board-description">
             <input
               id="board-description"
               type="text"
@@ -225,7 +176,7 @@ function BoardFormModal({
                 최대 {DESCRIPTION_MAX}자 ({form.description.length}/{DESCRIPTION_MAX})
               </p>
             </div>
-          </div>
+          </BoardFormField>
 
           {/* 접근 권한 */}
           <div className="flex flex-col">
@@ -281,16 +232,12 @@ function BoardFormModal({
             <Button variant="secondary" size="lg" onClick={() => handleTryClose('cancel')}>
               취소
             </Button>
-            <CustomAlertDialog
-              open={discardSource === 'cancel'}
-              onOpenChange={(next) => {
-                if (!next && discardSource === 'cancel') setDiscardSource(null);
-              }}
-              title={discardMessages.title}
-              actionLabel={discardMessages.actionLabel}
-              cancelLabel={discardMessages.cancelLabel}
-              onAction={handleDiscardConfirm}
-              onDismiss={() => setDiscardSource(null)}
+            <DiscardConfirmDialog
+              source="cancel"
+              currentSource={discardSource}
+              messages={discardMessages}
+              onConfirm={handleDiscardConfirm}
+              onDismiss={dismissDiscard}
               placement="above-right"
             />
           </div>
@@ -300,6 +247,26 @@ function BoardFormModal({
         </div>
       </DialogContent>
     </Dialog>
+  );
+}
+
+interface BoardFormFieldProps {
+  label: string;
+  htmlFor?: string;
+  children: React.ReactNode;
+}
+
+function BoardFormField({ label, htmlFor, children }: BoardFormFieldProps) {
+  return (
+    <div className="flex flex-col">
+      <label
+        htmlFor={htmlFor}
+        className="typo-caption1 text-text-normal flex h-12 items-center px-400"
+      >
+        {label}
+      </label>
+      {children}
+    </div>
   );
 }
 

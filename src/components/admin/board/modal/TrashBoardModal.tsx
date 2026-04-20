@@ -4,6 +4,7 @@ import { Trash2 } from 'lucide-react';
 
 import { Button, Icon } from '@/components/ui';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
+import { ModalIconButton } from '@/components/admin/modal/ModalIconButton';
 import { AdminCloseIcon } from '@/assets/icons/admin';
 import { InfoCircleIcon, PinIcon } from '@/assets/icons';
 
@@ -42,14 +43,7 @@ function TrashBoardModal({
         {/* Header */}
         <div className="flex h-24 items-center justify-between px-600">
           <h2 className="typo-h3 text-text-normal">게시판 휴지통</h2>
-          <button
-            type="button"
-            onClick={handleClose}
-            className="flex cursor-pointer items-center justify-center rounded-sm p-200"
-            aria-label="닫기"
-          >
-            <Icon src={AdminCloseIcon} size={24} alt="닫기" />
-          </button>
+          <ModalIconButton icon={AdminCloseIcon} label="닫기" onClick={handleClose} />
         </div>
 
         {/* Body */}
