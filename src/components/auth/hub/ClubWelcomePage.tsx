@@ -4,12 +4,14 @@ import { useEffect } from 'react';
 
 import { useRouter } from 'next/navigation';
 
-import { Button } from '@/components/ui';
-import { useAuthName } from '@/stores';
+import { Button, ClubAvatar } from '@/components/ui';
+import { useAuthName, useClubName, useClubProfileImageUrl } from '@/stores';
 
 function ClubWelcomePage() {
   const router = useRouter();
   const name = useAuthName();
+  const clubName = useClubName();
+  const clubProfileImageUrl = useClubProfileImageUrl();
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -21,7 +23,7 @@ function ClubWelcomePage() {
   return (
     <div className="flex min-h-screen items-center justify-center px-400">
       <div className="flex w-full max-w-[520px] flex-col items-center gap-400">
-        <div className="bg-container-neutral-alternative h-20 w-20 rounded-full" />
+        <ClubAvatar size={64} src={clubProfileImageUrl} name={clubName ?? ''} />
         <h1 className="typo-h3 text-text-strong text-center">
           {name ? `${name}님, ` : ''}반가워요!
           <br />
