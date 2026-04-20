@@ -1,6 +1,6 @@
 'use client';
 
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui';
+import { ClubAvatar } from '@/components/ui';
 import { cn } from '@/lib/cn';
 import type { Club } from '@/types';
 
@@ -29,14 +29,7 @@ function ClubSearchDropdown({ clubs, onSelect, className }: ClubSearchDropdownPr
             onClick={() => onSelect(club)}
             className="border-line bg-container-neutral flex w-full cursor-pointer items-center gap-400 rounded-[10px] border px-200 py-200 transition-colors"
           >
-            <Avatar size={64} type="square" className="border-line shrink-0 rounded-lg border">
-              {club.profileImageUrl && (
-                <AvatarImage src={club.profileImageUrl} alt={club.name} className="object-cover" />
-              )}
-              <AvatarFallback className="bg-container-neutral-alternative text-text-alternative rounded-lg">
-                {club.name.charAt(0)}
-              </AvatarFallback>
-            </Avatar>
+            <ClubAvatar size={40} src={club.profileImageUrl} name={club.name} />
             <div className="flex flex-col items-start gap-0.5 text-left">
               <span className="typo-sub2 text-text-strong">{club.name}</span>
               <span className="typo-body2 text-text-normal">{club.description}</span>

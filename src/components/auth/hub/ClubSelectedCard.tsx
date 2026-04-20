@@ -1,5 +1,5 @@
 import { CloseCircleIcon } from '@/assets/icons';
-import { Avatar, AvatarFallback, AvatarImage, Icon } from '@/components/ui';
+import { ClubAvatar, Icon } from '@/components/ui';
 import type { Club } from '@/types';
 
 interface ClubSelectedCardProps {
@@ -9,20 +9,9 @@ interface ClubSelectedCardProps {
 
 function ClubSelectedCard({ club, onRemove }: ClubSelectedCardProps) {
   return (
-    <div className="border-line bg-container-neutral flex items-center justify-between rounded-[10px] border px-400 py-200">
+    <div className="border-line bg-container-neutral flex items-center justify-between rounded-[10px] border px-200 py-200">
       <div className="flex items-center gap-400">
-        <Avatar
-          size={64}
-          type="square"
-          className="border-line h-10 w-10 shrink-0 rounded-lg border"
-        >
-          {club.profileImageUrl && (
-            <AvatarImage src={club.profileImageUrl} alt={club.name} className="object-cover" />
-          )}
-          <AvatarFallback className="bg-container-neutral-alternative text-text-alternative rounded-lg">
-            {club.name.charAt(0)}
-          </AvatarFallback>
-        </Avatar>
+        <ClubAvatar size={40} src={club.profileImageUrl} name={club.name} />
         <div className="flex flex-col gap-0.5">
           <span className="typo-sub2 text-text-strong">{club.name}</span>
           <span className="typo-body2 text-text-alternative">{club.description}</span>
