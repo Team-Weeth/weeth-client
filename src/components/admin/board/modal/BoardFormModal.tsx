@@ -41,7 +41,7 @@ type BoardFormMode = 'create' | 'edit';
 
 const DISCARD_MESSAGES: Record<
   BoardFormMode,
-  { title: string; actionLabel: string; cancelLabel: string }
+  { title: string; actionLabel: string; cancelLabel?: string }
 > = {
   create: {
     title: '작성하던 내용이 있어요.\n내용을 폐기하고 나갈까요?',
@@ -51,7 +51,6 @@ const DISCARD_MESSAGES: Record<
   edit: {
     title: '변경사항이 있어요.\n변경사항을 폐기할까요?',
     actionLabel: '변경사항 폐기',
-    cancelLabel: '취소',
   },
 };
 
@@ -136,9 +135,6 @@ function BoardFormModal({
       <DialogContent
         className="bg-background flex w-215 max-w-[calc(100%-2rem)] flex-col gap-0 overflow-hidden rounded-lg p-0"
         showCloseButton={false}
-        onPointerDownOutside={(e) => {
-          if (hasChanges) e.preventDefault();
-        }}
       >
         {/* Header */}
         <div className="flex h-24 items-center justify-between px-600">
@@ -180,6 +176,7 @@ function BoardFormModal({
                 actionLabel={discardMessages.actionLabel}
                 cancelLabel={discardMessages.cancelLabel}
                 onAction={handleDiscardConfirm}
+                onDismiss={() => setDiscardSource(null)}
                 placement="below-right"
               />
             </div>
@@ -293,6 +290,7 @@ function BoardFormModal({
               actionLabel={discardMessages.actionLabel}
               cancelLabel={discardMessages.cancelLabel}
               onAction={handleDiscardConfirm}
+              onDismiss={() => setDiscardSource(null)}
               placement="above-right"
             />
           </div>

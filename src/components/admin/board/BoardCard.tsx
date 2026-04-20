@@ -58,7 +58,7 @@ function BoardCard({
           disabled={!draggable}
           {...(draggable ? dragHandleProps : {})}
           className={cn(
-            'tablet:flex hidden shrink-0 items-center justify-center rounded-sm p-200 touch-none',
+            'tablet:flex hidden shrink-0 touch-none items-center justify-center rounded-sm p-200',
             draggable
               ? 'hover:bg-container-neutral-interaction cursor-grab active:cursor-grabbing'
               : 'cursor-not-allowed',
@@ -125,8 +125,8 @@ function BoardCard({
             </Button>
             <AlertDialog
               status="danger"
-              title="이 게시판을 삭제하시겠어요?"
-              description={'삭제된 게시판은 휴지통으로 이동합니다.'}
+              title={`'${name}'을 삭제하시겠어요?`}
+              description={'게시판을 삭제해도 휴지통에 30일간 보관됩니다.'}
               trigger={
                 <Button variant="danger" size="md">
                   삭제

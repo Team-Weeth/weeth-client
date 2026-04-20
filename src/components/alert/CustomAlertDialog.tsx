@@ -23,6 +23,7 @@ interface CustomAlertDialogProps extends React.ComponentProps<typeof AlertDialog
   cancelLabel?: string;
   onAction: () => void;
   onCancel?: () => void;
+  onDismiss?: () => void;
   placement?: Placement;
 }
 
@@ -33,15 +34,32 @@ function CustomAlertDialog({
   cancelLabel,
   onAction,
   onCancel,
+  onDismiss,
   placement = 'above-right',
   children,
+  open,
   ...props
 }: CustomAlertDialogProps) {
+  const contentRef = React.useRef<HTMLDivElement>(null);
+
+  React.useEffect(() => {
+    if (!open || !onDismiss) return;
+    const handler = (e: PointerEvent) => {
+      if (!contentRef.current?.contains(e.target as Node)) onDismiss();
+    };
+    const timer = setTimeout(() => document.addEventListener('pointerdown', handler), 0);
+    return () => {
+      clearTimeout(timer);
+      document.removeEventListener('pointerdown', handler);
+    };
+  }, [open, onDismiss]);
+
   return (
-    <AlertDialogPrimitive.Root {...props}>
+    <AlertDialogPrimitive.Root open={open} {...props}>
       {children}
 
       <AlertDialogPrimitive.Content
+        ref={contentRef}
         className={cn(
           'bg-background border-line data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 absolute z-50 w-[339px] rounded-lg border shadow-[0px_10px_40px_0px_rgba(0,0,0,0.5)] duration-200',
           PLACEMENT_CLASS[placement],
