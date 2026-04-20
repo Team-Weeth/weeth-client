@@ -2,6 +2,23 @@
 
 import { Fragment, useState } from 'react';
 import Image from 'next/image';
+import {
+  DndContext,
+  PointerSensor,
+  KeyboardSensor,
+  closestCenter,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+} from '@dnd-kit/core';
+import {
+  SortableContext,
+  arrayMove,
+  sortableKeyboardCoordinates,
+  useSortable,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 
 import {
   Card,
@@ -66,6 +83,32 @@ const MOCK_BOARDS: Board[] = [
 
 const MOCK_TRASH_COUNT = 1;
 
+interface SortableBoardCardProps {
+  board: Board;
+  onToggleComments: (next: boolean) => void;
+}
+
+function SortableBoardCard({ board, onToggleComments }: SortableBoardCardProps) {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
+    id: board.boardId,
+  });
+
+  return (
+    <BoardCard
+      ref={setNodeRef}
+      board={board}
+      onToggleComments={onToggleComments}
+      dragHandleProps={{ ...attributes, ...listeners }}
+      style={{
+        transform: CSS.Transform.toString(transform),
+        transition,
+        zIndex: isDragging ? 10 : undefined,
+        opacity: isDragging ? 0.8 : undefined,
+      }}
+    />
+  );
+}
+
 function BoardPageContent() {
   const { data: cardinals = [] } = useCardinals();
   const [selectedCardinalId, setSelectedCardinalId] = useState<number | null>(null);
@@ -88,6 +131,40 @@ function BoardPageContent() {
 
   const updateBoard = (boardId: number, patch: Partial<Board>) => {
     setBoards((prev) => prev.map((b) => (b.boardId === boardId ? { ...b, ...patch } : b)));
+  };
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 4 } }),
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
+  );
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (!over || active.id === over.id) return;
+
+    setBoards((prev) => {
+      const customIds = prev.filter((b) => b.editable).map((b) => b.boardId);
+      const oldIndex = customIds.indexOf(Number(active.id));
+      const newIndex = customIds.indexOf(Number(over.id));
+      if (oldIndex === -1 || newIndex === -1) return prev;
+
+      const reorderedCustomIds = arrayMove(customIds, oldIndex, newIndex);
+      const customById = new Map(
+        prev.filter((b) => b.editable).map((b) => [b.boardId, b] as const),
+      );
+
+      const result: Board[] = [];
+      let cursor = 0;
+      for (const board of prev) {
+        if (board.editable) {
+          const nextId = reorderedCustomIds[cursor++];
+          result.push(customById.get(nextId)!);
+        } else {
+          result.push(board);
+        }
+      }
+      return result;
+    });
   };
 
   return (
@@ -148,15 +225,28 @@ function BoardPageContent() {
 
         {/* Custom boards */}
         {customBoards.length > 0 && (
-          <div className="flex flex-col gap-200">
-            {customBoards.map((board) => (
-              <BoardCard
-                key={board.boardId}
-                board={board}
-                onToggleComments={(next) => updateBoard(board.boardId, { commentEnabled: next })}
-              />
-            ))}
-          </div>
+          <DndContext
+            sensors={sensors}
+            collisionDetection={closestCenter}
+            onDragEnd={handleDragEnd}
+          >
+            <SortableContext
+              items={customBoards.map((b) => b.boardId)}
+              strategy={verticalListSortingStrategy}
+            >
+              <div className="flex flex-col gap-200">
+                {customBoards.map((board) => (
+                  <SortableBoardCard
+                    key={board.boardId}
+                    board={board}
+                    onToggleComments={(next) =>
+                      updateBoard(board.boardId, { commentEnabled: next })
+                    }
+                  />
+                ))}
+              </div>
+            </SortableContext>
+          </DndContext>
         )}
 
         {/* Limit banner */}

@@ -21,6 +21,8 @@ interface BoardCardProps extends React.HTMLAttributes<HTMLDivElement> {
   onEdit?: () => void;
   onDelete?: () => void;
   draggable?: boolean;
+  ref?: React.Ref<HTMLDivElement>;
+  dragHandleProps?: React.ButtonHTMLAttributes<HTMLButtonElement>;
 }
 
 const BOARD_ICON: Record<Exclude<Board['kind'], 'NOTICE'>, typeof PinIcon> = {
@@ -35,6 +37,7 @@ function BoardCard({
   onEdit,
   onDelete,
   draggable = true,
+  dragHandleProps,
   ...props
 }: BoardCardProps) {
   const { name, description, visibility, postCount, commentEnabled, editable } = board;
@@ -53,7 +56,11 @@ function BoardCard({
           <button
             type="button"
             aria-label="순서 변경 핸들"
-            className="hover:bg-container-neutral-interaction tablet:flex hidden shrink-0 cursor-grab items-center justify-center rounded-sm p-200 active:cursor-grabbing"
+            {...dragHandleProps}
+            className={cn(
+              'hover:bg-container-neutral-interaction tablet:flex hidden shrink-0 cursor-grab items-center justify-center rounded-sm p-200 touch-none active:cursor-grabbing',
+              dragHandleProps?.className,
+            )}
           >
             <Icon src={AdminBoardMoveicon} size={40} className="text-icon-alternative" />
           </button>
