@@ -324,6 +324,19 @@ function BoardPageContent() {
             commentEnabled: data.commentEnabled,
           });
         }}
+        onDelete={(board) => {
+          setBoards((prev) => prev.filter((b) => b.boardId !== board.boardId));
+          setTrashedBoards((prev) => [
+            ...prev,
+            {
+              boardId: board.boardId,
+              name: board.name,
+              description: board.description,
+              daysLeft: 30,
+            },
+          ]);
+          setEditingBoardId(null);
+        }}
       />
     </div>
   );

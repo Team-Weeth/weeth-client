@@ -1,11 +1,17 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { Button, Icon, Switch } from '@/components/ui';
 import { CustomAlertDialog } from '@/components/alert';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
-import { AdminCloseIcon } from '@/assets/icons/admin';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/DropdownMenu';
+import { AdminCloseIcon, AdminMeatballIcon } from '@/assets/icons/admin';
 import { cn } from '@/lib/cn';
 import type { BoardVisibility } from '@/types/admin/board';
 
@@ -31,34 +37,58 @@ const DEFAULT_FORM: BoardFormData = {
   commentEnabled: true,
 };
 
+type BoardFormMode = 'create' | 'edit';
+
+const DISCARD_MESSAGES: Record<
+  BoardFormMode,
+  { title: string; actionLabel: string; cancelLabel: string }
+> = {
+  create: {
+    title: '작성하던 내용이 있어요.\n내용을 폐기하고 나갈까요?',
+    actionLabel: '나가기',
+    cancelLabel: '보관하기',
+  },
+  edit: {
+    title: '변경사항이 있어요.\n변경사항을 폐기할까요?',
+    actionLabel: '변경사항 폐기',
+    cancelLabel: '취소',
+  },
+};
+
 interface BoardFormModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   title: string;
+  mode?: BoardFormMode;
   initialValues?: Partial<BoardFormData>;
   onSubmit?: (data: BoardFormData) => void;
+  onDelete?: () => void;
 }
 
 function BoardFormModal({
   open,
   onOpenChange,
   title,
+  mode = 'edit',
   initialValues,
   onSubmit,
+  onDelete,
 }: BoardFormModalProps) {
-  const baseline = useMemo(
-    () => ({ ...DEFAULT_FORM, ...initialValues }),
-    [initialValues],
-  );
-  const [form, setForm] = useState<BoardFormData>(baseline);
+  const discardMessages = DISCARD_MESSAGES[mode];
+  const [form, setForm] = useState<BoardFormData>(() => ({ ...DEFAULT_FORM, ...initialValues }));
+  const [baseline, setBaseline] = useState<BoardFormData>(form);
   const [discardSource, setDiscardSource] = useState<'close' | 'cancel' | null>(null);
 
   useEffect(() => {
     if (open) {
-      setForm(baseline);
+      const next = { ...DEFAULT_FORM, ...initialValues };
+      setForm(next);
+      setBaseline(next);
       setDiscardSource(null);
     }
-  }, [open, baseline]);
+    // open이 true로 바뀔 때만 초기화 — 모달 열려있는 동안 initialValues 변경으로 유저 입력이 덮이지 않도록
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open]);
 
   const updateField = <K extends keyof BoardFormData>(key: K, value: BoardFormData[K]) => {
     setForm((prev) => ({ ...prev, [key]: value }));
@@ -113,31 +143,51 @@ function BoardFormModal({
         {/* Header */}
         <div className="flex h-24 items-center justify-between px-600">
           <h2 className="typo-h3 text-text-normal">{title}</h2>
-          <div className="relative">
-            <button
-              type="button"
-              onClick={() => handleTryClose('close')}
-              className="flex cursor-pointer items-center justify-center rounded-sm p-200"
-              aria-label="닫기"
-            >
-              <Icon src={AdminCloseIcon} size={24} alt="닫기" />
-            </button>
-            <CustomAlertDialog
-              open={discardSource === 'close'}
-              onOpenChange={(next) => {
-                if (!next && discardSource === 'close') setDiscardSource(null);
-              }}
-              title={'변경사항이 있어요.\n변경사항을 폐기할까요?'}
-              actionLabel="변경사항 폐기"
-              cancelLabel="취소"
-              onAction={handleDiscardConfirm}
-              placement="below-right"
-            />
+          <div className="flex items-center gap-200">
+            {onDelete && (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <button
+                    type="button"
+                    className="flex cursor-pointer items-center justify-center rounded-sm p-200"
+                    aria-label="더보기"
+                  >
+                    <Icon src={AdminMeatballIcon} size={24} alt="더보기" />
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem destructive onSelect={onDelete}>
+                    게시판 삭제
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            )}
+            <div className="relative">
+              <button
+                type="button"
+                onClick={() => handleTryClose('close')}
+                className="flex cursor-pointer items-center justify-center rounded-sm p-200"
+                aria-label="닫기"
+              >
+                <Icon src={AdminCloseIcon} size={24} alt="닫기" />
+              </button>
+              <CustomAlertDialog
+                open={discardSource === 'close'}
+                onOpenChange={(next) => {
+                  if (!next && discardSource === 'close') setDiscardSource(null);
+                }}
+                title={discardMessages.title}
+                actionLabel={discardMessages.actionLabel}
+                cancelLabel={discardMessages.cancelLabel}
+                onAction={handleDiscardConfirm}
+                placement="below-right"
+              />
+            </div>
           </div>
         </div>
 
         {/* Body */}
-        <div className="scrollbar-custom tablet:px-[71px] flex max-h-[700px] flex-col gap-400 overflow-y-auto px-700 pt-200 pb-400">
+        <div className="scrollbar-custom tablet:px-[71px] flex max-h-175 flex-col gap-400 overflow-y-auto px-700 pt-200 pb-400">
           {/* 게시판 이름 */}
           <div className="flex flex-col">
             <label
@@ -239,9 +289,9 @@ function BoardFormModal({
               onOpenChange={(next) => {
                 if (!next && discardSource === 'cancel') setDiscardSource(null);
               }}
-              title={'변경사항이 있어요.\n변경사항을 폐기할까요?'}
-              actionLabel="변경사항 폐기"
-              cancelLabel="취소"
+              title={discardMessages.title}
+              actionLabel={discardMessages.actionLabel}
+              cancelLabel={discardMessages.cancelLabel}
               onAction={handleDiscardConfirm}
               placement="above-right"
             />

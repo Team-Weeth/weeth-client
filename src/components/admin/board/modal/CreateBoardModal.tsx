@@ -19,6 +19,7 @@ function CreateBoardModal({ open, onOpenChange, onSubmit }: CreateBoardModalProp
       open={open}
       onOpenChange={onOpenChange}
       title="게시판 생성"
+      mode="create"
       onSubmit={onSubmit}
     />
   );

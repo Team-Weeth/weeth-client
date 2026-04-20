@@ -36,7 +36,7 @@ function TrashBoardModal({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
-        className="bg-background flex h-[880px] max-h-[880px] min-h-[880px] w-215 max-w-[calc(100%-2rem)] flex-col gap-0 overflow-hidden rounded-lg p-0"
+        className="bg-background flex min-h-165 w-215 max-w-[calc(100%-2rem)] flex-col gap-0 overflow-hidden rounded-lg p-0"
         showCloseButton={false}
       >
         {/* Header */}
@@ -53,7 +53,7 @@ function TrashBoardModal({
         </div>
 
         {/* Body */}
-        <div className="scrollbar-custom tablet:px-[71px] flex min-h-0 flex-1 flex-col gap-400 overflow-y-auto px-700 pt-200 pb-400">
+        <div className="scrollbar-custom tablet:px-[71px] flex max-h-175 min-h-0 flex-1 flex-col gap-400 overflow-y-auto px-700 pt-200 pb-400">
           {/* Notice banner */}
           <div className="bg-container-neutral-alternative flex items-start gap-400 rounded-md p-300">
             <div className="bg-brand-primary/10 flex shrink-0 items-center justify-center rounded-full p-300">
@@ -113,7 +113,7 @@ interface TrashedBoardCardProps {
 
 function TrashedBoardCard({ board, onRestore, onPermanentDelete }: TrashedBoardCardProps) {
   return (
-    <div className="bg-container-neutral flex items-center gap-600 rounded-sm py-400 pr-400 pl-500 shadow-sm">
+    <div className="bg-container-neutral flex min-h-3/4 items-center gap-600 rounded-sm py-400 pr-400 pl-500 shadow-sm">
       <div className="flex min-w-0 flex-1 items-center gap-400">
         <div className="bg-container-neutral-alternative flex size-10 shrink-0 items-center justify-center rounded-sm">
           <Icon src={PinIcon} size={24} className="text-icon-normal" />
@@ -123,15 +123,15 @@ function TrashedBoardCard({ board, onRestore, onPermanentDelete }: TrashedBoardC
           <p className="typo-caption2 text-text-alternative truncate">{board.description}</p>
         </div>
       </div>
-      <span className="bg-container-neutral-alternative typo-caption1 text-text-alternative inline-flex w-[71px] shrink-0 items-center justify-center rounded-sm px-200 py-100">
+      <span className="typo-caption1 text-text-alternative inline-flex w-[71px] shrink-0 items-center justify-center rounded-sm bg-[#B7BCBF1A] px-200 py-100">
         D-{board.daysLeft}
       </span>
       <div className="bg-line w-px self-stretch" />
       <div className="flex shrink-0 items-center gap-200">
-        <Button variant="secondary" size="sm" onClick={onRestore}>
+        <Button variant="secondary" size="md" onClick={onRestore}>
           복구
         </Button>
-        <Button variant="danger" size="sm" onClick={onPermanentDelete}>
+        <Button variant="danger" size="md" onClick={onPermanentDelete}>
           영구 삭제
         </Button>
       </div>
