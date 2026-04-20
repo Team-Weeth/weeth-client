@@ -67,33 +67,46 @@ function HomeBoardContent() {
           const hasAttachment = post.fileUrls.length > 0;
 
           return (
-            <Link key={post.id} href={`/board/${post.id}`}>
-              <PostCard.Root>
-                <PostCard.Header>
-                  <PostCard.Author
-                    author={{
-                      ...post.author,
-                      profileImageUrl: post.author.profileImageUrl ?? undefined,
-                    }}
-                    date={formatMonthDay(post.time)}
-                    dateTime={post.time}
-                    hasAttachment={hasAttachment}
-                  />
-                  {isMyPost && <PostActionMenu postId={post.id} />}
-                </PostCard.Header>
+            <PostCard.Root key={post.id} className="relative">
+              <PostCard.Header>
+                <PostCard.Author
+                  author={{
+                    ...post.author,
+                    profileImageUrl: post.author.profileImageUrl ?? undefined,
+                  }}
+                  date={formatMonthDay(post.time)}
+                  dateTime={post.time}
+                  hasAttachment={hasAttachment}
+                />
+                {isMyPost && (
+                  <div className="relative z-10">
+                    <PostActionMenu postId={post.id} />
+                  </div>
+                )}
+              </PostCard.Header>
+              <Link
+                href={`/board/${post.id}`}
+                className="after:absolute after:inset-0 after:content-['']"
+              >
                 <PostCard.ListContent
                   title={post.title}
                   content={post.content}
                   isNew={post.isNew}
                 />
+              </Link>
+              <div className="relative z-10">
                 <PostCard.Images files={images} />
+              </div>
+              <div className="relative z-10">
                 <PostCard.Actions
                   postId={post.id}
                   likeCount={post.likeCount}
+                  isLiked={post.isLiked}
                   commentCount={post.commentCount}
+                  onComment={() => router.push(`/board/${post.id}#comments`)}
                 />
-              </PostCard.Root>
-            </Link>
+              </div>
+            </PostCard.Root>
           );
         })}
       </main>
