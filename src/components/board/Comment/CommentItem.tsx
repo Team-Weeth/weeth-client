@@ -17,9 +17,11 @@ interface CommentItemProps {
   content: string;
   date: string;
   isAuthor?: boolean;
+  isDeleted?: boolean;
   replies?: ReplyItemProps[];
   replyOpen?: boolean;
   onReplyToggle?: () => void;
+  onReplySuccess?: () => void;
   onReplyDirtyChange?: (dirty: boolean) => void;
   onReply?: (value: string) => Promise<boolean> | boolean;
   onEdit?: (content: string) => Promise<boolean> | boolean;
@@ -33,9 +35,11 @@ function CommentItem({
   content,
   date,
   isAuthor,
+  isDeleted,
   replies,
   replyOpen = false,
   onReplyToggle,
+  onReplySuccess,
   onReplyDirtyChange,
   onReply,
   onEdit,
@@ -49,7 +53,7 @@ function CommentItem({
     const ok = await onReply?.(value);
     if (ok !== false) {
       onReplyDirtyChange?.(false);
-      onReplyToggle?.();
+      onReplySuccess?.();
     }
     return ok ?? true;
   };
@@ -81,7 +85,14 @@ function CommentItem({
             />
           ) : (
             <>
-              <p className="typo-body1 text-text-normal whitespace-pre-wrap">{content}</p>
+              <p
+                className={cn(
+                  'typo-body1 whitespace-pre-wrap',
+                  isDeleted ? 'text-text-disabled' : 'text-text-normal',
+                )}
+              >
+                {content}
+              </p>
               <p className="typo-caption2 text-text-alternative">{date}</p>
             </>
           )}
@@ -96,9 +107,9 @@ function CommentItem({
               onClick={onReplyToggle}
               aria-label="답글"
             >
-              <Icon src={ChatIcon} size={13} className="text-icon-normal" />
+              <Icon src={ChatIcon} size={16} className="text-icon-normal" />
             </Button>
-            {isAuthor && (
+            {isAuthor && !isDeleted && (
               <ActionMenu
                 triggerVariant="secondary"
                 triggerClassName="size-6"

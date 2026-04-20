@@ -58,6 +58,8 @@ export interface PostComment {
   time: string;
   fileUrls: FileItem[];
   children: PostComment[];
+  /** 백엔드에서 내려주는 삭제 플래그 (추후 추가 예정, 없으면 문자열 폴백) */
+  isDeleted?: boolean;
 }
 
 export interface PostDetail extends PostBase {
@@ -111,5 +113,6 @@ export interface MappedComment {
   content: string;
   date: string;
   isAuthor: boolean;
+  isDeleted: boolean;
   replies: MappedComment[];
 }

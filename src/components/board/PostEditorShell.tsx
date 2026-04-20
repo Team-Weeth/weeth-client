@@ -51,6 +51,7 @@ function PostEditorShell({ header, initialContent, align = 'start' }: PostEditor
 
       <AlertDialog
         open={open}
+        status="danger"
         onOpenChange={(isOpen) => {
           if (!isOpen) onCancel();
         }}

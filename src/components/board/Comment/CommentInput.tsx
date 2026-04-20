@@ -87,12 +87,16 @@ function CommentInput({
 
       {onCancel && (
         <div className="flex justify-end gap-200 pr-200">
-          <button type="button" className="typo-button2 text-text-alternative" onClick={onCancel}>
+          <button
+            type="button"
+            className="typo-button2 text-text-alternative hover:text-text-normal active:text-text-strong cursor-pointer rounded-sm transition-colors"
+            onClick={onCancel}
+          >
             취소
           </button>
           <button
             type="button"
-            className="typo-button2 text-brand-primary disabled:text-text-disabled"
+            className="typo-button2 text-brand-primary disabled:text-text-disabled cursor-pointer rounded-sm transition-colors hover:opacity-80 active:opacity-60 disabled:cursor-not-allowed disabled:opacity-100"
             onClick={handleSubmit}
             disabled={disabled || !value.trim()}
           >
