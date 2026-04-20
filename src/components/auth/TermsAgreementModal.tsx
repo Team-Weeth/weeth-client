@@ -59,29 +59,30 @@ function TermsAgreementModal({ open, onOpenChange, onAgree }: TermsAgreementModa
     onOpenChange(nextOpen);
   }
 
-  if (selectedTerm) {
-    return (
-      <TermsDetailView
-        term={selectedTerm}
-        onBack={() => setSelectedTermId(null)}
+  return (
+    <>
+      <TermsListView
+        checkedItems={checkedItems}
+        onToggleItem={handleToggleItem}
+        onToggleAll={handleToggleAll}
+        onSelectTerm={setSelectedTermId}
+        allChecked={allChecked}
+        allRequiredChecked={allRequiredChecked}
         open={open}
         onOpenChange={handleOpenChange}
+        onAgree={handleAgree}
       />
-    );
-  }
-
-  return (
-    <TermsListView
-      checkedItems={checkedItems}
-      onToggleItem={handleToggleItem}
-      onToggleAll={handleToggleAll}
-      onSelectTerm={setSelectedTermId}
-      allChecked={allChecked}
-      allRequiredChecked={allRequiredChecked}
-      open={open}
-      onOpenChange={handleOpenChange}
-      onAgree={handleAgree}
-    />
+      {selectedTerm && (
+        <TermsDetailView
+          term={selectedTerm}
+          onBack={() => setSelectedTermId(null)}
+          open={!!selectedTermId}
+          onOpenChange={(nextOpen) => {
+            if (!nextOpen) setSelectedTermId(null);
+          }}
+        />
+      )}
+    </>
   );
 }
 
