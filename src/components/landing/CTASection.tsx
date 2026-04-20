@@ -5,7 +5,6 @@ import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useWindowSize } from 'react-use';
-import { Button } from '@/components/ui';
 import { InquiryDialog } from './InquiryDialog';
 
 gsap.registerPlugin(ScrollTrigger);
