@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { Fragment, useState } from 'react';
 import Image from 'next/image';
 
 import {
@@ -129,13 +129,15 @@ function BoardPageContent() {
         {/* Fixed (system) boards */}
         {fixedBoards.length > 0 && (
           <div className="flex flex-col gap-400">
-            {fixedBoards.map((board) => (
-              <BoardCard
-                key={board.boardId}
-                board={board}
-                draggable={false}
-                onToggleComments={(next) => updateBoard(board.boardId, { commentEnabled: next })}
-              />
+            {fixedBoards.map((board, index) => (
+              <Fragment key={board.boardId}>
+                {index > 0 && <div className="border-line w-full border-t" />}
+                <BoardCard
+                  board={board}
+                  draggable={false}
+                  onToggleComments={(next) => updateBoard(board.boardId, { commentEnabled: next })}
+                />
+              </Fragment>
             ))}
           </div>
         )}

@@ -26,3 +26,4 @@ export { default as AdminRadioUnselectedIcon } from './ic_admin_radio_unselected
 export { default as AdminRoundCancelIcon } from './ic_admin_round_cancel.svg';
 
 export { default as AdminCloudUploadIcon } from './ic_admin_cloud_upload.svg';
+export { default as AdminBoardMoveicon } from './ic_admin_board_move.svg';

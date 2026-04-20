@@ -9,10 +9,11 @@ import {
   Switch,
   Tag,
 } from '@/components/ui';
-import { AdminColumnMeatballIcon, AdminForumIcon } from '@/assets/icons/admin';
+import { AdminBoardMoveicon } from '@/assets/icons/admin';
 import { PinIcon } from '@/assets/icons';
 import { cn } from '@/lib/cn';
 import type { Board } from '@/types/admin/board';
+import { MegaphoneIcon } from '@/components/board';
 
 interface BoardCardProps extends React.HTMLAttributes<HTMLDivElement> {
   board: Board;
@@ -22,9 +23,8 @@ interface BoardCardProps extends React.HTMLAttributes<HTMLDivElement> {
   draggable?: boolean;
 }
 
-const BOARD_ICON: Record<Board['kind'], typeof PinIcon> = {
+const BOARD_ICON: Record<Exclude<Board['kind'], 'NOTICE'>, typeof PinIcon> = {
   ALL: PinIcon,
-  NOTICE: AdminForumIcon,
   CUSTOM: PinIcon,
 };
 
@@ -42,24 +42,28 @@ function BoardCard({
   return (
     <div
       className={cn(
-        'bg-container-neutral shadow-sm flex w-full items-center gap-300 rounded-sm px-500 py-400 tablet:gap-400',
+        'bg-container-neutral tablet:gap-400 flex w-full items-center gap-300 rounded-sm px-500 py-400 shadow-sm',
         className,
       )}
       {...props}
     >
       {/* Drag handle + icon + title/desc */}
-      <div className="flex min-w-0 flex-1 items-center gap-300 tablet:gap-400">
+      <div className="tablet:gap-400 flex min-w-0 flex-1 items-center gap-300">
         {draggable && (
           <button
             type="button"
             aria-label="순서 변경 핸들"
-            className="hover:bg-container-neutral-interaction hidden shrink-0 cursor-grab items-center justify-center rounded-sm p-200 active:cursor-grabbing tablet:flex"
+            className="hover:bg-container-neutral-interaction tablet:flex hidden shrink-0 cursor-grab items-center justify-center rounded-sm p-200 active:cursor-grabbing"
           >
-            <Icon src={AdminColumnMeatballIcon} size={24} className="text-icon-alternative" />
+            <Icon src={AdminBoardMoveicon} size={40} className="text-icon-alternative" />
           </button>
         )}
         <div className="bg-container-neutral-alternative flex size-10 shrink-0 items-center justify-center rounded-sm">
-          <Icon src={BOARD_ICON[board.kind]} size={24} className="text-icon-normal" />
+          {board.kind === 'NOTICE' ? (
+            <MegaphoneIcon width={24} height={24} className="text-icon-normal" />
+          ) : (
+            <Icon src={BOARD_ICON[board.kind]} size={24} className="text-icon-normal" />
+          )}
         </div>
         <div className="flex min-w-0 flex-1 flex-col justify-center gap-200">
           <p className="typo-sub3 text-text-strong truncate">{name}</p>
@@ -68,13 +72,13 @@ function BoardCard({
       </div>
 
       {/* Post count */}
-      <div className="hidden w-[88px] shrink-0 flex-col justify-center gap-200 tablet:flex">
+      <div className="tablet:flex hidden w-[88px] shrink-0 flex-col justify-center gap-200">
         <p className="typo-body2 text-text-alternative">게시글</p>
         <p className="typo-sub3 text-text-strong">{postCount}</p>
       </div>
 
       {/* Comment toggle */}
-      <div className="hidden w-[88px] shrink-0 flex-col justify-center gap-100 desktop:flex">
+      <div className="desktop:flex hidden w-[88px] shrink-0 flex-col justify-center gap-100">
         {commentEnabled !== null ? (
           <>
             <p className="typo-body2 text-text-alternative">댓글 허용</p>
@@ -89,7 +93,7 @@ function BoardCard({
       </div>
 
       {/* Visibility tag */}
-      <div className="hidden shrink-0 desktop:flex">
+      <div className="desktop:flex hidden shrink-0">
         {visibility === 'PUBLIC' && <Tag variant="primary">전체 공개</Tag>}
         {visibility === 'ADMIN_ONLY' && (
           <Tag className="bg-state-caution/10 text-state-caution">관리자 전용</Tag>
