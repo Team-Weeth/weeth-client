@@ -30,7 +30,7 @@ function PostCardListContent({
   const plainContent = stripHtml(content);
 
   return (
-    <div className={cn('flex flex-col gap-200 self-stretch', className)}>
+    <div className={cn('flex flex-col gap-[5px] self-stretch', className)}>
       <PostCardTitle title={title} isNew={isNew} size="list" />
       <p
         ref={expandable ? ref : undefined}

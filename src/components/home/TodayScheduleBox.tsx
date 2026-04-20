@@ -34,13 +34,13 @@ export function TodayScheduleBox() {
       ) : isAdmin ? (
         <div className="px-450 pb-450">
           <EmptyBox
-            description="출석이 필요한 정기모임 정보가 없습니다"
+            description="출석이 필요한 정기모임 정보가 없습니다."
             button={{ label: '출석 일정 추가하기', onClick: () => router.push('/admin/schedule') }}
           />
         </div>
       ) : (
         <div className="px-450 pb-450">
-          <EmptyBox description="출석할 일정이 없습니다" />
+          <EmptyBox description="출석할 일정이 없습니다." />
         </div>
       )}
     </div>

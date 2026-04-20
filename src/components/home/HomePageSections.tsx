@@ -13,12 +13,10 @@ import {
   MainContainer,
   RightContainer,
 } from '@/components/home/DynamicSections';
-import { Header } from '@/components/layout';
 
 export function HomePageSections() {
   return (
     <>
-      <Header />
       <Suspense fallback={<BannerSkeleton />}>
         <Banner />
       </Suspense>

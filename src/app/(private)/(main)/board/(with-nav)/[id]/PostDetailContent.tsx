@@ -19,8 +19,10 @@ import { useCreateComment } from '@/hooks/board/useCreateComment';
 import { useUpdateComment } from '@/hooks/board/useUpdateComment';
 import { useDeleteComment } from '@/hooks/board/useDeleteComment';
 import { useReplyForm } from '@/hooks/board/useReplyForm';
-import { useSetActiveBoardId } from '@/stores/useBoardNavStore';
+import { useSetActiveBoardId, useBoardTypeMap } from '@/stores/useBoardNavStore';
+import { useClubId } from '@/stores/useClubStore';
 import { useUserId } from '@/stores/useUserStore';
+import { boardApi } from '@/lib/apis/board';
 import type { PostDetail } from '@/types/board';
 
 interface PostDetailContentProps {
@@ -30,7 +32,9 @@ interface PostDetailContentProps {
 function PostDetailContent({ initialData }: PostDetailContentProps) {
   const router = useRouter();
   const currentUserId = useUserId();
+  const clubId = useClubId();
   const setActiveBoardId = useSetActiveBoardId();
+  const boardTypeMap = useBoardTypeMap();
 
   const { data } = usePostDetailQuery(initialData.id, initialData);
   const currentPost = data ?? initialData;
@@ -44,6 +48,7 @@ function PostDetailContent({ initialData }: PostDetailContentProps) {
     setIsReplyDirty,
     setIsCommentDirty,
     handleReplyToggle,
+    forceCloseReply,
     switchGuardOpen,
     onSwitchConfirm,
     onSwitchCancel,
@@ -53,8 +58,25 @@ function PostDetailContent({ initialData }: PostDetailContentProps) {
   } = useReplyForm();
 
   useEffect(() => {
+    const hash = window.location.hash;
+    if (hash) {
+      // #comments 등 해시가 있으면 해당 요소로 스크롤
+      const el = document.getElementById(hash.slice(1));
+      el?.scrollIntoView({ behavior: 'smooth' });
+    } else {
+      window.scrollTo(0, 0);
+    }
+  }, []);
+
+  useEffect(() => {
     setActiveBoardId(currentPost.boardId);
   }, [currentPost.boardId, setActiveBoardId]);
+
+  useEffect(() => {
+    if (clubId && boardTypeMap[currentPost.boardId] === 'NOTICE') {
+      boardApi.readAllNotices(clubId, currentPost.boardId).catch(() => {});
+    }
+  }, [clubId, currentPost.boardId, boardTypeMap]);
 
   const isPostAuthor = currentUserId !== null && currentPost.author.id === currentUserId;
   const imageFiles = currentPost.fileUrls
@@ -68,7 +90,7 @@ function PostDetailContent({ initialData }: PostDetailContentProps) {
     <div className="bg-container-neutral flex flex-1 flex-col items-center overflow-hidden rounded-(--radius-lg)">
       <PostDetailHeader />
 
-      <div className="flex flex-col items-start gap-600 self-stretch p-450">
+      <div className="flex flex-col items-start gap-200 self-stretch px-450 pt-450">
         <PostCard.Header>
           <PostCard.Author
             author={{
@@ -98,14 +120,18 @@ function PostDetailContent({ initialData }: PostDetailContentProps) {
         <FileList files={nonImageFiles} />
 
         <PostCard.Actions
+          className="mt-400"
           postId={currentPost.id}
           likeCount={currentPost.like.likeCount}
           commentCount={currentPost.commentCount}
           isLiked={currentPost.like.isLiked}
+          onComment={() =>
+            document.getElementById('comments')?.scrollIntoView({ behavior: 'smooth' })
+          }
         />
       </div>
 
-      <div id="comments" className="self-stretch px-450 py-400">
+      <div id="comments" className="self-stretch px-450 pt-200 pb-400">
         <CommentInput
           placeholder="댓글을 입력하세요."
           onSubmit={async (v) => {
@@ -132,6 +158,7 @@ function PostDetailContent({ initialData }: PostDetailContentProps) {
                   {...mapped}
                   replyOpen={activeReplyId === comment.id}
                   onReplyToggle={() => handleReplyToggle(comment.id)}
+                  onReplySuccess={forceCloseReply}
                   onReplyDirtyChange={setIsReplyDirty}
                   replies={mapped.replies.map((reply) => ({
                     ...reply,

@@ -21,7 +21,7 @@ const buttonVariants = cva(
       },
       size: {
         lg: 'typo-button1 px-400 py-300 rounded-md',
-        md: 'typo-button2 px-300 py-200 rounded-md',
+        md: 'typo-button1 px-300 py-200 rounded-md',
         sm: 'typo-button2 px-200 py-100 rounded-sm',
         social: 'typo-social h-[48px] px-[14px] rounded-md',
         'icon-md': 'rounded-sm p-200',

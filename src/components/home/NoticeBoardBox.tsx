@@ -4,6 +4,7 @@ import React from 'react';
 import Image from 'next/image';
 import { NewIcon, ArrowRightIcon } from '@/assets/icons';
 import { Divider, Icon } from '@/components/ui';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useRecentNoticesQuery } from '@/hooks/home';
 import { stripHtml } from '@/lib/stripHtml';
@@ -17,10 +18,10 @@ export function NoticeBoardBox() {
 
   return (
     <div className="bg-container-neutral flex flex-col rounded-lg pb-300">
-      <div className="flex items-center justify-between p-450">
+      <div className="flex items-center justify-between px-450 pt-450 pb-300">
         <p className="typo-sub1 text-text-strong">공지</p>
         <button
-          className="p-1"
+          className="flex items-center justify-center"
           type="button"
           aria-label="공지 전체보기"
           onClick={() => router.push('/board')}
@@ -33,24 +34,23 @@ export function NoticeBoardBox() {
           notices.map((notice, index) => (
             <React.Fragment key={notice.id}>
               {index > 0 && <Divider />}
-              <div className="flex flex-col items-start gap-300 py-400">
+              <Link
+                href={`/board/${notice.id}`}
+                className="flex flex-col items-start gap-300 py-400"
+              >
                 <div className="flex flex-col gap-200">
                   <div className="flex gap-[5px]">
                     <p className="typo-sub3 text-text-strong">{notice.title}</p>
-                    {notice.isNew && <Image src={NewIcon} alt="new" width={9} height={12} />}
+                    {notice.isNew && <Image src={NewIcon} alt="new" width={7} height={9} />}
                   </div>
-                  <p className="typo-body2 text-icon-normal line-clamp-2 max-w-[268px]">
+                  <p className="typo-body2 text-icon-normal line-clamp-2 max-w-[268px] whitespace-pre-line">
                     {stripHtml(notice.content)}
                   </p>
-                  <button
-                    type="button"
-                    className="typo-body2 text-text-alternative w-fit cursor-pointer text-start"
-                    onClick={() => router.push('/board')}
-                  >
+                  <span className="typo-body2 text-text-alternative hover:text-text-normal w-fit text-start transition-colors">
                     전체보기
-                  </button>
+                  </span>
                 </div>
-              </div>
+              </Link>
             </React.Fragment>
           ))
         ) : isAdmin ? (

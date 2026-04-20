@@ -608,11 +608,11 @@ select:focus {
 }
 
 .ProseMirror h2 {
-  @apply typo-sub1 mt-300 mb-100;
+  @apply typo-sub2 mt-300 mb-100;
 }
 
 .ProseMirror h3 {
-  @apply typo-sub2 mt-300 mb-100;
+  @apply typo-sub3 mt-300 mb-100;
 }
 
 .ProseMirror ul {

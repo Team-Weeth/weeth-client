@@ -11,7 +11,7 @@ export const ADMIN_ATTENDANCE_STATUS_CONFIG = {
   ATTEND: {
     ...ATTENDANCE_STATUS_BASE.ATTEND,
     src: CheckRoundIcon,
-    className: 'text-brand-primary',
+    className: 'text-state-success',
   },
   ABSENT: {
     ...ATTENDANCE_STATUS_BASE.ABSENT,

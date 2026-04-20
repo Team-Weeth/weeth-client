@@ -1,7 +1,16 @@
 'use client';
 
+import { useState } from 'react';
+
 import { ArrowDownIcon, SearchIcon } from '@/assets/icons';
-import { Button, Icon, Badge } from '@/components/ui';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  Button,
+  Icon,
+  Badge,
+} from '@/components/ui';
 import type { AttendanceMember } from '@/types/admin/attendance';
 import { cn } from '@/lib/cn';
 
@@ -14,7 +23,9 @@ interface AttendanceCardProps extends React.HTMLAttributes<HTMLDivElement> {
   title: string;
   isCurrentWeek?: boolean;
   members: AttendanceMember[];
-  onSave?: (updates: { id: number; status: 'ATTEND' | 'ABSENT' }[]) => void;
+  onSave?: (updates: { id: number; status: 'ATTEND' | 'ABSENT' }[]) => void | Promise<void>;
+  onDirtyChange?: (dirty: boolean) => void;
+  onExpand?: () => void;
 }
 
 function AttendanceCard({
@@ -24,11 +35,14 @@ function AttendanceCard({
   isCurrentWeek,
   members,
   onSave,
+  onDirtyChange,
+  onExpand,
   ...props
 }: AttendanceCardProps) {
   const {
     isCollapsed,
     isEditing,
+    isDirty,
     searchQuery,
     setSearchQuery,
     filteredMembers,
@@ -39,7 +53,22 @@ function AttendanceCard({
     saveEdit,
     toggleStatus,
     getEditStatus,
-  } = useAttendanceCard({ members, onSave });
+  } = useAttendanceCard({ members, onSave, onDirtyChange });
+
+  const handleExpand = () => {
+    onExpand?.();
+    expand();
+  };
+
+  const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
+
+  const handleCancel = () => {
+    if (isDirty) {
+      setCancelDialogOpen(true);
+    } else {
+      cancelEdit();
+    }
+  };
 
   if (isCollapsed) {
     return (
@@ -47,7 +76,7 @@ function AttendanceCard({
         <button
           type="button"
           className="border-line flex h-[72px] w-full cursor-pointer items-center justify-between rounded-md border px-600"
-          onClick={expand}
+          onClick={handleExpand}
         >
           <div className="flex items-center gap-300">
             <span className="typo-sub1 text-text-normal">{date}</span>
@@ -77,7 +106,7 @@ function AttendanceCard({
             </span>
           )}
         </div>
-        <span className="flex size-12 items-center justify-center">
+        <span className="flex items-center justify-center">
           <Icon src={ArrowDownIcon} size={24} className="rotate-180 text-white" />
         </span>
       </button>
@@ -103,7 +132,7 @@ function AttendanceCard({
           </div>
           {isEditing ? (
             <div className="flex gap-200">
-              <Button variant="secondary" size="lg" onClick={cancelEdit}>
+              <Button variant="secondary" size="lg" onClick={handleCancel}>
                 취소
               </Button>
               <Button variant="primary" size="lg" onClick={saveEdit}>
@@ -123,20 +152,37 @@ function AttendanceCard({
           <AttendanceTableRow isEditing={isEditing} position="top" />
 
           {/* Member rows */}
-          {filteredMembers.map((member) => (
-            <AttendanceMemberRow
-              key={member.id}
-              member={member}
-              isEditing={isEditing}
-              status={getEditStatus(member.id) ?? member.status}
-              onToggle={toggleStatus}
-            />
-          ))}
+          {filteredMembers.length > 0 ? (
+            filteredMembers.map((member) => (
+              <AttendanceMemberRow
+                key={member.id}
+                member={member}
+                isEditing={isEditing}
+                status={getEditStatus(member.id) ?? member.status}
+                onToggle={toggleStatus}
+              />
+            ))
+          ) : (
+            <div className="border-line flex items-center justify-center border-r border-b border-l py-800">
+              <span className="typo-body1 text-text-alternative">검색 결과가 없습니다.</span>
+            </div>
+          )}
 
           {/* Footer row */}
           <AttendanceTableRow isEditing={isEditing} position="bottom" />
         </div>
       </div>
+
+      <AlertDialog
+        open={cancelDialogOpen}
+        status="danger"
+        onOpenChange={setCancelDialogOpen}
+        title="변경 사항이 저장되지 않았어요"
+        description={'지금 취소하면 수정 중인 내용이 사라집니다.\n계속하시겠어요?'}
+      >
+        <AlertDialogAction onClick={cancelEdit}>취소하기</AlertDialogAction>
+        <AlertDialogCancel>계속 수정</AlertDialogCancel>
+      </AlertDialog>
     </div>
   );
 }

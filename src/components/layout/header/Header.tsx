@@ -4,7 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { LogoGrayIcon, AvatarIcon, ExitToAppIcon } from '@/assets/icons';
-import { useClubName } from '@/stores';
+import { useClubName, useUserProfileImageUrl } from '@/stores';
 import { PostingActions } from './PostingActions';
 import { DefaultActions } from './DefaultActions';
 import { MobileNavSheet } from './MobileNavSheet';
@@ -29,6 +29,7 @@ export default function Header({ isMain = true }: HeaderProps) {
   const router = useRouter();
   const pathname = usePathname();
   const clubName = useClubName();
+  const profileImageUrl = useUserProfileImageUrl();
   const isPostingPage = pathname.includes('/write') || /^\/board\/edit\/\d+$/.test(pathname);
 
   return (
@@ -55,7 +56,17 @@ export default function Header({ isMain = true }: HeaderProps) {
             onClick={() => router.push('/mypage')}
             className="cursor-pointer rounded-full"
           >
-            <Image src={AvatarIcon} alt="avatar" width={40} height={40} />
+            {profileImageUrl ? (
+              <Image
+                src={profileImageUrl}
+                alt="avatar"
+                width={40}
+                height={40}
+                className="h-10 w-10 rounded-full object-cover"
+              />
+            ) : (
+              <Image src={AvatarIcon} alt="avatar" width={40} height={40} />
+            )}
           </button>
         </div>
       </header>
@@ -98,7 +109,11 @@ export default function Header({ isMain = true }: HeaderProps) {
               );
             })}
         </div>
-        {isMain && <span className="typo-sub1 text-neutral-700">{clubName}</span>}
+        {isMain && (
+          <span className="typo-sub1 absolute left-1/2 -translate-x-1/2 text-neutral-700">
+            {clubName}
+          </span>
+        )}
         {isMain && (isPostingPage ? <PostingActions /> : <DefaultActions />)}
       </header>
     </>

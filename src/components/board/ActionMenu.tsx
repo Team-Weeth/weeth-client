@@ -24,9 +24,6 @@ interface ActionMenuProps {
 
 /**
  * 수정/삭제 드롭다운 메뉴
- *
- * 외부 핸들러에 동작을 위임합니다. post 삭제처럼 확인 다이얼로그 + API 호출이
- * 내장된 동작이 필요하면 `PostActionMenu`를 사용하세요.
  */
 function ActionMenu({
   className,
@@ -37,7 +34,7 @@ function ActionMenu({
   triggerClassName,
 }: ActionMenuProps) {
   return (
-    <DropdownMenu modal>
+    <DropdownMenu modal={false}>
       <DropdownMenuTrigger asChild>
         <Button
           type="button"

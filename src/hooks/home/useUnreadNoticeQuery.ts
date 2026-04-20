@@ -9,6 +9,7 @@ export function useUnreadNoticeQuery() {
     queryKey: ['home', 'unread-notice', clubId],
     queryFn: () => homeApi.getUnreadNotice(clubId!).then((res) => res.data.data),
     enabled: !!clubId,
-    staleTime: 0, // 공지 읽음 상태가 변경될 수 있어 항상 최신 데이터 조회
+    staleTime: 0,
+    refetchOnMount: 'always', // 홈으로 돌아올 때 읽음 상태 반영
   });
 }
