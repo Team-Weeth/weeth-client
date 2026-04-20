@@ -9,12 +9,15 @@ import { useRouter } from 'next/navigation';
 import { useRecentNoticesQuery } from '@/hooks/home';
 import { stripHtml } from '@/lib/stripHtml';
 import { EmptyBox } from './EmptyBox';
+import { NoticeBoardBoxSkeleton } from './skeleton';
 import { useIsAdmin } from '@/hooks/shared';
 
 export function NoticeBoardBox() {
   const router = useRouter();
-  const { data: notices = [] } = useRecentNoticesQuery();
+  const { data: notices = [], isPending } = useRecentNoticesQuery();
   const { isAdmin } = useIsAdmin();
+
+  if (isPending) return <NoticeBoardBoxSkeleton />;
 
   return (
     <div className="bg-container-neutral flex flex-col rounded-lg pb-300">

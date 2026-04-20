@@ -6,11 +6,14 @@ import { useAttendanceQuery } from '@/hooks/attendance';
 import { useIsAdmin } from '@/hooks/shared';
 import { formatDateWithTimeRange } from '@/utils/shared/date';
 import { EmptyBox } from '@/components/home/EmptyBox';
+import { TodayScheduleBoxSkeleton } from '@/components/home/skeleton';
 
 export function TodayScheduleBox() {
   const router = useRouter();
-  const { data } = useAttendanceQuery();
+  const { data, isPending } = useAttendanceQuery();
   const { isAdmin } = useIsAdmin();
+
+  if (isPending) return <TodayScheduleBoxSkeleton />;
 
   return (
     <div className="bg-container-neutral rounded-lg">

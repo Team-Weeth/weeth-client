@@ -12,11 +12,19 @@ import { AvatarIcon } from '@/assets/icons';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useIsAdmin } from '@/hooks/shared';
+import { HomeBoardContentSkeleton } from '@/components/home/skeleton';
 
 function HomeBoardContent() {
   const { isAdmin } = useIsAdmin();
   const router = useRouter();
-  const { data: posts, fetchNextPage, hasNextPage, isFetchingNextPage } = useRecentPostsQuery();
+  const {
+    data: posts,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isPending,
+  } = useRecentPostsQuery();
+
   const { data: myUserId } = useHomeQuery({
     select: (data) => data.myInfo.userInfo.id,
   });
@@ -29,6 +37,8 @@ function HomeBoardContent() {
       fetchNextPage();
     }
   }, [isIntersecting, hasNextPage, isFetchingNextPage, fetchNextPage]);
+
+  if (isPending) return <HomeBoardContentSkeleton />;
 
   if (!posts || posts.length === 0) {
     return (
