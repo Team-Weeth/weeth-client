@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useRef, useState, useSyncExternalStore } from 'react';
 
 import type { AxiosError } from 'axios';
 import { useRouter } from 'next/navigation';
@@ -14,6 +14,7 @@ import { clubApi } from '@/lib/apis/club';
 import { inviteCodeSchema, type InviteCodeFormData } from '@/lib/schemas/inviteCode';
 import { useClubActions } from '@/stores';
 import type { Club } from '@/types';
+import { getInviteLinkExample, getInviteLinkExampleServerFallback } from '@/utils/shared';
 
 import { ClubSearchDropdown } from './ClubSearchDropdown';
 import { ClubSelectedCard } from './ClubSelectedCard';
@@ -41,6 +42,11 @@ function InviteCodeForm() {
     code: string;
   } | null>(null);
   const latestRequestIdRef = useRef(0);
+  const inviteLinkPlaceholder = useSyncExternalStore(
+    () => () => {},
+    getInviteLinkExample,
+    getInviteLinkExampleServerFallback,
+  );
 
   const {
     control,
@@ -129,7 +135,7 @@ function InviteCodeForm() {
                   {...field}
                   error={!!serverError}
                   clearable
-                  placeholder="https://weeth.kr/clubId=TSID?code=UUID"
+                  placeholder={inviteLinkPlaceholder}
                   className="bg-container-neutral-alternative px-300 py-400"
                   onChange={(e) => {
                     field.onChange(e);
