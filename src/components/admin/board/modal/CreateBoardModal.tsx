@@ -1,9 +1,6 @@
 'use client';
 
-import {
-  BoardFormModal,
-  type BoardFormData,
-} from '@/components/admin/board/modal/BoardFormModal';
+import { BoardFormModal, type BoardFormData } from '@/components/admin/board/modal/BoardFormModal';
 
 type CreateBoardFormData = BoardFormData;
 

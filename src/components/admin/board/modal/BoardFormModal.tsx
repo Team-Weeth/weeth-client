@@ -2,7 +2,10 @@
 
 import { Button, Switch } from '@/components/ui';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
-import { DiscardConfirmDialog, type DiscardMessages } from '@/components/admin/modal/DiscardConfirmDialog';
+import {
+  DiscardConfirmDialog,
+  type DiscardMessages,
+} from '@/components/admin/modal/DiscardConfirmDialog';
 import { BoardFormField } from '@/components/admin/board/modal/BoardFormField';
 import { BoardFormHeader } from '@/components/admin/board/modal/BoardFormHeader';
 import { cn } from '@/lib/cn';
@@ -65,28 +68,16 @@ function BoardFormModal({
   onDelete,
 }: BoardFormModalProps) {
   const discardMessages = DISCARD_MESSAGES[mode];
-  const {
-    form,
-    updateField,
-    discardSource,
-    setDiscardSource,
-    tryClose,
-    confirmDiscard,
-  } = useDiscardableForm<BoardFormData>({
-    defaultValue: DEFAULT_FORM,
-    initialValues,
-    open,
-  });
+  const { form, updateField, discardSource, setDiscardSource, tryClose, confirmDiscard } =
+    useDiscardableForm<BoardFormData>({
+      defaultValue: DEFAULT_FORM,
+      initialValues,
+      open,
+    });
 
   const handleClose = () => onOpenChange(false);
   const handleTryClose = (source: 'close' | 'cancel') => tryClose(source, handleClose);
-  const handleDiscardConfirm = () => {
-    if (discardSource === 'delete') {
-      confirmDiscard(() => onDelete?.());
-    } else {
-      confirmDiscard(handleClose);
-    }
-  };
+  const handleDiscardConfirm = () => confirmDiscard(handleClose);
   const dismissDiscard = () => setDiscardSource(null);
 
   const handleSubmit = () => {

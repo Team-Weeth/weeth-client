@@ -1,9 +1,6 @@
 'use client';
 
-import {
-  BoardFormModal,
-  type BoardFormData,
-} from '@/components/admin/board/modal/BoardFormModal';
+import { BoardFormModal, type BoardFormData } from '@/components/admin/board/modal/BoardFormModal';
 import type { Board } from '@/types/admin/board';
 
 type EditBoardFormData = BoardFormData;
@@ -16,13 +13,7 @@ interface EditBoardModalProps {
   onDelete?: (board: Board) => void;
 }
 
-function EditBoardModal({
-  open,
-  onOpenChange,
-  board,
-  onSubmit,
-  onDelete,
-}: EditBoardModalProps) {
+function EditBoardModal({ open, onOpenChange, board, onSubmit, onDelete }: EditBoardModalProps) {
   return (
     <BoardFormModal
       open={open}

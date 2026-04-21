@@ -20,10 +20,7 @@ function BoardFormField({
   labelVariant = 'caption',
   children,
 }: BoardFormFieldProps) {
-  const labelClass = cn(
-    'text-text-normal flex h-12 items-center px-400',
-    LABEL_TYPO[labelVariant],
-  );
+  const labelClass = cn('text-text-normal flex h-12 items-center px-400', LABEL_TYPO[labelVariant]);
 
   return (
     <div className="flex flex-col">

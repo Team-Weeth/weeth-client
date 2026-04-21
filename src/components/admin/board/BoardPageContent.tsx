@@ -99,12 +99,7 @@ interface SortableBoardCardProps {
   onDelete: () => void;
 }
 
-function SortableBoardCard({
-  board,
-  onToggleComments,
-  onEdit,
-  onDelete,
-}: SortableBoardCardProps) {
+function SortableBoardCard({ board, onToggleComments, onEdit, onDelete }: SortableBoardCardProps) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: board.boardId,
   });

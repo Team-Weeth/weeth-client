@@ -1,10 +1,6 @@
 'use client';
 
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-} from '@/components/ui';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel } from '@/components/ui';
 
 interface DeleteBoardDialogProps {
   name: string;
@@ -14,7 +10,13 @@ interface DeleteBoardDialogProps {
   trigger?: React.ReactElement;
 }
 
-function DeleteBoardDialog({ name, open, onOpenChange, onConfirm, trigger }: DeleteBoardDialogProps) {
+function DeleteBoardDialog({
+  name,
+  open,
+  onOpenChange,
+  onConfirm,
+  trigger,
+}: DeleteBoardDialogProps) {
   return (
     <AlertDialog
       open={open}
