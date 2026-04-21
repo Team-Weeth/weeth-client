@@ -28,7 +28,7 @@ function ClubList({ clubs, className, ...props }: ClubListProps) {
   async function handleSelect(club: ClubDto) {
     await setClubCookie(club.id, club.name);
     setClub(club.id, club.name);
-    router.push('/home');
+    router.push(`/${club.id}/home`);
   }
 
   if (!clubs.length) return null;

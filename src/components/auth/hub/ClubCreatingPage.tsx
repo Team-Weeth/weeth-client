@@ -26,12 +26,13 @@ function ClubCreatingPage({ onCancel }: ClubCreatingPageProps) {
   const animationDoneRef = useRef(false);
   const hasNavigatedRef = useRef(false);
   const requestStartedRef = useRef(false);
+  const clubIdRef = useRef<string | null>(null);
 
   const navigate = useCallback(() => {
-    if (hasNavigatedRef.current) return;
+    if (hasNavigatedRef.current || !clubIdRef.current) return;
     hasNavigatedRef.current = true;
     resetDraft();
-    router.replace('/home?onboarding=club-created');
+    router.replace(`/${clubIdRef.current}/home?onboarding=club-created`);
   }, [resetDraft, router]);
 
   const progress = useProgressAnimation({
@@ -75,6 +76,7 @@ function ClubCreatingPage({ onCancel }: ClubCreatingPageProps) {
         }
 
         const clubId = data.clubId;
+        clubIdRef.current = clubId;
         await setClubCookie(clubId, name);
         apiDoneRef.current = true;
         setClub(clubId, name);

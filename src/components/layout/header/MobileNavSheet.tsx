@@ -2,7 +2,7 @@
 
 import { Fragment } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { useParams, usePathname } from 'next/navigation';
 import {
   ExitIcon,
   PersonIcon,
@@ -17,17 +17,18 @@ import { logoutAction } from '@/lib/actions/auth';
 import { cn } from '@/lib/cn';
 import { useIsAdmin } from '@/hooks/shared';
 
-const NAV_ITEMS = [
-  { id: 'home', label: 'HOME', href: '/home', icon: HomeIcon },
-  { id: 'board', label: '게시판', href: '/board', icon: PinIcon },
-  { id: 'attendance', label: '출석', href: '/attendance', icon: CheckRoundIcon },
-  { id: 'admin', label: '관리자 서비스', href: '/admin', icon: ExitIcon },
-  { id: 'mypage', label: 'MY', href: '/mypage', icon: PersonIcon },
-] as const;
-
 function MobileNavSheet() {
   const pathname = usePathname();
+  const { clubId } = useParams<{ clubId: string }>();
   const { isAdmin } = useIsAdmin();
+
+  const navItems = [
+    { id: 'home', label: 'HOME', href: `/${clubId}/home`, icon: HomeIcon },
+    { id: 'board', label: '게시판', href: `/${clubId}/board`, icon: PinIcon },
+    { id: 'attendance', label: '출석', href: `/${clubId}/attendance`, icon: CheckRoundIcon },
+    { id: 'admin', label: '관리자 서비스', href: `/${clubId}/admin`, icon: ExitIcon },
+    { id: 'mypage', label: 'MY', href: `/${clubId}/mypage`, icon: PersonIcon },
+  ] as const;
 
   return (
     <Sheet>
@@ -45,7 +46,7 @@ function MobileNavSheet() {
         className="tablet:max-w-[375px] bg-container-neutral top-[64px] h-[calc(100dvh-64px)] w-full max-w-[440px]"
       >
         <nav className="flex flex-1 flex-col gap-200 px-450 py-400" aria-label="주요 메뉴">
-          {NAV_ITEMS.filter(({ id }) => id !== 'admin' || isAdmin).map(
+          {navItems.filter(({ id }) => id !== 'admin' || isAdmin).map(
             ({ id, label, href, icon }) => {
               const isActive = pathname.startsWith(href);
               return (

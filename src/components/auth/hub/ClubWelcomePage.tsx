@@ -6,19 +6,21 @@ import { useRouter } from 'next/navigation';
 
 import { Button, ClubAvatar } from '@/components/ui';
 import { useAuthName, useClubName, useClubProfileImageUrl } from '@/stores';
+import { useClubId } from '@/stores/useClubStore';
 
 function ClubWelcomePage() {
   const router = useRouter();
   const name = useAuthName();
+  const clubId = useClubId();
   const clubName = useClubName();
   const clubProfileImageUrl = useClubProfileImageUrl();
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      router.replace('/home');
+      router.replace(`/${clubId}/home`);
     }, 3000);
     return () => clearTimeout(timer);
-  }, [router]);
+  }, [router, clubId]);
 
   return (
     <div className="flex min-h-screen items-center justify-center px-400">
@@ -35,7 +37,7 @@ function ClubWelcomePage() {
             variant="primary"
             size="lg"
             className="w-full"
-            onClick={() => router.push('/home')}
+            onClick={() => router.push(`/${clubId}/home`)}
           >
             바로 사이트로 이동하기
           </Button>

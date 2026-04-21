@@ -1,17 +1,18 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { CompleteIcon } from '@/assets/icons';
 import Image from 'next/image';
 
 export function AlertBanner() {
   const router = useRouter();
+  const { clubId } = useParams<{ clubId: string }>();
 
   return (
     <button
       type="button"
       className="bg-container-primary-alternative mt-300 flex w-full cursor-pointer gap-[10px] rounded-md p-300 text-left"
-      onClick={() => router.push('/mypage')}
+      onClick={() => router.push(`/${clubId}/mypage`)}
     >
       <Image src={CompleteIcon} width={40} height={40} alt="complete" />
       <div className="flex flex-col gap-100">

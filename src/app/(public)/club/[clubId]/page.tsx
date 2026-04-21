@@ -1,11 +1,8 @@
 import { cookies } from 'next/headers';
-import Link from 'next/link';
 
-import { ClubAccessPage, ClubConfirmCard } from '@/components/auth/invite';
-import { buttonVariants } from '@/components/ui';
+import { ClubAccessPage, ClubConfirmCard, ClubNotFoundPage } from '@/components/auth/invite';
 import { apiServer } from '@/lib/apis';
 import { ACCESS_TOKEN_KEY } from '@/lib/apis/cookies';
-import { cn } from '@/lib/cn';
 import type { Club } from '@/types';
 
 interface ClubPageProps {
@@ -24,17 +21,7 @@ export default async function ClubPage({ params, searchParams }: ClubPageProps) 
     const { data } = await apiServer.get<{ data: Club }>(`/clubs/${clubId}`);
     club = data;
   } catch {
-    return (
-      <div className="flex min-h-screen flex-col items-center justify-center gap-500 px-400">
-        <h1 className="typo-h3 text-text-strong text-center">존재하지 않는 동아리입니다.</h1>
-        <Link
-          href="/"
-          className={cn(buttonVariants({ variant: 'primary', size: 'lg' }), 'w-full max-w-80')}
-        >
-          처음으로 돌아가기
-        </Link>
-      </div>
-    );
+    return <ClubNotFoundPage />;
   }
 
   if (code) {

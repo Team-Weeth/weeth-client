@@ -6,7 +6,7 @@ import type { Club } from '@/types';
 
 interface ClubAccessPageProps {
   club: Club;
-  loginHref: string;
+  loginHref?: string;
 }
 
 function ClubAccessPage({ club, loginHref }: ClubAccessPageProps) {
@@ -26,12 +26,14 @@ function ClubAccessPage({ club, loginHref }: ClubAccessPageProps) {
           <span className="typo-h3 text-text-strong">{club.name}</span>
           <span className="typo-body2 text-text-normal">{club.description}</span>
         </div>
-        <Link
-          href={loginHref}
-          className={cn(buttonVariants({ variant: 'primary', size: 'lg' }), 'w-full')}
-        >
-          로그인하고 들어가기
-        </Link>
+        {loginHref && (
+          <Link
+            href={loginHref}
+            className={cn(buttonVariants({ variant: 'primary', size: 'lg' }), 'w-full')}
+          >
+            로그인하고 들어가기
+          </Link>
+        )}
       </div>
     </div>
   );

@@ -1,6 +1,6 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import {
   AlertDialog,
   AlertDialogContent,
@@ -19,10 +19,11 @@ interface CardinalMissingModalProps {
 
 export function CardinalMissingModal({ open, onClose }: CardinalMissingModalProps) {
   const router = useRouter();
+  const { clubId } = useParams<{ clubId: string }>();
 
   // TODO: 기수 입력 페이지 경로 확정 후 변경
   const handleComplete = () => {
-    router.push('/mypage');
+    router.push(`/${clubId}/mypage`);
   };
 
   return (

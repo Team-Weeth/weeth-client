@@ -116,7 +116,7 @@ function ClubJoiningPage({ clubName, clubId, code }: ClubJoiningPageProps) {
           <h1 className="typo-h3 text-text-strong text-center">{errorState.message}</h1>
           {errorState.code === CLUB_JOIN_ERROR_CODE.ALREADY_JOINED ? (
             <Link
-              href="/home"
+              href={`/${clubId}/home`}
               className={cn(buttonVariants({ variant: 'primary', size: 'lg' }), 'w-full')}
             >
               홈으로 이동

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
 
 import { useHomeQuery } from '@/hooks/home';
 
@@ -13,6 +13,7 @@ const HOME_TUTORIAL_SEEN_KEY = 'home-tutorial-seen';
 
 function HomeTutorialLauncher() {
   const router = useRouter();
+  const { clubId } = useParams<{ clubId: string }>();
   const searchParams = useSearchParams();
   const [open, setOpen] = useState(() => {
     if (typeof window === 'undefined') return false;
@@ -29,9 +30,9 @@ function HomeTutorialLauncher() {
   useEffect(() => {
     const onboarding = searchParams.get('onboarding');
     if (onboarding === 'club-created') {
-      router.replace('/home', { scroll: false });
+      router.replace(`/${clubId}/home`, { scroll: false });
     }
-  }, [router, searchParams]);
+  }, [router, searchParams, clubId]);
 
   const handleOpenChange = (nextOpen: boolean) => {
     setOpen(nextOpen);

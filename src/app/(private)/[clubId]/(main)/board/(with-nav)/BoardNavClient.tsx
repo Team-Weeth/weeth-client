@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { usePathname, useRouter } from 'next/navigation';
+import { useParams, usePathname, useRouter } from 'next/navigation';
 
 import { BoardNav, CommentDirtyGuardDialog } from '@/components/board';
 import {
@@ -24,9 +24,10 @@ function BoardNavClient({ items }: BoardNavClientProps) {
   const setBoardTypeMap = useSetBoardTypeMap();
   const pathname = usePathname();
   const router = useRouter();
+  const { clubId: clubIdParam } = useParams<{ clubId: string }>();
 
   const clubId = useClubId();
-  const isDetailPage = /^\/board\/\d+$/.test(pathname);
+  const isDetailPage = /\/board\/\d+$/.test(pathname);
 
   const commentDirty = useCommentDirty();
   const setCommentDirty = useSetCommentDirty();
@@ -58,7 +59,7 @@ function BoardNavClient({ items }: BoardNavClientProps) {
     }
 
     if (isDetailPage) {
-      router.push('/board');
+      router.push(`/${clubIdParam}/board`);
     }
   };
 

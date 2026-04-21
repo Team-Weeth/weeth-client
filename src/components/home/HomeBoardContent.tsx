@@ -10,12 +10,13 @@ import { PostActionMenu, PostCard } from '../board';
 import { Avatar, AvatarFallback, Button } from '@/components/ui';
 import { AvatarIcon } from '@/assets/icons';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { useIsAdmin } from '@/hooks/shared';
 
 function HomeBoardContent() {
   const { isAdmin } = useIsAdmin();
   const router = useRouter();
+  const { clubId } = useParams<{ clubId: string }>();
   const { data: posts, fetchNextPage, hasNextPage, isFetchingNextPage } = useRecentPostsQuery();
   const { data: myUserId } = useHomeQuery({
     select: (data) => data.myInfo.userInfo.id,
@@ -49,7 +50,7 @@ function HomeBoardContent() {
           <Button
             variant="primary"
             size="lg"
-            onClick={() => router.push('/board/write?type=GENERAL')}
+            onClick={() => router.push(`/${clubId}/board/write?type=GENERAL`)}
           >
             게시글 작성하기
           </Button>
@@ -85,7 +86,7 @@ function HomeBoardContent() {
                 )}
               </PostCard.Header>
               <Link
-                href={`/board/${post.id}`}
+                href={`/${clubId}/board/${post.id}`}
                 className="after:absolute after:inset-0 after:content-['']"
               >
                 <PostCard.ListContent
@@ -103,7 +104,7 @@ function HomeBoardContent() {
                   likeCount={post.likeCount}
                   isLiked={post.isLiked}
                   commentCount={post.commentCount}
-                  onComment={() => router.push(`/board/${post.id}#comments`)}
+                  onComment={() => router.push(`/${clubId}/board/${post.id}#comments`)}
                 />
               </div>
             </PostCard.Root>

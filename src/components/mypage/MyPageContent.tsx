@@ -1,5 +1,6 @@
 'use client';
 
+import { useParams } from 'next/navigation';
 import { Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbPage } from '@/components/ui';
 import { cn } from '@/lib/cn';
 
@@ -16,6 +17,7 @@ import { useMyClubsQuery } from '@/hooks/queries/mypage/useMyClubsQuery';
 type MyPageContentProps = React.HTMLAttributes<HTMLDivElement>;
 
 function MyPageContent({ className, ...props }: MyPageContentProps) {
+  const { clubId } = useParams<{ clubId: string }>();
   const { data: me } = useMyMemberQuery();
   const { data: clubs = [] } = useMyClubsQuery();
 
@@ -105,8 +107,8 @@ function MyPageContent({ className, ...props }: MyPageContentProps) {
               variant="copy"
               copyText="help@weeth.kr"
             />
-            <SupportListItem title="서비스 이용 약관" variant="link" href="/terms" />
-            <SupportListItem title="개인정보 처리방침" variant="link" href="/privacy" />
+            <SupportListItem title="서비스 이용 약관" variant="link" href={`/${clubId}/terms`} />
+            <SupportListItem title="개인정보 처리방침" variant="link" href={`/${clubId}/privacy`} />
           </div>
         </InfoSection>
       </div>

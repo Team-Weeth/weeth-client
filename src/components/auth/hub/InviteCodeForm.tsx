@@ -100,7 +100,7 @@ function InviteCodeForm() {
       await clubApi.join(parsedLink.clubId, parsedLink.code);
       await setClubCookie(selectedClub.id, selectedClub.name);
       setClub(selectedClub.id, selectedClub.name);
-      router.push('/home');
+      router.push(`/${selectedClub.id}/home`);
     } catch (error) {
       const axiosError = error as AxiosError<{ message?: string }>;
       setServerError(axiosError.response?.data?.message ?? '가입에 실패했습니다.');

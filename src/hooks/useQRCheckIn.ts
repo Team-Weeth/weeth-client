@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 
 import { ATTENDANCE_ERROR_MESSAGE } from '@/constants/attendance';
 import { attendanceApi } from '@/lib/apis/attendance';
@@ -14,6 +14,7 @@ interface UseQRCheckInParams {
 
 function useQRCheckIn({ qrSessionId, qrCode, onSuccess }: UseQRCheckInParams) {
   const router = useRouter();
+  const { clubId: clubIdParam } = useParams<{ clubId: string }>();
   const clubId = useClubId();
   const [isChecked, setIsChecked] = useState(false);
   const checkedKey = useRef<string | null>(null);
@@ -34,12 +35,12 @@ function useQRCheckIn({ qrSessionId, qrCode, onSuccess }: UseQRCheckInParams) {
         const errorCode = (error as { response?: { data?: { code?: number } } }).response?.data
           ?.code;
         toastError(errorCode ? ATTENDANCE_ERROR_MESSAGE[errorCode] : undefined);
-        router.replace('/attendance');
+        router.replace(`/${clubIdParam}/attendance`);
       }
     };
 
     checkIn();
-  }, [clubId, qrSessionId, qrCode, router, onSuccess]);
+  }, [clubId, clubIdParam, qrSessionId, qrCode, router, onSuccess]);
 
   return { isChecked };
 }

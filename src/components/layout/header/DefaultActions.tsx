@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import { usePathname, useRouter } from 'next/navigation';
+import { useParams, usePathname, useRouter } from 'next/navigation';
 import dynamic from 'next/dynamic';
 
 import { Button, Icon } from '@/components/ui';
@@ -20,6 +20,7 @@ const ProfileIncompleteModal = dynamic(() =>
 function DefaultActions() {
   const router = useRouter();
   const pathname = usePathname();
+  const { clubId } = useParams<{ clubId: string }>();
   const {
     handleWriteClick,
     handleSkipProfile,
@@ -34,7 +35,7 @@ function DefaultActions() {
   return (
     <>
       <div className="flex items-center gap-200">
-        {pathname.startsWith('/board') && (
+        {pathname.startsWith(`/${clubId}/board`) && (
           <Button
             variant="primary"
             size="md"
@@ -49,7 +50,7 @@ function DefaultActions() {
           <Button
             variant="secondary"
             size="md"
-            onClick={() => router.push('/admin')}
+            onClick={() => router.push(`/${clubId}/admin`)}
             className="typo-button1 text-text-strong gap-100"
           >
             <Icon src={ExitToAppIcon} alt="exit" size={20} className="text-icon-normal" />
@@ -59,7 +60,7 @@ function DefaultActions() {
         <button
           type="button"
           aria-label="마이페이지로 이동"
-          onClick={() => router.push('/mypage')}
+          onClick={() => router.push(`/${clubId}/mypage`)}
           className="cursor-pointer rounded-full"
         >
           {profileImageUrl ? (

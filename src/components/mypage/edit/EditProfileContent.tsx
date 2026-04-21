@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
@@ -34,6 +34,7 @@ interface EditProfileContentProps extends React.HTMLAttributes<HTMLDivElement> {
 
 function EditProfileContent({ className, schools, majors, ...props }: EditProfileContentProps) {
   const router = useRouter();
+  const { clubId } = useParams<{ clubId: string }>();
   const { data: me } = useMyMemberQuery();
   const { mutate: updateProfile, isPending } = useUpdateProfileMutation();
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -79,7 +80,7 @@ function EditProfileContent({ className, schools, majors, ...props }: EditProfil
       {
         onSuccess: () => {
           toastSuccess('프로필이 수정되었습니다.');
-          router.push('/mypage');
+          router.push(`/${clubId}/mypage`);
         },
         onError: () => {
           toastError('프로필 수정에 실패했습니다.');
@@ -101,7 +102,7 @@ function EditProfileContent({ className, schools, majors, ...props }: EditProfil
           <BreadcrumbList>
             <BreadcrumbItem>
               <BreadcrumbLink asChild>
-                <Link href="/mypage" className="typo-caption1 text-text-alternative">
+                <Link href={`/${clubId}/mypage`} className="typo-caption1 text-text-alternative">
                   My
                 </Link>
               </BreadcrumbLink>

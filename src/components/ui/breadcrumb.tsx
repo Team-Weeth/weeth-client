@@ -1,5 +1,8 @@
+'use client';
+
 import * as React from 'react';
 import Link from 'next/link';
+import { useParams } from 'next/navigation';
 import { Slot } from 'radix-ui';
 
 import { ArrowRightIcon, HomeIcon, MoreHorizIcon } from '@/assets/icons';
@@ -15,6 +18,7 @@ interface BreadcrumbListProps extends React.ComponentProps<'ol'> {
 }
 
 function BreadcrumbList({ className, showHome = true, children, ...props }: BreadcrumbListProps) {
+  const { clubId } = useParams<{ clubId: string }>();
   return (
     <ol
       data-slot="breadcrumb-list"
@@ -28,7 +32,7 @@ function BreadcrumbList({ className, showHome = true, children, ...props }: Brea
         <>
           <BreadcrumbItem>
             <BreadcrumbLink asChild>
-              <Link href="/home" className="flex items-center">
+              <Link href={`/${clubId}/home`} className="flex items-center">
                 <Icon
                   src={HomeIcon}
                   size={16}
