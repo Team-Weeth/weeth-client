@@ -81,7 +81,13 @@ function BoardFormModal({
 
   const handleClose = () => onOpenChange(false);
   const handleTryClose = (source: 'close' | 'cancel') => tryClose(source, handleClose);
-  const handleDiscardConfirm = () => confirmDiscard(handleClose);
+  const handleDiscardConfirm = () => {
+    if (discardSource === 'delete') {
+      confirmDiscard(() => onDelete?.());
+    } else {
+      confirmDiscard(handleClose);
+    }
+  };
   const dismissDiscard = () => setDiscardSource(null);
 
   const handleSubmit = () => {
@@ -114,10 +120,10 @@ function BoardFormModal({
           boardName={form.name}
           hasChanges={hasChanges}
           discardSource={discardSource}
+          setDiscardSource={setDiscardSource}
           discardMessages={discardMessages}
           onTryClose={() => handleTryClose('close')}
           onDiscardConfirm={handleDiscardConfirm}
-          onDismissDiscard={dismissDiscard}
           onDelete={onDelete}
         />
 
@@ -151,11 +157,7 @@ function BoardFormModal({
             </div>
           </BoardFormField>
 
-          {/* 접근 권한 */}
-          <div className="flex flex-col">
-            <span className="typo-sub3 text-text-normal flex h-12 items-center px-400">
-              접근 권한
-            </span>
+          <BoardFormField label="접근 권한" labelVariant="sub3">
             <div
               role="radiogroup"
               aria-label="접근 권한"
@@ -182,13 +184,9 @@ function BoardFormModal({
                 );
               })}
             </div>
-          </div>
+          </BoardFormField>
 
-          {/* 댓글 허용 */}
-          <div className="flex flex-col">
-            <span className="typo-sub3 text-text-normal flex h-12 items-center px-400">
-              댓글 허용
-            </span>
+          <BoardFormField label="댓글 허용" labelVariant="sub3">
             <div className="flex p-200">
               <Switch
                 checked={form.commentEnabled}
@@ -196,7 +194,7 @@ function BoardFormModal({
                 aria-label="댓글 허용"
               />
             </div>
-          </div>
+          </BoardFormField>
         </div>
 
         {/* Footer */}

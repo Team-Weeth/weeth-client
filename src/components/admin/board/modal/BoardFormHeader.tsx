@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, type Dispatch, type SetStateAction } from 'react';
 
 import {
   DropdownMenu,
@@ -8,8 +8,10 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/DropdownMenu';
-import { DiscardConfirmDialog, type DiscardMessages } from '@/components/admin/modal/DiscardConfirmDialog';
-import { CustomAlertDialog } from '@/components/alert';
+import {
+  DiscardConfirmDialog,
+  type DiscardMessages,
+} from '@/components/admin/modal/DiscardConfirmDialog';
 import { DeleteBoardDialog } from '@/components/admin/board/modal/DeleteBoardDialog';
 import { ModalIconButton } from '@/components/admin/modal/ModalIconButton';
 import { AdminCloseIcon, AdminMeatballIcon } from '@/assets/icons/admin';
@@ -20,10 +22,10 @@ interface BoardFormHeaderProps {
   boardName: string;
   hasChanges: boolean;
   discardSource: DiscardSource;
+  setDiscardSource: Dispatch<SetStateAction<DiscardSource>>;
   discardMessages: DiscardMessages;
   onTryClose: () => void;
   onDiscardConfirm: () => void;
-  onDismissDiscard: () => void;
   onDelete?: () => void;
 }
 
@@ -32,14 +34,23 @@ function BoardFormHeader({
   boardName,
   hasChanges,
   discardSource,
+  setDiscardSource,
   discardMessages,
   onTryClose,
   onDiscardConfirm,
-  onDismissDiscard,
   onDelete,
 }: BoardFormHeaderProps) {
   const [deleteOpen, setDeleteOpen] = useState(false);
-  const [deleteDiscardOpen, setDeleteDiscardOpen] = useState(false);
+
+  const dismissDiscard = () => setDiscardSource(null);
+
+  // DropdownMenuItem onSelect이 드롭다운을 즉시 닫으면서 AlertDialog 오픈과 포커스가 충돌하므로 한 프레임 늦춤
+  const handleDeleteSelect = () => {
+    requestAnimationFrame(() => {
+      if (hasChanges) setDiscardSource('delete');
+      else setDeleteOpen(true);
+    });
+  };
 
   return (
     <div className="flex h-24 items-center justify-between px-600">
@@ -52,33 +63,17 @@ function BoardFormHeader({
                 <ModalIconButton icon={AdminMeatballIcon} label="더보기" />
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                <DropdownMenuItem
-                  destructive
-                  onSelect={() => {
-                    requestAnimationFrame(() => {
-                      if (hasChanges) {
-                        setDeleteDiscardOpen(true);
-                      } else {
-                        setDeleteOpen(true);
-                      }
-                    });
-                  }}
-                >
+                <DropdownMenuItem destructive onSelect={handleDeleteSelect}>
                   게시판 삭제
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
-            <CustomAlertDialog
-              open={deleteDiscardOpen}
-              onOpenChange={setDeleteDiscardOpen}
-              title={discardMessages.title}
-              actionLabel={discardMessages.actionLabel}
-              cancelLabel={discardMessages.cancelLabel}
-              onAction={() => {
-                setDeleteDiscardOpen(false);
-                onDelete();
-              }}
-              onDismiss={() => setDeleteDiscardOpen(false)}
+            <DiscardConfirmDialog
+              source="delete"
+              currentSource={discardSource}
+              messages={discardMessages}
+              onConfirm={onDiscardConfirm}
+              onDismiss={dismissDiscard}
               placement="below-right"
             />
             <DeleteBoardDialog
@@ -93,17 +88,13 @@ function BoardFormHeader({
           </div>
         )}
         <div className="relative">
-          <ModalIconButton
-            icon={AdminCloseIcon}
-            label="닫기"
-            onClick={onTryClose}
-          />
+          <ModalIconButton icon={AdminCloseIcon} label="닫기" onClick={onTryClose} />
           <DiscardConfirmDialog
             source="close"
             currentSource={discardSource}
             messages={discardMessages}
             onConfirm={onDiscardConfirm}
-            onDismiss={onDismissDiscard}
+            onDismiss={dismissDiscard}
             placement="below-right"
           />
         </div>

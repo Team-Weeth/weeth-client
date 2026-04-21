@@ -28,7 +28,7 @@ import {
   DropdownMenuTrigger,
   Icon,
 } from '@/components/ui';
-import { ArrowDownIcon, InfoCircleIcon, InfoIcon } from '@/assets/icons';
+import { ArrowDownIcon, InfoCircleIcon } from '@/assets/icons';
 import { BoardCard } from '@/components/admin/board/BoardCard';
 import { BoardToolbar } from '@/components/admin/board/BoardToolbar';
 import { CreateBoardModal } from '@/components/admin/board/modal/CreateBoardModal';
@@ -96,9 +96,15 @@ interface SortableBoardCardProps {
   board: Board;
   onToggleComments: (next: boolean) => void;
   onEdit: () => void;
+  onDelete: () => void;
 }
 
-function SortableBoardCard({ board, onToggleComments, onEdit }: SortableBoardCardProps) {
+function SortableBoardCard({
+  board,
+  onToggleComments,
+  onEdit,
+  onDelete,
+}: SortableBoardCardProps) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: board.boardId,
   });
@@ -109,6 +115,7 @@ function SortableBoardCard({ board, onToggleComments, onEdit }: SortableBoardCar
       board={board}
       onToggleComments={onToggleComments}
       onEdit={onEdit}
+      onDelete={onDelete}
       dragHandleProps={{ ...attributes, ...listeners }}
       style={{
         transform: CSS.Transform.toString(transform),
@@ -145,6 +152,19 @@ function BoardPageContent() {
 
   const updateBoard = (boardId: number, patch: Partial<Board>) => {
     setBoards((prev) => prev.map((b) => (b.boardId === boardId ? { ...b, ...patch } : b)));
+  };
+
+  const moveBoardToTrash = (board: Board) => {
+    setBoards((prev) => prev.filter((b) => b.boardId !== board.boardId));
+    setTrashedBoards((prev) => [
+      ...prev,
+      {
+        boardId: board.boardId,
+        name: board.name,
+        description: board.description,
+        daysLeft: 30,
+      },
+    ]);
   };
 
   const sensors = useSensors(
@@ -258,6 +278,7 @@ function BoardPageContent() {
                       updateBoard(board.boardId, { commentEnabled: next })
                     }
                     onEdit={() => setEditingBoardId(board.boardId)}
+                    onDelete={() => moveBoardToTrash(board)}
                   />
                 ))}
               </div>
@@ -325,16 +346,7 @@ function BoardPageContent() {
           });
         }}
         onDelete={(board) => {
-          setBoards((prev) => prev.filter((b) => b.boardId !== board.boardId));
-          setTrashedBoards((prev) => [
-            ...prev,
-            {
-              boardId: board.boardId,
-              name: board.name,
-              description: board.description,
-              daysLeft: 30,
-            },
-          ]);
+          moveBoardToTrash(board);
           setEditingBoardId(null);
         }}
       />

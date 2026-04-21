@@ -117,7 +117,7 @@ function TrashedBoardCard({ board, onRestore, onPermanentDelete }: TrashedBoardC
           <p className="typo-caption2 text-text-alternative truncate">{board.description}</p>
         </div>
       </div>
-      <span className="typo-caption1 text-text-alternative inline-flex w-[71px] shrink-0 items-center justify-center rounded-sm bg-[#B7BCBF1A] px-200 py-100">
+      <span className="bg-container-neutral-alternative typo-caption1 text-text-alternative inline-flex w-[71px] shrink-0 items-center justify-center rounded-sm px-200 py-100">
         D-{board.daysLeft}
       </span>
       <div className="bg-line w-px self-stretch" />

@@ -20,11 +20,6 @@ interface BoardCardProps extends React.HTMLAttributes<HTMLDivElement> {
   dragHandleProps?: React.ButtonHTMLAttributes<HTMLButtonElement>;
 }
 
-const BOARD_ICON: Record<Exclude<Board['kind'], 'NOTICE'>, typeof PinIcon> = {
-  ALL: PinIcon,
-  CUSTOM: PinIcon,
-};
-
 function BoardCard({
   className,
   board,
@@ -76,7 +71,7 @@ function BoardCard({
           {board.kind === 'NOTICE' ? (
             <MegaphoneIcon width={24} height={24} className="text-icon-normal" />
           ) : (
-            <Icon src={BOARD_ICON[board.kind]} size={24} className="text-icon-normal" />
+            <Icon src={PinIcon} size={24} className="text-icon-normal" />
           )}
         </div>
         <div className="flex min-w-0 flex-1 flex-col justify-center gap-200">
