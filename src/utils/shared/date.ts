@@ -9,11 +9,17 @@ export function toDateInputValue(date: Date = new Date()): string {
 }
 
 // 'YYYY-MM-DD' 문자열에 지정한 연수를 더한 날짜를 같은 포맷으로 반환
+// 윤년 2월 29일 + N년처럼 대상 월에 존재하지 않는 날짜는 해당 월의 마지막 날로 clamp한다
+// (Date 생성자의 overflow 정규화로 다음 달로 밀리는 것 방지).
 export function addYearsToDateInput(dateStr: string, years: number): string {
   if (!dateStr) return '';
   const [y, m, d] = dateStr.split('-').map(Number);
-  const next = new Date(y + years, m - 1, d);
-  return toDateInputValue(next);
+  const targetYear = y + years;
+  const targetMonthIndex = m - 1;
+  // 대상 월의 다음 달 0일 = 대상 월의 마지막 날
+  const lastDayOfTargetMonth = new Date(targetYear, targetMonthIndex + 1, 0).getDate();
+  const clampedDay = Math.min(d, lastDayOfTargetMonth);
+  return toDateInputValue(new Date(targetYear, targetMonthIndex, clampedDay));
 }
 
 // '2026년 3월 9일 (월)'

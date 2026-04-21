@@ -21,6 +21,13 @@ function parseSessionDate(dateString: string): ParsedSessionDate | null {
   const year = Number(y);
   const month = Number(mo);
   const day = Number(d);
+  const hours = Number(h);
+  const minutes = Number(mi);
+
+  // 시간/분 범위 가드 (ISO_PATTERN의 \d{2}는 숫자 개수만 보장하고 25:99 같은 값도 통과시키므로 별도 검증)
+  if (hours < 0 || hours > 23 || minutes < 0 || minutes > 59) {
+    return null;
+  }
 
   const utc = new Date(Date.UTC(year, month - 1, day));
   if (
@@ -36,8 +43,8 @@ function parseSessionDate(dateString: string): ParsedSessionDate | null {
     year,
     month,
     day,
-    hours: Number(h),
-    minutes: Number(mi),
+    hours,
+    minutes,
     dayOfWeek: utc.getUTCDay(),
   };
 }
