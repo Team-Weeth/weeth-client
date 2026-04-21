@@ -75,7 +75,9 @@ function CreateScheduleModal({
   };
 
   const isSession = activeTab === 'SESSION';
-  const isDateRangeValid = form.startDate < form.endDate;
+  const isDateRangeValid =
+    form.startDate < form.endDate ||
+    (form.startDate === form.endDate && form.startTime < form.endTime);
   const hasRecurrence = session.recurrenceType !== 'NONE';
   const isRecurrenceEndValid = !hasRecurrence || session.recurrenceEndDate >= form.endDate;
 
