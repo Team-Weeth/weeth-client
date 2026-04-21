@@ -2,8 +2,15 @@
 
 import { useState } from 'react';
 
-import { Button, Icon, Switch, Tag } from '@/components/ui';
-import { CustomAlertDialog } from '@/components/alert';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  Button,
+  Icon,
+  Switch,
+  Tag,
+} from '@/components/ui';
 import { AdminBoardMoveicon } from '@/assets/icons/admin';
 import { PinIcon } from '@/assets/icons';
 import { cn } from '@/lib/cn';
@@ -124,22 +131,21 @@ function BoardCard({
             <Button variant="secondary" size="md" onClick={onEdit}>
               수정
             </Button>
-            <div className="relative">
-              <Button variant="danger" size="md" onClick={() => setDeleteOpen(true)}>
-                삭제
-              </Button>
-              <CustomAlertDialog
-                open={deleteOpen}
-                onOpenChange={setDeleteOpen}
-                title={`'${name}'을 삭제하시겠어요?`}
-                description="게시판을 삭제해도 휴지통에 30일간 보관됩니다."
-                actionLabel="삭제"
-                cancelLabel="취소"
-                onAction={handleDeleteConfirm}
-                onDismiss={() => setDeleteOpen(false)}
-                placement="above-right"
-              />
-            </div>
+            <AlertDialog
+              open={deleteOpen}
+              onOpenChange={setDeleteOpen}
+              title={`'${name}'을 삭제하시겠어요?`}
+              description="게시판을 삭제해도 휴지통에 30일간 보관됩니다."
+              status="danger"
+              trigger={
+                <Button variant="danger" size="md">
+                  삭제
+                </Button>
+              }
+            >
+              <AlertDialogAction onClick={handleDeleteConfirm}>삭제</AlertDialogAction>
+              <AlertDialogCancel>취소</AlertDialogCancel>
+            </AlertDialog>
           </>
         ) : (
           <div className="w-[106px]" aria-hidden />
