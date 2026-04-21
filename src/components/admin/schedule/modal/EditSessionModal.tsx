@@ -189,16 +189,28 @@ function EditSessionModal({ open, onOpenChange, target, onDelete, onSave }: Edit
       />
 
       {/* 삭제 확인 */}
-      <CustomAlertDialog
-        open={deleteConfirmOpen}
-        onOpenChange={setDeleteConfirmOpen}
-        title={'이 세션을 삭제하시겠어요?\n반복 설정이 되어있는 세션이에요.'}
-        actionLabel="이 세션 일정만 삭제"
-        onAction={() => handleDeleteConfirm('this')}
-        secondActionLabel="이후 모든 세션 일정 삭제"
-        onSecondAction={() => handleDeleteConfirm('all')}
-        placement="center"
-      />
+      {isRecurring ? (
+        <CustomAlertDialog
+          open={deleteConfirmOpen}
+          onOpenChange={setDeleteConfirmOpen}
+          title={'이 세션을 삭제하시겠어요?\n반복 설정이 되어있는 세션이에요.'}
+          actionLabel="이 세션 일정만 삭제"
+          onAction={() => handleDeleteConfirm('this')}
+          secondActionLabel="이후 모든 세션 일정 삭제"
+          onSecondAction={() => handleDeleteConfirm('all')}
+          placement="center"
+        />
+      ) : (
+        <CustomAlertDialog
+          open={deleteConfirmOpen}
+          onOpenChange={setDeleteConfirmOpen}
+          title="이 세션을 삭제하시겠어요?"
+          description={'삭제된 세션은 복구할 수 없습니다.\n신중히 확인 후 진행해 주세요.'}
+          actionLabel="삭제"
+          onAction={() => handleDeleteConfirm('this')}
+          placement="center"
+        />
+      )}
     </>
   );
 }
