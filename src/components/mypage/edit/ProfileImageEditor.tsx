@@ -1,7 +1,6 @@
 'use client';
 
 import { useRef, useState } from 'react';
-
 import { Avatar, AvatarFallback, AvatarImage, Icon } from '@/components/ui';
 import { EditIcon } from '@/assets/icons';
 
@@ -31,8 +30,8 @@ function ProfileImageEditor({ name, profileImageUrl, onFileChange }: ProfileImag
   return (
     <div className="relative inline-block">
       <Avatar size={128} type="round">
-        {displayUrl && <AvatarImage src={displayUrl} alt={name} />}
-        <AvatarFallback>{name?.charAt(0)}</AvatarFallback>
+        <AvatarImage src={displayUrl ?? undefined} alt={name} className="object-cover" />
+        <AvatarFallback />
       </Avatar>
       <input
         ref={fileInputRef}
