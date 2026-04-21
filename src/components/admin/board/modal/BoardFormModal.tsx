@@ -2,51 +2,19 @@
 
 import { Button, Switch } from '@/components/ui';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
-import {
-  DiscardConfirmDialog,
-  type DiscardMessages,
-} from '@/components/admin/modal/DiscardConfirmDialog';
+import { DiscardConfirmDialog } from '@/components/admin/modal/DiscardConfirmDialog';
 import { BoardFormField } from '@/components/admin/board/modal/BoardFormField';
 import { BoardFormHeader } from '@/components/admin/board/modal/BoardFormHeader';
+import {
+  DESCRIPTION_MAX,
+  VISIBILITY_OPTIONS,
+  DEFAULT_FORM,
+  DISCARD_MESSAGES,
+  type BoardFormData,
+  type BoardFormMode,
+} from '@/components/admin/board/modal/constants';
 import { cn } from '@/lib/cn';
 import { useDiscardableForm } from '@/hooks/useDiscardableForm';
-import type { BoardVisibility } from '@/types/admin/board';
-
-const DESCRIPTION_MAX = 30;
-
-const VISIBILITY_OPTIONS: { value: BoardVisibility; label: string }[] = [
-  { value: 'PUBLIC', label: '전체 공개' },
-  { value: 'ADMIN_ONLY', label: '관리자 전용' },
-  { value: 'PRIVATE', label: '비공개' },
-];
-
-interface BoardFormData {
-  name: string;
-  description: string;
-  visibility: BoardVisibility;
-  commentEnabled: boolean;
-}
-
-const DEFAULT_FORM: BoardFormData = {
-  name: '',
-  description: '',
-  visibility: 'PUBLIC',
-  commentEnabled: true,
-};
-
-type BoardFormMode = 'create' | 'edit';
-
-const DISCARD_MESSAGES: Record<BoardFormMode, DiscardMessages> = {
-  create: {
-    title: '작성하던 내용이 있어요.\n내용을 폐기하고 나갈까요?',
-    actionLabel: '나가기',
-    cancelLabel: '보관하기',
-  },
-  edit: {
-    title: '변경사항이 있어요.\n변경사항을 폐기할까요?',
-    actionLabel: '변경사항 폐기',
-  },
-};
 
 interface BoardFormModalProps {
   open: boolean;
@@ -210,4 +178,5 @@ function BoardFormModal({
   );
 }
 
-export { BoardFormModal, type BoardFormModalProps, type BoardFormData };
+export { BoardFormModal, type BoardFormModalProps };
+export type { BoardFormData } from '@/components/admin/board/modal/constants';
