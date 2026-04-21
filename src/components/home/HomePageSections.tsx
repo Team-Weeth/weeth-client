@@ -13,7 +13,6 @@ import {
   MainContainer,
   RightContainer,
 } from '@/components/home/DynamicSections';
-import { Header } from '@/components/layout';
 
 export function HomePageSections() {
   return (
@@ -21,19 +20,18 @@ export function HomePageSections() {
       <Suspense fallback={<BannerSkeleton />}>
         <Banner />
       </Suspense>
-      <Header />
-      <div className="flex w-full gap-8 px-16">
-        <div className="flex flex-col gap-300">
+      <div className="tablet:flex-row desktop:px-16 flex w-full flex-col gap-8 px-[18px] py-450">
+        <div className="tablet:w-[304px] tablet:shrink-0 flex flex-col gap-300">
           <Suspense fallback={<LeftContainerSkeleton />}>
             <LeftContainer />
           </Suspense>
         </div>
-        <div className="flex w-full flex-col gap-300">
+        <div className="flex min-w-0 flex-1 flex-col gap-300">
           <Suspense fallback={<MainContainerSkeleton />}>
             <MainContainer />
           </Suspense>
         </div>
-        <div className="flex flex-col gap-300">
+        <div className="desktop:flex tablet:hidden flex flex-col gap-300">
           <Suspense fallback={<RightContainerSkeleton />}>
             <RightContainer />
           </Suspense>

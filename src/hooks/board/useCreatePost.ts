@@ -29,6 +29,9 @@ export function useCreatePost() {
     },
     onSuccess: (result) => {
       queryClient.invalidateQueries({ queryKey: ['posts'] });
+      queryClient.invalidateQueries({ queryKey: ['home', 'recent-posts', clubId] });
+      queryClient.invalidateQueries({ queryKey: ['home', 'recent-notices', clubId] });
+      queryClient.invalidateQueries({ queryKey: ['home', 'unread-notice', clubId] });
       toast({ title: '게시글이 작성되었습니다.', variant: 'success' });
       usePostStore.getState().reset();
       router.push(`/board/${result.id}`);

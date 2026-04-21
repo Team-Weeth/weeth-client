@@ -8,6 +8,7 @@ import { cn } from '@/lib/cn';
 import { AdminSquareLeftIcon, AdminSquareRightIcon } from '@/assets/icons/admin';
 import { DAY_META } from '@/constants/shared/date';
 import { formatDateDisplay, getDaysInMonth, getFirstDayOfMonth } from '@/utils/shared/date';
+import { AdminScopeBoundary } from '@/providers';
 
 interface CalendarPickerProps {
   value: string;
@@ -97,82 +98,84 @@ function CalendarPicker({ value, onChange, minDate, maxDate }: CalendarPickerPro
       </PopoverPrimitive.Trigger>
 
       <PopoverPrimitive.Portal>
-        <PopoverPrimitive.Content
-          sideOffset={4}
-          align="start"
-          className="bg-container-neutral z-50 w-72 rounded-md p-400 shadow-[0px_4px_14px_0px_rgba(0,0,0,0.25)]"
-        >
-          {/* Month navigation */}
-          <div className="mb-300 flex items-center justify-between">
-            <button
-              type="button"
-              onClick={handlePrevMonth}
-              className="hover:bg-container-neutral-interaction flex size-7 cursor-pointer items-center justify-center rounded-sm"
-            >
-              <Image src={AdminSquareLeftIcon} alt="이전" width={16} height={16} />
-            </button>
-            <span className="typo-sub2 text-text-strong">
-              {viewYear}년 {viewMonth}월
-            </span>
-            <button
-              type="button"
-              onClick={handleNextMonth}
-              className="hover:bg-container-neutral-interaction flex size-7 cursor-pointer items-center justify-center rounded-sm"
-            >
-              <Image src={AdminSquareRightIcon} alt="다음" width={16} height={16} />
-            </button>
-          </div>
-
-          {/* Day of week headers */}
-          <div className="mb-100 grid grid-cols-7">
-            {DAY_META.map((d) => (
-              <div
-                key={d.en}
-                className="typo-caption2 text-text-alternative flex h-8 items-center justify-center"
+        <AdminScopeBoundary>
+          <PopoverPrimitive.Content
+            sideOffset={4}
+            align="start"
+            className="bg-container-neutral z-50 w-72 rounded-md p-400 shadow-[0px_4px_14px_0px_rgba(0,0,0,0.25)]"
+          >
+            {/* Month navigation */}
+            <div className="mb-300 flex items-center justify-between">
+              <button
+                type="button"
+                onClick={handlePrevMonth}
+                className="hover:bg-container-neutral-interaction flex size-7 cursor-pointer items-center justify-center rounded-sm"
               >
-                {d.ko}
-              </div>
-            ))}
-          </div>
+                <Image src={AdminSquareLeftIcon} alt="이전" width={16} height={16} />
+              </button>
+              <span className="typo-sub2 text-text-strong">
+                {viewYear}년 {viewMonth}월
+              </span>
+              <button
+                type="button"
+                onClick={handleNextMonth}
+                className="hover:bg-container-neutral-interaction flex size-7 cursor-pointer items-center justify-center rounded-sm"
+              >
+                <Image src={AdminSquareRightIcon} alt="다음" width={16} height={16} />
+              </button>
+            </div>
 
-          {/* Day cells */}
-          <div className="grid grid-cols-7">
-            {/* Empty cells for offset */}
-            {Array.from({ length: firstDay }).map((_, i) => (
-              <div key={`empty-${i}`} className="h-8" />
-            ))}
-
-            {Array.from({ length: daysInMonth }).map((_, i) => {
-              const day = i + 1;
-              const isSelected =
-                selectedYear === viewYear && selectedMonth === viewMonth && selectedDay === day;
-              const isToday =
-                todayYear === viewYear && todayMonth === viewMonth && todayDay === day;
-              const disabled = isDayDisabled(day);
-
-              return (
-                <button
-                  key={day}
-                  type="button"
-                  disabled={disabled}
-                  onClick={() => handleSelectDay(day)}
-                  className={cn(
-                    'typo-caption1 flex h-8 items-center justify-center rounded-sm transition-colors',
-                    disabled
-                      ? 'text-text-disabled cursor-not-allowed'
-                      : isSelected
-                        ? 'bg-brand-primary text-text-inverse cursor-pointer'
-                        : isToday
-                          ? 'text-brand-primary hover:bg-container-neutral-interaction cursor-pointer'
-                          : 'text-text-normal hover:bg-container-neutral-interaction cursor-pointer',
-                  )}
+            {/* Day of week headers */}
+            <div className="mb-100 grid grid-cols-7">
+              {DAY_META.map((d) => (
+                <div
+                  key={d.en}
+                  className="typo-caption2 text-text-alternative flex h-8 items-center justify-center"
                 >
-                  {day}
-                </button>
-              );
-            })}
-          </div>
-        </PopoverPrimitive.Content>
+                  {d.ko}
+                </div>
+              ))}
+            </div>
+
+            {/* Day cells */}
+            <div className="grid grid-cols-7">
+              {/* Empty cells for offset */}
+              {Array.from({ length: firstDay }).map((_, i) => (
+                <div key={`empty-${i}`} className="h-8" />
+              ))}
+
+              {Array.from({ length: daysInMonth }).map((_, i) => {
+                const day = i + 1;
+                const isSelected =
+                  selectedYear === viewYear && selectedMonth === viewMonth && selectedDay === day;
+                const isToday =
+                  todayYear === viewYear && todayMonth === viewMonth && todayDay === day;
+                const disabled = isDayDisabled(day);
+
+                return (
+                  <button
+                    key={day}
+                    type="button"
+                    disabled={disabled}
+                    onClick={() => handleSelectDay(day)}
+                    className={cn(
+                      'typo-caption1 flex h-8 items-center justify-center rounded-sm transition-colors',
+                      disabled
+                        ? 'text-text-disabled cursor-not-allowed'
+                        : isSelected
+                          ? 'bg-brand-primary text-text-inverse cursor-pointer'
+                          : isToday
+                            ? 'text-brand-primary hover:bg-container-neutral-interaction cursor-pointer'
+                            : 'text-text-normal hover:bg-container-neutral-interaction cursor-pointer',
+                    )}
+                  >
+                    {day}
+                  </button>
+                );
+              })}
+            </div>
+          </PopoverPrimitive.Content>
+        </AdminScopeBoundary>
       </PopoverPrimitive.Portal>
     </PopoverPrimitive.Root>
   );
