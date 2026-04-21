@@ -1,20 +1,10 @@
 'use client';
 
-import { useState } from 'react';
-
 import { Button, Switch } from '@/components/ui';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/DropdownMenu';
 import { DiscardConfirmDialog, type DiscardMessages } from '@/components/admin/modal/DiscardConfirmDialog';
-import { CustomAlertDialog } from '@/components/alert';
-import { DeleteBoardDialog } from '@/components/admin/board/modal/DeleteBoardDialog';
-import { ModalIconButton } from '@/components/admin/modal/ModalIconButton';
-import { AdminCloseIcon, AdminMeatballIcon } from '@/assets/icons/admin';
+import { BoardFormField } from '@/components/admin/board/modal/BoardFormField';
+import { BoardFormHeader } from '@/components/admin/board/modal/BoardFormHeader';
 import { cn } from '@/lib/cn';
 import { useDiscardableForm } from '@/hooks/useDiscardableForm';
 import type { BoardVisibility } from '@/types/admin/board';
@@ -75,8 +65,6 @@ function BoardFormModal({
   onDelete,
 }: BoardFormModalProps) {
   const discardMessages = DISCARD_MESSAGES[mode];
-  const [deleteOpen, setDeleteOpen] = useState(false);
-  const [deleteDiscardOpen, setDeleteDiscardOpen] = useState(false);
   const {
     form,
     updateField,
@@ -121,74 +109,17 @@ function BoardFormModal({
         className="bg-background flex w-215 max-w-[calc(100%-2rem)] flex-col gap-0 overflow-hidden rounded-lg p-0"
         showCloseButton={false}
       >
-        {/* Header */}
-        <div className="flex h-24 items-center justify-between px-600">
-          <h2 className="typo-h3 text-text-normal">{title}</h2>
-          <div className="flex items-center gap-200">
-            {onDelete && (
-              <div className="relative">
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <ModalIconButton icon={AdminMeatballIcon} label="더보기" />
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                    <DropdownMenuItem
-                      destructive
-                      onSelect={() => {
-                        requestAnimationFrame(() => {
-                          if (hasChanges) {
-                            setDeleteDiscardOpen(true);
-                          } else {
-                            setDeleteOpen(true);
-                          }
-                        });
-                      }}
-                    >
-                      게시판 삭제
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-                <CustomAlertDialog
-                  open={deleteDiscardOpen}
-                  onOpenChange={setDeleteDiscardOpen}
-                  title={discardMessages.title}
-                  actionLabel={discardMessages.actionLabel}
-                  cancelLabel={discardMessages.cancelLabel}
-                  onAction={() => {
-                    setDeleteDiscardOpen(false);
-                    onDelete?.();
-                  }}
-                  onDismiss={() => setDeleteDiscardOpen(false)}
-                  placement="below-right"
-                />
-                <DeleteBoardDialog
-                  name={form.name}
-                  open={deleteOpen}
-                  onOpenChange={setDeleteOpen}
-                  onConfirm={() => {
-                    setDeleteOpen(false);
-                    onDelete();
-                  }}
-                />
-              </div>
-            )}
-            <div className="relative">
-              <ModalIconButton
-                icon={AdminCloseIcon}
-                label="닫기"
-                onClick={() => handleTryClose('close')}
-              />
-              <DiscardConfirmDialog
-                source="close"
-                currentSource={discardSource}
-                messages={discardMessages}
-                onConfirm={handleDiscardConfirm}
-                onDismiss={dismissDiscard}
-                placement="below-right"
-              />
-            </div>
-          </div>
-        </div>
+        <BoardFormHeader
+          title={title}
+          boardName={form.name}
+          hasChanges={hasChanges}
+          discardSource={discardSource}
+          discardMessages={discardMessages}
+          onTryClose={() => handleTryClose('close')}
+          onDiscardConfirm={handleDiscardConfirm}
+          onDismissDiscard={dismissDiscard}
+          onDelete={onDelete}
+        />
 
         {/* Body */}
         <div className="scrollbar-custom tablet:px-17.75 flex max-h-175 flex-col gap-400 overflow-y-auto px-700 pt-200 pb-400">
@@ -289,26 +220,6 @@ function BoardFormModal({
         </div>
       </DialogContent>
     </Dialog>
-  );
-}
-
-interface BoardFormFieldProps {
-  label: string;
-  htmlFor?: string;
-  children: React.ReactNode;
-}
-
-function BoardFormField({ label, htmlFor, children }: BoardFormFieldProps) {
-  return (
-    <div className="flex flex-col">
-      <label
-        htmlFor={htmlFor}
-        className="typo-caption1 text-text-normal flex h-12 items-center px-400"
-      >
-        {label}
-      </label>
-      {children}
-    </div>
   );
 }
 
