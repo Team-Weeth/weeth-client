@@ -94,7 +94,7 @@ function SetCardinalModal({ open, onOpenChange, club, onSave }: SetCardinalModal
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent
         showCloseButton={false}
-        className="bg-container-neutral-alternative border-line flex h-[481px] w-full max-w-[540px] flex-col gap-0 rounded-lg p-0"
+        className="bg-background border-line flex h-[481px] w-full max-w-[540px] flex-col gap-0 rounded-lg p-0"
       >
         <ModalHeader
           step={step}
