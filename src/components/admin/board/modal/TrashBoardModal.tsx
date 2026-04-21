@@ -7,11 +7,10 @@ import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { ModalIconButton } from '@/components/admin/modal/ModalIconButton';
 import { AdminCloseIcon } from '@/assets/icons/admin';
 import { InfoCircleIcon, PinIcon } from '@/assets/icons';
+import type { Board } from '@/types/admin/board';
 
-interface TrashedBoard {
-  boardId: number;
-  name: string;
-  description: string;
+/** 휴지통 항목 — 복원 시 원본 Board로 되돌리기 위해 전체 필드를 보존 */
+interface TrashedBoard extends Board {
   /** 영구 삭제까지 남은 일수 (D-N) */
   daysLeft: number;
 }

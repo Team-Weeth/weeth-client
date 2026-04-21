@@ -88,6 +88,11 @@ const MOCK_TRASHED_BOARDS: TrashedBoard[] = [
     boardId: 101,
     name: '자유 게시판',
     description: '모든 게시글을 확인할 수 있는 게시판입니다.',
+    kind: 'CUSTOM',
+    visibility: 'PUBLIC',
+    postCount: 0,
+    commentEnabled: true,
+    editable: true,
     daysLeft: 30,
   },
 ];
@@ -152,15 +157,15 @@ function BoardPageContent() {
 
   const moveBoardToTrash = (board: Board) => {
     setBoards((prev) => prev.filter((b) => b.boardId !== board.boardId));
-    setTrashedBoards((prev) => [
-      ...prev,
-      {
-        boardId: board.boardId,
-        name: board.name,
-        description: board.description,
-        daysLeft: 30,
-      },
-    ]);
+    setTrashedBoards((prev) => [...prev, { ...board, daysLeft: 30 }]);
+  };
+
+  const restoreBoardFromTrash = (boardId: number) => {
+    const trashed = trashedBoards.find((b) => b.boardId === boardId);
+    if (!trashed) return;
+    const { daysLeft: _daysLeft, ...board } = trashed;
+    setTrashedBoards((prev) => prev.filter((b) => b.boardId !== boardId));
+    setBoards((prev) => [...prev, board]);
   };
 
   const sensors = useSensors(
@@ -317,9 +322,7 @@ function BoardPageContent() {
         open={trashModalOpen}
         onOpenChange={setTrashModalOpen}
         boards={trashedBoards}
-        onRestore={(boardId) => {
-          setTrashedBoards((prev) => prev.filter((b) => b.boardId !== boardId));
-        }}
+        onRestore={restoreBoardFromTrash}
         onPermanentDelete={(boardId) => {
           setTrashedBoards((prev) => prev.filter((b) => b.boardId !== boardId));
         }}
