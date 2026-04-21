@@ -165,7 +165,11 @@ function useNavigationGuard({ enabled }: UseNavigationGuardOptions) {
     history.pushState(GUARD_STATE, '', guardUrl.current);
   };
 
-  return { open, onConfirm, onCancel };
+  const allowNavigation = () => {
+    isLeaving.current = true;
+  };
+
+  return { open, onConfirm, onCancel, allowNavigation };
 }
 
 export { useNavigationGuard };
