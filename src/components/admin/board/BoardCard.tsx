@@ -4,7 +4,7 @@ import { useState } from 'react';
 
 import { Button, Icon, Switch, Tag } from '@/components/ui';
 import { DeleteBoardDialog } from '@/components/admin/board/modal/DeleteBoardDialog';
-import { AdminBoardMoveicon } from '@/assets/icons/admin';
+import { AdminBoardMoveIcon } from '@/assets/icons/admin';
 import { PinIcon } from '@/assets/icons';
 import { cn } from '@/lib/cn';
 import type { Board } from '@/types/admin/board';
@@ -62,7 +62,7 @@ function BoardCard({
           )}
         >
           <Icon
-            src={AdminBoardMoveicon}
+            src={AdminBoardMoveIcon}
             size={40}
             className={draggable ? 'text-icon-normal' : 'text-icon-disabled'}
           />
