@@ -1,6 +1,5 @@
 import { redirect, unstable_rethrow } from 'next/navigation';
 import { ClubList, HubProfile } from '@/components/auth/hub';
-import { setClubCookie } from '@/lib/actions/club';
 import { apiServer } from '@/lib/apis/server';
 import type { ApiResponse } from '@/types/common';
 import type { ClubDto } from '@/types/mypage';
@@ -13,11 +12,10 @@ export default async function ClubSelectPage() {
 
   const clubs = res?.data ?? [];
 
-  // if (clubs.length === 1) {
-  //   const club = clubs[0];
-  //   await setClubCookie(club.id, club.name);
-  //   redirect('/home');
-  // }
+  if (clubs.length === 1) {
+    const club = clubs[0];
+    redirect(`/${club.id}/home`);
+  }
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center gap-600">
