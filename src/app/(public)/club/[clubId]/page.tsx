@@ -42,11 +42,7 @@ export default async function ClubPage({ params, searchParams }: ClubPageProps) 
   return (
     <ClubAccessPage
       club={club}
-      loginHref={
-        isLoggedIn
-          ? '/club/join'
-          : `/login?intent=join-no-code&clubId=${club.id}`
-      }
+      loginHref={isLoggedIn ? '/club/join' : `/login?intent=join-no-code&clubId=${club.id}`}
     />
   );
 }

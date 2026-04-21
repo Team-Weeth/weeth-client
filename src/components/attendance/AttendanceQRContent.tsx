@@ -32,7 +32,10 @@ function AttendanceQRContent({ sessionId }: AttendanceQRContentProps) {
         <BreadcrumbList>
           <BreadcrumbItem>
             <BreadcrumbLink asChild>
-              <Link href={`/${clubIdParam}/attendance`} className="typo-caption1 text-text-alternative">
+              <Link
+                href={`/${clubIdParam}/attendance`}
+                className="typo-caption1 text-text-alternative"
+              >
                 출석
               </Link>
             </BreadcrumbLink>

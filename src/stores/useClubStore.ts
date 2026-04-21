@@ -17,7 +17,11 @@ export const useClubStore = create(
         setClubId: (clubId: string) =>
           set({ clubId, clubName: null, clubProfileImageUrl: null }, false, 'setClubId'),
         setClub: (clubId: string, clubName: string, clubProfileImageUrl?: string | null) =>
-          set({ clubId, clubName, clubProfileImageUrl: clubProfileImageUrl ?? null }, false, 'setClub'),
+          set(
+            { clubId, clubName, clubProfileImageUrl: clubProfileImageUrl ?? null },
+            false,
+            'setClub',
+          ),
         reset: () => set(initialState, false, 'reset'),
       })),
       { name: 'clubId' },

@@ -18,7 +18,8 @@ const clubAvatarVariants = cva('border-line border bg-container-neutral-alternat
 });
 
 interface ClubAvatarProps
-  extends Omit<React.ComponentProps<typeof Avatar>, 'type' | 'size'>,
+  extends
+    Omit<React.ComponentProps<typeof Avatar>, 'type' | 'size'>,
     VariantProps<typeof clubAvatarVariants> {
   src?: string | null;
   name: string;

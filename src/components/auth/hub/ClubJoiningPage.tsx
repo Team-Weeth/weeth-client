@@ -23,13 +23,7 @@ interface ClubJoiningPageProps {
 
 type ErrorState = { code: number; message: string } | null;
 
-function JoiningProgress({
-  clubName,
-  onComplete,
-}: {
-  clubName: string;
-  onComplete: () => void;
-}) {
+function JoiningProgress({ clubName, onComplete }: { clubName: string; onComplete: () => void }) {
   const progress = useProgressAnimation({ duration: 3000, onComplete });
 
   return (
@@ -134,12 +128,7 @@ function ClubJoiningPage({ clubName, clubId, code }: ClubJoiningPageProps) {
     );
   }
 
-  return (
-    <JoiningProgress
-      clubName={clubName}
-      onComplete={() => router.replace('/welcome')}
-    />
-  );
+  return <JoiningProgress clubName={clubName} onComplete={() => router.replace('/welcome')} />;
 }
 
 export { ClubJoiningPage };

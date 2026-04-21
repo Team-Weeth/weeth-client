@@ -57,7 +57,10 @@ function AttendanceHistoryContent({ summary, errorMessage }: AttendanceHistoryCo
           <BreadcrumbList>
             <BreadcrumbItem>
               <BreadcrumbLink asChild>
-                <Link href={`/${clubId}/attendance`} className="typo-caption1 text-text-alternative">
+                <Link
+                  href={`/${clubId}/attendance`}
+                  className="typo-caption1 text-text-alternative"
+                >
                   출석
                 </Link>
               </BreadcrumbLink>

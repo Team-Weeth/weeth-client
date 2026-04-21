@@ -46,8 +46,9 @@ function MobileNavSheet() {
         className="tablet:max-w-[375px] bg-container-neutral top-[64px] h-[calc(100dvh-64px)] w-full max-w-[440px]"
       >
         <nav className="flex flex-1 flex-col gap-200 px-450 py-400" aria-label="주요 메뉴">
-          {navItems.filter(({ id }) => id !== 'admin' || isAdmin).map(
-            ({ id, label, href, icon }) => {
+          {navItems
+            .filter(({ id }) => id !== 'admin' || isAdmin)
+            .map(({ id, label, href, icon }) => {
               const isActive = pathname.startsWith(href);
               return (
                 <Fragment key={id}>
@@ -73,8 +74,7 @@ function MobileNavSheet() {
                   </SheetClose>
                 </Fragment>
               );
-            },
-          )}
+            })}
         </nav>
 
         <form action={logoutAction} className="pb-[24px] pl-[18px]">

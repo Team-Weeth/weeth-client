@@ -18,10 +18,7 @@ export default async function MainLayout({
   const { id: resolvedClubId, name: clubName } = data.club;
 
   return (
-    <UserHydrator
-      userInfo={userInfo}
-      clubInfo={{ clubId: resolvedClubId, clubName }}
-    >
+    <UserHydrator userInfo={userInfo} clubInfo={{ clubId: resolvedClubId, clubName }}>
       <div className="mx-auto flex h-screen max-w-[1440px] flex-col">
         <Header />
         {children}

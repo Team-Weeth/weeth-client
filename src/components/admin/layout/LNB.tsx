@@ -26,13 +26,28 @@ function LNB() {
 
   const managementNavItems = [
     { id: 'member', icon: PeopleIcon, label: '멤버 관리', path: `/${clubId}/admin/member` },
-    { id: 'schedule', icon: AdminCalendarIcon, label: '일정 관리', path: `/${clubId}/admin/schedule` },
-    { id: 'attendance', icon: CheckRoundIcon, label: '출석 관리', path: `/${clubId}/admin/attendance` },
+    {
+      id: 'schedule',
+      icon: AdminCalendarIcon,
+      label: '일정 관리',
+      path: `/${clubId}/admin/schedule`,
+    },
+    {
+      id: 'attendance',
+      icon: CheckRoundIcon,
+      label: '출석 관리',
+      path: `/${clubId}/admin/attendance`,
+    },
     { id: 'board', icon: AdminForumIcon, label: '게시판 관리', path: `/${clubId}/admin/board` },
   ];
 
   const infoNavItems = [
-    { id: 'club-info', icon: AdminSettingIcon, label: '동아리 정보', path: `/${clubId}/admin/club-info` },
+    {
+      id: 'club-info',
+      icon: AdminSettingIcon,
+      label: '동아리 정보',
+      path: `/${clubId}/admin/club-info`,
+    },
   ];
 
   const moveNavItems = [

@@ -26,7 +26,10 @@ export async function createClubAction(data: CreateClubFormData) {
   };
 
   try {
-    const result = await apiServer.post<{ data: { clubId: string; clubName: string } }>('/clubs', payload);
+    const result = await apiServer.post<{ data: { clubId: string; clubName: string } }>(
+      '/clubs',
+      payload,
+    );
     const clubId = result?.data?.clubId;
 
     if (clubId) {
