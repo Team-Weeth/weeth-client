@@ -11,8 +11,8 @@ function ProfileSection({ name, bio, profileImageUrl, className, ...props }: Pro
   return (
     <div className={cn('flex items-center gap-300', className)} {...props}>
       <Avatar size={128} type="round">
-        {profileImageUrl && <AvatarImage src={profileImageUrl} alt={name} />}
-        <AvatarFallback>{name.charAt(0)}</AvatarFallback>
+        <AvatarImage src={profileImageUrl ?? undefined} alt={name} className="object-cover" />
+        <AvatarFallback />
       </Avatar>
       <div className="flex flex-col gap-200">
         <h1 className="typo-h2 text-text-strong">{name}</h1>

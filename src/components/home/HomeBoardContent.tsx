@@ -8,8 +8,7 @@ import { formatMonthDay } from '@/lib/formatTime';
 import { fileAttachmentToFileItem } from '@/utils/shared/file';
 import { PostActionMenu, PostCard } from '../board';
 import { Avatar, AvatarFallback, Button } from '@/components/ui';
-import { AvatarIcon } from '@/assets/icons';
-import Image from 'next/image';
+
 import { useRouter } from 'next/navigation';
 import { useIsAdmin } from '@/hooks/shared';
 import { HomeBoardContentSkeleton } from '@/components/home/skeleton';
@@ -45,9 +44,7 @@ function HomeBoardContent() {
       <main className="bg-container-neutral flex min-w-0 flex-col items-start justify-center gap-300 rounded-lg px-450 py-400">
         <div className="flex items-center justify-start gap-100">
           <Avatar size={24} type="round">
-            <AvatarFallback>
-              <Image src={AvatarIcon} alt="profile" width={24} height={24} />
-            </AvatarFallback>
+            <AvatarFallback />
           </Avatar>
           <p className="typo-caption1">Weeth 관리자</p>
         </div>

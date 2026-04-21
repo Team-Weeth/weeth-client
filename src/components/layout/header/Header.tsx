@@ -3,12 +3,12 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { LogoGrayIcon, AvatarIcon, ExitToAppIcon } from '@/assets/icons';
+import { LogoGrayIcon, ExitToAppIcon } from '@/assets/icons';
 import { useClubName, useUserProfileImageUrl } from '@/stores';
 import { PostingActions } from './PostingActions';
 import { DefaultActions } from './DefaultActions';
 import { MobileNavSheet } from './MobileNavSheet';
-import { Icon } from '@/components/ui';
+import { Avatar, AvatarFallback, AvatarImage, Icon } from '@/components/ui';
 
 interface HeaderProps {
   isMain?: boolean;
@@ -56,17 +56,14 @@ export default function Header({ isMain = true }: HeaderProps) {
             onClick={() => router.push('/mypage')}
             className="cursor-pointer rounded-full"
           >
-            {profileImageUrl ? (
-              <Image
-                src={profileImageUrl}
+            <Avatar size={40} type="round">
+              <AvatarImage
+                src={profileImageUrl ?? undefined}
                 alt="avatar"
-                width={40}
-                height={40}
-                className="h-10 w-10 rounded-full object-cover"
+                className="object-cover"
               />
-            ) : (
-              <Image src={AvatarIcon} alt="avatar" width={40} height={40} />
-            )}
+              <AvatarFallback />
+            </Avatar>
           </button>
         </div>
       </header>
