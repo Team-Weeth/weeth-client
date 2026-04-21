@@ -20,7 +20,6 @@ import type { DiscardSource } from '@/hooks/useDiscardableForm';
 interface BoardFormHeaderProps {
   title: string;
   boardName: string;
-  hasChanges: boolean;
   discardSource: DiscardSource;
   setDiscardSource: Dispatch<SetStateAction<DiscardSource>>;
   discardMessages: DiscardMessages;
@@ -32,7 +31,6 @@ interface BoardFormHeaderProps {
 function BoardFormHeader({
   title,
   boardName,
-  hasChanges,
   discardSource,
   setDiscardSource,
   discardMessages,
@@ -46,10 +44,7 @@ function BoardFormHeader({
 
   // DropdownMenuItem onSelect이 드롭다운을 즉시 닫으면서 AlertDialog 오픈과 포커스가 충돌하므로 한 프레임 늦춤
   const handleDeleteSelect = () => {
-    requestAnimationFrame(() => {
-      if (hasChanges) setDiscardSource('delete');
-      else setDeleteOpen(true);
-    });
+    requestAnimationFrame(() => setDeleteOpen(true));
   };
 
   return (
@@ -68,14 +63,6 @@ function BoardFormHeader({
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
-            <DiscardConfirmDialog
-              source="delete"
-              currentSource={discardSource}
-              messages={discardMessages}
-              onConfirm={onDiscardConfirm}
-              onDismiss={dismissDiscard}
-              placement="below-right"
-            />
             <DeleteBoardDialog
               name={boardName}
               open={deleteOpen}

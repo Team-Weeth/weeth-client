@@ -68,7 +68,6 @@ function BoardFormModal({
   const {
     form,
     updateField,
-    hasChanges,
     discardSource,
     setDiscardSource,
     tryClose,
@@ -118,7 +117,6 @@ function BoardFormModal({
         <BoardFormHeader
           title={title}
           boardName={form.name}
-          hasChanges={hasChanges}
           discardSource={discardSource}
           setDiscardSource={setDiscardSource}
           discardMessages={discardMessages}
