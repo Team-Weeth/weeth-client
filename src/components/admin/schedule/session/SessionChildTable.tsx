@@ -1,13 +1,4 @@
-import { SessionStatusTag } from '@/components/admin/schedule/session/SessionStatusTag';
-import {
-  AttendanceLink,
-  MoreButton,
-} from '@/components/admin/schedule/session/SessionActionButtons';
-import {
-  formatSessionDate,
-  formatSessionDayLabel,
-  formatSessionTimeRange,
-} from '@/utils/admin/sessionUtils';
+import { SessionChildRow } from '@/components/admin/schedule/session/SessionChildRow';
 import type { AdminSession } from '@/types/admin/session';
 
 interface SessionChildTableProps {
@@ -40,38 +31,13 @@ function SessionChildTable({ sessions, onManageAttendance, onMore }: SessionChil
       </div>
 
       {sessions.map((session, idx) => (
-        <div key={session.id} className="flex h-10 w-full items-center">
-          <div className="bg-container-neutral sticky left-0 z-10 flex w-[306px] items-center">
-            <div className="flex w-[56px] items-center pl-200">
-              <div className="flex size-10 items-center justify-center">
-                <span className="typo-body1 text-text-alternative">{idx + 1}</span>
-              </div>
-            </div>
-            <div className="flex min-w-0 flex-1 items-center px-400 py-300 pr-600">
-              <span className="typo-body1 text-text-strong truncate">{session.title}</span>
-            </div>
-          </div>
-          <div className="flex w-[549px] items-center gap-300 px-400 py-300 pr-600">
-            <span className="typo-body1 text-text-strong w-20 shrink-0">
-              {formatSessionDate(session.start)}
-            </span>
-            <span className="typo-body1 text-text-strong w-[41px] shrink-0">
-              {formatSessionDayLabel(session.start)}
-            </span>
-            <span className="typo-body1 text-text-strong flex-1 truncate">
-              {formatSessionTimeRange(session.start, session.end)}
-            </span>
-          </div>
-          <div className="flex w-[102px] items-center px-400 py-300 pr-600">
-            <SessionStatusTag status={session.status} />
-          </div>
-          <div className="flex w-[112px] items-center px-400 pr-600">
-            <AttendanceLink onClick={() => onManageAttendance?.(session)} />
-          </div>
-          <div className="flex w-[71px] items-center justify-center">
-            <MoreButton onClick={() => onMore?.(session)} />
-          </div>
-        </div>
+        <SessionChildRow
+          key={session.id}
+          session={session}
+          order={idx + 1}
+          onManageAttendance={onManageAttendance}
+          onMore={onMore}
+        />
       ))}
     </div>
   );
