@@ -76,7 +76,16 @@ export const MOCK_SESSION_LIST: AdminSessionListData = {
       completedCount: 1,
       totalCount: 1,
       status: 'OPEN',
-      sessions: [],
+      sessions: [
+        {
+          id: 21,
+          cardinal: 7,
+          title: '7기 스터디 세션',
+          start: '2026-06-25T19:00:00',
+          end: '2026-06-25T21:00:00',
+          status: 'OPEN',
+        },
+      ],
     },
     {
       groupId: 3,
@@ -88,7 +97,16 @@ export const MOCK_SESSION_LIST: AdminSessionListData = {
       completedCount: 1,
       totalCount: 1,
       status: 'COMPLETED',
-      sessions: [],
+      sessions: [
+        {
+          id: 31,
+          cardinal: 7,
+          title: '7기 OT',
+          start: '2026-06-25T19:00:00',
+          end: '2026-06-25T21:00:00',
+          status: 'COMPLETED',
+        },
+      ],
     },
   ],
 };

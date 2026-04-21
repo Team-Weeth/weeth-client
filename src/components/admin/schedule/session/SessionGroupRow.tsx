@@ -18,8 +18,10 @@ interface SessionGroupRowProps {
   group: AdminSessionGroup;
   /** 위쪽 row와의 구분선 표시 여부 */
   bordered?: boolean;
-  onManageAttendance?: (session: AdminSession | AdminSessionGroup) => void;
-  onMore?: (session: AdminSession | AdminSessionGroup) => void;
+  /** 출석 관리는 개별 세션(AdminSession) id 기반 동작 */
+  onManageAttendance?: (session: AdminSession) => void;
+  /** 수정 대상은 그룹 전체 또는 개별 하위 세션 */
+  onMore?: (target: AdminSession | AdminSessionGroup) => void;
 }
 
 function SessionGroupRow({
@@ -28,7 +30,8 @@ function SessionGroupRow({
   onManageAttendance,
   onMore,
 }: SessionGroupRowProps) {
-  const hasChildren = group.sessions.length > 0;
+  // 반복 세션 그룹일 때만 토글과 하위 테이블을 노출
+  const isRecurring = group.recurrenceType !== 'NONE';
   const [expanded, setExpanded] = useState(true);
 
   return (
@@ -38,7 +41,7 @@ function SessionGroupRow({
         {/* sticky: 토글 + 세션 제목 */}
         <div className="bg-container-neutral sticky left-0 z-10 flex w-[306px] items-center">
           <div className="flex w-[56px] items-center pl-200">
-            {hasChildren ? (
+            {isRecurring ? (
               <button
                 type="button"
                 onClick={() => setExpanded((prev) => !prev)}
@@ -64,13 +67,13 @@ function SessionGroupRow({
 
         <div className="flex w-[206px] items-center px-400 py-300 pr-600">
           <span className="typo-body1 text-text-strong truncate">
-            {hasChildren
+            {isRecurring
               ? formatSessionDateRange(group.startDate, group.endDate)
               : formatSessionDate(group.startDate)}
           </span>
         </div>
         <div className="flex w-[241px] items-center px-400 py-300 pr-600">
-          {hasChildren && (
+          {isRecurring && (
             <span className="typo-body1 text-text-strong truncate">
               {group.recurrenceDescription}
             </span>
@@ -85,7 +88,9 @@ function SessionGroupRow({
           <SessionStatusTag status={group.status} />
         </div>
         <div className="flex w-[112px] items-center px-400 py-300 pr-600">
-          {!hasChildren && <AttendanceLink onClick={() => onManageAttendance?.(group)} />}
+          {!isRecurring && group.sessions[0] && (
+            <AttendanceLink onClick={() => onManageAttendance?.(group.sessions[0])} />
+          )}
         </div>
         <div className="flex w-[71px] items-center justify-center">
           <MoreButton onClick={() => onMore?.(group)} />
@@ -93,7 +98,7 @@ function SessionGroupRow({
       </div>
 
       {/* 하위 세션 펼침 영역 */}
-      {hasChildren && (
+      {isRecurring && (
         <div
           className={cn(
             'grid w-full overflow-hidden transition-[grid-template-rows] duration-200 ease-in',

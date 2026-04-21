@@ -13,7 +13,8 @@ import SessionInfobanner from './SessionInfoBanner';
 
 interface SessionTabContentProps {
   onCreateSession?: () => void;
-  onManageAttendance?: (target: AdminSession | AdminSessionGroup) => void;
+  /** 출석 관리는 개별 세션(AdminSession) id 기반 동작 */
+  onManageAttendance?: (session: AdminSession) => void;
 }
 
 function SessionTabContent({ onCreateSession, onManageAttendance }: SessionTabContentProps) {

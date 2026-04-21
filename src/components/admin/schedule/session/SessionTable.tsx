@@ -13,7 +13,9 @@ const HEADER_COLUMNS = [
 
 interface SessionTableProps extends React.HTMLAttributes<HTMLDivElement> {
   groups: AdminSessionGroup[];
-  onManageAttendance?: (target: AdminSession | AdminSessionGroup) => void;
+  /** 출석 관리는 개별 세션(AdminSession) id 기반 동작이므로 세션만 받는다 */
+  onManageAttendance?: (session: AdminSession) => void;
+  /** 수정 대상은 그룹 전체 또는 개별 하위 세션 모두 가능 */
   onMore?: (target: AdminSession | AdminSessionGroup) => void;
 }
 
