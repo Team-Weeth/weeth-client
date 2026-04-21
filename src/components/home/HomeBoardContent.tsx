@@ -59,15 +59,15 @@ function HomeBoardContent() {
   }
 
   return (
-    <main className="flex min-w-0 flex-1 flex-col gap-400">
-      {posts.map((post) => {
-        const isMyPost = myUserId !== undefined && post.author.id === myUserId;
-        const images = post.fileUrls.map(fileAttachmentToFileItem);
-        const hasAttachment = post.fileUrls.length > 0;
+    <div>
+      <main className="flex min-w-0 flex-1 flex-col gap-400">
+        {posts.map((post) => {
+          const isMyPost = myUserId !== undefined && post.author.id === myUserId;
+          const images = post.fileUrls.map(fileAttachmentToFileItem);
+          const hasAttachment = post.fileUrls.length > 0;
 
-        return (
-          <Link key={post.id} href={`/board/${post.id}`}>
-            <PostCard.Root>
+          return (
+            <PostCard.Root key={post.id} className="relative">
               <PostCard.Header>
                 <PostCard.Author
                   author={{
@@ -78,21 +78,40 @@ function HomeBoardContent() {
                   dateTime={post.time}
                   hasAttachment={hasAttachment}
                 />
-                {isMyPost && <PostActionMenu postId={post.id} />}
+                {isMyPost && (
+                  <div className="relative z-10">
+                    <PostActionMenu postId={post.id} />
+                  </div>
+                )}
               </PostCard.Header>
-              <PostCard.ListContent title={post.title} content={post.content} isNew={post.isNew} />
-              <PostCard.Images files={images} />
-              <PostCard.Actions
-                postId={post.id}
-                likeCount={post.likeCount}
-                commentCount={post.commentCount}
-              />
+              <Link
+                href={`/board/${post.id}`}
+                className="after:absolute after:inset-0 after:content-['']"
+              >
+                <PostCard.ListContent
+                  title={post.title}
+                  content={post.content}
+                  isNew={post.isNew}
+                />
+              </Link>
+              <div className="relative z-10">
+                <PostCard.Images files={images} />
+              </div>
+              <div className="relative z-10">
+                <PostCard.Actions
+                  postId={post.id}
+                  likeCount={post.likeCount}
+                  isLiked={post.isLiked}
+                  commentCount={post.commentCount}
+                  onComment={() => router.push(`/board/${post.id}#comments`)}
+                />
+              </div>
             </PostCard.Root>
-          </Link>
-        );
-      })}
+          );
+        })}
+      </main>
       <div ref={sentinelRef} />
-    </main>
+    </div>
   );
 }
 

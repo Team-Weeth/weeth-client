@@ -13,7 +13,7 @@ const toastVariants = cva(
   {
     variants: {
       variant: {
-        success: 'bg-state-success text-text-inverse',
+        success: 'bg-state-success text-white',
         info: 'bg-state-caution text-text-inverse',
         error: 'bg-state-error text-text-inverse',
       },

@@ -42,6 +42,11 @@ function useReplyForm() {
     setIsReplyDirty(false);
   };
 
+  const forceCloseReply = () => {
+    setActiveReplyId(null);
+    setIsReplyDirty(false);
+  };
+
   const onSwitchConfirm = () => {
     const id = switchGuard.confirm();
     setActiveReplyId(id === CLOSE_SENTINEL ? null : id);
@@ -64,6 +69,7 @@ function useReplyForm() {
     setIsReplyDirty,
     setIsCommentDirty,
     handleReplyToggle,
+    forceCloseReply,
     switchGuardOpen: switchGuard.guardOpen,
     onSwitchConfirm,
     onSwitchCancel,

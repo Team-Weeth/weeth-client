@@ -4,10 +4,11 @@ import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
 import dynamic from 'next/dynamic';
 
-import { Button } from '@/components/ui';
+import { Button, Icon } from '@/components/ui';
 import { EditIcon, ExitToAppIcon, AvatarIcon } from '@/assets/icons';
 import { useWritePost } from '@/hooks/home/useWritePost';
 import { useIsAdmin } from '@/hooks/shared';
+import { useUserProfileImageUrl } from '@/stores';
 
 const CardinalMissingModal = dynamic(() =>
   import('@/components/home/CardinalMissingModal').then((m) => m.CardinalMissingModal),
@@ -28,6 +29,7 @@ function DefaultActions() {
     setProfileModalOpen,
   } = useWritePost();
   const { isAdmin } = useIsAdmin();
+  const profileImageUrl = useUserProfileImageUrl();
 
   return (
     <>
@@ -39,7 +41,7 @@ function DefaultActions() {
             onClick={handleWriteClick}
             className="typo-button1 gap-100"
           >
-            <Image src={EditIcon} alt="edit" width={20} height={20} />
+            <Icon src={EditIcon} alt="edit" size={20} className="text-icon-inverse" />
             글쓰기
           </Button>
         )}
@@ -50,7 +52,7 @@ function DefaultActions() {
             onClick={() => router.push('/admin')}
             className="typo-button1 text-text-strong gap-100"
           >
-            <Image src={ExitToAppIcon} alt="exit" width={20} height={20} />
+            <Icon src={ExitToAppIcon} alt="exit" size={20} className="text-icon-normal" />
             관리자
           </Button>
         )}
@@ -60,7 +62,17 @@ function DefaultActions() {
           onClick={() => router.push('/mypage')}
           className="cursor-pointer rounded-full"
         >
-          <Image src={AvatarIcon} alt="avatar" width={40} height={40} />
+          {profileImageUrl ? (
+            <Image
+              src={profileImageUrl}
+              alt="avatar"
+              width={40}
+              height={40}
+              className="h-10 w-10 rounded-full object-cover"
+            />
+          ) : (
+            <Image src={AvatarIcon} alt="avatar" width={40} height={40} />
+          )}
         </button>
       </div>
 

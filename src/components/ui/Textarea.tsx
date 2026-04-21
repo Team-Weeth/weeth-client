@@ -1,9 +1,9 @@
 'use client';
 
 import { type ChangeEvent, type TextareaHTMLAttributes, useEffect, useRef, useState } from 'react';
-import Image from 'next/image';
-import closeCircleIcon from '@/assets/icons/close_circle.svg';
+import { CloseCircleIcon } from '@/assets/icons';
 import { cn } from '@/lib/cn';
+import { Icon } from './Icon';
 
 const baseStyles = cn(
   'w-full bg-container-neutral text-text-normal typo-body2',
@@ -126,7 +126,7 @@ function Textarea({
           )}
           aria-label="입력 내용 지우기"
         >
-          <Image src={closeCircleIcon} alt="" width={16} height={16} />
+          <Icon src={CloseCircleIcon} size={16} className="text-icon-alternative" />
         </button>
       </div>
     );

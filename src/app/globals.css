@@ -119,13 +119,14 @@
   --h2-line-height: 40px;
   --h3-size: 24px;
   --h3-line-height: 30px;
-  --sub1-size: 16px;
-  --sub1-line-height: 20px;
-  --sub2-size: 18px;
-  --sub2-line-height: 22px;
+  --sub1-size: 18px;
+  --sub1-line-height: 22px;
+  --sub1-weight: var(--font-weight-semibold);
+  --sub2-size: 16px;
+  --sub2-line-height: 20px;
+  --sub2-weight: var(--font-weight-black);
   --sub3-size: 16px;
   --sub3-line-height: 20px;
-
   --body1-size: 16px;
   --body1-line-height: 24px;
   --body1-weight: 470;
@@ -205,8 +206,10 @@
   --h2-line-height: 36px;
   --h3-size: 22px;
   --h3-line-height: 28px;
-  --sub2-size: 16px;
-  --sub2-line-height: 20px;
+  --sub1-size: 16px;
+  --sub1-line-height: 20px;
+  --sub2-size: 14px;
+  --sub2-line-height: 18px;
   --sub3-size: 14px;
   --sub3-line-height: 18px;
   --body1-size: 14px;
@@ -347,6 +350,42 @@
   --color-state-caution: var(--state-caution);
   --color-state-error: var(--state-error);
 
+  --color-neutral-0: var(--neutral-0);
+  --color-neutral-100: var(--neutral-100);
+  --color-neutral-200: var(--neutral-200);
+  --color-neutral-300: var(--neutral-300);
+  --color-neutral-400: var(--neutral-400);
+  --color-neutral-500: var(--neutral-500);
+  --color-neutral-600: var(--neutral-600);
+  --color-neutral-700: var(--neutral-700);
+  --color-neutral-800: var(--neutral-800);
+  --color-neutral-900: var(--neutral-900);
+
+  --color-primary-100: var(--primary-100);
+  --color-primary-200: var(--primary-200);
+  --color-primary-500: var(--primary-500);
+  --color-primary-600: var(--primary-600);
+  --color-primary-700: var(--primary-700);
+  --color-primary-900: var(--primary-900);
+
+  --color-secondary-100: var(--secondary-100);
+  --color-secondary-200: var(--secondary-200);
+  --color-secondary-500: var(--secondary-500);
+  --color-secondary-700: var(--secondary-700);
+  --color-secondary-900: var(--secondary-900);
+
+  --color-purple-100: var(--purple-100);
+  --color-purple-200: var(--purple-200);
+  --color-purple-500: var(--purple-500);
+  --color-purple-700: var(--purple-700);
+  --color-purple-900: var(--purple-900);
+
+  --color-pink-100: var(--pink-100);
+  --color-pink-200: var(--pink-200);
+  --color-pink-500: var(--pink-500);
+  --color-pink-700: var(--pink-700);
+  --color-pink-900: var(--pink-900);
+
   --spacing-0: 0px;
   --spacing-100: 4px;
   --spacing-200: 8px;
@@ -452,14 +491,14 @@ select:focus {
 @utility typo-sub1 {
   font-size: var(--sub1-size);
   line-height: var(--sub1-line-height);
-  font-weight: var(--font-weight-black);
+  font-weight: var(--sub1-weight);
   letter-spacing: var(--letter-spacing);
 }
 
 @utility typo-sub2 {
   font-size: var(--sub2-size);
   line-height: var(--sub2-line-height);
-  font-weight: var(--font-weight-semibold);
+  font-weight: var(--sub2-weight);
   letter-spacing: var(--letter-spacing);
 }
 
@@ -561,11 +600,11 @@ select:focus {
 }
 
 .ProseMirror h2 {
-  @apply typo-sub1 mt-300 mb-100;
+  @apply typo-sub2 mt-300 mb-100;
 }
 
 .ProseMirror h3 {
-  @apply typo-sub2 mt-300 mb-100;
+  @apply typo-sub3 mt-300 mb-100;
 }
 
 .ProseMirror ul {

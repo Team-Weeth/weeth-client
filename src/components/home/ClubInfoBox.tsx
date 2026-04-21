@@ -16,8 +16,6 @@ export function ClubInfoBox() {
     }),
   });
 
-  console.log('clubInfo', clubInfo);
-
   return (
     <div className="bg-container-neutral flex w-full flex-col rounded-lg px-450 pt-[22px] pb-450">
       <Tabs defaultValue="동아리 정보" className="w-full">

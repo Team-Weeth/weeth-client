@@ -3,16 +3,16 @@
 import { useState } from 'react';
 
 import type { AttendanceMember } from '@/types/admin/attendance';
-import { toastError } from '@/stores/useToastStore';
 
 type CardState = 'collapsed' | 'expanded' | 'editing';
 
 interface UseAttendanceCardParams {
   members: AttendanceMember[];
   onSave?: (updates: { id: number; status: 'ATTEND' | 'ABSENT' }[]) => void | Promise<void>;
+  onDirtyChange?: (dirty: boolean) => void;
 }
 
-function useAttendanceCard({ members, onSave }: UseAttendanceCardParams) {
+function useAttendanceCard({ members, onSave, onDirtyChange }: UseAttendanceCardParams) {
   const [cardState, setCardState] = useState<CardState>('collapsed');
   const [searchQuery, setSearchQuery] = useState('');
   const [editStatuses, setEditStatuses] = useState<Map<number, 'ATTEND' | 'ABSENT'>>(new Map());
@@ -34,32 +34,43 @@ function useAttendanceCard({ members, onSave }: UseAttendanceCardParams) {
 
   const expand = () => {
     setEditStatuses(new Map());
+    onDirtyChange?.(false);
     setCardState('expanded');
   };
 
   const collapse = () => {
     setEditStatuses(new Map());
+    onDirtyChange?.(false);
     setCardState('collapsed');
   };
 
   const startEdit = () => {
     setEditStatuses(new Map());
+    onDirtyChange?.(false);
     setCardState('editing');
   };
 
   const cancelEdit = () => {
     setEditStatuses(new Map());
+    onDirtyChange?.(false);
     setCardState('expanded');
   };
 
   const saveEdit = async () => {
     const updates = Array.from(editStatuses.entries()).map(([id, status]) => ({ id, status }));
+
+    if (updates.length === 0) {
+      setCardState('expanded');
+      return;
+    }
+
     try {
       await onSave?.(updates);
       setEditStatuses(new Map());
+      onDirtyChange?.(false);
       setCardState('expanded');
     } catch {
-      toastError('출석 상태 수정에 실패했습니다.');
+      // error toast is handled by the mutation's onError
     }
   };
 
@@ -71,6 +82,7 @@ function useAttendanceCard({ members, onSave }: UseAttendanceCardParams) {
       if (base === status) next.delete(memberId);
       else next.set(memberId, status); // 변경된 것만 저장
 
+      onDirtyChange?.(next.size > 0);
       return next;
     });
   };
@@ -78,9 +90,12 @@ function useAttendanceCard({ members, onSave }: UseAttendanceCardParams) {
   const getEditStatus = (memberId: number) =>
     editStatuses.get(memberId) ?? baseStatuses.get(memberId);
 
+  const isDirty = editStatuses.size > 0;
+
   return {
     isCollapsed,
     isEditing,
+    isDirty,
     searchQuery,
     setSearchQuery,
     filteredMembers,

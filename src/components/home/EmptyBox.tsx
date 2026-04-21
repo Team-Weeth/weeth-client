@@ -1,3 +1,4 @@
+import { cn } from '@/lib/cn';
 import { Button } from '../ui';
 
 interface EmptyBoxProps {
@@ -10,7 +11,12 @@ interface EmptyBoxProps {
 
 function EmptyBox({ description, button }: EmptyBoxProps) {
   return (
-    <div className="bg-background flex flex-col gap-[10px] rounded-md p-300">
+    <div
+      className={cn(
+        'bg-background flex flex-col gap-[10px] rounded-md',
+        button ? 'p-300' : 'p-450',
+      )}
+    >
       <p className="typo-body2 text-text-alternative">{description}</p>
       {button && (
         <Button variant="secondary" size="lg" className="w-full" onClick={button.onClick}>

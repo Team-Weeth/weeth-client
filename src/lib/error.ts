@@ -16,7 +16,8 @@ function parseApiError(error: Error): { status: number; code: number; message: s
 
 export function getBoardErrorInfo(error: Error): ErrorInfo {
   const parsed = parseApiError(error);
-  if (!parsed) return { message: error.message, retryable: true };
+  if (!parsed)
+    return { message: '일시적인 오류가 발생했어요. 다시 시도해주세요.', retryable: true };
 
   const known = BOARD_PAGE_ERRORS[parsed.code];
   if (known) return known;
