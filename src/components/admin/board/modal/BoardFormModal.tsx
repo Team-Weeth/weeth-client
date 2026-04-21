@@ -1,5 +1,7 @@
 'use client';
 
+import { useState } from 'react';
+
 import { Button, Switch } from '@/components/ui';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import {
@@ -9,6 +11,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/DropdownMenu';
 import { DiscardConfirmDialog, type DiscardMessages } from '@/components/admin/modal/DiscardConfirmDialog';
+import { DeleteBoardDialog } from '@/components/admin/board/modal/DeleteBoardDialog';
 import { ModalIconButton } from '@/components/admin/modal/ModalIconButton';
 import { AdminCloseIcon, AdminMeatballIcon } from '@/assets/icons/admin';
 import { cn } from '@/lib/cn';
@@ -71,9 +74,11 @@ function BoardFormModal({
   onDelete,
 }: BoardFormModalProps) {
   const discardMessages = DISCARD_MESSAGES[mode];
+  const [deleteOpen, setDeleteOpen] = useState(false);
   const {
     form,
     updateField,
+    hasChanges,
     discardSource,
     setDiscardSource,
     tryClose,
@@ -85,8 +90,12 @@ function BoardFormModal({
   });
 
   const handleClose = () => onOpenChange(false);
-  const handleTryClose = (source: 'close' | 'cancel') => tryClose(source, handleClose);
+  const handleTryClose = (source: 'close' | 'cancel' | 'delete') => tryClose(source, handleClose);
   const handleDiscardConfirm = () => confirmDiscard(handleClose);
+  const handleDeleteDiscard = () => {
+    setDiscardSource(null);
+    onDelete?.();
+  };
   const dismissDiscard = () => setDiscardSource(null);
 
   const handleSubmit = () => {
@@ -119,16 +128,46 @@ function BoardFormModal({
           <h2 className="typo-h3 text-text-normal">{title}</h2>
           <div className="flex items-center gap-200">
             {onDelete && (
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <ModalIconButton icon={AdminMeatballIcon} label="더보기" />
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  <DropdownMenuItem destructive onSelect={onDelete}>
-                    게시판 삭제
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+              <div className="relative">
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <ModalIconButton icon={AdminMeatballIcon} label="더보기" />
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem
+                      destructive
+                      onSelect={() => {
+                        requestAnimationFrame(() => {
+                          if (hasChanges) {
+                            setDiscardSource('delete');
+                          } else {
+                            setDeleteOpen(true);
+                          }
+                        });
+                      }}
+                    >
+                      게시판 삭제
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+                <DiscardConfirmDialog
+                  source="delete"
+                  currentSource={discardSource}
+                  messages={discardMessages}
+                  onConfirm={handleDeleteDiscard}
+                  onDismiss={dismissDiscard}
+                  placement="below-right"
+                />
+                <DeleteBoardDialog
+                  name={form.name}
+                  open={deleteOpen}
+                  onOpenChange={setDeleteOpen}
+                  onConfirm={() => {
+                    setDeleteOpen(false);
+                    onDelete();
+                  }}
+                />
+              </div>
             )}
             <div className="relative">
               <ModalIconButton

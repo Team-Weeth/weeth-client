@@ -2,15 +2,8 @@
 
 import { useState } from 'react';
 
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  Button,
-  Icon,
-  Switch,
-  Tag,
-} from '@/components/ui';
+import { Button, Icon, Switch, Tag } from '@/components/ui';
+import { DeleteBoardDialog } from '@/components/admin/board/modal/DeleteBoardDialog';
 import { AdminBoardMoveicon } from '@/assets/icons/admin';
 import { PinIcon } from '@/assets/icons';
 import { cn } from '@/lib/cn';
@@ -131,21 +124,17 @@ function BoardCard({
             <Button variant="secondary" size="md" onClick={onEdit}>
               수정
             </Button>
-            <AlertDialog
+            <DeleteBoardDialog
+              name={name}
               open={deleteOpen}
               onOpenChange={setDeleteOpen}
-              title={`'${name}'을 삭제하시겠어요?`}
-              description="게시판을 삭제해도 휴지통에 30일간 보관됩니다."
-              status="danger"
+              onConfirm={handleDeleteConfirm}
               trigger={
                 <Button variant="danger" size="md">
                   삭제
                 </Button>
               }
-            >
-              <AlertDialogAction onClick={handleDeleteConfirm}>삭제</AlertDialogAction>
-              <AlertDialogCancel>취소</AlertDialogCancel>
-            </AlertDialog>
+            />
           </>
         ) : (
           <div className="w-[106px]" aria-hidden />
