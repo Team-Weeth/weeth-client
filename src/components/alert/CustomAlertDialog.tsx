@@ -38,24 +38,27 @@ function CustomAlertDialog({
   placement = 'above-right',
   children,
   open,
+  onOpenChange,
   ...props
 }: CustomAlertDialogProps) {
   const contentRef = React.useRef<HTMLDivElement>(null);
 
   React.useEffect(() => {
-    if (!open || !onDismiss) return;
+    if (!open || (!onOpenChange && !onDismiss)) return;
     const handler = (e: PointerEvent) => {
-      if (!contentRef.current?.contains(e.target as Node)) onDismiss();
+      if (contentRef.current?.contains(e.target as Node)) return;
+      onOpenChange?.(false);
+      onDismiss?.();
     };
     const timer = setTimeout(() => document.addEventListener('pointerdown', handler), 0);
     return () => {
       clearTimeout(timer);
       document.removeEventListener('pointerdown', handler);
     };
-  }, [open, onDismiss]);
+  }, [open, onOpenChange, onDismiss]);
 
   return (
-    <AlertDialogPrimitive.Root open={open} {...props}>
+    <AlertDialogPrimitive.Root open={open} onOpenChange={onOpenChange} {...props}>
       {children}
 
       <AlertDialogPrimitive.Content
