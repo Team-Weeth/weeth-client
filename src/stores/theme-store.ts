@@ -10,6 +10,8 @@ interface ThemeStore {
   setDark: (isDark: boolean) => void;
 }
 
+type PersistedStateV0 = { isDark?: boolean };
+
 export const useThemeStore = create<ThemeStore>()(
   persist(
     (set) => ({
@@ -29,6 +31,18 @@ export const useThemeStore = create<ThemeStore>()(
       },
       setDark: (isDark) => set({ isDark }),
     }),
-    { name: 'weeth-theme' },
+    {
+      name: 'weeth-theme',
+      version: 1,
+      migrate: (persistedState, version) => {
+        if (version === 0) {
+          const old = persistedState as PersistedStateV0;
+          const mode: ThemeMode =
+            old.isDark === true ? 'dark' : old.isDark === false ? 'light' : 'auto';
+          return { mode, isDark: old.isDark ?? false };
+        }
+        return persistedState as ThemeStore;
+      },
+    },
   ),
 );

@@ -16,7 +16,7 @@ const CardinalMissingModal = dynamic(() =>
 
 export function TodayScheduleBox() {
   const router = useRouter();
-  const { data, isError, refetch, isPending } = useAttendanceQuery();
+  const { data, isError, refetch, isLoading } = useAttendanceQuery();
   const { isAdmin } = useIsAdmin();
 
   const {
@@ -29,7 +29,7 @@ export function TodayScheduleBox() {
     handleCheckIn,
   } = useCheckIn();
 
-  if (isPending) return <TodayScheduleBoxSkeleton />;
+  if (isLoading) return <TodayScheduleBoxSkeleton />;
 
   return (
     <div className="bg-container-neutral rounded-lg">

@@ -14,10 +14,10 @@ import { useIsAdmin } from '@/hooks/shared';
 
 export function NoticeBoardBox() {
   const router = useRouter();
-  const { data: notices = [], isPending } = useRecentNoticesQuery();
+  const { data: notices = [], isLoading } = useRecentNoticesQuery();
   const { isAdmin } = useIsAdmin();
 
-  if (isPending) return <NoticeBoardBoxSkeleton />;
+  if (isLoading) return <NoticeBoardBoxSkeleton />;
 
   return (
     <div className="bg-container-neutral flex flex-col rounded-lg pb-300">

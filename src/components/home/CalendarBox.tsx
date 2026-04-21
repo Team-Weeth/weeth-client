@@ -11,13 +11,13 @@ import { useIsAdmin } from '@/hooks/shared';
 
 export function CalendarBox() {
   const router = useRouter();
-  const { data: schedules, isPending: isSchedulesPending } = useMonthlySchedulesQuery();
-  const { isAdmin, isPending: isAdminPending } = useIsAdmin();
+  const { data: schedules, isLoading: isSchedulesLoading } = useMonthlySchedulesQuery();
+  const { isAdmin, isLoading: isAdminLoading } = useIsAdmin();
 
   const now = new Date();
   const monthLabel = `${now.getMonth() + 1}월 캘린더`;
   const dateGrouped = groupByStartDate(schedules ?? []);
-  const isLoading = isSchedulesPending || isAdminPending;
+  const isLoading = isSchedulesLoading || isAdminLoading;
 
   if (isLoading) return <CalendarBoxSkeleton />;
 

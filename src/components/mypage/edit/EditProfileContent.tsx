@@ -180,7 +180,7 @@ function EditProfileContent({ className, schools, majors, ...props }: EditProfil
         description={'지금 취소하면 수정 중인 내용이 사라집니다.\n계속하시겠어요?'}
       >
         <AlertDialogAction onClick={onConfirm}>취소하기</AlertDialogAction>
-        <AlertDialogCancel onClick={onCancel}>계속 수정</AlertDialogCancel>
+        <AlertDialogCancel>계속 수정</AlertDialogCancel>
       </AlertDialog>
     </>
   );

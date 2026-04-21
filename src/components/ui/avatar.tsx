@@ -5,39 +5,36 @@ import { Avatar as AvatarPrimitive } from 'radix-ui';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@/lib/cn';
 
-const avatarVariants = cva(
-  'group/avatar relative flex shrink-0 overflow-hidden select-none object-cover',
-  {
-    variants: {
-      type: {
-        round: 'rounded-full',
-        square: '',
-      },
-      size: {
-        128: 'size-32',
-        64: 'size-16',
-        40: 'size-10',
-        24: 'size-6',
-      },
-      colorScheme: {
-        default: '',
-        primary: '',
-        secondary: '',
-      },
+const avatarVariants = cva('group/avatar relative flex shrink-0 overflow-hidden select-none ', {
+  variants: {
+    type: {
+      round: 'rounded-full',
+      square: '',
     },
-    compoundVariants: [
-      { type: 'square', size: 128, className: 'rounded-[32px]' },
-      { type: 'square', size: 64, className: 'rounded-lg' },
-      { type: 'square', size: 40, className: 'rounded-md' },
-      { type: 'square', size: 24, className: 'rounded-[6px]' },
-    ],
-    defaultVariants: {
-      type: 'round',
-      size: 64,
-      colorScheme: 'default',
+    size: {
+      128: 'size-32',
+      64: 'size-16',
+      40: 'size-10',
+      24: 'size-6',
+    },
+    colorScheme: {
+      default: '',
+      primary: '',
+      secondary: '',
     },
   },
-);
+  compoundVariants: [
+    { type: 'square', size: 128, className: 'rounded-[32px]' },
+    { type: 'square', size: 64, className: 'rounded-lg' },
+    { type: 'square', size: 40, className: 'rounded-md' },
+    { type: 'square', size: 24, className: 'rounded-[6px]' },
+  ],
+  defaultVariants: {
+    type: 'round',
+    size: 64,
+    colorScheme: 'default',
+  },
+});
 
 interface AvatarProps
   extends React.ComponentProps<typeof AvatarPrimitive.Root>, VariantProps<typeof avatarVariants> {}
@@ -59,7 +56,7 @@ function AvatarImage({ className, ...props }: React.ComponentProps<typeof Avatar
   return (
     <AvatarPrimitive.Image
       data-slot="avatar-image"
-      className={cn('aspect-square size-full', className)}
+      className={cn('aspect-square size-full object-cover', className)}
       {...props}
     />
   );
