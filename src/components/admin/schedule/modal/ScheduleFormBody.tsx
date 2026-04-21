@@ -1,4 +1,5 @@
-import { ScheduleFormField } from '@/components/admin/schedule/ScheduleFormField';
+import { ScheduleTextField } from '@/components/admin/schedule/ScheduleTextField';
+import { ScheduleTextareaField } from '@/components/admin/schedule/ScheduleTextareaField';
 import { DateTimeInput } from '@/components/ui/DateTimeInput';
 
 import type { ScheduleFormState } from './types';
@@ -10,9 +11,6 @@ interface ScheduleFormBodyProps {
   titlePlaceholder: string;
 }
 
-const INPUT_CLASS =
-  'bg-container-neutral typo-body1 placeholder:text-text-alternative text-text-normal h-12 w-full rounded-sm px-400 py-300 focus:outline-none';
-
 function ScheduleFormBody({
   form,
   onFormChange,
@@ -21,15 +19,12 @@ function ScheduleFormBody({
 }: ScheduleFormBodyProps) {
   return (
     <div className="flex flex-col gap-400 py-400">
-      <ScheduleFormField label={titleLabel}>
-        <input
-          type="text"
-          value={form.title}
-          onChange={(e) => onFormChange({ title: e.target.value })}
-          placeholder={titlePlaceholder}
-          className={INPUT_CLASS}
-        />
-      </ScheduleFormField>
+      <ScheduleTextField
+        label={titleLabel}
+        value={form.title}
+        onChange={(v) => onFormChange({ title: v })}
+        placeholder={titlePlaceholder}
+      />
 
       <div className="flex gap-600">
         <DateTimeInput
@@ -48,24 +43,19 @@ function ScheduleFormBody({
         />
       </div>
 
-      <ScheduleFormField label="모임 장소 (선택)">
-        <input
-          type="text"
-          value={form.location}
-          onChange={(e) => onFormChange({ location: e.target.value })}
-          placeholder="장소를 입력해주세요."
-          className={INPUT_CLASS}
-        />
-      </ScheduleFormField>
+      <ScheduleTextField
+        label="모임 장소 (선택)"
+        value={form.location}
+        onChange={(v) => onFormChange({ location: v })}
+        placeholder="장소를 입력해주세요."
+      />
 
-      <ScheduleFormField label="일정 설명 (선택)">
-        <textarea
-          value={form.content}
-          onChange={(e) => onFormChange({ content: e.target.value })}
-          placeholder="일정에 대한 설명을 입력해주세요."
-          className="bg-container-neutral typo-body1 placeholder:text-text-alternative text-text-normal h-[150px] w-full resize-none rounded-sm px-400 py-300 focus:outline-none"
-        />
-      </ScheduleFormField>
+      <ScheduleTextareaField
+        label="일정 설명 (선택)"
+        value={form.content}
+        onChange={(v) => onFormChange({ content: v })}
+        placeholder="일정에 대한 설명을 입력해주세요."
+      />
     </div>
   );
 }

@@ -1,7 +1,7 @@
 import type { Schedule } from '@/types/admin/schedule';
 import type { AdminSession, AdminSessionGroup } from '@/types/admin/session';
 
-import type { ScheduleFormState } from './types';
+import type { ScheduleFormState } from '../../components/admin/schedule/modal/types';
 
 export function isSessionGroup(
   target: AdminSession | AdminSessionGroup,

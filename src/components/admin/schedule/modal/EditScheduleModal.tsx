@@ -17,7 +17,7 @@ import type { Schedule } from '@/types/admin/schedule';
 
 import { DiscardConfirmArea } from './DiscardConfirmArea';
 import { ScheduleFormBody } from './ScheduleFormBody';
-import { isFormChanged, toInitialScheduleForm } from './scheduleFormUtils';
+import { isFormChanged, toInitialScheduleForm } from '../../../../utils/admin/scheduleFormUtils';
 import type { ScheduleFormState } from './types';
 
 interface EditScheduleModalProps {

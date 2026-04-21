@@ -13,6 +13,8 @@ import { CalendarPicker } from '@/components/ui/CalendarPicker';
 import { DateTimeInput } from '@/components/ui/DateTimeInput';
 import { ArrowDownIcon, InfoCircleIcon } from '@/assets/icons';
 import { ScheduleFormField } from '@/components/admin/schedule/ScheduleFormField';
+import { ScheduleTextField } from '@/components/admin/schedule/ScheduleTextField';
+import { ScheduleTextareaField } from '@/components/admin/schedule/ScheduleTextareaField';
 import {
   SESSION_RECURRENCE_LABEL,
   SESSION_RECURRENCE_OPTIONS,
@@ -45,9 +47,9 @@ function SessionScheduleForm({
   cardinals,
   selectedCardinal,
 }: SessionScheduleFormProps) {
-
   const hasRecurrence = session.recurrenceType !== 'NONE';
-  const recurrenceMinDate = form.startDate;
+  // 반복 종료는 일정 종료 일자 이후, 시작 일자 기준 1년 이내에서 선택 가능
+  const recurrenceMinDate = form.endDate;
   const recurrenceMaxDate = addYearsToDateInput(form.startDate, 1);
 
   return (
@@ -62,15 +64,12 @@ function SessionScheduleForm({
       </div>
 
       {/* 세션 제목 */}
-      <ScheduleFormField label="세션 제목">
-        <input
-          type="text"
-          value={form.title}
-          onChange={(e) => onFormChange({ title: e.target.value })}
-          placeholder="예 : 7기 정기 모임"
-          className="bg-container-neutral typo-body1 placeholder:text-text-alternative h-12 w-full rounded-sm px-400 py-300 focus:outline-none"
-        />
-      </ScheduleFormField>
+      <ScheduleTextField
+        label="세션 제목"
+        value={form.title}
+        onChange={(v) => onFormChange({ title: v })}
+        placeholder="예 : 7기 정기 모임"
+      />
 
       {/* 기수 */}
       <ScheduleFormField label="기수">
@@ -168,25 +167,20 @@ function SessionScheduleForm({
       )}
 
       {/* 모임 장소 */}
-      <ScheduleFormField label="모임 장소 (선택)">
-        <input
-          type="text"
-          value={form.location}
-          onChange={(e) => onFormChange({ location: e.target.value })}
-          placeholder="장소를 입력해주세요."
-          className="bg-container-neutral typo-body1 placeholder:text-text-alternative h-12 w-full rounded-sm px-400 py-300 focus:outline-none"
-        />
-      </ScheduleFormField>
+      <ScheduleTextField
+        label="모임 장소 (선택)"
+        value={form.location}
+        onChange={(v) => onFormChange({ location: v })}
+        placeholder="장소를 입력해주세요."
+      />
 
       {/* 일정 설명 */}
-      <ScheduleFormField label="일정 설명 (선택)">
-        <textarea
-          value={form.content}
-          onChange={(e) => onFormChange({ content: e.target.value })}
-          placeholder="일정에 대한 설명을 입력해주세요."
-          className="bg-container-neutral typo-body1 placeholder:text-text-alternative h-[150px] w-full resize-none rounded-sm px-400 py-300 focus:outline-none"
-        />
-      </ScheduleFormField>
+      <ScheduleTextareaField
+        label="일정 설명 (선택)"
+        value={form.content}
+        onChange={(v) => onFormChange({ content: v })}
+        placeholder="일정에 대한 설명을 입력해주세요."
+      />
     </div>
   );
 }

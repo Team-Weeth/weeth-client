@@ -5,14 +5,10 @@ import { useState } from 'react';
 import { Button } from '@/components/ui';
 import { SessionScheduleForm } from '@/components/admin/schedule/modal/SessionScheduleForm';
 import { useCardinals } from '@/hooks/queries';
-import { toDateInputValue } from '@/utils/shared/date';
+import { addYearsToDateInput, toDateInputValue } from '@/utils/shared/date';
 import type { CreateSessionBody } from '@/types/admin/session';
 
-import {
-  isDateRangeValid,
-  type ScheduleFormState,
-  type SessionFormState,
-} from './types';
+import { isDateRangeValid, type ScheduleFormState, type SessionFormState } from './types';
 
 const INITIAL_FORM: ScheduleFormState = {
   title: '',
@@ -35,10 +31,7 @@ interface CreateSessionScheduleFormProps {
   onClose: () => void;
 }
 
-function CreateSessionScheduleForm({
-  onCreateSession,
-  onClose,
-}: CreateSessionScheduleFormProps) {
+function CreateSessionScheduleForm({ onCreateSession, onClose }: CreateSessionScheduleFormProps) {
   const [form, setForm] = useState<ScheduleFormState>(INITIAL_FORM);
   const [session, setSession] = useState<SessionFormState>(INITIAL_SESSION);
 
@@ -48,13 +41,41 @@ function CreateSessionScheduleForm({
       ? cardinals.find((c) => c.id === session.selectedCardinalId)
       : null;
 
-  const updateForm = (patch: Partial<ScheduleFormState>) =>
-    setForm((prev) => ({ ...prev, ...patch }));
-  const updateSession = (patch: Partial<SessionFormState>) =>
-    setSession((prev) => ({ ...prev, ...patch }));
-
   const hasRecurrence = session.recurrenceType !== 'NONE';
   const isRecurrenceEndValid = !hasRecurrence || session.recurrenceEndDate >= form.endDate;
+
+  // recurrenceEndDate를 [endDate, startDate+1년] 범위 안으로 clamp
+  const clampRecurrenceEndDate = (startDate: string, endDate: string) => {
+    const minDate = endDate;
+    const maxDate = addYearsToDateInput(startDate, 1);
+    setSession((prev) => {
+      if (prev.recurrenceEndDate < minDate) {
+        return { ...prev, recurrenceEndDate: minDate };
+      }
+      if (prev.recurrenceEndDate > maxDate) {
+        return { ...prev, recurrenceEndDate: maxDate };
+      }
+      return prev;
+    });
+  };
+
+  const updateForm = (patch: Partial<ScheduleFormState>) => {
+    setForm((prev) => ({ ...prev, ...patch }));
+
+    // 시작/종료 일자 변경으로 반복 종료 유효 범위가 바뀌면 기존 값을 범위 내로 clamp
+    if (hasRecurrence && (patch.startDate !== undefined || patch.endDate !== undefined)) {
+      clampRecurrenceEndDate(patch.startDate ?? form.startDate, patch.endDate ?? form.endDate);
+    }
+  };
+
+  const updateSession = (patch: Partial<SessionFormState>) => {
+    setSession((prev) => ({ ...prev, ...patch }));
+
+    // 반복 설정이 '안 함' → 반복으로 바뀌는 순간에도 clamp 필요
+    if (patch.recurrenceType && patch.recurrenceType !== 'NONE') {
+      clampRecurrenceEndDate(form.startDate, form.endDate);
+    }
+  };
 
   const isValid =
     form.title.trim().length > 0 &&

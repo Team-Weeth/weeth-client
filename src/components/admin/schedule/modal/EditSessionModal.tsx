@@ -17,7 +17,11 @@ import type { AdminSession, AdminSessionGroup } from '@/types/admin/session';
 
 import { DiscardConfirmArea } from './DiscardConfirmArea';
 import { ScheduleFormBody } from './ScheduleFormBody';
-import { isFormChanged, isSessionGroup, toInitialSessionForm } from './scheduleFormUtils';
+import {
+  isFormChanged,
+  isSessionGroup,
+  toInitialSessionForm,
+} from '../../../../utils/admin/scheduleFormUtils';
 import type { ScheduleFormState, SessionDeleteType, SessionSaveType } from './types';
 
 interface EditSessionModalProps {
