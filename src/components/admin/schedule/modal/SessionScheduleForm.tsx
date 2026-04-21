@@ -17,10 +17,14 @@ import {
   SESSION_RECURRENCE_LABEL,
   SESSION_RECURRENCE_OPTIONS,
 } from '@/constants/admin/session.constants';
-import { useCardinals } from '@/hooks/queries';
 import { addYearsToDateInput } from '@/utils/shared/date';
 
 import type { ScheduleFormState, SessionFormState } from './types';
+
+interface Cardinal {
+  id: number;
+  cardinalNumber: number;
+}
 
 interface SessionScheduleFormProps {
   form: ScheduleFormState;
@@ -28,6 +32,8 @@ interface SessionScheduleFormProps {
   session: SessionFormState;
   onSessionChange: (patch: Partial<SessionFormState>) => void;
   isRecurrenceEndValid: boolean;
+  cardinals: Cardinal[];
+  selectedCardinal: Cardinal | null | undefined;
 }
 
 function SessionScheduleForm({
@@ -36,12 +42,9 @@ function SessionScheduleForm({
   session,
   onSessionChange,
   isRecurrenceEndValid,
+  cardinals,
+  selectedCardinal,
 }: SessionScheduleFormProps) {
-  const { data: cardinals = [] } = useCardinals();
-  const selectedCardinal =
-    session.selectedCardinalId !== null
-      ? cardinals.find((c) => c.id === session.selectedCardinalId)
-      : null;
 
   const hasRecurrence = session.recurrenceType !== 'NONE';
   const recurrenceMinDate = form.startDate;

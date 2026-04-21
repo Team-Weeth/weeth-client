@@ -152,6 +152,8 @@ function CreateScheduleModal({
               session={session}
               onSessionChange={updateSession}
               isRecurrenceEndValid={isRecurrenceEndValid}
+              cardinals={cardinals}
+              selectedCardinal={selectedCardinal}
             />
           ) : (
             <ScheduleFormBody
