@@ -2,44 +2,22 @@
 
 import { useState } from 'react';
 
-import { Button, Icon, Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui';
+import { Icon, Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { AdminCloseIcon } from '@/assets/icons/admin';
-import { ScheduleFormBody } from '@/components/admin/schedule/modal/ScheduleFormBody';
-import { SessionScheduleForm } from '@/components/admin/schedule/modal/SessionScheduleForm';
+import { CreateGeneralScheduleForm } from '@/components/admin/schedule/modal/CreateGeneralScheduleForm';
+import { CreateSessionScheduleForm } from '@/components/admin/schedule/modal/CreateSessionScheduleForm';
 import { SCHEDULE_TYPE_LABEL } from '@/constants/admin/schedule.constants';
-import { useCardinals } from '@/hooks/queries';
 import type { ScheduleType } from '@/types/admin/schedule';
 import type { CreateSessionBody } from '@/types/admin/session';
-import { toDateInputValue } from '@/utils/shared/date';
-
-import type { ScheduleFormState, SessionFormState } from './types';
 
 interface CreateScheduleModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   cardinalNumber: number | null;
-  /** 모달이 열릴 때 활성화할 탭 (기본값: GENERAL) */
   initialTab?: ScheduleType;
-  /** 세션 탭에서 저장 시 호출. API 연결 전까지 목업 */
   onCreateSession?: (body: CreateSessionBody) => void;
 }
-
-const INITIAL_FORM: ScheduleFormState = {
-  title: '',
-  startDate: toDateInputValue(),
-  startTime: '00:00',
-  endDate: toDateInputValue(),
-  endTime: '23:55',
-  location: '',
-  content: '',
-};
-
-const INITIAL_SESSION: SessionFormState = {
-  selectedCardinalId: null,
-  recurrenceType: 'NONE',
-  recurrenceEndDate: toDateInputValue(),
-};
 
 function CreateScheduleModal({
   open,
@@ -49,69 +27,15 @@ function CreateScheduleModal({
   onCreateSession,
 }: CreateScheduleModalProps) {
   const [activeTab, setActiveTab] = useState<ScheduleType>(initialTab);
-  const [form, setForm] = useState<ScheduleFormState>(INITIAL_FORM);
-  const [session, setSession] = useState<SessionFormState>(INITIAL_SESSION);
-
-  const { data: cardinals = [] } = useCardinals();
-  const selectedCardinal =
-    session.selectedCardinalId !== null
-      ? cardinals.find((c) => c.id === session.selectedCardinalId)
-      : null;
-
-  const updateForm = (patch: Partial<ScheduleFormState>) =>
-    setForm((prev) => ({ ...prev, ...patch }));
-  const updateSession = (patch: Partial<SessionFormState>) =>
-    setSession((prev) => ({ ...prev, ...patch }));
-
-  const resetForm = () => {
-    setActiveTab(initialTab);
-    setForm({ ...INITIAL_FORM, startDate: toDateInputValue(), endDate: toDateInputValue() });
-    setSession({ ...INITIAL_SESSION, recurrenceEndDate: toDateInputValue() });
-  };
 
   const handleClose = () => {
     onOpenChange(false);
-    resetForm();
-  };
-
-  const isSession = activeTab === 'SESSION';
-  const isDateRangeValid =
-    form.startDate < form.endDate ||
-    (form.startDate === form.endDate && form.startTime < form.endTime);
-  const hasRecurrence = session.recurrenceType !== 'NONE';
-  const isRecurrenceEndValid = !hasRecurrence || session.recurrenceEndDate >= form.endDate;
-
-  const isValid = isSession
-    ? form.title.trim().length > 0 &&
-      selectedCardinal !== null &&
-      selectedCardinal !== undefined &&
-      isDateRangeValid &&
-      isRecurrenceEndValid
-    : form.title.trim().length > 0 && isDateRangeValid && cardinalNumber !== null;
-
-  const handleSubmit = () => {
-    if (!isValid) return;
-
-    if (isSession && selectedCardinal) {
-      const body: CreateSessionBody = {
-        title: form.title.trim(),
-        content: form.content.trim(),
-        location: form.location.trim(),
-        cardinal: selectedCardinal.cardinalNumber,
-        start: `${form.startDate}T${form.startTime}:00`,
-        end: `${form.endDate}T${form.endTime}:00`,
-        recurrenceType: session.recurrenceType,
-        recurrenceEndDate: hasRecurrence ? session.recurrenceEndDate : form.endDate,
-      };
-      onCreateSession?.(body);
-    }
-    // TODO: 일반 일정 API 연동 시 onCreateGeneral 콜백 추가
-    handleClose();
+    setActiveTab(initialTab);
   };
 
   const handleDialogOpenChange = (nextOpen: boolean) => {
     onOpenChange(nextOpen);
-    if (!nextOpen) resetForm();
+    if (!nextOpen) setActiveTab(initialTab);
   };
 
   return (
@@ -143,39 +67,18 @@ function CreateScheduleModal({
           </button>
         </div>
 
-        {/* Scrollable body */}
-        <div className="scrollbar-custom max-h-[700px] overflow-y-auto px-[60px]">
-          <h2 className="typo-h3 text-text-normal py-400">{`${SCHEDULE_TYPE_LABEL[activeTab]} 생성`}</h2>
-
-          {isSession ? (
-            <SessionScheduleForm
-              form={form}
-              onFormChange={updateForm}
-              session={session}
-              onSessionChange={updateSession}
-              isRecurrenceEndValid={isRecurrenceEndValid}
-              cardinals={cardinals}
-              selectedCardinal={selectedCardinal}
-            />
-          ) : (
-            <ScheduleFormBody
-              form={form}
-              onFormChange={updateForm}
-              titleLabel="일정 제목"
-              titlePlaceholder="예 : 중간고사 기간"
-            />
-          )}
-        </div>
-
-        {/* Footer */}
-        <div className="bg-container-neutral flex items-center justify-end gap-200 px-400 pt-400 pb-500">
-          <Button variant="secondary" size="lg" onClick={handleClose}>
-            취소
-          </Button>
-          <Button variant="primary" size="lg" disabled={!isValid} onClick={handleSubmit}>
-            {isSession ? '세션 생성' : '저장'}
-          </Button>
-        </div>
+        {/* Tab content */}
+        {activeTab === 'SESSION' ? (
+          <CreateSessionScheduleForm
+            onCreateSession={onCreateSession}
+            onClose={handleClose}
+          />
+        ) : (
+          <CreateGeneralScheduleForm
+            cardinalNumber={cardinalNumber}
+            onClose={handleClose}
+          />
+        )}
       </DialogContent>
     </Dialog>
   );

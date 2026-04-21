@@ -18,3 +18,10 @@ export interface SessionFormState {
 
 export type SessionDeleteType = 'this' | 'all';
 export type SessionSaveType = 'this' | 'all';
+
+export function isDateRangeValid(form: ScheduleFormState): boolean {
+  return (
+    form.startDate < form.endDate ||
+    (form.startDate === form.endDate && form.startTime < form.endTime)
+  );
+}
