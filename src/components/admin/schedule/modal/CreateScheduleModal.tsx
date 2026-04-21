@@ -69,15 +69,9 @@ function CreateScheduleModal({
 
         {/* Tab content */}
         {activeTab === 'SESSION' ? (
-          <CreateSessionScheduleForm
-            onCreateSession={onCreateSession}
-            onClose={handleClose}
-          />
+          <CreateSessionScheduleForm onCreateSession={onCreateSession} onClose={handleClose} />
         ) : (
-          <CreateGeneralScheduleForm
-            cardinalNumber={cardinalNumber}
-            onClose={handleClose}
-          />
+          <CreateGeneralScheduleForm cardinalNumber={cardinalNumber} onClose={handleClose} />
         )}
       </DialogContent>
     </Dialog>

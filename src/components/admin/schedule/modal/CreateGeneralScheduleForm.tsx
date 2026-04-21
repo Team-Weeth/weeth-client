@@ -23,17 +23,13 @@ interface CreateGeneralScheduleFormProps {
   onClose: () => void;
 }
 
-function CreateGeneralScheduleForm({
-  cardinalNumber,
-  onClose,
-}: CreateGeneralScheduleFormProps) {
+function CreateGeneralScheduleForm({ cardinalNumber, onClose }: CreateGeneralScheduleFormProps) {
   const [form, setForm] = useState<ScheduleFormState>(INITIAL_FORM);
 
   const updateForm = (patch: Partial<ScheduleFormState>) =>
     setForm((prev) => ({ ...prev, ...patch }));
 
-  const isValid =
-    form.title.trim().length > 0 && isDateRangeValid(form) && cardinalNumber !== null;
+  const isValid = form.title.trim().length > 0 && isDateRangeValid(form) && cardinalNumber !== null;
 
   const handleSubmit = () => {
     if (!isValid) return;
