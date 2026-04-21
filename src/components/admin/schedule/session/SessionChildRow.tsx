@@ -1,8 +1,10 @@
+import { cn } from '@/lib/cn';
 import { SessionStatusTag } from '@/components/admin/schedule/session/SessionStatusTag';
 import {
   AttendanceLink,
   MoreButton,
 } from '@/components/admin/schedule/session/SessionActionButtons';
+import { SESSION_TABLE_COLUMNS } from '@/components/admin/schedule/session/sessionTableColumns';
 import {
   formatSessionDate,
   formatSessionDayLabel,
@@ -21,8 +23,13 @@ interface SessionChildRowProps {
 function SessionChildRow({ session, order, onManageAttendance, onMore }: SessionChildRowProps) {
   return (
     <div className="flex h-10 w-full items-center">
-      <div className="bg-container-neutral sticky left-0 z-10 flex w-[306px] items-center">
-        <div className="flex w-[56px] items-center pl-200">
+      <div
+        className={cn(
+          'bg-container-neutral sticky left-0 z-10 flex items-center',
+          SESSION_TABLE_COLUMNS.titleSticky.widthClass,
+        )}
+      >
+        <div className={cn('flex items-center pl-200', SESSION_TABLE_COLUMNS.toggle.widthClass)}>
           <div className="flex size-10 items-center justify-center">
             <span className="typo-body1 text-text-alternative">{order}</span>
           </div>
@@ -31,7 +38,12 @@ function SessionChildRow({ session, order, onManageAttendance, onMore }: Session
           <span className="typo-body1 text-text-strong truncate">{session.title}</span>
         </div>
       </div>
-      <div className="flex w-[549px] items-center gap-300 px-400 py-300 pr-600">
+      <div
+        className={cn(
+          'flex items-center gap-300 px-400 py-300 pr-600',
+          SESSION_TABLE_COLUMNS.childDate.widthClass,
+        )}
+      >
         <span className="typo-body1 text-text-strong w-20 shrink-0">
           {formatSessionDate(session.start)}
         </span>
@@ -42,13 +54,25 @@ function SessionChildRow({ session, order, onManageAttendance, onMore }: Session
           {formatSessionTimeRange(session.start, session.end)}
         </span>
       </div>
-      <div className="flex w-[102px] items-center px-400 py-300 pr-600">
+      <div
+        className={cn(
+          'flex items-center px-400 py-300 pr-600',
+          SESSION_TABLE_COLUMNS.status.widthClass,
+        )}
+      >
         <SessionStatusTag status={session.status} />
       </div>
-      <div className="flex w-[112px] items-center px-400 pr-600">
+      <div
+        className={cn(
+          'flex items-center px-400 pr-600',
+          SESSION_TABLE_COLUMNS.attendance.widthClass,
+        )}
+      >
         <AttendanceLink onClick={() => onManageAttendance?.(session)} />
       </div>
-      <div className="flex w-[71px] items-center justify-center">
+      <div
+        className={cn('flex items-center justify-center', SESSION_TABLE_COLUMNS.more.widthClass)}
+      >
         <MoreButton onClick={() => onMore?.(session)} />
       </div>
     </div>
