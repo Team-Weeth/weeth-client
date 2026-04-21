@@ -143,7 +143,8 @@ function BoardPageContent() {
 
   const fixedBoards = filteredBoards.filter((b) => !b.editable);
   const customBoards = filteredBoards.filter((b) => b.editable);
-  const reachedLimit = customBoards.length >= MAX_CUSTOM_BOARDS;
+  const totalCustomCount = boards.filter((b) => b.editable).length;
+  const reachedLimit = totalCustomCount >= MAX_CUSTOM_BOARDS;
 
   const updateBoard = (boardId: number, patch: Partial<Board>) => {
     setBoards((prev) => prev.map((b) => (b.boardId === boardId ? { ...b, ...patch } : b)));
