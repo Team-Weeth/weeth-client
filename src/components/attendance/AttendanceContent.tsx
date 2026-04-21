@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import dynamic from 'next/dynamic';
+import { useQueryClient } from '@tanstack/react-query';
 
 import { Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbPage, Card } from '@/components/ui';
 import { AttendanceCompleteModal } from '@/components/attendance/AttendanceCompleteModal';
@@ -10,11 +12,18 @@ import { AttendanceTodayCard } from '@/components/attendance/AttendanceTodayCard
 import { ATTENDANCE_ERROR_MESSAGE } from '@/constants/attendance';
 import { attendanceApi } from '@/lib/apis/attendance';
 import { formatAttendanceDescription } from '@/lib/formatTime';
+import { useAttendanceQuery } from '@/hooks/attendance';
 import { useQRCheckIn } from '@/hooks/useQRCheckIn';
+import { useProfileStatusQuery } from '@/hooks/home/useProfileStatusQuery';
+import { useIsAdmin } from '@/hooks/shared';
 import { useClubId } from '@/stores/useClubStore';
 import { toastError } from '@/stores/useToastStore';
-import { useUserName, useUserRole } from '@/stores/useUserStore';
+import { useUserName } from '@/stores/useUserStore';
 import type { AttendanceData } from '@/types/attendance';
+
+const CardinalMissingModal = dynamic(() =>
+  import('@/components/home/CardinalMissingModal').then((m) => m.CardinalMissingModal),
+);
 
 interface AttendanceContentProps {
   attendance?: AttendanceData;
@@ -30,20 +39,27 @@ function AttendanceContent({
   qrCode,
 }: AttendanceContentProps) {
   const name = useUserName() ?? '';
-  const role = useUserRole();
   const clubId = useClubId();
-  const isAdmin = role === 'LEAD' || role === 'ADMIN';
+  const { isAdmin } = useIsAdmin();
   const router = useRouter();
+  const queryClient = useQueryClient();
+  const { data: attendanceData } = useAttendanceQuery();
+  const { data: profileStatus, isLoading: isProfileLoading } = useProfileStatusQuery();
+  const [cardinalModalOpen, setCardinalModalOpen] = useState(false);
   const [isManualChecked, setIsManualChecked] = useState(false);
   const [completeModalOpen, setCompleteModalOpen] = useState(false);
 
   const { isChecked: isQRChecked } = useQRCheckIn({
     qrSessionId,
     qrCode,
-    onSuccess: () => setCompleteModalOpen(true),
+    onSuccess: () => {
+      setCompleteModalOpen(true);
+      queryClient.invalidateQueries({ queryKey: ['attendance', clubId] });
+    },
   });
 
-  const isChecked = isManualChecked || isQRChecked;
+  const isAlreadyChecked = attendance?.status === 'ATTEND' || attendanceData?.status === 'ATTEND';
+  const isChecked = isAlreadyChecked || isManualChecked || isQRChecked;
 
   useEffect(() => {
     if (errorMessage) toastError(errorMessage);
@@ -51,25 +67,36 @@ function AttendanceContent({
 
   const {
     sessionId = null,
-    attendanceRate = 0,
     title = null,
     start = null,
     end = null,
     location = null,
   } = attendance ?? {};
+  const attendanceRate = attendanceData?.attendanceRate ?? attendance?.attendanceRate ?? 0;
   const description = formatAttendanceDescription(start ?? '', end ?? '', location ?? '');
 
   async function handleAttendanceComplete(code: string) {
+    if (!isProfileLoading && profileStatus?.cardinalAssigned === false) {
+      setCardinalModalOpen(true);
+      return;
+    }
     if (!clubId || !sessionId) return;
 
     try {
       await attendanceApi.checkIn(clubId, sessionId, Number(code));
-      setIsManualChecked(true);
-      setCompleteModalOpen(true);
     } catch (error) {
       const errorCode = (error as { response?: { data?: { code?: number } } }).response?.data?.code;
-      toastError(errorCode ? ATTENDANCE_ERROR_MESSAGE[errorCode] : undefined);
+      if (errorCode && ATTENDANCE_ERROR_MESSAGE[errorCode]) {
+        toastError(ATTENDANCE_ERROR_MESSAGE[errorCode]);
+      } else {
+        toastError();
+      }
+      return;
     }
+
+    setIsManualChecked(true);
+    setCompleteModalOpen(true);
+    queryClient.invalidateQueries({ queryKey: ['attendance', clubId] });
   }
 
   return (
@@ -119,6 +146,12 @@ function AttendanceContent({
         open={completeModalOpen}
         onOpenChange={setCompleteModalOpen}
         title="출석이 완료되었어요!"
+      />
+
+      <CardinalMissingModal
+        open={cardinalModalOpen}
+        onClose={() => setCardinalModalOpen(false)}
+        description="출석을 위해 기수 정보가 필요합니다."
       />
     </>
   );

@@ -10,8 +10,10 @@ function useQRCode(clubId: string | null, sessionId: number) {
       return response.data.data;
     },
     enabled: !!clubId,
-    staleTime: 0,
-    gcTime: 0,
+    staleTime: Infinity,
+    gcTime: Infinity,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
   });
 }
 

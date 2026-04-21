@@ -44,7 +44,7 @@ function AttendanceQRContent({ sessionId }: AttendanceQRContentProps) {
         </BreadcrumbList>
       </Breadcrumb>
 
-      <div className="flex flex-col gap-300 px-450">
+      <div className="flex flex-col gap-700 px-450">
         <div className="flex w-full flex-col items-center gap-200 text-center">
           <h1 className="typo-h3 text-text-strong">
             QR코드를 카메라로 스캔하여 빠르게 출석해보세요.

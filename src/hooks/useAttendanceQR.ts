@@ -20,15 +20,20 @@ function useAttendanceQR(clubId: string | null, sessionId: number) {
     const checkInUrl = `${window.location.origin}/attendance?sessionId=${qrData.sessionId}&code=${qrData.code}`;
 
     if (!qrCodeRef.current) {
+      const dotColor = getComputedStyle(document.documentElement)
+        .getPropertyValue('--icon-strong')
+        .trim();
+
       qrCodeRef.current = new QRCodeStyling({
         width: 256,
         height: 256,
         data: checkInUrl,
         qrOptions: { errorCorrectionLevel: 'L' },
         type: 'svg',
-        dotsOptions: { type: 'dots' },
-        cornersSquareOptions: { type: 'extra-rounded' },
-        cornersDotOptions: { type: 'extra-rounded' },
+        dotsOptions: { type: 'dots', color: dotColor },
+        cornersSquareOptions: { type: 'extra-rounded', color: dotColor },
+        cornersDotOptions: { type: 'extra-rounded', color: dotColor },
+        backgroundOptions: { color: 'transparent' },
       });
       qrCodeRef.current.append(qrRef.current);
     } else {
