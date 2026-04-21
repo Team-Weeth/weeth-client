@@ -14,6 +14,7 @@ import {
   Icon,
 } from '@/components/ui';
 import { AdminMeatballIcon } from '@/assets/icons/admin';
+import { logoutAction } from '@/lib/actions/auth';
 
 function MyPageDropdownMenu() {
   // const [withdrawOpen, setWithdrawOpen] = useState(false);
@@ -62,7 +63,7 @@ function MyPageDropdownMenu() {
         title={'로그아웃'}
         description="로그아웃 하시겠습니까?"
       >
-        <AlertDialogAction>로그아웃</AlertDialogAction>
+        <AlertDialogAction onClick={() => logoutAction()}>로그아웃</AlertDialogAction>
         <AlertDialogCancel>취소</AlertDialogCancel>
       </AlertDialog>
     </>
