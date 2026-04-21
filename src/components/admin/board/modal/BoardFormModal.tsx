@@ -11,6 +11,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/DropdownMenu';
 import { DiscardConfirmDialog, type DiscardMessages } from '@/components/admin/modal/DiscardConfirmDialog';
+import { CustomAlertDialog } from '@/components/alert';
 import { DeleteBoardDialog } from '@/components/admin/board/modal/DeleteBoardDialog';
 import { ModalIconButton } from '@/components/admin/modal/ModalIconButton';
 import { AdminCloseIcon, AdminMeatballIcon } from '@/assets/icons/admin';
@@ -75,6 +76,7 @@ function BoardFormModal({
 }: BoardFormModalProps) {
   const discardMessages = DISCARD_MESSAGES[mode];
   const [deleteOpen, setDeleteOpen] = useState(false);
+  const [deleteDiscardOpen, setDeleteDiscardOpen] = useState(false);
   const {
     form,
     updateField,
@@ -90,12 +92,8 @@ function BoardFormModal({
   });
 
   const handleClose = () => onOpenChange(false);
-  const handleTryClose = (source: 'close' | 'cancel' | 'delete') => tryClose(source, handleClose);
+  const handleTryClose = (source: 'close' | 'cancel') => tryClose(source, handleClose);
   const handleDiscardConfirm = () => confirmDiscard(handleClose);
-  const handleDeleteDiscard = () => {
-    setDiscardSource(null);
-    onDelete?.();
-  };
   const dismissDiscard = () => setDiscardSource(null);
 
   const handleSubmit = () => {
@@ -139,7 +137,7 @@ function BoardFormModal({
                       onSelect={() => {
                         requestAnimationFrame(() => {
                           if (hasChanges) {
-                            setDiscardSource('delete');
+                            setDeleteDiscardOpen(true);
                           } else {
                             setDeleteOpen(true);
                           }
@@ -150,12 +148,17 @@ function BoardFormModal({
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
-                <DiscardConfirmDialog
-                  source="delete"
-                  currentSource={discardSource}
-                  messages={discardMessages}
-                  onConfirm={handleDeleteDiscard}
-                  onDismiss={dismissDiscard}
+                <CustomAlertDialog
+                  open={deleteDiscardOpen}
+                  onOpenChange={setDeleteDiscardOpen}
+                  title={discardMessages.title}
+                  actionLabel={discardMessages.actionLabel}
+                  cancelLabel={discardMessages.cancelLabel}
+                  onAction={() => {
+                    setDeleteDiscardOpen(false);
+                    onDelete?.();
+                  }}
+                  onDismiss={() => setDeleteDiscardOpen(false)}
                   placement="below-right"
                 />
                 <DeleteBoardDialog

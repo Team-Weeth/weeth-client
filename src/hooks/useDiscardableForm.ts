@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-type DiscardSource = 'close' | 'cancel' | 'delete' | null;
+type DiscardSource = 'close' | 'cancel' | null;
 
 interface UseDiscardableFormParams<T> {
   defaultValue: T;
