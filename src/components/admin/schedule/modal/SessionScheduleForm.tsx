@@ -7,11 +7,10 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-  Icon,
 } from '@/components/ui';
 import { CalendarPicker } from '@/components/ui/CalendarPicker';
 import { DateTimeInput } from '@/components/ui/DateTimeInput';
-import { ArrowDownIcon, InfoCircleIcon } from '@/assets/icons';
+import { ArrowDownIcon } from '@/assets/icons';
 import { ScheduleFormField } from '@/components/admin/schedule/ScheduleFormField';
 import { ScheduleTextField } from '@/components/admin/schedule/ScheduleTextField';
 import { ScheduleTextareaField } from '@/components/admin/schedule/ScheduleTextareaField';
@@ -22,6 +21,7 @@ import {
 import { addYearsToDateInput } from '@/utils/shared/date';
 
 import type { ScheduleFormState, SessionFormState } from './types';
+import SessionInfobanner from '../session/SessionInfoBanner';
 
 interface Cardinal {
   id: number;
@@ -55,13 +55,7 @@ function SessionScheduleForm({
   return (
     <div className="flex flex-col gap-400 py-400">
       {/* 안내 배너 */}
-      <div className="bg-container-neutral-alternative flex items-start gap-200 rounded-md p-300">
-        <Icon src={InfoCircleIcon} size={20} className="text-icon-alternative mt-[2px]" />
-        <p className="typo-body2 text-text-alternative flex-1">
-          세션은 출석을 진행할 동아리의 공식적인 모임을 관리합니다. 생성된 세션은 출석 관리에
-          자동으로 연결되며, 출석 내역 확인 및 수정은 출석 관리 탭에서 진행해주세요.
-        </p>
-      </div>
+      <SessionInfobanner />
 
       {/* 세션 제목 */}
       <ScheduleTextField

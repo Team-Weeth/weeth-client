@@ -2,6 +2,15 @@ import { cn } from '@/lib/cn';
 import { SessionGroupRow } from '@/components/admin/schedule/session/SessionGroupRow';
 import type { AdminSession, AdminSessionGroup } from '@/types/admin/session';
 
+// 첫 번째 sticky 컬럼(세션 제목)을 제외한 헤더 컬럼 정의
+const HEADER_COLUMNS = [
+  { label: '날짜', widthClass: 'w-[206px]' },
+  { label: '반복 설정', widthClass: 'w-[241px]' },
+  { label: '진행 차수', widthClass: 'w-[102px]' },
+  { label: '상태', widthClass: 'w-[102px]' },
+  { label: '출석 관리', widthClass: 'w-[112px]' },
+] as const;
+
 interface SessionTableProps extends React.HTMLAttributes<HTMLDivElement> {
   groups: AdminSessionGroup[];
   onManageAttendance?: (target: AdminSession | AdminSessionGroup) => void;
@@ -26,21 +35,14 @@ function SessionTable({
               <span className="typo-sub3 text-text-alternative">세션 제목</span>
             </div>
           </div>
-          <div className="flex w-[206px] items-center px-400 py-[15px] pr-600">
-            <span className="typo-sub3 text-text-alternative">날짜</span>
-          </div>
-          <div className="flex w-[241px] items-center px-400 py-[15px] pr-600">
-            <span className="typo-sub3 text-text-alternative">반복 설정</span>
-          </div>
-          <div className="flex w-[102px] items-center px-400 py-[15px] pr-600">
-            <span className="typo-sub3 text-text-alternative">진행 차수</span>
-          </div>
-          <div className="flex w-[102px] items-center px-400 py-[15px] pr-600">
-            <span className="typo-sub3 text-text-alternative">상태</span>
-          </div>
-          <div className="flex w-[112px] items-center px-400 py-[15px] pr-600">
-            <span className="typo-sub3 text-text-alternative">출석 관리</span>
-          </div>
+          {HEADER_COLUMNS.map((col) => (
+            <div
+              key={col.label}
+              className={cn('flex items-center px-400 py-[15px] pr-600', col.widthClass)}
+            >
+              <span className="typo-sub3 text-text-alternative">{col.label}</span>
+            </div>
+          ))}
           <div className="w-[71px]" />
         </div>
 
