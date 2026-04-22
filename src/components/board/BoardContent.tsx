@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { useBoardPosts } from '@/hooks';
 import { useIntersectionObserver } from '@/hooks/board/useIntersectionObserver';
 import { useUserId } from '@/stores/useUserStore';
@@ -21,6 +21,7 @@ function toDisplayImages(files: FileItem[]) {
 
 function BoardContent() {
   const router = useRouter();
+  const { clubId } = useParams<{ clubId: string }>();
   const activeBoardId = useActiveBoardId();
   const currentUserId = useUserId();
   const {
@@ -78,7 +79,7 @@ function BoardContent() {
             )}
           </PostCard.Header>
           <Link
-            href={`/board/${post.id}`}
+            href={`/${clubId}/board/${post.id}`}
             className="after:absolute after:inset-0 after:content-['']"
           >
             <PostCard.ListContent title={post.title} content={post.content} isNew={post.isNew} />
@@ -92,7 +93,7 @@ function BoardContent() {
               likeCount={post.like.likeCount}
               commentCount={post.commentCount}
               isLiked={post.like.isLiked}
-              onComment={() => router.push(`/board/${post.id}#comments`)}
+              onComment={() => router.push(`/${clubId}/board/${post.id}#comments`)}
             />
           </div>
         </PostCard.Root>

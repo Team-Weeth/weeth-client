@@ -35,9 +35,6 @@ export function proxy(request: NextRequest) {
   }
 
   // 개발 배포 환경에서 토큰 자동 주입 (카카오/애플 로그인 없이 페이지 접근)
-  // Amplify/Vercel 환경변수에 NEXT_PUBLIC_APP_ENV를 브랜치별로 등록해야 함
-  // - develop 브랜치 배포: NEXT_PUBLIC_APP_ENV=development
-  // - main 브랜치 배포: NEXT_PUBLIC_APP_ENV=production
   const isPreview = process.env.NEXT_PUBLIC_APP_ENV !== 'production';
   const previewToken = process.env.PREVIEW_ACCESS_TOKEN;
 
@@ -65,13 +62,24 @@ export function proxy(request: NextRequest) {
     return NextResponse.next();
   }
 
+  // [clubId] 라우트는 레이아웃에서 접근 제어하므로 통과시킴
+  // 인증 필요한 고정 경로(/hub, /joining, /welcome 등)는 제외
+  const PRIVATE_PATHS = ['/hub', '/joining', '/welcome'];
+  const isPrivatePath = PRIVATE_PATHS.some(
+    (path) => pathname === path || pathname.startsWith(`${path}/`),
+  );
+  if (!isPrivatePath) {
+    const isClubRoute = /^\/[A-Za-z0-9]+(?:\/|$)/.test(pathname);
+    if (isClubRoute) {
+      const requestHeaders = new Headers(request.headers);
+      requestHeaders.set('x-pathname', pathname);
+      return NextResponse.next({ request: { headers: requestHeaders } });
+    }
+  }
+
   const accessToken = request.cookies.get(ACCESS_TOKEN_KEY)?.value;
 
   if (!accessToken) {
-    const clubId = process.env.CLUB_ID;
-    if (clubId) {
-      return NextResponse.redirect(new URL(`/club/${clubId}`, request.url));
-    }
     const loginUrl = new URL('/login', request.url);
     const redirect = request.nextUrl.search ? `${pathname}${request.nextUrl.search}` : pathname;
     loginUrl.searchParams.set('redirect', redirect);

@@ -9,13 +9,14 @@ import { fileAttachmentToFileItem } from '@/utils/shared/file';
 import { PostActionMenu, PostCard } from '../board';
 import { Avatar, AvatarFallback, Button } from '@/components/ui';
 
-import { useRouter } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { useIsAdmin } from '@/hooks/shared';
 import { HomeBoardContentSkeleton } from '@/components/home/skeleton';
 
 function HomeBoardContent() {
   const { isAdmin } = useIsAdmin();
   const router = useRouter();
+  const { clubId } = useParams<{ clubId: string }>();
   const {
     data: posts,
     fetchNextPage,
@@ -56,7 +57,7 @@ function HomeBoardContent() {
           <Button
             variant="primary"
             size="lg"
-            onClick={() => router.push('/board/write?type=GENERAL')}
+            onClick={() => router.push(`/${clubId}/board/write?type=GENERAL`)}
           >
             게시글 작성하기
           </Button>
@@ -92,7 +93,7 @@ function HomeBoardContent() {
                 )}
               </PostCard.Header>
               <Link
-                href={`/board/${post.id}`}
+                href={`/${clubId}/board/${post.id}`}
                 className="after:absolute after:inset-0 after:content-['']"
               >
                 <PostCard.ListContent
@@ -110,7 +111,7 @@ function HomeBoardContent() {
                   likeCount={post.like.likeCount}
                   isLiked={post.like.isLiked}
                   commentCount={post.commentCount}
-                  onComment={() => router.push(`/board/${post.id}#comments`)}
+                  onComment={() => router.push(`/${clubId}/board/${post.id}#comments`)}
                 />
               </div>
             </PostCard.Root>

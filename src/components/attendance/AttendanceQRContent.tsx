@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { useParams } from 'next/navigation';
 
 import {
   Breadcrumb,
@@ -18,6 +19,7 @@ interface AttendanceQRContentProps {
 }
 
 function AttendanceQRContent({ sessionId }: AttendanceQRContentProps) {
+  const { clubId: clubIdParam } = useParams<{ clubId: string }>();
   const clubId = useClubId();
   const { qrRef, qrData, isLoading, minutes, seconds, isExpired } = useAttendanceQR(
     clubId,
@@ -30,7 +32,10 @@ function AttendanceQRContent({ sessionId }: AttendanceQRContentProps) {
         <BreadcrumbList>
           <BreadcrumbItem>
             <BreadcrumbLink asChild>
-              <Link href="/attendance" className="typo-caption1 text-text-alternative">
+              <Link
+                href={`/${clubIdParam}/attendance`}
+                className="typo-caption1 text-text-alternative"
+              >
                 출석
               </Link>
             </BreadcrumbLink>

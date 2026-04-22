@@ -12,94 +12,83 @@ import { toastError } from '@/stores/useToastStore';
 import type { CreateClubDraftState } from '@/stores/useCreateClubDraftStore';
 
 interface ClubCreatingPageProps {
-  intent?: string;
   onCancel?: () => void;
 }
 
-function ClubCreatingPage({ intent, onCancel }: ClubCreatingPageProps) {
+type Status = 'idle' | 'requesting' | 'api-done' | 'navigated';
+
+function ClubCreatingPage({ onCancel }: ClubCreatingPageProps) {
   const router = useRouter();
   const resetDraft = useCreateClubDraftStore((state) => state.reset);
   const { setClub } = useClubActions();
-  const [apiDone, setApiDone] = useState(false);
-  const apiCalledRef = useRef(false);
+  const [status, setStatus] = useState<Status>('idle');
   const animationDoneRef = useRef(false);
-  const createdClubIdRef = useRef<string | null>(null);
-
-  const nextPath = intent === 'create' ? '/home?onboarding=club-created' : '/hub/welcome';
+  const clubIdRef = useRef<string | null>(null);
 
   const navigate = () => {
-    if (intent === 'create') resetDraft();
-    router.replace(nextPath);
+    if (status === 'navigated' || !clubIdRef.current) return;
+    setStatus('navigated');
+    resetDraft();
+    router.replace(`/${clubIdRef.current}/home?onboarding=club-created`);
   };
 
   const progress = useProgressAnimation({
     duration: 5000,
     onComplete: () => {
       animationDoneRef.current = true;
-      if (apiDone) navigate();
+      if (status === 'api-done') navigate();
     },
   });
 
-  // 프로그레스 80% 시점에 API 호출
   useEffect(() => {
-    let isMounted = true;
-
-    if (progress < 80 || apiCalledRef.current) return;
-    apiCalledRef.current = true;
+    if (progress < 80 || status !== 'idle') return;
+    setStatus('requesting');
 
     const { school, name, description, generation, phone, email, contactType } =
       useCreateClubDraftStore.getState() as CreateClubDraftState & Record<string, unknown>;
 
-    createClubAction({
-      school,
-      name,
-      description,
-      generation,
-      phone,
-      email,
-      contactType,
-    })
-      .then((result) => {
-        if (!isMounted) return;
+    if (!school || !name || !contactType) {
+      toastError('동아리 정보가 올바르지 않습니다.');
+      onCancel?.();
+      return;
+    }
 
-        if (result?.error) {
+    createClubAction({ school, name, description, generation, phone, email, contactType })
+      .then(async (result) => {
+        if (result.error) {
           toastError(result.error);
-          apiCalledRef.current = false;
           onCancel?.();
           return;
         }
 
         if (!result.clubId) {
-          toastError('동아리 생성에 실패했습니다. 다시 시도해주세요.');
-          apiCalledRef.current = false;
+          toastError('동아리 생성에 실패했습니다.');
           onCancel?.();
           return;
         }
 
-        createdClubIdRef.current = result.clubId;
+        clubIdRef.current = result.clubId;
         setClub(result.clubId, name);
-        setApiDone(true);
+        setStatus('api-done');
+
+        if (animationDoneRef.current) {
+          navigate();
+        }
       })
       .catch(() => {
-        if (!isMounted) return;
-
-        toastError('동아리 생성에 실패했습니다. 다시 시도해주세요.');
-        apiCalledRef.current = false;
+        toastError('동아리 생성에 실패했습니다.');
         onCancel?.();
       });
-
-    return () => {
-      isMounted = false;
-    };
-  }, [progress, onCancel, setClub]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [progress]);
 
   // API가 애니메이션 이후에 완료된 경우 즉시 navigate
   useEffect(() => {
-    if (apiDone && animationDoneRef.current) {
-      if (intent === 'create') resetDraft();
-      router.replace(nextPath);
+    if (status === 'api-done' && animationDoneRef.current) {
+      navigate();
     }
-  }, [apiDone, intent, nextPath, resetDraft, router]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [status]);
 
   return (
     <div className="flex min-h-screen items-center justify-center px-400">

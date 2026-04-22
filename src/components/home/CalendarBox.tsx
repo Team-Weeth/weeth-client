@@ -1,7 +1,7 @@
 'use client';
 
 // import Image from 'next/image';
-import { useRouter } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 // import { ArrowRightIcon } from '@/assets/icons';
 import { useMonthlySchedulesQuery } from '@/hooks/home';
 import { EmptyBox } from '@/components/home/EmptyBox';
@@ -11,6 +11,7 @@ import { useIsAdmin } from '@/hooks/shared';
 
 export function CalendarBox() {
   const router = useRouter();
+  const { clubId } = useParams<{ clubId: string }>();
   const { data: schedules, isLoading: isSchedulesLoading } = useMonthlySchedulesQuery();
   const { isAdmin, isLoading: isAdminLoading } = useIsAdmin();
 
@@ -62,7 +63,10 @@ export function CalendarBox() {
         ) : isAdmin ? (
           <EmptyBox
             description="아직 일정 정보가 없습니다."
-            button={{ label: '일정 추가하기', onClick: () => router.push('/admin/schedule') }}
+            button={{
+              label: '일정 추가하기',
+              onClick: () => router.push(`/${clubId}/admin/schedule`),
+            }}
           />
         ) : (
           <EmptyBox description="일정이 없습니다." />

@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { isAxiosError } from 'axios';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
@@ -36,6 +36,7 @@ interface EditProfileContentProps extends React.HTMLAttributes<HTMLDivElement> {
 
 function EditProfileContent({ className, schools, majors, ...props }: EditProfileContentProps) {
   const router = useRouter();
+  const { clubId } = useParams<{ clubId: string }>();
   const { data: me } = useMyMemberQuery();
   const { mutate: updateProfile, isPending } = useUpdateProfileMutation();
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -101,7 +102,7 @@ function EditProfileContent({ className, schools, majors, ...props }: EditProfil
         onSuccess: () => {
           toastSuccess('프로필이 수정되었습니다.');
           allowNavigation();
-          router.push('/mypage');
+          router.push(`/${clubId}/mypage`);
         },
         onError: (error) => {
           const message =
@@ -128,7 +129,7 @@ function EditProfileContent({ className, schools, majors, ...props }: EditProfil
             <BreadcrumbList>
               <BreadcrumbItem>
                 <BreadcrumbLink asChild>
-                  <Link href="/mypage" className="typo-caption1 text-text-alternative">
+                  <Link href={`/${clubId}/mypage`} className="typo-caption1 text-text-alternative">
                     My
                   </Link>
                 </BreadcrumbLink>

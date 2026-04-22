@@ -2,6 +2,7 @@
 
 import { useEffect } from 'react';
 import Link from 'next/link';
+import { useParams } from 'next/navigation';
 
 import {
   Breadcrumb,
@@ -41,6 +42,7 @@ function toDisplayRecord(record: AttendanceSummary['attendances'][number]) {
 }
 
 function AttendanceHistoryContent({ summary, errorMessage }: AttendanceHistoryContentProps) {
+  const { clubId } = useParams<{ clubId: string }>();
   const { total, attendanceCount, absenceCount, attendances = [] } = summary ?? {};
   const records = attendances.map(toDisplayRecord);
 
@@ -55,7 +57,10 @@ function AttendanceHistoryContent({ summary, errorMessage }: AttendanceHistoryCo
           <BreadcrumbList>
             <BreadcrumbItem>
               <BreadcrumbLink asChild>
-                <Link href="/attendance" className="typo-caption1 text-text-alternative">
+                <Link
+                  href={`/${clubId}/attendance`}
+                  className="typo-caption1 text-text-alternative"
+                >
                   출석
                 </Link>
               </BreadcrumbLink>

@@ -44,7 +44,7 @@ function TermsListView({
           <button
             type="button"
             onClick={onToggleAll}
-            className="flex cursor-pointer items-center gap-300"
+            className="flex cursor-pointer items-center gap-300 focus:outline-none"
           >
             <Icon
               src={CheckRoundIcon}

@@ -1,14 +1,23 @@
 import axios from 'axios';
+import { getAppOriginServerFallback } from '@/utils/shared/url';
+
+function getProxyBaseUrl(path: string) {
+  if (typeof window !== 'undefined') {
+    return path;
+  }
+
+  return `${getAppOriginServerFallback()}${path}`;
+}
 
 export const apiClient = axios.create({
-  baseURL: '/api/proxy',
+  baseURL: getProxyBaseUrl('/api/proxy'),
   timeout: 10000,
   headers: { 'Content-Type': 'application/json' },
   withCredentials: true,
 });
 
 export const apiClientV1 = axios.create({
-  baseURL: '/api/proxy-v1',
+  baseURL: getProxyBaseUrl('/api/proxy-v1'),
   timeout: 10000,
   headers: { 'Content-Type': 'application/json' },
   withCredentials: true,

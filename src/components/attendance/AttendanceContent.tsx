@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import dynamic from 'next/dynamic';
 import { useQueryClient } from '@tanstack/react-query';
 
@@ -46,6 +46,7 @@ function AttendanceContent({
   const { data: attendanceData } = useAttendanceQuery();
   const { data: profileStatus, isLoading: isProfileLoading } = useProfileStatusQuery();
   const [cardinalModalOpen, setCardinalModalOpen] = useState(false);
+  const { clubId: clubIdParam } = useParams<{ clubId: string }>();
   const [isManualChecked, setIsManualChecked] = useState(false);
   const [completeModalOpen, setCompleteModalOpen] = useState(false);
 
@@ -131,11 +132,11 @@ function AttendanceContent({
             variant="onlyText"
             overline="출석"
             title="출석 기록"
-            onClick={() => router.push('/attendance/history')}
+            onClick={() => router.push(`/${clubIdParam}/attendance/history`)}
             onKeyDown={(e) => {
               if (e.key === 'Enter' || e.key === ' ') {
                 e.preventDefault();
-                router.push('/attendance/history');
+                router.push(`/${clubIdParam}/attendance/history`);
               }
             }}
           />

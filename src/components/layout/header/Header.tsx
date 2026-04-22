@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
+import { useParams, usePathname, useRouter } from 'next/navigation';
 import { LogoGrayIcon, AvatarIcon, ExitToAppIcon } from '@/assets/icons';
 import { cn } from '@/lib/cn';
 import { useClubName, useUserProfileImageUrl } from '@/stores';
@@ -22,19 +22,20 @@ const Logo = ({ width = 32, href }: { width?: number; href: string }) => (
   </Link>
 );
 
-const NAV_ITEMS = [
-  { id: 'board', label: '게시판', href: '/board' },
-  { id: 'attendance', label: '출석', href: '/attendance' },
-];
-
 export default function Header({ isMain = true }: HeaderProps) {
   const router = useRouter();
   const pathname = usePathname();
+  const { clubId } = useParams<{ clubId: string }>();
   const clubName = useClubName();
   const profileImageUrl = useUserProfileImageUrl();
+  const isPostingPage = pathname.includes('/write') || /\/board\/edit\/\d+$/.test(pathname);
+
+  const NAV_ITEMS = [
+    { id: 'board', label: '게시판', href: `/${clubId}/board` },
+    { id: 'attendance', label: '출석', href: `/${clubId}/attendance` },
+  ];
   const [visible, setVisible] = useState(true);
   const lastScrollY = useRef(0);
-  const isPostingPage = pathname.includes('/write') || /^\/board\/edit\/\d+$/.test(pathname);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -67,38 +68,40 @@ export default function Header({ isMain = true }: HeaderProps) {
             <span className="typo-sub1 text-text-normal px-1">{clubName}</span>
           </div>
         )}
-        <div className="flex items-center justify-center gap-200">
-          <button
-            type="button"
-            aria-label="관리자 페이지로 이동"
-            onClick={() => router.push('/admin')}
-            className="flex cursor-pointer items-center justify-center rounded-full"
-          >
-            <Icon src={ExitToAppIcon} alt="avatar" size={40} className="text-icon-normal p-2" />
-          </button>
-          <button
-            type="button"
-            aria-label="마이페이지로 이동"
-            onClick={() => router.push('/mypage')}
-            className="cursor-pointer rounded-full"
-          >
-            {profileImageUrl ? (
-              <Image
-                src={profileImageUrl}
-                alt="avatar"
-                width={40}
-                height={40}
-                className="h-10 w-10 rounded-full object-cover"
-              />
-            ) : (
-              <Image src={AvatarIcon} alt="avatar" width={40} height={40} />
-            )}
-          </button>
-        </div>
+        {isMain && clubId && (
+          <div className="flex items-center justify-center gap-200">
+            <button
+              type="button"
+              aria-label="관리자 페이지로 이동"
+              onClick={() => router.push(`/${clubId}/admin`)}
+              className="flex cursor-pointer items-center justify-center rounded-full"
+            >
+              <Icon src={ExitToAppIcon} alt="avatar" size={40} className="text-icon-normal p-2" />
+            </button>
+            <button
+              type="button"
+              aria-label="마이페이지로 이동"
+              onClick={() => router.push(`/${clubId}/mypage`)}
+              className="cursor-pointer rounded-full"
+            >
+              {profileImageUrl ? (
+                <Image
+                  src={profileImageUrl}
+                  alt="avatar"
+                  width={40}
+                  height={40}
+                  className="h-10 w-10 rounded-full object-cover"
+                />
+              ) : (
+                <Image src={AvatarIcon} alt="avatar" width={40} height={40} />
+              )}
+            </button>
+          </div>
+        )}
       </header>
       <header className="tablet:flex bg-background hidden w-full items-center justify-between px-5 py-3">
         <div className="flex items-center gap-4">
-          <Logo href={isMain ? '/home' : '/'} />
+          <Logo href={isMain ? `/${clubId}/home` : '/'} />
 
           {!isMain && (
             <>

@@ -1,11 +1,12 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { useProfileStatusQuery } from './useProfileStatusQuery';
 
 export function useWritePost() {
   const router = useRouter();
+  const { clubId } = useParams<{ clubId: string }>();
   const { data: profileStatus, isLoading } = useProfileStatusQuery();
 
   const [cardinalModalOpen, setCardinalModalOpen] = useState(false);
@@ -19,7 +20,7 @@ export function useWritePost() {
     } else if (!profileStatus?.profileCompleted) {
       setProfileModalOpen(true);
     } else {
-      router.push('/board/write');
+      router.push(`/${clubId}/board/write`);
     }
   };
 
