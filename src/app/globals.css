@@ -106,6 +106,7 @@
   --state-error: #ff5857;
 
   --kakao-bg: #fee500;
+  --kakao-text: rgba(0, 0, 0, 0.85);
 
   --font-weight-medium: 500;
   --font-weight-semibold: 600;
@@ -549,6 +550,18 @@ select:focus {
   line-height: var(--button2-line-height);
   font-weight: var(--font-weight-semibold);
   letter-spacing: var(--letter-spacing);
+}
+
+@utility typo-social {
+  font-family:
+    'SF Pro',
+    -apple-system,
+    BlinkMacSystemFont,
+    system-ui,
+    sans-serif;
+  font-size: 19px;
+  font-weight: 590;
+  line-height: 24px;
 }
 
 .scrollbar-none {

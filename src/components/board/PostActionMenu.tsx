@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { ActionMenu, type ActionMenuProps } from './ActionMenu';
 import { PostDeleteDialog } from './PostDeleteDialog';
 
@@ -12,10 +12,11 @@ interface PostActionMenuProps extends Omit<ActionMenuProps, 'onDeleteSelect'> {
 
 function PostActionMenu({ postId, onDeleted, ...rest }: PostActionMenuProps) {
   const router = useRouter();
+  const { clubId } = useParams<{ clubId: string }>();
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
   const handleEdit = () => {
-    router.push(`/board/edit/${postId}`);
+    router.push(`/${clubId}/board/edit/${postId}`);
   };
 
   const handleDeleteSelect = (event: Event) => {

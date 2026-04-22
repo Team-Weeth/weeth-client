@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { useParams } from 'next/navigation';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -17,6 +18,7 @@ import { AdminMeatballIcon } from '@/assets/icons/admin';
 import { logoutAction } from '@/lib/actions/auth';
 
 function MyPageDropdownMenu() {
+  const { clubId } = useParams<{ clubId: string }>();
   // const [withdrawOpen, setWithdrawOpen] = useState(false);
   const [logoutOpen, setLogoutOpen] = useState(false);
 
@@ -34,7 +36,7 @@ function MyPageDropdownMenu() {
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           <DropdownMenuItem asChild>
-            <Link href="/mypage/edit">개인정보 수정</Link>
+            <Link href={`/${clubId}/mypage/edit`}>개인정보 수정</Link>
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem onSelect={() => setLogoutOpen(true)}>로그아웃</DropdownMenuItem>

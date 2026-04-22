@@ -1,7 +1,5 @@
 import type { ReactNode } from 'react';
-import { cookies } from 'next/headers';
 import { boardServerApi } from '@/lib/apis/board.server';
-import { CLUB_ID_KEY } from '@/lib/apis/cookies';
 import { toBoardNavItem } from '@/lib/board';
 import { BOARD_TYPE_ORDER } from '@/constants/board/type';
 import { BoardNavClient } from './BoardNavClient';
@@ -9,11 +7,11 @@ import { BoardNavClient } from './BoardNavClient';
 interface BoardLayoutProps {
   children: ReactNode;
   footer: ReactNode;
+  params: Promise<{ clubId: string }>;
 }
 
-export default async function BoardLayout({ children, footer }: BoardLayoutProps) {
-  const clubId = (await cookies()).get(CLUB_ID_KEY)?.value;
-  if (!clubId) return null;
+export default async function BoardLayout({ children, footer, params }: BoardLayoutProps) {
+  const { clubId } = await params;
   const response = await boardServerApi.getBoards(clubId).catch(() => null);
   const boards = [...(response?.data ?? [])].sort(
     (a, b) => (BOARD_TYPE_ORDER[a.type] ?? 99) - (BOARD_TYPE_ORDER[b.type] ?? 99),

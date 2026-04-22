@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 import { CompleteIcon } from '@/assets/icons';
@@ -49,6 +49,7 @@ function AttendanceTodayCard({
   onAttendanceComplete,
 }: AttendanceTodayCardProps) {
   const router = useRouter();
+  const { clubId } = useParams<{ clubId: string }>();
   const [codeModalOpen, setCodeModalOpen] = useState(false);
 
   function handleSecondaryClick() {
@@ -57,7 +58,7 @@ function AttendanceTodayCard({
       return;
     }
     if (sessionId == null) return;
-    router.push(`/attendance/qr?sessionId=${sessionId}`);
+    router.push(`/${clubId}/attendance/qr?sessionId=${sessionId}`);
   }
 
   return (

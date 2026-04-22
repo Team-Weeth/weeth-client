@@ -6,9 +6,10 @@ import type { Club } from '@/types';
 
 interface ClubAccessPageProps {
   club: Club;
+  loginHref?: string;
 }
 
-function ClubAccessPage({ club }: ClubAccessPageProps) {
+function ClubAccessPage({ club, loginHref }: ClubAccessPageProps) {
   return (
     <div className="flex min-h-screen flex-col items-center justify-center">
       <div className="flex flex-col items-center gap-400">
@@ -23,12 +24,14 @@ function ClubAccessPage({ club }: ClubAccessPageProps) {
           <span className="typo-h3 text-text-strong">{club.name}</span>
           <span className="typo-body2 text-text-normal">{club.description}</span>
         </div>
-        <Link
-          href={`/login?intent=join-no-code&clubId=${club.id}`}
-          className={cn(buttonVariants({ variant: 'primary', size: 'lg' }), 'w-full')}
-        >
-          로그인하고 들어가기
-        </Link>
+        {loginHref && (
+          <Link
+            href={loginHref}
+            className={cn(buttonVariants({ variant: 'primary', size: 'lg' }), 'w-full')}
+          >
+            로그인하고 들어가기
+          </Link>
+        )}
       </div>
     </div>
   );

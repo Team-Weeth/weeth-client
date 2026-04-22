@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { Divider } from '@/components/ui';
 import {
   PostCard,
@@ -31,6 +31,7 @@ interface PostDetailContentProps {
 
 function PostDetailContent({ initialData }: PostDetailContentProps) {
   const router = useRouter();
+  const { clubId: clubIdParam } = useParams<{ clubId: string }>();
   const currentUserId = useUserId();
   const clubId = useClubId();
   const setActiveBoardId = useSetActiveBoardId();
@@ -103,8 +104,8 @@ function PostDetailContent({ initialData }: PostDetailContentProps) {
           {isPostAuthor && (
             <PostActionMenu
               postId={currentPost.id}
-              onEdit={() => router.push(`/board/edit/${currentPost.id}`)}
-              onDeleted={() => router.push('/board')}
+              onEdit={() => router.push(`/${clubIdParam}/board/edit/${currentPost.id}`)}
+              onDeleted={() => router.push(`/${clubIdParam}/board`)}
             />
           )}
         </PostCard.Header>

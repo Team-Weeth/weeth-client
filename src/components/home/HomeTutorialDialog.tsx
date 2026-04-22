@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 
 import { HOME_TUTORIAL_SLIDES } from '@/constants/home/tutorial';
 import {
@@ -27,6 +27,7 @@ interface HomeTutorialDialogProps {
 
 function HomeTutorialDialog({ open, onOpenChange }: HomeTutorialDialogProps) {
   const router = useRouter();
+  const { clubId } = useParams<{ clubId: string }>();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [api, setApi] = useState<CarouselApi>();
   const displayIndex = open ? currentIndex : 0;
@@ -53,7 +54,7 @@ function HomeTutorialDialog({ open, onOpenChange }: HomeTutorialDialogProps) {
 
   const handleGoToAdmin = () => {
     onOpenChange(false);
-    router.push('/admin');
+    router.push(`/${clubId}/admin`);
   };
 
   const handlePrevious = () => {

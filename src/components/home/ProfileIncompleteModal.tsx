@@ -1,6 +1,6 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import {
   AlertDialog,
   AlertDialogContent,
@@ -20,10 +20,11 @@ interface ProfileIncompleteModalProps {
 
 export function ProfileIncompleteModal({ open, onClose, onSkip }: ProfileIncompleteModalProps) {
   const router = useRouter();
+  const { clubId } = useParams<{ clubId: string }>();
 
   // TODO: 프로필 편집 페이지 경로 확정 후 변경
   const handleComplete = () => {
-    router.push('/mypage');
+    router.push(`/${clubId}/mypage`);
   };
 
   return (

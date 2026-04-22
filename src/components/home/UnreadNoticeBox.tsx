@@ -2,6 +2,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
+import { useParams } from 'next/navigation';
 import { useState } from 'react';
 import { NewIcon, DeleteIcon } from '@/assets/icons';
 import { useUnreadNoticeQuery } from '@/hooks/home';
@@ -11,6 +12,7 @@ import { Icon } from '@/components/ui';
 
 export function UnreadNoticeBox() {
   const { data } = useUnreadNoticeQuery();
+  const { clubId } = useParams<{ clubId: string }>();
   const [dismissed, setDismissed] = useState(false);
   const [hidden, setHidden] = useState(false);
 
@@ -18,7 +20,7 @@ export function UnreadNoticeBox() {
 
   return (
     <Link
-      href={`/board/${data.id}`}
+      href={`/${clubId}/board/${data.id}`}
       className={cn(
         'flex flex-col rounded-lg shadow-[0_5px_20px_0_rgba(17,33,49,0.2)] transition-all duration-300',
         dismissed && 'pointer-events-none translate-x-2 opacity-0',
