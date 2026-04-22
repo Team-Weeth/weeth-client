@@ -3,12 +3,12 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { LogoGrayIcon, ExitToAppIcon } from '@/assets/icons';
+import { LogoGrayIcon, AvatarIcon, ExitToAppIcon } from '@/assets/icons';
 import { useClubName, useUserProfileImageUrl } from '@/stores';
 import { PostingActions } from './PostingActions';
 import { DefaultActions } from './DefaultActions';
 import { MobileNavSheet } from './MobileNavSheet';
-import { Avatar, AvatarFallback, AvatarImage, Icon } from '@/components/ui';
+import { Icon } from '@/components/ui';
 
 interface HeaderProps {
   isMain?: boolean;
@@ -34,7 +34,7 @@ export default function Header({ isMain = true }: HeaderProps) {
 
   return (
     <>
-      <header className="desktop:hidden bg-background sticky top-0 z-[70] flex items-center justify-between gap-100 py-3 pr-450 pl-200">
+      <header className="tablet:hidden bg-background sticky top-0 z-[70] flex items-center justify-between gap-100 py-3 pr-450 pl-200">
         {isMain && (
           <div className="flex items-center justify-center gap-100">
             <MobileNavSheet />
@@ -56,18 +56,21 @@ export default function Header({ isMain = true }: HeaderProps) {
             onClick={() => router.push('/mypage')}
             className="cursor-pointer rounded-full"
           >
-            <Avatar size={40} type="round">
-              <AvatarImage
-                src={profileImageUrl ?? undefined}
+            {profileImageUrl ? (
+              <Image
+                src={profileImageUrl}
                 alt="avatar"
-                className="object-cover"
+                width={40}
+                height={40}
+                className="h-10 w-10 rounded-full object-cover"
               />
-              <AvatarFallback />
-            </Avatar>
+            ) : (
+              <Image src={AvatarIcon} alt="avatar" width={40} height={40} />
+            )}
           </button>
         </div>
       </header>
-      <header className="desktop:flex bg-background flex hidden w-full items-center justify-between px-5 py-3">
+      <header className="tablet:flex bg-background flex hidden w-full items-center justify-between px-5 py-3">
         <div className="flex items-center gap-4">
           <Logo href={isMain ? '/home' : '/'} />
 

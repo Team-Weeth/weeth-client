@@ -39,6 +39,7 @@ function EditProfileContent({ className, schools, majors, ...props }: EditProfil
   const { data: me } = useMyMemberQuery();
   const { mutate: updateProfile, isPending } = useUpdateProfileMutation();
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [resetToDefault, setResetToDefault] = useState(false);
 
   const {
     register,
@@ -73,7 +74,7 @@ function EditProfileContent({ className, schools, majors, ...props }: EditProfil
     watchedDepartment &&
     watchedStudentId
   );
-  const hasChanges = isDirty || !!selectedFile;
+  const hasChanges = isDirty || !!selectedFile || resetToDefault;
 
   const { open, onConfirm, onCancel, allowNavigation } = useNavigationGuard({
     enabled: isDirty || !!selectedFile,
@@ -94,6 +95,7 @@ function EditProfileContent({ className, schools, majors, ...props }: EditProfil
           bio: data.bio ?? '',
         },
         profileImageFile: selectedFile,
+        resetImage: resetToDefault,
       },
       {
         onSuccess: () => {
@@ -148,7 +150,14 @@ function EditProfileContent({ className, schools, majors, ...props }: EditProfil
           <ProfileImageEditor
             name={name}
             profileImageUrl={me.profileImageUrl ?? undefined}
-            onFileChange={setSelectedFile}
+            onFileChange={(file) => {
+              setSelectedFile(file);
+              setResetToDefault(false);
+            }}
+            onResetImage={() => {
+              setSelectedFile(null);
+              setResetToDefault(true);
+            }}
           />
 
           <div className="flex w-full max-w-[640px] flex-col gap-600">

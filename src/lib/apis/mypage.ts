@@ -26,6 +26,7 @@ export const mypageApi = {
   getMyClubs: () => apiClient.get<ApiResponse<ClubDto[]>>('/clubs'),
   updateUser: (body: UpdateUserBody) => apiClient.patch('/users', body),
   updateClubProfile: (body: UpdateClubProfileBody) => apiClient.patch('/clubs/members/me', body),
+  deleteProfileImage: () => apiClient.delete('/clubs/members/me/profile-image'),
   initCardinals: (clubId: string, cardinals: number[]) =>
     apiClient.post(`/clubs/${clubId}/members/me/cardinals`, { cardinals }),
 };
