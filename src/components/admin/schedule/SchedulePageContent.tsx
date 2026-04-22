@@ -8,8 +8,9 @@ import { Icon } from '@/components/ui';
 import { AdminCalendarEditIcon } from '@/assets/icons/admin';
 import { SearchIcon } from '@/assets/icons';
 import { CardinalDropdown } from '@/components/admin';
-import { MonthNavigator } from '@/components/admin/schedule/MonthNavigator';
-import { ScheduleList } from '@/components/admin/schedule/ScheduleList';
+import { MonthNavigator } from '@/components/admin/schedule/general/MonthNavigator';
+import { ScheduleList } from '@/components/admin/schedule/general/ScheduleList';
+import { SessionTabContent } from '@/components/admin/schedule/session/SessionTabContent';
 import { CreateScheduleModal } from '@/components/admin/schedule/modal/CreateScheduleModal';
 import { EditScheduleModal } from '@/components/admin/schedule/modal/EditScheduleModal';
 import { useCardinalSelector } from '@/hooks';
@@ -110,7 +111,7 @@ function SchedulePageContent() {
   };
 
   return (
-    <div className="flex min-w-3xl flex-col gap-400 p-700">
+    <div className="flex min-w-0 flex-col gap-400 p-700">
       <CardinalDropdown
         cardinals={cardinals}
         activeCardinal={activeCardinal}
@@ -128,8 +129,8 @@ function SchedulePageContent() {
           <TabsTrigger value="session">세션</TabsTrigger>
         </TabsList>
 
-        <TabsContent value={activeTab}>
-          <Card className="mt-400 gap-700 px-600 pt-600 pb-800">
+        <TabsContent value="all" className="mt-400 overflow-x-auto">
+          <Card className="min-w-[690px] gap-700 px-600 pt-600 pb-800">
             {/* Month navigator */}
             <MonthNavigator
               year={currentYear}
@@ -173,6 +174,10 @@ function SchedulePageContent() {
             />
           </Card>
         </TabsContent>
+
+        <TabsContent value="session" className="mt-400">
+          <SessionTabContent onCreateSession={() => setCreateModalOpen(true)} />
+        </TabsContent>
       </Tabs>
 
       {/* Create schedule modal */}
@@ -180,6 +185,7 @@ function SchedulePageContent() {
         open={createModalOpen}
         onOpenChange={setCreateModalOpen}
         cardinalNumber={activeCardinal?.cardinalNumber ?? null}
+        initialTab={activeTab === 'session' ? 'SESSION' : 'GENERAL'}
       />
 
       {/* Edit schedule modal */}

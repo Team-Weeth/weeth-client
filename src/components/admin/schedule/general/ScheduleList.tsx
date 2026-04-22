@@ -1,6 +1,6 @@
 import { cn } from '@/lib/cn';
 import { Button } from '@/components/ui';
-import { ScheduleItem } from '@/components/admin/schedule/ScheduleItem';
+import { ScheduleItem } from '@/components/admin/schedule/general/ScheduleItem';
 import type { Schedule } from '@/types/admin/schedule';
 
 interface ScheduleListProps extends React.HTMLAttributes<HTMLDivElement> {

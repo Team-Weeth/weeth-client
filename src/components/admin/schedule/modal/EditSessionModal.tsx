@@ -13,27 +13,34 @@ import {
 import { CustomAlertDialog } from '@/components/alert';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { AdminCloseIcon, AdminMeatballIcon } from '@/assets/icons/admin';
-import type { Schedule } from '@/types/admin/schedule';
+import type { AdminSession, AdminSessionGroup } from '@/types/admin/session';
 
 import { DiscardConfirmArea } from './DiscardConfirmArea';
 import { ScheduleFormBody } from './ScheduleFormBody';
-import { isFormChanged, toInitialScheduleForm } from '../../../../utils/admin/scheduleFormUtils';
-import type { ScheduleFormState } from './types';
+import {
+  isFormChanged,
+  isSessionGroup,
+  toInitialSessionForm,
+} from '../../../../utils/admin/scheduleFormUtils';
+import type { ScheduleFormState, SessionDeleteType, SessionSaveType } from './types';
 
-interface EditScheduleModalProps {
+interface EditSessionModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  schedule: Schedule;
-  onDelete?: (schedule: Schedule) => void;
+  target: AdminSession | AdminSessionGroup;
+  onDelete?: (type: SessionDeleteType) => void;
+  onSave?: (type: SessionSaveType) => void;
 }
 
-function EditScheduleModal({ open, onOpenChange, schedule, onDelete }: EditScheduleModalProps) {
-  const initialForm = toInitialScheduleForm(schedule);
+function EditSessionModal({ open, onOpenChange, target, onDelete, onSave }: EditSessionModalProps) {
+  const initialForm = toInitialSessionForm(target);
   const [form, setForm] = useState<ScheduleFormState>(initialForm);
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const [saveConfirmOpen, setSaveConfirmOpen] = useState(false);
   const [discardSource, setDiscardSource] = useState<'close' | 'cancel' | null>(null);
 
   const hasChanges = isFormChanged(form, initialForm);
+  const isRecurring = isSessionGroup(target);
 
   const updateForm = (patch: Partial<ScheduleFormState>) => {
     setForm((prev) => ({ ...prev, ...patch }));
@@ -51,14 +58,24 @@ function EditScheduleModal({ open, onOpenChange, schedule, onDelete }: EditSched
 
   const handleSubmit = () => {
     if (!form.title.trim()) return;
-    // TODO: API 연동 시 수정 요청
-    handleClose();
+    if (isRecurring) {
+      setSaveConfirmOpen(true);
+    } else {
+      // TODO: API 연동 시 세션 수정 요청
+      handleClose();
+    }
   };
 
-  const handleDeleteConfirm = () => {
+  const handleSaveConfirm = (type: SessionSaveType) => {
+    setSaveConfirmOpen(false);
+    handleClose();
+    onSave?.(type);
+  };
+
+  const handleDeleteConfirm = (type: SessionDeleteType) => {
     setDeleteConfirmOpen(false);
     handleClose();
-    onDelete?.(schedule);
+    onDelete?.(type);
   };
 
   const handleDiscardConfirm = () => {
@@ -89,7 +106,7 @@ function EditScheduleModal({ open, onOpenChange, schedule, onDelete }: EditSched
           <div className="flex items-start justify-between px-700 pt-700">
             <div className="flex h-8 items-end">
               <span className="typo-button2 text-text-strong border-brand-primary border-b-2 px-100 pb-200">
-                일반 일정
+                세션
               </span>
             </div>
             <div className="flex items-center gap-200">
@@ -104,7 +121,7 @@ function EditScheduleModal({ open, onOpenChange, schedule, onDelete }: EditSched
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
                   <DropdownMenuItem destructive onSelect={() => setDeleteConfirmOpen(true)}>
-                    일반 일정 삭제
+                    세션 삭제
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
@@ -128,13 +145,13 @@ function EditScheduleModal({ open, onOpenChange, schedule, onDelete }: EditSched
           </div>
 
           {/* Body */}
-          <div className="scrollbar-custom max-h-[700px] overflow-y-auto px-700">
-            <h2 className="typo-h3 text-text-normal py-400">일반 일정 수정</h2>
+          <div className="scrollbar-custom max-h-[700px] overflow-y-auto px-[60px]">
+            <h2 className="typo-h3 text-text-normal py-400">세션 수정</h2>
             <ScheduleFormBody
               form={form}
               onFormChange={updateForm}
-              titleLabel="일정 제목"
-              titlePlaceholder="예 : 중간고사 기간"
+              titleLabel="세션 제목"
+              titlePlaceholder="예 : 7기 정기 모임"
             />
           </div>
 
@@ -162,18 +179,44 @@ function EditScheduleModal({ open, onOpenChange, schedule, onDelete }: EditSched
         </DialogContent>
       </Dialog>
 
-      {/* 삭제 확인 */}
+      {/* 저장 확인 (반복 세션 전용) */}
       <CustomAlertDialog
-        open={deleteConfirmOpen}
-        onOpenChange={setDeleteConfirmOpen}
-        title="이 일정을 삭제하시겠어요?"
-        description={'삭제된 일정은 복구할 수 없습니다.\n신중히 확인 후 진행해 주세요.'}
-        actionLabel="삭제"
-        onAction={handleDeleteConfirm}
+        open={saveConfirmOpen}
+        onOpenChange={setSaveConfirmOpen}
+        title="이 변경사항을 어떻게 저장할까요?"
+        actionLabel="이 세션 일정만 저장"
+        onAction={() => handleSaveConfirm('this')}
+        secondActionLabel="이후 모든 세션 일정에 대해 저장"
+        onSecondAction={() => handleSaveConfirm('all')}
         placement="center"
+        tone="primary"
       />
+
+      {/* 삭제 확인 */}
+      {isRecurring ? (
+        <CustomAlertDialog
+          open={deleteConfirmOpen}
+          onOpenChange={setDeleteConfirmOpen}
+          title={'이 세션을 삭제하시겠어요?\n반복 설정이 되어있는 세션이에요.'}
+          actionLabel="이 세션 일정만 삭제"
+          onAction={() => handleDeleteConfirm('this')}
+          secondActionLabel="이후 모든 세션 일정 삭제"
+          onSecondAction={() => handleDeleteConfirm('all')}
+          placement="center"
+        />
+      ) : (
+        <CustomAlertDialog
+          open={deleteConfirmOpen}
+          onOpenChange={setDeleteConfirmOpen}
+          title="이 세션을 삭제하시겠어요?"
+          description={'삭제된 세션은 복구할 수 없습니다.\n신중히 확인 후 진행해 주세요.'}
+          actionLabel="삭제"
+          onAction={() => handleDeleteConfirm('this')}
+          placement="center"
+        />
+      )}
     </>
   );
 }
 
-export { EditScheduleModal, type EditScheduleModalProps };
+export { EditSessionModal, type EditSessionModalProps };

@@ -6,7 +6,9 @@
       "Bash(git push:*)",
       "Bash(git fetch:*)",
       "mcp__figma__get_design_context",
-      "mcp__figma__get_screenshot"
+      "mcp__figma__get_screenshot",
+      "Bash(gh pr *)",
+      "Read(//c/Users/wlslw/.claude/projects/**)"
     ]
   }
 }
