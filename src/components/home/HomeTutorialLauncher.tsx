@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useSyncExternalStore } from 'react';
 
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
 
@@ -11,30 +11,48 @@ import { HomeTutorialButton } from './HomeTutorialButton';
 
 const HOME_TUTORIAL_SEEN_KEY = 'home-tutorial-seen';
 
+function subscribeTutorialSeen(callback: () => void) {
+  window.addEventListener('storage', callback);
+  return () => {
+    window.removeEventListener('storage', callback);
+  };
+}
+
+function getTutorialSeenSnapshot() {
+  return window.localStorage.getItem(HOME_TUTORIAL_SEEN_KEY) === 'true';
+}
+
 function HomeTutorialLauncher() {
   const router = useRouter();
   const { clubId } = useParams<{ clubId: string }>();
   const searchParams = useSearchParams();
-  const [open, setOpen] = useState(() => {
-    if (typeof window === 'undefined') return false;
-    const onboarding = searchParams.get('onboarding');
-    if (onboarding !== 'club-created') return false;
-    if (window.localStorage.getItem(HOME_TUTORIAL_SEEN_KEY) === 'true') return false;
-    window.localStorage.setItem(HOME_TUTORIAL_SEEN_KEY, 'true');
-    return true;
-  });
+  const [open, setOpen] = useState(false);
+  const [autoOpenDismissed, setAutoOpenDismissed] = useState(false);
   const { data: role } = useHomeQuery({
     select: (data) => data.myInfo.userInfo.role,
   });
+  const hasSeenTutorial = useSyncExternalStore(
+    subscribeTutorialSeen,
+    getTutorialSeenSnapshot,
+    () => false,
+  );
+  const onboarding = searchParams.get('onboarding');
+  const shouldHandleOnboarding = onboarding === 'club-created' && role !== undefined;
+  const shouldAutoOpen =
+    shouldHandleOnboarding && role === 'LEAD' && !hasSeenTutorial && !autoOpenDismissed;
+  const isDialogOpen = open || shouldAutoOpen;
 
   useEffect(() => {
-    const onboarding = searchParams.get('onboarding');
-    if (onboarding === 'club-created') {
-      router.replace(`/${clubId}/home`, { scroll: false });
-    }
-  }, [router, searchParams, clubId]);
+    if (!shouldHandleOnboarding) return;
+    router.replace(`/${clubId}/home`, { scroll: false });
+  }, [router, clubId, shouldHandleOnboarding]);
 
   const handleOpenChange = (nextOpen: boolean) => {
+    if (!nextOpen && shouldAutoOpen) {
+      window.localStorage.setItem(HOME_TUTORIAL_SEEN_KEY, 'true');
+      setAutoOpenDismissed(true);
+    }
+
     setOpen(nextOpen);
   };
 
@@ -42,7 +60,7 @@ function HomeTutorialLauncher() {
     <>
       {role === 'LEAD' && <HomeTutorialButton onClick={() => setOpen(true)} />}
 
-      <HomeTutorialDialog open={open} onOpenChange={handleOpenChange} />
+      <HomeTutorialDialog open={isDialogOpen} onOpenChange={handleOpenChange} />
     </>
   );
 }
