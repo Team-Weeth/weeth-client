@@ -5,18 +5,21 @@ import { useRouter } from 'next/navigation';
 // import { ArrowRightIcon } from '@/assets/icons';
 import { useMonthlySchedulesQuery } from '@/hooks/home';
 import { EmptyBox } from '@/components/home/EmptyBox';
+import { CalendarBoxSkeleton } from '@/components/home/skeleton';
 import { formatKoreanDate, formatKoreanTimeRange, groupByStartDate } from '@/utils/shared/date';
 import { useIsAdmin } from '@/hooks/shared';
 
 export function CalendarBox() {
   const router = useRouter();
-  const { data: schedules, isPending: isSchedulesPending } = useMonthlySchedulesQuery();
-  const { isAdmin, isPending: isAdminPending } = useIsAdmin();
+  const { data: schedules, isLoading: isSchedulesLoading } = useMonthlySchedulesQuery();
+  const { isAdmin, isLoading: isAdminLoading } = useIsAdmin();
 
   const now = new Date();
   const monthLabel = `${now.getMonth() + 1}월 캘린더`;
   const dateGrouped = groupByStartDate(schedules ?? []);
-  const isLoading = isSchedulesPending || isAdminPending;
+  const isLoading = isSchedulesLoading || isAdminLoading;
+
+  if (isLoading) return <CalendarBoxSkeleton />;
 
   return (
     <div className="bg-container-neutral rounded-lg">
@@ -34,7 +37,7 @@ export function CalendarBox() {
         </button> */}
       </div>
       <div className="flex flex-col gap-400 p-450">
-        {isLoading ? null : dateGrouped.length > 0 ? (
+        {dateGrouped.length > 0 ? (
           dateGrouped.map(([dateKey, daySchedules]) => (
             <div key={dateKey} className="flex flex-col gap-200">
               <p className="typo-sub3 text-text-strong">

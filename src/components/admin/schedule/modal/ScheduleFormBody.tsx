@@ -1,0 +1,63 @@
+import { ScheduleTextField } from '@/components/admin/schedule/ScheduleTextField';
+import { ScheduleTextareaField } from '@/components/admin/schedule/ScheduleTextareaField';
+import { DateTimeInput } from '@/components/ui/DateTimeInput';
+
+import type { ScheduleFormState } from './types';
+
+interface ScheduleFormBodyProps {
+  form: ScheduleFormState;
+  onFormChange: (patch: Partial<ScheduleFormState>) => void;
+  titleLabel: string;
+  titlePlaceholder: string;
+}
+
+function ScheduleFormBody({
+  form,
+  onFormChange,
+  titleLabel,
+  titlePlaceholder,
+}: ScheduleFormBodyProps) {
+  return (
+    <div className="flex flex-col gap-400 py-400">
+      <ScheduleTextField
+        label={titleLabel}
+        value={form.title}
+        onChange={(v) => onFormChange({ title: v })}
+        placeholder={titlePlaceholder}
+      />
+
+      <div className="flex gap-600">
+        <DateTimeInput
+          label="시작 일자"
+          dateValue={form.startDate}
+          timeValue={form.startTime}
+          onDateChange={(v) => onFormChange({ startDate: v })}
+          onTimeChange={(v) => onFormChange({ startTime: v })}
+        />
+        <DateTimeInput
+          label="종료 일자"
+          dateValue={form.endDate}
+          timeValue={form.endTime}
+          onDateChange={(v) => onFormChange({ endDate: v })}
+          onTimeChange={(v) => onFormChange({ endTime: v })}
+        />
+      </div>
+
+      <ScheduleTextField
+        label="모임 장소 (선택)"
+        value={form.location}
+        onChange={(v) => onFormChange({ location: v })}
+        placeholder="장소를 입력해주세요."
+      />
+
+      <ScheduleTextareaField
+        label="일정 설명 (선택)"
+        value={form.content}
+        onChange={(v) => onFormChange({ content: v })}
+        placeholder="일정에 대한 설명을 입력해주세요."
+      />
+    </div>
+  );
+}
+
+export { ScheduleFormBody, type ScheduleFormBodyProps };

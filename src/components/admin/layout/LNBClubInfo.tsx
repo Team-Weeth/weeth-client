@@ -19,8 +19,8 @@ function LNBClubInfo({ collapsed }: LNBClubInfoProps) {
       )}
     >
       <Avatar size={40} type="square" colorScheme="secondary">
-        {club?.profileImageUrl && <AvatarImage src={club.profileImageUrl} alt={club.name} />}
-        <AvatarFallback>{club?.name?.charAt(0)}</AvatarFallback>
+        <AvatarImage src={club?.profileImageUrl ?? undefined} alt={club?.name} />
+        <AvatarFallback variant="club" />
       </Avatar>
       {!collapsed && (
         <div className="flex flex-col gap-100">

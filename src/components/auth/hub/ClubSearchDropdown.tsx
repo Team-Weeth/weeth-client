@@ -33,9 +33,7 @@ function ClubSearchDropdown({ clubs, onSelect, className }: ClubSearchDropdownPr
               {club.profileImageUrl && (
                 <AvatarImage src={club.profileImageUrl} alt={club.name} className="object-cover" />
               )}
-              <AvatarFallback className="bg-container-neutral-alternative text-text-alternative rounded-lg">
-                {club.name.charAt(0)}
-              </AvatarFallback>
+              <AvatarFallback variant="club" />
             </Avatar>
             <div className="flex flex-col items-start gap-0.5 text-left">
               <span className="typo-sub2 text-text-strong">{club.name}</span>

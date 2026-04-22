@@ -9,7 +9,13 @@ export default async function EditProfilePage() {
     universityServerApi.getMajors(),
   ]);
 
-  const schools = schoolsRes.data.map((s) => s.schoolName);
+  const schoolCounts = schoolsRes.data.reduce<Record<string, number>>((acc, s) => {
+    acc[s.schoolName] = (acc[s.schoolName] ?? 0) + 1;
+    return acc;
+  }, {});
+  const schools = schoolsRes.data.map((s) =>
+    schoolCounts[s.schoolName] > 1 ? `${s.schoolName}(${s.region})` : s.schoolName,
+  );
   const majors = majorsRes.data.map((m) => m.majorName);
 
   return <EditProfileContent schools={schools} majors={majors} />;

@@ -6,6 +6,7 @@ import { Button, Chip, ChipList } from '@/components/ui';
 import { AttendanceCodeModal } from '@/components/attendance/AttendanceCodeModal';
 import { useAttendanceQuery, useCheckIn } from '@/hooks/attendance';
 import { useIsAdmin } from '@/hooks/shared';
+import { TodayScheduleBoxSkeleton } from '@/components/home/skeleton';
 import { formatDateWithTimeRange } from '@/utils/shared/date';
 import { EmptyBox } from '@/components/home/EmptyBox';
 
@@ -15,8 +16,9 @@ const CardinalMissingModal = dynamic(() =>
 
 export function TodayScheduleBox() {
   const router = useRouter();
-  const { data, isError, refetch } = useAttendanceQuery();
+  const { data, isError, refetch, isLoading } = useAttendanceQuery();
   const { isAdmin } = useIsAdmin();
+
   const {
     isChecked,
     checkInError,
@@ -26,6 +28,8 @@ export function TodayScheduleBox() {
     setCardinalModalOpen,
     handleCheckIn,
   } = useCheckIn();
+
+  if (isLoading) return <TodayScheduleBoxSkeleton />;
 
   return (
     <div className="bg-container-neutral rounded-lg">

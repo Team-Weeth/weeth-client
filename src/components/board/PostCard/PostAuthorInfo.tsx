@@ -18,7 +18,7 @@ function PostAuthorInfo({ className, author, date, dateTime, hasAttachment }: Po
     <div className={cn('flex items-center gap-200', className)}>
       <Avatar size={24}>
         <AvatarImage src={author.profileImageUrl} alt={author.name} />
-        <AvatarFallback>{author.name.charAt(0)}</AvatarFallback>
+        <AvatarFallback />
       </Avatar>
       <span className="typo-caption1 text-text-normal">{author.name}</span>
       <Divider orientation="vertical" className="h-3" />
