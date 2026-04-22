@@ -8,6 +8,5 @@ export { MyPageDropdownMenu } from './MyPageDropdownMenu';
 export { EditProfileContent, type EditProfileContentProps } from './edit';
 export { FormField, type FormFieldProps } from './FormField';
 export { SearchSelect, type SearchSelectProps } from './SearchSelect';
-
 export { ClubInfoCard, type ClubInfoCardProps } from './ClubInfoCard';
 export { SetCardinalModal, type SetCardinalModalProps } from './SetCardinalModal';
