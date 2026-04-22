@@ -5,16 +5,20 @@ import Image from 'next/image';
 import { NewIcon, ArrowRightIcon } from '@/assets/icons';
 import { Divider, Icon } from '@/components/ui';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { useRecentNoticesQuery } from '@/hooks/home';
 import { stripHtml } from '@/lib/stripHtml';
 import { EmptyBox } from './EmptyBox';
+import { NoticeBoardBoxSkeleton } from './skeleton';
 import { useIsAdmin } from '@/hooks/shared';
 
 export function NoticeBoardBox() {
   const router = useRouter();
-  const { data: notices = [] } = useRecentNoticesQuery();
+  const { clubId } = useParams<{ clubId: string }>();
+  const { data: notices = [], isLoading } = useRecentNoticesQuery();
   const { isAdmin } = useIsAdmin();
+
+  if (isLoading) return <NoticeBoardBoxSkeleton />;
 
   return (
     <div className="bg-container-neutral flex flex-col rounded-lg pb-300">
@@ -24,7 +28,7 @@ export function NoticeBoardBox() {
           className="flex items-center justify-center"
           type="button"
           aria-label="공지 전체보기"
-          onClick={() => router.push('/board')}
+          onClick={() => router.push(`/${clubId}/board`)}
         >
           <Icon src={ArrowRightIcon} size={16} className="cursor-pointer px-1 py-[1px]" />
         </button>
@@ -35,7 +39,7 @@ export function NoticeBoardBox() {
             <React.Fragment key={notice.id}>
               {index > 0 && <Divider />}
               <Link
-                href={`/board/${notice.id}`}
+                href={`/${clubId}/board/${notice.id}`}
                 className="flex flex-col items-start gap-300 py-400"
               >
                 <div className="flex flex-col gap-200">
@@ -58,7 +62,7 @@ export function NoticeBoardBox() {
             description="아직 공지 게시글이 없습니다."
             button={{
               label: '공지 작성하기',
-              onClick: () => router.push('/board/write?type=NOTICE'),
+              onClick: () => router.push(`/${clubId}/board/write?type=NOTICE`),
             }}
           />
         ) : (

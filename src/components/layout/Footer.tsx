@@ -2,6 +2,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
+import { useParams } from 'next/navigation';
 import { FooterLogoIcon } from '@/assets/icons';
 
 interface FooterProps {
@@ -9,6 +10,7 @@ interface FooterProps {
 }
 
 export default function Footer({ isSmall = false }: FooterProps) {
+  const { clubId } = useParams<{ clubId: string }>();
   return (
     <>
       {!isSmall ? (
@@ -45,7 +47,7 @@ export default function Footer({ isSmall = false }: FooterProps) {
             >
               서비스 소개
             </a>
-            <Link href="/admin" className="typo-body2 text-text-alternative">
+            <Link href={`/${clubId}/admin`} className="typo-body2 text-text-alternative">
               관리자 서비스
             </Link>
             <a href="mailto:contact@weeth.kr" className="typo-body2 text-text-alternative">

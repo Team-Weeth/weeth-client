@@ -1,4 +1,4 @@
-import { useRouter } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { createPost as createPostApi } from '@/lib/actions/board';
 import { useClubId } from '@/stores/useClubStore';
@@ -8,6 +8,7 @@ import { validatePost } from './validatePost';
 
 export function useCreatePost() {
   const router = useRouter();
+  const { clubId: clubIdParam } = useParams<{ clubId: string }>();
   const clubId = useClubId();
   const queryClient = useQueryClient();
 
@@ -34,7 +35,7 @@ export function useCreatePost() {
       queryClient.invalidateQueries({ queryKey: ['home', 'unread-notice', clubId] });
       toast({ title: '게시글이 작성되었습니다.', variant: 'success' });
       usePostStore.getState().reset();
-      router.push(`/board/${result.id}`);
+      router.push(`/${clubIdParam}/board/${result.id}`);
     },
     onError: (error) => {
       if (error.message !== 'board not selected' && error.message !== 'validation failed') {

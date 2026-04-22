@@ -18,10 +18,10 @@ function ModalFooter({
   primaryDisabled,
 }: ModalFooterProps) {
   return (
-    <div className="fixed bottom-0 flex w-full flex-col gap-[10px] px-400 pt-px pb-400">
+    <div className="fixed bottom-0 flex w-full flex-col gap-[10px] px-400 pb-400">
       <Divider />
       {children}
-      <div className="flex gap-200 pt-300">
+      <div className="flex gap-200">
         <Button variant="secondary" size="lg" className="flex-1" onClick={onSecondary}>
           {secondaryLabel}
         </Button>

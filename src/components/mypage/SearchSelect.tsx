@@ -49,7 +49,7 @@ function SearchSelect({
           onChange={(e) => setQuery(e.target.value)}
           onFocus={() => setOpen(true)}
           placeholder={open ? '검색...' : placeholder}
-          className={cn('rounded-lg', showArrow && 'pr-10', inputClassName)}
+          className={cn('typo-button2 rounded-lg', showArrow && 'pr-10', inputClassName)}
         />
         {showArrow && (
           <div className="pointer-events-none absolute top-1/2 right-300 flex -translate-y-1/2 items-center">

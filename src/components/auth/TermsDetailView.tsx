@@ -21,7 +21,7 @@ interface TermsDetailViewProps {
 function TermsDetailView({ term, onBack, open, onOpenChange }: TermsDetailViewProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent showCloseButton={false} className="w-full max-w-[640px]">
+      <DialogContent showCloseButton={false} className="z-60 w-full max-w-[640px]">
         <DialogHeader>
           <button type="button" onClick={onBack} className="cursor-pointer">
             <Icon src={ArrowLeftIcon} size={12} alt="뒤로 가기" className="text-icon-normal" />

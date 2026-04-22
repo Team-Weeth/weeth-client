@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { useParams } from 'next/navigation';
 
 import {
   Breadcrumb,
@@ -18,6 +19,7 @@ interface AttendanceQRContentProps {
 }
 
 function AttendanceQRContent({ sessionId }: AttendanceQRContentProps) {
+  const { clubId: clubIdParam } = useParams<{ clubId: string }>();
   const clubId = useClubId();
   const { qrRef, qrData, isLoading, minutes, seconds, isExpired } = useAttendanceQR(
     clubId,
@@ -30,7 +32,10 @@ function AttendanceQRContent({ sessionId }: AttendanceQRContentProps) {
         <BreadcrumbList>
           <BreadcrumbItem>
             <BreadcrumbLink asChild>
-              <Link href="/attendance" className="typo-caption1 text-text-alternative">
+              <Link
+                href={`/${clubIdParam}/attendance`}
+                className="typo-caption1 text-text-alternative"
+              >
                 출석
               </Link>
             </BreadcrumbLink>
@@ -44,7 +49,7 @@ function AttendanceQRContent({ sessionId }: AttendanceQRContentProps) {
         </BreadcrumbList>
       </Breadcrumb>
 
-      <div className="flex flex-col gap-300 px-450">
+      <div className="flex flex-col gap-700 px-450">
         <div className="flex w-full flex-col items-center gap-200 text-center">
           <h1 className="typo-h3 text-text-strong">
             QR코드를 카메라로 스캔하여 빠르게 출석해보세요.

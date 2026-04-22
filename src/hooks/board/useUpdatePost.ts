@@ -1,4 +1,4 @@
-import { useRouter } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { updatePost as updatePostApi } from '@/lib/actions/board';
 import { resolveFilesPayload } from './resolveFilesPayload';
@@ -9,6 +9,7 @@ import { validatePost } from './validatePost';
 
 export function useUpdatePost() {
   const router = useRouter();
+  const { clubId: clubIdParam } = useParams<{ clubId: string }>();
   const clubId = useClubId();
   const queryClient = useQueryClient();
 
@@ -33,7 +34,7 @@ export function useUpdatePost() {
       queryClient.invalidateQueries({ queryKey: ['home', 'unread-notice', clubId] });
       toast({ title: '게시글이 수정되었습니다.', variant: 'success' });
       usePostStore.getState().reset();
-      router.push(`/board/${postId}`);
+      router.push(`/${clubIdParam}/board/${postId}`);
     },
     onError: (error) => {
       if (error.message !== 'validation failed') {

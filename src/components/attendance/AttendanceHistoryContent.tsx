@@ -2,6 +2,7 @@
 
 import { useEffect } from 'react';
 import Link from 'next/link';
+import { useParams } from 'next/navigation';
 
 import {
   Breadcrumb,
@@ -41,6 +42,7 @@ function toDisplayRecord(record: AttendanceSummary['attendances'][number]) {
 }
 
 function AttendanceHistoryContent({ summary, errorMessage }: AttendanceHistoryContentProps) {
+  const { clubId } = useParams<{ clubId: string }>();
   const { total, attendanceCount, absenceCount, attendances = [] } = summary ?? {};
   const records = attendances.map(toDisplayRecord);
 
@@ -49,13 +51,16 @@ function AttendanceHistoryContent({ summary, errorMessage }: AttendanceHistoryCo
   }, [errorMessage]);
 
   return (
-    <div className="mx-auto flex w-full max-w-[1025px] flex-col gap-700 pt-600 pb-800">
-      <div className="flex flex-col items-start gap-200 self-stretch px-[36px]">
+    <div className="mx-auto flex w-full max-w-[1025px] flex-col gap-700 px-450 pt-600">
+      <div className="flex flex-col items-start gap-200 self-stretch">
         <Breadcrumb>
           <BreadcrumbList>
             <BreadcrumbItem>
               <BreadcrumbLink asChild>
-                <Link href="/attendance" className="typo-caption1 text-text-alternative">
+                <Link
+                  href={`/${clubId}/attendance`}
+                  className="typo-caption1 text-text-alternative"
+                >
                   출석
                 </Link>
               </BreadcrumbLink>
@@ -72,7 +77,7 @@ function AttendanceHistoryContent({ summary, errorMessage }: AttendanceHistoryCo
       </div>
 
       {summary ? (
-        <div className="flex flex-col gap-700 px-450">
+        <div className="flex flex-col gap-700">
           <div className="bg-container-neutral flex flex-col gap-400 rounded-lg p-400">
             <div className="flex gap-200">
               <StatBox label="정기 모임" value={`${total ?? 0}회`} />

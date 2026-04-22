@@ -1,8 +1,9 @@
 'use client';
 
+import { useParams } from 'next/navigation';
 import { Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbPage } from '@/components/ui';
 import { cn } from '@/lib/cn';
-
+import { useMyPageQueries } from '@/hooks/queries/mypage/useMyPageQueries';
 import { InfoCard } from './InfoCard';
 import { InfoSection } from './InfoSection';
 import { ProfileSection } from './ProfileSection';
@@ -10,14 +11,12 @@ import { SupportListItem } from './SupportListItem';
 import { ThemeToggle } from './ThemeToggle';
 import { MyPageDropdownMenu } from './MyPageDropdownMenu';
 import { ClubInfoCard } from './ClubInfoCard';
-import { useMyMemberQuery } from '@/hooks/queries/mypage/useMyMemberQuery';
-import { useMyClubsQuery } from '@/hooks/queries/mypage/useMyClubsQuery';
 
 type MyPageContentProps = React.HTMLAttributes<HTMLDivElement>;
 
 function MyPageContent({ className, ...props }: MyPageContentProps) {
-  const { data: me } = useMyMemberQuery();
-  const { data: clubs = [] } = useMyClubsQuery();
+  const { clubId } = useParams<{ clubId: string }>();
+  const [{ data: me }, { data: clubs }] = useMyPageQueries();
 
   return (
     <div
@@ -79,7 +78,7 @@ function MyPageContent({ className, ...props }: MyPageContentProps) {
         {/* 활동정보 */}
         <InfoSection title="활동정보">
           <div className="flex flex-row gap-300">
-            {clubs.map((club) => (
+            {(clubs ?? []).map((club) => (
               <ClubInfoCard key={club.id} club={club} />
             ))}
           </div>
@@ -90,7 +89,7 @@ function MyPageContent({ className, ...props }: MyPageContentProps) {
           <div className="bg-container-neutral flex flex-col gap-300 rounded-lg p-400">
             <div className="flex flex-col gap-100">
               <span className="typo-caption1 text-text-alternative">모드 설정</span>
-              <span className="typo-sub2 text-text-strong">다크/라이트 모드</span>
+              <span className="typo-sub1 text-text-strong">다크/라이트 모드</span>
             </div>
             <ThemeToggle />
           </div>
@@ -105,8 +104,8 @@ function MyPageContent({ className, ...props }: MyPageContentProps) {
               variant="copy"
               copyText="help@weeth.kr"
             />
-            <SupportListItem title="서비스 이용 약관" variant="link" href="/terms" />
-            <SupportListItem title="개인정보 처리방침" variant="link" href="/privacy" />
+            <SupportListItem title="서비스 이용 약관" variant="link" href={`/${clubId}/terms`} />
+            <SupportListItem title="개인정보 처리방침" variant="link" href={`/${clubId}/privacy`} />
           </div>
         </InfoSection>
       </div>

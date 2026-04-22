@@ -44,7 +44,7 @@ export { default as HubJoinIcon } from './hub_join.svg';
 export { default as HubGoIcon } from './hub_go.svg';
 export { default as TooltipIcon } from './tooltip.svg';
 export { default as CopyIcon } from './copy.svg';
-export { default as BasicAvatarIcon } from './basic_avatar.svg';
+export { default as ClubAvatarIcon } from './club_avatar.svg';
 export { default as QuestionMarkIcon } from './question_mark.svg';
 export { default as NavToggleIcon } from './nav_toggle.svg';
 export { default as TrashcanIcon } from './trash_can.svg';

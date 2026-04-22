@@ -46,8 +46,8 @@ function ReplyItem({
         <div className="flex flex-col gap-200">
           <div className="flex items-center gap-[5px]">
             <Avatar size={24}>
-              {profileImage && <AvatarImage src={profileImage} alt={name} />}
-              <AvatarFallback>{name[0]}</AvatarFallback>
+              <AvatarImage src={profileImage ?? undefined} alt={name} />
+              <AvatarFallback />
             </Avatar>
             <span className="typo-sub3 text-text-strong">{name}</span>
           </div>

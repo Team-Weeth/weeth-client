@@ -23,26 +23,34 @@ interface ClubJoiningPageProps {
 
 type ErrorState = { code: number; message: string } | null;
 
+function JoiningProgress({ clubName, onComplete }: { clubName: string; onComplete: () => void }) {
+  const progress = useProgressAnimation({ duration: 3000, onComplete });
+
+  return (
+    <div className="flex min-h-screen items-center justify-center px-400">
+      <div className="flex w-full max-w-[520px] flex-col items-center">
+        <div className="flex flex-col items-center gap-200 text-center">
+          <h1 className="typo-h3 text-text-strong">초대 코드로 {clubName}에 가입하고 있어요.</h1>
+          <p className="typo-body2 text-text-alternative">잠시만 기다려주세요...</p>
+        </div>
+        <ProgressBar value={progress} className="mt-500 w-full" />
+      </div>
+    </div>
+  );
+}
+
 function ClubJoiningPage({ clubName, clubId, code }: ClubJoiningPageProps) {
   const router = useRouter();
   const { setClub } = useClubActions();
-  const [apiDone, setApiDone] = useState(false);
+  const [status, setStatus] = useState<'pending' | 'joining' | 'error'>('pending');
   const [errorState, setErrorState] = useState<ErrorState>(null);
   const apiCalledRef = useRef(false);
-  const animationDoneRef = useRef(false);
+  const apiDoneRef = useRef(false);
 
-  const setClubInfo = async () => {
+  const setClubInfo = async (profileImageUrl?: string | null) => {
     await setClubCookie(clubId, clubName);
-    setClub(clubId, clubName);
+    setClub(clubId, clubName, profileImageUrl);
   };
-
-  const progress = useProgressAnimation({
-    duration: 3000,
-    onComplete: () => {
-      animationDoneRef.current = true;
-      if (apiDone) router.replace('/welcome');
-    },
-  });
 
   useEffect(() => {
     if (apiCalledRef.current) return;
@@ -52,7 +60,8 @@ function ClubJoiningPage({ clubName, clubId, code }: ClubJoiningPageProps) {
       .join(clubId, code)
       .then(async () => {
         await setClubInfo();
-        setApiDone(true);
+        apiDoneRef.current = true;
+        setStatus('joining');
       })
       .catch(async (error) => {
         if (isAxiosError(error)) {
@@ -62,15 +71,16 @@ function ClubJoiningPage({ clubName, clubId, code }: ClubJoiningPageProps) {
               code: CLUB_JOIN_ERROR_CODE.INVALID_INVITE_LINK,
               message: '잘못된 가입 링크입니다.',
             });
+            setStatus('error');
             return;
           }
           if (errorCode === CLUB_JOIN_ERROR_CODE.ALREADY_JOINED) {
-            // 이미 가입된 경우에도 clubId를 세팅
             await setClubInfo();
             setErrorState({
               code: CLUB_JOIN_ERROR_CODE.ALREADY_JOINED,
               message: '이미 가입된 동아리입니다. 동아리로 이동할까요?',
             });
+            setStatus('error');
             return;
           }
           if (errorCode === CLUB_JOIN_ERROR_CODE.CLUB_MEMBER_LIMIT_EXCEEDED) {
@@ -78,6 +88,7 @@ function ClubJoiningPage({ clubName, clubId, code }: ClubJoiningPageProps) {
               code: CLUB_JOIN_ERROR_CODE.CLUB_MEMBER_LIMIT_EXCEEDED,
               message: '가입 가능한 동아리 수를 초과했습니다.',
             });
+            setStatus('error');
             return;
           }
         }
@@ -87,10 +98,9 @@ function ClubJoiningPage({ clubName, clubId, code }: ClubJoiningPageProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // API가 애니메이션 이후에 완료된 경우 즉시 navigate
-  useEffect(() => {
-    if (apiDone && animationDoneRef.current) router.replace('/welcome');
-  }, [apiDone, router]);
+  if (status === 'pending') {
+    return <div className="flex min-h-screen items-center justify-center" />;
+  }
 
   if (errorState) {
     return (
@@ -99,7 +109,7 @@ function ClubJoiningPage({ clubName, clubId, code }: ClubJoiningPageProps) {
           <h1 className="typo-h3 text-text-strong text-center">{errorState.message}</h1>
           {errorState.code === CLUB_JOIN_ERROR_CODE.ALREADY_JOINED ? (
             <Link
-              href="/home"
+              href={`/${clubId}/home`}
               className={cn(buttonVariants({ variant: 'primary', size: 'lg' }), 'w-full')}
             >
               홈으로 이동
@@ -117,17 +127,7 @@ function ClubJoiningPage({ clubName, clubId, code }: ClubJoiningPageProps) {
     );
   }
 
-  return (
-    <div className="flex min-h-screen items-center justify-center px-400">
-      <div className="flex w-full max-w-[520px] flex-col items-center">
-        <div className="flex flex-col items-center gap-200 text-center">
-          <h1 className="typo-h3 text-text-strong">초대 코드로 {clubName}에 가입하고 있어요.</h1>
-          <p className="typo-body2 text-text-alternative">잠시만 기다려주세요...</p>
-        </div>
-        <ProgressBar value={progress} className="mt-500 w-full" />
-      </div>
-    </div>
-  );
+  return <JoiningProgress clubName={clubName} onComplete={() => router.replace('/welcome')} />;
 }
 
 export { ClubJoiningPage };

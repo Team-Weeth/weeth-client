@@ -1,9 +1,11 @@
 'use client';
 
+import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
+import { useParams, usePathname, useRouter } from 'next/navigation';
 import { LogoGrayIcon, AvatarIcon, ExitToAppIcon } from '@/assets/icons';
+import { cn } from '@/lib/cn';
 import { useClubName, useUserProfileImageUrl } from '@/stores';
 import { PostingActions } from './PostingActions';
 import { DefaultActions } from './DefaultActions';
@@ -20,59 +22,86 @@ const Logo = ({ width = 32, href }: { width?: number; href: string }) => (
   </Link>
 );
 
-const NAV_ITEMS = [
-  { id: 'board', label: '게시판', href: '/board' },
-  { id: 'attendance', label: '출석', href: '/attendance' },
-];
-
 export default function Header({ isMain = true }: HeaderProps) {
   const router = useRouter();
   const pathname = usePathname();
+  const { clubId } = useParams<{ clubId: string }>();
   const clubName = useClubName();
   const profileImageUrl = useUserProfileImageUrl();
-  const isPostingPage = pathname.includes('/write') || /^\/board\/edit\/\d+$/.test(pathname);
+  const isPostingPage = pathname.includes('/write') || /\/board\/edit\/\d+$/.test(pathname);
+
+  const NAV_ITEMS = [
+    { id: 'board', label: '게시판', href: `/${clubId}/board` },
+    { id: 'attendance', label: '출석', href: `/${clubId}/attendance` },
+  ];
+  const [visible, setVisible] = useState(true);
+  const lastScrollY = useRef(0);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentY = window.scrollY;
+      const shouldShow = currentY < 10 || currentY < lastScrollY.current;
+
+      lastScrollY.current = currentY;
+
+      setVisible((prev) => {
+        if (prev === shouldShow) return prev;
+        return shouldShow;
+      });
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   return (
-    <>
-      <header className="desktop:hidden bg-background sticky top-0 z-[70] flex items-center justify-between gap-100 py-3 pr-450 pl-200">
+    <div
+      className={cn(
+        'bg-background sticky top-0 z-[70] w-full transition-transform duration-300 ease-in-out',
+        visible ? 'translate-y-0' : '-translate-y-full',
+      )}
+    >
+      <header className="tablet:hidden bg-background flex items-center justify-between gap-100 py-3 pr-450 pl-200">
         {isMain && (
           <div className="flex items-center justify-center gap-100">
             <MobileNavSheet />
             <span className="typo-sub1 text-text-normal px-1">{clubName}</span>
           </div>
         )}
-        <div className="flex items-center justify-center gap-200">
-          <button
-            type="button"
-            aria-label="관리자 페이지로 이동"
-            onClick={() => router.push('/admin')}
-            className="flex cursor-pointer items-center justify-center rounded-full"
-          >
-            <Icon src={ExitToAppIcon} alt="avatar" size={40} className="text-icon-normal p-2" />
-          </button>
-          <button
-            type="button"
-            aria-label="마이페이지로 이동"
-            onClick={() => router.push('/mypage')}
-            className="cursor-pointer rounded-full"
-          >
-            {profileImageUrl ? (
-              <Image
-                src={profileImageUrl}
-                alt="avatar"
-                width={40}
-                height={40}
-                className="h-10 w-10 rounded-full object-cover"
-              />
-            ) : (
-              <Image src={AvatarIcon} alt="avatar" width={40} height={40} />
-            )}
-          </button>
-        </div>
+        {isMain && clubId && (
+          <div className="flex items-center justify-center gap-200">
+            <button
+              type="button"
+              aria-label="관리자 페이지로 이동"
+              onClick={() => router.push(`/${clubId}/admin`)}
+              className="flex cursor-pointer items-center justify-center rounded-full"
+            >
+              <Icon src={ExitToAppIcon} alt="avatar" size={40} className="text-icon-normal p-2" />
+            </button>
+            <button
+              type="button"
+              aria-label="마이페이지로 이동"
+              onClick={() => router.push(`/${clubId}/mypage`)}
+              className="cursor-pointer rounded-full"
+            >
+              {profileImageUrl ? (
+                <Image
+                  src={profileImageUrl}
+                  alt="avatar"
+                  width={40}
+                  height={40}
+                  className="h-10 w-10 rounded-full object-cover"
+                />
+              ) : (
+                <Image src={AvatarIcon} alt="avatar" width={40} height={40} />
+              )}
+            </button>
+          </div>
+        )}
       </header>
-      <header className="desktop:flex bg-background flex hidden w-full items-center justify-between px-5 py-3">
+      <header className="tablet:flex bg-background hidden w-full items-center justify-between px-5 py-3">
         <div className="flex items-center gap-4">
-          <Logo href={isMain ? '/home' : '/'} />
+          <Logo href={isMain ? `/${clubId}/home` : '/'} />
 
           {!isMain && (
             <>
@@ -116,6 +145,6 @@ export default function Header({ isMain = true }: HeaderProps) {
         )}
         {isMain && (isPostingPage ? <PostingActions /> : <DefaultActions />)}
       </header>
-    </>
+    </div>
   );
 }

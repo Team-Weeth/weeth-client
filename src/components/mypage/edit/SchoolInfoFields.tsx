@@ -1,30 +1,22 @@
 'use client';
 
-import type { Control, FieldErrors, UseFormRegister, UseFormSetValue } from 'react-hook-form';
-import { useWatch } from 'react-hook-form';
-
+import type { Control, UseFormSetValue } from 'react-hook-form';
+import { Controller, useFormState, useWatch } from 'react-hook-form';
 import { Input } from '@/components/ui';
 import { FormField } from '@/components/mypage/FormField';
 import { SearchSelect } from '@/components/mypage/SearchSelect';
 import type { EditProfileFormData } from '@/lib/schemas/editProfile';
+import { FormFieldWrapper } from '@/components/auth/hub';
 
 interface SchoolInfoFieldsProps {
-  register: UseFormRegister<EditProfileFormData>;
   control: Control<EditProfileFormData>;
-  errors: FieldErrors<EditProfileFormData>;
   setValue: UseFormSetValue<EditProfileFormData>;
   schools: string[];
   majors: string[];
 }
 
-function SchoolInfoFields({
-  register,
-  control,
-  errors,
-  setValue,
-  schools,
-  majors,
-}: SchoolInfoFieldsProps) {
+function SchoolInfoFields({ control, setValue, schools, majors }: SchoolInfoFieldsProps) {
+  const { errors } = useFormState({ control });
   const school = useWatch({ control, name: 'school' });
   const department = useWatch({ control, name: 'department' });
 
@@ -33,7 +25,7 @@ function SchoolInfoFields({
       <FormField label="학교" error={errors.school?.message}>
         <SearchSelect
           value={school}
-          onChange={(v) => setValue('school', v, { shouldValidate: true })}
+          onChange={(v) => setValue('school', v, { shouldValidate: true, shouldDirty: true })}
           options={schools}
           placeholder="학교 선택"
         />
@@ -42,24 +34,28 @@ function SchoolInfoFields({
       <FormField label="학과" error={errors.department?.message}>
         <SearchSelect
           value={department}
-          onChange={(v) => setValue('department', v, { shouldValidate: true })}
+          onChange={(v) => setValue('department', v, { shouldValidate: true, shouldDirty: true })}
           options={majors}
           placeholder="학과 선택"
         />
       </FormField>
 
-      <FormField label="학번" error={errors.studentId?.message}>
-        <Input
-          {...register('studentId')}
-          placeholder="학번을 입력하세요"
-          inputMode="numeric"
-          onInput={(e) => {
-            const target = e.currentTarget;
-            target.value = target.value.replace(/\D/g, '');
-          }}
-          className="rounded-lg"
+      <FormFieldWrapper label="학번" error={errors.studentId?.message}>
+        <Controller
+          name="studentId"
+          control={control}
+          render={({ field }) => (
+            <Input
+              {...field}
+              error={!!errors.studentId}
+              placeholder="학번 전체를 입력해주세요"
+              inputMode="numeric"
+              onChange={(e) => field.onChange(e.target.value.replace(/\D/g, ''))}
+              className="typo-body1 rounded-lg px-400 py-300"
+            />
+          )}
         />
-      </FormField>
+      </FormFieldWrapper>
     </div>
   );
 }

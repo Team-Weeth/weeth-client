@@ -7,7 +7,7 @@ import { cn } from '@/lib/cn';
 import { Icon } from '@/components/ui/Icon';
 
 const baseStyles = cn(
-  'w-full bg-container-neutral text-text-normal typo-body2',
+  'w-full bg-container-neutral text-text-normal',
   'rounded-sm border border-transparent px-300 py-200',
   'placeholder:text-text-alternative',
   'focus:outline-none focus:border-brand-primary',
@@ -23,6 +23,8 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
 }
 
 function Input({ className, clearable, error, wrapperClassName, ref, ...props }: InputProps) {
+  const hasTypo = className?.split(' ').some((c) => c.startsWith('typo-'));
+  const typoClass = hasTypo ? undefined : 'typo-body2';
   const innerRef = useRef<HTMLInputElement>(null);
   const [internalValue, setInternalValue] = useState(() => String(props.defaultValue ?? ''));
 
@@ -46,6 +48,7 @@ function Input({ className, clearable, error, wrapperClassName, ref, ...props }:
         aria-invalid={ariaInvalid}
         className={cn(
           baseStyles,
+          typoClass,
           error && 'border-state-error focus:border-state-error',
           className,
         )}
@@ -94,7 +97,7 @@ function Input({ className, clearable, error, wrapperClassName, ref, ...props }:
           className={cn(
             'absolute top-1/2 right-200 -translate-y-1/2',
             'flex items-center',
-            'text-icon-alternative hover:text-icon-normal',
+            'text-icon-normal',
             'cursor-pointer transition-colors',
           )}
           aria-label="입력 내용 지우기"

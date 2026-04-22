@@ -62,8 +62,7 @@ interface RecentPost {
   content: string;
   time: string;
   commentCount: number;
-  likeCount: number;
-  isLiked: boolean;
+  like: { isLiked: boolean; likeCount: number };
   fileUrls: FileItem[];
   isNew: boolean;
 }

@@ -15,15 +15,15 @@ const buttonVariants = cva(
         danger:
           'bg-state-error text-text-inverse hover:opacity-90 active:opacity-80 disabled:bg-button-neutral disabled:text-text-disabled',
         kakao:
-          'bg-[var(--kakao-bg)] text-text-strong hover:opacity-90 active:opacity-80 disabled:bg-button-neutral disabled:text-text-disabled',
+          'bg-[var(--kakao-bg)] text-[var(--kakao-text)] hover:opacity-90 active:opacity-80 disabled:bg-button-neutral disabled:text-text-disabled',
         apple:
-          'bg-button-neutral text-text-strong border border-line hover:opacity-90 active:opacity-80 disabled:bg-button-neutral disabled:text-text-disabled',
+          'bg-black text-white dark:bg-white dark:text-black hover:opacity-90 active:opacity-80 disabled:bg-button-neutral disabled:text-text-disabled',
       },
       size: {
         lg: 'typo-button1 px-400 py-300 rounded-md',
         md: 'typo-button1 px-300 py-200 rounded-md',
-        sm: 'typo-button2 px-200 py-100 rounded-sm',
-        social: 'typo-button1 h-[48px] px-[14px] rounded-md relative',
+        sm: 'typo-button2 px-300 py-200 rounded-sm',
+        social: 'typo-social h-[48px] px-[14px] rounded-md',
         'icon-md': 'rounded-sm p-200',
         'icon-sm': 'rounded-sm p-100',
       },

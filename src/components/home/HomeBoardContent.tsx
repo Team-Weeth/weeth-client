@@ -8,15 +8,23 @@ import { formatMonthDay } from '@/lib/formatTime';
 import { fileAttachmentToFileItem } from '@/utils/shared/file';
 import { PostActionMenu, PostCard } from '../board';
 import { Avatar, AvatarFallback, Button } from '@/components/ui';
-import { AvatarIcon } from '@/assets/icons';
-import Image from 'next/image';
-import { useRouter } from 'next/navigation';
+
+import { useParams, useRouter } from 'next/navigation';
 import { useIsAdmin } from '@/hooks/shared';
+import { HomeBoardContentSkeleton } from '@/components/home/skeleton';
 
 function HomeBoardContent() {
   const { isAdmin } = useIsAdmin();
   const router = useRouter();
-  const { data: posts, fetchNextPage, hasNextPage, isFetchingNextPage } = useRecentPostsQuery();
+  const { clubId } = useParams<{ clubId: string }>();
+  const {
+    data: posts,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isPending,
+  } = useRecentPostsQuery();
+
   const { data: myUserId } = useHomeQuery({
     select: (data) => data.myInfo.userInfo.id,
   });
@@ -30,14 +38,14 @@ function HomeBoardContent() {
     }
   }, [isIntersecting, hasNextPage, isFetchingNextPage, fetchNextPage]);
 
+  if (isPending) return <HomeBoardContentSkeleton />;
+
   if (!posts || posts.length === 0) {
     return (
       <main className="bg-container-neutral flex min-w-0 flex-col items-start justify-center gap-300 rounded-lg px-450 py-400">
         <div className="flex items-center justify-start gap-100">
           <Avatar size={24} type="round">
-            <AvatarFallback>
-              <Image src={AvatarIcon} alt="profile" width={24} height={24} />
-            </AvatarFallback>
+            <AvatarFallback />
           </Avatar>
           <p className="typo-caption1">Weeth 관리자</p>
         </div>
@@ -49,7 +57,7 @@ function HomeBoardContent() {
           <Button
             variant="primary"
             size="lg"
-            onClick={() => router.push('/board/write?type=GENERAL')}
+            onClick={() => router.push(`/${clubId}/board/write?type=GENERAL`)}
           >
             게시글 작성하기
           </Button>
@@ -85,7 +93,7 @@ function HomeBoardContent() {
                 )}
               </PostCard.Header>
               <Link
-                href={`/board/${post.id}`}
+                href={`/${clubId}/board/${post.id}`}
                 className="after:absolute after:inset-0 after:content-['']"
               >
                 <PostCard.ListContent
@@ -100,10 +108,10 @@ function HomeBoardContent() {
               <div className="relative z-10">
                 <PostCard.Actions
                   postId={post.id}
-                  likeCount={post.likeCount}
-                  isLiked={post.isLiked}
+                  likeCount={post.like.likeCount}
+                  isLiked={post.like.isLiked}
                   commentCount={post.commentCount}
-                  onComment={() => router.push(`/board/${post.id}#comments`)}
+                  onComment={() => router.push(`/${clubId}/board/${post.id}#comments`)}
                 />
               </div>
             </PostCard.Root>
