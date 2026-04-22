@@ -551,6 +551,45 @@ select:focus {
   letter-spacing: var(--letter-spacing);
 }
 
+/* ── Markdown / Editor Typography ─────────────────────── */
+
+@utility typo-md-title {
+  font-size: 32px;
+  line-height: 40px;
+  font-weight: var(--font-weight-bold);
+  letter-spacing: var(--letter-spacing);
+}
+
+@utility typo-md-h1 {
+  font-size: 30px;
+  line-height: 38px;
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--letter-spacing);
+}
+
+@utility typo-md-h2 {
+  font-size: 24px;
+  line-height: 32px;
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--letter-spacing);
+}
+
+@utility typo-md-h3 {
+  font-size: 20px;
+  line-height: 28px;
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--letter-spacing);
+}
+
+@utility typo-md-body {
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 400;
+  letter-spacing: var(--letter-spacing);
+}
+
+/* ────────────────────────────────────────────────────── */
+
 .scrollbar-none {
   scrollbar-width: none;
 }
@@ -596,15 +635,19 @@ select:focus {
 }
 
 .ProseMirror h1 {
-  @apply typo-h3 mt-300 mb-100;
+  @apply typo-md-h1 mt-300 mb-100;
 }
 
 .ProseMirror h2 {
-  @apply typo-sub2 mt-300 mb-100;
+  @apply typo-md-h2 mt-300 mb-100;
 }
 
 .ProseMirror h3 {
-  @apply typo-sub3 mt-300 mb-100;
+  @apply typo-md-h3 mt-300 mb-100;
+}
+
+.ProseMirror p {
+  @apply typo-md-body;
 }
 
 .ProseMirror ul {
