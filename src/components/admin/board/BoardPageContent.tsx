@@ -225,32 +225,46 @@ function BoardPageContent() {
         )}
 
         {/* Custom boards */}
-        {customBoards.length > 0 && (
-          <DndContext
-            sensors={sensors}
-            collisionDetection={closestCenter}
-            onDragEnd={handleDragEnd}
-          >
-            <SortableContext
-              items={customBoards.map((b) => b.boardId)}
-              strategy={verticalListSortingStrategy}
+        {customBoards.length > 0 &&
+          (query ? (
+            <div className="flex flex-col gap-200">
+              {customBoards.map((board) => (
+                <BoardCard
+                  key={board.boardId}
+                  board={board}
+                  draggable={false}
+                  onToggleComments={(next) => updateBoard(board.boardId, { commentEnabled: next })}
+                  onEdit={() => setEditingBoardId(board.boardId)}
+                  onDelete={() => moveBoardToTrash(board)}
+                />
+              ))}
+            </div>
+          ) : (
+            <DndContext
+              sensors={sensors}
+              collisionDetection={closestCenter}
+              onDragEnd={handleDragEnd}
             >
-              <div className="flex flex-col gap-200">
-                {customBoards.map((board) => (
-                  <SortableBoardCard
-                    key={board.boardId}
-                    board={board}
-                    onToggleComments={(next) =>
-                      updateBoard(board.boardId, { commentEnabled: next })
-                    }
-                    onEdit={() => setEditingBoardId(board.boardId)}
-                    onDelete={() => moveBoardToTrash(board)}
-                  />
-                ))}
-              </div>
-            </SortableContext>
-          </DndContext>
-        )}
+              <SortableContext
+                items={customBoards.map((b) => b.boardId)}
+                strategy={verticalListSortingStrategy}
+              >
+                <div className="flex flex-col gap-200">
+                  {customBoards.map((board) => (
+                    <SortableBoardCard
+                      key={board.boardId}
+                      board={board}
+                      onToggleComments={(next) =>
+                        updateBoard(board.boardId, { commentEnabled: next })
+                      }
+                      onEdit={() => setEditingBoardId(board.boardId)}
+                      onDelete={() => moveBoardToTrash(board)}
+                    />
+                  ))}
+                </div>
+              </SortableContext>
+            </DndContext>
+          ))}
 
         {/* Limit banner */}
         <div className="bg-container-neutral-alternative flex h-12 items-center gap-200 rounded-md p-300">
