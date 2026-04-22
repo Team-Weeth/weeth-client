@@ -1,11 +1,11 @@
 'use client';
 
-import * as React from 'react';
 import { AlertDialog as AlertDialogPrimitive } from 'radix-ui';
 
 import { cn } from '@/lib/cn';
 import { Icon } from '@/components/ui';
 import { InfoCircleIcon } from '@/assets/icons';
+import { useEffect, useRef } from 'react';
 
 type Placement = 'above-right' | 'below-right' | 'above-left' | 'below-left';
 
@@ -41,9 +41,9 @@ function CustomAlertDialog({
   onOpenChange,
   ...props
 }: CustomAlertDialogProps) {
-  const contentRef = React.useRef<HTMLDivElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!open || (!onOpenChange && !onDismiss)) return;
     const handler = (e: PointerEvent) => {
       if (contentRef.current?.contains(e.target as Node)) return;

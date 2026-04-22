@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 
 type DiscardSource = 'close' | 'cancel' | null;
 
@@ -10,11 +10,11 @@ interface UseDiscardableFormParams<T> {
 
 interface UseDiscardableFormResult<T> {
   form: T;
-  setForm: React.Dispatch<React.SetStateAction<T>>;
+  setForm: Dispatch<SetStateAction<T>>;
   updateField: <K extends keyof T>(key: K, value: T[K]) => void;
   hasChanges: boolean;
   discardSource: DiscardSource;
-  setDiscardSource: React.Dispatch<React.SetStateAction<DiscardSource>>;
+  setDiscardSource: Dispatch<React.SetStateAction<DiscardSource>>;
   tryClose: (source: Exclude<DiscardSource, null>, onConfirmedClose: () => void) => void;
   confirmDiscard: (onClose: () => void) => void;
 }

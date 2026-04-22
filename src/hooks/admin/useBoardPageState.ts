@@ -5,16 +5,10 @@ import { arrayMove } from '@dnd-kit/sortable';
 import type { DragEndEvent } from '@dnd-kit/core';
 
 import type { Board } from '@/types/admin/board';
+import type { BoardFormData } from '@/components/admin/board/modal/constants';
 import type { TrashedBoard } from '@/components/admin/board/modal/TrashBoardModal';
 
 const TRASH_RETENTION_DAYS = 30;
-
-interface CreateBoardInput {
-  name: string;
-  description: string;
-  visibility: Board['visibility'];
-  commentEnabled: boolean;
-}
 
 interface UseBoardPageStateParams {
   initialBoards: Board[];
@@ -29,7 +23,7 @@ function useBoardPageState({ initialBoards, initialTrashedBoards }: UseBoardPage
     setBoards((prev) => prev.map((b) => (b.boardId === boardId ? { ...b, ...patch } : b)));
   };
 
-  const createBoard = (data: CreateBoardInput) => {
+  const createBoard = (data: BoardFormData) => {
     setBoards((prev) => [
       ...prev,
       {
@@ -103,4 +97,4 @@ function useBoardPageState({ initialBoards, initialTrashedBoards }: UseBoardPage
   };
 }
 
-export { useBoardPageState, type CreateBoardInput };
+export { useBoardPageState };
