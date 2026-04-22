@@ -24,6 +24,13 @@ export class ApiError extends Error {
   }
 }
 
+function isErrorResponse(value: unknown): value is {
+  message?: string;
+  code?: number;
+} {
+  return typeof value === 'object' && value !== null;
+}
+
 function buildUrl(path: string, params?: Record<string, string | number>): string {
   let url = `${API_BASE_PATH}${path}`;
   if (params) {
@@ -114,9 +121,11 @@ async function request<T>(
     let serverMessage: string | undefined;
     let serverCode = 0;
     try {
-      const parsed = JSON.parse(errorBody);
-      serverMessage = parsed?.message;
-      serverCode = parsed?.code ?? 0;
+      const parsed: unknown = JSON.parse(errorBody);
+      if (isErrorResponse(parsed)) {
+        serverMessage = typeof parsed.message === 'string' ? parsed.message : undefined;
+        serverCode = typeof parsed.code === 'number' ? parsed.code : 0;
+      }
     } catch {
       // not JSON
     }

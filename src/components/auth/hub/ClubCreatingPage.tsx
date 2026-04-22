@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 import { ProgressBar } from '@/components/ui';
-import { createClubAction, setClubCookie } from '@/lib/actions/club';
+import { createClubAction } from '@/lib/actions/club';
 import { useProgressAnimation } from '@/hooks';
 import { useClubActions, useCreateClubDraftStore } from '@/stores';
 import { toastError } from '@/stores/useToastStore';

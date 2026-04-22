@@ -3,7 +3,7 @@ import { cookies, headers } from 'next/headers';
 
 import { ClubAccessPage, ClubNotFoundPage } from '@/components/auth/invite';
 import { ApiError, apiServer } from '@/lib/apis/server';
-import { ACCESS_TOKEN_KEY } from '@/lib/apis/cookies';
+import { ACCESS_TOKEN_KEY, REFRESH_TOKEN_KEY } from '@/lib/apis/cookies';
 import type { Club } from '@/types';
 
 interface ClubLayoutProps {
@@ -26,9 +26,11 @@ export default async function ClubLayout({ children, params }: ClubLayoutProps) 
   }
 
   const cookieStore = await cookies();
-  const isLoggedIn = cookieStore.has(ACCESS_TOKEN_KEY);
+  const hasAccessToken = cookieStore.has(ACCESS_TOKEN_KEY);
+  const hasRefreshToken = cookieStore.has(REFRESH_TOKEN_KEY);
+  const hasAuthSession = hasAccessToken || hasRefreshToken;
 
-  if (!isLoggedIn) {
+  if (!hasAuthSession) {
     const headerStore = await headers();
     const pathname = headerStore.get('x-pathname') ?? `/${clubId}/home`;
     return <ClubAccessPage club={club} loginHref={`/login?redirect=${pathname}`} />;
@@ -36,8 +38,12 @@ export default async function ClubLayout({ children, params }: ClubLayoutProps) 
 
   try {
     await apiServer.get(`/clubs/${clubId}/members/me`);
-  } catch {
-    return <ClubAccessPage club={club} />;
+  } catch (error) {
+    if (error instanceof ApiError && [403, 404].includes(error.status)) {
+      return <ClubAccessPage club={club} />;
+    }
+
+    throw error;
   }
 
   return <>{children}</>;
