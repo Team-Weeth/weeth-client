@@ -25,7 +25,7 @@ function SchoolInfoFields({ control, setValue, schools, majors }: SchoolInfoFiel
       <FormField label="학교" error={errors.school?.message}>
         <SearchSelect
           value={school}
-          onChange={(v) => setValue('school', v, { shouldValidate: true })}
+          onChange={(v) => setValue('school', v, { shouldValidate: true, shouldDirty: true })}
           options={schools}
           placeholder="학교 선택"
         />
@@ -34,7 +34,7 @@ function SchoolInfoFields({ control, setValue, schools, majors }: SchoolInfoFiel
       <FormField label="학과" error={errors.department?.message}>
         <SearchSelect
           value={department}
-          onChange={(v) => setValue('department', v, { shouldValidate: true })}
+          onChange={(v) => setValue('department', v, { shouldValidate: true, shouldDirty: true })}
           options={majors}
           placeholder="학과 선택"
         />

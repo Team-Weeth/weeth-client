@@ -77,7 +77,7 @@ function EditProfileContent({ className, schools, majors, ...props }: EditProfil
   const hasChanges = isDirty || !!selectedFile || resetToDefault;
 
   const { open, onConfirm, onCancel, allowNavigation } = useNavigationGuard({
-    enabled: isDirty || !!selectedFile,
+    enabled: hasChanges,
   });
 
   const onSubmit = (data: EditProfileFormData) => {
