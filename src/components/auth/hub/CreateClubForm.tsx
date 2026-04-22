@@ -100,7 +100,7 @@ function CreateClubForm({ schoolNames, schoolLoadError = false }: CreateClubForm
   return (
     <div className="mx-auto flex w-full max-w-145 flex-col px-400 pt-450 pb-600">
       <div className="mb-600 flex flex-col gap-200">
-        <h1 className="typo-sub2 text-text-strong">동아리 정보 입력</h1>
+        <h1 className="typo-sub1 text-text-strong">동아리 정보 입력</h1>
         <p className="typo-body2 text-text-alternative">
           동아리의 기본 정보를 입력하면
           <br />
@@ -144,7 +144,7 @@ function CreateClubForm({ schoolNames, schoolLoadError = false }: CreateClubForm
 
         {/* 동아리 이름 */}
         <FormFieldWrapper label="동아리 이름" error={errors.name?.message}>
-          <Input {...register('name')} clearable className="rounded-lg px-400 py-300" />
+          <Input {...register('name')} clearable className="typo-body1 rounded-lg px-400 py-300" />
         </FormFieldWrapper>
 
         {/* 동아리 소개 */}
@@ -153,7 +153,7 @@ function CreateClubForm({ schoolNames, schoolLoadError = false }: CreateClubForm
             {...register('description')}
             maxLength={30}
             clearable
-            className="rounded-lg px-400 py-300"
+            className="typo-body1 rounded-lg px-400 py-300"
           />
           <span className="typo-caption2 text-text-alternative">30자 제한</span>
         </FormFieldWrapper>
@@ -191,7 +191,7 @@ function CreateClubForm({ schoolNames, schoolLoadError = false }: CreateClubForm
                 placeholder="예 : 10"
                 clearable
                 onChange={(e) => field.onChange(e.target.value.replace(/\D/g, ''))}
-                className="rounded-lg px-400 py-300"
+                className="typo-body1 rounded-lg px-400 py-300"
               />
             )}
           />
@@ -209,7 +209,7 @@ function CreateClubForm({ schoolNames, schoolLoadError = false }: CreateClubForm
                 type="tel"
                 onChange={(e) => field.onChange(formatPhone(e.target.value))}
                 clearable
-                className="rounded-lg px-400 py-300"
+                className="typo-body1 rounded-lg px-400 py-300"
               />
             )}
           />
@@ -224,7 +224,7 @@ function CreateClubForm({ schoolNames, schoolLoadError = false }: CreateClubForm
             autoComplete="email"
             clearable
             spellCheck={false}
-            className="rounded-lg px-400 py-300"
+            className="typo-body1 rounded-lg px-400 py-300"
           />
         </FormFieldWrapper>
 
