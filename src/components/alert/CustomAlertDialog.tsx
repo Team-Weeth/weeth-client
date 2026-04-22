@@ -43,6 +43,7 @@ interface CustomAlertDialogProps extends React.ComponentProps<typeof AlertDialog
   title: string;
   description?: string;
   actionLabel: string;
+  cancelLabel?: string;
   onAction: () => void;
   onCancel?: () => void;
   onDismiss?: () => void;
@@ -56,6 +57,7 @@ function CustomAlertDialog({
   title,
   description,
   actionLabel,
+  cancelLabel,
   onAction,
   onCancel,
   onDismiss,
@@ -84,28 +86,12 @@ function CustomAlertDialog({
     };
   }, [open, onOpenChange, onDismiss]);
 
-  return (
-    <AlertDialogPrimitive.Root open={open} onOpenChange={onOpenChange} {...props}>
-      {children}
-
-      <AlertDialogPrimitive.Content
-        ref={contentRef}
-        className={cn(
-          'bg-background border-line data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 absolute z-50 w-[339px] rounded-lg border shadow-[0px_10px_40px_0px_rgba(0,0,0,0.5)] duration-200',
-          PLACEMENT_CLASS[placement],
-        )}
-      >
-        {/* Content area */}
-        <div className="flex flex-col items-center gap-600 px-400 py-400">
-          {/* Icon */}
-          <div className="bg-state-error/10 flex items-center rounded-full p-300">
-            <Icon src={InfoCircleIcon} size={24} className="text-state-error" />
-          </div>
   const useOverlay = placement === 'center';
   const toneStyle = TONE_STYLES[tone];
 
   const content = (
     <AlertDialogPrimitive.Content
+      ref={contentRef}
       className={cn(
         'bg-background border-line data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 z-[60] w-[339px] rounded-lg border shadow-[0px_10px_40px_0px_rgba(0,0,0,0.5)] duration-200',
         PLACEMENT_CLASS[placement],
@@ -147,19 +133,18 @@ function CustomAlertDialog({
                 {secondActionLabel}
               </button>
             </AlertDialogPrimitive.Action>
+          )}
 
-            {cancelLabel && (
-              <AlertDialogPrimitive.Cancel asChild>
-                <button
-                  type="button"
-                  onClick={onCancel}
-                  className="typo-button1 bg-button-neutral text-text-strong hover:bg-container-neutral-interaction w-full cursor-pointer rounded-md px-400 py-300 transition-colors"
-                >
-                  {cancelLabel}
-                </button>
-              </AlertDialogPrimitive.Cancel>
-            )}
-          </div>
+          {cancelLabel && (
+            <AlertDialogPrimitive.Cancel asChild>
+              <button
+                type="button"
+                onClick={onCancel}
+                className="typo-button1 bg-button-neutral text-text-strong hover:bg-container-neutral-interaction w-full cursor-pointer rounded-md px-400 py-300 transition-colors"
+              >
+                {cancelLabel}
+              </button>
+            </AlertDialogPrimitive.Cancel>
           )}
         </div>
       </div>
@@ -167,7 +152,7 @@ function CustomAlertDialog({
   );
 
   return (
-    <AlertDialogPrimitive.Root {...props}>
+    <AlertDialogPrimitive.Root open={open} onOpenChange={onOpenChange} {...props}>
       {children}
 
       {useOverlay ? (
