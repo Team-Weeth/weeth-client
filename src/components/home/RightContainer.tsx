@@ -2,12 +2,16 @@ import { Footer } from '@/components/layout';
 import { NoticeBoardBox } from './NoticeBoardBox';
 import { CalendarBox } from './CalendarBox';
 
-export function RightContainer() {
+interface RightContainerProps {
+  showFooter?: boolean;
+}
+
+export function RightContainer({ showFooter = true }: RightContainerProps) {
   return (
     <>
       <NoticeBoardBox />
       <CalendarBox />
-      <Footer isSmall />
+      {showFooter ? <Footer isSmall /> : null}
     </>
   );
 }
