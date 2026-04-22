@@ -36,7 +36,7 @@ function ClubAvatar({ src, name, size, className, ...props }: ClubAvatarProps) {
       {...props}
     >
       {src && <AvatarImage src={src} alt={name} />}
-      <AvatarFallback>{name.charAt(0)}</AvatarFallback>
+      <AvatarFallback variant="club" />
     </Avatar>
   );
 }
