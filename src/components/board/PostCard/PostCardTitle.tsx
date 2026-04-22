@@ -12,7 +12,7 @@ interface PostCardTitleProps {
 function PostCardTitle({ title, isNew, size }: PostCardTitleProps) {
   return (
     <div className="flex items-center gap-[5px]">
-      <h3 className={cn('text-text-strong', size === 'detail' ? 'typo-h3' : 'typo-sub3')}>
+      <h3 className={cn('text-text-strong', size === 'detail' ? 'typo-md-title' : 'typo-sub3')}>
         {title}
       </h3>
       {isNew && (

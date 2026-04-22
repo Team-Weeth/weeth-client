@@ -108,8 +108,8 @@ function HomeBoardContent() {
               <div className="relative z-10">
                 <PostCard.Actions
                   postId={post.id}
-                  likeCount={post.likeCount}
-                  isLiked={post.isLiked}
+                  likeCount={post.like.likeCount}
+                  isLiked={post.like.isLiked}
                   commentCount={post.commentCount}
                   onComment={() => router.push(`/${clubId}/board/${post.id}#comments`)}
                 />

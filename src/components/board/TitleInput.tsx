@@ -34,7 +34,7 @@ function TitleInput({ className, onKeyDown, onChange, ...props }: TitleInputProp
       <textarea
         rows={1}
         maxLength={MAX_LENGTH}
-        className="typo-h3 text-text-strong placeholder:text-text-alternative w-full resize-none overflow-hidden bg-transparent outline-none"
+        className="typo-md-title text-text-strong placeholder:text-text-alternative w-full resize-none overflow-hidden bg-transparent outline-none"
         placeholder="제목"
         onChange={handleChange}
         onKeyDown={handleKeyDown}

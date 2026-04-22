@@ -25,6 +25,11 @@ export function HomePageSections() {
           <Suspense fallback={<LeftContainerSkeleton />}>
             <LeftContainer />
           </Suspense>
+          <div className="desktop:hidden tablet:flex hidden flex-col gap-300">
+            <Suspense fallback={<RightContainerSkeleton />}>
+              <RightContainer showFooter={false} />
+            </Suspense>
+          </div>
         </div>
         <div className="flex min-w-0 flex-1 flex-col gap-300">
           <Suspense fallback={<MainContainerSkeleton />}>
