@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
 
@@ -15,26 +15,35 @@ function HomeTutorialLauncher() {
   const router = useRouter();
   const { clubId } = useParams<{ clubId: string }>();
   const searchParams = useSearchParams();
-  const [open, setOpen] = useState(() => {
-    if (typeof window === 'undefined') return false;
-    const onboarding = searchParams.get('onboarding');
-    if (onboarding !== 'club-created') return false;
-    if (window.localStorage.getItem(HOME_TUTORIAL_SEEN_KEY) === 'true') return false;
-    window.localStorage.setItem(HOME_TUTORIAL_SEEN_KEY, 'true');
-    return true;
-  });
+  const [open, setOpen] = useState(false);
+  const autoOpenedRef = useRef(false);
   const { data: role } = useHomeQuery({
     select: (data) => data.myInfo.userInfo.role,
   });
 
   useEffect(() => {
     const onboarding = searchParams.get('onboarding');
+
+    if (
+      onboarding === 'club-created' &&
+      role === 'LEAD' &&
+      window.localStorage.getItem(HOME_TUTORIAL_SEEN_KEY) !== 'true'
+    ) {
+      autoOpenedRef.current = true;
+      setOpen(true);
+    }
+
     if (onboarding === 'club-created') {
       router.replace(`/${clubId}/home`, { scroll: false });
     }
-  }, [router, searchParams, clubId]);
+  }, [router, searchParams, clubId, role]);
 
   const handleOpenChange = (nextOpen: boolean) => {
+    if (!nextOpen && autoOpenedRef.current) {
+      window.localStorage.setItem(HOME_TUTORIAL_SEEN_KEY, 'true');
+      autoOpenedRef.current = false;
+    }
+
     setOpen(nextOpen);
   };
 
