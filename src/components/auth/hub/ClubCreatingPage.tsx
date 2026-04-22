@@ -1,14 +1,12 @@
 'use client';
 
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
-import { isAxiosError } from 'axios';
 import { useRouter } from 'next/navigation';
 
 import { ProgressBar } from '@/components/ui';
-import { setClubCookie } from '@/lib/actions/club';
+import { createClubAction, setClubCookie } from '@/lib/actions/club';
 import { useProgressAnimation } from '@/hooks';
-import { clubApi } from '@/lib/apis/club';
 import { useClubActions, useCreateClubDraftStore } from '@/stores';
 import { toastError } from '@/stores/useToastStore';
 import type { CreateClubDraftState } from '@/stores/useCreateClubDraftStore';
@@ -17,99 +15,80 @@ interface ClubCreatingPageProps {
   onCancel?: () => void;
 }
 
+type Status = 'idle' | 'requesting' | 'api-done' | 'navigated';
+
 function ClubCreatingPage({ onCancel }: ClubCreatingPageProps) {
   const router = useRouter();
   const resetDraft = useCreateClubDraftStore((state) => state.reset);
   const { setClub } = useClubActions();
-  const [apiDone, setApiDone] = useState(false);
-  const apiDoneRef = useRef(false);
+  const [status, setStatus] = useState<Status>('idle');
   const animationDoneRef = useRef(false);
-  const hasNavigatedRef = useRef(false);
-  const requestStartedRef = useRef(false);
-  const cancelledRef = useRef(false);
   const clubIdRef = useRef<string | null>(null);
 
-  const navigate = useCallback(() => {
-    if (hasNavigatedRef.current || cancelledRef.current || !clubIdRef.current) return;
-    hasNavigatedRef.current = true;
+  const navigate = () => {
+    if (status === 'navigated' || !clubIdRef.current) return;
+    setStatus('navigated');
     resetDraft();
     router.replace(`/${clubIdRef.current}/home?onboarding=club-created`);
-  }, [resetDraft, router]);
+  };
 
   const progress = useProgressAnimation({
     duration: 5000,
     onComplete: () => {
       animationDoneRef.current = true;
-      if (apiDoneRef.current) navigate();
+      if (status === 'api-done') navigate();
     },
   });
 
-  // progress >= 80일 때 API 호출
   useEffect(() => {
-    if (progress < 80 || requestStartedRef.current) return;
-    requestStartedRef.current = true;
+    if (progress < 80 || status !== 'idle') return;
+    setStatus('requesting');
 
     const { school, name, description, generation, phone, email, contactType } =
       useCreateClubDraftStore.getState() as CreateClubDraftState & Record<string, unknown>;
 
     if (!school || !name || !contactType) {
       toastError('동아리 정보가 올바르지 않습니다.');
-      cancelledRef.current = true;
       onCancel?.();
       return;
     }
 
-    const schoolName = school.replace(/\(.*\)$/, '').trim();
-
-    const payload = {
-      name,
-      schoolName,
-      description,
-      contactEmail: email || null,
-      contactPhoneNumber: phone.replace(/-/g, ''),
-      primaryContact: contactType.toUpperCase() as 'PHONE' | 'EMAIL',
-      currentCardinal: Number(generation),
-      profileImage: null,
-      backgroundImage: null,
-    };
-
-    clubApi
-      .create(payload)
-      .then(async (response) => {
-        const { data, message } = response.data;
-
-        if (!data) {
-          toastError(message || '동아리 생성에 실패했습니다.');
-          cancelledRef.current = true;
+    createClubAction({ school, name, description, generation, phone, email, contactType })
+      .then(async (result) => {
+        if (result.error) {
+          toastError(result.error);
           onCancel?.();
           return;
         }
 
-        const clubId = data.clubId;
-        clubIdRef.current = clubId;
-        await setClubCookie(clubId, name);
-        apiDoneRef.current = true;
-        setClub(clubId, name);
-        setApiDone(true);
+        if (!result.clubId) {
+          toastError('동아리 생성에 실패했습니다.');
+          onCancel?.();
+          return;
+        }
+
+        clubIdRef.current = result.clubId;
+        setClub(result.clubId, name);
+        setStatus('api-done');
 
         if (animationDoneRef.current) {
           navigate();
         }
       })
-      .catch((error) => {
-        const message = isAxiosError(error) ? error.response?.data?.message : undefined;
-        toastError(message || '동아리 생성에 실패했습니다.');
-        cancelledRef.current = true;
+      .catch(() => {
+        toastError('동아리 생성에 실패했습니다.');
         onCancel?.();
       });
-  }, [progress, navigate, onCancel, setClub]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [progress]);
 
   // API가 애니메이션 이후에 완료된 경우 즉시 navigate
   useEffect(() => {
-    if (apiDone && animationDoneRef.current) {
+    if (status === 'api-done' && animationDoneRef.current) {
       navigate();
     }
-  }, [apiDone, navigate]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [status]);
 
   return (
     <div className="flex min-h-screen items-center justify-center px-400">

@@ -2,10 +2,12 @@
 
 import { useEffect } from 'react';
 
+import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 
 import { Button, ClubAvatar } from '@/components/ui';
-import { useAuthName, useClubName, useClubProfileImageUrl } from '@/stores';
+import { clubApi } from '@/lib/apis/club';
+import { useAuthName, useClubName } from '@/stores';
 import { useClubId } from '@/stores/useClubStore';
 
 function ClubWelcomePage() {
@@ -13,7 +15,12 @@ function ClubWelcomePage() {
   const name = useAuthName();
   const clubId = useClubId();
   const clubName = useClubName();
-  const clubProfileImageUrl = useClubProfileImageUrl();
+
+  const { data: clubProfileImageUrl } = useQuery({
+    queryKey: ['club', clubId, 'profile'],
+    queryFn: () => clubApi.getById(clubId!).then((res) => res.data.data.profileImageUrl ?? null),
+    enabled: !!clubId,
+  });
 
   useEffect(() => {
     if (!clubId) return;

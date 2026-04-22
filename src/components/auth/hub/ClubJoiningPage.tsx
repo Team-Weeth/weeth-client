@@ -59,12 +59,7 @@ function ClubJoiningPage({ clubName, clubId, code }: ClubJoiningPageProps) {
     clubApi
       .join(clubId, code)
       .then(async () => {
-        try {
-          const { data } = await clubApi.getById(clubId);
-          await setClubInfo(data.data.profileImageUrl);
-        } catch {
-          await setClubInfo();
-        }
+        await setClubInfo();
         apiDoneRef.current = true;
         setStatus('joining');
       })
