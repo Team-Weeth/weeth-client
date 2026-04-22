@@ -28,6 +28,7 @@ function BoardCard({
   onDelete,
   draggable = true,
   dragHandleProps,
+  ref,
   ...props
 }: BoardCardProps) {
   const { name, description, visibility, postCount, commentEnabled, editable } = board;
@@ -40,6 +41,7 @@ function BoardCard({
 
   return (
     <div
+      ref={ref}
       className={cn(
         'bg-container-neutral tablet:gap-400 flex w-full items-center gap-300 rounded-sm px-500 py-400 shadow-sm',
         className,
