@@ -35,7 +35,7 @@ export default function Header({ isMain = true }: HeaderProps) {
 
   return (
     <>
-      <header className="desktop:hidden bg-background sticky top-0 z-[70] flex items-center justify-between gap-100 py-3 pr-450 pl-200">
+      <header className="tablet:hidden bg-background sticky top-0 z-[70] flex items-center justify-between gap-100 py-3 pr-450 pl-200">
         {isMain && (
           <div className="flex items-center justify-center gap-100">
             <MobileNavSheet />
@@ -73,7 +73,7 @@ export default function Header({ isMain = true }: HeaderProps) {
           </div>
         )}
       </header>
-      <header className="desktop:flex bg-background flex hidden w-full items-center justify-between px-5 py-3">
+      <header className="tablet:flex bg-background flex hidden w-full items-center justify-between px-5 py-3">
         <div className="flex items-center gap-4">
           <Logo href={isMain ? `/${clubId}/home` : '/'} />
 

@@ -3,6 +3,21 @@ name: pr-writer
 description: Analyzes code changes and generates a PR body following .github/pull_request_template.md format. Use for PR creation or PR update requests.
 ---
 
+## Step 0. Pre-flight Checks (Required — run BEFORE PR creation)
+
+Run these four checks and verify each passes. If a check fails on newly changed files, fix and re-run; if it fails on pre-existing issues unrelated to this branch, note it in the PR body.
+
+```bash
+pnpm typecheck   # TypeScript
+pnpm lint        # ESLint (0 errors; warnings ok)
+pnpm format:check  # Prettier
+pnpm build       # Next.js build
+```
+
+If `pnpm typecheck` / `pnpm build` fail with missing-module errors, run `pnpm install` first and retry. If `pnpm format:check` fails on files touched in this branch, run `pnpm prettier --write <paths>` on only those files before proceeding.
+
+Do not proceed to Step 1 until all four checks are green (or failures are confirmed pre-existing and unrelated).
+
 ## Step 1. Analyze Changes
 ```bash
 BASE_BRANCH=$(git remote show origin | sed -n '/HEAD branch/s/.*: //p')

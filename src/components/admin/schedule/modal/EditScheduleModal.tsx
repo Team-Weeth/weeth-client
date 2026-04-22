@@ -3,9 +3,6 @@
 import { useState } from 'react';
 
 import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
   Button,
   DropdownMenu,
   DropdownMenuContent,
@@ -16,35 +13,12 @@ import {
 import { CustomAlertDialog } from '@/components/alert';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { AdminCloseIcon, AdminMeatballIcon } from '@/assets/icons/admin';
-import { ScheduleFormField } from '@/components/admin/schedule/ScheduleFormField';
-import { DateTimeInput } from '@/components/ui/DateTimeInput';
 import type { Schedule } from '@/types/admin/schedule';
 
-interface ScheduleFormState {
-  title: string;
-  startDate: string;
-  startTime: string;
-  endDate: string;
-  endTime: string;
-  location: string;
-  content: string;
-}
-
-function toInitialForm(schedule: Schedule): ScheduleFormState {
-  return {
-    title: schedule.title,
-    startDate: schedule.startDateTime.slice(0, 10),
-    startTime: schedule.startDateTime.slice(11, 16),
-    endDate: schedule.endDateTime.slice(0, 10),
-    endTime: schedule.endDateTime.slice(11, 16),
-    location: schedule.location,
-    content: '',
-  };
-}
-
-function isFormChanged(a: ScheduleFormState, b: ScheduleFormState): boolean {
-  return (Object.keys(a) as (keyof ScheduleFormState)[]).some((key) => a[key] !== b[key]);
-}
+import { DiscardConfirmArea } from './DiscardConfirmArea';
+import { ScheduleFormBody } from './ScheduleFormBody';
+import { isFormChanged, toInitialScheduleForm } from '../../../../utils/admin/scheduleFormUtils';
+import type { ScheduleFormState } from './types';
 
 interface EditScheduleModalProps {
   open: boolean;
@@ -54,16 +28,16 @@ interface EditScheduleModalProps {
 }
 
 function EditScheduleModal({ open, onOpenChange, schedule, onDelete }: EditScheduleModalProps) {
-  const initialForm = toInitialForm(schedule);
+  const initialForm = toInitialScheduleForm(schedule);
   const [form, setForm] = useState<ScheduleFormState>(initialForm);
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const [discardSource, setDiscardSource] = useState<'close' | 'cancel' | null>(null);
 
-  const updateField = <K extends keyof ScheduleFormState>(key: K, value: ScheduleFormState[K]) => {
-    setForm((prev) => ({ ...prev, [key]: value }));
-  };
-
   const hasChanges = isFormChanged(form, initialForm);
+
+  const updateForm = (patch: Partial<ScheduleFormState>) => {
+    setForm((prev) => ({ ...prev, ...patch }));
+  };
 
   const handleClose = () => onOpenChange(false);
 
@@ -92,14 +66,16 @@ function EditScheduleModal({ open, onOpenChange, schedule, onDelete }: EditSched
     handleClose();
   };
 
+  const closeDiscardAlert = (source: 'close' | 'cancel') => (next: boolean) => {
+    if (!next && discardSource === source) setDiscardSource(null);
+  };
+
   return (
     <>
       <Dialog
         open={open}
         onOpenChange={(nextOpen) => {
-          if (!nextOpen) {
-            handleTryClose('close');
-          }
+          if (!nextOpen) handleTryClose('close');
         }}
       >
         <DialogContent
@@ -117,7 +93,6 @@ function EditScheduleModal({ open, onOpenChange, schedule, onDelete }: EditSched
               </span>
             </div>
             <div className="flex items-center gap-200">
-              {/* Menu button */}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <button
@@ -134,8 +109,12 @@ function EditScheduleModal({ open, onOpenChange, schedule, onDelete }: EditSched
                 </DropdownMenuContent>
               </DropdownMenu>
 
-              {/* Close button */}
-              <div className="relative">
+              <DiscardConfirmArea
+                open={discardSource === 'close'}
+                onOpenChange={closeDiscardAlert('close')}
+                onConfirm={handleDiscardConfirm}
+                placement="below-right"
+              >
                 <button
                   type="button"
                   onClick={() => handleTryClose('close')}
@@ -144,94 +123,33 @@ function EditScheduleModal({ open, onOpenChange, schedule, onDelete }: EditSched
                 >
                   <Icon src={AdminCloseIcon} size={24} alt="닫기" />
                 </button>
-                <CustomAlertDialog
-                  open={discardSource === 'close'}
-                  onOpenChange={(open) => {
-                    if (!open && discardSource === 'close') setDiscardSource(null);
-                  }}
-                  title={'변경사항이 있어요.\n변경사항을 폐기할까요?'}
-                  actionLabel="변경사항 폐기"
-                  onAction={handleDiscardConfirm}
-                  placement="below-right"
-                />
-              </div>
+              </DiscardConfirmArea>
             </div>
           </div>
 
-          {/* Scrollable body */}
+          {/* Body */}
           <div className="scrollbar-custom max-h-[700px] overflow-y-auto px-700">
             <h2 className="typo-h3 text-text-normal py-400">일반 일정 수정</h2>
-
-            <div className="flex flex-col gap-400 py-400">
-              {/* Title */}
-              <ScheduleFormField label="일정 제목">
-                <input
-                  type="text"
-                  value={form.title}
-                  onChange={(e) => updateField('title', e.target.value)}
-                  placeholder="예 : 중간고사 기간"
-                  className="bg-container-neutral typo-body1 placeholder:text-text-alternative text-text-normal h-12 w-full rounded-sm px-400 py-300 focus:outline-none"
-                />
-              </ScheduleFormField>
-
-              {/* Start / End dates */}
-              <div className="flex gap-600">
-                <DateTimeInput
-                  label="시작 일자"
-                  dateValue={form.startDate}
-                  timeValue={form.startTime}
-                  onDateChange={(v) => updateField('startDate', v)}
-                  onTimeChange={(v) => updateField('startTime', v)}
-                />
-                <DateTimeInput
-                  label="종료 일자"
-                  dateValue={form.endDate}
-                  timeValue={form.endTime}
-                  onDateChange={(v) => updateField('endDate', v)}
-                  onTimeChange={(v) => updateField('endTime', v)}
-                />
-              </div>
-
-              {/* Location */}
-              <ScheduleFormField label="모임 장소 (선택)">
-                <input
-                  type="text"
-                  value={form.location}
-                  onChange={(e) => updateField('location', e.target.value)}
-                  placeholder="장소를 입력해주세요."
-                  className="bg-container-neutral typo-body1 placeholder:text-text-alternative text-text-normal h-12 w-full rounded-sm px-400 py-300 focus:outline-none"
-                />
-              </ScheduleFormField>
-
-              {/* Content */}
-              <ScheduleFormField label="일정 설명 (선택)">
-                <textarea
-                  value={form.content}
-                  onChange={(e) => updateField('content', e.target.value)}
-                  placeholder="일정에 대한 설명을 입력해주세요."
-                  className="bg-container-neutral typo-body1 placeholder:text-text-alternative text-text-normal h-[150px] w-full resize-none rounded-sm px-400 py-300 focus:outline-none"
-                />
-              </ScheduleFormField>
-            </div>
+            <ScheduleFormBody
+              form={form}
+              onFormChange={updateForm}
+              titleLabel="일정 제목"
+              titlePlaceholder="예 : 중간고사 기간"
+            />
           </div>
 
           {/* Footer */}
           <div className="bg-container-neutral flex items-center justify-end gap-200 px-400 pt-400 pb-500">
-            <div className="relative">
+            <DiscardConfirmArea
+              open={discardSource === 'cancel'}
+              onOpenChange={closeDiscardAlert('cancel')}
+              onConfirm={handleDiscardConfirm}
+              placement="above-right"
+            >
               <Button variant="secondary" size="lg" onClick={() => handleTryClose('cancel')}>
                 취소
               </Button>
-              <CustomAlertDialog
-                open={discardSource === 'cancel'}
-                onOpenChange={(open) => {
-                  if (!open && discardSource === 'cancel') setDiscardSource(null);
-                }}
-                title={'변경사항이 있어요.\n변경사항을 폐기할까요?'}
-                actionLabel="변경사항 폐기"
-                onAction={handleDiscardConfirm}
-                placement="above-right"
-              />
-            </div>
+            </DiscardConfirmArea>
             <Button
               variant="primary"
               size="lg"
@@ -244,17 +162,16 @@ function EditScheduleModal({ open, onOpenChange, schedule, onDelete }: EditSched
         </DialogContent>
       </Dialog>
 
-      {/* Delete confirmation */}
-      <AlertDialog
+      {/* 삭제 확인 */}
+      <CustomAlertDialog
         open={deleteConfirmOpen}
         onOpenChange={setDeleteConfirmOpen}
-        status="danger"
         title="이 일정을 삭제하시겠어요?"
         description={'삭제된 일정은 복구할 수 없습니다.\n신중히 확인 후 진행해 주세요.'}
-      >
-        <AlertDialogAction onClick={handleDeleteConfirm}>삭제</AlertDialogAction>
-        <AlertDialogCancel>취소</AlertDialogCancel>
-      </AlertDialog>
+        actionLabel="삭제"
+        onAction={handleDeleteConfirm}
+        placement="center"
+      />
     </>
   );
 }

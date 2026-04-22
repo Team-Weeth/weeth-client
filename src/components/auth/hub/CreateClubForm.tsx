@@ -1,10 +1,8 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Controller, useForm, useWatch } from 'react-hook-form';
-
 import { TooltipIcon } from '@/assets/icons';
 import { Button, Icon, Input, Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui';
 import { SearchSelect } from '@/components/mypage';
@@ -15,7 +13,6 @@ import {
   useCreateClubDraftValues,
 } from '@/stores/useCreateClubDraftStore';
 import { formatPhone } from '@/utils/shared';
-
 import { ClubCreatingPage } from './ClubCreatingPage';
 import { FieldError, FieldLabel, FormFieldWrapper } from './FormFieldWrapper';
 
