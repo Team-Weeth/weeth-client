@@ -150,3 +150,5 @@ export { TimePicker, type TimePickerProps } from './TimePicker';
 export { DateTimeInput, type DateTimeInputProps } from './DateTimeInput';
 
 export { Badge, badgeVariants, type BadgeProps } from './Badge';
+
+export { Switch, type SwitchProps } from './Switch';
