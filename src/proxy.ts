@@ -63,10 +63,18 @@ export function proxy(request: NextRequest) {
   }
 
   // [clubId] 라우트는 레이아웃에서 접근 제어하므로 통과시킴
-  // PUBLIC_PATHS, /club/, /kakao/ 등은 이미 위에서 처리됨
-  const isClubRoute = /^\/[A-Za-z0-9]+(?:\/|$)/.test(pathname);
-  if (isClubRoute) {
-    return NextResponse.next();
+  // 인증 필요한 고정 경로(/hub, /joining, /welcome 등)는 제외
+  const PRIVATE_PATHS = ['/hub', '/joining', '/welcome'];
+  const isPrivatePath = PRIVATE_PATHS.some(
+    (path) => pathname === path || pathname.startsWith(`${path}/`),
+  );
+  if (!isPrivatePath) {
+    const isClubRoute = /^\/[A-Za-z0-9]+(?:\/|$)/.test(pathname);
+    if (isClubRoute) {
+      const requestHeaders = new Headers(request.headers);
+      requestHeaders.set('x-pathname', pathname);
+      return NextResponse.next({ request: { headers: requestHeaders } });
+    }
   }
 
   const accessToken = request.cookies.get(ACCESS_TOKEN_KEY)?.value;

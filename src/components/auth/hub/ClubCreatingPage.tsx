@@ -26,10 +26,11 @@ function ClubCreatingPage({ onCancel }: ClubCreatingPageProps) {
   const animationDoneRef = useRef(false);
   const hasNavigatedRef = useRef(false);
   const requestStartedRef = useRef(false);
+  const cancelledRef = useRef(false);
   const clubIdRef = useRef<string | null>(null);
 
   const navigate = useCallback(() => {
-    if (hasNavigatedRef.current || !clubIdRef.current) return;
+    if (hasNavigatedRef.current || cancelledRef.current || !clubIdRef.current) return;
     hasNavigatedRef.current = true;
     resetDraft();
     router.replace(`/${clubIdRef.current}/home?onboarding=club-created`);
@@ -50,6 +51,14 @@ function ClubCreatingPage({ onCancel }: ClubCreatingPageProps) {
 
     const { school, name, description, generation, phone, email, contactType } =
       useCreateClubDraftStore.getState() as CreateClubDraftState & Record<string, unknown>;
+
+    if (!school || !name || !contactType) {
+      toastError('동아리 정보가 올바르지 않습니다.');
+      cancelledRef.current = true;
+      onCancel?.();
+      return;
+    }
+
     const schoolName = school.replace(/\(.*\)$/, '').trim();
 
     const payload = {
@@ -71,6 +80,7 @@ function ClubCreatingPage({ onCancel }: ClubCreatingPageProps) {
 
         if (!data) {
           toastError(message || '동아리 생성에 실패했습니다.');
+          cancelledRef.current = true;
           onCancel?.();
           return;
         }
@@ -89,6 +99,7 @@ function ClubCreatingPage({ onCancel }: ClubCreatingPageProps) {
       .catch((error) => {
         const message = isAxiosError(error) ? error.response?.data?.message : undefined;
         toastError(message || '동아리 생성에 실패했습니다.');
+        cancelledRef.current = true;
         onCancel?.();
       });
   }, [progress, navigate, onCancel, setClub]);

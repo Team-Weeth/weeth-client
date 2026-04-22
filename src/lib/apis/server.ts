@@ -112,13 +112,19 @@ async function request<T>(
       responseBodyPreview: responsePreview,
     });
     let serverMessage: string | undefined;
+    let serverCode = 0;
     try {
       const parsed = JSON.parse(errorBody);
       serverMessage = parsed?.message;
+      serverCode = parsed?.code ?? 0;
     } catch {
       // not JSON
     }
-    throw new Error(serverMessage ?? `API Error: ${response.status} ${response.statusText}`);
+    throw new ApiError(
+      response.status,
+      serverCode,
+      serverMessage ?? `API Error: ${response.status} ${response.statusText}`,
+    );
   }
 
   if (response.status === 204) {

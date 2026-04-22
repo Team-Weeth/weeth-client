@@ -16,6 +16,7 @@ function ClubWelcomePage() {
   const clubProfileImageUrl = useClubProfileImageUrl();
 
   useEffect(() => {
+    if (!clubId) return;
     const timer = setTimeout(() => {
       router.replace(`/${clubId}/home`);
     }, 3000);
@@ -37,7 +38,8 @@ function ClubWelcomePage() {
             variant="primary"
             size="lg"
             className="w-full"
-            onClick={() => router.push(`/${clubId}/home`)}
+            disabled={!clubId}
+            onClick={() => clubId && router.push(`/${clubId}/home`)}
           >
             바로 사이트로 이동하기
           </Button>

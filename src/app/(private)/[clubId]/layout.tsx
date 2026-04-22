@@ -1,8 +1,8 @@
 import type { ReactNode } from 'react';
-import { cookies } from 'next/headers';
+import { cookies, headers } from 'next/headers';
 
 import { ClubAccessPage, ClubNotFoundPage } from '@/components/auth/invite';
-import { apiServer } from '@/lib/apis/server';
+import { ApiError, apiServer } from '@/lib/apis/server';
 import { ACCESS_TOKEN_KEY } from '@/lib/apis/cookies';
 import type { Club } from '@/types';
 
@@ -18,15 +18,20 @@ export default async function ClubLayout({ children, params }: ClubLayoutProps) 
   try {
     const res = await apiServer.get<{ data: Club }>(`/clubs/${clubId}`);
     club = res.data;
-  } catch {
-    return <ClubNotFoundPage />;
+  } catch (error) {
+    if (error instanceof ApiError && error.status === 404) {
+      return <ClubNotFoundPage />;
+    }
+    throw error;
   }
 
   const cookieStore = await cookies();
   const isLoggedIn = cookieStore.has(ACCESS_TOKEN_KEY);
 
   if (!isLoggedIn) {
-    return <ClubAccessPage club={club} loginHref={`/login?redirect=/${clubId}/home`} />;
+    const headerStore = await headers();
+    const pathname = headerStore.get('x-pathname') ?? `/${clubId}/home`;
+    return <ClubAccessPage club={club} loginHref={`/login?redirect=${pathname}`} />;
   }
 
   try {

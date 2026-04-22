@@ -1,15 +1,11 @@
-import { redirect, unstable_rethrow } from 'next/navigation';
+import { redirect } from 'next/navigation';
 import { ClubList, HubProfile } from '@/components/auth/hub';
 import { apiServer } from '@/lib/apis/server';
 import type { ApiResponse } from '@/types/common';
 import type { ClubDto } from '@/types/mypage';
 
 export default async function ClubSelectPage() {
-  const res = await apiServer.get<ApiResponse<ClubDto[]>>('/clubs').catch((err) => {
-    unstable_rethrow(err);
-    return null;
-  });
-
+  const res = await apiServer.get<ApiResponse<ClubDto[]>>('/clubs');
   const clubs = res?.data ?? [];
 
   if (clubs.length === 1) {

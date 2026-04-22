@@ -42,34 +42,36 @@ export default function Header({ isMain = true }: HeaderProps) {
             <span className="typo-sub1 text-text-normal px-1">{clubName}</span>
           </div>
         )}
-        <div className="flex items-center justify-center gap-200">
-          <button
-            type="button"
-            aria-label="관리자 페이지로 이동"
-            onClick={() => router.push(`/${clubId}/admin`)}
-            className="flex cursor-pointer items-center justify-center rounded-full"
-          >
-            <Icon src={ExitToAppIcon} alt="avatar" size={40} className="text-icon-normal p-2" />
-          </button>
-          <button
-            type="button"
-            aria-label="마이페이지로 이동"
-            onClick={() => router.push(`/${clubId}/mypage`)}
-            className="cursor-pointer rounded-full"
-          >
-            {profileImageUrl ? (
-              <Image
-                src={profileImageUrl}
-                alt="avatar"
-                width={40}
-                height={40}
-                className="h-10 w-10 rounded-full object-cover"
-              />
-            ) : (
-              <Image src={AvatarIcon} alt="avatar" width={40} height={40} />
-            )}
-          </button>
-        </div>
+        {isMain && clubId && (
+          <div className="flex items-center justify-center gap-200">
+            <button
+              type="button"
+              aria-label="관리자 페이지로 이동"
+              onClick={() => router.push(`/${clubId}/admin`)}
+              className="flex cursor-pointer items-center justify-center rounded-full"
+            >
+              <Icon src={ExitToAppIcon} alt="avatar" size={40} className="text-icon-normal p-2" />
+            </button>
+            <button
+              type="button"
+              aria-label="마이페이지로 이동"
+              onClick={() => router.push(`/${clubId}/mypage`)}
+              className="cursor-pointer rounded-full"
+            >
+              {profileImageUrl ? (
+                <Image
+                  src={profileImageUrl}
+                  alt="avatar"
+                  width={40}
+                  height={40}
+                  className="h-10 w-10 rounded-full object-cover"
+                />
+              ) : (
+                <Image src={AvatarIcon} alt="avatar" width={40} height={40} />
+              )}
+            </button>
+          </div>
+        )}
       </header>
       <header className="desktop:flex bg-background flex hidden w-full items-center justify-between px-5 py-3">
         <div className="flex items-center gap-4">
