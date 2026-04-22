@@ -32,7 +32,7 @@ export default async function MainLayout({
         clubInfo={{ clubId: resolvedClubId, clubName }}
         syncCookies={needsCookieSync}
       >
-        <div className="mx-auto flex h-screen max-w-[1440px] flex-col">
+        <div className="mx-auto flex min-h-screen max-w-[1440px] flex-col">
           <Header />
           {children}
         </div>
