@@ -19,9 +19,7 @@ function ClubSelectedCard({ club, onRemove }: ClubSelectedCardProps) {
           {club.profileImageUrl && (
             <AvatarImage src={club.profileImageUrl} alt={club.name} className="object-cover" />
           )}
-          <AvatarFallback className="bg-container-neutral-alternative text-text-alternative rounded-lg">
-            {club.name.charAt(0)}
-          </AvatarFallback>
+          <AvatarFallback variant="club" />
         </Avatar>
         <div className="flex flex-col gap-0.5">
           <span className="typo-sub2 text-text-strong">{club.name}</span>

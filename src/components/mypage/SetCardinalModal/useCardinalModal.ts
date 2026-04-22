@@ -35,7 +35,7 @@ function useCardinalModal({ onOpenChange, onSave }: UseCardinalModalProps) {
   };
 
   const handleSave = () => {
-    const cardinals = [...selected];
+    const cardinals = [...selected].sort((a, b) => a - b);
     initCardinals(cardinals, {
       onSuccess: () => {
         toastSuccess('활동 기수가 설정되었습니다.');

@@ -4,6 +4,7 @@ export function useIsAdmin() {
   const {
     data: role,
     isPending,
+    isLoading,
     isError,
   } = useHomeQuery({
     select: (data) => data.myInfo.userInfo.role,
@@ -12,6 +13,7 @@ export function useIsAdmin() {
   return {
     isAdmin: role === 'ADMIN' || role === 'LEAD',
     isPending,
+    isLoading,
     isError,
   };
 }

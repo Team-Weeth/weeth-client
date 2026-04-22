@@ -1,11 +1,10 @@
 'use client';
 
-import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
 import dynamic from 'next/dynamic';
 
-import { Button, Icon } from '@/components/ui';
-import { EditIcon, ExitToAppIcon, AvatarIcon } from '@/assets/icons';
+import { Avatar, AvatarFallback, AvatarImage, Button, Icon } from '@/components/ui';
+import { EditIcon, ExitToAppIcon } from '@/assets/icons';
 import { useWritePost } from '@/hooks/home/useWritePost';
 import { useIsAdmin } from '@/hooks/shared';
 import { useUserProfileImageUrl } from '@/stores';
@@ -62,17 +61,15 @@ function DefaultActions() {
           onClick={() => router.push('/mypage')}
           className="cursor-pointer rounded-full"
         >
-          {profileImageUrl ? (
-            <Image
-              src={profileImageUrl}
+          <Avatar size={40} type="round">
+            <AvatarImage
+              key={profileImageUrl ?? 'fallback'}
+              src={profileImageUrl ?? undefined}
               alt="avatar"
-              width={40}
-              height={40}
-              className="h-10 w-10 rounded-full object-cover"
+              className="object-cover"
             />
-          ) : (
-            <Image src={AvatarIcon} alt="avatar" width={40} height={40} />
-          )}
+            <AvatarFallback />
+          </Avatar>
         </button>
       </div>
 

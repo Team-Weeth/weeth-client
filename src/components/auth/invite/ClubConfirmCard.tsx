@@ -17,9 +17,7 @@ function ClubConfirmCard({ club, confirmHref }: ClubConfirmCardProps) {
         {club.profileImageUrl && (
           <AvatarImage src={club.profileImageUrl} alt={club.name} className="object-cover" />
         )}
-        <AvatarFallback className="bg-container-neutral-alternative text-text-alternative rounded-lg">
-          {club.name.charAt(0)}
-        </AvatarFallback>
+        <AvatarFallback variant="club" />
       </Avatar>
       <div className="mb-600 flex flex-col items-center gap-200">
         <span className="typo-h3 text-text-strong">{club.name}</span>
