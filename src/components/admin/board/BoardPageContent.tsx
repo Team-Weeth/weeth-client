@@ -9,11 +9,9 @@ import {
   closestCenter,
   useSensor,
   useSensors,
-  type DragEndEvent,
 } from '@dnd-kit/core';
 import {
   SortableContext,
-  arrayMove,
   sortableKeyboardCoordinates,
   useSortable,
   verticalListSortingStrategy,
@@ -34,6 +32,7 @@ import { BoardToolbar } from '@/components/admin/board/BoardToolbar';
 import { CreateBoardModal } from '@/components/admin/board/modal/CreateBoardModal';
 import { EditBoardModal } from '@/components/admin/board/modal/EditBoardModal';
 import { TrashBoardModal, type TrashedBoard } from '@/components/admin/board/modal/TrashBoardModal';
+import { useBoardPageState } from '@/hooks/admin';
 import { useCardinals } from '@/hooks/queries';
 import type { Board } from '@/types/admin/board';
 
@@ -131,11 +130,23 @@ function BoardPageContent() {
   const { data: cardinals = [] } = useCardinals();
   const [selectedCardinalId, setSelectedCardinalId] = useState<number | null>(null);
   const [searchValue, setSearchValue] = useState('');
-  const [boards, setBoards] = useState<Board[]>(MOCK_BOARDS);
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [editingBoardId, setEditingBoardId] = useState<number | null>(null);
   const [trashModalOpen, setTrashModalOpen] = useState(false);
-  const [trashedBoards, setTrashedBoards] = useState<TrashedBoard[]>(MOCK_TRASHED_BOARDS);
+
+  const {
+    boards,
+    trashedBoards,
+    updateBoard,
+    createBoard,
+    moveBoardToTrash,
+    restoreBoardFromTrash,
+    permanentlyDeleteBoard,
+    handleDragEnd,
+  } = useBoardPageState({
+    initialBoards: MOCK_BOARDS,
+    initialTrashedBoards: MOCK_TRASHED_BOARDS,
+  });
 
   const activeCardinal = selectedCardinalId
     ? cardinals.find((c) => c.id === selectedCardinalId)
@@ -151,56 +162,10 @@ function BoardPageContent() {
   const totalCustomCount = boards.filter((b) => b.editable).length;
   const reachedLimit = totalCustomCount >= MAX_CUSTOM_BOARDS;
 
-  const updateBoard = (boardId: number, patch: Partial<Board>) => {
-    setBoards((prev) => prev.map((b) => (b.boardId === boardId ? { ...b, ...patch } : b)));
-  };
-
-  const moveBoardToTrash = (board: Board) => {
-    setBoards((prev) => prev.filter((b) => b.boardId !== board.boardId));
-    setTrashedBoards((prev) => [...prev, { ...board, daysLeft: 30 }]);
-  };
-
-  const restoreBoardFromTrash = (boardId: number) => {
-    const trashed = trashedBoards.find((b) => b.boardId === boardId);
-    if (!trashed) return;
-    const { daysLeft: _daysLeft, ...board } = trashed;
-    setTrashedBoards((prev) => prev.filter((b) => b.boardId !== boardId));
-    setBoards((prev) => [...prev, board]);
-  };
-
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 4 } }),
     useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
   );
-
-  const handleDragEnd = (event: DragEndEvent) => {
-    const { active, over } = event;
-    if (!over || active.id === over.id) return;
-
-    setBoards((prev) => {
-      const customIds = prev.filter((b) => b.editable).map((b) => b.boardId);
-      const oldIndex = customIds.indexOf(Number(active.id));
-      const newIndex = customIds.indexOf(Number(over.id));
-      if (oldIndex === -1 || newIndex === -1) return prev;
-
-      const reorderedCustomIds = arrayMove(customIds, oldIndex, newIndex);
-      const customById = new Map(
-        prev.filter((b) => b.editable).map((b) => [b.boardId, b] as const),
-      );
-
-      const result: Board[] = [];
-      let cursor = 0;
-      for (const board of prev) {
-        if (board.editable) {
-          const nextId = reorderedCustomIds[cursor++];
-          result.push(customById.get(nextId)!);
-        } else {
-          result.push(board);
-        }
-      }
-      return result;
-    });
-  };
 
   return (
     <div className="flex min-w-0 flex-col gap-400 p-700">
@@ -300,21 +265,7 @@ function BoardPageContent() {
       <CreateBoardModal
         open={createModalOpen}
         onOpenChange={setCreateModalOpen}
-        onSubmit={(data) => {
-          setBoards((prev) => [
-            ...prev,
-            {
-              boardId: Math.max(0, ...prev.map((b) => b.boardId)) + 1,
-              name: data.name.trim(),
-              description: data.description.trim(),
-              kind: 'CUSTOM',
-              visibility: data.visibility,
-              postCount: 0,
-              commentEnabled: data.commentEnabled,
-              editable: true,
-            },
-          ]);
-        }}
+        onSubmit={createBoard}
       />
 
       {/* Trash board modal */}
@@ -323,9 +274,7 @@ function BoardPageContent() {
         onOpenChange={setTrashModalOpen}
         boards={trashedBoards}
         onRestore={restoreBoardFromTrash}
-        onPermanentDelete={(boardId) => {
-          setTrashedBoards((prev) => prev.filter((b) => b.boardId !== boardId));
-        }}
+        onPermanentDelete={permanentlyDeleteBoard}
       />
 
       {/* Edit board modal */}
