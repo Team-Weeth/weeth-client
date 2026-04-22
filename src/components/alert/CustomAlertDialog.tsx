@@ -43,8 +43,8 @@ interface CustomAlertDialogProps extends React.ComponentProps<typeof AlertDialog
   title: string;
   description?: string;
   actionLabel: string;
-  onAction: () => void;
   cancelLabel?: string;
+  onAction: () => void;
   onCancel?: () => void;
   onDismiss?: () => void;
   secondActionLabel?: string;
@@ -57,8 +57,8 @@ function CustomAlertDialog({
   title,
   description,
   actionLabel,
-  onAction,
   cancelLabel,
+  onAction,
   onCancel,
   onDismiss,
   secondActionLabel,
