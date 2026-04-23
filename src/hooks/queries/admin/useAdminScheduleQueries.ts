@@ -45,3 +45,19 @@ export function useCreateSchedule() {
     },
   });
 }
+
+export function useDeleteSchedule() {
+  const clubId = useClubId();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (eventId: number) => adminScheduleApi.deleteEvent(clubId!, eventId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin', 'schedules'] });
+    },
+    onError: (error) => {
+      const code = isAxiosError(error) ? error.response?.data?.code : undefined;
+      toastError(code ? (SCHEDULE_ERROR_MESSAGE[code] ?? undefined) : undefined);
+    },
+  });
+}

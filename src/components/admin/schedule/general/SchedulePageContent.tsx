@@ -14,7 +14,10 @@ import { SessionTabContent } from '@/components/admin/schedule/session/SessionTa
 import { CreateScheduleModal } from '@/components/admin/schedule/modal/CreateScheduleModal';
 import { EditScheduleModal } from '@/components/admin/schedule/modal/EditScheduleModal';
 import { useCardinalSelector } from '@/hooks';
-import { useAdminMonthlySchedules } from '@/hooks/queries/admin/useAdminScheduleQueries';
+import {
+  useAdminMonthlySchedules,
+  useDeleteSchedule,
+} from '@/hooks/queries/admin/useAdminScheduleQueries';
 import type { Schedule } from '@/types/admin/schedule';
 
 type ScheduleTab = 'all' | 'session';
@@ -30,6 +33,7 @@ function SchedulePageContent() {
   const [editTarget, setEditTarget] = useState<Schedule | null>(null);
 
   const { data: schedules = [] } = useAdminMonthlySchedules(currentYear, currentMonth);
+  const { mutate: deleteSchedule } = useDeleteSchedule();
 
   // 기수 필터링
   const cardinalFiltered =
@@ -74,8 +78,8 @@ function SchedulePageContent() {
     }
   };
 
-  const handleDelete = (_schedule: Schedule) => {
-    // TODO: API 연동 시 deleteSchedule(_schedule) 호출
+  const handleDelete = (schedule: Schedule) => {
+    deleteSchedule(schedule.id);
   };
 
   return (

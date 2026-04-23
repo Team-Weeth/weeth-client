@@ -9,4 +9,6 @@ export const adminScheduleApi = {
     }),
   createEvent: (clubId: string, body: CreateEventBody) =>
     apiClient.post<ApiResponse<string>>(`/admin/clubs/${clubId}/events`, body),
+  deleteEvent: (clubId: string, eventId: number) =>
+    apiClient.delete<ApiResponse<null>>(`/admin/clubs/${clubId}/events/${eventId}`),
 };
