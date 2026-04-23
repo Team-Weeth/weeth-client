@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { useParams, usePathname, useRouter } from 'next/navigation';
+import { useParams, usePathname, useRouter, useSearchParams } from 'next/navigation';
 
 import { BoardNav, CommentDirtyGuardDialog } from '@/components/board';
 import {
@@ -34,6 +34,8 @@ function BoardNavClient({ items }: BoardNavClientProps) {
   const [guardOpen, setGuardOpen] = useState(false);
   const pendingSelect = useRef<number | null>(null);
 
+  const searchParams = useSearchParams();
+
   useEffect(() => {
     const map: Record<number, BoardType> = {};
     items.forEach((item) => {
@@ -41,6 +43,17 @@ function BoardNavClient({ items }: BoardNavClientProps) {
     });
     setBoardTypeMap(map);
   }, [items, setBoardTypeMap]);
+
+  // URL의 type 파라미터로 초기 활성 채널 설정 (e.g. ?type=NOTICE)
+  useEffect(() => {
+    const type = searchParams.get('type');
+    if (!type) return;
+
+    const target = items.find((item) => item.type === type);
+    if (target && target.id !== activeBoardId) {
+      setActiveBoardId(target.id);
+    }
+  }, [searchParams, items, activeBoardId, setActiveBoardId]);
 
   useEffect(() => {
     if (activeBoardId === null) return;

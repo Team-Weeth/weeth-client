@@ -28,7 +28,7 @@ export function NoticeBoardBox() {
           className="flex items-center justify-center"
           type="button"
           aria-label="공지 전체보기"
-          onClick={() => router.push(`/${clubId}/board`)}
+          onClick={() => router.push(`/${clubId}/board?type=NOTICE`)}
         >
           <Icon src={ArrowRightIcon} size={16} className="cursor-pointer px-1 py-[1px]" />
         </button>
