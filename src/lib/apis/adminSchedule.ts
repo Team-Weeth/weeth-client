@@ -1,6 +1,6 @@
 import { apiClient } from '@/lib/apis/client';
 import type { ApiResponse } from '@/types/common';
-import type { CreateEventBody, Schedule } from '@/types/admin/schedule';
+import type { CreateEventBody, UpdateEventBody, Schedule } from '@/types/admin/schedule';
 
 export const adminScheduleApi = {
   getMonthly: (clubId: string, start: string, end: string) =>
@@ -9,6 +9,8 @@ export const adminScheduleApi = {
     }),
   createEvent: (clubId: string, body: CreateEventBody) =>
     apiClient.post<ApiResponse<string>>(`/admin/clubs/${clubId}/events`, body),
+  updateEvent: (clubId: string, eventId: number, body: UpdateEventBody) =>
+    apiClient.patch<ApiResponse<null>>(`/admin/clubs/${clubId}/events/${eventId}`, body),
   deleteEvent: (clubId: string, eventId: number) =>
     apiClient.delete<ApiResponse<null>>(`/admin/clubs/${clubId}/events/${eventId}`),
 };

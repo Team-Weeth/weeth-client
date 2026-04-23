@@ -18,3 +18,11 @@ export interface CreateEventBody {
   start: string;
   end: string;
 }
+
+export interface UpdateEventBody {
+  title: string;
+  content: string;
+  location: string;
+  start: string;
+  end: string;
+}

@@ -40,7 +40,7 @@ function DropdownMenuContent({
         data-slot="dropdown-menu-content"
         sideOffset={sideOffset}
         className={cn(
-          'bg-container-neutral z-50 flex min-w-[144px] flex-col items-center overflow-hidden rounded-md shadow-[0px_4px_14px_0px_rgba(0,0,0,0.25)]',
+          'bg-container-neutral z-90 flex min-w-[144px] flex-col items-center overflow-hidden rounded-md shadow-[0px_4px_14px_0px_rgba(0,0,0,0.25)]',
           'data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95',
           'data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95',
           className,

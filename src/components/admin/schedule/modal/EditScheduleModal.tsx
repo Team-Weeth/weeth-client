@@ -15,9 +15,18 @@ import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { AdminCloseIcon, AdminMeatballIcon } from '@/assets/icons/admin';
 import type { Schedule } from '@/types/admin/schedule';
 
+import { useUpdateSchedule } from '@/hooks/queries/admin/useAdminScheduleQueries';
+import {
+  isFormChanged,
+  isScheduleContentValid,
+  isScheduleLocationValid,
+  isScheduleTitleValid,
+  toInitialScheduleForm,
+} from '@/utils/admin/scheduleFormUtils';
+
 import { DiscardConfirmArea } from './DiscardConfirmArea';
 import { ScheduleFormBody } from './ScheduleFormBody';
-import { isFormChanged, toInitialScheduleForm } from '../../../../utils/admin/scheduleFormUtils';
+import { isDateRangeValid } from './types';
 import type { ScheduleFormState } from './types';
 
 interface EditScheduleModalProps {
@@ -33,7 +42,15 @@ function EditScheduleModal({ open, onOpenChange, schedule, onDelete }: EditSched
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const [discardSource, setDiscardSource] = useState<'close' | 'cancel' | null>(null);
 
+  const { mutate, isPending } = useUpdateSchedule();
+
   const hasChanges = isFormChanged(form, initialForm);
+
+  const isValid =
+    isScheduleTitleValid(form.title) &&
+    isScheduleLocationValid(form.location) &&
+    isScheduleContentValid(form.content) &&
+    isDateRangeValid(form);
 
   const updateForm = (patch: Partial<ScheduleFormState>) => {
     setForm((prev) => ({ ...prev, ...patch }));
@@ -50,9 +67,20 @@ function EditScheduleModal({ open, onOpenChange, schedule, onDelete }: EditSched
   };
 
   const handleSubmit = () => {
-    if (!form.title.trim()) return;
-    // TODO: API 연동 시 수정 요청
-    handleClose();
+    if (!isValid) return;
+    mutate(
+      {
+        eventId: schedule.id,
+        body: {
+          title: form.title,
+          content: form.content,
+          location: form.location,
+          start: `${form.startDate}T${form.startTime}:00`,
+          end: `${form.endDate}T${form.endTime}:00`,
+        },
+      },
+      { onSuccess: handleClose },
+    );
   };
 
   const handleDeleteConfirm = () => {
@@ -79,7 +107,7 @@ function EditScheduleModal({ open, onOpenChange, schedule, onDelete }: EditSched
         }}
       >
         <DialogContent
-          className="bg-background flex w-215 max-w-[860px] flex-col gap-0 overflow-hidden rounded-lg p-0"
+          className="bg-background flex w-215 max-w-215 flex-col gap-0 overflow-hidden rounded-lg p-0"
           showCloseButton={false}
           onPointerDownOutside={(e) => {
             if (hasChanges) e.preventDefault();
@@ -128,7 +156,7 @@ function EditScheduleModal({ open, onOpenChange, schedule, onDelete }: EditSched
           </div>
 
           {/* Body */}
-          <div className="scrollbar-custom max-h-[700px] overflow-y-auto px-700">
+          <div className="scrollbar-custom max-h-175 overflow-y-auto px-700">
             <h2 className="typo-h3 text-text-normal py-400">일반 일정 수정</h2>
             <ScheduleFormBody
               form={form}
@@ -153,7 +181,7 @@ function EditScheduleModal({ open, onOpenChange, schedule, onDelete }: EditSched
             <Button
               variant="primary"
               size="lg"
-              disabled={!form.title.trim()}
+              disabled={!isValid || isPending}
               onClick={handleSubmit}
             >
               저장
