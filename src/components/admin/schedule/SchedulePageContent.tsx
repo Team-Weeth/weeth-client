@@ -14,39 +14,10 @@ import { SessionTabContent } from '@/components/admin/schedule/session/SessionTa
 import { CreateScheduleModal } from '@/components/admin/schedule/modal/CreateScheduleModal';
 import { EditScheduleModal } from '@/components/admin/schedule/modal/EditScheduleModal';
 import { useCardinalSelector } from '@/hooks';
+import { useAdminMonthlySchedules } from '@/hooks/queries/admin/useAdminScheduleQueries';
 import type { Schedule } from '@/types/admin/schedule';
 
 type ScheduleTab = 'all' | 'session';
-
-const MOCK_SCHEDULES: Schedule[] = [
-  {
-    scheduleId: 1,
-    title: '7기 1차 정기모임',
-    type: 'SESSION',
-    startDateTime: '2026-04-12T20:00:00',
-    endDateTime: '2026-04-12T22:00:00',
-    location: '가천대 체육관',
-    cardinalNumber: 7,
-  },
-  {
-    scheduleId: 2,
-    title: '중간고사 기간',
-    type: 'GENERAL',
-    startDateTime: '2026-04-14T20:00:00',
-    endDateTime: '2026-04-14T22:00:00',
-    location: '가천관 123호',
-    cardinalNumber: 7,
-  },
-  {
-    scheduleId: 3,
-    title: '7기 2차 정기모임',
-    type: 'SESSION',
-    startDateTime: '2026-04-15T20:00:00',
-    endDateTime: '2026-04-15T22:00:00',
-    location: '종합경기장',
-    cardinalNumber: 7,
-  },
-];
 
 function SchedulePageContent() {
   const { cardinals, selectedCardinalId, setSelectedCardinalId, activeCardinal } =
@@ -58,22 +29,19 @@ function SchedulePageContent() {
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [editTarget, setEditTarget] = useState<Schedule | null>(null);
 
-  const schedules = MOCK_SCHEDULES;
+  const { data: schedules = [] } = useAdminMonthlySchedules(currentYear, currentMonth);
 
   // 기수 필터링
   const cardinalFiltered =
     selectedCardinalId === null
       ? schedules
       : schedules.filter((s) => s.cardinalNumber === activeCardinal?.cardinalNumber);
-  // 월 필터링
-  const monthFiltered = cardinalFiltered.filter((s) => {
-    const date = new Date(s.startDateTime);
-    return date.getFullYear() === currentYear && date.getMonth() + 1 === currentMonth;
-  });
 
   // 탭 필터링
   const tabFiltered =
-    activeTab === 'session' ? monthFiltered.filter((s) => s.type === 'SESSION') : monthFiltered;
+    activeTab === 'session'
+      ? cardinalFiltered.filter((s) => s.type === 'SESSION')
+      : cardinalFiltered;
 
   // 검색 필터링
   const query = searchValue.trim().toLowerCase();
