@@ -53,10 +53,10 @@ export function toInitialSessionForm(target: AdminSession | AdminSessionGroup): 
 export function toInitialScheduleForm(schedule: Schedule): ScheduleFormState {
   return {
     title: schedule.title,
-    startDate: schedule.startDateTime.slice(0, 10),
-    startTime: schedule.startDateTime.slice(11, 16),
-    endDate: schedule.endDateTime.slice(0, 10),
-    endTime: schedule.endDateTime.slice(11, 16),
+    startDate: schedule.start.slice(0, 10),
+    startTime: schedule.start.slice(11, 16),
+    endDate: schedule.end.slice(0, 10),
+    endTime: schedule.end.slice(11, 16),
     location: schedule.location,
     content: '',
   };

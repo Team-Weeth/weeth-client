@@ -1,5 +1,5 @@
-import { ScheduleTextField } from '@/components/admin/schedule/ScheduleTextField';
-import { ScheduleTextareaField } from '@/components/admin/schedule/ScheduleTextareaField';
+import { ScheduleTextField } from '@/components/admin/schedule/general/ScheduleTextField';
+import { ScheduleTextareaField } from '@/components/admin/schedule/general/ScheduleTextareaField';
 import { DateTimeInput } from '@/components/ui/DateTimeInput';
 import { SCHEDULE_FIELD_LIMITS } from '@/utils/admin/scheduleFormUtils';
 

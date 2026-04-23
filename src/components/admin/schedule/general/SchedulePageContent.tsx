@@ -35,7 +35,7 @@ function SchedulePageContent() {
   const cardinalFiltered =
     selectedCardinalId === null
       ? schedules
-      : schedules.filter((s) => s.cardinalNumber === activeCardinal?.cardinalNumber);
+      : schedules.filter((s) => s.cardinal === activeCardinal?.cardinalNumber);
 
   // 탭 필터링
   const tabFiltered =
@@ -53,7 +53,7 @@ function SchedulePageContent() {
 
   // 날짜순 정렬
   const sortedSchedules = [...filteredSchedules].sort(
-    (a, b) => new Date(a.startDateTime).getTime() - new Date(b.startDateTime).getTime(),
+    (a, b) => new Date(a.start).getTime() - new Date(b.start).getTime(),
   );
 
   const handlePrevMonth = () => {
@@ -153,13 +153,13 @@ function SchedulePageContent() {
         open={createModalOpen}
         onOpenChange={setCreateModalOpen}
         cardinalNumber={activeCardinal?.cardinalNumber ?? null}
-        initialTab={activeTab === 'session' ? 'SESSION' : 'GENERAL'}
+        initialTab={activeTab === 'session' ? 'SESSION' : 'EVENT'}
       />
 
       {/* Edit schedule modal */}
       {editTarget && (
         <EditScheduleModal
-          key={editTarget.scheduleId}
+          key={editTarget.id}
           open
           onOpenChange={(open) => {
             if (!open) setEditTarget(null);

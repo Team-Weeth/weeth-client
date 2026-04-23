@@ -11,9 +11,9 @@ import {
 import { CalendarPicker } from '@/components/ui/CalendarPicker';
 import { DateTimeInput } from '@/components/ui/DateTimeInput';
 import { ArrowDownIcon } from '@/assets/icons';
-import { ScheduleFormField } from '@/components/admin/schedule/ScheduleFormField';
-import { ScheduleTextField } from '@/components/admin/schedule/ScheduleTextField';
-import { ScheduleTextareaField } from '@/components/admin/schedule/ScheduleTextareaField';
+import { ScheduleFormField } from '@/components/admin/schedule/general/ScheduleFormField';
+import { ScheduleTextField } from '@/components/admin/schedule/general/ScheduleTextField';
+import { ScheduleTextareaField } from '@/components/admin/schedule/general/ScheduleTextareaField';
 import {
   SESSION_RECURRENCE_LABEL,
   SESSION_RECURRENCE_OPTIONS,

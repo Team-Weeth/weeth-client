@@ -2,7 +2,7 @@ import type { ScheduleType } from '@/types/admin/schedule';
 
 export const SCHEDULE_TYPE_LABEL: Record<ScheduleType, string> = {
   SESSION: '세션',
-  GENERAL: '일반 일정',
+  EVENT: '일반 일정',
 };
 
 export const SCHEDULE_ERROR_MESSAGE: Record<number, string> = {

@@ -23,7 +23,7 @@ function CreateScheduleModal({
   open,
   onOpenChange,
   cardinalNumber,
-  initialTab = 'GENERAL',
+  initialTab = 'EVENT',
   onCreateSession,
 }: CreateScheduleModalProps) {
   const [activeTab, setActiveTab] = useState<ScheduleType>(initialTab);
@@ -52,7 +52,7 @@ function CreateScheduleModal({
             className="gap-0"
           >
             <TabsList variant="line" className="h-8">
-              <TabsTrigger value="GENERAL">{SCHEDULE_TYPE_LABEL.GENERAL}</TabsTrigger>
+              <TabsTrigger value="EVENT">{SCHEDULE_TYPE_LABEL.EVENT}</TabsTrigger>
               <TabsTrigger value="SESSION">{SCHEDULE_TYPE_LABEL.SESSION}</TabsTrigger>
             </TabsList>
             <TabsContent value={activeTab} className="hidden" />

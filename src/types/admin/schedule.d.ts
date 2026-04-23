@@ -1,13 +1,13 @@
-export type ScheduleType = 'SESSION' | 'GENERAL';
+export type ScheduleType = 'SESSION' | 'EVENT';
 
 export interface Schedule {
-  scheduleId: number;
+  id: number;
   title: string;
   type: ScheduleType;
-  startDateTime: string;
-  endDateTime: string;
+  start: string;
+  end: string;
   location: string;
-  cardinalNumber: number;
+  cardinal: number;
 }
 
 export interface CreateEventBody {

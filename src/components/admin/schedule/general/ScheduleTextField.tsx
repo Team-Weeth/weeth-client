@@ -1,4 +1,4 @@
-import { ScheduleFormField } from '@/components/admin/schedule/ScheduleFormField';
+import { ScheduleFormField } from '@/components/admin/schedule/general/ScheduleFormField';
 
 interface ScheduleTextFieldProps {
   label: string;
