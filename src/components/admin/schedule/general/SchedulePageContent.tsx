@@ -13,12 +13,13 @@ import { ScheduleList } from '@/components/admin/schedule/general/ScheduleList';
 import { SessionTabContent } from '@/components/admin/schedule/session/SessionTabContent';
 import { CreateScheduleModal } from '@/components/admin/schedule/modal/CreateScheduleModal';
 import { EditScheduleModal } from '@/components/admin/schedule/modal/EditScheduleModal';
+import { EditSessionModal } from '@/components/admin/schedule/modal/EditSessionModal';
 import { useCardinalSelector } from '@/hooks';
 import {
   useAdminMonthlySchedules,
   useDeleteSchedule,
 } from '@/hooks/queries/admin/useAdminScheduleQueries';
-import type { Schedule } from '@/types/admin/schedule';
+import type { Schedule, ScheduleType } from '@/types/admin/schedule';
 
 type ScheduleTab = 'all' | 'session';
 
@@ -30,7 +31,13 @@ function SchedulePageContent() {
   const [searchValue, setSearchValue] = useState('');
   const [activeTab, setActiveTab] = useState<ScheduleTab>('all');
   const [createModalOpen, setCreateModalOpen] = useState(false);
+  const [createModalTab, setCreateModalTab] = useState<ScheduleType>('EVENT');
   const [editTarget, setEditTarget] = useState<Schedule | null>(null);
+
+  const openCreateModal = (tab: ScheduleType) => {
+    setCreateModalTab(tab);
+    setCreateModalOpen(true);
+  };
 
   const { data: schedules = [] } = useAdminMonthlySchedules(currentYear, currentMonth);
   const { mutate: deleteSchedule } = useDeleteSchedule();
@@ -131,7 +138,7 @@ function SchedulePageContent() {
                   className="bg-container-neutral-alternative typo-body1 placeholder:text-text-alternative h-12 w-full rounded-sm py-300 pr-300 pl-14 focus:outline-none"
                 />
               </div>
-              <Button variant="primary" size="lg" onClick={() => setCreateModalOpen(true)}>
+              <Button variant="primary" size="lg" onClick={() => openCreateModal('EVENT')}>
                 <Icon src={AdminCalendarEditIcon} size={20} className="text-text-inverse mr-1" />
                 일반 일정 생성
               </Button>
@@ -142,13 +149,13 @@ function SchedulePageContent() {
               schedules={sortedSchedules}
               onEdit={setEditTarget}
               onDelete={handleDelete}
-              onCreateClick={() => setCreateModalOpen(true)}
+              onCreateClick={() => openCreateModal('EVENT')}
             />
           </Card>
         </TabsContent>
 
         <TabsContent value="session" className="mt-400">
-          <SessionTabContent onCreateSession={() => setCreateModalOpen(true)} />
+          <SessionTabContent onCreateSession={() => openCreateModal('SESSION')} />
         </TabsContent>
       </Tabs>
 
@@ -157,11 +164,12 @@ function SchedulePageContent() {
         open={createModalOpen}
         onOpenChange={setCreateModalOpen}
         cardinalNumber={activeCardinal?.cardinalNumber ?? null}
-        initialTab={activeTab === 'session' ? 'SESSION' : 'EVENT'}
+        activeTab={createModalTab}
+        onActiveTabChange={setCreateModalTab}
       />
 
       {/* Edit schedule modal */}
-      {editTarget && (
+      {editTarget?.type === 'EVENT' && (
         <EditScheduleModal
           key={editTarget.id}
           open
@@ -170,6 +178,26 @@ function SchedulePageContent() {
           }}
           schedule={editTarget}
           onDelete={handleDelete}
+        />
+      )}
+
+      {/* Edit session modal */}
+      {editTarget?.type === 'SESSION' && (
+        <EditSessionModal
+          key={editTarget.id}
+          open
+          onOpenChange={(open) => {
+            if (!open) setEditTarget(null);
+          }}
+          target={{
+            id: editTarget.id,
+            cardinal: editTarget.cardinal,
+            title: editTarget.title,
+            start: editTarget.start,
+            end: editTarget.end,
+            status: 'SCHEDULED',
+          }}
+          onDelete={() => handleDelete(editTarget)}
         />
       )}
     </div>
