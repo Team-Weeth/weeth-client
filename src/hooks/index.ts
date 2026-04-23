@@ -1,4 +1,5 @@
 // hooks index file
+export { useLogout } from './useLogout';
 export { useAutoScrollIntoView } from './useAutoScrollIntoView';
 export { useClickOutside } from './useClickOutside';
 export { useDragScroll } from './useDragScroll';

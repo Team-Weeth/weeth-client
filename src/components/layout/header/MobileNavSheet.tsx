@@ -13,14 +13,15 @@ import {
   MenuIcon,
 } from '@/assets/icons';
 import { Icon, Sheet, SheetClose, SheetContent, SheetTrigger } from '@/components/ui';
-import { logoutAction } from '@/lib/actions/auth';
 import { cn } from '@/lib/cn';
+import { useLogout } from '@/hooks';
 import { useIsAdmin } from '@/hooks/shared';
 
 function MobileNavSheet() {
   const pathname = usePathname();
   const { clubId } = useParams<{ clubId: string }>();
   const { isAdmin } = useIsAdmin();
+  const handleLogout = useLogout();
 
   const navItems = [
     { id: 'home', label: 'HOME', href: `/${clubId}/home`, icon: HomeIcon },
@@ -43,7 +44,7 @@ function MobileNavSheet() {
       </SheetTrigger>
       <SheetContent
         side="left"
-        className="tablet:max-w-[375px] bg-container-neutral top-[64px] h-[calc(100dvh-64px)] w-full max-w-[440px]"
+        className="tablet:max-w-93.75 bg-container-neutral top-16 h-[calc(100dvh-64px)] w-full max-w-110"
       >
         <nav className="flex flex-1 flex-col gap-200 px-450 py-400" aria-label="주요 메뉴">
           {navItems
@@ -77,15 +78,16 @@ function MobileNavSheet() {
             })}
         </nav>
 
-        <form action={logoutAction} className="pb-[24px] pl-[18px]">
+        <div className="pb-600 pl-450">
           <button
-            type="submit"
+            type="button"
+            onClick={handleLogout}
             className="typo-button1 text-text-alternative flex w-full cursor-pointer items-center gap-100 py-300"
           >
             <Icon src={LogoutIcon} size={20} className="text-icon-alternative" />
             로그아웃
           </button>
-        </form>
+        </div>
       </SheetContent>
     </Sheet>
   );

@@ -33,8 +33,12 @@
 //   //     '기수 시작시 이월된 회비와 해당 기수 회비를 종합해 회비를 등록해주시기 바랍니다. 회비 등록은 기수당 한 번만 가능합니다.',
 //   // },
 // };
-import { logoutAction } from '@/lib/actions/auth';
+'use client';
+
+import { useLogout } from '@/hooks';
+
 export function Header() {
+  const handleLogout = useLogout();
   // const pathname = usePathname();
 
   // const metadata = Object.entries(PAGE_METADATA).find(([path]) => pathname.startsWith(path))?.[1];
@@ -52,7 +56,8 @@ export function Header() {
       )} */}
 
       <button
-        onClick={logoutAction}
+        type="button"
+        onClick={handleLogout}
         className="border-line typo-button2 bg-button-neutral text-text-strong hover:bg-container-neutral-interaction ml-auto shrink-0 cursor-pointer rounded-sm border px-300 py-200"
       >
         Logout

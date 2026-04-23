@@ -15,12 +15,13 @@ import {
   Icon,
 } from '@/components/ui';
 import { AdminMeatballIcon } from '@/assets/icons/admin';
-import { logoutAction } from '@/lib/actions/auth';
+import { useLogout } from '@/hooks';
 
 function MyPageDropdownMenu() {
   const { clubId } = useParams<{ clubId: string }>();
   // const [withdrawOpen, setWithdrawOpen] = useState(false);
   const [logoutOpen, setLogoutOpen] = useState(false);
+  const handleLogout = useLogout();
 
   return (
     <>
@@ -65,9 +66,7 @@ function MyPageDropdownMenu() {
         title={'로그아웃'}
         description="로그아웃 하시겠습니까?"
       >
-        <form action={logoutAction}>
-          <AlertDialogAction type="submit">로그아웃</AlertDialogAction>
-        </form>
+        <AlertDialogAction onClick={handleLogout}>로그아웃</AlertDialogAction>
         <AlertDialogCancel>취소</AlertDialogCancel>
       </AlertDialog>
     </>

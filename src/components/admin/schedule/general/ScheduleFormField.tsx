@@ -8,7 +8,7 @@ function ScheduleFormField({ label, className, children, ...props }: ScheduleFor
   return (
     <div className={cn('flex flex-col', className)} {...props}>
       <div className="flex h-12 items-center px-400">
-        <label className="typo-sub2 text-text-normal">{label}</label>
+        <label className="typo-sub3 text-text-normal">{label}</label>
       </div>
       {children}
     </div>
