@@ -1,7 +1,11 @@
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { isAxiosError } from 'axios';
 
+import { SCHEDULE_ERROR_MESSAGE } from '@/constants/admin/schedule.constants';
 import { adminScheduleApi } from '@/lib/apis/adminSchedule';
 import { useClubId } from '@/stores';
+import { toastError } from '@/stores/useToastStore';
+import type { CreateEventBody } from '@/types/admin/schedule';
 
 function toMonthRange(year: number, month: number) {
   const pad = (n: number) => String(n).padStart(2, '0');
@@ -23,5 +27,21 @@ export function useAdminMonthlySchedules(year: number, month: number) {
       return res.data.data;
     },
     enabled: !!clubId,
+  });
+}
+
+export function useCreateSchedule() {
+  const clubId = useClubId();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (body: CreateEventBody) => adminScheduleApi.createEvent(clubId!, body),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin', 'schedules'] });
+    },
+    onError: (error) => {
+      const code = isAxiosError(error) ? error.response?.data?.code : undefined;
+      toastError(code ? (SCHEDULE_ERROR_MESSAGE[code] ?? undefined) : undefined);
+    },
   });
 }

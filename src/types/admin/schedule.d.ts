@@ -9,3 +9,12 @@ export interface Schedule {
   location: string;
   cardinalNumber: number;
 }
+
+export interface CreateEventBody {
+  title: string;
+  content: string;
+  location: string;
+  cardinal: number;
+  start: string;
+  end: string;
+}

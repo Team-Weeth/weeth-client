@@ -1,6 +1,7 @@
 import { ScheduleTextField } from '@/components/admin/schedule/ScheduleTextField';
 import { ScheduleTextareaField } from '@/components/admin/schedule/ScheduleTextareaField';
 import { DateTimeInput } from '@/components/ui/DateTimeInput';
+import { SCHEDULE_FIELD_LIMITS } from '@/utils/admin/scheduleFormUtils';
 
 import type { ScheduleFormState } from './types';
 
@@ -24,6 +25,7 @@ function ScheduleFormBody({
         value={form.title}
         onChange={(v) => onFormChange({ title: v })}
         placeholder={titlePlaceholder}
+        maxLength={SCHEDULE_FIELD_LIMITS.title}
       />
 
       <div className="flex gap-600">
@@ -48,6 +50,7 @@ function ScheduleFormBody({
         value={form.location}
         onChange={(v) => onFormChange({ location: v })}
         placeholder="장소를 입력해주세요."
+        maxLength={SCHEDULE_FIELD_LIMITS.location}
       />
 
       <ScheduleTextareaField
@@ -55,6 +58,7 @@ function ScheduleFormBody({
         value={form.content}
         onChange={(v) => onFormChange({ content: v })}
         placeholder="일정에 대한 설명을 입력해주세요."
+        maxLength={SCHEDULE_FIELD_LIMITS.content}
       />
     </div>
   );
