@@ -34,6 +34,8 @@ import { useBoardPageState } from '@/hooks/admin';
 import { useCardinals } from '@/hooks/queries';
 import { useAdminBoardsQuery } from '@/hooks/queries/admin/useAdminBoardsQuery';
 import { useCreateBoardMutation } from '@/hooks/queries/admin/useCreateBoardMutation';
+import { ADMIN_BOARD_ERROR, getApiErrorCode, getApiErrorMessage } from '@/lib/apis/adminBoard';
+import { toastError } from '@/stores/useToastStore';
 import type { Board } from '@/types/admin/board';
 import type { BoardFormData } from '@/components/admin/board/modal/constants';
 import { SortableBoardCard } from './SortableBoardCard';
@@ -43,14 +45,14 @@ const MAX_CUSTOM_BOARDS = 3;
 interface BoardPageInnerProps {
   initialBoards: Board[];
   initialTrashedBoards: TrashedBoard[];
-  onCreateBoard: (data: BoardFormData) => void;
 }
 
-function BoardPageInner({ initialBoards, initialTrashedBoards, onCreateBoard }: BoardPageInnerProps) {
+function BoardPageInner({ initialBoards, initialTrashedBoards }: BoardPageInnerProps) {
   const { data: cardinals = [] } = useCardinals();
   const [selectedCardinalId, setSelectedCardinalId] = useState<number | null>(null);
   const [searchValue, setSearchValue] = useState('');
   const [createModalOpen, setCreateModalOpen] = useState(false);
+  const [createNameError, setCreateNameError] = useState<string | null>(null);
   const [editingBoardId, setEditingBoardId] = useState<number | null>(null);
   const [trashModalOpen, setTrashModalOpen] = useState(false);
 
@@ -66,6 +68,29 @@ function BoardPageInner({ initialBoards, initialTrashedBoards, onCreateBoard }: 
     initialBoards,
     initialTrashedBoards,
   });
+
+  const { mutate: createBoard } = useCreateBoardMutation({
+    onSuccess: () => setCreateModalOpen(false),
+    onError: (err) => {
+      const code = getApiErrorCode(err);
+      if (code === ADMIN_BOARD_ERROR.DUPLICATE_NAME) {
+        setCreateNameError('같은 이름의 게시판이 이미 있어요.');
+      } else {
+        toastError(getApiErrorMessage(err));
+      }
+    },
+  });
+
+  const handleCreateBoard = (formData: BoardFormData) => {
+    setCreateNameError(null);
+    createBoard({
+      name: formData.name,
+      type: 'GENERAL',
+      commentEnabled: formData.commentEnabled,
+      writePermission: formData.visibility === 'ADMIN_ONLY' ? 'ADMIN' : 'USER',
+      isPrivate: formData.visibility === 'PRIVATE',
+    });
+  };
 
   const activeCardinal = selectedCardinalId
     ? cardinals.find((c) => c.id === selectedCardinalId)
@@ -118,7 +143,11 @@ function BoardPageInner({ initialBoards, initialTrashedBoards, onCreateBoard }: 
         onSearchChange={setSearchValue}
         trashCount={trashedBoards.length}
         onTrashClick={() => setTrashModalOpen(true)}
-        onCreateClick={reachedLimit ? undefined : () => setCreateModalOpen(true)}
+        onCreateClick={
+          reachedLimit
+            ? () => toastError(`추가 게시판은 최대 ${MAX_CUSTOM_BOARDS}개까지 만들 수 있어요.`)
+            : () => setCreateModalOpen(true)
+        }
       />
 
       {/* Board list */}
@@ -197,8 +226,13 @@ function BoardPageInner({ initialBoards, initialTrashedBoards, onCreateBoard }: 
       {/* Create board modal */}
       <CreateBoardModal
         open={createModalOpen}
-        onOpenChange={setCreateModalOpen}
-        onSubmit={onCreateBoard}
+        onOpenChange={(open) => {
+          setCreateModalOpen(open);
+          if (!open) setCreateNameError(null);
+        }}
+        onSubmit={handleCreateBoard}
+        nameError={createNameError}
+        onNameChange={() => setCreateNameError(null)}
       />
 
       {/* Trash board modal */}
@@ -225,6 +259,7 @@ function BoardPageInner({ initialBoards, initialTrashedBoards, onCreateBoard }: 
             visibility: data.visibility,
             commentEnabled: data.commentEnabled,
           });
+          setEditingBoardId(null);
         }}
         onDelete={(board) => {
           moveBoardToTrash(board);
@@ -237,17 +272,6 @@ function BoardPageInner({ initialBoards, initialTrashedBoards, onCreateBoard }: 
 
 function BoardPageContent() {
   const { data, isLoading, dataUpdatedAt } = useAdminBoardsQuery();
-  const { mutate: createBoard } = useCreateBoardMutation();
-
-  const handleCreateBoard = (formData: BoardFormData) => {
-    createBoard({
-      name: formData.name,
-      type: 'GENERAL',
-      commentEnabled: formData.commentEnabled,
-      writePermission: formData.visibility === 'ADMIN_ONLY' ? 'ADMIN' : 'USER',
-      isPrivate: formData.visibility === 'PRIVATE',
-    });
-  };
 
   if (isLoading || !data) {
     return (
@@ -262,7 +286,6 @@ function BoardPageContent() {
       key={dataUpdatedAt}
       initialBoards={data.boards}
       initialTrashedBoards={data.trashedBoards}
-      onCreateBoard={handleCreateBoard}
     />
   );
 }

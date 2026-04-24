@@ -30,7 +30,7 @@ function useBoardPageState({ initialBoards, initialTrashedBoards }: UseBoardPage
         boardId: Math.max(0, ...prev.map((b) => b.boardId)) + 1,
         name: data.name.trim(),
         description: data.description.trim(),
-        kind: 'CUSTOM',
+        kind: 'GENERAL',
         visibility: data.visibility,
         postCount: 0,
         commentEnabled: data.commentEnabled,

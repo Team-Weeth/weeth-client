@@ -1,5 +1,24 @@
+import type { AxiosError } from 'axios';
+
 import { apiClient } from '@/lib/apis/client';
 import type { ApiResponse } from '@/types/common';
+
+export const ADMIN_BOARD_ERROR = {
+  DUPLICATE_NAME: 20409,
+  BOARD_LIMIT_EXCEEDED: 20415,
+  BOARD_NOT_FOUND: 20403,
+  PAGE_NOT_FOUND: 20401,
+} as const;
+
+export function getApiErrorCode(err: unknown): number | null {
+  const axiosErr = err as AxiosError<{ code?: number }>;
+  return axiosErr?.response?.data?.code ?? null;
+}
+
+export function getApiErrorMessage(err: unknown): string | undefined {
+  const axiosErr = err as AxiosError<{ message?: string }>;
+  return axiosErr?.response?.data?.message;
+}
 
 export type AdminBoardType = 'ALL' | 'NOTICE' | 'GALLERY' | 'INFORMATION' | 'GENERAL';
 export type AdminBoardWritePermission = 'USER' | 'ADMIN';

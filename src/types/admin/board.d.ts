@@ -1,4 +1,4 @@
-export type BoardKind = 'ALL' | 'NOTICE' | 'CUSTOM';
+export type BoardKind = 'ALL' | 'NOTICE' | 'GALLERY' | 'INFORMATION' | 'GENERAL';
 export type BoardVisibility = 'PUBLIC' | 'ADMIN_ONLY' | 'PRIVATE';
 
 export interface Board {
