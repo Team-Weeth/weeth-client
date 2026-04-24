@@ -6,9 +6,9 @@ import { useParams, useRouter } from 'next/navigation';
 import { useBoardPosts } from '@/hooks';
 import { useIntersectionObserver } from '@/hooks/board/useIntersectionObserver';
 import { useUserId } from '@/stores/useUserStore';
-import { useActiveBoardId } from '@/stores/useBoardNavStore';
 import { formatShortDateTime } from '@/lib/formatTime';
 import type { FileItem } from '@/types/file';
+import { buildPostPath } from '@/lib/board';
 import { PostActionMenu } from './PostActionMenu';
 import { PostCard } from './PostCard';
 import { BoardContentSkeleton } from './BoardContentSkeleton';
@@ -19,10 +19,13 @@ function toDisplayImages(files: FileItem[]) {
     .map((f) => ({ id: f.fileId, fileName: f.fileName, fileUrl: f.fileUrl, uploaded: true }));
 }
 
-function BoardContent() {
+interface BoardContentProps {
+  boardId: number | null;
+}
+
+function BoardContent({ boardId }: BoardContentProps) {
   const router = useRouter();
   const { clubId } = useParams<{ clubId: string }>();
-  const activeBoardId = useActiveBoardId();
   const currentUserId = useUserId();
   const {
     data: posts,
@@ -32,7 +35,7 @@ function BoardContent() {
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
-  } = useBoardPosts(activeBoardId);
+  } = useBoardPosts(boardId);
   const { ref: sentinelRef, isIntersecting } = useIntersectionObserver({
     rootMargin: '200px',
   });
@@ -79,7 +82,7 @@ function BoardContent() {
             )}
           </PostCard.Header>
           <Link
-            href={`/${clubId}/board/${post.id}`}
+            href={buildPostPath(clubId, post.id, post.boardId)}
             className="after:absolute after:inset-0 after:content-['']"
           >
             <PostCard.ListContent title={post.title} content={post.content} isNew={post.isNew} />
@@ -93,7 +96,7 @@ function BoardContent() {
               likeCount={post.like.likeCount}
               commentCount={post.commentCount}
               isLiked={post.like.isLiked}
-              onComment={() => router.push(`/${clubId}/board/${post.id}#comments`)}
+              onComment={() => router.push(`${buildPostPath(clubId, post.id, post.boardId)}#comments`)}
             />
           </div>
         </PostCard.Root>

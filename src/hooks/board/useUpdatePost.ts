@@ -5,6 +5,7 @@ import { resolveFilesPayload } from './resolveFilesPayload';
 import { useClubId } from '@/stores/useClubStore';
 import { usePostStore } from '@/stores/usePostStore';
 import { toast } from '@/stores/useToastStore';
+import { buildPostPath } from '@/lib/board';
 import { validatePost } from './validatePost';
 
 export function useUpdatePost() {
@@ -28,13 +29,14 @@ export function useUpdatePost() {
       return postId;
     },
     onSuccess: (postId) => {
+      const boardId = usePostStore.getState().board;
       queryClient.invalidateQueries({ queryKey: ['posts'] });
       queryClient.invalidateQueries({ queryKey: ['home', 'recent-posts', clubId] });
       queryClient.invalidateQueries({ queryKey: ['home', 'recent-notices', clubId] });
       queryClient.invalidateQueries({ queryKey: ['home', 'unread-notice', clubId] });
       toast({ title: '게시글이 수정되었습니다.', variant: 'success' });
       usePostStore.getState().reset();
-      router.push(`/${clubIdParam}/board/${postId}`);
+      router.push(buildPostPath(clubIdParam, postId, boardId ?? undefined));
     },
     onError: (error) => {
       if (error.message !== 'validation failed') {

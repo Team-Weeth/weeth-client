@@ -23,6 +23,7 @@ import { useSetActiveBoardId, useBoardTypeMap } from '@/stores/useBoardNavStore'
 import { useClubId } from '@/stores/useClubStore';
 import { useUserId } from '@/stores/useUserStore';
 import { boardApi } from '@/lib/apis/board';
+import { buildBoardPath } from '@/lib/board';
 import type { PostDetail } from '@/types/board';
 
 interface PostDetailContentProps {
@@ -31,7 +32,10 @@ interface PostDetailContentProps {
 
 function PostDetailContent({ initialData }: PostDetailContentProps) {
   const router = useRouter();
-  const { clubId: clubIdParam } = useParams<{ clubId: string }>();
+  const { clubId: clubIdParam, boardId: boardIdParam } = useParams<{
+    clubId: string;
+    boardId?: string;
+  }>();
   const currentUserId = useUserId();
   const clubId = useClubId();
   const setActiveBoardId = useSetActiveBoardId();
@@ -61,7 +65,6 @@ function PostDetailContent({ initialData }: PostDetailContentProps) {
   useEffect(() => {
     const hash = window.location.hash;
     if (hash) {
-      // #comments 등 해시가 있으면 해당 요소로 스크롤
       const el = document.getElementById(hash.slice(1));
       el?.scrollIntoView({ behavior: 'smooth' });
     } else {
@@ -105,7 +108,11 @@ function PostDetailContent({ initialData }: PostDetailContentProps) {
             <PostActionMenu
               postId={currentPost.id}
               onEdit={() => router.push(`/${clubIdParam}/board/edit/${currentPost.id}`)}
-              onDeleted={() => router.push(`/${clubIdParam}/board`)}
+              onDeleted={() =>
+                router.push(
+                  buildBoardPath(clubIdParam, boardIdParam ? Number(boardIdParam) : undefined),
+                )
+              }
             />
           )}
         </PostCard.Header>

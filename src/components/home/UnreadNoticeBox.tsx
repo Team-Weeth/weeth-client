@@ -9,6 +9,7 @@ import { useUnreadNoticeQuery } from '@/hooks/home';
 import { cn } from '@/lib/cn';
 import { stripHtml } from '@/lib/stripHtml';
 import { Icon } from '@/components/ui';
+import { buildPostPath } from '@/lib/board';
 
 export function UnreadNoticeBox() {
   const { data } = useUnreadNoticeQuery();
@@ -20,7 +21,7 @@ export function UnreadNoticeBox() {
 
   return (
     <Link
-      href={`/${clubId}/board/${data.id}`}
+      href={buildPostPath(clubId, data.id, data.boardId)}
       className={cn(
         'flex flex-col rounded-lg shadow-[0_5px_20px_0_rgba(17,33,49,0.2)] transition-all duration-300',
         dismissed && 'pointer-events-none translate-x-2 opacity-0',

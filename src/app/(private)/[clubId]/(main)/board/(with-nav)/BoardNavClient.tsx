@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { useParams, usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { useParams, usePathname, useRouter } from 'next/navigation';
 
 import { BoardNav, CommentDirtyGuardDialog } from '@/components/board';
 import {
@@ -24,17 +24,19 @@ function BoardNavClient({ items }: BoardNavClientProps) {
   const setBoardTypeMap = useSetBoardTypeMap();
   const pathname = usePathname();
   const router = useRouter();
-  const { clubId: clubIdParam } = useParams<{ clubId: string }>();
+  const { clubId: clubIdParam, boardId: boardIdParam } = useParams<{
+    clubId: string;
+    boardId?: string;
+  }>();
 
   const clubId = useClubId();
-  const isDetailPage = /\/board\/\d+$/.test(pathname);
+  const isDetailPage = /\/board\/\d+\/\d+$/.test(pathname);
+  const isPostsRoute = /\/board\/posts\/\d+$/.test(pathname);
 
   const commentDirty = useCommentDirty();
   const setCommentDirty = useSetCommentDirty();
   const [guardOpen, setGuardOpen] = useState(false);
   const pendingSelect = useRef<number | null>(null);
-
-  const searchParams = useSearchParams();
 
   useEffect(() => {
     const map: Record<number, BoardType> = {};
@@ -44,16 +46,21 @@ function BoardNavClient({ items }: BoardNavClientProps) {
     setBoardTypeMap(map);
   }, [items, setBoardTypeMap]);
 
-  // URL의 type 파라미터로 초기 활성 채널 설정 (e.g. ?type=NOTICE)
+  // URL의 boardId 파라미터로 활성 채널 동기화
   useEffect(() => {
-    const type = searchParams.get('type');
-    if (!type) return;
-
-    const target = items.find((item) => item.type === type);
-    if (target && target.id !== activeBoardId) {
-      setActiveBoardId(target.id);
+    if (boardIdParam) {
+      const boardId = Number(boardIdParam);
+      if (Number.isInteger(boardId) && boardId !== activeBoardId) {
+        setActiveBoardId(boardId);
+      }
+    } else if (!isDetailPage && !isPostsRoute) {
+      // /board (전체 게시글) 페이지일 때
+      // posts/ 경로는 PostDetailContent가 boardId를 설정하므로 리셋하지 않음
+      if (activeBoardId !== null) {
+        setActiveBoardId(null);
+      }
     }
-  }, [searchParams, items, activeBoardId, setActiveBoardId]);
+  }, [boardIdParam, activeBoardId, setActiveBoardId, isDetailPage, isPostsRoute]);
 
   useEffect(() => {
     if (activeBoardId === null) return;
@@ -71,8 +78,10 @@ function BoardNavClient({ items }: BoardNavClientProps) {
       boardApi.readAllNotices(clubId, id).catch(() => {});
     }
 
-    if (isDetailPage) {
+    if (id === null) {
       router.push(`/${clubIdParam}/board`);
+    } else {
+      router.push(`/${clubIdParam}/board/${id}`);
     }
   };
 

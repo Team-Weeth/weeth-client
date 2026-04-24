@@ -4,6 +4,7 @@ import { createPost as createPostApi } from '@/lib/actions/board';
 import { useClubId } from '@/stores/useClubStore';
 import { usePostStore } from '@/stores/usePostStore';
 import { toast } from '@/stores/useToastStore';
+import { buildPostPath } from '@/lib/board';
 import { validatePost } from './validatePost';
 
 export function useCreatePost() {
@@ -29,13 +30,14 @@ export function useCreatePost() {
       return createPostApi(clubId!, board, payload);
     },
     onSuccess: (result) => {
+      const selectedBoard = usePostStore.getState().board;
       queryClient.invalidateQueries({ queryKey: ['posts'] });
       queryClient.invalidateQueries({ queryKey: ['home', 'recent-posts', clubId] });
       queryClient.invalidateQueries({ queryKey: ['home', 'recent-notices', clubId] });
       queryClient.invalidateQueries({ queryKey: ['home', 'unread-notice', clubId] });
       toast({ title: '게시글이 작성되었습니다.', variant: 'success' });
       usePostStore.getState().reset();
-      router.push(`/${clubIdParam}/board/${result.id}`);
+      router.push(buildPostPath(clubIdParam, result.id, selectedBoard ?? undefined));
     },
     onError: (error) => {
       if (error.message !== 'board not selected' && error.message !== 'validation failed') {
