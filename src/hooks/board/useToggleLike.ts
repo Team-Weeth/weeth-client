@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { boardApi } from '@/lib/apis/board';
 import { useClubId } from '@/stores/useClubStore';
-import type { PostDetail, PostListItem } from '@/types/board';
+import type { PostDetail, PostListItem, PostLike } from '@/types/board';
 import type { PageData, RecentPost } from '@/types/home';
 import type { ApiResponse } from '@/types/common';
 import type { InfiniteData } from '@tanstack/react-query';
@@ -13,6 +13,13 @@ interface UseToggleLikeParams {
   initialLikeCount?: number;
 }
 
+function toggledLike(like: PostLike): PostLike {
+  return {
+    isLiked: !like.isLiked,
+    likeCount: like.isLiked ? like.likeCount - 1 : like.likeCount + 1,
+  };
+}
+
 function useToggleLike({
   postId,
   initialIsLiked = false,
@@ -22,29 +29,27 @@ function useToggleLike({
   const queryClient = useQueryClient();
 
   const detailKey = ['posts', 'detail', clubId, postId] as const;
+  const listKey = ['posts', clubId] as const;
   const homePostsKey = ['home', 'recent-posts', clubId] as const;
 
   const mutation = useMutation({
-    mutationFn: () => boardApi.toggleLike(clubId!, postId),
+    mutationFn: (wasLiked: boolean) =>
+      wasLiked ? boardApi.removeLike(clubId!, postId) : boardApi.addLike(clubId!, postId),
     onMutate: async () => {
       await Promise.all([
         queryClient.cancelQueries({ queryKey: detailKey }),
-        queryClient.cancelQueries({ queryKey: ['posts', clubId], type: 'all' }),
+        queryClient.cancelQueries({ queryKey: listKey, type: 'all' }),
         queryClient.cancelQueries({ queryKey: homePostsKey }),
       ]);
 
       const previousDetail = queryClient.getQueryData<PostDetail>(detailKey);
       const previousHomePosts = queryClient.getQueryData(homePostsKey);
 
+      const wasLiked = previousDetail?.like.isLiked ?? initialIsLiked;
+
       queryClient.setQueryData<PostDetail>(detailKey, (old) => {
         if (!old) return old;
-        return {
-          ...old,
-          like: {
-            isLiked: !old.like.isLiked,
-            likeCount: old.like.isLiked ? old.like.likeCount - 1 : old.like.likeCount + 1,
-          },
-        };
+        return { ...old, like: toggledLike(old.like) };
       });
 
       queryClient.setQueryData<InfiniteData<PageData<RecentPost>>>(homePostsKey, (old) => {
@@ -54,23 +59,13 @@ function useToggleLike({
           pages: old.pages.map((page) => ({
             ...page,
             content: page.content.map((item) =>
-              item.id === postId
-                ? {
-                    ...item,
-                    like: {
-                      isLiked: !item.like.isLiked,
-                      likeCount: item.like.isLiked
-                        ? item.like.likeCount - 1
-                        : item.like.likeCount + 1,
-                    },
-                  }
-                : item,
+              item.id === postId ? { ...item, like: toggledLike(item.like) } : item,
             ),
           })),
         };
       });
 
-      return { previousDetail, previousHomePosts };
+      return { previousDetail, previousHomePosts, wasLiked };
     },
     onSuccess: (res) => {
       const serverLike = res.data.data;
@@ -82,7 +77,7 @@ function useToggleLike({
 
       queryClient.setQueriesData<
         InfiniteData<AxiosResponse<ApiResponse<{ content: PostListItem[] }>>>
-      >({ queryKey: ['posts', clubId], type: 'all' }, (old) => {
+      >({ queryKey: listKey, type: 'all' }, (old) => {
         if (!old?.pages) return old;
         return {
           ...old,
@@ -130,7 +125,7 @@ function useToggleLike({
 
   const toggleLike = () => {
     if (!clubId || mutation.isPending) return;
-    mutation.mutate();
+    mutation.mutate(isLiked);
   };
 
   return { isLiked, likeCount, toggleLike, isPending: mutation.isPending };

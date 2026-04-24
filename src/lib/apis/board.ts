@@ -30,7 +30,11 @@ export const boardApi = {
   readAllNotices: (clubId: string, boardId: number) =>
     apiClient.post<ApiResponse<void>>(`/clubs/${clubId}/boards/${boardId}/notices/read-all`),
 
-  /** 좋아요 토글 */
-  toggleLike: (clubId: string, postId: number) =>
+  /** 좋아요 추가 */
+  addLike: (clubId: string, postId: number) =>
     apiClient.post<ApiResponse<PostLike>>(`/clubs/${clubId}/boards/posts/${postId}/like`),
+
+  /** 좋아요 취소 */
+  removeLike: (clubId: string, postId: number) =>
+    apiClient.delete<ApiResponse<PostLike>>(`/clubs/${clubId}/boards/posts/${postId}/like`),
 };
