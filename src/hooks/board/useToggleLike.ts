@@ -13,10 +13,53 @@ interface UseToggleLikeParams {
   initialLikeCount?: number;
 }
 
+type ListData = InfiniteData<AxiosResponse<ApiResponse<{ content: PostListItem[] }>>>;
+type HomeData = InfiniteData<PageData<RecentPost>>;
+
 function toggledLike(like: PostLike): PostLike {
   return {
     isLiked: !like.isLiked,
     likeCount: like.isLiked ? like.likeCount - 1 : like.likeCount + 1,
+  };
+}
+
+function updateListPages(
+  old: ListData | undefined,
+  postId: number,
+  updater: (like: PostLike) => PostLike,
+) {
+  if (!old?.pages) return old;
+  return {
+    ...old,
+    pages: old.pages.map((page) => ({
+      ...page,
+      data: {
+        ...page.data,
+        data: {
+          ...page.data.data,
+          content: page.data.data.content.map((item) =>
+            item.id === postId ? { ...item, like: updater(item.like) } : item,
+          ),
+        },
+      },
+    })),
+  };
+}
+
+function updateHomePages(
+  old: HomeData | undefined,
+  postId: number,
+  updater: (like: PostLike) => PostLike,
+) {
+  if (!old) return old;
+  return {
+    ...old,
+    pages: old.pages.map((page) => ({
+      ...page,
+      content: page.content.map((item) =>
+        item.id === postId ? { ...item, like: updater(item.like) } : item,
+      ),
+    })),
   };
 }
 
@@ -43,75 +86,52 @@ function useToggleLike({
       ]);
 
       const previousDetail = queryClient.getQueryData<PostDetail>(detailKey);
-      const previousHomePosts = queryClient.getQueryData(homePostsKey);
-
-      const wasLiked = previousDetail?.like.isLiked ?? initialIsLiked;
+      const previousHomePosts = queryClient.getQueryData<HomeData>(homePostsKey);
+      const previousList = queryClient.getQueriesData<ListData>({
+        queryKey: listKey,
+        type: 'all',
+      });
 
       queryClient.setQueryData<PostDetail>(detailKey, (old) => {
         if (!old) return old;
         return { ...old, like: toggledLike(old.like) };
       });
 
-      queryClient.setQueryData<InfiniteData<PageData<RecentPost>>>(homePostsKey, (old) => {
-        if (!old) return old;
-        return {
-          ...old,
-          pages: old.pages.map((page) => ({
-            ...page,
-            content: page.content.map((item) =>
-              item.id === postId ? { ...item, like: toggledLike(item.like) } : item,
-            ),
-          })),
-        };
-      });
+      queryClient.setQueriesData<ListData>({ queryKey: listKey, type: 'all' }, (old) =>
+        updateListPages(old, postId, toggledLike),
+      );
 
-      return { previousDetail, previousHomePosts, wasLiked };
+      queryClient.setQueryData<HomeData>(homePostsKey, (old) =>
+        updateHomePages(old, postId, toggledLike),
+      );
+
+      return { previousDetail, previousHomePosts, previousList };
     },
     onSuccess: (res) => {
       const serverLike = res.data.data;
+      const replace = () => serverLike;
 
       queryClient.setQueryData<PostDetail>(detailKey, (old) => {
         if (!old) return old;
         return { ...old, like: serverLike };
       });
 
-      queryClient.setQueriesData<
-        InfiniteData<AxiosResponse<ApiResponse<{ content: PostListItem[] }>>>
-      >({ queryKey: listKey, type: 'all' }, (old) => {
-        if (!old?.pages) return old;
-        return {
-          ...old,
-          pages: old.pages.map((page) => ({
-            ...page,
-            data: {
-              ...page.data,
-              data: {
-                ...page.data.data,
-                content: page.data.data.content.map((item) =>
-                  item.id === postId ? { ...item, like: serverLike } : item,
-                ),
-              },
-            },
-          })),
-        };
-      });
+      queryClient.setQueriesData<ListData>({ queryKey: listKey, type: 'all' }, (old) =>
+        updateListPages(old, postId, replace),
+      );
 
-      queryClient.setQueryData<InfiniteData<PageData<RecentPost>>>(homePostsKey, (old) => {
-        if (!old) return old;
-        return {
-          ...old,
-          pages: old.pages.map((page) => ({
-            ...page,
-            content: page.content.map((item) =>
-              item.id === postId ? { ...item, like: serverLike } : item,
-            ),
-          })),
-        };
-      });
+      queryClient.setQueryData<HomeData>(homePostsKey, (old) =>
+        updateHomePages(old, postId, replace),
+      );
     },
     onError: (_error, _variables, context) => {
       if (context?.previousDetail) {
         queryClient.setQueryData(detailKey, context.previousDetail);
+      }
+      if (context?.previousList) {
+        for (const [key, data] of context.previousList) {
+          queryClient.setQueryData(key, data);
+        }
       }
       if (context?.previousHomePosts) {
         queryClient.setQueryData(homePostsKey, context.previousHomePosts);
