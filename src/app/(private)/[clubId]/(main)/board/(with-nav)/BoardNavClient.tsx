@@ -50,8 +50,11 @@ function BoardNavClient({ items }: BoardNavClientProps) {
   useEffect(() => {
     if (boardIdParam) {
       const boardId = Number(boardIdParam);
-      if (Number.isInteger(boardId) && boardId !== activeBoardId) {
-        setActiveBoardId(boardId);
+      if (Number.isInteger(boardId)) {
+        if (boardId !== activeBoardId) setActiveBoardId(boardId);
+      } else if (activeBoardId !== null) {
+        // 유효하지 않은 boardIdParam → stale 방지를 위해 리셋
+        setActiveBoardId(null);
       }
     } else if (!isDetailPage && !isPostsRoute) {
       // /board (전체 게시글) 페이지일 때
