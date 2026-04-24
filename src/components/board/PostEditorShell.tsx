@@ -1,7 +1,7 @@
 'use client';
 
 import dynamic from 'next/dynamic';
-import type { ReactNode } from 'react';
+import { useEffect, type ReactNode } from 'react';
 
 import { AlertDialog, AlertDialogAction, AlertDialogCancel } from '@/components/ui';
 import { useNavigationGuard } from '@/hooks';
@@ -32,7 +32,14 @@ function PostEditorShell({ header, initialContent, align = 'start' }: PostEditor
       content !== snapshot.content ||
       files.map((f) => f.id).join(',') !== snapshot.fileIds.join(',')
     : title.length > 0 || content.length > 0 || files.length > 0;
-  const { open, onConfirm, onCancel } = useNavigationGuard({ enabled: hasChanges });
+  const { open, onConfirm, onCancel, allowNavigation } = useNavigationGuard({
+    enabled: hasChanges,
+  });
+
+  useEffect(() => {
+    usePostStore.getState().setAllowNavigation(allowNavigation);
+    return () => usePostStore.getState().setAllowNavigation(null);
+  }, [allowNavigation]);
 
   return (
     <div

@@ -33,6 +33,7 @@ const initialState = {
   files: [] as UploadFileItem[],
   status: 'DRAFT' as 'DRAFT' | 'PUBLISHED',
   _snapshot: null as Snapshot | null,
+  _allowNavigation: null as (() => void) | null,
 };
 
 export type PostState = typeof initialState;
@@ -81,6 +82,9 @@ export const usePostStore = create(
         ),
 
       setStatus: (status: 'DRAFT' | 'PUBLISHED') => set({ status }, false, 'setStatus'),
+
+      setAllowNavigation: (fn: (() => void) | null) =>
+        set({ _allowNavigation: fn }, false, 'setAllowNavigation'),
 
       reset: () => {
         const { files } = get();
