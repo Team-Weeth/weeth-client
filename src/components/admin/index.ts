@@ -1,5 +1,6 @@
 // admin components index file
 export { CardinalDropdown, type CardinalDropdownProps } from './CardinalDropdown';
+export { ModalIconButton, type ModalIconButtonProps } from './modal/ModalIconButton';
 export { AttendanceCard, type AttendanceCardProps } from './attendance/AttendanceCard';
 export { AttendancePageContent } from './attendance/AttendancePageContent';
 export { AdminInfoCard, type AdminInfoCardProps } from './club-info/AdminInfoCard';

@@ -8,13 +8,12 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-  Icon,
 } from '@/components/ui';
 import { CustomAlertDialog } from '@/components/alert';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { AdminCloseIcon, AdminMeatballIcon } from '@/assets/icons/admin';
+import { ModalIconButton } from '@/components/admin';
 import type { Schedule } from '@/types/admin/schedule';
-
 import { useUpdateSchedule } from '@/hooks/queries/admin/useAdminScheduleQueries';
 import {
   isFormChanged,
@@ -123,12 +122,7 @@ function EditScheduleModal({ open, onOpenChange, schedule, onDelete }: EditSched
             <div className="flex items-center gap-200">
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <button
-                    type="button"
-                    className="flex cursor-pointer items-center justify-center rounded-sm p-200"
-                  >
-                    <Icon src={AdminMeatballIcon} size={24} alt="메뉴" />
-                  </button>
+                  <ModalIconButton icon={AdminMeatballIcon} label="메뉴" />
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
                   <DropdownMenuItem destructive onSelect={() => setDeleteConfirmOpen(true)}>
@@ -143,14 +137,11 @@ function EditScheduleModal({ open, onOpenChange, schedule, onDelete }: EditSched
                 onConfirm={handleDiscardConfirm}
                 placement="below-right"
               >
-                <button
-                  type="button"
+                <ModalIconButton
+                  icon={AdminCloseIcon}
+                  label="닫기"
                   onClick={() => handleTryClose('close')}
-                  className="flex cursor-pointer items-center justify-center rounded-sm p-200"
-                  aria-label="닫기"
-                >
-                  <Icon src={AdminCloseIcon} size={24} alt="닫기" />
-                </button>
+                />
               </DiscardConfirmArea>
             </div>
           </div>

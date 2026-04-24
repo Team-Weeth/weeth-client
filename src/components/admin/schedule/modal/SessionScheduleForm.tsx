@@ -3,13 +3,13 @@
 import Image from 'next/image';
 
 import {
+  CalendarPicker,
+  DateTimeInput,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui';
-import { CalendarPicker } from '@/components/ui/CalendarPicker';
-import { DateTimeInput } from '@/components/ui/DateTimeInput';
 import { ArrowDownIcon } from '@/assets/icons';
 import { ScheduleFormField } from '@/components/admin/schedule/general/ScheduleFormField';
 import { ScheduleTextField } from '@/components/admin/schedule/general/ScheduleTextField';
@@ -19,14 +19,10 @@ import {
   SESSION_RECURRENCE_OPTIONS,
 } from '@/constants/admin/session.constants';
 import { addYearsToDateInput } from '@/utils/shared/date';
+import type { Cardinal } from '@/types/admin/cardinal';
 
 import type { ScheduleFormState, SessionFormState } from './types';
 import SessionInfobanner from '../session/SessionInfoBanner';
-
-interface Cardinal {
-  id: number;
-  cardinalNumber: number;
-}
 
 interface SessionScheduleFormProps {
   form: ScheduleFormState;
@@ -71,7 +67,7 @@ function SessionScheduleForm({
           <DropdownMenuTrigger asChild>
             <button
               type="button"
-              className="bg-container-neutral flex w-[120px] cursor-pointer items-center gap-100 rounded-sm py-200 pr-200 pl-300"
+              className="bg-container-neutral flex w-30 cursor-pointer items-center gap-100 rounded-sm py-200 pr-200 pl-300"
             >
               <span className="typo-button2 text-text-normal flex-1 text-left">
                 {selectedCardinal ? `${selectedCardinal.cardinalNumber}기` : '선택'}
@@ -79,7 +75,7 @@ function SessionScheduleForm({
               <Image src={ArrowDownIcon} alt="" width={20} height={20} />
             </button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="start" className="min-w-[120px]">
+          <DropdownMenuContent align="start" className="min-w-30">
             {cardinals.length === 0 ? (
               <DropdownMenuItem disabled>기수 없음</DropdownMenuItem>
             ) : (
@@ -120,7 +116,7 @@ function SessionScheduleForm({
           <DropdownMenuTrigger asChild>
             <button
               type="button"
-              className="bg-container-neutral flex w-[120px] cursor-pointer items-center gap-100 rounded-sm py-200 pr-200 pl-300"
+              className="bg-container-neutral flex w-30 cursor-pointer items-center gap-100 rounded-sm py-200 pr-200 pl-300"
             >
               <span className="typo-button2 text-text-normal flex-1 text-left">
                 {SESSION_RECURRENCE_LABEL[session.recurrenceType]}
@@ -128,7 +124,7 @@ function SessionScheduleForm({
               <Image src={ArrowDownIcon} alt="" width={20} height={20} />
             </button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="start" className="min-w-[120px]">
+          <DropdownMenuContent align="start" className="min-w-30">
             {SESSION_RECURRENCE_OPTIONS.map((type) => (
               <DropdownMenuItem
                 key={type}

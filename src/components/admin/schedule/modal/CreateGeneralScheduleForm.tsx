@@ -60,7 +60,7 @@ function CreateGeneralScheduleForm({ cardinalNumber, onClose }: CreateGeneralSch
 
   return (
     <>
-      <div className="scrollbar-custom max-h-[700px] overflow-y-auto px-[60px]">
+      <div className="scrollbar-custom max-h-175 overflow-y-auto px-15">
         <h2 className="typo-h3 text-text-normal py-400">일정 생성</h2>
         <ScheduleFormBody
           form={form}

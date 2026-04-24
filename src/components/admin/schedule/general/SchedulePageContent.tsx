@@ -3,8 +3,7 @@
 import { useState } from 'react';
 import Image from 'next/image';
 
-import { Button, Card, Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui';
-import { Icon } from '@/components/ui';
+import { Button, Card, Icon, Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui';
 import { AdminCalendarEditIcon } from '@/assets/icons/admin';
 import { SearchIcon } from '@/assets/icons';
 import { CardinalDropdown } from '@/components/admin';
@@ -109,7 +108,7 @@ function SchedulePageContent() {
         </TabsList>
 
         <TabsContent value="all" className="mt-400 overflow-x-auto">
-          <Card className="min-w-[690px] gap-700 px-600 pt-600 pb-800">
+          <Card className="min-w-172.5 gap-700 px-600 pt-600 pb-800">
             {/* Month navigator */}
             <MonthNavigator
               year={currentYear}
@@ -120,7 +119,7 @@ function SchedulePageContent() {
 
             {/* Search bar + Create button */}
             <div className="flex items-center justify-between">
-              <div className="relative w-[492px]">
+              <div className="relative w-123">
                 <Image
                   src={SearchIcon}
                   alt="검색"

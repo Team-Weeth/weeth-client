@@ -1,6 +1,6 @@
+import { DateTimeInput } from '@/components/ui';
 import { ScheduleTextField } from '@/components/admin/schedule/general/ScheduleTextField';
 import { ScheduleTextareaField } from '@/components/admin/schedule/general/ScheduleTextareaField';
-import { DateTimeInput } from '@/components/ui/DateTimeInput';
 import { SCHEDULE_FIELD_LIMITS } from '@/utils/admin/scheduleFormUtils';
 
 import { isDateRangeValid } from './types';
