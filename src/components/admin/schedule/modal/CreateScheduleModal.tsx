@@ -1,7 +1,5 @@
 'use client';
 
-
-
 import { Icon, Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { AdminCloseIcon } from '@/assets/icons/admin';
