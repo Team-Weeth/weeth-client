@@ -1,6 +1,7 @@
 'use client';
 
 import { useRef } from 'react';
+import DOMPurify from 'dompurify';
 import { cn } from '@/lib/cn';
 import { useLineClamp } from '@/hooks/useLineClamp';
 import { useCodeHighlight } from '@/hooks/useCodeHighlight';
@@ -15,12 +16,13 @@ interface PostCardBodyProps {
 
 function PostCardBody({ className, content, expandable = false }: PostCardBodyProps) {
   const contentRef = useRef<HTMLDivElement>(null);
+  const sanitized = DOMPurify.sanitize(content);
   const { ref, isClamped, isExpanded, setIsExpanded } = useLineClamp<HTMLDivElement>(
     expandable,
-    content,
+    sanitized,
   );
 
-  useCodeHighlight(contentRef, content);
+  useCodeHighlight(contentRef, sanitized);
 
   return (
     <>
@@ -34,7 +36,7 @@ function PostCardBody({ className, content, expandable = false }: PostCardBodyPr
           expandable && !isExpanded && 'line-clamp-8 overflow-hidden',
           className,
         )}
-        dangerouslySetInnerHTML={{ __html: content }}
+        dangerouslySetInnerHTML={{ __html: sanitized }}
       />
       {expandable && isClamped && !isExpanded && (
         <ExpandButton onExpand={() => setIsExpanded(true)} />
