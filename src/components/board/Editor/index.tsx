@@ -36,16 +36,6 @@ const floatingMenuTippyOptions = {
   },
 };
 
-/**
- * 주요 기능:
- * Tiptap 기반 에디터 컴포넌트
- *
- * - Slash Menu (/)
- * - Bubble Menu (텍스트 선택 시)
- * - 커스텀 키보드 단축키 (` 인라인 코드, Backspace 블록 정리)
- * - 이미지 붙여넣기 (Ctrl+V) 및 드래그앤드롭
- */
-
 interface EditorProps {
   initialContent?: string;
 }
