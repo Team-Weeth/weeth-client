@@ -62,4 +62,7 @@ export const adminBoardApi = {
 
   deleteBoard: (clubId: string, boardId: number) =>
     apiClient.delete<ApiResponse<void>>(`/admin/clubs/${clubId}/boards/${boardId}`),
+
+  updateBoardOrder: (clubId: string, boardIds: number[]) =>
+    apiClient.patch<ApiResponse<void>>(`/admin/clubs/${clubId}/boards/order`, { boardIds }),
 };

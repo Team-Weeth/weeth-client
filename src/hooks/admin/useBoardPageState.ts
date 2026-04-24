@@ -13,9 +13,10 @@ const TRASH_RETENTION_DAYS = 30;
 interface UseBoardPageStateParams {
   initialBoards: Board[];
   initialTrashedBoards: TrashedBoard[];
+  onReorder?: (boardIds: number[]) => void;
 }
 
-function useBoardPageState({ initialBoards, initialTrashedBoards }: UseBoardPageStateParams) {
+function useBoardPageState({ initialBoards, initialTrashedBoards, onReorder }: UseBoardPageStateParams) {
   const [boards, setBoards] = useState<Board[]>(initialBoards);
   const [trashedBoards, setTrashedBoards] = useState<TrashedBoard[]>(initialTrashedBoards);
 
@@ -60,29 +61,26 @@ function useBoardPageState({ initialBoards, initialTrashedBoards }: UseBoardPage
     const { active, over } = event;
     if (!over || active.id === over.id) return;
 
-    setBoards((prev) => {
-      const customIds = prev.filter((b) => b.editable).map((b) => b.boardId);
-      const oldIndex = customIds.indexOf(Number(active.id));
-      const newIndex = customIds.indexOf(Number(over.id));
-      if (oldIndex === -1 || newIndex === -1) return prev;
+    const customIds = boards.filter((b) => b.editable).map((b) => b.boardId);
+    const oldIndex = customIds.indexOf(Number(active.id));
+    const newIndex = customIds.indexOf(Number(over.id));
+    if (oldIndex === -1 || newIndex === -1) return;
 
-      const reorderedCustomIds = arrayMove(customIds, oldIndex, newIndex);
-      const customById = new Map(
-        prev.filter((b) => b.editable).map((b) => [b.boardId, b] as const),
-      );
+    const reorderedCustomIds = arrayMove(customIds, oldIndex, newIndex);
+    const customById = new Map(boards.filter((b) => b.editable).map((b) => [b.boardId, b] as const));
 
-      const result: Board[] = [];
-      let cursor = 0;
-      for (const board of prev) {
-        if (board.editable) {
-          const nextId = reorderedCustomIds[cursor++];
-          result.push(customById.get(nextId)!);
-        } else {
-          result.push(board);
-        }
+    const result: Board[] = [];
+    let cursor = 0;
+    for (const board of boards) {
+      if (board.editable) {
+        result.push(customById.get(reorderedCustomIds[cursor++])!);
+      } else {
+        result.push(board);
       }
-      return result;
-    });
+    }
+
+    setBoards(result);
+    onReorder?.(reorderedCustomIds);
   };
 
   return {

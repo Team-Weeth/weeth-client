@@ -36,6 +36,7 @@ import { useAdminBoardsQuery } from '@/hooks/queries/admin/useAdminBoardsQuery';
 import { useCreateBoardMutation } from '@/hooks/queries/admin/useCreateBoardMutation';
 import { useUpdateBoardMutation } from '@/hooks/queries/admin/useUpdateBoardMutation';
 import { useDeleteBoardMutation } from '@/hooks/queries/admin/useDeleteBoardMutation';
+import { useUpdateBoardOrderMutation } from '@/hooks/queries/admin/useUpdateBoardOrderMutation';
 import { ADMIN_BOARD_ERROR, getApiErrorCode, getApiErrorMessage } from '@/lib/apis/adminBoard';
 import { toastError } from '@/stores/useToastStore';
 import type { Board } from '@/types/admin/board';
@@ -59,6 +60,8 @@ function BoardPageInner({ initialBoards, initialTrashedBoards }: BoardPageInnerP
   const [editNameError, setEditNameError] = useState<string | null>(null);
   const [trashModalOpen, setTrashModalOpen] = useState(false);
 
+  const { mutate: updateBoardOrder } = useUpdateBoardOrderMutation();
+
   const {
     boards,
     trashedBoards,
@@ -70,6 +73,7 @@ function BoardPageInner({ initialBoards, initialTrashedBoards }: BoardPageInnerP
   } = useBoardPageState({
     initialBoards,
     initialTrashedBoards,
+    onReorder: updateBoardOrder,
   });
 
   const { mutate: createBoard } = useCreateBoardMutation({
