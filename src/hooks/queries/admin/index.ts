@@ -6,3 +6,4 @@ export {
 } from './useAdminAttendanceQueries';
 export { useAdminBoardsQuery } from './useAdminBoardsQuery';
 export { useCreateBoardMutation } from './useCreateBoardMutation';
+export { useUpdateBoardMutation } from './useUpdateBoardMutation';

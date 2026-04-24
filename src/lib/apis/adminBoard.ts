@@ -43,10 +43,20 @@ export interface CreateBoardBody {
   isPrivate: boolean;
 }
 
+export interface UpdateBoardBody {
+  name: string;
+  commentEnabled: boolean;
+  writePermission: AdminBoardWritePermission;
+  isPrivate: boolean;
+}
+
 export const adminBoardApi = {
   getBoards: (clubId: string) =>
     apiClient.get<ApiResponse<AdminBoardDto[]>>(`/admin/clubs/${clubId}/boards`),
 
   createBoard: (clubId: string, body: CreateBoardBody) =>
     apiClient.post<ApiResponse<AdminBoardDto>>(`/admin/clubs/${clubId}/boards`, body),
+
+  updateBoard: (clubId: string, boardId: number, body: UpdateBoardBody) =>
+    apiClient.patch<ApiResponse<AdminBoardDto>>(`/admin/clubs/${clubId}/boards/${boardId}`, body),
 };

@@ -34,6 +34,7 @@ import { useBoardPageState } from '@/hooks/admin';
 import { useCardinals } from '@/hooks/queries';
 import { useAdminBoardsQuery } from '@/hooks/queries/admin/useAdminBoardsQuery';
 import { useCreateBoardMutation } from '@/hooks/queries/admin/useCreateBoardMutation';
+import { useUpdateBoardMutation } from '@/hooks/queries/admin/useUpdateBoardMutation';
 import { ADMIN_BOARD_ERROR, getApiErrorCode, getApiErrorMessage } from '@/lib/apis/adminBoard';
 import { toastError } from '@/stores/useToastStore';
 import type { Board } from '@/types/admin/board';
@@ -54,12 +55,13 @@ function BoardPageInner({ initialBoards, initialTrashedBoards }: BoardPageInnerP
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [createNameError, setCreateNameError] = useState<string | null>(null);
   const [editingBoardId, setEditingBoardId] = useState<number | null>(null);
+  const [editNameError, setEditNameError] = useState<string | null>(null);
   const [trashModalOpen, setTrashModalOpen] = useState(false);
 
   const {
     boards,
     trashedBoards,
-    updateBoard,
+    updateBoard: updateLocalBoard,
     moveBoardToTrash,
     restoreBoardFromTrash,
     permanentlyDeleteBoard,
@@ -75,6 +77,18 @@ function BoardPageInner({ initialBoards, initialTrashedBoards }: BoardPageInnerP
       const code = getApiErrorCode(err);
       if (code === ADMIN_BOARD_ERROR.DUPLICATE_NAME) {
         setCreateNameError('같은 이름의 게시판이 이미 있어요.');
+      } else {
+        toastError(getApiErrorMessage(err));
+      }
+    },
+  });
+
+  const { mutate: updateBoard } = useUpdateBoardMutation({
+    onSuccess: () => setEditingBoardId(null),
+    onError: (err) => {
+      const code = getApiErrorCode(err);
+      if (code === ADMIN_BOARD_ERROR.DUPLICATE_NAME) {
+        setEditNameError('같은 이름의 게시판이 이미 있어요.');
       } else {
         toastError(getApiErrorMessage(err));
       }
@@ -161,7 +175,7 @@ function BoardPageInner({ initialBoards, initialTrashedBoards }: BoardPageInnerP
                 <BoardCard
                   board={board}
                   draggable={false}
-                  onToggleComments={(next) => updateBoard(board.boardId, { commentEnabled: next })}
+                  onToggleComments={(next) => updateLocalBoard(board.boardId, { commentEnabled: next })}
                 />
               </Fragment>
             ))}
@@ -181,7 +195,7 @@ function BoardPageInner({ initialBoards, initialTrashedBoards }: BoardPageInnerP
                   key={board.boardId}
                   board={board}
                   draggable={false}
-                  onToggleComments={(next) => updateBoard(board.boardId, { commentEnabled: next })}
+                  onToggleComments={(next) => updateLocalBoard(board.boardId, { commentEnabled: next })}
                   onEdit={() => setEditingBoardId(board.boardId)}
                   onDelete={() => moveBoardToTrash(board)}
                 />
@@ -203,7 +217,7 @@ function BoardPageInner({ initialBoards, initialTrashedBoards }: BoardPageInnerP
                       key={board.boardId}
                       board={board}
                       onToggleComments={(next) =>
-                        updateBoard(board.boardId, { commentEnabled: next })
+                        updateLocalBoard(board.boardId, { commentEnabled: next })
                       }
                       onEdit={() => setEditingBoardId(board.boardId)}
                       onDelete={() => moveBoardToTrash(board)}
@@ -248,23 +262,31 @@ function BoardPageInner({ initialBoards, initialTrashedBoards }: BoardPageInnerP
       <EditBoardModal
         open={editingBoardId !== null}
         onOpenChange={(next) => {
-          if (!next) setEditingBoardId(null);
+          if (!next) {
+            setEditingBoardId(null);
+            setEditNameError(null);
+          }
         }}
         board={boards.find((b) => b.boardId === editingBoardId) ?? null}
         onSubmit={(data) => {
           if (editingBoardId === null) return;
-          updateBoard(editingBoardId, {
-            name: data.name.trim(),
-            description: data.description.trim(),
-            visibility: data.visibility,
-            commentEnabled: data.commentEnabled,
+          setEditNameError(null);
+          updateBoard({
+            boardId: editingBoardId,
+            body: {
+              name: data.name.trim(),
+              commentEnabled: data.commentEnabled,
+              writePermission: data.visibility === 'ADMIN_ONLY' ? 'ADMIN' : 'USER',
+              isPrivate: data.visibility === 'PRIVATE',
+            },
           });
-          setEditingBoardId(null);
         }}
         onDelete={(board) => {
           moveBoardToTrash(board);
           setEditingBoardId(null);
         }}
+        nameError={editNameError}
+        onNameChange={() => setEditNameError(null)}
       />
     </div>
   );
