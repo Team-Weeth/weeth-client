@@ -112,7 +112,9 @@ function HomeBoardContent() {
                   likeCount={post.like.likeCount}
                   isLiked={post.like.isLiked}
                   commentCount={post.commentCount}
-                  onComment={() => router.push(`${buildPostPath(clubId, post.id, post.boardId)}#comments`)}
+                  onComment={() =>
+                    router.push(`${buildPostPath(clubId, post.id, post.boardId)}#comments`)
+                  }
                 />
               </div>
             </PostCard.Root>
