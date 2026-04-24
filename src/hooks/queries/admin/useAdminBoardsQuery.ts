@@ -22,7 +22,7 @@ function toBoard(dto: AdminBoardDto): Board {
     visibility: mapVisibility(dto.writePermission, dto.isPrivate),
     postCount: dto.postCount,
     commentEnabled: dto.type === 'ALL' ? null : dto.commentEnabled,
-    editable: dto.type === 'CUSTOM',
+    editable: dto.type === 'GENERAL',
   };
 }
 
@@ -47,6 +47,7 @@ export function useAdminBoardsQuery() {
       return { boards, trashedBoards };
     },
     enabled: !!clubId,
+    retry: false,
     staleTime: 5 * 60 * 1000,
     gcTime: 10 * 60 * 1000,
   });

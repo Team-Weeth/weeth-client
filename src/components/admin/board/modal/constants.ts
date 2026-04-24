@@ -1,6 +1,7 @@
 import type { DiscardMessages } from '@/components/admin/modal/DiscardConfirmDialog';
 import type { BoardVisibility } from '@/types/admin/board';
 
+const NAME_MAX = 20;
 const DESCRIPTION_MAX = 30;
 
 const VISIBILITY_OPTIONS: { value: BoardVisibility; label: string }[] = [
@@ -38,6 +39,7 @@ const DISCARD_MESSAGES: Record<BoardFormMode, DiscardMessages> = {
 };
 
 export {
+  NAME_MAX,
   DESCRIPTION_MAX,
   VISIBILITY_OPTIONS,
   DEFAULT_FORM,

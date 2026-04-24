@@ -5,3 +5,4 @@ export {
   useUpdateAttendanceStatus,
 } from './useAdminAttendanceQueries';
 export { useAdminBoardsQuery } from './useAdminBoardsQuery';
+export { useCreateBoardMutation } from './useCreateBoardMutation';

@@ -6,6 +6,7 @@ import { DiscardConfirmDialog } from '@/components/admin/modal/DiscardConfirmDia
 import { BoardFormField } from '@/components/admin/board/modal/BoardFormField';
 import { BoardFormHeader } from '@/components/admin/board/modal/BoardFormHeader';
 import {
+  NAME_MAX,
   DESCRIPTION_MAX,
   VISIBILITY_OPTIONS,
   DEFAULT_FORM,
@@ -54,6 +55,11 @@ function BoardFormModal({
     handleClose();
   };
 
+  const handleNameChange = (value: string) => {
+    if (value.length > NAME_MAX) return;
+    updateField('name', value);
+  };
+
   const handleDescriptionChange = (value: string) => {
     if (value.length > DESCRIPTION_MAX) return;
     updateField('description', value);
@@ -91,10 +97,16 @@ function BoardFormModal({
               id="board-name"
               type="text"
               value={form.name}
-              onChange={(e) => updateField('name', e.target.value)}
+              onChange={(e) => handleNameChange(e.target.value)}
               placeholder="게시판의 이름을 작성해주세요"
+              maxLength={NAME_MAX}
               className="bg-container-neutral typo-body1 placeholder:text-text-alternative text-text-normal h-12 w-full rounded-sm px-400 py-300 focus:outline-none"
             />
+            <div className="flex h-8 items-center px-400">
+              <p className="typo-caption2 text-text-alternative">
+                최대 {NAME_MAX}자 ({form.name.length}/{NAME_MAX})
+              </p>
+            </div>
           </BoardFormField>
 
           <BoardFormField label="설명" htmlFor="board-description">

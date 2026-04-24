@@ -33,7 +33,9 @@ import { TrashBoardModal, type TrashedBoard } from '@/components/admin/board/mod
 import { useBoardPageState } from '@/hooks/admin';
 import { useCardinals } from '@/hooks/queries';
 import { useAdminBoardsQuery } from '@/hooks/queries/admin/useAdminBoardsQuery';
+import { useCreateBoardMutation } from '@/hooks/queries/admin/useCreateBoardMutation';
 import type { Board } from '@/types/admin/board';
+import type { BoardFormData } from '@/components/admin/board/modal/constants';
 import { SortableBoardCard } from './SortableBoardCard';
 
 const MAX_CUSTOM_BOARDS = 3;
@@ -41,9 +43,10 @@ const MAX_CUSTOM_BOARDS = 3;
 interface BoardPageInnerProps {
   initialBoards: Board[];
   initialTrashedBoards: TrashedBoard[];
+  onCreateBoard: (data: BoardFormData) => void;
 }
 
-function BoardPageInner({ initialBoards, initialTrashedBoards }: BoardPageInnerProps) {
+function BoardPageInner({ initialBoards, initialTrashedBoards, onCreateBoard }: BoardPageInnerProps) {
   const { data: cardinals = [] } = useCardinals();
   const [selectedCardinalId, setSelectedCardinalId] = useState<number | null>(null);
   const [searchValue, setSearchValue] = useState('');
@@ -55,7 +58,6 @@ function BoardPageInner({ initialBoards, initialTrashedBoards }: BoardPageInnerP
     boards,
     trashedBoards,
     updateBoard,
-    createBoard,
     moveBoardToTrash,
     restoreBoardFromTrash,
     permanentlyDeleteBoard,
@@ -196,7 +198,7 @@ function BoardPageInner({ initialBoards, initialTrashedBoards }: BoardPageInnerP
       <CreateBoardModal
         open={createModalOpen}
         onOpenChange={setCreateModalOpen}
-        onSubmit={createBoard}
+        onSubmit={onCreateBoard}
       />
 
       {/* Trash board modal */}
@@ -234,7 +236,18 @@ function BoardPageInner({ initialBoards, initialTrashedBoards }: BoardPageInnerP
 }
 
 function BoardPageContent() {
-  const { data, isLoading } = useAdminBoardsQuery();
+  const { data, isLoading, dataUpdatedAt } = useAdminBoardsQuery();
+  const { mutate: createBoard } = useCreateBoardMutation();
+
+  const handleCreateBoard = (formData: BoardFormData) => {
+    createBoard({
+      name: formData.name,
+      type: 'GENERAL',
+      commentEnabled: formData.commentEnabled,
+      writePermission: formData.visibility === 'ADMIN_ONLY' ? 'ADMIN' : 'USER',
+      isPrivate: formData.visibility === 'PRIVATE',
+    });
+  };
 
   if (isLoading || !data) {
     return (
@@ -244,7 +257,14 @@ function BoardPageContent() {
     );
   }
 
-  return <BoardPageInner initialBoards={data.boards} initialTrashedBoards={data.trashedBoards} />;
+  return (
+    <BoardPageInner
+      key={dataUpdatedAt}
+      initialBoards={data.boards}
+      initialTrashedBoards={data.trashedBoards}
+      onCreateBoard={handleCreateBoard}
+    />
+  );
 }
 
 export { BoardPageContent };
