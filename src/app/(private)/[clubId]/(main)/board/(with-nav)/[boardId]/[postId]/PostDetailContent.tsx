@@ -128,7 +128,6 @@ function PostDetailContent({ initialData }: PostDetailContentProps) {
         <FileList files={nonImageFiles} />
 
         <PostCard.Actions
-          className="mt-400"
           postId={currentPost.id}
           likeCount={currentPost.like.likeCount}
           commentCount={currentPost.commentCount}

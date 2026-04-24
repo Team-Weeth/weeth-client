@@ -5,7 +5,7 @@ import { cn } from '@/lib/cn';
 
 const ICON_SIZE = {
   list: { width: 7, height: 9 },
-  detail: { width: 10, height: 12 },
+  detail: { width: 11, height: 13 },
 } as const;
 
 interface PostCardTitleProps {
@@ -16,7 +16,7 @@ interface PostCardTitleProps {
 
 function PostCardTitle({ title, isNew, size }: PostCardTitleProps) {
   return (
-    <div className="flex items-center gap-[5px]">
+    <div className={cn('flex items-center', size === 'detail' ? 'gap-[10px]' : 'gap-[5px]')}>
       <h3 className={cn('text-text-strong', size === 'detail' ? 'typo-md-title' : 'typo-sub3')}>
         {title}
       </h3>

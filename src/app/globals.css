@@ -648,8 +648,15 @@ select:focus {
 }
 
 .ProseMirror h1 {
-  @apply typo-md-h1 pb-400;
-  border-bottom: 1px solid var(--line);
+  @apply typo-md-h1;
+}
+
+.ProseMirror h1::after {
+  content: '';
+  display: block;
+  margin-top: 16px;
+  height: 1px;
+  background-color: var(--line);
 }
 
 .ProseMirror h2 {
@@ -667,7 +674,8 @@ select:focus {
 .ProseMirror hr {
   margin: 0;
   border: none;
-  border-top: 1px solid var(--line);
+  height: 1px;
+  background-color: var(--line);
 }
 
 /* heading·구분선 전후 16px 간격, p+p는 0 */

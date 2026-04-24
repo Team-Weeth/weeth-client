@@ -30,7 +30,7 @@ function PostCardBody({ className, content, expandable = false }: PostCardBodyPr
           if (expandable) ref.current = el;
         }}
         className={cn(
-          'ProseMirror prose-readonly text-text-normal typo-body1 whitespace-pre-line',
+          'ProseMirror prose-readonly text-text-normal typo-body1 self-stretch whitespace-pre-line',
           expandable && !isExpanded && 'line-clamp-8 overflow-hidden',
           className,
         )}
