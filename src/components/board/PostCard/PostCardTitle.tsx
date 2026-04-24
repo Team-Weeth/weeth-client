@@ -3,6 +3,11 @@ import Image from 'next/image';
 import { NewIcon } from '@/assets/icons';
 import { cn } from '@/lib/cn';
 
+const ICON_SIZE = {
+  list: { width: 7, height: 9 },
+  detail: { width: 10, height: 12 },
+} as const;
+
 interface PostCardTitleProps {
   title: string;
   isNew?: boolean;
@@ -17,7 +22,7 @@ function PostCardTitle({ title, isNew, size }: PostCardTitleProps) {
       </h3>
       {isNew && (
         <>
-          <Image src={NewIcon} alt="" width={7} height={9} aria-hidden />
+          <Image src={NewIcon} alt="" {...ICON_SIZE[size]} aria-hidden />
           <span className="sr-only">새 글</span>
         </>
       )}

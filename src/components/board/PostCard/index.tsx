@@ -2,6 +2,8 @@ import { cn } from '@/lib/cn';
 import { ImageList } from '@/components/board/ImageList';
 import type { DisplayFile } from '@/types/board';
 import { PostAuthorInfo } from './PostAuthorInfo';
+import { PostCardTitle } from './PostCardTitle';
+import { PostCardBody } from './PostCardBody';
 import { PostCardListContent } from './PostCardListContent';
 import { PostCardDetailContent } from './PostCardDetailContent';
 import { PostCardActions, type PostCardActionsProps } from './PostCardActions';
@@ -46,6 +48,8 @@ const PostCard = {
   Root: PostCardRoot,
   Header: PostCardHeader,
   Author: PostAuthorInfo,
+  Title: PostCardTitle,
+  Body: PostCardBody,
   ListContent: PostCardListContent,
   DetailContent: PostCardDetailContent,
   Images: PostCardImages,

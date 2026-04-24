@@ -94,16 +94,9 @@ function PostDetailContent({ initialData }: PostDetailContentProps) {
     <div className="bg-container-neutral flex flex-1 flex-col items-center overflow-hidden rounded-(--radius-lg)">
       <PostDetailHeader />
 
-      <div className="flex flex-col items-start gap-200 self-stretch px-450 pt-450">
+      <div className="flex flex-col items-start gap-600 self-stretch px-450 pt-450">
         <PostCard.Header>
-          <PostCard.Author
-            author={{
-              name: currentPost.author.name,
-              profileImageUrl: currentPost.author.profileImageUrl,
-            }}
-            date={formatShortDateTime(currentPost.time)}
-            hasAttachment={currentPost.fileUrls.length > 0}
-          />
+          <PostCard.Title title={currentPost.title} isNew={currentPost.isNew} size="detail" />
           {isPostAuthor && (
             <PostActionMenu
               postId={currentPost.id}
@@ -117,11 +110,18 @@ function PostDetailContent({ initialData }: PostDetailContentProps) {
           )}
         </PostCard.Header>
 
-        <PostCard.DetailContent
-          title={currentPost.title}
-          content={currentPost.content}
-          isNew={currentPost.isNew}
+        <PostCard.Author
+          author={{
+            name: currentPost.author.name,
+            profileImageUrl: currentPost.author.profileImageUrl,
+          }}
+          date={formatShortDateTime(currentPost.time)}
+          hasAttachment={currentPost.fileUrls.length > 0}
         />
+
+        <Divider />
+
+        <PostCard.Body content={currentPost.content} />
 
         <PostCard.Images files={imageFiles} />
 
