@@ -25,6 +25,12 @@ export function useBoardList() {
   });
 }
 
+/** NOTICE 타입 게시판의 ID를 반환 (대시보드 API에 boardId가 없을 때 사용) */
+export function useNoticeBoardId() {
+  const { data } = useBoardList();
+  return data?.find((b) => b.type === 'NOTICE')?.id ?? undefined;
+}
+
 export function useBoardPosts(activeBoardId: number | null) {
   const clubId = useClubId();
   const isAll = activeBoardId === null;
