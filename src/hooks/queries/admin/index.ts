@@ -4,3 +4,4 @@ export {
   useAdminAttendance,
   useUpdateAttendanceStatus,
 } from './useAdminAttendanceQueries';
+export { useAdminBoardsQuery } from './useAdminBoardsQuery';

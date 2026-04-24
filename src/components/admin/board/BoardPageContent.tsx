@@ -13,10 +13,8 @@ import {
 import {
   SortableContext,
   sortableKeyboardCoordinates,
-  useSortable,
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
-import { CSS } from '@dnd-kit/utilities';
 
 import {
   Card,
@@ -34,99 +32,18 @@ import { EditBoardModal } from '@/components/admin/board/modal/EditBoardModal';
 import { TrashBoardModal, type TrashedBoard } from '@/components/admin/board/modal/TrashBoardModal';
 import { useBoardPageState } from '@/hooks/admin';
 import { useCardinals } from '@/hooks/queries';
+import { useAdminBoardsQuery } from '@/hooks/queries/admin/useAdminBoardsQuery';
 import type { Board } from '@/types/admin/board';
+import { SortableBoardCard } from './SortableBoardCard';
 
 const MAX_CUSTOM_BOARDS = 3;
 
-// TODO: API 연동 전 임시 데이터
-const MOCK_BOARDS: Board[] = [
-  {
-    boardId: 1,
-    name: '전체 게시판',
-    description: '모든 게시글을 확인할 수 있는 게시판입니다.',
-    kind: 'ALL',
-    visibility: 'PUBLIC',
-    postCount: 32,
-    commentEnabled: null,
-    editable: false,
-  },
-  {
-    boardId: 2,
-    name: '공지',
-    description: '운영진이 공지사항을 올리는 게시판입니다.',
-    kind: 'NOTICE',
-    visibility: 'ADMIN_ONLY',
-    postCount: 32,
-    commentEnabled: true,
-    editable: false,
-  },
-  {
-    boardId: 3,
-    name: '자유 게시판',
-    description: '모든 게시글을 확인할 수 있는 게시판입니다.',
-    kind: 'CUSTOM',
-    visibility: 'PUBLIC',
-    postCount: 32,
-    commentEnabled: true,
-    editable: true,
-  },
-  {
-    boardId: 4,
-    name: '자유 게시판',
-    description: '모든 게시글을 확인할 수 있는 게시판입니다.',
-    kind: 'CUSTOM',
-    visibility: 'PUBLIC',
-    postCount: 32,
-    commentEnabled: true,
-    editable: true,
-  },
-];
-
-const MOCK_TRASHED_BOARDS: TrashedBoard[] = [
-  {
-    boardId: 101,
-    name: '자유 게시판',
-    description: '모든 게시글을 확인할 수 있는 게시판입니다.',
-    kind: 'CUSTOM',
-    visibility: 'PUBLIC',
-    postCount: 0,
-    commentEnabled: true,
-    editable: true,
-    daysLeft: 30,
-  },
-];
-
-interface SortableBoardCardProps {
-  board: Board;
-  onToggleComments: (next: boolean) => void;
-  onEdit: () => void;
-  onDelete: () => void;
+interface BoardPageInnerProps {
+  initialBoards: Board[];
+  initialTrashedBoards: TrashedBoard[];
 }
 
-function SortableBoardCard({ board, onToggleComments, onEdit, onDelete }: SortableBoardCardProps) {
-  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
-    id: board.boardId,
-  });
-
-  return (
-    <BoardCard
-      ref={setNodeRef}
-      board={board}
-      onToggleComments={onToggleComments}
-      onEdit={onEdit}
-      onDelete={onDelete}
-      dragHandleProps={{ ...attributes, ...listeners }}
-      style={{
-        transform: CSS.Transform.toString(transform),
-        transition,
-        zIndex: isDragging ? 10 : undefined,
-        opacity: isDragging ? 0.8 : undefined,
-      }}
-    />
-  );
-}
-
-function BoardPageContent() {
+function BoardPageInner({ initialBoards, initialTrashedBoards }: BoardPageInnerProps) {
   const { data: cardinals = [] } = useCardinals();
   const [selectedCardinalId, setSelectedCardinalId] = useState<number | null>(null);
   const [searchValue, setSearchValue] = useState('');
@@ -144,8 +61,8 @@ function BoardPageContent() {
     permanentlyDeleteBoard,
     handleDragEnd,
   } = useBoardPageState({
-    initialBoards: MOCK_BOARDS,
-    initialTrashedBoards: MOCK_TRASHED_BOARDS,
+    initialBoards,
+    initialTrashedBoards,
   });
 
   const activeCardinal = selectedCardinalId
@@ -314,6 +231,20 @@ function BoardPageContent() {
       />
     </div>
   );
+}
+
+function BoardPageContent() {
+  const { data, isLoading } = useAdminBoardsQuery();
+
+  if (isLoading || !data) {
+    return (
+      <div className="flex min-w-0 flex-col gap-400 p-700">
+        <p className="typo-body2 text-text-alternative">불러오는 중...</p>
+      </div>
+    );
+  }
+
+  return <BoardPageInner initialBoards={data.boards} initialTrashedBoards={data.trashedBoards} />;
 }
 
 export { BoardPageContent };
