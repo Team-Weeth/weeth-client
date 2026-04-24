@@ -35,6 +35,7 @@ import { useCardinals } from '@/hooks/queries';
 import { useAdminBoardsQuery } from '@/hooks/queries/admin/useAdminBoardsQuery';
 import { useCreateBoardMutation } from '@/hooks/queries/admin/useCreateBoardMutation';
 import { useUpdateBoardMutation } from '@/hooks/queries/admin/useUpdateBoardMutation';
+import { useDeleteBoardMutation } from '@/hooks/queries/admin/useDeleteBoardMutation';
 import { ADMIN_BOARD_ERROR, getApiErrorCode, getApiErrorMessage } from '@/lib/apis/adminBoard';
 import { toastError } from '@/stores/useToastStore';
 import type { Board } from '@/types/admin/board';
@@ -93,6 +94,11 @@ function BoardPageInner({ initialBoards, initialTrashedBoards }: BoardPageInnerP
         toastError(getApiErrorMessage(err));
       }
     },
+  });
+
+  const { mutate: deleteBoard } = useDeleteBoardMutation({
+    onSuccess: () => setEditingBoardId(null),
+    onError: (err) => toastError(getApiErrorMessage(err)),
   });
 
   const handleCreateBoard = (formData: BoardFormData) => {
@@ -282,8 +288,7 @@ function BoardPageInner({ initialBoards, initialTrashedBoards }: BoardPageInnerP
           });
         }}
         onDelete={(board) => {
-          moveBoardToTrash(board);
-          setEditingBoardId(null);
+          deleteBoard(board.boardId);
         }}
         nameError={editNameError}
         onNameChange={() => setEditNameError(null)}

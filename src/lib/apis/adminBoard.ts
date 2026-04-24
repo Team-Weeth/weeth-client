@@ -59,4 +59,7 @@ export const adminBoardApi = {
 
   updateBoard: (clubId: string, boardId: number, body: UpdateBoardBody) =>
     apiClient.patch<ApiResponse<AdminBoardDto>>(`/admin/clubs/${clubId}/boards/${boardId}`, body),
+
+  deleteBoard: (clubId: string, boardId: number) =>
+    apiClient.delete<ApiResponse<void>>(`/admin/clubs/${clubId}/boards/${boardId}`),
 };
