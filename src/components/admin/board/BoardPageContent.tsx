@@ -22,7 +22,8 @@ import { BoardCard } from '@/components/admin/board/BoardCard';
 import { BoardToolbar } from '@/components/admin/board/BoardToolbar';
 import { CreateBoardModal } from '@/components/admin/board/modal/CreateBoardModal';
 import { EditBoardModal } from '@/components/admin/board/modal/EditBoardModal';
-import { TrashBoardModal, type TrashedBoard } from '@/components/admin/board/modal/TrashBoardModal';
+// TODO: 휴지통 API 정상화되면 TrashBoardModal import 복원
+import type { TrashedBoard } from '@/components/admin/board/modal/TrashBoardModal';
 import { useBoardDragReorder } from '@/hooks/admin';
 import { useAdminBoardsQuery } from '@/hooks/queries/admin/useAdminBoardsQuery';
 import { useCreateBoardMutation } from '@/hooks/queries/admin/useCreateBoardMutation';
@@ -53,7 +54,8 @@ function BoardPageContent() {
   const [createNameError, setCreateNameError] = useState<string | null>(null);
   const [editingBoardId, setEditingBoardId] = useState<number | null>(null);
   const [editNameError, setEditNameError] = useState<string | null>(null);
-  const [trashModalOpen, setTrashModalOpen] = useState(false);
+  // TODO: 휴지통 API 정상화되면 복원
+  // const [trashModalOpen, setTrashModalOpen] = useState(false);
 
   const cacheKey = adminBoardQueryKeys.list(clubId);
   const updateCache = (updater: (prev: BoardListCache) => BoardListCache) => {
@@ -116,7 +118,7 @@ function BoardPageContent() {
     );
   }
 
-  const { boards, trashedBoards } = data;
+  const { boards } = data;
 
   const handleCreateBoard = (formData: BoardFormData) => {
     setCreateNameError(null);
@@ -163,34 +165,34 @@ function BoardPageContent() {
     deleteBoard(board.boardId);
   };
 
-  // TODO: 백엔드 복원/영구삭제 API 추가되면 mutation으로 교체
-  const handleRestoreFromTrash = (boardId: number) => {
-    updateCache((prev) => {
-      const trashed = prev.trashedBoards.find((b) => b.boardId === boardId);
-      if (!trashed) return prev;
-      const restored: Board = {
-        boardId: trashed.boardId,
-        name: trashed.name,
-        description: trashed.description,
-        kind: trashed.kind,
-        visibility: trashed.visibility,
-        postCount: trashed.postCount,
-        commentEnabled: trashed.commentEnabled,
-        editable: trashed.editable,
-      };
-      return {
-        boards: [...prev.boards, restored],
-        trashedBoards: prev.trashedBoards.filter((b) => b.boardId !== boardId),
-      };
-    });
-  };
-
-  const handlePermanentDelete = (boardId: number) => {
-    updateCache((prev) => ({
-      ...prev,
-      trashedBoards: prev.trashedBoards.filter((b) => b.boardId !== boardId),
-    }));
-  };
+  // TODO: 휴지통 API 정상화되면 복원
+  // const handleRestoreFromTrash = (boardId: number) => {
+  //   updateCache((prev) => {
+  //     const trashed = prev.trashedBoards.find((b) => b.boardId === boardId);
+  //     if (!trashed) return prev;
+  //     const restored: Board = {
+  //       boardId: trashed.boardId,
+  //       name: trashed.name,
+  //       description: trashed.description,
+  //       kind: trashed.kind,
+  //       visibility: trashed.visibility,
+  //       postCount: trashed.postCount,
+  //       commentEnabled: trashed.commentEnabled,
+  //       editable: trashed.editable,
+  //     };
+  //     return {
+  //       boards: [...prev.boards, restored],
+  //       trashedBoards: prev.trashedBoards.filter((b) => b.boardId !== boardId),
+  //     };
+  //   });
+  // };
+  //
+  // const handlePermanentDelete = (boardId: number) => {
+  //   updateCache((prev) => ({
+  //     ...prev,
+  //     trashedBoards: prev.trashedBoards.filter((b) => b.boardId !== boardId),
+  //   }));
+  // };
 
   const query = searchValue.trim().toLowerCase();
   const filteredBoards = query
@@ -210,8 +212,9 @@ function BoardPageContent() {
       <BoardToolbar
         searchValue={searchValue}
         onSearchChange={setSearchValue}
-        trashCount={trashedBoards.length}
-        onTrashClick={() => setTrashModalOpen(true)}
+        // TODO: 휴지통 API 정상화되면 복원
+        // trashCount={trashedBoards.length}
+        // onTrashClick={() => setTrashModalOpen(true)}
         onCreateClick={
           reachedLimit
             ? () => toastError(`추가 게시판은 최대 ${MAX_CUSTOM_BOARDS}개까지 만들 수 있어요.`)
@@ -298,6 +301,7 @@ function BoardPageContent() {
         onNameChange={() => setCreateNameError(null)}
       />
 
+      {/* TODO: 휴지통 API 정상화되면 복원
       <TrashBoardModal
         open={trashModalOpen}
         onOpenChange={setTrashModalOpen}
@@ -305,6 +309,7 @@ function BoardPageContent() {
         onRestore={handleRestoreFromTrash}
         onPermanentDelete={handlePermanentDelete}
       />
+      */}
 
       <EditBoardModal
         open={editingBoardId !== null}

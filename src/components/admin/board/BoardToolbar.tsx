@@ -4,14 +4,16 @@ import Image from 'next/image';
 
 import { Button, Icon } from '@/components/ui';
 import { AdminPlusIcon } from '@/assets/icons/admin';
-import { TrashcanIcon, SearchIcon } from '@/assets/icons';
+// TODO: 휴지통 API 정상화되면 TrashcanIcon import 복원
+import { SearchIcon } from '@/assets/icons';
 import { cn } from '@/lib/cn';
 
 interface BoardToolbarProps extends React.HTMLAttributes<HTMLDivElement> {
   searchValue: string;
   onSearchChange: (value: string) => void;
-  trashCount: number;
-  onTrashClick?: () => void;
+  // TODO: 휴지통 API 정상화되면 복원
+  // trashCount: number;
+  // onTrashClick?: () => void;
   onCreateClick?: () => void;
 }
 
@@ -19,8 +21,8 @@ function BoardToolbar({
   className,
   searchValue,
   onSearchChange,
-  trashCount,
-  onTrashClick,
+  // trashCount,
+  // onTrashClick,
   onCreateClick,
   ...props
 }: BoardToolbarProps) {
@@ -48,6 +50,7 @@ function BoardToolbar({
 
       {/* Button group */}
       <div className="flex shrink-0 items-center gap-300">
+        {/* TODO: 휴지통 API 정상화되면 복원
         <Button
           variant="secondary"
           size="lg"
@@ -57,6 +60,7 @@ function BoardToolbar({
           <Icon src={TrashcanIcon} size={20} className="text-text-strong mr-1" />
           <span>휴지통 ({trashCount})</span>
         </Button>
+        */}
         <Button variant="primary" size="lg" onClick={onCreateClick}>
           <Icon src={AdminPlusIcon} size={20} className="text-text-inverse mr-1" />
           <span>게시판 생성</span>
