@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { Suspense, useEffect, useRef, useState } from 'react';
+import type { RefObject } from 'react';
 
 import {
   Button,
@@ -14,7 +15,10 @@ import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { AdminCloseIcon, AdminMeatballIcon } from '@/assets/icons/admin';
 import { ModalIconButton } from '@/components/admin';
 import type { Schedule } from '@/types/admin/schedule';
-import { useUpdateSchedule } from '@/hooks/queries/admin/useAdminScheduleQueries';
+import {
+  useAdminScheduleDetail,
+  useUpdateSchedule,
+} from '@/hooks/queries/admin/useAdminScheduleQueries';
 import {
   isFormChanged,
   isScheduleContentValid,
@@ -36,7 +40,80 @@ interface EditScheduleModalProps {
 }
 
 function EditScheduleModal({ open, onOpenChange, schedule, onDelete }: EditScheduleModalProps) {
-  const initialForm = toInitialScheduleForm(schedule);
+  const hasChangesRef = useRef(false);
+  const requestCloseRef = useRef<(() => void) | null>(null);
+
+  const handleClose = () => onOpenChange(false);
+
+  return (
+    <Dialog
+      open={open}
+      onOpenChange={(nextOpen) => {
+        if (nextOpen) return;
+        if (requestCloseRef.current) requestCloseRef.current();
+        else handleClose();
+      }}
+    >
+      <DialogContent
+        className="bg-background flex w-215 max-w-215 flex-col gap-0 overflow-hidden rounded-lg p-0"
+        showCloseButton={false}
+        onPointerDownOutside={(e) => {
+          if (hasChangesRef.current) e.preventDefault();
+        }}
+      >
+        <Suspense fallback={<EditScheduleModalLoading onClose={handleClose} />}>
+          <EditScheduleModalContent
+            scheduleId={schedule.id}
+            onClose={handleClose}
+            onDelete={onDelete}
+            hasChangesRef={hasChangesRef}
+            requestCloseRef={requestCloseRef}
+          />
+        </Suspense>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+function EditScheduleModalLoading({ onClose }: { onClose: () => void }) {
+  return (
+    <>
+      <div className="flex items-start justify-between px-700 pt-700">
+        <div className="flex h-8 items-end">
+          <span className="typo-button2 text-text-strong border-brand-primary border-b-2 px-100 pb-200">
+            일반 일정
+          </span>
+        </div>
+        <ModalIconButton icon={AdminCloseIcon} label="닫기" onClick={onClose} />
+      </div>
+      <div className="flex min-h-150 flex-col px-700 pb-700">
+        <h2 className="typo-h3 text-text-normal py-400">일반 일정 수정</h2>
+        <div className="flex flex-1 items-center justify-center">
+          <p className="typo-body2 text-text-alternative">불러오는 중...</p>
+        </div>
+      </div>
+    </>
+  );
+}
+
+interface EditScheduleModalContentProps {
+  scheduleId: number;
+  onClose: () => void;
+  onDelete?: (schedule: Schedule) => void;
+  hasChangesRef: RefObject<boolean>;
+  requestCloseRef: RefObject<(() => void) | null>;
+}
+
+function EditScheduleModalContent({
+  scheduleId,
+  onClose,
+  onDelete,
+  hasChangesRef,
+  requestCloseRef,
+}: EditScheduleModalContentProps) {
+  const { data: detail } = useAdminScheduleDetail(scheduleId);
+
+  const [initialForm] = useState<ScheduleFormState>(() => toInitialScheduleForm(detail));
   const [form, setForm] = useState<ScheduleFormState>(initialForm);
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const [discardSource, setDiscardSource] = useState<'close' | 'cancel' | null>(null);
@@ -55,21 +132,28 @@ function EditScheduleModal({ open, onOpenChange, schedule, onDelete }: EditSched
     setForm((prev) => ({ ...prev, ...patch }));
   };
 
-  const handleClose = () => onOpenChange(false);
-
   const handleTryClose = (source: 'close' | 'cancel') => {
-    if (hasChanges) {
-      setDiscardSource(source);
-    } else {
-      handleClose();
-    }
+    if (hasChanges) setDiscardSource(source);
+    else onClose();
   };
+
+  useEffect(() => {
+    hasChangesRef.current = hasChanges;
+    requestCloseRef.current = () => {
+      if (hasChanges) setDiscardSource('close');
+      else onClose();
+    };
+    return () => {
+      hasChangesRef.current = false;
+      requestCloseRef.current = null;
+    };
+  }, [hasChanges, hasChangesRef, onClose, requestCloseRef]);
 
   const handleSubmit = () => {
     if (!isValid) return;
     mutate(
       {
-        eventId: schedule.id,
+        eventId: scheduleId,
         body: {
           title: form.title,
           content: form.content,
@@ -78,19 +162,19 @@ function EditScheduleModal({ open, onOpenChange, schedule, onDelete }: EditSched
           end: `${form.endDate}T${form.endTime}:00`,
         },
       },
-      { onSuccess: handleClose },
+      { onSuccess: onClose },
     );
   };
 
   const handleDeleteConfirm = () => {
     setDeleteConfirmOpen(false);
-    handleClose();
-    onDelete?.(schedule);
+    onClose();
+    onDelete?.(detail);
   };
 
   const handleDiscardConfirm = () => {
     setDiscardSource(null);
-    handleClose();
+    onClose();
   };
 
   const closeDiscardAlert = (source: 'close' | 'cancel') => (next: boolean) => {
@@ -99,87 +183,72 @@ function EditScheduleModal({ open, onOpenChange, schedule, onDelete }: EditSched
 
   return (
     <>
-      <Dialog
-        open={open}
-        onOpenChange={(nextOpen) => {
-          if (!nextOpen) handleTryClose('close');
-        }}
-      >
-        <DialogContent
-          className="bg-background flex w-215 max-w-215 flex-col gap-0 overflow-hidden rounded-lg p-0"
-          showCloseButton={false}
-          onPointerDownOutside={(e) => {
-            if (hasChanges) e.preventDefault();
-          }}
-        >
-          {/* Header */}
-          <div className="flex items-start justify-between px-700 pt-700">
-            <div className="flex h-8 items-end">
-              <span className="typo-button2 text-text-strong border-brand-primary border-b-2 px-100 pb-200">
-                일반 일정
-              </span>
-            </div>
-            <div className="flex items-center gap-200">
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <ModalIconButton icon={AdminMeatballIcon} label="메뉴" />
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  <DropdownMenuItem destructive onSelect={() => setDeleteConfirmOpen(true)}>
-                    일반 일정 삭제
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+      {/* Header */}
+      <div className="flex items-start justify-between px-700 pt-700">
+        <div className="flex h-8 items-end">
+          <span className="typo-button2 text-text-strong border-brand-primary border-b-2 px-100 pb-200">
+            일반 일정
+          </span>
+        </div>
+        <div className="flex items-center gap-200">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <ModalIconButton icon={AdminMeatballIcon} label="메뉴" />
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem destructive onSelect={() => setDeleteConfirmOpen(true)}>
+                일반 일정 삭제
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
 
-              <DiscardConfirmArea
-                open={discardSource === 'close'}
-                onOpenChange={closeDiscardAlert('close')}
-                onConfirm={handleDiscardConfirm}
-                placement="below-right"
-              >
-                <ModalIconButton
-                  icon={AdminCloseIcon}
-                  label="닫기"
-                  onClick={() => handleTryClose('close')}
-                />
-              </DiscardConfirmArea>
-            </div>
-          </div>
-
-          {/* Body */}
-          <div className="scrollbar-custom max-h-175 overflow-y-auto px-700">
-            <h2 className="typo-h3 text-text-normal py-400">일반 일정 수정</h2>
-            <ScheduleFormBody
-              form={form}
-              onFormChange={updateForm}
-              titleLabel="일정 제목"
-              titlePlaceholder="예 : 중간고사 기간"
+          <DiscardConfirmArea
+            open={discardSource === 'close'}
+            onOpenChange={closeDiscardAlert('close')}
+            onConfirm={handleDiscardConfirm}
+            placement="below-right"
+          >
+            <ModalIconButton
+              icon={AdminCloseIcon}
+              label="닫기"
+              onClick={() => handleTryClose('close')}
             />
-          </div>
+          </DiscardConfirmArea>
+        </div>
+      </div>
 
-          {/* Footer */}
-          <div className="bg-container-neutral flex items-center justify-end gap-200 px-400 pt-400 pb-500">
-            <DiscardConfirmArea
-              open={discardSource === 'cancel'}
-              onOpenChange={closeDiscardAlert('cancel')}
-              onConfirm={handleDiscardConfirm}
-              placement="above-right"
-            >
-              <Button variant="secondary" size="lg" onClick={() => handleTryClose('cancel')}>
-                취소
-              </Button>
-            </DiscardConfirmArea>
-            <Button
-              variant="primary"
-              size="lg"
-              disabled={!isValid || isPending}
-              onClick={handleSubmit}
-            >
-              저장
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
+      {/* Body */}
+      <div className="scrollbar-custom max-h-175 overflow-y-auto px-700">
+        <h2 className="typo-h3 text-text-normal py-400">일반 일정 수정</h2>
+        <ScheduleFormBody
+          form={form}
+          onFormChange={updateForm}
+          titleLabel="일정 제목"
+          titlePlaceholder="예 : 중간고사 기간"
+        />
+      </div>
+
+      {/* Footer */}
+      <div className="bg-container-neutral flex items-center justify-end gap-200 px-400 pt-400 pb-500">
+        <DiscardConfirmArea
+          open={discardSource === 'cancel'}
+          onOpenChange={closeDiscardAlert('cancel')}
+          onConfirm={handleDiscardConfirm}
+          placement="above-right"
+        >
+          <Button variant="secondary" size="lg" onClick={() => handleTryClose('cancel')}>
+            취소
+          </Button>
+        </DiscardConfirmArea>
+        <Button
+          variant="primary"
+          size="lg"
+          disabled={!isValid || isPending}
+          onClick={handleSubmit}
+        >
+          저장
+        </Button>
+      </div>
 
       {/* 삭제 확인 */}
       <CustomAlertDialog

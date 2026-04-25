@@ -1,4 +1,9 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import {
+  useMutation,
+  useQuery,
+  useQueryClient,
+  useSuspenseQuery,
+} from '@tanstack/react-query';
 import { isAxiosError } from 'axios';
 
 import { SCHEDULE_ERROR_MESSAGE } from '@/constants/admin/schedule.constants';
@@ -28,6 +33,16 @@ export function useAdminMonthlySchedules(year: number, month: number) {
       return res.data.data;
     },
     enabled: !!clubId,
+  });
+}
+
+export function useAdminScheduleDetail(eventId: number) {
+  const clubId = useClubId();
+
+  return useSuspenseQuery({
+    queryKey: ['admin', 'schedule', clubId, eventId],
+    queryFn: () => adminScheduleApi.getEventDetail(clubId!, eventId).then((res) => res.data.data),
+    staleTime: 5 * 60 * 1000,
   });
 }
 

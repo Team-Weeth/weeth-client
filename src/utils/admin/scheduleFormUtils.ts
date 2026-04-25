@@ -1,4 +1,4 @@
-import type { Schedule } from '@/types/admin/schedule';
+import type { ScheduleDetail } from '@/types/admin/schedule';
 import type { AdminSession, AdminSessionGroup } from '@/types/admin/session';
 
 import type { ScheduleFormState } from '../../components/admin/schedule/modal/types';
@@ -50,15 +50,15 @@ export function toInitialSessionForm(target: AdminSession | AdminSessionGroup): 
   };
 }
 
-export function toInitialScheduleForm(schedule: Schedule): ScheduleFormState {
+export function toInitialScheduleForm(detail: ScheduleDetail): ScheduleFormState {
   return {
-    title: schedule.title,
-    startDate: schedule.start.slice(0, 10),
-    startTime: schedule.start.slice(11, 16),
-    endDate: schedule.end.slice(0, 10),
-    endTime: schedule.end.slice(11, 16),
-    location: schedule.location,
-    content: '',
+    title: detail.title,
+    startDate: detail.start.slice(0, 10),
+    startTime: detail.start.slice(11, 16),
+    endDate: detail.end.slice(0, 10),
+    endTime: detail.end.slice(11, 16),
+    location: detail.location,
+    content: detail.content,
   };
 }
 

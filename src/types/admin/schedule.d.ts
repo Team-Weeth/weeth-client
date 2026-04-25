@@ -10,6 +10,13 @@ export interface Schedule {
   cardinal: number;
 }
 
+export interface ScheduleDetail extends Schedule {
+  content: string;
+  name: string;
+  createdAt: string;
+  modifiedAt: string;
+}
+
 export interface CreateEventBody {
   title: string;
   content: string;
