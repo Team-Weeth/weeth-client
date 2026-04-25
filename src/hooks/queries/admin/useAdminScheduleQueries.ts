@@ -6,6 +6,7 @@ import { adminScheduleApi } from '@/lib/apis/adminSchedule';
 import { useClubId } from '@/stores';
 import { toastError } from '@/stores/useToastStore';
 import type { CreateEventBody, UpdateEventBody } from '@/types/admin/schedule';
+import { MutationCallbacks } from '@/types';
 
 function toMonthRange(year: number, month: number) {
   const pad = (n: number) => String(n).padStart(2, '0');
@@ -63,14 +64,17 @@ export function useUpdateSchedule() {
   });
 }
 
-export function useDeleteSchedule() {
+export function useDeleteSchedule(callback?: MutationCallbacks) {
   const clubId = useClubId();
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: (eventId: number) => adminScheduleApi.deleteEvent(clubId!, eventId),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin', 'schedules'] });
+      if (callback?.onSuccess) {
+        callback.onSuccess();
+        queryClient.invalidateQueries({ queryKey: ['admin', 'schedules'] });
+      }
     },
     onError: (error) => {
       const code = isAxiosError(error) ? error.response?.data?.code : undefined;

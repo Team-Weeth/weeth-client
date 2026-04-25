@@ -13,7 +13,7 @@ import { SessionTabContent } from '@/components/admin/schedule/session/SessionTa
 import { CreateScheduleModal } from '@/components/admin/schedule/modal/CreateScheduleModal';
 import { EditScheduleModal } from '@/components/admin/schedule/modal/EditScheduleModal';
 import { EditSessionModal } from '@/components/admin/schedule/modal/EditSessionModal';
-import { useCardinalSelector } from '@/hooks';
+import { useCardinalSelector, useMonthNavigator } from '@/hooks';
 import {
   useAdminMonthlySchedules,
   useDeleteSchedule,
@@ -25,8 +25,8 @@ type ScheduleTab = 'all' | 'session';
 function SchedulePageContent() {
   const { cardinals, selectedCardinalId, setSelectedCardinalId, activeCardinal } =
     useCardinalSelector({ autoSelectLatest: true });
-  const [currentYear, setCurrentYear] = useState(() => new Date().getFullYear());
-  const [currentMonth, setCurrentMonth] = useState(() => new Date().getMonth() + 1);
+  const { year: currentYear, month: currentMonth, prev: handlePrevMonth, next: handleNextMonth } =
+    useMonthNavigator();
   const [searchValue, setSearchValue] = useState('');
   const [activeTab, setActiveTab] = useState<ScheduleTab>('all');
   const [createModalOpen, setCreateModalOpen] = useState(false);
@@ -66,26 +66,11 @@ function SchedulePageContent() {
     (a, b) => new Date(a.start).getTime() - new Date(b.start).getTime(),
   );
 
-  const handlePrevMonth = () => {
-    if (currentMonth === 1) {
-      setCurrentYear((y) => y - 1);
-      setCurrentMonth(12);
-    } else {
-      setCurrentMonth((m) => m - 1);
-    }
-  };
-
-  const handleNextMonth = () => {
-    if (currentMonth === 12) {
-      setCurrentYear((y) => y + 1);
-      setCurrentMonth(1);
-    } else {
-      setCurrentMonth((m) => m + 1);
-    }
-  };
-
   const handleDelete = (schedule: Schedule) => {
-    deleteSchedule(schedule.id);
+    deleteSchedule(schedule.id, {
+      onSuccess: () => setEditTarget(null),
+      // onError 처리도 토스트 유틸과 연결하는 것을 권장합니다.
+    });
   };
 
   return (
