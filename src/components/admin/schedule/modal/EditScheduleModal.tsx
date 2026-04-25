@@ -240,12 +240,7 @@ function EditScheduleModalContent({
             취소
           </Button>
         </DiscardConfirmArea>
-        <Button
-          variant="primary"
-          size="lg"
-          disabled={!isValid || isPending}
-          onClick={handleSubmit}
-        >
+        <Button variant="primary" size="lg" disabled={!isValid || isPending} onClick={handleSubmit}>
           저장
         </Button>
       </div>

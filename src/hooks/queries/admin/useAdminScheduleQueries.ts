@@ -1,9 +1,4 @@
-import {
-  useMutation,
-  useQuery,
-  useQueryClient,
-  useSuspenseQuery,
-} from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
 import { isAxiosError } from 'axios';
 
 import { SCHEDULE_ERROR_MESSAGE } from '@/constants/admin/schedule.constants';
