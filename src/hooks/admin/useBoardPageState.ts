@@ -1,8 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { arrayMove } from '@dnd-kit/sortable';
-import type { DragEndEvent } from '@dnd-kit/core';
+import type { DragEndEvent, DragStartEvent } from '@dnd-kit/core';
 
 import type { Board } from '@/types/admin/board';
 import type { BoardFormData } from '@/components/admin/board/modal/constants';
@@ -19,6 +19,7 @@ interface UseBoardPageStateParams {
 function useBoardPageState({ initialBoards, initialTrashedBoards, onReorder }: UseBoardPageStateParams) {
   const [boards, setBoards] = useState<Board[]>(initialBoards);
   const [trashedBoards, setTrashedBoards] = useState<TrashedBoard[]>(initialTrashedBoards);
+  const reorderTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const updateBoard = (boardId: number, patch: Partial<Board>) => {
     setBoards((prev) => prev.map((b) => (b.boardId === boardId ? { ...b, ...patch } : b)));
@@ -57,6 +58,10 @@ function useBoardPageState({ initialBoards, initialTrashedBoards, onReorder }: U
     setTrashedBoards((prev) => prev.filter((b) => b.boardId !== boardId));
   };
 
+  const handleDragStart = (_event: DragStartEvent) => {
+    if (reorderTimerRef.current) clearTimeout(reorderTimerRef.current);
+  };
+
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
     if (!over || active.id === over.id) return;
@@ -80,7 +85,11 @@ function useBoardPageState({ initialBoards, initialTrashedBoards, onReorder }: U
     }
 
     setBoards(result);
-    onReorder?.(reorderedCustomIds);
+
+    if (reorderTimerRef.current) clearTimeout(reorderTimerRef.current);
+    reorderTimerRef.current = setTimeout(() => {
+      onReorder?.(reorderedCustomIds);
+    }, 500);
   };
 
   return {
@@ -91,6 +100,7 @@ function useBoardPageState({ initialBoards, initialTrashedBoards, onReorder }: U
     moveBoardToTrash,
     restoreBoardFromTrash,
     permanentlyDeleteBoard,
+    handleDragStart,
     handleDragEnd,
   };
 }

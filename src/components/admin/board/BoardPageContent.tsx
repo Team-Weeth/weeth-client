@@ -69,6 +69,7 @@ function BoardPageInner({ initialBoards, initialTrashedBoards }: BoardPageInnerP
     moveBoardToTrash,
     restoreBoardFromTrash,
     permanentlyDeleteBoard,
+    handleDragStart,
     handleDragEnd,
   } = useBoardPageState({
     initialBoards,
@@ -215,6 +216,7 @@ function BoardPageInner({ initialBoards, initialTrashedBoards }: BoardPageInnerP
             <DndContext
               sensors={sensors}
               collisionDetection={closestCenter}
+              onDragStart={handleDragStart}
               onDragEnd={handleDragEnd}
             >
               <SortableContext
