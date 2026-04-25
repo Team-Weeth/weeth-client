@@ -42,6 +42,7 @@ import { toastError } from '@/stores/useToastStore';
 import type { Board } from '@/types/admin/board';
 import type { BoardFormData } from '@/components/admin/board/modal/constants';
 import { SortableBoardCard } from './SortableBoardCard';
+import { CardinalDropdown } from '../CardinalDropdown';
 
 const MAX_CUSTOM_BOARDS = 3;
 
@@ -139,28 +140,11 @@ function BoardPageInner({ initialBoards, initialTrashedBoards }: BoardPageInnerP
   return (
     <div className="flex min-w-0 flex-col gap-400 p-700">
       {/* Cardinal filter */}
-      <Card className="w-fit">
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <button
-              type="button"
-              className="border-line flex cursor-pointer items-center gap-700 rounded-sm border py-300 pr-300 pl-400"
-            >
-              <span className="typo-sub2 text-text-normal w-12 text-left">
-                {activeCardinal ? `${activeCardinal.cardinalNumber}기` : '기수'}
-              </span>
-              <Image src={ArrowDownIcon} alt="기수 선택" width={24} height={24} />
-            </button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="start">
-            {cardinals.map((c) => (
-              <DropdownMenuItem key={c.id} onSelect={() => setSelectedCardinalId(c.id)}>
-                {c.cardinalNumber}기
-              </DropdownMenuItem>
-            ))}
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </Card>
+      <CardinalDropdown
+        cardinals={cardinals}
+        activeCardinal={activeCardinal}
+        onSelect={setSelectedCardinalId}
+      />
 
       {/* Toolbar: search + trash + create */}
       <BoardToolbar
@@ -186,7 +170,9 @@ function BoardPageInner({ initialBoards, initialTrashedBoards }: BoardPageInnerP
                 <BoardCard
                   board={board}
                   draggable={false}
-                  onToggleComments={(next) => updateLocalBoard(board.boardId, { commentEnabled: next })}
+                  onToggleComments={(next) =>
+                    updateLocalBoard(board.boardId, { commentEnabled: next })
+                  }
                 />
               </Fragment>
             ))}
@@ -206,7 +192,9 @@ function BoardPageInner({ initialBoards, initialTrashedBoards }: BoardPageInnerP
                   key={board.boardId}
                   board={board}
                   draggable={false}
-                  onToggleComments={(next) => updateLocalBoard(board.boardId, { commentEnabled: next })}
+                  onToggleComments={(next) =>
+                    updateLocalBoard(board.boardId, { commentEnabled: next })
+                  }
                   onEdit={() => setEditingBoardId(board.boardId)}
                   onDelete={() => moveBoardToTrash(board)}
                 />
