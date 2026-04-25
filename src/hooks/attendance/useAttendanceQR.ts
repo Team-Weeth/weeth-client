@@ -1,18 +1,12 @@
 import { useEffect, useRef } from 'react';
 import QRCodeStyling from 'qr-code-styling';
 
-import { useRemainingTime } from '@/hooks/useRemainingTime';
-import { useQRCode } from '@/hooks/useQRCode';
+import { useQRCode } from '@/hooks/attendance/useQRCode';
 
 function useAttendanceQR(clubId: string | null, sessionId: number) {
-  const { data: qrData, isLoading, refetch } = useQRCode(clubId, sessionId);
+  const { data: qrData, isLoading } = useQRCode(clubId, sessionId);
   const qrRef = useRef<HTMLDivElement>(null);
   const qrCodeRef = useRef<QRCodeStyling | null>(null);
-  const { minutes, seconds, isExpired } = useRemainingTime(qrData?.expiredAt ?? '');
-
-  useEffect(() => {
-    if (isExpired && qrData) refetch();
-  }, [isExpired, qrData, refetch]);
 
   useEffect(() => {
     if (!qrData || !qrRef.current) return;
@@ -41,7 +35,7 @@ function useAttendanceQR(clubId: string | null, sessionId: number) {
     }
   }, [qrData]);
 
-  return { qrRef, qrData, isLoading, minutes, seconds, isExpired };
+  return { qrRef, qrData, isLoading };
 }
 
 export { useAttendanceQR };
