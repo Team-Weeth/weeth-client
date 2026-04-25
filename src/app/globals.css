@@ -128,6 +128,7 @@
   --sub2-weight: var(--font-weight-black);
   --sub3-size: 16px;
   --sub3-line-height: 20px;
+  --sub3-weight: var(--font-weight-semibold);
   --body1-size: 16px;
   --body1-line-height: 24px;
   --body1-weight: 470;
@@ -212,7 +213,7 @@
   --sub2-size: 14px;
   --sub2-line-height: 18px;
   --sub3-size: 14px;
-  --sub3-weight: var(--font-weight-semibold);
+  --font-weight: var(--sub3-weight);
   --sub3-line-height: 18px;
   --body1-size: 14px;
   --body1-line-height: 22px;
