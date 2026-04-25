@@ -22,12 +22,8 @@ import { BoardCard } from '@/components/admin/board/BoardCard';
 import { BoardToolbar } from '@/components/admin/board/BoardToolbar';
 import { CreateBoardModal } from '@/components/admin/board/modal/CreateBoardModal';
 import { EditBoardModal } from '@/components/admin/board/modal/EditBoardModal';
-import {
-  TrashBoardModal,
-  type TrashedBoard,
-} from '@/components/admin/board/modal/TrashBoardModal';
+import { TrashBoardModal, type TrashedBoard } from '@/components/admin/board/modal/TrashBoardModal';
 import { useBoardDragReorder } from '@/hooks/admin';
-import { useCardinals } from '@/hooks/queries';
 import { useAdminBoardsQuery } from '@/hooks/queries/admin/useAdminBoardsQuery';
 import { useCreateBoardMutation } from '@/hooks/queries/admin/useCreateBoardMutation';
 import { useUpdateBoardMutation } from '@/hooks/queries/admin/useUpdateBoardMutation';
@@ -42,7 +38,6 @@ import { MAX_CUSTOM_BOARDS } from '@/constants/admin/board.constants';
 import type { Board } from '@/types/admin/board';
 import type { BoardFormData } from '@/components/admin/board/modal/constants';
 import { SortableBoardCard } from './SortableBoardCard';
-import { CardinalDropdown } from '../CardinalDropdown';
 
 interface BoardListCache {
   boards: Board[];
@@ -53,9 +48,6 @@ function BoardPageContent() {
   const clubId = useClubId();
   const queryClient = useQueryClient();
   const { data, isLoading } = useAdminBoardsQuery();
-  const { data: cardinals = [] } = useCardinals();
-
-  const [selectedCardinalId, setSelectedCardinalId] = useState<number | null>(null);
   const [searchValue, setSearchValue] = useState('');
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [createNameError, setCreateNameError] = useState<string | null>(null);
@@ -107,6 +99,10 @@ function BoardPageContent() {
     },
   });
 
+  const { mutate: toggleComment } = useUpdateBoardMutation({
+    onError: (err) => toastError(getApiErrorMessage(err)),
+  });
+
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 4 } }),
     useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
@@ -133,10 +129,34 @@ function BoardPageContent() {
   };
 
   const handleToggleComments = (boardId: number, next: boolean) => {
+    const target = boards.find((b) => b.boardId === boardId);
+    if (!target) return;
+
     updateCache((prev) => ({
       ...prev,
       boards: prev.boards.map((b) => (b.boardId === boardId ? { ...b, commentEnabled: next } : b)),
     }));
+
+    toggleComment(
+      {
+        boardId,
+        body: {
+          name: target.name,
+          commentEnabled: next,
+          ...toApiPermission(target.visibility),
+        },
+      },
+      {
+        onError: () => {
+          updateCache((prev) => ({
+            ...prev,
+            boards: prev.boards.map((b) =>
+              b.boardId === boardId ? { ...b, commentEnabled: !next } : b,
+            ),
+          }));
+        },
+      },
+    );
   };
 
   const handleMoveToTrash = (board: Board) => {
@@ -172,10 +192,6 @@ function BoardPageContent() {
     }));
   };
 
-  const activeCardinal = selectedCardinalId
-    ? cardinals.find((c) => c.id === selectedCardinalId)
-    : undefined;
-
   const query = searchValue.trim().toLowerCase();
   const filteredBoards = query
     ? boards.filter((b) => b.name.toLowerCase().includes(query))
@@ -186,18 +202,11 @@ function BoardPageContent() {
   const totalCustomCount = boards.filter((b) => b.editable).length;
   const reachedLimit = totalCustomCount >= MAX_CUSTOM_BOARDS;
 
-  const editingBoard = editingBoardId !== null
-    ? boards.find((b) => b.boardId === editingBoardId) ?? null
-    : null;
+  const editingBoard =
+    editingBoardId !== null ? (boards.find((b) => b.boardId === editingBoardId) ?? null) : null;
 
   return (
     <div className="flex min-w-0 flex-col gap-400 p-700">
-      <CardinalDropdown
-        cardinals={cardinals}
-        activeCardinal={activeCardinal}
-        onSelect={setSelectedCardinalId}
-      />
-
       <BoardToolbar
         searchValue={searchValue}
         onSearchChange={setSearchValue}
