@@ -10,6 +10,7 @@ interface AttendanceData {
   start: string | null;
   end: string | null;
   location: string | null;
+  expiredAt: string | null;
 }
 
 type AttendanceResponse = ApiResponse<AttendanceData>;

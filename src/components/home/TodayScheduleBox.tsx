@@ -77,7 +77,6 @@ export function TodayScheduleBox() {
             onConfirm={handleCheckIn}
             title={data.title}
             start={data.start ?? ''}
-            endTime={data.end ?? ''}
             location={data.location ?? ''}
           />
         </div>

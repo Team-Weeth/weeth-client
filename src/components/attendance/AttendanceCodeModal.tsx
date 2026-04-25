@@ -13,6 +13,7 @@ import {
   Icon,
 } from '@/components/ui';
 import { InputOTP } from '@/components/attendance/InputOTP';
+import { useAttendanceSSE } from '@/hooks/attendance';
 import { useRemainingTime } from '@/hooks';
 import { formatModalDescription } from '@/lib/formatTime';
 
@@ -22,7 +23,6 @@ interface AttendanceCodeModalProps {
   onConfirm?: (code: string) => void;
   title: string;
   start: string;
-  endTime: string;
   location: string;
 }
 
@@ -32,11 +32,11 @@ function AttendanceCodeModal({
   onConfirm,
   title,
   start,
-  endTime,
   location,
 }: AttendanceCodeModalProps) {
   const [code, setCode] = useState('');
-  const { minutes, seconds, isExpired } = useRemainingTime(endTime);
+  const { expiredAt: sseExpiredAt } = useAttendanceSSE();
+  const { minutes, seconds, isExpired } = useRemainingTime(sseExpiredAt ?? '');
   const isComplete = code.length === 6;
   const description = formatModalDescription(start, location);
 

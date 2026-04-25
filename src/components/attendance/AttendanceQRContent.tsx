@@ -11,7 +11,8 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from '@/components/ui';
-import { useAttendanceQR } from '@/hooks/useAttendanceQR';
+import { useAttendanceSSE, useAttendanceQR } from '@/hooks/attendance';
+import { useRemainingTime } from '@/hooks/useRemainingTime';
 import { useClubId } from '@/stores/useClubStore';
 
 interface AttendanceQRContentProps {
@@ -21,10 +22,9 @@ interface AttendanceQRContentProps {
 function AttendanceQRContent({ sessionId }: AttendanceQRContentProps) {
   const { clubId: clubIdParam } = useParams<{ clubId: string }>();
   const clubId = useClubId();
-  const { qrRef, qrData, isLoading, minutes, seconds, isExpired } = useAttendanceQR(
-    clubId,
-    sessionId,
-  );
+  const { qrRef, qrData, isLoading } = useAttendanceQR(clubId, sessionId);
+  const { expiredAt: sseExpiredAt } = useAttendanceSSE();
+  const { minutes, seconds, isExpired } = useRemainingTime(sseExpiredAt ?? '');
 
   return (
     <div className="mx-auto flex w-full max-w-[1025px] flex-col gap-700 pt-600">

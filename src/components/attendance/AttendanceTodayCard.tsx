@@ -14,7 +14,6 @@ interface AttendanceTodayCardProps {
   title: string;
   description: string;
   start: string;
-  endTime: string;
   location: string;
   sessionId?: number | null;
   isAdmin?: boolean;
@@ -40,7 +39,6 @@ function AttendanceTodayCard({
   title,
   description,
   start,
-  endTime,
   location,
   sessionId,
   isAdmin = false,
@@ -85,7 +83,6 @@ function AttendanceTodayCard({
         onConfirm={(code) => onAttendanceComplete?.(code)}
         title={title}
         start={start}
-        endTime={endTime}
         location={location}
       />
     </>
