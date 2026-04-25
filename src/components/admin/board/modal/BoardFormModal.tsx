@@ -106,7 +106,7 @@ function BoardFormModal({
               maxLength={NAME_MAX}
               className={cn(
                 'bg-container-neutral typo-body1 placeholder:text-text-alternative text-text-normal h-12 w-full rounded-sm px-400 py-300 focus:outline-none',
-                nameError && 'border border-state-error',
+                nameError && 'border-state-error border',
               )}
             />
             <div className="flex h-8 items-center px-400">

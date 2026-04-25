@@ -12,7 +12,13 @@ interface CreateBoardModalProps {
   onNameChange?: () => void;
 }
 
-function CreateBoardModal({ open, onOpenChange, onSubmit, nameError, onNameChange }: CreateBoardModalProps) {
+function CreateBoardModal({
+  open,
+  onOpenChange,
+  onSubmit,
+  nameError,
+  onNameChange,
+}: CreateBoardModalProps) {
   return (
     <BoardFormModal
       open={open}
