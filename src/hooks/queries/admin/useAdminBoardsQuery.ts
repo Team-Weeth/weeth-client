@@ -1,36 +1,17 @@
 import { useQuery } from '@tanstack/react-query';
 
-import { adminBoardApi, type AdminBoardDto } from '@/lib/apis/adminBoard';
+import { adminBoardApi } from '@/lib/apis/adminBoard';
 import { useClubId } from '@/stores';
-import type { Board, BoardVisibility } from '@/types/admin/board';
+import { toBoard } from '@/utils/admin/boardMapper';
+import { TRASH_RETENTION_DAYS } from '@/constants/admin/board.constants';
 import type { TrashedBoard } from '@/components/admin/board/modal/TrashBoardModal';
-
-const TRASH_RETENTION_DAYS = 30;
-
-function mapVisibility(writePermission: string, isPrivate: boolean): BoardVisibility {
-  if (isPrivate) return 'PRIVATE';
-  if (writePermission === 'ADMIN') return 'ADMIN_ONLY';
-  return 'PUBLIC';
-}
-
-function toBoard(dto: AdminBoardDto): Board {
-  return {
-    boardId: dto.id,
-    name: dto.name,
-    description: '',
-    kind: dto.type,
-    visibility: mapVisibility(dto.writePermission, dto.isPrivate),
-    postCount: dto.postCount,
-    commentEnabled: dto.type === 'ALL' ? null : dto.commentEnabled,
-    editable: dto.type === 'GENERAL',
-  };
-}
+import { adminBoardQueryKeys } from './boardQueryKeys';
 
 export function useAdminBoardsQuery() {
   const clubId = useClubId();
 
   return useQuery({
-    queryKey: ['admin', 'boards', clubId],
+    queryKey: adminBoardQueryKeys.list(clubId),
     queryFn: async () => {
       const res = await adminBoardApi.getBoards(clubId!);
       const all = res.data.data;

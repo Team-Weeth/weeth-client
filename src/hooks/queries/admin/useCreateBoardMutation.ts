@@ -4,15 +4,19 @@ import type { AxiosError } from 'axios';
 import { adminBoardApi, type CreateBoardBody } from '@/lib/apis/adminBoard';
 import { useClubId } from '@/stores';
 import type { MutationCallbacks } from '@/types/common';
+import { adminBoardQueryKeys } from './boardQueryKeys';
 
 export function useCreateBoardMutation(callbacks?: MutationCallbacks<AxiosError>) {
   const clubId = useClubId();
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (body: CreateBoardBody) => adminBoardApi.createBoard(clubId!, body),
+    mutationFn: (body: CreateBoardBody) => {
+      if (!clubId) throw new Error('clubId is required');
+      return adminBoardApi.createBoard(clubId, body);
+    },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin', 'boards', clubId] });
+      queryClient.invalidateQueries({ queryKey: adminBoardQueryKeys.list(clubId) });
       callbacks?.onSuccess?.();
     },
     onError: callbacks?.onError,

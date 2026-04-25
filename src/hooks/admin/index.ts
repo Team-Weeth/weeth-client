@@ -1,2 +1,2 @@
 export { useFlattenedSessions, type FlattenedSession } from './useFlattenedSessions';
-export { useBoardPageState } from './useBoardPageState';
+export { useBoardDragReorder } from './useBoardDragReorder';

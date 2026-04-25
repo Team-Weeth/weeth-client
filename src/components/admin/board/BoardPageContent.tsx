@@ -1,7 +1,6 @@
 'use client';
 
 import { Fragment, useState } from 'react';
-import Image from 'next/image';
 import {
   DndContext,
   PointerSensor,
@@ -15,44 +14,47 @@ import {
   sortableKeyboardCoordinates,
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
+import { useQueryClient } from '@tanstack/react-query';
 
-import {
-  Card,
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-  Icon,
-} from '@/components/ui';
-import { ArrowDownIcon, InfoCircleIcon } from '@/assets/icons';
+import { Icon } from '@/components/ui';
+import { InfoCircleIcon } from '@/assets/icons';
 import { BoardCard } from '@/components/admin/board/BoardCard';
 import { BoardToolbar } from '@/components/admin/board/BoardToolbar';
 import { CreateBoardModal } from '@/components/admin/board/modal/CreateBoardModal';
 import { EditBoardModal } from '@/components/admin/board/modal/EditBoardModal';
-import { TrashBoardModal, type TrashedBoard } from '@/components/admin/board/modal/TrashBoardModal';
-import { useBoardPageState } from '@/hooks/admin';
+import {
+  TrashBoardModal,
+  type TrashedBoard,
+} from '@/components/admin/board/modal/TrashBoardModal';
+import { useBoardDragReorder } from '@/hooks/admin';
 import { useCardinals } from '@/hooks/queries';
 import { useAdminBoardsQuery } from '@/hooks/queries/admin/useAdminBoardsQuery';
 import { useCreateBoardMutation } from '@/hooks/queries/admin/useCreateBoardMutation';
 import { useUpdateBoardMutation } from '@/hooks/queries/admin/useUpdateBoardMutation';
 import { useDeleteBoardMutation } from '@/hooks/queries/admin/useDeleteBoardMutation';
 import { useUpdateBoardOrderMutation } from '@/hooks/queries/admin/useUpdateBoardOrderMutation';
+import { adminBoardQueryKeys } from '@/hooks/queries/admin/boardQueryKeys';
 import { ADMIN_BOARD_ERROR, getApiErrorCode, getApiErrorMessage } from '@/lib/apis/adminBoard';
+import { useClubId } from '@/stores';
 import { toastError } from '@/stores/useToastStore';
+import { toApiPermission } from '@/utils/admin/boardMapper';
+import { MAX_CUSTOM_BOARDS } from '@/constants/admin/board.constants';
 import type { Board } from '@/types/admin/board';
 import type { BoardFormData } from '@/components/admin/board/modal/constants';
 import { SortableBoardCard } from './SortableBoardCard';
 import { CardinalDropdown } from '../CardinalDropdown';
 
-const MAX_CUSTOM_BOARDS = 3;
-
-interface BoardPageInnerProps {
-  initialBoards: Board[];
-  initialTrashedBoards: TrashedBoard[];
+interface BoardListCache {
+  boards: Board[];
+  trashedBoards: TrashedBoard[];
 }
 
-function BoardPageInner({ initialBoards, initialTrashedBoards }: BoardPageInnerProps) {
+function BoardPageContent() {
+  const clubId = useClubId();
+  const queryClient = useQueryClient();
+  const { data, isLoading } = useAdminBoardsQuery();
   const { data: cardinals = [] } = useCardinals();
+
   const [selectedCardinalId, setSelectedCardinalId] = useState<number | null>(null);
   const [searchValue, setSearchValue] = useState('');
   const [createModalOpen, setCreateModalOpen] = useState(false);
@@ -61,22 +63,13 @@ function BoardPageInner({ initialBoards, initialTrashedBoards }: BoardPageInnerP
   const [editNameError, setEditNameError] = useState<string | null>(null);
   const [trashModalOpen, setTrashModalOpen] = useState(false);
 
-  const { mutate: updateBoardOrder } = useUpdateBoardOrderMutation();
+  const cacheKey = adminBoardQueryKeys.list(clubId);
+  const updateCache = (updater: (prev: BoardListCache) => BoardListCache) => {
+    queryClient.setQueryData<BoardListCache>(cacheKey, (prev) => (prev ? updater(prev) : prev));
+  };
 
-  const {
-    boards,
-    trashedBoards,
-    updateBoard: updateLocalBoard,
-    moveBoardToTrash,
-    restoreBoardFromTrash,
-    permanentlyDeleteBoard,
-    handleDragStart,
-    handleDragEnd,
-  } = useBoardPageState({
-    initialBoards,
-    initialTrashedBoards,
-    onReorder: updateBoardOrder,
-  });
+  const { mutate: updateBoardOrder } = useUpdateBoardOrderMutation();
+  const { handleDragStart, handleDragEnd } = useBoardDragReorder({ onReorder: updateBoardOrder });
 
   const { mutate: createBoard } = useCreateBoardMutation({
     onSuccess: () => setCreateModalOpen(false),
@@ -104,8 +97,30 @@ function BoardPageInner({ initialBoards, initialTrashedBoards }: BoardPageInnerP
 
   const { mutate: deleteBoard } = useDeleteBoardMutation({
     onSuccess: () => setEditingBoardId(null),
-    onError: (err) => toastError(getApiErrorMessage(err)),
+    onError: (err) => {
+      const code = getApiErrorCode(err);
+      if (code === ADMIN_BOARD_ERROR.BOARD_NOT_FOUND) {
+        toastError('이미 삭제된 게시판이에요.');
+      } else {
+        toastError(getApiErrorMessage(err));
+      }
+    },
   });
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 4 } }),
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
+  );
+
+  if (isLoading || !data) {
+    return (
+      <div className="flex min-w-0 flex-col gap-400 p-700">
+        <p className="typo-body2 text-text-alternative">불러오는 중...</p>
+      </div>
+    );
+  }
+
+  const { boards, trashedBoards } = data;
 
   const handleCreateBoard = (formData: BoardFormData) => {
     setCreateNameError(null);
@@ -113,9 +128,48 @@ function BoardPageInner({ initialBoards, initialTrashedBoards }: BoardPageInnerP
       name: formData.name,
       type: 'GENERAL',
       commentEnabled: formData.commentEnabled,
-      writePermission: formData.visibility === 'ADMIN_ONLY' ? 'ADMIN' : 'USER',
-      isPrivate: formData.visibility === 'PRIVATE',
+      ...toApiPermission(formData.visibility),
     });
+  };
+
+  const handleToggleComments = (boardId: number, next: boolean) => {
+    updateCache((prev) => ({
+      ...prev,
+      boards: prev.boards.map((b) => (b.boardId === boardId ? { ...b, commentEnabled: next } : b)),
+    }));
+  };
+
+  const handleMoveToTrash = (board: Board) => {
+    deleteBoard(board.boardId);
+  };
+
+  // TODO: 백엔드 복원/영구삭제 API 추가되면 mutation으로 교체
+  const handleRestoreFromTrash = (boardId: number) => {
+    updateCache((prev) => {
+      const trashed = prev.trashedBoards.find((b) => b.boardId === boardId);
+      if (!trashed) return prev;
+      const restored: Board = {
+        boardId: trashed.boardId,
+        name: trashed.name,
+        description: trashed.description,
+        kind: trashed.kind,
+        visibility: trashed.visibility,
+        postCount: trashed.postCount,
+        commentEnabled: trashed.commentEnabled,
+        editable: trashed.editable,
+      };
+      return {
+        boards: [...prev.boards, restored],
+        trashedBoards: prev.trashedBoards.filter((b) => b.boardId !== boardId),
+      };
+    });
+  };
+
+  const handlePermanentDelete = (boardId: number) => {
+    updateCache((prev) => ({
+      ...prev,
+      trashedBoards: prev.trashedBoards.filter((b) => b.boardId !== boardId),
+    }));
   };
 
   const activeCardinal = selectedCardinalId
@@ -132,21 +186,18 @@ function BoardPageInner({ initialBoards, initialTrashedBoards }: BoardPageInnerP
   const totalCustomCount = boards.filter((b) => b.editable).length;
   const reachedLimit = totalCustomCount >= MAX_CUSTOM_BOARDS;
 
-  const sensors = useSensors(
-    useSensor(PointerSensor, { activationConstraint: { distance: 4 } }),
-    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
-  );
+  const editingBoard = editingBoardId !== null
+    ? boards.find((b) => b.boardId === editingBoardId) ?? null
+    : null;
 
   return (
     <div className="flex min-w-0 flex-col gap-400 p-700">
-      {/* Cardinal filter */}
       <CardinalDropdown
         cardinals={cardinals}
         activeCardinal={activeCardinal}
         onSelect={setSelectedCardinalId}
       />
 
-      {/* Toolbar: search + trash + create */}
       <BoardToolbar
         searchValue={searchValue}
         onSearchChange={setSearchValue}
@@ -159,9 +210,7 @@ function BoardPageInner({ initialBoards, initialTrashedBoards }: BoardPageInnerP
         }
       />
 
-      {/* Board list */}
       <div className="flex flex-col gap-400">
-        {/* Fixed (system) boards */}
         {fixedBoards.length > 0 && (
           <div className="flex flex-col gap-400">
             {fixedBoards.map((board, index) => (
@@ -170,9 +219,7 @@ function BoardPageInner({ initialBoards, initialTrashedBoards }: BoardPageInnerP
                 <BoardCard
                   board={board}
                   draggable={false}
-                  onToggleComments={(next) =>
-                    updateLocalBoard(board.boardId, { commentEnabled: next })
-                  }
+                  onToggleComments={(next) => handleToggleComments(board.boardId, next)}
                 />
               </Fragment>
             ))}
@@ -183,7 +230,6 @@ function BoardPageInner({ initialBoards, initialTrashedBoards }: BoardPageInnerP
           <div className="border-line w-full border-t" />
         )}
 
-        {/* Custom boards */}
         {customBoards.length > 0 &&
           (query ? (
             <div className="flex flex-col gap-200">
@@ -192,11 +238,9 @@ function BoardPageInner({ initialBoards, initialTrashedBoards }: BoardPageInnerP
                   key={board.boardId}
                   board={board}
                   draggable={false}
-                  onToggleComments={(next) =>
-                    updateLocalBoard(board.boardId, { commentEnabled: next })
-                  }
+                  onToggleComments={(next) => handleToggleComments(board.boardId, next)}
                   onEdit={() => setEditingBoardId(board.boardId)}
-                  onDelete={() => moveBoardToTrash(board)}
+                  onDelete={() => handleMoveToTrash(board)}
                 />
               ))}
             </div>
@@ -216,11 +260,9 @@ function BoardPageInner({ initialBoards, initialTrashedBoards }: BoardPageInnerP
                     <SortableBoardCard
                       key={board.boardId}
                       board={board}
-                      onToggleComments={(next) =>
-                        updateLocalBoard(board.boardId, { commentEnabled: next })
-                      }
+                      onToggleComments={(next) => handleToggleComments(board.boardId, next)}
                       onEdit={() => setEditingBoardId(board.boardId)}
-                      onDelete={() => moveBoardToTrash(board)}
+                      onDelete={() => handleMoveToTrash(board)}
                     />
                   ))}
                 </div>
@@ -228,7 +270,6 @@ function BoardPageInner({ initialBoards, initialTrashedBoards }: BoardPageInnerP
             </DndContext>
           ))}
 
-        {/* Limit banner */}
         <div className="bg-container-neutral-alternative flex h-12 items-center gap-200 rounded-md p-300">
           <Icon src={InfoCircleIcon} size={20} className="text-icon-alternative" />
           <p className="typo-body2 text-text-alternative min-w-0 flex-1">
@@ -237,7 +278,6 @@ function BoardPageInner({ initialBoards, initialTrashedBoards }: BoardPageInnerP
         </div>
       </div>
 
-      {/* Create board modal */}
       <CreateBoardModal
         open={createModalOpen}
         onOpenChange={(open) => {
@@ -249,16 +289,14 @@ function BoardPageInner({ initialBoards, initialTrashedBoards }: BoardPageInnerP
         onNameChange={() => setCreateNameError(null)}
       />
 
-      {/* Trash board modal */}
       <TrashBoardModal
         open={trashModalOpen}
         onOpenChange={setTrashModalOpen}
         boards={trashedBoards}
-        onRestore={restoreBoardFromTrash}
-        onPermanentDelete={permanentlyDeleteBoard}
+        onRestore={handleRestoreFromTrash}
+        onPermanentDelete={handlePermanentDelete}
       />
 
-      {/* Edit board modal */}
       <EditBoardModal
         open={editingBoardId !== null}
         onOpenChange={(next) => {
@@ -267,47 +305,24 @@ function BoardPageInner({ initialBoards, initialTrashedBoards }: BoardPageInnerP
             setEditNameError(null);
           }
         }}
-        board={boards.find((b) => b.boardId === editingBoardId) ?? null}
-        onSubmit={(data) => {
+        board={editingBoard}
+        onSubmit={(formData) => {
           if (editingBoardId === null) return;
           setEditNameError(null);
           updateBoard({
             boardId: editingBoardId,
             body: {
-              name: data.name.trim(),
-              commentEnabled: data.commentEnabled,
-              writePermission: data.visibility === 'ADMIN_ONLY' ? 'ADMIN' : 'USER',
-              isPrivate: data.visibility === 'PRIVATE',
+              name: formData.name.trim(),
+              commentEnabled: formData.commentEnabled,
+              ...toApiPermission(formData.visibility),
             },
           });
         }}
-        onDelete={(board) => {
-          deleteBoard(board.boardId);
-        }}
+        onDelete={(board) => deleteBoard(board.boardId)}
         nameError={editNameError}
         onNameChange={() => setEditNameError(null)}
       />
     </div>
-  );
-}
-
-function BoardPageContent() {
-  const { data, isLoading, dataUpdatedAt } = useAdminBoardsQuery();
-
-  if (isLoading || !data) {
-    return (
-      <div className="flex min-w-0 flex-col gap-400 p-700">
-        <p className="typo-body2 text-text-alternative">불러오는 중...</p>
-      </div>
-    );
-  }
-
-  return (
-    <BoardPageInner
-      key={dataUpdatedAt}
-      initialBoards={data.boards}
-      initialTrashedBoards={data.trashedBoards}
-    />
   );
 }
 
