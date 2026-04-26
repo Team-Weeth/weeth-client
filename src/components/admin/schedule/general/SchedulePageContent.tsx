@@ -143,7 +143,12 @@ function SchedulePageContent() {
         </TabsContent>
 
         <TabsContent value="session" className="mt-400">
-          <SessionTabContent onCreateSession={() => openCreateModal('SESSION')} />
+          <SessionTabContent
+            onCreateSession={() => openCreateModal('SESSION')}
+            cardinalNumber={
+              selectedCardinalId === null ? null : (activeCardinal?.cardinalNumber ?? null)
+            }
+          />
         </TabsContent>
       </Tabs>
 

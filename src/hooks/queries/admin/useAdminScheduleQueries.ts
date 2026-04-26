@@ -31,6 +31,19 @@ export function useAdminMonthlySchedules(year: number, month: number) {
   });
 }
 
+export function useAdminSessionList(cardinal?: number | null) {
+  const clubId = useClubId();
+
+  return useQuery({
+    queryKey: ['admin', 'sessionList', clubId, cardinal ?? null],
+    queryFn: async () => {
+      const res = await adminScheduleApi.getSessionList(clubId!, cardinal ?? undefined);
+      return res.data.data;
+    },
+    enabled: !!clubId,
+  });
+}
+
 export function useAdminScheduleDetail(eventId: number) {
   const clubId = useClubId();
 

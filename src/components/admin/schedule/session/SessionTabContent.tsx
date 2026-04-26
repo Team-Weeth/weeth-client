@@ -7,7 +7,7 @@ import { Button, Icon } from '@/components/ui';
 import { AdminCalendarEditIcon } from '@/assets/icons/admin';
 import { SessionTable } from '@/components/admin/schedule/session/SessionTable';
 import { EditSessionModal } from '@/components/admin/schedule/modal/EditSessionModal';
-import { MOCK_SESSION_LIST } from '@/constants/admin/session.constants';
+import { useAdminSessionList } from '@/hooks/queries/admin';
 import type { AdminSession, AdminSessionGroup } from '@/types/admin/session';
 import SessionInfobanner from './SessionInfoBanner';
 
@@ -15,11 +15,17 @@ interface SessionTabContentProps {
   onCreateSession?: () => void;
   /** 출석 관리는 개별 세션(AdminSession) id 기반 동작 */
   onManageAttendance?: (session: AdminSession) => void;
+  /** 선택된 기수 (없으면 전체) */
+  cardinalNumber?: number | null;
 }
 
-function SessionTabContent({ onCreateSession, onManageAttendance }: SessionTabContentProps) {
-  // TODO: API 연결 시 useAdminSessionList() 같은 훅으로 교체
-  const { sessions } = MOCK_SESSION_LIST;
+function SessionTabContent({
+  onCreateSession,
+  onManageAttendance,
+  cardinalNumber,
+}: SessionTabContentProps) {
+  const { data } = useAdminSessionList(cardinalNumber);
+  const sessions = data?.sessions ?? [];
 
   const [editTarget, setEditTarget] = useState<AdminSession | AdminSessionGroup | null>(null);
 
