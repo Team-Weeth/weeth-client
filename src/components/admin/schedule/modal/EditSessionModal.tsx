@@ -1,6 +1,6 @@
 'use client';
 
-import { Suspense, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { RefObject } from 'react';
 
 import {
@@ -11,13 +11,14 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui';
 import { CustomAlertDialog } from '@/components/alert';
-import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { AdminCloseIcon, AdminMeatballIcon } from '@/assets/icons/admin';
 import { ModalIconButton } from '@/components/admin';
+import { useSessionMutations } from '@/hooks/admin';
 import { useAdminSessionDetail } from '@/hooks/queries/admin/useAdminScheduleQueries';
 import type {
   AdminSession,
   AdminSessionGroup,
+  SessionUpdateScope,
   UpdateSessionBody,
 } from '@/types/admin/session';
 import {
@@ -28,6 +29,7 @@ import {
 } from '@/utils/admin/scheduleFormUtils';
 
 import { DiscardConfirmArea } from './DiscardConfirmArea';
+import { EditModalShell } from './EditModalShell';
 import { ScheduleFormBody } from './ScheduleFormBody';
 import type { ScheduleFormState, SessionDeleteType, SessionSaveType } from './types';
 
@@ -35,9 +37,6 @@ interface EditSessionModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   target: AdminSession | AdminSessionGroup;
-  onDelete?: (type: SessionDeleteType) => void;
-  /** 비반복 세션은 type='this'로 호출됨. sessionId는 PATCH 대상 (그룹이면 대표 세션) */
-  onSave?: (sessionId: number, body: UpdateSessionBody, type: SessionSaveType) => void;
 }
 
 /** 그룹/단일 어느 쪽이 와도 PATCH 대상이 되는 sessionId를 결정 */
@@ -56,47 +55,36 @@ function toUpdateBody(form: ScheduleFormState): UpdateSessionBody {
   };
 }
 
-function EditSessionModal({ open, onOpenChange, target, onDelete, onSave }: EditSessionModalProps) {
+function EditSessionModal({ open, onOpenChange, target }: EditSessionModalProps) {
   const sessionId = resolveSessionId(target);
   const isRecurring = isSessionGroup(target);
+  const groupId = isSessionGroup(target) ? target.groupId : null;
   const hasChangesRef = useRef(false);
   const requestCloseRef = useRef<(() => void) | null>(null);
 
   const handleClose = () => onOpenChange(false);
 
   return (
-    <Dialog
+    <EditModalShell
       open={open}
-      onOpenChange={(nextOpen) => {
-        if (nextOpen) return;
-        if (requestCloseRef.current) requestCloseRef.current();
-        else handleClose();
-      }}
+      onOpenChange={onOpenChange}
+      hasChangesRef={hasChangesRef}
+      requestCloseRef={requestCloseRef}
+      fallback={<EditSessionModalLoading onClose={handleClose} />}
     >
-      <DialogContent
-        className="bg-background flex w-215 max-w-215 flex-col gap-0 overflow-hidden rounded-lg p-0"
-        showCloseButton={false}
-        onPointerDownOutside={(e) => {
-          if (hasChangesRef.current) e.preventDefault();
-        }}
-      >
-        {sessionId === null ? (
-          <EditSessionModalLoading onClose={handleClose} />
-        ) : (
-          <Suspense fallback={<EditSessionModalLoading onClose={handleClose} />}>
-            <EditSessionModalContent
-              sessionId={sessionId}
-              isRecurring={isRecurring}
-              onClose={handleClose}
-              onSave={onSave}
-              onDelete={onDelete}
-              hasChangesRef={hasChangesRef}
-              requestCloseRef={requestCloseRef}
-            />
-          </Suspense>
-        )}
-      </DialogContent>
-    </Dialog>
+      {sessionId === null ? (
+        <EditSessionModalLoading onClose={handleClose} />
+      ) : (
+        <EditSessionModalContent
+          sessionId={sessionId}
+          isRecurring={isRecurring}
+          groupId={groupId}
+          onClose={handleClose}
+          hasChangesRef={hasChangesRef}
+          requestCloseRef={requestCloseRef}
+        />
+      )}
+    </EditModalShell>
   );
 }
 
@@ -124,9 +112,9 @@ function EditSessionModalLoading({ onClose }: { onClose: () => void }) {
 interface EditSessionModalContentProps {
   sessionId: number;
   isRecurring: boolean;
+  /** 반복 세션일 때만 값이 있음 (그룹 전체 삭제용) */
+  groupId: number | null;
   onClose: () => void;
-  onSave?: (sessionId: number, body: UpdateSessionBody, type: SessionSaveType) => void;
-  onDelete?: (type: SessionDeleteType) => void;
   hasChangesRef: RefObject<boolean>;
   requestCloseRef: RefObject<(() => void) | null>;
 }
@@ -134,9 +122,8 @@ interface EditSessionModalContentProps {
 function EditSessionModalContent({
   sessionId,
   isRecurring,
+  groupId,
   onClose,
-  onSave,
-  onDelete,
   hasChangesRef,
   requestCloseRef,
 }: EditSessionModalContentProps) {
@@ -147,6 +134,9 @@ function EditSessionModalContent({
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const [saveConfirmOpen, setSaveConfirmOpen] = useState(false);
   const [discardSource, setDiscardSource] = useState<'close' | 'cancel' | null>(null);
+
+  const { submitUpdate, submitDeleteSession, submitDeleteGroup, forceConfirmDialog } =
+    useSessionMutations();
 
   const hasChanges = isFormChanged(form, initialForm);
   const isValid = isScheduleTitleValid(form.title);
@@ -172,26 +162,34 @@ function EditSessionModalContent({
     };
   }, [hasChanges, hasChangesRef, onClose, requestCloseRef]);
 
+  const runUpdate = (type: SessionSaveType) => {
+    const scope: SessionUpdateScope = type === 'all' ? 'THIS_AND_FUTURE' : 'THIS_ONLY';
+    submitUpdate(sessionId, toUpdateBody(form), scope, false, { onSuccess: onClose });
+  };
+
   const handleSubmit = () => {
     if (!isValid) return;
     if (isRecurring) {
       setSaveConfirmOpen(true);
     } else {
-      onSave?.(sessionId, toUpdateBody(form), 'this');
-      onClose();
+      runUpdate('this');
     }
   };
 
   const handleSaveConfirm = (type: SessionSaveType) => {
     setSaveConfirmOpen(false);
-    onClose();
-    onSave?.(sessionId, toUpdateBody(form), type);
+    runUpdate(type);
   };
 
   const handleDeleteConfirm = (type: SessionDeleteType) => {
     setDeleteConfirmOpen(false);
-    onClose();
-    onDelete?.(type);
+    if (isRecurring && type === 'all') {
+      // 그룹 전체 삭제
+      if (groupId !== null) submitDeleteGroup(groupId, false, { onSuccess: onClose });
+    } else {
+      // 단일 / 그룹의 대표 세션 단일 삭제
+      submitDeleteSession(sessionId, 'THIS_ONLY', false, { onSuccess: onClose });
+    }
   };
 
   const handleDiscardConfirm = () => {
@@ -303,6 +301,9 @@ function EditSessionModalContent({
           placement="center"
         />
       )}
+
+      {/* CLOSED 세션 포함 시 force=true 재요청 동의 (modal 위에 overlay) */}
+      {forceConfirmDialog}
     </>
   );
 }

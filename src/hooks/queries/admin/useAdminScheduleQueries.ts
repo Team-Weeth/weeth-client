@@ -16,11 +16,13 @@ import type {
 } from '@/types/admin/session';
 import { MutationCallbacks } from '@/types';
 
-/** PATCH /sessions/{sessionId} 응답이 "CLOSED 포함, force 필요" 에러인지 판별 */
-export function isSessionForceRequiredError(error: unknown): boolean {
+/** 세션 update/delete 응답이 "CLOSED 포함, force 필요" 에러인지 판별 */
+function isSessionForceRequiredError(error: unknown): boolean {
   if (!isAxiosError(error)) return false;
   return error.response?.data?.code === SESSION_UPDATE_FORCE_REQUIRED_CODE;
 }
+
+export { isSessionForceRequiredError };
 
 function toMonthRange(year: number, month: number) {
   const pad = (n: number) => String(n).padStart(2, '0');
@@ -132,6 +134,7 @@ export function useUpdateSession(callback?: MutationCallbacks) {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin', 'sessionList'] });
       queryClient.invalidateQueries({ queryKey: ['admin', 'sessions'] });
+      queryClient.invalidateQueries({ queryKey: ['admin', 'sessionDetail'] });
       queryClient.invalidateQueries({ queryKey: ['admin', 'schedules'] });
       callback?.onSuccess?.();
     },

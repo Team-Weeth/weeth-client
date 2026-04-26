@@ -17,7 +17,6 @@ import { useCardinalSelector, useMonthNavigator } from '@/hooks';
 import { useSessionMutations } from '@/hooks/admin';
 import {
   useAdminMonthlySchedules,
-  useCreateSession,
   useDeleteSchedule,
 } from '@/hooks/queries/admin/useAdminScheduleQueries';
 import type { Schedule, ScheduleType } from '@/types/admin/schedule';
@@ -46,8 +45,7 @@ function SchedulePageContent() {
 
   const { data: schedules = [] } = useAdminMonthlySchedules(currentYear, currentMonth);
   const { mutate: deleteSchedule } = useDeleteSchedule();
-  const { mutate: createSession } = useCreateSession();
-  const { submitUpdate, submitDeleteSession, forceConfirmDialog } = useSessionMutations();
+  const { submitCreate, submitDeleteSession, forceConfirmDialog } = useSessionMutations();
 
   // 기수 필터링
   const cardinalFiltered =
@@ -169,7 +167,7 @@ function SchedulePageContent() {
         cardinalNumber={activeCardinal?.cardinalNumber ?? null}
         activeTab={createModalTab}
         onActiveTabChange={setCreateModalTab}
-        onCreateSession={(body) => createSession(body)}
+        onCreateSession={(body) => submitCreate(body)}
       />
 
       {/* Edit schedule modal */}
@@ -185,7 +183,7 @@ function SchedulePageContent() {
         />
       )}
 
-      {/* Edit session modal */}
+      {/* Edit session modal — mutation은 모달이 직접 소유 */}
       {editTarget?.type === 'SESSION' && (
         <EditSessionModal
           key={editTarget.id}
@@ -201,11 +199,6 @@ function SchedulePageContent() {
             end: editTarget.end,
             status: 'SCHEDULED',
           }}
-          onSave={(sessionId, body) => {
-            // 월간 일정 카드의 SESSION 항목은 단일 세션이므로 항상 THIS_ONLY
-            submitUpdate(sessionId, body, 'THIS_ONLY');
-          }}
-          onDelete={() => handleDelete(editTarget)}
         />
       )}
 

@@ -3,18 +3,14 @@
 import { useState } from 'react';
 import Image from 'next/image';
 
-import { Button, Icon } from '@/components/ui';
+import { Button } from '@/components/ui';
 import { AdminCalendarEditIcon } from '@/assets/icons/admin';
 import { SessionTable } from '@/components/admin/schedule/session/SessionTable';
 import { EditSessionModal } from '@/components/admin/schedule/modal/EditSessionModal';
 import { useAdminSessionList } from '@/hooks/queries/admin';
-import { useSessionMutations } from '@/hooks/admin';
+import { toastError } from '@/stores/useToastStore';
 import { isSessionGroup } from '@/utils/admin/scheduleFormUtils';
-import type {
-  AdminSession,
-  AdminSessionGroup,
-  SessionUpdateScope,
-} from '@/types/admin/session';
+import type { AdminSession, AdminSessionGroup } from '@/types/admin/session';
 import SessionInfobanner from './SessionInfoBanner';
 
 interface SessionTabContentProps {
@@ -35,24 +31,13 @@ function SessionTabContent({
 
   const [editTarget, setEditTarget] = useState<AdminSession | AdminSessionGroup | null>(null);
 
-  const { submitUpdate, submitDeleteSession, submitDeleteGroup, forceConfirmDialog } =
-    useSessionMutations();
-
-  /** 모달 onDelete → 그룹/단일 + this/all 조합에 따라 적절한 API로 분배 */
-  const handleDelete = (target: AdminSession | AdminSessionGroup, type: 'this' | 'all') => {
-    if (isSessionGroup(target)) {
-      if (type === 'all') {
-        // 그룹 전체 삭제
-        submitDeleteGroup(target.groupId);
-      } else {
-        // 'this': 그룹의 대표 세션(첫 번째)만 단일 삭제
-        const sessionId = target.sessions[0]?.id;
-        if (sessionId !== undefined) submitDeleteSession(sessionId, 'THIS_ONLY');
-      }
-    } else {
-      // 단일 세션 (모달은 'this'만 노출)
-      submitDeleteSession(target.id, 'THIS_ONLY');
+  /** 그룹에 세션이 0개면 PATCH/DELETE 대상이 없으므로 모달 진입 차단 */
+  const handleOpenEdit = (target: AdminSession | AdminSessionGroup) => {
+    if (isSessionGroup(target) && target.sessions.length === 0) {
+      toastError('수정·삭제 가능한 세션이 없습니다.');
+      return;
     }
+    setEditTarget(target);
   };
 
   return (
@@ -76,12 +61,12 @@ function SessionTabContent({
           <SessionTable
             groups={sessions}
             onManageAttendance={onManageAttendance}
-            onMore={setEditTarget}
+            onMore={handleOpenEdit}
           />
         </div>
       </div>
 
-      {/* 세션 수정 모달 */}
+      {/* 세션 수정 모달 — mutation은 모달이 직접 소유 */}
       {editTarget && (
         <EditSessionModal
           key={'groupId' in editTarget ? editTarget.groupId : editTarget.id}
@@ -90,15 +75,8 @@ function SessionTabContent({
             if (!nextOpen) setEditTarget(null);
           }}
           target={editTarget}
-          onSave={(sessionId, body, type) => {
-            const scope: SessionUpdateScope = type === 'all' ? 'THIS_AND_FUTURE' : 'THIS_ONLY';
-            submitUpdate(sessionId, body, scope);
-          }}
-          onDelete={(type) => handleDelete(editTarget, type)}
         />
       )}
-
-      {forceConfirmDialog}
     </div>
   );
 }

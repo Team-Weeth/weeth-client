@@ -1,6 +1,6 @@
 'use client';
 
-import { Suspense, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { RefObject } from 'react';
 
 import {
@@ -11,7 +11,6 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui';
 import { CustomAlertDialog } from '@/components/alert';
-import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { AdminCloseIcon, AdminMeatballIcon } from '@/assets/icons/admin';
 import { ModalIconButton } from '@/components/admin';
 import type { Schedule } from '@/types/admin/schedule';
@@ -28,6 +27,7 @@ import {
 } from '@/utils/admin/scheduleFormUtils';
 
 import { DiscardConfirmArea } from './DiscardConfirmArea';
+import { EditModalShell } from './EditModalShell';
 import { ScheduleFormBody } from './ScheduleFormBody';
 import { isDateRangeValid } from './types';
 import type { ScheduleFormState } from './types';
@@ -46,32 +46,21 @@ function EditScheduleModal({ open, onOpenChange, schedule, onDelete }: EditSched
   const handleClose = () => onOpenChange(false);
 
   return (
-    <Dialog
+    <EditModalShell
       open={open}
-      onOpenChange={(nextOpen) => {
-        if (nextOpen) return;
-        if (requestCloseRef.current) requestCloseRef.current();
-        else handleClose();
-      }}
+      onOpenChange={onOpenChange}
+      hasChangesRef={hasChangesRef}
+      requestCloseRef={requestCloseRef}
+      fallback={<EditScheduleModalLoading onClose={handleClose} />}
     >
-      <DialogContent
-        className="bg-background flex w-215 max-w-215 flex-col gap-0 overflow-hidden rounded-lg p-0"
-        showCloseButton={false}
-        onPointerDownOutside={(e) => {
-          if (hasChangesRef.current) e.preventDefault();
-        }}
-      >
-        <Suspense fallback={<EditScheduleModalLoading onClose={handleClose} />}>
-          <EditScheduleModalContent
-            scheduleId={schedule.id}
-            onClose={handleClose}
-            onDelete={onDelete}
-            hasChangesRef={hasChangesRef}
-            requestCloseRef={requestCloseRef}
-          />
-        </Suspense>
-      </DialogContent>
-    </Dialog>
+      <EditScheduleModalContent
+        scheduleId={schedule.id}
+        onClose={handleClose}
+        onDelete={onDelete}
+        hasChangesRef={hasChangesRef}
+        requestCloseRef={requestCloseRef}
+      />
+    </EditModalShell>
   );
 }
 
