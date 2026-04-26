@@ -1,13 +1,26 @@
 import { useMutation, useQuery, useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
 import { isAxiosError } from 'axios';
 
-import { SCHEDULE_ERROR_MESSAGE } from '@/constants/admin/schedule.constants';
+import {
+  SCHEDULE_ERROR_MESSAGE,
+  SESSION_UPDATE_FORCE_REQUIRED_CODE,
+} from '@/constants/admin/schedule.constants';
 import { adminScheduleApi } from '@/lib/apis/adminSchedule';
 import { useClubId } from '@/stores';
 import { toastError } from '@/stores/useToastStore';
 import type { CreateEventBody, UpdateEventBody } from '@/types/admin/schedule';
-import type { CreateSessionBody } from '@/types/admin/session';
+import type {
+  CreateSessionBody,
+  SessionUpdateScope,
+  UpdateSessionBody,
+} from '@/types/admin/session';
 import { MutationCallbacks } from '@/types';
+
+/** PATCH /sessions/{sessionId} 응답이 "CLOSED 포함, force 필요" 에러인지 판별 */
+export function isSessionForceRequiredError(error: unknown): boolean {
+  if (!isAxiosError(error)) return false;
+  return error.response?.data?.code === SESSION_UPDATE_FORCE_REQUIRED_CODE;
+}
 
 function toMonthRange(year: number, month: number) {
   const pad = (n: number) => String(n).padStart(2, '0');
@@ -55,6 +68,17 @@ export function useAdminScheduleDetail(eventId: number) {
   });
 }
 
+export function useAdminSessionDetail(sessionId: number) {
+  const clubId = useClubId();
+
+  return useSuspenseQuery({
+    queryKey: ['admin', 'sessionDetail', clubId, sessionId],
+    queryFn: () =>
+      adminScheduleApi.getSessionDetail(clubId!, sessionId).then((res) => res.data.data),
+    staleTime: 60 * 1000,
+  });
+}
+
 export function useCreateSchedule() {
   const clubId = useClubId();
   const queryClient = useQueryClient();
@@ -84,6 +108,39 @@ export function useCreateSession(callback?: MutationCallbacks) {
       callback?.onSuccess?.();
     },
     onError: (error) => {
+      const code = isAxiosError(error) ? error.response?.data?.code : undefined;
+      toastError(code ? (SCHEDULE_ERROR_MESSAGE[code] ?? undefined) : undefined);
+      callback?.onError?.(error);
+    },
+  });
+}
+
+interface UpdateSessionVariables {
+  sessionId: number;
+  body: UpdateSessionBody;
+  scope?: SessionUpdateScope;
+  force?: boolean;
+}
+
+export function useUpdateSession(callback?: MutationCallbacks) {
+  const clubId = useClubId();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ sessionId, body, scope, force }: UpdateSessionVariables) =>
+      adminScheduleApi.updateSession(clubId!, sessionId, body, { scope, force }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin', 'sessionList'] });
+      queryClient.invalidateQueries({ queryKey: ['admin', 'sessions'] });
+      queryClient.invalidateQueries({ queryKey: ['admin', 'schedules'] });
+      callback?.onSuccess?.();
+    },
+    onError: (error) => {
+      // CLOSED 세션 포함 → force=true 재요청 필요한 케이스는 호출자(UI)가 처리
+      if (isSessionForceRequiredError(error)) {
+        callback?.onError?.(error);
+        return;
+      }
       const code = isAxiosError(error) ? error.response?.data?.code : undefined;
       toastError(code ? (SCHEDULE_ERROR_MESSAGE[code] ?? undefined) : undefined);
       callback?.onError?.(error);
