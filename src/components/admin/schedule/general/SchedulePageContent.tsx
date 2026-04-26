@@ -25,8 +25,12 @@ type ScheduleTab = 'all' | 'session';
 function SchedulePageContent() {
   const { cardinals, selectedCardinalId, setSelectedCardinalId, activeCardinal } =
     useCardinalSelector({ autoSelectLatest: true });
-  const { year: currentYear, month: currentMonth, prev: handlePrevMonth, next: handleNextMonth } =
-    useMonthNavigator();
+  const {
+    year: currentYear,
+    month: currentMonth,
+    prev: handlePrevMonth,
+    next: handleNextMonth,
+  } = useMonthNavigator();
   const [searchValue, setSearchValue] = useState('');
   const [activeTab, setActiveTab] = useState<ScheduleTab>('all');
   const [createModalOpen, setCreateModalOpen] = useState(false);
