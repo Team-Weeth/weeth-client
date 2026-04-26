@@ -16,6 +16,7 @@ import { EditSessionModal } from '@/components/admin/schedule/modal/EditSessionM
 import { useCardinalSelector, useMonthNavigator } from '@/hooks';
 import {
   useAdminMonthlySchedules,
+  useCreateSession,
   useDeleteSchedule,
 } from '@/hooks/queries/admin/useAdminScheduleQueries';
 import type { Schedule, ScheduleType } from '@/types/admin/schedule';
@@ -44,6 +45,7 @@ function SchedulePageContent() {
 
   const { data: schedules = [] } = useAdminMonthlySchedules(currentYear, currentMonth);
   const { mutate: deleteSchedule } = useDeleteSchedule();
+  const { mutate: createSession } = useCreateSession();
 
   // 기수 필터링
   const cardinalFiltered =
@@ -159,6 +161,7 @@ function SchedulePageContent() {
         cardinalNumber={activeCardinal?.cardinalNumber ?? null}
         activeTab={createModalTab}
         onActiveTabChange={setCreateModalTab}
+        onCreateSession={(body) => createSession(body)}
       />
 
       {/* Edit schedule modal */}

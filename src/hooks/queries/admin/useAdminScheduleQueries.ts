@@ -6,6 +6,7 @@ import { adminScheduleApi } from '@/lib/apis/adminSchedule';
 import { useClubId } from '@/stores';
 import { toastError } from '@/stores/useToastStore';
 import type { CreateEventBody, UpdateEventBody } from '@/types/admin/schedule';
+import type { CreateSessionBody } from '@/types/admin/session';
 import { MutationCallbacks } from '@/types';
 
 function toMonthRange(year: number, month: number) {
@@ -66,6 +67,26 @@ export function useCreateSchedule() {
     onError: (error) => {
       const code = isAxiosError(error) ? error.response?.data?.code : undefined;
       toastError(code ? (SCHEDULE_ERROR_MESSAGE[code] ?? undefined) : undefined);
+    },
+  });
+}
+
+export function useCreateSession(callback?: MutationCallbacks) {
+  const clubId = useClubId();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (body: CreateSessionBody) => adminScheduleApi.createSession(clubId!, body),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin', 'sessionList'] });
+      queryClient.invalidateQueries({ queryKey: ['admin', 'sessions'] });
+      queryClient.invalidateQueries({ queryKey: ['admin', 'schedules'] });
+      callback?.onSuccess?.();
+    },
+    onError: (error) => {
+      const code = isAxiosError(error) ? error.response?.data?.code : undefined;
+      toastError(code ? (SCHEDULE_ERROR_MESSAGE[code] ?? undefined) : undefined);
+      callback?.onError?.(error);
     },
   });
 }
