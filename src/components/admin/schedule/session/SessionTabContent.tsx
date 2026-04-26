@@ -4,20 +4,16 @@ import { useState } from 'react';
 import Image from 'next/image';
 
 import { Button, Icon } from '@/components/ui';
-import { CustomAlertDialog } from '@/components/alert';
 import { AdminCalendarEditIcon } from '@/assets/icons/admin';
 import { SessionTable } from '@/components/admin/schedule/session/SessionTable';
 import { EditSessionModal } from '@/components/admin/schedule/modal/EditSessionModal';
 import { useAdminSessionList } from '@/hooks/queries/admin';
-import {
-  isSessionForceRequiredError,
-  useUpdateSession,
-} from '@/hooks/queries/admin/useAdminScheduleQueries';
+import { useSessionMutations } from '@/hooks/admin';
+import { isSessionGroup } from '@/utils/admin/scheduleFormUtils';
 import type {
   AdminSession,
   AdminSessionGroup,
   SessionUpdateScope,
-  UpdateSessionBody,
 } from '@/types/admin/session';
 import SessionInfobanner from './SessionInfoBanner';
 
@@ -38,31 +34,25 @@ function SessionTabContent({
   const sessions = data?.sessions ?? [];
 
   const [editTarget, setEditTarget] = useState<AdminSession | AdminSessionGroup | null>(null);
-  /** scope=THIS_AND_FUTURE인데 CLOSED 세션이 끼어 force=true 재요청 동의가 필요할 때만 채워짐 */
-  const [forceConfirm, setForceConfirm] = useState<{
-    sessionId: number;
-    body: UpdateSessionBody;
-    scope: SessionUpdateScope;
-  } | null>(null);
 
-  const { mutate: updateSession } = useUpdateSession();
+  const { submitUpdate, submitDeleteSession, submitDeleteGroup, forceConfirmDialog } =
+    useSessionMutations();
 
-  const submitUpdate = (
-    sessionId: number,
-    body: UpdateSessionBody,
-    scope: SessionUpdateScope,
-    force: boolean,
-  ) => {
-    updateSession(
-      { sessionId, body, scope, force },
-      {
-        onError: (error) => {
-          if (!force && scope === 'THIS_AND_FUTURE' && isSessionForceRequiredError(error)) {
-            setForceConfirm({ sessionId, body, scope });
-          }
-        },
-      },
-    );
+  /** 모달 onDelete → 그룹/단일 + this/all 조합에 따라 적절한 API로 분배 */
+  const handleDelete = (target: AdminSession | AdminSessionGroup, type: 'this' | 'all') => {
+    if (isSessionGroup(target)) {
+      if (type === 'all') {
+        // 그룹 전체 삭제
+        submitDeleteGroup(target.groupId);
+      } else {
+        // 'this': 그룹의 대표 세션(첫 번째)만 단일 삭제
+        const sessionId = target.sessions[0]?.id;
+        if (sessionId !== undefined) submitDeleteSession(sessionId, 'THIS_ONLY');
+      }
+    } else {
+      // 단일 세션 (모달은 'this'만 노출)
+      submitDeleteSession(target.id, 'THIS_ONLY');
+    }
   };
 
   return (
@@ -102,34 +92,13 @@ function SessionTabContent({
           target={editTarget}
           onSave={(sessionId, body, type) => {
             const scope: SessionUpdateScope = type === 'all' ? 'THIS_AND_FUTURE' : 'THIS_ONLY';
-            submitUpdate(sessionId, body, scope, false);
+            submitUpdate(sessionId, body, scope);
           }}
-          onDelete={(_type) => {
-            // TODO: API 연동 시 type에 따라 'this'=단일 삭제, 'all'=이후 모두 삭제 호출
-            setEditTarget(null);
-          }}
+          onDelete={(type) => handleDelete(editTarget, type)}
         />
       )}
 
-      {/* CLOSED 세션 포함 시 force=true 재요청 동의 */}
-      <CustomAlertDialog
-        open={!!forceConfirm}
-        onOpenChange={(open) => {
-          if (!open) setForceConfirm(null);
-        }}
-        title="종료된 세션이 포함되어 있어요"
-        description={'이후 일정 중 이미 종료된 세션도 함께 수정할까요?'}
-        actionLabel="모두 수정"
-        cancelLabel="취소"
-        onAction={() => {
-          if (!forceConfirm) return;
-          const { sessionId, body, scope } = forceConfirm;
-          setForceConfirm(null);
-          submitUpdate(sessionId, body, scope, true);
-        }}
-        placement="center"
-        tone="primary"
-      />
+      {forceConfirmDialog}
     </div>
   );
 }

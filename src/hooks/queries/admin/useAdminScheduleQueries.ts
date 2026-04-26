@@ -148,6 +148,68 @@ export function useUpdateSession(callback?: MutationCallbacks) {
   });
 }
 
+interface DeleteSessionVariables {
+  sessionId: number;
+  scope?: SessionUpdateScope;
+  force?: boolean;
+}
+
+export function useDeleteSession(callback?: MutationCallbacks) {
+  const clubId = useClubId();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ sessionId, scope, force }: DeleteSessionVariables) =>
+      adminScheduleApi.deleteSession(clubId!, sessionId, { scope, force }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin', 'sessionList'] });
+      queryClient.invalidateQueries({ queryKey: ['admin', 'sessions'] });
+      queryClient.invalidateQueries({ queryKey: ['admin', 'schedules'] });
+      callback?.onSuccess?.();
+    },
+    onError: (error) => {
+      // CLOSED 포함 → force=true 재요청 필요한 케이스는 호출자(UI)가 처리
+      if (isSessionForceRequiredError(error)) {
+        callback?.onError?.(error);
+        return;
+      }
+      const code = isAxiosError(error) ? error.response?.data?.code : undefined;
+      toastError(code ? (SCHEDULE_ERROR_MESSAGE[code] ?? undefined) : undefined);
+      callback?.onError?.(error);
+    },
+  });
+}
+
+interface DeleteSessionGroupVariables {
+  groupId: number;
+  force?: boolean;
+}
+
+export function useDeleteSessionGroup(callback?: MutationCallbacks) {
+  const clubId = useClubId();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ groupId, force }: DeleteSessionGroupVariables) =>
+      adminScheduleApi.deleteSessionGroup(clubId!, groupId, { force }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin', 'sessionList'] });
+      queryClient.invalidateQueries({ queryKey: ['admin', 'sessions'] });
+      queryClient.invalidateQueries({ queryKey: ['admin', 'schedules'] });
+      callback?.onSuccess?.();
+    },
+    onError: (error) => {
+      if (isSessionForceRequiredError(error)) {
+        callback?.onError?.(error);
+        return;
+      }
+      const code = isAxiosError(error) ? error.response?.data?.code : undefined;
+      toastError(code ? (SCHEDULE_ERROR_MESSAGE[code] ?? undefined) : undefined);
+      callback?.onError?.(error);
+    },
+  });
+}
+
 export function useUpdateSchedule() {
   const clubId = useClubId();
   const queryClient = useQueryClient();

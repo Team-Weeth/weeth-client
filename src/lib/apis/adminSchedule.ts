@@ -40,6 +40,23 @@ export const adminScheduleApi = {
         force: options?.force ?? false,
       },
     }),
+  deleteSession: (
+    clubId: string,
+    sessionId: number,
+    options?: { scope?: SessionUpdateScope; force?: boolean },
+  ) =>
+    apiClient.delete<ApiResponse<null>>(`/admin/clubs/${clubId}/sessions/${sessionId}`, {
+      params: {
+        scope: options?.scope ?? 'THIS_ONLY',
+        force: options?.force ?? false,
+      },
+    }),
+  deleteSessionGroup: (clubId: string, groupId: number, options?: { force?: boolean }) =>
+    apiClient.delete<ApiResponse<null>>(`/admin/clubs/${clubId}/sessions/groups/${groupId}`, {
+      params: {
+        force: options?.force ?? false,
+      },
+    }),
   createEvent: (clubId: string, body: CreateEventBody) =>
     apiClient.post<ApiResponse<string>>(`/admin/clubs/${clubId}/events`, body),
   updateEvent: (clubId: string, eventId: number, body: UpdateEventBody) =>

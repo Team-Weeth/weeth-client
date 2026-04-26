@@ -14,11 +14,11 @@ import { CreateScheduleModal } from '@/components/admin/schedule/modal/CreateSch
 import { EditScheduleModal } from '@/components/admin/schedule/modal/EditScheduleModal';
 import { EditSessionModal } from '@/components/admin/schedule/modal/EditSessionModal';
 import { useCardinalSelector, useMonthNavigator } from '@/hooks';
+import { useSessionMutations } from '@/hooks/admin';
 import {
   useAdminMonthlySchedules,
   useCreateSession,
   useDeleteSchedule,
-  useUpdateSession,
 } from '@/hooks/queries/admin/useAdminScheduleQueries';
 import type { Schedule, ScheduleType } from '@/types/admin/schedule';
 
@@ -47,7 +47,7 @@ function SchedulePageContent() {
   const { data: schedules = [] } = useAdminMonthlySchedules(currentYear, currentMonth);
   const { mutate: deleteSchedule } = useDeleteSchedule();
   const { mutate: createSession } = useCreateSession();
-  const { mutate: updateSession } = useUpdateSession();
+  const { submitUpdate, submitDeleteSession, forceConfirmDialog } = useSessionMutations();
 
   // 기수 필터링
   const cardinalFiltered =
@@ -75,6 +75,12 @@ function SchedulePageContent() {
   );
 
   const handleDelete = (schedule: Schedule) => {
+    if (schedule.type === 'SESSION') {
+      // 월간 일정 카드의 SESSION은 단일 세션 삭제 (THIS_ONLY)
+      submitDeleteSession(schedule.id, 'THIS_ONLY');
+      setEditTarget(null);
+      return;
+    }
     deleteSchedule(schedule.id, {
       onSuccess: () => setEditTarget(null),
       // onError 처리도 토스트 유틸과 연결하는 것을 권장합니다.
@@ -197,11 +203,13 @@ function SchedulePageContent() {
           }}
           onSave={(sessionId, body) => {
             // 월간 일정 카드의 SESSION 항목은 단일 세션이므로 항상 THIS_ONLY
-            updateSession({ sessionId, body, scope: 'THIS_ONLY', force: false });
+            submitUpdate(sessionId, body, 'THIS_ONLY');
           }}
           onDelete={() => handleDelete(editTarget)}
         />
       )}
+
+      {forceConfirmDialog}
     </div>
   );
 }
