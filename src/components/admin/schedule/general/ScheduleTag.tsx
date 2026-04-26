@@ -3,7 +3,7 @@ import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@/lib/cn';
 import { Icon } from '@/components/ui';
 import { AdminCalendarIcon } from '@/assets/icons/admin';
-import { PinIcon } from '@/assets/icons';
+import { LocationIcon } from '@/assets/icons';
 
 const scheduleTagVariants = cva(
   'typo-caption1 inline-flex h-6 items-center gap-100 rounded-sm px-200 py-100 whitespace-nowrap',
@@ -31,7 +31,9 @@ function ScheduleTag({ className, variant, icon, children, ...props }: ScheduleT
       {icon === 'calendar' && (
         <Icon src={AdminCalendarIcon} size={16} className="text-text-alternative" />
       )}
-      {icon === 'location' && <Icon src={PinIcon} size={16} className="text-text-alternative" />}
+      {icon === 'location' && (
+        <Icon src={LocationIcon} size={16} className="text-text-alternative" />
+      )}
       {children}
     </span>
   );

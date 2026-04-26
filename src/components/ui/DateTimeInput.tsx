@@ -24,7 +24,7 @@ function DateTimeInput({
   return (
     <div className={cn('flex flex-col', className)} {...props}>
       <div className="flex h-12 items-center px-400">
-        <span className="typo-sub2 text-text-normal">{label}</span>
+        <span className="typo-sub3 text-text-normal">{label}</span>
       </div>
       <div className="flex items-center gap-200">
         <CalendarPicker value={dateValue} onChange={onDateChange} />
