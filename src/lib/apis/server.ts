@@ -79,9 +79,17 @@ async function request<T>(
   _retried = false,
 ): Promise<T> {
   const cookieStore = await cookies();
-  const accessToken =
+  let accessToken =
     cookieStore.get(ACCESS_TOKEN_KEY)?.value ??
     (process.env.NODE_ENV === 'development' ? process.env.DEV_ACCESS_TOKEN : undefined);
+  const refreshToken = cookieStore.get(REFRESH_TOKEN_KEY)?.value;
+
+  // If only the refresh token remains, refresh first so the initial SSR request
+  // doesn't incur an avoidable 401 -> retry round trip.
+  if (!accessToken && refreshToken) {
+    await refreshTokens(cookieStore);
+    accessToken = cookieStore.get(ACCESS_TOKEN_KEY)?.value;
+  }
 
   const { params, ...fetchOptions } = options;
   const url = buildUrl(path, params);

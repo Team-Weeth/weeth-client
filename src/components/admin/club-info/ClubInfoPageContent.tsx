@@ -61,7 +61,7 @@ function ClubInfoPageContent({ schoolNames }: ClubInfoPageContentProps) {
 
   useEffect(() => {
     if (primaryContact === 'email' && isEmailContactDisabled) {
-      setValue('primaryContact', 'phone', { shouldDirty: true });
+      setValue('primaryContact', 'phone', { shouldDirty: false });
     }
   }, [primaryContact, isEmailContactDisabled, setValue]);
 
