@@ -117,7 +117,7 @@ function BoardPageContent() {
   const handleCreateBoard = (formData: BoardFormData) => {
     setCreateNameError(null);
     createBoard({
-      name: formData.name,
+      name: formData.name.trim(),
       type: 'GENERAL',
       commentEnabled: formData.commentEnabled,
       ...toApiPermission(formData.visibility),
