@@ -121,7 +121,7 @@ function ClubInfoPageContent({ schoolNames }: ClubInfoPageContentProps) {
   );
 
   return (
-    <div className="flex min-w-3xl flex-col">
+    <div className="flex flex-col">
       {isEditMode && (
         <ClubInfoTopBar
           className="sticky top-0 z-10 -mt-15"
@@ -131,7 +131,7 @@ function ClubInfoPageContent({ schoolNames }: ClubInfoPageContentProps) {
         />
       )}
 
-      <div className="flex flex-col items-start gap-400 px-8 py-12">
+      <div className="flex min-w-3xl flex-col items-start gap-400 px-8 py-12">
         <ClubInfoImageSection
           profilePreviewUrl={profilePreviewUrl}
           backgroundPreviewUrl={backgroundPreviewUrl}
