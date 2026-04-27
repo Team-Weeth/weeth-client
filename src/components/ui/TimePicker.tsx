@@ -94,7 +94,7 @@ function TimePicker({ value, onChange }: TimePickerProps) {
           ref={attachWheel}
           sideOffset={4}
           align="start"
-          className="bg-container-neutral z-50 flex h-60 rounded-md shadow-[0px_4px_14px_0px_rgba(0,0,0,0.25)]"
+          className="bg-container-neutral z-90 flex h-60 rounded-md shadow-[0px_4px_14px_0px_rgba(0,0,0,0.25)]"
         >
           {/* Hours */}
           <div ref={hourRef} className="scrollbar-custom flex flex-col overflow-y-auto py-100">

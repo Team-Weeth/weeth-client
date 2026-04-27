@@ -8,6 +8,8 @@ import { useCardinals } from '@/hooks/queries';
 import { addYearsToDateInput, toDateInputValue } from '@/utils/shared/date';
 import type { CreateSessionBody } from '@/types/admin/session';
 
+import { isScheduleTitleValid } from '@/utils/admin/scheduleFormUtils';
+
 import { isDateRangeValid, type ScheduleFormState, type SessionFormState } from './types';
 
 const INITIAL_FORM: ScheduleFormState = {
@@ -78,7 +80,7 @@ function CreateSessionScheduleForm({ onCreateSession, onClose }: CreateSessionSc
   };
 
   const isValid =
-    form.title.trim().length > 0 &&
+    isScheduleTitleValid(form.title) &&
     selectedCardinal != null &&
     isDateRangeValid(form) &&
     isRecurrenceEndValid;
@@ -102,7 +104,7 @@ function CreateSessionScheduleForm({ onCreateSession, onClose }: CreateSessionSc
 
   return (
     <>
-      <div className="scrollbar-custom max-h-[700px] overflow-y-auto px-[60px]">
+      <div className="scrollbar-custom max-h-175 overflow-y-auto px-15">
         <h2 className="typo-h3 text-text-normal py-400">세션 생성</h2>
         <SessionScheduleForm
           form={form}

@@ -8,20 +8,21 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-  Icon,
 } from '@/components/ui';
 import { CustomAlertDialog } from '@/components/alert';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { AdminCloseIcon, AdminMeatballIcon } from '@/assets/icons/admin';
+import { ModalIconButton } from '@/components/admin';
 import type { AdminSession, AdminSessionGroup } from '@/types/admin/session';
+import {
+  isFormChanged,
+  isScheduleTitleValid,
+  isSessionGroup,
+  toInitialSessionForm,
+} from '@/utils/admin/scheduleFormUtils';
 
 import { DiscardConfirmArea } from './DiscardConfirmArea';
 import { ScheduleFormBody } from './ScheduleFormBody';
-import {
-  isFormChanged,
-  isSessionGroup,
-  toInitialSessionForm,
-} from '../../../../utils/admin/scheduleFormUtils';
 import type { ScheduleFormState, SessionDeleteType, SessionSaveType } from './types';
 
 interface EditSessionModalProps {
@@ -57,7 +58,7 @@ function EditSessionModal({ open, onOpenChange, target, onDelete, onSave }: Edit
   };
 
   const handleSubmit = () => {
-    if (!form.title.trim()) return;
+    if (!isScheduleTitleValid(form.title)) return;
     if (isRecurring) {
       setSaveConfirmOpen(true);
     } else {
@@ -96,7 +97,7 @@ function EditSessionModal({ open, onOpenChange, target, onDelete, onSave }: Edit
         }}
       >
         <DialogContent
-          className="bg-background flex w-215 max-w-[860px] flex-col gap-0 overflow-hidden rounded-lg p-0"
+          className="bg-background flex w-215 max-w-215 flex-col gap-0 overflow-hidden rounded-lg p-0"
           showCloseButton={false}
           onPointerDownOutside={(e) => {
             if (hasChanges) e.preventDefault();
@@ -112,12 +113,7 @@ function EditSessionModal({ open, onOpenChange, target, onDelete, onSave }: Edit
             <div className="flex items-center gap-200">
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <button
-                    type="button"
-                    className="flex cursor-pointer items-center justify-center rounded-sm p-200"
-                  >
-                    <Icon src={AdminMeatballIcon} size={24} alt="메뉴" />
-                  </button>
+                  <ModalIconButton icon={AdminMeatballIcon} label="메뉴" />
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
                   <DropdownMenuItem destructive onSelect={() => setDeleteConfirmOpen(true)}>
@@ -132,20 +128,17 @@ function EditSessionModal({ open, onOpenChange, target, onDelete, onSave }: Edit
                 onConfirm={handleDiscardConfirm}
                 placement="below-right"
               >
-                <button
-                  type="button"
+                <ModalIconButton
+                  icon={AdminCloseIcon}
+                  label="닫기"
                   onClick={() => handleTryClose('close')}
-                  className="flex cursor-pointer items-center justify-center rounded-sm p-200"
-                  aria-label="닫기"
-                >
-                  <Icon src={AdminCloseIcon} size={24} alt="닫기" />
-                </button>
+                />
               </DiscardConfirmArea>
             </div>
           </div>
 
           {/* Body */}
-          <div className="scrollbar-custom max-h-[700px] overflow-y-auto px-[60px]">
+          <div className="scrollbar-custom max-h-175 overflow-y-auto px-15">
             <h2 className="typo-h3 text-text-normal py-400">세션 수정</h2>
             <ScheduleFormBody
               form={form}
@@ -170,7 +163,7 @@ function EditSessionModal({ open, onOpenChange, target, onDelete, onSave }: Edit
             <Button
               variant="primary"
               size="lg"
-              disabled={!form.title.trim()}
+              disabled={!isScheduleTitleValid(form.title)}
               onClick={handleSubmit}
             >
               저장

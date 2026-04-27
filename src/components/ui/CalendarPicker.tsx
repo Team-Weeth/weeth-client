@@ -102,7 +102,7 @@ function CalendarPicker({ value, onChange, minDate, maxDate }: CalendarPickerPro
           <PopoverPrimitive.Content
             sideOffset={4}
             align="start"
-            className="bg-container-neutral z-50 w-72 rounded-md p-400 shadow-[0px_4px_14px_0px_rgba(0,0,0,0.25)]"
+            className="bg-container-neutral z-90 w-72 rounded-md p-400 shadow-[0px_4px_14px_0px_rgba(0,0,0,0.25)]"
           >
             {/* Month navigation */}
             <div className="mb-300 flex items-center justify-between">

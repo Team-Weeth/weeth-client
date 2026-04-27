@@ -51,3 +51,4 @@ export { default as TrashcanIcon } from './trash_can.svg';
 export { default as PersonIcon } from './person.svg';
 export { default as LogoutIcon } from './logout.svg';
 export { default as TimeIcon } from './time.svg';
+export { default as LocationIcon } from './location.svg';
