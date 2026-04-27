@@ -1,9 +1,7 @@
 import { Skeleton } from '@/components/ui';
 import { cn } from '@/lib/cn';
 
-interface BoardCardSkeletonProps extends React.HTMLAttributes<HTMLDivElement> {}
-
-function BoardCardSkeleton({ className, ...props }: BoardCardSkeletonProps) {
+function BoardCardSkeleton({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
   return (
     <div
       className={cn(
@@ -38,7 +36,7 @@ function BoardCardSkeleton({ className, ...props }: BoardCardSkeletonProps) {
       </div>
 
       {/* Visibility tag (desktop+) */}
-      <div className="desktop:flex hidden shrink-0">
+      <div className="desktop:flex hidden w-24 shrink-0">
         <Skeleton className="h-6 w-16 rounded-full" />
       </div>
 
@@ -48,4 +46,4 @@ function BoardCardSkeleton({ className, ...props }: BoardCardSkeletonProps) {
   );
 }
 
-export { BoardCardSkeleton, type BoardCardSkeletonProps };
+export { BoardCardSkeleton };
