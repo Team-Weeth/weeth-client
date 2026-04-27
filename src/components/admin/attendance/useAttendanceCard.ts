@@ -24,9 +24,9 @@ function useAttendanceCard({ members, onSave, onDirtyChange }: UseAttendanceCard
 
   const filteredMembers = members.filter(
     (m) =>
-      m.name.includes(searchQuery) ||
-      m.studentId.includes(searchQuery) ||
-      m.department.includes(searchQuery),
+      m.name?.includes(searchQuery) ||
+      m.studentId?.includes(searchQuery) ||
+      m.department?.includes(searchQuery),
   );
 
   const isEditing = cardState === 'editing';
@@ -75,16 +75,14 @@ function useAttendanceCard({ members, onSave, onDirtyChange }: UseAttendanceCard
   };
 
   const toggleStatus = (memberId: number, status: 'ATTEND' | 'ABSENT') => {
-    setEditStatuses((prev) => {
-      const next = new Map(prev);
-      const base = baseStatuses.get(memberId);
+    const next = new Map(editStatuses);
+    const base = baseStatuses.get(memberId);
 
-      if (base === status) next.delete(memberId);
-      else next.set(memberId, status); // 변경된 것만 저장
+    if (base === status) next.delete(memberId);
+    else next.set(memberId, status); // 변경된 것만 저장
 
-      onDirtyChange?.(next.size > 0);
-      return next;
-    });
+    setEditStatuses(next);
+    onDirtyChange?.(next.size > 0);
   };
 
   const getEditStatus = (memberId: number) =>

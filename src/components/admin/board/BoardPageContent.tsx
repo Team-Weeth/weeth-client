@@ -1,6 +1,6 @@
 'use client';
 
-import { Fragment, useState } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 import Image from 'next/image';
 import {
   DndContext,
@@ -152,6 +152,9 @@ function BoardPageContent() {
     ? cardinals.find((c) => c.id === selectedCardinalId)
     : undefined;
 
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+
   const query = searchValue.trim().toLowerCase();
   const filteredBoards = query
     ? boards.filter((b) => b.name.toLowerCase().includes(query))
@@ -226,7 +229,7 @@ function BoardPageContent() {
 
         {/* Custom boards */}
         {customBoards.length > 0 &&
-          (query ? (
+          (query || !mounted ? (
             <div className="flex flex-col gap-200">
               {customBoards.map((board) => (
                 <BoardCard

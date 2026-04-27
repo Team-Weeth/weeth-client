@@ -23,7 +23,7 @@ function AttendanceSessionCard({
 }: AttendanceSessionCardProps) {
   const [expanded, setExpanded] = useState(false);
   const { data: members = [] } = useAdminAttendance(sessionId, { enabled: expanded });
-  const { mutateAsync } = useUpdateAttendanceStatus(sessionId);
+  const { mutateAsync, isPending } = useUpdateAttendanceStatus(sessionId);
 
   const handleDirtyChange = (dirty: boolean) => onDirtyChange?.(sessionId, dirty);
 
@@ -40,6 +40,7 @@ function AttendanceSessionCard({
       onSave={handleSave}
       onDirtyChange={handleDirtyChange}
       onExpand={() => setExpanded(true)}
+      isSaving={isPending}
     />
   );
 }
