@@ -1,7 +1,6 @@
 'use client';
 
 // import Image from 'next/image';
-import { useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 // import { ArrowRightIcon } from '@/assets/icons';
 import { useMonthlySchedulesQuery } from '@/hooks/home';
@@ -14,7 +13,6 @@ import { useIsAdmin } from '@/hooks/shared';
 export function CalendarBox() {
   const router = useRouter();
   const { clubId } = useParams<{ clubId: string }>();
-  const [expandedScheduleId, setExpandedScheduleId] = useState<number | string | null>(null);
   const { data: schedules, isLoading: isSchedulesLoading } = useMonthlySchedulesQuery();
   const { isAdmin, isLoading: isAdminLoading } = useIsAdmin();
 
@@ -54,12 +52,7 @@ export function CalendarBox() {
                 >
                   <div className="bg-brand-primary h-[45px] w-[5px] rounded-xl" />
                   <div className="flex min-w-0 flex-1 flex-col gap-[5px] pr-[10px]">
-                    <ExpandableScheduleTitle
-                      scheduleId={schedule.id}
-                      title={schedule.title}
-                      expandedScheduleId={expandedScheduleId}
-                      setExpandedScheduleId={setExpandedScheduleId}
-                    />
+                    <ExpandableScheduleTitle title={schedule.title} />
                     <p className="typo-caption2 text-text-alternative">
                       {formatKoreanTimeRange(schedule.start, schedule.end)}
                     </p>
