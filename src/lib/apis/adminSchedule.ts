@@ -6,6 +6,12 @@ import type {
   ScheduleDetail,
   UpdateEventBody,
 } from '@/types/admin/schedule';
+import type {
+  AdminSessionListData,
+  CreateSessionBody,
+  SessionUpdateScope,
+  UpdateSessionBody,
+} from '@/types/admin/session';
 
 export const adminScheduleApi = {
   getMonthly: (clubId: string, start: string, end: string) =>
@@ -14,6 +20,43 @@ export const adminScheduleApi = {
     }),
   getEventDetail: (clubId: string, eventId: number) =>
     apiClient.get<ApiResponse<ScheduleDetail>>(`/clubs/${clubId}/events/${eventId}`),
+  getSessionDetail: (clubId: string, sessionId: number) =>
+    apiClient.get<ApiResponse<ScheduleDetail>>(`/clubs/${clubId}/sessions/${sessionId}`),
+  getSessionList: (clubId: string, cardinal?: number) =>
+    apiClient.get<ApiResponse<AdminSessionListData>>(`/admin/clubs/${clubId}/sessions`, {
+      params: cardinal !== undefined ? { cardinal } : undefined,
+    }),
+  createSession: (clubId: string, body: CreateSessionBody) =>
+    apiClient.post<ApiResponse<null>>(`/admin/clubs/${clubId}/sessions`, body),
+  updateSession: (
+    clubId: string,
+    sessionId: number,
+    body: UpdateSessionBody,
+    options?: { scope?: SessionUpdateScope; force?: boolean },
+  ) =>
+    apiClient.patch<ApiResponse<null>>(`/admin/clubs/${clubId}/sessions/${sessionId}`, body, {
+      params: {
+        scope: options?.scope ?? 'THIS_ONLY',
+        force: options?.force ?? false,
+      },
+    }),
+  deleteSession: (
+    clubId: string,
+    sessionId: number,
+    options?: { scope?: SessionUpdateScope; force?: boolean },
+  ) =>
+    apiClient.delete<ApiResponse<null>>(`/admin/clubs/${clubId}/sessions/${sessionId}`, {
+      params: {
+        scope: options?.scope ?? 'THIS_ONLY',
+        force: options?.force ?? false,
+      },
+    }),
+  deleteSessionGroup: (clubId: string, groupId: number, options?: { force?: boolean }) =>
+    apiClient.delete<ApiResponse<null>>(`/admin/clubs/${clubId}/sessions/groups/${groupId}`, {
+      params: {
+        force: options?.force ?? false,
+      },
+    }),
   createEvent: (clubId: string, body: CreateEventBody) =>
     apiClient.post<ApiResponse<string>>(`/admin/clubs/${clubId}/events`, body),
   updateEvent: (clubId: string, eventId: number, body: UpdateEventBody) =>

@@ -47,3 +47,15 @@ export interface CreateSessionBody {
   /** YYYY-MM-DD. recurrenceType이 NONE이면 end 날짜와 동일하게 전송 */
   recurrenceEndDate: string;
 }
+
+export interface UpdateSessionBody {
+  title: string;
+  content: string;
+  location: string;
+  /** ISO 8601 (로컬 타임, 초 포함) — "2026-03-27T10:00:00" */
+  start: string;
+  end: string;
+}
+
+/** 정기모임 수정 적용 범위 */
+export type SessionUpdateScope = 'THIS_ONLY' | 'THIS_AND_FUTURE';

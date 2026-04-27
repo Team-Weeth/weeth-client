@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { RefObject } from 'react';
 
 import {
@@ -13,109 +13,60 @@ import {
 import { CustomAlertDialog } from '@/components/alert';
 import { AdminCloseIcon, AdminMeatballIcon } from '@/assets/icons/admin';
 import { ModalIconButton } from '@/components/admin';
-import type { Schedule } from '@/types/admin/schedule';
-import {
-  useAdminScheduleDetail,
-  useUpdateSchedule,
-} from '@/hooks/queries/admin/useAdminScheduleQueries';
+import { useSessionMutations } from '@/hooks/admin';
+import { useAdminSessionDetail } from '@/hooks/queries/admin/useAdminScheduleQueries';
+import type { SessionUpdateScope, UpdateSessionBody } from '@/types/admin/session';
 import {
   isFormChanged,
-  isScheduleContentValid,
-  isScheduleLocationValid,
   isScheduleTitleValid,
   toInitialScheduleForm,
 } from '@/utils/admin/scheduleFormUtils';
 
 import { DiscardConfirmArea } from './DiscardConfirmArea';
-import { EditModalShell } from './EditModalShell';
 import { ScheduleFormBody } from './ScheduleFormBody';
-import { isDateRangeValid } from './types';
-import type { ScheduleFormState } from './types';
+import type { ScheduleFormState, SessionDeleteType, SessionSaveType } from './types';
 
-interface EditScheduleModalProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  schedule: Schedule;
-  onDelete?: (schedule: Schedule) => void;
-}
-
-function EditScheduleModal({ open, onOpenChange, schedule, onDelete }: EditScheduleModalProps) {
-  const hasChangesRef = useRef(false);
-  const requestCloseRef = useRef<(() => void) | null>(null);
-
-  const handleClose = () => onOpenChange(false);
-
-  return (
-    <EditModalShell
-      open={open}
-      onOpenChange={onOpenChange}
-      hasChangesRef={hasChangesRef}
-      requestCloseRef={requestCloseRef}
-      fallback={<EditScheduleModalLoading onClose={handleClose} />}
-    >
-      <EditScheduleModalContent
-        scheduleId={schedule.id}
-        onClose={handleClose}
-        onDelete={onDelete}
-        hasChangesRef={hasChangesRef}
-        requestCloseRef={requestCloseRef}
-      />
-    </EditModalShell>
-  );
-}
-
-function EditScheduleModalLoading({ onClose }: { onClose: () => void }) {
-  return (
-    <>
-      <div className="flex items-start justify-between px-700 pt-700">
-        <div className="flex h-8 items-end">
-          <span className="typo-button2 text-text-strong border-brand-primary border-b-2 px-100 pb-200">
-            일반 일정
-          </span>
-        </div>
-        <ModalIconButton icon={AdminCloseIcon} label="닫기" onClick={onClose} />
-      </div>
-      <div className="flex min-h-150 flex-col px-700 pb-700">
-        <h2 className="typo-h3 text-text-normal py-400">일반 일정 수정</h2>
-        <div className="flex flex-1 items-center justify-center">
-          <p className="typo-body2 text-text-alternative">불러오는 중...</p>
-        </div>
-      </div>
-    </>
-  );
-}
-
-interface EditScheduleModalContentProps {
-  scheduleId: number;
+interface EditSessionModalContentProps {
+  sessionId: number;
+  isRecurring: boolean;
+  /** 반복 세션일 때만 값이 있음 (그룹 전체 삭제용) */
+  groupId: number | null;
   onClose: () => void;
-  onDelete?: (schedule: Schedule) => void;
   hasChangesRef: RefObject<boolean>;
   requestCloseRef: RefObject<(() => void) | null>;
 }
 
-function EditScheduleModalContent({
-  scheduleId,
+function toUpdateBody(form: ScheduleFormState): UpdateSessionBody {
+  return {
+    title: form.title.trim(),
+    content: form.content,
+    location: form.location,
+    start: `${form.startDate}T${form.startTime}:00`,
+    end: `${form.endDate}T${form.endTime}:00`,
+  };
+}
+
+function EditSessionModalContent({
+  sessionId,
+  isRecurring,
+  groupId,
   onClose,
-  onDelete,
   hasChangesRef,
   requestCloseRef,
-}: EditScheduleModalContentProps) {
-  const { data: detail } = useAdminScheduleDetail(scheduleId);
+}: EditSessionModalContentProps) {
+  const { data: detail } = useAdminSessionDetail(sessionId);
 
   const [initialForm] = useState<ScheduleFormState>(() => toInitialScheduleForm(detail));
   const [form, setForm] = useState<ScheduleFormState>(initialForm);
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const [saveConfirmOpen, setSaveConfirmOpen] = useState(false);
   const [discardSource, setDiscardSource] = useState<'close' | 'cancel' | null>(null);
 
-  const { mutate, isPending } = useUpdateSchedule();
+  const { submitUpdate, submitDeleteSession, submitDeleteGroup, forceConfirmDialog } =
+    useSessionMutations();
 
   const hasChanges = isFormChanged(form, initialForm);
-
-  const isValid =
-    isScheduleTitleValid(form.title) &&
-    isScheduleLocationValid(form.location) &&
-    isScheduleContentValid(form.content) &&
-    isDateRangeValid(form);
+  const isValid = isScheduleTitleValid(form.title);
 
   const updateForm = (patch: Partial<ScheduleFormState>) => {
     setForm((prev) => ({ ...prev, ...patch }));
@@ -138,27 +89,32 @@ function EditScheduleModalContent({
     };
   }, [hasChanges, hasChangesRef, onClose, requestCloseRef]);
 
-  const handleSubmit = () => {
-    if (!isValid) return;
-    mutate(
-      {
-        eventId: scheduleId,
-        body: {
-          title: form.title,
-          content: form.content,
-          location: form.location,
-          start: `${form.startDate}T${form.startTime}:00`,
-          end: `${form.endDate}T${form.endTime}:00`,
-        },
-      },
-      { onSuccess: onClose },
-    );
+  const runUpdate = (type: SessionSaveType) => {
+    const scope: SessionUpdateScope = type === 'all' ? 'THIS_AND_FUTURE' : 'THIS_ONLY';
+    submitUpdate(sessionId, toUpdateBody(form), scope, false, { onSuccess: onClose });
   };
 
-  const handleDeleteConfirm = () => {
+  const handleSubmit = () => {
+    if (!isValid) return;
+    if (isRecurring) {
+      setSaveConfirmOpen(true);
+    } else {
+      runUpdate('this');
+    }
+  };
+
+  const handleSaveConfirm = (type: SessionSaveType) => {
+    setSaveConfirmOpen(false);
+    runUpdate(type);
+  };
+
+  const handleDeleteConfirm = (type: SessionDeleteType) => {
     setDeleteConfirmOpen(false);
-    onClose();
-    onDelete?.(detail);
+    if (isRecurring && type === 'all') {
+      if (groupId !== null) submitDeleteGroup(groupId, false, { onSuccess: onClose });
+    } else {
+      submitDeleteSession(sessionId, 'THIS_ONLY', false, { onSuccess: onClose });
+    }
   };
 
   const handleDiscardConfirm = () => {
@@ -176,7 +132,7 @@ function EditScheduleModalContent({
       <div className="flex items-start justify-between px-700 pt-700">
         <div className="flex h-8 items-end">
           <span className="typo-button2 text-text-strong border-brand-primary border-b-2 px-100 pb-200">
-            일반 일정
+            세션
           </span>
         </div>
         <div className="flex items-center gap-200">
@@ -186,7 +142,7 @@ function EditScheduleModalContent({
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuItem destructive onSelect={() => setDeleteConfirmOpen(true)}>
-                일반 일정 삭제
+                세션 삭제
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -207,13 +163,13 @@ function EditScheduleModalContent({
       </div>
 
       {/* Body */}
-      <div className="scrollbar-custom max-h-175 overflow-y-auto px-700">
-        <h2 className="typo-h3 text-text-normal py-400">일반 일정 수정</h2>
+      <div className="scrollbar-custom max-h-175 overflow-y-auto px-15">
+        <h2 className="typo-h3 text-text-normal py-400">세션 수정</h2>
         <ScheduleFormBody
           form={form}
           onFormChange={updateForm}
-          titleLabel="일정 제목"
-          titlePlaceholder="예 : 중간고사 기간"
+          titleLabel="세션 제목"
+          titlePlaceholder="예 : 7기 정기 모임"
         />
       </div>
 
@@ -229,23 +185,52 @@ function EditScheduleModalContent({
             취소
           </Button>
         </DiscardConfirmArea>
-        <Button variant="primary" size="lg" disabled={!isValid || isPending} onClick={handleSubmit}>
+        <Button variant="primary" size="lg" disabled={!isValid} onClick={handleSubmit}>
           저장
         </Button>
       </div>
 
-      {/* 삭제 확인 */}
+      {/* 저장 확인 (반복 세션 전용) */}
       <CustomAlertDialog
-        open={deleteConfirmOpen}
-        onOpenChange={setDeleteConfirmOpen}
-        title="이 일정을 삭제하시겠어요?"
-        description={'삭제된 일정은 복구할 수 없습니다.\n신중히 확인 후 진행해 주세요.'}
-        actionLabel="삭제"
-        onAction={handleDeleteConfirm}
+        open={saveConfirmOpen}
+        onOpenChange={setSaveConfirmOpen}
+        title="이 변경사항을 어떻게 저장할까요?"
+        actionLabel="이 세션 일정만 저장"
+        onAction={() => handleSaveConfirm('this')}
+        secondActionLabel="이후 모든 세션 일정에 대해 저장"
+        onSecondAction={() => handleSaveConfirm('all')}
         placement="center"
+        tone="primary"
       />
+
+      {/* 삭제 확인 */}
+      {isRecurring ? (
+        <CustomAlertDialog
+          open={deleteConfirmOpen}
+          onOpenChange={setDeleteConfirmOpen}
+          title={'이 세션을 삭제하시겠어요?\n반복 설정이 되어있는 세션이에요.'}
+          actionLabel="이 세션 일정만 삭제"
+          onAction={() => handleDeleteConfirm('this')}
+          secondActionLabel="이후 모든 세션 일정 삭제"
+          onSecondAction={() => handleDeleteConfirm('all')}
+          placement="center"
+        />
+      ) : (
+        <CustomAlertDialog
+          open={deleteConfirmOpen}
+          onOpenChange={setDeleteConfirmOpen}
+          title="이 세션을 삭제하시겠어요?"
+          description={'삭제된 세션은 복구할 수 없습니다.\n신중히 확인 후 진행해 주세요.'}
+          actionLabel="삭제"
+          onAction={() => handleDeleteConfirm('this')}
+          placement="center"
+        />
+      )}
+
+      {/* CLOSED 세션 포함 시 force=true 재요청 동의 (modal 위에 overlay) */}
+      {forceConfirmDialog}
     </>
   );
 }
 
-export { EditScheduleModal, type EditScheduleModalProps };
+export { EditSessionModalContent, type EditSessionModalContentProps };
