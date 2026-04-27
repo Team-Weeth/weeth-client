@@ -32,8 +32,7 @@ export function NoticeBoardBox() {
           type="button"
           aria-label="공지 전체보기"
           onClick={() => {
-            const firstNotice = notices[0];
-            if (firstNotice) {
+            if (notices.length > 0) {
               router.push(buildBoardPath(clubId, noticeBoardId));
             }
           }}

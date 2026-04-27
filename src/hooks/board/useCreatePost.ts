@@ -35,10 +35,10 @@ export function useCreatePost() {
       queryClient.invalidateQueries({ queryKey: ['home', 'recent-posts', clubId] });
       queryClient.invalidateQueries({ queryKey: ['home', 'recent-notices', clubId] });
       queryClient.invalidateQueries({ queryKey: ['home', 'unread-notice', clubId] });
-      toast({ title: '게시글이 작성되었습니다.', variant: 'success' });
       _allowNavigation?.();
       usePostStore.getState().reset();
       router.push(buildPostPath(clubIdParam, result.id, selectedBoard ?? undefined));
+      toast({ title: '게시글이 작성되었습니다.', variant: 'success' });
     },
     onError: (error) => {
       if (error.message !== 'board not selected' && error.message !== 'validation failed') {

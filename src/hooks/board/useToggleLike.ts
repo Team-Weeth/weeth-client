@@ -1,6 +1,9 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { isAxiosError } from 'axios';
+import { BOARD_ACTION_ERRORS } from '@/constants/board/error';
 import { boardApi } from '@/lib/apis/board';
 import { useClubId } from '@/stores/useClubStore';
+import { toast } from '@/stores/useToastStore';
 import type { PostDetail, PostListItem, PostLike } from '@/types/board';
 import type { PageData, RecentPost } from '@/types/home';
 import type { ApiResponse } from '@/types/common';
@@ -124,7 +127,12 @@ function useToggleLike({
         updateHomePages(old, postId, replace),
       );
     },
-    onError: (_error, _variables, context) => {
+    onError: (error, _variables, context) => {
+      const code = isAxiosError(error) ? error.response?.data?.code : undefined;
+      const message = code && BOARD_ACTION_ERRORS[code];
+      if (message) {
+        toast({ title: message, variant: 'error' });
+      }
       if (context?.previousDetail) {
         queryClient.setQueryData(detailKey, context.previousDetail);
       }
