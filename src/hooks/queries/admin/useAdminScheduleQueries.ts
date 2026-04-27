@@ -239,8 +239,8 @@ export function useDeleteSchedule(callback?: MutationCallbacks) {
     onSuccess: () => {
       if (callback?.onSuccess) {
         callback.onSuccess();
-        queryClient.invalidateQueries({ queryKey: ['admin', 'schedules'] });
       }
+      queryClient.invalidateQueries({ queryKey: ['admin', 'schedules'] });
     },
     onError: (error) => {
       const code = isAxiosError(error) ? error.response?.data?.code : undefined;
