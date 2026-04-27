@@ -151,6 +151,7 @@ function BoardPageContent() {
     setCreateNameError(null);
     createBoard({
       name: formData.name.trim(),
+      description: formData.description.trim(),
       type: 'GENERAL',
       commentEnabled: formData.commentEnabled,
       ...toApiPermission(formData.visibility),
@@ -173,6 +174,7 @@ function BoardPageContent() {
         boardId,
         body: {
           name: target.name,
+          description: target.description,
           commentEnabled: next,
           ...toApiPermission(target.visibility),
         },
@@ -351,6 +353,7 @@ function BoardPageContent() {
             boardId: editingBoardId,
             body: {
               name: formData.name.trim(),
+              description: formData.description.trim(),
               commentEnabled: formData.commentEnabled,
               ...toApiPermission(formData.visibility),
             },

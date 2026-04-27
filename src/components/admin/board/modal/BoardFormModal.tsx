@@ -1,5 +1,7 @@
 'use client';
 
+import { useState } from 'react';
+
 import { Button, Switch } from '@/components/ui';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { DiscardConfirmDialog } from '@/components/admin/modal/DiscardConfirmDialog';
@@ -48,13 +50,23 @@ function BoardFormModal({
       open,
     });
 
+  const [descriptionTouched, setDescriptionTouched] = useState(false);
+  const [prevOpen, setPrevOpen] = useState(open);
+  if (prevOpen !== open) {
+    setPrevOpen(open);
+    if (open) setDescriptionTouched(false);
+  }
+
   const handleClose = () => onOpenChange(false);
   const handleTryClose = (source: 'close' | 'cancel') => tryClose(source, handleClose);
   const handleDiscardConfirm = () => confirmDiscard(handleClose);
   const dismissDiscard = () => setDiscardSource(null);
 
   const handleSubmit = () => {
-    if (!form.name.trim()) return;
+    if (!form.name.trim() || !form.description.trim()) {
+      setDescriptionTouched(true);
+      return;
+    }
     onSubmit?.(form);
   };
 
@@ -69,7 +81,9 @@ function BoardFormModal({
     updateField('description', value);
   };
 
-  const isValid = form.name.trim().length > 0;
+  const descriptionError =
+    descriptionTouched && !form.description.trim() ? '설명은 필수입니다.' : null;
+  const isValid = form.name.trim().length > 0 && form.description.trim().length > 0;
 
   return (
     <Dialog
@@ -126,14 +140,22 @@ function BoardFormModal({
               type="text"
               value={form.description}
               onChange={(e) => handleDescriptionChange(e.target.value)}
+              onBlur={() => setDescriptionTouched(true)}
               placeholder="게시판을 알아볼 수 있는 설명을 짧게 작성해주세요."
               maxLength={DESCRIPTION_MAX}
-              className="bg-container-neutral typo-body1 placeholder:text-text-alternative text-text-normal h-12 w-full rounded-sm px-400 py-300 focus:outline-none"
+              className={cn(
+                'bg-container-neutral typo-body1 placeholder:text-text-alternative text-text-normal h-12 w-full rounded-sm px-400 py-300 focus:outline-none',
+                descriptionError && 'border-state-error border',
+              )}
             />
             <div className="flex h-8 items-center px-400">
-              <p className="typo-caption2 text-text-alternative">
-                최대 {DESCRIPTION_MAX}자 ({form.description.length}/{DESCRIPTION_MAX})
-              </p>
+              {descriptionError ? (
+                <p className="typo-caption2 text-state-error">{descriptionError}</p>
+              ) : (
+                <p className="typo-caption2 text-text-alternative">
+                  최대 {DESCRIPTION_MAX}자 ({form.description.length}/{DESCRIPTION_MAX})
+                </p>
+              )}
             </div>
           </BoardFormField>
 

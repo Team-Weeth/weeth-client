@@ -87,6 +87,7 @@ interface DialogHeaderProps extends Omit<React.HTMLAttributes<HTMLDivElement>, '
   description?: ReactNode;
   showClose?: boolean;
   closeClassName?: string;
+  titleClassName?: string;
   onClose?: () => void;
   children?: ReactNode;
 }
@@ -98,6 +99,7 @@ function DialogHeader({
   description,
   showClose = false,
   closeClassName,
+  titleClassName,
   onClose,
   children,
   className,
@@ -143,7 +145,7 @@ function DialogHeader({
           {overline && <p className="typo-caption1 text-text-alternative">{overline}</p>}
           {title ? (
             <DialogPrimitive.Title asChild>
-              <h2 className="typo-sub1 text-text-strong">{title}</h2>
+              <h2 className={cn('typo-sub1 text-text-strong', titleClassName)}>{title}</h2>
             </DialogPrimitive.Title>
           ) : (
             <DialogPrimitive.Title className="sr-only">Dialog</DialogPrimitive.Title>

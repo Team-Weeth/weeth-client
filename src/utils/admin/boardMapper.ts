@@ -24,7 +24,7 @@ export function toBoard(dto: AdminBoardDto): Board {
   return {
     boardId: dto.id,
     name: dto.name,
-    description: '',
+    description: dto.description ?? '',
     kind: dto.type,
     visibility: mapVisibility(dto.writePermission, dto.isPrivate),
     postCount: dto.postCount,

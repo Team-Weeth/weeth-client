@@ -26,6 +26,7 @@ export type AdminBoardWritePermission = 'USER' | 'ADMIN';
 export interface AdminBoardDto {
   id: number;
   name: string;
+  description: string;
   type: AdminBoardType;
   commentEnabled: boolean;
   writePermission: AdminBoardWritePermission;
@@ -37,6 +38,7 @@ export interface AdminBoardDto {
 
 export interface CreateBoardBody {
   name: string;
+  description: string;
   type: AdminBoardType;
   commentEnabled: boolean;
   writePermission: AdminBoardWritePermission;
@@ -45,6 +47,7 @@ export interface CreateBoardBody {
 
 export interface UpdateBoardBody {
   name: string;
+  description: string;
   commentEnabled: boolean;
   writePermission: AdminBoardWritePermission;
   isPrivate: boolean;
