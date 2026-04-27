@@ -1,4 +1,7 @@
+import { cookies } from 'next/headers';
+import { redirect as nextRedirect } from 'next/navigation';
 import { LoginPageClient } from '@/components/auth/LoginPageClient';
+import { ACCESS_TOKEN_KEY, REFRESH_TOKEN_KEY } from '@/lib/apis/cookies';
 
 export default async function LoginPage({
   searchParams,
@@ -13,6 +16,13 @@ export default async function LoginPage({
 }) {
   const { terms, intent, clubId, code, redirect } = await searchParams;
   const resolvedRedirect = Array.isArray(redirect) ? redirect[0] : redirect;
+
+  const cookieStore = await cookies();
+  const hasToken = cookieStore.has(ACCESS_TOKEN_KEY) || cookieStore.has(REFRESH_TOKEN_KEY);
+  if (hasToken && !terms && !intent && !code) {
+    nextRedirect(resolvedRedirect ?? '/hub');
+  }
+
   return (
     <LoginPageClient
       defaultTermsOpen={terms === 'true'}
