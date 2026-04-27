@@ -5,14 +5,13 @@ import Link from 'next/link';
 import { useRecentPostsQuery, useHomeQuery } from '@/hooks/home';
 import { useIntersectionObserver } from '@/hooks/board/useIntersectionObserver';
 import { formatMonthDay } from '@/lib/formatTime';
-import { fileAttachmentToFileItem } from '@/utils/shared/file';
 import { PostActionMenu, PostCard } from '../board';
 import { Avatar, AvatarFallback, Button } from '@/components/ui';
 
 import { useParams, useRouter } from 'next/navigation';
 import { useIsAdmin } from '@/hooks/shared';
 import { HomeBoardContentSkeleton } from '@/components/home/skeleton';
-import { buildPostPath } from '@/lib/board';
+import { buildPostPath, toDisplayFile, isImageFileByType } from '@/lib/board';
 
 function HomeBoardContent() {
   const { isAdmin } = useIsAdmin();
@@ -72,7 +71,9 @@ function HomeBoardContent() {
       <main className="flex min-w-0 flex-1 flex-col gap-400">
         {posts.map((post) => {
           const isMyPost = myUserId !== undefined && post.author.id === myUserId;
-          const images = post.fileUrls.map(fileAttachmentToFileItem);
+          const images = post.fileUrls
+            .filter((f) => isImageFileByType(f.contentType))
+            .map(toDisplayFile);
           const hasAttachment = post.fileUrls.length > 0;
 
           return (
