@@ -7,7 +7,9 @@ import { Button } from '@/components/ui';
 import { AdminCalendarEditIcon } from '@/assets/icons/admin';
 import { SessionTable } from '@/components/admin/schedule/session/SessionTable';
 import { EditSessionModal } from '@/components/admin/schedule/modal/EditSessionModal';
-import { MOCK_SESSION_LIST } from '@/constants/admin/session.constants';
+import { useAdminSessionList } from '@/hooks/queries/admin';
+import { toastError } from '@/stores/useToastStore';
+import { isSessionGroup } from '@/utils/admin/scheduleFormUtils';
 import type { AdminSession, AdminSessionGroup } from '@/types/admin/session';
 import SessionInfobanner from './SessionInfoBanner';
 
@@ -15,13 +17,28 @@ interface SessionTabContentProps {
   onCreateSession?: () => void;
   /** 출석 관리는 개별 세션(AdminSession) id 기반 동작 */
   onManageAttendance?: (session: AdminSession) => void;
+  /** 선택된 기수 (없으면 전체) */
+  cardinalNumber?: number | null;
 }
 
-function SessionTabContent({ onCreateSession, onManageAttendance }: SessionTabContentProps) {
-  // TODO: API 연결 시 useAdminSessionList() 같은 훅으로 교체
-  const { sessions } = MOCK_SESSION_LIST;
+function SessionTabContent({
+  onCreateSession,
+  onManageAttendance,
+  cardinalNumber,
+}: SessionTabContentProps) {
+  const { data } = useAdminSessionList(cardinalNumber);
+  const sessions = data?.sessions ?? [];
 
   const [editTarget, setEditTarget] = useState<AdminSession | AdminSessionGroup | null>(null);
+
+  /** 그룹에 세션이 0개면 PATCH/DELETE 대상이 없으므로 모달 진입 차단 */
+  const handleOpenEdit = (target: AdminSession | AdminSessionGroup) => {
+    if (isSessionGroup(target) && target.sessions.length === 0) {
+      toastError('수정·삭제 가능한 세션이 없습니다.');
+      return;
+    }
+    setEditTarget(target);
+  };
 
   return (
     <div className="flex flex-col gap-400">
@@ -44,12 +61,12 @@ function SessionTabContent({ onCreateSession, onManageAttendance }: SessionTabCo
           <SessionTable
             groups={sessions}
             onManageAttendance={onManageAttendance}
-            onMore={setEditTarget}
+            onMore={handleOpenEdit}
           />
         </div>
       </div>
 
-      {/* 세션 수정 모달 */}
+      {/* 세션 수정 모달 — mutation은 모달이 직접 소유 */}
       {editTarget && (
         <EditSessionModal
           key={'groupId' in editTarget ? editTarget.groupId : editTarget.id}
@@ -58,10 +75,6 @@ function SessionTabContent({ onCreateSession, onManageAttendance }: SessionTabCo
             if (!nextOpen) setEditTarget(null);
           }}
           target={editTarget}
-          onDelete={(_type) => {
-            // TODO: API 연동 시 type에 따라 'this'=단일 삭제, 'all'=이후 모두 삭제 호출
-            setEditTarget(null);
-          }}
         />
       )}
     </div>

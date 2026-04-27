@@ -11,9 +11,19 @@ interface EditBoardModalProps {
   board: Board | null;
   onSubmit?: (data: EditBoardFormData) => void;
   onDelete?: (board: Board) => void;
+  nameError?: string | null;
+  onNameChange?: () => void;
 }
 
-function EditBoardModal({ open, onOpenChange, board, onSubmit, onDelete }: EditBoardModalProps) {
+function EditBoardModal({
+  open,
+  onOpenChange,
+  board,
+  onSubmit,
+  onDelete,
+  nameError,
+  onNameChange,
+}: EditBoardModalProps) {
   return (
     <BoardFormModal
       open={open}
@@ -31,6 +41,8 @@ function EditBoardModal({ open, onOpenChange, board, onSubmit, onDelete }: EditB
       }
       onSubmit={onSubmit}
       onDelete={board && onDelete ? () => onDelete(board) : undefined}
+      nameError={nameError}
+      onNameChange={onNameChange}
     />
   );
 }

@@ -27,29 +27,6 @@ export function isSessionGroup(
   return 'groupId' in target;
 }
 
-export function toInitialSessionForm(target: AdminSession | AdminSessionGroup): ScheduleFormState {
-  if (isSessionGroup(target)) {
-    return {
-      title: target.title,
-      startDate: target.startDate,
-      startTime: '00:00',
-      endDate: target.endDate,
-      endTime: '23:59',
-      location: '',
-      content: '',
-    };
-  }
-  return {
-    title: target.title,
-    startDate: target.start.slice(0, 10),
-    startTime: target.start.slice(11, 16),
-    endDate: target.end.slice(0, 10),
-    endTime: target.end.slice(11, 16),
-    location: '',
-    content: '',
-  };
-}
-
 export function toInitialScheduleForm(detail: ScheduleDetail): ScheduleFormState {
   return {
     title: detail.title,
