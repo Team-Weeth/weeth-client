@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation';
 
 import { boardServerApi } from '@/lib/apis/board.server';
-import { PostDetailContent } from '../../[boardId]/[postId]/PostDetailContent';
+import { PostDetailContent } from '@/app/(private)/[clubId]/(main)/board/(with-nav)/[boardId]/[postId]/PostDetailContent';
 
 interface PostDetailPageProps {
   params: Promise<{ clubId: string; postId: string }>;
