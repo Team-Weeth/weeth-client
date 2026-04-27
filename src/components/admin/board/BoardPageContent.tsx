@@ -128,6 +128,8 @@ function BoardPageContent() {
     const target = boards.find((b) => b.boardId === boardId);
     if (!target) return;
 
+    const snapshot = queryClient.getQueryData<BoardListCache>(cacheKey);
+
     updateCache((prev) => ({
       ...prev,
       boards: prev.boards.map((b) => (b.boardId === boardId ? { ...b, commentEnabled: next } : b)),
@@ -144,12 +146,7 @@ function BoardPageContent() {
       },
       {
         onError: () => {
-          updateCache((prev) => ({
-            ...prev,
-            boards: prev.boards.map((b) =>
-              b.boardId === boardId ? { ...b, commentEnabled: !next } : b,
-            ),
-          }));
+          queryClient.setQueryData(cacheKey, snapshot);
         },
       },
     );
