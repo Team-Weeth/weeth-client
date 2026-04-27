@@ -61,8 +61,11 @@ function useSessionMutations() {
         onError: (error) => {
           if (!force && isSessionForceRequiredError(error)) {
             setForceConfirm({
-              description: '이후 일정 중 이미 종료된 세션도 함께 수정할까요?',
-              actionLabel: '모두 수정',
+              description:
+                scope === 'THIS_AND_FUTURE'
+                  ? '이후 일정 중 이미 종료된 세션도 함께 수정할까요?'
+                  : '이미 종료된 세션이에요. 그래도 수정할까요?',
+              actionLabel: scope === 'THIS_AND_FUTURE' ? '모두 수정' : '수정',
               retry: () => submitUpdate(sessionId, body, scope, true, options),
             });
           }
