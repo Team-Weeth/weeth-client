@@ -22,7 +22,7 @@ function DeleteBoardDialog({
       open={open}
       onOpenChange={onOpenChange}
       title={`'${name}'을 삭제하시겠어요?`}
-      description="게시판을 삭제해도 휴지통에 30일간 보관됩니다."
+      description="삭제된 게시판은 복구할 수 없습니다."
       status="danger"
       trigger={trigger}
     >
