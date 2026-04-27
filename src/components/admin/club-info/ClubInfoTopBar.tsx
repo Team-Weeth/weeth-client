@@ -100,7 +100,7 @@ function ClubInfoTopBar({ className, onBack, onSave, isSaving, ...props }: ClubI
 
       <span className="typo-sub1 text-text-inverse ml-200 shrink-0">수정 모드</span>
 
-      <div className="ml-auto flex gap-200">
+      <div className="ml-auto flex shrink-0 gap-200">
         <DiscardAlertDialog onAction={onBack} placement="below-left">
           <AlertDialogPrimitive.Trigger asChild>
             <Button variant="secondary" size="md" className="py-200">

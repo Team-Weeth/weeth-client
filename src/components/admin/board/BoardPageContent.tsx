@@ -1,6 +1,6 @@
 'use client';
 
-import { Fragment, useState } from 'react';
+import { Fragment, useState, useSyncExternalStore } from 'react';
 import {
   DndContext,
   PointerSensor,
@@ -40,6 +40,10 @@ import type { Board, BoardListCache } from '@/types/admin/board';
 import type { BoardFormData } from '@/components/admin/board/modal/constants';
 import { SortableBoardCard } from './SortableBoardCard';
 
+function subscribeMounted() {
+  return () => {};
+}
+
 function BoardPageContent() {
   const clubId = useClubId();
   const queryClient = useQueryClient();
@@ -49,6 +53,11 @@ function BoardPageContent() {
   const [createNameError, setCreateNameError] = useState<string | null>(null);
   const [editingBoardId, setEditingBoardId] = useState<number | null>(null);
   const [editNameError, setEditNameError] = useState<string | null>(null);
+  const mounted = useSyncExternalStore(
+    subscribeMounted,
+    () => true,
+    () => false,
+  );
   // TODO: 휴지통 API 정상화되면 복원
   // const [trashModalOpen, setTrashModalOpen] = useState(false);
 
@@ -258,7 +267,7 @@ function BoardPageContent() {
         )}
 
         {customBoards.length > 0 &&
-          (query ? (
+          (query || !mounted ? (
             <div className="flex flex-col gap-200">
               {customBoards.map((board) => (
                 <BoardCard

@@ -57,6 +57,14 @@ function ClubInfoPageContent({ schoolNames }: ClubInfoPageContentProps) {
   const email = useWatch({ control, name: 'email' });
   const primaryContact = useWatch({ control, name: 'primaryContact' });
 
+  const isEmailContactDisabled = !email?.trim() || Boolean(errors.email);
+
+  useEffect(() => {
+    if (primaryContact === 'email' && isEmailContactDisabled) {
+      setValue('primaryContact', 'phone', { shouldDirty: false });
+    }
+  }, [primaryContact, isEmailContactDisabled, setValue]);
+
   const [profileImage, setProfileImage] = useState<ImageState>({ status: 'unchanged' });
   const [backgroundImage, setBackgroundImage] = useState<ImageState>({ status: 'unchanged' });
 
@@ -121,7 +129,7 @@ function ClubInfoPageContent({ schoolNames }: ClubInfoPageContentProps) {
   );
 
   return (
-    <div className="flex min-w-3xl flex-col">
+    <div className="flex flex-col">
       {isEditMode && (
         <ClubInfoTopBar
           className="sticky top-0 z-10 -mt-15"
@@ -131,7 +139,7 @@ function ClubInfoPageContent({ schoolNames }: ClubInfoPageContentProps) {
         />
       )}
 
-      <div className="flex flex-col items-start gap-400 px-8 py-12">
+      <div className="flex min-w-3xl flex-col items-start gap-400 px-8 py-12">
         <ClubInfoImageSection
           profilePreviewUrl={profilePreviewUrl}
           backgroundPreviewUrl={backgroundPreviewUrl}
@@ -159,6 +167,7 @@ function ClubInfoPageContent({ schoolNames }: ClubInfoPageContentProps) {
           email={email ?? ''}
           primaryContact={primaryContact ?? 'phone'}
           phoneError={errors.phone?.message}
+          emailError={errors.email?.message}
           onPhoneChange={(value) => setValue('phone', value, { shouldDirty: true })}
           onEmailChange={(value) => setValue('email', value, { shouldDirty: true })}
           onPrimaryContactChange={(value) =>

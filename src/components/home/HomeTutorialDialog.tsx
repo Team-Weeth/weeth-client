@@ -76,7 +76,7 @@ function HomeTutorialDialog({ open, onOpenChange }: HomeTutorialDialogProps) {
           overline="사이트 완성하기"
           title={currentSlide.title}
           description={currentSlide.description}
-          className="pb-300"
+          className="min-h-27 pb-300"
         />
 
         <DialogBody className="gap-0 overflow-hidden rounded-sm px-0 pt-400 pb-0">
