@@ -1,7 +1,5 @@
 'use client';
 
-import { useRef } from 'react';
-
 import { useClubStore } from '@/stores/useClubStore';
 
 interface ClubIdSyncerProps {
@@ -10,11 +8,10 @@ interface ClubIdSyncerProps {
 }
 
 function ClubIdSyncer({ clubId, children }: ClubIdSyncerProps) {
-  const hydrated = useRef(false);
+  const currentClubId = useClubStore((s) => s.clubId);
 
-  if (!hydrated.current) {
+  if (currentClubId !== clubId) {
     useClubStore.setState({ clubId }, false, 'setClubId');
-    hydrated.current = true;
   }
 
   return children;
