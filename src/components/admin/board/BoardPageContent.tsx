@@ -23,7 +23,6 @@ import { BoardToolbar } from '@/components/admin/board/BoardToolbar';
 import { CreateBoardModal } from '@/components/admin/board/modal/CreateBoardModal';
 import { EditBoardModal } from '@/components/admin/board/modal/EditBoardModal';
 // TODO: 휴지통 API 정상화되면 TrashBoardModal import 복원
-import type { TrashedBoard } from '@/types/admin/board';
 import { useBoardDragReorder } from '@/hooks/admin';
 import { useAdminBoardsQuery } from '@/hooks/queries/admin/useAdminBoardsQuery';
 import { useCreateBoardMutation } from '@/hooks/queries/admin/useCreateBoardMutation';
@@ -36,14 +35,9 @@ import { useClubId } from '@/stores';
 import { toastError } from '@/stores/useToastStore';
 import { toApiPermission } from '@/utils/admin/boardMapper';
 import { MAX_CUSTOM_BOARDS } from '@/constants/admin/board.constants';
-import type { Board } from '@/types/admin/board';
+import type { Board, BoardListCache } from '@/types/admin/board';
 import type { BoardFormData } from '@/components/admin/board/modal/constants';
 import { SortableBoardCard } from './SortableBoardCard';
-
-interface BoardListCache {
-  boards: Board[];
-  trashedBoards: TrashedBoard[];
-}
 
 function BoardPageContent() {
   const clubId = useClubId();

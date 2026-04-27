@@ -19,3 +19,8 @@ export interface TrashedBoard extends Board {
   /** 영구 삭제까지 남은 일수 (D-N) */
   daysLeft: number;
 }
+
+export interface BoardListCache {
+  boards: Board[];
+  trashedBoards: TrashedBoard[];
+}

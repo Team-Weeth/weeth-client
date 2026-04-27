@@ -7,13 +7,7 @@ import type { DragEndEvent } from '@dnd-kit/core';
 
 import { useClubId } from '@/stores';
 import { adminBoardQueryKeys } from '@/hooks/queries/admin/boardQueryKeys';
-import type { Board } from '@/types/admin/board';
-import type { TrashedBoard } from '@/types/admin/board';
-
-interface BoardListCache {
-  boards: Board[];
-  trashedBoards: TrashedBoard[];
-}
+import type { BoardListCache } from '@/types/admin/board';
 
 interface UseBoardDragReorderParams {
   onReorder: (boardIds: number[]) => void;
