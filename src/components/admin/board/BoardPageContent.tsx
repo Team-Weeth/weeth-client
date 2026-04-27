@@ -53,7 +53,11 @@ function BoardPageContent() {
   const [createNameError, setCreateNameError] = useState<string | null>(null);
   const [editingBoardId, setEditingBoardId] = useState<number | null>(null);
   const [editNameError, setEditNameError] = useState<string | null>(null);
-  const mounted = useSyncExternalStore(subscribeMounted, () => true, () => false);
+  const mounted = useSyncExternalStore(
+    subscribeMounted,
+    () => true,
+    () => false,
+  );
   // TODO: 휴지통 API 정상화되면 복원
   // const [trashModalOpen, setTrashModalOpen] = useState(false);
 
