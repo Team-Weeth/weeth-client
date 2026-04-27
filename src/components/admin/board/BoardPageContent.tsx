@@ -1,6 +1,6 @@
 'use client';
 
-import { Fragment, useEffect, useState } from 'react';
+import { Fragment, useState, useSyncExternalStore } from 'react';
 import {
   DndContext,
   PointerSensor,
@@ -40,6 +40,10 @@ import type { Board, BoardListCache } from '@/types/admin/board';
 import type { BoardFormData } from '@/components/admin/board/modal/constants';
 import { SortableBoardCard } from './SortableBoardCard';
 
+function subscribeMounted() {
+  return () => {};
+}
+
 function BoardPageContent() {
   const clubId = useClubId();
   const queryClient = useQueryClient();
@@ -49,6 +53,7 @@ function BoardPageContent() {
   const [createNameError, setCreateNameError] = useState<string | null>(null);
   const [editingBoardId, setEditingBoardId] = useState<number | null>(null);
   const [editNameError, setEditNameError] = useState<string | null>(null);
+  const mounted = useSyncExternalStore(subscribeMounted, () => true, () => false);
   // TODO: 휴지통 API 정상화되면 복원
   // const [trashModalOpen, setTrashModalOpen] = useState(false);
 
@@ -208,12 +213,6 @@ function BoardPageContent() {
   //     trashedBoards: prev.trashedBoards.filter((b) => b.boardId !== boardId),
   //   }));
   // };
-
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- dnd-kit hydration mismatch 방지를 위해 클라이언트 마운트 후에만 sortable 렌더
-    setMounted(true);
-  }, []);
 
   const query = searchValue.trim().toLowerCase();
   const filteredBoards = query
