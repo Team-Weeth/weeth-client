@@ -43,6 +43,7 @@ function HomeTutorialLauncher() {
     if (onboarding !== 'club-created' || role === undefined) return;
 
     if (role === 'LEAD' && !hasSeenTutorial) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- URL onboarding 플래그를 1회성 UI 트리거로 변환하는 의도된 동기화
       setAutoOpen(true);
     }
     router.replace(`/${clubId}/home`, { scroll: false });

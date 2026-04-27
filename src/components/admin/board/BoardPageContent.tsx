@@ -106,7 +106,10 @@ function BoardPageContent() {
   );
 
   const [mounted, setMounted] = useState(false);
-  useEffect(() => setMounted(true), []);
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- dnd-kit hydration mismatch 방지를 위해 클라이언트 마운트 후에만 sortable 렌더
+    setMounted(true);
+  }, []);
 
   if (isLoading || !data) {
     return (
