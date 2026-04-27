@@ -139,7 +139,7 @@ export default function Header({ isMain = true }: HeaderProps) {
             })}
         </div>
         {isMain && (
-          <span className="typo-sub1 absolute left-1/2 -translate-x-1/2 text-neutral-700">
+          <span className="typo-sub2 absolute left-1/2 -translate-x-1/2 text-neutral-700">
             {clubName}
           </span>
         )}
