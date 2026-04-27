@@ -1,7 +1,13 @@
 'use client';
 
 import { useParams } from 'next/navigation';
-import { Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbPage } from '@/components/ui';
+import {
+  Breadcrumb,
+  BreadcrumbList,
+  BreadcrumbItem,
+  BreadcrumbPage,
+  Skeleton,
+} from '@/components/ui';
 import { cn } from '@/lib/cn';
 import { useMyPageQueries } from '@/hooks/queries/mypage/useMyPageQueries';
 import { InfoCard } from './InfoCard';
@@ -14,9 +20,62 @@ import { ClubInfoCard } from './ClubInfoCard';
 
 type MyPageContentProps = React.HTMLAttributes<HTMLDivElement>;
 
+function ProfileSectionSkeleton() {
+  return (
+    <div className="flex items-center gap-300">
+      <Skeleton className="size-32 shrink-0 rounded-full" />
+      <div className="flex flex-col gap-200">
+        <Skeleton className="h-9 w-32" />
+        <Skeleton className="h-5 w-48" />
+      </div>
+    </div>
+  );
+}
+
+function InfoCardSkeleton({ rows }: { rows: number }) {
+  return (
+    <div className="bg-container-neutral flex w-full flex-col gap-400 rounded-lg p-450">
+      {Array.from({ length: rows }).map((_, index) => (
+        <div key={index} className="flex items-center gap-400">
+          <Skeleton className="h-5 w-[78px]" />
+          <Skeleton className="h-5 flex-1" />
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function ClubInfoCardSkeleton() {
+  return (
+    <div className="bg-container-neutral flex w-[340px] flex-col gap-400 rounded-lg p-450">
+      <div className="flex items-start justify-between">
+        <Skeleton className="size-16 rounded-lg" />
+        <Skeleton className="h-6 w-6" />
+      </div>
+      <div className="flex flex-col gap-100">
+        <Skeleton className="h-6 w-32" />
+        <Skeleton className="h-4 w-40" />
+      </div>
+      <Skeleton className="h-px w-full" />
+      <div className="flex items-center gap-200">
+        <Skeleton className="h-4 w-4" />
+        <Skeleton className="h-4 w-12" />
+      </div>
+      <div className="flex flex-col gap-200">
+        <Skeleton className="h-4 w-16" />
+        <div className="flex gap-100">
+          <Skeleton className="h-8 w-14 rounded-full" />
+          <Skeleton className="h-8 w-14 rounded-full" />
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function MyPageContent({ className, ...props }: MyPageContentProps) {
   const { clubId } = useParams<{ clubId: string }>();
-  const [{ data: me }, { data: clubs }] = useMyPageQueries();
+  const [{ data: me, isPending: isMePending }, { data: clubs, isPending: isClubsPending }] =
+    useMyPageQueries(clubId);
 
   return (
     <div
@@ -45,42 +104,55 @@ function MyPageContent({ className, ...props }: MyPageContentProps) {
       {/* Main Content */}
       <div className="flex w-full flex-col gap-700">
         {/* 프로필 */}
-        <ProfileSection
-          name={me.name}
-          bio={me.bio ?? undefined}
-          profileImageUrl={me.profileImageUrl ?? undefined}
-        />
+        {me ? (
+          <ProfileSection
+            name={me.name}
+            bio={me.bio ?? undefined}
+            profileImageUrl={me.profileImageUrl ?? undefined}
+          />
+        ) : (
+          <ProfileSectionSkeleton />
+        )}
 
         {/* 개인정보 */}
         <InfoSection title="개인정보">
           <div className="flex flex-col gap-300">
-            <InfoCard
-              items={[
-                { label: '이름', value: me.name },
-                { label: '소개글', value: me.bio },
-                {
-                  label: '전화번호',
-                  value: me.tel?.replace(/(\d{3})(\d{4})(\d{4})/, '$1-$2-$3') ?? '-',
-                },
-                { label: '이메일', value: me.email },
-              ]}
-            />
-            <InfoCard
-              items={[
-                { label: '학교', value: me.school },
-                { label: '학과', value: me.department },
-                { label: '학번', value: me.studentId },
-              ]}
-            />
+            {me && !isMePending ? (
+              <>
+                <InfoCard
+                  items={[
+                    { label: '이름', value: me.name },
+                    { label: '소개글', value: me.bio },
+                    {
+                      label: '전화번호',
+                      value: me.tel?.replace(/(\d{3})(\d{4})(\d{4})/, '$1-$2-$3') ?? '-',
+                    },
+                    { label: '이메일', value: me.email },
+                  ]}
+                />
+                <InfoCard
+                  items={[
+                    { label: '학교', value: me.school },
+                    { label: '학과', value: me.department },
+                    { label: '학번', value: me.studentId },
+                  ]}
+                />
+              </>
+            ) : (
+              <>
+                <InfoCardSkeleton rows={4} />
+                <InfoCardSkeleton rows={3} />
+              </>
+            )}
           </div>
         </InfoSection>
 
         {/* 활동정보 */}
         <InfoSection title="활동정보">
           <div className="flex flex-row gap-300">
-            {(clubs ?? []).map((club) => (
-              <ClubInfoCard key={club.id} club={club} />
-            ))}
+            {clubs && !isClubsPending
+              ? clubs.map((club) => <ClubInfoCard key={club.id} club={club} />)
+              : Array.from({ length: 1 }).map((_, index) => <ClubInfoCardSkeleton key={index} />)}
           </div>
         </InfoSection>
 

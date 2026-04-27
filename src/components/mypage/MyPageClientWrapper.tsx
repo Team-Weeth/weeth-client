@@ -1,12 +1,6 @@
 'use client';
 
-import dynamic from 'next/dynamic';
-import { MyPageSkeleton } from './MyPageSkeleton';
-
-const MyPageContent = dynamic(() => import('./MyPageContent').then((m) => m.MyPageContent), {
-  ssr: false,
-  loading: () => <MyPageSkeleton />,
-});
+import { MyPageContent } from './MyPageContent';
 
 function MyPageClientWrapper() {
   return <MyPageContent />;
