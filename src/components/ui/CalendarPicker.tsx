@@ -102,7 +102,7 @@ function CalendarPicker({ value, onChange, minDate, maxDate }: CalendarPickerPro
           <PopoverPrimitive.Content
             sideOffset={4}
             align="start"
-            className="bg-container-neutral z-50 w-72 rounded-md p-400 shadow-[0px_4px_14px_0px_rgba(0,0,0,0.25)]"
+            className="bg-container-neutral z-90 w-72 rounded-md p-400 shadow-[0px_4px_14px_0px_rgba(0,0,0,0.25)]"
           >
             {/* Month navigation */}
             <div className="mb-300 flex items-center justify-between">
@@ -113,7 +113,7 @@ function CalendarPicker({ value, onChange, minDate, maxDate }: CalendarPickerPro
               >
                 <Image src={AdminSquareLeftIcon} alt="이전" width={16} height={16} />
               </button>
-              <span className="typo-sub2 text-text-strong">
+              <span className="typo-sub1 text-text-strong">
                 {viewYear}년 {viewMonth}월
               </span>
               <button

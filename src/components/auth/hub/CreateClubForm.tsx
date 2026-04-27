@@ -265,7 +265,7 @@ function CreateClubForm({ schoolNames, schoolLoadError = false }: CreateClubForm
                 </div>
                 <span
                   className={cn(
-                    'typo-body2',
+                    'typo-sub3',
                     type === 'email' && isEmailContactDisabled
                       ? 'text-text-disabled'
                       : 'text-text-normal',

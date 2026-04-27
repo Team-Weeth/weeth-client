@@ -11,8 +11,9 @@ import { formatKoreanDate } from '@/lib/formatTime';
 import { AttendanceSessionCard } from './AttendanceSessionCard';
 
 function AttendancePageContent() {
-  const { cardinals, selectedCardinalId, setSelectedCardinalId, activeCardinal } =
-    useCardinalSelector({ autoSelectLatest: true });
+  const { cardinals, setSelectedCardinalId, activeCardinal } = useCardinalSelector({
+    autoSelectLatest: true,
+  });
   const [dirtyCardIds, setDirtyCardIds] = useState<Set<number>>(new Set());
   const [pendingCardinalId, setPendingCardinalId] = useState<number | null>(null);
   const [cardinalDialogOpen, setCardinalDialogOpen] = useState(false);

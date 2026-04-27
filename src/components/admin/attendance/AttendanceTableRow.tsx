@@ -19,7 +19,7 @@ function AttendanceTableRow({ isEditing, position }: AttendanceTableRowProps) {
           isBottom && 'rounded-bl-sm',
         )}
       >
-        <span className="typo-sub2 text-text-alternative">사용자 정보</span>
+        <span className="typo-sub3 text-text-alternative">사용자 정보</span>
       </div>
 
       {/* right cells */}
@@ -31,7 +31,7 @@ function AttendanceTableRow({ isEditing, position }: AttendanceTableRowProps) {
               isTop && 'border-t',
             )}
           >
-            <span className="typo-sub2 text-text-alternative">출석</span>
+            <span className="typo-sub3 text-text-alternative">출석</span>
           </div>
           <div
             className={cn(
@@ -40,7 +40,7 @@ function AttendanceTableRow({ isEditing, position }: AttendanceTableRowProps) {
               isBottom && 'rounded-br-sm',
             )}
           >
-            <span className="typo-sub2 text-text-alternative">결석</span>
+            <span className="typo-sub3 text-text-alternative">결석</span>
           </div>
         </>
       ) : (
@@ -51,7 +51,7 @@ function AttendanceTableRow({ isEditing, position }: AttendanceTableRowProps) {
             isBottom && 'rounded-br-sm',
           )}
         >
-          <span className="typo-sub2 text-text-alternative">출석 정보</span>
+          <span className="typo-sub3 text-text-alternative">출석 정보</span>
         </div>
       )}
     </div>

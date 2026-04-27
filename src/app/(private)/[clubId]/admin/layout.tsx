@@ -2,24 +2,30 @@ import type { ReactNode } from 'react';
 
 import { Header } from '@/components/admin/layout/Header';
 import { LNB } from '@/components/admin/layout/LNB';
-import { AdminScopeProvider } from '@/providers';
+import { AdminScopeProvider, ClubIdSyncer } from '@/providers';
 
-export default function AdminLayout({
+export default async function AdminLayout({
   children,
+  params,
 }: Readonly<{
   children: ReactNode;
+  params: Promise<{ clubId: string }>;
 }>) {
+  const { clubId } = await params;
+
   return (
-    <AdminScopeProvider>
-      <div data-admin className="fixed inset-0 flex flex-col">
-        <div className="flex flex-1 overflow-hidden">
-          <LNB />
-          <main className="bg-background flex-1 overflow-x-hidden overflow-y-auto [scrollbar-gutter:stable]">
-            <Header />
-            {children}
-          </main>
+    <ClubIdSyncer clubId={clubId}>
+      <AdminScopeProvider>
+        <div data-admin className="fixed inset-0 flex flex-col">
+          <div className="flex flex-1 overflow-hidden">
+            <LNB />
+            <main className="bg-background flex-1 overflow-x-hidden overflow-y-auto [scrollbar-gutter:stable]">
+              <Header />
+              {children}
+            </main>
+          </div>
         </div>
-      </div>
-    </AdminScopeProvider>
+      </AdminScopeProvider>
+    </ClubIdSyncer>
   );
 }

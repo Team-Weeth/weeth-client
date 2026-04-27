@@ -16,14 +16,14 @@ import {
 } from '@dnd-kit/sortable';
 import { useQueryClient } from '@tanstack/react-query';
 
-import { Icon } from '@/components/ui';
+import { Icon, Skeleton } from '@/components/ui';
 import { InfoCircleIcon } from '@/assets/icons';
 import { BoardCard } from '@/components/admin/board/BoardCard';
+import { BoardCardSkeleton } from '@/components/admin/board/BoardCardSkeleton';
 import { BoardToolbar } from '@/components/admin/board/BoardToolbar';
 import { CreateBoardModal } from '@/components/admin/board/modal/CreateBoardModal';
 import { EditBoardModal } from '@/components/admin/board/modal/EditBoardModal';
 // TODO: 휴지통 API 정상화되면 TrashBoardModal import 복원
-import type { TrashedBoard } from '@/components/admin/board/modal/TrashBoardModal';
 import { useBoardDragReorder } from '@/hooks/admin';
 import { useAdminBoardsQuery } from '@/hooks/queries/admin/useAdminBoardsQuery';
 import { useCreateBoardMutation } from '@/hooks/queries/admin/useCreateBoardMutation';
@@ -36,14 +36,9 @@ import { useClubId } from '@/stores';
 import { toastError } from '@/stores/useToastStore';
 import { toApiPermission } from '@/utils/admin/boardMapper';
 import { MAX_CUSTOM_BOARDS } from '@/constants/admin/board.constants';
-import type { Board } from '@/types/admin/board';
+import type { Board, BoardListCache } from '@/types/admin/board';
 import type { BoardFormData } from '@/components/admin/board/modal/constants';
 import { SortableBoardCard } from './SortableBoardCard';
-
-interface BoardListCache {
-  boards: Board[];
-  trashedBoards: TrashedBoard[];
-}
 
 function BoardPageContent() {
   const clubId = useClubId();
@@ -113,7 +108,30 @@ function BoardPageContent() {
   if (isLoading || !data) {
     return (
       <div className="flex min-w-0 flex-col gap-400 p-700">
-        <p className="typo-body2 text-text-alternative">불러오는 중...</p>
+        {/* Toolbar skeleton */}
+        <div className="flex flex-wrap items-center gap-300">
+          <Skeleton className="h-20 min-w-65 flex-1 rounded-lg" />
+          <Skeleton className="h-12 w-30 shrink-0 rounded-lg" />
+        </div>
+
+        {/* Board card skeletons */}
+        <div className="flex flex-col gap-400">
+          <div className="flex flex-col gap-400">
+            <BoardCardSkeleton />
+            <div className="border-line w-full border-t" />
+            <BoardCardSkeleton />
+          </div>
+
+          <div className="border-line w-full border-t" />
+
+          <div className="flex flex-col gap-200">
+            <BoardCardSkeleton />
+            <BoardCardSkeleton />
+            <BoardCardSkeleton />
+          </div>
+
+          <Skeleton className="h-12 rounded-md" />
+        </div>
       </div>
     );
   }
@@ -123,7 +141,7 @@ function BoardPageContent() {
   const handleCreateBoard = (formData: BoardFormData) => {
     setCreateNameError(null);
     createBoard({
-      name: formData.name,
+      name: formData.name.trim(),
       type: 'GENERAL',
       commentEnabled: formData.commentEnabled,
       ...toApiPermission(formData.visibility),
@@ -133,6 +151,8 @@ function BoardPageContent() {
   const handleToggleComments = (boardId: number, next: boolean) => {
     const target = boards.find((b) => b.boardId === boardId);
     if (!target) return;
+
+    const snapshot = queryClient.getQueryData<BoardListCache>(cacheKey);
 
     updateCache((prev) => ({
       ...prev,
@@ -150,12 +170,7 @@ function BoardPageContent() {
       },
       {
         onError: () => {
-          updateCache((prev) => ({
-            ...prev,
-            boards: prev.boards.map((b) =>
-              b.boardId === boardId ? { ...b, commentEnabled: !next } : b,
-            ),
-          }));
+          queryClient.setQueryData(cacheKey, snapshot);
         },
       },
     );

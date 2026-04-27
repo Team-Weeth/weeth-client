@@ -51,21 +51,21 @@ function NavItem({
         onClick={() => window.open(path, '_blank', 'noopener,noreferrer')}
       >
         {iconEl}
-        {!collapsed && <span className="typo-sub2">{label}</span>}
+        {!collapsed && <span className="typo-sub3">{label}</span>}
       </button>
     );
   } else if (external) {
     el = (
       <Link href={path} className={cls} target="_blank" rel="noopener noreferrer">
         {iconEl}
-        {!collapsed && <span className="typo-sub2">{label}</span>}
+        {!collapsed && <span className="typo-sub3">{label}</span>}
       </Link>
     );
   } else {
     el = (
       <Link href={path} className={cls}>
         {iconEl}
-        {!collapsed && <span className="typo-sub2">{label}</span>}
+        {!collapsed && <span className="typo-sub3">{label}</span>}
       </Link>
     );
   }

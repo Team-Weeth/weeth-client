@@ -14,7 +14,7 @@ interface PublicHeaderProps {
   showAuthButtons?: boolean;
 }
 
-export default function PublicHeader({ className, showAuthButtons = false }: PublicHeaderProps) {
+export default function PublicHeader({ className, showAuthButtons = true }: PublicHeaderProps) {
   const [visible, setVisible] = useState(true);
   const lastScrollY = useRef(0);
 

@@ -7,16 +7,10 @@ import type { DragEndEvent } from '@dnd-kit/core';
 
 import { useClubId } from '@/stores';
 import { adminBoardQueryKeys } from '@/hooks/queries/admin/boardQueryKeys';
-import type { Board } from '@/types/admin/board';
-import type { TrashedBoard } from '@/components/admin/board/modal/TrashBoardModal';
-
-interface BoardListCache {
-  boards: Board[];
-  trashedBoards: TrashedBoard[];
-}
+import type { Board, BoardListCache } from '@/types/admin/board';
 
 interface UseBoardDragReorderParams {
-  onReorder: (boardIds: number[]) => void;
+  onReorder: (boardIds: number[], options?: { onError?: () => void }) => void;
   /** 드래그 종료 후 실제 PATCH가 나가기까지 대기 시간 (ms) */
   debounceMs?: number;
 }
@@ -34,29 +28,32 @@ function useBoardDragReorder({ onReorder, debounceMs = 500 }: UseBoardDragReorde
   const cacheKey = adminBoardQueryKeys.list(clubId);
 
   const handleDragStart = () => {
-    if (reorderTimerRef.current) clearTimeout(reorderTimerRef.current);
+    if (reorderTimerRef.current) {
+      clearTimeout(reorderTimerRef.current);
+      reorderTimerRef.current = null;
+    }
   };
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
     if (!over || active.id === over.id) return;
 
-    const cache = queryClient.getQueryData<BoardListCache>(cacheKey);
-    if (!cache) return;
+    const snapshot = queryClient.getQueryData<BoardListCache>(cacheKey);
+    if (!snapshot) return;
 
-    const customIds = cache.boards.filter((b) => b.editable).map((b) => b.boardId);
+    const customIds = snapshot.boards.filter((b) => b.editable).map((b) => b.boardId);
     const oldIndex = customIds.indexOf(Number(active.id));
     const newIndex = customIds.indexOf(Number(over.id));
     if (oldIndex === -1 || newIndex === -1) return;
 
     const reorderedIds = arrayMove(customIds, oldIndex, newIndex);
     const customById = new Map(
-      cache.boards.filter((b) => b.editable).map((b) => [b.boardId, b] as const),
+      snapshot.boards.filter((b) => b.editable).map((b) => [b.boardId, b] as const),
     );
 
     const nextBoards: Board[] = [];
     let cursor = 0;
-    for (const board of cache.boards) {
+    for (const board of snapshot.boards) {
       if (board.editable) {
         nextBoards.push(customById.get(reorderedIds[cursor++])!);
       } else {
@@ -64,11 +61,17 @@ function useBoardDragReorder({ onReorder, debounceMs = 500 }: UseBoardDragReorde
       }
     }
 
-    queryClient.setQueryData<BoardListCache>(cacheKey, { ...cache, boards: nextBoards });
+    queryClient.setQueryData<BoardListCache>(cacheKey, { ...snapshot, boards: nextBoards });
 
-    if (reorderTimerRef.current) clearTimeout(reorderTimerRef.current);
+    if (reorderTimerRef.current) {
+      clearTimeout(reorderTimerRef.current);
+      reorderTimerRef.current = null;
+    }
     reorderTimerRef.current = setTimeout(() => {
-      onReorder(reorderedIds);
+      reorderTimerRef.current = null;
+      onReorder(reorderedIds, {
+        onError: () => queryClient.setQueryData(cacheKey, snapshot),
+      });
     }, debounceMs);
   };
 
