@@ -27,7 +27,7 @@ function HomeTutorialLauncher() {
   const { clubId } = useParams<{ clubId: string }>();
   const searchParams = useSearchParams();
   const [open, setOpen] = useState(false);
-  const [autoOpenDismissed, setAutoOpenDismissed] = useState(false);
+  const [autoOpen, setAutoOpen] = useState(false);
   const { data: role } = useHomeQuery({
     select: (data) => data.myInfo.userInfo.role,
   });
@@ -37,20 +37,21 @@ function HomeTutorialLauncher() {
     () => false,
   );
   const onboarding = searchParams.get('onboarding');
-  const shouldHandleOnboarding = onboarding === 'club-created' && role !== undefined;
-  const shouldAutoOpen =
-    shouldHandleOnboarding && role === 'LEAD' && !hasSeenTutorial && !autoOpenDismissed;
-  const isDialogOpen = open || shouldAutoOpen;
+  const isDialogOpen = open || autoOpen;
 
   useEffect(() => {
-    if (!shouldHandleOnboarding) return;
+    if (onboarding !== 'club-created' || role === undefined) return;
+
+    if (role === 'LEAD' && !hasSeenTutorial) {
+      setAutoOpen(true);
+    }
     router.replace(`/${clubId}/home`, { scroll: false });
-  }, [router, clubId, shouldHandleOnboarding]);
+  }, [router, clubId, onboarding, role, hasSeenTutorial]);
 
   const handleOpenChange = (nextOpen: boolean) => {
-    if (!nextOpen && shouldAutoOpen) {
+    if (!nextOpen && autoOpen) {
       window.localStorage.setItem(HOME_TUTORIAL_SEEN_KEY, 'true');
-      setAutoOpenDismissed(true);
+      setAutoOpen(false);
     }
 
     setOpen(nextOpen);

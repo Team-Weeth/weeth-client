@@ -1,9 +1,9 @@
 import type { ReactNode } from 'react';
 import type { StaticImageData } from 'next/image';
 
-import tutorialImg1 from '@/assets/images/home_tutorial_img1.png';
-import tutorialImg2 from '@/assets/images/home_tutorial_img2.png';
-import tutorialImg3 from '@/assets/images/home_tutorial_img3.png';
+import tutorialImg1 from '@/assets/image/home_tutorial_1.png';
+import tutorialImg2 from '@/assets/image/home_tutorial_2.png';
+import tutorialImg3 from '@/assets/image/home_tutorial_3.png';
 
 interface HomeTutorialSlide {
   title: ReactNode;
@@ -24,13 +24,19 @@ export const HOME_TUTORIAL_SLIDES: HomeTutorialSlide[] = [
     image: tutorialImg1,
   },
   {
-    title: '관리자 페이지에서 정기모임 일정을 추가해보세요.',
+    title: (
+      <>
+        관리자 페이지에서
+        <br />
+        정기모임 일정을 추가해보세요
+      </>
+    ),
     description: '관리자 서비스에서 언제든 추가할 수 있어요.',
     image: tutorialImg2,
   },
   {
-    title: '사이트 링크로 멤버를 초대해요.',
-    description: '승인은 관리자 서비스에서 할 수 있어요.',
+    title: '초대 링크를 복사하고 멤버를 초대해요.',
+    description: '별도의 승인 없이 바로 접근할 수 있어요.',
     image: tutorialImg3,
   },
 ];
