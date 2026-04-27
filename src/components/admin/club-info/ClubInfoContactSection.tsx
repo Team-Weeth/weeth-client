@@ -10,6 +10,7 @@ interface ClubInfoContactSectionProps {
   email: string;
   primaryContact: ClubInfoFormData['primaryContact'];
   phoneError?: string;
+  emailError?: string;
   onPhoneChange: (value: string) => void;
   onEmailChange: (value: string) => void;
   onPrimaryContactChange: (value: ClubInfoFormData['primaryContact']) => void;
@@ -20,10 +21,12 @@ function ClubInfoContactSection({
   email,
   primaryContact,
   phoneError,
+  emailError,
   onPhoneChange,
   onEmailChange,
   onPrimaryContactChange,
 }: ClubInfoContactSectionProps) {
+  const isEmailContactDisabled = !email.trim() || Boolean(emailError);
   return (
     <AdminInfoCard
       title="연락처"
@@ -40,7 +43,7 @@ function ClubInfoContactSection({
           />
         </FieldBlock>
 
-        <FieldBlock label="대표 이메일">
+        <FieldBlock label="대표 이메일" error={emailError}>
           <Input
             value={email}
             onChange={(e) => onEmailChange(e.target.value)}
@@ -51,30 +54,49 @@ function ClubInfoContactSection({
 
         <FieldBlock label="주 연락처">
           <div className="flex gap-200">
-            {PRIMARY_CONTACT_OPTIONS.map((option) => (
-              <label key={option.value} className="flex cursor-pointer items-center gap-200">
-                <input
-                  type="radio"
-                  value={option.value}
-                  checked={primaryContact === option.value}
-                  onChange={() => onPrimaryContactChange(option.value)}
-                  className="sr-only"
-                />
-                <div
+            {PRIMARY_CONTACT_OPTIONS.map((option) => {
+              const isDisabled = option.value === 'email' && isEmailContactDisabled;
+              return (
+                <label
+                  key={option.value}
                   className={cn(
-                    'flex h-5 w-5 items-center justify-center rounded-full border-2 transition-colors',
-                    primaryContact === option.value
-                      ? 'border-brand-primary'
-                      : 'border-text-alternative',
+                    'flex items-center gap-200',
+                    isDisabled ? 'cursor-not-allowed' : 'cursor-pointer',
                   )}
                 >
-                  {primaryContact === option.value && (
-                    <div className="bg-brand-primary h-2.5 w-2.5 rounded-full" />
-                  )}
-                </div>
-                <span className="typo-body2 text-text-normal">{option.label}</span>
-              </label>
-            ))}
+                  <input
+                    type="radio"
+                    value={option.value}
+                    checked={primaryContact === option.value}
+                    disabled={isDisabled}
+                    onChange={() => onPrimaryContactChange(option.value)}
+                    className="sr-only"
+                  />
+                  <div
+                    className={cn(
+                      'flex h-5 w-5 items-center justify-center rounded-full border-2 transition-colors',
+                      isDisabled
+                        ? 'border-icon-disabled'
+                        : primaryContact === option.value
+                          ? 'border-brand-primary'
+                          : 'border-text-alternative',
+                    )}
+                  >
+                    {primaryContact === option.value && (
+                      <div className="bg-brand-primary h-2.5 w-2.5 rounded-full" />
+                    )}
+                  </div>
+                  <span
+                    className={cn(
+                      'typo-body2',
+                      isDisabled ? 'text-text-disabled' : 'text-text-normal',
+                    )}
+                  >
+                    {option.label}
+                  </span>
+                </label>
+              );
+            })}
           </div>
         </FieldBlock>
       </div>
