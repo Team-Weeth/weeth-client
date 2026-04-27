@@ -57,6 +57,14 @@ function ClubInfoPageContent({ schoolNames }: ClubInfoPageContentProps) {
   const email = useWatch({ control, name: 'email' });
   const primaryContact = useWatch({ control, name: 'primaryContact' });
 
+  const isEmailContactDisabled = !email?.trim() || Boolean(errors.email);
+
+  useEffect(() => {
+    if (primaryContact === 'email' && isEmailContactDisabled) {
+      setValue('primaryContact', 'phone', { shouldDirty: true });
+    }
+  }, [primaryContact, isEmailContactDisabled, setValue]);
+
   const [profileImage, setProfileImage] = useState<ImageState>({ status: 'unchanged' });
   const [backgroundImage, setBackgroundImage] = useState<ImageState>({ status: 'unchanged' });
 
@@ -159,6 +167,7 @@ function ClubInfoPageContent({ schoolNames }: ClubInfoPageContentProps) {
           email={email ?? ''}
           primaryContact={primaryContact ?? 'phone'}
           phoneError={errors.phone?.message}
+          emailError={errors.email?.message}
           onPhoneChange={(value) => setValue('phone', value, { shouldDirty: true })}
           onEmailChange={(value) => setValue('email', value, { shouldDirty: true })}
           onPrimaryContactChange={(value) =>

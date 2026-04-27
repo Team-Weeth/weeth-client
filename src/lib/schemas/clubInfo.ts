@@ -8,7 +8,7 @@ export const clubInfoSchema = z.object({
     .string()
     .min(1, '전화번호를 입력해주세요')
     .regex(/^\d{2,3}-\d{3,4}-\d{4}$/, '010-0000-0000 형식으로 입력해주세요'),
-  email: z.string(),
+  email: z.union([z.literal(''), z.email('올바른 이메일 형식으로 입력해주세요')]),
   primaryContact: z.enum(['phone', 'email']),
 });
 
