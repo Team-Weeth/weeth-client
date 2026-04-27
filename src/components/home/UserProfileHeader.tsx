@@ -1,7 +1,11 @@
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui';
 import { useHomeQuery } from '@/hooks/home';
+import { useClubId } from '@/stores/useClubStore';
+import { useRouter } from 'next/navigation';
 
 export function UserProfileHeader() {
+  const router = useRouter();
+  const clubId = useClubId();
   const { data: myInfo } = useHomeQuery({
     select: (data) => data.myInfo,
   });
@@ -9,7 +13,13 @@ export function UserProfileHeader() {
 
   return (
     <div className="flex items-center gap-4 px-200 py-300">
-      <Avatar type="round">
+      <Avatar
+        type="round"
+        onClick={() => {
+          router.push(`/${clubId}/mypage`);
+        }}
+        className="cursor-pointer"
+      >
         <AvatarImage
           key={userInfo?.profileImageUrl ?? 'fallback'}
           width={64}
