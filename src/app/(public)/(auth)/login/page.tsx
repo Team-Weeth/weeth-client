@@ -20,7 +20,11 @@ export default async function LoginPage({
   const cookieStore = await cookies();
   const hasToken = cookieStore.has(ACCESS_TOKEN_KEY) || cookieStore.has(REFRESH_TOKEN_KEY);
   if (hasToken && !terms && !intent && !code) {
-    nextRedirect(resolvedRedirect ?? '/hub');
+    const safeRedirect =
+      resolvedRedirect && resolvedRedirect.startsWith('/') && !resolvedRedirect.startsWith('//')
+        ? resolvedRedirect
+        : '/hub';
+    nextRedirect(safeRedirect);
   }
 
   return (
