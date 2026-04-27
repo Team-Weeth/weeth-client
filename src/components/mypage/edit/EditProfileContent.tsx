@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { isAxiosError } from 'axios';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
@@ -25,6 +25,7 @@ import { useMyMemberQuery } from '@/hooks/queries/mypage/useMyMemberQuery';
 import { useUpdateProfileMutation } from '@/hooks/mutations/useUpdateProfileMutation';
 import { toastSuccess, toastError } from '@/stores/useToastStore';
 import { formatPhone } from '@/utils/shared';
+import { EditProfileSkeleton } from '../skeleton';
 import { ProfileImageEditor } from './ProfileImageEditor';
 import { PersonalInfoFields } from './PersonalInfoFields';
 import { SchoolInfoFields } from './SchoolInfoFields';
@@ -37,7 +38,7 @@ interface EditProfileContentProps extends React.HTMLAttributes<HTMLDivElement> {
 function EditProfileContent({ className, schools, majors, ...props }: EditProfileContentProps) {
   const router = useRouter();
   const { clubId } = useParams<{ clubId: string }>();
-  const { data: me } = useMyMemberQuery();
+  const { data: me, isPending: isMePending } = useMyMemberQuery(clubId);
   const { mutate: updateProfile, isPending } = useUpdateProfileMutation();
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [resetToDefault, setResetToDefault] = useState(false);
@@ -47,12 +48,27 @@ function EditProfileContent({ className, schools, majors, ...props }: EditProfil
     handleSubmit,
     setValue,
     control,
+    reset,
     formState: { isDirty },
   } = useForm<EditProfileFormData>({
     resolver: zodResolver(editProfileSchema),
     mode: 'onChange',
     reValidateMode: 'onChange',
     defaultValues: {
+      name: '',
+      bio: '',
+      phone: '',
+      email: '',
+      school: '',
+      department: '',
+      studentId: '',
+    },
+  });
+
+  useEffect(() => {
+    if (!me) return;
+
+    reset({
       name: me.name,
       bio: me.bio ?? '',
       phone: me.tel ? formatPhone(me.tel) : '',
@@ -60,8 +76,8 @@ function EditProfileContent({ className, schools, majors, ...props }: EditProfil
       school: me.school,
       department: me.department,
       studentId: me.studentId,
-    },
-  });
+    });
+  }, [me, reset]);
 
   const name = useWatch({ control, name: 'name' });
   const [watchedPhone, watchedSchool, watchedDepartment, watchedStudentId] = useWatch({
@@ -114,6 +130,10 @@ function EditProfileContent({ className, schools, majors, ...props }: EditProfil
       },
     );
   };
+
+  if (isMePending || !me) {
+    return <EditProfileSkeleton className={className} {...props} />;
+  }
 
   return (
     <>

@@ -6,6 +6,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { useMonthlySchedulesQuery } from '@/hooks/home';
 import { EmptyBox } from '@/components/home/EmptyBox';
 import { CalendarBoxSkeleton } from '@/components/home/skeleton';
+import { ExpandableScheduleTitle } from './ExpandableScheduleTitle';
 import { formatKoreanDate, formatKoreanTimeRange, groupByStartDate } from '@/utils/shared/date';
 import { useIsAdmin } from '@/hooks/shared';
 
@@ -50,8 +51,8 @@ export function CalendarBox() {
                   className="bg-container-neutral-alternative flex gap-[10px] rounded-md py-[10px] pl-[5px]"
                 >
                   <div className="bg-brand-primary h-[45px] w-[5px] rounded-xl" />
-                  <div className="flex flex-col gap-[5px]">
-                    <p className="typo-body1 text-text-strong">{schedule.title}</p>
+                  <div className="flex min-w-0 flex-1 flex-col gap-[5px] pr-[10px]">
+                    <ExpandableScheduleTitle title={schedule.title} />
                     <p className="typo-caption2 text-text-alternative">
                       {formatKoreanTimeRange(schedule.start, schedule.end)}
                     </p>
