@@ -53,3 +53,5 @@ export { default as LogoutIcon } from './logout.svg';
 export { default as TimeIcon } from './time.svg';
 export { default as LocationIcon } from './location.svg';
 export { default as ProfileCompleteIcon } from './profile_complete.svg';
+export { default as TaskFinishedIcon } from './task_finished.svg';
+export { default as RushIcon } from './rush.svg';
