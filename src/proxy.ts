@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { ACCESS_TOKEN_KEY } from '@/lib/apis/cookies';
+import { ACCESS_TOKEN_KEY, REFRESH_TOKEN_KEY } from '@/lib/apis/cookies';
 
 const PUBLIC_PATHS = ['/', '/login', '/terms', '/landing'];
 
@@ -15,6 +15,7 @@ export function proxy(request: NextRequest) {
     appEnv: process.env.NEXT_PUBLIC_APP_ENV,
     hasPreviewToken: !!process.env.PREVIEW_ACCESS_TOKEN,
     hasAccessCookie: request.cookies.has(ACCESS_TOKEN_KEY),
+    hasRefreshCookie: request.cookies.has(REFRESH_TOKEN_KEY),
   });
 
   // 런칭 전: /landing 외 모든 경로 차단
@@ -37,8 +38,11 @@ export function proxy(request: NextRequest) {
   // 개발 배포 환경에서 토큰 자동 주입 (카카오/애플 로그인 없이 페이지 접근)
   const isPreview = process.env.NEXT_PUBLIC_APP_ENV !== 'production';
   const previewToken = process.env.PREVIEW_ACCESS_TOKEN;
+  const hasAccessToken = request.cookies.has(ACCESS_TOKEN_KEY);
+  const hasRefreshToken = request.cookies.has(REFRESH_TOKEN_KEY);
+  const hasAuthSession = hasAccessToken || hasRefreshToken;
 
-  if (isPreview && previewToken && !request.cookies.has(ACCESS_TOKEN_KEY)) {
+  if (isPreview && previewToken && !hasAuthSession) {
     request.cookies.set(ACCESS_TOKEN_KEY, previewToken);
 
     const response = NextResponse.next({ request });
@@ -77,9 +81,7 @@ export function proxy(request: NextRequest) {
     }
   }
 
-  const accessToken = request.cookies.get(ACCESS_TOKEN_KEY)?.value;
-
-  if (!accessToken) {
+  if (!hasAuthSession) {
     const loginUrl = new URL('/login', request.url);
     const redirect = request.nextUrl.search ? `${pathname}${request.nextUrl.search}` : pathname;
     loginUrl.searchParams.set('redirect', redirect);

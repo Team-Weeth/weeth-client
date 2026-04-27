@@ -50,7 +50,7 @@ async function refreshTokens(cookieStore: Awaited<ReturnType<typeof cookies>>): 
     redirect('/login');
   }
 
-  const refreshResponse = await fetch(`${API_BASE_PATH}/users/refresh`, {
+  const refreshResponse = await fetch(`${API_BASE_PATH}/users/social/refresh`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
