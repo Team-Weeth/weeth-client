@@ -12,7 +12,7 @@ interface PostDetailHeaderProps {
 
 function PostDetailHeader({ className }: PostDetailHeaderProps) {
   const router = useRouter();
-  const { clubId, boardId } = useParams<{ clubId: string; boardId?: string }>();
+  const { clubId, boardId } = useParams<{ clubId: string; boardId: string }>();
 
   return (
     <div className={cn('flex items-start gap-200 self-stretch px-450 pt-450 pb-300', className)}>
@@ -21,7 +21,7 @@ function PostDetailHeader({ className }: PostDetailHeaderProps) {
         variant="tertiary"
         size="icon-md"
         className="h-600 w-600"
-        onClick={() => router.push(buildBoardPath(clubId, boardId ? Number(boardId) : undefined))}
+        onClick={() => router.push(buildBoardPath(clubId, Number(boardId)))}
         aria-label="뒤로 가기"
       >
         <Icon src={BackIcon} size={13} className="text-icon-alternative" />

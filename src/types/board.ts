@@ -7,7 +7,7 @@ export type { FileStatus, FileItem, DisplayFile, CreatePostFile } from '@/types/
 
 export type BoardType = 'ALL' | 'NOTICE' | 'GENERAL';
 
-export type UserRole = 'USER' | 'ADMIN';
+export type UserRole = 'USER' | 'ADMIN' | 'LEAD';
 
 interface BoardBase {
   id: number | null;
@@ -38,7 +38,7 @@ interface PostBase {
   id: number;
   author: PostAuthor;
   boardId: number;
-  boardName?: string;
+  boardName: string;
   title: string;
   content: string;
   time: string;

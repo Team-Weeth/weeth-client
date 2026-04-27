@@ -7,7 +7,6 @@ import { Divider, Icon } from '@/components/ui';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import { useRecentNoticesQuery } from '@/hooks/home';
-import { useNoticeBoardId } from '@/hooks/board/useBoardQuery';
 import { stripHtml } from '@/lib/stripHtml';
 import { buildPostPath, buildBoardPath } from '@/lib/board';
 import { EmptyBox } from './EmptyBox';
@@ -18,7 +17,6 @@ export function NoticeBoardBox() {
   const router = useRouter();
   const { clubId } = useParams<{ clubId: string }>();
   const { data: notices = [], isLoading } = useRecentNoticesQuery();
-  const noticeBoardId = useNoticeBoardId();
   const { isAdmin } = useIsAdmin();
 
   if (isLoading) return <NoticeBoardBoxSkeleton />;
@@ -33,7 +31,7 @@ export function NoticeBoardBox() {
           aria-label="공지 전체보기"
           onClick={() => {
             if (notices.length > 0) {
-              router.push(buildBoardPath(clubId, noticeBoardId));
+              router.push(buildBoardPath(clubId, notices[0].boardId));
             }
           }}
         >
@@ -46,7 +44,7 @@ export function NoticeBoardBox() {
             <React.Fragment key={notice.id}>
               {index > 0 && <Divider />}
               <Link
-                href={buildPostPath(clubId, notice.id, noticeBoardId)}
+                href={buildPostPath(clubId, notice.id, notice.boardId)}
                 className="flex flex-col items-start gap-300 py-400"
               >
                 <div className="flex flex-col gap-200">

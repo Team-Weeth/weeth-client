@@ -34,7 +34,7 @@ function PostDetailContent({ initialData }: PostDetailContentProps) {
   const router = useRouter();
   const { clubId: clubIdParam, boardId: boardIdParam } = useParams<{
     clubId: string;
-    boardId?: string;
+    boardId: string;
   }>();
   const currentUserId = useUserId();
   const clubId = useClubId();
@@ -101,11 +101,7 @@ function PostDetailContent({ initialData }: PostDetailContentProps) {
             <PostActionMenu
               postId={currentPost.id}
               onEdit={() => router.push(`/${clubIdParam}/board/edit/${currentPost.id}`)}
-              onDeleted={() =>
-                router.push(
-                  buildBoardPath(clubIdParam, boardIdParam ? Number(boardIdParam) : undefined),
-                )
-              }
+              onDeleted={() => router.push(buildBoardPath(clubIdParam, Number(boardIdParam)))}
             />
           )}
         </PostCard.Header>

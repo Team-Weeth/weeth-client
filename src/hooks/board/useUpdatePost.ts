@@ -37,7 +37,7 @@ export function useUpdatePost() {
       toast({ title: '게시글이 수정되었습니다.', variant: 'success' });
       _allowNavigation?.();
       usePostStore.getState().reset();
-      router.push(buildPostPath(clubIdParam, postId, boardId ?? undefined));
+      router.push(buildPostPath(clubIdParam, postId, boardId!));
     },
     onError: (error) => {
       if (error.message !== 'validation failed') {

@@ -37,7 +37,7 @@ export function useCreatePost() {
       queryClient.invalidateQueries({ queryKey: ['home', 'unread-notice', clubId] });
       _allowNavigation?.();
       usePostStore.getState().reset();
-      router.push(buildPostPath(clubIdParam, result.id, selectedBoard ?? undefined));
+      router.push(buildPostPath(clubIdParam, result.id, selectedBoard!));
       toast({ title: '게시글이 작성되었습니다.', variant: 'success' });
     },
     onError: (error) => {

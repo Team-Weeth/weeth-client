@@ -6,7 +6,6 @@ import { useParams } from 'next/navigation';
 import { useState } from 'react';
 import { NewIcon, DeleteIcon } from '@/assets/icons';
 import { useUnreadNoticeQuery } from '@/hooks/home';
-import { useNoticeBoardId } from '@/hooks/board/useBoardQuery';
 import { cn } from '@/lib/cn';
 import { stripHtml } from '@/lib/stripHtml';
 import { Icon } from '@/components/ui';
@@ -14,7 +13,6 @@ import { buildPostPath } from '@/lib/board';
 
 export function UnreadNoticeBox() {
   const { data } = useUnreadNoticeQuery();
-  const noticeBoardId = useNoticeBoardId();
   const { clubId } = useParams<{ clubId: string }>();
   const [dismissed, setDismissed] = useState(false);
   const [hidden, setHidden] = useState(false);
@@ -23,7 +21,7 @@ export function UnreadNoticeBox() {
 
   return (
     <Link
-      href={buildPostPath(clubId, data.id, noticeBoardId)}
+      href={buildPostPath(clubId, data.id, data.boardId)}
       className={cn(
         'flex flex-col rounded-lg shadow-[0_5px_20px_0_rgba(17,33,49,0.2)] transition-all duration-300',
         dismissed && 'pointer-events-none translate-x-2 opacity-0',
