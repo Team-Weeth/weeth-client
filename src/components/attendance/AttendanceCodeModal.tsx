@@ -13,6 +13,7 @@ import {
   Icon,
 } from '@/components/ui';
 import { InputOTP } from '@/components/attendance/InputOTP';
+import { useAttendanceSSE } from '@/hooks/attendance';
 import { useRemainingTime } from '@/hooks';
 import { formatModalDescription } from '@/lib/formatTime';
 
@@ -22,7 +23,6 @@ interface AttendanceCodeModalProps {
   onConfirm?: (code: string) => void;
   title: string;
   start: string;
-  endTime: string;
   location: string;
 }
 
@@ -32,11 +32,12 @@ function AttendanceCodeModal({
   onConfirm,
   title,
   start,
-  endTime,
   location,
 }: AttendanceCodeModalProps) {
   const [code, setCode] = useState('');
-  const { minutes, seconds, isExpired } = useRemainingTime(endTime);
+  const { expiredAt: sseExpiredAt } = useAttendanceSSE();
+  const isLoading = sseExpiredAt === null;
+  const { minutes, seconds, isExpired } = useRemainingTime(sseExpiredAt ?? '');
   const isComplete = code.length === 6;
   const description = formatModalDescription(start, location);
 
@@ -49,7 +50,7 @@ function AttendanceCodeModal({
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent
         showCloseButton={false}
-        className="bg-background flex h-[565px] w-[508px] flex-col"
+        className="bg-background flex h-[565px] w-full max-w-[508px] min-w-[320px] flex-col"
       >
         <DialogHeader
           icon={<Icon src={CheckRoundIcon} size={24} className="text-icon-alternative" />}
@@ -74,7 +75,11 @@ function AttendanceCodeModal({
 
           <InputOTP value={code} onChange={setCode} />
 
-          {!isExpired ? (
+          {isLoading ? (
+            <p className="typo-caption2 text-text-alternative text-center">
+              출석 정보를 불러오는 중...
+            </p>
+          ) : !isExpired ? (
             <p className="typo-caption2 text-text-strong text-center">
               출석 가능 시간{' '}
               <span className="text-brand-primary tabular-nums">
@@ -97,7 +102,7 @@ function AttendanceCodeModal({
             variant="primary"
             size="lg"
             className="w-full"
-            disabled={!isComplete || isExpired}
+            disabled={!isComplete || (!isLoading && isExpired)}
             onClick={() => {
               onConfirm?.(code);
               handleOpenChange(false);

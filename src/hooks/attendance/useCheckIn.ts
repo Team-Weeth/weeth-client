@@ -7,7 +7,12 @@ import { useClubId } from '@/stores/useClubStore';
 import { toastError } from '@/stores/useToastStore';
 import { useAttendanceQuery } from '@/hooks/attendance/useAttendanceQuery';
 
-export function useCheckIn() {
+interface UseCheckInOptions {
+  sessionId?: number | null;
+  onSuccess?: () => void;
+}
+
+export function useCheckIn(options?: UseCheckInOptions) {
   const queryClient = useQueryClient();
   const clubId = useClubId();
   const { data } = useAttendanceQuery();
@@ -17,18 +22,20 @@ export function useCheckIn() {
   const [checkedSessionId, setCheckedSessionId] = useState<number | null>(null);
   const [checkInError, setCheckInError] = useState(false);
 
-  const isChecked = data?.status === 'ATTEND' || checkedSessionId === data?.sessionId;
+  const sessionId = options?.sessionId ?? data?.sessionId;
+  const isChecked =
+    data?.status === 'ATTEND' || (sessionId != null && checkedSessionId === sessionId);
 
   async function handleCheckIn(code: string) {
     if (!isProfileLoading && profileStatus?.cardinalAssigned === false) {
       setCardinalModalOpen(true);
       return;
     }
-    if (!clubId || !data?.sessionId) return;
+    if (!clubId || !sessionId) return;
 
     try {
       setCheckInError(false);
-      await attendanceApi.checkIn(clubId, data.sessionId, Number(code));
+      await attendanceApi.checkIn(clubId, sessionId, Number(code));
     } catch (error) {
       const errorCode = (error as { response?: { data?: { code?: number } } }).response?.data?.code;
       if (errorCode && ATTENDANCE_ERROR_MESSAGE[errorCode]) {
@@ -40,8 +47,9 @@ export function useCheckIn() {
       return;
     }
 
-    setCheckedSessionId(data.sessionId);
+    setCheckedSessionId(sessionId);
     setCodeModalOpen(false);
+    options?.onSuccess?.();
     queryClient.invalidateQueries({ queryKey: ['attendance', clubId] });
   }
 

@@ -11,7 +11,8 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from '@/components/ui';
-import { useAttendanceQR } from '@/hooks/useAttendanceQR';
+import { useAttendanceSSE, useAttendanceQR } from '@/hooks/attendance';
+import { useRemainingTime } from '@/hooks/useRemainingTime';
 import { useClubId } from '@/stores/useClubStore';
 
 interface AttendanceQRContentProps {
@@ -21,10 +22,9 @@ interface AttendanceQRContentProps {
 function AttendanceQRContent({ sessionId }: AttendanceQRContentProps) {
   const { clubId: clubIdParam } = useParams<{ clubId: string }>();
   const clubId = useClubId();
-  const { qrRef, qrData, isLoading, minutes, seconds, isExpired } = useAttendanceQR(
-    clubId,
-    sessionId,
-  );
+  const { qrRef, qrData, isLoading } = useAttendanceQR(clubId, sessionId);
+  const { expiredAt: sseExpiredAt } = useAttendanceSSE();
+  const { minutes, seconds, isExpired } = useRemainingTime(sseExpiredAt ?? '');
 
   return (
     <div className="mx-auto flex w-full max-w-[1025px] flex-col gap-700 pt-600">
@@ -62,7 +62,7 @@ function AttendanceQRContent({ sessionId }: AttendanceQRContentProps) {
         <div className="bg-container-neutral flex w-full flex-col items-center gap-400 rounded-lg p-400">
           <div className="flex w-full flex-col items-center gap-600 p-400">
             {isLoading ? (
-              <div className="flex h-[256px] w-[256px] items-center justify-center">
+              <div className="flex aspect-square w-full max-w-[256px] min-w-[200px] items-center justify-center">
                 <p className="typo-body2 text-text-alternative">QR 코드 생성 중...</p>
               </div>
             ) : (
@@ -73,7 +73,7 @@ function AttendanceQRContent({ sessionId }: AttendanceQRContentProps) {
                   <div className="flex items-center gap-200">
                     <span className="typo-sub3 text-text-strong">출석 가능 시간</span>
                     <span className="typo-sub3 text-state-error tabular-nums">
-                      {isExpired ? '마감' : `${minutes}:${seconds}`}
+                      {!sseExpiredAt ? '연결 중...' : isExpired ? '마감' : `${minutes}:${seconds}`}
                     </span>
                   </div>
                   <p className="typo-body2 text-text-strong">QR코드는 모바일만 제공하고 있어요.</p>

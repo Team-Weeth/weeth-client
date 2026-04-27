@@ -34,12 +34,26 @@ async function handler(request: NextRequest, { params }: { params: Promise<{ pat
     duplex: 'half',
   } as RequestInit);
 
-  const body = await response.arrayBuffer();
-
   const responseHeaders = new Headers(response.headers);
   responseHeaders.delete('transfer-encoding');
   responseHeaders.delete('content-encoding');
   responseHeaders.delete('set-cookie');
+
+  const isSSE =
+    request.headers.get('accept')?.includes('text/event-stream') && response.ok && response.body;
+
+  if (isSSE) {
+    responseHeaders.set('content-type', 'text/event-stream');
+    responseHeaders.set('cache-control', 'no-cache');
+
+    return new NextResponse(response.body, {
+      status: response.status,
+      statusText: response.statusText,
+      headers: responseHeaders,
+    });
+  }
+
+  const body = await response.arrayBuffer();
 
   return new NextResponse(body, {
     status: response.status,

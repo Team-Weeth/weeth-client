@@ -9,12 +9,9 @@ import { Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbPage, Card } from
 import { AttendanceCompleteModal } from '@/components/attendance/AttendanceCompleteModal';
 import { AttendanceStatus } from '@/components/attendance/AttendanceStatus';
 import { AttendanceTodayCard } from '@/components/attendance/AttendanceTodayCard';
-import { ATTENDANCE_ERROR_MESSAGE } from '@/constants/attendance';
-import { attendanceApi } from '@/lib/apis/attendance';
 import { formatAttendanceDescription } from '@/lib/formatTime';
-import { useAttendanceQuery } from '@/hooks/attendance';
+import { useAttendanceQuery, useCheckIn } from '@/hooks/attendance';
 import { useQRCheckIn } from '@/hooks/useQRCheckIn';
-import { useProfileStatusQuery } from '@/hooks/home/useProfileStatusQuery';
 import { useIsAdmin } from '@/hooks/shared';
 import { useClubId } from '@/stores/useClubStore';
 import { toastError } from '@/stores/useToastStore';
@@ -44,11 +41,18 @@ function AttendanceContent({
   const router = useRouter();
   const queryClient = useQueryClient();
   const { data: attendanceData } = useAttendanceQuery();
-  const { data: profileStatus, isLoading: isProfileLoading } = useProfileStatusQuery();
-  const [cardinalModalOpen, setCardinalModalOpen] = useState(false);
   const { clubId: clubIdParam } = useParams<{ clubId: string }>();
-  const [isManualChecked, setIsManualChecked] = useState(false);
   const [completeModalOpen, setCompleteModalOpen] = useState(false);
+
+  const {
+    isChecked: isCheckInChecked,
+    cardinalModalOpen,
+    setCardinalModalOpen,
+    handleCheckIn: handleAttendanceComplete,
+  } = useCheckIn({
+    sessionId: attendance?.sessionId,
+    onSuccess: () => setCompleteModalOpen(true),
+  });
 
   const { isChecked: isQRChecked } = useQRCheckIn({
     qrSessionId,
@@ -59,8 +63,7 @@ function AttendanceContent({
     },
   });
 
-  const isAlreadyChecked = attendance?.status === 'ATTEND' || attendanceData?.status === 'ATTEND';
-  const isChecked = isAlreadyChecked || isManualChecked || isQRChecked;
+  const isChecked = attendance?.status === 'ATTEND' || isCheckInChecked || isQRChecked;
 
   useEffect(() => {
     if (errorMessage) toastError(errorMessage);
@@ -75,30 +78,6 @@ function AttendanceContent({
   } = attendance ?? {};
   const attendanceRate = attendanceData?.attendanceRate ?? attendance?.attendanceRate ?? 0;
   const description = formatAttendanceDescription(start ?? '', end ?? '', location ?? '');
-
-  async function handleAttendanceComplete(code: string) {
-    if (!isProfileLoading && profileStatus?.cardinalAssigned === false) {
-      setCardinalModalOpen(true);
-      return;
-    }
-    if (!clubId || !sessionId) return;
-
-    try {
-      await attendanceApi.checkIn(clubId, sessionId, Number(code));
-    } catch (error) {
-      const errorCode = (error as { response?: { data?: { code?: number } } }).response?.data?.code;
-      if (errorCode && ATTENDANCE_ERROR_MESSAGE[errorCode]) {
-        toastError(ATTENDANCE_ERROR_MESSAGE[errorCode]);
-      } else {
-        toastError();
-      }
-      return;
-    }
-
-    setIsManualChecked(true);
-    setCompleteModalOpen(true);
-    queryClient.invalidateQueries({ queryKey: ['attendance', clubId] });
-  }
 
   return (
     <>
@@ -119,7 +98,6 @@ function AttendanceContent({
             title={title ?? '오늘은 일정이 없어요'}
             description={title ? description : '동아리원과 스터디를 해보는 건 어때요?'}
             start={start ?? ''}
-            endTime={end ?? ''}
             location={location ?? ''}
             sessionId={sessionId}
             isAdmin={isAdmin}
