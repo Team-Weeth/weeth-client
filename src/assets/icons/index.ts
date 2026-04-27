@@ -47,6 +47,8 @@ export { default as CopyIcon } from './copy.svg';
 export { default as ClubAvatarIcon } from './club_avatar.svg';
 export { default as QuestionMarkIcon } from './question_mark.svg';
 export { default as NavToggleIcon } from './nav_toggle.svg';
+export { default as TrashcanIcon } from './trash_can.svg';
 export { default as PersonIcon } from './person.svg';
 export { default as LogoutIcon } from './logout.svg';
 export { default as TimeIcon } from './time.svg';
+export { default as LocationIcon } from './location.svg';

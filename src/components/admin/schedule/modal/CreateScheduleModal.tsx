@@ -1,7 +1,5 @@
 'use client';
 
-import { useState } from 'react';
-
 import { Icon, Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { AdminCloseIcon } from '@/assets/icons/admin';
@@ -15,7 +13,8 @@ interface CreateScheduleModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   cardinalNumber: number | null;
-  initialTab?: ScheduleType;
+  activeTab: ScheduleType;
+  onActiveTabChange: (tab: ScheduleType) => void;
   onCreateSession?: (body: CreateSessionBody) => void;
 }
 
@@ -23,36 +22,27 @@ function CreateScheduleModal({
   open,
   onOpenChange,
   cardinalNumber,
-  initialTab = 'GENERAL',
+  activeTab,
+  onActiveTabChange,
   onCreateSession,
 }: CreateScheduleModalProps) {
-  const [activeTab, setActiveTab] = useState<ScheduleType>(initialTab);
-
-  const handleClose = () => {
-    onOpenChange(false);
-    setActiveTab(initialTab);
-  };
-
-  const handleDialogOpenChange = (nextOpen: boolean) => {
-    onOpenChange(nextOpen);
-    if (!nextOpen) setActiveTab(initialTab);
-  };
+  const handleClose = () => onOpenChange(false);
 
   return (
-    <Dialog open={open} onOpenChange={handleDialogOpenChange}>
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
-        className="bg-background flex w-215 max-w-[860px] flex-col gap-0 overflow-hidden rounded-lg p-0"
+        className="bg-background flex w-215 max-w-215 flex-col gap-0 overflow-hidden rounded-lg p-0"
         showCloseButton={false}
       >
         {/* Header with tabs */}
         <div className="flex items-start justify-between px-700 pt-700">
           <Tabs
             value={activeTab}
-            onValueChange={(v) => setActiveTab(v as ScheduleType)}
+            onValueChange={(v) => onActiveTabChange(v as ScheduleType)}
             className="gap-0"
           >
             <TabsList variant="line" className="h-8">
-              <TabsTrigger value="GENERAL">{SCHEDULE_TYPE_LABEL.GENERAL}</TabsTrigger>
+              <TabsTrigger value="EVENT">{SCHEDULE_TYPE_LABEL.EVENT}</TabsTrigger>
               <TabsTrigger value="SESSION">{SCHEDULE_TYPE_LABEL.SESSION}</TabsTrigger>
             </TabsList>
             <TabsContent value={activeTab} className="hidden" />

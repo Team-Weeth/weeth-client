@@ -20,9 +20,9 @@ function ScheduleItem({
   onDelete,
   ...props
 }: ScheduleItemProps) {
-  const day = getDayOfMonth(schedule.startDateTime);
-  const dayLabel = getDayLabel(schedule.startDateTime);
-  const dateTimeText = formatScheduleDateTime(schedule.startDateTime);
+  const day = getDayOfMonth(schedule.start);
+  const dayLabel = getDayLabel(schedule.start);
+  const dateTimeText = formatScheduleDateTime(schedule.start);
 
   return (
     <div
@@ -41,7 +41,7 @@ function ScheduleItem({
 
       {/* Content column */}
       <div className="flex flex-1 flex-col justify-center gap-200 self-stretch">
-        <span className="typo-sub2 text-text-strong">{schedule.title}</span>
+        <span className="typo-sub3 text-text-strong">{schedule.title}</span>
         <div className="flex flex-wrap items-center gap-200">
           <ScheduleTag variant="type">{SCHEDULE_TYPE_LABEL[schedule.type]}</ScheduleTag>
           <ScheduleTag icon="calendar">{dateTimeText}</ScheduleTag>

@@ -42,7 +42,7 @@ function ScheduleList({
       ) : (
         schedules.map((schedule, index) => (
           <ScheduleItem
-            key={schedule.scheduleId}
+            key={schedule.id}
             schedule={schedule}
             isLast={index === schedules.length - 1}
             onEdit={() => onEdit?.(schedule)}

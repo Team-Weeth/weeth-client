@@ -3,8 +3,7 @@
 import { useState } from 'react';
 import Image from 'next/image';
 
-import { Button, Card, Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui';
-import { Icon } from '@/components/ui';
+import { Button, Card, Icon, Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui';
 import { AdminCalendarEditIcon } from '@/assets/icons/admin';
 import { SearchIcon } from '@/assets/icons';
 import { CardinalDropdown } from '@/components/admin';
@@ -13,67 +12,50 @@ import { ScheduleList } from '@/components/admin/schedule/general/ScheduleList';
 import { SessionTabContent } from '@/components/admin/schedule/session/SessionTabContent';
 import { CreateScheduleModal } from '@/components/admin/schedule/modal/CreateScheduleModal';
 import { EditScheduleModal } from '@/components/admin/schedule/modal/EditScheduleModal';
-import { useCardinalSelector } from '@/hooks';
-import type { Schedule } from '@/types/admin/schedule';
+import { EditSessionModal } from '@/components/admin/schedule/modal/EditSessionModal';
+import { useCardinalSelector, useMonthNavigator } from '@/hooks';
+import {
+  useAdminMonthlySchedules,
+  useDeleteSchedule,
+} from '@/hooks/queries/admin/useAdminScheduleQueries';
+import type { Schedule, ScheduleType } from '@/types/admin/schedule';
 
 type ScheduleTab = 'all' | 'session';
-
-const MOCK_SCHEDULES: Schedule[] = [
-  {
-    scheduleId: 1,
-    title: '7기 1차 정기모임',
-    type: 'SESSION',
-    startDateTime: '2026-04-12T20:00:00',
-    endDateTime: '2026-04-12T22:00:00',
-    location: '가천대 체육관',
-    cardinalNumber: 7,
-  },
-  {
-    scheduleId: 2,
-    title: '중간고사 기간',
-    type: 'GENERAL',
-    startDateTime: '2026-04-14T20:00:00',
-    endDateTime: '2026-04-14T22:00:00',
-    location: '가천관 123호',
-    cardinalNumber: 7,
-  },
-  {
-    scheduleId: 3,
-    title: '7기 2차 정기모임',
-    type: 'SESSION',
-    startDateTime: '2026-04-15T20:00:00',
-    endDateTime: '2026-04-15T22:00:00',
-    location: '종합경기장',
-    cardinalNumber: 7,
-  },
-];
 
 function SchedulePageContent() {
   const { cardinals, selectedCardinalId, setSelectedCardinalId, activeCardinal } =
     useCardinalSelector({ autoSelectLatest: true });
-  const [currentYear, setCurrentYear] = useState(() => new Date().getFullYear());
-  const [currentMonth, setCurrentMonth] = useState(() => new Date().getMonth() + 1);
+  const {
+    year: currentYear,
+    month: currentMonth,
+    prev: handlePrevMonth,
+    next: handleNextMonth,
+  } = useMonthNavigator();
   const [searchValue, setSearchValue] = useState('');
   const [activeTab, setActiveTab] = useState<ScheduleTab>('all');
   const [createModalOpen, setCreateModalOpen] = useState(false);
+  const [createModalTab, setCreateModalTab] = useState<ScheduleType>('EVENT');
   const [editTarget, setEditTarget] = useState<Schedule | null>(null);
 
-  const schedules = MOCK_SCHEDULES;
+  const openCreateModal = (tab: ScheduleType) => {
+    setCreateModalTab(tab);
+    setCreateModalOpen(true);
+  };
+
+  const { data: schedules = [] } = useAdminMonthlySchedules(currentYear, currentMonth);
+  const { mutate: deleteSchedule } = useDeleteSchedule();
 
   // 기수 필터링
   const cardinalFiltered =
     selectedCardinalId === null
       ? schedules
-      : schedules.filter((s) => s.cardinalNumber === activeCardinal?.cardinalNumber);
-  // 월 필터링
-  const monthFiltered = cardinalFiltered.filter((s) => {
-    const date = new Date(s.startDateTime);
-    return date.getFullYear() === currentYear && date.getMonth() + 1 === currentMonth;
-  });
+      : schedules.filter((s) => s.cardinal === activeCardinal?.cardinalNumber);
 
   // 탭 필터링
   const tabFiltered =
-    activeTab === 'session' ? monthFiltered.filter((s) => s.type === 'SESSION') : monthFiltered;
+    activeTab === 'session'
+      ? cardinalFiltered.filter((s) => s.type === 'SESSION')
+      : cardinalFiltered;
 
   // 검색 필터링
   const query = searchValue.trim().toLowerCase();
@@ -85,29 +67,14 @@ function SchedulePageContent() {
 
   // 날짜순 정렬
   const sortedSchedules = [...filteredSchedules].sort(
-    (a, b) => new Date(a.startDateTime).getTime() - new Date(b.startDateTime).getTime(),
+    (a, b) => new Date(a.start).getTime() - new Date(b.start).getTime(),
   );
 
-  const handlePrevMonth = () => {
-    if (currentMonth === 1) {
-      setCurrentYear((y) => y - 1);
-      setCurrentMonth(12);
-    } else {
-      setCurrentMonth((m) => m - 1);
-    }
-  };
-
-  const handleNextMonth = () => {
-    if (currentMonth === 12) {
-      setCurrentYear((y) => y + 1);
-      setCurrentMonth(1);
-    } else {
-      setCurrentMonth((m) => m + 1);
-    }
-  };
-
-  const handleDelete = (_schedule: Schedule) => {
-    // TODO: API 연동 시 deleteSchedule(_schedule) 호출
+  const handleDelete = (schedule: Schedule) => {
+    deleteSchedule(schedule.id, {
+      onSuccess: () => setEditTarget(null),
+      // onError 처리도 토스트 유틸과 연결하는 것을 권장합니다.
+    });
   };
 
   return (
@@ -130,7 +97,7 @@ function SchedulePageContent() {
         </TabsList>
 
         <TabsContent value="all" className="mt-400 overflow-x-auto">
-          <Card className="min-w-[690px] gap-700 px-600 pt-600 pb-800">
+          <Card className="min-w-172.5 gap-700 px-600 pt-600 pb-800">
             {/* Month navigator */}
             <MonthNavigator
               year={currentYear}
@@ -141,7 +108,7 @@ function SchedulePageContent() {
 
             {/* Search bar + Create button */}
             <div className="flex items-center justify-between">
-              <div className="relative w-[492px]">
+              <div className="relative w-123">
                 <Image
                   src={SearchIcon}
                   alt="검색"
@@ -159,7 +126,7 @@ function SchedulePageContent() {
                   className="bg-container-neutral-alternative typo-body1 placeholder:text-text-alternative h-12 w-full rounded-sm py-300 pr-300 pl-14 focus:outline-none"
                 />
               </div>
-              <Button variant="primary" size="lg" onClick={() => setCreateModalOpen(true)}>
+              <Button variant="primary" size="lg" onClick={() => openCreateModal('EVENT')}>
                 <Icon src={AdminCalendarEditIcon} size={20} className="text-text-inverse mr-1" />
                 일반 일정 생성
               </Button>
@@ -170,13 +137,13 @@ function SchedulePageContent() {
               schedules={sortedSchedules}
               onEdit={setEditTarget}
               onDelete={handleDelete}
-              onCreateClick={() => setCreateModalOpen(true)}
+              onCreateClick={() => openCreateModal('EVENT')}
             />
           </Card>
         </TabsContent>
 
         <TabsContent value="session" className="mt-400">
-          <SessionTabContent onCreateSession={() => setCreateModalOpen(true)} />
+          <SessionTabContent onCreateSession={() => openCreateModal('SESSION')} />
         </TabsContent>
       </Tabs>
 
@@ -185,19 +152,40 @@ function SchedulePageContent() {
         open={createModalOpen}
         onOpenChange={setCreateModalOpen}
         cardinalNumber={activeCardinal?.cardinalNumber ?? null}
-        initialTab={activeTab === 'session' ? 'SESSION' : 'GENERAL'}
+        activeTab={createModalTab}
+        onActiveTabChange={setCreateModalTab}
       />
 
       {/* Edit schedule modal */}
-      {editTarget && (
+      {editTarget?.type === 'EVENT' && (
         <EditScheduleModal
-          key={editTarget.scheduleId}
+          key={editTarget.id}
           open
           onOpenChange={(open) => {
             if (!open) setEditTarget(null);
           }}
           schedule={editTarget}
           onDelete={handleDelete}
+        />
+      )}
+
+      {/* Edit session modal */}
+      {editTarget?.type === 'SESSION' && (
+        <EditSessionModal
+          key={editTarget.id}
+          open
+          onOpenChange={(open) => {
+            if (!open) setEditTarget(null);
+          }}
+          target={{
+            id: editTarget.id,
+            cardinal: editTarget.cardinal,
+            title: editTarget.title,
+            start: editTarget.start,
+            end: editTarget.end,
+            status: 'SCHEDULED',
+          }}
+          onDelete={() => handleDelete(editTarget)}
         />
       )}
     </div>

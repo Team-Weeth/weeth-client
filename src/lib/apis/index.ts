@@ -15,3 +15,4 @@ export { cardinalApi } from './cardinal';
 export { inquiryApi } from './inquiry';
 export { adminClubApi } from './adminClub';
 export { adminAttendanceApi } from './adminAttendance';
+export { adminScheduleApi } from './adminSchedule';

@@ -1,6 +1,6 @@
 'use client';
 
-import * as React from 'react';
+import { useEffect, useRef } from 'react';
 import { AlertDialog as AlertDialogPrimitive } from 'radix-ui';
 
 import { cn } from '@/lib/cn';
@@ -43,7 +43,10 @@ interface CustomAlertDialogProps extends React.ComponentProps<typeof AlertDialog
   title: string;
   description?: string;
   actionLabel: string;
+  cancelLabel?: string;
   onAction: () => void;
+  onCancel?: () => void;
+  onDismiss?: () => void;
   secondActionLabel?: string;
   onSecondAction?: () => void;
   placement?: Placement;
@@ -54,21 +57,42 @@ function CustomAlertDialog({
   title,
   description,
   actionLabel,
+  cancelLabel,
   onAction,
+  onCancel,
+  onDismiss,
   secondActionLabel,
   onSecondAction,
   placement = 'above-right',
   tone = 'danger',
   children,
+  open,
+  onOpenChange,
   ...props
 }: CustomAlertDialogProps) {
+  const contentRef = useRef<HTMLDivElement>(null);
   const useOverlay = placement === 'center';
   const toneStyle = TONE_STYLES[tone];
 
+  useEffect(() => {
+    if (!open || (!onOpenChange && !onDismiss)) return;
+    const handler = (e: PointerEvent) => {
+      if (contentRef.current?.contains(e.target as Node)) return;
+      onOpenChange?.(false);
+      onDismiss?.();
+    };
+    const timer = setTimeout(() => document.addEventListener('pointerdown', handler), 0);
+    return () => {
+      clearTimeout(timer);
+      document.removeEventListener('pointerdown', handler);
+    };
+  }, [open, onOpenChange, onDismiss]);
+
   const content = (
     <AlertDialogPrimitive.Content
+      ref={contentRef}
       className={cn(
-        'bg-background border-line data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 z-[60] w-[339px] rounded-lg border shadow-[0px_10px_40px_0px_rgba(0,0,0,0.5)] duration-200',
+        'bg-background border-line data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 z-90 w-[339px] rounded-lg border shadow-[0px_10px_40px_0px_rgba(0,0,0,0.5)] duration-200',
         PLACEMENT_CLASS[placement],
       )}
     >
@@ -109,13 +133,25 @@ function CustomAlertDialog({
               </button>
             </AlertDialogPrimitive.Action>
           )}
+
+          {cancelLabel && (
+            <AlertDialogPrimitive.Cancel asChild>
+              <button
+                type="button"
+                onClick={onCancel}
+                className="typo-button1 bg-button-neutral text-text-strong hover:bg-container-neutral-interaction w-full cursor-pointer rounded-md px-400 py-300 transition-colors"
+              >
+                {cancelLabel}
+              </button>
+            </AlertDialogPrimitive.Cancel>
+          )}
         </div>
       </div>
     </AlertDialogPrimitive.Content>
   );
 
   return (
-    <AlertDialogPrimitive.Root {...props}>
+    <AlertDialogPrimitive.Root open={open} onOpenChange={onOpenChange} {...props}>
       {children}
 
       {useOverlay ? (
