@@ -19,7 +19,7 @@ function AttendanceMemberRow({ member, isEditing, status, onToggle }: Attendance
     <div className="flex">
       {/* 사용자 정보 */}
       <div className="border-line flex min-w-0 flex-1 flex-col justify-center gap-200 border-r border-b border-l px-400 py-300">
-        <span className="typo-sub2 text-text-strong">{member.name}</span>
+        <span className="typo-sub3 text-text-strong">{member.name}</span>
         <div className="mt-100 flex items-center gap-200">
           <span className="typo-body2 text-text-normal">{member.department}</span>
           <span className="typo-body2 text-text-alternative">{member.studentId}</span>

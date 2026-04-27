@@ -36,7 +36,7 @@ export function HomePageSections() {
             <MainContainer />
           </Suspense>
         </div>
-        <div className="desktop:flex tablet:hidden flex flex-col gap-300">
+        <div className="desktop:flex desktop:w-[339px] desktop:shrink-0 tablet:hidden flex flex-col gap-300">
           <Suspense fallback={<RightContainerSkeleton />}>
             <RightContainer />
           </Suspense>

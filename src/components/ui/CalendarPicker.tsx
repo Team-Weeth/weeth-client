@@ -113,7 +113,7 @@ function CalendarPicker({ value, onChange, minDate, maxDate }: CalendarPickerPro
               >
                 <Image src={AdminSquareLeftIcon} alt="이전" width={16} height={16} />
               </button>
-              <span className="typo-sub2 text-text-strong">
+              <span className="typo-sub1 text-text-strong">
                 {viewYear}년 {viewMonth}월
               </span>
               <button
