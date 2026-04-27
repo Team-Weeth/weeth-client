@@ -25,24 +25,10 @@ function useNavigationGuard({ enabled }: UseNavigationGuardOptions) {
   const isLeaving = useRef(false);
   const guardUrl = useRef('');
   const pendingUrl = useRef<string | null>(null);
-  const beforeUnloadRef = useRef<((e: BeforeUnloadEvent) => void) | null>(null);
-
-  // guardUrl을 현재 URL과 동기화 — 같은 페이지 내 쿼리 파라미터 변경 등 반영
-  useEffect(() => {
-    if (!enabled) return;
-
-    const syncGuardUrl = () => {
-      guardUrl.current = location.href;
-    };
-
-    window.addEventListener('popstate', syncGuardUrl);
-    return () => window.removeEventListener('popstate', syncGuardUrl);
-  }, [enabled]);
 
   useEffect(() => {
     if (!enabled) {
-      // enabled가 꺼질 때 guard entry 정리
-      if (isGuardEntry()) {
+      if (!isLeaving.current && isGuardEntry()) {
         history.back();
       }
       return;
@@ -57,13 +43,13 @@ function useNavigationGuard({ enabled }: UseNavigationGuardOptions) {
 
     const handlePopState = () => {
       if (isLeaving.current) return;
+      guardUrl.current = location.href;
       setOpen(true);
     };
 
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
       e.preventDefault();
     };
-    beforeUnloadRef.current = handleBeforeUnload;
 
     // <a> 클릭을 캡처 단계에서 가로채서 Next.js Link 내비게이션을 차단
     const handleClick = (e: MouseEvent) => {
@@ -72,10 +58,7 @@ function useNavigationGuard({ enabled }: UseNavigationGuardOptions) {
       if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
 
       const anchor = (e.target as HTMLElement).closest('a');
-      if (!anchor) return;
-
-      // anchor.href는 브라우저가 이미 절대 URL로 변환한 값
-      if (!anchor.href) return;
+      if (!anchor?.href) return;
 
       // target="_blank" 등 외부 탭은 무시
       if (anchor.target && anchor.target !== '_self') return;
@@ -90,7 +73,7 @@ function useNavigationGuard({ enabled }: UseNavigationGuardOptions) {
       setOpen(true);
     };
 
-    // pushState/replaceState 패치 — router.push() 등 프로그래매틱 내비게이션 감지
+    // pushState/replaceState 패치 — router.push() 등 프로그래매틱 네비게이션 감지
     const originalPushState = history.pushState.bind(history);
     const originalReplaceState = history.replaceState.bind(history);
 
@@ -139,11 +122,6 @@ function useNavigationGuard({ enabled }: UseNavigationGuardOptions) {
   const onConfirm = () => {
     isLeaving.current = true;
     setOpen(false);
-
-    if (beforeUnloadRef.current) {
-      window.removeEventListener('beforeunload', beforeUnloadRef.current);
-      beforeUnloadRef.current = null;
-    }
 
     if (pendingUrl.current) {
       const target = new URL(pendingUrl.current);

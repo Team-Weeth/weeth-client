@@ -10,7 +10,7 @@ function PostingActions() {
   const router = useRouter();
   const pathname = usePathname();
 
-  const editMatch = pathname.match(/^\/board\/edit\/(\d+)$/);
+  const editMatch = pathname.match(/^\/[^/]+\/board\/edit\/(\d+)$/);
   const editPostId = editMatch ? Number(editMatch[1]) : null;
   const isEditPage = editPostId !== null;
 

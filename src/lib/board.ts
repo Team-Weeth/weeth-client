@@ -49,4 +49,28 @@ function toBoardNavItem(board: {
   return { id: board.id, label: board.name, type: board.type };
 }
 
-export { toDisplayFile, isImageFileByType, stripUuidPrefix, mapComment, toBoardNavItem };
+/** boardId가 있으면 /board/{boardId}/{postId}, 없으면 /board/posts/{postId} */
+function buildPostPath(clubId: string, postId: number, boardId?: number): string {
+  if (boardId != null) {
+    return `/${clubId}/board/${boardId}/${postId}`;
+  }
+  return `/${clubId}/board/posts/${postId}`;
+}
+
+/** boardId가 있으면 /board/{boardId}, 없으면 /board */
+function buildBoardPath(clubId: string, boardId?: number): string {
+  if (boardId != null) {
+    return `/${clubId}/board/${boardId}`;
+  }
+  return `/${clubId}/board`;
+}
+
+export {
+  toDisplayFile,
+  isImageFileByType,
+  stripUuidPrefix,
+  mapComment,
+  toBoardNavItem,
+  buildPostPath,
+  buildBoardPath,
+};

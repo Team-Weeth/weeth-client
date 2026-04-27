@@ -24,10 +24,14 @@ function BoardNavClient({ items }: BoardNavClientProps) {
   const setBoardTypeMap = useSetBoardTypeMap();
   const pathname = usePathname();
   const router = useRouter();
-  const { clubId: clubIdParam } = useParams<{ clubId: string }>();
+  const { clubId: clubIdParam, boardId: boardIdParam } = useParams<{
+    clubId: string;
+    boardId?: string;
+  }>();
 
   const clubId = useClubId();
-  const isDetailPage = /\/board\/\d+$/.test(pathname);
+  const isDetailPage = /\/board\/\d+\/\d+$/.test(pathname);
+  const isPostsRoute = /\/board\/posts\/\d+$/.test(pathname);
 
   const commentDirty = useCommentDirty();
   const setCommentDirty = useSetCommentDirty();
@@ -41,6 +45,25 @@ function BoardNavClient({ items }: BoardNavClientProps) {
     });
     setBoardTypeMap(map);
   }, [items, setBoardTypeMap]);
+
+  // URL의 boardId 파라미터로 활성 채널 동기화
+  useEffect(() => {
+    if (boardIdParam) {
+      const boardId = Number(boardIdParam);
+      if (Number.isInteger(boardId)) {
+        if (boardId !== activeBoardId) setActiveBoardId(boardId);
+      } else if (activeBoardId !== null) {
+        // 유효하지 않은 boardIdParam → stale 방지를 위해 리셋
+        setActiveBoardId(null);
+      }
+    } else if (!isDetailPage && !isPostsRoute) {
+      // /board (전체 게시글) 페이지일 때
+      // posts/ 경로는 PostDetailContent가 boardId를 설정하므로 리셋하지 않음
+      if (activeBoardId !== null) {
+        setActiveBoardId(null);
+      }
+    }
+  }, [boardIdParam, activeBoardId, setActiveBoardId, isDetailPage, isPostsRoute]);
 
   useEffect(() => {
     if (activeBoardId === null) return;
@@ -58,8 +81,10 @@ function BoardNavClient({ items }: BoardNavClientProps) {
       boardApi.readAllNotices(clubId, id).catch(() => {});
     }
 
-    if (isDetailPage) {
+    if (id === null) {
       router.push(`/${clubIdParam}/board`);
+    } else {
+      router.push(`/${clubIdParam}/board/${id}`);
     }
   };
 

@@ -23,6 +23,7 @@ import { useSetActiveBoardId, useBoardTypeMap } from '@/stores/useBoardNavStore'
 import { useClubId } from '@/stores/useClubStore';
 import { useUserId } from '@/stores/useUserStore';
 import { boardApi } from '@/lib/apis/board';
+import { buildBoardPath } from '@/lib/board';
 import type { PostDetail } from '@/types/board';
 
 interface PostDetailContentProps {
@@ -31,7 +32,10 @@ interface PostDetailContentProps {
 
 function PostDetailContent({ initialData }: PostDetailContentProps) {
   const router = useRouter();
-  const { clubId: clubIdParam } = useParams<{ clubId: string }>();
+  const { clubId: clubIdParam, boardId: boardIdParam } = useParams<{
+    clubId: string;
+    boardId?: string;
+  }>();
   const currentUserId = useUserId();
   const clubId = useClubId();
   const setActiveBoardId = useSetActiveBoardId();
@@ -61,7 +65,6 @@ function PostDetailContent({ initialData }: PostDetailContentProps) {
   useEffect(() => {
     const hash = window.location.hash;
     if (hash) {
-      // #comments 등 해시가 있으면 해당 요소로 스크롤
       const el = document.getElementById(hash.slice(1));
       el?.scrollIntoView({ behavior: 'smooth' });
     } else {
@@ -91,37 +94,40 @@ function PostDetailContent({ initialData }: PostDetailContentProps) {
     <div className="bg-container-neutral flex flex-1 flex-col items-center overflow-hidden rounded-(--radius-lg)">
       <PostDetailHeader />
 
-      <div className="flex flex-col items-start gap-200 self-stretch px-450 pt-450">
+      <div className="flex flex-col items-start gap-600 self-stretch px-450 pt-450">
         <PostCard.Header>
-          <PostCard.Author
-            author={{
-              name: currentPost.author.name,
-              profileImageUrl: currentPost.author.profileImageUrl,
-            }}
-            date={formatShortDateTime(currentPost.time)}
-            hasAttachment={currentPost.fileUrls.length > 0}
-          />
+          <PostCard.Title title={currentPost.title} isNew={currentPost.isNew} size="detail" />
           {isPostAuthor && (
             <PostActionMenu
               postId={currentPost.id}
               onEdit={() => router.push(`/${clubIdParam}/board/edit/${currentPost.id}`)}
-              onDeleted={() => router.push(`/${clubIdParam}/board`)}
+              onDeleted={() =>
+                router.push(
+                  buildBoardPath(clubIdParam, boardIdParam ? Number(boardIdParam) : undefined),
+                )
+              }
             />
           )}
         </PostCard.Header>
 
-        <PostCard.DetailContent
-          title={currentPost.title}
-          content={currentPost.content}
-          isNew={currentPost.isNew}
+        <PostCard.Author
+          author={{
+            name: currentPost.author.name,
+            profileImageUrl: currentPost.author.profileImageUrl,
+          }}
+          date={formatShortDateTime(currentPost.time)}
+          hasAttachment={currentPost.fileUrls.length > 0}
         />
+
+        <Divider />
+
+        <PostCard.Body content={currentPost.content} />
 
         <PostCard.Images files={imageFiles} />
 
         <FileList files={nonImageFiles} />
 
         <PostCard.Actions
-          className="mt-400"
           postId={currentPost.id}
           likeCount={currentPost.like.likeCount}
           commentCount={currentPost.commentCount}

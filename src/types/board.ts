@@ -38,7 +38,7 @@ interface PostBase {
   id: number;
   author: PostAuthor;
   boardId: number;
-  boardName: string;
+  boardName?: string;
   title: string;
   content: string;
   time: string;

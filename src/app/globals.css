@@ -650,19 +650,40 @@ select:focus {
 }
 
 .ProseMirror h1 {
-  @apply typo-md-h1 mt-300 mb-100;
+  @apply typo-md-h1;
+}
+
+.ProseMirror h1::after {
+  content: '';
+  display: block;
+  margin-top: 16px;
+  height: 1px;
+  background-color: var(--line);
 }
 
 .ProseMirror h2 {
-  @apply typo-md-h2 mt-300 mb-100;
+  @apply typo-md-h2;
 }
 
 .ProseMirror h3 {
-  @apply typo-md-h3 mt-300 mb-100;
+  @apply typo-md-h3;
 }
 
 .ProseMirror p {
   @apply typo-md-body;
+}
+
+.ProseMirror hr {
+  margin: 0;
+  border: none;
+  height: 1px;
+  background-color: var(--line);
+}
+
+/* heading·구분선 전후 16px 간격, p+p는 0 */
+.ProseMirror > * + :is(h1, h2, h3, hr),
+.ProseMirror > :is(h1, h2, h3, hr) + * {
+  margin-top: 16px;
 }
 
 .ProseMirror ul {

@@ -36,6 +36,7 @@ interface HomeDashboard {
 
 interface UnreadNotice {
   id: number;
+  boardId?: number;
   title: string;
   content: string;
 }
@@ -57,6 +58,7 @@ type PostAuthor = UserSummary;
 
 interface RecentPost {
   id: number;
+  boardId?: number;
   author: PostAuthor;
   title: string;
   content: string;

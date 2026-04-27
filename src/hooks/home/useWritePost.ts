@@ -3,11 +3,13 @@
 import { useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { useProfileStatusQuery } from './useProfileStatusQuery';
+import { useSetActiveBoardId } from '@/stores/useBoardNavStore';
 
 export function useWritePost() {
   const router = useRouter();
   const { clubId } = useParams<{ clubId: string }>();
   const { data: profileStatus, isLoading } = useProfileStatusQuery();
+  const setActiveBoardId = useSetActiveBoardId();
 
   const [cardinalModalOpen, setCardinalModalOpen] = useState(false);
   const [profileModalOpen, setProfileModalOpen] = useState(false);
@@ -20,6 +22,7 @@ export function useWritePost() {
     } else if (!profileStatus?.profileCompleted) {
       setProfileModalOpen(true);
     } else {
+      setActiveBoardId(null);
       router.push(`/${clubId}/board/write`);
     }
   };
