@@ -1,17 +1,20 @@
 'use client';
 
 // import Image from 'next/image';
+import { useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 // import { ArrowRightIcon } from '@/assets/icons';
 import { useMonthlySchedulesQuery } from '@/hooks/home';
 import { EmptyBox } from '@/components/home/EmptyBox';
 import { CalendarBoxSkeleton } from '@/components/home/skeleton';
+import { ExpandableScheduleTitle } from './ExpandableScheduleTitle';
 import { formatKoreanDate, formatKoreanTimeRange, groupByStartDate } from '@/utils/shared/date';
 import { useIsAdmin } from '@/hooks/shared';
 
 export function CalendarBox() {
   const router = useRouter();
   const { clubId } = useParams<{ clubId: string }>();
+  const [expandedScheduleId, setExpandedScheduleId] = useState<number | string | null>(null);
   const { data: schedules, isLoading: isSchedulesLoading } = useMonthlySchedulesQuery();
   const { isAdmin, isLoading: isAdminLoading } = useIsAdmin();
 
@@ -50,8 +53,13 @@ export function CalendarBox() {
                   className="bg-container-neutral-alternative flex gap-[10px] rounded-md py-[10px] pl-[5px]"
                 >
                   <div className="bg-brand-primary h-[45px] w-[5px] rounded-xl" />
-                  <div className="flex flex-col gap-[5px]">
-                    <p className="typo-body1 text-text-strong">{schedule.title}</p>
+                  <div className="flex min-w-0 flex-1 flex-col gap-[5px] pr-[10px]">
+                    <ExpandableScheduleTitle
+                      scheduleId={schedule.id}
+                      title={schedule.title}
+                      expandedScheduleId={expandedScheduleId}
+                      setExpandedScheduleId={setExpandedScheduleId}
+                    />
                     <p className="typo-caption2 text-text-alternative">
                       {formatKoreanTimeRange(schedule.start, schedule.end)}
                     </p>
