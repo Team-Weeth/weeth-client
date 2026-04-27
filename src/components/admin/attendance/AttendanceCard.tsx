@@ -26,6 +26,7 @@ interface AttendanceCardProps extends React.HTMLAttributes<HTMLDivElement> {
   onSave?: (updates: { id: number; status: 'ATTEND' | 'ABSENT' }[]) => void | Promise<void>;
   onDirtyChange?: (dirty: boolean) => void;
   onExpand?: () => void;
+  isSaving?: boolean;
 }
 
 function AttendanceCard({
@@ -37,6 +38,7 @@ function AttendanceCard({
   onSave,
   onDirtyChange,
   onExpand,
+  isSaving = false,
   ...props
 }: AttendanceCardProps) {
   const {
@@ -132,10 +134,10 @@ function AttendanceCard({
           </div>
           {isEditing ? (
             <div className="flex gap-200">
-              <Button variant="secondary" size="lg" onClick={handleCancel}>
+              <Button variant="secondary" size="lg" onClick={handleCancel} disabled={isSaving}>
                 취소
               </Button>
-              <Button variant="primary" size="lg" onClick={saveEdit}>
+              <Button variant="primary" size="lg" onClick={saveEdit} disabled={isSaving}>
                 저장
               </Button>
             </div>

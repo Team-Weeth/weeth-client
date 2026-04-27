@@ -1,6 +1,6 @@
 'use client';
 
-import { Fragment, useState } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 import {
   DndContext,
   PointerSensor,
@@ -104,6 +104,9 @@ function BoardPageContent() {
     useSensor(PointerSensor, { activationConstraint: { distance: 4 } }),
     useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
   );
+
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
 
   if (isLoading || !data) {
     return (
@@ -258,7 +261,7 @@ function BoardPageContent() {
         )}
 
         {customBoards.length > 0 &&
-          (query ? (
+          (query || !mounted ? (
             <div className="flex flex-col gap-200">
               {customBoards.map((board) => (
                 <BoardCard
