@@ -36,6 +36,7 @@ function AttendanceCodeModal({
 }: AttendanceCodeModalProps) {
   const [code, setCode] = useState('');
   const { expiredAt: sseExpiredAt } = useAttendanceSSE();
+  const isLoading = sseExpiredAt === null;
   const { minutes, seconds, isExpired } = useRemainingTime(sseExpiredAt ?? '');
   const isComplete = code.length === 6;
   const description = formatModalDescription(start, location);
@@ -74,7 +75,11 @@ function AttendanceCodeModal({
 
           <InputOTP value={code} onChange={setCode} />
 
-          {!isExpired ? (
+          {isLoading ? (
+            <p className="typo-caption2 text-text-alternative text-center">
+              출석 정보를 불러오는 중...
+            </p>
+          ) : !isExpired ? (
             <p className="typo-caption2 text-text-strong text-center">
               출석 가능 시간{' '}
               <span className="text-brand-primary tabular-nums">
@@ -97,7 +102,7 @@ function AttendanceCodeModal({
             variant="primary"
             size="lg"
             className="w-full"
-            disabled={!isComplete || isExpired}
+            disabled={!isComplete || (!isLoading && isExpired)}
             onClick={() => {
               onConfirm?.(code);
               handleOpenChange(false);

@@ -23,7 +23,8 @@ export function useCheckIn(options?: UseCheckInOptions) {
   const [checkInError, setCheckInError] = useState(false);
 
   const sessionId = options?.sessionId ?? data?.sessionId;
-  const isChecked = data?.status === 'ATTEND' || checkedSessionId === sessionId;
+  const isChecked =
+    data?.status === 'ATTEND' || (sessionId != null && checkedSessionId === sessionId);
 
   async function handleCheckIn(code: string) {
     if (!isProfileLoading && profileStatus?.cardinalAssigned === false) {
