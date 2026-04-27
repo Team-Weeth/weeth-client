@@ -1,4 +1,4 @@
-import { MyPageSkeleton } from '@/components/mypage/MyPageSkeleton';
+import { MyPageSkeleton } from '@/components/mypage/skeleton';
 
 export default function MyPageLoading() {
   return <MyPageSkeleton />;
