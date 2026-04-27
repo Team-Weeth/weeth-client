@@ -62,7 +62,7 @@ function AttendanceQRContent({ sessionId }: AttendanceQRContentProps) {
         <div className="bg-container-neutral flex w-full flex-col items-center gap-400 rounded-lg p-400">
           <div className="flex w-full flex-col items-center gap-600 p-400">
             {isLoading ? (
-              <div className="flex h-[256px] w-[256px] items-center justify-center">
+              <div className="flex aspect-square w-full max-w-[256px] min-w-[200px] items-center justify-center">
                 <p className="typo-body2 text-text-alternative">QR 코드 생성 중...</p>
               </div>
             ) : (

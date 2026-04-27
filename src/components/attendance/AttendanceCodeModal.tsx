@@ -50,7 +50,7 @@ function AttendanceCodeModal({
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent
         showCloseButton={false}
-        className="bg-background flex h-[565px] w-[508px] flex-col"
+        className="bg-background flex h-[565px] w-full max-w-[508px] min-w-[320px] flex-col"
       >
         <DialogHeader
           icon={<Icon src={CheckRoundIcon} size={24} className="text-icon-alternative" />}
