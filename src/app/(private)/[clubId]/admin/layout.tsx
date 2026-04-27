@@ -11,7 +11,7 @@ export default function AdminLayout({
 }>) {
   return (
     <AdminScopeProvider>
-      <div data-admin className="flex h-screen flex-col">
+      <div data-admin className="fixed inset-0 flex flex-col">
         <div className="flex flex-1 overflow-hidden">
           <LNB />
           <main className="bg-background flex-1 overflow-x-hidden overflow-y-auto [scrollbar-gutter:stable]">
