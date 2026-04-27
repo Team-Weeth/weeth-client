@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 
-import { CompleteIcon } from '@/assets/icons';
+import { TaskFinishedIcon } from '@/assets/icons';
 import {
   Button,
   Dialog,
@@ -34,7 +34,7 @@ function AttendanceCompleteModal({
         <DialogHeader showClose onClose={() => onOpenChange(false)} />
 
         <DialogBody className="flex-1 items-center justify-center gap-300 p-400">
-          <Image src={CompleteIcon} alt="출석 완료" width={120} height={120} />
+          <Image src={TaskFinishedIcon} alt="출석 완료" width={120} height={120} />
           <div className="flex flex-col gap-200 text-center">
             <h2 className="typo-sub2 text-text-strong">{title}</h2>
             <p className="typo-body2 text-text-alternative">{description}</p>
