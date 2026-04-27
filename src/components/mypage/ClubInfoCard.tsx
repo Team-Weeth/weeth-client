@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { useParams } from 'next/navigation';
 import dynamic from 'next/dynamic';
 import { cn } from '@/lib/cn';
 import { Avatar, AvatarFallback, AvatarImage, Button, Divider, Icon, Tag } from '@/components/ui';
@@ -19,7 +18,6 @@ interface ClubInfoCardProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 function ClubInfoCard({ club, className }: ClubInfoCardProps) {
-  const { clubId } = useParams<{ clubId: string }>();
   const [modalOpen, setModalOpen] = useState(false);
 
   return (
@@ -41,7 +39,7 @@ function ClubInfoCard({ club, className }: ClubInfoCardProps) {
                 </Avatar>
               </div>
               <Link
-                href={`/${clubId}/home`}
+                href={`/${club.id}/home`}
                 className="text-icon-alternative hover:text-icon-normal transition-colors"
               >
                 <Icon src={ExitIcon} size={24} alt="클럽 홈으로 이동" />
