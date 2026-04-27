@@ -23,7 +23,7 @@ import { BoardToolbar } from '@/components/admin/board/BoardToolbar';
 import { CreateBoardModal } from '@/components/admin/board/modal/CreateBoardModal';
 import { EditBoardModal } from '@/components/admin/board/modal/EditBoardModal';
 // TODO: 휴지통 API 정상화되면 TrashBoardModal import 복원
-import type { TrashedBoard } from '@/components/admin/board/modal/TrashBoardModal';
+import type { TrashedBoard } from '@/types/admin/board';
 import { useBoardDragReorder } from '@/hooks/admin';
 import { useAdminBoardsQuery } from '@/hooks/queries/admin/useAdminBoardsQuery';
 import { useCreateBoardMutation } from '@/hooks/queries/admin/useCreateBoardMutation';

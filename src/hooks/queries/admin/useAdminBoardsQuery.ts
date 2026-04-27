@@ -4,7 +4,7 @@ import { adminBoardApi } from '@/lib/apis/adminBoard';
 import { useClubId } from '@/stores';
 import { toBoard } from '@/utils/admin/boardMapper';
 // import { TRASH_RETENTION_DAYS } from '@/constants/admin/board.constants';
-import type { TrashedBoard } from '@/components/admin/board/modal/TrashBoardModal';
+import type { TrashedBoard } from '@/types/admin/board';
 import { adminBoardQueryKeys } from './boardQueryKeys';
 
 export function useAdminBoardsQuery() {
