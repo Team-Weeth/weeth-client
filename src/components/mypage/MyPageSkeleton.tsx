@@ -1,6 +1,6 @@
 import { Skeleton } from '@/components/ui';
 
-export default function MyPageLoading() {
+function MyPageSkeleton() {
   return (
     <div className="mx-auto flex w-full max-w-[1088px] flex-col items-center gap-[35px] px-450 pt-450 pb-[80px]">
       <div className="flex w-full flex-col gap-200">
@@ -41,3 +41,5 @@ export default function MyPageLoading() {
     </div>
   );
 }
+
+export { MyPageSkeleton };
