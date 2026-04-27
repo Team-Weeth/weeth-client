@@ -1,5 +1,5 @@
 import { Button, Icon } from '@/components/ui';
-import { TrashedBoard } from './TrashBoardModal';
+import type { TrashedBoard } from '@/types/admin/board';
 import { PinIcon } from '@/assets/icons';
 
 interface TrashedBoardCardProps {

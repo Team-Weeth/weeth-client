@@ -7,14 +7,8 @@ import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { ModalIconButton } from '@/components/admin/modal/ModalIconButton';
 import { AdminCloseIcon } from '@/assets/icons/admin';
 import { InfoCircleIcon } from '@/assets/icons';
-import type { Board } from '@/types/admin/board';
+import type { TrashedBoard } from '@/types/admin/board';
 import { TrashedBoardCard } from './TrashBoardCard';
-
-/** 휴지통 항목 — 복원 시 원본 Board로 되돌리기 위해 전체 필드를 보존 */
-interface TrashedBoard extends Board {
-  /** 영구 삭제까지 남은 일수 (D-N) */
-  daysLeft: number;
-}
 
 interface TrashBoardModalProps {
   open: boolean;
@@ -99,4 +93,4 @@ function TrashBoardModal({
   );
 }
 
-export { TrashBoardModal, type TrashBoardModalProps, type TrashedBoard };
+export { TrashBoardModal, type TrashBoardModalProps };

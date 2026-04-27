@@ -21,7 +21,7 @@ export function NoticeBoardBox() {
   if (isLoading) return <NoticeBoardBoxSkeleton />;
 
   return (
-    <div className="bg-container-neutral flex flex-col rounded-lg pb-300">
+    <div className="bg-container-neutral desktop:max-w-[339px] flex flex-col rounded-lg pb-300">
       <div className="flex items-center justify-between px-450 pt-450 pb-300">
         <p className="typo-sub1 text-text-strong">공지</p>
         <button

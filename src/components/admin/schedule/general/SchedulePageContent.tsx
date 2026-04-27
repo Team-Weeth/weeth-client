@@ -14,6 +14,7 @@ import { CreateScheduleModal } from '@/components/admin/schedule/modal/CreateSch
 import { EditScheduleModal } from '@/components/admin/schedule/modal/EditScheduleModal';
 import { EditSessionModal } from '@/components/admin/schedule/modal/EditSessionModal';
 import { useCardinalSelector, useMonthNavigator } from '@/hooks';
+import { useSessionMutations } from '@/hooks/admin';
 import {
   useAdminMonthlySchedules,
   useDeleteSchedule,
@@ -44,6 +45,7 @@ function SchedulePageContent() {
 
   const { data: schedules = [] } = useAdminMonthlySchedules(currentYear, currentMonth);
   const { mutate: deleteSchedule } = useDeleteSchedule();
+  const { submitCreate, submitDeleteSession, forceConfirmDialog } = useSessionMutations();
 
   // 기수 필터링
   const cardinalFiltered =
@@ -71,6 +73,12 @@ function SchedulePageContent() {
   );
 
   const handleDelete = (schedule: Schedule) => {
+    if (schedule.type === 'SESSION') {
+      // 월간 일정 카드의 SESSION은 단일 세션 삭제 (THIS_ONLY)
+      submitDeleteSession(schedule.id, 'THIS_ONLY');
+      setEditTarget(null);
+      return;
+    }
     deleteSchedule(schedule.id, {
       onSuccess: () => setEditTarget(null),
       // onError 처리도 토스트 유틸과 연결하는 것을 권장합니다.
@@ -143,7 +151,12 @@ function SchedulePageContent() {
         </TabsContent>
 
         <TabsContent value="session" className="mt-400">
-          <SessionTabContent onCreateSession={() => openCreateModal('SESSION')} />
+          <SessionTabContent
+            onCreateSession={() => openCreateModal('SESSION')}
+            cardinalNumber={
+              selectedCardinalId === null ? null : (activeCardinal?.cardinalNumber ?? null)
+            }
+          />
         </TabsContent>
       </Tabs>
 
@@ -154,6 +167,7 @@ function SchedulePageContent() {
         cardinalNumber={activeCardinal?.cardinalNumber ?? null}
         activeTab={createModalTab}
         onActiveTabChange={setCreateModalTab}
+        onCreateSession={(body) => submitCreate(body)}
       />
 
       {/* Edit schedule modal */}
@@ -169,7 +183,7 @@ function SchedulePageContent() {
         />
       )}
 
-      {/* Edit session modal */}
+      {/* Edit session modal — mutation은 모달이 직접 소유 */}
       {editTarget?.type === 'SESSION' && (
         <EditSessionModal
           key={editTarget.id}
@@ -185,9 +199,10 @@ function SchedulePageContent() {
             end: editTarget.end,
             status: 'SCHEDULED',
           }}
-          onDelete={() => handleDelete(editTarget)}
         />
       )}
+
+      {forceConfirmDialog}
     </div>
   );
 }

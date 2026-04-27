@@ -6,6 +6,7 @@ import { DiscardConfirmDialog } from '@/components/admin/modal/DiscardConfirmDia
 import { BoardFormField } from '@/components/admin/board/modal/BoardFormField';
 import { BoardFormHeader } from '@/components/admin/board/modal/BoardFormHeader';
 import {
+  NAME_MAX,
   DESCRIPTION_MAX,
   VISIBILITY_OPTIONS,
   DEFAULT_FORM,
@@ -24,6 +25,8 @@ interface BoardFormModalProps {
   initialValues?: Partial<BoardFormData>;
   onSubmit?: (data: BoardFormData) => void;
   onDelete?: () => void;
+  nameError?: string | null;
+  onNameChange?: () => void;
 }
 
 function BoardFormModal({
@@ -34,6 +37,8 @@ function BoardFormModal({
   initialValues,
   onSubmit,
   onDelete,
+  nameError,
+  onNameChange,
 }: BoardFormModalProps) {
   const discardMessages = DISCARD_MESSAGES[mode];
   const { form, updateField, discardSource, setDiscardSource, tryClose, confirmDiscard } =
@@ -51,7 +56,12 @@ function BoardFormModal({
   const handleSubmit = () => {
     if (!form.name.trim()) return;
     onSubmit?.(form);
-    handleClose();
+  };
+
+  const handleNameChange = (value: string) => {
+    if (value.length > NAME_MAX) return;
+    updateField('name', value);
+    onNameChange?.();
   };
 
   const handleDescriptionChange = (value: string) => {
@@ -91,10 +101,23 @@ function BoardFormModal({
               id="board-name"
               type="text"
               value={form.name}
-              onChange={(e) => updateField('name', e.target.value)}
+              onChange={(e) => handleNameChange(e.target.value)}
               placeholder="게시판의 이름을 작성해주세요"
-              className="bg-container-neutral typo-body1 placeholder:text-text-alternative text-text-normal h-12 w-full rounded-sm px-400 py-300 focus:outline-none"
+              maxLength={NAME_MAX}
+              className={cn(
+                'bg-container-neutral typo-body1 placeholder:text-text-alternative text-text-normal h-12 w-full rounded-sm px-400 py-300 focus:outline-none',
+                nameError && 'border-state-error border',
+              )}
             />
+            <div className="flex h-8 items-center px-400">
+              {nameError ? (
+                <p className="typo-caption2 text-state-error">{nameError}</p>
+              ) : (
+                <p className="typo-caption2 text-text-alternative">
+                  최대 {NAME_MAX}자 ({form.name.length}/{NAME_MAX})
+                </p>
+              )}
+            </div>
           </BoardFormField>
 
           <BoardFormField label="설명" htmlFor="board-description">

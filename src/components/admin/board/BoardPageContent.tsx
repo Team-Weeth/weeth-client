@@ -1,7 +1,6 @@
 'use client';
 
 import { Fragment, useEffect, useState } from 'react';
-import Image from 'next/image';
 import {
   DndContext,
   PointerSensor,
@@ -13,144 +12,202 @@ import {
 import {
   SortableContext,
   sortableKeyboardCoordinates,
-  useSortable,
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
-import { CSS } from '@dnd-kit/utilities';
+import { useQueryClient } from '@tanstack/react-query';
 
-import {
-  Card,
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-  Icon,
-} from '@/components/ui';
-import { ArrowDownIcon, InfoCircleIcon } from '@/assets/icons';
+import { Icon, Skeleton } from '@/components/ui';
+import { InfoCircleIcon } from '@/assets/icons';
 import { BoardCard } from '@/components/admin/board/BoardCard';
+import { BoardCardSkeleton } from '@/components/admin/board/BoardCardSkeleton';
 import { BoardToolbar } from '@/components/admin/board/BoardToolbar';
 import { CreateBoardModal } from '@/components/admin/board/modal/CreateBoardModal';
 import { EditBoardModal } from '@/components/admin/board/modal/EditBoardModal';
-import { TrashBoardModal, type TrashedBoard } from '@/components/admin/board/modal/TrashBoardModal';
-import { useBoardPageState } from '@/hooks/admin';
-import { useCardinals } from '@/hooks/queries';
-import type { Board } from '@/types/admin/board';
-
-const MAX_CUSTOM_BOARDS = 3;
-
-// TODO: API 연동 전 임시 데이터
-const MOCK_BOARDS: Board[] = [
-  {
-    boardId: 1,
-    name: '전체 게시판',
-    description: '모든 게시글을 확인할 수 있는 게시판입니다.',
-    kind: 'ALL',
-    visibility: 'PUBLIC',
-    postCount: 32,
-    commentEnabled: null,
-    editable: false,
-  },
-  {
-    boardId: 2,
-    name: '공지',
-    description: '운영진이 공지사항을 올리는 게시판입니다.',
-    kind: 'NOTICE',
-    visibility: 'ADMIN_ONLY',
-    postCount: 32,
-    commentEnabled: true,
-    editable: false,
-  },
-  {
-    boardId: 3,
-    name: '자유 게시판',
-    description: '모든 게시글을 확인할 수 있는 게시판입니다.',
-    kind: 'CUSTOM',
-    visibility: 'PUBLIC',
-    postCount: 32,
-    commentEnabled: true,
-    editable: true,
-  },
-  {
-    boardId: 4,
-    name: '자유 게시판',
-    description: '모든 게시글을 확인할 수 있는 게시판입니다.',
-    kind: 'CUSTOM',
-    visibility: 'PUBLIC',
-    postCount: 32,
-    commentEnabled: true,
-    editable: true,
-  },
-];
-
-const MOCK_TRASHED_BOARDS: TrashedBoard[] = [
-  {
-    boardId: 101,
-    name: '자유 게시판',
-    description: '모든 게시글을 확인할 수 있는 게시판입니다.',
-    kind: 'CUSTOM',
-    visibility: 'PUBLIC',
-    postCount: 0,
-    commentEnabled: true,
-    editable: true,
-    daysLeft: 30,
-  },
-];
-
-interface SortableBoardCardProps {
-  board: Board;
-  onToggleComments: (next: boolean) => void;
-  onEdit: () => void;
-  onDelete: () => void;
-}
-
-function SortableBoardCard({ board, onToggleComments, onEdit, onDelete }: SortableBoardCardProps) {
-  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
-    id: board.boardId,
-  });
-
-  return (
-    <BoardCard
-      ref={setNodeRef}
-      board={board}
-      onToggleComments={onToggleComments}
-      onEdit={onEdit}
-      onDelete={onDelete}
-      dragHandleProps={{ ...attributes, ...listeners }}
-      style={{
-        transform: CSS.Transform.toString(transform),
-        transition,
-        zIndex: isDragging ? 10 : undefined,
-        opacity: isDragging ? 0.8 : undefined,
-      }}
-    />
-  );
-}
+// TODO: 휴지통 API 정상화되면 TrashBoardModal import 복원
+import { useBoardDragReorder } from '@/hooks/admin';
+import { useAdminBoardsQuery } from '@/hooks/queries/admin/useAdminBoardsQuery';
+import { useCreateBoardMutation } from '@/hooks/queries/admin/useCreateBoardMutation';
+import { useUpdateBoardMutation } from '@/hooks/queries/admin/useUpdateBoardMutation';
+import { useDeleteBoardMutation } from '@/hooks/queries/admin/useDeleteBoardMutation';
+import { useUpdateBoardOrderMutation } from '@/hooks/queries/admin/useUpdateBoardOrderMutation';
+import { adminBoardQueryKeys } from '@/hooks/queries/admin/boardQueryKeys';
+import { ADMIN_BOARD_ERROR, getApiErrorCode, getApiErrorMessage } from '@/lib/apis/adminBoard';
+import { useClubId } from '@/stores';
+import { toastError } from '@/stores/useToastStore';
+import { toApiPermission } from '@/utils/admin/boardMapper';
+import { MAX_CUSTOM_BOARDS } from '@/constants/admin/board.constants';
+import type { Board, BoardListCache } from '@/types/admin/board';
+import type { BoardFormData } from '@/components/admin/board/modal/constants';
+import { SortableBoardCard } from './SortableBoardCard';
 
 function BoardPageContent() {
-  const { data: cardinals = [] } = useCardinals();
-  const [selectedCardinalId, setSelectedCardinalId] = useState<number | null>(null);
+  const clubId = useClubId();
+  const queryClient = useQueryClient();
+  const { data, isLoading } = useAdminBoardsQuery();
   const [searchValue, setSearchValue] = useState('');
   const [createModalOpen, setCreateModalOpen] = useState(false);
+  const [createNameError, setCreateNameError] = useState<string | null>(null);
   const [editingBoardId, setEditingBoardId] = useState<number | null>(null);
-  const [trashModalOpen, setTrashModalOpen] = useState(false);
+  const [editNameError, setEditNameError] = useState<string | null>(null);
+  // TODO: 휴지통 API 정상화되면 복원
+  // const [trashModalOpen, setTrashModalOpen] = useState(false);
 
-  const {
-    boards,
-    trashedBoards,
-    updateBoard,
-    createBoard,
-    moveBoardToTrash,
-    restoreBoardFromTrash,
-    permanentlyDeleteBoard,
-    handleDragEnd,
-  } = useBoardPageState({
-    initialBoards: MOCK_BOARDS,
-    initialTrashedBoards: MOCK_TRASHED_BOARDS,
+  const cacheKey = adminBoardQueryKeys.list(clubId);
+  const updateCache = (updater: (prev: BoardListCache) => BoardListCache) => {
+    queryClient.setQueryData<BoardListCache>(cacheKey, (prev) => (prev ? updater(prev) : prev));
+  };
+
+  const { mutate: updateBoardOrder } = useUpdateBoardOrderMutation();
+  const { handleDragStart, handleDragEnd } = useBoardDragReorder({ onReorder: updateBoardOrder });
+
+  const { mutate: createBoard } = useCreateBoardMutation({
+    onSuccess: () => setCreateModalOpen(false),
+    onError: (err) => {
+      const code = getApiErrorCode(err);
+      if (code === ADMIN_BOARD_ERROR.DUPLICATE_NAME) {
+        setCreateNameError('같은 이름의 게시판이 이미 있어요.');
+      } else {
+        toastError(getApiErrorMessage(err));
+      }
+    },
   });
 
-  const activeCardinal = selectedCardinalId
-    ? cardinals.find((c) => c.id === selectedCardinalId)
-    : undefined;
+  const { mutate: updateBoard } = useUpdateBoardMutation({
+    onSuccess: () => setEditingBoardId(null),
+    onError: (err) => {
+      const code = getApiErrorCode(err);
+      if (code === ADMIN_BOARD_ERROR.DUPLICATE_NAME) {
+        setEditNameError('같은 이름의 게시판이 이미 있어요.');
+      } else {
+        toastError(getApiErrorMessage(err));
+      }
+    },
+  });
+
+  const { mutate: deleteBoard } = useDeleteBoardMutation({
+    onSuccess: () => setEditingBoardId(null),
+    onError: (err) => {
+      const code = getApiErrorCode(err);
+      if (code === ADMIN_BOARD_ERROR.BOARD_NOT_FOUND) {
+        toastError('이미 삭제된 게시판이에요.');
+      } else {
+        toastError(getApiErrorMessage(err));
+      }
+    },
+  });
+
+  const { mutate: toggleComment } = useUpdateBoardMutation({
+    onError: (err) => toastError(getApiErrorMessage(err)),
+  });
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 4 } }),
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
+  );
+
+  if (isLoading || !data) {
+    return (
+      <div className="flex min-w-0 flex-col gap-400 p-700">
+        {/* Toolbar skeleton */}
+        <div className="flex flex-wrap items-center gap-300">
+          <Skeleton className="h-20 min-w-65 flex-1 rounded-lg" />
+          <Skeleton className="h-12 w-30 shrink-0 rounded-lg" />
+        </div>
+
+        {/* Board card skeletons */}
+        <div className="flex flex-col gap-400">
+          <div className="flex flex-col gap-400">
+            <BoardCardSkeleton />
+            <div className="border-line w-full border-t" />
+            <BoardCardSkeleton />
+          </div>
+
+          <div className="border-line w-full border-t" />
+
+          <div className="flex flex-col gap-200">
+            <BoardCardSkeleton />
+            <BoardCardSkeleton />
+            <BoardCardSkeleton />
+          </div>
+
+          <Skeleton className="h-12 rounded-md" />
+        </div>
+      </div>
+    );
+  }
+
+  const { boards } = data;
+
+  const handleCreateBoard = (formData: BoardFormData) => {
+    setCreateNameError(null);
+    createBoard({
+      name: formData.name.trim(),
+      type: 'GENERAL',
+      commentEnabled: formData.commentEnabled,
+      ...toApiPermission(formData.visibility),
+    });
+  };
+
+  const handleToggleComments = (boardId: number, next: boolean) => {
+    const target = boards.find((b) => b.boardId === boardId);
+    if (!target) return;
+
+    const snapshot = queryClient.getQueryData<BoardListCache>(cacheKey);
+
+    updateCache((prev) => ({
+      ...prev,
+      boards: prev.boards.map((b) => (b.boardId === boardId ? { ...b, commentEnabled: next } : b)),
+    }));
+
+    toggleComment(
+      {
+        boardId,
+        body: {
+          name: target.name,
+          commentEnabled: next,
+          ...toApiPermission(target.visibility),
+        },
+      },
+      {
+        onError: () => {
+          queryClient.setQueryData(cacheKey, snapshot);
+        },
+      },
+    );
+  };
+
+  const handleMoveToTrash = (board: Board) => {
+    deleteBoard(board.boardId);
+  };
+
+  // TODO: 휴지통 API 정상화되면 복원
+  // const handleRestoreFromTrash = (boardId: number) => {
+  //   updateCache((prev) => {
+  //     const trashed = prev.trashedBoards.find((b) => b.boardId === boardId);
+  //     if (!trashed) return prev;
+  //     const restored: Board = {
+  //       boardId: trashed.boardId,
+  //       name: trashed.name,
+  //       description: trashed.description,
+  //       kind: trashed.kind,
+  //       visibility: trashed.visibility,
+  //       postCount: trashed.postCount,
+  //       commentEnabled: trashed.commentEnabled,
+  //       editable: trashed.editable,
+  //     };
+  //     return {
+  //       boards: [...prev.boards, restored],
+  //       trashedBoards: prev.trashedBoards.filter((b) => b.boardId !== boardId),
+  //     };
+  //   });
+  // };
+  //
+  // const handlePermanentDelete = (boardId: number) => {
+  //   updateCache((prev) => ({
+  //     ...prev,
+  //     trashedBoards: prev.trashedBoards.filter((b) => b.boardId !== boardId),
+  //   }));
+  // };
 
   const [mounted, setMounted] = useState(false);
   useEffect(() => {
@@ -168,49 +225,25 @@ function BoardPageContent() {
   const totalCustomCount = boards.filter((b) => b.editable).length;
   const reachedLimit = totalCustomCount >= MAX_CUSTOM_BOARDS;
 
-  const sensors = useSensors(
-    useSensor(PointerSensor, { activationConstraint: { distance: 4 } }),
-    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
-  );
+  const editingBoard =
+    editingBoardId !== null ? (boards.find((b) => b.boardId === editingBoardId) ?? null) : null;
 
   return (
     <div className="flex min-w-0 flex-col gap-400 p-700">
-      {/* Cardinal filter */}
-      <Card className="w-fit">
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <button
-              type="button"
-              className="border-line flex cursor-pointer items-center gap-700 rounded-sm border py-300 pr-300 pl-400"
-            >
-              <span className="typo-sub2 text-text-normal w-12 text-left">
-                {activeCardinal ? `${activeCardinal.cardinalNumber}기` : '기수'}
-              </span>
-              <Image src={ArrowDownIcon} alt="기수 선택" width={24} height={24} />
-            </button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="start">
-            {cardinals.map((c) => (
-              <DropdownMenuItem key={c.id} onSelect={() => setSelectedCardinalId(c.id)}>
-                {c.cardinalNumber}기
-              </DropdownMenuItem>
-            ))}
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </Card>
-
-      {/* Toolbar: search + trash + create */}
       <BoardToolbar
         searchValue={searchValue}
         onSearchChange={setSearchValue}
-        trashCount={trashedBoards.length}
-        onTrashClick={() => setTrashModalOpen(true)}
-        onCreateClick={reachedLimit ? undefined : () => setCreateModalOpen(true)}
+        // TODO: 휴지통 API 정상화되면 복원
+        // trashCount={trashedBoards.length}
+        // onTrashClick={() => setTrashModalOpen(true)}
+        onCreateClick={
+          reachedLimit
+            ? () => toastError(`추가 게시판은 최대 ${MAX_CUSTOM_BOARDS}개까지 만들 수 있어요.`)
+            : () => setCreateModalOpen(true)
+        }
       />
 
-      {/* Board list */}
       <div className="flex flex-col gap-400">
-        {/* Fixed (system) boards */}
         {fixedBoards.length > 0 && (
           <div className="flex flex-col gap-400">
             {fixedBoards.map((board, index) => (
@@ -219,7 +252,7 @@ function BoardPageContent() {
                 <BoardCard
                   board={board}
                   draggable={false}
-                  onToggleComments={(next) => updateBoard(board.boardId, { commentEnabled: next })}
+                  onToggleComments={(next) => handleToggleComments(board.boardId, next)}
                 />
               </Fragment>
             ))}
@@ -230,7 +263,6 @@ function BoardPageContent() {
           <div className="border-line w-full border-t" />
         )}
 
-        {/* Custom boards */}
         {customBoards.length > 0 &&
           (query || !mounted ? (
             <div className="flex flex-col gap-200">
@@ -239,9 +271,9 @@ function BoardPageContent() {
                   key={board.boardId}
                   board={board}
                   draggable={false}
-                  onToggleComments={(next) => updateBoard(board.boardId, { commentEnabled: next })}
+                  onToggleComments={(next) => handleToggleComments(board.boardId, next)}
                   onEdit={() => setEditingBoardId(board.boardId)}
-                  onDelete={() => moveBoardToTrash(board)}
+                  onDelete={() => handleMoveToTrash(board)}
                 />
               ))}
             </div>
@@ -249,6 +281,7 @@ function BoardPageContent() {
             <DndContext
               sensors={sensors}
               collisionDetection={closestCenter}
+              onDragStart={handleDragStart}
               onDragEnd={handleDragEnd}
             >
               <SortableContext
@@ -260,11 +293,9 @@ function BoardPageContent() {
                     <SortableBoardCard
                       key={board.boardId}
                       board={board}
-                      onToggleComments={(next) =>
-                        updateBoard(board.boardId, { commentEnabled: next })
-                      }
+                      onToggleComments={(next) => handleToggleComments(board.boardId, next)}
                       onEdit={() => setEditingBoardId(board.boardId)}
-                      onDelete={() => moveBoardToTrash(board)}
+                      onDelete={() => handleMoveToTrash(board)}
                     />
                   ))}
                 </div>
@@ -272,7 +303,6 @@ function BoardPageContent() {
             </DndContext>
           ))}
 
-        {/* Limit banner */}
         <div className="bg-container-neutral-alternative flex h-12 items-center gap-200 rounded-md p-300">
           <Icon src={InfoCircleIcon} size={20} className="text-icon-alternative" />
           <p className="typo-body2 text-text-alternative min-w-0 flex-1">
@@ -281,42 +311,51 @@ function BoardPageContent() {
         </div>
       </div>
 
-      {/* Create board modal */}
       <CreateBoardModal
         open={createModalOpen}
-        onOpenChange={setCreateModalOpen}
-        onSubmit={createBoard}
+        onOpenChange={(open) => {
+          setCreateModalOpen(open);
+          if (!open) setCreateNameError(null);
+        }}
+        onSubmit={handleCreateBoard}
+        nameError={createNameError}
+        onNameChange={() => setCreateNameError(null)}
       />
 
-      {/* Trash board modal */}
+      {/* TODO: 휴지통 API 정상화되면 복원
       <TrashBoardModal
         open={trashModalOpen}
         onOpenChange={setTrashModalOpen}
         boards={trashedBoards}
-        onRestore={restoreBoardFromTrash}
-        onPermanentDelete={permanentlyDeleteBoard}
+        onRestore={handleRestoreFromTrash}
+        onPermanentDelete={handlePermanentDelete}
       />
+      */}
 
-      {/* Edit board modal */}
       <EditBoardModal
         open={editingBoardId !== null}
         onOpenChange={(next) => {
-          if (!next) setEditingBoardId(null);
+          if (!next) {
+            setEditingBoardId(null);
+            setEditNameError(null);
+          }
         }}
-        board={boards.find((b) => b.boardId === editingBoardId) ?? null}
-        onSubmit={(data) => {
+        board={editingBoard}
+        onSubmit={(formData) => {
           if (editingBoardId === null) return;
-          updateBoard(editingBoardId, {
-            name: data.name.trim(),
-            description: data.description.trim(),
-            visibility: data.visibility,
-            commentEnabled: data.commentEnabled,
+          setEditNameError(null);
+          updateBoard({
+            boardId: editingBoardId,
+            body: {
+              name: formData.name.trim(),
+              commentEnabled: formData.commentEnabled,
+              ...toApiPermission(formData.visibility),
+            },
           });
         }}
-        onDelete={(board) => {
-          moveBoardToTrash(board);
-          setEditingBoardId(null);
-        }}
+        onDelete={(board) => deleteBoard(board.boardId)}
+        nameError={editNameError}
+        onNameChange={() => setEditNameError(null)}
       />
     </div>
   );
