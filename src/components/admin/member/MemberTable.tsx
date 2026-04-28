@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 
-import { AdminChangeIcon } from '@/assets/icons/admin';
+import { AdminChangeIcon, AdminMeatballIcon } from '@/assets/icons/admin';
 import {
   Icon,
   Table,
@@ -103,6 +103,7 @@ function MemberTable({
                   {label}
                 </TableHead>
               ))}
+              <TableHead className="w-10" />
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -128,6 +129,19 @@ function MemberTable({
                     {String(member[key])}
                   </TableCell>
                 ))}
+                <TableCell className="w-10">
+                  <button
+                    type="button"
+                    className="text-icon-normal flex cursor-pointer items-center justify-center"
+                    aria-label="더보기"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onMemberAction?.(member);
+                    }}
+                  >
+                    <Icon src={AdminMeatballIcon} alt="더보기" size={20} />
+                  </button>
+                </TableCell>
               </TableRow>
             ))}
         </TableBody>
