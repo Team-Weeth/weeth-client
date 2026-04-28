@@ -11,7 +11,7 @@ import {
   MemberTopBar,
 } from '@/components/admin';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, Card } from '@/components/ui';
-import { MEMBER_CARDINAL_ERROR_CODE } from '@/constants/errorCode';
+import { MEMBER_CARDINAL_ERROR_CODE, MEMBER_ROLE_ERROR_CODE } from '@/constants/errorCode';
 import type { ClubMemberRole, Member } from '@/types/admin/member';
 import { useAdminMembers } from '@/hooks/queries/admin';
 import { useCardinals } from '@/hooks/queries';
@@ -128,6 +128,14 @@ function MemberPageContent() {
       clubMemberIds.map((clubMemberId) => ({ clubMemberId, memberRole })),
       changeMemberRoleAsync,
       { success: '권한이 변경되었습니다.', error: '권한 변경에 실패했습니다.' },
+      (errors) => {
+        const isLeadTransferOnly = errors.some(
+          (err) =>
+            isAxiosError(err) &&
+            err.response?.data?.code === MEMBER_ROLE_ERROR_CODE.LEAD_TRANSFER_ONLY,
+        );
+        return isLeadTransferOnly ? 'LEAD는 이양을 통해서만 변경할 수 있습니다.' : undefined;
+      },
     );
 
   const submitBan = (clubMemberIds: number[]) =>
