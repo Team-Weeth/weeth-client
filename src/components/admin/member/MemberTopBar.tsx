@@ -17,7 +17,6 @@ interface MemberTopBarProps extends React.HTMLAttributes<HTMLDivElement> {
   onBack: () => void;
   onApprove?: () => void;
   onChangeRole?: () => void;
-  // onResetPassword?: () => void;
   onBan?: () => void;
   onRestore?: () => void;
   onChangeCardinals?: (cardinalIds: number[]) => void;
@@ -33,7 +32,6 @@ function MemberTopBar({
   onBack,
   onApprove,
   onChangeRole,
-  // onResetPassword,
   onBan,
   onRestore,
   onChangeCardinals,
@@ -49,7 +47,6 @@ function MemberTopBar({
     targetBanAction,
     onApprove,
     onChangeRole,
-    // onResetPassword,
     onBan,
     onRestore,
     onTransferLead,

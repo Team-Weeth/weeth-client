@@ -16,9 +16,7 @@ interface MemberDetailModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   member: Member | null;
-  onApprove?: () => void;
   onChangeRole?: () => void;
-  onResetPassword?: () => void;
   onBan?: () => void;
   onRestore?: () => void;
   onChangeCardinals?: (cardinalIds: number[]) => void;
@@ -29,9 +27,7 @@ function MemberDetailModal({
   open,
   onOpenChange,
   member,
-  onApprove,
   onChangeRole,
-  onResetPassword,
   onBan,
   onRestore,
   onChangeCardinals,
@@ -46,9 +42,7 @@ function MemberDetailModal({
   const footerActions = getFooterActions({
     memberRole: member.memberRole,
     status: member.status,
-    onApprove,
     onChangeRole,
-    onResetPassword,
     onBan,
     onRestore,
   });

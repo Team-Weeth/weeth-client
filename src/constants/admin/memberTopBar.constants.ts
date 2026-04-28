@@ -6,7 +6,6 @@ interface TopBarActionParams {
   targetBanAction: 'ban' | 'restore' | null; // null = BANNED와 BANNED 아닌 멤버가 섞임
   onApprove?: () => void;
   onChangeRole?: () => void;
-  // onResetPassword?: () => void;
   onBan?: () => void;
   onRestore?: () => void;
   onTransferLead?: () => void;
@@ -26,7 +25,6 @@ export function getTopBarActions({
   targetBanAction,
   onApprove,
   onChangeRole,
-  // onResetPassword,
   onBan,
   onRestore,
   onTransferLead,
@@ -50,12 +48,6 @@ export function getTopBarActions({
       handler: onChangeRole,
       disabled: !onChangeRole || targetRole === null,
     },
-    // {
-    //   label: '비밀번호 초기화',
-    //   title: `${selectedCount}명의 멤버 비밀번호를 초기화\n시키시겠습니까?`,
-    //   handler: onResetPassword,
-    //   disabled: !onResetPassword,
-    // },
     targetBanAction === 'restore'
       ? {
           label: '유저 복구',
