@@ -63,7 +63,7 @@ function ThemeModeSelector({ collapsed }: ThemeModeSelectorProps) {
         className={cn(
           'text-text-normal flex h-12 w-full cursor-pointer items-center border-none transition-colors',
           'hover:bg-container-neutral-interaction',
-          collapsed ? 'justify-center px-200' : 'gap-300 px-300',
+          collapsed ? 'justify-center px-300' : 'gap-300 px-400',
         )}
       >
         <TriggerIcon className="h-6 w-6 shrink-0" />
