@@ -39,6 +39,7 @@ import { MAX_CUSTOM_BOARDS } from '@/constants/admin/board.constants';
 import type { Board, BoardListCache } from '@/types/admin/board';
 import type { BoardFormData } from '@/components/admin/board/modal/constants';
 import { SortableBoardCard } from './SortableBoardCard';
+import { BoardAdminSkeleton } from './BoardAdminSkeleton';
 
 function subscribeMounted() {
   return () => {};
@@ -114,36 +115,7 @@ function BoardPageContent() {
     useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
   );
 
-  if (isLoading || !data) {
-    return (
-      <div className="flex min-w-0 flex-col gap-400 p-700">
-        {/* Toolbar skeleton */}
-        <div className="flex flex-wrap items-center gap-300">
-          <Skeleton className="h-20 min-w-65 flex-1 rounded-lg" />
-          <Skeleton className="h-12 w-30 shrink-0 rounded-lg" />
-        </div>
-
-        {/* Board card skeletons */}
-        <div className="flex flex-col gap-400">
-          <div className="flex flex-col gap-400">
-            <BoardCardSkeleton />
-            <div className="border-line w-full border-t" />
-            <BoardCardSkeleton />
-          </div>
-
-          <div className="border-line w-full border-t" />
-
-          <div className="flex flex-col gap-200">
-            <BoardCardSkeleton />
-            <BoardCardSkeleton />
-            <BoardCardSkeleton />
-          </div>
-
-          <Skeleton className="h-12 rounded-md" />
-        </div>
-      </div>
-    );
-  }
+  if (isLoading || !data) return <BoardAdminSkeleton />;
 
   const { boards } = data;
 
