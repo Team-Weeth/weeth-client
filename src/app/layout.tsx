@@ -66,7 +66,7 @@ export default function RootLayout({
       <head>
         <script
           dangerouslySetInnerHTML={{
-            __html: `(function(){try{var t=localStorage.getItem('weeth-theme');if(!t)return;var parsed=JSON.parse(t);var state=parsed&&parsed.state?parsed.state:{};var mode=state.mode;var isDark=state.isDark;var prefersDark=window.matchMedia('(prefers-color-scheme: dark)').matches;var shouldDark=mode==='auto'?prefersDark:typeof isDark==='boolean'?isDark:false;if(shouldDark)document.documentElement.classList.add('dark')}catch(e){}})()`,
+            __html: `(function(){try{var t=localStorage.getItem('weeth-theme');var mode='auto';var isDark; if(t){var parsed=JSON.parse(t);var state=parsed&&parsed.state?parsed.state:{};mode=state.mode;isDark=state.isDark;}var prefersDark=window.matchMedia('(prefers-color-scheme: dark)').matches;var shouldDark=mode==='auto'?prefersDark:typeof isDark==='boolean'?isDark:false;document.documentElement.classList.toggle('dark',shouldDark);}catch(e){}})()`,
           }}
         />
         {isProduction && (
