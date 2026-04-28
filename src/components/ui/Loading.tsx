@@ -49,7 +49,8 @@ function Loading({ className, colorHex }: LoadingProps) {
 
   if (typeof document !== 'undefined') {
     const hex =
-      colorHex || getComputedStyle(document.documentElement).getPropertyValue('--icon-normal').trim();
+      colorHex ||
+      getComputedStyle(document.documentElement).getPropertyValue('--icon-normal').trim();
     const color = hexToLottieColor(hex);
     if (color) {
       animationData = applyColor(loadingData as LottieData, color);

@@ -1,10 +1,7 @@
 import { cookies, headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { API_BASE_PATH } from '@/constants/api';
-import {
-  ACCESS_TOKEN_KEY,
-  REFRESH_TOKEN_KEY,
-} from './cookies';
+import { ACCESS_TOKEN_KEY, REFRESH_TOKEN_KEY } from './cookies';
 
 interface RequestOptions extends Omit<RequestInit, 'method' | 'body'> {
   params?: Record<string, string | number>;

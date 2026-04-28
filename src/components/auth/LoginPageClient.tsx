@@ -84,7 +84,7 @@ function LoginPageClient({
   }
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center gap-10 px-400 py-600 tablet:px-0 tablet:py-0">
+    <div className="tablet:px-0 tablet:py-0 flex min-h-screen flex-col items-center justify-center gap-10 px-400 py-600">
       <div className="typo-h3 text-text-strong text-center">
         우리 동아리만의 공간을 만들어보세요
         <br />
