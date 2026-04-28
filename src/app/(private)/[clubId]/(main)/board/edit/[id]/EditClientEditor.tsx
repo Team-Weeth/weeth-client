@@ -3,8 +3,7 @@
 import { useEffect, useRef } from 'react';
 
 import { CategorySelector, PostEditorShell } from '@/components/board';
-import { useBoardList } from '@/hooks';
-import { toBoardNavItem } from '@/lib/board';
+import { useWritableBoards } from '@/hooks';
 import { usePostStore } from '@/stores/usePostStore';
 import type { PostDetail } from '@/types/board';
 
@@ -21,8 +20,7 @@ function EditClientEditor({ post }: EditClientEditorProps) {
     usePostStore.getState().initFromDetail(post);
   }, [post]);
 
-  const { data: boards } = useBoardList();
-  const items = boards?.map(toBoardNavItem) ?? [];
+  const { writableItems } = useWritableBoards();
 
   const board = usePostStore((s) => s.board);
   const setBoard = usePostStore((s) => s.setBoard);
@@ -33,7 +31,9 @@ function EditClientEditor({ post }: EditClientEditorProps) {
     <PostEditorShell
       align="center"
       initialContent={post.content}
-      header={<CategorySelector items={items} activeId={activeId} onItemSelect={setBoard} />}
+      header={
+        <CategorySelector items={writableItems} activeId={activeId} onItemSelect={setBoard} />
+      }
     />
   );
 }

@@ -1,17 +1,18 @@
 'use client';
 
 import { useEffect, useLayoutEffect } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { CategorySelector, PostEditorShell } from '@/components/board';
-import { useBoardList } from '@/hooks';
-import { toBoardNavItem } from '@/lib/board';
+import { useWritableBoards } from '@/hooks';
 import { usePostStore } from '@/stores/usePostStore';
 import { useActiveBoardId } from '@/stores/useBoardNavStore';
+import { useClubId } from '@/stores/useClubStore';
+import { toastError } from '@/stores/useToastStore';
 
 export default function ClientEditor() {
-  const { data: boards } = useBoardList();
-  const items = boards?.map(toBoardNavItem) ?? [];
-  const writableItems = items.filter((item) => item.type !== 'ALL' && item.canWrite !== false);
+  const router = useRouter();
+  const clubId = useClubId();
+  const { boards, writableItems } = useWritableBoards();
   const activeBoardId = useActiveBoardId();
 
   const searchParams = useSearchParams();
@@ -24,6 +25,13 @@ export default function ClientEditor() {
   const board = usePostStore((s) => s.board);
   const setBoard = usePostStore((s) => s.setBoard);
   const reset = usePostStore((s) => s.reset);
+
+  useEffect(() => {
+    if (boards && writableItems.length === 0) {
+      toastError('작성 가능한 게시판이 없습니다. 관리자에게 문의하세요.');
+      router.replace(`/${clubId}/board`);
+    }
+  }, [boards, writableItems.length, router, clubId]);
 
   const isWritable = (id: number | null) =>
     id !== null && writableItems.some((item) => item.id === id);
