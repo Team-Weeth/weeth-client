@@ -1,32 +1,13 @@
-import type { Member, MemberStatus } from '@/types/admin/member';
-
-export const STATUS_LABEL: Record<MemberStatus, string> = {
-  ACTIVE: '활동중',
-  WAITING: '가입 대기',
-  BANNED: '추방',
-  LEFT: '탈퇴',
-};
-
-export const STATUS_DOT_COLOR: Record<MemberStatus, string> = {
-  ACTIVE: 'bg-container-primary',
-  WAITING: 'bg-state-caution',
-  BANNED: 'bg-state-error',
-  LEFT: 'bg-container-neutral-alternative',
-};
+import type { ClubMemberRole, Member, MemberStatus } from '@/types/admin/member';
 
 export function getPersonalInfo(member: Member) {
   return [
     { label: '역할', value: member.position },
-    { label: '역할', value: member.role },
     { label: '학과', value: member.department },
     { label: '전화번호', value: member.phone },
     { label: '학번', value: member.studentId },
     { label: '이메일', value: member.email },
   ];
-}
-
-export function getActivityInfo(member: Member) {
-  return [{ label: '활동기수', value: member.cardinal }];
 }
 
 export function getActivityStats(member: Member) {
@@ -40,8 +21,6 @@ export function getActivityStats(member: Member) {
     // },
   ];
 }
-
-import type { ClubMemberRole } from '@/types/admin/member';
 
 interface FooterActionHandlers {
   memberRole: ClubMemberRole;

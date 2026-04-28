@@ -12,7 +12,6 @@ export function toMember(cm: ClubMember): Member {
     clubMemberId: cm.clubMemberId,
     name: cm.name ?? '',
     email: cm.email ?? '',
-    role: '',
     department: cm.department ?? '',
     studentId: cm.studentId ?? '',
     phone: cm.tel ?? '',
