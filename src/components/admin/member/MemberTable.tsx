@@ -112,7 +112,7 @@ function MemberTable({
                 className="hover:bg-container-neutral-interaction cursor-pointer border-0"
                 onClick={() => onMemberAction?.(member)}
               >
-                <TableCell className="bg-brand-primary w-1 min-w-1 p-0" />
+                <TableCell className={cn('w-1 min-w-1 p-0', STATUS_BAR_COLOR[member.status])} />
                 <TableCell className="w-12">
                   <input
                     aria-label={`${member.name} ${member.studentId} 선택`}

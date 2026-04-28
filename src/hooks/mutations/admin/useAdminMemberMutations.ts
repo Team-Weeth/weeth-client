@@ -3,6 +3,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { adminMemberApi } from '@/lib/apis/adminMember';
 import type { ClubMemberRole, Member } from '@/types/admin/member';
 import { useClubId } from '@/stores';
+import { useUserStore } from '@/stores/useUserStore';
 import { ROLE_MAP } from '@/utils/admin/memberMapper';
 
 // 멤버 권한 변경
@@ -130,6 +131,9 @@ export function useTransferLead() {
     mutationFn: (clubMemberId: number) => {
       if (!clubId) throw new Error('clubId가 없습니다');
       return adminMemberApi.transferLead(clubId, clubMemberId);
+    },
+    onSuccess: () => {
+      useUserStore.setState({ role: 'ADMIN' }, false, 'demoteAfterTransferLead');
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey });
