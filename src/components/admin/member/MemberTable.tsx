@@ -86,69 +86,66 @@ function MemberTable({
         </button>
       </div>
 
-      <Table
-        className="w-max min-w-full"
-        wrapperClassName="max-h-[600px] overflow-auto"
-      >
+      <Table className="w-max min-w-full" wrapperClassName="max-h-[600px] overflow-auto">
         <TableHeader className="bg-container-neutral sticky top-0 z-10">
           <TableRow className="border-0 hover:bg-transparent">
-              <TableHead className="w-1 min-w-1 p-0" />
-              <TableHead className="w-12">
+            <TableHead className="w-1 min-w-1 p-0" />
+            <TableHead className="w-12">
+              <input
+                aria-label="전체 멤버 선택"
+                type="checkbox"
+                className="cursor-pointer"
+                checked={isAllSelected}
+                ref={headerCheckboxRef}
+                onChange={toggleAll}
+              />
+            </TableHead>
+            {COLUMNS.map(({ label }) => (
+              <TableHead key={label} className="typo-body1 text-text-strong">
+                {label}
+              </TableHead>
+            ))}
+            <TableHead className="w-10" />
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {sortedMembers.map((member) => (
+            <TableRow
+              key={member.id}
+              className="hover:bg-container-neutral-interaction cursor-pointer border-0"
+              onClick={() => onMemberAction?.(member)}
+            >
+              <TableCell className={cn('w-1 min-w-1 p-0', STATUS_BAR_COLOR[member.status])} />
+              <TableCell className="w-12">
                 <input
-                  aria-label="전체 멤버 선택"
+                  aria-label={`${member.name} ${member.studentId} 선택`}
                   type="checkbox"
                   className="cursor-pointer"
-                  checked={isAllSelected}
-                  ref={headerCheckboxRef}
-                  onChange={toggleAll}
+                  checked={selectedIds.has(member.id)}
+                  onChange={() => toggleOne(member.id)}
+                  onClick={(e) => e.stopPropagation()}
                 />
-              </TableHead>
-              {COLUMNS.map(({ label }) => (
-                <TableHead key={label} className="typo-body1 text-text-strong">
-                  {label}
-                </TableHead>
+              </TableCell>
+              {COLUMNS.map(({ key, label }) => (
+                <TableCell key={label} className="typo-body1 text-text-strong">
+                  {String(member[key])}
+                </TableCell>
               ))}
-              <TableHead className="w-10" />
+              <TableCell className="w-10">
+                <button
+                  type="button"
+                  className="text-icon-normal flex cursor-pointer items-center justify-center"
+                  aria-label="더보기"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onMemberAction?.(member);
+                  }}
+                >
+                  <Icon src={AdminMeatballIcon} alt="더보기" size={20} />
+                </button>
+              </TableCell>
             </TableRow>
-          </TableHeader>
-          <TableBody>
-            {sortedMembers.map((member) => (
-              <TableRow
-                key={member.id}
-                className="hover:bg-container-neutral-interaction cursor-pointer border-0"
-                onClick={() => onMemberAction?.(member)}
-              >
-                <TableCell className={cn('w-1 min-w-1 p-0', STATUS_BAR_COLOR[member.status])} />
-                <TableCell className="w-12">
-                  <input
-                    aria-label={`${member.name} ${member.studentId} 선택`}
-                    type="checkbox"
-                    className="cursor-pointer"
-                    checked={selectedIds.has(member.id)}
-                    onChange={() => toggleOne(member.id)}
-                    onClick={(e) => e.stopPropagation()}
-                  />
-                </TableCell>
-                {COLUMNS.map(({ key, label }) => (
-                  <TableCell key={label} className="typo-body1 text-text-strong">
-                    {String(member[key])}
-                  </TableCell>
-                ))}
-                <TableCell className="w-10">
-                  <button
-                    type="button"
-                    className="text-icon-normal flex cursor-pointer items-center justify-center"
-                    aria-label="더보기"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onMemberAction?.(member);
-                    }}
-                  >
-                    <Icon src={AdminMeatballIcon} alt="더보기" size={20} />
-                  </button>
-                </TableCell>
-              </TableRow>
-            ))}
+          ))}
         </TableBody>
       </Table>
     </div>

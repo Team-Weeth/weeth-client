@@ -37,9 +37,7 @@ function CardinalDropdown({
           </button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="start">
-          {onSelectAll && (
-            <DropdownMenuItem onSelect={() => onSelectAll()}>전체</DropdownMenuItem>
-          )}
+          {onSelectAll && <DropdownMenuItem onSelect={() => onSelectAll()}>전체</DropdownMenuItem>}
           {cardinals.map((c) => (
             <DropdownMenuItem key={c.id} onSelect={() => onSelect(c.id)}>
               {c.cardinalNumber}기
