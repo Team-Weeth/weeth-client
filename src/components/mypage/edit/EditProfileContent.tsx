@@ -44,12 +44,11 @@ function EditProfileContent({ className, schools, majors, ...props }: EditProfil
   const [resetToDefault, setResetToDefault] = useState(false);
 
   const {
-    register,
     handleSubmit,
-    setValue,
     control,
     reset,
-    formState: { isDirty },
+    trigger,
+    formState: { isDirty, isValid },
   } = useForm<EditProfileFormData>({
     resolver: zodResolver(editProfileSchema),
     mode: 'onChange',
@@ -77,7 +76,9 @@ function EditProfileContent({ className, schools, majors, ...props }: EditProfil
       department: me.department,
       studentId: me.studentId,
     });
-  }, [me, reset]);
+
+    void trigger();
+  }, [me, reset, trigger]);
 
   const name = useWatch({ control, name: 'name' });
   const [watchedPhone, watchedSchool, watchedDepartment, watchedStudentId] = useWatch({
@@ -85,11 +86,20 @@ function EditProfileContent({ className, schools, majors, ...props }: EditProfil
     name: ['phone', 'school', 'department', 'studentId'],
   });
 
+  const isSchoolValid = !!watchedSchool && schools.includes(watchedSchool);
+  const isDepartmentValid = !!watchedDepartment && majors.includes(watchedDepartment);
+  const schoolError =
+    watchedSchool && !isSchoolValid ? '목록에 있는 학교를 선택해주세요' : undefined;
+  const departmentError =
+    watchedDepartment && !isDepartmentValid ? '목록에 있는 학과를 선택해주세요' : undefined;
+
   const hasRequiredFields = !!(
     watchedPhone &&
     watchedSchool &&
     watchedDepartment &&
-    watchedStudentId
+    watchedStudentId &&
+    isSchoolValid &&
+    isDepartmentValid
   );
   const hasChanges = isDirty || !!selectedFile || resetToDefault;
 
@@ -183,18 +193,19 @@ function EditProfileContent({ className, schools, majors, ...props }: EditProfil
 
           <div className="flex w-full max-w-[640px] flex-col gap-600">
             <div className="flex flex-col gap-500">
-              <PersonalInfoFields register={register} control={control} />
+              <PersonalInfoFields control={control} />
               <SchoolInfoFields
                 control={control}
-                setValue={setValue}
                 schools={schools}
                 majors={majors}
+                schoolError={schoolError}
+                departmentError={departmentError}
               />
             </div>
             <Button
               type="submit"
               size="lg"
-              disabled={isPending || !hasRequiredFields || !hasChanges}
+              disabled={isPending || !hasRequiredFields || !hasChanges || !isValid}
               className="w-full"
             >
               {isPending ? '수정 중...' : '수정 완료'}
