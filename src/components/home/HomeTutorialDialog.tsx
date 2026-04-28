@@ -52,9 +52,13 @@ function HomeTutorialDialog({ open, onOpenChange }: HomeTutorialDialogProps) {
     }
   }, [open, api]);
 
-  const handleGoToAdmin = () => {
+  const isLastSlide = displayIndex === HOME_TUTORIAL_SLIDES.length - 1;
+
+  const handleSecondary = () => {
     onOpenChange(false);
-    router.push(`/${clubId}/admin`);
+    if (currentSlide.secondaryHref) {
+      router.push(currentSlide.secondaryHref(clubId));
+    }
   };
 
   const handlePrevious = () => {
@@ -62,7 +66,7 @@ function HomeTutorialDialog({ open, onOpenChange }: HomeTutorialDialogProps) {
   };
 
   const handleNext = () => {
-    if (displayIndex === HOME_TUTORIAL_SLIDES.length - 1) {
+    if (isLastSlide) {
       onOpenChange(false);
       return;
     }
@@ -108,11 +112,11 @@ function HomeTutorialDialog({ open, onOpenChange }: HomeTutorialDialogProps) {
             />
           }
         >
-          <Button variant="secondary" size="lg" className="w-full" onClick={handleGoToAdmin}>
-            설정하러 가기
+          <Button variant="secondary" size="lg" className="w-full" onClick={handleSecondary}>
+            {currentSlide.secondaryLabel}
           </Button>
           <Button variant="primary" size="lg" className="w-full" onClick={handleNext}>
-            {displayIndex === HOME_TUTORIAL_SLIDES.length - 1 ? '닫기' : '다음'}
+            {isLastSlide ? '닫기' : '다음'}
           </Button>
         </DialogFooter>
       </DialogContent>
