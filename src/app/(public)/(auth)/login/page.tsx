@@ -12,14 +12,15 @@ export default async function LoginPage({
     clubId?: string;
     code?: string;
     redirect?: string | string[];
+    expired?: string;
   }>;
 }) {
-  const { terms, intent, clubId, code, redirect } = await searchParams;
+  const { terms, intent, clubId, code, redirect, expired } = await searchParams;
   const resolvedRedirect = Array.isArray(redirect) ? redirect[0] : redirect;
 
   const cookieStore = await cookies();
   const hasToken = cookieStore.has(ACCESS_TOKEN_KEY) || cookieStore.has(REFRESH_TOKEN_KEY);
-  if (hasToken && !terms && !intent && !code) {
+  if (hasToken && !terms && !intent && !code && !expired) {
     const safeRedirect =
       resolvedRedirect && resolvedRedirect.startsWith('/') && !resolvedRedirect.startsWith('//')
         ? resolvedRedirect

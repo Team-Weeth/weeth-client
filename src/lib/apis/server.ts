@@ -47,7 +47,7 @@ async function refreshTokens(cookieStore: Awaited<ReturnType<typeof cookies>>): 
   const refreshToken = cookieStore.get(REFRESH_TOKEN_KEY)?.value;
 
   if (!refreshToken) {
-    redirect('/login');
+    redirect('/login?expired=1');
   }
 
   const refreshResponse = await fetch(`${API_BASE_PATH}/users/social/refresh`, {
@@ -61,7 +61,7 @@ async function refreshTokens(cookieStore: Awaited<ReturnType<typeof cookies>>): 
   if (!refreshResponse.ok) {
     cookieStore.delete(ACCESS_TOKEN_KEY);
     cookieStore.delete(REFRESH_TOKEN_KEY);
-    redirect('/login');
+    redirect('/login?expired=1');
   }
 
   const refreshJson = await refreshResponse.json();
@@ -109,7 +109,7 @@ async function request<T>(
 
   if (response.status === 401) {
     if (_retried) {
-      redirect('/login');
+      redirect('/login?expired=1');
     }
 
     await refreshTokens(cookieStore);

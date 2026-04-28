@@ -45,14 +45,16 @@ function HomeTutorialLauncher() {
     if (role === 'LEAD' && !hasSeenTutorial) {
       // eslint-disable-next-line react-hooks/set-state-in-effect -- URL onboarding 플래그를 1회성 UI 트리거로 변환하는 의도된 동기화
       setAutoOpen(true);
+    } else {
+      router.replace(`/${clubId}/home`, { scroll: false });
     }
-    router.replace(`/${clubId}/home`, { scroll: false });
   }, [router, clubId, onboarding, role, hasSeenTutorial]);
 
   const handleOpenChange = (nextOpen: boolean) => {
     if (!nextOpen && autoOpen) {
       window.localStorage.setItem(HOME_TUTORIAL_SEEN_KEY, 'true');
       setAutoOpen(false);
+      router.replace(`/${clubId}/home`, { scroll: false });
     }
 
     setOpen(nextOpen);
