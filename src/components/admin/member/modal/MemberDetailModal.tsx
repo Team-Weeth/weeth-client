@@ -151,7 +151,8 @@ function MemberDetailModal({
             )}
             {onTransferLead && (
               <AlertDialog
-                title={'해당 멤버에게\nLEAD 권한을 이양하시겠습니까?'}
+                title={'해당 멤버에게\n리더 권한을 이양하시겠습니까?'}
+              description={'리더는 동아리별로\n1명만 지정할 수 있습니다'}
                 trigger={
                   <Button variant="secondary" size="lg">
                     리더로 변경
