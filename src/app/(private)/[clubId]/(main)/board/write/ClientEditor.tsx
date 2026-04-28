@@ -11,7 +11,7 @@ import { useActiveBoardId } from '@/stores/useBoardNavStore';
 export default function ClientEditor() {
   const { data: boards } = useBoardList();
   const items = boards?.map(toBoardNavItem) ?? [];
-  const writableItems = items.filter((item) => item.type !== 'ALL');
+  const writableItems = items.filter((item) => item.type !== 'ALL' && item.canWrite !== false);
   const activeBoardId = useActiveBoardId();
 
   const searchParams = useSearchParams();
@@ -55,7 +55,9 @@ export default function ClientEditor() {
   return (
     <PostEditorShell
       align="center"
-      header={<CategorySelector items={items} activeId={activeId} onItemSelect={setBoard} />}
+      header={
+        <CategorySelector items={writableItems} activeId={activeId} onItemSelect={setBoard} />
+      }
     />
   );
 }

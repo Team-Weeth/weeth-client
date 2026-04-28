@@ -97,6 +97,7 @@ function BoardContent({ boardId }: BoardContentProps) {
               likeCount={post.like.likeCount}
               commentCount={post.commentCount}
               isLiked={post.like.isLiked}
+              canComment={post.boardConfig?.canComment ?? true}
               onComment={() =>
                 router.push(`${buildPostPath(clubId, post.id, post.boardId)}#comments`)
               }

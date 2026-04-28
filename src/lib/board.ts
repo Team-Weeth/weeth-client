@@ -45,8 +45,14 @@ function toBoardNavItem(board: {
   id: number | null;
   name: string;
   type: 'ALL' | 'NOTICE' | 'GENERAL';
+  boardConfig?: { canWrite: boolean; canComment: boolean };
 }): BoardNavItem {
-  return { id: board.id, label: board.name, type: board.type };
+  return {
+    id: board.id,
+    label: board.name,
+    type: board.type,
+    canWrite: board.boardConfig?.canWrite,
+  };
 }
 
 function buildPostPath(clubId: string, postId: number, boardId: number): string {

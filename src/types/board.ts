@@ -9,6 +9,11 @@ export type BoardType = 'ALL' | 'NOTICE' | 'GENERAL';
 
 export type UserRole = 'USER' | 'ADMIN' | 'LEAD';
 
+export interface BoardConfig {
+  canWrite: boolean;
+  canComment: boolean;
+}
+
 interface BoardBase {
   id: number | null;
   type: BoardType;
@@ -16,10 +21,12 @@ interface BoardBase {
 
 export interface BoardNavItem extends BoardBase {
   label: string;
+  canWrite?: boolean;
 }
 
 export interface Board extends BoardBase {
   name: string;
+  boardConfig?: BoardConfig;
 }
 
 export interface PostAuthor {
@@ -54,6 +61,7 @@ interface PostBase {
 export interface PostListItem extends PostBase {
   fileUrls: FileItem[];
   isNew: boolean;
+  boardConfig?: BoardConfig;
 }
 
 export interface PostComment {
@@ -71,6 +79,7 @@ export interface PostDetail extends PostBase {
   isNew?: boolean;
   comments: PostComment[];
   fileUrls: FileItem[];
+  boardConfig?: BoardConfig;
 }
 
 /** 게시글 작성 요청 body */

@@ -83,6 +83,7 @@ function PostDetailContent({ initialData }: PostDetailContentProps) {
   }, [clubId, currentPost.boardId, boardTypeMap]);
 
   const isPostAuthor = currentUserId !== null && currentPost.author.id === currentUserId;
+  const canComment = currentPost.boardConfig?.canComment ?? true;
   const imageFiles = currentPost.fileUrls
     .filter((f) => isImageFileByType(f.contentType))
     .map(toDisplayFile);
@@ -134,6 +135,7 @@ function PostDetailContent({ initialData }: PostDetailContentProps) {
           likeCount={currentPost.like.likeCount}
           commentCount={currentPost.commentCount}
           isLiked={currentPost.like.isLiked}
+          canComment={canComment}
           onComment={() =>
             document.getElementById('comments')?.scrollIntoView({ behavior: 'smooth' })
           }
@@ -142,13 +144,13 @@ function PostDetailContent({ initialData }: PostDetailContentProps) {
 
       <div id="comments" className="self-stretch px-450 pt-200 pb-400">
         <CommentInput
-          placeholder="댓글을 입력하세요."
+          placeholder={canComment ? '댓글을 입력하세요.' : '댓글을 작성할 수 없는 게시판입니다.'}
           onSubmit={async (v) => {
             await createComment(v);
             return true;
           }}
           onValueChange={(v) => setIsCommentDirty(v.trim().length > 0)}
-          disabled={isPending}
+          disabled={!canComment || isPending}
         />
       </div>
 

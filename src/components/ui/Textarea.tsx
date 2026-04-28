@@ -10,7 +10,7 @@ const baseStyles = cn(
   'rounded-sm border border-transparent px-300 py-200',
   'placeholder:text-text-alternative',
   'focus:outline-none focus:border-brand-primary',
-  'disabled:bg-container-neutral-alternative disabled:text-text-disabled disabled:cursor-not-allowed',
+  'disabled:bg-container-neutral disabled:text-text-disabled disabled:cursor-not-allowed',
   'transition-colors',
 );
 
@@ -95,8 +95,7 @@ function Textarea({
       <div
         className={cn(
           wrapperStyles,
-          props.disabled &&
-            'bg-container-neutral-alternative text-text-disabled cursor-not-allowed',
+          props.disabled && 'bg-container-neutral text-text-disabled cursor-not-allowed',
           wrapperClassName,
         )}
       >

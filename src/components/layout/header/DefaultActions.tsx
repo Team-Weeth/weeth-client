@@ -8,6 +8,8 @@ import { EditIcon, ExitToAppIcon } from '@/assets/icons';
 import { useWritePost } from '@/hooks/home/useWritePost';
 import { useIsAdmin } from '@/hooks/shared';
 import { useUserProfileImageUrl } from '@/stores';
+import { useBoardList } from '@/hooks';
+import { useActiveBoardId } from '@/stores/useBoardNavStore';
 
 const CardinalMissingModal = dynamic(() =>
   import('@/components/home/CardinalMissingModal').then((m) => m.CardinalMissingModal),
@@ -30,11 +32,22 @@ function DefaultActions() {
   } = useWritePost();
   const { isAdmin } = useIsAdmin();
   const profileImageUrl = useUserProfileImageUrl();
+  const { data: boards } = useBoardList();
+  const activeBoardId = useActiveBoardId();
+
+  const canWrite = (() => {
+    if (!boards) return false;
+    if (activeBoardId === null) {
+      return boards.some((b) => b.boardConfig?.canWrite !== false);
+    }
+    const activeBoard = boards.find((b) => b.id === activeBoardId);
+    return activeBoard?.boardConfig?.canWrite !== false;
+  })();
 
   return (
     <>
       <div className="flex items-center gap-200">
-        {pathname.startsWith(`/${clubId}/board`) && (
+        {pathname.startsWith(`/${clubId}/board`) && canWrite && (
           <Button
             variant="primary"
             size="md"
