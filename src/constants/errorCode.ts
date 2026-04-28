@@ -10,6 +10,8 @@ export const MEMBER_CARDINAL_ERROR_CODE = {
 } as const;
 
 export const MEMBER_ROLE_ERROR_CODE = {
+  /** LEAD만 권한 이양 가능 */
+  ONLY_LEAD_CAN_TRANSFER: 21113,
   /** LEAD는 이양을 통해서만 변경 가능 */
   LEAD_TRANSFER_ONLY: 21114,
 } as const;

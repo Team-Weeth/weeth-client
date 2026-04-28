@@ -134,7 +134,7 @@ function MemberPageContent() {
             isAxiosError(err) &&
             err.response?.data?.code === MEMBER_ROLE_ERROR_CODE.LEAD_TRANSFER_ONLY,
         );
-        return isLeadTransferOnly ? 'LEAD는 이양을 통해서만 변경할 수 있습니다.' : undefined;
+        return isLeadTransferOnly ? '리더는 이양을 통해서만 변경할 수 있습니다.' : undefined;
       },
     );
 
@@ -167,8 +167,8 @@ function MemberPageContent() {
       onSuccess: () => toastSuccess('리더로 변경되었습니다.'),
       onError: (err) => {
         const code = isAxiosError(err) ? err.response?.data?.code : undefined;
-        if (code === 21113) {
-          toastError('LEAD만 권한을 이양할 수 있습니다.');
+        if (code === MEMBER_ROLE_ERROR_CODE.ONLY_LEAD_CAN_TRANSFER) {
+          toastError('리더만 권한을 이양할 수 있습니다.');
         } else {
           toastError('리더 변경에 실패했습니다.');
         }
