@@ -8,7 +8,10 @@ interface ErrorInfo {
 /**
  * error.message에서 "[status:code] message" 패턴을 파싱
  */
-export function parseApiError(error: Error): { status: number; code: number; message: string } | null {
+export function parseApiError(
+  error: unknown,
+): { status: number; code: number; message: string } | null {
+  if (!(error instanceof Error)) return null;
   const match = error.message.match(/^\[(\d+):(\d+)\]\s(.+)$/);
   if (!match) return null;
   return { status: Number(match[1]), code: Number(match[2]), message: match[3] };

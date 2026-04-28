@@ -14,7 +14,13 @@ interface PostDeleteDialogProps {
 /**
  * 게시글 삭제 확인 다이얼로그
  */
-function PostDeleteDialog({ postId, boardId, open, onOpenChange, onDeleted }: PostDeleteDialogProps) {
+function PostDeleteDialog({
+  postId,
+  boardId,
+  open,
+  onOpenChange,
+  onDeleted,
+}: PostDeleteDialogProps) {
   const { deletePost, isPending } = useDeletePost();
 
   const handleConfirm = async (event: React.MouseEvent) => {

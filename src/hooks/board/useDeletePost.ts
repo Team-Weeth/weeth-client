@@ -26,7 +26,8 @@ export function useDeletePost() {
     onError: (error) => {
       if (error.message === 'club not found') return;
       const parsed = error instanceof Error ? parseApiError(error) : null;
-      const message = (parsed?.code && BOARD_ACTION_ERRORS[parsed.code]) || '게시글 삭제에 실패했습니다.';
+      const message =
+        (parsed?.code && BOARD_ACTION_ERRORS[parsed.code]) || '게시글 삭제에 실패했습니다.';
       toast({ title: message, variant: 'error' });
     },
   });

@@ -48,7 +48,8 @@ export function useUpdatePost() {
     onError: (error) => {
       if (error.message === 'board not selected' || error.message === 'validation failed') return;
       const parsed = error instanceof Error ? parseApiError(error) : null;
-      const message = (parsed?.code && BOARD_ACTION_ERRORS[parsed.code]) || '게시글 수정에 실패했습니다.';
+      const message =
+        (parsed?.code && BOARD_ACTION_ERRORS[parsed.code]) || '게시글 수정에 실패했습니다.';
       toast({ title: message, variant: 'error' });
     },
   });

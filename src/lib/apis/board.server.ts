@@ -39,7 +39,5 @@ export const boardServerApi = {
 
   /** 게시글 삭제 (Server Action) */
   deletePost: (clubId: string, boardId: number, postId: number) =>
-    apiServer.delete<ApiResponse<void>>(
-      `/clubs/${clubId}/boards/${boardId}/posts/${postId}`,
-    ),
+    apiServer.delete<ApiResponse<void>>(`/clubs/${clubId}/boards/${boardId}/posts/${postId}`),
 };
