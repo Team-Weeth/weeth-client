@@ -35,12 +35,8 @@ async function refreshSession(refreshToken: string) {
 
 function buildLoginRedirectUrl(request: NextRequest, expired: boolean) {
   const loginUrl = new URL('/login', request.url);
-  if (expired) {
-    loginUrl.searchParams.set('expired', '1');
-    return loginUrl;
-  }
   const { pathname, search } = request.nextUrl;
-  if (pathname !== '/login') {
+  if (!expired && pathname !== '/login') {
     const redirect = search ? `${pathname}${search}` : pathname;
     loginUrl.searchParams.set('redirect', redirect);
   }
@@ -103,6 +99,7 @@ export async function proxy(request: NextRequest) {
   if (isClubRoute && !isPrivatePath) {
     const requestHeaders = new Headers(request.headers);
     requestHeaders.set('x-pathname', pathname);
+    requestHeaders.set('x-search', request.nextUrl.search);
     return NextResponse.next({ request: { headers: requestHeaders } });
   }
 
