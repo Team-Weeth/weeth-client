@@ -24,6 +24,7 @@ import {
 } from '@/hooks/mutations/admin';
 import { toastError, toastSuccess } from '@/stores/useToastStore';
 import { getBulkBanAction, getBulkTargetRole } from '@/utils/admin/memberBulkActions';
+import { parseCardinals } from '@/utils/admin/parseCardinals';
 import { getApiErrorCode } from '@/utils/shared';
 import { runBulkMutation } from '@/utils/shared/runBulkMutation';
 
@@ -59,12 +60,7 @@ function MemberPageContent() {
   const cardinalFilteredMembers =
     selectedCardinal === 'all'
       ? members
-      : members.filter((m) =>
-          m.cardinal
-            .split(',')
-            .map((c) => c.trim())
-            .includes(String(selectedCardinal)),
-        );
+      : members.filter((m) => parseCardinals(m.cardinal).includes(String(selectedCardinal)));
 
   const query = searchValue.trim().toLowerCase();
   const filteredMembers = query

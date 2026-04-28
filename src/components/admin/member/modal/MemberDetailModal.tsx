@@ -10,6 +10,7 @@ import {
   getActivityStats,
   getFooterActions,
 } from '@/constants/admin/memberDetailModal.constants';
+import { parseCardinals } from '@/utils/admin/parseCardinals';
 import type { Member } from '@/types/admin/member';
 
 interface MemberDetailModalProps {
@@ -98,18 +99,14 @@ function MemberDetailModal({
               <div className="flex items-start">
                 <span className="typo-body1 text-text-alternative w-24 shrink-0">활동 기수</span>
                 <div className="flex flex-wrap gap-200">
-                  {member.cardinal
-                    .split(',')
-                    .map((c) => c.trim())
-                    .filter(Boolean)
-                    .map((c) => (
-                      <span
-                        key={c}
-                        className="bg-container-primary-alternative text-brand-primary typo-body2 rounded-full px-300 py-100"
-                      >
-                        {c}기
-                      </span>
-                    ))}
+                  {parseCardinals(member.cardinal).map((c) => (
+                    <span
+                      key={c}
+                      className="bg-container-primary-alternative text-brand-primary typo-body2 rounded-full px-300 py-100"
+                    >
+                      {c}기
+                    </span>
+                  ))}
                 </div>
               </div>
             </div>
