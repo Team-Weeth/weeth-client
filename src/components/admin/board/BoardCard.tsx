@@ -107,7 +107,7 @@ function BoardCard({
       <div className="desktop:flex hidden w-24 shrink-0">
         {visibility === 'PUBLIC' && <Tag variant="primary">전체 공개</Tag>}
         {visibility === 'ADMIN_ONLY' && (
-          <Tag className="bg-state-caution/10 text-state-caution">관리자 전용</Tag>
+          <Tag className="bg-state-caution/10 text-state-caution">운영진 전용</Tag>
         )}
         {visibility === 'PRIVATE' && (
           <Tag className="bg-text-alternative/10 text-text-alternative">비공개</Tag>

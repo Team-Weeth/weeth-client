@@ -47,7 +47,7 @@ function HomeBoardContent() {
           <Avatar size={24} type="round">
             <AvatarFallback />
           </Avatar>
-          <p className="typo-caption1">Weeth 관리자</p>
+          <p className="typo-caption1">Weeth 운영진</p>
         </div>
         <p className="typo-sub3 text-text-strong">
           {isAdmin ? '사이트 개설을 축하합니다!' : '아직 게시된 글이 없어요!'}

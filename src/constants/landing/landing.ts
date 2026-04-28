@@ -103,7 +103,7 @@ export const FOOTER_MENUS = [
     title: 'Weeth 서비스',
     items: [
       { label: '서비스 소개', href: '/landing#service' },
-      { label: '관리자 서비스', href: '/landing#admin-service' },
+      { label: '운영진 서비스', href: '/landing#admin-service' },
       { label: '문의 메일', href: 'mailto:contact@weeth.kr' },
     ],
   },

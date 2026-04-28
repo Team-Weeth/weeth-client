@@ -21,10 +21,10 @@ export function getTopBarActions({
   onBan,
   onRestore,
 }: TopBarActionParams) {
-  const roleLabel = targetRole === 'ADMIN' ? '관리자로 변경' : '사용자로 변경';
+  const roleLabel = targetRole === 'ADMIN' ? '운영진으로 변경' : '사용자로 변경';
   const roleTitle =
     targetRole === 'ADMIN'
-      ? `${selectedCount}명의 멤버 역할을 관리자로\n변경하시겠습니까?`
+      ? `${selectedCount}명의 멤버 역할을 운영진으로\n변경하시겠습니까?`
       : `${selectedCount}명의 멤버 역할을 사용자로\n변경하시겠습니까?`;
 
   return [

@@ -53,7 +53,7 @@ function DefaultActions() {
             className="typo-button1 text-text-strong gap-100"
           >
             <Icon src={ExitToAppIcon} alt="exit" size={20} className="text-icon-normal" />
-            관리자
+            운영진
           </Button>
         )}
         <button

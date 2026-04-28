@@ -68,10 +68,10 @@ export function getFooterActions({
     // TODO: 가입 승인 api 열리면 열기
     // { label: '가입 승인', title: '1명의 멤버 가입을 승인하시겠습니까?', handler: onApprove },
     {
-      label: isAdmin ? '사용자로 변경' : '관리자로 변경',
+      label: isAdmin ? '사용자로 변경' : '운영진으로 변경',
       title: isAdmin
         ? '1명의 멤버 역할을 사용자로\n변경하시겠습니까?'
-        : '1명의 멤버 역할을 관리자로\n변경하시겠습니까?',
+        : '1명의 멤버 역할을 운영진으로\n변경하시겠습니까?',
       handler: onChangeRole,
     },
     // TODO: 비번 변경 api 열리면 열기

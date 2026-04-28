@@ -20,18 +20,18 @@ export const HOME_TUTORIAL_SLIDES: HomeTutorialSlide[] = [
         사이트를 꾸며보세요!
       </>
     ),
-    description: '관리자 서비스에서 언제든 수정할 수 있어요.',
+    description: '운영진 서비스에서 언제든 수정할 수 있어요.',
     image: tutorialImg1,
   },
   {
     title: (
       <>
-        관리자 페이지에서
+        운영진 페이지에서
         <br />
         정기모임 일정을 추가해보세요
       </>
     ),
-    description: '관리자 서비스에서 언제든 추가할 수 있어요.',
+    description: '운영진 서비스에서 언제든 추가할 수 있어요.',
     image: tutorialImg2,
   },
   {

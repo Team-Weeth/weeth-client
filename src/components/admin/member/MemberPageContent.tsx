@@ -15,7 +15,7 @@ import {
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, Card } from '@/components/ui';
 import { MEMBER_CARDINAL_ERROR_CODE } from '@/constants/errorCode';
 import { useDragScroll } from '@/hooks';
-import type { Member } from '@/types/admin/member';
+import type { ClubMemberRole, Member } from '@/types/admin/member';
 import { useAdminMembers } from '@/hooks/queries/admin';
 import { useCardinals } from '@/hooks/queries';
 import { useUserRole } from '@/stores';
@@ -29,6 +29,7 @@ import {
 } from '@/hooks/mutations/admin';
 import { toastError, toastSuccess } from '@/stores/useToastStore';
 import { getBulkBanAction, getBulkTargetRole } from '@/utils/admin/memberBulkActions';
+import { runBulkMutation } from '@/utils/shared/runBulkMutation';
 
 interface ForceConfirmState {
   clubMemberIds: number[];
@@ -43,9 +44,9 @@ function MemberPageContent() {
   const { ref: dragScrollRef, onMouseDown } = useDragScroll();
   const { data: members = [] } = useAdminMembers();
   const { data: cardinals = [] } = useCardinals();
-  const { mutate: changeMemberRole } = useChangeMemberRole();
-  const { mutate: banMember } = useBanMember();
-  const { mutate: restoreMember } = useRestoreMember();
+  const { mutateAsync: changeMemberRoleAsync } = useChangeMemberRole();
+  const { mutateAsync: banMemberAsync } = useBanMember();
+  const { mutateAsync: restoreMemberAsync } = useRestoreMember();
   const { mutate: transferLead } = useTransferLead();
   const myRole = useUserRole();
   const isLead = myRole === 'LEAD';
@@ -128,6 +129,25 @@ function MemberPageContent() {
     toastSuccess('기수가 변경되었습니다.');
   };
 
+  const submitChangeRole = (clubMemberIds: number[], memberRole: ClubMemberRole) =>
+    runBulkMutation(
+      clubMemberIds.map((clubMemberId) => ({ clubMemberId, memberRole })),
+      changeMemberRoleAsync,
+      { success: '권한이 변경되었습니다.', error: '권한 변경에 실패했습니다.' },
+    );
+
+  const submitBan = (clubMemberIds: number[]) =>
+    runBulkMutation(clubMemberIds, banMemberAsync, {
+      success: '추방되었습니다.',
+      error: '추방에 실패했습니다.',
+    });
+
+  const submitRestore = (clubMemberIds: number[]) =>
+    runBulkMutation(clubMemberIds, restoreMemberAsync, {
+      success: '복구되었습니다.',
+      error: '복구에 실패했습니다.',
+    });
+
   const handleChangeCardinalsForDetail = (cardinalIds: number[]) => {
     if (!detailMember) return;
     submitCardinalsChange([detailMember.clubMemberId], cardinalIds);
@@ -172,20 +192,17 @@ function MemberPageContent() {
         onBack={handleClearSelection}
         onChangeRole={
           targetRole
-            ? () =>
-                selectedMembers.forEach((m) =>
-                  changeMemberRole({ clubMemberId: m.clubMemberId, memberRole: targetRole }),
-                )
+            ? () => submitChangeRole(selectedMembers.map((m) => m.clubMemberId), targetRole)
             : undefined
         }
         onBan={
           targetBanAction === 'ban'
-            ? () => selectedMembers.forEach((m) => banMember(m.clubMemberId))
+            ? () => submitBan(selectedMembers.map((m) => m.clubMemberId))
             : undefined
         }
         onRestore={
           targetBanAction === 'restore'
-            ? () => selectedMembers.forEach((m) => restoreMember(m.clubMemberId))
+            ? () => submitRestore(selectedMembers.map((m) => m.clubMemberId))
             : undefined
         }
         onChangeCardinals={handleChangeCardinalsForBulk}
@@ -219,7 +236,13 @@ function MemberPageContent() {
           ))}
           <AddCardinalModal
             onSubmit={({ cardinal, isCurrent }) =>
-              createCardinal({ cardinalNumber: cardinal, inProgress: isCurrent })
+              createCardinal(
+                { cardinalNumber: cardinal, inProgress: isCurrent },
+                {
+                  onSuccess: () => toastSuccess('기수가 추가되었습니다.'),
+                  onError: () => toastError('기수 추가에 실패했습니다.'),
+                },
+              )
             }
           >
             <AddCardinalButton />
@@ -249,13 +272,13 @@ function MemberPageContent() {
           if (!open) setDetailMemberId(null);
         }}
         member={detailMember}
-        onBan={detailMember ? () => banMember(detailMember.clubMemberId) : undefined}
-        onRestore={detailMember ? () => restoreMember(detailMember.clubMemberId) : undefined}
+        onBan={detailMember ? () => submitBan([detailMember.clubMemberId]) : undefined}
+        onRestore={detailMember ? () => submitRestore([detailMember.clubMemberId]) : undefined}
         onChangeRole={
           detailMember
             ? () => {
                 const nextRole = detailMember.memberRole === 'ADMIN' ? 'USER' : 'ADMIN';
-                changeMemberRole({ clubMemberId: detailMember.clubMemberId, memberRole: nextRole });
+                submitChangeRole([detailMember.clubMemberId], nextRole);
               }
             : undefined
         }
