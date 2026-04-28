@@ -13,9 +13,15 @@ interface CardinalDropdownProps {
   cardinals: Cardinal[];
   activeCardinal?: Cardinal;
   onSelect: (id: number) => void;
+  onSelectAll?: () => void;
 }
 
-function CardinalDropdown({ cardinals, activeCardinal, onSelect }: CardinalDropdownProps) {
+function CardinalDropdown({
+  cardinals,
+  activeCardinal,
+  onSelect,
+  onSelectAll,
+}: CardinalDropdownProps) {
   return (
     <Card className="w-fit">
       <DropdownMenu>
@@ -31,6 +37,9 @@ function CardinalDropdown({ cardinals, activeCardinal, onSelect }: CardinalDropd
           </button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="start">
+          {onSelectAll && (
+            <DropdownMenuItem onSelect={() => onSelectAll()}>전체</DropdownMenuItem>
+          )}
           {cardinals.map((c) => (
             <DropdownMenuItem key={c.id} onSelect={() => onSelect(c.id)}>
               {c.cardinalNumber}기

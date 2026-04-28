@@ -205,7 +205,11 @@ function MemberPageContent() {
         onBack={handleClearSelection}
         onChangeRole={
           targetRole
-            ? () => submitChangeRole(selectedMembers.map((m) => m.clubMemberId), targetRole)
+            ? () =>
+                submitChangeRole(
+                  selectedMembers.map((m) => m.clubMemberId),
+                  targetRole,
+                )
             : undefined
         }
         onBan={
@@ -257,7 +261,7 @@ function MemberPageContent() {
                   <CardinalCard
                     variant="active"
                     title={`${c.cardinalNumber}기`}
-                    endIcon={<Icon src={MoreVerticalIcon} size={16} />}
+                    endIcon={<Icon src={MoreVerticalIcon} size={12} />}
                   />
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="start">
@@ -265,8 +269,7 @@ function MemberPageContent() {
                     disabled={c.status === 'IN_PROGRESS'}
                     onSelect={() =>
                       setCurrentCardinal(c.id, {
-                        onSuccess: () =>
-                          toastSuccess('현재 진행 기수로 설정되었습니다.'),
+                        onSuccess: () => toastSuccess('현재 진행 기수로 설정되었습니다.'),
                         onError: () => toastError('현재 진행 기수 설정에 실패했습니다.'),
                       })
                     }
@@ -327,9 +330,7 @@ function MemberPageContent() {
         }
         onChangeCardinals={detailMember ? handleChangeCardinalsForDetail : undefined}
         onTransferLead={
-          isLead && detailMember
-            ? () => handleTransferLead(detailMember.clubMemberId)
-            : undefined
+          isLead && detailMember ? () => handleTransferLead(detailMember.clubMemberId) : undefined
         }
       />
 

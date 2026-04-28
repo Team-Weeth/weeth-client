@@ -91,6 +91,7 @@ function SchedulePageContent() {
         cardinals={cardinals}
         activeCardinal={activeCardinal}
         onSelect={setSelectedCardinalId}
+        onSelectAll={() => setSelectedCardinalId(null)}
       />
 
       {/* Tabs */}
