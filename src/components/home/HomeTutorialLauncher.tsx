@@ -2,14 +2,15 @@
 
 import { useEffect, useState, useSyncExternalStore } from 'react';
 
-import { useParams, useRouter, useSearchParams } from 'next/navigation';
+import { useParams } from 'next/navigation';
 
 import { useHomeQuery } from '@/hooks/home';
 
 import { HomeTutorialDialog } from './HomeTutorialDialog';
 import { HomeTutorialButton } from './HomeTutorialButton';
 
-const HOME_TUTORIAL_SEEN_KEY = 'home-tutorial-seen';
+const HOME_TUTORIAL_PENDING_KEY = 'home-tutorial-pending-club-id';
+const HOME_TUTORIAL_SEEN_KEY_PREFIX = 'home-tutorial-seen';
 
 function subscribeTutorialSeen(callback: () => void) {
   window.addEventListener('storage', callback);
@@ -18,43 +19,48 @@ function subscribeTutorialSeen(callback: () => void) {
   };
 }
 
-function getTutorialSeenSnapshot() {
-  return window.localStorage.getItem(HOME_TUTORIAL_SEEN_KEY) === 'true';
+function getTutorialSeenKey(clubId: string) {
+  return `${HOME_TUTORIAL_SEEN_KEY_PREFIX}:${clubId}`;
 }
 
 function HomeTutorialLauncher() {
-  const router = useRouter();
   const { clubId } = useParams<{ clubId: string }>();
-  const searchParams = useSearchParams();
   const [open, setOpen] = useState(false);
-  const [autoOpen, setAutoOpen] = useState(false);
+  const [autoOpenDismissed, setAutoOpenDismissed] = useState(false);
+
   const { data: role } = useHomeQuery({
     select: (data) => data.myInfo.userInfo.role,
   });
   const hasSeenTutorial = useSyncExternalStore(
     subscribeTutorialSeen,
-    getTutorialSeenSnapshot,
+    () => window.localStorage.getItem(getTutorialSeenKey(clubId)) === 'true',
     () => false,
   );
-  const onboarding = searchParams.get('onboarding');
-  const isDialogOpen = open || autoOpen;
+  const pendingClubId = useSyncExternalStore(
+    subscribeTutorialSeen,
+    () => window.sessionStorage.getItem(HOME_TUTORIAL_PENDING_KEY),
+    () => null,
+  );
+
+  const shouldAutoOpen =
+    pendingClubId === clubId &&
+    role === 'LEAD' &&
+    !hasSeenTutorial &&
+    !autoOpenDismissed;
+  const isDialogOpen = open || shouldAutoOpen;
 
   useEffect(() => {
-    if (onboarding !== 'club-created' || role === undefined) return;
-
-    if (role === 'LEAD' && !hasSeenTutorial) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect -- URL onboarding 플래그를 1회성 UI 트리거로 변환하는 의도된 동기화
-      setAutoOpen(true);
-    } else {
-      router.replace(`/${clubId}/home`, { scroll: false });
+    if (role === undefined || pendingClubId !== clubId) return;
+    if (role !== 'LEAD' || hasSeenTutorial) {
+      window.sessionStorage.removeItem(HOME_TUTORIAL_PENDING_KEY);
     }
-  }, [router, clubId, onboarding, role, hasSeenTutorial]);
+  }, [clubId, hasSeenTutorial, pendingClubId, role]);
 
   const handleOpenChange = (nextOpen: boolean) => {
-    if (!nextOpen && autoOpen) {
-      window.localStorage.setItem(HOME_TUTORIAL_SEEN_KEY, 'true');
-      setAutoOpen(false);
-      router.replace(`/${clubId}/home`, { scroll: false });
+    if (!nextOpen && shouldAutoOpen) {
+      window.localStorage.setItem(getTutorialSeenKey(clubId), 'true');
+      window.sessionStorage.removeItem(HOME_TUTORIAL_PENDING_KEY);
+      setAutoOpenDismissed(true);
     }
 
     setOpen(nextOpen);
