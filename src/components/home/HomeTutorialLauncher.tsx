@@ -43,10 +43,7 @@ function HomeTutorialLauncher() {
   );
 
   const shouldAutoOpen =
-    pendingClubId === clubId &&
-    role === 'LEAD' &&
-    !hasSeenTutorial &&
-    !autoOpenDismissed;
+    pendingClubId === clubId && role === 'LEAD' && !hasSeenTutorial && !autoOpenDismissed;
   const isDialogOpen = open || shouldAutoOpen;
 
   useEffect(() => {

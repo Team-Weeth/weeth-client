@@ -19,7 +19,7 @@ function ClubAccessPage({ club, loginHref }: ClubAccessPageProps) {
             <br />
             동아리 회원만 이용할 수 있어요.
           </span>
-          <span className="hidden whitespace-nowrap tablet:inline">
+          <span className="tablet:inline hidden whitespace-nowrap">
             이 사이트는 동아리 회원만 이용할 수 있어요.
           </span>
         </h1>

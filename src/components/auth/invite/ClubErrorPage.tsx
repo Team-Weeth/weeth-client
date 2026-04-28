@@ -8,10 +8,7 @@ interface ClubErrorPageProps {
   message?: string;
 }
 
-function ClubErrorPage({
-  title = '존재하지 않는 동아리입니다.',
-  message,
-}: ClubErrorPageProps) {
+function ClubErrorPage({ title = '존재하지 않는 동아리입니다.', message }: ClubErrorPageProps) {
   return (
     <div className="bg-container-neutral-alternative flex min-h-screen flex-col items-center justify-center gap-500 px-400">
       <div className="flex max-w-120 flex-col items-center gap-200 text-center">
