@@ -3,6 +3,7 @@ export {
   useBanMember,
   useRestoreMember,
   useChangeMemberCardinals,
+  useTransferLead,
 } from './useAdminMemberMutations';
 export { useCreateCardinal } from './useAdminCardinalMutations';
 export {

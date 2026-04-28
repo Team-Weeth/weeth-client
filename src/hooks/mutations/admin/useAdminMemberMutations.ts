@@ -120,6 +120,23 @@ export function useChangeMemberCardinals() {
   });
 }
 
+// LEAD 권한 이양
+export function useTransferLead() {
+  const queryClient = useQueryClient();
+  const clubId = useClubId();
+  const queryKey = ['admin', 'members', clubId];
+
+  return useMutation({
+    mutationFn: (clubMemberId: number) => {
+      if (!clubId) throw new Error('clubId가 없습니다');
+      return adminMemberApi.transferLead(clubId, clubMemberId);
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey });
+    },
+  });
+}
+
 // 추방 유저 복구
 export function useRestoreMember() {
   const queryClient = useQueryClient();

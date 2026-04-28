@@ -18,12 +18,14 @@ import { useDragScroll } from '@/hooks';
 import type { Member } from '@/types/admin/member';
 import { useAdminMembers } from '@/hooks/queries/admin';
 import { useCardinals } from '@/hooks/queries';
+import { useUserRole } from '@/stores';
 import {
   useBanMember,
   useChangeMemberCardinals,
   useChangeMemberRole,
   useCreateCardinal,
   useRestoreMember,
+  useTransferLead,
 } from '@/hooks/mutations/admin';
 import { toastError, toastSuccess } from '@/stores/useToastStore';
 import { getBulkBanAction, getBulkTargetRole } from '@/utils/admin/memberBulkActions';
@@ -44,6 +46,9 @@ function MemberPageContent() {
   const { mutate: changeMemberRole } = useChangeMemberRole();
   const { mutate: banMember } = useBanMember();
   const { mutate: restoreMember } = useRestoreMember();
+  const { mutate: transferLead } = useTransferLead();
+  const myRole = useUserRole();
+  const isLead = myRole === 'LEAD';
   const { mutate: createCardinal } = useCreateCardinal();
   const { mutateAsync: changeMemberCardinalsAsync } = useChangeMemberCardinals();
   const [forceConfirm, setForceConfirm] = useState<ForceConfirmState | null>(null);
@@ -135,6 +140,20 @@ function MemberPageContent() {
     );
   };
 
+  const handleTransferLead = (clubMemberId: number) => {
+    transferLead(clubMemberId, {
+      onSuccess: () => toastSuccess('리더로 변경되었습니다.'),
+      onError: (err) => {
+        const code = isAxiosError(err) ? err.response?.data?.code : undefined;
+        if (code === 21113) {
+          toastError('LEAD만 권한을 이양할 수 있습니다.');
+        } else {
+          toastError('리더 변경에 실패했습니다.');
+        }
+      },
+    });
+  };
+
   const handleForceConfirm = () => {
     if (!forceConfirm) return;
     const { clubMemberIds, cardinalIds } = forceConfirm;
@@ -170,6 +189,11 @@ function MemberPageContent() {
             : undefined
         }
         onChangeCardinals={handleChangeCardinalsForBulk}
+        onTransferLead={
+          isLead && selectedCount === 1
+            ? () => handleTransferLead(selectedMembers[0].clubMemberId)
+            : undefined
+        }
       />
 
       {/* Main content */}
@@ -236,6 +260,11 @@ function MemberPageContent() {
             : undefined
         }
         onChangeCardinals={detailMember ? handleChangeCardinalsForDetail : undefined}
+        onTransferLead={
+          isLead && detailMember
+            ? () => handleTransferLead(detailMember.clubMemberId)
+            : undefined
+        }
       />
 
       {/* 출석 기록이 있는 기수 삭제 확인 */}

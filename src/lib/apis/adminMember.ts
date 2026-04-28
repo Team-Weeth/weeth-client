@@ -11,6 +11,8 @@ export const adminMemberApi = {
     apiClient.delete(`/admin/clubs/${clubId}/members/${clubMemberId}/ban`),
   restoreMember: (clubId: string, clubMemberId: number) =>
     apiClient.patch(`/admin/clubs/${clubId}/members/${clubMemberId}/restore`),
+  transferLead: (clubId: string, targetClubMemberId: number) =>
+    apiClient.patch(`/admin/clubs/${clubId}/members/${targetClubMemberId}/lead`),
   updateMemberCardinals: (
     clubId: string,
     clubMemberId: number,

@@ -22,6 +22,7 @@ interface MemberDetailModalProps {
   onBan?: () => void;
   onRestore?: () => void;
   onChangeCardinals?: (cardinalIds: number[]) => void;
+  onTransferLead?: () => void;
 }
 
 function MemberDetailModal({
@@ -34,6 +35,7 @@ function MemberDetailModal({
   onBan,
   onRestore,
   onChangeCardinals,
+  onTransferLead,
 }: MemberDetailModalProps) {
   if (!member) return null;
 
@@ -151,6 +153,19 @@ function MemberDetailModal({
                   기수 변경
                 </Button>
               </ChangeCardinalsModal>
+            )}
+            {onTransferLead && (
+              <AlertDialog
+                title={'해당 멤버에게\nLEAD 권한을 이양하시겠습니까?'}
+                trigger={
+                  <Button variant="secondary" size="lg">
+                    리더로 변경
+                  </Button>
+                }
+              >
+                <AlertDialogAction onClick={onTransferLead}>확인</AlertDialogAction>
+                <AlertDialogCancel>취소</AlertDialogCancel>
+              </AlertDialog>
             )}
           </div>
 

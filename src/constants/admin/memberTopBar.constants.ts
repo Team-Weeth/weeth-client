@@ -6,7 +6,7 @@ interface TopBarActionParams {
   targetBanAction: 'ban' | 'restore' | null; // null = BANNED와 BANNED 아닌 멤버가 섞임
   onApprove?: () => void;
   onChangeRole?: () => void;
-  onResetPassword?: () => void;
+  // onResetPassword?: () => void;
   onBan?: () => void;
   onRestore?: () => void;
 }
@@ -17,7 +17,7 @@ export function getTopBarActions({
   targetBanAction,
   onApprove,
   onChangeRole,
-  onResetPassword,
+  // onResetPassword,
   onBan,
   onRestore,
 }: TopBarActionParams) {
