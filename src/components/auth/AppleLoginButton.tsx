@@ -7,7 +7,11 @@ import { AppleLogoIcon } from '@/assets/icons';
 
 type AppleLoginButtonProps = Omit<ButtonProps, 'variant' | 'size'>;
 
-function AppleLoginButton({ className, ...props }: AppleLoginButtonProps) {
+interface AppleLoginButtonCustomProps extends AppleLoginButtonProps {
+  iconClassName?: string;
+}
+
+function AppleLoginButton({ className, iconClassName, ...props }: AppleLoginButtonCustomProps) {
   return (
     <Button variant="apple" size="social" className={cn('w-full gap-[5px]', className)} {...props}>
       <Image
@@ -15,11 +19,11 @@ function AppleLoginButton({ className, ...props }: AppleLoginButtonProps) {
         alt="apple-login"
         width={14}
         height={14}
-        className="invert dark:invert-0"
+        className={cn('invert dark:invert-0', iconClassName)}
       />
       Apple로 로그인
     </Button>
   );
 }
 
-export { AppleLoginButton, type AppleLoginButtonProps };
+export { AppleLoginButton, type AppleLoginButtonCustomProps as AppleLoginButtonProps };
