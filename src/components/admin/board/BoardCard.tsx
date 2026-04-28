@@ -31,7 +31,8 @@ function BoardCard({
   ref,
   ...props
 }: BoardCardProps) {
-  const { name, description, visibility, postCount, commentEnabled, editable } = board;
+  const { name, description, visibility, postCount, commentEnabled, editable, kind } = board;
+  const showCommentToggle = kind !== 'ALL';
   const [deleteOpen, setDeleteOpen] = useState(false);
 
   const handleDeleteConfirm = () => {

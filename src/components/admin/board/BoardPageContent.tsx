@@ -16,10 +16,9 @@ import {
 } from '@dnd-kit/sortable';
 import { useQueryClient } from '@tanstack/react-query';
 
-import { Icon, Skeleton } from '@/components/ui';
+import { Icon } from '@/components/ui';
 import { InfoCircleIcon } from '@/assets/icons';
 import { BoardCard } from '@/components/admin/board/BoardCard';
-import { BoardCardSkeleton } from '@/components/admin/board/BoardCardSkeleton';
 import { BoardToolbar } from '@/components/admin/board/BoardToolbar';
 import { CreateBoardModal } from '@/components/admin/board/modal/CreateBoardModal';
 import { EditBoardModal } from '@/components/admin/board/modal/EditBoardModal';
@@ -283,7 +282,7 @@ function BoardPageContent() {
         <div className="bg-container-neutral-alternative flex h-12 items-center gap-200 rounded-md p-300">
           <Icon src={InfoCircleIcon} size={20} className="text-icon-alternative" />
           <p className="typo-body2 text-text-alternative min-w-0 flex-1">
-            추가 게시판은 최대 {MAX_CUSTOM_BOARDS}개입니다.
+            추가 게시판은 최대 {MAX_CUSTOM_BOARDS}개까지 가능 합니다.
           </p>
         </div>
       </div>
