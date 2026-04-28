@@ -3,12 +3,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { adminMemberApi } from '@/lib/apis/adminMember';
 import type { ClubMemberRole, Member } from '@/types/admin/member';
 import { useClubId } from '@/stores';
-
-const ROLE_LABEL: Record<ClubMemberRole, string> = {
-  USER: '사용자',
-  ADMIN: '관리자',
-  LEAD: '리더',
-};
+import { ROLE_MAP } from '@/utils/admin/memberMapper';
 
 // 멤버 권한 변경
 export function useChangeMemberRole() {
@@ -34,7 +29,7 @@ export function useChangeMemberRole() {
       queryClient.setQueryData<Member[]>(queryKey, (old = []) =>
         old.map((m) =>
           m.clubMemberId === clubMemberId
-            ? { ...m, memberRole, position: ROLE_LABEL[memberRole] }
+            ? { ...m, memberRole, position: ROLE_MAP[memberRole] }
             : m,
         ),
       );

@@ -16,7 +16,7 @@ export const STATUS_DOT_COLOR: Record<MemberStatus, string> = {
 
 export function getPersonalInfo(member: Member) {
   return [
-    { label: '직급', value: member.position },
+    { label: '역할', value: member.position },
     { label: '역할', value: member.role },
     { label: '학과', value: member.department },
     { label: '전화번호', value: member.phone },

@@ -14,7 +14,7 @@ export const COLUMNS: { label: string; key: keyof Member }[] = [
   { label: '기수', key: 'cardinal' },
   { label: '전화번호', key: 'phone' },
   { label: '학번', key: 'studentId' },
-  { label: '직급', key: 'position' },
+  { label: '역할', key: 'position' },
   { label: '출석', key: 'attendance' },
   { label: '결석', key: 'absence' },
 ];

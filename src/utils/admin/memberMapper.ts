@@ -1,8 +1,8 @@
 import type { ClubMember, ClubMemberRole, Member } from '@/types/admin/member';
 
-const ROLE_MAP: Record<ClubMemberRole, string> = {
-  USER: '사용자',
-  ADMIN: '관리자',
+export const ROLE_MAP: Record<ClubMemberRole, string> = {
+  USER: '부원',
+  ADMIN: '운영진',
   LEAD: '리더',
 };
 

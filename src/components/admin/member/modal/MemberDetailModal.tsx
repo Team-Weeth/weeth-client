@@ -6,8 +6,6 @@ import { ChangeCardinalsModal } from '@/components/admin/member/modal/ChangeCard
 import { cn } from '@/lib/cn';
 import { AdminCloseIcon } from '@/assets/icons/admin';
 import {
-  STATUS_LABEL,
-  STATUS_DOT_COLOR,
   getPersonalInfo,
   getActivityInfo,
   getActivityStats,
@@ -85,11 +83,6 @@ function MemberDetailModal({
               <span className="typo-h3 text-text-strong">
                 {parseInt(member.cardinal, 10) || member.cardinal || '-'}기
               </span>
-            </div>
-
-            <div className="mb-400 flex items-center gap-200">
-              <span className={cn('size-1', STATUS_DOT_COLOR[member.status])} />
-              <span className="typo-caption2 text-text-strong">{STATUS_LABEL[member.status]}</span>
             </div>
 
             <div className="flex flex-col gap-400">

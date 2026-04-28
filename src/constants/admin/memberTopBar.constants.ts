@@ -40,12 +40,12 @@ export function getTopBarActions({
       handler: onChangeRole,
       disabled: !onChangeRole || targetRole === null,
     },
-    {
-      label: '비밀번호 초기화',
-      title: `${selectedCount}명의 멤버 비밀번호를 초기화\n시키시겠습니까?`,
-      handler: onResetPassword,
-      disabled: !onResetPassword,
-    },
+    // {
+    //   label: '비밀번호 초기화',
+    //   title: `${selectedCount}명의 멤버 비밀번호를 초기화\n시키시겠습니까?`,
+    //   handler: onResetPassword,
+    //   disabled: !onResetPassword,
+    // },
     targetBanAction === 'restore'
       ? {
           label: '유저 복구',
