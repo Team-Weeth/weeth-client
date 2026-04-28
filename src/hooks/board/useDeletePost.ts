@@ -18,13 +18,9 @@ export function useDeletePost() {
       await deletePostApi(clubId, boardId, postId);
       return postId;
     },
-    onSuccess: async () => {
-      await Promise.all([
-        queryClient.invalidateQueries({ queryKey: ['posts'] }),
-        queryClient.invalidateQueries({ queryKey: ['home', 'recent-posts', clubId] }),
-        queryClient.invalidateQueries({ queryKey: ['home', 'recent-notices', clubId] }),
-        queryClient.invalidateQueries({ queryKey: ['home', 'unread-notice', clubId] }),
-      ]);
+    onSuccess: () => {
+      // 상세 쿼리를 즉시 제거해 삭제된 게시글 refetch로 인한 에러 깜빡임 방지
+      queryClient.removeQueries({ queryKey: ['posts', 'detail'] });
       toast({ title: '게시글이 삭제되었습니다.', variant: 'success' });
     },
     onError: (error) => {
@@ -37,13 +33,13 @@ export function useDeletePost() {
 
   const deletePost = async (boardId: number, postId: number, onSuccess?: () => void) => {
     await mutation.mutateAsync({ boardId, postId });
-    // 상세 쿼리 캐시를 즉시 제거해 삭제된 게시글 refetch 방지
-    queryClient.removeQueries({ queryKey: ['posts', 'detail'] });
     // 리다이렉트 먼저 실행
     onSuccess?.();
-    // 목록/홈 쿼리는 백그라운드에서 갱신 (상세 쿼리 제외)
+    // 목록/홈 쿼리는 백그라운드에서 갱신
     queryClient.invalidateQueries({ queryKey: ['posts', clubId] });
-    queryClient.invalidateQueries({ queryKey: ['home', 'recent-posts'] });
+    queryClient.invalidateQueries({ queryKey: ['home', 'recent-posts', clubId] });
+    queryClient.invalidateQueries({ queryKey: ['home', 'recent-notices', clubId] });
+    queryClient.invalidateQueries({ queryKey: ['home', 'unread-notice', clubId] });
   };
 
   return { deletePost, isPending: mutation.isPending };
