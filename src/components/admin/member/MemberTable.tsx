@@ -45,7 +45,7 @@ function MemberTable({
 
   const sortedMembers = sortMembers(members, sortBy);
 
-  const isAllSelected = selectedIds.size === members.length;
+  const isAllSelected = members.length > 0 && selectedIds.size === members.length;
   const isIndeterminate = selectedIds.size > 0 && !isAllSelected;
 
   const toggleAll = () => {
