@@ -17,7 +17,7 @@ function PostActionMenu({ postId, boardId, onDeleted, ...rest }: PostActionMenuP
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
   const handleEdit = () => {
-    router.push(`/${clubId}/board/edit/${boardId}/${postId}`);
+    router.push(`/${clubId}/board/edit/${postId}?boardId=${boardId}`);
   };
 
   const handleDeleteSelect = (event: Event) => {

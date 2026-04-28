@@ -101,7 +101,11 @@ function PostDetailContent({ initialData }: PostDetailContentProps) {
             <PostActionMenu
               postId={currentPost.id}
               boardId={currentPost.boardId}
-              onEdit={() => router.push(`/${clubIdParam}/board/edit/${currentPost.boardId}/${currentPost.id}`)}
+              onEdit={() =>
+                router.push(
+                  `/${clubIdParam}/board/edit/${currentPost.id}?boardId=${currentPost.boardId}`,
+                )
+              }
               onDeleted={() => router.push(buildBoardPath(clubIdParam, Number(boardIdParam)))}
             />
           )}
