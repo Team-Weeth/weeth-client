@@ -34,7 +34,9 @@ function useNavigationGuard({ enabled }: UseNavigationGuardOptions) {
       return;
     }
 
-    isLeaving.current = false;
+    // allowNavigation()으로 이탈이 허용된 상태라면 guard를 재설정하지 않음
+    if (isLeaving.current) return;
+
     guardUrl.current = location.href;
 
     if (!isGuardEntry()) {
