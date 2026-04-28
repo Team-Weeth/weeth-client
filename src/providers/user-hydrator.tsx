@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef } from 'react';
+import { useEffect, useRef } from 'react';
 
 import { useClubStore } from '@/stores/useClubStore';
 import { useUserStore } from '@/stores/useUserStore';
@@ -16,11 +16,12 @@ interface UserHydratorProps {
 function UserHydrator({ userInfo, clubInfo, children }: UserHydratorProps) {
   const hydrated = useRef(false);
 
-  if (!hydrated.current) {
+  useEffect(() => {
+    if (hydrated.current) return;
     useUserStore.setState(userInfo, false, 'setUser');
     useClubStore.setState(clubInfo, false, 'setClub');
     hydrated.current = true;
-  }
+  }, [clubInfo, userInfo]);
 
   return children;
 }

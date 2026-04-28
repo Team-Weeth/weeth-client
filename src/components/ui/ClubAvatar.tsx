@@ -7,6 +7,7 @@ import { cn } from '@/lib/cn';
 const clubAvatarVariants = cva('border-line border bg-container-neutral-alternative', {
   variants: {
     size: {
+      128: '',
       40: '',
       56: 'size-14',
       64: '',
