@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 import { AdminChangeIcon, AdminMeatballIcon } from '@/assets/icons/admin';
 import {
@@ -39,6 +39,7 @@ function MemberTable({
 }: MemberTableProps) {
   const [internalSelectedIds, setInternalSelectedIds] = useState<Set<string>>(new Set());
   const [sortBy, setSortBy] = useState<SortBy>('cardinal');
+  const headerCheckboxRef = useRef<HTMLInputElement>(null);
 
   const selectedIds = controlledSelectedIds ?? internalSelectedIds;
   const setSelectedIds = onSelectionChange ?? setInternalSelectedIds;
@@ -47,6 +48,12 @@ function MemberTable({
 
   const isAllSelected = members.length > 0 && selectedIds.size === members.length;
   const isIndeterminate = selectedIds.size > 0 && !isAllSelected;
+
+  useEffect(() => {
+    if (headerCheckboxRef.current) {
+      headerCheckboxRef.current.indeterminate = isIndeterminate;
+    }
+  }, [isIndeterminate]);
 
   const toggleAll = () => {
     setSelectedIds(isAllSelected ? new Set() : new Set(members.map((m) => m.id)));
@@ -92,9 +99,7 @@ function MemberTable({
                   type="checkbox"
                   className="cursor-pointer"
                   checked={isAllSelected}
-                  ref={(el) => {
-                    if (el) el.indeterminate = isIndeterminate;
-                  }}
+                  ref={headerCheckboxRef}
                   onChange={toggleAll}
                 />
               </TableHead>
