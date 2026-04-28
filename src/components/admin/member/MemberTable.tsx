@@ -79,10 +79,12 @@ function MemberTable({
         </button>
       </div>
 
-      <div className="scrollbar-none overflow-x-auto">
-        <Table className="w-max min-w-full">
-          <TableHeader>
-            <TableRow className="border-0 hover:bg-transparent">
+      <Table
+        className="w-max min-w-full"
+        wrapperClassName="scrollbar-none max-h-[600px] overflow-auto"
+      >
+        <TableHeader className="bg-container-neutral sticky top-0 z-10">
+          <TableRow className="border-0 hover:bg-transparent">
               <TableHead className="w-1 min-w-1 p-0" />
               <TableHead className="w-12">
                 <input
@@ -128,9 +130,8 @@ function MemberTable({
                 ))}
               </TableRow>
             ))}
-          </TableBody>
-        </Table>
-      </div>
+        </TableBody>
+      </Table>
     </div>
   );
 }
