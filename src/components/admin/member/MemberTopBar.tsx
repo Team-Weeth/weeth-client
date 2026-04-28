@@ -52,6 +52,7 @@ function MemberTopBar({
     // onResetPassword,
     onBan,
     onRestore,
+    onTransferLead,
   });
 
   return (
@@ -71,10 +72,11 @@ function MemberTopBar({
       <span className="typo-sub1 text-text-inverse ml-200 shrink-0">{selectedCount}명 선택됨</span>
 
       <div className="ml-auto flex items-center gap-200">
-        {topBarActions.map(({ label, title, handler, disabled }) => (
+        {topBarActions.map(({ label, title, description, handler, disabled }) => (
           <AlertDialog
             key={label}
             title={title}
+            description={description}
             trigger={
               <Button variant="secondary" size="lg" className="py-200" disabled={disabled}>
                 {label}
@@ -92,20 +94,6 @@ function MemberTopBar({
               기수 변경
             </Button>
           </ChangeCardinalsModal>
-        )}
-        {onTransferLead && (
-          <AlertDialog
-            title={'해당 멤버에게\n리더 권한을 이양하시겠습니까?'}
-            description={'리더는 동아리별로\n1명만 지정할 수 있습니다'}
-            trigger={
-              <Button variant="secondary" size="lg" className="py-200">
-                리더로 변경
-              </Button>
-            }
-          >
-            <AlertDialogAction onClick={onTransferLead}>확인</AlertDialogAction>
-            <AlertDialogCancel>취소</AlertDialogCancel>
-          </AlertDialog>
         )}
       </div>
     </div>
