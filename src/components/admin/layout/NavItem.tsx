@@ -17,6 +17,7 @@ interface NavItemProps {
   collapsed?: boolean;
   external?: boolean;
   openInWindow?: boolean;
+  onClick?: () => void;
 }
 
 function NavItem({
@@ -27,6 +28,7 @@ function NavItem({
   collapsed = false,
   external = false,
   openInWindow = false,
+  onClick,
 }: NavItemProps) {
   const iconEl = (
     <Icon

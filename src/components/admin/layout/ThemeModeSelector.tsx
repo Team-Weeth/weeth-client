@@ -66,11 +66,11 @@ function ThemeModeSelector({ collapsed }: ThemeModeSelectorProps) {
           collapsed ? 'justify-center px-300' : 'gap-300 px-400',
         )}
       >
-        <TriggerIcon className="h-6 w-6 shrink-0" />
+        <TriggerIcon className="text-icon-alternative h-6 w-6 shrink-0" />
         {!collapsed && (
           <>
             <span className="typo-button2 flex-1 text-left">{TRIGGER_LABELS[mode]}</span>
-            <ChevronDown className="h-5 w-5 shrink-0" />
+            <ChevronDown className="text-icon-alternative h-5 w-5 shrink-0" />
           </>
         )}
       </button>

@@ -19,7 +19,7 @@ export function Header() {
   const title = Object.entries(PAGE_TITLES).find(([path]) => pathname.includes(path))?.[1];
 
   return (
-    <header className="border-line bg-background flex w-full shrink-0 items-center gap-300 border-b px-700 pt-2 pb-2">
+    <header className="bg-background flex w-full shrink-0 items-center gap-300 px-700 pt-2 pb-2">
       {title && <span className="typo-sub1 text-text-strong shrink-0">{title}</span>}
 
       <button
