@@ -56,6 +56,13 @@ function NavItem({
         {!collapsed && <span className="typo-sub3">{label}</span>}
       </button>
     );
+  } else if (onClick) {
+    el = (
+      <button type="button" className={cn(cls, 'w-full cursor-pointer')} onClick={onClick}>
+        {iconEl}
+        {!collapsed && <span className="typo-sub3">{label}</span>}
+      </button>
+    );
   } else if (external) {
     el = (
       <Link href={path} className={cls} target="_blank" rel="noopener noreferrer">

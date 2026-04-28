@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useParams, usePathname } from 'next/navigation';
+import { useParams, usePathname, useRouter } from 'next/navigation';
 import {
   AdminForumIcon,
   AdminCalendarIcon,
@@ -10,7 +10,12 @@ import {
 } from '@/assets/icons/admin';
 import { CheckRoundIcon, ExitIcon, PeopleIcon } from '@/assets/icons';
 
-import { TooltipProvider } from '@/components/ui';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  TooltipProvider,
+} from '@/components/ui';
 import { cn } from '@/lib/cn';
 import { LNBHeader } from '@/components/admin/layout/LNBHeader';
 import { LNBClubInfo } from '@/components/admin/layout/LNBClubInfo';
@@ -21,8 +26,12 @@ import { ThemeModeSelector } from '@/components/admin/layout/ThemeModeSelector';
 
 function LNB() {
   const pathname = usePathname();
+  const router = useRouter();
   const { clubId } = useParams<{ clubId: string }>();
   const [collapsed, setCollapsed] = useState(false);
+  const [serviceDialogOpen, setServiceDialogOpen] = useState(false);
+
+  const servicePath = `/${clubId}/home`;
 
   const managementNavItems = [
     { id: 'member', icon: PeopleIcon, label: '멤버 관리', path: `/${clubId}/admin/member` },
@@ -51,13 +60,6 @@ function LNB() {
   ];
 
   const moveNavItems = [
-    {
-      id: 'service',
-      icon: ExitIcon,
-      label: '서비스로 이동',
-      path: `/${clubId}/home`,
-      external: false,
-    },
     {
       id: 'manual',
       icon: AdminFileoutIcon,
@@ -110,6 +112,13 @@ function LNB() {
         <CollapsedDivider collapsed={collapsed} />
 
         <NavSection label="이동" collapsed={collapsed}>
+          <NavItem
+            icon={ExitIcon}
+            label="서비스로 이동"
+            path={servicePath}
+            collapsed={collapsed}
+            onClick={() => setServiceDialogOpen(true)}
+          />
           {moveNavItems.map(({ id, icon, label, path, external, openInWindow }) => (
             <NavItem
               key={id}
@@ -122,6 +131,18 @@ function LNB() {
             />
           ))}
         </NavSection>
+
+        <AlertDialog
+          open={serviceDialogOpen}
+          onOpenChange={setServiceDialogOpen}
+          title="서비스로 이동하시겠습니까?"
+          description={'관리자 페이지에서 나가\n서비스 화면으로 이동합니다.'}
+        >
+          <AlertDialogAction onClick={() => router.push(servicePath)} className="text-text-inverse">
+            이동
+          </AlertDialogAction>
+          <AlertDialogCancel>취소</AlertDialogCancel>
+        </AlertDialog>
         <CollapsedDivider collapsed={collapsed} />
         <NavSection label="모드" collapsed={collapsed}>
           <ThemeModeSelector collapsed={collapsed} />
