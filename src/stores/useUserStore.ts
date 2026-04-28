@@ -2,13 +2,13 @@ import { create } from 'zustand';
 import { combine, devtools } from 'zustand/middleware';
 import { useShallow } from 'zustand/react/shallow';
 
-import type { UserInfo } from '@/types/user';
+import type { Role, UserInfo } from '@/types/user';
 
 const initialState = {
   id: null as number | null,
   name: null as string | null,
   profileImageUrl: null as string | null,
-  role: null as 'LEAD' | 'ADMIN' | 'USER' | null,
+  role: null as Role | null,
 };
 
 export type UserState = typeof initialState;
@@ -17,6 +17,7 @@ export const useUserStore = create(
   devtools(
     combine(initialState, (set) => ({
       setUser: (user: UserInfo) => set(user, false, 'setUser'),
+      setRole: (role: Role) => set({ role }, false, 'setRole'),
       reset: () => set(initialState, false, 'reset'),
     })),
     { name: 'UserStore' },

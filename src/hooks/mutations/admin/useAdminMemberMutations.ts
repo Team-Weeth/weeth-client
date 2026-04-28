@@ -134,7 +134,7 @@ export function useTransferLead() {
       return adminMemberApi.transferLead(clubId, clubMemberId);
     },
     onSuccess: async () => {
-      useUserStore.setState({ role: 'ADMIN' }, false, 'demoteAfterTransferLead');
+      useUserStore.getState().setRole('ADMIN');
       if (clubId) await revalidateDashboard(clubId);
     },
     onSettled: () => {
