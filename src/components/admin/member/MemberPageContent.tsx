@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { isAxiosError } from 'axios';
 
 import {
   CardinalPillList,
@@ -25,6 +24,7 @@ import {
 } from '@/hooks/mutations/admin';
 import { toastError, toastSuccess } from '@/stores/useToastStore';
 import { getBulkBanAction, getBulkTargetRole } from '@/utils/admin/memberBulkActions';
+import { getApiErrorCode } from '@/utils/shared';
 import { runBulkMutation } from '@/utils/shared/runBulkMutation';
 
 interface ForceConfirmState {
@@ -101,8 +101,7 @@ function MemberPageContent() {
 
     results.forEach((result, idx) => {
       if (result.status !== 'rejected') return;
-      const err = result.reason;
-      const code = isAxiosError(err) ? err.response?.data?.code : undefined;
+      const code = getApiErrorCode(result.reason);
       if (code === MEMBER_CARDINAL_ERROR_CODE.REMOVAL_HAS_ATTENDANCE) {
         attendanceFailedIds.push(clubMemberIds[idx]);
       } else {
@@ -130,9 +129,7 @@ function MemberPageContent() {
       { success: '권한이 변경되었습니다.', error: '권한 변경에 실패했습니다.' },
       (errors) => {
         const isLeadTransferOnly = errors.some(
-          (err) =>
-            isAxiosError(err) &&
-            err.response?.data?.code === MEMBER_ROLE_ERROR_CODE.LEAD_TRANSFER_ONLY,
+          (err) => getApiErrorCode(err) === MEMBER_ROLE_ERROR_CODE.LEAD_TRANSFER_ONLY,
         );
         return isLeadTransferOnly ? '리더는 이양을 통해서만 변경할 수 있습니다.' : undefined;
       },
@@ -166,8 +163,7 @@ function MemberPageContent() {
     transferLead(clubMemberId, {
       onSuccess: () => toastSuccess('리더로 변경되었습니다.'),
       onError: (err) => {
-        const code = isAxiosError(err) ? err.response?.data?.code : undefined;
-        if (code === MEMBER_ROLE_ERROR_CODE.ONLY_LEAD_CAN_TRANSFER) {
+        if (getApiErrorCode(err) === MEMBER_ROLE_ERROR_CODE.ONLY_LEAD_CAN_TRANSFER) {
           toastError('리더만 권한을 이양할 수 있습니다.');
         } else {
           toastError('리더 변경에 실패했습니다.');

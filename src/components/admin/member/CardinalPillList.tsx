@@ -1,7 +1,5 @@
 'use client';
 
-import { isAxiosError } from 'axios';
-
 import { MoreVerticalIcon } from '@/assets/icons';
 import { AddCardinalButton, AddCardinalModal, CardinalCard } from '@/components/admin';
 import {
@@ -15,6 +13,7 @@ import { CARDINAL_ERROR_CODE } from '@/constants/errorCode';
 import { useDragScroll } from '@/hooks';
 import { useCreateCardinal, useSetCurrentCardinal } from '@/hooks/mutations/admin';
 import { toastError, toastSuccess } from '@/stores/useToastStore';
+import { getApiErrorCode } from '@/utils/shared';
 import type { Cardinal } from '@/types/admin/cardinal';
 
 interface CardinalPillListProps {
@@ -87,8 +86,7 @@ function CardinalPillList({
             {
               onSuccess: () => toastSuccess('기수가 추가되었습니다.'),
               onError: (err) => {
-                const code = isAxiosError(err) ? err.response?.data?.code : undefined;
-                if (code === CARDINAL_ERROR_CODE.ALREADY_EXISTS) {
+                if (getApiErrorCode(err) === CARDINAL_ERROR_CODE.ALREADY_EXISTS) {
                   toastError('이미 존재하는 기수입니다.');
                 } else {
                   toastError('기수 추가에 실패했습니다.');
