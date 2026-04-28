@@ -46,6 +46,7 @@ function MemberDetailModal({
     onChangeRole,
     onBan,
     onRestore,
+    onTransferLead,
   });
 
   return (
@@ -125,10 +126,11 @@ function MemberDetailModal({
         {/* Footer */}
         <div className="bg-container-neutral flex items-center justify-between rounded-b-sm px-400 pt-400 pb-500">
           <div className="flex items-center gap-200">
-            {footerActions.map(({ label, title, handler }) => (
+            {footerActions.map(({ label, title, description, handler }) => (
               <AlertDialog
                 key={label}
                 title={title}
+                description={description}
                 trigger={
                   <Button variant="secondary" size="lg">
                     {label}
@@ -145,20 +147,6 @@ function MemberDetailModal({
                   기수 변경
                 </Button>
               </ChangeCardinalsModal>
-            )}
-            {onTransferLead && (
-              <AlertDialog
-                title={'해당 멤버에게\n리더 권한을 이양하시겠습니까?'}
-              description={'리더는 동아리별로\n1명만 지정할 수 있습니다'}
-                trigger={
-                  <Button variant="secondary" size="lg">
-                    리더로 변경
-                  </Button>
-                }
-              >
-                <AlertDialogAction onClick={onTransferLead}>확인</AlertDialogAction>
-                <AlertDialogCancel>취소</AlertDialogCancel>
-              </AlertDialog>
             )}
           </div>
 

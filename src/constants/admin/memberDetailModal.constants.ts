@@ -28,6 +28,14 @@ interface FooterActionHandlers {
   onChangeRole?: () => void;
   onBan?: () => void;
   onRestore?: () => void;
+  onTransferLead?: () => void;
+}
+
+interface FooterAction {
+  label: string;
+  title: string;
+  description?: string;
+  handler?: () => void;
 }
 
 export function getFooterActions({
@@ -36,10 +44,11 @@ export function getFooterActions({
   onChangeRole,
   onBan,
   onRestore,
-}: FooterActionHandlers) {
+  onTransferLead,
+}: FooterActionHandlers): FooterAction[] {
   const isAdmin = memberRole === 'ADMIN';
   const isBanned = status === 'BANNED';
-  return [
+  const actions: FooterAction[] = [
     {
       label: isAdmin ? '사용자로 변경' : '운영진으로 변경',
       title: isAdmin
@@ -51,4 +60,17 @@ export function getFooterActions({
       ? { label: '유저 복구', title: '1명의 멤버를 복구하시겠습니까?', handler: onRestore }
       : { label: '유저 추방', title: '1명의 멤버를 추방하시겠습니까?', handler: onBan },
   ];
+
+  if (onTransferLead) {
+    actions.push({
+      label: '리더로 변경',
+      title: '해당 멤버에게\n리더 권한을 이양하시겠습니까?',
+      description: '리더는 동아리별로\n1명만 지정할 수 있습니다',
+      handler: onTransferLead,
+    });
+  }
+
+  return actions;
 }
+
+export type { FooterAction };
