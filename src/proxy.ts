@@ -100,7 +100,13 @@ export async function proxy(request: NextRequest) {
     (path) => pathname === path || pathname.startsWith(`${path}/`),
   );
   const isClubRoute = /^\/[A-Za-z0-9]+(?:\/|$)/.test(pathname);
-  const requiresAuth = isPrivatePath || isClubRoute;
+  if (isClubRoute && !isPrivatePath) {
+    const requestHeaders = new Headers(request.headers);
+    requestHeaders.set('x-pathname', pathname);
+    return NextResponse.next({ request: { headers: requestHeaders } });
+  }
+
+  const requiresAuth = isPrivatePath;
 
   if (!requiresAuth) {
     return NextResponse.next();
@@ -108,11 +114,6 @@ export async function proxy(request: NextRequest) {
 
   // 액세스 토큰 있으면 통과
   if (hasAccessToken) {
-    if (isClubRoute && !isPrivatePath) {
-      const requestHeaders = new Headers(request.headers);
-      requestHeaders.set('x-pathname', pathname);
-      return NextResponse.next({ request: { headers: requestHeaders } });
-    }
     return NextResponse.next();
   }
 
@@ -123,11 +124,7 @@ export async function proxy(request: NextRequest) {
 
     if (newTokens) {
       request.cookies.set(ACCESS_TOKEN_KEY, newTokens.accessToken);
-      const requestHeaders = new Headers(request.headers);
-      if (isClubRoute && !isPrivatePath) {
-        requestHeaders.set('x-pathname', pathname);
-      }
-      const response = NextResponse.next({ request: { headers: requestHeaders } });
+      const response = NextResponse.next({ request });
       response.cookies.set(ACCESS_TOKEN_KEY, newTokens.accessToken, ACCESS_COOKIE_OPTIONS);
       response.cookies.set(REFRESH_TOKEN_KEY, newTokens.refreshToken, REFRESH_COOKIE_OPTIONS);
       return response;
