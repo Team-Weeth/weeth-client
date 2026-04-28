@@ -80,6 +80,7 @@ function MemberDetailModal({
 
             <div className="mb-200 flex items-baseline gap-200">
               <span className="typo-h3 text-text-strong">{member.name}</span>
+              {/* TODO: 응답 기수 정렬 확인 후 수정 (다중 기수일 때 첫 숫자만 노출됨) */}
               <span className="typo-h3 text-text-strong">
                 {parseInt(member.cardinal, 10) || member.cardinal || '-'}기
               </span>
