@@ -7,7 +7,6 @@ import { cn } from '@/lib/cn';
 import { AdminCloseIcon } from '@/assets/icons/admin';
 import {
   getPersonalInfo,
-  getActivityInfo,
   getActivityStats,
   getFooterActions,
 } from '@/constants/admin/memberDetailModal.constants';
@@ -41,7 +40,6 @@ function MemberDetailModal({
   const handleClose = () => onOpenChange(false);
 
   const personalInfo = getPersonalInfo(member);
-  const activityInfo = getActivityInfo(member);
   const activityStats = getActivityStats(member);
   const footerActions = getFooterActions({
     memberRole: member.memberRole,
@@ -100,12 +98,23 @@ function MemberDetailModal({
             <p className="typo-caption1 text-text-alternative mb-400">활동정보</p>
 
             <div className="flex flex-col gap-400">
-              {activityInfo.map(({ label, value }) => (
-                <div key={label} className="flex items-start">
-                  <span className="typo-body1 text-text-alternative w-24 shrink-0">{label}</span>
-                  <span className="typo-body1 text-text-strong">{value}</span>
+              <div className="flex items-start">
+                <span className="typo-body1 text-text-alternative w-24 shrink-0">활동 기수</span>
+                <div className="flex flex-wrap gap-200">
+                  {member.cardinal
+                    .split(',')
+                    .map((c) => c.trim())
+                    .filter(Boolean)
+                    .map((c) => (
+                      <span
+                        key={c}
+                        className="bg-container-primary-alternative text-brand-primary typo-body2 rounded-full px-300 py-100"
+                      >
+                        {c}기
+                      </span>
+                    ))}
                 </div>
-              ))}
+              </div>
             </div>
 
             <div className="mt-500 flex flex-col gap-200">
