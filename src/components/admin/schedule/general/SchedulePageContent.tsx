@@ -25,7 +25,7 @@ type ScheduleTab = 'all' | 'session';
 
 function SchedulePageContent() {
   const { cardinals, selectedCardinalId, setSelectedCardinalId, activeCardinal } =
-    useCardinalSelector({ autoSelectLatest: true });
+    useCardinalSelector();
   const {
     year: currentYear,
     month: currentMonth,

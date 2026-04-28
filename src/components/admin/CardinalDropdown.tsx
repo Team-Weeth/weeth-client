@@ -25,7 +25,7 @@ function CardinalDropdown({ cardinals, activeCardinal, onSelect }: CardinalDropd
             className="border-line flex cursor-pointer items-center gap-700 rounded-sm border py-300 pr-300 pl-400"
           >
             <span className="typo-button1 text-text-normal w-12 text-left">
-              {activeCardinal ? `${activeCardinal.cardinalNumber}기` : '기수'}
+              {activeCardinal ? `${activeCardinal.cardinalNumber}기` : '전체'}
             </span>
             <Icon src={ArrowDownIcon} size={24} className="text-icon-normal" />
           </button>

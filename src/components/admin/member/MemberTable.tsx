@@ -81,7 +81,7 @@ function MemberTable({
 
       <Table
         className="w-max min-w-full"
-        wrapperClassName="scrollbar-none max-h-[600px] overflow-auto"
+        wrapperClassName="max-h-[600px] overflow-auto"
       >
         <TableHeader className="bg-container-neutral sticky top-0 z-10">
           <TableRow className="border-0 hover:bg-transparent">

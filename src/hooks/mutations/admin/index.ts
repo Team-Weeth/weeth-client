@@ -5,7 +5,7 @@ export {
   useChangeMemberCardinals,
   useTransferLead,
 } from './useAdminMemberMutations';
-export { useCreateCardinal } from './useAdminCardinalMutations';
+export { useCreateCardinal, useSetCurrentCardinal } from './useAdminCardinalMutations';
 export {
   useUpdateClub,
   useDeleteClubProfileImage,

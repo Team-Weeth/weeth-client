@@ -12,7 +12,18 @@ import {
   MemberTable,
   MemberTopBar,
 } from '@/components/admin';
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, Card } from '@/components/ui';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  Card,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  Icon,
+} from '@/components/ui';
+import { MoreVerticalIcon } from '@/assets/icons';
 import { MEMBER_CARDINAL_ERROR_CODE } from '@/constants/errorCode';
 import { useDragScroll } from '@/hooks';
 import type { ClubMemberRole, Member } from '@/types/admin/member';
@@ -25,6 +36,7 @@ import {
   useChangeMemberRole,
   useCreateCardinal,
   useRestoreMember,
+  useSetCurrentCardinal,
   useTransferLead,
 } from '@/hooks/mutations/admin';
 import { toastError, toastSuccess } from '@/stores/useToastStore';
@@ -51,6 +63,7 @@ function MemberPageContent() {
   const myRole = useUserRole();
   const isLead = myRole === 'LEAD';
   const { mutate: createCardinal } = useCreateCardinal();
+  const { mutate: setCurrentCardinal } = useSetCurrentCardinal();
   const { mutateAsync: changeMemberCardinalsAsync } = useChangeMemberCardinals();
   const [forceConfirm, setForceConfirm] = useState<ForceConfirmState | null>(null);
 
@@ -182,7 +195,7 @@ function MemberPageContent() {
   };
 
   return (
-    <div className="flex min-w-3xl flex-col">
+    <div className="flex min-w-0 flex-col">
       {/* Selection top bar */}
       <MemberTopBar
         className="sticky top-0 z-10 -mt-15"
@@ -226,14 +239,44 @@ function MemberPageContent() {
             title="전체"
             onClick={() => setSelectedCardinal('all')}
           />
-          {cardinals.map((c) => (
-            <CardinalCard
-              key={c.id}
-              variant={selectedCardinal === c.cardinalNumber ? 'active' : 'normal'}
-              title={`${c.cardinalNumber}기`}
-              onClick={() => setSelectedCardinal(c.cardinalNumber)}
-            />
-          ))}
+          {cardinals.map((c) => {
+            const isActive = selectedCardinal === c.cardinalNumber;
+            if (!isActive) {
+              return (
+                <CardinalCard
+                  key={c.id}
+                  variant="normal"
+                  title={`${c.cardinalNumber}기`}
+                  onClick={() => setSelectedCardinal(c.cardinalNumber)}
+                />
+              );
+            }
+            return (
+              <DropdownMenu key={c.id}>
+                <DropdownMenuTrigger asChild>
+                  <CardinalCard
+                    variant="active"
+                    title={`${c.cardinalNumber}기`}
+                    endIcon={<Icon src={MoreVerticalIcon} size={16} />}
+                  />
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="start">
+                  <DropdownMenuItem
+                    disabled={c.status === 'IN_PROGRESS'}
+                    onSelect={() =>
+                      setCurrentCardinal(c.id, {
+                        onSuccess: () =>
+                          toastSuccess('현재 진행 기수로 설정되었습니다.'),
+                        onError: () => toastError('현재 진행 기수 설정에 실패했습니다.'),
+                      })
+                    }
+                  >
+                    현재 진행 기수로 설정
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            );
+          })}
           <AddCardinalModal
             onSubmit={({ cardinal, isCurrent }) =>
               createCardinal(
