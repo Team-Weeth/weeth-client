@@ -1,8 +1,8 @@
 import { useParams, useRouter } from 'next/navigation';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { isAxiosError } from 'axios';
 import { updatePost as updatePostApi } from '@/lib/actions/board';
 import { BOARD_ACTION_ERRORS } from '@/constants/board/error';
+import { parseApiError } from '@/lib/error';
 import { resolveFilesPayload } from './resolveFilesPayload';
 import { useClubId } from '@/stores/useClubStore';
 import { usePostStore } from '@/stores/usePostStore';
@@ -47,8 +47,8 @@ export function useUpdatePost() {
     },
     onError: (error) => {
       if (error.message === 'board not selected' || error.message === 'validation failed') return;
-      const code = isAxiosError(error) ? error.response?.data?.code : undefined;
-      const message = (code && BOARD_ACTION_ERRORS[code]) || '게시글 수정에 실패했습니다.';
+      const parsed = error instanceof Error ? parseApiError(error) : null;
+      const message = (parsed?.code && BOARD_ACTION_ERRORS[parsed.code]) || '게시글 수정에 실패했습니다.';
       toast({ title: message, variant: 'error' });
     },
   });
