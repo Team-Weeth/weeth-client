@@ -93,7 +93,7 @@ export async function POST() {
 }
 
 export async function GET(request: NextRequest) {
-  const appUrl = request.nextUrl.origin;
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? request.nextUrl.origin;
   const redirectPath = request.nextUrl.searchParams.get('redirect');
   const safeRedirect =
     redirectPath && redirectPath.startsWith('/') && !redirectPath.startsWith('//')
