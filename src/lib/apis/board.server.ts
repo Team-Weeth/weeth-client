@@ -17,8 +17,8 @@ export const boardServerApi = {
     }),
 
   /** 게시글 상세 조회 (RSC)*/
-  getPostById: (clubId: string, postId: number) =>
-    apiServer.get<ApiResponse<PostDetail>>(`/clubs/${clubId}/boards/posts/${postId}`, {
+  getPostById: (clubId: string, boardId: number, postId: number) =>
+    apiServer.get<ApiResponse<PostDetail>>(`/clubs/${clubId}/boards/${boardId}/posts/${postId}`, {
       cache: 'no-store',
     }),
 
@@ -31,10 +31,15 @@ export const boardServerApi = {
     apiServer.post<ApiResponse<CreatePostData>>(`/clubs/${clubId}/boards/${boardId}/posts`, body),
 
   /** 게시글 수정 (Server Action) */
-  updatePost: (clubId: string, postId: number, body: UpdatePostBody) =>
-    apiServer.patch<ApiResponse<UpdatePostData>>(`/clubs/${clubId}/boards/posts/${postId}`, body),
+  updatePost: (clubId: string, boardId: number, postId: number, body: UpdatePostBody) =>
+    apiServer.patch<ApiResponse<UpdatePostData>>(
+      `/clubs/${clubId}/boards/${boardId}/posts/${postId}`,
+      body,
+    ),
 
   /** 게시글 삭제 (Server Action) */
-  deletePost: (clubId: string, postId: number) =>
-    apiServer.delete<ApiResponse<void>>(`/clubs/${clubId}/boards/posts/${postId}`),
+  deletePost: (clubId: string, boardId: number, postId: number) =>
+    apiServer.delete<ApiResponse<void>>(
+      `/clubs/${clubId}/boards/${boardId}/posts/${postId}`,
+    ),
 };

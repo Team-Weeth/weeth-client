@@ -77,7 +77,7 @@ function BoardContent({ boardId }: BoardContentProps) {
             />
             {currentUserId === post.author.id && (
               <div className="relative z-10">
-                <PostActionMenu postId={post.id} />
+                <PostActionMenu postId={post.id} boardId={post.boardId} />
               </div>
             )}
           </PostCard.Header>
@@ -93,6 +93,7 @@ function BoardContent({ boardId }: BoardContentProps) {
           <div className="relative z-10">
             <PostCard.Actions
               postId={post.id}
+              boardId={post.boardId}
               likeCount={post.like.likeCount}
               commentCount={post.commentCount}
               isLiked={post.like.isLiked}

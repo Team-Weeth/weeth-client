@@ -8,12 +8,12 @@ export function useDeletePost() {
   const queryClient = useQueryClient();
 
   const mutation = useMutation({
-    mutationFn: async (postId: number) => {
+    mutationFn: async ({ boardId, postId }: { boardId: number; postId: number }) => {
       if (!clubId) {
         toast({ title: '클럽 정보를 불러올 수 없습니다.', variant: 'error' });
         throw new Error('club not found');
       }
-      await deletePostApi(clubId, postId);
+      await deletePostApi(clubId, boardId, postId);
       return postId;
     },
     onSuccess: async () => {
@@ -32,8 +32,8 @@ export function useDeletePost() {
     },
   });
 
-  const deletePost = async (postId: number, onSuccess?: () => void) => {
-    await mutation.mutateAsync(postId);
+  const deletePost = async (boardId: number, postId: number, onSuccess?: () => void) => {
+    await mutation.mutateAsync({ boardId, postId });
     // 상세 쿼리 캐시를 즉시 제거해 삭제된 게시글 refetch 방지
     queryClient.removeQueries({ queryKey: ['posts', 'detail'] });
     // 리다이렉트 먼저 실행

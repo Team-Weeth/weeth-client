@@ -34,6 +34,11 @@ export interface PostLike {
   likeCount: number;
 }
 
+/** 좋아요 API 응답 (boardId 포함) */
+export interface PostLikeResponse extends PostLike {
+  boardId: number;
+}
+
 interface PostBase {
   id: number;
   author: PostAuthor;
@@ -78,6 +83,7 @@ export interface CreatePostBody {
 /** 게시글 작성 응답 data */
 export interface CreatePostData {
   id: number;
+  boardId: number;
 }
 
 /** 게시글 수정 요청 body — files: null=변경 없음, []=전체 삭제, 배열=교체 */
@@ -90,6 +96,7 @@ export interface UpdatePostBody {
 /** 게시글 수정 응답 data */
 export interface UpdatePostData {
   id: number;
+  boardId: number;
 }
 
 /** 댓글 작성 요청 body */

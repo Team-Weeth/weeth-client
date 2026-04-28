@@ -16,7 +16,12 @@ export function useUpdatePost() {
 
   const mutation = useMutation({
     mutationFn: async (postId: number) => {
-      const { title, content, files, _snapshot } = usePostStore.getState();
+      const { board, title, content, files, _snapshot } = usePostStore.getState();
+
+      if (!board) {
+        toast({ title: '게시판을 선택해주세요.', variant: 'error' });
+        throw new Error('board not selected');
+      }
 
       if (!validatePost({ clubId, title, content, files })) {
         throw new Error('validation failed');
@@ -25,22 +30,21 @@ export function useUpdatePost() {
       const uploadedFiles = files.filter((f) => f.uploaded);
       const filesPayload = resolveFilesPayload(uploadedFiles, _snapshot?.fileIds ?? null);
 
-      await updatePostApi(clubId!, postId, { title, content, files: filesPayload });
-      return postId;
+      return updatePostApi(clubId!, board, postId, { title, content, files: filesPayload });
     },
-    onSuccess: (postId) => {
-      const { board: boardId, _allowNavigation } = usePostStore.getState();
+    onSuccess: (result) => {
+      const { _allowNavigation } = usePostStore.getState();
       queryClient.invalidateQueries({ queryKey: ['posts'] });
       queryClient.invalidateQueries({ queryKey: ['home', 'recent-posts', clubId] });
       queryClient.invalidateQueries({ queryKey: ['home', 'recent-notices', clubId] });
       queryClient.invalidateQueries({ queryKey: ['home', 'unread-notice', clubId] });
       toast({ title: '게시글이 수정되었습니다.', variant: 'success' });
       _allowNavigation?.();
+      router.push(buildPostPath(clubIdParam, result.id, result.boardId));
       usePostStore.getState().reset();
-      router.push(buildPostPath(clubIdParam, postId, boardId!));
     },
     onError: (error) => {
-      if (error.message !== 'validation failed') {
+      if (error.message !== 'board not selected' && error.message !== 'validation failed') {
         toast({ title: '게시글 수정에 실패했습니다.', variant: 'error' });
       }
     },

@@ -15,14 +15,19 @@ export async function createPost(clubId: string, boardId: number, body: CreatePo
   return response.data;
 }
 
-export async function updatePost(clubId: string, postId: number, body: UpdatePostBody) {
-  const response = await boardServerApi.updatePost(clubId, postId, body);
+export async function updatePost(
+  clubId: string,
+  boardId: number,
+  postId: number,
+  body: UpdatePostBody,
+) {
+  const response = await boardServerApi.updatePost(clubId, boardId, postId, body);
   revalidatePath('/board', 'layout');
-  revalidatePath(`/board/${postId}`);
+  revalidatePath(`/board/${boardId}/${postId}`);
   return response.data;
 }
 
-export async function deletePost(clubId: string, postId: number) {
-  await boardServerApi.deletePost(clubId, postId);
+export async function deletePost(clubId: string, boardId: number, postId: number) {
+  await boardServerApi.deletePost(clubId, boardId, postId);
   revalidatePath('/board', 'layout');
 }

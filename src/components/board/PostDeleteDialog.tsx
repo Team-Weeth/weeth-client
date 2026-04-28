@@ -5,6 +5,7 @@ import { useDeletePost } from '@/hooks';
 
 interface PostDeleteDialogProps {
   postId: number;
+  boardId: number;
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onDeleted?: () => void;
@@ -13,12 +14,12 @@ interface PostDeleteDialogProps {
 /**
  * 게시글 삭제 확인 다이얼로그
  */
-function PostDeleteDialog({ postId, open, onOpenChange, onDeleted }: PostDeleteDialogProps) {
+function PostDeleteDialog({ postId, boardId, open, onOpenChange, onDeleted }: PostDeleteDialogProps) {
   const { deletePost, isPending } = useDeletePost();
 
   const handleConfirm = async (event: React.MouseEvent) => {
     event.preventDefault();
-    await deletePost(postId, onDeleted);
+    await deletePost(boardId, postId, onDeleted);
     onOpenChange(false);
   };
 

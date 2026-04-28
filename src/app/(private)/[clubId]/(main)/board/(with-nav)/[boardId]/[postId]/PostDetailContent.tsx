@@ -41,7 +41,7 @@ function PostDetailContent({ initialData }: PostDetailContentProps) {
   const setActiveBoardId = useSetActiveBoardId();
   const boardTypeMap = useBoardTypeMap();
 
-  const { data } = usePostDetailQuery(initialData.id, initialData);
+  const { data } = usePostDetailQuery(initialData.boardId, initialData.id, initialData);
   const currentPost = data ?? initialData;
 
   const { createComment, isPending } = useCreateComment(currentPost.id);
@@ -100,7 +100,8 @@ function PostDetailContent({ initialData }: PostDetailContentProps) {
           {isPostAuthor && (
             <PostActionMenu
               postId={currentPost.id}
-              onEdit={() => router.push(`/${clubIdParam}/board/edit/${currentPost.id}`)}
+              boardId={currentPost.boardId}
+              onEdit={() => router.push(`/${clubIdParam}/board/edit/${currentPost.boardId}/${currentPost.id}`)}
               onDeleted={() => router.push(buildBoardPath(clubIdParam, Number(boardIdParam)))}
             />
           )}
@@ -125,6 +126,7 @@ function PostDetailContent({ initialData }: PostDetailContentProps) {
 
         <PostCard.Actions
           postId={currentPost.id}
+          boardId={currentPost.boardId}
           likeCount={currentPost.like.likeCount}
           commentCount={currentPost.commentCount}
           isLiked={currentPost.like.isLiked}

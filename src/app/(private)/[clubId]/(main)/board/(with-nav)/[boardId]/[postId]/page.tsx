@@ -8,11 +8,12 @@ interface PostDetailPageProps {
 }
 
 export default async function PostDetailPage({ params }: PostDetailPageProps) {
-  const { clubId, postId } = await params;
+  const { clubId, boardId, postId } = await params;
+  const boardIdNum = Number(boardId);
   const postIdNum = Number(postId);
-  if (!Number.isInteger(postIdNum)) notFound();
+  if (!Number.isInteger(boardIdNum) || !Number.isInteger(postIdNum)) notFound();
 
-  const response = await boardServerApi.getPostById(clubId, postIdNum).catch((error) => {
+  const response = await boardServerApi.getPostById(clubId, boardIdNum, postIdNum).catch((error) => {
     if (error?.response?.status === 404) return null;
     throw error;
   });

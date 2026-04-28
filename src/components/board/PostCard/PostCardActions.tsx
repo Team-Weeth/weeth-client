@@ -8,6 +8,7 @@ import { useToggleLike } from '@/hooks/board/useToggleLike';
 interface PostCardActionsProps {
   className?: string;
   postId: number;
+  boardId: number;
   likeCount?: number;
   commentCount?: number;
   isLiked?: boolean;
@@ -17,6 +18,7 @@ interface PostCardActionsProps {
 function PostCardActions({
   className,
   postId,
+  boardId,
   likeCount: initialLikeCount = 0,
   commentCount = 0,
   isLiked: initialIsLiked = false,
@@ -24,6 +26,7 @@ function PostCardActions({
 }: PostCardActionsProps) {
   const { isLiked, likeCount, toggleLike } = useToggleLike({
     postId,
+    boardId,
     initialIsLiked,
     initialLikeCount,
   });

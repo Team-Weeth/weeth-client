@@ -7,16 +7,17 @@ import { PostDeleteDialog } from './PostDeleteDialog';
 
 interface PostActionMenuProps extends Omit<ActionMenuProps, 'onDeleteSelect'> {
   postId: number;
+  boardId: number;
   onDeleted?: () => void;
 }
 
-function PostActionMenu({ postId, onDeleted, ...rest }: PostActionMenuProps) {
+function PostActionMenu({ postId, boardId, onDeleted, ...rest }: PostActionMenuProps) {
   const router = useRouter();
   const { clubId } = useParams<{ clubId: string }>();
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
   const handleEdit = () => {
-    router.push(`/${clubId}/board/edit/${postId}`);
+    router.push(`/${clubId}/board/edit/${boardId}/${postId}`);
   };
 
   const handleDeleteSelect = (event: Event) => {
@@ -31,6 +32,7 @@ function PostActionMenu({ postId, onDeleted, ...rest }: PostActionMenuProps) {
       {deleteDialogOpen ? (
         <PostDeleteDialog
           postId={postId}
+          boardId={boardId}
           open={deleteDialogOpen}
           onOpenChange={setDeleteDialogOpen}
           onDeleted={onDeleted}
