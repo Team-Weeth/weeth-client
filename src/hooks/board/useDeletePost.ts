@@ -1,5 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { isAxiosError } from 'axios';
 import { deletePost as deletePostApi } from '@/lib/actions/board';
+import { BOARD_ACTION_ERRORS } from '@/constants/board/error';
 import { useClubId } from '@/stores/useClubStore';
 import { toast } from '@/stores/useToastStore';
 
@@ -26,9 +28,10 @@ export function useDeletePost() {
       toast({ title: '게시글이 삭제되었습니다.', variant: 'success' });
     },
     onError: (error) => {
-      if (error.message !== 'club not found') {
-        toast({ title: '게시글 삭제에 실패했습니다.', variant: 'error' });
-      }
+      if (error.message === 'club not found') return;
+      const code = isAxiosError(error) ? error.response?.data?.code : undefined;
+      const message = (code && BOARD_ACTION_ERRORS[code]) || '게시글 삭제에 실패했습니다.';
+      toast({ title: message, variant: 'error' });
     },
   });
 
