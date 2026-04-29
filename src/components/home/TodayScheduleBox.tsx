@@ -86,7 +86,7 @@ export function TodayScheduleBox() {
             description="출석이 필요한 정기모임 정보가 없습니다."
             button={{
               label: '출석 일정 추가하기',
-              onClick: () => router.push(`/${clubId}/admin/schedule`),
+              onClick: () => router.push(`/${clubId}/admin/schedule?tab=session`),
             }}
           />
         </div>

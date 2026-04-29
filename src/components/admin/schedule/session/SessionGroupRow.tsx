@@ -12,9 +12,9 @@ import {
 } from '@/components/admin/schedule/session/SessionActionButtons';
 import { SESSION_TABLE_COLUMNS } from '@/components/admin/schedule/session/sessionTableColumns';
 import {
+  deriveStatusFromDateRange,
   formatSessionDate,
   formatSessionDateRange,
-  isSessionActiveToday,
 } from '@/utils/admin/sessionUtils';
 import type { AdminSession, AdminSessionGroup } from '@/types/admin/session';
 import { AdminToggleOpenIcon } from '@/assets/icons/admin';
@@ -42,16 +42,11 @@ function SessionGroupRow({
   const isRecurring = group.recurrenceType !== 'NONE';
   const [expanded, setExpanded] = useState(true);
 
-  // 하위 세션 중 오늘 진행되는 세션이 있으면 그룹도 진행 중으로 표시
-  const hasActiveSessionToday = group.sessions.some((s) =>
-    isSessionActiveToday(s.start, s.end),
-  );
+  // 그룹 시작/종료일과 오늘을 비교해 SCHEDULED / OPEN / COMPLETED 도출
   const derivedGroupStatus =
     group.status === 'COMPLETED' || group.status === 'CANCELED'
       ? group.status
-      : hasActiveSessionToday
-        ? 'OPEN'
-        : 'SCHEDULED';
+      : deriveStatusFromDateRange(group.startDate, group.endDate);
 
   return (
     <div className={cn('flex flex-col', bordered && 'border-line border-t')}>
@@ -139,10 +134,8 @@ function SessionGroupRow({
         >
           {!isRecurring && group.sessions[0] && (
             <AttendanceLink
+              status={derivedGroupStatus}
               onClick={() => onManageAttendance?.(group.sessions[0])}
-              disabled={
-                !isSessionActiveToday(group.sessions[0].start, group.sessions[0].end)
-              }
             />
           )}
         </div>

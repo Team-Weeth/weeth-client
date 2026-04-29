@@ -81,25 +81,38 @@ export function formatSessionTimeRange(start: string, end: string): string {
   return `${formatSessionTime(start)} ~ ${formatSessionTime(end)}`;
 }
 
-// 오늘 날짜(로컬)가 세션 시작일~종료일 범위 안에 있는지 (시각 무관, 그날 하루 전체 기준)
-export function isSessionActiveToday(start: string, end: string): boolean {
-  const startDate = start.split('T')[0];
-  const endDate = end.split('T')[0];
-  if (!startDate || !endDate) return false;
-
+function getTodayString(): string {
   const now = new Date();
-  const today = `${now.getFullYear()}-${pad2(now.getMonth() + 1)}-${pad2(now.getDate())}`;
-  return startDate <= today && today <= endDate;
+  return `${now.getFullYear()}-${pad2(now.getMonth() + 1)}-${pad2(now.getDate())}`;
 }
 
-// 날짜 기준 status 도출:
-//  - COMPLETED / CANCELED는 서버 상태 유지 (종료/취소된 세션은 덮어쓰지 않음)
-//  - 그 외에는 오늘이 세션 날짜 범위 안이면 OPEN, 아니면 SCHEDULED
-export function deriveSessionStatusByDate(
-  status: SessionStatus,
+// 시작/종료 날짜와 오늘을 비교해 SCHEDULED(예정) | OPEN(진행중) | COMPLETED(종료) 도출
+export function deriveStatusFromDateRange(
   start: string,
   end: string,
-): SessionStatus {
+): 'SCHEDULED' | 'OPEN' | 'COMPLETED' {
+  const startDate = start.split('T')[0];
+  const endDate = end.split('T')[0];
+  if (!startDate || !endDate) return 'SCHEDULED';
+
+  const today = getTodayString();
+  if (today < startDate) return 'SCHEDULED';
+  if (today > endDate) return 'COMPLETED';
+  return 'OPEN';
+}
+
+// 자식(반복) 세션 status 도출:
+//  - 자식 세션은 의미상 "시작 날짜에 열리는 1회차"로 간주
+//  - 백엔드가 자식 end를 그룹 기간만큼 늘려서 주는 경우가 있어 end는 신뢰하지 않고 start 날짜로만 판정
+//  - COMPLETED / CANCELED는 서버 상태 유지
+export function deriveChildSessionStatus(status: SessionStatus, start: string): SessionStatus {
   if (status === 'COMPLETED' || status === 'CANCELED') return status;
-  return isSessionActiveToday(start, end) ? 'OPEN' : 'SCHEDULED';
+
+  const startDate = start.split('T')[0];
+  if (!startDate) return 'SCHEDULED';
+
+  const today = getTodayString();
+  if (today < startDate) return 'SCHEDULED';
+  if (today > startDate) return 'COMPLETED';
+  return 'OPEN';
 }
