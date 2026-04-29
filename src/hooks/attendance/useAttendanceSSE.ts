@@ -1,6 +1,6 @@
 'use client';
 
-import { useSyncExternalStore } from 'react';
+import { useCallback, useSyncExternalStore, useRef } from 'react';
 
 import { useClubId } from '@/stores/useClubStore';
 
@@ -187,48 +187,58 @@ function subscribe(clubId: string, conn: SSEConnection, listener: Listener) {
     conn.listeners.delete(listener);
     conn.subscriberCount--;
 
-    if (conn.subscriberCount === 0) {
-      conn.controller?.abort();
-      conn.controller = null;
-      clearTimeout(conn.retryTimer);
-      conn.retryTimer = undefined;
-      conn.retryCount = 0;
-      conn.status = null;
-      conn.expiredAt = null;
-      conn.currentEvent = '';
-      connections.delete(clubId);
-    }
+    setTimeout(() => {
+      if (conn.subscriberCount === 0) {
+        conn.controller?.abort();
+        conn.controller = null;
+        clearTimeout(conn.retryTimer);
+        conn.retryTimer = undefined;
+        conn.retryCount = 0;
+        conn.status = null;
+        conn.expiredAt = null;
+        conn.currentEvent = '';
+        connections.delete(clubId);
+      }
+    }, 0);
   };
 }
 
 function useAttendanceSSE() {
   const clubId = useClubId();
 
-  const subscribeFn = (listener: Listener) => {
-    if (!clubId) return () => {};
-    const conn = getOrCreateConnection(clubId);
-    return subscribe(clubId, conn, listener);
-  };
-
-  const expiredAt = useSyncExternalStore(
-    subscribeFn,
-    () => {
-      if (!clubId) return null;
-      return connections.get(clubId)?.expiredAt ?? null;
+  const subscribeFn = useCallback(
+    (listener: Listener) => {
+      if (!clubId) return () => {};
+      const conn = getOrCreateConnection(clubId);
+      return subscribe(clubId, conn, listener);
     },
-    () => null,
+    [clubId],
   );
 
-  const status = useSyncExternalStore(
+  const prevSnapshotRef = useRef<{ status: QRStatus; expiredAt: string | null } | null>(null);
+
+  const snapshot = useSyncExternalStore(
     subscribeFn,
     () => {
-      if (!clubId) return null;
-      return connections.get(clubId)?.status ?? null;
-    },
-    () => null,
-  );
+      if (!clubId) return { status: null, expiredAt: null };
 
-  return { status, expiredAt };
+      const conn = connections.get(clubId);
+      const next = {
+        status: conn?.status ?? null,
+        expiredAt: conn?.expiredAt ?? null,
+      };
+
+      const prev = prevSnapshotRef.current;
+      if (prev && prev.status === next.status && prev.expiredAt === next.expiredAt) {
+        return prev;
+      }
+
+      prevSnapshotRef.current = next;
+      return next;
+    },
+    () => ({ status: null, expiredAt: null }),
+  );
+  return snapshot;
 }
 
 export { useAttendanceSSE, type QRStatus };
