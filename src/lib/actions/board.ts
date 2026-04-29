@@ -16,7 +16,7 @@ function rethrowWithCode(error: unknown): never {
 export async function readAllNotices(clubId: string, boardId: number) {
   try {
     await boardServerApi.readAllNotices(clubId, boardId);
-    revalidatePath('/board', 'layout');
+    revalidatePath(`/${clubId}/board`, 'layout');
   } catch (error) {
     rethrowWithCode(error);
   }
@@ -25,7 +25,7 @@ export async function readAllNotices(clubId: string, boardId: number) {
 export async function createPost(clubId: string, boardId: number, body: CreatePostBody) {
   try {
     const response = await boardServerApi.createPost(clubId, boardId, body);
-    revalidatePath('/board', 'layout');
+    revalidatePath(`/${clubId}/board`, 'layout');
     return response.data;
   } catch (error) {
     rethrowWithCode(error);
@@ -40,8 +40,8 @@ export async function updatePost(
 ) {
   try {
     const response = await boardServerApi.updatePost(clubId, boardId, postId, body);
-    revalidatePath('/board', 'layout');
-    revalidatePath(`/board/${boardId}/${postId}`);
+    revalidatePath(`/${clubId}/board`, 'layout');
+    revalidatePath(`/${clubId}/board/${boardId}/${postId}`);
     return response.data;
   } catch (error) {
     rethrowWithCode(error);
@@ -51,7 +51,7 @@ export async function updatePost(
 export async function deletePost(clubId: string, boardId: number, postId: number) {
   try {
     await boardServerApi.deletePost(clubId, boardId, postId);
-    revalidatePath('/board', 'layout');
+    revalidatePath(`/${clubId}/board`, 'layout');
   } catch (error) {
     rethrowWithCode(error);
   }
