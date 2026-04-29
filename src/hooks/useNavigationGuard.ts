@@ -28,7 +28,7 @@ function useNavigationGuard({ enabled }: UseNavigationGuardOptions) {
 
   useEffect(() => {
     if (!enabled) {
-      if (!isLeaving.current && isGuardEntry()) {
+      if (isGuardEntry()) {
         history.back();
       }
       return;
