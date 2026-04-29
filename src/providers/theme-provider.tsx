@@ -8,6 +8,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const isDark = useThemeStore((state) => state.isDark);
   const mode = useThemeStore((state) => state.mode);
+  const hasHydrated = useThemeStore((state) => state.hasHydrated);
   const setDark = useThemeStore((state) => state.setDark);
   const forceLight = pathname.startsWith('/landing');
 
@@ -17,10 +18,13 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
       return;
     }
 
+    if (!hasHydrated) return;
+
     document.documentElement.classList.toggle('dark', isDark);
-  }, [forceLight, isDark]);
+  }, [forceLight, hasHydrated, isDark]);
 
   useEffect(() => {
+    if (!hasHydrated) return;
     if (mode !== 'auto') return;
 
     const mq = window.matchMedia('(prefers-color-scheme: dark)');
@@ -28,7 +32,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     const handler = (e: MediaQueryListEvent) => setDark(e.matches);
     mq.addEventListener('change', handler);
     return () => mq.removeEventListener('change', handler);
-  }, [mode, setDark]);
+  }, [hasHydrated, mode, setDark]);
 
   return <>{children}</>;
 }
