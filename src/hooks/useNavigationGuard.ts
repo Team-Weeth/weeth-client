@@ -8,6 +8,7 @@ interface UseNavigationGuardOptions {
 }
 
 const GUARD_STATE = { __navigationGuard: true } as const;
+const NAVIGATION_TIMEOUT = 3000;
 
 function isGuardEntry() {
   return !!(history.state as Record<string, unknown> | null)?.__navigationGuard;
@@ -25,6 +26,22 @@ function useNavigationGuard({ enabled }: UseNavigationGuardOptions) {
   const isLeaving = useRef(false);
   const guardUrl = useRef('');
   const pendingUrl = useRef<string | null>(null);
+  const resetTimerId = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // 네비게이션이 실제로 일어나지 않았을 경우 가드를 복원하는 안전장치
+  const scheduleGuardReset = (snapshot: string) => {
+    if (resetTimerId.current) clearTimeout(resetTimerId.current);
+    resetTimerId.current = setTimeout(() => {
+      resetTimerId.current = null;
+      if (isLeaving.current && location.href === snapshot) {
+        isLeaving.current = false;
+        guardUrl.current = location.href;
+        if (!isGuardEntry()) {
+          history.pushState(GUARD_STATE, '', location.href);
+        }
+      }
+    }, NAVIGATION_TIMEOUT);
+  };
 
   useEffect(() => {
     if (!enabled) {
@@ -84,12 +101,18 @@ function useNavigationGuard({ enabled }: UseNavigationGuardOptions) {
       document.removeEventListener('click', handleClick, true);
       window.removeEventListener('popstate', handlePopState);
       window.removeEventListener('beforeunload', handleBeforeUnload);
+      if (resetTimerId.current) {
+        clearTimeout(resetTimerId.current);
+        resetTimerId.current = null;
+      }
     };
   }, [enabled]);
 
   const onConfirm = () => {
     isLeaving.current = true;
     setOpen(false);
+
+    const snapshot = location.href;
 
     if (pendingUrl.current) {
       const target = new URL(pendingUrl.current);
@@ -98,6 +121,8 @@ function useNavigationGuard({ enabled }: UseNavigationGuardOptions) {
     } else {
       history.back();
     }
+
+    scheduleGuardReset(snapshot);
   };
 
   const onCancel = () => {
@@ -114,6 +139,7 @@ function useNavigationGuard({ enabled }: UseNavigationGuardOptions) {
   const allowNavigation = () => {
     isLeaving.current = true;
     pendingUrl.current = null;
+    scheduleGuardReset(location.href);
   };
 
   return { open, onConfirm, onCancel, allowNavigation };
