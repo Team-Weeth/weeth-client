@@ -88,7 +88,7 @@ export default function PublicHeader({ className, showAuthButtons = true }: Publ
             href="/login"
             className={cn(
               buttonVariants({ variant: 'secondary', size: 'md' }),
-              'whitespace-nowrap bg-[#E6EAED] text-black',
+              'bg-[#E6EAED] whitespace-nowrap text-black',
             )}
           >
             로그인
@@ -97,7 +97,7 @@ export default function PublicHeader({ className, showAuthButtons = true }: Publ
             href="/login?intent=create"
             className={cn(
               buttonVariants({ variant: 'primary', size: 'md' }),
-              'whitespace-nowrap bg-[#00C8AA] text-white',
+              'bg-[#00C8AA] whitespace-nowrap text-white',
             )}
           >
             지금 무료로 시작하기

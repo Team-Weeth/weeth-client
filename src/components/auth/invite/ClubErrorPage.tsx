@@ -31,10 +31,7 @@ function ClubErrorPage({
             새로고침
           </Button>
         )}
-        <Link
-          href="/"
-          className={cn(buttonVariants({ variant: 'primary', size: 'lg' }), 'w-full')}
-        >
+        <Link href="/" className={cn(buttonVariants({ variant: 'primary', size: 'lg' }), 'w-full')}>
           처음으로 돌아가기
         </Link>
       </div>

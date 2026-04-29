@@ -107,8 +107,8 @@ export async function proxy(request: NextRequest) {
       return response;
     }
 
-    // 갱신 실패 → 쿠키 정리 후 로그인 페이지로
-    return clearAuthCookies(NextResponse.redirect(buildLoginRedirectUrl(request, false)));
+    // 갱신 실패 → 쿠키 정리 후 원래 경로를 유지한 채 로그인 페이지로
+    return clearAuthCookies(NextResponse.redirect(buildLoginRedirectUrl(request, true)));
   }
 
   // 토큰 없음 → 로그인 페이지로
