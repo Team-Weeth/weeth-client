@@ -7,6 +7,9 @@ import { useBoardPosts } from '@/hooks';
 import { useIntersectionObserver } from '@/hooks/board/useIntersectionObserver';
 import { useUserId } from '@/stores/useUserStore';
 import { formatShortDateTime } from '@/lib/formatTime';
+import { parseApiError } from '@/lib/error';
+import { BOARD_PAGE_ERRORS } from '@/constants/board/error';
+import { toastError } from '@/stores/useToastStore';
 import type { FileItem } from '@/types/file';
 import { buildPostPath } from '@/lib/board';
 import { PostActionMenu } from './PostActionMenu';
@@ -31,6 +34,7 @@ function BoardContent({ boardId }: BoardContentProps) {
     data: posts,
     isPending,
     isError,
+    error,
     refetch,
     fetchNextPage,
     hasNextPage,
@@ -39,6 +43,16 @@ function BoardContent({ boardId }: BoardContentProps) {
   const { ref: sentinelRef, isIntersecting } = useIntersectionObserver({
     rootMargin: '200px',
   });
+
+  useEffect(() => {
+    if (!isError || !error) return;
+    const parsed = parseApiError(error);
+    const known = parsed ? BOARD_PAGE_ERRORS[parsed.code] : null;
+    if (known) {
+      toastError(known.message);
+      router.replace(`/${clubId}/board`);
+    }
+  }, [isError, error, router, clubId]);
 
   useEffect(() => {
     if (isIntersecting && hasNextPage && !isFetchingNextPage) {

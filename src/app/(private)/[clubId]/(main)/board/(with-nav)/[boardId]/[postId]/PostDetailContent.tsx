@@ -23,6 +23,9 @@ import { useSetActiveBoardId, useBoardTypeMap } from '@/stores/useBoardNavStore'
 import { useClubId } from '@/stores/useClubStore';
 import { useUserId } from '@/stores/useUserStore';
 import { boardApi } from '@/lib/apis/board';
+import { parseApiError } from '@/lib/error';
+import { BOARD_PAGE_ERRORS } from '@/constants/board/error';
+import { toastError } from '@/stores/useToastStore';
 import { buildBoardPath } from '@/lib/board';
 import type { PostDetail } from '@/types/board';
 
@@ -41,7 +44,11 @@ function PostDetailContent({ initialData }: PostDetailContentProps) {
   const setActiveBoardId = useSetActiveBoardId();
   const boardTypeMap = useBoardTypeMap();
 
-  const { data } = usePostDetailQuery(initialData.boardId, initialData.id, initialData);
+  const { data, isError, error } = usePostDetailQuery(
+    initialData.boardId,
+    initialData.id,
+    initialData,
+  );
   const currentPost = data ?? initialData;
 
   const { createComment, isPending } = useCreateComment(currentPost.boardId, currentPost.id);
@@ -61,6 +68,16 @@ function PostDetailContent({ initialData }: PostDetailContentProps) {
     onNavGuardConfirm,
     onNavGuardCancel,
   } = useReplyForm();
+
+  useEffect(() => {
+    if (!isError || !error) return;
+    const parsed = parseApiError(error);
+    const known = parsed ? BOARD_PAGE_ERRORS[parsed.code] : null;
+    if (known) {
+      toastError(known.message);
+      router.replace(`/${clubIdParam}/board`);
+    }
+  }, [isError, error, router, clubIdParam]);
 
   useEffect(() => {
     const hash = window.location.hash;
