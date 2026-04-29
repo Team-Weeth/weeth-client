@@ -217,7 +217,8 @@ function EditSessionModalContent({
       />
 
       {/* 삭제 확인 */}
-      {isRecurring ? (
+      {isRecurring && isChildOfRecurringGroup ? (
+        // 자식 세션 행: 이 세션만 / 이후 모두 둘 다 선택 가능
         <CustomAlertDialog
           open={deleteConfirmOpen}
           onOpenChange={setDeleteConfirmOpen}
@@ -226,6 +227,16 @@ function EditSessionModalContent({
           onAction={() => handleDeleteConfirm('this')}
           secondActionLabel="이후 모든 세션 일정 삭제"
           onSecondAction={() => handleDeleteConfirm('all')}
+          placement="center"
+        />
+      ) : isRecurring ? (
+        // 반복 그룹 행: 그룹 전체 삭제만 가능
+        <CustomAlertDialog
+          open={deleteConfirmOpen}
+          onOpenChange={setDeleteConfirmOpen}
+          title={'반복 설정이 되어있는 세션이에요.\n모든 세션 일정을 삭제하시겠어요?'}
+          actionLabel="이후 모든 세션 일정 삭제"
+          onAction={() => handleDeleteConfirm('all')}
           placement="center"
         />
       ) : (
