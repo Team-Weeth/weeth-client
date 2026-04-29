@@ -57,7 +57,8 @@ function AttendancePageContent() {
 
   const searchParams = useSearchParams();
   const targetSessionIdParam = searchParams.get('sessionId');
-  const targetSessionId = targetSessionIdParam ? Number(targetSessionIdParam) : null;
+  const parsedSessionId = targetSessionIdParam ? Number(targetSessionIdParam) : NaN;
+  const targetSessionId = Number.isFinite(parsedSessionId) ? parsedSessionId : null;
   const targetCardRef = useRef<HTMLDivElement | null>(null);
   const hasScrolledRef = useRef(false);
 
@@ -65,8 +66,9 @@ function AttendancePageContent() {
     if (hasScrolledRef.current) return;
     if (targetSessionId === null) return;
     if (!sessions.some((s) => s.id === targetSessionId)) return;
+    if (!targetCardRef.current) return;
 
-    targetCardRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    targetCardRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
     hasScrolledRef.current = true;
   }, [sessions, targetSessionId]);
 

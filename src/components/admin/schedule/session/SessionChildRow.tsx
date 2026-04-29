@@ -4,7 +4,10 @@ import {
   AttendanceLink,
   MoreButton,
 } from '@/components/admin/schedule/session/SessionActionButtons';
-import { SESSION_TABLE_COLUMNS } from '@/components/admin/schedule/session/sessionTableColumns';
+import {
+  SESSION_CHILD_INDENT_CLASS,
+  SESSION_TABLE_COLUMNS,
+} from '@/components/admin/schedule/session/sessionTableColumns';
 import {
   deriveChildSessionStatus,
   formatSessionDate,
@@ -28,7 +31,8 @@ function SessionChildRow({ session, order, onManageAttendance, onMore }: Session
     <div className="flex h-10 w-full items-center">
       <div
         className={cn(
-          'bg-container-neutral sticky left-0 z-10 flex items-center pl-[64px]',
+          'bg-container-neutral sticky left-0 z-10 flex items-center',
+          SESSION_CHILD_INDENT_CLASS,
           SESSION_TABLE_COLUMNS.titleSticky.widthClass,
         )}
       >

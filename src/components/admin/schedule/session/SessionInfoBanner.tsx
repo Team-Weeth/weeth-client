@@ -1,7 +1,7 @@
 import { InfoCircleIcon } from '@/assets/icons';
 import { Icon } from '@/components/ui';
 
-export default function SessionInfobanner() {
+function SessionInfoBanner() {
   return (
     <div className="bg-container-neutral-alternative flex items-start gap-200 rounded-md p-300">
       <Icon src={InfoCircleIcon} size={20} className="text-icon-alternative mt-[2px]" />
@@ -12,3 +12,5 @@ export default function SessionInfobanner() {
     </div>
   );
 }
+
+export { SessionInfoBanner };

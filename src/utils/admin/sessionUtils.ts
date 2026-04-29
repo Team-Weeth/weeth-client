@@ -101,18 +101,18 @@ export function deriveStatusFromDateRange(
   return 'OPEN';
 }
 
-// 자식(반복) 세션 status 도출:
-//  - 자식 세션은 의미상 "시작 날짜에 열리는 1회차"로 간주
-//  - 백엔드가 자식 end를 그룹 기간만큼 늘려서 주는 경우가 있어 end는 신뢰하지 않고 start 날짜로만 판정
-//  - COMPLETED / CANCELED는 서버 상태 유지
-export function deriveChildSessionStatus(status: SessionStatus, start: string): SessionStatus {
+// COMPLETED/CANCELED는 서버 상태 유지, 그 외에는 날짜 기반으로 도출
+export function deriveSessionStatus(
+  status: SessionStatus,
+  start: string,
+  end: string,
+): SessionStatus {
   if (status === 'COMPLETED' || status === 'CANCELED') return status;
+  return deriveStatusFromDateRange(start, end);
+}
 
-  const startDate = start.split('T')[0];
-  if (!startDate) return 'SCHEDULED';
-
-  const today = getTodayString();
-  if (today < startDate) return 'SCHEDULED';
-  if (today > startDate) return 'COMPLETED';
-  return 'OPEN';
+// 자식(반복) 세션은 의미상 "시작 날짜에 열리는 1회차"로 간주.
+// 백엔드가 자식 end를 그룹 기간만큼 늘려 보내는 케이스가 있어 start 날짜로만 판정.
+export function deriveChildSessionStatus(status: SessionStatus, start: string): SessionStatus {
+  return deriveSessionStatus(status, start, start);
 }

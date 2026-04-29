@@ -11,7 +11,7 @@ import { useAdminSessionList } from '@/hooks/queries/admin';
 import { toastError } from '@/stores/useToastStore';
 import { isSessionGroup } from '@/utils/admin/scheduleFormUtils';
 import type { AdminSession, AdminSessionGroup } from '@/types/admin/session';
-import SessionInfobanner from './SessionInfoBanner';
+import { SessionInfoBanner } from './SessionInfoBanner';
 
 interface SessionTabContentProps {
   onCreateSession?: () => void;
@@ -52,7 +52,7 @@ function SessionTabContent({
   return (
     <div className="flex flex-col gap-400">
       {/* 알림 배너 */}
-      <SessionInfobanner />
+      <SessionInfoBanner />
 
       {/* 세션 카드 */}
       <div className="bg-container-neutral flex flex-col rounded-lg shadow-sm">

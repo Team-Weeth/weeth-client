@@ -1,6 +1,9 @@
 import { cn } from '@/lib/cn';
 import { SessionChildRow } from '@/components/admin/schedule/session/SessionChildRow';
-import { SESSION_TABLE_COLUMNS } from '@/components/admin/schedule/session/sessionTableColumns';
+import {
+  SESSION_CHILD_INDENT_CLASS,
+  SESSION_TABLE_COLUMNS,
+} from '@/components/admin/schedule/session/sessionTableColumns';
 import type { AdminSession } from '@/types/admin/session';
 
 // 첫 번째 sticky 컬럼(세션 제목)을 제외한 하위 테이블 헤더 컬럼 정의
@@ -23,7 +26,8 @@ function SessionChildTable({ sessions, onManageAttendance, onMore }: SessionChil
       <div className="flex h-10 w-full items-center">
         <div
           className={cn(
-            'bg-container-neutral sticky left-0 z-10 flex items-center pl-[64px]',
+            'bg-container-neutral sticky left-0 z-10 flex items-center',
+            SESSION_CHILD_INDENT_CLASS,
             SESSION_TABLE_COLUMNS.titleSticky.widthClass,
           )}
         >

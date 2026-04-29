@@ -21,8 +21,9 @@ import {
 import { addYearsToDateInput } from '@/utils/shared/date';
 import type { Cardinal } from '@/types/admin/cardinal';
 
+import { SessionInfoBanner } from '../session/SessionInfoBanner';
+
 import type { ScheduleFormState, SessionFormState } from './types';
-import SessionInfobanner from '../session/SessionInfoBanner';
 
 interface SessionScheduleFormProps {
   form: ScheduleFormState;
@@ -51,7 +52,7 @@ function SessionScheduleForm({
   return (
     <div className="flex flex-col gap-400 py-400">
       {/* 안내 배너 */}
-      <SessionInfobanner />
+      <SessionInfoBanner />
 
       {/* 세션 제목 */}
       <ScheduleTextField

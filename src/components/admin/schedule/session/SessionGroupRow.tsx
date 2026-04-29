@@ -12,7 +12,7 @@ import {
 } from '@/components/admin/schedule/session/SessionActionButtons';
 import { SESSION_TABLE_COLUMNS } from '@/components/admin/schedule/session/sessionTableColumns';
 import {
-  deriveStatusFromDateRange,
+  deriveSessionStatus,
   formatSessionDate,
   formatSessionDateRange,
 } from '@/utils/admin/sessionUtils';
@@ -43,10 +43,11 @@ function SessionGroupRow({
   const [expanded, setExpanded] = useState(true);
 
   // 그룹 시작/종료일과 오늘을 비교해 SCHEDULED / OPEN / COMPLETED 도출
-  const derivedGroupStatus =
-    group.status === 'COMPLETED' || group.status === 'CANCELED'
-      ? group.status
-      : deriveStatusFromDateRange(group.startDate, group.endDate);
+  const derivedGroupStatus = deriveSessionStatus(
+    group.status,
+    group.startDate,
+    group.endDate,
+  );
 
   return (
     <div className={cn('flex flex-col', bordered && 'border-line border-t')}>
