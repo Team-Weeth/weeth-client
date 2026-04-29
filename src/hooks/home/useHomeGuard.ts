@@ -1,15 +1,16 @@
 'use client';
 
 import { useEffect, useSyncExternalStore } from 'react';
-import { useRouter } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { isAxiosError } from 'axios';
 import { useClubActions, useClubId, useClubStore } from '@/stores/useClubStore';
 import { useHomeQuery } from './useHomeQuery';
 
 export function useHomeGuard() {
   const router = useRouter();
+  const { clubId: clubIdParam } = useParams<{ clubId: string }>();
   const clubId = useClubId();
-  const { reset } = useClubActions();
+  const { reset, syncClubId } = useClubActions();
   const { error } = useHomeQuery();
 
   const hydrated = useSyncExternalStore(
@@ -20,11 +21,17 @@ export function useHomeGuard() {
 
   useEffect(() => {
     if (!hydrated) return;
-    if (!clubId) {
+
+    if (clubIdParam && clubId !== clubIdParam) {
+      syncClubId(clubIdParam);
+      return;
+    }
+
+    if (!clubIdParam && !clubId) {
       reset();
       router.replace('/hub');
     }
-  }, [hydrated, clubId, reset, router]);
+  }, [hydrated, clubId, clubIdParam, reset, router, syncClubId]);
 
   useEffect(() => {
     if (isAxiosError(error) && error.response?.status === 404) {
