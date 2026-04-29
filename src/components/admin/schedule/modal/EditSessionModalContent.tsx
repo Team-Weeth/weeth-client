@@ -24,11 +24,18 @@ import {
 
 import { DiscardConfirmArea } from './DiscardConfirmArea';
 import { ScheduleFormBody } from './ScheduleFormBody';
+import { isDateRangeValid } from './types';
 import type { ScheduleFormState, SessionDeleteType, SessionSaveType } from './types';
 
 interface EditSessionModalContentProps {
   sessionId: number;
   isRecurring: boolean;
+  /**
+   * 반복 그룹의 자식 세션을 수정 중인지 여부.
+   * - true: "이후 모두 삭제"는 이 세션 + 이후 세션만 삭제 (THIS_AND_FUTURE)
+   * - false: "이후 모두 삭제"는 그룹 전체 삭제 (submitDeleteGroup)
+   */
+  isChildOfRecurringGroup?: boolean;
   /** 반복 세션일 때만 값이 있음 (그룹 전체 삭제용) */
   groupId: number | null;
   onClose: () => void;
@@ -49,6 +56,7 @@ function toUpdateBody(form: ScheduleFormState): UpdateSessionBody {
 function EditSessionModalContent({
   sessionId,
   isRecurring,
+  isChildOfRecurringGroup = false,
   groupId,
   onClose,
   hasChangesRef,
@@ -66,7 +74,7 @@ function EditSessionModalContent({
     useSessionMutations();
 
   const hasChanges = isFormChanged(form, initialForm);
-  const isValid = isScheduleTitleValid(form.title);
+  const isValid = isScheduleTitleValid(form.title) && isDateRangeValid(form);
 
   const updateForm = (patch: Partial<ScheduleFormState>) => {
     setForm((prev) => ({ ...prev, ...patch }));
@@ -111,7 +119,12 @@ function EditSessionModalContent({
   const handleDeleteConfirm = (type: SessionDeleteType) => {
     setDeleteConfirmOpen(false);
     if (isRecurring && type === 'all') {
-      if (groupId !== null) submitDeleteGroup(groupId, false, { onSuccess: onClose });
+      // 자식 세션이면 "이 세션 + 이후"만 삭제, 그룹 자체를 수정 중이면 그룹 전체 삭제
+      if (isChildOfRecurringGroup) {
+        submitDeleteSession(sessionId, 'THIS_AND_FUTURE', false, { onSuccess: onClose });
+      } else if (groupId !== null) {
+        submitDeleteGroup(groupId, false, { onSuccess: onClose });
+      }
     } else {
       submitDeleteSession(sessionId, 'THIS_ONLY', false, { onSuccess: onClose });
     }
@@ -125,6 +138,29 @@ function EditSessionModalContent({
   const closeDiscardAlert = (source: 'close' | 'cancel') => (next: boolean) => {
     if (!next && discardSource === source) setDiscardSource(null);
   };
+
+  // 삭제 확인 다이얼로그 분기 — 자식 세션 / 반복 그룹 / 단일 세션
+  const deleteDialogProps =
+    isRecurring && isChildOfRecurringGroup
+      ? {
+          title: '이 세션을 삭제하시겠어요?\n반복 설정이 되어있는 세션이에요.',
+          actionLabel: '이 세션 일정만 삭제',
+          onAction: () => handleDeleteConfirm('this'),
+          secondActionLabel: '이후 모든 세션 일정 삭제',
+          onSecondAction: () => handleDeleteConfirm('all'),
+        }
+      : isRecurring
+        ? {
+            title: '반복 설정이 되어있는 세션이에요.\n모든 세션 일정을 삭제하시겠어요?',
+            actionLabel: '이후 모든 세션 일정 삭제',
+            onAction: () => handleDeleteConfirm('all'),
+          }
+        : {
+            title: '이 세션을 삭제하시겠어요?',
+            description: '삭제된 세션은 복구할 수 없습니다.\n신중히 확인 후 진행해 주세요.',
+            actionLabel: '삭제',
+            onAction: () => handleDeleteConfirm('this'),
+          };
 
   return (
     <>
@@ -185,47 +221,31 @@ function EditSessionModalContent({
             취소
           </Button>
         </DiscardConfirmArea>
-        <Button variant="primary" size="lg" disabled={!isValid} onClick={handleSubmit}>
-          저장
-        </Button>
+        {/* 저장 + 반복 세션 저장 확인 alert */}
+        <CustomAlertDialog
+          open={saveConfirmOpen}
+          onOpenChange={setSaveConfirmOpen}
+          title="이 변경사항을 어떻게 저장할까요?"
+          actionLabel="이 세션 일정만 저장"
+          onAction={() => handleSaveConfirm('this')}
+          secondActionLabel="이후 모든 세션 일정에 대해 저장"
+          onSecondAction={() => handleSaveConfirm('all')}
+          placement="above-right"
+          tone="primary"
+        >
+          <Button variant="primary" size="lg" disabled={!isValid} onClick={handleSubmit}>
+            저장
+          </Button>
+        </CustomAlertDialog>
       </div>
 
-      {/* 저장 확인 (반복 세션 전용) */}
-      <CustomAlertDialog
-        open={saveConfirmOpen}
-        onOpenChange={setSaveConfirmOpen}
-        title="이 변경사항을 어떻게 저장할까요?"
-        actionLabel="이 세션 일정만 저장"
-        onAction={() => handleSaveConfirm('this')}
-        secondActionLabel="이후 모든 세션 일정에 대해 저장"
-        onSecondAction={() => handleSaveConfirm('all')}
-        placement="center"
-        tone="primary"
-      />
-
       {/* 삭제 확인 */}
-      {isRecurring ? (
-        <CustomAlertDialog
-          open={deleteConfirmOpen}
-          onOpenChange={setDeleteConfirmOpen}
-          title={'이 세션을 삭제하시겠어요?\n반복 설정이 되어있는 세션이에요.'}
-          actionLabel="이 세션 일정만 삭제"
-          onAction={() => handleDeleteConfirm('this')}
-          secondActionLabel="이후 모든 세션 일정 삭제"
-          onSecondAction={() => handleDeleteConfirm('all')}
-          placement="center"
-        />
-      ) : (
-        <CustomAlertDialog
-          open={deleteConfirmOpen}
-          onOpenChange={setDeleteConfirmOpen}
-          title="이 세션을 삭제하시겠어요?"
-          description={'삭제된 세션은 복구할 수 없습니다.\n신중히 확인 후 진행해 주세요.'}
-          actionLabel="삭제"
-          onAction={() => handleDeleteConfirm('this')}
-          placement="center"
-        />
-      )}
+      <CustomAlertDialog
+        open={deleteConfirmOpen}
+        onOpenChange={setDeleteConfirmOpen}
+        placement="center"
+        {...deleteDialogProps}
+      />
 
       {/* CLOSED 세션 포함 시 force=true 재요청 동의 (modal 위에 overlay) */}
       {forceConfirmDialog}

@@ -24,17 +24,16 @@ function DiscardConfirmArea({
   children,
 }: DiscardConfirmAreaProps) {
   return (
-    <div className="relative">
+    <CustomAlertDialog
+      open={open}
+      onOpenChange={onOpenChange}
+      title={DISCARD_ALERT_TITLE}
+      actionLabel="변경사항 폐기"
+      onAction={onConfirm}
+      placement={placement}
+    >
       {children}
-      <CustomAlertDialog
-        open={open}
-        onOpenChange={onOpenChange}
-        title={DISCARD_ALERT_TITLE}
-        actionLabel="변경사항 폐기"
-        onAction={onConfirm}
-        placement={placement}
-      />
-    </div>
+    </CustomAlertDialog>
   );
 }
 

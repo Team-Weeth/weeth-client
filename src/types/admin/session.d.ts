@@ -43,9 +43,10 @@ export interface CreateSessionBody {
   /** ISO 8601 (로컬 타임, 초 포함) — "2026-03-26T10:00:00" */
   start: string;
   end: string;
-  recurrenceType: SessionRecurrenceType;
-  /** YYYY-MM-DD. recurrenceType이 NONE이면 end 날짜와 동일하게 전송 */
-  recurrenceEndDate: string;
+  /** 반복 설정을 선택하지 않으면 null */
+  recurrenceType: SessionRecurrenceType | null;
+  /** YYYY-MM-DD. 반복 설정을 선택하지 않으면 null */
+  recurrenceEndDate: string | null;
 }
 
 export interface UpdateSessionBody {

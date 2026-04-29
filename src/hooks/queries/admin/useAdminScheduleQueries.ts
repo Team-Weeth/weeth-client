@@ -7,7 +7,7 @@ import {
 } from '@/constants/admin/schedule.constants';
 import { adminScheduleApi } from '@/lib/apis/adminSchedule';
 import { useClubId } from '@/stores';
-import { toastError } from '@/stores/useToastStore';
+import { toastError, toastSuccess } from '@/stores/useToastStore';
 import type { CreateEventBody, UpdateEventBody } from '@/types/admin/schedule';
 import type {
   CreateSessionBody,
@@ -107,6 +107,7 @@ export function useCreateSession(callback?: MutationCallbacks) {
       queryClient.invalidateQueries({ queryKey: ['admin', 'sessionList'] });
       queryClient.invalidateQueries({ queryKey: ['admin', 'sessions'] });
       queryClient.invalidateQueries({ queryKey: ['admin', 'schedules'] });
+      toastSuccess('세션이 생성되었습니다');
       callback?.onSuccess?.();
     },
     onError: (error) => {
@@ -136,6 +137,7 @@ export function useUpdateSession(callback?: MutationCallbacks) {
       queryClient.invalidateQueries({ queryKey: ['admin', 'sessions'] });
       queryClient.invalidateQueries({ queryKey: ['admin', 'sessionDetail'] });
       queryClient.invalidateQueries({ queryKey: ['admin', 'schedules'] });
+      toastSuccess('세션이 수정되었습니다');
       callback?.onSuccess?.();
     },
     onError: (error) => {
@@ -168,6 +170,7 @@ export function useDeleteSession(callback?: MutationCallbacks) {
       queryClient.invalidateQueries({ queryKey: ['admin', 'sessionList'] });
       queryClient.invalidateQueries({ queryKey: ['admin', 'sessions'] });
       queryClient.invalidateQueries({ queryKey: ['admin', 'schedules'] });
+      toastSuccess('세션이 삭제되었습니다');
       callback?.onSuccess?.();
     },
     onError: (error) => {
@@ -199,6 +202,7 @@ export function useDeleteSessionGroup(callback?: MutationCallbacks) {
       queryClient.invalidateQueries({ queryKey: ['admin', 'sessionList'] });
       queryClient.invalidateQueries({ queryKey: ['admin', 'sessions'] });
       queryClient.invalidateQueries({ queryKey: ['admin', 'schedules'] });
+      toastSuccess('세션 그룹이 삭제되었습니다');
       callback?.onSuccess?.();
     },
     onError: (error) => {

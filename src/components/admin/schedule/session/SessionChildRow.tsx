@@ -4,8 +4,12 @@ import {
   AttendanceLink,
   MoreButton,
 } from '@/components/admin/schedule/session/SessionActionButtons';
-import { SESSION_TABLE_COLUMNS } from '@/components/admin/schedule/session/sessionTableColumns';
 import {
+  SESSION_CHILD_INDENT_CLASS,
+  SESSION_TABLE_COLUMNS,
+} from '@/components/admin/schedule/session/sessionTableColumns';
+import {
+  deriveChildSessionStatus,
   formatSessionDate,
   formatSessionDayLabel,
   formatSessionTimeRange,
@@ -21,11 +25,14 @@ interface SessionChildRowProps {
 }
 
 function SessionChildRow({ session, order, onManageAttendance, onMore }: SessionChildRowProps) {
+  const derivedStatus = deriveChildSessionStatus(session.status, session.start);
+
   return (
     <div className="flex h-10 w-full items-center">
       <div
         className={cn(
           'bg-container-neutral sticky left-0 z-10 flex items-center',
+          SESSION_CHILD_INDENT_CLASS,
           SESSION_TABLE_COLUMNS.titleSticky.widthClass,
         )}
       >
@@ -60,7 +67,7 @@ function SessionChildRow({ session, order, onManageAttendance, onMore }: Session
           SESSION_TABLE_COLUMNS.status.widthClass,
         )}
       >
-        <SessionStatusTag status={session.status} />
+        <SessionStatusTag status={derivedStatus} />
       </div>
       <div
         className={cn(
@@ -68,8 +75,9 @@ function SessionChildRow({ session, order, onManageAttendance, onMore }: Session
           SESSION_TABLE_COLUMNS.attendance.widthClass,
         )}
       >
-        <AttendanceLink onClick={() => onManageAttendance?.(session)} />
+        <AttendanceLink status={derivedStatus} onClick={() => onManageAttendance?.(session)} />
       </div>
+      <div className="flex-1" />
       <div
         className={cn('flex items-center justify-center', SESSION_TABLE_COLUMNS.more.widthClass)}
       >

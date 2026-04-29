@@ -78,7 +78,7 @@ export function getFirstDayOfMonth(year: number, month: number): number {
 export function formatDateDisplay(dateStr: string): string {
   if (!dateStr) return '';
   const [year, month, day] = dateStr.split('-');
-  return `${year}. ${month}. ${day}.`;
+  return `${year}. ${month}. ${day}`;
 }
 
 export function formatTimeDisplay(timeStr: string): string {
