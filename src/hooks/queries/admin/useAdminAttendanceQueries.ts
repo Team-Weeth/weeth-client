@@ -13,10 +13,10 @@ export function useAdminSessions(cardinal: number | null) {
   return useQuery({
     queryKey: ['admin', 'sessions', clubId, cardinal],
     queryFn: async () => {
-      const res = await adminAttendanceApi.getSessions(clubId!, cardinal!);
+      const res = await adminAttendanceApi.getSessions(clubId!, cardinal ?? undefined);
       return res.data.data;
     },
-    enabled: !!clubId && cardinal !== null,
+    enabled: !!clubId,
   });
 }
 
