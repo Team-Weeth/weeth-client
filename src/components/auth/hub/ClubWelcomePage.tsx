@@ -33,7 +33,12 @@ function ClubWelcomePage() {
   return (
     <div className="flex min-h-screen items-center justify-center px-400">
       <div className="flex w-full max-w-[520px] flex-col items-center gap-400">
-        <ClubAvatar size={64} src={clubProfileImageUrl} name={clubName ?? ''} />
+        <ClubAvatar
+          size={128}
+          src={clubProfileImageUrl}
+          name={clubName ?? '동아리'}
+          className="rounded-[32px] border-2"
+        />
         <h1 className="typo-h3 text-text-strong text-center">
           {name ? `${name}님, ` : ''}반가워요!
           <br />

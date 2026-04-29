@@ -65,7 +65,7 @@ export default function PublicHeader({ className, showAuthButtons = true }: Publ
               <InquiryDialog key={id}>
                 <button
                   type="button"
-                  className="typo-button1 cursor-pointer text-[#909599] transition-colors hover:text-black"
+                  className="typo-button1 cursor-pointer whitespace-nowrap text-[#909599] transition-colors hover:text-black"
                 >
                   {label}
                 </button>
@@ -74,7 +74,7 @@ export default function PublicHeader({ className, showAuthButtons = true }: Publ
               <Link
                 key={id}
                 href={href}
-                className="typo-button1 text-[#909599] transition-colors hover:text-black"
+                className="typo-button1 whitespace-nowrap text-[#909599] transition-colors hover:text-black"
               >
                 {label}
               </Link>
@@ -88,7 +88,7 @@ export default function PublicHeader({ className, showAuthButtons = true }: Publ
             href="/login"
             className={cn(
               buttonVariants({ variant: 'secondary', size: 'md' }),
-              'bg-[#E6EAED] text-black',
+              'bg-[#E6EAED] whitespace-nowrap text-black',
             )}
           >
             로그인
@@ -97,7 +97,7 @@ export default function PublicHeader({ className, showAuthButtons = true }: Publ
             href="/login?intent=create"
             className={cn(
               buttonVariants({ variant: 'primary', size: 'md' }),
-              'bg-[#00C8AA] text-white',
+              'bg-[#00C8AA] whitespace-nowrap text-white',
             )}
           >
             지금 무료로 시작하기
