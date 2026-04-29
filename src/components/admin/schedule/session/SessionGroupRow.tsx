@@ -43,11 +43,7 @@ function SessionGroupRow({
   const [expanded, setExpanded] = useState(true);
 
   // 그룹 시작/종료일과 오늘을 비교해 SCHEDULED / OPEN / COMPLETED 도출
-  const derivedGroupStatus = deriveSessionStatus(
-    group.status,
-    group.startDate,
-    group.endDate,
-  );
+  const derivedGroupStatus = deriveSessionStatus(group.status, group.startDate, group.endDate);
 
   return (
     <div className={cn('flex flex-col', bordered && 'border-line border-t')}>

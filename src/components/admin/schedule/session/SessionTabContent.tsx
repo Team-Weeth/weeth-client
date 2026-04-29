@@ -78,9 +78,7 @@ function SessionTabContent({
       {/* 세션 수정 모달 — mutation은 모달이 직접 소유 */}
       {editTarget && (
         <EditSessionModal
-          key={
-            'groupId' in editTarget.target ? editTarget.target.groupId : editTarget.target.id
-          }
+          key={'groupId' in editTarget.target ? editTarget.target.groupId : editTarget.target.id}
           open
           onOpenChange={(nextOpen) => {
             if (!nextOpen) setEditTarget(null);
