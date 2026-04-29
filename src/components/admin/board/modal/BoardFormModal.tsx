@@ -123,13 +123,13 @@ function BoardFormModal({
                 nameError && 'border-state-error border',
               )}
             />
-            <div className="flex h-8 items-center px-400">
+            <div className="flex h-8 items-center">
               {nameError ? (
                 <p className="typo-caption2 text-state-error">{nameError}</p>
               ) : (
-                <p className="typo-caption2 text-text-alternative">
-                  최대 {NAME_MAX}자 ({form.name.length}/{NAME_MAX})
-                </p>
+                <span className="typo-caption2 text-text-alternative ml-auto">
+                  {form.name.length}/{DESCRIPTION_MAX}
+                </span>
               )}
             </div>
           </BoardFormField>
@@ -148,13 +148,13 @@ function BoardFormModal({
                 descriptionError && 'border-state-error border',
               )}
             />
-            <div className="flex h-8 items-center px-400">
+            <div className="flex h-8 items-center">
               {descriptionError ? (
                 <p className="typo-caption2 text-state-error">{descriptionError}</p>
               ) : (
-                <p className="typo-caption2 text-text-alternative">
-                  최대 {DESCRIPTION_MAX}자 ({form.description.length}/{DESCRIPTION_MAX})
-                </p>
+                <span className="typo-caption2 text-text-alternative ml-auto">
+                  {form.description.length}/{DESCRIPTION_MAX}
+                </span>
               )}
             </div>
           </BoardFormField>

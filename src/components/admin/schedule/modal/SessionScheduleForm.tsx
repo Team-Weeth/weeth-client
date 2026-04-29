@@ -60,6 +60,7 @@ function SessionScheduleForm({
         value={form.title}
         onChange={(v) => onFormChange({ title: v })}
         placeholder="예 : 7기 정기 모임"
+        maxLength={30}
       />
 
       {/* 기수 */}
@@ -148,6 +149,7 @@ function SessionScheduleForm({
         value={form.location}
         onChange={(v) => onFormChange({ location: v })}
         placeholder="장소를 입력해주세요."
+        maxLength={30}
       />
 
       {/* 일정 설명 */}
@@ -156,6 +158,7 @@ function SessionScheduleForm({
         value={form.content}
         onChange={(v) => onFormChange({ content: v })}
         placeholder="일정에 대한 설명을 입력해주세요."
+        maxLength={500}
       />
     </div>
   );
