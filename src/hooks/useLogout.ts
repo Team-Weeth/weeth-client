@@ -1,11 +1,23 @@
 import { logoutAction } from '@/lib/actions/auth';
-import { useClubActions } from '@/stores/useClubStore';
+
+function clearClientCookies() {
+  document.cookie.split(';').forEach((cookie) => {
+    const name = cookie.split('=')[0]?.trim();
+    if (!name) return;
+
+    document.cookie = `${name}=; path=/; max-age=0; samesite=lax`;
+  });
+}
+
+function clearBrowserStorage() {
+  localStorage.clear();
+  sessionStorage.clear();
+  clearClientCookies();
+}
 
 export function useLogout() {
-  const { reset } = useClubActions();
-
   return async () => {
-    reset();
+    clearBrowserStorage();
     await logoutAction();
   };
 }
