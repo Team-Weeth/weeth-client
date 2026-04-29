@@ -49,7 +49,11 @@ export const useThemeStore = create<ThemeStore>()(
         return persistedState as ThemeStore;
       },
       onRehydrateStorage: () => (state) => {
-        state?.setHasHydrated(true);
+        if (state) {
+          state.setHasHydrated(true);
+        } else {
+          useThemeStore.setState({ hasHydrated: true });
+        }
       },
     },
   ),
