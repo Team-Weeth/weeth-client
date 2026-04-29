@@ -49,11 +49,9 @@ export default async function ClubPage({ params, searchParams }: ClubPageProps) 
       club = json.data;
     }
   } catch (error) {
+    console.error('Failed to load public club page:', error);
     errorTitle = '동아리 정보를 불러오지 못했어요.';
-    errorMessage =
-      error instanceof Error && error.message
-        ? error.message
-        : '동아리 정보를 불러오는 중 문제가 발생했어요.';
+    errorMessage = '동아리 정보를 불러오는 중 문제가 발생했어요.';
   }
 
   if (!club) {

@@ -8,8 +8,12 @@ import {
   REFRESH_COOKIE_OPTIONS,
 } from '@/lib/apis/cookies';
 
-function buildLoginResponse(appUrl: string) {
-  const response = NextResponse.redirect(new URL('/login', appUrl));
+function buildLoginResponse(appUrl: string, redirectPath?: string) {
+  const loginUrl = new URL('/login', appUrl);
+  if (redirectPath) {
+    loginUrl.searchParams.set('redirect', redirectPath);
+  }
+  const response = NextResponse.redirect(loginUrl);
   response.cookies.delete(ACCESS_TOKEN_KEY);
   response.cookies.delete(REFRESH_TOKEN_KEY);
   return response;
@@ -93,7 +97,7 @@ export async function POST() {
 }
 
 export async function GET(request: NextRequest) {
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? request.nextUrl.origin;
+  const appUrl = request.nextUrl.origin;
   const redirectPath = request.nextUrl.searchParams.get('redirect');
   const safeRedirect =
     redirectPath && redirectPath.startsWith('/') && !redirectPath.startsWith('//')
@@ -102,7 +106,7 @@ export async function GET(request: NextRequest) {
 
   try {
     if (!API_BASE_PATH) {
-      return buildLoginResponse(appUrl);
+      return buildLoginResponse(appUrl, safeRedirect);
     }
 
     const cookieStore = await cookies();
@@ -114,7 +118,7 @@ export async function GET(request: NextRequest) {
 
     if (!refreshToken) {
       console.log('[refresh-route][GET] missing refresh token');
-      return buildLoginResponse(appUrl);
+      return buildLoginResponse(appUrl, safeRedirect);
     }
 
     const response = await requestRefresh(refreshToken);
@@ -122,7 +126,7 @@ export async function GET(request: NextRequest) {
 
     if (!response.ok) {
       console.log('[refresh-route][GET] refresh failed -> cleared cookies, redirect login');
-      return buildLoginResponse(appUrl);
+      return buildLoginResponse(appUrl, safeRedirect);
     }
 
     const json = await response.json();
@@ -135,6 +139,6 @@ export async function GET(request: NextRequest) {
     return redirectResponse;
   } catch (error) {
     console.error('[refresh-route][GET] unexpected error', error);
-    return buildLoginResponse(appUrl);
+    return buildLoginResponse(appUrl, safeRedirect);
   }
 }
