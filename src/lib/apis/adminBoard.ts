@@ -46,7 +46,8 @@ export interface CreateBoardBody {
 }
 
 export interface UpdateBoardBody {
-  name: string;
+  /** 공지 게시판의 댓글 허용 토글 요청 시에는 제외하고 전송 */
+  name?: string;
   description: string;
   commentEnabled: boolean;
   writePermission: AdminBoardWritePermission;

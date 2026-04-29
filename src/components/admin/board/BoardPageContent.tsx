@@ -152,7 +152,7 @@ function BoardPageContent() {
       {
         boardId,
         body: {
-          name: target.name,
+          ...(target.kind === 'NOTICE' ? {} : { name: target.name }),
           description: target.description,
           commentEnabled: next,
           ...toApiPermission(target.visibility),
