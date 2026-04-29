@@ -29,9 +29,7 @@ export const useClubStore = create(
         partialize: (state) => ({
           ...(state.clubId ? { clubId: state.clubId } : {}),
           ...(state.clubName ? { clubName: state.clubName } : {}),
-          ...(state.clubProfileImageUrl
-            ? { clubProfileImageUrl: state.clubProfileImageUrl }
-            : {}),
+          ...(state.clubProfileImageUrl ? { clubProfileImageUrl: state.clubProfileImageUrl } : {}),
         }),
         merge: (persistedState, currentState) => {
           const persisted = (persistedState ?? {}) as Partial<ClubState>;
@@ -40,8 +38,7 @@ export const useClubStore = create(
             ...currentState,
             clubId: persisted.clubId ?? currentState.clubId,
             clubName: persisted.clubName ?? currentState.clubName,
-            clubProfileImageUrl:
-              persisted.clubProfileImageUrl ?? currentState.clubProfileImageUrl,
+            clubProfileImageUrl: persisted.clubProfileImageUrl ?? currentState.clubProfileImageUrl,
           };
         },
       },

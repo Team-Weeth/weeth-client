@@ -18,14 +18,14 @@ function UserHydrator({ userInfo, clubInfo, children }: UserHydratorProps) {
     const currentUser = useUserStore.getState();
     const currentClub = useClubStore.getState();
 
-    if (currentUser.id !== userInfo.id || currentUser.profileImageUrl !== userInfo.profileImageUrl) {
+    if (
+      currentUser.id !== userInfo.id ||
+      currentUser.profileImageUrl !== userInfo.profileImageUrl
+    ) {
       useUserStore.setState(userInfo, false, 'setUser');
     }
 
-    if (
-      currentClub.clubId !== clubInfo.clubId ||
-      currentClub.clubName !== clubInfo.clubName
-    ) {
+    if (currentClub.clubId !== clubInfo.clubId || currentClub.clubName !== clubInfo.clubName) {
       useClubStore.setState(clubInfo, false, 'setClub');
     }
   }, [clubInfo, userInfo]);
