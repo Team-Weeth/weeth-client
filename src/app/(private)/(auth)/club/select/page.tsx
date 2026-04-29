@@ -1,6 +1,7 @@
 import { redirect } from 'next/navigation';
 import { ClubList, HubProfile } from '@/components/auth/hub';
 import { apiServer } from '@/lib/apis/server';
+import { setClubCookie } from '@/lib/actions/club';
 import type { ApiResponse } from '@/types/common';
 import type { ClubDto } from '@/types/mypage';
 
@@ -10,6 +11,7 @@ export default async function ClubSelectPage() {
 
   if (clubs.length === 1) {
     const club = clubs[0];
+    await setClubCookie(club.id, club.name);
     redirect(`/${club.id}/home`);
   }
 

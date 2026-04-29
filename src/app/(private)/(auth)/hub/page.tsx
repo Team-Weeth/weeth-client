@@ -1,6 +1,9 @@
-import { unstable_rethrow } from 'next/navigation';
+import { redirect, unstable_rethrow } from 'next/navigation';
 import { HubActionCard, HubProfile } from '@/components/auth/hub';
 import { apiServer } from '@/lib/apis/server';
+import { setClubCookie } from '@/lib/actions/club';
+import type { ApiResponse } from '@/types/common';
+import type { ClubDto } from '@/types/mypage';
 
 type CardVariant = 'create' | 'join' | 'go';
 
@@ -29,6 +32,18 @@ export default async function HubPage({
     });
 
   const hasActiveClub = status?.data?.hasActiveClub ?? false;
+
+  if (hasActiveClub) {
+    const clubsRes = await apiServer.get<ApiResponse<ClubDto[]>>('/clubs');
+    const clubs = clubsRes?.data ?? [];
+
+    if (clubs.length === 1) {
+      const club = clubs[0];
+      await setClubCookie(club.id, club.name);
+      redirect(`/${club.id}/home`);
+    }
+  }
+
   if (hasActiveClub) goHref = '/club/select';
 
   if (intent === 'create') {
