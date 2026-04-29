@@ -113,6 +113,7 @@ function useNavigationGuard({ enabled }: UseNavigationGuardOptions) {
 
   const allowNavigation = () => {
     isLeaving.current = true;
+    pendingUrl.current = null;
   };
 
   return { open, onConfirm, onCancel, allowNavigation };
