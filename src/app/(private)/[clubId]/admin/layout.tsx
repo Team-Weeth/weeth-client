@@ -1,8 +1,10 @@
+import { redirect } from 'next/navigation';
 import type { ReactNode } from 'react';
 
 import { Header } from '@/components/admin/layout/Header';
 import { LNB } from '@/components/admin/layout/LNB';
 import { homeServerApi } from '@/lib/apis/home.server';
+import { ApiError } from '@/lib/apis/server';
 import { AdminScopeProvider, ClubIdSyncer } from '@/providers';
 import { UserHydrator } from '@/providers/user-hydrator';
 
@@ -15,7 +17,17 @@ export default async function AdminLayout({
 }>) {
   const { clubId } = await params;
 
-  const { data } = await homeServerApi.getDashboard(clubId);
+  let dashboard;
+  try {
+    dashboard = await homeServerApi.getDashboard(clubId);
+  } catch (error) {
+    if (error instanceof ApiError && error.status === 403) {
+      redirect(`/${clubId}/home`);
+    }
+    throw error;
+  }
+
+  const { data } = dashboard;
   const { userInfo } = data.myInfo;
   const { id: resolvedClubId, name: clubName } = data.club;
 
