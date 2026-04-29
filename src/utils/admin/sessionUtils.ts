@@ -1,4 +1,5 @@
 import { DAY_META } from '@/constants/shared/date';
+import type { SessionStatus } from '@/types/admin/session';
 
 const INVALID_DATE_FALLBACK = '-';
 
@@ -89,4 +90,16 @@ export function isSessionActiveToday(start: string, end: string): boolean {
   const now = new Date();
   const today = `${now.getFullYear()}-${pad2(now.getMonth() + 1)}-${pad2(now.getDate())}`;
   return startDate <= today && today <= endDate;
+}
+
+// 날짜 기준 status 도출:
+//  - COMPLETED / CANCELED는 서버 상태 유지 (종료/취소된 세션은 덮어쓰지 않음)
+//  - 그 외에는 오늘이 세션 날짜 범위 안이면 OPEN, 아니면 SCHEDULED
+export function deriveSessionStatusByDate(
+  status: SessionStatus,
+  start: string,
+  end: string,
+): SessionStatus {
+  if (status === 'COMPLETED' || status === 'CANCELED') return status;
+  return isSessionActiveToday(start, end) ? 'OPEN' : 'SCHEDULED';
 }

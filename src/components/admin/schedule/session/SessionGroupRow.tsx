@@ -39,6 +39,17 @@ function SessionGroupRow({
   const isRecurring = group.recurrenceType !== 'NONE';
   const [expanded, setExpanded] = useState(true);
 
+  // 하위 세션 중 오늘 진행되는 세션이 있으면 그룹도 진행 중으로 표시
+  const hasActiveSessionToday = group.sessions.some((s) =>
+    isSessionActiveToday(s.start, s.end),
+  );
+  const derivedGroupStatus =
+    group.status === 'COMPLETED' || group.status === 'CANCELED'
+      ? group.status
+      : hasActiveSessionToday
+        ? 'OPEN'
+        : 'SCHEDULED';
+
   return (
     <div className={cn('flex flex-col', bordered && 'border-line border-t')}>
       {/* summary row */}
@@ -115,7 +126,7 @@ function SessionGroupRow({
             SESSION_TABLE_COLUMNS.status.widthClass,
           )}
         >
-          <SessionStatusTag status={group.status} />
+          <SessionStatusTag status={derivedGroupStatus} />
         </div>
         <div
           className={cn(

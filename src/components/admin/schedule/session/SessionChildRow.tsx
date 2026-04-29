@@ -6,6 +6,7 @@ import {
 } from '@/components/admin/schedule/session/SessionActionButtons';
 import { SESSION_TABLE_COLUMNS } from '@/components/admin/schedule/session/sessionTableColumns';
 import {
+  deriveSessionStatusByDate,
   formatSessionDate,
   formatSessionDayLabel,
   formatSessionTimeRange,
@@ -61,7 +62,9 @@ function SessionChildRow({ session, order, onManageAttendance, onMore }: Session
           SESSION_TABLE_COLUMNS.status.widthClass,
         )}
       >
-        <SessionStatusTag status={session.status} />
+        <SessionStatusTag
+          status={deriveSessionStatusByDate(session.status, session.start, session.end)}
+        />
       </div>
       <div
         className={cn(
