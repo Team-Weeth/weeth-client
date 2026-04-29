@@ -18,6 +18,7 @@ import type {
 
 /** CLOSED 세션 포함 → force=true 재요청 동의 다이얼로그용 페이로드 */
 interface ForceConfirm {
+  title: string;
   description: string;
   actionLabel: string;
   retry: () => void;
@@ -61,6 +62,7 @@ function useSessionMutations() {
         onError: (error) => {
           if (!force && isSessionForceRequiredError(error)) {
             setForceConfirm({
+              title: '종료된 세션이 포함되어 있어요',
               description:
                 scope === 'THIS_AND_FUTURE'
                   ? '이후 일정 중 이미 종료된 세션도 함께 수정할까요?'
@@ -87,11 +89,12 @@ function useSessionMutations() {
         onError: (error) => {
           if (!force && isSessionForceRequiredError(error)) {
             setForceConfirm({
+              title: '출석 데이터가 있어요',
               description:
                 scope === 'THIS_AND_FUTURE'
-                  ? '이후 일정 중 이미 종료된 세션도 함께 삭제할까요?'
-                  : '이미 종료된 세션이에요. 그래도 삭제할까요?',
-              actionLabel: '모두 삭제',
+                  ? '이후 일정 중 출석 데이터가 있는 세션이 있어요.\n삭제하면 출석 데이터도 함께 사라져요.'
+                  : '출석 데이터가 있는 세션이에요. 그래도 삭제할까요?\n삭제하면 출석 데이터도 함께 사라져요.',
+              actionLabel: scope === 'THIS_AND_FUTURE' ? '모두 삭제' : '삭제',
               retry: () => submitDeleteSession(sessionId, scope, true, options),
             });
           }
@@ -108,7 +111,9 @@ function useSessionMutations() {
         onError: (error) => {
           if (!force && isSessionForceRequiredError(error)) {
             setForceConfirm({
-              description: '종료된 세션도 포함되어 있어요. 그래도 그룹 전체를 삭제할까요?',
+              title: '출석 데이터가 있어요',
+              description:
+                '출석 데이터가 있는 세션이 포함되어 있어요.\n삭제하면 출석 데이터도 함께 사라져요.',
               actionLabel: '모두 삭제',
               retry: () => submitDeleteGroup(groupId, true, options),
             });
@@ -124,7 +129,7 @@ function useSessionMutations() {
       onOpenChange={(open) => {
         if (!open) setForceConfirm(null);
       }}
-      title="종료된 세션이 포함되어 있어요"
+      title={forceConfirm?.title ?? ''}
       description={forceConfirm?.description ?? ''}
       actionLabel={forceConfirm?.actionLabel ?? '확인'}
       cancelLabel="취소"
