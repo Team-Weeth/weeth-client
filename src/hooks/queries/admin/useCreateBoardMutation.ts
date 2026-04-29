@@ -11,6 +11,7 @@ export function useCreateBoardMutation(callbacks?: MutationCallbacks<AxiosError>
   const queryClient = useQueryClient();
 
   return useMutation({
+    mutationKey: ['admin', 'board', 'create'],
     mutationFn: (body: CreateBoardBody) => {
       if (!clubId) throw new Error('clubId is required');
       return adminBoardApi.createBoard(clubId, body);

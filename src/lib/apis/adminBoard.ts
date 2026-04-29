@@ -46,8 +46,15 @@ export interface CreateBoardBody {
 }
 
 export interface UpdateBoardBody {
-  /** 공지 게시판의 댓글 허용 토글 요청 시에는 제외하고 전송 */
-  name?: string;
+  name: string;
+  description: string;
+  commentEnabled: boolean;
+  writePermission: AdminBoardWritePermission;
+  isPrivate: boolean;
+}
+
+/** 댓글 허용 토글 전용 body. 공지 게시판도 안전하게 PATCH 가능하도록 name 미포함 */
+export interface UpdateBoardCommentBody {
   description: string;
   commentEnabled: boolean;
   writePermission: AdminBoardWritePermission;
@@ -62,6 +69,9 @@ export const adminBoardApi = {
     apiClient.post<ApiResponse<AdminBoardDto>>(`/admin/clubs/${clubId}/boards`, body),
 
   updateBoard: (clubId: string, boardId: number, body: UpdateBoardBody) =>
+    apiClient.patch<ApiResponse<AdminBoardDto>>(`/admin/clubs/${clubId}/boards/${boardId}`, body),
+
+  updateBoardComment: (clubId: string, boardId: number, body: UpdateBoardCommentBody) =>
     apiClient.patch<ApiResponse<AdminBoardDto>>(`/admin/clubs/${clubId}/boards/${boardId}`, body),
 
   deleteBoard: (clubId: string, boardId: number) =>

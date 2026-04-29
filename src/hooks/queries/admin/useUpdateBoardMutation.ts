@@ -11,6 +11,7 @@ export function useUpdateBoardMutation(callbacks?: MutationCallbacks<AxiosError>
   const queryClient = useQueryClient();
 
   return useMutation({
+    mutationKey: ['admin', 'board', 'update'],
     mutationFn: ({ boardId, body }: { boardId: number; body: UpdateBoardBody }) => {
       if (!clubId) throw new Error('clubId is required');
       return adminBoardApi.updateBoard(clubId, boardId, body);

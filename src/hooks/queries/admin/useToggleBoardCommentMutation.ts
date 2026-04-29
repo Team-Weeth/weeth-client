@@ -1,23 +1,23 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import type { AxiosError } from 'axios';
 
-import { adminBoardApi } from '@/lib/apis/adminBoard';
+import { adminBoardApi, type UpdateBoardCommentBody } from '@/lib/apis/adminBoard';
 import { useClubId } from '@/stores';
 import type { MutationCallbacks } from '@/types/common';
 import { adminBoardQueryKeys } from './boardQueryKeys';
 
-export function useDeleteBoardMutation(callbacks?: MutationCallbacks<AxiosError>) {
+export function useToggleBoardCommentMutation(callbacks?: MutationCallbacks<AxiosError>) {
   const clubId = useClubId();
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationKey: ['admin', 'board', 'delete'],
-    mutationFn: (boardId: number) => {
+    mutationKey: ['admin', 'board', 'comment-toggle'],
+    mutationFn: ({ boardId, body }: { boardId: number; body: UpdateBoardCommentBody }) => {
       if (!clubId) throw new Error('clubId is required');
-      return adminBoardApi.deleteBoard(clubId, boardId);
+      return adminBoardApi.updateBoardComment(clubId, boardId, body);
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: adminBoardQueryKeys.list(clubId) });
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: adminBoardQueryKeys.list(clubId) });
       callbacks?.onSuccess?.();
     },
     onError: callbacks?.onError,

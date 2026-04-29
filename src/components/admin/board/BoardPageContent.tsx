@@ -27,6 +27,7 @@ import { useBoardDragReorder } from '@/hooks/admin';
 import { useAdminBoardsQuery } from '@/hooks/queries/admin/useAdminBoardsQuery';
 import { useCreateBoardMutation } from '@/hooks/queries/admin/useCreateBoardMutation';
 import { useUpdateBoardMutation } from '@/hooks/queries/admin/useUpdateBoardMutation';
+import { useToggleBoardCommentMutation } from '@/hooks/queries/admin/useToggleBoardCommentMutation';
 import { useDeleteBoardMutation } from '@/hooks/queries/admin/useDeleteBoardMutation';
 import { useUpdateBoardOrderMutation } from '@/hooks/queries/admin/useUpdateBoardOrderMutation';
 import { adminBoardQueryKeys } from '@/hooks/queries/admin/boardQueryKeys';
@@ -52,6 +53,17 @@ function compareFixedBoards(a: Board, b: Board) {
   return (ai === -1 ? FIXED_BOARD_ORDER.length : ai) - (bi === -1 ? FIXED_BOARD_ORDER.length : bi);
 }
 
+function handleNameMutationError(setNameError: (msg: string) => void) {
+  return (err: unknown) => {
+    const code = getApiErrorCode(err);
+    if (code === ADMIN_BOARD_ERROR.DUPLICATE_NAME) {
+      setNameError('같은 이름의 게시판이 이미 있어요.');
+    } else {
+      toastError(getApiErrorMessage(err));
+    }
+  };
+}
+
 function BoardPageContent() {
   const clubId = useClubId();
   const queryClient = useQueryClient();
@@ -62,6 +74,20 @@ function BoardPageContent() {
   const [editingBoardId, setEditingBoardId] = useState<number | null>(null);
   const [editNameError, setEditNameError] = useState<string | null>(null);
   const [pendingToggleIds, setPendingToggleIds] = useState<Set<number>>(() => new Set());
+
+  const addPendingToggle = (boardId: number) =>
+    setPendingToggleIds((prev) => {
+      const next = new Set(prev);
+      next.add(boardId);
+      return next;
+    });
+
+  const removePendingToggle = (boardId: number) =>
+    setPendingToggleIds((prev) => {
+      const next = new Set(prev);
+      next.delete(boardId);
+      return next;
+    });
   const mounted = useSyncExternalStore(
     subscribeMounted,
     () => true,
@@ -83,14 +109,7 @@ function BoardPageContent() {
       setCreateModalOpen(false);
       toastSuccess('게시판이 생성되었어요.');
     },
-    onError: (err) => {
-      const code = getApiErrorCode(err);
-      if (code === ADMIN_BOARD_ERROR.DUPLICATE_NAME) {
-        setCreateNameError('같은 이름의 게시판이 이미 있어요.');
-      } else {
-        toastError(getApiErrorMessage(err));
-      }
-    },
+    onError: handleNameMutationError(setCreateNameError),
   });
 
   const { mutate: updateBoard } = useUpdateBoardMutation({
@@ -98,14 +117,7 @@ function BoardPageContent() {
       setEditingBoardId(null);
       toastSuccess('게시판이 수정되었어요.');
     },
-    onError: (err) => {
-      const code = getApiErrorCode(err);
-      if (code === ADMIN_BOARD_ERROR.DUPLICATE_NAME) {
-        setEditNameError('같은 이름의 게시판이 이미 있어요.');
-      } else {
-        toastError(getApiErrorMessage(err));
-      }
-    },
+    onError: handleNameMutationError(setEditNameError),
   });
 
   const { mutate: deleteBoard } = useDeleteBoardMutation({
@@ -123,7 +135,7 @@ function BoardPageContent() {
     },
   });
 
-  const { mutate: toggleComment } = useUpdateBoardMutation({
+  const { mutate: toggleComment } = useToggleBoardCommentMutation({
     onSuccess: () => toastSuccess('댓글 허용 설정을 변경했어요.'),
     onError: (err) => toastError(getApiErrorMessage(err)),
   });
@@ -161,17 +173,12 @@ function BoardPageContent() {
       boards: prev.boards.map((b) => (b.boardId === boardId ? { ...b, commentEnabled: next } : b)),
     }));
 
-    setPendingToggleIds((prev) => {
-      const nextSet = new Set(prev);
-      nextSet.add(boardId);
-      return nextSet;
-    });
+    addPendingToggle(boardId);
 
     toggleComment(
       {
         boardId,
         body: {
-          ...(target.kind === 'NOTICE' ? {} : { name: target.name }),
           description: target.description,
           commentEnabled: next,
           ...toApiPermission(target.visibility),
@@ -181,13 +188,7 @@ function BoardPageContent() {
         onError: () => {
           queryClient.setQueryData(cacheKey, snapshot);
         },
-        onSettled: () => {
-          setPendingToggleIds((prev) => {
-            const nextSet = new Set(prev);
-            nextSet.delete(boardId);
-            return nextSet;
-          });
-        },
+        onSettled: () => removePendingToggle(boardId),
       },
     );
   };
@@ -238,6 +239,16 @@ function BoardPageContent() {
   const editingBoard =
     editingBoardId !== null ? (boards.find((b) => b.boardId === editingBoardId) ?? null) : null;
 
+  const getToggleProps = (board: Board) => ({
+    onToggleComments: (next: boolean) => handleToggleComments(board.boardId, next),
+    commentTogglePending: pendingToggleIds.has(board.boardId),
+  });
+
+  const getEditableProps = (board: Board) => ({
+    onEdit: () => setEditingBoardId(board.boardId),
+    onDelete: () => handleMoveToTrash(board),
+  });
+
   return (
     <div className="flex min-w-0 flex-col gap-400 p-700">
       <BoardToolbar
@@ -259,12 +270,7 @@ function BoardPageContent() {
             {fixedBoards.map((board, index) => (
               <Fragment key={board.boardId}>
                 {index > 0 && <div className="border-line w-full border-t" />}
-                <BoardCard
-                  board={board}
-                  draggable={false}
-                  onToggleComments={(next) => handleToggleComments(board.boardId, next)}
-                  commentTogglePending={pendingToggleIds.has(board.boardId)}
-                />
+                <BoardCard board={board} draggable={false} {...getToggleProps(board)} />
               </Fragment>
             ))}
           </div>
@@ -282,10 +288,8 @@ function BoardPageContent() {
                   key={board.boardId}
                   board={board}
                   draggable={false}
-                  onToggleComments={(next) => handleToggleComments(board.boardId, next)}
-                  commentTogglePending={pendingToggleIds.has(board.boardId)}
-                  onEdit={() => setEditingBoardId(board.boardId)}
-                  onDelete={() => handleMoveToTrash(board)}
+                  {...getToggleProps(board)}
+                  {...getEditableProps(board)}
                 />
               ))}
             </div>
@@ -305,10 +309,8 @@ function BoardPageContent() {
                     <SortableBoardCard
                       key={board.boardId}
                       board={board}
-                      onToggleComments={(next) => handleToggleComments(board.boardId, next)}
-                      commentTogglePending={pendingToggleIds.has(board.boardId)}
-                      onEdit={() => setEditingBoardId(board.boardId)}
-                      onDelete={() => handleMoveToTrash(board)}
+                      {...getToggleProps(board)}
+                      {...getEditableProps(board)}
                     />
                   ))}
                 </div>
