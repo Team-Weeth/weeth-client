@@ -1,3 +1,4 @@
+import { useTransition } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { createPost as createPostApi } from '@/lib/actions/board';
@@ -14,6 +15,7 @@ export function useCreatePost() {
   const { clubId: clubIdParam } = useParams<{ clubId: string }>();
   const clubId = useClubId();
   const queryClient = useQueryClient();
+  const [isNavigating, startTransition] = useTransition();
 
   const mutation = useMutation({
     mutationFn: async () => {
@@ -38,7 +40,9 @@ export function useCreatePost() {
       queryClient.invalidateQueries({ queryKey: ['home', 'recent-notices', clubId] });
       queryClient.invalidateQueries({ queryKey: ['home', 'unread-notice', clubId] });
       _allowNavigation?.();
-      router.push(buildPostPath(clubIdParam, result.id, result.boardId));
+      startTransition(() => {
+        router.push(buildPostPath(clubIdParam, result.id, result.boardId));
+      });
       usePostStore.getState().reset();
       toast({ title: '게시글이 작성되었습니다.', variant: 'success' });
     },
@@ -51,5 +55,5 @@ export function useCreatePost() {
     },
   });
 
-  return { createPost: () => mutation.mutate(), isPending: mutation.isPending };
+  return { createPost: () => mutation.mutate(), isPending: mutation.isPending || isNavigating };
 }
