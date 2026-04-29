@@ -16,6 +16,7 @@ export const useClubStore = create(
       combine(initialState, (set) => ({
         setClubId: (clubId: string) =>
           set({ clubId, clubName: null, clubProfileImageUrl: null }, false, 'setClubId'),
+        syncClubId: (clubId: string) => set({ clubId }, false, 'syncClubId'),
         setClub: (clubId: string, clubName: string, clubProfileImageUrl?: string | null) =>
           set(
             { clubId, clubName, clubProfileImageUrl: clubProfileImageUrl ?? null },
@@ -54,6 +55,7 @@ export const useClubActions = () =>
   useClubStore(
     useShallow((store) => ({
       setClubId: store.setClubId,
+      syncClubId: store.syncClubId,
       setClub: store.setClub,
       reset: store.reset,
     })),

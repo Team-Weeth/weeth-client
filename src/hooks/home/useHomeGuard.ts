@@ -10,7 +10,7 @@ export function useHomeGuard() {
   const router = useRouter();
   const { clubId: clubIdParam } = useParams<{ clubId: string }>();
   const clubId = useClubId();
-  const { reset, setClubId } = useClubActions();
+  const { reset, syncClubId } = useClubActions();
   const { error } = useHomeQuery();
 
   const hydrated = useSyncExternalStore(
@@ -23,7 +23,7 @@ export function useHomeGuard() {
     if (!hydrated) return;
 
     if (clubIdParam && clubId !== clubIdParam) {
-      setClubId(clubIdParam);
+      syncClubId(clubIdParam);
       return;
     }
 
@@ -31,7 +31,7 @@ export function useHomeGuard() {
       reset();
       router.replace('/hub');
     }
-  }, [hydrated, clubId, clubIdParam, reset, router, setClubId]);
+  }, [hydrated, clubId, clubIdParam, reset, router, syncClubId]);
 
   useEffect(() => {
     if (isAxiosError(error) && error.response?.status === 404) {
