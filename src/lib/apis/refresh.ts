@@ -56,15 +56,6 @@ async function requestTokenRefresh(refreshToken: string): Promise<RefreshedToken
   return result?.tokens ?? null;
 }
 
-async function buildRefreshResponsePreview(response: Response) {
-  try {
-    const raw = await response.clone().text();
-    return raw.length > 200 ? `${raw.slice(0, 200)}...` : raw;
-  } catch {
-    return '[unreadable response body]';
-  }
-}
-
 function clearAuthCookies(response: NextResponse) {
   response.cookies.delete(ACCESS_TOKEN_KEY);
   response.cookies.delete(REFRESH_TOKEN_KEY);
@@ -72,7 +63,6 @@ function clearAuthCookies(response: NextResponse) {
 }
 
 export {
-  buildRefreshResponsePreview,
   clearAuthCookies,
   requestTokenRefresh,
   requestTokenRefreshWithResponse,

@@ -46,13 +46,13 @@ async function redirectToRefresh(): Promise<never> {
   redirect(`/api/proxy/auth/refresh?redirect=${encodeURIComponent(redirectPath)}`);
 }
 
-async function refreshTokens(cookieStore: Awaited<ReturnType<typeof cookies>>): Promise<void> {
+async function refreshTokens(cookieStore: Awaited<ReturnType<typeof cookies>>): Promise<never> {
   const refreshToken = cookieStore.get(REFRESH_TOKEN_KEY)?.value;
 
   if (!refreshToken) {
     redirect('/login');
   }
-  await redirectToRefresh();
+  return redirectToRefresh();
 }
 
 async function request<T>(
@@ -63,7 +63,7 @@ async function request<T>(
   _retried = false,
 ): Promise<T> {
   const cookieStore = await cookies();
-  let accessToken =
+  const accessToken =
     cookieStore.get(ACCESS_TOKEN_KEY)?.value ??
     (process.env.NODE_ENV === 'development' ? process.env.DEV_ACCESS_TOKEN : undefined);
   const refreshToken = cookieStore.get(REFRESH_TOKEN_KEY)?.value;
@@ -72,7 +72,6 @@ async function request<T>(
   // doesn't incur an avoidable 401 -> retry round trip.
   if (!accessToken && refreshToken) {
     await refreshTokens(cookieStore);
-    accessToken = cookieStore.get(ACCESS_TOKEN_KEY)?.value;
   }
 
   const { params, ...fetchOptions } = options;

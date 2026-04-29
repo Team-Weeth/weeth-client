@@ -13,15 +13,10 @@ function ClubAccessPage({ club, loginHref }: ClubAccessPageProps) {
   return (
     <div className="flex min-h-screen flex-col items-center justify-center">
       <div className="flex w-full max-w-[414px] flex-col items-center gap-400 px-400">
-        <h1 className="typo-h3 text-text-strong text-center">
-          <span className="tablet:hidden">
-            이 사이트는
-            <br />
-            동아리 회원만 이용할 수 있어요.
-          </span>
-          <span className="tablet:inline hidden whitespace-nowrap">
-            이 사이트는 동아리 회원만 이용할 수 있어요.
-          </span>
+        <h1 className="typo-h3 text-text-strong tablet:whitespace-nowrap text-center">
+          이 사이트는
+          <br className="tablet:hidden" />
+          동아리 회원만 이용할 수 있어요.
         </h1>
         <Avatar size={128} type="square" className="border-line rounded-[32px] border-2">
           {club.profileImageUrl && (
