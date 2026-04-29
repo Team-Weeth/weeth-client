@@ -4,12 +4,12 @@ export type MemberStatus = 'ACTIVE' | 'INACTIVE' | 'BANNED';
 export interface MyMember {
   userId: number;
   clubMemberId: number;
-  name: string;
-  email: string;
+  name: string | null;
+  email: string | null;
   tel: string | null;
-  school: string;
-  department: string;
-  studentId: string;
+  school: string | null;
+  department: string | null;
+  studentId: string | null;
   cardinals: number[];
   memberRole: MemberRole;
   memberStatus: MemberStatus;
