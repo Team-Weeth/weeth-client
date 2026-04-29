@@ -12,27 +12,16 @@ interface SchoolInfoFieldsProps {
   control: Control<EditProfileFormData>;
   schools: string[];
   majors: string[];
-  schoolError?: string;
-  departmentError?: string;
 }
 
-function SchoolInfoFields({
-  control,
-  schools,
-  majors,
-  schoolError,
-  departmentError,
-}: SchoolInfoFieldsProps) {
+function SchoolInfoFields({ control, schools, majors }: SchoolInfoFieldsProps) {
   return (
     <div className="flex flex-col gap-400">
       <Controller
         name="school"
         control={control}
-        rules={{
-          validate: (value) => schools.includes(value) || '학교를 선택해주세요',
-        }}
         render={({ field, fieldState }) => (
-          <FormField label="학교" error={schoolError ?? fieldState.error?.message}>
+          <FormField label="학교" error={fieldState.error?.message}>
             <SearchSelect
               value={field.value ?? ''}
               onChange={field.onChange}
@@ -46,11 +35,8 @@ function SchoolInfoFields({
       <Controller
         name="department"
         control={control}
-        rules={{
-          validate: (value) => majors.includes(value) || '학과를 선택해주세요',
-        }}
         render={({ field, fieldState }) => (
-          <FormField label="학과" error={departmentError ?? fieldState.error?.message}>
+          <FormField label="학과" error={fieldState.error?.message}>
             <SearchSelect
               value={field.value ?? ''}
               onChange={field.onChange}

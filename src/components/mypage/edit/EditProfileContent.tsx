@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { isAxiosError } from 'axios';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
@@ -20,7 +20,7 @@ import {
 } from '@/components/ui';
 import { useNavigationGuard } from '@/hooks/useNavigationGuard';
 import { cn } from '@/lib/cn';
-import { editProfileSchema, type EditProfileFormData } from '@/lib/schemas/editProfile';
+import { createEditProfileSchema, type EditProfileFormData } from '@/lib/schemas/editProfile';
 import { useMyMemberQuery } from '@/hooks/queries/mypage/useMyMemberQuery';
 import { useUpdateProfileMutation } from '@/hooks/mutations/useUpdateProfileMutation';
 import { toastSuccess, toastError } from '@/stores/useToastStore';
@@ -42,6 +42,10 @@ function EditProfileContent({ className, schools, majors, ...props }: EditProfil
   const { mutate: updateProfile, isPending } = useUpdateProfileMutation();
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [resetToDefault, setResetToDefault] = useState(false);
+  const editProfileSchema = useMemo(
+    () => createEditProfileSchema({ schools, majors }),
+    [schools, majors],
+  );
 
   const {
     handleSubmit,
@@ -80,26 +84,21 @@ function EditProfileContent({ className, schools, majors, ...props }: EditProfil
     void trigger();
   }, [me, reset, trigger]);
 
+  useEffect(() => {
+    void trigger(['school', 'department']);
+  }, [editProfileSchema, trigger]);
+
   const name = useWatch({ control, name: 'name' });
   const [watchedPhone, watchedSchool, watchedDepartment, watchedStudentId] = useWatch({
     control,
     name: ['phone', 'school', 'department', 'studentId'],
   });
 
-  const isSchoolValid = !!watchedSchool && schools.includes(watchedSchool);
-  const isDepartmentValid = !!watchedDepartment && majors.includes(watchedDepartment);
-  const schoolError =
-    watchedSchool && !isSchoolValid ? '목록에 있는 학교를 선택해주세요' : undefined;
-  const departmentError =
-    watchedDepartment && !isDepartmentValid ? '목록에 있는 학과를 선택해주세요' : undefined;
-
   const hasRequiredFields = !!(
     watchedPhone &&
     watchedSchool &&
     watchedDepartment &&
-    watchedStudentId &&
-    isSchoolValid &&
-    isDepartmentValid
+    watchedStudentId
   );
   const hasChanges = isDirty || !!selectedFile || resetToDefault;
 
@@ -194,18 +193,12 @@ function EditProfileContent({ className, schools, majors, ...props }: EditProfil
           <div className="flex w-full max-w-[640px] flex-col gap-600">
             <div className="flex flex-col gap-500">
               <PersonalInfoFields control={control} />
-              <SchoolInfoFields
-                control={control}
-                schools={schools}
-                majors={majors}
-                schoolError={schoolError}
-                departmentError={departmentError}
-              />
+              <SchoolInfoFields control={control} schools={schools} majors={majors} />
             </div>
             <Button
               type="submit"
               size="lg"
-              disabled={isPending || !hasRequiredFields || !hasChanges || !isValid}
+              disabled={isPending || !hasRequiredFields || !isValid || !hasChanges}
               className="w-full"
             >
               {isPending ? '수정 중...' : '수정 완료'}
