@@ -12,6 +12,7 @@ export function useUpdateBoardOrderMutation(callbacks?: MutationCallbacks<AxiosE
   const queryClient = useQueryClient();
 
   return useMutation({
+    mutationKey: ['admin', 'boards', 'reorder', clubId],
     mutationFn: (boardIds: number[]) => {
       if (!clubId) throw new Error('clubId is required');
       return adminBoardApi.updateBoardOrder(clubId, boardIds);
