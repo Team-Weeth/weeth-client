@@ -91,11 +91,11 @@ function BoardCard({
 
       {/* Comment toggle */}
       <div className="desktop:flex hidden w-[88px] shrink-0 flex-col justify-center gap-100">
-        {commentEnabled !== null && (
+        {showCommentToggle && (
           <>
             <p className="typo-body2 text-text-alternative">댓글 허용</p>
             <Switch
-              checked={commentEnabled}
+              checked={commentEnabled ?? false}
               onCheckedChange={onToggleComments}
               disabled={!onToggleComments}
               aria-label="댓글 허용 토글"

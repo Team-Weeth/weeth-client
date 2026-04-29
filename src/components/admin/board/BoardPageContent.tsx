@@ -35,13 +35,21 @@ import { useClubId } from '@/stores';
 import { toastError } from '@/stores/useToastStore';
 import { toApiPermission } from '@/utils/admin/boardMapper';
 import { MAX_CUSTOM_BOARDS } from '@/constants/admin/board.constants';
-import type { Board, BoardListCache } from '@/types/admin/board';
+import type { Board, BoardKind, BoardListCache } from '@/types/admin/board';
 import type { BoardFormData } from '@/components/admin/board/modal/constants';
 import { SortableBoardCard } from './SortableBoardCard';
 import { BoardAdminSkeleton } from './BoardAdminSkeleton';
 
 function subscribeMounted() {
   return () => {};
+}
+
+const FIXED_BOARD_ORDER: BoardKind[] = ['ALL', 'NOTICE'];
+
+function compareFixedBoards(a: Board, b: Board) {
+  const ai = FIXED_BOARD_ORDER.indexOf(a.kind);
+  const bi = FIXED_BOARD_ORDER.indexOf(b.kind);
+  return (ai === -1 ? FIXED_BOARD_ORDER.length : ai) - (bi === -1 ? FIXED_BOARD_ORDER.length : bi);
 }
 
 function BoardPageContent() {
@@ -196,7 +204,7 @@ function BoardPageContent() {
     ? boards.filter((b) => b.name.toLowerCase().includes(query))
     : boards;
 
-  const fixedBoards = filteredBoards.filter((b) => !b.editable);
+  const fixedBoards = filteredBoards.filter((b) => !b.editable).sort(compareFixedBoards);
   const customBoards = filteredBoards.filter((b) => b.editable);
   const totalCustomCount = boards.filter((b) => b.editable).length;
   const reachedLimit = totalCustomCount >= MAX_CUSTOM_BOARDS;
