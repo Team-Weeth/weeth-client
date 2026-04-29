@@ -38,10 +38,11 @@ function DefaultActions() {
   const canWrite = (() => {
     if (!boards) return false;
     if (activeBoardId === null) {
-      return boards.some((b) => b.boardConfig?.canWrite !== false);
+      return boards.some((b) => b.boardConfig?.canWrite === true);
     }
     const activeBoard = boards.find((b) => b.id === activeBoardId);
-    return activeBoard?.boardConfig?.canWrite !== false;
+    if (!activeBoard) return false;
+    return activeBoard.boardConfig?.canWrite === true;
   })();
 
   return (
