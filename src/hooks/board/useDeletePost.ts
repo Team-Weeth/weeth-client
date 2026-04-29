@@ -18,9 +18,9 @@ export function useDeletePost() {
       await deletePostApi(clubId, boardId, postId);
       return postId;
     },
-    onSuccess: () => {
-      // 상세 쿼리를 즉시 제거해 삭제된 게시글 refetch로 인한 에러 깜빡임 방지
-      queryClient.removeQueries({ queryKey: ['posts', 'detail'] });
+    onSuccess: (_postId, { boardId, postId }) => {
+      // 삭제된 게시글의 상세 쿼리만 즉시 제거해 refetch로 인한 에러 깜빡임 방지
+      queryClient.removeQueries({ queryKey: ['posts', 'detail', clubId, boardId, postId] });
       toast({ title: '게시글이 삭제되었습니다.', variant: 'success' });
     },
     onError: (error) => {
