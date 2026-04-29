@@ -1,6 +1,6 @@
 'use client';
 
-import { useLayoutEffect, useRef } from 'react';
+import { useLayoutEffect } from 'react';
 
 import { useClubStore } from '@/stores/useClubStore';
 import { useUserStore } from '@/stores/useUserStore';
@@ -14,13 +14,20 @@ interface UserHydratorProps {
 }
 
 function UserHydrator({ userInfo, clubInfo, children }: UserHydratorProps) {
-  const hydrated = useRef(false);
-
   useLayoutEffect(() => {
-    if (hydrated.current) return;
-    useUserStore.setState(userInfo, false, 'setUser');
-    useClubStore.setState(clubInfo, false, 'setClub');
-    hydrated.current = true;
+    const currentUser = useUserStore.getState();
+    const currentClub = useClubStore.getState();
+
+    if (currentUser.id !== userInfo.id || currentUser.profileImageUrl !== userInfo.profileImageUrl) {
+      useUserStore.setState(userInfo, false, 'setUser');
+    }
+
+    if (
+      currentClub.clubId !== clubInfo.clubId ||
+      currentClub.clubName !== clubInfo.clubName
+    ) {
+      useClubStore.setState(clubInfo, false, 'setClub');
+    }
   }, [clubInfo, userInfo]);
 
   return children;

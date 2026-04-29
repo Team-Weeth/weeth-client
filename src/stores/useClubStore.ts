@@ -24,7 +24,27 @@ export const useClubStore = create(
           ),
         reset: () => set(initialState, false, 'reset'),
       })),
-      { name: 'clubId' },
+      {
+        name: 'clubId',
+        partialize: (state) => ({
+          ...(state.clubId ? { clubId: state.clubId } : {}),
+          ...(state.clubName ? { clubName: state.clubName } : {}),
+          ...(state.clubProfileImageUrl
+            ? { clubProfileImageUrl: state.clubProfileImageUrl }
+            : {}),
+        }),
+        merge: (persistedState, currentState) => {
+          const persisted = (persistedState ?? {}) as Partial<ClubState>;
+
+          return {
+            ...currentState,
+            clubId: persisted.clubId ?? currentState.clubId,
+            clubName: persisted.clubName ?? currentState.clubName,
+            clubProfileImageUrl:
+              persisted.clubProfileImageUrl ?? currentState.clubProfileImageUrl,
+          };
+        },
+      },
     ),
     { name: 'ClubStore' },
   ),
