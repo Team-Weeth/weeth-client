@@ -74,7 +74,7 @@ function EditSessionModalContent({
     useSessionMutations();
 
   const hasChanges = isFormChanged(form, initialForm);
-  const isValid = isScheduleTitleValid(form.title);
+  const isValid = isScheduleTitleValid(form.title) && isDateRangeValid(form);
 
   const updateForm = (patch: Partial<ScheduleFormState>) => {
     setForm((prev) => ({ ...prev, ...patch }));
