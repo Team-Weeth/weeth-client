@@ -15,7 +15,7 @@ function isGuardEntry() {
 
 /**
  * 브라우저 뒤로가기(popstate), 탭 닫기/새로고침(beforeunload),
- * 그리고 링크 클릭·프로그래매틱 네비게이션(router.push 등)을 가로채서 사용자에게 확인을 요청하는 훅.
+ * 그리고 링크 클릭을 가로채서 사용자에게 확인을 요청하는 훅.
  *
  * 반환값의 open / onConfirm / onCancel 을 AlertDialog에 바인딩하여 사용.
  */
@@ -75,46 +75,12 @@ function useNavigationGuard({ enabled }: UseNavigationGuardOptions) {
       setOpen(true);
     };
 
-    // pushState/replaceState 패치 — router.push() 등 프로그래매틱 네비게이션 감지
-    const originalPushState = history.pushState.bind(history);
-    const originalReplaceState = history.replaceState.bind(history);
-
-    const interceptNavigation = (
-      original: typeof history.pushState,
-      ...args: Parameters<typeof history.pushState>
-    ) => {
-      if (isLeaving.current) {
-        original(...args);
-        return;
-      }
-
-      const url = args[2];
-      if (!url) {
-        original(...args);
-        return;
-      }
-
-      const targetUrl = new URL(String(url), location.href);
-      if (targetUrl.origin !== location.origin || targetUrl.href === guardUrl.current) {
-        original(...args);
-        return;
-      }
-
-      pendingUrl.current = targetUrl.href;
-      setOpen(true);
-    };
-
-    history.pushState = (...args) => interceptNavigation(originalPushState, ...args);
-    history.replaceState = (...args) => interceptNavigation(originalReplaceState, ...args);
-
     // capture: true — Next.js Link 핸들러보다 먼저 실행
     document.addEventListener('click', handleClick, true);
     window.addEventListener('popstate', handlePopState);
     window.addEventListener('beforeunload', handleBeforeUnload);
 
     return () => {
-      history.pushState = originalPushState;
-      history.replaceState = originalReplaceState;
       document.removeEventListener('click', handleClick, true);
       window.removeEventListener('popstate', handlePopState);
       window.removeEventListener('beforeunload', handleBeforeUnload);
