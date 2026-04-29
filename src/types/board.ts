@@ -7,7 +7,12 @@ export type { FileStatus, FileItem, DisplayFile, CreatePostFile } from '@/types/
 
 export type BoardType = 'ALL' | 'NOTICE' | 'GENERAL';
 
-export type UserRole = 'USER' | 'ADMIN';
+export type UserRole = 'USER' | 'ADMIN' | 'LEAD';
+
+export interface BoardConfig {
+  canWrite: boolean;
+  canComment: boolean;
+}
 
 interface BoardBase {
   id: number | null;
@@ -16,10 +21,12 @@ interface BoardBase {
 
 export interface BoardNavItem extends BoardBase {
   label: string;
+  canWrite?: boolean;
 }
 
 export interface Board extends BoardBase {
   name: string;
+  boardConfig?: BoardConfig;
 }
 
 export interface PostAuthor {
@@ -34,11 +41,16 @@ export interface PostLike {
   likeCount: number;
 }
 
+/** 좋아요 API 응답 (boardId 포함) */
+export interface PostLikeResponse extends PostLike {
+  boardId: number;
+}
+
 interface PostBase {
   id: number;
   author: PostAuthor;
   boardId: number;
-  boardName?: string;
+  boardName: string;
   title: string;
   content: string;
   time: string;
@@ -49,6 +61,7 @@ interface PostBase {
 export interface PostListItem extends PostBase {
   fileUrls: FileItem[];
   isNew: boolean;
+  boardConfig?: BoardConfig;
 }
 
 export interface PostComment {
@@ -66,6 +79,7 @@ export interface PostDetail extends PostBase {
   isNew?: boolean;
   comments: PostComment[];
   fileUrls: FileItem[];
+  boardConfig?: BoardConfig;
 }
 
 /** 게시글 작성 요청 body */
@@ -78,6 +92,7 @@ export interface CreatePostBody {
 /** 게시글 작성 응답 data */
 export interface CreatePostData {
   id: number;
+  boardId: number;
 }
 
 /** 게시글 수정 요청 body — files: null=변경 없음, []=전체 삭제, 배열=교체 */
@@ -90,6 +105,7 @@ export interface UpdatePostBody {
 /** 게시글 수정 응답 data */
 export interface UpdatePostData {
   id: number;
+  boardId: number;
 }
 
 /** 댓글 작성 요청 body */

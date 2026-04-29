@@ -90,7 +90,7 @@ function HomeBoardContent() {
                 />
                 {isMyPost && (
                   <div className="relative z-10">
-                    <PostActionMenu postId={post.id} />
+                    <PostActionMenu postId={post.id} boardId={post.boardId} />
                   </div>
                 )}
               </PostCard.Header>
@@ -110,6 +110,7 @@ function HomeBoardContent() {
               <div className="relative z-10">
                 <PostCard.Actions
                   postId={post.id}
+                  boardId={post.boardId}
                   likeCount={post.like.likeCount}
                   isLiked={post.like.isLiked}
                   commentCount={post.commentCount}

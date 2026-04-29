@@ -45,24 +45,22 @@ function toBoardNavItem(board: {
   id: number | null;
   name: string;
   type: 'ALL' | 'NOTICE' | 'GENERAL';
+  boardConfig?: { canWrite: boolean; canComment: boolean };
 }): BoardNavItem {
-  return { id: board.id, label: board.name, type: board.type };
+  return {
+    id: board.id,
+    label: board.name,
+    type: board.type,
+    canWrite: board.boardConfig?.canWrite,
+  };
 }
 
-/** boardId가 있으면 /board/{boardId}/{postId}, 없으면 /board/posts/{postId} */
-function buildPostPath(clubId: string, postId: number, boardId?: number): string {
-  if (boardId != null) {
-    return `/${clubId}/board/${boardId}/${postId}`;
-  }
-  return `/${clubId}/board/posts/${postId}`;
+function buildPostPath(clubId: string, postId: number, boardId: number): string {
+  return `/${clubId}/board/${boardId}/${postId}`;
 }
 
-/** boardId가 있으면 /board/{boardId}, 없으면 /board */
-function buildBoardPath(clubId: string, boardId?: number): string {
-  if (boardId != null) {
-    return `/${clubId}/board/${boardId}`;
-  }
-  return `/${clubId}/board`;
+function buildBoardPath(clubId: string, boardId: number): string {
+  return `/${clubId}/board/${boardId}`;
 }
 
 export {

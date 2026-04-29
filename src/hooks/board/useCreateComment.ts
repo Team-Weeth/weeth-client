@@ -1,8 +1,9 @@
 import { commentApi } from '@/lib/apis/comment';
 import { useCommentMutation } from './useCommentMutation';
 
-export function useCreateComment(postId: number) {
+export function useCreateComment(boardId: number, postId: number) {
   const mutation = useCommentMutation({
+    boardId,
     postId,
     mutationFn: ({ content, parentCommentId }: { content: string; parentCommentId?: number }) =>
       commentApi.create(postId, { content, files: [], parentCommentId }),

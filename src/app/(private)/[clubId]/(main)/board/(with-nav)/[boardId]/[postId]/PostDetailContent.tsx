@@ -23,6 +23,9 @@ import { useSetActiveBoardId, useBoardTypeMap } from '@/stores/useBoardNavStore'
 import { useClubId } from '@/stores/useClubStore';
 import { useUserId } from '@/stores/useUserStore';
 import { boardApi } from '@/lib/apis/board';
+import { parseApiError } from '@/lib/error';
+import { BOARD_PAGE_ERRORS } from '@/constants/board/error';
+import { toastError } from '@/stores/useToastStore';
 import { buildBoardPath } from '@/lib/board';
 import type { PostDetail } from '@/types/board';
 
@@ -34,19 +37,23 @@ function PostDetailContent({ initialData }: PostDetailContentProps) {
   const router = useRouter();
   const { clubId: clubIdParam, boardId: boardIdParam } = useParams<{
     clubId: string;
-    boardId?: string;
+    boardId: string;
   }>();
   const currentUserId = useUserId();
   const clubId = useClubId();
   const setActiveBoardId = useSetActiveBoardId();
   const boardTypeMap = useBoardTypeMap();
 
-  const { data } = usePostDetailQuery(initialData.id, initialData);
+  const { data, isError, error } = usePostDetailQuery(
+    initialData.boardId,
+    initialData.id,
+    initialData,
+  );
   const currentPost = data ?? initialData;
 
-  const { createComment, isPending } = useCreateComment(currentPost.id);
-  const { updateComment } = useUpdateComment(currentPost.id);
-  const { deleteComment } = useDeleteComment(currentPost.id);
+  const { createComment, isPending } = useCreateComment(currentPost.boardId, currentPost.id);
+  const { updateComment } = useUpdateComment(currentPost.boardId, currentPost.id);
+  const { deleteComment } = useDeleteComment(currentPost.boardId, currentPost.id);
 
   const {
     activeReplyId,
@@ -61,6 +68,16 @@ function PostDetailContent({ initialData }: PostDetailContentProps) {
     onNavGuardConfirm,
     onNavGuardCancel,
   } = useReplyForm();
+
+  useEffect(() => {
+    if (!isError || !error) return;
+    const parsed = parseApiError(error);
+    const known = parsed ? BOARD_PAGE_ERRORS[parsed.code] : null;
+    if (known) {
+      toastError(known.message);
+      router.replace(`/${clubIdParam}/board`);
+    }
+  }, [isError, error, router, clubIdParam]);
 
   useEffect(() => {
     const hash = window.location.hash;
@@ -83,6 +100,7 @@ function PostDetailContent({ initialData }: PostDetailContentProps) {
   }, [clubId, currentPost.boardId, boardTypeMap]);
 
   const isPostAuthor = currentUserId !== null && currentPost.author.id === currentUserId;
+  const canComment = currentPost.boardConfig?.canComment ?? true;
   const imageFiles = currentPost.fileUrls
     .filter((f) => isImageFileByType(f.contentType))
     .map(toDisplayFile);
@@ -100,12 +118,13 @@ function PostDetailContent({ initialData }: PostDetailContentProps) {
           {isPostAuthor && (
             <PostActionMenu
               postId={currentPost.id}
-              onEdit={() => router.push(`/${clubIdParam}/board/edit/${currentPost.id}`)}
-              onDeleted={() =>
+              boardId={currentPost.boardId}
+              onEdit={() =>
                 router.push(
-                  buildBoardPath(clubIdParam, boardIdParam ? Number(boardIdParam) : undefined),
+                  `/${clubIdParam}/board/edit/${currentPost.id}?boardId=${currentPost.boardId}`,
                 )
               }
+              onDeleted={() => router.push(buildBoardPath(clubIdParam, currentPost.boardId))}
             />
           )}
         </PostCard.Header>
@@ -129,9 +148,11 @@ function PostDetailContent({ initialData }: PostDetailContentProps) {
 
         <PostCard.Actions
           postId={currentPost.id}
+          boardId={currentPost.boardId}
           likeCount={currentPost.like.likeCount}
           commentCount={currentPost.commentCount}
           isLiked={currentPost.like.isLiked}
+          canComment={canComment}
           onComment={() =>
             document.getElementById('comments')?.scrollIntoView({ behavior: 'smooth' })
           }
@@ -140,13 +161,13 @@ function PostDetailContent({ initialData }: PostDetailContentProps) {
 
       <div id="comments" className="self-stretch px-450 pt-200 pb-400">
         <CommentInput
-          placeholder="댓글을 입력하세요."
+          placeholder={canComment ? '댓글을 입력하세요.' : '댓글을 작성할 수 없는 게시판입니다.'}
           onSubmit={async (v) => {
             await createComment(v);
             return true;
           }}
           onValueChange={(v) => setIsCommentDirty(v.trim().length > 0)}
-          disabled={isPending}
+          disabled={!canComment || isPending}
         />
       </div>
 
@@ -164,7 +185,10 @@ function PostDetailContent({ initialData }: PostDetailContentProps) {
                   key={comment.id}
                   {...mapped}
                   replyOpen={activeReplyId === comment.id}
-                  onReplyToggle={() => handleReplyToggle(comment.id)}
+                  onReplyToggle={() => {
+                    if (!canComment) return;
+                    handleReplyToggle(comment.id);
+                  }}
                   onReplySuccess={forceCloseReply}
                   onReplyDirtyChange={setIsReplyDirty}
                   replies={mapped.replies.map((reply) => ({
@@ -176,6 +200,7 @@ function PostDetailContent({ initialData }: PostDetailContentProps) {
                     onDelete: () => deleteComment(reply.id),
                   }))}
                   onReply={async (content) => {
+                    if (!canComment) return false;
                     await createComment(content, comment.id);
                     return true;
                   }}

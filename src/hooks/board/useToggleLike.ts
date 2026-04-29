@@ -12,6 +12,7 @@ import type { AxiosResponse } from 'axios';
 
 interface UseToggleLikeParams {
   postId: number;
+  boardId: number;
   initialIsLiked?: boolean;
   initialLikeCount?: number;
 }
@@ -68,19 +69,22 @@ function updateHomePages(
 
 function useToggleLike({
   postId,
+  boardId,
   initialIsLiked = false,
   initialLikeCount = 0,
 }: UseToggleLikeParams) {
   const clubId = useClubId();
   const queryClient = useQueryClient();
 
-  const detailKey = ['posts', 'detail', clubId, postId] as const;
+  const detailKey = ['posts', 'detail', clubId, boardId, postId] as const;
   const listKey = ['posts', clubId] as const;
   const homePostsKey = ['home', 'recent-posts', clubId] as const;
 
   const mutation = useMutation({
     mutationFn: (wasLiked: boolean) =>
-      wasLiked ? boardApi.removeLike(clubId!, postId) : boardApi.addLike(clubId!, postId),
+      wasLiked
+        ? boardApi.removeLike(clubId!, boardId, postId)
+        : boardApi.addLike(clubId!, boardId, postId),
     onMutate: async () => {
       await Promise.all([
         queryClient.cancelQueries({ queryKey: detailKey }),

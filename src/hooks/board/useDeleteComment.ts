@@ -1,8 +1,9 @@
 import { commentApi } from '@/lib/apis/comment';
 import { useCommentMutation } from './useCommentMutation';
 
-export function useDeleteComment(postId: number) {
+export function useDeleteComment(boardId: number, postId: number) {
   const mutation = useCommentMutation({
+    boardId,
     postId,
     mutationFn: (commentId: number) => commentApi.delete(postId, commentId),
     successMessage: '댓글이 삭제되었습니다.',
