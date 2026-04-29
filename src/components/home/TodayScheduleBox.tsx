@@ -47,7 +47,7 @@ export function TodayScheduleBox() {
           <p className="typo-sub3 text-text-strong">{data.title}</p>
           <ChipList>
             <Chip shape="round">{formatDateWithTimeRange(data.start!, data.end!)}</Chip>
-            <Chip shape="round">{data.location}</Chip>
+            {data.location && <Chip shape="round">{data.location}</Chip>}
           </ChipList>
           {checkInError && (
             <div className="flex items-center justify-between">

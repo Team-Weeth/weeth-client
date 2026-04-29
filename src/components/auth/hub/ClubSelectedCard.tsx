@@ -13,7 +13,7 @@ function ClubSelectedCard({ club, onRemove }: ClubSelectedCardProps) {
       <div className="flex items-center gap-400">
         <ClubAvatar size={56} src={club.profileImageUrl} name={club.name} />
         <div className="flex flex-col gap-0.5">
-          <span className="typo-sub2 text-text-strong">{club.name}</span>
+          <span className="typo-sub3 text-text-strong">{club.name}</span>
           <span className="typo-body2 text-text-alternative">{club.description}</span>
         </div>
       </div>

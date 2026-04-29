@@ -16,6 +16,7 @@ interface ClubCreatingPageProps {
 }
 
 type Status = 'idle' | 'requesting' | 'api-done' | 'navigated';
+const HOME_TUTORIAL_PENDING_KEY = 'home-tutorial-pending-club-id';
 
 function ClubCreatingPage({ onCancel }: ClubCreatingPageProps) {
   const router = useRouter();
@@ -28,8 +29,9 @@ function ClubCreatingPage({ onCancel }: ClubCreatingPageProps) {
   const navigate = () => {
     if (status === 'navigated' || !clubIdRef.current) return;
     setStatus('navigated');
+    window.sessionStorage.setItem(HOME_TUTORIAL_PENDING_KEY, clubIdRef.current);
     resetDraft();
-    router.replace(`/${clubIdRef.current}/home?onboarding=club-created`);
+    router.replace(`/${clubIdRef.current}/home`);
   };
 
   const progress = useProgressAnimation({

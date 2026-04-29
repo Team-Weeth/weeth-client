@@ -8,22 +8,27 @@ import { useToggleLike } from '@/hooks/board/useToggleLike';
 interface PostCardActionsProps {
   className?: string;
   postId: number;
+  boardId: number;
   likeCount?: number;
   commentCount?: number;
   isLiked?: boolean;
+  canComment?: boolean;
   onComment?: () => void;
 }
 
 function PostCardActions({
   className,
   postId,
+  boardId,
   likeCount: initialLikeCount = 0,
   commentCount = 0,
   isLiked: initialIsLiked = false,
+  canComment = true,
   onComment,
 }: PostCardActionsProps) {
   const { isLiked, likeCount, toggleLike } = useToggleLike({
     postId,
+    boardId,
     initialIsLiked,
     initialLikeCount,
   });
@@ -43,15 +48,17 @@ function PostCardActions({
         />
         <span className="typo-caption2 text-text-alternative">{likeCount}</span>
       </button>
-      <button
-        type="button"
-        aria-label="댓글"
-        className="focus-visible:outline-ring flex cursor-pointer items-center gap-100 rounded-sm hover:opacity-70 focus-visible:outline-2 focus-visible:outline-offset-2"
-        onClick={onComment}
-      >
-        <Icon src={ChatIcon} size={17} className="text-icon-alternative" />
-        <span className="typo-caption2 text-text-alternative">{commentCount}</span>
-      </button>
+      {canComment && (
+        <button
+          type="button"
+          aria-label="댓글"
+          className="focus-visible:outline-ring flex cursor-pointer items-center gap-100 rounded-sm hover:opacity-70 focus-visible:outline-2 focus-visible:outline-offset-2"
+          onClick={onComment}
+        >
+          <Icon src={ChatIcon} size={17} className="text-icon-alternative" />
+          <span className="typo-caption2 text-text-alternative">{commentCount}</span>
+        </button>
+      )}
     </div>
   );
 }

@@ -7,13 +7,22 @@
 export const BOARD_PAGE_ERRORS: Record<number, { message: string; retryable: boolean }> = {
   20400: { message: '검색 결과가 없습니다', retryable: false },
   20401: { message: '유효하지 않은 페이지입니다', retryable: false },
+  20403: { message: '존재하지 않는 게시판입니다.', retryable: false },
+  20404: { message: '존재하지 않는 게시글입니다.', retryable: false },
 };
 
 /** 액션 에러 — 토스트로 처리 */
 export const BOARD_ACTION_ERRORS: Record<number, string> = {
   20402: '해당 카테고리에 대한 권한이 없습니다',
+  20403: '존재하지 않는 게시판입니다.',
+  20404: '존재하지 않는 게시글입니다.',
+  20405: '게시글 작성자만 수정/삭제할 수 있습니다.',
+  20406: '공지 게시판이 아닙니다.',
+  20407: '해당 클럽에 속한 게시판이 아닙니다.',
   20409: '이미 존재하는 게시판 이름입니다',
   20413: '잠시 후 다시 시도해주세요',
+  20416: '잠시 후 다시 시도해주세요.',
+  29000: '올바르지 않은 Token 입니다.',
 };
 
 /**
