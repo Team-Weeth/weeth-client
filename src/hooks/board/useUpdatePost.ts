@@ -44,9 +44,9 @@ export function useUpdatePost() {
       queryClient.invalidateQueries({ queryKey: ['home', 'unread-notice', clubId] });
       toast({ title: '게시글이 수정되었습니다.', variant: 'success' });
       _allowNavigation?.();
-      setTimeout(() => {
+      startTransition(() => {
         router.push(buildPostPath(clubIdParam, result.id, result.boardId));
-      }, 0);
+      });
       usePostStore.getState().reset();
     },
     onError: (error) => {
