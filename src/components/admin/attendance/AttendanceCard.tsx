@@ -10,6 +10,7 @@ import {
   Button,
   Icon,
   Badge,
+  Skeleton,
 } from '@/components/ui';
 import type { AttendanceMember } from '@/types/admin/attendance';
 import { cn } from '@/lib/cn';
@@ -27,6 +28,7 @@ interface AttendanceCardProps extends React.HTMLAttributes<HTMLDivElement> {
   onDirtyChange?: (dirty: boolean) => void;
   onExpand?: () => void;
   isSaving?: boolean;
+  isMembersLoading?: boolean;
   defaultExpanded?: boolean;
 }
 
@@ -40,6 +42,7 @@ function AttendanceCard({
   onDirtyChange,
   onExpand,
   isSaving = false,
+  isMembersLoading = false,
   defaultExpanded = false,
   ...props
 }: AttendanceCardProps) {
@@ -156,7 +159,19 @@ function AttendanceCard({
           <AttendanceTableRow isEditing={isEditing} position="top" />
 
           {/* Member rows */}
-          {filteredMembers.length > 0 ? (
+          {isMembersLoading ? (
+            Array.from({ length: 5 }, (_, i) => (
+              <div key={i} className="border-line flex border-r border-b border-l">
+                <div className="flex min-w-0 flex-1 flex-col gap-200 px-400 py-300">
+                  <Skeleton className="h-[20px] w-24 rounded-sm" />
+                  <Skeleton className="h-[16px] w-40 rounded-sm" />
+                </div>
+                <div className="border-line flex w-[158px] items-center justify-center border-l">
+                  <Skeleton className="h-[20px] w-16 rounded-sm" />
+                </div>
+              </div>
+            ))
+          ) : filteredMembers.length > 0 ? (
             filteredMembers.map((member) => (
               <AttendanceMemberRow
                 key={member.id}
