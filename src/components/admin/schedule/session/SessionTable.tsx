@@ -69,7 +69,7 @@ function SessionTable({
         ) : (
           groups.map((group, index) => (
             <SessionGroupRow
-              key={group.groupId}
+              key={group.groupId ?? `single-${group.sessions[0]?.id ?? index}`}
               group={group}
               bordered={index > 0}
               onManageAttendance={onManageAttendance}
