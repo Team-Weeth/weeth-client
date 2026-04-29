@@ -99,7 +99,7 @@ function MemberTable({
                 <Icon
                   src={hasAnySelected ? AdminCheckboxIcon : AdminUncheckboxIcon}
                   alt={hasAnySelected ? '선택됨' : '선택 안됨'}
-                  size={24}
+                  size={20}
                 />
               </button>
             </TableHead>
@@ -133,7 +133,7 @@ function MemberTable({
                   <Icon
                     src={selectedIds.has(member.id) ? AdminCheckboxIcon : AdminUncheckboxIcon}
                     alt={selectedIds.has(member.id) ? '선택됨' : '선택 안됨'}
-                    size={24}
+                    size={20}
                   />
                 </button>
               </TableCell>
