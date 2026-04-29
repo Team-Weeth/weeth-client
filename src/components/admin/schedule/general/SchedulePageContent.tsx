@@ -34,7 +34,17 @@ function SchedulePageContent() {
     next: handleNextMonth,
   } = useMonthNavigator();
   const [searchValue, setSearchValue] = useState('');
-  const [activeTab, setActiveTab] = useState<ScheduleTab>('all');
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const activeTab: ScheduleTab = searchParams.get('tab') === 'session' ? 'session' : 'all';
+  const handleTabChange = (value: string) => {
+    const params = new URLSearchParams(searchParams);
+    if (value === 'session') params.set('tab', 'session');
+    else params.delete('tab');
+    const query = params.toString();
+    router.replace(query ? `${pathname}?${query}` : pathname, { scroll: false });
+  };
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [createModalTab, setCreateModalTab] = useState<ScheduleType>('EVENT');
   const [editTarget, setEditTarget] = useState<Schedule | null>(null);
@@ -95,11 +105,7 @@ function SchedulePageContent() {
       />
 
       {/* Tabs */}
-      <Tabs
-        value={activeTab}
-        onValueChange={(v) => setActiveTab(v as ScheduleTab)}
-        className="gap-0"
-      >
+      <Tabs value={activeTab} onValueChange={handleTabChange} className="gap-0">
         <TabsList variant="line" className="h-8">
           <TabsTrigger value="all">전체 일정</TabsTrigger>
           <TabsTrigger value="session">세션</TabsTrigger>
