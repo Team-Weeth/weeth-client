@@ -7,4 +7,6 @@ export const cardinalApi = {
     apiClient.get<ApiResponse<Cardinal[]>>(`/clubs/${clubId}/cardinals`),
   createCardinal: (clubId: string, body: CreateCardinalBody) =>
     apiClient.post(`/admin/clubs/${clubId}/cardinals`, body),
+  setCurrentCardinal: (clubId: string, cardinalId: number) =>
+    apiClient.patch(`/admin/clubs/${clubId}/cardinals/${cardinalId}`),
 };

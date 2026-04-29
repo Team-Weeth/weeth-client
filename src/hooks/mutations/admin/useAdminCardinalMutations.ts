@@ -17,3 +17,18 @@ export function useCreateCardinal() {
     },
   });
 }
+
+export function useSetCurrentCardinal() {
+  const clubId = useClubId();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (cardinalId: number) => {
+      if (!clubId) throw new Error('clubId가 없습니다');
+      return cardinalApi.setCurrentCardinal(clubId!, cardinalId);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['cardinals', clubId] });
+    },
+  });
+}

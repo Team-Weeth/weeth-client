@@ -22,6 +22,7 @@ const cardinalCardVariants = cva(
 interface CardinalCardProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement>, VariantProps<typeof cardinalCardVariants> {
   title: string;
+  endIcon?: React.ReactNode;
   ref?: React.Ref<HTMLButtonElement>;
 }
 
@@ -29,6 +30,7 @@ function CardinalCard({
   className,
   variant,
   title,
+  endIcon,
   ref,
   type = 'button',
   ...props
@@ -37,10 +39,11 @@ function CardinalCard({
     <button
       ref={ref}
       type={type}
-      className={cn(cardinalCardVariants({ variant }), className)}
+      className={cn(cardinalCardVariants({ variant }), endIcon && 'gap-100', className)}
       {...props}
     >
       {title}
+      {endIcon}
     </button>
   );
 }

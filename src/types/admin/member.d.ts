@@ -5,7 +5,6 @@ export interface Member {
   clubMemberId: number;
   name: string;
   email: string;
-  role: string;
   department: string;
   cardinal: string; // 활동기수 전체, e.g. "1, 2"
   phone: string;

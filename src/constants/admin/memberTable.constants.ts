@@ -9,21 +9,14 @@ export const STATUS_BAR_COLOR: Record<MemberStatus, string> = {
 
 export const COLUMNS: { label: string; key: keyof Member }[] = [
   { label: '이름', key: 'name' },
-  { label: '역할', key: 'role' },
   { label: '학과', key: 'department' },
   { label: '기수', key: 'cardinal' },
   { label: '전화번호', key: 'phone' },
   { label: '학번', key: 'studentId' },
-  { label: '직급', key: 'position' },
+  { label: '역할', key: 'position' },
   { label: '출석', key: 'attendance' },
   { label: '결석', key: 'absence' },
 ];
-
-export const STATUS_LEGEND = [
-  { label: '활동중', color: 'bg-brand-primary' },
-  { label: '추방', color: 'bg-state-error' },
-  { label: '탈퇴', color: 'bg-text-alternative' },
-] as const;
 
 export type SortBy = 'cardinal' | 'name';
 

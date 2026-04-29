@@ -48,7 +48,7 @@ export default function Footer({ isSmall = false }: FooterProps) {
               서비스 소개
             </a>
             <Link href={`/${clubId}/admin`} className="typo-body2 text-text-alternative">
-              관리자 서비스
+              운영진 서비스
             </Link>
             <a href="mailto:contact@weeth.kr" className="typo-body2 text-text-alternative">
               문의 메일

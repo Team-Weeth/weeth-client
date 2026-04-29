@@ -1,32 +1,32 @@
 'use client';
 
 import { useState } from 'react';
-import { isAxiosError } from 'axios';
 
 import {
-  AddCardinalButton,
-  AddCardinalModal,
-  CardinalCard,
+  CardinalPillList,
   MemberDetailModal,
   MemberSearchBar,
   MemberTable,
   MemberTopBar,
 } from '@/components/admin';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, Card } from '@/components/ui';
-import { MEMBER_CARDINAL_ERROR_CODE } from '@/constants/errorCode';
-import { useDragScroll } from '@/hooks';
-import type { Member } from '@/types/admin/member';
+import { MEMBER_CARDINAL_ERROR_CODE, MEMBER_ROLE_ERROR_CODE } from '@/constants/errorCode';
+import type { ClubMemberRole, Member } from '@/types/admin/member';
 import { useAdminMembers } from '@/hooks/queries/admin';
 import { useCardinals } from '@/hooks/queries';
+import { useUserRole } from '@/stores';
 import {
   useBanMember,
   useChangeMemberCardinals,
   useChangeMemberRole,
-  useCreateCardinal,
   useRestoreMember,
+  useTransferLead,
 } from '@/hooks/mutations/admin';
 import { toastError, toastSuccess } from '@/stores/useToastStore';
 import { getBulkBanAction, getBulkTargetRole } from '@/utils/admin/memberBulkActions';
+import { parseCardinals } from '@/utils/admin/parseCardinals';
+import { getApiErrorCode } from '@/utils/shared';
+import { runBulkMutation } from '@/utils/shared/runBulkMutation';
 
 interface ForceConfirmState {
   clubMemberIds: number[];
@@ -38,13 +38,14 @@ function MemberPageContent() {
   const [searchValue, setSearchValue] = useState('');
   const [detailMemberId, setDetailMemberId] = useState<string | null>(null);
   const [selectedCardinal, setSelectedCardinal] = useState<number | 'all'>('all');
-  const { ref: dragScrollRef, onMouseDown } = useDragScroll();
   const { data: members = [] } = useAdminMembers();
   const { data: cardinals = [] } = useCardinals();
-  const { mutate: changeMemberRole } = useChangeMemberRole();
-  const { mutate: banMember } = useBanMember();
-  const { mutate: restoreMember } = useRestoreMember();
-  const { mutate: createCardinal } = useCreateCardinal();
+  const { mutateAsync: changeMemberRoleAsync } = useChangeMemberRole();
+  const { mutateAsync: banMemberAsync } = useBanMember();
+  const { mutateAsync: restoreMemberAsync } = useRestoreMember();
+  const { mutate: transferLead } = useTransferLead();
+  const myRole = useUserRole();
+  const isLead = myRole === 'LEAD';
   const { mutateAsync: changeMemberCardinalsAsync } = useChangeMemberCardinals();
   const [forceConfirm, setForceConfirm] = useState<ForceConfirmState | null>(null);
 
@@ -59,12 +60,7 @@ function MemberPageContent() {
   const cardinalFilteredMembers =
     selectedCardinal === 'all'
       ? members
-      : members.filter((m) =>
-          m.cardinal
-            .split(',')
-            .map((c) => c.trim())
-            .includes(String(selectedCardinal)),
-        );
+      : members.filter((m) => parseCardinals(m.cardinal).includes(String(selectedCardinal)));
 
   const query = searchValue.trim().toLowerCase();
   const filteredMembers = query
@@ -101,8 +97,7 @@ function MemberPageContent() {
 
     results.forEach((result, idx) => {
       if (result.status !== 'rejected') return;
-      const err = result.reason;
-      const code = isAxiosError(err) ? err.response?.data?.code : undefined;
+      const code = getApiErrorCode(result.reason);
       if (code === MEMBER_CARDINAL_ERROR_CODE.REMOVAL_HAS_ATTENDANCE) {
         attendanceFailedIds.push(clubMemberIds[idx]);
       } else {
@@ -123,6 +118,31 @@ function MemberPageContent() {
     toastSuccess('기수가 변경되었습니다.');
   };
 
+  const submitChangeRole = (clubMemberIds: number[], memberRole: ClubMemberRole) =>
+    runBulkMutation(
+      clubMemberIds.map((clubMemberId) => ({ clubMemberId, memberRole })),
+      changeMemberRoleAsync,
+      { success: '권한이 변경되었습니다.', error: '권한 변경에 실패했습니다.' },
+      (errors) => {
+        const isLeadTransferOnly = errors.some(
+          (err) => getApiErrorCode(err) === MEMBER_ROLE_ERROR_CODE.LEAD_TRANSFER_ONLY,
+        );
+        return isLeadTransferOnly ? '리더는 이양을 통해서만 변경할 수 있습니다.' : undefined;
+      },
+    );
+
+  const submitBan = (clubMemberIds: number[]) =>
+    runBulkMutation(clubMemberIds, banMemberAsync, {
+      success: '추방되었습니다.',
+      error: '추방에 실패했습니다.',
+    });
+
+  const submitRestore = (clubMemberIds: number[]) =>
+    runBulkMutation(clubMemberIds, restoreMemberAsync, {
+      success: '복구되었습니다.',
+      error: '복구에 실패했습니다.',
+    });
+
   const handleChangeCardinalsForDetail = (cardinalIds: number[]) => {
     if (!detailMember) return;
     submitCardinalsChange([detailMember.clubMemberId], cardinalIds);
@@ -135,6 +155,19 @@ function MemberPageContent() {
     );
   };
 
+  const handleTransferLead = (clubMemberId: number) => {
+    transferLead(clubMemberId, {
+      onSuccess: () => toastSuccess('리더로 변경되었습니다.'),
+      onError: (err) => {
+        if (getApiErrorCode(err) === MEMBER_ROLE_ERROR_CODE.ONLY_LEAD_CAN_TRANSFER) {
+          toastError('리더만 권한을 이양할 수 있습니다.');
+        } else {
+          toastError('리더 변경에 실패했습니다.');
+        }
+      },
+    });
+  };
+
   const handleForceConfirm = () => {
     if (!forceConfirm) return;
     const { clubMemberIds, cardinalIds } = forceConfirm;
@@ -143,7 +176,7 @@ function MemberPageContent() {
   };
 
   return (
-    <div className="flex min-w-3xl flex-col">
+    <div className="flex min-w-0 flex-col">
       {/* Selection top bar */}
       <MemberTopBar
         className="sticky top-0 z-10 -mt-15"
@@ -154,53 +187,37 @@ function MemberPageContent() {
         onChangeRole={
           targetRole
             ? () =>
-                selectedMembers.forEach((m) =>
-                  changeMemberRole({ clubMemberId: m.clubMemberId, memberRole: targetRole }),
+                submitChangeRole(
+                  selectedMembers.map((m) => m.clubMemberId),
+                  targetRole,
                 )
             : undefined
         }
         onBan={
           targetBanAction === 'ban'
-            ? () => selectedMembers.forEach((m) => banMember(m.clubMemberId))
+            ? () => submitBan(selectedMembers.map((m) => m.clubMemberId))
             : undefined
         }
         onRestore={
           targetBanAction === 'restore'
-            ? () => selectedMembers.forEach((m) => restoreMember(m.clubMemberId))
+            ? () => submitRestore(selectedMembers.map((m) => m.clubMemberId))
             : undefined
         }
         onChangeCardinals={handleChangeCardinalsForBulk}
+        onTransferLead={
+          isLead && selectedCount === 1
+            ? () => handleTransferLead(selectedMembers[0].clubMemberId)
+            : undefined
+        }
       />
 
       {/* Main content */}
       <div className="flex flex-col gap-400 p-700">
-        {/* Cardinal pills */}
-        <div
-          ref={dragScrollRef}
-          className="scrollbar-none flex cursor-grab items-center gap-200 overflow-x-auto select-none active:cursor-grabbing"
-          onMouseDown={onMouseDown}
-        >
-          <CardinalCard
-            variant={selectedCardinal === 'all' ? 'active' : 'normal'}
-            title="전체"
-            onClick={() => setSelectedCardinal('all')}
-          />
-          {cardinals.map((c) => (
-            <CardinalCard
-              key={c.id}
-              variant={selectedCardinal === c.cardinalNumber ? 'active' : 'normal'}
-              title={`${c.cardinalNumber}기`}
-              onClick={() => setSelectedCardinal(c.cardinalNumber)}
-            />
-          ))}
-          <AddCardinalModal
-            onSubmit={({ cardinal, isCurrent }) =>
-              createCardinal({ cardinalNumber: cardinal, inProgress: isCurrent })
-            }
-          >
-            <AddCardinalButton />
-          </AddCardinalModal>
-        </div>
+        <CardinalPillList
+          cardinals={cardinals}
+          selectedCardinal={selectedCardinal}
+          onSelectCardinal={setSelectedCardinal}
+        />
 
         {/* Search bar */}
         <Card>
@@ -225,17 +242,20 @@ function MemberPageContent() {
           if (!open) setDetailMemberId(null);
         }}
         member={detailMember}
-        onBan={detailMember ? () => banMember(detailMember.clubMemberId) : undefined}
-        onRestore={detailMember ? () => restoreMember(detailMember.clubMemberId) : undefined}
+        onBan={detailMember ? () => submitBan([detailMember.clubMemberId]) : undefined}
+        onRestore={detailMember ? () => submitRestore([detailMember.clubMemberId]) : undefined}
         onChangeRole={
           detailMember
             ? () => {
                 const nextRole = detailMember.memberRole === 'ADMIN' ? 'USER' : 'ADMIN';
-                changeMemberRole({ clubMemberId: detailMember.clubMemberId, memberRole: nextRole });
+                submitChangeRole([detailMember.clubMemberId], nextRole);
               }
             : undefined
         }
         onChangeCardinals={detailMember ? handleChangeCardinalsForDetail : undefined}
+        onTransferLead={
+          isLead && detailMember ? () => handleTransferLead(detailMember.clubMemberId) : undefined
+        }
       />
 
       {/* 출석 기록이 있는 기수 삭제 확인 */}

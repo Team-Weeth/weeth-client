@@ -17,6 +17,7 @@ export {
   type ChangeCardinalsModalProps,
 } from './member/modal/ChangeCardinalsModal';
 export { CardinalCard, cardinalCardVariants, type CardinalCardProps } from './member/CardinalCard';
+export { CardinalPillList, type CardinalPillListProps } from './member/CardinalPillList';
 export { MemberDetailModal, type MemberDetailModalProps } from './member/modal/MemberDetailModal';
 export { MemberPageContent } from './member/MemberPageContent';
 export { MemberSearchBar, type MemberSearchBarProps } from './member/MemberSearchBar';

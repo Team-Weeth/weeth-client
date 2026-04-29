@@ -72,7 +72,7 @@ export default function Header({ isMain = true }: HeaderProps) {
           <div className="flex items-center justify-center gap-200">
             <button
               type="button"
-              aria-label="관리자 페이지로 이동"
+              aria-label="운영진 페이지로 이동"
               onClick={() => router.push(`/${clubId}/admin`)}
               className="flex cursor-pointer items-center justify-center rounded-full"
             >
