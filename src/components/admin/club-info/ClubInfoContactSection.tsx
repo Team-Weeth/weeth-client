@@ -32,7 +32,7 @@ function ClubInfoContactSection({
       title="연락처"
       titleGapClassName="mt-[58px]"
       contentClassName="gap-0"
-      className="pb-[70px]"
+      className="pb-[40px]"
     >
       <div className="flex flex-col gap-400">
         <FieldBlock label="대표 전화번호" error={phoneError}>

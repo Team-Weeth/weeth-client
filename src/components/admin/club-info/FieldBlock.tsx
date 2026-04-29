@@ -7,8 +7,8 @@ interface FieldBlockProps {
 
 function FieldBlock({ label, helper, error, children }: FieldBlockProps) {
   return (
-    <div className="flex flex-col gap-300">
-      <span className="typo-caption1 text-text-normal">{label}</span>
+    <div className="flex flex-col gap-400">
+      <span className="typo-caption1 text-text-normal px-400">{label}</span>
       {children}
       {error ? (
         <span className="typo-caption2 text-state-error">{error}</span>

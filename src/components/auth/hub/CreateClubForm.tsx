@@ -60,6 +60,8 @@ function CreateClubForm({ schoolNames, schoolLoadError = false }: CreateClubForm
 
   const contactType = useWatch({ control, name: 'contactType' });
   const email = useWatch({ control, name: 'email' });
+  const clubName = useWatch({ control, name: 'name' });
+  const description = useWatch({ control, name: 'description' });
   const hasValidEmail = Boolean(email?.trim()) && !errors.email;
   const isEmailContactDisabled = !hasValidEmail;
 
@@ -143,19 +145,49 @@ function CreateClubForm({ schoolNames, schoolLoadError = false }: CreateClubForm
         </FormFieldWrapper>
 
         {/* 동아리 이름 */}
-        <FormFieldWrapper label="동아리 이름" error={errors.name?.message}>
-          <Input {...register('name')} clearable className="typo-body1 rounded-lg px-400 py-300" />
+        <FormFieldWrapper label="동아리 이름">
+          <Input
+            {...register('name')}
+            clearable
+            clearButtonClassName="text-icon-alternative"
+            maxLength={30}
+            className="typo-body1 rounded-lg px-400 py-300"
+          />
+          <div className="grid min-h-4 grid-cols-[minmax(0,1fr)_auto] items-start gap-200">
+            <div className="min-w-0">
+              {errors.name?.message ? (
+                <span className="typo-caption2 text-state-error block truncate">
+                  {errors.name.message}
+                </span>
+              ) : null}
+            </div>
+            <span className="typo-caption2 text-text-alternative shrink-0 text-right">
+              {(clubName ?? '').length}/30
+            </span>
+          </div>
         </FormFieldWrapper>
 
         {/* 동아리 소개 */}
-        <FormFieldWrapper label="동아리 소개" error={errors.description?.message}>
+        <FormFieldWrapper label="동아리 소개">
           <Input
             {...register('description')}
             maxLength={30}
             clearable
+            clearButtonClassName="text-icon-alternative"
             className="typo-body1 rounded-lg px-400 py-300"
           />
-          <span className="typo-caption2 text-text-alternative">30자 제한</span>
+          <div className="grid min-h-4 grid-cols-[minmax(0,1fr)_auto] items-start gap-200">
+            <div className="min-w-0">
+              {errors.description?.message ? (
+                <span className="typo-caption2 text-state-error block truncate">
+                  {errors.description.message}
+                </span>
+              ) : null}
+            </div>
+            <span className="typo-caption2 text-text-alternative shrink-0 text-right">
+              {(description ?? '').length}/30
+            </span>
+          </div>
         </FormFieldWrapper>
 
         {/* 동아리 기수 */}

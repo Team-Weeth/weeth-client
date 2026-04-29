@@ -81,7 +81,7 @@ function AttendanceHistoryContent({ summary, errorMessage }: AttendanceHistoryCo
           <div className="bg-container-neutral flex flex-col gap-400 rounded-lg p-400">
             <div className="flex gap-200">
               <StatBox label="정기 모임" value={`${total ?? 0}회`} />
-              <StatBox label="출석" value={`${attendanceCount ?? 0}회`} />
+              <StatBox label="세션" value={`${attendanceCount ?? 0}회`} />
               <StatBox label="결석" value={`${absenceCount ?? 0}회`} />
             </div>
 
