@@ -9,6 +9,7 @@ import {
   formatSessionDate,
   formatSessionDayLabel,
   formatSessionTimeRange,
+  isSessionActiveToday,
 } from '@/utils/admin/sessionUtils';
 import type { AdminSession } from '@/types/admin/session';
 
@@ -68,7 +69,10 @@ function SessionChildRow({ session, order, onManageAttendance, onMore }: Session
           SESSION_TABLE_COLUMNS.attendance.widthClass,
         )}
       >
-        <AttendanceLink onClick={() => onManageAttendance?.(session)} />
+        <AttendanceLink
+          onClick={() => onManageAttendance?.(session)}
+          disabled={!isSessionActiveToday(session.start, session.end)}
+        />
       </div>
       <div
         className={cn('flex items-center justify-center', SESSION_TABLE_COLUMNS.more.widthClass)}

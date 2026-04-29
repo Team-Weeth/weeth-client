@@ -79,3 +79,14 @@ export function formatSessionTime(dateString: string): string {
 export function formatSessionTimeRange(start: string, end: string): string {
   return `${formatSessionTime(start)} ~ ${formatSessionTime(end)}`;
 }
+
+// 오늘 날짜(로컬)가 세션 시작일~종료일 범위 안에 있는지 (시각 무관, 그날 하루 전체 기준)
+export function isSessionActiveToday(start: string, end: string): boolean {
+  const startDate = start.split('T')[0];
+  const endDate = end.split('T')[0];
+  if (!startDate || !endDate) return false;
+
+  const now = new Date();
+  const today = `${now.getFullYear()}-${pad2(now.getMonth() + 1)}-${pad2(now.getDate())}`;
+  return startDate <= today && today <= endDate;
+}

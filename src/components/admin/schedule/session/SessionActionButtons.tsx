@@ -1,12 +1,25 @@
+import { cn } from '@/lib/cn';
 import { Icon } from '@/components/ui';
 import { ArrowRightIcon, MoreHorizIcon } from '@/assets/icons';
 
-function AttendanceLink({ onClick }: { onClick?: () => void }) {
+function AttendanceLink({
+  onClick,
+  disabled = false,
+}: {
+  onClick?: () => void;
+  disabled?: boolean;
+}) {
   return (
     <button
       type="button"
       onClick={onClick}
-      className="text-text-alternative flex cursor-pointer items-center gap-100 rounded-sm py-200"
+      disabled={disabled}
+      className={cn(
+        'flex items-center gap-100 rounded-sm py-200',
+        disabled
+          ? 'text-text-disabled cursor-not-allowed'
+          : 'text-text-alternative cursor-pointer',
+      )}
     >
       <span className="typo-button2">출석 관리</span>
       <Icon src={ArrowRightIcon} alt="출석 관리" size={8} />

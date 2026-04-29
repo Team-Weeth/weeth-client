@@ -11,7 +11,11 @@ import {
   MoreButton,
 } from '@/components/admin/schedule/session/SessionActionButtons';
 import { SESSION_TABLE_COLUMNS } from '@/components/admin/schedule/session/sessionTableColumns';
-import { formatSessionDate, formatSessionDateRange } from '@/utils/admin/sessionUtils';
+import {
+  formatSessionDate,
+  formatSessionDateRange,
+  isSessionActiveToday,
+} from '@/utils/admin/sessionUtils';
 import type { AdminSession, AdminSessionGroup } from '@/types/admin/session';
 import { AdminToggleOpenIcon } from '@/assets/icons/admin';
 
@@ -120,7 +124,12 @@ function SessionGroupRow({
           )}
         >
           {!isRecurring && group.sessions[0] && (
-            <AttendanceLink onClick={() => onManageAttendance?.(group.sessions[0])} />
+            <AttendanceLink
+              onClick={() => onManageAttendance?.(group.sessions[0])}
+              disabled={
+                !isSessionActiveToday(group.sessions[0].start, group.sessions[0].end)
+              }
+            />
           )}
         </div>
         <div

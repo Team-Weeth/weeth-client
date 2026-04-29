@@ -1,6 +1,7 @@
 'use client';
 
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, Card } from '@/components/ui';
 import { CardinalDropdown } from '@/components/admin';
@@ -54,6 +55,21 @@ function AttendancePageContent() {
   const cardinalNumber = activeCardinal?.cardinalNumber ?? null;
   const { sessions } = useFlattenedSessions(cardinalNumber);
 
+  const searchParams = useSearchParams();
+  const targetSessionIdParam = searchParams.get('sessionId');
+  const targetSessionId = targetSessionIdParam ? Number(targetSessionIdParam) : null;
+  const targetCardRef = useRef<HTMLDivElement | null>(null);
+  const hasScrolledRef = useRef(false);
+
+  useEffect(() => {
+    if (hasScrolledRef.current) return;
+    if (targetSessionId === null) return;
+    if (!sessions.some((s) => s.id === targetSessionId)) return;
+
+    targetCardRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    hasScrolledRef.current = true;
+  }, [sessions, targetSessionId]);
+
   return (
     <div className="flex min-w-3xl flex-col gap-400 p-700">
       <CardinalDropdown
@@ -64,16 +80,21 @@ function AttendancePageContent() {
 
       {sessions.length > 0 ? (
         <Card className="mt-400 gap-400 px-600 pt-600 pb-[64px]">
-          {sessions.map((session) => (
-            <AttendanceSessionCard
-              key={session.id}
-              sessionId={session.id}
-              date={formatKoreanDate(new Date(session.start))}
-              title={session.title}
-              isCurrentWeek={session.isCurrentWeek}
-              onDirtyChange={handleDirtyChange}
-            />
-          ))}
+          {sessions.map((session) => {
+            const isTarget = session.id === targetSessionId;
+            return (
+              <div key={session.id} ref={isTarget ? targetCardRef : undefined}>
+                <AttendanceSessionCard
+                  sessionId={session.id}
+                  date={formatKoreanDate(new Date(session.start))}
+                  title={session.title}
+                  isCurrentWeek={session.isCurrentWeek}
+                  defaultExpanded={isTarget}
+                  onDirtyChange={handleDirtyChange}
+                />
+              </div>
+            );
+          })}
         </Card>
       ) : (
         <Card className="mt-400 flex items-center justify-center px-600 py-800">

@@ -14,6 +14,7 @@ import { SessionTabContent } from '@/components/admin/schedule/session/SessionTa
 import { CreateScheduleModal } from '@/components/admin/schedule/modal/CreateScheduleModal';
 import { EditScheduleModal } from '@/components/admin/schedule/modal/EditScheduleModal';
 import { EditSessionModal } from '@/components/admin/schedule/modal/EditSessionModal';
+import { useClubId } from '@/stores';
 import { useCardinalSelector, useMonthNavigator } from '@/hooks';
 import { useSessionMutations } from '@/hooks/admin';
 import {
@@ -25,6 +26,7 @@ import type { Schedule, ScheduleType } from '@/types/admin/schedule';
 type ScheduleTab = 'all' | 'session';
 
 function SchedulePageContent() {
+  const clubId = useClubId();
   const { cardinals, selectedCardinalId, setSelectedCardinalId, activeCardinal } =
     useCardinalSelector({ autoSelectLatest: true });
   const {
@@ -160,6 +162,9 @@ function SchedulePageContent() {
         <TabsContent value="session" className="mt-400">
           <SessionTabContent
             onCreateSession={() => openCreateModal('SESSION')}
+            onManageAttendance={(session) =>
+              router.push(`/${clubId}/admin/attendance?sessionId=${session.id}`)
+            }
             cardinalNumber={
               selectedCardinalId === null ? null : (activeCardinal?.cardinalNumber ?? null)
             }

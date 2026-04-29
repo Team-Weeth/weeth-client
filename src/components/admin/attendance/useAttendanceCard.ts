@@ -10,10 +10,18 @@ interface UseAttendanceCardParams {
   members: AttendanceMember[];
   onSave?: (updates: { id: number; status: 'ATTEND' | 'ABSENT' }[]) => void | Promise<void>;
   onDirtyChange?: (dirty: boolean) => void;
+  defaultExpanded?: boolean;
 }
 
-function useAttendanceCard({ members, onSave, onDirtyChange }: UseAttendanceCardParams) {
-  const [cardState, setCardState] = useState<CardState>('collapsed');
+function useAttendanceCard({
+  members,
+  onSave,
+  onDirtyChange,
+  defaultExpanded = false,
+}: UseAttendanceCardParams) {
+  const [cardState, setCardState] = useState<CardState>(
+    defaultExpanded ? 'expanded' : 'collapsed',
+  );
   const [searchQuery, setSearchQuery] = useState('');
   const [editStatuses, setEditStatuses] = useState<Map<number, 'ATTEND' | 'ABSENT'>>(new Map());
 
