@@ -11,7 +11,7 @@ function useAttendanceQR(clubId: string | null, sessionId: number) {
   useEffect(() => {
     if (!qrData || !qrRef.current) return;
 
-    const checkInUrl = `${window.location.origin}/attendance?sessionId=${qrData.sessionId}&code=${qrData.code}`;
+    const checkInUrl = `${window.location.origin}/${clubId}/attendance?sessionId=${qrData.sessionId}&code=${qrData.code}`;
 
     if (!qrCodeRef.current) {
       const dotColor = getComputedStyle(document.documentElement)
@@ -33,7 +33,7 @@ function useAttendanceQR(clubId: string | null, sessionId: number) {
     } else {
       qrCodeRef.current.update({ data: checkInUrl });
     }
-  }, [qrData]);
+  }, [qrData, clubId]);
 
   return { qrRef, qrData, isLoading };
 }
