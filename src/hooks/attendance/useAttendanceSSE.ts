@@ -8,10 +8,13 @@ const MAX_RETRY_DELAY = 30000;
 const MAX_RETRY_COUNT = 10;
 
 type Listener = () => void;
+type QRStatus = 'qr-none' | 'qr-open' | 'qr-close' | null;
 
 interface SSEConnection {
   subscriberCount: number;
+  status: QRStatus;
   expiredAt: string | null;
+  currentEvent: string;
   listeners: Set<Listener>;
   controller: AbortController | null;
   retryTimer: ReturnType<typeof setTimeout> | undefined;
@@ -27,7 +30,9 @@ function getOrCreateConnection(clubId: string): SSEConnection {
 
   const conn: SSEConnection = {
     subscriberCount: 0,
+    status: null,
     expiredAt: null,
+    currentEvent: '',
     listeners: new Set(),
     controller: null,
     retryTimer: undefined,
@@ -44,6 +49,8 @@ function notify(conn: SSEConnection) {
 function scheduleRetry(clubId: string, conn: SSEConnection) {
   if (conn.retryCount >= MAX_RETRY_COUNT) return;
 
+  clearTimeout(conn.retryTimer);
+
   const delay = Math.min(1000 * 2 ** conn.retryCount, MAX_RETRY_DELAY);
   conn.retryCount++;
   conn.retryTimer = setTimeout(() => connect(clubId, conn), delay);
@@ -51,11 +58,23 @@ function scheduleRetry(clubId: string, conn: SSEConnection) {
 
 function processSSEText(text: string, buffer: string, conn: SSEConnection): string {
   const combined = buffer + text;
-  const lines = combined.split('\n');
+  const lines = combined.split(/\r?\n/);
   // 마지막 줄은 불완전할 수 있으므로 버퍼에 보관
   const remaining = lines.pop() ?? '';
 
   for (const line of lines) {
+    // SSE event: 필드
+    if (line.startsWith('event:')) {
+      conn.currentEvent = line.slice(6).trim();
+      continue;
+    }
+
+    // 빈 줄 = 이벤트 경계, currentEvent 초기화
+    if (line === '') {
+      conn.currentEvent = '';
+      continue;
+    }
+
     if (!line.startsWith('data:')) continue;
 
     const jsonStr = line.slice(5).trim();
@@ -63,14 +82,30 @@ function processSSEText(text: string, buffer: string, conn: SSEConnection): stri
 
     try {
       const parsed = JSON.parse(jsonStr) as {
-        data?: { expiredAt?: string };
-      };
+        expiredAt?: string;
+      } | null;
 
-      if (parsed.data?.expiredAt) {
-        conn.expiredAt = parsed.data.expiredAt;
+      const eventType = conn.currentEvent as QRStatus;
+
+      if (eventType === 'qr-open' && parsed?.expiredAt) {
+        conn.status = 'qr-open';
+        conn.expiredAt = parsed.expiredAt;
+        notify(conn);
+      } else if (eventType === 'qr-none') {
+        conn.status = 'qr-none';
+        conn.expiredAt = null;
+        notify(conn);
+      } else if (eventType === 'qr-close') {
+        conn.status = 'qr-close';
+        conn.expiredAt = null;
+        notify(conn);
+      } else if (parsed?.expiredAt) {
+        conn.expiredAt = parsed.expiredAt;
         notify(conn);
       }
+
       conn.retryCount = 0;
+      conn.currentEvent = '';
     } catch {
       // ignore parse errors
     }
@@ -144,7 +179,7 @@ function subscribe(clubId: string, conn: SSEConnection, listener: Listener) {
   conn.listeners.add(listener);
   conn.subscriberCount++;
 
-  if (conn.subscriberCount === 1) {
+  if (conn.subscriberCount === 1 && !conn.controller) {
     connect(clubId, conn);
   }
 
@@ -158,7 +193,9 @@ function subscribe(clubId: string, conn: SSEConnection, listener: Listener) {
       clearTimeout(conn.retryTimer);
       conn.retryTimer = undefined;
       conn.retryCount = 0;
+      conn.status = null;
       conn.expiredAt = null;
+      conn.currentEvent = '';
       connections.delete(clubId);
     }
   };
@@ -167,21 +204,31 @@ function subscribe(clubId: string, conn: SSEConnection, listener: Listener) {
 function useAttendanceSSE() {
   const clubId = useClubId();
 
+  const subscribeFn = (listener: Listener) => {
+    if (!clubId) return () => {};
+    const conn = getOrCreateConnection(clubId);
+    return subscribe(clubId, conn, listener);
+  };
+
   const expiredAt = useSyncExternalStore(
-    (listener) => {
-      if (!clubId) return () => {};
-      const conn = getOrCreateConnection(clubId);
-      return subscribe(clubId, conn, listener);
-    },
+    subscribeFn,
     () => {
       if (!clubId) return null;
       return connections.get(clubId)?.expiredAt ?? null;
     },
-    // SSR에서는 항상 null
     () => null,
   );
 
-  return { expiredAt };
+  const status = useSyncExternalStore(
+    subscribeFn,
+    () => {
+      if (!clubId) return null;
+      return connections.get(clubId)?.status ?? null;
+    },
+    () => null,
+  );
+
+  return { status, expiredAt };
 }
 
-export { useAttendanceSSE };
+export { useAttendanceSSE, type QRStatus };

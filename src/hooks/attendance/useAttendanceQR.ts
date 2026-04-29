@@ -33,7 +33,7 @@ function useAttendanceQR(clubId: string | null, sessionId: number) {
     } else {
       qrCodeRef.current.update({ data: checkInUrl });
     }
-  }, [qrData]);
+  }, [qrData, clubId]);
 
   return { qrRef, qrData, isLoading };
 }
