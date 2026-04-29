@@ -32,7 +32,7 @@ import { useUpdateBoardOrderMutation } from '@/hooks/queries/admin/useUpdateBoar
 import { adminBoardQueryKeys } from '@/hooks/queries/admin/boardQueryKeys';
 import { ADMIN_BOARD_ERROR, getApiErrorCode, getApiErrorMessage } from '@/lib/apis/adminBoard';
 import { useClubId } from '@/stores';
-import { toastError } from '@/stores/useToastStore';
+import { toastError, toastSuccess } from '@/stores/useToastStore';
 import { toApiPermission } from '@/utils/admin/boardMapper';
 import { MAX_CUSTOM_BOARDS } from '@/constants/admin/board.constants';
 import type { Board, BoardKind, BoardListCache } from '@/types/admin/board';
@@ -78,7 +78,10 @@ function BoardPageContent() {
   const { handleDragStart, handleDragEnd } = useBoardDragReorder({ onReorder: updateBoardOrder });
 
   const { mutate: createBoard } = useCreateBoardMutation({
-    onSuccess: () => setCreateModalOpen(false),
+    onSuccess: () => {
+      setCreateModalOpen(false);
+      toastSuccess('게시판이 생성되었어요.');
+    },
     onError: (err) => {
       const code = getApiErrorCode(err);
       if (code === ADMIN_BOARD_ERROR.DUPLICATE_NAME) {
@@ -90,7 +93,10 @@ function BoardPageContent() {
   });
 
   const { mutate: updateBoard } = useUpdateBoardMutation({
-    onSuccess: () => setEditingBoardId(null),
+    onSuccess: () => {
+      setEditingBoardId(null);
+      toastSuccess('게시판이 수정되었어요.');
+    },
     onError: (err) => {
       const code = getApiErrorCode(err);
       if (code === ADMIN_BOARD_ERROR.DUPLICATE_NAME) {
@@ -102,7 +108,10 @@ function BoardPageContent() {
   });
 
   const { mutate: deleteBoard } = useDeleteBoardMutation({
-    onSuccess: () => setEditingBoardId(null),
+    onSuccess: () => {
+      setEditingBoardId(null);
+      toastSuccess('게시판이 삭제되었어요.');
+    },
     onError: (err) => {
       const code = getApiErrorCode(err);
       if (code === ADMIN_BOARD_ERROR.BOARD_NOT_FOUND) {
@@ -114,6 +123,7 @@ function BoardPageContent() {
   });
 
   const { mutate: toggleComment } = useUpdateBoardMutation({
+    onSuccess: () => toastSuccess('댓글 허용 설정을 변경했어요.'),
     onError: (err) => toastError(getApiErrorMessage(err)),
   });
 
