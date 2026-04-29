@@ -146,6 +146,7 @@ function SessionGroupRow({
             />
           )}
         </div>
+        <div className="flex-1" />
         <div
           className={cn('flex items-center justify-center', SESSION_TABLE_COLUMNS.more.widthClass)}
         >

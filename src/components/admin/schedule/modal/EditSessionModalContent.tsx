@@ -198,23 +198,23 @@ function EditSessionModalContent({
             취소
           </Button>
         </DiscardConfirmArea>
-        <Button variant="primary" size="lg" disabled={!isValid} onClick={handleSubmit}>
-          저장
-        </Button>
+        {/* 저장 + 반복 세션 저장 확인 alert */}
+        <CustomAlertDialog
+          open={saveConfirmOpen}
+          onOpenChange={setSaveConfirmOpen}
+          title="이 변경사항을 어떻게 저장할까요?"
+          actionLabel="이 세션 일정만 저장"
+          onAction={() => handleSaveConfirm('this')}
+          secondActionLabel="이후 모든 세션 일정에 대해 저장"
+          onSecondAction={() => handleSaveConfirm('all')}
+          placement="above-right"
+          tone="primary"
+        >
+          <Button variant="primary" size="lg" disabled={!isValid} onClick={handleSubmit}>
+            저장
+          </Button>
+        </CustomAlertDialog>
       </div>
-
-      {/* 저장 확인 (반복 세션 전용) */}
-      <CustomAlertDialog
-        open={saveConfirmOpen}
-        onOpenChange={setSaveConfirmOpen}
-        title="이 변경사항을 어떻게 저장할까요?"
-        actionLabel="이 세션 일정만 저장"
-        onAction={() => handleSaveConfirm('this')}
-        secondActionLabel="이후 모든 세션 일정에 대해 저장"
-        onSecondAction={() => handleSaveConfirm('all')}
-        placement="below-right"
-        tone="primary"
-      />
 
       {/* 삭제 확인 */}
       {isRecurring && isChildOfRecurringGroup ? (

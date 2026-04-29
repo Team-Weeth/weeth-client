@@ -152,15 +152,19 @@ function CustomAlertDialog({
 
   return (
     <AlertDialogPrimitive.Root open={open} onOpenChange={onOpenChange} {...props}>
-      {children}
-
       {useOverlay ? (
-        <AlertDialogPrimitive.Portal>
-          <AlertDialogPrimitive.Overlay className="data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 z-[55] bg-black/60" />
-          {content}
-        </AlertDialogPrimitive.Portal>
+        <>
+          {children}
+          <AlertDialogPrimitive.Portal>
+            <AlertDialogPrimitive.Overlay className="data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 z-[55] bg-black/60" />
+            {content}
+          </AlertDialogPrimitive.Portal>
+        </>
       ) : (
-        content
+        <div className="relative">
+          {children}
+          {content}
+        </div>
       )}
     </AlertDialogPrimitive.Root>
   );

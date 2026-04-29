@@ -4,13 +4,13 @@ import Image from 'next/image';
 
 import {
   CalendarPicker,
-  DateTimeInput,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui';
 import { ArrowDownIcon } from '@/assets/icons';
+import { ScheduleDateRangeFields } from '@/components/admin/schedule/general/ScheduleDateRangeFields';
 import { ScheduleFormField } from '@/components/admin/schedule/general/ScheduleFormField';
 import { ScheduleTextField } from '@/components/admin/schedule/general/ScheduleTextField';
 import { ScheduleTextareaField } from '@/components/admin/schedule/general/ScheduleTextareaField';
@@ -93,22 +93,7 @@ function SessionScheduleForm({
       </ScheduleFormField>
 
       {/* 시작 / 종료 일자 */}
-      <div className="flex gap-600">
-        <DateTimeInput
-          label="시작 일자"
-          dateValue={form.startDate}
-          timeValue={form.startTime}
-          onDateChange={(v) => onFormChange({ startDate: v })}
-          onTimeChange={(v) => onFormChange({ startTime: v })}
-        />
-        <DateTimeInput
-          label="종료 일자"
-          dateValue={form.endDate}
-          timeValue={form.endTime}
-          onDateChange={(v) => onFormChange({ endDate: v })}
-          onTimeChange={(v) => onFormChange({ endTime: v })}
-        />
-      </div>
+      <ScheduleDateRangeFields form={form} onFormChange={onFormChange} />
 
       {/* 반복 설정 */}
       <ScheduleFormField label="반복 설정">

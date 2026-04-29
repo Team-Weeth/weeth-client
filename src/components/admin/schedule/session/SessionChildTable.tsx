@@ -23,7 +23,7 @@ function SessionChildTable({ sessions, onManageAttendance, onMore }: SessionChil
       <div className="flex h-10 w-full items-center">
         <div
           className={cn(
-            'bg-container-neutral sticky left-0 z-10 flex items-center',
+            'bg-container-neutral sticky left-0 z-10 flex items-center pl-[64px]',
             SESSION_TABLE_COLUMNS.titleSticky.widthClass,
           )}
         >
@@ -40,6 +40,7 @@ function SessionChildTable({ sessions, onManageAttendance, onMore }: SessionChil
             <span className="typo-sub3 text-text-strong">{col.label}</span>
           </div>
         ))}
+        <div className="flex-1" />
         <div className={SESSION_TABLE_COLUMNS.more.widthClass} />
       </div>
 

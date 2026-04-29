@@ -74,17 +74,16 @@ function BoardFormHeader({
             />
           </div>
         )}
-        <div className="relative">
+        <DiscardConfirmDialog
+          source="close"
+          currentSource={discardSource}
+          messages={discardMessages}
+          onConfirm={onDiscardConfirm}
+          onDismiss={dismissDiscard}
+          placement="below-right"
+        >
           <ModalIconButton icon={AdminCloseIcon} label="닫기" onClick={onTryClose} />
-          <DiscardConfirmDialog
-            source="close"
-            currentSource={discardSource}
-            messages={discardMessages}
-            onConfirm={onDiscardConfirm}
-            onDismiss={dismissDiscard}
-            placement="below-right"
-          />
-        </div>
+        </DiscardConfirmDialog>
       </div>
     </div>
   );

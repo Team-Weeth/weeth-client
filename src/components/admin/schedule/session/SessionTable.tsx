@@ -35,7 +35,7 @@ function SessionTable({
 }: SessionTableProps) {
   return (
     <div className={cn('border-line overflow-x-auto rounded-sm border', className)} {...props}>
-      <div style={{ minWidth: SESSION_TABLE_MIN_WIDTH }}>
+      <div className="w-full" style={{ minWidth: SESSION_TABLE_MIN_WIDTH }}>
         {/* 테이블 헤더 */}
         <div className="bg-container-neutral-alternative border-line flex w-full items-center border-b">
           <div
@@ -57,6 +57,7 @@ function SessionTable({
               <span className="typo-sub3 text-text-alternative">{col.label}</span>
             </div>
           ))}
+          <div className="flex-1" />
           <div className={SESSION_TABLE_COLUMNS.more.widthClass} />
         </div>
 

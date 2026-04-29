@@ -27,7 +27,7 @@ function SessionChildRow({ session, order, onManageAttendance, onMore }: Session
     <div className="flex h-10 w-full items-center">
       <div
         className={cn(
-          'bg-container-neutral sticky left-0 z-10 flex items-center',
+          'bg-container-neutral sticky left-0 z-10 flex items-center pl-[64px]',
           SESSION_TABLE_COLUMNS.titleSticky.widthClass,
         )}
       >
@@ -77,6 +77,7 @@ function SessionChildRow({ session, order, onManageAttendance, onMore }: Session
           disabled={!isSessionActiveToday(session.start, session.end)}
         />
       </div>
+      <div className="flex-1" />
       <div
         className={cn('flex items-center justify-center', SESSION_TABLE_COLUMNS.more.widthClass)}
       >

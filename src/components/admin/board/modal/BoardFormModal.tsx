@@ -201,19 +201,18 @@ function BoardFormModal({
 
         {/* Footer */}
         <div className="bg-container-neutral flex items-center justify-end gap-200 px-400 pt-400 pb-500">
-          <div className="relative">
+          <DiscardConfirmDialog
+            source="cancel"
+            currentSource={discardSource}
+            messages={discardMessages}
+            onConfirm={handleDiscardConfirm}
+            onDismiss={dismissDiscard}
+            placement="above-right"
+          >
             <Button variant="secondary" size="lg" onClick={() => handleTryClose('cancel')}>
               취소
             </Button>
-            <DiscardConfirmDialog
-              source="cancel"
-              currentSource={discardSource}
-              messages={discardMessages}
-              onConfirm={handleDiscardConfirm}
-              onDismiss={dismissDiscard}
-              placement="above-right"
-            />
-          </div>
+          </DiscardConfirmDialog>
           <Button variant="primary" size="lg" disabled={!isValid} onClick={handleSubmit}>
             저장
           </Button>
