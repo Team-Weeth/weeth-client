@@ -129,7 +129,7 @@ function ClubInfoPageContent({ schoolNames }: ClubInfoPageContentProps) {
   );
 
   return (
-    <div className="flex flex-col">
+    <div className="flex w-full flex-col overflow-x-auto">
       {isEditMode && (
         <ClubInfoTopBar
           className="sticky top-0 z-10 -mt-15"
