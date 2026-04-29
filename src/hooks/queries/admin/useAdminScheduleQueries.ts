@@ -3,7 +3,7 @@ import { isAxiosError } from 'axios';
 
 import {
   SCHEDULE_ERROR_MESSAGE,
-  SESSION_UPDATE_FORCE_REQUIRED_CODE,
+  SESSION_FORCE_REQUIRED_CODES,
 } from '@/constants/admin/schedule.constants';
 import { adminScheduleApi } from '@/lib/apis/adminSchedule';
 import { useClubId } from '@/stores';
@@ -16,10 +16,11 @@ import type {
 } from '@/types/admin/session';
 import { MutationCallbacks } from '@/types';
 
-/** 세션 update/delete 응답이 "CLOSED 포함, force 필요" 에러인지 판별 */
+/** 세션 update(20305)/delete(20306) 응답이 "CLOSED 포함, force 필요" 에러인지 판별 */
 function isSessionForceRequiredError(error: unknown): boolean {
   if (!isAxiosError(error)) return false;
-  return error.response?.data?.code === SESSION_UPDATE_FORCE_REQUIRED_CODE;
+  const code = error.response?.data?.code;
+  return SESSION_FORCE_REQUIRED_CODES.includes(code);
 }
 
 export { isSessionForceRequiredError };

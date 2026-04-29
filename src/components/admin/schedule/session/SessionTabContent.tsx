@@ -46,6 +46,14 @@ function SessionTabContent({
       toastError('수정·삭제 가능한 세션이 없습니다.');
       return;
     }
+    // 서버는 단발 세션도 그룹 wrapper로 감싸서 보내지만(groupId·recurrenceType 모두 null),
+    // 의미상 그룹이 아니므로 자식 세션을 직접 수정 대상으로 전달해 단일 세션 흐름을 타도록 한다.
+    const isSingleSessionWrapper =
+      isSessionGroup(target) && (target.recurrenceType == null || target.recurrenceType === 'NONE');
+    if (isSingleSessionWrapper) {
+      setEditTarget({ target: target.sessions[0]! });
+      return;
+    }
     setEditTarget({ target, parentGroup });
   };
 

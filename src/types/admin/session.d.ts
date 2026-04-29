@@ -14,15 +14,17 @@ export interface AdminSession {
 }
 
 export interface AdminSessionGroup {
-  groupId: number;
+  /** 단발(반복 없음) 세션은 그룹이 아니므로 null */
+  groupId: number | null;
   title: string;
-  recurrenceType: SessionRecurrenceType;
-  /** "매주 목요일 오후 7:00 ~ 오후 9:00" 처럼 서버에서 렌더링된 문구 */
-  recurrenceDescription: string;
+  /** 단발 세션은 null */
+  recurrenceType: SessionRecurrenceType | null;
+  /** "매주 목요일 오후 7:00 ~ 오후 9:00" 처럼 서버에서 렌더링된 문구. 단발 세션은 null */
+  recurrenceDescription: string | null;
   /** YYYY-MM-DD */
   startDate: string;
-  /** YYYY-MM-DD */
-  endDate: string;
+  /** YYYY-MM-DD. 단발 세션은 반복 종료일이 없으므로 null */
+  endDate: string | null;
   completedCount: number;
   totalCount: number;
   status: SessionStatus;

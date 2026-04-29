@@ -2,12 +2,7 @@
 
 import { useState } from 'react';
 import { useParams, usePathname, useRouter } from 'next/navigation';
-import {
-  AdminForumIcon,
-  AdminCalendarIcon,
-  AdminSettingIcon,
-  AdminFileoutIcon,
-} from '@/assets/icons/admin';
+import { AdminForumIcon, AdminCalendarIcon, AdminSettingIcon } from '@/assets/icons/admin';
 import { CheckRoundIcon, ExitIcon, PeopleIcon } from '@/assets/icons';
 
 import {
@@ -59,16 +54,16 @@ function LNB() {
     },
   ];
 
-  const moveNavItems = [
-    {
-      id: 'manual',
-      icon: AdminFileoutIcon,
-      label: '운영진 매뉴얼',
-      path: 'https://weeth-develop-2.s3.ap-northeast-2.amazonaws.com/Weeth_%E1%84%80%E1%85%AA%E1%86%AB%E1%84%85%E1%85%B5%E1%84%8C%E1%85%A1_%E1%84%86%E1%85%A6%E1%84%82%E1%85%B2%E1%84%8B%E1%85%A5%E1%86%AF_v3.pdf',
-      external: true,
-      openInWindow: true,
-    },
-  ];
+  // const moveNavItems = [
+  //   {
+  //     id: 'manual',
+  //     icon: AdminFileoutIcon,
+  //     label: '운영진 매뉴얼',
+  //     path: 'https://weeth-develop-2.s3.ap-northeast-2.amazonaws.com/Weeth_%E1%84%80%E1%85%AA%E1%86%AB%E1%84%85%E1%85%B5%E1%84%8C%E1%85%A1_%E1%84%86%E1%85%A6%E1%84%82%E1%85%B2%E1%84%8B%E1%85%A5%E1%86%AF_v3.pdf',
+  //     external: true,
+  //     openInWindow: true,
+  //   },
+  // ];
 
   return (
     <TooltipProvider>
@@ -119,17 +114,6 @@ function LNB() {
             collapsed={collapsed}
             onClick={() => setServiceDialogOpen(true)}
           />
-          {moveNavItems.map(({ id, icon, label, path, external, openInWindow }) => (
-            <NavItem
-              key={id}
-              icon={icon}
-              label={label}
-              path={path}
-              collapsed={collapsed}
-              external={external}
-              openInWindow={openInWindow}
-            />
-          ))}
         </NavSection>
 
         <AlertDialog

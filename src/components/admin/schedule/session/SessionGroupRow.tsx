@@ -38,12 +38,16 @@ function SessionGroupRow({
   onManageAttendance,
   onMore,
 }: SessionGroupRowProps) {
-  // 반복 세션 그룹일 때만 토글과 하위 테이블을 노출
-  const isRecurring = group.recurrenceType !== 'NONE';
+  // 반복 세션 그룹일 때만 토글과 하위 테이블을 노출 (서버는 단발 세션의 recurrenceType을 null로 보냄)
+  const isRecurring = group.recurrenceType != null && group.recurrenceType !== 'NONE';
   const [expanded, setExpanded] = useState(true);
 
-  // 그룹 시작/종료일과 오늘을 비교해 SCHEDULED / OPEN / COMPLETED 도출
-  const derivedGroupStatus = deriveSessionStatus(group.status, group.startDate, group.endDate);
+  // 단발 세션은 endDate가 null이므로 startDate로 폴백 (단일 날짜 = 시작일과 동일)
+  const derivedGroupStatus = deriveSessionStatus(
+    group.status,
+    group.startDate,
+    group.endDate ?? group.startDate,
+  );
 
   return (
     <div className={cn('flex flex-col', bordered && 'border-line border-t')}>
@@ -89,7 +93,7 @@ function SessionGroupRow({
         >
           <span className="typo-body1 text-text-strong truncate">
             {isRecurring
-              ? formatSessionDateRange(group.startDate, group.endDate)
+              ? formatSessionDateRange(group.startDate, group.endDate ?? group.startDate)
               : formatSessionDate(group.startDate)}
           </span>
         </div>

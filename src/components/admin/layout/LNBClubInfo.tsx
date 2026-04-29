@@ -14,7 +14,7 @@ function LNBClubInfo({ collapsed }: LNBClubInfoProps) {
   return (
     <div
       className={cn(
-        'border-line bg-container-neutral flex h-30 items-start border-b py-400',
+        'border-line bg-container-neutral flex h-[142px] items-start border-b py-400',
         collapsed ? 'justify-center' : 'flex-col gap-300 px-400',
       )}
     >

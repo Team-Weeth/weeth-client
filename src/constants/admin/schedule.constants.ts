@@ -15,3 +15,8 @@ export const SCHEDULE_ERROR_MESSAGE: Record<number, string> = {
  * 백엔드가 반환하는 에러 코드. 토스트 대신 호출자 UI(force-confirm 다이얼로그)에서 처리.
  */
 export const SESSION_UPDATE_FORCE_REQUIRED_CODE = 20305;
+export const SESSION_DELETE_FORCE_REQUIRED_CODE = 20306;
+export const SESSION_FORCE_REQUIRED_CODES = [
+  SESSION_UPDATE_FORCE_REQUIRED_CODE,
+  SESSION_DELETE_FORCE_REQUIRED_CODE,
+] as const;
