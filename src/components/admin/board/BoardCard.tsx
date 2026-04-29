@@ -13,6 +13,7 @@ import { MegaphoneIcon } from '@/components/board';
 interface BoardCardProps extends React.HTMLAttributes<HTMLDivElement> {
   board: Board;
   onToggleComments?: (next: boolean) => void;
+  commentTogglePending?: boolean;
   onEdit?: () => void;
   onDelete?: () => void;
   draggable?: boolean;
@@ -24,6 +25,7 @@ function BoardCard({
   className,
   board,
   onToggleComments,
+  commentTogglePending = false,
   onEdit,
   onDelete,
   draggable = true,
@@ -97,7 +99,7 @@ function BoardCard({
             <Switch
               checked={commentEnabled ?? false}
               onCheckedChange={onToggleComments}
-              disabled={!onToggleComments}
+              disabled={!onToggleComments || commentTogglePending}
               aria-label="댓글 허용 토글"
             />
           </>

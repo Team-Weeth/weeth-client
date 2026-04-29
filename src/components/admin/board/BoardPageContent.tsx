@@ -61,6 +61,7 @@ function BoardPageContent() {
   const [createNameError, setCreateNameError] = useState<string | null>(null);
   const [editingBoardId, setEditingBoardId] = useState<number | null>(null);
   const [editNameError, setEditNameError] = useState<string | null>(null);
+  const [pendingToggleIds, setPendingToggleIds] = useState<Set<number>>(() => new Set());
   const mounted = useSyncExternalStore(
     subscribeMounted,
     () => true,
@@ -148,6 +149,8 @@ function BoardPageContent() {
   };
 
   const handleToggleComments = (boardId: number, next: boolean) => {
+    if (pendingToggleIds.has(boardId)) return;
+
     const target = boards.find((b) => b.boardId === boardId);
     if (!target) return;
 
@@ -157,6 +160,12 @@ function BoardPageContent() {
       ...prev,
       boards: prev.boards.map((b) => (b.boardId === boardId ? { ...b, commentEnabled: next } : b)),
     }));
+
+    setPendingToggleIds((prev) => {
+      const nextSet = new Set(prev);
+      nextSet.add(boardId);
+      return nextSet;
+    });
 
     toggleComment(
       {
@@ -171,6 +180,13 @@ function BoardPageContent() {
       {
         onError: () => {
           queryClient.setQueryData(cacheKey, snapshot);
+        },
+        onSettled: () => {
+          setPendingToggleIds((prev) => {
+            const nextSet = new Set(prev);
+            nextSet.delete(boardId);
+            return nextSet;
+          });
         },
       },
     );
@@ -247,6 +263,7 @@ function BoardPageContent() {
                   board={board}
                   draggable={false}
                   onToggleComments={(next) => handleToggleComments(board.boardId, next)}
+                  commentTogglePending={pendingToggleIds.has(board.boardId)}
                 />
               </Fragment>
             ))}
@@ -266,6 +283,7 @@ function BoardPageContent() {
                   board={board}
                   draggable={false}
                   onToggleComments={(next) => handleToggleComments(board.boardId, next)}
+                  commentTogglePending={pendingToggleIds.has(board.boardId)}
                   onEdit={() => setEditingBoardId(board.boardId)}
                   onDelete={() => handleMoveToTrash(board)}
                 />
@@ -288,6 +306,7 @@ function BoardPageContent() {
                       key={board.boardId}
                       board={board}
                       onToggleComments={(next) => handleToggleComments(board.boardId, next)}
+                      commentTogglePending={pendingToggleIds.has(board.boardId)}
                       onEdit={() => setEditingBoardId(board.boardId)}
                       onDelete={() => handleMoveToTrash(board)}
                     />
