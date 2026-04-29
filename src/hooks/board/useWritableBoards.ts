@@ -1,4 +1,4 @@
-import { useBoardList } from '@/hooks';
+import { useBoardList } from './useBoardQuery';
 import { toBoardNavItem } from '@/lib/board';
 
 export function useWritableBoards() {
