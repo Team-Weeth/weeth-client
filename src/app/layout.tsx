@@ -65,7 +65,7 @@ export default function RootLayout({
       <head>
         <script
           dangerouslySetInnerHTML={{
-            __html: `(function(){try{if(location.pathname.indexOf('/landing')===0){document.documentElement.classList.remove('dark');return;}var t=localStorage.getItem('weeth-theme');var mode='auto';if(t){var parsed=JSON.parse(t);var state=parsed&&parsed.state?parsed.state:{};mode=state.mode||'auto';}var prefersDark=window.matchMedia('(prefers-color-scheme: dark)').matches;var shouldDark=mode==='auto'?prefersDark:mode==='dark';document.documentElement.classList.toggle('dark',shouldDark);}catch(e){}})()`,
+            __html: `(function(){try{var isLanding=/^\\/landing(?:\\/|$)/.test(location.pathname);if(isLanding){document.documentElement.classList.remove('dark');return;}var t=localStorage.getItem('weeth-theme');var mode='auto';if(t){var parsed=JSON.parse(t);var state=parsed&&parsed.state?parsed.state:{};mode=state.mode||'auto';}var prefersDark=window.matchMedia('(prefers-color-scheme: dark)').matches;var shouldDark=mode==='auto'?prefersDark:mode==='dark';document.documentElement.classList.toggle('dark',shouldDark);}catch(e){}})()`,
           }}
         />
         {isProduction && (
