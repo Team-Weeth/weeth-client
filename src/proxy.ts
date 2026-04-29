@@ -1,22 +1,30 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { ACCESS_TOKEN_KEY, REFRESH_TOKEN_KEY } from '@/lib/apis/cookies';
+import {
+  ACCESS_TOKEN_KEY,
+  REFRESH_TOKEN_KEY,
+  ACCESS_COOKIE_OPTIONS,
+  REFRESH_COOKIE_OPTIONS,
+} from '@/lib/apis/cookies';
+import { clearAuthCookies, requestTokenRefresh } from '@/lib/apis/refresh';
 
 const PUBLIC_PATHS = ['/', '/login', '/terms', '/landing'];
+const PRIVATE_PATHS = ['/hub', '/joining', '/welcome'];
 
 // TODO: 런칭 후 PRE_LAUNCH 플래그 및 관련 분기 제거
 const PRE_LAUNCH = false;
 
-export function proxy(request: NextRequest) {
-  const { pathname } = request.nextUrl;
+function buildLoginRedirectUrl(request: NextRequest, includeRedirect: boolean) {
+  const loginUrl = new URL('/login', request.url);
+  const { pathname, search } = request.nextUrl;
+  if (includeRedirect && pathname !== '/login') {
+    const redirect = search ? `${pathname}${search}` : pathname;
+    loginUrl.searchParams.set('redirect', redirect);
+  }
+  return loginUrl;
+}
 
-  // TODO: 진단 후 제거
-  console.log('[proxy-debug]', {
-    pathname,
-    appEnv: process.env.NEXT_PUBLIC_APP_ENV,
-    hasPreviewToken: !!process.env.PREVIEW_ACCESS_TOKEN,
-    hasAccessCookie: request.cookies.has(ACCESS_TOKEN_KEY),
-    hasRefreshCookie: request.cookies.has(REFRESH_TOKEN_KEY),
-  });
+export async function proxy(request: NextRequest) {
+  const { pathname } = request.nextUrl;
 
   // 런칭 전: /landing 외 모든 경로 차단
   if (PRE_LAUNCH && pathname !== '/landing') {
@@ -35,60 +43,76 @@ export function proxy(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
+  const hasAccessToken = request.cookies.has(ACCESS_TOKEN_KEY);
+  const hasRefreshToken = request.cookies.has(REFRESH_TOKEN_KEY);
+
   // 개발 배포 환경에서 토큰 자동 주입 (카카오/애플 로그인 없이 페이지 접근)
   const isPreview = process.env.NEXT_PUBLIC_APP_ENV !== 'production';
   const previewToken = process.env.PREVIEW_ACCESS_TOKEN;
-  const hasAccessToken = request.cookies.has(ACCESS_TOKEN_KEY);
-  const hasRefreshToken = request.cookies.has(REFRESH_TOKEN_KEY);
-  const hasAuthSession = hasAccessToken || hasRefreshToken;
-
-  if (isPreview && previewToken && !hasAuthSession) {
+  if (isPreview && previewToken && !hasAccessToken && !hasRefreshToken) {
     request.cookies.set(ACCESS_TOKEN_KEY, previewToken);
-
     const response = NextResponse.next({ request });
     response.cookies.set(ACCESS_TOKEN_KEY, previewToken, {
       httpOnly: true,
       secure: true,
       sameSite: 'lax',
-
       path: '/',
       maxAge: 60 * 60 * 24 * 7,
     });
     return response;
   }
 
-  if (
+  const isPublicPath =
     PUBLIC_PATHS.some((path) => pathname === path) ||
     pathname.startsWith('/club/') ||
     pathname.startsWith('/kakao/') ||
-    pathname === '/apple/oauth'
-  ) {
+    pathname === '/apple/oauth';
+
+  if (isPublicPath) {
     return NextResponse.next();
   }
 
-  // [clubId] 라우트는 레이아웃에서 접근 제어하므로 통과시킴
-  // 인증 필요한 고정 경로(/hub, /joining, /welcome 등)는 제외
-  const PRIVATE_PATHS = ['/hub', '/joining', '/welcome'];
   const isPrivatePath = PRIVATE_PATHS.some(
     (path) => pathname === path || pathname.startsWith(`${path}/`),
   );
-  if (!isPrivatePath) {
-    const isClubRoute = /^\/[A-Za-z0-9]+(?:\/|$)/.test(pathname);
-    if (isClubRoute) {
-      const requestHeaders = new Headers(request.headers);
-      requestHeaders.set('x-pathname', pathname);
-      return NextResponse.next({ request: { headers: requestHeaders } });
+  const isClubRoute = /^\/[A-Za-z0-9]+(?:\/|$)/.test(pathname);
+  if (isClubRoute && !isPrivatePath) {
+    const requestHeaders = new Headers(request.headers);
+    requestHeaders.set('x-pathname', pathname);
+    requestHeaders.set('x-search', request.nextUrl.search);
+    return NextResponse.next({ request: { headers: requestHeaders } });
+  }
+
+  const requiresAuth = isPrivatePath;
+
+  if (!requiresAuth) {
+    return NextResponse.next();
+  }
+
+  // 액세스 토큰 있으면 통과
+  if (hasAccessToken) {
+    return NextResponse.next();
+  }
+
+  // 액세스 토큰 없고 리프레시 토큰만 있을 때 → 자동 갱신
+  if (hasRefreshToken) {
+    const refreshToken = request.cookies.get(REFRESH_TOKEN_KEY)!.value;
+    const newTokens = await requestTokenRefresh(refreshToken);
+
+    if (newTokens) {
+      request.cookies.set(ACCESS_TOKEN_KEY, newTokens.accessToken);
+      const response = NextResponse.next({ request });
+      response.cookies.set(ACCESS_TOKEN_KEY, newTokens.accessToken, ACCESS_COOKIE_OPTIONS);
+      response.cookies.set(REFRESH_TOKEN_KEY, newTokens.refreshToken, REFRESH_COOKIE_OPTIONS);
+      return response;
     }
+
+    // 갱신 실패 → 쿠키 정리 후 원래 경로를 유지한 채 로그인 페이지로
+    return clearAuthCookies(NextResponse.redirect(buildLoginRedirectUrl(request, true)));
   }
 
-  if (!hasAuthSession) {
-    const loginUrl = new URL('/login', request.url);
-    const redirect = request.nextUrl.search ? `${pathname}${request.nextUrl.search}` : pathname;
-    loginUrl.searchParams.set('redirect', redirect);
-    return NextResponse.redirect(loginUrl);
-  }
-
-  return NextResponse.next();
+  // 토큰 없음 → 로그인 페이지로
+  return NextResponse.redirect(buildLoginRedirectUrl(request, true));
 }
 
 export const config = {

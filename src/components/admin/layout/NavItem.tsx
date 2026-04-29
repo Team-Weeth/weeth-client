@@ -17,6 +17,7 @@ interface NavItemProps {
   collapsed?: boolean;
   external?: boolean;
   openInWindow?: boolean;
+  onClick?: () => void;
 }
 
 function NavItem({
@@ -27,6 +28,7 @@ function NavItem({
   collapsed = false,
   external = false,
   openInWindow = false,
+  onClick,
 }: NavItemProps) {
   const iconEl = (
     <Icon
@@ -50,6 +52,13 @@ function NavItem({
         className={cn(cls, 'w-full cursor-pointer')}
         onClick={() => window.open(path, '_blank', 'noopener,noreferrer')}
       >
+        {iconEl}
+        {!collapsed && <span className="typo-sub3">{label}</span>}
+      </button>
+    );
+  } else if (onClick) {
+    el = (
+      <button type="button" className={cn(cls, 'w-full cursor-pointer')} onClick={onClick}>
         {iconEl}
         {!collapsed && <span className="typo-sub3">{label}</span>}
       </button>

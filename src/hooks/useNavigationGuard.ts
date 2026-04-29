@@ -8,6 +8,7 @@ interface UseNavigationGuardOptions {
 }
 
 const GUARD_STATE = { __navigationGuard: true } as const;
+const NAVIGATION_TIMEOUT = 3000;
 
 function isGuardEntry() {
   return !!(history.state as Record<string, unknown> | null)?.__navigationGuard;
@@ -15,7 +16,7 @@ function isGuardEntry() {
 
 /**
  * 브라우저 뒤로가기(popstate), 탭 닫기/새로고침(beforeunload),
- * 그리고 링크 클릭·프로그래매틱 네비게이션(router.push 등)을 가로채서 사용자에게 확인을 요청하는 훅.
+ * 그리고 링크 클릭을 가로채서 사용자에게 확인을 요청하는 훅.
  *
  * 반환값의 open / onConfirm / onCancel 을 AlertDialog에 바인딩하여 사용.
  */
@@ -25,16 +26,34 @@ function useNavigationGuard({ enabled }: UseNavigationGuardOptions) {
   const isLeaving = useRef(false);
   const guardUrl = useRef('');
   const pendingUrl = useRef<string | null>(null);
+  const resetTimerId = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // 네비게이션이 실제로 일어나지 않았을 경우 가드를 복원하는 안전장치
+  const scheduleGuardReset = (snapshot: string) => {
+    if (resetTimerId.current) clearTimeout(resetTimerId.current);
+    resetTimerId.current = setTimeout(() => {
+      resetTimerId.current = null;
+      if (isLeaving.current && location.href === snapshot) {
+        isLeaving.current = false;
+        guardUrl.current = location.href;
+        if (!isGuardEntry()) {
+          history.pushState(GUARD_STATE, '', location.href);
+        }
+      }
+    }, NAVIGATION_TIMEOUT);
+  };
 
   useEffect(() => {
     if (!enabled) {
-      if (!isLeaving.current && isGuardEntry()) {
+      if (isGuardEntry() && !isLeaving.current) {
         history.back();
       }
       return;
     }
 
-    isLeaving.current = false;
+    // allowNavigation()으로 이탈이 허용된 상태라면 guard를 재설정하지 않음
+    if (isLeaving.current) return;
+
     guardUrl.current = location.href;
 
     if (!isGuardEntry()) {
@@ -73,55 +92,27 @@ function useNavigationGuard({ enabled }: UseNavigationGuardOptions) {
       setOpen(true);
     };
 
-    // pushState/replaceState 패치 — router.push() 등 프로그래매틱 네비게이션 감지
-    const originalPushState = history.pushState.bind(history);
-    const originalReplaceState = history.replaceState.bind(history);
-
-    const interceptNavigation = (
-      original: typeof history.pushState,
-      ...args: Parameters<typeof history.pushState>
-    ) => {
-      if (isLeaving.current) {
-        original(...args);
-        return;
-      }
-
-      const url = args[2];
-      if (!url) {
-        original(...args);
-        return;
-      }
-
-      const targetUrl = new URL(String(url), location.href);
-      if (targetUrl.origin !== location.origin || targetUrl.href === guardUrl.current) {
-        original(...args);
-        return;
-      }
-
-      pendingUrl.current = targetUrl.href;
-      setOpen(true);
-    };
-
-    history.pushState = (...args) => interceptNavigation(originalPushState, ...args);
-    history.replaceState = (...args) => interceptNavigation(originalReplaceState, ...args);
-
     // capture: true — Next.js Link 핸들러보다 먼저 실행
     document.addEventListener('click', handleClick, true);
     window.addEventListener('popstate', handlePopState);
     window.addEventListener('beforeunload', handleBeforeUnload);
 
     return () => {
-      history.pushState = originalPushState;
-      history.replaceState = originalReplaceState;
       document.removeEventListener('click', handleClick, true);
       window.removeEventListener('popstate', handlePopState);
       window.removeEventListener('beforeunload', handleBeforeUnload);
+      if (resetTimerId.current) {
+        clearTimeout(resetTimerId.current);
+        resetTimerId.current = null;
+      }
     };
   }, [enabled]);
 
   const onConfirm = () => {
     isLeaving.current = true;
     setOpen(false);
+
+    const snapshot = location.href;
 
     if (pendingUrl.current) {
       const target = new URL(pendingUrl.current);
@@ -130,6 +121,8 @@ function useNavigationGuard({ enabled }: UseNavigationGuardOptions) {
     } else {
       history.back();
     }
+
+    scheduleGuardReset(snapshot);
   };
 
   const onCancel = () => {
@@ -145,6 +138,8 @@ function useNavigationGuard({ enabled }: UseNavigationGuardOptions) {
 
   const allowNavigation = () => {
     isLeaving.current = true;
+    pendingUrl.current = null;
+    scheduleGuardReset(location.href);
   };
 
   return { open, onConfirm, onCancel, allowNavigation };

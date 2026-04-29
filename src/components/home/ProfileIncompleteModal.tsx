@@ -22,9 +22,8 @@ export function ProfileIncompleteModal({ open, onClose, onSkip }: ProfileIncompl
   const router = useRouter();
   const { clubId } = useParams<{ clubId: string }>();
 
-  // TODO: 프로필 편집 페이지 경로 확정 후 변경
   const handleComplete = () => {
-    router.push(`/${clubId}/mypage`);
+    router.push(`/${clubId}/mypage/edit`);
   };
 
   return (

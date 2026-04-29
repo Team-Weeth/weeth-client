@@ -7,7 +7,6 @@ import { Divider, Icon } from '@/components/ui';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import { useRecentNoticesQuery } from '@/hooks/home';
-import { useNoticeBoardId } from '@/hooks/board/useBoardQuery';
 import { stripHtml } from '@/lib/stripHtml';
 import { buildPostPath, buildBoardPath } from '@/lib/board';
 import { EmptyBox } from './EmptyBox';
@@ -18,7 +17,6 @@ export function NoticeBoardBox() {
   const router = useRouter();
   const { clubId } = useParams<{ clubId: string }>();
   const { data: notices = [], isLoading } = useRecentNoticesQuery();
-  const noticeBoardId = useNoticeBoardId();
   const { isAdmin } = useIsAdmin();
 
   if (isLoading) return <NoticeBoardBoxSkeleton />;
@@ -27,18 +25,20 @@ export function NoticeBoardBox() {
     <div className="bg-container-neutral desktop:max-w-[339px] flex flex-col rounded-lg pb-300">
       <div className="flex items-center justify-between px-450 pt-450 pb-300">
         <p className="typo-sub1 text-text-strong">공지</p>
-        <button
-          className="flex items-center justify-center"
-          type="button"
-          aria-label="공지 전체보기"
-          onClick={() => {
-            if (notices.length > 0) {
-              router.push(buildBoardPath(clubId, noticeBoardId));
-            }
-          }}
-        >
-          <Icon src={ArrowRightIcon} size={16} className="cursor-pointer px-1 py-[1px]" />
-        </button>
+        {notices.length > 0 && (
+          <button
+            className="flex items-center justify-center"
+            type="button"
+            aria-label="공지 전체보기"
+            onClick={() => {
+              if (notices.length > 0) {
+                router.push(buildBoardPath(clubId, notices[0].boardId));
+              }
+            }}
+          >
+            <Icon src={ArrowRightIcon} size={16} className="cursor-pointer px-1 py-[1px]" />
+          </button>
+        )}
       </div>
       <div className="flex flex-col px-450">
         {notices.length > 0 ? (
@@ -46,7 +46,7 @@ export function NoticeBoardBox() {
             <React.Fragment key={notice.id}>
               {index > 0 && <Divider />}
               <Link
-                href={buildPostPath(clubId, notice.id, noticeBoardId)}
+                href={buildPostPath(clubId, notice.id, notice.boardId)}
                 className="flex flex-col items-start gap-300 py-400"
               >
                 <div className="flex flex-col gap-200">

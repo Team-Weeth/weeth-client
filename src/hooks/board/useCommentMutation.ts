@@ -5,6 +5,7 @@ import { toast } from '@/stores/useToastStore';
 import { useClubId } from '@/stores';
 
 interface UseCommentMutationOptions<TVariables> {
+  boardId: number;
   postId: number;
   mutationFn: (variables: TVariables) => Promise<unknown>;
   successMessage: string;
@@ -12,6 +13,7 @@ interface UseCommentMutationOptions<TVariables> {
 }
 
 export function useCommentMutation<TVariables>({
+  boardId,
   postId,
   mutationFn,
   successMessage,
@@ -23,7 +25,7 @@ export function useCommentMutation<TVariables>({
   return useMutation({
     mutationFn,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['posts', 'detail', clubId, postId] });
+      queryClient.invalidateQueries({ queryKey: ['posts', 'detail', clubId, boardId, postId] });
       toast({ title: successMessage, variant: 'success' });
     },
     onError: (error) => {

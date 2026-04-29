@@ -31,7 +31,7 @@ function ClubSearchDropdown({ clubs, onSelect, className }: ClubSearchDropdownPr
           >
             <ClubAvatar size={56} src={club.profileImageUrl} name={club.name} />
             <div className="flex flex-col items-start gap-0.5 text-left">
-              <span className="typo-sub2 text-text-strong">{club.name}</span>
+              <span className="typo-sub3 text-text-strong">{club.name}</span>
               <span className="typo-body2 text-text-normal">{club.description}</span>
             </div>
           </button>

@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import { cookies, headers } from 'next/headers';
 
-import { ClubAccessPage, ClubNotFoundPage } from '@/components/auth/invite';
+import { ClubAccessPage, ClubErrorPage } from '@/components/auth/invite';
 import { ApiError, apiServer } from '@/lib/apis/server';
 import { ACCESS_TOKEN_KEY, REFRESH_TOKEN_KEY } from '@/lib/apis/cookies';
 import type { Club } from '@/types';
@@ -20,7 +20,7 @@ export default async function ClubLayout({ children, params }: ClubLayoutProps) 
     club = res.data;
   } catch (error) {
     if (error instanceof ApiError && error.status === 404) {
-      return <ClubNotFoundPage />;
+      return <ClubErrorPage />;
     }
     throw error;
   }

@@ -1,6 +1,5 @@
 'use client';
 
-import { useState } from 'react';
 import { ChevronDown, Moon, Sun, SunMoon } from 'lucide-react';
 
 import {
@@ -34,25 +33,8 @@ interface ThemeModeSelectorProps {
 }
 
 function ThemeModeSelector({ collapsed }: ThemeModeSelectorProps) {
-  const setDark = useThemeStore((state) => state.setDark);
-
-  const [mode, setMode] = useState<ThemeMode>(() => {
-    if (typeof window === 'undefined') return 'light';
-    return useThemeStore.getState().isDark ? 'dark' : 'light';
-  });
-
-  const handleSelect = (value: ThemeMode) => {
-    setMode(value);
-
-    if (value === 'light') {
-      setDark(false);
-    } else if (value === 'dark') {
-      setDark(true);
-    } else {
-      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      setDark(prefersDark);
-    }
-  };
+  const mode = useThemeStore((state) => state.mode);
+  const setMode = useThemeStore((state) => state.setMode);
 
   const currentOption = THEME_OPTIONS.find((o) => o.value === mode)!;
   const TriggerIcon = currentOption.icon;
@@ -63,14 +45,14 @@ function ThemeModeSelector({ collapsed }: ThemeModeSelectorProps) {
         className={cn(
           'text-text-normal flex h-12 w-full cursor-pointer items-center border-none transition-colors',
           'hover:bg-container-neutral-interaction',
-          collapsed ? 'justify-center px-200' : 'gap-300 px-300',
+          collapsed ? 'justify-center px-300' : 'gap-300 px-400',
         )}
       >
-        <TriggerIcon className="h-6 w-6 shrink-0" />
+        <TriggerIcon className="text-icon-alternative h-6 w-6 shrink-0" />
         {!collapsed && (
           <>
             <span className="typo-button2 flex-1 text-left">{TRIGGER_LABELS[mode]}</span>
-            <ChevronDown className="h-5 w-5 shrink-0" />
+            <ChevronDown className="text-icon-alternative h-5 w-5 shrink-0" />
           </>
         )}
       </button>
@@ -90,7 +72,7 @@ function ThemeModeSelector({ collapsed }: ThemeModeSelectorProps) {
 
       <DropdownMenuContent side="bottom" align="end" sideOffset={4} className="w-[200px]">
         {THEME_OPTIONS.map(({ value, label }) => (
-          <DropdownMenuItem key={value} onSelect={() => handleSelect(value)}>
+          <DropdownMenuItem key={value} onSelect={() => setMode(value)}>
             {label}
           </DropdownMenuItem>
         ))}

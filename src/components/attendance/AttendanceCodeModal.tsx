@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 import { CheckRoundIcon } from '@/assets/icons';
 import {
@@ -16,6 +16,7 @@ import { InputOTP } from '@/components/attendance/InputOTP';
 import { useAttendanceSSE } from '@/hooks/attendance';
 import { useRemainingTime } from '@/hooks';
 import { formatModalDescription } from '@/lib/formatTime';
+import { toastError } from '@/stores/useToastStore';
 
 interface AttendanceCodeModalProps {
   open: boolean;
@@ -35,16 +36,36 @@ function AttendanceCodeModal({
   location,
 }: AttendanceCodeModalProps) {
   const [code, setCode] = useState('');
-  const { expiredAt: sseExpiredAt } = useAttendanceSSE();
-  const isLoading = sseExpiredAt === null;
+  const { status, expiredAt: sseExpiredAt } = useAttendanceSSE();
+  const isLoading = status === null;
   const { minutes, seconds, isExpired } = useRemainingTime(sseExpiredAt ?? '');
   const isComplete = code.length === 6;
   const description = formatModalDescription(start, location);
+
+  const hasShownRef = useRef(false);
 
   function handleOpenChange(nextOpen: boolean) {
     if (!nextOpen) setCode('');
     onOpenChange(nextOpen);
   }
+
+  useEffect(() => {
+    if (!open) return;
+    if (status === null) return;
+
+    if ((status === 'qr-none' || status === 'qr-close') && !hasShownRef.current) {
+      hasShownRef.current = true;
+      toastError('현재 출석이 진행 중이 아닙니다.');
+
+      onOpenChange(false);
+    }
+  }, [open, status, onOpenChange]);
+
+  useEffect(() => {
+    if (!open) {
+      hasShownRef.current = false;
+    }
+  }, [open]);
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>

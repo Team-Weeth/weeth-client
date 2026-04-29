@@ -1,7 +1,6 @@
 import { cookies } from 'next/headers';
-
-import { ClubAccessPage, ClubConfirmCard, ClubNotFoundPage } from '@/components/auth/invite';
-import { apiServer } from '@/lib/apis';
+import { API_BASE_PATH } from '@/constants/api';
+import { ClubAccessPage, ClubConfirmCard, ClubErrorPage } from '@/components/auth/invite';
 import { ACCESS_TOKEN_KEY } from '@/lib/apis/cookies';
 import type { Club } from '@/types';
 
@@ -16,12 +15,47 @@ export default async function ClubPage({ params, searchParams }: ClubPageProps) 
   const cookieStore = await cookies();
   const isLoggedIn = cookieStore.has(ACCESS_TOKEN_KEY);
 
-  let club: Club;
+  let club: Club | null = null;
+  let errorTitle: string | null = null;
+  let errorMessage: string | null = null;
+
   try {
-    const { data } = await apiServer.get<{ data: Club }>(`/clubs/${clubId}`);
-    club = data;
-  } catch {
-    return <ClubNotFoundPage />;
+    const response = await fetch(`${API_BASE_PATH}/clubs/${clubId}`, {
+      headers: { 'Content-Type': 'application/json' },
+      cache: 'no-store',
+    });
+
+    if (!response.ok) {
+      let message = '동아리 정보를 불러오는 중 문제가 발생했어요.';
+
+      try {
+        const errorJson = (await response.json()) as { message?: string };
+        if (typeof errorJson.message === 'string' && errorJson.message.trim()) {
+          message = errorJson.message;
+        }
+      } catch {
+        // fall back to the default message when the error body is not JSON
+      }
+
+      if (response.status === 404) {
+        errorTitle = '존재하지 않는 동아리입니다.';
+        errorMessage = null;
+      } else {
+        errorTitle = '동아리 정보를 불러오지 못했어요.';
+        errorMessage = message;
+      }
+    } else {
+      const json = (await response.json()) as { data: Club };
+      club = json.data;
+    }
+  } catch (error) {
+    console.error('Failed to load public club page:', error);
+    errorTitle = '동아리 정보를 불러오지 못했어요.';
+    errorMessage = '동아리 정보를 불러오는 중 문제가 발생했어요.';
+  }
+
+  if (!club) {
+    return <ClubErrorPage title={errorTitle ?? undefined} message={errorMessage ?? undefined} />;
   }
 
   if (code) {

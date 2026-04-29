@@ -4,12 +4,12 @@ import { useClubId } from '@/stores/useClubStore';
 import { BOARD_STALE_TIME, BOARD_GC_TIME } from '@/constants/board/type';
 import type { PostDetail } from '@/types/board';
 
-export function usePostDetailQuery(postId: number, initialData?: PostDetail) {
+export function usePostDetailQuery(boardId: number, postId: number, initialData?: PostDetail) {
   const clubId = useClubId();
 
   return useQuery({
-    queryKey: ['posts', 'detail', clubId, postId],
-    queryFn: () => boardApi.getPostById(clubId!, postId).then((res) => res.data.data),
+    queryKey: ['posts', 'detail', clubId, boardId, postId],
+    queryFn: () => boardApi.getPostById(clubId!, boardId, postId).then((res) => res.data.data),
     initialData,
     enabled: !!clubId,
     staleTime: BOARD_STALE_TIME,

@@ -5,17 +5,24 @@ import { EditClientEditor } from './EditClientEditor';
 
 interface PostEditPageProps {
   params: Promise<{ clubId: string; id: string }>;
+  searchParams: Promise<{ boardId?: string }>;
 }
 
-export default async function PostEditPage({ params }: PostEditPageProps) {
-  const { clubId, id } = await params;
-  const postId = Number(id);
+const isValidId = (value?: string): value is string =>
+  typeof value === 'string' && /^\d+$/.test(value);
 
-  if (Number.isNaN(postId)) {
+export default async function PostEditPage({ params, searchParams }: PostEditPageProps) {
+  const { clubId, id } = await params;
+  const { boardId: boardIdParam } = await searchParams;
+
+  if (!isValidId(id) || !isValidId(boardIdParam)) {
     notFound();
   }
 
-  const response = await boardServerApi.getPostById(clubId, postId).catch(() => null);
+  const postId = parseInt(id, 10);
+  const boardId = parseInt(boardIdParam, 10);
+
+  const response = await boardServerApi.getPostById(clubId, boardId, postId).catch(() => null);
 
   if (!response?.data) {
     notFound();

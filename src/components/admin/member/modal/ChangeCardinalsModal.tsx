@@ -47,7 +47,10 @@ function ChangeCardinalsModal({
 
   const handleSave = () => {
     if (selected.size === 0) return;
-    onSubmit?.(selectedArray);
+    const cardinalIds = cardinalsData
+      .filter((c) => selected.has(c.cardinalNumber))
+      .map((c) => c.id);
+    onSubmit?.(cardinalIds);
     handleClose();
   };
 

@@ -1,12 +1,7 @@
-import { cookies } from 'next/headers';
+import { cookies, headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { API_BASE_PATH } from '@/constants/api';
-import {
-  ACCESS_TOKEN_KEY,
-  REFRESH_TOKEN_KEY,
-  ACCESS_COOKIE_OPTIONS,
-  REFRESH_COOKIE_OPTIONS,
-} from './cookies';
+import { ACCESS_TOKEN_KEY, REFRESH_TOKEN_KEY } from './cookies';
 
 interface RequestOptions extends Omit<RequestInit, 'method' | 'body'> {
   params?: Record<string, string | number>;
@@ -43,32 +38,21 @@ function buildUrl(path: string, params?: Record<string, string | number>): strin
   return url;
 }
 
-async function refreshTokens(cookieStore: Awaited<ReturnType<typeof cookies>>): Promise<void> {
+async function redirectToRefresh(): Promise<never> {
+  const headerStore = await headers();
+  const pathname = headerStore.get('x-pathname') ?? '/hub';
+  const search = headerStore.get('x-search') ?? '';
+  const redirectPath = `${pathname}${search}`;
+  redirect(`/api/proxy/auth/refresh?redirect=${encodeURIComponent(redirectPath)}`);
+}
+
+async function refreshTokens(cookieStore: Awaited<ReturnType<typeof cookies>>): Promise<never> {
   const refreshToken = cookieStore.get(REFRESH_TOKEN_KEY)?.value;
 
   if (!refreshToken) {
     redirect('/login');
   }
-
-  const refreshResponse = await fetch(`${API_BASE_PATH}/users/social/refresh`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization_refresh: `Bearer ${refreshToken}`,
-    },
-  });
-
-  if (!refreshResponse.ok) {
-    cookieStore.delete(ACCESS_TOKEN_KEY);
-    cookieStore.delete(REFRESH_TOKEN_KEY);
-    redirect('/login');
-  }
-
-  const refreshJson = await refreshResponse.json();
-  const { accessToken: newAccessToken, refreshToken: newRefreshToken } = refreshJson.data;
-
-  cookieStore.set(ACCESS_TOKEN_KEY, newAccessToken, ACCESS_COOKIE_OPTIONS);
-  cookieStore.set(REFRESH_TOKEN_KEY, newRefreshToken, REFRESH_COOKIE_OPTIONS);
+  return redirectToRefresh();
 }
 
 async function request<T>(
@@ -79,7 +63,7 @@ async function request<T>(
   _retried = false,
 ): Promise<T> {
   const cookieStore = await cookies();
-  let accessToken =
+  const accessToken =
     cookieStore.get(ACCESS_TOKEN_KEY)?.value ??
     (process.env.NODE_ENV === 'development' ? process.env.DEV_ACCESS_TOKEN : undefined);
   const refreshToken = cookieStore.get(REFRESH_TOKEN_KEY)?.value;
@@ -88,7 +72,6 @@ async function request<T>(
   // doesn't incur an avoidable 401 -> retry round trip.
   if (!accessToken && refreshToken) {
     await refreshTokens(cookieStore);
-    accessToken = cookieStore.get(ACCESS_TOKEN_KEY)?.value;
   }
 
   const { params, ...fetchOptions } = options;
