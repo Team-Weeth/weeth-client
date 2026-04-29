@@ -107,7 +107,7 @@ function PostDetailContent({ initialData }: PostDetailContentProps) {
                   `/${clubIdParam}/board/edit/${currentPost.id}?boardId=${currentPost.boardId}`,
                 )
               }
-              onDeleted={() => router.push(buildBoardPath(clubIdParam, Number(boardIdParam)))}
+              onDeleted={() => router.push(buildBoardPath(clubIdParam, currentPost.boardId))}
             />
           )}
         </PostCard.Header>
@@ -168,7 +168,10 @@ function PostDetailContent({ initialData }: PostDetailContentProps) {
                   key={comment.id}
                   {...mapped}
                   replyOpen={activeReplyId === comment.id}
-                  onReplyToggle={() => handleReplyToggle(comment.id)}
+                  onReplyToggle={() => {
+                    if (!canComment) return;
+                    handleReplyToggle(comment.id);
+                  }}
                   onReplySuccess={forceCloseReply}
                   onReplyDirtyChange={setIsReplyDirty}
                   replies={mapped.replies.map((reply) => ({
@@ -180,6 +183,7 @@ function PostDetailContent({ initialData }: PostDetailContentProps) {
                     onDelete: () => deleteComment(reply.id),
                   }))}
                   onReply={async (content) => {
+                    if (!canComment) return false;
                     await createComment(content, comment.id);
                     return true;
                   }}
