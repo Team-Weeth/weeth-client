@@ -6,6 +6,7 @@ import { BoardCard } from './BoardCard';
 interface SortableBoardCardProps {
   board: Board;
   onToggleComments: (next: boolean) => void;
+  commentTogglePending?: boolean;
   onEdit: () => void;
   onDelete: () => void;
 }
@@ -13,6 +14,7 @@ interface SortableBoardCardProps {
 export function SortableBoardCard({
   board,
   onToggleComments,
+  commentTogglePending,
   onEdit,
   onDelete,
 }: SortableBoardCardProps) {
@@ -25,6 +27,7 @@ export function SortableBoardCard({
       ref={setNodeRef}
       board={board}
       onToggleComments={onToggleComments}
+      commentTogglePending={commentTogglePending}
       onEdit={onEdit}
       onDelete={onDelete}
       dragHandleProps={{ ...attributes, ...listeners }}

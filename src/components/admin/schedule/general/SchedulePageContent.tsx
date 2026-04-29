@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
 import { Button, Card, Icon, Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui';
 import { AdminCalendarEditIcon } from '@/assets/icons/admin';
@@ -13,6 +14,7 @@ import { SessionTabContent } from '@/components/admin/schedule/session/SessionTa
 import { CreateScheduleModal } from '@/components/admin/schedule/modal/CreateScheduleModal';
 import { EditScheduleModal } from '@/components/admin/schedule/modal/EditScheduleModal';
 import { EditSessionModal } from '@/components/admin/schedule/modal/EditSessionModal';
+import { useClubId } from '@/stores';
 import { useCardinalSelector, useMonthNavigator } from '@/hooks';
 import { useSessionMutations } from '@/hooks/admin';
 import {
@@ -24,8 +26,9 @@ import type { Schedule, ScheduleType } from '@/types/admin/schedule';
 type ScheduleTab = 'all' | 'session';
 
 function SchedulePageContent() {
+  const clubId = useClubId();
   const { cardinals, selectedCardinalId, setSelectedCardinalId, activeCardinal } =
-    useCardinalSelector({ autoSelectLatest: true });
+    useCardinalSelector();
   const {
     year: currentYear,
     month: currentMonth,
@@ -33,7 +36,17 @@ function SchedulePageContent() {
     next: handleNextMonth,
   } = useMonthNavigator();
   const [searchValue, setSearchValue] = useState('');
-  const [activeTab, setActiveTab] = useState<ScheduleTab>('all');
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const activeTab: ScheduleTab = searchParams.get('tab') === 'session' ? 'session' : 'all';
+  const handleTabChange = (value: string) => {
+    const params = new URLSearchParams(searchParams);
+    if (value === 'session') params.set('tab', 'session');
+    else params.delete('tab');
+    const query = params.toString();
+    router.replace(query ? `${pathname}?${query}` : pathname, { scroll: false });
+  };
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [createModalTab, setCreateModalTab] = useState<ScheduleType>('EVENT');
   const [editTarget, setEditTarget] = useState<Schedule | null>(null);
@@ -91,14 +104,11 @@ function SchedulePageContent() {
         cardinals={cardinals}
         activeCardinal={activeCardinal}
         onSelect={setSelectedCardinalId}
+        onSelectAll={() => setSelectedCardinalId(null)}
       />
 
       {/* Tabs */}
-      <Tabs
-        value={activeTab}
-        onValueChange={(v) => setActiveTab(v as ScheduleTab)}
-        className="gap-0"
-      >
+      <Tabs value={activeTab} onValueChange={handleTabChange} className="gap-0">
         <TabsList variant="line" className="h-8">
           <TabsTrigger value="all">전체 일정</TabsTrigger>
           <TabsTrigger value="session">세션</TabsTrigger>
@@ -153,6 +163,9 @@ function SchedulePageContent() {
         <TabsContent value="session" className="mt-400">
           <SessionTabContent
             onCreateSession={() => openCreateModal('SESSION')}
+            onManageAttendance={(session) =>
+              router.push(`/${clubId}/admin/attendance?sessionId=${session.id}`)
+            }
             cardinalNumber={
               selectedCardinalId === null ? null : (activeCardinal?.cardinalNumber ?? null)
             }

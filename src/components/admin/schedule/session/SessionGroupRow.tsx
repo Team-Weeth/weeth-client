@@ -11,7 +11,11 @@ import {
   MoreButton,
 } from '@/components/admin/schedule/session/SessionActionButtons';
 import { SESSION_TABLE_COLUMNS } from '@/components/admin/schedule/session/sessionTableColumns';
-import { formatSessionDate, formatSessionDateRange } from '@/utils/admin/sessionUtils';
+import {
+  deriveSessionStatus,
+  formatSessionDate,
+  formatSessionDateRange,
+} from '@/utils/admin/sessionUtils';
 import type { AdminSession, AdminSessionGroup } from '@/types/admin/session';
 import { AdminToggleOpenIcon } from '@/assets/icons/admin';
 
@@ -21,8 +25,11 @@ interface SessionGroupRowProps {
   bordered?: boolean;
   /** 출석 관리는 개별 세션(AdminSession) id 기반 동작 */
   onManageAttendance?: (session: AdminSession) => void;
-  /** 수정 대상은 그룹 전체 또는 개별 하위 세션 */
-  onMore?: (target: AdminSession | AdminSessionGroup) => void;
+  /**
+   * 수정 대상은 그룹 전체 또는 개별 하위 세션.
+   * 하위 세션이 클릭된 경우, 부모 그룹을 함께 전달해서 모달에서 반복 스코프 다이얼로그를 표시할 수 있도록 한다.
+   */
+  onMore?: (target: AdminSession | AdminSessionGroup, parentGroup?: AdminSessionGroup) => void;
 }
 
 function SessionGroupRow({
@@ -34,6 +41,9 @@ function SessionGroupRow({
   // 반복 세션 그룹일 때만 토글과 하위 테이블을 노출
   const isRecurring = group.recurrenceType !== 'NONE';
   const [expanded, setExpanded] = useState(true);
+
+  // 그룹 시작/종료일과 오늘을 비교해 SCHEDULED / OPEN / COMPLETED 도출
+  const derivedGroupStatus = deriveSessionStatus(group.status, group.startDate, group.endDate);
 
   return (
     <div className={cn('flex flex-col', bordered && 'border-line border-t')}>
@@ -111,7 +121,7 @@ function SessionGroupRow({
             SESSION_TABLE_COLUMNS.status.widthClass,
           )}
         >
-          <SessionStatusTag status={group.status} />
+          <SessionStatusTag status={derivedGroupStatus} />
         </div>
         <div
           className={cn(
@@ -120,9 +130,13 @@ function SessionGroupRow({
           )}
         >
           {!isRecurring && group.sessions[0] && (
-            <AttendanceLink onClick={() => onManageAttendance?.(group.sessions[0])} />
+            <AttendanceLink
+              status={derivedGroupStatus}
+              onClick={() => onManageAttendance?.(group.sessions[0])}
+            />
           )}
         </div>
+        <div className="flex-1" />
         <div
           className={cn('flex items-center justify-center', SESSION_TABLE_COLUMNS.more.widthClass)}
         >
@@ -142,7 +156,7 @@ function SessionGroupRow({
             <SessionChildTable
               sessions={group.sessions}
               onManageAttendance={onManageAttendance}
-              onMore={onMore}
+              onMore={(session) => onMore?.(session, group)}
             />
           </div>
         </div>

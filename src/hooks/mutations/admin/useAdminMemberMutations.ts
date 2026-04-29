@@ -1,14 +1,11 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { adminMemberApi } from '@/lib/apis/adminMember';
+import { revalidateDashboard } from '@/lib/actions/club';
 import type { ClubMemberRole, Member } from '@/types/admin/member';
 import { useClubId } from '@/stores';
-
-const ROLE_LABEL: Record<ClubMemberRole, string> = {
-  USER: '사용자',
-  ADMIN: '관리자',
-  LEAD: '리더',
-};
+import { useUserStore } from '@/stores/useUserStore';
+import { ROLE_MAP } from '@/utils/admin/memberMapper';
 
 // 멤버 권한 변경
 export function useChangeMemberRole() {
@@ -34,7 +31,7 @@ export function useChangeMemberRole() {
       queryClient.setQueryData<Member[]>(queryKey, (old = []) =>
         old.map((m) =>
           m.clubMemberId === clubMemberId
-            ? { ...m, memberRole, position: ROLE_LABEL[memberRole] }
+            ? { ...m, memberRole, position: ROLE_MAP[memberRole] }
             : m,
         ),
       );
@@ -118,6 +115,27 @@ export function useChangeMemberCardinals() {
       if (context?.previous) {
         queryClient.setQueryData(queryKey, context.previous);
       }
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey });
+    },
+  });
+}
+
+// LEAD 권한 이양
+export function useTransferLead() {
+  const queryClient = useQueryClient();
+  const clubId = useClubId();
+  const queryKey = ['admin', 'members', clubId];
+
+  return useMutation({
+    mutationFn: (clubMemberId: number) => {
+      if (!clubId) throw new Error('clubId가 없습니다');
+      return adminMemberApi.transferLead(clubId, clubMemberId);
+    },
+    onSuccess: async () => {
+      useUserStore.getState().setRole('ADMIN');
+      if (clubId) await revalidateDashboard(clubId);
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey });

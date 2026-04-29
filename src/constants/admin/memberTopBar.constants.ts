@@ -6,9 +6,17 @@ interface TopBarActionParams {
   targetBanAction: 'ban' | 'restore' | null; // null = BANNED와 BANNED 아닌 멤버가 섞임
   onApprove?: () => void;
   onChangeRole?: () => void;
-  onResetPassword?: () => void;
   onBan?: () => void;
   onRestore?: () => void;
+  onTransferLead?: () => void;
+}
+
+interface TopBarAction {
+  label: string;
+  title: string;
+  description?: string;
+  handler?: () => void;
+  disabled: boolean;
 }
 
 export function getTopBarActions({
@@ -17,17 +25,17 @@ export function getTopBarActions({
   targetBanAction,
   onApprove,
   onChangeRole,
-  onResetPassword,
   onBan,
   onRestore,
-}: TopBarActionParams) {
-  const roleLabel = targetRole === 'ADMIN' ? '관리자로 변경' : '사용자로 변경';
+  onTransferLead,
+}: TopBarActionParams): TopBarAction[] {
+  const roleLabel = targetRole === 'ADMIN' ? '운영진으로 변경' : '사용자로 변경';
   const roleTitle =
     targetRole === 'ADMIN'
-      ? `${selectedCount}명의 멤버 역할을 관리자로\n변경하시겠습니까?`
+      ? `${selectedCount}명의 멤버 역할을 운영진으로\n변경하시겠습니까?`
       : `${selectedCount}명의 멤버 역할을 사용자로\n변경하시겠습니까?`;
 
-  return [
+  const actions: TopBarAction[] = [
     {
       label: '가입 승인',
       title: `${selectedCount}명의 멤버 가입을 승인하시겠습니까?`,
@@ -39,12 +47,6 @@ export function getTopBarActions({
       title: roleTitle,
       handler: onChangeRole,
       disabled: !onChangeRole || targetRole === null,
-    },
-    {
-      label: '비밀번호 초기화',
-      title: `${selectedCount}명의 멤버 비밀번호를 초기화\n시키시겠습니까?`,
-      handler: onResetPassword,
-      disabled: !onResetPassword,
     },
     targetBanAction === 'restore'
       ? {
@@ -60,4 +62,18 @@ export function getTopBarActions({
           disabled: !onBan || targetBanAction === null,
         },
   ];
+
+  if (onTransferLead) {
+    actions.push({
+      label: '리더로 변경',
+      title: '해당 멤버에게\n리더 권한을 이양하시겠습니까?',
+      description: '리더는 동아리별로\n1명만 지정할 수 있습니다',
+      handler: onTransferLead,
+      disabled: false,
+    });
+  }
+
+  return actions;
 }
+
+export type { TopBarAction };

@@ -70,7 +70,7 @@ function useBoardDragReorder({ onReorder, debounceMs = 500 }: UseBoardDragReorde
     reorderTimerRef.current = setTimeout(() => {
       reorderTimerRef.current = null;
       onReorder(reorderedIds, {
-        onError: () => queryClient.setQueryData(cacheKey, snapshot),
+        onError: () => queryClient.invalidateQueries({ queryKey: cacheKey }),
       });
     }, debounceMs);
   };

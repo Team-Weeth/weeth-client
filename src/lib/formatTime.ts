@@ -16,11 +16,12 @@ function formatKoreanDate(date: Date) {
  * 출석 카드용 설명 문자열 생성
  * "날짜 : 2026년 3월 20일 (7:00 PM~9:00 PM)\n장소 : 동아리방"
  */
-function formatAttendanceDescription(start: string, end: string, location: string) {
+function formatAttendanceDescription(start: string, end: string, location: string | null) {
   const startDate = new Date(start);
   const endDate = new Date(end);
 
-  return `날짜 : ${formatKoreanDate(startDate)} (${formatTime(startDate)}~${formatTime(endDate)})\n장소 : ${location}`;
+  const datePart = `날짜 : ${formatKoreanDate(startDate)} (${formatTime(startDate)}~${formatTime(endDate)})`;
+  return location ? `${datePart}\n장소 : ${location}` : datePart;
 }
 
 /**

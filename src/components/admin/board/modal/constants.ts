@@ -6,7 +6,7 @@ const DESCRIPTION_MAX = 30;
 
 const VISIBILITY_OPTIONS: { value: BoardVisibility; label: string }[] = [
   { value: 'PUBLIC', label: '전체 공개' },
-  { value: 'ADMIN_ONLY', label: '관리자 전용' },
+  { value: 'ADMIN_ONLY', label: '운영진 전용' },
   { value: 'PRIVATE', label: '비공개' },
 ];
 

@@ -27,7 +27,7 @@ function MobileNavSheet() {
     { id: 'home', label: 'HOME', href: `/${clubId}/home`, icon: HomeIcon },
     { id: 'board', label: '게시판', href: `/${clubId}/board`, icon: PinIcon },
     { id: 'attendance', label: '출석', href: `/${clubId}/attendance`, icon: CheckRoundIcon },
-    { id: 'admin', label: '관리자 서비스', href: `/${clubId}/admin`, icon: ExitIcon },
+    { id: 'admin', label: '운영진 서비스', href: `/${clubId}/admin`, icon: ExitIcon },
     { id: 'mypage', label: 'MY', href: `/${clubId}/mypage`, icon: PersonIcon },
   ] as const;
 

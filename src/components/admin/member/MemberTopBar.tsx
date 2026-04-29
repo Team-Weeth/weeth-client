@@ -17,10 +17,10 @@ interface MemberTopBarProps extends React.HTMLAttributes<HTMLDivElement> {
   onBack: () => void;
   onApprove?: () => void;
   onChangeRole?: () => void;
-  onResetPassword?: () => void;
   onBan?: () => void;
   onRestore?: () => void;
   onChangeCardinals?: (cardinalIds: number[]) => void;
+  onTransferLead?: () => void;
   ref?: React.Ref<HTMLDivElement>;
 }
 
@@ -32,10 +32,10 @@ function MemberTopBar({
   onBack,
   onApprove,
   onChangeRole,
-  onResetPassword,
   onBan,
   onRestore,
   onChangeCardinals,
+  onTransferLead,
   ref,
   ...props
 }: MemberTopBarProps) {
@@ -47,9 +47,9 @@ function MemberTopBar({
     targetBanAction,
     onApprove,
     onChangeRole,
-    onResetPassword,
     onBan,
     onRestore,
+    onTransferLead,
   });
 
   return (
@@ -69,12 +69,18 @@ function MemberTopBar({
       <span className="typo-sub1 text-text-inverse ml-200 shrink-0">{selectedCount}명 선택됨</span>
 
       <div className="ml-auto flex items-center gap-200">
-        {topBarActions.map(({ label, title, handler, disabled }) => (
+        {topBarActions.map(({ label, title, description, handler, disabled }) => (
           <AlertDialog
             key={label}
             title={title}
+            description={description}
             trigger={
-              <Button variant="secondary" size="lg" className="py-200" disabled={disabled}>
+              <Button
+                variant="secondary"
+                size="lg"
+                className="typo-button1 py-200"
+                disabled={disabled}
+              >
                 {label}
               </Button>
             }

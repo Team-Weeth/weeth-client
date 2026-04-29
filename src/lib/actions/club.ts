@@ -1,10 +1,15 @@
 'use server';
 
 import { cookies } from 'next/headers';
+import { updateTag } from 'next/cache';
 
 import { apiServer } from '@/lib/apis/server';
 import { CLUB_COOKIE_OPTIONS, CLUB_ID_KEY, CLUB_NAME_KEY } from '@/lib/apis/cookies';
 import type { CreateClubFormData } from '@/lib/schemas/createClub';
+
+export async function revalidateDashboard(clubId: string) {
+  updateTag(`dashboard-${clubId}`);
+}
 
 export async function setClubCookie(clubId: string, clubName: string) {
   const cookieStore = await cookies();

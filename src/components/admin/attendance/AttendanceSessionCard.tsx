@@ -11,6 +11,7 @@ interface AttendanceSessionCardProps {
   date: string;
   title: string;
   isCurrentWeek?: boolean;
+  defaultExpanded?: boolean;
   onDirtyChange?: (sessionId: number, dirty: boolean) => void;
 }
 
@@ -19,9 +20,10 @@ function AttendanceSessionCard({
   date,
   title,
   isCurrentWeek,
+  defaultExpanded = false,
   onDirtyChange,
 }: AttendanceSessionCardProps) {
-  const [expanded, setExpanded] = useState(false);
+  const [expanded, setExpanded] = useState(defaultExpanded);
   const { data: members = [] } = useAdminAttendance(sessionId, { enabled: expanded });
   const { mutateAsync, isPending } = useUpdateAttendanceStatus(sessionId);
 
@@ -36,6 +38,7 @@ function AttendanceSessionCard({
       date={date}
       title={title}
       isCurrentWeek={isCurrentWeek}
+      defaultExpanded={defaultExpanded}
       members={members}
       onSave={handleSave}
       onDirtyChange={handleDirtyChange}

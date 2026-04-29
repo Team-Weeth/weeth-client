@@ -6,53 +6,49 @@ import { ChangeCardinalsModal } from '@/components/admin/member/modal/ChangeCard
 import { cn } from '@/lib/cn';
 import { AdminCloseIcon } from '@/assets/icons/admin';
 import {
-  STATUS_LABEL,
-  STATUS_DOT_COLOR,
   getPersonalInfo,
-  getActivityInfo,
   getActivityStats,
   getFooterActions,
 } from '@/constants/admin/memberDetailModal.constants';
+import { parseCardinals } from '@/utils/admin/parseCardinals';
 import type { Member } from '@/types/admin/member';
 
 interface MemberDetailModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   member: Member | null;
-  onApprove?: () => void;
   onChangeRole?: () => void;
-  onResetPassword?: () => void;
   onBan?: () => void;
   onRestore?: () => void;
   onChangeCardinals?: (cardinalIds: number[]) => void;
+  onTransferLead?: () => void;
 }
 
 function MemberDetailModal({
   open,
   onOpenChange,
   member,
-  onApprove,
   onChangeRole,
-  onResetPassword,
   onBan,
   onRestore,
   onChangeCardinals,
+  onTransferLead,
 }: MemberDetailModalProps) {
   if (!member) return null;
 
   const handleClose = () => onOpenChange(false);
 
   const personalInfo = getPersonalInfo(member);
-  const activityInfo = getActivityInfo(member);
   const activityStats = getActivityStats(member);
+  const cardinals = parseCardinals(member.cardinal);
+  const latestCardinal = cardinals.at(-1);
   const footerActions = getFooterActions({
     memberRole: member.memberRole,
     status: member.status,
-    onApprove,
     onChangeRole,
-    onResetPassword,
     onBan,
     onRestore,
+    onTransferLead,
   });
 
   return (
@@ -82,14 +78,7 @@ function MemberDetailModal({
 
             <div className="mb-200 flex items-baseline gap-200">
               <span className="typo-h3 text-text-strong">{member.name}</span>
-              <span className="typo-h3 text-text-strong">
-                {parseInt(member.cardinal, 10) || member.cardinal || '-'}기
-              </span>
-            </div>
-
-            <div className="mb-400 flex items-center gap-200">
-              <span className={cn('size-1', STATUS_DOT_COLOR[member.status])} />
-              <span className="typo-caption2 text-text-strong">{STATUS_LABEL[member.status]}</span>
+              <span className="typo-h3 text-text-strong">{latestCardinal ?? '-'}기</span>
             </div>
 
             <div className="flex flex-col gap-400">
@@ -107,12 +96,19 @@ function MemberDetailModal({
             <p className="typo-caption1 text-text-alternative mb-400">활동정보</p>
 
             <div className="flex flex-col gap-400">
-              {activityInfo.map(({ label, value }) => (
-                <div key={label} className="flex items-start">
-                  <span className="typo-body1 text-text-alternative w-24 shrink-0">{label}</span>
-                  <span className="typo-body1 text-text-strong">{value}</span>
+              <div className="flex items-start">
+                <span className="typo-body1 text-text-alternative w-24 shrink-0">활동 기수</span>
+                <div className="flex flex-wrap gap-200">
+                  {cardinals.map((c) => (
+                    <span
+                      key={c}
+                      className="bg-container-primary-alternative text-brand-primary typo-body2 rounded-full px-300 py-100"
+                    >
+                      {c}기
+                    </span>
+                  ))}
                 </div>
-              ))}
+              </div>
             </div>
 
             <div className="mt-500 flex flex-col gap-200">
@@ -129,10 +125,11 @@ function MemberDetailModal({
         {/* Footer */}
         <div className="bg-container-neutral flex items-center justify-between rounded-b-sm px-400 pt-400 pb-500">
           <div className="flex items-center gap-200">
-            {footerActions.map(({ label, title, handler }) => (
+            {footerActions.map(({ label, title, description, handler }) => (
               <AlertDialog
                 key={label}
                 title={title}
+                description={description}
                 trigger={
                   <Button variant="secondary" size="lg">
                     {label}

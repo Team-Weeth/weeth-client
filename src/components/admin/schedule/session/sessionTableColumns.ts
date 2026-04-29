@@ -31,6 +31,9 @@ export const SESSION_TABLE_COLUMNS = {
   childDate: { width: 549, widthClass: 'w-[549px]' },
 } as const;
 
+/** 자식 행/헤더의 sticky 컬럼 좌측 들여쓰기 */
+export const SESSION_CHILD_INDENT_CLASS = 'pl-[64px]';
+
 /**
  * 테이블 전체 최소 너비 (px).
  * sticky 컬럼 + 부모 테이블의 나머지 컬럼 + more 영역의 합.

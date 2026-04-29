@@ -28,7 +28,7 @@ export function toBoard(dto: AdminBoardDto): Board {
     kind: dto.type,
     visibility: mapVisibility(dto.writePermission, dto.isPrivate),
     postCount: dto.postCount,
-    commentEnabled: dto.type === 'ALL' || dto.type === 'NOTICE' ? null : dto.commentEnabled,
+    commentEnabled: dto.type === 'ALL' ? null : dto.commentEnabled,
     editable: dto.type === 'GENERAL',
   };
 }

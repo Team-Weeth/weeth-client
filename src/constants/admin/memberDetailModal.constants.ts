@@ -1,32 +1,13 @@
-import type { Member, MemberStatus } from '@/types/admin/member';
-
-export const STATUS_LABEL: Record<MemberStatus, string> = {
-  ACTIVE: '활동중',
-  WAITING: '가입 대기',
-  BANNED: '추방',
-  LEFT: '탈퇴',
-};
-
-export const STATUS_DOT_COLOR: Record<MemberStatus, string> = {
-  ACTIVE: 'bg-container-primary',
-  WAITING: 'bg-state-caution',
-  BANNED: 'bg-state-error',
-  LEFT: 'bg-container-neutral-alternative',
-};
+import type { ClubMemberRole, Member, MemberStatus } from '@/types/admin/member';
 
 export function getPersonalInfo(member: Member) {
   return [
-    { label: '직급', value: member.position },
-    { label: '역할', value: member.role },
+    { label: '역할', value: member.position },
     { label: '학과', value: member.department },
     { label: '전화번호', value: member.phone },
     { label: '학번', value: member.studentId },
     { label: '이메일', value: member.email },
   ];
-}
-
-export function getActivityInfo(member: Member) {
-  return [{ label: '활동기수', value: member.cardinal }];
 }
 
 export function getActivityStats(member: Member) {
@@ -41,47 +22,55 @@ export function getActivityStats(member: Member) {
   ];
 }
 
-import type { ClubMemberRole } from '@/types/admin/member';
-
 interface FooterActionHandlers {
   memberRole: ClubMemberRole;
   status: MemberStatus;
-  onApprove?: () => void;
   onChangeRole?: () => void;
-  onResetPassword?: () => void;
   onBan?: () => void;
   onRestore?: () => void;
+  onTransferLead?: () => void;
+}
+
+interface FooterAction {
+  label: string;
+  title: string;
+  description?: string;
+  handler?: () => void;
 }
 
 export function getFooterActions({
   memberRole,
   status,
-  //  onApprove,
   onChangeRole,
-  //  onResetPassword,
   onBan,
   onRestore,
-}: FooterActionHandlers) {
+  onTransferLead,
+}: FooterActionHandlers): FooterAction[] {
   const isAdmin = memberRole === 'ADMIN';
   const isBanned = status === 'BANNED';
-  return [
-    // TODO: 가입 승인 api 열리면 열기
-    // { label: '가입 승인', title: '1명의 멤버 가입을 승인하시겠습니까?', handler: onApprove },
+  const actions: FooterAction[] = [
     {
-      label: isAdmin ? '사용자로 변경' : '관리자로 변경',
+      label: isAdmin ? '사용자로 변경' : '운영진으로 변경',
       title: isAdmin
         ? '1명의 멤버 역할을 사용자로\n변경하시겠습니까?'
-        : '1명의 멤버 역할을 관리자로\n변경하시겠습니까?',
+        : '1명의 멤버 역할을 운영진으로\n변경하시겠습니까?',
       handler: onChangeRole,
     },
-    // TODO: 비번 변경 api 열리면 열기
-    // {
-    //   label: '비밀번호 초기화',
-    //   title: '1명의 멤버 비밀번호를 초기화\n시키시겠습니까?',
-    //   handler: onResetPassword,
-    // },
     isBanned
       ? { label: '유저 복구', title: '1명의 멤버를 복구하시겠습니까?', handler: onRestore }
       : { label: '유저 추방', title: '1명의 멤버를 추방하시겠습니까?', handler: onBan },
   ];
+
+  if (onTransferLead) {
+    actions.push({
+      label: '리더로 변경',
+      title: '해당 멤버에게\n리더 권한을 이양하시겠습니까?',
+      description: '리더는 동아리별로\n1명만 지정할 수 있습니다',
+      handler: onTransferLead,
+    });
+  }
+
+  return actions;
 }
+
+export type { FooterAction };

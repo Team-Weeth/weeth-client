@@ -19,6 +19,7 @@ function MyPageContent({ className, ...props }: MyPageContentProps) {
   const { clubId } = useParams<{ clubId: string }>();
   const [{ data: me, isPending: isMePending }, { data: clubs, isPending: isClubsPending }] =
     useMyPageQueries(clubId);
+  const displayName = me?.name ?? '';
 
   return (
     <div
@@ -49,7 +50,7 @@ function MyPageContent({ className, ...props }: MyPageContentProps) {
         {/* 프로필 */}
         {me ? (
           <ProfileSection
-            name={me.name}
+            name={displayName}
             bio={me.bio ?? undefined}
             profileImageUrl={me.profileImageUrl ?? undefined}
           />
@@ -64,20 +65,20 @@ function MyPageContent({ className, ...props }: MyPageContentProps) {
               <>
                 <InfoCard
                   items={[
-                    { label: '이름', value: me.name },
-                    { label: '소개글', value: me.bio },
+                    { label: '이름', value: me.name ?? '-' },
+                    { label: '소개글', value: me.bio ?? '-' },
                     {
                       label: '전화번호',
                       value: me.tel?.replace(/(\d{3})(\d{4})(\d{4})/, '$1-$2-$3') ?? '-',
                     },
-                    { label: '이메일', value: me.email },
+                    { label: '이메일', value: me.email ?? '-' },
                   ]}
                 />
                 <InfoCard
                   items={[
-                    { label: '학교', value: me.school },
-                    { label: '학과', value: me.department },
-                    { label: '학번', value: me.studentId },
+                    { label: '학교', value: me.school ?? '-' },
+                    { label: '학과', value: me.department ?? '-' },
+                    { label: '학번', value: me.studentId ?? '-' },
                   ]}
                 />
               </>

@@ -4,25 +4,15 @@ import * as React from 'react';
 
 import { cn } from '@/lib/cn';
 
-function Table({ className, ...props }: React.ComponentProps<'table'>) {
+interface TableProps extends React.ComponentProps<'table'> {
+  wrapperClassName?: string;
+}
+
+function Table({ className, wrapperClassName, ...props }: TableProps) {
   return (
     <div
       data-slot="table-container"
-      className="scrollbar-none relative w-full cursor-grab overflow-x-auto select-none active:cursor-grabbing"
-      onMouseDown={(e) => {
-        const el = e.currentTarget;
-        const startX = e.pageX - el.offsetLeft;
-        const scrollLeft = el.scrollLeft;
-        const onMouseMove = (ev: MouseEvent) => {
-          el.scrollLeft = scrollLeft - (ev.pageX - el.offsetLeft - startX);
-        };
-        const onMouseUp = () => {
-          window.removeEventListener('mousemove', onMouseMove);
-          window.removeEventListener('mouseup', onMouseUp);
-        };
-        window.addEventListener('mousemove', onMouseMove);
-        window.addEventListener('mouseup', onMouseUp);
-      }}
+      className={cn('relative w-full overflow-x-auto', wrapperClassName)}
     >
       <table
         data-slot="table"

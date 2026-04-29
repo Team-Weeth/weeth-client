@@ -1,16 +1,24 @@
 'use client';
 
 import { useEffect, type ReactNode } from 'react';
+import { usePathname } from 'next/navigation';
 import { useThemeStore } from '@/stores/theme-store';
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
+  const pathname = usePathname();
   const isDark = useThemeStore((state) => state.isDark);
   const mode = useThemeStore((state) => state.mode);
   const setDark = useThemeStore((state) => state.setDark);
+  const forceLight = pathname.startsWith('/landing');
 
   useEffect(() => {
+    if (forceLight) {
+      document.documentElement.classList.remove('dark');
+      return;
+    }
+
     document.documentElement.classList.toggle('dark', isDark);
-  }, [isDark]);
+  }, [forceLight, isDark]);
 
   useEffect(() => {
     if (mode !== 'auto') return;
