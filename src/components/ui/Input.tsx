@@ -19,10 +19,19 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   clearable?: boolean;
   error?: boolean;
   wrapperClassName?: string;
+  clearButtonClassName?: string;
   ref?: React.Ref<HTMLInputElement>;
 }
 
-function Input({ className, clearable, error, wrapperClassName, ref, ...props }: InputProps) {
+function Input({
+  className,
+  clearable,
+  error,
+  wrapperClassName,
+  clearButtonClassName,
+  ref,
+  ...props
+}: InputProps) {
   const hasTypo = className?.split(' ').some((c) => c.startsWith('typo-'));
   const typoClass = hasTypo ? undefined : 'typo-body2';
   const innerRef = useRef<HTMLInputElement>(null);
@@ -99,6 +108,7 @@ function Input({ className, clearable, error, wrapperClassName, ref, ...props }:
             'flex items-center',
             'text-icon-normal',
             'cursor-pointer transition-colors',
+            clearButtonClassName,
           )}
           aria-label="입력 내용 지우기"
         >
