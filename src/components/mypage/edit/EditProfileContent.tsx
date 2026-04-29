@@ -30,6 +30,8 @@ import { ProfileImageEditor } from './ProfileImageEditor';
 import { PersonalInfoFields } from './PersonalInfoFields';
 import { SchoolInfoFields } from './SchoolInfoFields';
 
+const toFormString = (value: string | null | undefined) => value ?? '';
+
 interface EditProfileContentProps extends React.HTMLAttributes<HTMLDivElement> {
   schools: string[];
   majors: string[];
@@ -71,22 +73,28 @@ function EditProfileContent({ className, schools, majors, ...props }: EditProfil
   useEffect(() => {
     if (!me) return;
 
-    reset({
-      name: me.name,
-      bio: me.bio ?? '',
+    const nextValues = {
+      name: toFormString(me.name),
+      bio: toFormString(me.bio),
       phone: me.tel ? formatPhone(me.tel) : '',
-      email: me.email,
-      school: me.school,
-      department: me.department,
-      studentId: me.studentId,
-    });
+      email: toFormString(me.email),
+      school: toFormString(me.school),
+      department: toFormString(me.department),
+      studentId: toFormString(me.studentId),
+    };
 
-    void trigger();
+    reset(nextValues);
+
+    if (nextValues.phone && nextValues.school && nextValues.department && nextValues.studentId) {
+      void trigger();
+    }
   }, [me, reset, trigger]);
 
   useEffect(() => {
+    if (!me?.school && !me?.department) return;
+
     void trigger(['school', 'department']);
-  }, [editProfileSchema, trigger]);
+  }, [editProfileSchema, me?.department, me?.school, trigger]);
 
   const name = useWatch({ control, name: 'name' });
   const [watchedPhone, watchedSchool, watchedDepartment, watchedStudentId] = useWatch({

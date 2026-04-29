@@ -95,8 +95,8 @@ function CreateSessionScheduleForm({ onCreateSession, onClose }: CreateSessionSc
       cardinal: selectedCardinal.cardinalNumber,
       start: `${form.startDate}T${form.startTime}:00`,
       end: `${form.endDate}T${form.endTime}:00`,
-      recurrenceType: session.recurrenceType,
-      recurrenceEndDate: hasRecurrence ? session.recurrenceEndDate : form.endDate,
+      recurrenceType: hasRecurrence ? session.recurrenceType : null,
+      recurrenceEndDate: hasRecurrence ? session.recurrenceEndDate : null,
     };
     onCreateSession?.(body);
     onClose();

@@ -1,6 +1,7 @@
 'use client';
 
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, Card, Skeleton } from '@/components/ui';
 import { CardinalDropdown } from '@/components/admin';
@@ -51,6 +52,23 @@ function AttendancePageContent() {
 
   const cardinalNumber = activeCardinal?.cardinalNumber ?? null;
   const { sessions, isLoading } = useFlattenedSessions(cardinalNumber);
+
+  const searchParams = useSearchParams();
+  const targetSessionIdParam = searchParams.get('sessionId');
+  const parsedSessionId = targetSessionIdParam ? Number(targetSessionIdParam) : NaN;
+  const targetSessionId = Number.isFinite(parsedSessionId) ? parsedSessionId : null;
+  const targetCardRef = useRef<HTMLDivElement | null>(null);
+  const hasScrolledRef = useRef(false);
+
+  useEffect(() => {
+    if (hasScrolledRef.current) return;
+    if (targetSessionId === null) return;
+    if (!sessions.some((s) => s.id === targetSessionId)) return;
+    if (!targetCardRef.current) return;
+
+    targetCardRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    hasScrolledRef.current = true;
+  }, [sessions, targetSessionId]);
 
   return (
     <div className="flex min-w-0 flex-col gap-400 p-700">

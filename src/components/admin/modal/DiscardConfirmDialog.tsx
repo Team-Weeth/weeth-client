@@ -1,5 +1,7 @@
 'use client';
 
+import type { ReactNode } from 'react';
+
 import { CustomAlertDialog } from '@/components/alert';
 import type { DiscardSource } from '@/hooks/useDiscardableForm';
 
@@ -16,6 +18,7 @@ interface DiscardConfirmDialogProps {
   messages: DiscardMessages;
   onConfirm: () => void;
   onDismiss: () => void;
+  children: ReactNode;
 }
 
 function DiscardConfirmDialog({
@@ -25,6 +28,7 @@ function DiscardConfirmDialog({
   messages,
   onConfirm,
   onDismiss,
+  children,
 }: DiscardConfirmDialogProps) {
   return (
     <CustomAlertDialog
@@ -38,7 +42,9 @@ function DiscardConfirmDialog({
       onAction={onConfirm}
       onDismiss={onDismiss}
       placement={placement}
-    />
+    >
+      {children}
+    </CustomAlertDialog>
   );
 }
 

@@ -1,4 +1,5 @@
 import { DAY_META } from '@/constants/shared/date';
+import type { SessionStatus } from '@/types/admin/session';
 
 const INVALID_DATE_FALLBACK = '-';
 
@@ -78,4 +79,40 @@ export function formatSessionTime(dateString: string): string {
 
 export function formatSessionTimeRange(start: string, end: string): string {
   return `${formatSessionTime(start)} ~ ${formatSessionTime(end)}`;
+}
+
+function getTodayString(): string {
+  const now = new Date();
+  return `${now.getFullYear()}-${pad2(now.getMonth() + 1)}-${pad2(now.getDate())}`;
+}
+
+// 시작/종료 날짜와 오늘을 비교해 SCHEDULED(예정) | OPEN(진행중) | COMPLETED(종료) 도출
+export function deriveStatusFromDateRange(
+  start: string,
+  end: string,
+): 'SCHEDULED' | 'OPEN' | 'COMPLETED' {
+  const startDate = start.split('T')[0];
+  const endDate = end.split('T')[0];
+  if (!startDate || !endDate) return 'SCHEDULED';
+
+  const today = getTodayString();
+  if (today < startDate) return 'SCHEDULED';
+  if (today > endDate) return 'COMPLETED';
+  return 'OPEN';
+}
+
+// COMPLETED/CANCELED는 서버 상태 유지, 그 외에는 날짜 기반으로 도출
+export function deriveSessionStatus(
+  status: SessionStatus,
+  start: string,
+  end: string,
+): SessionStatus {
+  if (status === 'COMPLETED' || status === 'CANCELED') return status;
+  return deriveStatusFromDateRange(start, end);
+}
+
+// 자식(반복) 세션은 의미상 "시작 날짜에 열리는 1회차"로 간주.
+// 백엔드가 자식 end를 그룹 기간만큼 늘려 보내는 케이스가 있어 start 날짜로만 판정.
+export function deriveChildSessionStatus(status: SessionStatus, start: string): SessionStatus {
+  return deriveSessionStatus(status, start, start);
 }

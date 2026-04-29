@@ -27,6 +27,7 @@ interface AttendanceCardProps extends React.HTMLAttributes<HTMLDivElement> {
   onDirtyChange?: (dirty: boolean) => void;
   onExpand?: () => void;
   isSaving?: boolean;
+  defaultExpanded?: boolean;
 }
 
 function AttendanceCard({
@@ -39,6 +40,7 @@ function AttendanceCard({
   onDirtyChange,
   onExpand,
   isSaving = false,
+  defaultExpanded = false,
   ...props
 }: AttendanceCardProps) {
   const {
@@ -55,7 +57,7 @@ function AttendanceCard({
     saveEdit,
     toggleStatus,
     getEditStatus,
-  } = useAttendanceCard({ members, onSave, onDirtyChange });
+  } = useAttendanceCard({ members, onSave, onDirtyChange, defaultExpanded });
 
   const handleExpand = () => {
     onExpand?.();

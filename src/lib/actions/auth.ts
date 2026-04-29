@@ -5,8 +5,11 @@ import { redirect } from 'next/navigation';
 import {
   ACCESS_TOKEN_KEY,
   REFRESH_TOKEN_KEY,
+  CLUB_ID_KEY,
+  CLUB_NAME_KEY,
   ACCESS_COOKIE_OPTIONS,
   REFRESH_COOKIE_OPTIONS,
+  CLUB_COOKIE_OPTIONS,
 } from '@/lib/apis/cookies';
 import { authApi } from '@/lib/apis';
 import { getPostLoginUrl } from '@/lib/auth/redirectPaths';
@@ -49,8 +52,10 @@ export async function agreeTermsAction(
 
 export async function logoutAction() {
   const cookieStore = await cookies();
-  cookieStore.delete(ACCESS_TOKEN_KEY);
-  cookieStore.delete(REFRESH_TOKEN_KEY);
+  cookieStore.set(ACCESS_TOKEN_KEY, '', { ...ACCESS_COOKIE_OPTIONS, maxAge: 0 });
+  cookieStore.set(REFRESH_TOKEN_KEY, '', { ...REFRESH_COOKIE_OPTIONS, maxAge: 0 });
+  cookieStore.set(CLUB_ID_KEY, '', { ...CLUB_COOKIE_OPTIONS, maxAge: 0 });
+  cookieStore.set(CLUB_NAME_KEY, '', { ...CLUB_COOKIE_OPTIONS, maxAge: 0 });
 
   redirect('/login');
 }

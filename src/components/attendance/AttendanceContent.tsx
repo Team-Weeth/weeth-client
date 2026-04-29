@@ -77,7 +77,7 @@ function AttendanceContent({
     location = null,
   } = attendance ?? {};
   const attendanceRate = attendanceData?.attendanceRate ?? attendance?.attendanceRate ?? 0;
-  const description = formatAttendanceDescription(start ?? '', end ?? '', location ?? '');
+  const description = formatAttendanceDescription(start ?? '', end ?? '', location);
 
   return (
     <>
