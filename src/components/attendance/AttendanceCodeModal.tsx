@@ -53,9 +53,10 @@ function AttendanceCodeModal({
     if (!open) return;
     if (status === null) return;
 
-    if (status === 'qr-none' && !hasShownRef.current) {
+    if ((status === 'qr-none' || status === 'qr-close') && !hasShownRef.current) {
       hasShownRef.current = true;
       toastError('현재 출석이 진행 중이 아닙니다.');
+
       onOpenChange(false);
     }
   }, [open, status, onOpenChange]);
