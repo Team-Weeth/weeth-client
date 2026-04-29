@@ -1,4 +1,4 @@
-import { useTransition } from 'react';
+import { useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { updatePost as updatePostApi } from '@/lib/actions/board';
@@ -16,7 +16,7 @@ export function useUpdatePost() {
   const { clubId: clubIdParam } = useParams<{ clubId: string }>();
   const clubId = useClubId();
   const queryClient = useQueryClient();
-  const [isNavigating, startTransition] = useTransition();
+  const [isRedirecting, setIsRedirecting] = useState(false);
 
   const mutation = useMutation({
     mutationFn: async (postId: number) => {
@@ -44,9 +44,10 @@ export function useUpdatePost() {
       queryClient.invalidateQueries({ queryKey: ['home', 'unread-notice', clubId] });
       toast({ title: '게시글이 수정되었습니다.', variant: 'success' });
       _allowNavigation?.();
-      startTransition(() => {
+      setIsRedirecting(true);
+      setTimeout(() => {
         router.push(buildPostPath(clubIdParam, result.id, result.boardId));
-      });
+      }, 0);
       usePostStore.getState().reset();
     },
     onError: (error) => {
@@ -60,6 +61,6 @@ export function useUpdatePost() {
 
   return {
     updatePost: (postId: number) => mutation.mutate(postId),
-    isPending: mutation.isPending || isNavigating,
+    isPending: mutation.isPending || isRedirecting,
   };
 }
