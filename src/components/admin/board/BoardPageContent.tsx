@@ -248,7 +248,7 @@ function BoardPageContent() {
         // onTrashClick={() => setTrashModalOpen(true)}
         onCreateClick={
           reachedLimit
-            ? () => toastError(`추가 게시판은 최대 ${MAX_CUSTOM_BOARDS}개까지 만들 수 있어요.`)
+            ? () => toastError(`게시판은 최대 ${MAX_CUSTOM_BOARDS}개까지 만들 수 있어요.`)
             : () => setCreateModalOpen(true)
         }
       />
@@ -319,7 +319,7 @@ function BoardPageContent() {
         <div className="bg-container-neutral-alternative flex h-12 items-center gap-200 rounded-md p-300">
           <Icon src={InfoCircleIcon} size={20} className="text-icon-alternative" />
           <p className="typo-body2 text-text-alternative min-w-0 flex-1">
-            추가 게시판은 최대 {MAX_CUSTOM_BOARDS}개까지 가능 합니다.
+            게시판 추가는 최대 {MAX_CUSTOM_BOARDS}개까지 가능 합니다.
           </p>
         </div>
       </div>
