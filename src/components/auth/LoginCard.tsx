@@ -2,7 +2,7 @@ import Image from 'next/image';
 
 import { cn } from '@/lib/cn';
 import { LoginCoverIcon } from '@/assets/icons';
-import { Divider, Loading } from '@/components/ui';
+import { Loading } from '@/components/ui';
 import { SocialLoginButtons } from '@/components/auth/SocialLoginButtons';
 
 interface LoginCardProps {
