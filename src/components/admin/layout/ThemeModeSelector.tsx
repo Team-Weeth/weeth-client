@@ -34,6 +34,7 @@ interface ThemeModeSelectorProps {
 
 function ThemeModeSelector({ collapsed }: ThemeModeSelectorProps) {
   const mode = useThemeStore((state) => state.mode);
+  const hasHydrated = useThemeStore((state) => state.hasHydrated);
   const setMode = useThemeStore((state) => state.setMode);
 
   const currentOption = THEME_OPTIONS.find((o) => o.value === mode)!;
@@ -46,7 +47,9 @@ function ThemeModeSelector({ collapsed }: ThemeModeSelectorProps) {
           'text-text-normal flex h-12 w-full cursor-pointer items-center border-none transition-colors',
           'hover:bg-container-neutral-interaction',
           collapsed ? 'justify-center px-300' : 'gap-300 px-400',
+          !hasHydrated && 'invisible',
         )}
+        disabled={!hasHydrated}
       >
         <TriggerIcon className="text-icon-alternative h-6 w-6 shrink-0" />
         {!collapsed && (
