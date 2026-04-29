@@ -2,7 +2,7 @@
 
 import { useCallback, useState } from 'react';
 
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, Card } from '@/components/ui';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, Card, Skeleton } from '@/components/ui';
 import { CardinalDropdown } from '@/components/admin';
 import { useNavigationGuard, useCardinalSelector } from '@/hooks';
 import { useFlattenedSessions } from '@/hooks/admin';
@@ -50,10 +50,10 @@ function AttendancePageContent() {
   };
 
   const cardinalNumber = activeCardinal?.cardinalNumber ?? null;
-  const { sessions } = useFlattenedSessions(cardinalNumber);
+  const { sessions, isLoading } = useFlattenedSessions(cardinalNumber);
 
   return (
-    <div className="flex min-w-3xl flex-col gap-400 p-700">
+    <div className="flex min-w-0 flex-col gap-400 p-700">
       <CardinalDropdown
         cardinals={cardinals}
         activeCardinal={activeCardinal}
@@ -61,24 +61,34 @@ function AttendancePageContent() {
         onSelectAll={() => handleCardinalSelect(null)}
       />
 
-      {sessions.length > 0 ? (
-        <Card className="mt-400 gap-400 px-600 pt-600 pb-[64px]">
-          {sessions.map((session) => (
-            <AttendanceSessionCard
-              key={session.id}
-              sessionId={session.id}
-              date={formatKoreanDate(new Date(session.start))}
-              title={session.title}
-              isCurrentWeek={session.isCurrentWeek}
-              onDirtyChange={handleDirtyChange}
-            />
-          ))}
+      {isLoading ? (
+        <Card className="mt-400 gap-400 overflow-x-auto px-600 pt-600 pb-[64px]">
+          <div className="min-w-172.5">
+            {Array.from({ length: 4 }, (_, i) => (
+              <Skeleton key={i} className="mt-400 h-[72px] w-full first:mt-0 rounded-md" />
+            ))}
+          </div>
+        </Card>
+      ) : sessions.length > 0 ? (
+        <Card className="mt-400 gap-400 overflow-x-auto px-600 pt-600 pb-[64px]">
+          <div className="flex min-w-172.5 flex-col gap-400">
+            {sessions.map((session) => (
+              <AttendanceSessionCard
+                key={session.id}
+                sessionId={session.id}
+                date={formatKoreanDate(new Date(session.start))}
+                title={session.title}
+                isCurrentWeek={session.isCurrentWeek}
+                onDirtyChange={handleDirtyChange}
+              />
+            ))}
+          </div>
         </Card>
       ) : (
-        <Card className="mt-400 flex items-center justify-center px-600 py-800">
-          <span className="typo-body1 text-text-alternative">
-            {activeCardinal ? '등록된 정기모임이 없습니다.' : '기수를 선택해 주세요.'}
-          </span>
+        <Card className="mt-400 flex items-center justify-center overflow-x-auto px-600 py-800">
+          <div className="min-w-172.5 text-center">
+          <span className="typo-body1 text-text-alternative">등록된 정기모임이 없습니다.</span>
+          </div>
         </Card>
       )}
 
