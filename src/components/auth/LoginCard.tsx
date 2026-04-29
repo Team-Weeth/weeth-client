@@ -58,11 +58,8 @@ function LoginCard({ className, isLoading = false, onKakaoLogin, onAppleLogin }:
         </p>
       </div>
 
-      {/* 모바일: 소개 하단에 Divider + 로그인 */}
-      <div className="tablet:hidden mt-500 flex w-full flex-col gap-400">
-        <Divider />
-        {mobileLoginContent}
-      </div>
+      {/* 모바일: 소개 하단에  로그인 */}
+      <div className="tablet:hidden mt-500 flex w-full flex-col gap-400">{mobileLoginContent}</div>
 
       {/* 데스크톱: 우측 소셜 로그인 / 로딩 */}
       <div className="bg-container-neutral tablet:flex hidden h-[427px] flex-1 flex-col items-center justify-center p-600">
