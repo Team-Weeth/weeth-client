@@ -7,9 +7,9 @@ import type {
 } from '@/types/admin/attendance';
 
 export const adminAttendanceApi = {
-  getSessions: (clubId: string, cardinal: number) =>
+  getSessions: (clubId: string, cardinal?: number) =>
     apiClient.get<ApiResponse<SessionListResponse>>(`/admin/clubs/${clubId}/sessions`, {
-      params: { cardinal },
+      params: cardinal != null ? { cardinal } : undefined,
     }),
 
   getAttendanceBySession: (clubId: string, sessionId: number) =>
