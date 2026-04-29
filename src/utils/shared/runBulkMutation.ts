@@ -11,6 +11,7 @@ export async function runBulkMutation<TArg, TResult>(
   messages: BulkMutationMessages,
   resolveErrorMessage?: (errors: unknown[]) => string | undefined,
 ): Promise<void> {
+  if (args.length === 0) return;
   const results = await Promise.allSettled(args.map(mutateAsync));
   const errors = results
     .filter((r): r is PromiseRejectedResult => r.status === 'rejected')
