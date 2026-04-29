@@ -3,13 +3,7 @@ import { Icon } from '@/components/ui';
 import { ArrowRightIcon, MoreHorizIcon } from '@/assets/icons';
 import type { SessionStatus } from '@/types/admin/session';
 
-function AttendanceLink({
-  status,
-  onClick,
-}: {
-  status: SessionStatus;
-  onClick?: () => void;
-}) {
+function AttendanceLink({ status, onClick }: { status: SessionStatus; onClick?: () => void }) {
   // 예정/취소 상태는 출석 관리 진입 불가 → 버튼 자체를 숨김
   if (status === 'SCHEDULED' || status === 'CANCELED') return null;
 

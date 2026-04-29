@@ -30,9 +30,7 @@ function EditSessionModal({ open, onOpenChange, target, parentGroup }: EditSessi
   const sessionId = resolveSessionId(target);
   const isChildOfRecurringGroup = !isSessionGroup(target) && parentGroup !== undefined;
   const isRecurring = isSessionGroup(target) || isChildOfRecurringGroup;
-  const groupId = isSessionGroup(target)
-    ? target.groupId
-    : (parentGroup?.groupId ?? null);
+  const groupId = isSessionGroup(target) ? target.groupId : (parentGroup?.groupId ?? null);
   const hasChangesRef = useRef(false);
   const requestCloseRef = useRef<(() => void) | null>(null);
 

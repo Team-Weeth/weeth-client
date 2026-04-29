@@ -19,9 +19,7 @@ function useAttendanceCard({
   onDirtyChange,
   defaultExpanded = false,
 }: UseAttendanceCardParams) {
-  const [cardState, setCardState] = useState<CardState>(
-    defaultExpanded ? 'expanded' : 'collapsed',
-  );
+  const [cardState, setCardState] = useState<CardState>(defaultExpanded ? 'expanded' : 'collapsed');
   const [searchQuery, setSearchQuery] = useState('');
   const [editStatuses, setEditStatuses] = useState<Map<number, 'ATTEND' | 'ABSENT'>>(new Map());
 
