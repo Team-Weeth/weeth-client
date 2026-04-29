@@ -1,7 +1,9 @@
 'use client';
 
 import { MoreVerticalIcon } from '@/assets/icons';
-import { AddCardinalButton, AddCardinalModal, CardinalCard } from '@/components/admin';
+import { AddCardinalButton } from './AddCardinalButton';
+import { AddCardinalModal } from './modal/AddCardinalModal';
+import { CardinalCard } from './CardinalCard';
 import {
   DropdownMenu,
   DropdownMenuContent,

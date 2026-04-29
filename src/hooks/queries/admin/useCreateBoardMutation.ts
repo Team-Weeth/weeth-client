@@ -1,12 +1,11 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import type { AxiosError } from 'axios';
 
 import { adminBoardApi, type CreateBoardBody } from '@/lib/apis/adminBoard';
 import { useClubId } from '@/stores';
 import type { MutationCallbacks } from '@/types/common';
 import { adminBoardQueryKeys } from './boardQueryKeys';
 
-export function useCreateBoardMutation(callbacks?: MutationCallbacks<AxiosError>) {
+export function useCreateBoardMutation(callbacks?: MutationCallbacks<unknown>) {
   const clubId = useClubId();
   const queryClient = useQueryClient();
 
