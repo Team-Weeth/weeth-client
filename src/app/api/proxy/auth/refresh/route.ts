@@ -7,37 +7,22 @@ import {
   ACCESS_COOKIE_OPTIONS,
   REFRESH_COOKIE_OPTIONS,
 } from '@/lib/apis/cookies';
+import {
+  buildRefreshResponsePreview,
+  clearAuthCookies,
+  requestTokenRefreshWithResponse,
+} from '@/lib/apis/refresh';
 
 function buildLoginResponse(appUrl: string, redirectPath?: string) {
   const loginUrl = new URL('/login', appUrl);
   if (redirectPath) {
     loginUrl.searchParams.set('redirect', redirectPath);
   }
-  const response = NextResponse.redirect(loginUrl);
-  response.cookies.delete(ACCESS_TOKEN_KEY);
-  response.cookies.delete(REFRESH_TOKEN_KEY);
-  return response;
-}
-
-async function requestRefresh(refreshToken: string) {
-  return fetch(`${API_BASE_PATH}/users/social/refresh`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization_refresh: `Bearer ${refreshToken}`,
-    },
-  });
+  return clearAuthCookies(NextResponse.redirect(loginUrl));
 }
 
 async function logRefreshResponse(scope: 'GET' | 'POST', response: Response) {
-  let responseBodyPreview = '';
-
-  try {
-    const raw = await response.clone().text();
-    responseBodyPreview = raw.length > 200 ? `${raw.slice(0, 200)}...` : raw;
-  } catch {
-    responseBodyPreview = '[unreadable response body]';
-  }
+  const responseBodyPreview = await buildRefreshResponsePreview(response);
 
   console.log(`[refresh-route][${scope}] backend refresh response`, {
     status: response.status,
@@ -49,10 +34,9 @@ async function logRefreshResponse(scope: 'GET' | 'POST', response: Response) {
 export async function POST() {
   try {
     if (!API_BASE_PATH) {
-      const response = NextResponse.json({ error: 'API URL not configured' }, { status: 500 });
-      response.cookies.delete(ACCESS_TOKEN_KEY);
-      response.cookies.delete(REFRESH_TOKEN_KEY);
-      return response;
+      return clearAuthCookies(
+        NextResponse.json({ error: 'API URL not configured' }, { status: 500 }),
+      );
     }
 
     const cookieStore = await cookies();
@@ -63,36 +47,31 @@ export async function POST() {
 
     if (!refreshToken) {
       console.log('[refresh-route][POST] missing refresh token');
-      const response = NextResponse.json({ error: 'No refresh token' }, { status: 401 });
-      response.cookies.delete(ACCESS_TOKEN_KEY);
-      response.cookies.delete(REFRESH_TOKEN_KEY);
-      return response;
+      return clearAuthCookies(NextResponse.json({ error: 'No refresh token' }, { status: 401 }));
     }
 
-    const response = await requestRefresh(refreshToken);
-    await logRefreshResponse('POST', response);
+    const refreshResult = await requestTokenRefreshWithResponse(refreshToken);
 
-    if (!response.ok) {
-      cookieStore.delete(ACCESS_TOKEN_KEY);
-      cookieStore.delete(REFRESH_TOKEN_KEY);
+    if (!refreshResult) {
+      console.log('[refresh-route][POST] refresh failed -> request error');
+      return clearAuthCookies(NextResponse.json({ error: 'Refresh failed' }, { status: 401 }));
+    }
+
+    await logRefreshResponse('POST', refreshResult.response);
+
+    if (!refreshResult.tokens) {
       console.log('[refresh-route][POST] refresh failed -> cleared cookies');
-      return NextResponse.json({ error: 'Refresh failed' }, { status: 401 });
+      return clearAuthCookies(NextResponse.json({ error: 'Refresh failed' }, { status: 401 }));
     }
 
-    const json = await response.json();
-    const { accessToken: newAccessToken, refreshToken: newRefreshToken } = json.data;
-
-    cookieStore.set(ACCESS_TOKEN_KEY, newAccessToken, ACCESS_COOKIE_OPTIONS);
-    cookieStore.set(REFRESH_TOKEN_KEY, newRefreshToken, REFRESH_COOKIE_OPTIONS);
+    cookieStore.set(ACCESS_TOKEN_KEY, refreshResult.tokens.accessToken, ACCESS_COOKIE_OPTIONS);
+    cookieStore.set(REFRESH_TOKEN_KEY, refreshResult.tokens.refreshToken, REFRESH_COOKIE_OPTIONS);
     console.log('[refresh-route][POST] refresh success -> cookies updated');
 
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error('[refresh-route][POST] unexpected error', error);
-    const response = NextResponse.json({ error: 'Internal server error' }, { status: 500 });
-    response.cookies.delete(ACCESS_TOKEN_KEY);
-    response.cookies.delete(REFRESH_TOKEN_KEY);
-    return response;
+    return clearAuthCookies(NextResponse.json({ error: 'Internal server error' }, { status: 500 }));
   }
 }
 
@@ -121,20 +100,31 @@ export async function GET(request: NextRequest) {
       return buildLoginResponse(appUrl, safeRedirect);
     }
 
-    const response = await requestRefresh(refreshToken);
-    await logRefreshResponse('GET', response);
+    const refreshResult = await requestTokenRefreshWithResponse(refreshToken);
 
-    if (!response.ok) {
+    if (!refreshResult) {
+      console.log('[refresh-route][GET] refresh failed -> request error');
+      return buildLoginResponse(appUrl, safeRedirect);
+    }
+
+    await logRefreshResponse('GET', refreshResult.response);
+
+    if (!refreshResult.tokens) {
       console.log('[refresh-route][GET] refresh failed -> cleared cookies, redirect login');
       return buildLoginResponse(appUrl, safeRedirect);
     }
 
-    const json = await response.json();
-    const { accessToken: newAccessToken, refreshToken: newRefreshToken } = json.data;
-
     const redirectResponse = NextResponse.redirect(new URL(safeRedirect, appUrl));
-    redirectResponse.cookies.set(ACCESS_TOKEN_KEY, newAccessToken, ACCESS_COOKIE_OPTIONS);
-    redirectResponse.cookies.set(REFRESH_TOKEN_KEY, newRefreshToken, REFRESH_COOKIE_OPTIONS);
+    redirectResponse.cookies.set(
+      ACCESS_TOKEN_KEY,
+      refreshResult.tokens.accessToken,
+      ACCESS_COOKIE_OPTIONS,
+    );
+    redirectResponse.cookies.set(
+      REFRESH_TOKEN_KEY,
+      refreshResult.tokens.refreshToken,
+      REFRESH_COOKIE_OPTIONS,
+    );
     console.log('[refresh-route][GET] refresh success -> cookies updated, redirecting back');
     return redirectResponse;
   } catch (error) {

@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { API_BASE_PATH } from '@/constants/api';
 import {
   ACCESS_TOKEN_KEY,
   REFRESH_TOKEN_KEY,
   ACCESS_COOKIE_OPTIONS,
   REFRESH_COOKIE_OPTIONS,
 } from '@/lib/apis/cookies';
+import { clearAuthCookies, requestTokenRefresh } from '@/lib/apis/refresh';
 
 const PUBLIC_PATHS = ['/', '/login', '/terms', '/landing'];
 const PRIVATE_PATHS = ['/hub', '/joining', '/welcome'];
@@ -13,30 +13,10 @@ const PRIVATE_PATHS = ['/hub', '/joining', '/welcome'];
 // TODO: 런칭 후 PRE_LAUNCH 플래그 및 관련 분기 제거
 const PRE_LAUNCH = false;
 
-async function refreshSession(refreshToken: string) {
-  try {
-    const response = await fetch(`${API_BASE_PATH}/users/social/refresh`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization_refresh: `Bearer ${refreshToken}`,
-      },
-    });
-    if (!response.ok) return null;
-    const json = await response.json();
-    return {
-      accessToken: json.data.accessToken as string,
-      refreshToken: json.data.refreshToken as string,
-    };
-  } catch {
-    return null;
-  }
-}
-
-function buildLoginRedirectUrl(request: NextRequest, expired: boolean) {
+function buildLoginRedirectUrl(request: NextRequest, includeRedirect: boolean) {
   const loginUrl = new URL('/login', request.url);
   const { pathname, search } = request.nextUrl;
-  if (!expired && pathname !== '/login') {
+  if (includeRedirect && pathname !== '/login') {
     const redirect = search ? `${pathname}${search}` : pathname;
     loginUrl.searchParams.set('redirect', redirect);
   }
@@ -117,7 +97,7 @@ export async function proxy(request: NextRequest) {
   // 액세스 토큰 없고 리프레시 토큰만 있을 때 → 자동 갱신
   if (hasRefreshToken) {
     const refreshToken = request.cookies.get(REFRESH_TOKEN_KEY)!.value;
-    const newTokens = await refreshSession(refreshToken);
+    const newTokens = await requestTokenRefresh(refreshToken);
 
     if (newTokens) {
       request.cookies.set(ACCESS_TOKEN_KEY, newTokens.accessToken);
@@ -128,14 +108,11 @@ export async function proxy(request: NextRequest) {
     }
 
     // 갱신 실패 → 쿠키 정리 후 로그인 페이지로
-    const response = NextResponse.redirect(buildLoginRedirectUrl(request, true));
-    response.cookies.delete(ACCESS_TOKEN_KEY);
-    response.cookies.delete(REFRESH_TOKEN_KEY);
-    return response;
+    return clearAuthCookies(NextResponse.redirect(buildLoginRedirectUrl(request, false)));
   }
 
   // 토큰 없음 → 로그인 페이지로
-  return NextResponse.redirect(buildLoginRedirectUrl(request, false));
+  return NextResponse.redirect(buildLoginRedirectUrl(request, true));
 }
 
 export const config = {
