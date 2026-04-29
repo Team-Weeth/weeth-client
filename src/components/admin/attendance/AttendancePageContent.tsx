@@ -11,9 +11,7 @@ import { formatKoreanDate } from '@/lib/formatTime';
 import { AttendanceSessionCard } from './AttendanceSessionCard';
 
 function AttendancePageContent() {
-  const { cardinals, setSelectedCardinalId, activeCardinal } = useCardinalSelector({
-    autoSelectLatest: true,
-  });
+  const { cardinals, setSelectedCardinalId, activeCardinal } = useCardinalSelector();
   const [dirtyCardIds, setDirtyCardIds] = useState<Set<number>>(new Set());
   const [pendingCardinalId, setPendingCardinalId] = useState<number | null>(null);
   const [cardinalDialogOpen, setCardinalDialogOpen] = useState(false);
@@ -31,7 +29,7 @@ function AttendancePageContent() {
   }, []);
 
   const handleCardinalSelect = useCallback(
-    (id: number) => {
+    (id: number | null) => {
       if (isDirty) {
         setPendingCardinalId(id);
         setCardinalDialogOpen(true);
@@ -60,6 +58,7 @@ function AttendancePageContent() {
         cardinals={cardinals}
         activeCardinal={activeCardinal}
         onSelect={handleCardinalSelect}
+        onSelectAll={() => handleCardinalSelect(null)}
       />
 
       {sessions.length > 0 ? (
