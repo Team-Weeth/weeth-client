@@ -1,8 +1,13 @@
 'use client';
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useState } from 'react';
 
-import { AdminChangeIcon, AdminMeatballIcon } from '@/assets/icons/admin';
+import {
+  AdminChangeIcon,
+  AdminCheckboxIcon,
+  AdminMeatballIcon,
+  AdminUncheckboxIcon,
+} from '@/assets/icons/admin';
 import {
   Icon,
   Table,
@@ -39,7 +44,6 @@ function MemberTable({
 }: MemberTableProps) {
   const [internalSelectedIds, setInternalSelectedIds] = useState<Set<string>>(new Set());
   const [sortBy, setSortBy] = useState<SortBy>('cardinal');
-  const headerCheckboxRef = useRef<HTMLInputElement>(null);
 
   const selectedIds = controlledSelectedIds ?? internalSelectedIds;
   const setSelectedIds = onSelectionChange ?? setInternalSelectedIds;
@@ -47,13 +51,7 @@ function MemberTable({
   const sortedMembers = sortMembers(members, sortBy);
 
   const isAllSelected = members.length > 0 && selectedIds.size === members.length;
-  const isIndeterminate = selectedIds.size > 0 && !isAllSelected;
-
-  useEffect(() => {
-    if (headerCheckboxRef.current) {
-      headerCheckboxRef.current.indeterminate = isIndeterminate;
-    }
-  }, [isIndeterminate]);
+  const hasAnySelected = selectedIds.size > 0;
 
   const toggleAll = () => {
     setSelectedIds(isAllSelected ? new Set() : new Set(members.map((m) => m.id)));
@@ -91,14 +89,19 @@ function MemberTable({
           <TableRow className="border-0 hover:bg-transparent">
             <TableHead className="w-1 min-w-1 p-0" />
             <TableHead className="w-12">
-              <input
+              <button
+                aria-pressed={isAllSelected}
                 aria-label="전체 멤버 선택"
-                type="checkbox"
-                className="cursor-pointer"
-                checked={isAllSelected}
-                ref={headerCheckboxRef}
-                onChange={toggleAll}
-              />
+                type="button"
+                className="flex cursor-pointer items-center"
+                onClick={toggleAll}
+              >
+                <Icon
+                  src={hasAnySelected ? AdminCheckboxIcon : AdminUncheckboxIcon}
+                  alt={hasAnySelected ? '선택됨' : '선택 안됨'}
+                  size={24}
+                />
+              </button>
             </TableHead>
             {COLUMNS.map(({ label }) => (
               <TableHead key={label} className="typo-body1 text-text-strong">
@@ -117,14 +120,22 @@ function MemberTable({
             >
               <TableCell className={cn('w-1 min-w-1 p-0', STATUS_BAR_COLOR[member.status])} />
               <TableCell className="w-12">
-                <input
+                <button
+                  aria-pressed={selectedIds.has(member.id)}
                   aria-label={`${member.name} ${member.studentId} 선택`}
-                  type="checkbox"
-                  className="cursor-pointer"
-                  checked={selectedIds.has(member.id)}
-                  onChange={() => toggleOne(member.id)}
-                  onClick={(e) => e.stopPropagation()}
-                />
+                  type="button"
+                  className="flex cursor-pointer items-center"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    toggleOne(member.id);
+                  }}
+                >
+                  <Icon
+                    src={selectedIds.has(member.id) ? AdminCheckboxIcon : AdminUncheckboxIcon}
+                    alt={selectedIds.has(member.id) ? '선택됨' : '선택 안됨'}
+                    size={24}
+                  />
+                </button>
               </TableCell>
               {COLUMNS.map(({ key, label }) => (
                 <TableCell key={label} className="typo-body1 text-text-strong">
