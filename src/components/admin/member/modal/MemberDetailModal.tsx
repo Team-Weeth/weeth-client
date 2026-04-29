@@ -40,6 +40,8 @@ function MemberDetailModal({
 
   const personalInfo = getPersonalInfo(member);
   const activityStats = getActivityStats(member);
+  const cardinals = parseCardinals(member.cardinal);
+  const latestCardinal = cardinals.at(-1);
   const footerActions = getFooterActions({
     memberRole: member.memberRole,
     status: member.status,
@@ -76,10 +78,7 @@ function MemberDetailModal({
 
             <div className="mb-200 flex items-baseline gap-200">
               <span className="typo-h3 text-text-strong">{member.name}</span>
-              {/* TODO: 응답 기수 정렬 확인 후 수정 (다중 기수일 때 첫 숫자만 노출됨) */}
-              <span className="typo-h3 text-text-strong">
-                {parseInt(member.cardinal, 10) || member.cardinal || '-'}기
-              </span>
+              <span className="typo-h3 text-text-strong">{latestCardinal ?? '-'}기</span>
             </div>
 
             <div className="flex flex-col gap-400">
@@ -100,7 +99,7 @@ function MemberDetailModal({
               <div className="flex items-start">
                 <span className="typo-body1 text-text-alternative w-24 shrink-0">활동 기수</span>
                 <div className="flex flex-wrap gap-200">
-                  {parseCardinals(member.cardinal).map((c) => (
+                  {cardinals.map((c) => (
                     <span
                       key={c}
                       className="bg-container-primary-alternative text-brand-primary typo-body2 rounded-full px-300 py-100"

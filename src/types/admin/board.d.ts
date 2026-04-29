@@ -8,7 +8,7 @@ export interface Board {
   kind: BoardKind;
   visibility: BoardVisibility;
   postCount: number;
-  /** 댓글 허용 여부. ALL/NOTICE 등 일부 게시판은 토글이 노출되지 않음 */
+  /** 댓글 허용 여부. 전체(ALL) 게시판은 토글이 노출되지 않아 null 일 수 있음 */
   commentEnabled: boolean | null;
   /** 사용자가 수정/삭제할 수 있는 게시판인지 (커스텀 게시판) */
   editable: boolean;

@@ -14,7 +14,7 @@ function Switch({ className, ref, ...props }: SwitchProps) {
       ref={ref}
       className={cn(
         'relative inline-flex h-5 w-9 shrink-0 cursor-pointer items-center rounded-[10px] disabled:cursor-not-allowed disabled:opacity-50',
-        'before:absolute before:inset-x-0 before:top-1/2 before:h-[15px] before:-translate-y-1/2 before:rounded-[10px] before:transition-colors',
+        'before:absolute before:inset-x-[2px] before:top-1/2 before:h-[15px] before:-translate-y-1/2 before:rounded-[10px] before:transition-colors',
         'data-[state=checked]:before:bg-brand-primary data-[state=unchecked]:before:bg-button-neutral',
         className,
       )}
