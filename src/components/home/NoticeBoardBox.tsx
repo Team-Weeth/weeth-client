@@ -25,18 +25,20 @@ export function NoticeBoardBox() {
     <div className="bg-container-neutral desktop:max-w-[339px] flex flex-col rounded-lg pb-300">
       <div className="flex items-center justify-between px-450 pt-450 pb-300">
         <p className="typo-sub1 text-text-strong">공지</p>
-        <button
-          className="flex items-center justify-center"
-          type="button"
-          aria-label="공지 전체보기"
-          onClick={() => {
-            if (notices.length > 0) {
-              router.push(buildBoardPath(clubId, notices[0].boardId));
-            }
-          }}
-        >
-          <Icon src={ArrowRightIcon} size={16} className="cursor-pointer px-1 py-[1px]" />
-        </button>
+        {notices.length > 0 && (
+          <button
+            className="flex items-center justify-center"
+            type="button"
+            aria-label="공지 전체보기"
+            onClick={() => {
+              if (notices.length > 0) {
+                router.push(buildBoardPath(clubId, notices[0].boardId));
+              }
+            }}
+          >
+            <Icon src={ArrowRightIcon} size={16} className="cursor-pointer px-1 py-[1px]" />
+          </button>
+        )}
       </div>
       <div className="flex flex-col px-450">
         {notices.length > 0 ? (

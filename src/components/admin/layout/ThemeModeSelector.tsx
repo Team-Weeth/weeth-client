@@ -1,6 +1,5 @@
 'use client';
 
-import { useState } from 'react';
 import { ChevronDown, Moon, Sun, SunMoon } from 'lucide-react';
 
 import {
@@ -34,25 +33,8 @@ interface ThemeModeSelectorProps {
 }
 
 function ThemeModeSelector({ collapsed }: ThemeModeSelectorProps) {
-  const setDark = useThemeStore((state) => state.setDark);
-
-  const [mode, setMode] = useState<ThemeMode>(() => {
-    if (typeof window === 'undefined') return 'light';
-    return useThemeStore.getState().isDark ? 'dark' : 'light';
-  });
-
-  const handleSelect = (value: ThemeMode) => {
-    setMode(value);
-
-    if (value === 'light') {
-      setDark(false);
-    } else if (value === 'dark') {
-      setDark(true);
-    } else {
-      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      setDark(prefersDark);
-    }
-  };
+  const mode = useThemeStore((state) => state.mode);
+  const setMode = useThemeStore((state) => state.setMode);
 
   const currentOption = THEME_OPTIONS.find((o) => o.value === mode)!;
   const TriggerIcon = currentOption.icon;
@@ -90,7 +72,7 @@ function ThemeModeSelector({ collapsed }: ThemeModeSelectorProps) {
 
       <DropdownMenuContent side="bottom" align="end" sideOffset={4} className="w-[200px]">
         {THEME_OPTIONS.map(({ value, label }) => (
-          <DropdownMenuItem key={value} onSelect={() => handleSelect(value)}>
+          <DropdownMenuItem key={value} onSelect={() => setMode(value)}>
             {label}
           </DropdownMenuItem>
         ))}

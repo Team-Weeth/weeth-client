@@ -1,10 +1,10 @@
 'use client';
 
-import Image from 'next/image';
+import Image, { type StaticImageData } from 'next/image';
 import { useParams, useRouter } from 'next/navigation';
 import { useState } from 'react';
 
-import { CompleteIcon } from '@/assets/icons';
+import { CompleteIcon, RushIcon } from '@/assets/icons';
 import { Card } from '@/components/ui';
 import { AttendanceCodeModal } from '@/components/attendance/AttendanceCodeModal';
 import { toastError } from '@/stores/useToastStore';
@@ -22,13 +22,20 @@ interface AttendanceTodayCardProps {
   onAttendanceComplete?: (code: string) => void;
 }
 
-function AttendanceCompleteBanner() {
+interface AttendanceBannerProps {
+  icon: StaticImageData;
+  alt: string;
+  title: string;
+  description: string;
+}
+
+function AttendanceBanner({ icon, alt, title, description }: AttendanceBannerProps) {
   return (
     <div className="bg-background flex items-start gap-[10px] rounded-md p-300">
-      <Image src={CompleteIcon} alt="출석 완료" width={40} height={40} />
+      <Image src={icon} alt={alt} width={40} height={40} />
       <div className="flex min-h-px min-w-px flex-1 flex-col gap-100">
-        <p className="typo-sub3 text-text-normal">출석이 완료되었어요!</p>
-        <p className="typo-body2 text-text-alternative">오늘도 즐거운 활동을 이어가세요.</p>
+        <p className="typo-sub3 text-text-normal">{title}</p>
+        <p className="typo-body2 text-text-alternative">{description}</p>
       </div>
     </div>
   );
@@ -74,7 +81,23 @@ function AttendanceTodayCard({
         secondaryButtonText="출석코드 확인"
         secondaryButtonDisabled={disabled || sessionId == null}
       >
-        {isChecked && <AttendanceCompleteBanner />}
+        {isChecked ? (
+          <AttendanceBanner
+            icon={CompleteIcon}
+            alt="출석 완료"
+            title="출석이 완료되었어요!"
+            description="오늘도 즐거운 활동을 이어가세요."
+          />
+        ) : (
+          !disabled && (
+            <AttendanceBanner
+              icon={RushIcon}
+              alt="출석 진행"
+              title="출석을 진행해주세요!"
+              description="운영진이 공유한 코드를 통해 출석을 진행하세요."
+            />
+          )
+        )}
       </Card>
 
       <AttendanceCodeModal
