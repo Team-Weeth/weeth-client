@@ -24,11 +24,18 @@ import {
 
 import { DiscardConfirmArea } from './DiscardConfirmArea';
 import { ScheduleFormBody } from './ScheduleFormBody';
+import { isDateRangeValid } from './types';
 import type { ScheduleFormState, SessionDeleteType, SessionSaveType } from './types';
 
 interface EditSessionModalContentProps {
   sessionId: number;
   isRecurring: boolean;
+  /**
+   * 반복 그룹의 자식 세션을 수정 중인지 여부.
+   * - true: "이후 모두 삭제"는 이 세션 + 이후 세션만 삭제 (THIS_AND_FUTURE)
+   * - false: "이후 모두 삭제"는 그룹 전체 삭제 (submitDeleteGroup)
+   */
+  isChildOfRecurringGroup?: boolean;
   /** 반복 세션일 때만 값이 있음 (그룹 전체 삭제용) */
   groupId: number | null;
   onClose: () => void;
@@ -49,6 +56,7 @@ function toUpdateBody(form: ScheduleFormState): UpdateSessionBody {
 function EditSessionModalContent({
   sessionId,
   isRecurring,
+  isChildOfRecurringGroup = false,
   groupId,
   onClose,
   hasChangesRef,
@@ -111,7 +119,12 @@ function EditSessionModalContent({
   const handleDeleteConfirm = (type: SessionDeleteType) => {
     setDeleteConfirmOpen(false);
     if (isRecurring && type === 'all') {
-      if (groupId !== null) submitDeleteGroup(groupId, false, { onSuccess: onClose });
+      // 자식 세션이면 "이 세션 + 이후"만 삭제, 그룹 자체를 수정 중이면 그룹 전체 삭제
+      if (isChildOfRecurringGroup) {
+        submitDeleteSession(sessionId, 'THIS_AND_FUTURE', false, { onSuccess: onClose });
+      } else if (groupId !== null) {
+        submitDeleteGroup(groupId, false, { onSuccess: onClose });
+      }
     } else {
       submitDeleteSession(sessionId, 'THIS_ONLY', false, { onSuccess: onClose });
     }
@@ -199,7 +212,7 @@ function EditSessionModalContent({
         onAction={() => handleSaveConfirm('this')}
         secondActionLabel="이후 모든 세션 일정에 대해 저장"
         onSecondAction={() => handleSaveConfirm('all')}
-        placement="center"
+        placement="below-right"
         tone="primary"
       />
 

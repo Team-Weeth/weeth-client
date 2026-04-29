@@ -25,8 +25,11 @@ interface SessionGroupRowProps {
   bordered?: boolean;
   /** 출석 관리는 개별 세션(AdminSession) id 기반 동작 */
   onManageAttendance?: (session: AdminSession) => void;
-  /** 수정 대상은 그룹 전체 또는 개별 하위 세션 */
-  onMore?: (target: AdminSession | AdminSessionGroup) => void;
+  /**
+   * 수정 대상은 그룹 전체 또는 개별 하위 세션.
+   * 하위 세션이 클릭된 경우, 부모 그룹을 함께 전달해서 모달에서 반복 스코프 다이얼로그를 표시할 수 있도록 한다.
+   */
+  onMore?: (target: AdminSession | AdminSessionGroup, parentGroup?: AdminSessionGroup) => void;
 }
 
 function SessionGroupRow({
@@ -162,7 +165,7 @@ function SessionGroupRow({
             <SessionChildTable
               sessions={group.sessions}
               onManageAttendance={onManageAttendance}
-              onMore={onMore}
+              onMore={(session) => onMore?.(session, group)}
             />
           </div>
         </div>

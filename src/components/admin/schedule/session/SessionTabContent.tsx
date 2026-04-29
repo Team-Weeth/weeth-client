@@ -21,6 +21,12 @@ interface SessionTabContentProps {
   cardinalNumber?: number | null;
 }
 
+interface EditTargetState {
+  target: AdminSession | AdminSessionGroup;
+  /** 자식 세션을 수정할 때 부모 반복 그룹 컨텍스트 (스코프 다이얼로그 표시용) */
+  parentGroup?: AdminSessionGroup;
+}
+
 function SessionTabContent({
   onCreateSession,
   onManageAttendance,
@@ -29,15 +35,18 @@ function SessionTabContent({
   const { data } = useAdminSessionList(cardinalNumber);
   const sessions = data?.sessions ?? [];
 
-  const [editTarget, setEditTarget] = useState<AdminSession | AdminSessionGroup | null>(null);
+  const [editTarget, setEditTarget] = useState<EditTargetState | null>(null);
 
   /** 그룹에 세션이 0개면 PATCH/DELETE 대상이 없으므로 모달 진입 차단 */
-  const handleOpenEdit = (target: AdminSession | AdminSessionGroup) => {
+  const handleOpenEdit = (
+    target: AdminSession | AdminSessionGroup,
+    parentGroup?: AdminSessionGroup,
+  ) => {
     if (isSessionGroup(target) && target.sessions.length === 0) {
       toastError('수정·삭제 가능한 세션이 없습니다.');
       return;
     }
-    setEditTarget(target);
+    setEditTarget({ target, parentGroup });
   };
 
   return (
@@ -69,12 +78,15 @@ function SessionTabContent({
       {/* 세션 수정 모달 — mutation은 모달이 직접 소유 */}
       {editTarget && (
         <EditSessionModal
-          key={'groupId' in editTarget ? editTarget.groupId : editTarget.id}
+          key={
+            'groupId' in editTarget.target ? editTarget.target.groupId : editTarget.target.id
+          }
           open
           onOpenChange={(nextOpen) => {
             if (!nextOpen) setEditTarget(null);
           }}
-          target={editTarget}
+          target={editTarget.target}
+          parentGroup={editTarget.parentGroup}
         />
       )}
     </div>

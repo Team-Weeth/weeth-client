@@ -19,8 +19,11 @@ interface SessionTableProps extends React.HTMLAttributes<HTMLDivElement> {
   groups: AdminSessionGroup[];
   /** 출석 관리는 개별 세션(AdminSession) id 기반 동작이므로 세션만 받는다 */
   onManageAttendance?: (session: AdminSession) => void;
-  /** 수정 대상은 그룹 전체 또는 개별 하위 세션 모두 가능 */
-  onMore?: (target: AdminSession | AdminSessionGroup) => void;
+  /**
+   * 수정 대상은 그룹 전체 또는 개별 하위 세션 모두 가능.
+   * 하위 세션이 클릭된 경우, 부모 그룹이 함께 전달된다 (반복 스코프 다이얼로그 표시용).
+   */
+  onMore?: (target: AdminSession | AdminSessionGroup, parentGroup?: AdminSessionGroup) => void;
 }
 
 function SessionTable({
