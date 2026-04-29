@@ -75,7 +75,12 @@ function MemberTopBar({
             title={title}
             description={description}
             trigger={
-              <Button variant="secondary" size="lg" className="py-200" disabled={disabled}>
+              <Button
+                variant="secondary"
+                size="lg"
+                className="typo-button1 py-200"
+                disabled={disabled}
+              >
                 {label}
               </Button>
             }
