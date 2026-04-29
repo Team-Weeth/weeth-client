@@ -65,7 +65,7 @@ function AttendancePageContent() {
         <Card className="mt-400 gap-400 overflow-x-auto px-600 pt-600 pb-[64px]">
           <div className="min-w-172.5">
             {Array.from({ length: 4 }, (_, i) => (
-              <Skeleton key={i} className="mt-400 h-[72px] w-full first:mt-0 rounded-md" />
+              <Skeleton key={i} className="mt-400 h-[72px] w-full rounded-md first:mt-0" />
             ))}
           </div>
         </Card>
@@ -87,7 +87,7 @@ function AttendancePageContent() {
       ) : (
         <Card className="mt-400 flex items-center justify-center overflow-x-auto px-600 py-800">
           <div className="min-w-172.5 text-center">
-          <span className="typo-body1 text-text-alternative">등록된 정기모임이 없습니다.</span>
+            <span className="typo-body1 text-text-alternative">등록된 정기모임이 없습니다.</span>
           </div>
         </Card>
       )}
