@@ -7,7 +7,7 @@ import { useState } from 'react';
 import { CompleteIcon, RushIcon } from '@/assets/icons';
 import { Card } from '@/components/ui';
 import { AttendanceCodeModal } from '@/components/attendance/AttendanceCodeModal';
-import { toastError } from '@/stores/useToastStore';
+import { useIsAdmin } from '@/hooks/shared';
 
 interface AttendanceTodayCardProps {
   overline: string;
@@ -55,13 +55,10 @@ function AttendanceTodayCard({
 }: AttendanceTodayCardProps) {
   const router = useRouter();
   const { clubId } = useParams<{ clubId: string }>();
+  const { isAdmin: isAdminUser } = useIsAdmin();
   const [codeModalOpen, setCodeModalOpen] = useState(false);
 
   function handleSecondaryClick() {
-    if (!isAdmin) {
-      toastError('운영진만 사용할 수 있는 기능입니다.');
-      return;
-    }
     if (sessionId == null) return;
     router.push(`/${clubId}/attendance/qr?sessionId=${sessionId}`);
   }
@@ -77,9 +74,11 @@ function AttendanceTodayCard({
         onPrimaryClick={() => setCodeModalOpen(true)}
         primaryButtonText={isChecked ? '출석 완료' : '출석하기'}
         primaryButtonDisabled={disabled || isChecked}
-        onSecondaryClick={handleSecondaryClick}
-        secondaryButtonText="출석코드 확인"
-        secondaryButtonDisabled={disabled || sessionId == null}
+        {...(isAdminUser && {
+          onSecondaryClick: handleSecondaryClick,
+          secondaryButtonText: '출석코드 확인',
+          secondaryButtonDisabled: disabled || sessionId == null,
+        })}
       >
         {isChecked ? (
           <AttendanceBanner
