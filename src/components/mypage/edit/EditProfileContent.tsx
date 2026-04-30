@@ -44,10 +44,7 @@ function EditProfileContent({ className, schools, majors, ...props }: EditProfil
   const { mutate: updateProfile, isPending } = useUpdateProfileMutation();
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [resetToDefault, setResetToDefault] = useState(false);
-  const editProfileSchema = useMemo(
-    () => createEditProfileSchema({ schools, majors }),
-    [schools, majors],
-  );
+  const editProfileSchema = useMemo(() => createEditProfileSchema(), []);
 
   const {
     handleSubmit,
@@ -84,30 +81,10 @@ function EditProfileContent({ className, schools, majors, ...props }: EditProfil
     };
 
     reset(nextValues);
-
-    if (nextValues.phone && nextValues.school && nextValues.department && nextValues.studentId) {
-      void trigger();
-    }
+    void trigger(['phone', 'school', 'department', 'studentId']);
   }, [me, reset, trigger]);
 
-  useEffect(() => {
-    if (!me?.school && !me?.department) return;
-
-    void trigger(['school', 'department']);
-  }, [editProfileSchema, me?.department, me?.school, trigger]);
-
   const name = useWatch({ control, name: 'name' });
-  const [watchedPhone, watchedSchool, watchedDepartment, watchedStudentId] = useWatch({
-    control,
-    name: ['phone', 'school', 'department', 'studentId'],
-  });
-
-  const hasRequiredFields = !!(
-    watchedPhone &&
-    watchedSchool &&
-    watchedDepartment &&
-    watchedStudentId
-  );
   const hasChanges = isDirty || !!selectedFile || resetToDefault;
 
   const { open, onConfirm, onCancel, allowNavigation } = useNavigationGuard({
@@ -206,7 +183,7 @@ function EditProfileContent({ className, schools, majors, ...props }: EditProfil
             <Button
               type="submit"
               size="lg"
-              disabled={isPending || !hasRequiredFields || !isValid || !hasChanges}
+              disabled={isPending || !isValid || !hasChanges}
               className="w-full"
             >
               {isPending ? '수정 중...' : '수정 완료'}
