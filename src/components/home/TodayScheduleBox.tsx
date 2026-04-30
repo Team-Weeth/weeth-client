@@ -45,7 +45,7 @@ export function TodayScheduleBox() {
       ) : data?.title ? (
         <div className="flex flex-col gap-[14px] p-450">
           <p className="typo-sub3 text-text-strong">{data.title}</p>
-          <ChipList>
+          <ChipList className="scrollbar-none min-w-0 overflow-x-auto">
             <Chip shape="round">{formatDateWithTimeRange(data.start!, data.end!)}</Chip>
             {data.location && <Chip shape="round">{data.location}</Chip>}
           </ChipList>
