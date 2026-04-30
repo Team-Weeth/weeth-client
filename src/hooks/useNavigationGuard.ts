@@ -69,11 +69,8 @@ function useNavigationGuard({ enabled }: UseNavigationGuardOptions) {
   useEffect(() => {
     const handlePopState = () => {
       if (isLeaving.current) return;
-      // Next.js App Router는 pushState/replaceState 호출 시 popstate를 디스패치한다.
-      // guard entry 위에 있다면 우리 코드가 pushState한 것이므로 무시한다.
       if (isGuardEntry()) return;
 
-      // guard가 비활성 상태면 guard entry를 투명하게 건너뛴다
       if (!enabledRef.current) {
         if (hasGuardEntry.current) {
           hasGuardEntry.current = false;
