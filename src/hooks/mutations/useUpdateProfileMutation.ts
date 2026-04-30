@@ -66,6 +66,7 @@ export function useUpdateProfileMutation() {
       );
 
       void queryClient.invalidateQueries({ queryKey: ['home', clubId] });
+      void queryClient.invalidateQueries({ queryKey: ['home', 'profile-status', clubId] });
       void queryClient.invalidateQueries({ queryKey: ['home', 'recent-posts', clubId] });
       void queryClient.invalidateQueries({ queryKey: ['posts', clubId] });
 

@@ -8,18 +8,21 @@ import { useSetActiveBoardId } from '@/stores/useBoardNavStore';
 export function useWritePost() {
   const router = useRouter();
   const { clubId } = useParams<{ clubId: string }>();
-  const { data: profileStatus, isLoading } = useProfileStatusQuery();
+  const { data: profileStatus, isLoading, isFetching, refetch } = useProfileStatusQuery();
   const setActiveBoardId = useSetActiveBoardId();
 
   const [cardinalModalOpen, setCardinalModalOpen] = useState(false);
   const [profileModalOpen, setProfileModalOpen] = useState(false);
 
-  const handleWriteClick = () => {
-    if (isLoading) return;
+  const handleWriteClick = async () => {
+    if (isLoading || isFetching) return;
 
-    if (!profileStatus?.cardinalAssigned) {
+    const { data: latestProfileStatus } = await refetch();
+    const currentProfileStatus = latestProfileStatus ?? profileStatus;
+
+    if (!currentProfileStatus?.cardinalAssigned) {
       setCardinalModalOpen(true);
-    } else if (!profileStatus?.profileCompleted) {
+    } else if (!currentProfileStatus?.profileCompleted) {
       setProfileModalOpen(true);
     } else {
       setActiveBoardId(null);
