@@ -5,7 +5,7 @@ import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useWindowSize } from 'react-use';
-import { InquiryDialog } from './InquiryDialog';
+import Link from 'next/link';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -69,11 +69,12 @@ function CTASection({ className }: { className?: string }) {
             3분 만에 사이트를 개설해보세요.
           </p>
           <div className="flex gap-3">
-            <InquiryDialog>
-              <button className="typo-button1 flex-1 rounded-md bg-[#00C8AA] px-400 py-300 text-white hover:bg-[#00877a]">
-                지금 무료로 시작하기
-              </button>
-            </InquiryDialog>
+            <Link
+              href="/login?intent=create"
+              className="typo-button1 flex-1 rounded-md bg-[#00C8AA] px-400 py-300 text-white hover:bg-[#00877a]"
+            >
+              지금 무료로 시작하기
+            </Link>
           </div>
         </div>
       </section>
