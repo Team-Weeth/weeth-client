@@ -16,11 +16,11 @@ interface UpdateProfileParams {
 const isCompleteProfile = (user: UpdateUserBody) =>
   Boolean(
     user.name.trim() &&
-      user.email.trim() &&
-      user.tel.trim() &&
-      user.school.trim() &&
-      user.department.trim() &&
-      user.studentId.trim(),
+    user.email.trim() &&
+    user.tel.trim() &&
+    user.school.trim() &&
+    user.department.trim() &&
+    user.studentId.trim(),
   );
 
 export function useUpdateProfileMutation() {
