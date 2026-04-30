@@ -12,31 +12,35 @@ import {
   Input,
   Textarea,
 } from '@/components/ui';
-import { TimeIcon } from '@/assets/icons';
+import { LandingInfoIcon } from '@/assets/icons/landing';
 import { inquiryApi } from '@/lib/apis/inquiry';
 import { toastSuccess, toastError } from '@/stores/useToastStore';
 import Image from 'next/image';
 
 interface InquiryDialogProps {
-  children: ReactNode;
+  children?: ReactNode;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
 }
 
-function InquiryDialog({ children }: InquiryDialogProps) {
-  const [open, setOpen] = useState(false);
+function InquiryDialog({ children, open, onOpenChange }: InquiryDialogProps) {
+  const [internalOpen, setInternalOpen] = useState(false);
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const dialogOpen = open ?? internalOpen;
+  const setDialogOpen = onOpenChange ?? setInternalOpen;
 
   const handleClose = () => {
     if (isSubmitting) return;
-    setOpen(false);
+    setDialogOpen(false);
     setEmail('');
     setMessage('');
   };
 
   const handleOpenChange = (next: boolean) => {
     if (!next) handleClose();
-    else setOpen(true);
+    else setDialogOpen(true);
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -56,8 +60,8 @@ function InquiryDialog({ children }: InquiryDialogProps) {
   };
 
   return (
-    <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogTrigger asChild>{children}</DialogTrigger>
+    <Dialog open={dialogOpen} onOpenChange={handleOpenChange}>
+      {children && <DialogTrigger asChild>{children}</DialogTrigger>}
       <DialogContent
         showCloseButton={false}
         className="flex w-[640px] flex-col bg-[#F3F5F7]"
@@ -65,13 +69,13 @@ function InquiryDialog({ children }: InquiryDialogProps) {
         onInteractOutside={isSubmitting ? (e) => e.preventDefault() : undefined}
       >
         <DialogHeader
-          icon={<Image src={TimeIcon} width={24} height={24} alt="정보 아이콘" />}
-          title={<span className="typo-h2 text-black">사전예약</span>}
+          icon={<Image src={LandingInfoIcon} width={24} height={24} alt="정보 아이콘" />}
+          title={<span className="typo-h2 text-black">가입 문의</span>}
           description={
             <span className="typo-body2 text-[#909599]">
-              Weeth가 출시되면 메일로 가장 먼저 알려드릴게요!
+              Weeth 도입이 궁금하신가요?
               <br />
-              추가 문의사항을 작성해 주시면 빠른 시일 내로 답변드리겠습니다.
+              가입 문의를 남겨주시면 안내해드릴게요.
             </span>
           }
           showClose
@@ -83,7 +87,7 @@ function InquiryDialog({ children }: InquiryDialogProps) {
             <div className="flex flex-col gap-400">
               <div className="flex flex-col gap-200">
                 <label htmlFor="inquiry-email" className="typo-caption1 text-[#909599]">
-                  알림 받을 메일
+                  연락 가능한 이메일
                 </label>
                 <Input
                   id="inquiry-email"
@@ -129,7 +133,7 @@ function InquiryDialog({ children }: InquiryDialogProps) {
                 className="typo-button1 flex-1 rounded-md bg-[#00C8AA] px-400 py-300 text-white hover:bg-[#00877a]"
                 disabled={isSubmitting}
               >
-                사전예약 완료
+                가입 문의
               </button>
             </div>
           </DialogFooter>
