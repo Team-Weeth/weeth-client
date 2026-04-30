@@ -21,7 +21,7 @@ function HeroSectionCTA() {
     <div className="flex gap-3">
       <InquiryDialog>
         <Button className="block w-fit rounded-md bg-[#00C8AA] px-400 py-300 text-[16px] leading-[24px] font-semibold tracking-[-0.005em] text-white hover:bg-[#00877a]">
-          사전 예약하기
+          가입 문의하기
         </Button>
       </InquiryDialog>
     </div>

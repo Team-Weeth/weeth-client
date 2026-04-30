@@ -70,12 +70,12 @@ function InquiryDialog({ children, open, onOpenChange }: InquiryDialogProps) {
       >
         <DialogHeader
           icon={<Image src={TimeIcon} width={24} height={24} alt="정보 아이콘" />}
-          title={<span className="typo-h2 text-black">사전예약</span>}
+          title={<span className="typo-h2 text-black">가입 문의</span>}
           description={
             <span className="typo-body2 text-[#909599]">
-              Weeth가 출시되면 메일로 가장 먼저 알려드릴게요!
+              Weeth 도입이 궁금하신가요?
               <br />
-              추가 문의사항을 작성해 주시면 빠른 시일 내로 답변드리겠습니다.
+              가입 문의를 남겨주시면 안내해드릴게요.
             </span>
           }
           showClose
@@ -133,7 +133,7 @@ function InquiryDialog({ children, open, onOpenChange }: InquiryDialogProps) {
                 className="typo-button1 flex-1 rounded-md bg-[#00C8AA] px-400 py-300 text-white hover:bg-[#00877a]"
                 disabled={isSubmitting}
               >
-                사전예약 완료
+                가입 문의
               </button>
             </div>
           </DialogFooter>
