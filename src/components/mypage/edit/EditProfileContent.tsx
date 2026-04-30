@@ -94,6 +94,7 @@ function EditProfileContent({ className, schools, majors, ...props }: EditProfil
   const onSubmit = (data: EditProfileFormData) => {
     updateProfile(
       {
+        clubId,
         user: {
           name: data.name,
           email: data.email,

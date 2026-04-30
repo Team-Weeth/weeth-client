@@ -6,11 +6,22 @@ import { useClubId } from '@/stores/useClubStore';
 import { useUserStore } from '@/stores/useUserStore';
 
 interface UpdateProfileParams {
+  clubId?: string;
   user: UpdateUserBody;
   clubProfile: Omit<UpdateClubProfileBody, 'profileImage'>;
   profileImageFile?: File | null;
   resetImage?: boolean;
 }
+
+const isCompleteProfile = (user: UpdateUserBody) =>
+  Boolean(
+    user.name.trim() &&
+      user.email.trim() &&
+      user.tel.trim() &&
+      user.school.trim() &&
+      user.department.trim() &&
+      user.studentId.trim(),
+  );
 
 export function useUpdateProfileMutation() {
   const queryClient = useQueryClient();
@@ -38,11 +49,12 @@ export function useUpdateProfileMutation() {
 
       return { isReset: !!resetImage };
     },
-    onSuccess: async ({ isReset }, { user, clubProfile }) => {
-      if (!clubId) return;
+    onSuccess: async ({ isReset }, { clubId: mutationClubId, user, clubProfile }) => {
+      const targetClubId = mutationClubId ?? clubId;
+      if (!targetClubId) return;
 
       queryClient.setQueryData(
-        ['mypage', 'me', clubId],
+        ['mypage', 'me', targetClubId],
         (old: Record<string, unknown> | undefined) => {
           if (!old) return old;
           return {
@@ -65,20 +77,38 @@ export function useUpdateProfileMutation() {
         'syncProfile',
       );
 
-      void queryClient.invalidateQueries({ queryKey: ['home', clubId] });
-      void queryClient.invalidateQueries({ queryKey: ['home', 'profile-status', clubId] });
-      void queryClient.invalidateQueries({ queryKey: ['home', 'recent-posts', clubId] });
-      void queryClient.invalidateQueries({ queryKey: ['posts', clubId] });
+      queryClient.setQueryData(
+        ['home', 'profile-status', targetClubId],
+        (
+          old:
+            | { cardinalAssigned: boolean; profileCompleted: boolean; missingFields: string[] }
+            | undefined,
+        ) => {
+          if (!old) return old;
+
+          const profileCompleted = isCompleteProfile(user);
+          return {
+            ...old,
+            profileCompleted,
+            missingFields: profileCompleted ? [] : old.missingFields,
+          };
+        },
+      );
+
+      await queryClient.invalidateQueries({ queryKey: ['home', targetClubId] });
+      await queryClient.invalidateQueries({ queryKey: ['home', 'profile-status', targetClubId] });
+      void queryClient.invalidateQueries({ queryKey: ['home', 'recent-posts', targetClubId] });
+      void queryClient.invalidateQueries({ queryKey: ['posts', targetClubId] });
 
       if (isReset) {
-        void queryClient.invalidateQueries({ queryKey: ['mypage', 'me', clubId] });
+        void queryClient.invalidateQueries({ queryKey: ['mypage', 'me', targetClubId] });
         return;
       }
 
       try {
         const res = await queryClient.fetchQuery({
-          queryKey: ['mypage', 'me', clubId],
-          queryFn: () => mypageApi.getMe(clubId).then((r) => r.data.data),
+          queryKey: ['mypage', 'me', targetClubId],
+          queryFn: () => mypageApi.getMe(targetClubId).then((r) => r.data.data),
           staleTime: 0,
         });
         useUserStore.setState(
@@ -87,7 +117,7 @@ export function useUpdateProfileMutation() {
           'syncProfile',
         );
       } catch {
-        void queryClient.invalidateQueries({ queryKey: ['mypage', 'me', clubId] });
+        void queryClient.invalidateQueries({ queryKey: ['mypage', 'me', targetClubId] });
       }
     },
   });
