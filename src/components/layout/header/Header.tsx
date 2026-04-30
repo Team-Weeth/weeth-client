@@ -11,6 +11,7 @@ import { PostingActions } from './PostingActions';
 import { DefaultActions } from './DefaultActions';
 import { MobileNavSheet } from './MobileNavSheet';
 import { Avatar, AvatarFallback, AvatarImage, Icon } from '@/components/ui';
+import { useIsAdmin } from '@/hooks/shared';
 
 interface HeaderProps {
   isMain?: boolean;
@@ -28,6 +29,7 @@ export default function Header({ isMain = true }: HeaderProps) {
   const { clubId } = useParams<{ clubId: string }>();
   const clubName = useClubName();
   const profileImageUrl = useUserProfileImageUrl();
+  const { isAdmin } = useIsAdmin();
   const isPostingPage = pathname.includes('/write') || /\/board\/edit\/\d+$/.test(pathname);
 
   const NAV_ITEMS = [
@@ -70,14 +72,16 @@ export default function Header({ isMain = true }: HeaderProps) {
         )}
         {isMain && clubId && (
           <div className="flex items-center justify-center gap-200">
-            <button
-              type="button"
-              aria-label="운영진 페이지로 이동"
-              onClick={() => router.push(`/${clubId}/admin`)}
-              className="flex cursor-pointer items-center justify-center rounded-full"
-            >
-              <Icon src={ExitToAppIcon} alt="avatar" size={40} className="text-icon-normal p-2" />
-            </button>
+            {isAdmin && (
+              <button
+                type="button"
+                aria-label="운영진 페이지로 이동"
+                onClick={() => router.push(`/${clubId}/admin`)}
+                className="flex cursor-pointer items-center justify-center rounded-full"
+              >
+                <Icon src={ExitToAppIcon} alt="avatar" size={40} className="text-icon-normal p-2" />
+              </button>
+            )}
             <button
               type="button"
               aria-label="마이페이지로 이동"
