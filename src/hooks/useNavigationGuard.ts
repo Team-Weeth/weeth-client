@@ -52,7 +52,10 @@ function useNavigationGuard({ enabled }: UseNavigationGuardOptions) {
 
   // enabled가 true가 될 때 guard entry를 push
   useEffect(() => {
-    if (!enabled) return;
+    if (!enabled) {
+      hasGuardEntry.current = isGuardEntry();
+      return;
+    }
     if (isLeaving.current) return;
 
     guardUrl.current = location.href;
