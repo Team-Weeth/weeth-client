@@ -1,6 +1,6 @@
 'use client';
 
-import { InquiryDialog } from './InquiryDialog';
+import Link from 'next/link';
 import { Button } from '../ui';
 
 interface HeroSectionProps {
@@ -19,11 +19,11 @@ const TEXT_STYLE = {
 function HeroSectionCTA() {
   return (
     <div className="flex gap-3">
-      <InquiryDialog>
+      <Link href="/login?intent=create">
         <Button className="block w-fit rounded-md bg-[#00C8AA] px-400 py-300 text-[16px] leading-[24px] font-semibold tracking-[-0.005em] text-white hover:bg-[#00877a]">
           지금 무료로 시작하기
         </Button>
-      </InquiryDialog>
+      </Link>
     </div>
   );
 }
