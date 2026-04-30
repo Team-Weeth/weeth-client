@@ -23,10 +23,16 @@ function isGuardEntry() {
 function useNavigationGuard({ enabled }: UseNavigationGuardOptions) {
   const [open, setOpen] = useState(false);
   const router = useRouter();
+  const enabledRef = useRef(enabled);
   const isLeaving = useRef(false);
   const guardUrl = useRef('');
   const pendingUrl = useRef<string | null>(null);
   const resetTimerId = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const hasGuardEntry = useRef(false);
+
+  useEffect(() => {
+    enabledRef.current = enabled;
+  }, [enabled]);
 
   // 네비게이션이 실제로 일어나지 않았을 경우 가드를 복원하는 안전장치
   const scheduleGuardReset = (snapshot: string) => {
@@ -38,40 +44,53 @@ function useNavigationGuard({ enabled }: UseNavigationGuardOptions) {
         guardUrl.current = location.href;
         if (!isGuardEntry()) {
           history.pushState(GUARD_STATE, '', location.href);
+          hasGuardEntry.current = true;
         }
       }
     }, NAVIGATION_TIMEOUT);
   };
 
+  // enabled가 true가 될 때 guard entry를 push
   useEffect(() => {
-    if (!enabled) {
-      if (isGuardEntry() && !isLeaving.current) {
-        history.back();
-      }
-      return;
-    }
-
-    // allowNavigation()으로 이탈이 허용된 상태라면 guard를 재설정하지 않음
+    if (!enabled) return;
     if (isLeaving.current) return;
 
     guardUrl.current = location.href;
-
     if (!isGuardEntry()) {
       history.pushState(GUARD_STATE, '', location.href);
     }
+    hasGuardEntry.current = true;
+  }, [enabled]);
 
+  // 이벤트 리스너는 마운트 시 한 번만 등록하고, ref를 통해 최신 상태를 참조
+  useEffect(() => {
     const handlePopState = () => {
       if (isLeaving.current) return;
+      // Next.js App Router는 pushState/replaceState 호출 시 popstate를 디스패치한다.
+      // guard entry 위에 있다면 우리 코드가 pushState한 것이므로 무시한다.
+      if (isGuardEntry()) return;
+
+      // guard가 비활성 상태면 guard entry를 투명하게 건너뛴다
+      if (!enabledRef.current) {
+        if (hasGuardEntry.current) {
+          hasGuardEntry.current = false;
+          history.back();
+        }
+        return;
+      }
+
       guardUrl.current = location.href;
       setOpen(true);
     };
 
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (!enabledRef.current) return;
       e.preventDefault();
     };
 
     // <a> 클릭을 캡처 단계에서 가로채서 Next.js Link 내비게이션을 차단
     const handleClick = (e: MouseEvent) => {
+      if (!enabledRef.current) return;
       if (isLeaving.current) return;
       // ctrl/cmd/shift 등 새 탭/새 창 클릭은 무시
       if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
@@ -106,10 +125,11 @@ function useNavigationGuard({ enabled }: UseNavigationGuardOptions) {
         resetTimerId.current = null;
       }
     };
-  }, [enabled]);
+  }, []);
 
   const onConfirm = () => {
     isLeaving.current = true;
+    hasGuardEntry.current = false;
     setOpen(false);
 
     const snapshot = location.href;
@@ -133,11 +153,16 @@ function useNavigationGuard({ enabled }: UseNavigationGuardOptions) {
       return;
     }
     setOpen(false);
-    history.pushState(GUARD_STATE, '', guardUrl.current);
+    // 뒤로가기로 guard entry를 벗어난 경우에만 재설정
+    if (!isGuardEntry()) {
+      history.pushState(GUARD_STATE, '', guardUrl.current);
+      hasGuardEntry.current = true;
+    }
   };
 
   const allowNavigation = () => {
     isLeaving.current = true;
+    hasGuardEntry.current = false;
     pendingUrl.current = null;
     scheduleGuardReset(location.href);
   };
