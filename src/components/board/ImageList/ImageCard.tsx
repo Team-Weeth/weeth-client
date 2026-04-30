@@ -52,11 +52,7 @@ function ImageCard({ item, className, imgClassName, removable, onRemove }: Image
         src={item.fileUrl}
         alt={item.fileName}
         draggable={false}
-        className={cn(
-          'h-full w-full object-cover',
-          item.uploaded === false && 'opacity-50',
-          imgClassName,
-        )}
+        className={cn('object-cover', item.uploaded === false && 'opacity-50', imgClassName)}
       />
 
       {item.uploaded === false && <LoadingOverlay />}

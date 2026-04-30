@@ -27,11 +27,14 @@ function PostEditorShell({ header, initialContent, align = 'start' }: PostEditor
   const files = usePostStore((s) => s.files);
   const snapshot = usePostStore((s) => s._snapshot);
 
+  // Tiptap은 빈 에디터에서도 '<p></p>' 등의 HTML을 반환하므로 태그를 제거
+  const hasText = !!content.replace(/<[^>]*>/g, '').trim();
+
   const hasChanges = snapshot
     ? title !== snapshot.title ||
       content !== snapshot.content ||
       files.map((f) => f.id).join(',') !== snapshot.fileIds.join(',')
-    : title.length > 0 || content.length > 0 || files.length > 0;
+    : title.length > 0 || hasText || files.length > 0;
   const { open, onConfirm, onCancel, allowNavigation } = useNavigationGuard({
     enabled: hasChanges,
   });

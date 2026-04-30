@@ -1,13 +1,12 @@
 'use client';
 
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 
 import { Button, Icon } from '@/components/ui';
 import { SendIcon } from '@/assets/icons';
 import { useCreatePost, useUpdatePost } from '@/hooks';
 
 function PostingActions() {
-  const router = useRouter();
   const pathname = usePathname();
 
   const editMatch = pathname.match(/^\/[^/]+\/board\/edit\/(\d+)$/);
@@ -32,7 +31,7 @@ function PostingActions() {
         variant="secondary"
         size="md"
         className="typo-button1 text-text-strong px-4"
-        onClick={() => router.back()}
+        onClick={() => history.back()}
       >
         {isEditPage ? '수정 취소' : '작성 취소'}
       </Button>
