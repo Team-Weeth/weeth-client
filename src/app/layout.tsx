@@ -35,8 +35,6 @@ export const metadata: Metadata = {
     title: '우리 동아리만의 사이트를 원한다면, 위드',
     description:
       '동아리의 출석부터 활동 공유까지! 위드에서 동아리만의 사이트를 개설하여 관리해보세요.',
-    url: 'https://www.weeth.kr',
-    siteName: 'Weeth',
     images: [
       {
         url: '/assets/og/og-image.png',
