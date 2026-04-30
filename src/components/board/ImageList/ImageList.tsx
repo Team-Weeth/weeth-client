@@ -52,7 +52,7 @@ function ImageList({ files, removable, onRemove }: ImageListProps) {
             'min-w-[60px] shrink-0 self-stretch',
             index === files.length - 1 && 'mr-800',
           )}
-          imgClassName="h-full w-auto object-contain"
+          imgClassName="h-full max-w-full object-contain"
           removable={removable}
           onRemove={onRemove}
         />
