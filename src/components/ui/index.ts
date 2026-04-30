@@ -74,6 +74,8 @@ export {
   type AvatarProps,
 } from './avatar';
 
+export { ClubAvatar, clubAvatarVariants, type ClubAvatarProps } from './ClubAvatar';
+
 export { Chip, chipVariants, ChipList, type ChipProps } from './chips';
 
 export { Tag, tagVariants, type TagProps } from './tag';
@@ -119,6 +121,17 @@ export {
 
 export { Separator } from './separator';
 
+export {
+  Sheet,
+  SheetTrigger,
+  SheetClose,
+  SheetPortal,
+  SheetOverlay,
+  SheetContent,
+  sheetContentVariants,
+  type SheetContentProps,
+} from './Sheet';
+
 export { Progress } from './progress';
 export { ProgressBar, type ProgressBarProps } from './ProgressBar';
 
@@ -131,3 +144,11 @@ export { Skeleton } from './skeleton';
 export { Loading, type LoadingProps } from './Loading';
 
 export { Carousel, CarouselContent, CarouselItem, useCarousel, type CarouselApi } from './carousel';
+
+export { CalendarPicker, type CalendarPickerProps } from './CalendarPicker';
+export { TimePicker, type TimePickerProps } from './TimePicker';
+export { DateTimeInput, type DateTimeInputProps } from './DateTimeInput';
+
+export { Badge, badgeVariants, type BadgeProps } from './Badge';
+
+export { Switch, type SwitchProps } from './Switch';

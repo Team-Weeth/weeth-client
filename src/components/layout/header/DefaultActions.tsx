@@ -1,12 +1,15 @@
 'use client';
 
-import Image from 'next/image';
-import { usePathname, useRouter } from 'next/navigation';
+import { useParams, usePathname, useRouter } from 'next/navigation';
 import dynamic from 'next/dynamic';
 
-import { Button } from '@/components/ui';
-import { EditIcon, ExitToAppIcon, AvatarIcon } from '@/assets/icons';
+import { Avatar, AvatarFallback, AvatarImage, Button, Icon } from '@/components/ui';
+import { EditIcon, ExitToAppIcon } from '@/assets/icons';
 import { useWritePost } from '@/hooks/home/useWritePost';
+import { useIsAdmin } from '@/hooks/shared';
+import { useUserProfileImageUrl } from '@/stores';
+import { useBoardList } from '@/hooks';
+import { useActiveBoardId } from '@/stores/useBoardNavStore';
 
 const CardinalMissingModal = dynamic(() =>
   import('@/components/home/CardinalMissingModal').then((m) => m.CardinalMissingModal),
@@ -18,6 +21,7 @@ const ProfileIncompleteModal = dynamic(() =>
 function DefaultActions() {
   const router = useRouter();
   const pathname = usePathname();
+  const { clubId } = useParams<{ clubId: string }>();
   const {
     handleWriteClick,
     handleSkipProfile,
@@ -26,37 +30,61 @@ function DefaultActions() {
     profileModalOpen,
     setProfileModalOpen,
   } = useWritePost();
+  const { isAdmin } = useIsAdmin();
+  const profileImageUrl = useUserProfileImageUrl();
+  const { data: boards } = useBoardList();
+  const activeBoardId = useActiveBoardId();
+
+  const canWrite = (() => {
+    if (!boards) return false;
+    if (activeBoardId === null) {
+      return boards.some((b) => b.boardConfig?.canWrite === true);
+    }
+    const activeBoard = boards.find((b) => b.id === activeBoardId);
+    if (!activeBoard) return false;
+    return activeBoard.boardConfig?.canWrite === true;
+  })();
 
   return (
     <>
       <div className="flex items-center gap-200">
-        {pathname.startsWith('/board') && (
+        {pathname.startsWith(`/${clubId}/board`) && canWrite && (
           <Button
             variant="primary"
             size="md"
             onClick={handleWriteClick}
             className="typo-button1 gap-100"
           >
-            <Image src={EditIcon} alt="edit" width={20} height={20} />
+            <Icon src={EditIcon} alt="edit" size={20} className="text-icon-inverse" />
             글쓰기
           </Button>
         )}
-        <Button
-          variant="secondary"
-          size="md"
-          onClick={() => router.push('/admin')}
-          className="typo-button1 text-text-strong gap-100"
-        >
-          <Image src={ExitToAppIcon} alt="exit" width={20} height={20} />
-          관리자
-        </Button>
+        {isAdmin && (
+          <Button
+            variant="secondary"
+            size="md"
+            onClick={() => router.push(`/${clubId}/admin`)}
+            className="typo-button1 text-text-strong gap-100"
+          >
+            <Icon src={ExitToAppIcon} alt="exit" size={20} className="text-icon-normal" />
+            운영진
+          </Button>
+        )}
         <button
           type="button"
           aria-label="마이페이지로 이동"
-          onClick={() => router.push('/mypage')}
+          onClick={() => router.push(`/${clubId}/mypage`)}
           className="cursor-pointer rounded-full"
         >
-          <Image src={AvatarIcon} alt="avatar" width={40} height={40} />
+          <Avatar size={40} type="round">
+            <AvatarImage
+              key={profileImageUrl ?? 'fallback'}
+              src={profileImageUrl ?? undefined}
+              alt="avatar"
+              className="object-cover"
+            />
+            <AvatarFallback />
+          </Avatar>
         </button>
       </div>
 

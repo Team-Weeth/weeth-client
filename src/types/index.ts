@@ -12,6 +12,17 @@ export type {
   RecentPost,
   PageData,
 } from './home';
-export type { Club } from './club';
+
+export type { Club, ClubIdentifier } from './club';
+export type {
+  Role,
+  NullableImage,
+  Identifiable,
+  Named,
+  WithProfileImage,
+  WithRole,
+  UserSummary,
+  UserInfo,
+} from './user';
 
 export type { FileStatus, FileItem, DisplayFile, CreatePostFile } from './file';

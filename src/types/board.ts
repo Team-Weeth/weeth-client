@@ -7,7 +7,12 @@ export type { FileStatus, FileItem, DisplayFile, CreatePostFile } from '@/types/
 
 export type BoardType = 'ALL' | 'NOTICE' | 'GENERAL';
 
-export type UserRole = 'USER' | 'ADMIN';
+export type UserRole = 'USER' | 'ADMIN' | 'LEAD';
+
+export interface BoardConfig {
+  canWrite: boolean;
+  canComment: boolean;
+}
 
 interface BoardBase {
   id: number | null;
@@ -16,10 +21,12 @@ interface BoardBase {
 
 export interface BoardNavItem extends BoardBase {
   label: string;
+  canWrite?: boolean;
 }
 
 export interface Board extends BoardBase {
   name: string;
+  boardConfig?: BoardConfig;
 }
 
 export interface PostAuthor {
@@ -32,6 +39,11 @@ export interface PostAuthor {
 export interface PostLike {
   isLiked: boolean;
   likeCount: number;
+}
+
+/** 좋아요 API 응답 (boardId 포함) */
+export interface PostLikeResponse extends PostLike {
+  boardId: number;
 }
 
 interface PostBase {
@@ -49,6 +61,7 @@ interface PostBase {
 export interface PostListItem extends PostBase {
   fileUrls: FileItem[];
   isNew: boolean;
+  boardConfig?: BoardConfig;
 }
 
 export interface PostComment {
@@ -58,12 +71,15 @@ export interface PostComment {
   time: string;
   fileUrls: FileItem[];
   children: PostComment[];
+  /** 백엔드에서 내려주는 삭제 플래그 (추후 추가 예정, 없으면 문자열 폴백) */
+  isDeleted?: boolean;
 }
 
 export interface PostDetail extends PostBase {
   isNew?: boolean;
   comments: PostComment[];
   fileUrls: FileItem[];
+  boardConfig?: BoardConfig;
 }
 
 /** 게시글 작성 요청 body */
@@ -76,6 +92,7 @@ export interface CreatePostBody {
 /** 게시글 작성 응답 data */
 export interface CreatePostData {
   id: number;
+  boardId: number;
 }
 
 /** 게시글 수정 요청 body — files: null=변경 없음, []=전체 삭제, 배열=교체 */
@@ -88,6 +105,20 @@ export interface UpdatePostBody {
 /** 게시글 수정 응답 data */
 export interface UpdatePostData {
   id: number;
+  boardId: number;
+}
+
+/** 댓글 작성 요청 body */
+export interface CreateCommentBody {
+  parentCommentId?: number | null;
+  content: string;
+  files: CreatePostFile[];
+}
+
+/** 댓글 수정 요청 body — files: null=기존 유지, []=전체 삭제, 배열=교체 */
+export interface UpdateCommentBody {
+  content: string;
+  files: CreatePostFile[] | null;
 }
 
 /** mapComment 변환 결과 (UI 표시용) */
@@ -98,5 +129,6 @@ export interface MappedComment {
   content: string;
   date: string;
   isAuthor: boolean;
+  isDeleted: boolean;
   replies: MappedComment[];
 }

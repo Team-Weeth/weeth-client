@@ -9,12 +9,20 @@ export function Banner() {
   });
 
   if (backgroundImageUrl) {
-    return <Image src={backgroundImageUrl} alt="banner" width={1440} height={364} />;
+    return (
+      <Image
+        src={backgroundImageUrl}
+        alt="banner"
+        width={1440}
+        height={364}
+        className="tablet:h-[364px] h-[134px] w-full object-cover"
+      />
+    );
   }
 
   return (
     <div
-      className="h-[364px] w-full"
+      className="tablet:h-[364px] h-[134px] w-full"
       style={{
         background: `linear-gradient(30deg, rgba(30, 32, 33, 0) 0%, rgba(30, 32, 33, 0.8) 100%), var(--neutral-700)`,
       }}

@@ -5,9 +5,16 @@ export { InfoCard, type InfoCardProps, type InfoCardItem } from './InfoCard';
 export { ThemeToggle, type ThemeToggleProps } from './ThemeToggle';
 export { SupportListItem, type SupportListItemProps } from './SupportListItem';
 export { MyPageDropdownMenu } from './MyPageDropdownMenu';
-export { EditProfileContent, type EditProfileContentProps } from './EditProfileContent';
+export { EditProfileContent, type EditProfileContentProps } from './edit';
 export { FormField, type FormFieldProps } from './FormField';
 export { SearchSelect, type SearchSelectProps } from './SearchSelect';
-
 export { ClubInfoCard, type ClubInfoCardProps } from './ClubInfoCard';
 export { SetCardinalModal, type SetCardinalModalProps } from './SetCardinalModal';
+export {
+  MyPageSkeleton,
+  ProfileSectionSkeleton,
+  InfoCardSkeleton,
+  ClubInfoCardSkeleton,
+  EditProfileSkeleton,
+  type EditProfileSkeletonProps,
+} from './skeleton';

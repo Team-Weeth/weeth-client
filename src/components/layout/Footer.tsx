@@ -1,6 +1,8 @@
 'use client';
 
 import Image from 'next/image';
+import Link from 'next/link';
+import { useParams } from 'next/navigation';
 import { FooterLogoIcon } from '@/assets/icons';
 
 interface FooterProps {
@@ -8,6 +10,7 @@ interface FooterProps {
 }
 
 export default function Footer({ isSmall = false }: FooterProps) {
+  const { clubId } = useParams<{ clubId: string }>();
   return (
     <>
       {!isSmall ? (
@@ -17,7 +20,7 @@ export default function Footer({ isSmall = false }: FooterProps) {
               <p className="typo-caption1 text-text-normal">Leets Makers</p>
               <p className="typo-body2 text-text-alternative">Weeth Admin</p>
               <p className="typo-body2 text-text-alternative">Leets Makers Site</p>
-              <a href="mailto:weeth.site@gmail.com" className="typo-body2 text-text-alternative">
+              <a href="mailto:contact@weeth.kr" className="typo-body2 text-text-alternative">
                 문의 메일
               </a>
             </div>
@@ -36,9 +39,18 @@ export default function Footer({ isSmall = false }: FooterProps) {
         <footer className="bg-container-neutral-alternative flex w-[304px] flex-col gap-[67px] rounded-lg px-[18px] py-[26px]">
           <div className="flex flex-col gap-200">
             <p className="typo-caption1 text-text-normal">Weeth 서비스</p>
-            <p className="typo-body2 text-text-alternative">서비스 소개</p>
-            <p className="typo-body2 text-text-alternative">관리자 서비스</p>
-            <a href="mailto:weeth.site@gmail.com" className="typo-body2 text-text-alternative">
+            <a
+              href="https://landing.weeth.kr"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="typo-body2 text-text-alternative"
+            >
+              서비스 소개
+            </a>
+            <Link href={`/${clubId}/admin`} className="typo-body2 text-text-alternative">
+              운영진 서비스
+            </Link>
+            <a href="mailto:contact@weeth.kr" className="typo-body2 text-text-alternative">
               문의 메일
             </a>
           </div>

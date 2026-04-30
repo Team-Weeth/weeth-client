@@ -6,7 +6,7 @@ import { Avatar, AvatarFallback, AvatarImage, Button, Icon } from '@/components/
 import { useScrollIntoView } from '@/hooks';
 import { cn } from '@/lib/cn';
 import { ActionMenu } from '@/components/board/ActionMenu';
-import type { UploadFileItem } from '@/stores/usePostStore';
+import { CommentDeleteDialog } from './CommentDeleteDialog';
 import { CommentInput } from './CommentInput';
 import { ReplyItem, type ReplyItemProps } from './ReplyItem';
 
@@ -17,9 +17,14 @@ interface CommentItemProps {
   content: string;
   date: string;
   isAuthor?: boolean;
+  isDeleted?: boolean;
   replies?: ReplyItemProps[];
-  onReply?: (value: string, file: UploadFileItem | null) => void;
-  onEdit?: () => void;
+  replyOpen?: boolean;
+  onReplyToggle?: () => void;
+  onReplySuccess?: () => void;
+  onReplyDirtyChange?: (dirty: boolean) => void;
+  onReply?: (value: string) => Promise<boolean> | boolean;
+  onEdit?: (content: string) => Promise<boolean> | boolean;
   onDelete?: () => void;
 }
 
@@ -30,17 +35,33 @@ function CommentItem({
   content,
   date,
   isAuthor,
+  isDeleted,
   replies,
+  replyOpen = false,
+  onReplyToggle,
+  onReplySuccess,
+  onReplyDirtyChange,
   onReply,
   onEdit,
   onDelete,
 }: CommentItemProps) {
-  const [replyOpen, setReplyOpen] = useState(false);
+  const [editing, setEditing] = useState(false);
+  const [deleteOpen, setDeleteOpen] = useState(false);
   const replyInputRef = useScrollIntoView<HTMLDivElement>(replyOpen);
 
-  const handleReplySubmit = (value: string, file: UploadFileItem | null) => {
-    onReply?.(value, file);
-    setReplyOpen(false);
+  const handleReplySubmit = async (value: string) => {
+    const ok = await onReply?.(value);
+    if (ok !== false) {
+      onReplyDirtyChange?.(false);
+      onReplySuccess?.();
+    }
+    return ok ?? true;
+  };
+
+  const handleEditSubmit = async (value: string) => {
+    const ok = await onEdit?.(value);
+    if (ok !== false) setEditing(false);
+    return ok ?? true;
   };
 
   return (
@@ -49,34 +70,55 @@ function CommentItem({
         <div className="flex flex-1 flex-col gap-200">
           <div className="flex items-center gap-[5px]">
             <Avatar size={24}>
-              {profileImage && <AvatarImage src={profileImage} alt={name} />}
-              <AvatarFallback>{name[0]}</AvatarFallback>
+              <AvatarImage src={profileImage ?? undefined} alt={name} />
+              <AvatarFallback />
             </Avatar>
-            <span className="typo-sub2 text-text-strong">{name}</span>
+            <span className="typo-sub3 text-text-strong">{name}</span>
           </div>
-          <p className="typo-body1 text-text-normal">{content}</p>
-          <p className="typo-caption2 text-text-alternative">{date}</p>
-        </div>
-        <div className="flex gap-100">
-          <Button
-            type="button"
-            variant="secondary"
-            size="icon-sm"
-            className="size-6"
-            onClick={() => setReplyOpen((prev) => !prev)}
-            aria-label="답글"
-          >
-            <Icon src={ChatIcon} size={13} className="text-icon-normal" />
-          </Button>
-          {isAuthor && (
-            <ActionMenu
-              triggerVariant="secondary"
-              triggerClassName="size-6"
-              onEdit={onEdit}
-              onDeleteSelect={onDelete}
+          {editing ? (
+            <CommentInput
+              className="mt-100"
+              defaultValue={content}
+              placeholder="댓글을 수정하세요"
+              onSubmit={handleEditSubmit}
+              onCancel={() => setEditing(false)}
             />
+          ) : (
+            <>
+              <p
+                className={cn(
+                  'typo-body1 whitespace-pre-wrap',
+                  isDeleted ? 'text-text-disabled' : 'text-text-normal',
+                )}
+              >
+                {content}
+              </p>
+              <p className="typo-caption2 text-text-alternative">{date}</p>
+            </>
           )}
         </div>
+        {!editing && (
+          <div className="flex gap-100">
+            <Button
+              type="button"
+              variant="secondary"
+              size="icon-sm"
+              className="size-6"
+              onClick={onReplyToggle}
+              aria-label="답글"
+            >
+              <Icon src={ChatIcon} size={16} className="text-icon-normal" />
+            </Button>
+            {isAuthor && !isDeleted && (
+              <ActionMenu
+                triggerVariant="secondary"
+                triggerClassName="size-6"
+                onEdit={() => setEditing(true)}
+                onDeleteSelect={() => setDeleteOpen(true)}
+              />
+            )}
+          </div>
+        )}
       </div>
 
       {replies && replies.length > 0 && (
@@ -87,12 +129,22 @@ function CommentItem({
         </div>
       )}
 
+      <CommentDeleteDialog
+        open={deleteOpen}
+        onOpenChange={setDeleteOpen}
+        onConfirm={() => {
+          onDelete?.();
+          setDeleteOpen(false);
+        }}
+      />
+
       {replyOpen && (
         <div ref={replyInputRef}>
           <CommentInput
             className="mt-200 mr-450 ml-[38px]"
             placeholder="답글을 입력하세요"
             onSubmit={handleReplySubmit}
+            onValueChange={(v) => onReplyDirtyChange?.(v.trim().length > 0)}
           />
         </div>
       )}

@@ -17,6 +17,7 @@ async function handler(request: NextRequest, { params }: { params: Promise<{ pat
 
   const headers = new Headers(request.headers);
   headers.delete('cookie');
+  headers.delete('accept-encoding');
   headers.set('host', new URL(API_BASE_PATH).host);
 
   if (accessToken) {
@@ -35,9 +36,26 @@ async function handler(request: NextRequest, { params }: { params: Promise<{ pat
 
   const responseHeaders = new Headers(response.headers);
   responseHeaders.delete('transfer-encoding');
+  responseHeaders.delete('content-encoding');
   responseHeaders.delete('set-cookie');
 
-  return new NextResponse(response.body, {
+  const isSSE =
+    request.headers.get('accept')?.includes('text/event-stream') && response.ok && response.body;
+
+  if (isSSE) {
+    responseHeaders.set('content-type', 'text/event-stream');
+    responseHeaders.set('cache-control', 'no-cache');
+
+    return new NextResponse(response.body, {
+      status: response.status,
+      statusText: response.statusText,
+      headers: responseHeaders,
+    });
+  }
+
+  const body = await response.arrayBuffer();
+
+  return new NextResponse(body, {
     status: response.status,
     statusText: response.statusText,
     headers: responseHeaders,

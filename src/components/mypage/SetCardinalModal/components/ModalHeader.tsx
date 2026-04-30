@@ -1,4 +1,4 @@
-import { Icon } from '@/components/ui';
+import { DialogTitle, Icon } from '@/components/ui';
 import { DeleteIcon } from '@/assets/icons';
 import { cn } from '@/lib/cn';
 
@@ -19,8 +19,8 @@ function StepIndicator({ current, total }: { current: number; total: number }) {
 }
 
 interface ModalHeaderProps {
-  step: number;
-  total: number;
+  step?: number;
+  total?: number;
   overline: string;
   title: string;
   onClose: () => void;
@@ -30,10 +30,12 @@ function ModalHeader({ step, total, overline, title, onClose }: ModalHeaderProps
   return (
     <div className="flex items-start justify-between gap-400 p-400">
       <div className="flex flex-1 flex-col gap-400">
-        <StepIndicator current={step} total={total} />
+        {step !== undefined && total !== undefined && (
+          <StepIndicator current={step} total={total} />
+        )}
         <div className="flex flex-col gap-200">
           <p className="typo-caption1 text-text-alternative">{overline}</p>
-          <p className="typo-sub1 text-text-strong">{title}</p>
+          <DialogTitle className="typo-sub1 text-text-strong">{title}</DialogTitle>
         </div>
       </div>
       <button

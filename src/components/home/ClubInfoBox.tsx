@@ -9,6 +9,7 @@ import { UserProfileHeader } from './UserProfileHeader';
 export function ClubInfoBox() {
   const { data: clubInfo } = useHomeQuery({
     select: (data) => ({
+      id: data.club.id,
       memberCount: data.club.memberCount,
       name: data.club.name,
       code: data.club.code,
@@ -31,6 +32,7 @@ export function ClubInfoBox() {
       </Tabs>
       <ClubActions
         memberCount={clubInfo?.memberCount}
+        clubId={clubInfo?.id}
         clubName={clubInfo?.name}
         clubCode={clubInfo?.code}
       />

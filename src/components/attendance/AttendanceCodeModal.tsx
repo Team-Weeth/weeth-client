@@ -13,7 +13,11 @@ import {
   Icon,
 } from '@/components/ui';
 import { InputOTP } from '@/components/attendance/InputOTP';
-import { useRemainingTime } from '@/hooks';
+// TODO: SSE 연결 안정화 후 복원
+// import { useEffect, useRef } from 'react';
+// import { useAttendanceSSE } from '@/hooks/attendance';
+// import { useRemainingTime } from '@/hooks';
+// import { toastError } from '@/stores/useToastStore';
 import { formatModalDescription } from '@/lib/formatTime';
 
 interface AttendanceCodeModalProps {
@@ -22,7 +26,6 @@ interface AttendanceCodeModalProps {
   onConfirm?: (code: string) => void;
   title: string;
   start: string;
-  endTime: string;
   location: string;
 }
 
@@ -32,24 +35,48 @@ function AttendanceCodeModal({
   onConfirm,
   title,
   start,
-  endTime,
   location,
 }: AttendanceCodeModalProps) {
   const [code, setCode] = useState('');
-  const { minutes, seconds, isExpired } = useRemainingTime(endTime);
+  // TODO: SSE 연결 안정화 후 복원
+  // const { status, expiredAt: sseExpiredAt } = useAttendanceSSE();
+  // const isLoading = status === null;
+  // const { minutes, seconds, isExpired } = useRemainingTime(sseExpiredAt ?? '');
   const isComplete = code.length === 6;
   const description = formatModalDescription(start, location);
+
+  // TODO: SSE 연결 안정화 후 복원
+  // const hasShownRef = useRef(false);
 
   function handleOpenChange(nextOpen: boolean) {
     if (!nextOpen) setCode('');
     onOpenChange(nextOpen);
   }
 
+  // TODO: SSE 연결 안정화 후 복원
+  // useEffect(() => {
+  //   if (!open) return;
+  //   if (status === null) return;
+  //
+  //   if ((status === 'qr-none' || status === 'qr-close') && !hasShownRef.current) {
+  //     hasShownRef.current = true;
+  //     toastError('현재 출석이 진행 중이 아닙니다.');
+  //
+  //     onOpenChange(false);
+  //   }
+  // }, [open, status, onOpenChange]);
+
+  // useEffect(() => {
+  //   if (!open) {
+  //     hasShownRef.current = false;
+  //   }
+  // }, [open]);
+
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent
         showCloseButton={false}
-        className="bg-background flex h-[565px] w-[508px] flex-col"
+        className="bg-background flex h-[565px] w-full max-w-[508px] min-w-[320px] flex-col"
       >
         <DialogHeader
           icon={<Icon src={CheckRoundIcon} size={24} className="text-icon-alternative" />}
@@ -74,7 +101,11 @@ function AttendanceCodeModal({
 
           <InputOTP value={code} onChange={setCode} />
 
-          {!isExpired ? (
+          {/* {isLoading ? (
+            <p className="typo-caption2 text-text-alternative text-center">
+              출석 정보를 불러오는 중...
+            </p>
+          ) : !isExpired ? (
             <p className="typo-caption2 text-text-strong text-center">
               출석 가능 시간{' '}
               <span className="text-brand-primary tabular-nums">
@@ -85,7 +116,9 @@ function AttendanceCodeModal({
             <p className="typo-caption2 text-state-error text-center">
               출석 가능 시간이 만료되었습니다
             </p>
-          )}
+          )} */}
+
+          {/* TODO: SSE 연결 안정화 후 출석 가능 시간 표시 복원 */}
         </DialogBody>
 
         <DialogFooter
@@ -97,7 +130,7 @@ function AttendanceCodeModal({
             variant="primary"
             size="lg"
             className="w-full"
-            disabled={!isComplete || isExpired}
+            disabled={!isComplete}
             onClick={() => {
               onConfirm?.(code);
               handleOpenChange(false);

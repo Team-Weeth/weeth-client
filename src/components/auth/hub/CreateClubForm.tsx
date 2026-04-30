@@ -1,10 +1,8 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Controller, useForm, useWatch } from 'react-hook-form';
-
 import { TooltipIcon } from '@/assets/icons';
 import { Button, Icon, Input, Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui';
 import { SearchSelect } from '@/components/mypage';
@@ -15,7 +13,6 @@ import {
   useCreateClubDraftValues,
 } from '@/stores/useCreateClubDraftStore';
 import { formatPhone } from '@/utils/shared';
-
 import { ClubCreatingPage } from './ClubCreatingPage';
 import { FieldError, FieldLabel, FormFieldWrapper } from './FormFieldWrapper';
 
@@ -42,6 +39,8 @@ function CreateClubForm({ schoolNames, schoolLoadError = false }: CreateClubForm
     register,
     control,
     handleSubmit,
+    setValue,
+    trigger,
     watch,
     formState: { errors, isValid },
   } = useForm<CreateClubFormData>({
@@ -60,6 +59,11 @@ function CreateClubForm({ schoolNames, schoolLoadError = false }: CreateClubForm
   });
 
   const contactType = useWatch({ control, name: 'contactType' });
+  const email = useWatch({ control, name: 'email' });
+  const clubName = useWatch({ control, name: 'name' });
+  const description = useWatch({ control, name: 'description' });
+  const hasValidEmail = Boolean(email?.trim()) && !errors.email;
+  const isEmailContactDisabled = !hasValidEmail;
 
   useEffect(() => {
     const subscription = watch((values) => {
@@ -77,12 +81,22 @@ function CreateClubForm({ schoolNames, schoolLoadError = false }: CreateClubForm
     return () => subscription.unsubscribe();
   }, [setDraft, watch]);
 
-  function onSubmit(data: CreateClubFormData) {
+  useEffect(() => {
+    if (contactType === 'email' && isEmailContactDisabled) {
+      setValue('contactType', 'phone', { shouldValidate: true, shouldDirty: true });
+    }
+  }, [contactType, isEmailContactDisabled, setValue]);
+
+  useEffect(() => {
+    void trigger('email');
+  }, [contactType, trigger]);
+
+  function onSubmit() {
     setIsCreating(true);
   }
 
   if (isCreating) {
-    return <ClubCreatingPage intent="create" onCancel={() => setIsCreating(false)} />;
+    return <ClubCreatingPage onCancel={() => setIsCreating(false)} />;
   }
 
   return (
@@ -131,19 +145,49 @@ function CreateClubForm({ schoolNames, schoolLoadError = false }: CreateClubForm
         </FormFieldWrapper>
 
         {/* 동아리 이름 */}
-        <FormFieldWrapper label="동아리 이름" error={errors.name?.message}>
-          <Input {...register('name')} clearable className="rounded-lg px-400 py-300" />
+        <FormFieldWrapper label="동아리 이름">
+          <Input
+            {...register('name')}
+            clearable
+            clearButtonClassName="text-icon-alternative"
+            maxLength={30}
+            className="typo-body1 rounded-lg px-400 py-300"
+          />
+          <div className="grid min-h-4 grid-cols-[minmax(0,1fr)_auto] items-start gap-200">
+            <div className="min-w-0">
+              {errors.name?.message ? (
+                <span className="typo-caption2 text-state-error block truncate">
+                  {errors.name.message}
+                </span>
+              ) : null}
+            </div>
+            <span className="typo-caption2 text-text-alternative shrink-0 text-right">
+              {(clubName ?? '').length}/30
+            </span>
+          </div>
         </FormFieldWrapper>
 
         {/* 동아리 소개 */}
-        <FormFieldWrapper label="동아리 소개" error={errors.description?.message}>
+        <FormFieldWrapper label="동아리 소개">
           <Input
             {...register('description')}
             maxLength={30}
             clearable
-            className="rounded-lg px-400 py-300"
+            clearButtonClassName="text-icon-alternative"
+            className="typo-body1 rounded-lg px-400 py-300"
           />
-          <span className="typo-caption2 text-text-alternative">30자 제한</span>
+          <div className="grid min-h-4 grid-cols-[minmax(0,1fr)_auto] items-start gap-200">
+            <div className="min-w-0">
+              {errors.description?.message ? (
+                <span className="typo-caption2 text-state-error block truncate">
+                  {errors.description.message}
+                </span>
+              ) : null}
+            </div>
+            <span className="typo-caption2 text-text-alternative shrink-0 text-right">
+              {(description ?? '').length}/30
+            </span>
+          </div>
         </FormFieldWrapper>
 
         {/* 동아리 기수 */}
@@ -179,7 +223,7 @@ function CreateClubForm({ schoolNames, schoolLoadError = false }: CreateClubForm
                 placeholder="예 : 10"
                 clearable
                 onChange={(e) => field.onChange(e.target.value.replace(/\D/g, ''))}
-                className="rounded-lg px-400 py-300"
+                className="typo-body1 rounded-lg px-400 py-300"
               />
             )}
           />
@@ -197,7 +241,7 @@ function CreateClubForm({ schoolNames, schoolLoadError = false }: CreateClubForm
                 type="tel"
                 onChange={(e) => field.onChange(formatPhone(e.target.value))}
                 clearable
-                className="rounded-lg px-400 py-300"
+                className="typo-body1 rounded-lg px-400 py-300"
               />
             )}
           />
@@ -212,7 +256,7 @@ function CreateClubForm({ schoolNames, schoolLoadError = false }: CreateClubForm
             autoComplete="email"
             clearable
             spellCheck={false}
-            className="rounded-lg px-400 py-300"
+            className="typo-body1 rounded-lg px-400 py-300"
           />
         </FormFieldWrapper>
 
@@ -220,25 +264,45 @@ function CreateClubForm({ schoolNames, schoolLoadError = false }: CreateClubForm
         <FormFieldWrapper label="주 연락처">
           <div className="flex gap-200">
             {(['phone', 'email'] as const).map((type) => (
-              <label key={type} className="flex cursor-pointer items-center gap-200">
+              <label
+                key={type}
+                className={cn(
+                  'flex items-center gap-200',
+                  type === 'email' && isEmailContactDisabled
+                    ? 'cursor-not-allowed'
+                    : 'cursor-pointer',
+                )}
+              >
                 <input
                   type="radio"
                   value={type}
                   checked={contactType === type}
+                  disabled={type === 'email' && isEmailContactDisabled}
                   {...register('contactType')}
                   className="sr-only"
                 />
                 <div
                   className={cn(
                     'flex h-5 w-5 items-center justify-center rounded-full border-2 transition-colors',
-                    contactType === type ? 'border-brand-primary' : 'border-text-alternative',
+                    type === 'email' && isEmailContactDisabled
+                      ? 'border-icon-disabled'
+                      : contactType === type
+                        ? 'border-brand-primary'
+                        : 'border-text-alternative',
                   )}
                 >
                   {contactType === type && (
                     <div className="bg-brand-primary h-2.5 w-2.5 rounded-full" />
                   )}
                 </div>
-                <span className="typo-body2 text-text-normal">
+                <span
+                  className={cn(
+                    'typo-sub3',
+                    type === 'email' && isEmailContactDisabled
+                      ? 'text-text-disabled'
+                      : 'text-text-normal',
+                  )}
+                >
                   {type === 'phone' ? '전화번호' : '이메일'}
                 </span>
               </label>

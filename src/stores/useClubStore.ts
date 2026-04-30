@@ -4,6 +4,8 @@ import { useShallow } from 'zustand/react/shallow';
 
 const initialState = {
   clubId: null as string | null,
+  clubName: null as string | null,
+  clubProfileImageUrl: null as string | null,
 };
 
 export type ClubState = typeof initialState;
@@ -12,15 +14,49 @@ export const useClubStore = create(
   devtools(
     persist(
       combine(initialState, (set) => ({
-        setClubId: (clubId: string) => set({ clubId }, false, 'setClubId'),
+        setClubId: (clubId: string) =>
+          set({ clubId, clubName: null, clubProfileImageUrl: null }, false, 'setClubId'),
+        syncClubId: (clubId: string) => set({ clubId }, false, 'syncClubId'),
+        setClub: (clubId: string, clubName: string, clubProfileImageUrl?: string | null) =>
+          set(
+            { clubId, clubName, clubProfileImageUrl: clubProfileImageUrl ?? null },
+            false,
+            'setClub',
+          ),
         reset: () => set(initialState, false, 'reset'),
       })),
-      { name: 'clubId' },
+      {
+        name: 'clubId',
+        partialize: (state) => ({
+          ...(state.clubId ? { clubId: state.clubId } : {}),
+          ...(state.clubName ? { clubName: state.clubName } : {}),
+          ...(state.clubProfileImageUrl ? { clubProfileImageUrl: state.clubProfileImageUrl } : {}),
+        }),
+        merge: (persistedState, currentState) => {
+          const persisted = (persistedState ?? {}) as Partial<ClubState>;
+
+          return {
+            ...currentState,
+            clubId: persisted.clubId ?? currentState.clubId,
+            clubName: persisted.clubName ?? currentState.clubName,
+            clubProfileImageUrl: persisted.clubProfileImageUrl ?? currentState.clubProfileImageUrl,
+          };
+        },
+      },
     ),
-    { name: 'ClubIdStore' },
+    { name: 'ClubStore' },
   ),
 );
 
 export const useClubId = () => useClubStore((store) => store.clubId);
+export const useClubName = () => useClubStore((store) => store.clubName);
+export const useClubProfileImageUrl = () => useClubStore((store) => store.clubProfileImageUrl);
 export const useClubActions = () =>
-  useClubStore(useShallow((store) => ({ setClubId: store.setClubId, reset: store.reset })));
+  useClubStore(
+    useShallow((store) => ({
+      setClubId: store.setClubId,
+      syncClubId: store.syncClubId,
+      setClub: store.setClub,
+      reset: store.reset,
+    })),
+  );

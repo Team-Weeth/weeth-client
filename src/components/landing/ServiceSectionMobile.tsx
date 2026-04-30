@@ -168,7 +168,7 @@ function ServiceSectionMobile({
         )}
       >
         <div className="flex shrink-0 items-center gap-200">
-          <span className="typo-sub2 flex items-center gap-[13px] text-[#1E2021]">
+          <span className="typo-sub3 flex items-center gap-[13px] text-[#1E2021]">
             <Image
               src={variant === 'user' ? LandingUserFaceIcon : LandingAdminFaceIcon}
               alt="face-icon"

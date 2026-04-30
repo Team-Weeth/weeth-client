@@ -25,7 +25,7 @@ function ImageList({ files, removable, onRemove }: ImageListProps) {
       <div className="self-stretch">
         <ImageCard
           item={files[0]}
-          className="inline-block min-h-[80px] max-w-full min-w-[80px]"
+          className="inline-block min-h-[182px] max-w-full"
           imgClassName="max-h-[320px] max-w-full object-contain"
           removable={removable}
           onRemove={onRemove}
@@ -48,8 +48,11 @@ function ImageList({ files, removable, onRemove }: ImageListProps) {
         <ImageCard
           key={item.id}
           item={item}
-          className={cn('shrink-0 self-stretch', index === files.length - 1 && 'mr-800')}
-          imgClassName="h-full w-auto object-cover"
+          className={cn(
+            'min-w-[60px] shrink-0 self-stretch',
+            index === files.length - 1 && 'mr-800',
+          )}
+          imgClassName="h-full max-w-full object-contain"
           removable={removable}
           onRemove={onRemove}
         />

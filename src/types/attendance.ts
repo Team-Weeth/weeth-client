@@ -1,8 +1,8 @@
 import type { ApiResponse } from '@/types/common';
-
-type AttendanceStatus = 'ATTEND' | 'ABSENT' | 'PENDING';
+import { AttendanceStatus } from '@/constants/attendance';
 
 interface AttendanceData {
+  sessionId: number | null;
   attendanceRate: number;
   title: string | null;
   status: AttendanceStatus | null;
@@ -10,6 +10,7 @@ interface AttendanceData {
   start: string | null;
   end: string | null;
   location: string | null;
+  expiredAt: string | null;
 }
 
 type AttendanceResponse = ApiResponse<AttendanceData>;
@@ -32,6 +33,14 @@ interface AttendanceSummary {
 
 type AttendanceSummaryResponse = ApiResponse<AttendanceSummary>;
 
+interface QRCodeData {
+  sessionId: number;
+  code: number;
+  expiredAt: string;
+}
+
+type QRCodeResponse = ApiResponse<QRCodeData>;
+
 export type {
   AttendanceStatus,
   AttendanceData,
@@ -39,4 +48,6 @@ export type {
   AttendanceRecord,
   AttendanceSummary,
   AttendanceSummaryResponse,
+  QRCodeData,
+  QRCodeResponse,
 };

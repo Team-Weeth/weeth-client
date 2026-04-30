@@ -1,22 +1,25 @@
 'use client';
 
+import { useParams } from 'next/navigation';
 import { Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbPage } from '@/components/ui';
 import { cn } from '@/lib/cn';
-
+import { useMyPageQueries } from '@/hooks/queries/mypage/useMyPageQueries';
 import { InfoCard } from './InfoCard';
 import { InfoSection } from './InfoSection';
 import { ProfileSection } from './ProfileSection';
 import { SupportListItem } from './SupportListItem';
 import { ThemeToggle } from './ThemeToggle';
 import { MyPageDropdownMenu } from './MyPageDropdownMenu';
-import { MOCK_AVAILABLE_CARDINALS, MOCK_CLUBS, MOCK_USER } from '@/constants/mock';
 import { ClubInfoCard } from './ClubInfoCard';
+import { ProfileSectionSkeleton, InfoCardSkeleton, ClubInfoCardSkeleton } from './skeleton';
 
 type MyPageContentProps = React.HTMLAttributes<HTMLDivElement>;
 
 function MyPageContent({ className, ...props }: MyPageContentProps) {
-  // TODO: API 연동 시 실제 데이터로 교체
-  const user = MOCK_USER;
+  const { clubId } = useParams<{ clubId: string }>();
+  const [{ data: me, isPending: isMePending }, { data: clubs, isPending: isClubsPending }] =
+    useMyPageQueries(clubId);
+  const displayName = me?.name ?? '';
 
   return (
     <div
@@ -45,43 +48,55 @@ function MyPageContent({ className, ...props }: MyPageContentProps) {
       {/* Main Content */}
       <div className="flex w-full flex-col gap-700">
         {/* 프로필 */}
-        <ProfileSection name={user.name} bio={user.bio} profileImageUrl={user.profileImageUrl} />
+        {me ? (
+          <ProfileSection
+            name={displayName}
+            bio={me.bio ?? undefined}
+            profileImageUrl={me.profileImageUrl ?? undefined}
+          />
+        ) : (
+          <ProfileSectionSkeleton />
+        )}
 
         {/* 개인정보 */}
         <InfoSection title="개인정보">
           <div className="flex flex-col gap-300">
-            <InfoCard
-              items={[
-                { label: '이름', value: user.name },
-                { label: '소개글', value: user.introduction },
-                {
-                  label: '전화번호',
-                  value: user.phone?.replace(/(\d{3})(\d{4})(\d{4})/, '$1-$2-$3') ?? '-',
-                },
-                { label: '이메일', value: user.email },
-                { label: '로그인 정보', value: user.loginInfo },
-              ]}
-            />
-            <InfoCard
-              items={[
-                { label: '학교', value: user.university },
-                { label: '학과', value: user.department },
-                { label: '학번', value: user.studentId },
-              ]}
-            />
+            {me && !isMePending ? (
+              <>
+                <InfoCard
+                  items={[
+                    { label: '이름', value: me.name ?? '-' },
+                    { label: '소개글', value: me.bio ?? '-' },
+                    {
+                      label: '전화번호',
+                      value: me.tel?.replace(/(\d{3})(\d{4})(\d{4})/, '$1-$2-$3') ?? '-',
+                    },
+                    { label: '이메일', value: me.email ?? '-' },
+                  ]}
+                />
+                <InfoCard
+                  items={[
+                    { label: '학교', value: me.school ?? '-' },
+                    { label: '학과', value: me.department ?? '-' },
+                    { label: '학번', value: me.studentId ?? '-' },
+                  ]}
+                />
+              </>
+            ) : (
+              <>
+                <InfoCardSkeleton rows={4} />
+                <InfoCardSkeleton rows={3} />
+              </>
+            )}
           </div>
         </InfoSection>
 
         {/* 활동정보 */}
         <InfoSection title="활동정보">
           <div className="flex flex-row gap-300">
-            {MOCK_CLUBS.map((club) => (
-              <ClubInfoCard
-                key={club.id}
-                club={club}
-                availableCardinals={MOCK_AVAILABLE_CARDINALS}
-              />
-            ))}
+            {clubs && !isClubsPending
+              ? clubs.map((club) => <ClubInfoCard key={club.id} club={club} />)
+              : Array.from({ length: 1 }).map((_, index) => <ClubInfoCardSkeleton key={index} />)}
           </div>
         </InfoSection>
 
@@ -105,8 +120,8 @@ function MyPageContent({ className, ...props }: MyPageContentProps) {
               variant="copy"
               copyText="help@weeth.kr"
             />
-            <SupportListItem title="서비스 이용 약관" variant="link" href="/terms" />
-            <SupportListItem title="개인정보 처리방침" variant="link" href="/privacy" />
+            <SupportListItem title="서비스 이용 약관" variant="link" href={`/${clubId}/terms`} />
+            <SupportListItem title="개인정보 처리방침" variant="link" href={`/${clubId}/privacy`} />
           </div>
         </InfoSection>
       </div>

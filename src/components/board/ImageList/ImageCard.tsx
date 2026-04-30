@@ -51,10 +51,12 @@ function ImageCard({ item, className, imgClassName, removable, onRemove }: Image
       <img
         src={item.fileUrl}
         alt={item.fileName}
-        className={cn(imgClassName, item.uploaded === false && 'opacity-50')}
         draggable={false}
+        className={cn(item.uploaded === false && 'opacity-50', imgClassName)}
       />
+
       {item.uploaded === false && <LoadingOverlay />}
+
       {removable && onRemove && (
         <RemoveButton
           id={item.id}

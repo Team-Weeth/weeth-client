@@ -1,10 +1,10 @@
 'use client';
 
-import Image from 'next/image';
 import { PeopleIcon, CopyIcon } from '@/assets/icons';
 import { Button, Divider, Icon } from '@/components/ui';
 import dynamic from 'next/dynamic';
 import { copyTextToClipboard } from '@/utils/shared/clipboard';
+import { getAppOrigin } from '@/utils/shared';
 import { AlertBanner } from './AlertBanner';
 const CardinalMissingModal = dynamic(() =>
   import('./CardinalMissingModal').then((m) => m.CardinalMissingModal),
@@ -16,15 +16,16 @@ import { useWritePost } from '@/hooks/home/useWritePost';
 
 interface ClubActionsProps {
   memberCount?: number;
+  clubId?: string;
   clubName?: string;
   clubCode?: string;
 }
 
-export function ClubActions({ memberCount, clubName, clubCode }: ClubActionsProps) {
+export function ClubActions({ memberCount, clubId, clubName, clubCode }: ClubActionsProps) {
   const handleCopyInvite = () => {
-    if (!clubName || !clubCode) return;
+    if (!clubId || !clubName || !clubCode) return;
 
-    return copyTextToClipboard(`${window.location.origin}/${clubName}/code?${clubCode}`, {
+    return copyTextToClipboard(`${getAppOrigin()}/clubId=${clubId}?code=${clubCode}`, {
       successMessage: '초대 링크가 복사되었습니다.',
       errorMessage: '초대 링크 복사에 실패했습니다.',
     });
@@ -45,7 +46,7 @@ export function ClubActions({ memberCount, clubName, clubCode }: ClubActionsProp
       <Divider />
       <div className="flex justify-between px-[10px] py-450">
         <div className="flex gap-200">
-          <Image src={PeopleIcon} alt="people" width={20} height={20} />
+          <Icon src={PeopleIcon} alt="people" size={20} className="text-icon-normal" />
           <p className="typo-button2 text-text-normal">{memberCount}명</p>
         </div>
         <button

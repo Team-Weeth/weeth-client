@@ -106,10 +106,12 @@
   --state-error: #ff5857;
 
   --kakao-bg: #fee500;
+  --kakao-text: rgba(0, 0, 0, 0.85);
 
   --font-weight-medium: 500;
   --font-weight-semibold: 600;
   --font-weight-bold: 700;
+  --font-weight-black: 900;
   --letter-spacing: -0.005em;
 
   --h1-size: 40px;
@@ -120,8 +122,13 @@
   --h3-line-height: 30px;
   --sub1-size: 18px;
   --sub1-line-height: 22px;
+  --sub1-weight: var(--font-weight-semibold);
   --sub2-size: 16px;
   --sub2-line-height: 20px;
+  --sub2-weight: var(--font-weight-black);
+  --sub3-size: 16px;
+  --sub3-line-height: 20px;
+  --sub3-weight: var(--font-weight-semibold);
   --body1-size: 16px;
   --body1-line-height: 24px;
   --body1-weight: 470;
@@ -161,6 +168,7 @@
   --shadow-dialog: 0 10px 40px 0 rgba(0, 0, 0, 0.4);
   --shadow-sm: 0 1px 5px 0 rgba(17, 33, 49, 0.15);
   --shadow-lg: 0 10px 30px 0 rgba(17, 33, 49, 0.3);
+  --shadow-weeth: 0 0 5px 0 var(--brand-primary);
 
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.145 0 0);
@@ -204,6 +212,9 @@
   --sub1-line-height: 20px;
   --sub2-size: 14px;
   --sub2-line-height: 18px;
+  --sub3-size: 14px;
+  --font-weight: var(--sub3-weight);
+  --sub3-line-height: 18px;
   --body1-size: 14px;
   --body1-line-height: 22px;
   --body1-weight: 500;
@@ -216,8 +227,8 @@
   --caption2-line-height: 16px;
   --button1-size: 14px;
   --button1-line-height: 24px;
-  --button2-size: 13px;
-  --button2-line-height: 16px;
+  --button2-size: 14px;
+  --button2-line-height: 20px;
 }
 
 .dark {
@@ -342,6 +353,42 @@
   --color-state-caution: var(--state-caution);
   --color-state-error: var(--state-error);
 
+  --color-neutral-0: var(--neutral-0);
+  --color-neutral-100: var(--neutral-100);
+  --color-neutral-200: var(--neutral-200);
+  --color-neutral-300: var(--neutral-300);
+  --color-neutral-400: var(--neutral-400);
+  --color-neutral-500: var(--neutral-500);
+  --color-neutral-600: var(--neutral-600);
+  --color-neutral-700: var(--neutral-700);
+  --color-neutral-800: var(--neutral-800);
+  --color-neutral-900: var(--neutral-900);
+
+  --color-primary-100: var(--primary-100);
+  --color-primary-200: var(--primary-200);
+  --color-primary-500: var(--primary-500);
+  --color-primary-600: var(--primary-600);
+  --color-primary-700: var(--primary-700);
+  --color-primary-900: var(--primary-900);
+
+  --color-secondary-100: var(--secondary-100);
+  --color-secondary-200: var(--secondary-200);
+  --color-secondary-500: var(--secondary-500);
+  --color-secondary-700: var(--secondary-700);
+  --color-secondary-900: var(--secondary-900);
+
+  --color-purple-100: var(--purple-100);
+  --color-purple-200: var(--purple-200);
+  --color-purple-500: var(--purple-500);
+  --color-purple-700: var(--purple-700);
+  --color-purple-900: var(--purple-900);
+
+  --color-pink-100: var(--pink-100);
+  --color-pink-200: var(--pink-200);
+  --color-pink-500: var(--pink-500);
+  --color-pink-700: var(--pink-700);
+  --color-pink-900: var(--pink-900);
+
   --spacing-0: 0px;
   --spacing-100: 4px;
   --spacing-200: 8px;
@@ -372,6 +419,10 @@
   --radius-sm: 8px;
   --radius-md: 12px;
   --radius-lg: 16px;
+
+  --shadow-dialog: 0 10px 40px 0 rgba(0, 0, 0, 0.4);
+  --shadow-weeth: 0 0 5px 0 var(--brand-primary);
+
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -443,13 +494,20 @@ select:focus {
 @utility typo-sub1 {
   font-size: var(--sub1-size);
   line-height: var(--sub1-line-height);
-  font-weight: var(--font-weight-semibold);
+  font-weight: var(--sub1-weight);
   letter-spacing: var(--letter-spacing);
 }
 
 @utility typo-sub2 {
   font-size: var(--sub2-size);
   line-height: var(--sub2-line-height);
+  font-weight: var(--sub2-weight);
+  letter-spacing: var(--letter-spacing);
+}
+
+@utility typo-sub3 {
+  font-size: var(--sub3-size);
+  line-height: var(--sub3-line-height);
   font-weight: var(--font-weight-semibold);
   letter-spacing: var(--letter-spacing);
 }
@@ -496,6 +554,57 @@ select:focus {
   letter-spacing: var(--letter-spacing);
 }
 
+@utility typo-social {
+  font-family:
+    'SF Pro',
+    -apple-system,
+    BlinkMacSystemFont,
+    system-ui,
+    sans-serif;
+  font-size: 19px;
+  font-weight: 590;
+  line-height: 24px;
+}
+
+/* ── Markdown / Editor Typography ─────────────────────── */
+
+@utility typo-md-title {
+  font-size: 32px;
+  line-height: 40px;
+  font-weight: var(--font-weight-bold);
+  letter-spacing: var(--letter-spacing);
+}
+
+@utility typo-md-h1 {
+  font-size: 30px;
+  line-height: 38px;
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--letter-spacing);
+}
+
+@utility typo-md-h2 {
+  font-size: 24px;
+  line-height: 32px;
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--letter-spacing);
+}
+
+@utility typo-md-h3 {
+  font-size: 20px;
+  line-height: 28px;
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--letter-spacing);
+}
+
+@utility typo-md-body {
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 400;
+  letter-spacing: var(--letter-spacing);
+}
+
+/* ────────────────────────────────────────────────────── */
+
 .scrollbar-none {
   scrollbar-width: none;
 }
@@ -541,15 +650,40 @@ select:focus {
 }
 
 .ProseMirror h1 {
-  @apply typo-h3 mt-300 mb-100;
+  @apply typo-md-h1;
+}
+
+.ProseMirror h1::after {
+  content: '';
+  display: block;
+  margin-top: 16px;
+  height: 1px;
+  background-color: var(--line);
 }
 
 .ProseMirror h2 {
-  @apply typo-sub1 mt-300 mb-100;
+  @apply typo-md-h2;
 }
 
 .ProseMirror h3 {
-  @apply typo-sub2 mt-300 mb-100;
+  @apply typo-md-h3;
+}
+
+.ProseMirror p {
+  @apply typo-md-body;
+}
+
+.ProseMirror hr {
+  margin: 0;
+  border: none;
+  height: 1px;
+  background-color: var(--line);
+}
+
+/* heading·구분선 전후 16px 간격, p+p는 0 */
+.ProseMirror > * + :is(h1, h2, h3, hr),
+.ProseMirror > :is(h1, h2, h3, hr) + * {
+  margin-top: 16px;
 }
 
 .ProseMirror ul {

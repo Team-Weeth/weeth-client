@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useRef, useState, useSyncExternalStore } from 'react';
 
 import type { AxiosError } from 'axios';
 import { useRouter } from 'next/navigation';
@@ -9,9 +9,12 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Controller, useForm } from 'react-hook-form';
 
 import { Button, FormCard, Input } from '@/components/ui';
+import { setClubCookie } from '@/lib/actions/club';
 import { clubApi } from '@/lib/apis/club';
 import { inviteCodeSchema, type InviteCodeFormData } from '@/lib/schemas/inviteCode';
+import { useClubActions } from '@/stores';
 import type { Club } from '@/types';
+import { getInviteLinkExample, getInviteLinkExampleServerFallback } from '@/utils/shared';
 
 import { ClubSearchDropdown } from './ClubSearchDropdown';
 import { ClubSelectedCard } from './ClubSelectedCard';
@@ -30,6 +33,7 @@ function parseInviteLink(url: string): { clubId: string; code: string } | null {
 
 function InviteCodeForm() {
   const router = useRouter();
+  const { setClub } = useClubActions();
   const [searchResults, setSearchResults] = useState<Club[]>([]);
   const [selectedClub, setSelectedClub] = useState<Club | null>(null);
   const [serverError, setServerError] = useState<string | null>(null);
@@ -38,6 +42,11 @@ function InviteCodeForm() {
     code: string;
   } | null>(null);
   const latestRequestIdRef = useRef(0);
+  const inviteLinkPlaceholder = useSyncExternalStore(
+    () => () => {},
+    getInviteLinkExample,
+    getInviteLinkExampleServerFallback,
+  );
 
   const {
     control,
@@ -89,7 +98,9 @@ function InviteCodeForm() {
 
     try {
       await clubApi.join(parsedLink.clubId, parsedLink.code);
-      router.push('/home');
+      await setClubCookie(selectedClub.id, selectedClub.name);
+      setClub(selectedClub.id, selectedClub.name);
+      router.push(`/${selectedClub.id}/home`);
     } catch (error) {
       const axiosError = error as AxiosError<{ message?: string }>;
       setServerError(axiosError.response?.data?.message ?? '가입에 실패했습니다.');
@@ -97,7 +108,7 @@ function InviteCodeForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="w-full max-w-[520px]">
+    <form onSubmit={handleSubmit(onSubmit)} className="w-full max-w-[608px]">
       <FormCard
         label="동아리에 가입하기"
         title="동아리에서 받은 초대 링크를 입력해주세요."
@@ -124,7 +135,7 @@ function InviteCodeForm() {
                   {...field}
                   error={!!serverError}
                   clearable
-                  placeholder="https://weeth.kr/clubId=TSID?code=UUID"
+                  placeholder={inviteLinkPlaceholder}
                   className="bg-container-neutral-alternative px-300 py-400"
                   onChange={(e) => {
                     field.onChange(e);

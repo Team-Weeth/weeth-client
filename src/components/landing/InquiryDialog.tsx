@@ -60,7 +60,7 @@ function InquiryDialog({ children }: InquiryDialogProps) {
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent
         showCloseButton={false}
-        className="bg-background flex w-[640px] flex-col"
+        className="flex w-[640px] flex-col bg-[#F3F5F7]"
         onPointerDownOutside={isSubmitting ? (e) => e.preventDefault() : undefined}
         onInteractOutside={isSubmitting ? (e) => e.preventDefault() : undefined}
       >
@@ -78,7 +78,6 @@ function InquiryDialog({ children }: InquiryDialogProps) {
           closeClassName="text-[#1E2021]"
           onClose={handleClose}
         />
-
         <form onSubmit={handleSubmit}>
           <DialogBody className="flex-1">
             <div className="flex flex-col gap-400">
@@ -114,6 +113,7 @@ function InquiryDialog({ children }: InquiryDialogProps) {
               </div>
             </div>
           </DialogBody>
+
           <div className="h-[1px] w-full bg-[#E6EAED]" />
           <DialogFooter>
             <div className="flex gap-200">

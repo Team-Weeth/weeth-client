@@ -1,34 +1,39 @@
+export type MemberStatus = 'WAITING' | 'ACTIVE' | 'BANNED' | 'LEFT';
+
 export interface Member {
   id: string;
+  clubMemberId: number;
   name: string;
-  role: string;
+  email: string;
   department: string;
-  generation: string;
+  cardinal: string; // 활동기수 전체, e.g. "1, 2"
   phone: string;
   studentId: string;
   position: string;
+  memberRole: ClubMemberRole;
   attendance: number;
   absence: number;
+  penaltyCount: number;
   status: MemberStatus;
 }
 
-export type MemberStatus = 'approved' | 'pending' | 'banned';
+// API response types
+export type ClubMemberRole = 'USER' | 'ADMIN' | 'LEAD';
 
-export type MemberDetailStatus = 'approved' | 'pending' | 'banned';
-
-export interface MemberDetail {
+export interface ClubMember {
+  userId: number;
+  clubMemberId: number;
   name: string;
-  generation: number;
-  status: MemberDetailStatus;
-  position: string;
-  role: string;
-  department: string;
-  phone: string;
-  studentId: string;
   email: string;
-  activeGenerations: string;
-  memberStatus: string;
-  joinDate: string;
-  attendance: number;
-  absence: number;
+  tel: string;
+  school: string;
+  department: string;
+  studentId: string;
+  cardinals: number[];
+  memberStatus: MemberStatus;
+  memberRole: ClubMemberRole;
+  attendanceCount: number;
+  absenceCount: number;
+  attendanceRate: number;
+  penaltyCount: number;
 }

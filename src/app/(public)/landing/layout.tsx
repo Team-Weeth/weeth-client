@@ -6,10 +6,8 @@ export default function PublicLayout({
   children: ReactNode;
 }>) {
   return (
-    <>
-      <div className="mx-auto flex min-h-screen max-w-screen flex-col">
-        <main className="flex-1">{children}</main>
-      </div>
-    </>
+    <div className="mx-auto flex min-h-screen max-w-screen flex-col">
+      <main className="flex-1">{children}</main>
+    </div>
   );
 }

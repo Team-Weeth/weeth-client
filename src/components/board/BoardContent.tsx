@@ -2,12 +2,16 @@
 
 import { useEffect } from 'react';
 import Link from 'next/link';
+import { useParams, useRouter } from 'next/navigation';
 import { useBoardPosts } from '@/hooks';
 import { useIntersectionObserver } from '@/hooks/board/useIntersectionObserver';
 import { useUserId } from '@/stores/useUserStore';
-import { useActiveBoardId } from '@/stores/useBoardNavStore';
 import { formatShortDateTime } from '@/lib/formatTime';
+import { parseApiError } from '@/lib/error';
+import { BOARD_PAGE_ERRORS } from '@/constants/board/error';
+import { toastError } from '@/stores/useToastStore';
 import type { FileItem } from '@/types/file';
+import { buildPostPath } from '@/lib/board';
 import { PostActionMenu } from './PostActionMenu';
 import { PostCard } from './PostCard';
 import { BoardContentSkeleton } from './BoardContentSkeleton';
@@ -18,21 +22,37 @@ function toDisplayImages(files: FileItem[]) {
     .map((f) => ({ id: f.fileId, fileName: f.fileName, fileUrl: f.fileUrl, uploaded: true }));
 }
 
-function BoardContent() {
-  const activeBoardId = useActiveBoardId();
+interface BoardContentProps {
+  boardId: number | null;
+}
+
+function BoardContent({ boardId }: BoardContentProps) {
+  const router = useRouter();
+  const { clubId } = useParams<{ clubId: string }>();
   const currentUserId = useUserId();
   const {
     data: posts,
-    isLoading,
+    isPending,
     isError,
+    error,
     refetch,
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
-  } = useBoardPosts(activeBoardId);
+  } = useBoardPosts(boardId);
   const { ref: sentinelRef, isIntersecting } = useIntersectionObserver({
     rootMargin: '200px',
   });
+
+  useEffect(() => {
+    if (!isError || !error) return;
+    const parsed = parseApiError(error);
+    const known = parsed ? BOARD_PAGE_ERRORS[parsed.code] : null;
+    if (known) {
+      toastError(known.message);
+      router.replace(`/${clubId}/board`);
+    }
+  }, [isError, error, router, clubId]);
 
   useEffect(() => {
     if (isIntersecting && hasNextPage && !isFetchingNextPage) {
@@ -40,7 +60,7 @@ function BoardContent() {
     }
   }, [isIntersecting, hasNextPage, isFetchingNextPage, fetchNextPage]);
 
-  if (isLoading) return <BoardContentSkeleton />;
+  if (isPending) return <BoardContentSkeleton />;
 
   if (isError)
     return (
@@ -62,37 +82,42 @@ function BoardContent() {
   return (
     <main className="flex min-w-0 flex-1 flex-col gap-400">
       {posts.map((post) => (
-        <Link key={post.id} href={`/board/${post.id}`}>
-          <PostCard.Root>
-            <PostCard.Header>
-              <PostCard.Author
-                author={post.author}
-                date={formatShortDateTime(post.time)}
-                hasAttachment={post.fileUrls.length > 0}
-              />
-              {currentUserId === post.author.id && (
-                <div
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                  }}
-                >
-                  <PostActionMenu postId={post.id} />
-                </div>
-              )}
-            </PostCard.Header>
+        <PostCard.Root key={post.id} className="relative">
+          <PostCard.Header>
+            <PostCard.Author
+              author={post.author}
+              date={formatShortDateTime(post.time)}
+              hasAttachment={post.fileUrls.length > 0}
+            />
+            {currentUserId === post.author.id && (
+              <div className="relative z-10">
+                <PostActionMenu postId={post.id} boardId={post.boardId} />
+              </div>
+            )}
+          </PostCard.Header>
+          <Link
+            href={buildPostPath(clubId, post.id, post.boardId)}
+            className="after:absolute after:inset-0 after:content-['']"
+          >
             <PostCard.ListContent title={post.title} content={post.content} isNew={post.isNew} />
-            <div
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-              }}
-            >
-              <PostCard.Images files={toDisplayImages(post.fileUrls)} />
-            </div>
-            <PostCard.Actions likeCount={post.like.likeCount} commentCount={post.commentCount} />
-          </PostCard.Root>
-        </Link>
+          </Link>
+          <div className="relative z-10">
+            <PostCard.Images files={toDisplayImages(post.fileUrls)} />
+          </div>
+          <div className="relative z-10">
+            <PostCard.Actions
+              postId={post.id}
+              boardId={post.boardId}
+              likeCount={post.like.likeCount}
+              commentCount={post.commentCount}
+              isLiked={post.like.isLiked}
+              canComment={post.boardConfig?.canComment ?? true}
+              onComment={() =>
+                router.push(`${buildPostPath(clubId, post.id, post.boardId)}#comments`)
+              }
+            />
+          </div>
+        </PostCard.Root>
       ))}
       {isFetchingNextPage && <BoardContentSkeleton />}
       <div ref={sentinelRef} />

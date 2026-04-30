@@ -2,7 +2,12 @@
 
 import React, { useState } from 'react';
 
-import { AdminChangeIcon, AdminMeatballIcon } from '@/assets/icons/admin';
+import {
+  AdminChangeIcon,
+  AdminCheckboxIcon,
+  AdminMeatballIcon,
+  AdminUncheckboxIcon,
+} from '@/assets/icons/admin';
 import {
   Icon,
   Table,
@@ -16,15 +21,14 @@ import { cn } from '@/lib/cn';
 import type { Member } from '@/types/admin/member';
 import {
   COLUMNS,
-  MOCK_MEMBERS,
   SORT_LABEL,
   STATUS_BAR_COLOR,
-  STATUS_LEGEND,
   sortMembers,
   type SortBy,
 } from '@/constants/admin/memberTable.constants';
 
 interface MemberTableProps extends React.HTMLAttributes<HTMLDivElement> {
+  members: Member[];
   selectedIds?: Set<string>;
   onSelectionChange?: (ids: Set<string>) => void;
   onMemberAction?: (member: Member) => void;
@@ -32,24 +36,25 @@ interface MemberTableProps extends React.HTMLAttributes<HTMLDivElement> {
 
 function MemberTable({
   className,
+  members,
   selectedIds: controlledSelectedIds,
   onSelectionChange,
   onMemberAction,
   ...props
 }: MemberTableProps) {
   const [internalSelectedIds, setInternalSelectedIds] = useState<Set<string>>(new Set());
-  const [sortBy, setSortBy] = useState<SortBy>('generation');
+  const [sortBy, setSortBy] = useState<SortBy>('cardinal');
 
   const selectedIds = controlledSelectedIds ?? internalSelectedIds;
   const setSelectedIds = onSelectionChange ?? setInternalSelectedIds;
 
-  const sortedMembers = sortMembers(MOCK_MEMBERS, sortBy);
+  const sortedMembers = sortMembers(members, sortBy);
 
-  const isAllSelected = selectedIds.size === MOCK_MEMBERS.length;
-  const isIndeterminate = selectedIds.size > 0 && !isAllSelected;
+  const isAllSelected = members.length > 0 && selectedIds.size === members.length;
+  const hasAnySelected = selectedIds.size > 0;
 
   const toggleAll = () => {
-    setSelectedIds(isAllSelected ? new Set() : new Set(MOCK_MEMBERS.map((m) => m.id)));
+    setSelectedIds(isAllSelected ? new Set() : new Set(members.map((m) => m.id)));
   };
 
   const toggleOne = (id: string) => {
@@ -63,88 +68,97 @@ function MemberTable({
   };
 
   const toggleSort = () => {
-    setSortBy((prev) => (prev === 'generation' ? 'name' : 'generation'));
+    setSortBy((prev) => (prev === 'cardinal' ? 'name' : 'cardinal'));
   };
 
   return (
     <div className={cn('flex flex-col gap-600', className)} {...props}>
       <div className="flex items-center">
-        <div className="flex items-center gap-400">
-          {STATUS_LEGEND.map(({ label, color }) => (
-            <span key={label} className="typo-caption2 text-text-strong flex items-center gap-200">
-              <span className={cn('size-1', color)} />
-              {label}
-            </span>
-          ))}
-        </div>
         <button
           type="button"
           onClick={toggleSort}
-          className="bg-button-neutral typo-button2 text-text-strong ml-300 flex cursor-pointer items-center gap-200 rounded px-200 py-100"
+          className="bg-button-neutral typo-button2 text-text-strong flex cursor-pointer items-center gap-200 rounded px-200 py-100"
         >
           {SORT_LABEL[sortBy]}
           <Icon src={AdminChangeIcon} alt="정렬" size={20} />
         </button>
       </div>
 
-      <div className="scrollbar-none overflow-x-auto">
-        <Table>
-          <TableHeader>
-            <TableRow className="border-0 hover:bg-transparent">
-              <TableHead className="w-1 min-w-1 p-0" />
-              <TableHead className="w-12">
-                <input
-                  aria-label="전체 멤버 선택"
-                  type="checkbox"
-                  className="cursor-pointer"
-                  checked={isAllSelected}
-                  ref={(el) => {
-                    if (el) el.indeterminate = isIndeterminate;
-                  }}
-                  onChange={toggleAll}
+      <Table className="w-max min-w-full" wrapperClassName="max-h-[600px] overflow-auto">
+        <TableHeader className="bg-container-neutral sticky top-0 z-10">
+          <TableRow className="border-0 hover:bg-transparent">
+            <TableHead className="w-1 min-w-1 p-0" />
+            <TableHead className="w-12">
+              <button
+                aria-pressed={isAllSelected}
+                aria-label="전체 멤버 선택"
+                type="button"
+                className="flex cursor-pointer items-center"
+                onClick={toggleAll}
+              >
+                <Icon
+                  src={hasAnySelected ? AdminCheckboxIcon : AdminUncheckboxIcon}
+                  alt={hasAnySelected ? '선택됨' : '선택 안됨'}
+                  size={20}
                 />
+              </button>
+            </TableHead>
+            {COLUMNS.map(({ label }) => (
+              <TableHead key={label} className="typo-body1 text-text-strong">
+                {label}
               </TableHead>
-              {COLUMNS.map(({ label }) => (
-                <TableHead key={label} className="typo-body1 text-text-strong">
-                  {label}
-                </TableHead>
-              ))}
-              <TableHead className="w-10" />
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {sortedMembers.map((member) => (
-              <TableRow key={member.id} className="hover:bg-container-neutral-interaction border-0">
-                <TableCell className={cn('w-1 min-w-1 p-0', STATUS_BAR_COLOR[member.status])} />
-                <TableCell className="w-12">
-                  <input
-                    aria-label={`${member.name} ${member.studentId} 선택`}
-                    type="checkbox"
-                    className="cursor-pointer"
-                    checked={selectedIds.has(member.id)}
-                    onChange={() => toggleOne(member.id)}
-                  />
-                </TableCell>
-                {COLUMNS.map(({ key, label }) => (
-                  <TableCell key={label} className="typo-body1 text-text-strong">
-                    {String(member[key])}
-                  </TableCell>
-                ))}
-                <TableCell className="w-10">
-                  <button
-                    type="button"
-                    className="text-icon-normal flex cursor-pointer items-center justify-center"
-                    aria-label="더보기"
-                    onClick={() => onMemberAction?.(member)}
-                  >
-                    <Icon src={AdminMeatballIcon} alt="더보기" size={20} />
-                  </button>
-                </TableCell>
-              </TableRow>
             ))}
-          </TableBody>
-        </Table>
-      </div>
+            <TableHead className="w-10" />
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {sortedMembers.map((member) => (
+            <TableRow
+              key={member.id}
+              className="hover:bg-container-neutral-interaction cursor-pointer border-0"
+              onClick={() => onMemberAction?.(member)}
+            >
+              <TableCell className={cn('w-1 min-w-1 p-0', STATUS_BAR_COLOR[member.status])} />
+              <TableCell className="w-12">
+                <button
+                  aria-pressed={selectedIds.has(member.id)}
+                  aria-label={`${member.name} ${member.studentId} 선택`}
+                  type="button"
+                  className="flex cursor-pointer items-center"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    toggleOne(member.id);
+                  }}
+                >
+                  <Icon
+                    src={selectedIds.has(member.id) ? AdminCheckboxIcon : AdminUncheckboxIcon}
+                    alt={selectedIds.has(member.id) ? '선택됨' : '선택 안됨'}
+                    size={20}
+                  />
+                </button>
+              </TableCell>
+              {COLUMNS.map(({ key, label }) => (
+                <TableCell key={label} className="typo-body1 text-text-strong">
+                  {String(member[key])}
+                </TableCell>
+              ))}
+              <TableCell className="w-10">
+                <button
+                  type="button"
+                  className="text-icon-normal flex cursor-pointer items-center justify-center"
+                  aria-label="더보기"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onMemberAction?.(member);
+                  }}
+                >
+                  <Icon src={AdminMeatballIcon} alt="더보기" size={20} />
+                </button>
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
     </div>
   );
 }

@@ -2,6 +2,7 @@
 
 import { Dialog, DialogContent } from '@/components/ui';
 import type { ClubDto } from '@/types/mypage';
+import { useCardinals } from '@/hooks/queries/useCardinalsQuery';
 import { useCardinalModal } from './useCardinalModal';
 import { ModalHeader } from './components/ModalHeader';
 import { ModalFooter } from './components/ModalFooter';
@@ -19,19 +20,23 @@ interface SetCardinalModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   club: ClubDto;
-  availableCardinals: number[];
-  onSave: (selected: number[]) => void;
+  onSave?: (selected: number[]) => void;
 }
 
-function SetCardinalModal({
-  open,
-  onOpenChange,
-  club,
-  availableCardinals,
-  onSave,
-}: SetCardinalModalProps) {
-  const { step, setStep, selected, handleOpenChange, handleClose, handleToggle, handleSave } =
-    useCardinalModal({ onOpenChange, onSave });
+function SetCardinalModal({ open, onOpenChange, club, onSave }: SetCardinalModalProps) {
+  const { data: cardinalsData = [] } = useCardinals();
+  const availableCardinals = cardinalsData.map((c) => c.cardinalNumber);
+
+  const {
+    step,
+    setStep,
+    selected,
+    isPending,
+    handleOpenChange,
+    handleClose,
+    handleToggle,
+    handleSave,
+  } = useCardinalModal({ onOpenChange, onSave });
 
   const selectedArray = [...selected];
 
@@ -63,7 +68,7 @@ function SetCardinalModal({
         primaryDisabled: selected.size === 0,
         children: selected.size > 0 && (
           <div className="flex items-center gap-400 px-2.5 pt-200">
-            <span className="typo-sub2 text-text-alternative shrink-0">선택됨</span>
+            <span className="typo-sub3 text-text-alternative shrink-0">선택됨</span>
             <CardinalTags cardinals={selectedArray} />
           </div>
         ),
@@ -73,10 +78,11 @@ function SetCardinalModal({
       title: '설정 내용을 확인해주세요',
       body: <Step3Confirm club={club} selected={selectedArray} />,
       footer: {
-        primaryLabel: '저장하기',
+        primaryLabel: isPending ? '저장 중...' : '저장하기',
         secondaryLabel: '이전',
         onPrimary: handleSave,
         onSecondary: () => setStep(2),
+        primaryDisabled: isPending,
       },
     },
   ];
@@ -88,7 +94,7 @@ function SetCardinalModal({
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent
         showCloseButton={false}
-        className="bg-container-neutral-alternative border-line flex h-[481px] w-full max-w-[540px] flex-col gap-0 rounded-lg p-0"
+        className="bg-background border-line flex h-[481px] w-full max-w-[540px] flex-col gap-0 rounded-lg p-0"
       >
         <ModalHeader
           step={step}

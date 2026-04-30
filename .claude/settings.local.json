@@ -2,21 +2,13 @@
   "permissions": {
     "allow": [
       "Bash(gh pr:*)",
+      "Bash(gh run:*)",
       "Bash(git push:*)",
+      "Bash(git fetch:*)",
       "mcp__figma__get_design_context",
-      "Bash(grep -E \"\\\\.tsx$\")",
-      "Bash(find \"D:\\\\project\\\\weeth-client\\\\src\\\\app\\\\\\(private\\)\" -name \"layout.tsx\" -type f)",
-      "Bash(find \"D:\\\\project\\\\weeth-client\\\\src\\\\app\\\\\\(private\\)\\\\\\(main\\)\" -name \"page.tsx\" -type f)",
-      "Bash(grep -r PageNavigation D:projectweeth-clientsrc --include=*.tsx --include=*.ts)",
-      "Bash(ls -la \"D:\\\\project\\\\weeth-client\\\\src\\\\app\\\\\\(private\\)\\\\\\(intro\\)\\\\home\")",
-      "Bash(find \"D:\\\\project\\\\weeth-client\\\\src\\\\app\\\\\\(private\\)\" -type f -name \"layout.tsx\")",
       "mcp__figma__get_screenshot",
-      "Bash(find D:projectweeth-clientsrccomponentsmypage -type f -name *.tsx -o -name *.ts)",
-      "Bash(ls -la \"D:\\\\project\\\\weeth-client\\\\src\\\\app\\\\\\(private\\)\\\\\\(main\\)\\\\mypage\")",
-      "Bash(ls -la \"D:\\\\project\\\\weeth-client\\\\src\\\\app\\\\\\(private\\)\\\\\\(main\\)\\\\mypage\\\\edit\")",
-      "Bash(find D:projectweeth-clientsrccomponentsui -type f \\\\\\(-name *.tsx -o -name *.ts \\\\\\))",
-      "Bash(find D:/project/weeth-client/src/constants -name *.ts)",
-      "Bash(grep -r \"POSTHOG\\\\|PostHog\" D:projectweeth-client/.env*)"
+      "Bash(gh pr *)",
+      "Read(//c/Users/wlslw/.claude/projects/**)"
     ]
   }
 }

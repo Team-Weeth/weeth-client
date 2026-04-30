@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 
 import { HOME_TUTORIAL_SLIDES } from '@/constants/home/tutorial';
 import {
@@ -27,6 +27,7 @@ interface HomeTutorialDialogProps {
 
 function HomeTutorialDialog({ open, onOpenChange }: HomeTutorialDialogProps) {
   const router = useRouter();
+  const { clubId } = useParams<{ clubId: string }>();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [api, setApi] = useState<CarouselApi>();
   const displayIndex = open ? currentIndex : 0;
@@ -51,9 +52,13 @@ function HomeTutorialDialog({ open, onOpenChange }: HomeTutorialDialogProps) {
     }
   }, [open, api]);
 
-  const handleGoToAdmin = () => {
+  const isLastSlide = displayIndex === HOME_TUTORIAL_SLIDES.length - 1;
+
+  const handleSecondary = () => {
     onOpenChange(false);
-    router.push('/admin');
+    if (currentSlide.secondaryHref) {
+      router.push(currentSlide.secondaryHref(clubId));
+    }
   };
 
   const handlePrevious = () => {
@@ -61,7 +66,7 @@ function HomeTutorialDialog({ open, onOpenChange }: HomeTutorialDialogProps) {
   };
 
   const handleNext = () => {
-    if (displayIndex === HOME_TUTORIAL_SLIDES.length - 1) {
+    if (isLastSlide) {
       onOpenChange(false);
       return;
     }
@@ -75,7 +80,7 @@ function HomeTutorialDialog({ open, onOpenChange }: HomeTutorialDialogProps) {
           overline="사이트 완성하기"
           title={currentSlide.title}
           description={currentSlide.description}
-          className="pb-300"
+          className="min-h-27 pb-300"
         />
 
         <DialogBody className="gap-0 overflow-hidden rounded-sm px-0 pt-400 pb-0">
@@ -107,11 +112,11 @@ function HomeTutorialDialog({ open, onOpenChange }: HomeTutorialDialogProps) {
             />
           }
         >
-          <Button variant="secondary" size="lg" className="w-full" onClick={handleGoToAdmin}>
-            설정하러 가기
+          <Button variant="secondary" size="lg" className="w-full" onClick={handleSecondary}>
+            {currentSlide.secondaryLabel}
           </Button>
           <Button variant="primary" size="lg" className="w-full" onClick={handleNext}>
-            {displayIndex === HOME_TUTORIAL_SLIDES.length - 1 ? '닫기' : '다음'}
+            {isLastSlide ? '닫기' : '다음'}
           </Button>
         </DialogFooter>
       </DialogContent>

@@ -3,12 +3,12 @@
 import * as React from 'react';
 import type { ReactNode } from 'react';
 import { Dialog as DialogPrimitive } from 'radix-ui';
-
 import { DeleteIcon } from '@/assets/icons';
 import { cn } from '@/lib/cn';
 import { Button } from '@/components/ui/Button';
 import { Divider } from '@/components/ui/Divider';
 import { Icon } from '@/components/ui/Icon';
+import { AdminScopeBoundary } from '@/providers';
 
 function Dialog({ ...props }: React.ComponentProps<typeof DialogPrimitive.Root>) {
   return <DialogPrimitive.Root data-slot="dialog" {...props} />;
@@ -18,8 +18,12 @@ function DialogTrigger({ ...props }: React.ComponentProps<typeof DialogPrimitive
   return <DialogPrimitive.Trigger data-slot="dialog-trigger" {...props} />;
 }
 
-function DialogPortal({ ...props }: React.ComponentProps<typeof DialogPrimitive.Portal>) {
-  return <DialogPrimitive.Portal data-slot="dialog-portal" {...props} />;
+function DialogPortal({ children, ...props }: React.ComponentProps<typeof DialogPrimitive.Portal>) {
+  return (
+    <DialogPrimitive.Portal data-slot="dialog-portal" {...props}>
+      <AdminScopeBoundary>{children}</AdminScopeBoundary>
+    </DialogPrimitive.Portal>
+  );
 }
 
 function DialogClose({ ...props }: React.ComponentProps<typeof DialogPrimitive.Close>) {
@@ -34,7 +38,7 @@ function DialogOverlay({
     <DialogPrimitive.Overlay
       data-slot="dialog-overlay"
       className={cn(
-        'data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 z-50 bg-black/60',
+        'data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 z-[80] bg-black/60',
         className,
       )}
       {...props}
@@ -44,20 +48,22 @@ function DialogOverlay({
 
 function DialogContent({
   className,
+  overlayClassName,
   children,
   showCloseButton = true,
   ...props
 }: React.ComponentProps<typeof DialogPrimitive.Content> & {
   showCloseButton?: boolean;
+  overlayClassName?: string;
 }) {
   return (
     <DialogPortal data-slot="dialog-portal">
-      <DialogOverlay />
+      <DialogOverlay className={overlayClassName} />
       <DialogPrimitive.Content
         aria-describedby={undefined}
         data-slot="dialog-content"
         className={cn(
-          'bg-container-neutral data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 fixed top-[50%] left-[50%] z-50 grid w-78.75 max-w-[calc(100%-2rem)] translate-x-[-50%] translate-y-[-50%] rounded-lg border p-400 shadow-lg duration-200 outline-none sm:max-w-lg',
+          'bg-container-neutral data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 fixed top-[50%] left-[50%] z-[80] grid w-78.75 max-w-[calc(100%-2rem)] translate-x-[-50%] translate-y-[-50%] rounded-lg border p-400 shadow-lg duration-200 outline-none sm:max-w-lg',
           className,
         )}
         {...props}
@@ -83,6 +89,7 @@ interface DialogHeaderProps extends Omit<React.HTMLAttributes<HTMLDivElement>, '
   description?: ReactNode;
   showClose?: boolean;
   closeClassName?: string;
+  titleClassName?: string;
   onClose?: () => void;
   children?: ReactNode;
 }
@@ -94,6 +101,7 @@ function DialogHeader({
   description,
   showClose = false,
   closeClassName,
+  titleClassName,
   onClose,
   children,
   className,
@@ -139,7 +147,7 @@ function DialogHeader({
           {overline && <p className="typo-caption1 text-text-alternative">{overline}</p>}
           {title ? (
             <DialogPrimitive.Title asChild>
-              <h2 className="typo-sub2 text-text-strong">{title}</h2>
+              <h2 className={cn('typo-sub1 text-text-strong', titleClassName)}>{title}</h2>
             </DialogPrimitive.Title>
           ) : (
             <DialogPrimitive.Title className="sr-only">Dialog</DialogPrimitive.Title>

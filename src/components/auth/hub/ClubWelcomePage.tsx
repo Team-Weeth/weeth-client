@@ -2,26 +2,43 @@
 
 import { useEffect } from 'react';
 
+import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 
-import { Button } from '@/components/ui';
-import { useAuthName } from '@/stores';
+import { Button, ClubAvatar } from '@/components/ui';
+import { clubApi } from '@/lib/apis/club';
+import { useAuthName, useClubName } from '@/stores';
+import { useClubId } from '@/stores/useClubStore';
 
 function ClubWelcomePage() {
   const router = useRouter();
   const name = useAuthName();
+  const clubId = useClubId();
+  const clubName = useClubName();
+
+  const { data: clubProfileImageUrl } = useQuery({
+    queryKey: ['club', clubId, 'profile'],
+    queryFn: () => clubApi.getById(clubId!).then((res) => res.data.data.profileImageUrl ?? null),
+    enabled: !!clubId,
+  });
 
   useEffect(() => {
+    if (!clubId) return;
     const timer = setTimeout(() => {
-      router.replace('/home');
+      router.replace(`/${clubId}/home`);
     }, 3000);
     return () => clearTimeout(timer);
-  }, [router]);
+  }, [router, clubId]);
 
   return (
     <div className="flex min-h-screen items-center justify-center px-400">
       <div className="flex w-full max-w-[520px] flex-col items-center gap-400">
-        <div className="bg-container-neutral-alternative h-20 w-20 rounded-full" />
+        <ClubAvatar
+          size={128}
+          src={clubProfileImageUrl}
+          name={clubName ?? '동아리'}
+          className="rounded-[32px] border-2"
+        />
         <h1 className="typo-h3 text-text-strong text-center">
           {name ? `${name}님, ` : ''}반가워요!
           <br />
@@ -33,7 +50,8 @@ function ClubWelcomePage() {
             variant="primary"
             size="lg"
             className="w-full"
-            onClick={() => router.push('/home')}
+            disabled={!clubId}
+            onClick={() => clubId && router.push(`/${clubId}/home`)}
           >
             바로 사이트로 이동하기
           </Button>

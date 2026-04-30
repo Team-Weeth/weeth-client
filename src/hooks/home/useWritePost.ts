@@ -1,31 +1,41 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { useProfileStatusQuery } from './useProfileStatusQuery';
+import { useSetActiveBoardId } from '@/stores/useBoardNavStore';
 
 export function useWritePost() {
   const router = useRouter();
-  const { data: profileStatus, isLoading } = useProfileStatusQuery();
+  const { clubId } = useParams<{ clubId: string }>();
+  const { data: profileStatus, isLoading, isFetching, refetch } = useProfileStatusQuery(clubId);
+  const setActiveBoardId = useSetActiveBoardId();
 
   const [cardinalModalOpen, setCardinalModalOpen] = useState(false);
   const [profileModalOpen, setProfileModalOpen] = useState(false);
 
-  const handleWriteClick = () => {
-    if (isLoading) return;
+  const handleWriteClick = async () => {
+    if (isLoading || isFetching) return;
 
-    if (!profileStatus?.cardinalAssigned) {
+    let currentProfileStatus = profileStatus;
+
+    if (!currentProfileStatus?.cardinalAssigned || !currentProfileStatus?.profileCompleted) {
+      const { data: latestProfileStatus } = await refetch();
+      currentProfileStatus = latestProfileStatus ?? currentProfileStatus;
+    }
+
+    if (!currentProfileStatus?.cardinalAssigned) {
       setCardinalModalOpen(true);
-    } else if (!profileStatus?.profileCompleted) {
+    } else if (!currentProfileStatus?.profileCompleted) {
       setProfileModalOpen(true);
     } else {
-      router.push('/board/write');
+      setActiveBoardId(null);
+      router.push(`/${clubId}/board/write`);
     }
   };
 
   const handleSkipProfile = () => {
     setProfileModalOpen(false);
-    router.push('/board/write');
   };
 
   const isProfileIncomplete = !profileStatus?.cardinalAssigned || !profileStatus?.profileCompleted;

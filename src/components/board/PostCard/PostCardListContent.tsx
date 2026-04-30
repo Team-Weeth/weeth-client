@@ -1,6 +1,7 @@
 'use client';
 
 import { cn } from '@/lib/cn';
+import { stripHtml } from '@/lib/stripHtml';
 import { useLineClamp } from '@/hooks/useLineClamp';
 
 import { PostCardTitle } from './PostCardTitle';
@@ -26,15 +27,10 @@ function PostCardListContent({
     content,
   );
 
-  const plainContent = content
-    .replace(/<br\s*\/?>/gi, '\n')
-    .replace(/<\/(p|h[1-6]|li|div|blockquote)>/gi, '\n')
-    .replace(/<[^>]*>/g, '')
-    .replace(/\n{3,}/g, '\n\n')
-    .trim();
+  const plainContent = stripHtml(content);
 
   return (
-    <div className={cn('flex flex-col gap-200 self-stretch', className)}>
+    <div className={cn('flex flex-col gap-[5px] self-stretch', className)}>
       <PostCardTitle title={title} isNew={isNew} size="list" />
       <p
         ref={expandable ? ref : undefined}

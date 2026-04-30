@@ -7,13 +7,13 @@ import {
   Breadcrumb,
   BreadcrumbList,
   BreadcrumbItem,
-  BreadcrumbSeparator,
   DropdownMenu,
   DropdownMenuTrigger,
   DropdownMenuContent,
   Icon,
 } from '@/components/ui';
 import { ChannelList } from '@/components/board/ChannelList';
+import { useClubName } from '@/stores';
 import type { BoardNavItem } from '@/types/board';
 
 interface CategorySelectorProps {
@@ -30,9 +30,9 @@ interface CategorySelectorProps {
 function CategorySelector({ className, items, activeId, onItemSelect }: CategorySelectorProps) {
   const [open, setOpen] = useState(false);
   const activeItem = items.find((item) => item.id === activeId);
+  const clubName = useClubName();
 
-  // TODO: 실제 게시판 이름은 API 연동 시 props로 전달
-  const boardName = '가천대 검도부';
+  const boardName = clubName ?? '게시판';
   const channelName = activeItem?.label ?? '';
 
   // 아이템 선택 후 드롭다운 닫기
@@ -45,15 +45,13 @@ function CategorySelector({ className, items, activeId, onItemSelect }: Category
     <DropdownMenu open={open} onOpenChange={setOpen}>
       <DropdownMenuTrigger
         className={cn(
-          'bg-container-neutral flex items-center gap-100 self-stretch rounded-lg py-200 pr-200 pl-300',
+          'bg-container-neutral flex h-[40px] items-center self-stretch rounded-lg py-200 pr-200 pl-300',
           className,
         )}
       >
         <Breadcrumb className="flex-1">
-          <BreadcrumbList className="flex-nowrap gap-100">
-            <BreadcrumbItem className="typo-button2 text-text-strong">{boardName}</BreadcrumbItem>
-            <BreadcrumbSeparator className="[&>svg]:size-4" />
-            <BreadcrumbItem className="typo-button2 text-text-strong">{channelName}</BreadcrumbItem>
+          <BreadcrumbList className="flex-nowrap gap-100" showHome={false}>
+            <BreadcrumbItem className="typo-button1 text-text-strong">{channelName}</BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
         <Icon src={ArrowDownIcon} size={20} className="text-icon-normal" />

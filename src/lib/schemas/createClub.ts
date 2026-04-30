@@ -8,7 +8,8 @@ export const createClubSchema = z
     generation: z
       .string()
       .min(1, '기수를 입력해주세요')
-      .regex(/^\d+$/, '기수는 숫자만 입력해주세요'),
+      .regex(/^\d+$/, '기수는 숫자만 입력해주세요')
+      .refine((value) => Number(value) > 0, '기수는 1 이상 입력해주세요'),
     phone: z
       .string()
       .min(1, '대표 전화번호를 입력해주세요')

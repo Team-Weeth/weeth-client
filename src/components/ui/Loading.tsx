@@ -41,13 +41,16 @@ function applyColor(data: LottieData, color: [number, number, number]): LottieDa
 
 interface LoadingProps {
   className?: string;
+  colorHex?: string;
 }
 
-function Loading({ className }: LoadingProps) {
+function Loading({ className, colorHex }: LoadingProps) {
   let animationData = loadingData as LottieData;
 
   if (typeof document !== 'undefined') {
-    const hex = getComputedStyle(document.documentElement).getPropertyValue('--icon-normal').trim();
+    const hex =
+      colorHex ||
+      getComputedStyle(document.documentElement).getPropertyValue('--icon-normal').trim();
     const color = hexToLottieColor(hex);
     if (color) {
       animationData = applyColor(loadingData as LottieData, color);

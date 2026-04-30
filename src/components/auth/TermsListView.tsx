@@ -44,7 +44,7 @@ function TermsListView({
           <button
             type="button"
             onClick={onToggleAll}
-            className="flex cursor-pointer items-center gap-300"
+            className="flex cursor-pointer items-center gap-300 focus:outline-none"
           >
             <Icon
               src={CheckRoundIcon}
@@ -52,7 +52,7 @@ function TermsListView({
               alt="전체 동의"
               className={cn(allChecked ? 'text-brand-primary' : 'text-icon-disabled')}
             />
-            <span className="typo-sub2 text-text-strong">모두 확인하였고 이에 동의합니다.</span>
+            <span className="typo-sub3 text-text-strong">모두 확인하였고 이에 동의합니다.</span>
           </button>
           <p className="typo-caption2 text-text-alternative pl-[36px]">{TERMS_DESCRIPTION}</p>
 
@@ -76,10 +76,10 @@ function TermsListView({
                       alt={isChecked ? '선택됨' : '선택 안됨'}
                       className={cn(isChecked ? 'text-brand-primary' : 'text-icon-disabled')}
                     />
-                    <span className="typo-sub2 text-text-normal">
+                    <span className="typo-sub3 text-text-normal">
                       {item.label}
                       {item.required && (
-                        <span className="text-text-normal typo-sub2 ml-100">(필수)</span>
+                        <span className="text-text-normal typo-sub3 ml-100">(필수)</span>
                       )}
                     </span>
                   </button>

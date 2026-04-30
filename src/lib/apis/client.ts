@@ -1,7 +1,23 @@
 import axios from 'axios';
+import { getAppOriginServerFallback } from '@/utils/shared/url';
+
+function getProxyBaseUrl(path: string) {
+  if (typeof window !== 'undefined') {
+    return path;
+  }
+
+  return `${getAppOriginServerFallback()}${path}`;
+}
 
 export const apiClient = axios.create({
-  baseURL: '/api/proxy',
+  baseURL: getProxyBaseUrl('/api/proxy'),
+  timeout: 10000,
+  headers: { 'Content-Type': 'application/json' },
+  withCredentials: true,
+});
+
+export const apiClientV1 = axios.create({
+  baseURL: getProxyBaseUrl('/api/proxy-v1'),
   timeout: 10000,
   headers: { 'Content-Type': 'application/json' },
   withCredentials: true,
@@ -15,31 +31,36 @@ const refreshTokens = async () => {
 };
 
 // Response: 401 시 refresh → 재시도
-apiClient.interceptors.response.use(
-  (response) => response,
-  async (error) => {
-    const originalRequest = error.config;
+const createAuthInterceptor = (client: typeof apiClient) => {
+  client.interceptors.response.use(
+    (response) => response,
+    async (error) => {
+      const originalRequest = error.config;
 
-    if (error.response?.status === 401 && !originalRequest._retry) {
-      originalRequest._retry = true;
+      if (error.response?.status === 401 && !originalRequest._retry) {
+        originalRequest._retry = true;
 
-      if (!refreshPromise) {
-        refreshPromise = refreshTokens();
-      }
-
-      try {
-        await refreshPromise;
-        refreshPromise = null;
-        return apiClient(originalRequest);
-      } catch {
-        refreshPromise = null;
-        if (typeof window !== 'undefined') {
-          window.location.href = '/login';
+        if (!refreshPromise) {
+          refreshPromise = refreshTokens();
         }
-        return Promise.reject(error);
-      }
-    }
 
-    return Promise.reject(error);
-  },
-);
+        try {
+          await refreshPromise;
+          refreshPromise = null;
+          return client(originalRequest);
+        } catch {
+          refreshPromise = null;
+          if (typeof window !== 'undefined') {
+            window.location.href = '/login';
+          }
+          return Promise.reject(error);
+        }
+      }
+
+      return Promise.reject(error);
+    },
+  );
+};
+
+createAuthInterceptor(apiClient);
+createAuthInterceptor(apiClientV1);
