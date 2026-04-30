@@ -2,8 +2,9 @@ import { useQuery } from '@tanstack/react-query';
 import { homeApi } from '@/lib/apis/home';
 import { useClubId } from '@/stores/useClubStore';
 
-export function useProfileStatusQuery() {
-  const clubId = useClubId();
+export function useProfileStatusQuery(clubIdOverride?: string) {
+  const storedClubId = useClubId();
+  const clubId = clubIdOverride ?? storedClubId;
 
   return useQuery({
     queryKey: ['home', 'profile-status', clubId],
