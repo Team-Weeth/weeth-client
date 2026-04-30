@@ -18,25 +18,29 @@ import { toastSuccess, toastError } from '@/stores/useToastStore';
 import Image from 'next/image';
 
 interface InquiryDialogProps {
-  children: ReactNode;
+  children?: ReactNode;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
 }
 
-function InquiryDialog({ children }: InquiryDialogProps) {
-  const [open, setOpen] = useState(false);
+function InquiryDialog({ children, open, onOpenChange }: InquiryDialogProps) {
+  const [internalOpen, setInternalOpen] = useState(false);
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const dialogOpen = open ?? internalOpen;
+  const setDialogOpen = onOpenChange ?? setInternalOpen;
 
   const handleClose = () => {
     if (isSubmitting) return;
-    setOpen(false);
+    setDialogOpen(false);
     setEmail('');
     setMessage('');
   };
 
   const handleOpenChange = (next: boolean) => {
     if (!next) handleClose();
-    else setOpen(true);
+    else setDialogOpen(true);
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -56,8 +60,8 @@ function InquiryDialog({ children }: InquiryDialogProps) {
   };
 
   return (
-    <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogTrigger asChild>{children}</DialogTrigger>
+    <Dialog open={dialogOpen} onOpenChange={handleOpenChange}>
+      {children && <DialogTrigger asChild>{children}</DialogTrigger>}
       <DialogContent
         showCloseButton={false}
         className="flex w-[640px] flex-col bg-[#F3F5F7]"
