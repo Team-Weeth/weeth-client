@@ -12,7 +12,7 @@ import {
   Input,
   Textarea,
 } from '@/components/ui';
-import { TimeIcon } from '@/assets/icons';
+import { LandingInfoIcon } from '@/assets/icons/landing';
 import { inquiryApi } from '@/lib/apis/inquiry';
 import { toastSuccess, toastError } from '@/stores/useToastStore';
 import Image from 'next/image';
@@ -69,7 +69,7 @@ function InquiryDialog({ children, open, onOpenChange }: InquiryDialogProps) {
         onInteractOutside={isSubmitting ? (e) => e.preventDefault() : undefined}
       >
         <DialogHeader
-          icon={<Image src={TimeIcon} width={24} height={24} alt="정보 아이콘" />}
+          icon={<Image src={LandingInfoIcon} width={24} height={24} alt="정보 아이콘" />}
           title={<span className="typo-h2 text-black">가입 문의</span>}
           description={
             <span className="typo-body2 text-[#909599]">
@@ -87,7 +87,7 @@ function InquiryDialog({ children, open, onOpenChange }: InquiryDialogProps) {
             <div className="flex flex-col gap-400">
               <div className="flex flex-col gap-200">
                 <label htmlFor="inquiry-email" className="typo-caption1 text-[#909599]">
-                  알림 받을 메일
+                  연락 가능한 이메일
                 </label>
                 <Input
                   id="inquiry-email"

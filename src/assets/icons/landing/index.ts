@@ -11,3 +11,4 @@ export { default as YogaImage } from './yoga.png';
 export { default as BicycleImage } from './bicycle.png';
 export { default as HeroSectionCardImage } from './hero_section_card.svg';
 export { default as MobileHeroSectionCardImage } from './mobile_hero_section_card.svg';
+export { default as LandingInfoIcon } from './landing_info.svg';
