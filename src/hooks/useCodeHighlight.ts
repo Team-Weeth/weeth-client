@@ -12,6 +12,10 @@ function useCodeHighlight(ref: RefObject<HTMLElement | null>, content: string) {
     const container = ref.current;
     if (!container) return;
 
+    container
+      .querySelectorAll('pre code[data-highlighted]')
+      .forEach((el) => el.removeAttribute('data-highlighted'));
+
     const codeBlocks = container.querySelectorAll('pre code:not([data-highlighted])');
     codeBlocks.forEach((codeEl) => {
       const text = codeEl.textContent ?? '';
