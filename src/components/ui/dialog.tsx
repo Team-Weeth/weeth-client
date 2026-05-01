@@ -2,13 +2,28 @@
 
 import * as React from 'react';
 import type { ReactNode } from 'react';
+import { usePathname } from 'next/navigation';
 import { Dialog as DialogPrimitive } from 'radix-ui';
 import { DeleteIcon } from '@/assets/icons';
 import { cn } from '@/lib/cn';
 import { Button } from '@/components/ui/Button';
 import { Divider } from '@/components/ui/Divider';
 import { Icon } from '@/components/ui/Icon';
-import { AdminScopeBoundary } from '@/providers';
+import { MobileBlocker } from '@/components/ui/MobileBlocker';
+import { AdminScopeBoundary, useIsAdminScope } from '@/providers';
+
+const ADMIN_PAGE_LABELS: Record<string, string> = {
+  schedule: '스케줄',
+  member: '멤버',
+  attendance: '출석',
+  board: '게시판',
+  'club-info': '동아리 정보',
+};
+
+function getAdminPageLabel(pathname: string) {
+  const segment = pathname.match(/\/admin\/([^/]+)/)?.[1] ?? '';
+  return ADMIN_PAGE_LABELS[segment] ?? '이전';
+}
 
 function Dialog({ ...props }: React.ComponentProps<typeof DialogPrimitive.Root>) {
   return <DialogPrimitive.Root data-slot="dialog" {...props} />;
@@ -56,6 +71,10 @@ function DialogContent({
   showCloseButton?: boolean;
   overlayClassName?: string;
 }) {
+  const isAdminScope = useIsAdminScope();
+  const pathname = usePathname();
+  const adminPageLabel = getAdminPageLabel(pathname ?? '');
+
   return (
     <DialogPortal data-slot="dialog-portal">
       <DialogOverlay className={overlayClassName} />
@@ -68,7 +87,25 @@ function DialogContent({
         )}
         {...props}
       >
-        {children}
+        {isAdminScope ? (
+          <>
+            <div className="hidden tablet:contents">{children}</div>
+            <div className="tablet:hidden">
+              <MobileBlocker
+                className="min-h-0 py-400"
+                action={
+                  <DialogPrimitive.Close asChild>
+                    <Button variant="primary" size="md">
+                      {adminPageLabel} 페이지로 돌아가기
+                    </Button>
+                  </DialogPrimitive.Close>
+                }
+              />
+            </div>
+          </>
+        ) : (
+          children
+        )}
         {showCloseButton && (
           <DialogPrimitive.Close
             data-slot="dialog-close"
