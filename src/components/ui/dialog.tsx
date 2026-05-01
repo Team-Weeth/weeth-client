@@ -92,10 +92,10 @@ function DialogContent({
             <div className="hidden tablet:contents">{children}</div>
             <div className="tablet:hidden">
               <MobileBlocker
-                className="min-h-0 py-400"
+                className="min-h-0 px-0 py-400 tablet:px-0"
                 action={
                   <DialogPrimitive.Close asChild>
-                    <Button variant="primary" size="md">
+                    <Button variant="primary" size="md" className="w-full">
                       {adminPageLabel} 페이지로 돌아가기
                     </Button>
                   </DialogPrimitive.Close>
