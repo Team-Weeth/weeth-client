@@ -55,7 +55,10 @@ function MemberTopBar({
   return (
     <div
       ref={ref}
-      className={cn('bg-container-primary flex h-15 items-center px-500', className)}
+      className={cn(
+        'bg-container-primary scrollbar-none flex h-15 items-center overflow-x-auto px-500',
+        className,
+      )}
       {...props}
     >
       <button
@@ -68,7 +71,7 @@ function MemberTopBar({
 
       <span className="typo-sub1 text-text-inverse ml-200 shrink-0">{selectedCount}명 선택됨</span>
 
-      <div className="ml-auto flex items-center gap-200">
+      <div className="ml-auto flex shrink-0 items-center gap-200 pl-200">
         {topBarActions.map(({ label, title, description, handler, disabled }) => (
           <AlertDialog
             key={label}
@@ -78,7 +81,7 @@ function MemberTopBar({
               <Button
                 variant="secondary"
                 size="lg"
-                className="typo-button1 py-200"
+                className="typo-button1 shrink-0 py-200 whitespace-nowrap"
                 disabled={disabled}
               >
                 {label}
@@ -92,7 +95,7 @@ function MemberTopBar({
 
         {onChangeCardinals && (
           <ChangeCardinalsModal onSubmit={onChangeCardinals}>
-            <Button variant="secondary" size="lg" className="py-200">
+            <Button variant="secondary" size="lg" className="shrink-0 py-200 whitespace-nowrap">
               기수 변경
             </Button>
           </ChangeCardinalsModal>
