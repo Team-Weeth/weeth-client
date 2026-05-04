@@ -46,7 +46,7 @@ function BoardCard({
     <div
       ref={ref}
       className={cn(
-        'bg-container-neutral tablet:gap-400 flex w-full items-center gap-300 rounded-sm px-500 py-400 shadow-sm',
+        'bg-container-neutral tablet:gap-400 flex w-full min-w-180 items-center gap-300 rounded-sm px-500 py-400 shadow-sm',
         className,
       )}
       {...props}
@@ -86,13 +86,13 @@ function BoardCard({
       </div>
 
       {/* Post count */}
-      <div className="tablet:flex hidden w-[88px] shrink-0 flex-col justify-center gap-200">
+      <div className="flex w-22 shrink-0 flex-col justify-center gap-200">
         <p className="typo-body2 text-text-alternative">게시글</p>
         <p className="typo-sub3 text-text-strong">{postCount}</p>
       </div>
 
       {/* Comment toggle */}
-      <div className="desktop:flex hidden w-[88px] shrink-0 flex-col justify-center gap-100">
+      <div className="flex w-22 shrink-0 flex-col justify-center gap-100">
         {showCommentToggle && (
           <>
             <p className="typo-body2 text-text-alternative">댓글 허용</p>
@@ -107,7 +107,7 @@ function BoardCard({
       </div>
 
       {/* Visibility tag */}
-      <div className="desktop:flex hidden w-24 shrink-0">
+      <div className="flex w-24 shrink-0">
         {visibility === 'PUBLIC' && <Tag variant="primary">전체 공개</Tag>}
         {visibility === 'ADMIN_ONLY' && (
           <Tag className="bg-state-caution/10 text-state-caution">운영진 전용</Tag>

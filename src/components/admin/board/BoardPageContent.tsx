@@ -265,62 +265,64 @@ function BoardPageContent() {
       />
 
       <div className="flex flex-col gap-400">
-        {fixedBoards.length > 0 && (
-          <div className="flex flex-col gap-400">
-            {fixedBoards.map((board, index) => (
-              <Fragment key={board.boardId}>
-                {index > 0 && <div className="border-line w-full border-t" />}
-                <BoardCard board={board} draggable={false} {...getToggleProps(board)} />
-              </Fragment>
-            ))}
-          </div>
-        )}
-
-        {fixedBoards.length > 0 && customBoards.length > 0 && (
-          <div className="border-line w-full border-t" />
-        )}
-
-        {customBoards.length > 0 &&
-          (query || !mounted ? (
-            <div className="flex flex-col gap-200">
-              {customBoards.map((board) => (
-                <BoardCard
-                  key={board.boardId}
-                  board={board}
-                  draggable={false}
-                  {...getToggleProps(board)}
-                  {...getEditableProps(board)}
-                />
+        <div className="flex flex-col gap-400 overflow-x-auto">
+          {fixedBoards.length > 0 && (
+            <div className="flex flex-col gap-400">
+              {fixedBoards.map((board, index) => (
+                <Fragment key={board.boardId}>
+                  {index > 0 && <div className="border-line w-full border-t" />}
+                  <BoardCard board={board} draggable={false} {...getToggleProps(board)} />
+                </Fragment>
               ))}
             </div>
-          ) : (
-            <DndContext
-              sensors={sensors}
-              collisionDetection={closestCenter}
-              onDragStart={handleDragStart}
-              onDragEnd={handleDragEnd}
-            >
-              <SortableContext
-                items={customBoards.map((b) => b.boardId)}
-                strategy={verticalListSortingStrategy}
+          )}
+
+          {fixedBoards.length > 0 && customBoards.length > 0 && (
+            <div className="border-line w-full border-t" />
+          )}
+
+          {customBoards.length > 0 &&
+            (query || !mounted ? (
+              <div className="flex flex-col gap-200">
+                {customBoards.map((board) => (
+                  <BoardCard
+                    key={board.boardId}
+                    board={board}
+                    draggable={false}
+                    {...getToggleProps(board)}
+                    {...getEditableProps(board)}
+                  />
+                ))}
+              </div>
+            ) : (
+              <DndContext
+                sensors={sensors}
+                collisionDetection={closestCenter}
+                onDragStart={handleDragStart}
+                onDragEnd={handleDragEnd}
               >
-                <div className="flex flex-col gap-200">
-                  {customBoards.map((board) => (
-                    <SortableBoardCard
-                      key={board.boardId}
-                      board={board}
-                      {...getToggleProps(board)}
-                      {...getEditableProps(board)}
-                    />
-                  ))}
-                </div>
-              </SortableContext>
-            </DndContext>
-          ))}
+                <SortableContext
+                  items={customBoards.map((b) => b.boardId)}
+                  strategy={verticalListSortingStrategy}
+                >
+                  <div className="flex flex-col gap-200">
+                    {customBoards.map((board) => (
+                      <SortableBoardCard
+                        key={board.boardId}
+                        board={board}
+                        {...getToggleProps(board)}
+                        {...getEditableProps(board)}
+                      />
+                    ))}
+                  </div>
+                </SortableContext>
+              </DndContext>
+            ))}
+        </div>
 
         <div className="bg-container-neutral-alternative flex h-12 items-center gap-200 rounded-md p-300">
           <Icon src={InfoCircleIcon} size={20} className="text-icon-alternative" />
-          <p className="typo-body2 text-text-alternative min-w-0 flex-1">
+          <p className="typo-body2 text-text-alternative min-w-0 flex-1 truncate">
             게시판 추가는 최대 {MAX_CUSTOM_BOARDS}개까지 가능 합니다.
           </p>
         </div>
