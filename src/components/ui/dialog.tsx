@@ -54,6 +54,29 @@ function DialogOverlay({
   );
 }
 
+function AdminMobileBlockedContent({ children }: { children: ReactNode }) {
+  const pathname = usePathname();
+  const adminPageLabel = getAdminPageLabel(pathname ?? '');
+
+  return (
+    <>
+      <div className="hidden tablet:contents">{children}</div>
+      <div className="tablet:hidden">
+        <DialogPrimitive.Title className="sr-only">PC 버전으로 접속해주세요</DialogPrimitive.Title>
+        <MobileBlocker
+          action={
+            <DialogPrimitive.Close asChild>
+              <Button variant="primary" size="md">
+                {adminPageLabel} 페이지로 돌아가기
+              </Button>
+            </DialogPrimitive.Close>
+          }
+        />
+      </div>
+    </>
+  );
+}
+
 function DialogContent({
   className,
   overlayClassName,
@@ -65,8 +88,6 @@ function DialogContent({
   overlayClassName?: string;
 }) {
   const isAdminScope = useIsAdminScope();
-  const pathname = usePathname();
-  const adminPageLabel = getAdminPageLabel(pathname ?? '');
 
   return (
     <DialogPortal data-slot="dialog-portal">
@@ -83,23 +104,7 @@ function DialogContent({
         {...props}
       >
         {isAdminScope ? (
-          <>
-            <div className="hidden tablet:contents">{children}</div>
-            <div className="tablet:hidden">
-              <DialogPrimitive.Title className="sr-only">
-                PC 버전으로 접속해주세요
-              </DialogPrimitive.Title>
-              <MobileBlocker
-                action={
-                  <DialogPrimitive.Close asChild>
-                    <Button variant="primary" size="md">
-                      {adminPageLabel} 페이지로 돌아가기
-                    </Button>
-                  </DialogPrimitive.Close>
-                }
-              />
-            </div>
-          </>
+          <AdminMobileBlockedContent>{children}</AdminMobileBlockedContent>
         ) : (
           children
         )}

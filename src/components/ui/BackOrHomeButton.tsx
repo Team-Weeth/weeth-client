@@ -13,12 +13,16 @@ function BackOrHomeButton({ fallbackHref, children }: BackOrHomeButtonProps) {
   const router = useRouter();
 
   const handleClick = () => {
-    const hasSameOriginReferrer =
-      typeof document !== 'undefined' &&
-      document.referrer !== '' &&
-      new URL(document.referrer).origin === window.location.origin;
+    const isSameOriginReferrer = (() => {
+      if (!document.referrer) return false;
+      try {
+        return new URL(document.referrer).origin === window.location.origin;
+      } catch {
+        return false;
+      }
+    })();
 
-    if (hasSameOriginReferrer && window.history.length > 1) {
+    if (isSameOriginReferrer && window.history.length > 1) {
       router.back();
       return;
     }
