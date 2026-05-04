@@ -60,7 +60,7 @@ function AdminMobileBlockedContent({ children }: { children: ReactNode }) {
 
   return (
     <>
-      <div className="hidden tablet:contents">{children}</div>
+      <div className="tablet:contents hidden">{children}</div>
       <div className="tablet:hidden">
         <DialogPrimitive.Title className="sr-only">PC 버전으로 접속해주세요</DialogPrimitive.Title>
         <MobileBlocker
