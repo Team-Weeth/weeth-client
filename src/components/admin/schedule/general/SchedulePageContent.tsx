@@ -27,7 +27,7 @@ type ScheduleTab = 'all' | 'session';
 
 function SchedulePageContent() {
   const clubId = useClubId();
-  const { cardinals, selectedCardinalId, setSelectedCardinalId, activeCardinal } =
+  const { cardinals, selectedCardinalId, setSelectedCardinalId, activeCardinal, latestCardinal } =
     useCardinalSelector();
   const {
     year: currentYear,
@@ -177,7 +177,7 @@ function SchedulePageContent() {
       <CreateScheduleModal
         open={createModalOpen}
         onOpenChange={setCreateModalOpen}
-        cardinalNumber={activeCardinal?.cardinalNumber ?? null}
+        cardinalNumber={activeCardinal?.cardinalNumber ?? latestCardinal?.cardinalNumber ?? null}
         activeTab={createModalTab}
         onActiveTabChange={setCreateModalTab}
         onCreateSession={(body) => submitCreate(body)}

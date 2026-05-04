@@ -1,5 +1,5 @@
 export const ADMIN_PAGE_LABELS: Record<string, string> = {
-  schedule: '스케줄',
+  schedule: '일정',
   member: '멤버',
   attendance: '출석',
   board: '게시판',
