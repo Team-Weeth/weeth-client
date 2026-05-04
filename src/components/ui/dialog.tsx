@@ -10,15 +10,8 @@ import { Button } from '@/components/ui/Button';
 import { Divider } from '@/components/ui/Divider';
 import { Icon } from '@/components/ui/Icon';
 import { MobileBlocker } from '@/components/ui/MobileBlocker';
+import { ADMIN_PAGE_LABELS } from '@/constants/admin/adminPage.constants';
 import { AdminScopeBoundary, useIsAdminScope } from '@/providers';
-
-const ADMIN_PAGE_LABELS: Record<string, string> = {
-  schedule: '스케줄',
-  member: '멤버',
-  attendance: '출석',
-  board: '게시판',
-  'club-info': '동아리 정보',
-};
 
 function getAdminPageLabel(pathname: string) {
   const segment = pathname.match(/\/admin\/([^/]+)/)?.[1] ?? '';
@@ -83,6 +76,8 @@ function DialogContent({
         data-slot="dialog-content"
         className={cn(
           'bg-container-neutral data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 fixed top-[50%] left-[50%] z-[80] grid w-78.75 max-w-[calc(100%-2rem)] translate-x-[-50%] translate-y-[-50%] rounded-lg border p-400 shadow-lg duration-200 outline-none sm:max-w-lg',
+          isAdminScope &&
+            'max-tablet:inset-0 max-tablet:top-0 max-tablet:left-0 max-tablet:h-screen max-tablet:w-screen max-tablet:max-w-none max-tablet:translate-x-0 max-tablet:translate-y-0 max-tablet:rounded-none max-tablet:border-0 max-tablet:p-0',
           className,
         )}
         {...props}
@@ -91,11 +86,13 @@ function DialogContent({
           <>
             <div className="hidden tablet:contents">{children}</div>
             <div className="tablet:hidden">
+              <DialogPrimitive.Title className="sr-only">
+                PC 버전으로 접속해주세요
+              </DialogPrimitive.Title>
               <MobileBlocker
-                className="min-h-0 px-0 py-400 tablet:px-0"
                 action={
                   <DialogPrimitive.Close asChild>
-                    <Button variant="primary" size="md" className="w-full">
+                    <Button variant="primary" size="md">
                       {adminPageLabel} 페이지로 돌아가기
                     </Button>
                   </DialogPrimitive.Close>
