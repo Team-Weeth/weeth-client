@@ -10,7 +10,7 @@ function MobileBlocker({ className, action }: MobileBlockerProps) {
   return (
     <div
       className={cn(
-        'flex min-h-screen flex-col items-center justify-center gap-400 px-300 text-center break-keep tablet:px-400',
+        'tablet:px-400 flex min-h-screen flex-col items-center justify-center gap-400 px-300 text-center break-keep',
         className,
       )}
     >

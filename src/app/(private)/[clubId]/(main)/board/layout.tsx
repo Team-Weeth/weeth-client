@@ -22,7 +22,7 @@ export default async function BoardLayout({
           }
         />
       </div>
-      <div className="hidden tablet:contents">{children}</div>
+      <div className="tablet:contents hidden">{children}</div>
     </>
   );
 }
