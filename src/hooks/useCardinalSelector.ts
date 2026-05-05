@@ -31,6 +31,7 @@ function useCardinalSelector({ autoSelectLatest = false }: UseCardinalSelectorOp
     selectedCardinalId: effectiveCardinalId,
     setSelectedCardinalId,
     activeCardinal,
+    latestCardinal,
   };
 }
 
