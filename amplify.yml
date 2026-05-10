@@ -13,14 +13,6 @@ frontend:
           matched=$(env | grep -E '^(PREVIEW_ACCESS_TOKEN|CLUB_ID|NEXT_PUBLIC_SENTRY_DSN)=') || grep_status=$?
           if [ "${grep_status:-0}" -gt 1 ]; then exit "$grep_status"; fi
           if [ -n "$matched" ]; then printf '%s\n' "$matched" >> .env.production; fi
-          if [ "$AWS_BRANCH" = "main" ]; then
-            SENTRY_ENV="production"
-          elif [ "$AWS_BRANCH" = "develop" ]; then
-            SENTRY_ENV="staging"
-          else
-            SENTRY_ENV="development"
-          fi
-          printf 'NEXT_PUBLIC_SENTRY_ENVIRONMENT=%s\n' "$SENTRY_ENV" >> .env.production
           printf 'NEXT_PUBLIC_SENTRY_RELEASE=%s\n' "$AWS_COMMIT_ID" >> .env.production
         - pnpm build
     postBuild:

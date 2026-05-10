@@ -5,9 +5,7 @@
 import * as Sentry from '@sentry/nextjs';
 import { scrubSentryBreadcrumb, scrubSentryEvent } from '@/lib/sentry/scrub';
 
-const branch = process.env.AWS_BRANCH;
-const environment =
-  branch === 'main' ? 'production' : branch === 'develop' ? 'staging' : 'development';
+const environment = process.env.NEXT_PUBLIC_APP_ENV ?? 'development';
 const isProduction = environment === 'production';
 
 Sentry.init({

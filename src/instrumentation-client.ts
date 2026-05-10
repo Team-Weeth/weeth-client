@@ -5,7 +5,7 @@
 import * as Sentry from '@sentry/nextjs';
 import { scrubSentryBreadcrumb, scrubSentryEvent } from '@/lib/sentry/scrub';
 
-const environment = process.env.NEXT_PUBLIC_SENTRY_ENVIRONMENT ?? 'development';
+const environment = process.env.NEXT_PUBLIC_APP_ENV ?? 'development';
 const isProduction = environment === 'production';
 
 Sentry.init({
