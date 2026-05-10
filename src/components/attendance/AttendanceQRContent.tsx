@@ -11,9 +11,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from '@/components/ui';
-// TODO: SSE 연결 안정화 후 복원
-// import { useAttendanceSSE } from '@/hooks/attendance';
-import { useAttendanceQR } from '@/hooks/attendance';
+import { useAttendanceSSE, useAttendanceQR } from '@/hooks/attendance';
 import { useRemainingTime } from '@/hooks/useRemainingTime';
 import { useClubId } from '@/stores/useClubStore';
 
@@ -25,9 +23,8 @@ function AttendanceQRContent({ sessionId }: AttendanceQRContentProps) {
   const { clubId: clubIdParam } = useParams<{ clubId: string }>();
   const clubId = useClubId();
   const { qrRef, qrData, isLoading } = useAttendanceQR(clubId, sessionId);
-  // TODO: SSE 연결 안정화 후 복원
-  // const { expiredAt: sseExpiredAt } = useAttendanceSSE();
-  const { minutes, seconds, isExpired } = useRemainingTime(qrData?.expiredAt ?? '');
+  const { expiredAt: sseExpiredAt } = useAttendanceSSE();
+  const { minutes, seconds, isExpired } = useRemainingTime(sseExpiredAt ?? '');
 
   return (
     <div className="mx-auto flex w-full max-w-[1025px] flex-col gap-700 pt-600">
@@ -76,7 +73,7 @@ function AttendanceQRContent({ sessionId }: AttendanceQRContentProps) {
                   <div className="flex items-center gap-200">
                     <span className="typo-sub3 text-text-strong">출석 가능 시간</span>
                     <span className="typo-sub3 text-state-error tabular-nums">
-                      {!qrData?.expiredAt
+                      {!sseExpiredAt
                         ? '로딩 중...'
                         : isExpired
                           ? '마감'
