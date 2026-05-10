@@ -3,6 +3,7 @@
 // https://docs.sentry.io/platforms/javascript/guides/nextjs/
 
 import * as Sentry from '@sentry/nextjs';
+import { scrubSentryBreadcrumb, scrubSentryEvent } from '@/lib/sentry/scrub';
 
 const branch = process.env.AWS_BRANCH;
 const environment =
@@ -15,6 +16,7 @@ Sentry.init({
   release: process.env.AWS_COMMIT_ID,
   tracesSampleRate: isProduction ? 0.1 : 1,
   enableLogs: true,
-  // PII 마스킹 필터(beforeSend)는 다음 PR에서 추가 — 추가 전까지는 production에서 비활성
-  sendDefaultPii: !isProduction,
+  sendDefaultPii: true,
+  beforeSend: scrubSentryEvent,
+  beforeBreadcrumb: scrubSentryBreadcrumb,
 });

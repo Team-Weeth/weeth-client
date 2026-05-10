@@ -4,6 +4,7 @@
 // https://docs.sentry.io/platforms/javascript/guides/nextjs/
 
 import * as Sentry from '@sentry/nextjs';
+import { scrubSentryBreadcrumb, scrubSentryEvent } from '@/lib/sentry/scrub';
 
 const branch = process.env.AWS_BRANCH;
 const environment =
@@ -16,5 +17,7 @@ Sentry.init({
   release: process.env.AWS_COMMIT_ID,
   tracesSampleRate: isProduction ? 0.1 : 1,
   enableLogs: true,
-  sendDefaultPii: !isProduction,
+  sendDefaultPii: true,
+  beforeSend: scrubSentryEvent,
+  beforeBreadcrumb: scrubSentryBreadcrumb,
 });

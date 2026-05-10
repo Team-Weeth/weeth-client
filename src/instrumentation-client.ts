@@ -3,6 +3,7 @@
 // https://docs.sentry.io/platforms/javascript/guides/nextjs/
 
 import * as Sentry from '@sentry/nextjs';
+import { scrubSentryBreadcrumb, scrubSentryEvent } from '@/lib/sentry/scrub';
 
 const environment = process.env.NEXT_PUBLIC_SENTRY_ENVIRONMENT ?? 'development';
 const isProduction = environment === 'production';
@@ -16,8 +17,9 @@ Sentry.init({
   enableLogs: true,
   replaysSessionSampleRate: 0.1,
   replaysOnErrorSampleRate: 1.0,
-  // PII 마스킹 필터(beforeSend)는 다음 커밋에서 추가 — 추가 전까지는 production에서 비활성
-  sendDefaultPii: !isProduction,
+  sendDefaultPii: true,
+  beforeSend: scrubSentryEvent,
+  beforeBreadcrumb: scrubSentryBreadcrumb,
 });
 
 export const onRouterTransitionStart = Sentry.captureRouterTransitionStart;
