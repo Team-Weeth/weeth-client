@@ -7,6 +7,7 @@ import { usePathname } from 'next/navigation';
 import { CloseCircleIcon } from '@/assets/icons';
 import { cn } from '@/lib/cn';
 import { getActivePopup, type PopupDocument } from '@/lib/apis/popup';
+import DefaultPopupImg from '@/assets/image/popup_default_img_1.png';
 
 const HIDE_KEY = 'popup_hide_until';
 
@@ -95,16 +96,14 @@ function NoticePopup() {
           </div>
 
           {/* 이미지 */}
-          {currentPage.imageUrl && !currentPage.useDefaultImage ? (
-            <div className="relative aspect-[16/10] w-full">
-              <Image
-                src={currentPage.imageUrl}
-                alt={currentPage.title}
-                fill
-                className="object-cover"
-              />
-            </div>
-          ) : null}
+          <div className="relative aspect-[16/10] w-full">
+            <Image
+              src={currentPage.useDefaultImage || !currentPage.imageUrl ? DefaultPopupImg : currentPage.imageUrl}
+              alt={currentPage.title}
+              fill
+              className="object-cover"
+            />
+          </div>
 
           {/* 콘텐츠 */}
           <div className="flex flex-col p-400">

@@ -13,7 +13,7 @@ export interface PopupDocument {
   pages: PopupPage[];
 }
 
-const QUERY = `*[_type == "popup" && isActive == true && (target == "all" || target == $currentEnv) && now() >= startDate && now() <= endDate] | order(startDate desc)[0] {
+const QUERY = `*[_type == "popup" && isActive == true && (product == "all" || product == "weeth_v4") && (target == "all" || target == $currentEnv) && now() >= startDate && now() <= endDate] | order(startDate desc)[0] {
   headerLabel,
   pages[] {
     title,
