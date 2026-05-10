@@ -70,10 +70,7 @@ function NoticePopup() {
         'desktop:items-end desktop:justify-end desktop:p-600',
       )}
     >
-      <div
-        className="pointer-events-auto flex flex-col"
-        onClick={(e) => e.stopPropagation()}
-      >
+      <div className="pointer-events-auto flex flex-col" onClick={(e) => e.stopPropagation()}>
         {/* 팝업 카드 */}
         <div
           className={cn(
@@ -98,7 +95,11 @@ function NoticePopup() {
           {/* 이미지 */}
           <div className="relative aspect-[16/10] w-full">
             <Image
-              src={currentPage.useDefaultImage || !currentPage.imageUrl ? DefaultPopupImg : currentPage.imageUrl}
+              src={
+                currentPage.useDefaultImage || !currentPage.imageUrl
+                  ? DefaultPopupImg
+                  : currentPage.imageUrl
+              }
               alt={currentPage.title}
               fill
               className="object-cover"
@@ -115,11 +116,11 @@ function NoticePopup() {
             )}
 
             {showPagination && (
-              <div className="mb-700 mt-400 flex items-center gap-300">
+              <div className="mt-400 mb-700 flex items-center gap-300">
                 <button
                   onClick={handlePrev}
                   disabled={currentIndex === 0}
-                  className="cursor-pointer border-none bg-transparent text-[18px] text-text-normal disabled:cursor-default disabled:opacity-20"
+                  className="text-text-normal cursor-pointer border-none bg-transparent text-[18px] disabled:cursor-default disabled:opacity-20"
                 >
                   ‹
                 </button>
@@ -129,7 +130,7 @@ function NoticePopup() {
                 <button
                   onClick={handleNext}
                   disabled={currentIndex === popup.pages.length - 1}
-                  className="cursor-pointer border-none bg-transparent text-[18px] text-text-normal disabled:cursor-default disabled:opacity-20"
+                  className="text-text-normal cursor-pointer border-none bg-transparent text-[18px] disabled:cursor-default disabled:opacity-20"
                 >
                   ›
                 </button>
@@ -153,7 +154,7 @@ function NoticePopup() {
         {/* 24시간 숨기기 */}
         <button
           onClick={handleDismiss24h}
-          className="typo-button2 text-text-alternative hover:text-text-strong self-start cursor-pointer border-none bg-transparent px-450 py-200 underline underline-offset-[3px]"
+          className="typo-button2 text-text-alternative hover:text-text-strong cursor-pointer self-start border-none bg-transparent px-450 py-200 underline underline-offset-[3px]"
         >
           24시간동안 보이지 않기
         </button>
