@@ -73,11 +73,7 @@ function AttendanceQRContent({ sessionId }: AttendanceQRContentProps) {
                   <div className="flex items-center gap-200">
                     <span className="typo-sub3 text-text-strong">출석 가능 시간</span>
                     <span className="typo-sub3 text-state-error tabular-nums">
-                      {!sseExpiredAt
-                        ? '로딩 중...'
-                        : isExpired
-                          ? '마감'
-                          : `${minutes}:${seconds}`}
+                      {!sseExpiredAt ? '로딩 중...' : isExpired ? '마감' : `${minutes}:${seconds}`}
                     </span>
                   </div>
                   <p className="typo-body2 text-text-strong">QR코드는 모바일만 제공하고 있어요.</p>
