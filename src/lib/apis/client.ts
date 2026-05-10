@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/nextjs';
 import axios from 'axios';
 import { getAppOriginServerFallback } from '@/utils/shared/url';
 
@@ -55,6 +56,16 @@ const createAuthInterceptor = (client: typeof apiClient) => {
           }
           return Promise.reject(error);
         }
+      }
+
+      if (error.response?.status >= 500) {
+        Sentry.captureException(error, {
+          extra: {
+            status: error.response.status,
+            url: originalRequest?.url,
+            method: originalRequest?.method,
+          },
+        });
       }
 
       return Promise.reject(error);
