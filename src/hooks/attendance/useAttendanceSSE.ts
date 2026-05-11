@@ -24,6 +24,11 @@ interface SSEConnection {
 // clubId별 싱글턴 연결 — 여러 컴포넌트가 구독해도 연결은 1개만 유지
 const connections = new Map<string, SSEConnection>();
 
+const EMPTY_SNAPSHOT: { status: QRStatus; expiredAt: string | null } = {
+  status: null,
+  expiredAt: null,
+};
+
 function getOrCreateConnection(clubId: string): SSEConnection {
   const existing = connections.get(clubId);
   if (existing) return existing;
@@ -220,7 +225,7 @@ function useAttendanceSSE() {
   const snapshot = useSyncExternalStore(
     subscribeFn,
     () => {
-      if (!clubId) return { status: null, expiredAt: null };
+      if (!clubId) return EMPTY_SNAPSHOT;
 
       const conn = connections.get(clubId);
       const next = {
@@ -236,7 +241,7 @@ function useAttendanceSSE() {
       prevSnapshotRef.current = next;
       return next;
     },
-    () => ({ status: null, expiredAt: null }),
+    () => EMPTY_SNAPSHOT,
   );
   return snapshot;
 }
