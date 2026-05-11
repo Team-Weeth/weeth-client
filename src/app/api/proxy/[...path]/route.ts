@@ -66,14 +66,27 @@ async function handler(request: NextRequest, { params }: { params: Promise<{ pat
         }
       }, KEEPALIVE_INTERVAL_MS);
 
+      // 클라이언트 연결 종료 시 upstream reader를 취소하여 리소스 누수 방지
+      const abortHandler = () => {
+        reader.cancel().catch(() => {});
+      };
+      request.signal.addEventListener('abort', abortHandler);
+
       try {
         while (true) {
           const { done, value } = await reader.read();
           if (done) break;
           await writer.write(value);
         }
+      } catch (e) {
+        // 클라이언트 취소(abort)로 인한 종료는 정상 흐름
+        if (!request.signal.aborted) {
+          console.error('[SSE Proxy] stream error:', e);
+        }
+        reader.cancel().catch(() => {});
       } finally {
         clearInterval(keepaliveTimer);
+        request.signal.removeEventListener('abort', abortHandler);
         writer.close().catch(() => {});
       }
     })();
