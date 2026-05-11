@@ -10,12 +10,7 @@ interface UseQRScannerOptions {
   scanIntervalMs?: number;
 }
 
-function useQRScanner({
-  enabled,
-  getVideo,
-  onScan,
-  scanIntervalMs = 250,
-}: UseQRScannerOptions) {
+function useQRScanner({ enabled, getVideo, onScan, scanIntervalMs = 250 }: UseQRScannerOptions) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const stoppedRef = useRef(false);
   const onScanRef = useRef(onScan);
