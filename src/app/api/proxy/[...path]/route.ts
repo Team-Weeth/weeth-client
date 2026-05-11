@@ -3,8 +3,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { API_BASE_PATH } from '@/constants/api';
 import { ACCESS_TOKEN_KEY } from '@/lib/apis/cookies';
 
-// Amplify/Lambda 실행 시간 연장 (SSE 장기 연결 대응, 출석 시간 10분 기준 + 여유)
-export const maxDuration = 700;
+// SSE 장기 연결 대응 (출석 시간 10분 기준 + 여유)
+// Amplify/Lambda는 700초, Vercel Preview(hobby)는 최대 300초 제한
+export const maxDuration = process.env.VERCEL ? 300 : 700;
 
 async function handler(request: NextRequest, { params }: { params: Promise<{ path: string[] }> }) {
   if (!API_BASE_PATH) {
