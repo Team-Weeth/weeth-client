@@ -15,11 +15,9 @@ import {
   Icon,
 } from '@/components/ui';
 import { InputOTP } from '@/components/attendance/InputOTP';
-// TODO: SSE 연결 안정화 후 복원
-// import { useEffect, useRef } from 'react';
-// import { useAttendanceSSE } from '@/hooks/attendance';
-// import { useRemainingTime } from '@/hooks';
-// import { toastError } from '@/stores/useToastStore';
+import { useAttendanceSSE } from '@/hooks/attendance';
+import { useRemainingTime } from '@/hooks';
+import { toastError } from '@/stores/useToastStore';
 import { formatModalDescription } from '@/lib/formatTime';
 
 interface AttendanceCodeModalProps {
@@ -47,8 +45,13 @@ function AttendanceCodeModal({
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const scannedRef = useRef(false);
 
+  const { status, expiredAt: sseExpiredAt } = useAttendanceSSE();
+  const isLoading = status === null;
+  const { minutes, seconds, isExpired } = useRemainingTime(sseExpiredAt ?? '');
   const isComplete = code.length === 6;
   const description = formatModalDescription(start, location);
+
+  const hasShownRef = useRef(false);
 
   function handleOpenChange(nextOpen: boolean) {
     if (!nextOpen) {
@@ -112,6 +115,24 @@ function AttendanceCodeModal({
     };
   }, [scanning]);
 
+  useEffect(() => {
+    if (!open) return;
+    if (status === null) return;
+
+    if ((status === 'qr-none' || status === 'qr-close') && !hasShownRef.current) {
+      hasShownRef.current = true;
+      toastError('현재 출석이 진행 중이 아닙니다.');
+
+      onOpenChange(false);
+    }
+  }, [open, status, onOpenChange]);
+
+  useEffect(() => {
+    if (!open) {
+      hasShownRef.current = false;
+    }
+  }, [open]);
+
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent
@@ -171,6 +192,23 @@ function AttendanceCodeModal({
               </div>
 
               <InputOTP value={code} onChange={setCode} />
+
+              {isLoading ? (
+                <p className="typo-caption2 text-text-alternative text-center">
+                  출석 정보를 불러오는 중...
+                </p>
+              ) : !isExpired ? (
+                <p className="typo-caption2 text-text-strong text-center">
+                  출석 가능 시간{' '}
+                  <span className="text-brand-primary tabular-nums">
+                    {minutes}:{seconds}
+                  </span>
+                </p>
+              ) : (
+                <p className="typo-caption2 text-state-error text-center">
+                  출석 가능 시간이 만료되었습니다
+                </p>
+              )}
             </>
           )}
 
