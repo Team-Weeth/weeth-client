@@ -53,6 +53,13 @@ function AttendanceCodeModal({
 
   const hasShownRef = useRef(false);
 
+  const onConfirmRef = useRef(onConfirm);
+  const onOpenChangeRef = useRef(onOpenChange);
+  useEffect(() => {
+    onConfirmRef.current = onConfirm;
+    onOpenChangeRef.current = onOpenChange;
+  });
+
   function handleOpenChange(nextOpen: boolean) {
     if (!nextOpen) {
       setCode('');
@@ -102,8 +109,13 @@ function AttendanceCodeModal({
         scannedRef.current = true;
         const digits = result.data.replace(/\D/g, '').slice(0, 6);
         if (digits.length === 6) {
-          setCode(digits);
-          handleStopScan();
+          setCode('');
+          setScanning(false);
+          setCameraReady(false);
+          setCameraError(null);
+          scannedRef.current = false;
+          onConfirmRef.current?.(digits);
+          onOpenChangeRef.current(false);
         } else {
           scannedRef.current = false;
         }
