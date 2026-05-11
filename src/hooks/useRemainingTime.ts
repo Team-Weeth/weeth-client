@@ -24,7 +24,7 @@ function useRemainingTime(endTime: string) {
     const interval = setInterval(() => {
       onStoreChange();
       if (getRemainingSeconds(endTime) <= 0) clearInterval(interval);
-    }, 1000);
+    }, 100);
     return () => clearInterval(interval);
   };
 

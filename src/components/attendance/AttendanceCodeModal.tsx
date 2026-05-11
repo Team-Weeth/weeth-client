@@ -14,10 +14,10 @@ import {
 } from '@/components/ui';
 import { InputOTP } from '@/components/attendance/InputOTP';
 // TODO: SSE 연결 안정화 후 복원
-// import { useEffect, useRef } from 'react';
-// import { useAttendanceSSE } from '@/hooks/attendance';
-// import { useRemainingTime } from '@/hooks';
-// import { toastError } from '@/stores/useToastStore';
+import { useEffect, useRef } from 'react';
+import { useAttendanceSSE } from '@/hooks/attendance';
+import { useRemainingTime } from '@/hooks';
+import { toastError } from '@/stores/useToastStore';
 import { formatModalDescription } from '@/lib/formatTime';
 
 interface AttendanceCodeModalProps {
@@ -39,14 +39,14 @@ function AttendanceCodeModal({
 }: AttendanceCodeModalProps) {
   const [code, setCode] = useState('');
   // TODO: SSE 연결 안정화 후 복원
-  // const { status, expiredAt: sseExpiredAt } = useAttendanceSSE();
-  // const isLoading = status === null;
-  // const { minutes, seconds, isExpired } = useRemainingTime(sseExpiredAt ?? '');
+  const { status, expiredAt: sseExpiredAt } = useAttendanceSSE();
+  const isLoading = status === null;
+  const { minutes, seconds, isExpired } = useRemainingTime(sseExpiredAt ?? '');
   const isComplete = code.length === 6;
   const description = formatModalDescription(start, location);
 
   // TODO: SSE 연결 안정화 후 복원
-  // const hasShownRef = useRef(false);
+  const hasShownRef = useRef(false);
 
   function handleOpenChange(nextOpen: boolean) {
     if (!nextOpen) setCode('');
@@ -54,23 +54,23 @@ function AttendanceCodeModal({
   }
 
   // TODO: SSE 연결 안정화 후 복원
-  // useEffect(() => {
-  //   if (!open) return;
-  //   if (status === null) return;
-  //
-  //   if ((status === 'qr-none' || status === 'qr-close') && !hasShownRef.current) {
-  //     hasShownRef.current = true;
-  //     toastError('현재 출석이 진행 중이 아닙니다.');
-  //
-  //     onOpenChange(false);
-  //   }
-  // }, [open, status, onOpenChange]);
+  useEffect(() => {
+    if (!open) return;
+    if (status === null) return;
 
-  // useEffect(() => {
-  //   if (!open) {
-  //     hasShownRef.current = false;
-  //   }
-  // }, [open]);
+    if ((status === 'qr-none' || status === 'qr-close') && !hasShownRef.current) {
+      hasShownRef.current = true;
+      toastError('현재 출석이 진행 중이 아닙니다.');
+
+      onOpenChange(false);
+    }
+  }, [open, status, onOpenChange]);
+
+  useEffect(() => {
+    if (!open) {
+      hasShownRef.current = false;
+    }
+  }, [open]);
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
@@ -101,7 +101,7 @@ function AttendanceCodeModal({
 
           <InputOTP value={code} onChange={setCode} />
 
-          {/* {isLoading ? (
+          {isLoading ? (
             <p className="typo-caption2 text-text-alternative text-center">
               출석 정보를 불러오는 중...
             </p>
@@ -116,9 +116,7 @@ function AttendanceCodeModal({
             <p className="typo-caption2 text-state-error text-center">
               출석 가능 시간이 만료되었습니다
             </p>
-          )} */}
-
-          {/* TODO: SSE 연결 안정화 후 출석 가능 시간 표시 복원 */}
+          )}
         </DialogBody>
 
         <DialogFooter
