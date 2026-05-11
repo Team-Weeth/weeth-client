@@ -8,7 +8,11 @@
       "mcp__figma__get_design_context",
       "mcp__figma__get_screenshot",
       "Bash(gh pr *)",
-      "Read(//c/Users/wlslw/.claude/projects/**)"
+      "Read(//c/Users/wlslw/.claude/projects/**)",
+      "mcp__Claude_in_Chrome__tabs_context_mcp",
+      "Bash(export PATH=\"C:/Users/wlslw/AppData/Local/Temp/poppler_extracted/poppler-24.08.0/Library/bin:$PATH\")",
+      "Bash(pdftoppm -v)",
+      "Bash(\"C:/Users/wlslw/AppData/Local/Temp/poppler_extracted/poppler-24.08.0/Library/bin/pdftotext.exe\" \"C:/Users/wlslw/Downloads/이유진_포트폴리오_인턴추가버전.pdf\" \"C:/Users/wlslw/AppData/Local/Temp/portfolio.txt\")"
     ]
   }
 }
