@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/nextjs';
 import { NextRequest, NextResponse } from 'next/server';
 
 import { API_BASE_PATH } from '@/constants/api';
@@ -25,6 +26,9 @@ export async function GET(request: NextRequest) {
   });
 
   if (!response.ok) {
+    Sentry.captureException(new Error(`Kakao OAuth failed: HTTP ${response.status}`), {
+      extra: { status: response.status, endpoint: `${API_BASE_PATH}/users/social/kakao` },
+    });
     return NextResponse.redirect(new URL('/login', appUrl));
   }
 
