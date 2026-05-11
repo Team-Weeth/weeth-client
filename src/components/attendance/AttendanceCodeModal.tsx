@@ -129,7 +129,7 @@ function AttendanceCodeModal({
 
         <DialogBody className="flex-1 items-center justify-start gap-300 self-stretch p-400">
           {scanning ? (
-            <div className="bg-container-neutral-alternative relative aspect-square w-full max-w-[320px] overflow-hidden rounded-md">
+            <div className="bg-container-neutral-alternative relative aspect-3/4 w-full max-w-70 overflow-hidden rounded-md">
               {cameraError ? (
                 <div className="flex h-full w-full items-center justify-center p-400 text-center">
                   <p className="typo-body2 text-state-error">{cameraError}</p>
