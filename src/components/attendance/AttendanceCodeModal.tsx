@@ -67,7 +67,15 @@ function AttendanceCodeModal({
     enabled: scanning,
     getVideo: () => webcamRef.current?.video ?? null,
     onScan: (data) => {
-      const digits = data.replace(/\D/g, '').slice(0, 6);
+      let digits = '';
+
+      try {
+        const parsedUrl = new URL(data);
+        digits = (parsedUrl.searchParams.get('code') ?? '').replace(/\D/g, '').slice(0, 6);
+      } catch {
+        digits = data.replace(/\D/g, '').slice(0, 6);
+      }
+
       if (digits.length !== 6) return;
 
       onConfirm?.(digits);
