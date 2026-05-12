@@ -70,9 +70,8 @@ function AttendanceCodeModal({
       const digits = data.replace(/\D/g, '').slice(0, 6);
       if (digits.length !== 6) return;
 
-      stopCamera();
       onConfirm?.(digits);
-      onOpenChange(false);
+      handleOpenChange(false);
       return true;
     },
   });
