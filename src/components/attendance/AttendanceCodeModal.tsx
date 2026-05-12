@@ -18,6 +18,7 @@ import { useAttendanceSSE, useQRScanner } from '@/hooks/attendance';
 import { useRemainingTime } from '@/hooks';
 import { toastError } from '@/stores/useToastStore';
 import { formatModalDescription } from '@/lib/formatTime';
+import { parseAttendanceQRCode } from '@/utils/attendance/parseAttendanceQRCode';
 
 interface AttendanceCodeModalProps {
   open: boolean;
@@ -67,15 +68,7 @@ function AttendanceCodeModal({
     enabled: scanning,
     getVideo: () => webcamRef.current?.video ?? null,
     onScan: (data) => {
-      let digits = '';
-
-      try {
-        const parsedUrl = new URL(data);
-        digits = (parsedUrl.searchParams.get('code') ?? '').replace(/\D/g, '').slice(0, 6);
-      } catch {
-        digits = data.replace(/\D/g, '').slice(0, 6);
-      }
-
+      const digits = parseAttendanceQRCode(data);
       if (digits.length !== 6) return;
 
       onConfirm?.(digits);
