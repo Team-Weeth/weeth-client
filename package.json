@@ -69,6 +69,7 @@
     "lottie-react": "^2.4.1",
     "lowlight": "^3.3.0",
     "lucide-react": "^0.468.0",
+    "module-details-from-path": "1.0.4",
     "next": "16.1.6",
     "posthog-js": "^1.364.4",
     "qr-code-styling": "^1.9.2",
