@@ -36,6 +36,7 @@ export { default as MoreHorizIcon } from './more-horiz.svg';
 export { default as CompleteIcon } from './complete.svg';
 export { default as InfoCircleIcon } from './info_circle.svg';
 export { default as CautionIcon } from './caution.svg';
+export { default as CameraIcon } from './camera.svg';
 export { default as KakaoLogoIcon } from './kakao_logo.svg';
 export { default as AppleLogoIcon } from './apple_logo.svg';
 export { default as LoginCoverIcon } from './login_cover.svg';

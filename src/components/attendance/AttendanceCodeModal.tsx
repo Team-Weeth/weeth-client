@@ -1,8 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import Webcam from 'react-webcam';
 
-import { CheckRoundIcon } from '@/assets/icons';
+import { CameraIcon, CheckRoundIcon } from '@/assets/icons';
 import {
   Button,
   Dialog,
@@ -13,9 +14,7 @@ import {
   Icon,
 } from '@/components/ui';
 import { InputOTP } from '@/components/attendance/InputOTP';
-// TODO: SSE 연결 안정화 후 복원
-import { useEffect, useRef } from 'react';
-import { useAttendanceSSE } from '@/hooks/attendance';
+import { useAttendanceSSE, useQRScanner } from '@/hooks/attendance';
 import { useRemainingTime } from '@/hooks';
 import { toastError } from '@/stores/useToastStore';
 import { formatModalDescription } from '@/lib/formatTime';
@@ -38,38 +37,57 @@ function AttendanceCodeModal({
   location,
 }: AttendanceCodeModalProps) {
   const [code, setCode] = useState('');
-  // TODO: SSE 연결 안정화 후 복원
+  const [scanning, setScanning] = useState(false);
+  const [cameraReady, setCameraReady] = useState(false);
+  const [cameraError, setCameraError] = useState<string | null>(null);
+  const webcamRef = useRef<Webcam>(null);
+  const hasShownRef = useRef(false);
+
   const { status, expiredAt: sseExpiredAt } = useAttendanceSSE();
   const isLoading = status === null;
   const { minutes, seconds, isExpired } = useRemainingTime(sseExpiredAt ?? '');
   const isComplete = code.length === 6;
   const description = formatModalDescription(start, location);
 
-  // TODO: SSE 연결 안정화 후 복원
-  const hasShownRef = useRef(false);
+  function stopCamera() {
+    setScanning(false);
+    setCameraReady(false);
+    setCameraError(null);
+  }
 
   function handleOpenChange(nextOpen: boolean) {
-    if (!nextOpen) setCode('');
+    if (!nextOpen) {
+      setCode('');
+      stopCamera();
+    }
     onOpenChange(nextOpen);
   }
 
-  // TODO: SSE 연결 안정화 후 복원
+  useQRScanner({
+    enabled: scanning,
+    getVideo: () => webcamRef.current?.video ?? null,
+    onScan: (data) => {
+      const digits = data.replace(/\D/g, '').slice(0, 6);
+      if (digits.length !== 6) return;
+
+      onConfirm?.(digits);
+      handleOpenChange(false);
+      return true;
+    },
+  });
+
   useEffect(() => {
-    if (!open) return;
-    if (status === null) return;
+    if (!open || status === null) return;
 
     if ((status === 'qr-none' || status === 'qr-close') && !hasShownRef.current) {
       hasShownRef.current = true;
       toastError('현재 출석이 진행 중이 아닙니다.');
-
       onOpenChange(false);
     }
   }, [open, status, onOpenChange]);
 
   useEffect(() => {
-    if (!open) {
-      hasShownRef.current = false;
-    }
+    if (!open) hasShownRef.current = false;
   }, [open]);
 
   return (
@@ -88,35 +106,79 @@ function AttendanceCodeModal({
         />
 
         <DialogBody className="flex-1 items-center justify-start gap-300 self-stretch p-400">
-          <div className="bg-container-neutral-alternative flex items-start gap-[10px] self-stretch rounded-md p-300">
-            <div className="flex flex-1 flex-col gap-100 text-center">
-              <p className="typo-caption1 text-text-strong">
-                운영진이 공유한 6자리 출석 코드를 입력하세요
-              </p>
-              <p className="typo-caption2 text-text-alternative">
-                QR 스캔이 어려운 경우 코드를 직접 입력할 수 있어요
-              </p>
+          {scanning ? (
+            <div className="bg-container-neutral-alternative relative aspect-3/4 w-full max-w-70 overflow-hidden rounded-md">
+              {cameraError ? (
+                <div className="flex h-full w-full items-center justify-center p-400 text-center">
+                  <p className="typo-body2 text-state-error">{cameraError}</p>
+                </div>
+              ) : (
+                <>
+                  <Webcam
+                    ref={webcamRef}
+                    audio={false}
+                    videoConstraints={{ facingMode: { ideal: 'environment' } }}
+                    onUserMedia={() => setCameraReady(true)}
+                    onUserMediaError={(err) => {
+                      const message = typeof err === 'string' ? err : err.message;
+                      setCameraError(message || '카메라에 접근할 수 없습니다.');
+                    }}
+                    className="h-full w-full object-cover"
+                  />
+                  {!cameraReady && (
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <p className="typo-caption2 text-text-alternative">
+                        카메라를 준비 중이에요...
+                      </p>
+                    </div>
+                  )}
+                </>
+              )}
             </div>
-          </div>
-
-          <InputOTP value={code} onChange={setCode} />
-
-          {isLoading ? (
-            <p className="typo-caption2 text-text-alternative text-center">
-              출석 정보를 불러오는 중...
-            </p>
-          ) : !isExpired ? (
-            <p className="typo-caption2 text-text-strong text-center">
-              출석 가능 시간{' '}
-              <span className="text-brand-primary tabular-nums">
-                {minutes}:{seconds}
-              </span>
-            </p>
           ) : (
-            <p className="typo-caption2 text-state-error text-center">
-              출석 가능 시간이 만료되었습니다
-            </p>
+            <>
+              <div className="bg-container-neutral-alternative flex items-start gap-2.5 self-stretch rounded-md p-300">
+                <div className="flex flex-1 flex-col gap-100 text-center">
+                  <p className="typo-caption1 text-text-strong">
+                    운영진이 공유한 6자리 출석 코드를 입력하세요
+                  </p>
+                  <p className="typo-caption2 text-text-alternative">
+                    QR 스캔이 어려운 경우 코드를 직접 입력할 수 있어요
+                  </p>
+                </div>
+              </div>
+
+              <InputOTP value={code} onChange={setCode} />
+
+              {isLoading ? (
+                <p className="typo-caption2 text-text-alternative text-center">
+                  출석 정보를 불러오는 중...
+                </p>
+              ) : !isExpired ? (
+                <p className="typo-caption2 text-text-strong text-center">
+                  출석 가능 시간{' '}
+                  <span className="text-brand-primary tabular-nums">
+                    {minutes}:{seconds}
+                  </span>
+                </p>
+              ) : (
+                <p className="typo-caption2 text-state-error text-center">
+                  출석 가능 시간이 만료되었습니다
+                </p>
+              )}
+            </>
           )}
+
+          <button
+            type="button"
+            onClick={() => (scanning ? stopCamera() : setScanning(true))}
+            className="bg-button-neutral hover:bg-button-neutral-interaction flex cursor-pointer items-center justify-center gap-100 rounded-sm px-300 py-200"
+          >
+            <Icon src={CameraIcon} size={16} className="text-icon-normal" />
+            <span className="typo-button2 text-text-normal">
+              {scanning ? '스캔 취소' : 'QR코드 스캔하기'}
+            </span>
+          </button>
         </DialogBody>
 
         <DialogFooter
