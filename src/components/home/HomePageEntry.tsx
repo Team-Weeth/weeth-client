@@ -2,6 +2,7 @@
 
 import dynamic from 'next/dynamic';
 import { HomeTutorialLauncher } from '@/components/home/HomeTutorialLauncher';
+import { NoticePopup } from '@/components/home/NoticePopup';
 import { useHomeGuard } from '@/hooks/home';
 import { BannerSkeleton } from '@/components/home/skeleton';
 import {
@@ -45,6 +46,7 @@ export function HomePageEntry() {
 
   return (
     <>
+      <NoticePopup />
       <HomeTutorialLauncher />
       <HomePageSections />
     </>
