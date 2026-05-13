@@ -2,21 +2,14 @@
 
 import * as React from 'react';
 import type { ReactNode } from 'react';
-import { usePathname } from 'next/navigation';
 import { Dialog as DialogPrimitive } from 'radix-ui';
 import { DeleteIcon } from '@/assets/icons';
 import { cn } from '@/lib/cn';
 import { Button } from '@/components/ui/Button';
 import { Divider } from '@/components/ui/Divider';
 import { Icon } from '@/components/ui/Icon';
-import { MobileBlocker } from '@/components/ui/MobileBlocker';
-import { ADMIN_PAGE_LABELS } from '@/constants/admin/adminPage.constants';
+// import { AdminMobileBlockedContent } from '@/components/admin/AdminMobileBlockedContent';
 import { AdminScopeBoundary, useIsAdminScope } from '@/providers';
-
-function getAdminPageLabel(pathname: string) {
-  const segment = pathname.match(/\/admin\/([^/]+)/)?.[1] ?? '';
-  return ADMIN_PAGE_LABELS[segment] ?? '이전';
-}
 
 function Dialog({ ...props }: React.ComponentProps<typeof DialogPrimitive.Root>) {
   return <DialogPrimitive.Root data-slot="dialog" {...props} />;
@@ -54,28 +47,6 @@ function DialogOverlay({
   );
 }
 
-function AdminMobileBlockedContent({ children }: { children: ReactNode }) {
-  const pathname = usePathname();
-  const adminPageLabel = getAdminPageLabel(pathname ?? '');
-
-  return (
-    <>
-      <div className="tablet:contents hidden">{children}</div>
-      <div className="tablet:hidden">
-        <DialogPrimitive.Title className="sr-only">PC 버전으로 접속해주세요</DialogPrimitive.Title>
-        <MobileBlocker
-          action={
-            <DialogPrimitive.Close asChild>
-              <Button variant="primary" size="md">
-                {adminPageLabel} 페이지로 돌아가기
-              </Button>
-            </DialogPrimitive.Close>
-          }
-        />
-      </div>
-    </>
-  );
-}
 
 function DialogContent({
   className,
@@ -97,8 +68,8 @@ function DialogContent({
         data-slot="dialog-content"
         className={cn(
           'bg-container-neutral data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 fixed top-[50%] left-[50%] z-[80] grid w-78.75 max-w-[calc(100%-2rem)] translate-x-[-50%] translate-y-[-50%] rounded-lg border p-400 shadow-lg duration-200 outline-none sm:max-w-lg',
-          // isAdminScope &&
-          //   'max-tablet:inset-0 max-tablet:top-0 max-tablet:left-0 max-tablet:h-screen max-tablet:w-screen max-tablet:max-w-none max-tablet:translate-x-0 max-tablet:translate-y-0 max-tablet:rounded-none max-tablet:border-0 max-tablet:p-0',
+          isAdminScope &&
+            'max-tablet:inset-0 max-tablet:top-0 max-tablet:left-0 max-tablet:h-screen max-tablet:w-screen max-tablet:max-w-none max-tablet:translate-x-0 max-tablet:translate-y-0 max-tablet:rounded-none max-tablet:border-0 max-tablet:p-0',
           className,
         )}
         {...props}
