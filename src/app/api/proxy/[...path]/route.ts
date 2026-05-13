@@ -3,8 +3,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { API_BASE_PATH } from '@/constants/api';
 import { ACCESS_TOKEN_KEY } from '@/lib/apis/cookies';
 
-// Amplify: 700s (SSE 10분 대응), Vercel hobby 플랜: 최대 300s
-export const maxDuration = process.env.VERCEL ? 300 : 700;
+// Vercel hobby 플랜 최대값 300s (Amplify는 별도 Lambda 타임아웃 설정으로 대응)
+export const maxDuration = 300;
 
 async function handler(request: NextRequest, { params }: { params: Promise<{ path: string[] }> }) {
   if (!API_BASE_PATH) {
