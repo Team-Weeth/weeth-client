@@ -35,7 +35,7 @@ function CreateScheduleModal({
         showCloseButton={false}
       >
         {/* Header with tabs */}
-        <div className="flex items-start justify-between px-400 pt-400 tablet:px-700 tablet:pt-700">
+        <div className="tablet:px-700 tablet:pt-700 flex items-start justify-between px-400 pt-400">
           <Tabs
             value={activeTab}
             onValueChange={(v) => onActiveTabChange(v as ScheduleType)}

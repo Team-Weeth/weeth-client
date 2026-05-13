@@ -165,7 +165,7 @@ function EditSessionModalContent({
   return (
     <>
       {/* Header */}
-      <div className="flex items-start justify-between px-400 pt-400 tablet:px-700 tablet:pt-700">
+      <div className="tablet:px-700 tablet:pt-700 flex items-start justify-between px-400 pt-400">
         <div className="flex h-8 items-end">
           <span className="typo-button2 text-text-strong border-brand-primary border-b-2 px-100 pb-200">
             세션
@@ -199,7 +199,7 @@ function EditSessionModalContent({
       </div>
 
       {/* Body */}
-      <div className="scrollbar-custom max-h-175 overflow-y-auto px-400 tablet:px-15">
+      <div className="scrollbar-custom tablet:px-15 max-h-175 overflow-y-auto px-400">
         <h2 className="typo-h3 text-text-normal py-400">세션 수정</h2>
         <ScheduleFormBody
           form={form}

@@ -71,7 +71,7 @@ function MemberDetailModal({
         </div>
 
         {/* Body */}
-        <div className="flex flex-col gap-500 overflow-y-auto px-400 pb-500 tablet:flex-row tablet:px-700">
+        <div className="tablet:flex-row tablet:px-700 flex flex-col gap-500 overflow-y-auto px-400 pb-500">
           {/* 회원정보 */}
           <div className="bg-container-neutral flex-1 rounded-md p-400">
             <p className="typo-caption1 text-text-alternative mb-400">회원정보</p>
@@ -92,7 +92,7 @@ function MemberDetailModal({
           </div>
 
           {/* 활동정보 */}
-          <div className="bg-container-neutral w-full shrink-0 rounded-md p-400 tablet:w-80">
+          <div className="bg-container-neutral tablet:w-80 w-full shrink-0 rounded-md p-400">
             <p className="typo-caption1 text-text-alternative mb-400">활동정보</p>
 
             <div className="flex flex-col gap-400">

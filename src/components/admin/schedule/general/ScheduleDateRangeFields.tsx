@@ -11,7 +11,7 @@ interface ScheduleDateRangeFieldsProps {
 function ScheduleDateRangeFields({ form, onFormChange }: ScheduleDateRangeFieldsProps) {
   return (
     <div className="flex flex-col gap-100">
-      <div className="flex flex-col gap-600 tablet:flex-row">
+      <div className="tablet:flex-row flex flex-col gap-600">
         <DateTimeInput
           label="시작 일자"
           dateValue={form.startDate}
