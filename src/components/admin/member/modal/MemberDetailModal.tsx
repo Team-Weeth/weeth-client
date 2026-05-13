@@ -54,7 +54,7 @@ function MemberDetailModal({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
-        className="bg-background flex w-215 max-w-[860px] flex-col gap-0 rounded-sm p-0"
+        className="bg-background flex w-215 max-w-[calc(100%-2rem)] flex-col gap-0 rounded-sm p-0"
         showCloseButton={false}
       >
         {/* Header */}
@@ -71,7 +71,7 @@ function MemberDetailModal({
         </div>
 
         {/* Body */}
-        <div className="flex gap-500 px-700 pb-500">
+        <div className="flex flex-col gap-500 overflow-y-auto px-400 pb-500 tablet:flex-row tablet:px-700">
           {/* 회원정보 */}
           <div className="bg-container-neutral flex-1 rounded-md p-400">
             <p className="typo-caption1 text-text-alternative mb-400">회원정보</p>
@@ -92,7 +92,7 @@ function MemberDetailModal({
           </div>
 
           {/* 활동정보 */}
-          <div className="bg-container-neutral w-80 shrink-0 rounded-md p-400">
+          <div className="bg-container-neutral w-full shrink-0 rounded-md p-400 tablet:w-80">
             <p className="typo-caption1 text-text-alternative mb-400">활동정보</p>
 
             <div className="flex flex-col gap-400">
@@ -123,8 +123,8 @@ function MemberDetailModal({
         </div>
 
         {/* Footer */}
-        <div className="bg-container-neutral flex items-center justify-between rounded-b-sm px-400 pt-400 pb-500">
-          <div className="flex items-center gap-200">
+        <div className="bg-container-neutral flex flex-wrap items-center justify-between gap-200 rounded-b-sm px-400 pt-400 pb-500">
+          <div className="flex flex-wrap items-center gap-200">
             {footerActions.map(({ label, title, description, handler }) => (
               <AlertDialog
                 key={label}

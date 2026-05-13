@@ -104,7 +104,7 @@ function CreateSessionScheduleForm({ onCreateSession, onClose }: CreateSessionSc
 
   return (
     <>
-      <div className="scrollbar-custom max-h-175 overflow-y-auto px-15">
+      <div className="scrollbar-custom max-h-175 overflow-y-auto px-400 tablet:px-15">
         <h2 className="typo-h3 text-text-normal py-400">세션 생성</h2>
         <SessionScheduleForm
           form={form}
