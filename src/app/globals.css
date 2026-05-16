@@ -758,6 +758,11 @@ select:focus {
   content: none !important;
 }
 
+/* 링크 */
+.ProseMirror a {
+  @apply text-text-alternative underline underline-offset-2;
+}
+
 /* 인라인 코드 */
 .ProseMirror p:has(> code:not(pre code)) {
   @apply py-100;
