@@ -16,7 +16,9 @@ interface PostCardBodyProps {
 
 function PostCardBody({ className, content, expandable = false }: PostCardBodyProps) {
   const contentRef = useRef<HTMLDivElement>(null);
-  const sanitized = DOMPurify.sanitize(content);
+  const sanitized = DOMPurify.sanitize(content, {
+    ADD_ATTR: ['target', 'rel'],
+  });
   const { ref, isClamped, isExpanded, setIsExpanded } = useLineClamp<HTMLDivElement>(
     expandable,
     sanitized,
