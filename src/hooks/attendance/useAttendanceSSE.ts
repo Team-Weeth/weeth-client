@@ -2,6 +2,7 @@
 
 import { useCallback, useSyncExternalStore, useRef } from 'react';
 
+import { API_BASE_PATH } from '@/constants/api';
 import { useClubId } from '@/stores/useClubStore';
 
 const MAX_RETRY_DELAY = 30000;
@@ -19,6 +20,7 @@ interface SSEConnection {
   controller: AbortController | null;
   retryTimer: ReturnType<typeof setTimeout> | undefined;
   retryCount: number;
+  connected: boolean;
 }
 
 // clubId별 싱글턴 연결 — 여러 컴포넌트가 구독해도 연결은 1개만 유지
@@ -42,6 +44,7 @@ function getOrCreateConnection(clubId: string): SSEConnection {
     controller: null,
     retryTimer: undefined,
     retryCount: 0,
+    connected: false,
   };
   connections.set(clubId, conn);
   return conn;
@@ -51,10 +54,18 @@ function notify(conn: SSEConnection) {
   conn.listeners.forEach((listener) => listener());
 }
 
-function scheduleRetry(clubId: string, conn: SSEConnection) {
-  if (conn.retryCount >= MAX_RETRY_COUNT) return;
-
+// reconnect: 연결 성공 후 끊김 (즉시 재연결, 카운트 리셋)
+// retry: 연결 자체 실패 (지수 백오프, 최대 횟수 제한)
+function scheduleRetry(clubId: string, conn: SSEConnection, mode: 'reconnect' | 'retry') {
   clearTimeout(conn.retryTimer);
+
+  if (mode === 'reconnect') {
+    conn.retryCount = 0;
+    conn.retryTimer = setTimeout(() => connect(clubId, conn), 1000);
+    return;
+  }
+
+  if (conn.retryCount >= MAX_RETRY_COUNT) return;
 
   const delay = Math.min(1000 * 2 ** conn.retryCount, MAX_RETRY_DELAY);
   conn.retryCount++;
@@ -119,14 +130,49 @@ function processSSEText(text: string, buffer: string, conn: SSEConnection): stri
   return remaining;
 }
 
-// SSE 연결 생성, 에러 시 지수 백오프로 재연결
+interface TokenPair {
+  accessToken: string;
+  refreshToken: string | null;
+}
+
+async function fetchTokens(): Promise<TokenPair | null> {
+  try {
+    const res = await fetch('/api/auth/token');
+    if (!res.ok) return null;
+    const data = (await res.json()) as { accessToken?: string; refreshToken?: string };
+    if (!data.accessToken) return null;
+    return { accessToken: data.accessToken, refreshToken: data.refreshToken ?? null };
+  } catch {
+    return null;
+  }
+}
+
+// 브라우저가 API 서버와 직접 커넥션을 유지하여 스트림을 즉시 수신
 async function connect(clubId: string, conn: SSEConnection) {
   const controller = new AbortController();
   conn.controller = controller;
 
   try {
-    const response = await fetch(`/api/proxy/clubs/${clubId}/attendances/stream`, {
-      headers: { Accept: 'text/event-stream' },
+    const tokens = await fetchTokens();
+
+    if (controller.signal.aborted) return;
+
+    if (!tokens) {
+      window.location.href = '/login';
+      return;
+    }
+
+    const headers: Record<string, string> = {
+      Accept: 'text/event-stream',
+      Authorization: `Bearer ${tokens.accessToken}`,
+    };
+
+    if (tokens.refreshToken) {
+      headers['Authorization_refresh'] = tokens.refreshToken;
+    }
+
+    const response = await fetch(`${API_BASE_PATH}/clubs/${clubId}/attendances/stream`, {
+      headers,
       signal: controller.signal,
     });
 
@@ -153,9 +199,13 @@ async function connect(clubId: string, conn: SSEConnection) {
     }
 
     if (!response.ok || !response.body) {
-      scheduleRetry(clubId, conn);
+      console.error('[SSE] 연결 실패:', response.status, response.statusText);
+      scheduleRetry(clubId, conn, 'retry');
       return;
     }
+
+    conn.connected = true;
+    conn.retryCount = 0;
 
     const reader = response.body.getReader();
     const decoder = new TextDecoder();
@@ -169,13 +219,24 @@ async function connect(clubId: string, conn: SSEConnection) {
       buffer = processSSEText(text, buffer, conn);
     }
 
-    // 스트림이 정상 종료된 경우 재연결
-    scheduleRetry(clubId, conn);
+    // 스트림이 정상 종료된 경우 즉시 재연결
+    conn.connected = false;
+    scheduleRetry(clubId, conn, 'reconnect');
   } catch (error) {
+    const wasConnected = conn.connected;
+    conn.connected = false;
+
     // AbortError는 의도적 종료이므로 무시
     if (error instanceof DOMException && error.name === 'AbortError') return;
 
-    scheduleRetry(clubId, conn);
+    // 연결 성공 후 끊김 (HTTP/2 프로토콜 에러 등) → 재연결
+    if (wasConnected) {
+      scheduleRetry(clubId, conn, 'reconnect');
+      return;
+    }
+
+    console.error('[SSE] 연결 에러:', error);
+    scheduleRetry(clubId, conn, 'retry');
   }
 }
 
@@ -199,6 +260,7 @@ function subscribe(clubId: string, conn: SSEConnection, listener: Listener) {
         clearTimeout(conn.retryTimer);
         conn.retryTimer = undefined;
         conn.retryCount = 0;
+        conn.connected = false;
         conn.status = null;
         conn.expiredAt = null;
         conn.currentEvent = '';
@@ -208,16 +270,20 @@ function subscribe(clubId: string, conn: SSEConnection, listener: Listener) {
   };
 }
 
-function useAttendanceSSE() {
+interface UseAttendanceSSEOptions {
+  enabled?: boolean;
+}
+
+function useAttendanceSSE({ enabled = true }: UseAttendanceSSEOptions = {}) {
   const clubId = useClubId();
 
   const subscribeFn = useCallback(
     (listener: Listener) => {
-      if (!clubId) return () => {};
+      if (!clubId || !enabled) return () => {};
       const conn = getOrCreateConnection(clubId);
       return subscribe(clubId, conn, listener);
     },
-    [clubId],
+    [clubId, enabled],
   );
 
   const prevSnapshotRef = useRef<{ status: QRStatus; expiredAt: string | null } | null>(null);
@@ -246,4 +312,4 @@ function useAttendanceSSE() {
   return snapshot;
 }
 
-export { useAttendanceSSE, type QRStatus };
+export { useAttendanceSSE, type QRStatus, type UseAttendanceSSEOptions };
