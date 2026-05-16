@@ -1,13 +1,15 @@
 'use client';
 
+import { useState } from 'react';
 import { EditorContent, FloatingMenu } from '@tiptap/react';
 import { usePostEditor } from './usePostEditor';
 import { BubbleMenuBar } from './BubbleMenu';
 import { SlashMenuContent } from './SlashMenu';
+import { LinkInput } from './LinkInput';
 import { ImageList } from '../ImageList';
 import { FileList } from '../FileList';
 import { useFileUpload } from '@/hooks/useFileUpload';
-import { createMediaItems } from '@/constants/board/slashMenu';
+import { createMediaItems, createLinkItem } from '@/constants/board/slashMenu';
 
 const floatingMenuTippyOptions = {
   duration: 100,
@@ -46,6 +48,7 @@ export default function Editor({ initialContent }: EditorProps = {}) {
     processFiles,
     initialContent,
   });
+  const [showSlashLinkInput, setShowSlashLinkInput] = useState(false);
 
   if (!editor) return null;
 
@@ -88,12 +91,21 @@ export default function Editor({ initialContent }: EditorProps = {}) {
             extraGroups={[
               {
                 title: '미디어',
-                items: createMediaItems(picker.openImagePicker, picker.openFilePicker),
+                items: [
+                  ...createMediaItems(picker.openImagePicker, picker.openFilePicker),
+                  createLinkItem(() => setShowSlashLinkInput(true)),
+                ],
               },
             ]}
           />
         )}
       </FloatingMenu>
+
+      {showSlashLinkInput && (
+        <div className="border-line bg-container-neutral rounded-md border p-200 shadow-md">
+          <LinkInput editor={editor} onClose={() => setShowSlashLinkInput(false)} />
+        </div>
+      )}
 
       <div className="relative">
         <EditorContent editor={editor} className="max-w-none" />

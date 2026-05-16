@@ -12,6 +12,7 @@ import {
   Minus,
   ImageIcon,
   Paperclip,
+  Link2,
 } from 'lucide-react';
 import { MenuItem } from '@/types/editor';
 
@@ -93,4 +94,12 @@ export function createMediaItems(
       command: () => openFilePicker(),
     },
   ];
+}
+
+export function createLinkItem(openLinkInput: () => void): MenuItem {
+  return {
+    label: '링크',
+    icon: Link2,
+    command: () => openLinkInput(),
+  };
 }
