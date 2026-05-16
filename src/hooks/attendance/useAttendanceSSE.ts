@@ -149,18 +149,23 @@ async function fetchTokens(): Promise<TokenPair | null> {
 
 // 브라우저가 API 서버와 직접 커넥션을 유지하여 스트림을 즉시 수신
 async function connect(clubId: string, conn: SSEConnection) {
-  const controller = new AbortController();
-  conn.controller = controller;
+  // subscribe 중복 호출 방지용 — fetchTokens 대기 중에도 controller가 존재해야 함
+  conn.controller = new AbortController();
 
   try {
     const tokens = await fetchTokens();
 
-    if (controller.signal.aborted) return;
+    // fetchTokens 대기 중 구독자가 모두 해제된 경우 중단
+    if (conn.subscriberCount === 0) return;
 
     if (!tokens) {
       window.location.href = '/login';
       return;
     }
+
+    // fetchTokens 완료 후 새 controller 생성 (이전 것은 abort됐을 수 있음)
+    const controller = new AbortController();
+    conn.controller = controller;
 
     const headers: Record<string, string> = {
       Accept: 'text/event-stream',
