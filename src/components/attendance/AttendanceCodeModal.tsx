@@ -44,7 +44,7 @@ function AttendanceCodeModal({
   const webcamRef = useRef<Webcam>(null);
   const hasShownRef = useRef(false);
 
-  const { status, expiredAt: sseExpiredAt } = useAttendanceSSE();
+  const { status, expiredAt: sseExpiredAt } = useAttendanceSSE({ enabled: open });
   const isLoading = status === null;
   const { minutes, seconds, isExpired } = useRemainingTime(sseExpiredAt ?? '');
   const isComplete = code.length === 6;
