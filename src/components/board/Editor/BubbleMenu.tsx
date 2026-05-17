@@ -107,6 +107,11 @@ export function BubbleMenuBar({ editor, containerRef }: BubbleMenuBarProps) {
         placement: 'top-start',
         appendTo: () => containerRef.current ?? document.body,
       }}
+      shouldShow={({ editor: e, state }) => {
+        if (e.isActive('table')) return false;
+        const { from, to } = state.selection;
+        return from !== to;
+      }}
       className="border-line bg-container-neutral flex flex-col items-start rounded-md border p-100 shadow-md"
     >
       <div className="flex items-center">

@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { EditorContent, FloatingMenu } from '@tiptap/react';
 import { usePostEditor } from './usePostEditor';
 import { BubbleMenuBar } from './BubbleMenu';
+import { TableMenu } from './TableMenu';
 import { SlashMenuContent } from './SlashMenu';
 import { LinkInput } from './LinkInput';
 import { ImageList } from '../ImageList';
@@ -74,6 +75,7 @@ export default function Editor({ initialContent }: EditorProps = {}) {
       />
 
       <BubbleMenuBar editor={editor} containerRef={containerRef} />
+      <TableMenu editor={editor} containerRef={containerRef} />
 
       <FloatingMenu
         editor={editor}

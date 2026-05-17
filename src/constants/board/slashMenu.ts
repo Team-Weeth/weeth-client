@@ -13,6 +13,7 @@ import {
   ImageIcon,
   Paperclip,
   Link2,
+  Table2,
 } from 'lucide-react';
 import { MenuItem } from '@/types/editor';
 
@@ -75,6 +76,12 @@ export const STYLE_ITEMS: MenuItem[] = [
     description: '---',
     icon: Minus,
     command: (editor: TiptapEditor) => editor.chain().focus().setHorizontalRule().run(),
+  },
+  {
+    label: '표',
+    icon: Table2,
+    command: (editor: TiptapEditor) =>
+      editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run(),
   },
 ];
 
