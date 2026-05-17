@@ -1,4 +1,5 @@
 // admin components index file
+export { AdminMobileBlockedContent } from './AdminMobileBlockedContent';
 export { CardinalDropdown, type CardinalDropdownProps } from './CardinalDropdown';
 export { ModalIconButton, type ModalIconButtonProps } from './modal/ModalIconButton';
 export { AttendanceCard, type AttendanceCardProps } from './attendance/AttendanceCard';
