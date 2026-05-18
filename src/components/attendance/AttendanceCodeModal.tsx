@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import type { QRCode } from 'jsqr';
 import Webcam from 'react-webcam';
 
 import { CameraIcon, CheckRoundIcon } from '@/assets/icons';
@@ -29,6 +30,16 @@ interface AttendanceCodeModalProps {
   location: string;
 }
 
+interface VideoSize {
+  width: number;
+  height: number;
+}
+
+interface ViewportSize {
+  width: number;
+  height: number;
+}
+
 function AttendanceCodeModal({
   open,
   onOpenChange,
@@ -41,8 +52,13 @@ function AttendanceCodeModal({
   const [scanning, setScanning] = useState(false);
   const [cameraReady, setCameraReady] = useState(false);
   const [cameraError, setCameraError] = useState<string | null>(null);
+  const [detectedLocation, setDetectedLocation] = useState<QRCode['location'] | null>(null);
+  const [videoSize, setVideoSize] = useState<VideoSize>({ width: 1, height: 1 });
+  const [viewportSize, setViewportSize] = useState<ViewportSize>({ width: 1, height: 1 });
   const webcamRef = useRef<Webcam>(null);
+  const viewportRef = useRef<HTMLDivElement>(null);
   const hasShownRef = useRef(false);
+  const confirmTimeoutRef = useRef<number | null>(null);
 
   const { status, expiredAt: sseExpiredAt } = useAttendanceSSE();
   const isLoading = status === null;
@@ -51,9 +67,16 @@ function AttendanceCodeModal({
   const description = formatModalDescription(start, location);
 
   function stopCamera() {
+    if (confirmTimeoutRef.current != null) {
+      window.clearTimeout(confirmTimeoutRef.current);
+      confirmTimeoutRef.current = null;
+    }
     setScanning(false);
     setCameraReady(false);
     setCameraError(null);
+    setDetectedLocation(null);
+    setVideoSize({ width: 1, height: 1 });
+    setViewportSize({ width: 1, height: 1 });
   }
 
   function handleOpenChange(nextOpen: boolean) {
@@ -67,14 +90,20 @@ function AttendanceCodeModal({
   useQRScanner({
     enabled: scanning,
     getVideo: () => webcamRef.current?.video ?? null,
-    onScan: (data) => {
+    onScan: ({ data, location, videoWidth, videoHeight }) => {
       const digits = parseAttendanceQRCode(data);
       if (digits.length !== 6) return;
 
-      onConfirm?.(digits);
-      handleOpenChange(false);
-      return true;
+      setVideoSize({ width: videoWidth, height: videoHeight });
+      setDetectedLocation(location);
+      // TODO: 코너선 디버깅용 - 위치 확인 후 아래 timeout/return 복원
+      // confirmTimeoutRef.current = window.setTimeout(() => {
+      //   onConfirm?.(digits);
+      //   handleOpenChange(false);
+      // }, 700);
+      // return true;
     },
+    onLost: () => setDetectedLocation(null),
   });
 
   useEffect(() => {
@@ -90,6 +119,66 @@ function AttendanceCodeModal({
   useEffect(() => {
     if (!open) hasShownRef.current = false;
   }, [open]);
+
+  useEffect(
+    () => () => {
+      if (confirmTimeoutRef.current != null) {
+        window.clearTimeout(confirmTimeoutRef.current);
+      }
+    },
+    [],
+  );
+
+  useEffect(() => {
+    const element = viewportRef.current;
+    if (!element) return;
+
+    const updateViewportSize = () => {
+      setViewportSize({
+        width: element.clientWidth || 1,
+        height: element.clientHeight || 1,
+      });
+    };
+
+    updateViewportSize();
+
+    const observer = new ResizeObserver(updateViewportSize);
+    observer.observe(element);
+
+    return () => {
+      observer.disconnect();
+    };
+  }, [scanning]);
+
+  function getCornerSegments() {
+    if (!detectedLocation) return [];
+
+    const { topLeftCorner, topRightCorner, bottomRightCorner, bottomLeftCorner } = detectedLocation;
+    const cornerLength = 12;
+    const scale = Math.max(
+      viewportSize.width / videoSize.width,
+      viewportSize.height / videoSize.height,
+    );
+    const offsetX = (viewportSize.width - videoSize.width * scale) / 2;
+    const offsetY = (viewportSize.height - videoSize.height * scale) / 2;
+
+    const mapPoint = ({ x, y }: { x: number; y: number }) => ({
+      x: x * scale + offsetX,
+      y: y * scale + offsetY,
+    });
+
+    const topLeft = mapPoint(topLeftCorner);
+    const topRight = mapPoint(topRightCorner);
+    const bottomRight = mapPoint(bottomRightCorner);
+    const bottomLeft = mapPoint(bottomLeftCorner);
+
+    return [
+      `M ${topLeft.x + cornerLength} ${topLeft.y} L ${topLeft.x} ${topLeft.y} L ${topLeft.x} ${topLeft.y + cornerLength}`,
+      `M ${topRight.x - cornerLength} ${topRight.y} L ${topRight.x} ${topRight.y} L ${topRight.x} ${topRight.y + cornerLength}`,
+      `M ${bottomRight.x - cornerLength} ${bottomRight.y} L ${bottomRight.x} ${bottomRight.y} L ${bottomRight.x} ${bottomRight.y - cornerLength}`,
+      `M ${bottomLeft.x + cornerLength} ${bottomLeft.y} L ${bottomLeft.x} ${bottomLeft.y} L ${bottomLeft.x} ${bottomLeft.y - cornerLength}`,
+    ];
+  }
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
@@ -108,7 +197,10 @@ function AttendanceCodeModal({
 
         <DialogBody className="flex-1 items-center justify-start gap-300 self-stretch p-400">
           {scanning ? (
-            <div className="bg-container-neutral-alternative relative aspect-3/4 w-full max-w-70 overflow-hidden rounded-md">
+            <div
+              ref={viewportRef}
+              className="bg-container-neutral-alternative relative aspect-3/4 w-full max-w-70 overflow-hidden rounded-md"
+            >
               {cameraError ? (
                 <div className="flex h-full w-full items-center justify-center p-400 text-center">
                   <p className="typo-body2 text-state-error">{cameraError}</p>
@@ -119,13 +211,39 @@ function AttendanceCodeModal({
                     ref={webcamRef}
                     audio={false}
                     videoConstraints={{ facingMode: { ideal: 'environment' } }}
-                    onUserMedia={() => setCameraReady(true)}
+                    onUserMedia={() => {
+                      const video = webcamRef.current?.video;
+                      setVideoSize({
+                        width: video?.videoWidth || 1,
+                        height: video?.videoHeight || 1,
+                      });
+                      setCameraReady(true);
+                    }}
                     onUserMediaError={(err) => {
                       const message = typeof err === 'string' ? err : err.message;
                       setCameraError(message || '카메라에 접근할 수 없습니다.');
                     }}
                     className="h-full w-full object-cover"
                   />
+                  {cameraReady && detectedLocation && (
+                    <svg
+                      className="pointer-events-none absolute inset-0 h-full w-full"
+                      viewBox={`0 0 ${viewportSize.width} ${viewportSize.height}`}
+                      preserveAspectRatio="none"
+                    >
+                      {getCornerSegments().map((segment, idx) => (
+                        <path
+                          key={idx}
+                          d={segment}
+                          fill="none"
+                          stroke="#FFD60A"
+                          strokeWidth="3"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                      ))}
+                    </svg>
+                  )}
                   {!cameraReady && (
                     <div className="absolute inset-0 flex items-center justify-center">
                       <p className="typo-caption2 text-text-alternative">
