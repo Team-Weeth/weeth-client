@@ -1,29 +1,47 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
-import jsQR from 'jsqr';
+import jsQR, { type QRCode } from 'jsqr';
+
+interface QRScanResult {
+  data: string;
+  location: QRCode['location'];
+  videoWidth: number;
+  videoHeight: number;
+}
 
 interface UseQRScannerOptions {
   enabled: boolean;
   getVideo: () => HTMLVideoElement | null;
-  onScan: (data: string) => boolean | void;
+  onScan: (result: QRScanResult) => boolean | void;
+  onLost?: () => void;
   scanIntervalMs?: number;
 }
 
-function useQRScanner({ enabled, getVideo, onScan, scanIntervalMs = 250 }: UseQRScannerOptions) {
+function useQRScanner({
+  enabled,
+  getVideo,
+  onScan,
+  onLost,
+  scanIntervalMs = 250,
+}: UseQRScannerOptions) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const stoppedRef = useRef(false);
+  const previousDetectedRef = useRef(false);
   const onScanRef = useRef(onScan);
+  const onLostRef = useRef(onLost);
   const getVideoRef = useRef(getVideo);
 
   useEffect(() => {
     onScanRef.current = onScan;
+    onLostRef.current = onLost;
     getVideoRef.current = getVideo;
   });
 
   useEffect(() => {
     if (!enabled) {
       stoppedRef.current = false;
+      previousDetectedRef.current = false;
       return;
     }
 
@@ -52,10 +70,19 @@ function useQRScanner({ enabled, getVideo, onScan, scanIntervalMs = 250 }: UseQR
       });
 
       if (result?.data) {
-        const shouldStop = onScanRef.current(result.data);
+        previousDetectedRef.current = true;
+        const shouldStop = onScanRef.current({
+          data: result.data,
+          location: result.location,
+          videoWidth: width,
+          videoHeight: height,
+        });
         if (shouldStop === true) {
           stoppedRef.current = true;
         }
+      } else if (previousDetectedRef.current) {
+        previousDetectedRef.current = false;
+        onLostRef.current?.();
       }
     }, scanIntervalMs);
 
@@ -65,4 +92,4 @@ function useQRScanner({ enabled, getVideo, onScan, scanIntervalMs = 250 }: UseQR
   }, [enabled, scanIntervalMs]);
 }
 
-export { useQRScanner, type UseQRScannerOptions };
+export { useQRScanner, type UseQRScannerOptions, type QRScanResult };
