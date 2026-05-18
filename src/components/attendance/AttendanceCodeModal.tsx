@@ -96,12 +96,11 @@ function AttendanceCodeModal({
 
       setVideoSize({ width: videoWidth, height: videoHeight });
       setDetectedLocation(location);
-      // TODO: 코너선 디버깅용 - 위치 확인 후 아래 timeout/return 복원
-      // confirmTimeoutRef.current = window.setTimeout(() => {
-      //   onConfirm?.(digits);
-      //   handleOpenChange(false);
-      // }, 700);
-      // return true;
+      confirmTimeoutRef.current = window.setTimeout(() => {
+        onConfirm?.(digits);
+        handleOpenChange(false);
+      }, 700);
+      return true;
     },
     onLost: () => setDetectedLocation(null),
   });
