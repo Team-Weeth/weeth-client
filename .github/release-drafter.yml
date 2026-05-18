@@ -1,56 +1,54 @@
-name-template: "v$RESOLVED_VERSION"
-tag-template: "v$RESOLVED_VERSION"
-commitish: "develop"
+name-template: 'v$RESOLVED_VERSION'
+tag-template: 'v$RESOLVED_VERSION'
+commitish: 'develop'
 filter-by-commitish: true
 pull-request-limit: 20
 history-limit: 100
 
 categories:
-  - title: "✨ Features"
-    labels: ["✨ Feature"]
-  - title: "🐞 Bug Fixes"
-    labels: ["🐞 BugFix"]
-  - title: "🌏 Deploy"
-    labels: ["🌏 Deploy"]
-  - title: "🎨 UI & Styling"
-    labels: ["🎨 Html&css"]
-  - title: "💻 Cross Browsing"
-    labels: ["💻 CrossBrowsing"]
-  - title: "📬 API"
-    labels: ["📬 API"]
-  - title: "🔨 Refactors"
-    labels: ["🔨 Refactor"]
-  - title: "✅ Tests"
-    labels: ["✅ Test"]
-  - title: "📃 Docs"
-    labels: ["📃 Docs"]
-  - title: "⚙ Settings"
-    labels: ["⚙ Setting"]
-  - title: "🥰 Accessibility"
-    labels: ["🥰 Accessibility"]
+  - title: '✨ Features'
+    labels: ['✨ Feature']
+  - title: '🐞 Bug Fixes'
+    labels: ['🐞 BugFix']
+  - title: '🌏 Deploy'
+    labels: ['🌏 Deploy']
+  - title: '🎨 UI & Styling'
+    labels: ['🎨 Html&css']
+  - title: '💻 Cross Browsing'
+    labels: ['💻 CrossBrowsing']
+  - title: '📬 API'
+    labels: ['📬 API']
+  - title: '🔨 Refactors'
+    labels: ['🔨 Refactor']
+  - title: '✅ Tests'
+    labels: ['✅ Test']
+  - title: '📃 Docs'
+    labels: ['📃 Docs']
+  - title: '⚙ Settings'
+    labels: ['⚙ Setting']
+  - title: '🥰 Accessibility'
+    labels: ['🥰 Accessibility']
 
-change-template: "- $TITLE (#$NUMBER) @$AUTHOR"
-change-title-escapes: "<*_&"
+change-template: '- $TITLE (#$NUMBER) @$AUTHOR'
+change-title-escapes: '<*_&'
 
 version-resolver:
   major:
-    labels: ["💥 Breaking"]
-
+    labels: ['💥 Breaking']
   minor:
-    labels: ["✨ Feature"]
-
+    labels: ['✨ Feature']
   patch:
     labels:
-      - "🐞 BugFix"
-      - "🌏 Deploy"
-      - "🎨 Html&css"
-      - "💻 CrossBrowsing"
-      - "📬 API"
-      - "🔨 Refactor"
-      - "✅ Test"
-      - "📃 Docs"
-      - "⚙ Setting"
-      - "🥰 Accessibility"
+      - '🐞 BugFix'
+      - '🌏 Deploy'
+      - '🎨 Html&css'
+      - '💻 CrossBrowsing'
+      - '📬 API'
+      - '🔨 Refactor'
+      - '✅ Test'
+      - '📃 Docs'
+      - '⚙ Setting'
+      - '🥰 Accessibility'
 
   default: patch
 

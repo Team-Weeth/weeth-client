@@ -8,6 +8,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Trigger Amplify webhook
-        run: curl -X POST -d {} "$AMPLIFY_MAIN_WEBHOOK_URL" -H "Content-Type: application/json"
+        run: |
+          curl -X POST -d {} "$AMPLIFY_MAIN_WEBHOOK_URL" \
+            -H "Content-Type: application/json"
         env:
           AMPLIFY_MAIN_WEBHOOK_URL: ${{ secrets.AMPLIFY_MAIN_WEBHOOK_URL }}
