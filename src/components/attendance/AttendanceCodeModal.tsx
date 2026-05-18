@@ -210,7 +210,7 @@ function AttendanceCodeModal({
                           key={idx}
                           d={segment}
                           fill="none"
-                          stroke="#FFD60A"
+                          stroke={'var(--color-brand-primary)'}
                           strokeWidth="3"
                           strokeLinecap="round"
                           strokeLinejoin="round"
