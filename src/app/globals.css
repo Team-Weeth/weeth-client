@@ -821,42 +821,9 @@ select:focus {
 
 /* 테이블 gap (위/아래 paragraph 삽입 영역) */
 .ProseMirror .table-gap {
-  height: 12px;
-  position: relative;
-  cursor: pointer;
-  transition: opacity 0.15s;
-}
-
-.ProseMirror .table-gap::after {
-  content: '+';
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  width: 20px;
   height: 20px;
-  border-radius: 50%;
-  background-color: var(--container-neutral-alternative);
-  color: var(--text-alternative);
-  font-size: 14px;
-  line-height: 20px;
-  text-align: center;
-  opacity: 0;
-  transition: opacity 0.15s;
-}
-
-.ProseMirror .table-gap:hover::after {
-  opacity: 1;
-}
-
-.ProseMirror .table-gap:hover {
-  background: linear-gradient(
-    to bottom,
-    transparent 45%,
-    var(--line) 45%,
-    var(--line) 55%,
-    transparent 55%
-  );
+  position: relative;
+  cursor: text;
 }
 
 /* 링크 */

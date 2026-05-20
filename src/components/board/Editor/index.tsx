@@ -50,8 +50,16 @@ export default function Editor({ initialContent }: EditorProps = {}) {
     initialContent,
   });
   const [showSlashLinkInput, setShowSlashLinkInput] = useState(false);
+  const [linkInputPos, setLinkInputPos] = useState<{ top: number; left: number } | null>(null);
 
   if (!editor) return null;
+
+  const openSlashLinkInput = () => {
+    const { from } = editor.state.selection;
+    const coords = editor.view.coordsAtPos(from);
+    setLinkInputPos({ top: coords.bottom + 8, left: coords.left });
+    setShowSlashLinkInput(true);
+  };
 
   return (
     <div ref={containerRef} className="relative flex min-h-[400px] w-full flex-col overflow-hidden">
@@ -95,7 +103,7 @@ export default function Editor({ initialContent }: EditorProps = {}) {
                 title: '미디어',
                 items: [
                   ...createMediaItems(picker.openImagePicker, picker.openFilePicker),
-                  createLinkItem(() => setShowSlashLinkInput(true)),
+                  createLinkItem(openSlashLinkInput),
                 ],
               },
             ]}
@@ -103,8 +111,16 @@ export default function Editor({ initialContent }: EditorProps = {}) {
         )}
       </FloatingMenu>
 
-      {showSlashLinkInput && (
-        <LinkInput editor={editor} onClose={() => setShowSlashLinkInput(false)} />
+      {showSlashLinkInput && linkInputPos && (
+        <div className="fixed z-50" style={{ top: linkInputPos.top, left: linkInputPos.left }}>
+          <LinkInput
+            editor={editor}
+            onClose={() => {
+              setShowSlashLinkInput(false);
+              setLinkInputPos(null);
+            }}
+          />
+        </div>
       )}
 
       <div className="relative">
