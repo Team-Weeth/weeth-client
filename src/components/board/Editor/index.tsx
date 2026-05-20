@@ -104,9 +104,7 @@ export default function Editor({ initialContent }: EditorProps = {}) {
       </FloatingMenu>
 
       {showSlashLinkInput && (
-        <div className="border-line bg-container-neutral rounded-md border p-200 shadow-md">
-          <LinkInput editor={editor} onClose={() => setShowSlashLinkInput(false)} />
-        </div>
+        <LinkInput editor={editor} onClose={() => setShowSlashLinkInput(false)} />
       )}
 
       <div className="relative">
