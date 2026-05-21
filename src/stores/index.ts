@@ -24,3 +24,8 @@ export {
   useBoardNavReset,
 } from './useBoardNavStore';
 export { useCreateClubDraftStore } from './useCreateClubDraftStore';
+export {
+  useAdminHeaderStore,
+  useIsAdminEditMode,
+  useSetAdminEditMode,
+} from './useAdminHeaderStore';
