@@ -139,7 +139,7 @@ function ClubInfoPageContent({ schoolNames }: ClubInfoPageContentProps) {
         />
       )}
 
-      <div className="flex min-w-3xl flex-col items-start gap-400 px-8 py-12">
+      <div className="tablet:min-w-3xl tablet:px-8 tablet:py-12 flex flex-col items-start gap-400 px-400 py-500">
         <ClubInfoImageSection
           profilePreviewUrl={profilePreviewUrl}
           backgroundPreviewUrl={backgroundPreviewUrl}
