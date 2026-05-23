@@ -23,7 +23,7 @@ function AttendanceQRContent({ sessionId }: AttendanceQRContentProps) {
   const { clubId: clubIdParam } = useParams<{ clubId: string }>();
   const clubId = useClubId();
   const { qrRef, qrData, isLoading } = useAttendanceQR(clubId, sessionId);
-  const { expiredAt: sseExpiredAt } = useAttendanceSSE();
+  const { status, expiredAt: sseExpiredAt } = useAttendanceSSE();
   const expiredAt = sseExpiredAt ?? null;
   const { minutes, seconds, isExpired } = useRemainingTime(expiredAt ?? '');
 
@@ -74,7 +74,11 @@ function AttendanceQRContent({ sessionId }: AttendanceQRContentProps) {
                   <div className="flex items-center gap-200">
                     <span className="typo-sub3 text-text-strong">출석 가능 시간</span>
                     <span className="typo-sub3 text-state-error tabular-nums">
-                      {!expiredAt ? '\u00A0' : isExpired ? '마감' : `${minutes}:${seconds}`}
+                      {status === null
+                        ? '\u00A0'
+                        : status === 'qr-open' && !isExpired
+                          ? `${minutes}:${seconds}`
+                          : '마감'}
                     </span>
                   </div>
                   <p className="typo-body2 text-text-strong">QR코드는 모바일만 제공하고 있어요.</p>
