@@ -1,8 +1,8 @@
 'use client';
 
-import { useState } from 'react';
 import { EditorContent, FloatingMenu } from '@tiptap/react';
 import { usePostEditor } from './usePostEditor';
+import { useLinkPopup } from './useLinkPopup';
 import { BubbleMenuBar } from './BubbleMenu';
 import { TableMenu } from './TableMenu';
 import { SlashMenuContent } from './SlashMenu';
@@ -49,25 +49,14 @@ export default function Editor({ initialContent }: EditorProps = {}) {
     processFiles,
     initialContent,
   });
-  const [showSlashLinkInput, setShowSlashLinkInput] = useState(false);
-  const [linkInputPos, setLinkInputPos] = useState<{ top: number; left: number } | null>(null);
+  const {
+    pos: linkInputPos,
+    openFromSlashMenu,
+    handleEditorClick,
+    close: closeLinkInput,
+  } = useLinkPopup(editor);
 
   if (!editor) return null;
-
-  const openSlashLinkInput = () => {
-    const { from } = editor.state.selection;
-    const coords = editor.view.coordsAtPos(from);
-    setLinkInputPos({ top: coords.bottom + 8, left: coords.left });
-    setShowSlashLinkInput(true);
-  };
-
-  const handleEditorClick = (e: React.MouseEvent) => {
-    const linkEl = (e.target as HTMLElement).closest('a[href]');
-    if (!linkEl) return;
-    const rect = linkEl.getBoundingClientRect();
-    setLinkInputPos({ top: rect.bottom + 8, left: rect.left });
-    setShowSlashLinkInput(true);
-  };
 
   return (
     <div ref={containerRef} className="relative flex min-h-[400px] w-full flex-col overflow-hidden">
@@ -111,7 +100,7 @@ export default function Editor({ initialContent }: EditorProps = {}) {
                 title: '미디어',
                 items: [
                   ...createMediaItems(picker.openImagePicker, picker.openFilePicker),
-                  createLinkItem(openSlashLinkInput),
+                  createLinkItem(openFromSlashMenu),
                 ],
               },
             ]}
@@ -119,15 +108,9 @@ export default function Editor({ initialContent }: EditorProps = {}) {
         )}
       </FloatingMenu>
 
-      {showSlashLinkInput && linkInputPos && (
+      {linkInputPos && (
         <div className="fixed z-50" style={{ top: linkInputPos.top, left: linkInputPos.left }}>
-          <LinkInput
-            editor={editor}
-            onClose={() => {
-              setShowSlashLinkInput(false);
-              setLinkInputPos(null);
-            }}
-          />
+          <LinkInput editor={editor} onClose={closeLinkInput} />
         </div>
       )}
 

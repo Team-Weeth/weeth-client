@@ -6,6 +6,7 @@ import { Trash2 } from 'lucide-react';
 import { cn } from '@/lib/cn';
 import { Input } from '@/components/ui';
 import { useClickOutside } from '@/hooks/useClickOutside';
+import { normalizeHref } from './normalizeHref';
 
 interface LinkInputProps {
   editor: TiptapEditor;
@@ -33,7 +34,7 @@ function LinkInput({ editor, onClose }: LinkInputProps) {
     const trimmed = url.trim();
     if (!trimmed) return;
 
-    const normalized = /^https?:\/\//i.test(trimmed) ? trimmed : `https://${trimmed}`;
+    const normalized = normalizeHref(trimmed);
 
     const { empty } = editor.state.selection;
     if (empty) {
