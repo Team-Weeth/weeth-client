@@ -24,12 +24,35 @@ import TaskList from '@tiptap/extension-task-list';
 import TaskItem from '@tiptap/extension-task-item';
 import Typography from '@tiptap/extension-typography';
 import Link from '@tiptap/extension-link';
+import { mergeAttributes } from '@tiptap/core';
 import Table from '@tiptap/extension-table';
 import TableRow from '@tiptap/extension-table-row';
 import TableCell from '@tiptap/extension-table-cell';
 import TableHeader from '@tiptap/extension-table-header';
 
 const lowlight = createLowlight(common);
+
+// protocol이 없는 href를 https://로 정규화
+function normalizeHref(href: string): string {
+  if (!href) return href;
+  if (/^[a-z][a-z\d+\-.]*:/i.test(href)) return href;
+  if (href.startsWith('//') || href.startsWith('#')) return href;
+  return `https://${href}`;
+}
+
+const NormalizedLink = Link.extend({
+  renderHTML({ HTMLAttributes }) {
+    const { href, ...rest } = HTMLAttributes;
+    return [
+      'a',
+      mergeAttributes(this.options.HTMLAttributes, {
+        ...rest,
+        href: href ? normalizeHref(String(href)) : href,
+      }),
+      0,
+    ];
+  },
+});
 
 export const editorExtensions = [
   Document,
@@ -56,7 +79,7 @@ export const editorExtensions = [
   TaskList,
   TaskItem.configure({ nested: true, onReadOnlyChecked: () => false }),
   IndentExtension,
-  Link.configure({
+  NormalizedLink.configure({
     openOnClick: false,
     autolink: true,
     linkOnPaste: true,
