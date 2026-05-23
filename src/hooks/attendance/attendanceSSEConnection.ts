@@ -1,10 +1,10 @@
 import { API_BASE_PATH } from '@/constants/api';
+import { parseSSEText, type QRStatus } from '@/utils/attendance/parseSSEText';
 
 const MAX_RETRY_DELAY = 30000;
 const MAX_RETRY_COUNT = 10;
 
 type Listener = () => void;
-type QRStatus = 'qr-none' | 'qr-open' | 'qr-close' | null;
 
 interface SSEConnection {
   clubId: string;
@@ -70,59 +70,6 @@ function scheduleRetry(clubId: string, conn: SSEConnection, mode: 'reconnect' | 
   const delay = Math.min(1000 * 2 ** conn.retryCount, MAX_RETRY_DELAY);
   conn.retryCount++;
   conn.retryTimer = setTimeout(() => connect(clubId, conn), delay);
-}
-
-function processSSEText(text: string, buffer: string, conn: SSEConnection): string {
-  const combined = buffer + text;
-  const lines = combined.split(/\r?\n/);
-  const remaining = lines.pop() ?? '';
-
-  for (const line of lines) {
-    if (line.startsWith('event:')) {
-      conn.currentEvent = line.slice(6).trim();
-      continue;
-    }
-
-    // 빈 줄 = 이벤트 경계, currentEvent 초기화
-    if (line === '') {
-      conn.currentEvent = '';
-      continue;
-    }
-
-    if (!line.startsWith('data:')) continue;
-
-    const jsonStr = line.slice(5).trim();
-    if (!jsonStr) continue;
-
-    try {
-      const parsed = JSON.parse(jsonStr) as { expiredAt?: string } | null;
-      const eventType = conn.currentEvent as QRStatus;
-
-      if (eventType === 'qr-open' && parsed?.expiredAt) {
-        conn.status = 'qr-open';
-        conn.expiredAt = parsed.expiredAt;
-        notify(conn);
-      } else if (eventType === 'qr-none') {
-        conn.status = 'qr-none';
-        conn.expiredAt = null;
-        notify(conn);
-      } else if (eventType === 'qr-close') {
-        conn.status = 'qr-close';
-        conn.expiredAt = null;
-        notify(conn);
-      } else if (parsed?.expiredAt) {
-        conn.expiredAt = parsed.expiredAt;
-        notify(conn);
-      }
-
-      conn.retryCount = 0;
-      conn.currentEvent = '';
-    } catch {
-      // ignore parse errors
-    }
-  }
-
-  return remaining;
 }
 
 type FetchTokensResult =
@@ -207,7 +154,25 @@ async function connect(clubId: string, conn: SSEConnection) {
     while (true) {
       const { done, value } = await reader.read();
       if (done) break;
-      buffer = processSSEText(decoder.decode(value, { stream: true }), buffer, conn);
+
+      const { remaining, currentEvent, updates, resetRetry } = parseSSEText(
+        decoder.decode(value, { stream: true }),
+        buffer,
+        conn.currentEvent,
+      );
+      buffer = remaining;
+      conn.currentEvent = currentEvent;
+      if (resetRetry) conn.retryCount = 0;
+
+      for (const update of updates) {
+        if (update.kind === 'status') {
+          conn.status = update.status;
+          conn.expiredAt = update.expiredAt;
+        } else {
+          conn.expiredAt = update.expiredAt;
+        }
+        notify(conn);
+      }
     }
 
     // 스트림이 정상 종료된 경우 즉시 재연결
