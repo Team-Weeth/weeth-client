@@ -38,7 +38,9 @@ export function useUpdatePost() {
     },
     onSuccess: (result) => {
       const { _allowNavigation } = usePostStore.getState();
-      queryClient.removeQueries({ queryKey: ['posts', 'detail', clubId, result.boardId, result.id] });
+      queryClient.removeQueries({
+        queryKey: ['posts', 'detail', clubId, result.boardId, result.id],
+      });
       queryClient.invalidateQueries({ queryKey: ['posts'] });
       queryClient.invalidateQueries({ queryKey: ['home', 'recent-posts', clubId] });
       queryClient.invalidateQueries({ queryKey: ['home', 'recent-notices', clubId] });
