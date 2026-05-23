@@ -7,6 +7,7 @@ type Listener = () => void;
 type QRStatus = 'qr-none' | 'qr-open' | 'qr-close' | null;
 
 interface SSEConnection {
+  clubId: string;
   subscriberCount: number;
   status: QRStatus;
   expiredAt: string | null;
@@ -18,8 +19,9 @@ interface SSEConnection {
   connected: boolean;
 }
 
-// clubId별 싱글턴 연결 — 여러 컴포넌트가 구독해도 연결은 1개만 유지
 const connections = new Map<string, SSEConnection>();
+
+const stateCache = new Map<string, { status: QRStatus; expiredAt: string | null }>();
 
 const EMPTY_SNAPSHOT: { status: QRStatus; expiredAt: string | null } = {
   status: null,
@@ -30,10 +32,12 @@ function getOrCreateConnection(clubId: string): SSEConnection {
   const existing = connections.get(clubId);
   if (existing) return existing;
 
+  const cached = stateCache.get(clubId);
   const conn: SSEConnection = {
+    clubId,
     subscriberCount: 0,
-    status: null,
-    expiredAt: null,
+    status: cached?.status ?? null,
+    expiredAt: cached?.expiredAt ?? null,
     currentEvent: '',
     listeners: new Set(),
     controller: null,
@@ -46,6 +50,7 @@ function getOrCreateConnection(clubId: string): SSEConnection {
 }
 
 function notify(conn: SSEConnection) {
+  stateCache.set(conn.clubId, { status: conn.status, expiredAt: conn.expiredAt });
   conn.listeners.forEach((listener) => listener());
 }
 
@@ -70,7 +75,6 @@ function scheduleRetry(clubId: string, conn: SSEConnection, mode: 'reconnect' | 
 function processSSEText(text: string, buffer: string, conn: SSEConnection): string {
   const combined = buffer + text;
   const lines = combined.split(/\r?\n/);
-  // 마지막 줄은 불완전할 수 있으므로 버퍼에 보관
   const remaining = lines.pop() ?? '';
 
   for (const line of lines) {
@@ -141,13 +145,11 @@ async function fetchTokens(): Promise<FetchTokensResult> {
 
 // 브라우저가 API 서버와 직접 커넥션을 유지하여 스트림을 즉시 수신
 async function connect(clubId: string, conn: SSEConnection) {
-  // subscribe 중복 호출 방지용 — fetchTokens 대기 중에도 controller가 존재해야 함
   conn.controller = new AbortController();
 
   try {
     const tokens = await fetchTokens();
 
-    // fetchTokens 대기 중 구독자가 모두 해제된 경우 중단
     if (conn.subscriberCount === 0) return;
 
     if (!tokens.ok) {
@@ -160,7 +162,6 @@ async function connect(clubId: string, conn: SSEConnection) {
       return;
     }
 
-    // fetchTokens 완료 후 새 controller 생성 (이전 것은 abort됐을 수 있음)
     const controller = new AbortController();
     conn.controller = controller;
 
@@ -177,12 +178,10 @@ async function connect(clubId: string, conn: SSEConnection) {
       const refreshRes = await fetch('/api/proxy/auth/refresh', { method: 'POST' });
 
       if (refreshRes.ok) {
-        // 리프레시 성공 → 즉시 재연결 (retryCount 유지)
         connect(clubId, conn);
         return;
       }
 
-      // 리프레시 실패 → 로그인 페이지로 리다이렉트, 재시도 중단
       window.location.href = '/login';
       return;
     }
@@ -218,10 +217,8 @@ async function connect(clubId: string, conn: SSEConnection) {
     const wasConnected = conn.connected;
     conn.connected = false;
 
-    // AbortError는 의도적 종료이므로 무시
     if (error instanceof DOMException && error.name === 'AbortError') return;
 
-    // 연결 성공 후 끊김 (HTTP/2 프로토콜 에러 등) → 재연결
     if (wasConnected) {
       scheduleRetry(clubId, conn, 'reconnect');
       return;
@@ -265,10 +262,8 @@ function subscribe(clubId: string, listener: Listener) {
 
 function getSnapshot(clubId: string): { status: QRStatus; expiredAt: string | null } {
   const conn = connections.get(clubId);
-  return {
-    status: conn?.status ?? null,
-    expiredAt: conn?.expiredAt ?? null,
-  };
+  if (conn) return { status: conn.status, expiredAt: conn.expiredAt };
+  return stateCache.get(clubId) ?? EMPTY_SNAPSHOT;
 }
 
 export { subscribe, getSnapshot, EMPTY_SNAPSHOT, type QRStatus, type Listener };

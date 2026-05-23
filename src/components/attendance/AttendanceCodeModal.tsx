@@ -244,8 +244,8 @@ function AttendanceCodeModal({
               <InputOTP value={code} onChange={setCode} />
 
               {isLoading ? (
-                <p className="typo-caption2 text-text-alternative text-center">
-                  출석 정보를 불러오는 중...
+                <p className="typo-caption2 invisible text-center" aria-hidden>
+                  &nbsp;
                 </p>
               ) : !isExpired ? (
                 <p className="typo-caption2 text-text-strong text-center">
