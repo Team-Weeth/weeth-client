@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import type { QRCode } from 'jsqr';
 import Webcam from 'react-webcam';
 
 import { CameraIcon, CheckRoundIcon } from '@/assets/icons';
@@ -19,6 +20,7 @@ import { useRemainingTime } from '@/hooks';
 import { toastError } from '@/stores/useToastStore';
 import { formatModalDescription } from '@/lib/formatTime';
 import { parseAttendanceQRCode } from '@/utils/attendance/parseAttendanceQRCode';
+import { getQRCornerSegments } from '@/utils/attendance/getQRCornerSegments';
 
 interface AttendanceCodeModalProps {
   open: boolean;
@@ -27,6 +29,16 @@ interface AttendanceCodeModalProps {
   title: string;
   start: string;
   location: string;
+}
+
+interface VideoSize {
+  width: number;
+  height: number;
+}
+
+interface ViewportSize {
+  width: number;
+  height: number;
 }
 
 function AttendanceCodeModal({
@@ -41,8 +53,13 @@ function AttendanceCodeModal({
   const [scanning, setScanning] = useState(false);
   const [cameraReady, setCameraReady] = useState(false);
   const [cameraError, setCameraError] = useState<string | null>(null);
+  const [detectedLocation, setDetectedLocation] = useState<QRCode['location'] | null>(null);
+  const [videoSize, setVideoSize] = useState<VideoSize>({ width: 1, height: 1 });
+  const [viewportSize, setViewportSize] = useState<ViewportSize>({ width: 1, height: 1 });
   const webcamRef = useRef<Webcam>(null);
+  const viewportRef = useRef<HTMLDivElement>(null);
   const hasShownRef = useRef(false);
+  const confirmTimeoutRef = useRef<number | null>(null);
 
   const { status, expiredAt: sseExpiredAt } = useAttendanceSSE({ enabled: open });
   const isLoading = status === null;
@@ -51,9 +68,16 @@ function AttendanceCodeModal({
   const description = formatModalDescription(start, location);
 
   function stopCamera() {
+    if (confirmTimeoutRef.current != null) {
+      window.clearTimeout(confirmTimeoutRef.current);
+      confirmTimeoutRef.current = null;
+    }
     setScanning(false);
     setCameraReady(false);
     setCameraError(null);
+    setDetectedLocation(null);
+    setVideoSize({ width: 1, height: 1 });
+    setViewportSize({ width: 1, height: 1 });
   }
 
   function handleOpenChange(nextOpen: boolean) {
@@ -67,14 +91,19 @@ function AttendanceCodeModal({
   useQRScanner({
     enabled: scanning,
     getVideo: () => webcamRef.current?.video ?? null,
-    onScan: (data) => {
+    onScan: ({ data, location, videoWidth, videoHeight }) => {
       const digits = parseAttendanceQRCode(data);
       if (digits.length !== 6) return;
 
-      onConfirm?.(digits);
-      handleOpenChange(false);
+      setVideoSize({ width: videoWidth, height: videoHeight });
+      setDetectedLocation(location);
+      confirmTimeoutRef.current = window.setTimeout(() => {
+        onConfirm?.(digits);
+        handleOpenChange(false);
+      }, 700);
       return true;
     },
+    onLost: () => setDetectedLocation(null),
   });
 
   useEffect(() => {
@@ -90,6 +119,40 @@ function AttendanceCodeModal({
   useEffect(() => {
     if (!open) hasShownRef.current = false;
   }, [open]);
+
+  useEffect(
+    () => () => {
+      if (confirmTimeoutRef.current != null) {
+        window.clearTimeout(confirmTimeoutRef.current);
+      }
+    },
+    [],
+  );
+
+  useEffect(() => {
+    const element = viewportRef.current;
+    if (!element) return;
+
+    const updateViewportSize = () => {
+      setViewportSize({
+        width: element.clientWidth || 1,
+        height: element.clientHeight || 1,
+      });
+    };
+
+    updateViewportSize();
+
+    const observer = new ResizeObserver(updateViewportSize);
+    observer.observe(element);
+
+    return () => {
+      observer.disconnect();
+    };
+  }, [scanning]);
+
+  const cornerSegments = detectedLocation
+    ? getQRCornerSegments({ location: detectedLocation, videoSize, viewportSize })
+    : [];
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
@@ -108,7 +171,10 @@ function AttendanceCodeModal({
 
         <DialogBody className="flex-1 items-center justify-start gap-300 self-stretch p-400">
           {scanning ? (
-            <div className="bg-container-neutral-alternative relative aspect-3/4 w-full max-w-70 overflow-hidden rounded-md">
+            <div
+              ref={viewportRef}
+              className="bg-container-neutral-alternative relative aspect-3/4 w-full max-w-70 overflow-hidden rounded-md"
+            >
               {cameraError ? (
                 <div className="flex h-full w-full items-center justify-center p-400 text-center">
                   <p className="typo-body2 text-state-error">{cameraError}</p>
@@ -119,13 +185,39 @@ function AttendanceCodeModal({
                     ref={webcamRef}
                     audio={false}
                     videoConstraints={{ facingMode: { ideal: 'environment' } }}
-                    onUserMedia={() => setCameraReady(true)}
+                    onUserMedia={() => {
+                      const video = webcamRef.current?.video;
+                      setVideoSize({
+                        width: video?.videoWidth || 1,
+                        height: video?.videoHeight || 1,
+                      });
+                      setCameraReady(true);
+                    }}
                     onUserMediaError={(err) => {
                       const message = typeof err === 'string' ? err : err.message;
                       setCameraError(message || '카메라에 접근할 수 없습니다.');
                     }}
                     className="h-full w-full object-cover"
                   />
+                  {cameraReady && detectedLocation && (
+                    <svg
+                      className="pointer-events-none absolute inset-0 h-full w-full"
+                      viewBox={`0 0 ${viewportSize.width} ${viewportSize.height}`}
+                      preserveAspectRatio="none"
+                    >
+                      {cornerSegments.map((segment, idx) => (
+                        <path
+                          key={idx}
+                          d={segment}
+                          fill="none"
+                          stroke={'var(--color-brand-primary)'}
+                          strokeWidth="3"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                      ))}
+                    </svg>
+                  )}
                   {!cameraReady && (
                     <div className="absolute inset-0 flex items-center justify-center">
                       <p className="typo-caption2 text-text-alternative">
