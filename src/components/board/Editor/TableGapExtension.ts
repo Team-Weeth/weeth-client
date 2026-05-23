@@ -92,6 +92,7 @@ export const TableGapExtension = Extension.create({
 
           handleDOMEvents: {
             mousedown(view, event) {
+              if (!view.editable) return false;
               const target = event.target as HTMLElement;
               if (!target.classList.contains('table-gap')) return false;
 
