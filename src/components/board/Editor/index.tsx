@@ -61,6 +61,14 @@ export default function Editor({ initialContent }: EditorProps = {}) {
     setShowSlashLinkInput(true);
   };
 
+  const handleEditorClick = (e: React.MouseEvent) => {
+    const linkEl = (e.target as HTMLElement).closest('a[href]');
+    if (!linkEl) return;
+    const rect = linkEl.getBoundingClientRect();
+    setLinkInputPos({ top: rect.bottom + 8, left: rect.left });
+    setShowSlashLinkInput(true);
+  };
+
   return (
     <div ref={containerRef} className="relative flex min-h-[400px] w-full flex-col overflow-hidden">
       {/* 숨겨진 파일 input — 슬래시 메뉴에서 각 ref를 통해 트리거 */}
@@ -123,7 +131,7 @@ export default function Editor({ initialContent }: EditorProps = {}) {
         </div>
       )}
 
-      <div className="relative">
+      <div className="relative" onClick={handleEditorClick}>
         <EditorContent editor={editor} className="max-w-none" />
       </div>
 

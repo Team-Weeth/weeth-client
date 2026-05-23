@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Editor as TiptapEditor } from '@tiptap/core';
+import { Editor as TiptapEditor, getMarkRange } from '@tiptap/core';
 import { Trash2 } from 'lucide-react';
 import { cn } from '@/lib/cn';
 import { Input } from '@/components/ui';
@@ -18,24 +18,40 @@ function LinkInput({ editor, onClose }: LinkInputProps) {
 
   const { from, to } = editor.state.selection;
   const selectedText = editor.state.doc.textBetween(from, to, '');
-  const [title, setTitle] = useState(selectedText);
+  const isEditing = editor.isActive('link');
+
+  const [title, setTitle] = useState(() => {
+    if (selectedText) return selectedText;
+    if (!isEditing) return '';
+    // 선택 없이 기존 링크 위에 커서만 있을 때 → 링크 마크 범위로 텍스트 추출
+    const linkType = editor.state.schema.marks.link;
+    const range = getMarkRange(editor.state.selection.$from, linkType);
+    return range ? editor.state.doc.textBetween(range.from, range.to, '') : '';
+  });
 
   const applyLink = () => {
     const trimmed = url.trim();
     if (!trimmed) return;
 
+    const normalized = /^https?:\/\//i.test(trimmed) ? trimmed : `https://${trimmed}`;
+
     const { empty } = editor.state.selection;
     if (empty) {
-      const linkText = title.trim() || trimmed;
-      editor
-        .chain()
-        .focus()
-        .insertContent({
-          type: 'text',
-          marks: [{ type: 'link', attrs: { href: trimmed } }],
-          text: linkText,
-        })
-        .run();
+      if (isEditing) {
+        // 기존 링크 위에 커서만 있을 때 → href만 업데이트
+        editor.chain().focus().extendMarkRange('link').setLink({ href: normalized }).run();
+      } else {
+        const linkText = title.trim() || normalized;
+        editor
+          .chain()
+          .focus()
+          .insertContent({
+            type: 'text',
+            marks: [{ type: 'link', attrs: { href: normalized } }],
+            text: linkText,
+          })
+          .run();
+      }
     } else {
       if (title.trim() && title !== selectedText) {
         editor
@@ -44,12 +60,12 @@ function LinkInput({ editor, onClose }: LinkInputProps) {
           .extendMarkRange('link')
           .insertContent({
             type: 'text',
-            marks: [{ type: 'link', attrs: { href: trimmed } }],
+            marks: [{ type: 'link', attrs: { href: normalized } }],
             text: title.trim(),
           })
           .run();
       } else {
-        editor.chain().focus().extendMarkRange('link').setLink({ href: trimmed }).run();
+        editor.chain().focus().extendMarkRange('link').setLink({ href: normalized }).run();
       }
     }
     onClose();
@@ -70,8 +86,6 @@ function LinkInput({ editor, onClose }: LinkInputProps) {
       onClose();
     }
   };
-
-  const isEditing = editor.isActive('link');
 
   const handleClickOutside = () => {
     if (url.trim()) {
