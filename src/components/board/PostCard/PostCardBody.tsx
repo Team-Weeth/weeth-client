@@ -17,7 +17,7 @@ interface PostCardBodyProps {
 
 function PostCardBody({ className, content, expandable = false }: PostCardBodyProps) {
   const sanitized = DOMPurify.sanitize(content, {
-    ADD_ATTR: ['target', 'rel'],
+    ADD_ATTR: ['target', 'rel', 'colwidth'],
   });
 
   const { ref, isClamped, isExpanded, setIsExpanded } = useLineClamp<HTMLDivElement>(
@@ -51,7 +51,7 @@ function PostCardBody({ className, content, expandable = false }: PostCardBodyPr
         ref={ref}
         className={cn('self-stretch', expandable && !isExpanded && 'line-clamp-8 overflow-hidden')}
       >
-        <EditorContent editor={editor} className="max-w-none" />
+        <EditorContent editor={editor} className="w-full max-w-[900px]" />
       </div>
       {expandable && isClamped && !isExpanded && (
         <ExpandButton onExpand={() => setIsExpanded(true)} />
