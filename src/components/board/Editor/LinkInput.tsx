@@ -38,8 +38,25 @@ function LinkInput({ editor, onClose }: LinkInputProps) {
     const { empty } = editor.state.selection;
     if (empty) {
       if (isEditing) {
-        // 기존 링크 위에 커서만 있을 때 → href만 업데이트
-        editor.chain().focus().extendMarkRange('link').setLink({ href: normalized }).run();
+        // 기존 링크 위에 커서만 있을 때 → 제목 변경 여부에 따라 텍스트도 함께 업데이트
+        const linkType = editor.state.schema.marks.link;
+        const range = getMarkRange(editor.state.selection.$from, linkType);
+        const currentLinkText = range ? editor.state.doc.textBetween(range.from, range.to, '') : '';
+
+        if (title.trim() && title.trim() !== currentLinkText) {
+          editor
+            .chain()
+            .focus()
+            .extendMarkRange('link')
+            .insertContent({
+              type: 'text',
+              marks: [{ type: 'link', attrs: { href: normalized } }],
+              text: title.trim(),
+            })
+            .run();
+        } else {
+          editor.chain().focus().extendMarkRange('link').setLink({ href: normalized }).run();
+        }
       } else {
         const linkText = title.trim() || normalized;
         editor
