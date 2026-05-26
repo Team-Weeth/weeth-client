@@ -31,7 +31,7 @@ function CreateScheduleModal({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
-        className="bg-background flex w-215 max-w-[calc(100%-2rem)] flex-col gap-0 overflow-hidden rounded-lg p-0"
+        className="bg-background flex w-215 max-w-[calc(100%-2rem)] min-w-90 flex-col gap-0 overflow-hidden rounded-lg p-0"
         showCloseButton={false}
       >
         {/* Header with tabs */}
