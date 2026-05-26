@@ -12,7 +12,9 @@
       "mcp__Claude_in_Chrome__tabs_context_mcp",
       "Bash(export PATH=\"C:/Users/wlslw/AppData/Local/Temp/poppler_extracted/poppler-24.08.0/Library/bin:$PATH\")",
       "Bash(pdftoppm -v)",
-      "Bash(\"C:/Users/wlslw/AppData/Local/Temp/poppler_extracted/poppler-24.08.0/Library/bin/pdftotext.exe\" \"C:/Users/wlslw/Downloads/이유진_포트폴리오_인턴추가버전.pdf\" \"C:/Users/wlslw/AppData/Local/Temp/portfolio.txt\")"
+      "Bash(\"C:/Users/wlslw/AppData/Local/Temp/poppler_extracted/poppler-24.08.0/Library/bin/pdftotext.exe\" \"C:/Users/wlslw/Downloads/이유진_포트폴리오_인턴추가버전.pdf\" \"C:/Users/wlslw/AppData/Local/Temp/portfolio.txt\")",
+      "PowerShell(Get-ChildItem -Path \"D:\\\\project\\\\weeth-client\\\\src\\\\app\" | ForEach-Object { $_.Name })",
+      "PowerShell(Get-Process | Group-Object Name | Select-Object Name, Count, @{N='TotalMem\\(MB\\)';E={[math]::Round\\(\\(\\($_.Group | Measure-Object WorkingSet64 -Sum\\).Sum\\)/1MB,0\\)}} | Sort-Object 'TotalMem\\(MB\\)' -Descending | Select-Object -First 15 | Format-Table -AutoSize; $os = Get-CimInstance Win32_OperatingSystem; \"Total: {0}MB / Free: {1}MB\" -f [math]::Round\\($os.TotalVisibleMemorySize/1KB,0\\), [math]::Round\\($os.FreePhysicalMemory/1KB,0\\))"
     ]
   }
 }
