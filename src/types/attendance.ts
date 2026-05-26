@@ -41,6 +41,8 @@ interface QRCodeData {
 
 type QRCodeResponse = ApiResponse<QRCodeData>;
 
+type QRStatus = 'qr-none' | 'qr-open' | 'qr-close' | null;
+
 export type {
   AttendanceStatus,
   AttendanceData,
@@ -50,4 +52,5 @@ export type {
   AttendanceSummaryResponse,
   QRCodeData,
   QRCodeResponse,
+  QRStatus,
 };

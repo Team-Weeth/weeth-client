@@ -4,11 +4,12 @@ import { useCallback, useSyncExternalStore, useRef } from 'react';
 
 import { useClubId } from '@/stores/useClubStore';
 
+import type { QRStatus } from '@/types/attendance';
+
 import {
   subscribe,
   getSnapshot,
   EMPTY_SNAPSHOT,
-  type QRStatus,
   type Listener,
 } from './attendanceSSEConnection';
 

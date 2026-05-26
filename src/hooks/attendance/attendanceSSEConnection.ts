@@ -1,5 +1,6 @@
 import { API_BASE_PATH } from '@/constants/api';
-import { parseSSEText, type QRStatus } from '@/utils/attendance/parseSSEText';
+import type { QRStatus } from '@/types/attendance';
+import { parseSSEText } from '@/utils/attendance/parseSSEText';
 
 const MAX_RETRY_DELAY = 30000;
 const MAX_RETRY_COUNT = 10;
@@ -125,8 +126,7 @@ async function connect(clubId: string, conn: SSEConnection) {
       const refreshRes = await fetch('/api/proxy/auth/refresh', { method: 'POST' });
 
       if (refreshRes.ok) {
-        connect(clubId, conn);
-        return;
+        return connect(clubId, conn);
       }
 
       window.location.href = '/login';
@@ -231,4 +231,4 @@ function getSnapshot(clubId: string): { status: QRStatus; expiredAt: string | nu
   return stateCache.get(clubId) ?? EMPTY_SNAPSHOT;
 }
 
-export { subscribe, getSnapshot, EMPTY_SNAPSHOT, type QRStatus, type Listener };
+export { subscribe, getSnapshot, EMPTY_SNAPSHOT, type Listener };

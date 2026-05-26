@@ -1,4 +1,4 @@
-type QRStatus = 'qr-none' | 'qr-open' | 'qr-close' | null;
+import type { QRStatus } from '@/types/attendance';
 
 type SSEStateUpdate =
   | { kind: 'status'; status: Exclude<QRStatus, null>; expiredAt: string | null }
@@ -51,12 +51,12 @@ function parseSSEText(text: string, buffer: string, currentEvent: string): Parse
 
       resetRetry = true;
       currentEvent = '';
-    } catch {
-      // ignore parse errors
+    } catch (error) {
+      console.error('[SSE] JSON 파싱 실패:', jsonStr, error);
     }
   }
 
   return { remaining, currentEvent, updates, resetRetry };
 }
 
-export { parseSSEText, type QRStatus, type SSEStateUpdate, type ParseSSEResult };
+export { parseSSEText, type SSEStateUpdate, type ParseSSEResult };
