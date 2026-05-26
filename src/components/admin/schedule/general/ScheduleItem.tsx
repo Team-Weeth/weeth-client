@@ -40,7 +40,7 @@ function ScheduleItem({
       </div>
 
       {/* Content column */}
-      <div className="flex flex-1 flex-col justify-center gap-200 self-stretch">
+      <div className="flex min-w-0 flex-1 flex-col justify-center gap-200 self-stretch">
         <span className="typo-sub3 text-text-strong">{schedule.title}</span>
         <div className="flex flex-wrap items-center gap-200">
           <ScheduleTag variant="type">{SCHEDULE_TYPE_LABEL[schedule.type]}</ScheduleTag>

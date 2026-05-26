@@ -115,7 +115,7 @@ function SchedulePageContent() {
         </TabsList>
 
         <TabsContent value="all" className="mt-400">
-          <Card className="tablet:gap-700 tablet:px-600 tablet:pt-600 tablet:pb-800 gap-600 px-400 pt-400 pb-600">
+          <Card className="tablet:gap-700 tablet:px-600 tablet:pt-600 tablet:pb-800 min-w-78 gap-600 px-400 pt-400 pb-600">
             {/* Month navigator */}
             <MonthNavigator
               year={currentYear}
