@@ -99,7 +99,7 @@ function SchedulePageContent() {
   };
 
   return (
-    <div className="flex min-w-0 flex-col gap-400 p-400 tablet:p-700">
+    <div className="tablet:p-700 flex min-w-0 flex-col gap-400 p-400">
       <CardinalDropdown
         cardinals={cardinals}
         activeCardinal={activeCardinal}
@@ -115,7 +115,7 @@ function SchedulePageContent() {
         </TabsList>
 
         <TabsContent value="all" className="mt-400">
-          <Card className="gap-600 px-400 pt-400 pb-600 tablet:gap-700 tablet:px-600 tablet:pt-600 tablet:pb-800">
+          <Card className="tablet:gap-700 tablet:px-600 tablet:pt-600 tablet:pb-800 gap-600 px-400 pt-400 pb-600">
             {/* Month navigator */}
             <MonthNavigator
               year={currentYear}
@@ -125,8 +125,8 @@ function SchedulePageContent() {
             />
 
             {/* Search bar + Create button */}
-            <div className="flex flex-col gap-300 tablet:flex-row tablet:items-center tablet:justify-between">
-              <div className="relative w-full tablet:w-123">
+            <div className="tablet:flex-row tablet:flex-wrap tablet:items-center tablet:justify-between flex flex-col gap-300">
+              <div className="tablet:w-123 relative w-full">
                 <Image
                   src={SearchIcon}
                   alt="검색"
@@ -147,7 +147,7 @@ function SchedulePageContent() {
               <Button
                 variant="primary"
                 size="lg"
-                className="w-full tablet:w-auto"
+                className="tablet:w-auto tablet:shrink-0 w-full whitespace-nowrap"
                 onClick={() => openCreateModal('EVENT')}
               >
                 <Icon src={AdminCalendarEditIcon} size={20} className="text-text-inverse mr-1" />
