@@ -30,7 +30,7 @@ function PostingActions() {
       <Button
         variant="secondary"
         size="sm"
-        className="tablet:typo-button1 tablet:rounded-md tablet:px-4 text-text-strong"
+        className="tablet:typo-button1 tablet:rounded-md tablet:px-4 text-text-strong whitespace-nowrap"
         onClick={() => history.back()}
       >
         {isEditPage ? '수정 취소' : '작성 취소'}
@@ -40,7 +40,7 @@ function PostingActions() {
         size="sm"
         disabled={isPending}
         onClick={handleSubmit}
-        className="tablet:typo-button1 tablet:rounded-md gap-100"
+        className="tablet:typo-button1 tablet:rounded-md gap-100 whitespace-nowrap"
       >
         <Icon
           src={SendIcon}
