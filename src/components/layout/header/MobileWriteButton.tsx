@@ -30,8 +30,6 @@ function MobileWriteButton() {
   const { data: boards } = useBoardList();
   const activeBoardId = useActiveBoardId();
 
-  const isPostingPage = pathname.includes('/write') || /\/board\/edit\/\d+$/.test(pathname);
-
   const canWrite = (() => {
     if (!boards) return false;
     if (activeBoardId === null) {
@@ -42,7 +40,7 @@ function MobileWriteButton() {
     return activeBoard.boardConfig?.canWrite === true;
   })();
 
-  if (!pathname.startsWith(`/${clubId}/board`) || !canWrite || isPostingPage) return null;
+  if (!pathname.startsWith(`/${clubId}/board`) || !canWrite) return null;
 
   return (
     <>
