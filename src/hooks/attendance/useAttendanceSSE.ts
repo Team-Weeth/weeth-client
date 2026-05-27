@@ -6,12 +6,7 @@ import { useClubId } from '@/stores/useClubStore';
 
 import type { QRStatus } from '@/types/attendance';
 
-import {
-  subscribe,
-  getSnapshot,
-  EMPTY_SNAPSHOT,
-  type Listener,
-} from './attendanceSSEConnection';
+import { subscribe, getSnapshot, EMPTY_SNAPSHOT, type Listener } from './attendanceSSEConnection';
 
 interface UseAttendanceSSEOptions {
   enabled?: boolean;
