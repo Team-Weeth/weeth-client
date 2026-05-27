@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Weeth</string>
+    <string name="title_activity_main">Weeth</string>
+    <string name="package_name">kr.weeth.client</string>
+    <string name="custom_url_scheme">kr.weeth.client</string>
+</resources>
