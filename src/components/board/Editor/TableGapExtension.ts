@@ -22,8 +22,8 @@ export const TableGapExtension = Extension.create({
             const decorations: Decoration[] = [];
             const { doc } = state;
 
-            doc.forEach((node, pos) => {
-              if (node.type.name !== 'table') return;
+            doc.descendants((node, pos) => {
+              if (node.type.name !== 'table') return false;
 
               decorations.push(
                 Decoration.widget(pos, () => {
