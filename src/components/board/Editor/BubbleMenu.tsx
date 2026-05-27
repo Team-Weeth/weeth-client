@@ -12,6 +12,7 @@ import {
   BubbleMenuItem,
   BubbleActiveKey,
 } from '@/constants/board/bubbleMenu';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui';
 import { LinkInput } from '@/components/board/Editor/LinkInput';
 
 const ICON_SIZE = 15;
@@ -80,18 +81,22 @@ function renderButtons(
   active: Record<BubbleActiveKey, boolean>,
 ) {
   return items.map(({ key, label, icon: Icon, command }) => (
-    <button
-      key={key}
-      type="button"
-      aria-label={label}
-      onMouseDown={(e) => {
-        e.preventDefault();
-        command(editor);
-      }}
-      className={cn(bubbleButtonVariants({ active: active[key] }))}
-    >
-      <Icon size={ICON_SIZE} />
-    </button>
+    <Tooltip key={key}>
+      <TooltipTrigger asChild>
+        <button
+          type="button"
+          aria-label={label}
+          onMouseDown={(e) => {
+            e.preventDefault();
+            command(editor);
+          }}
+          className={cn(bubbleButtonVariants({ active: active[key] }))}
+        >
+          <Icon size={ICON_SIZE} />
+        </button>
+      </TooltipTrigger>
+      <TooltipContent variant="sm">{label}</TooltipContent>
+    </Tooltip>
   ));
 }
 
@@ -114,33 +119,40 @@ export function BubbleMenuBar({ editor, containerRef }: BubbleMenuBarProps) {
       }}
       className="border-line bg-container-neutral flex flex-col items-start rounded-md border p-100 shadow-md"
     >
-      <div className="flex items-center">
-        {renderButtons(MARK_BUTTONS, editor, active)}
-        <button
-          type="button"
-          aria-label={LINK_BUTTON.label}
-          onMouseDown={(e) => {
-            e.preventDefault();
-            setShowLinkInput((prev) => !prev);
-          }}
-          className={cn(bubbleButtonVariants({ active: active.link }))}
-        >
-          <LINK_BUTTON.icon size={ICON_SIZE} />
-        </button>
-        <div className="bg-line mx-100 h-4 w-px" />
-        {renderButtons(HEADING_BUTTONS, editor, active)}
-      </div>
-      {showLinkInput && (
-        <div className="pt-100">
-          <LinkInput
-            editor={editor}
-            onClose={() => {
-              setShowLinkInput(false);
-              editor.commands.blur();
-            }}
-          />
+      <TooltipProvider>
+        <div className="flex items-center">
+          {renderButtons(MARK_BUTTONS, editor, active)}
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button
+                type="button"
+                aria-label={LINK_BUTTON.label}
+                onMouseDown={(e) => {
+                  e.preventDefault();
+                  setShowLinkInput((prev) => !prev);
+                }}
+                className={cn(bubbleButtonVariants({ active: active.link }))}
+              >
+                <LINK_BUTTON.icon size={ICON_SIZE} />
+              </button>
+            </TooltipTrigger>
+            <TooltipContent variant="sm">{LINK_BUTTON.label}</TooltipContent>
+          </Tooltip>
+          <div className="bg-line mx-100 h-4 w-px" />
+          {renderButtons(HEADING_BUTTONS, editor, active)}
         </div>
-      )}
+        {showLinkInput && (
+          <div className="pt-100">
+            <LinkInput
+              editor={editor}
+              onClose={() => {
+                setShowLinkInput(false);
+                editor.commands.blur();
+              }}
+            />
+          </div>
+        )}
+      </TooltipProvider>
     </BubbleMenu>
   );
 }
