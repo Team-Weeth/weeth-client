@@ -1,9 +1,9 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { useParams, usePathname, useRouter } from 'next/navigation';
 
-import { BoardNav, CommentDirtyGuardDialog } from '@/components/board';
+import { BoardNav, CategorySelector, CommentDirtyGuardDialog } from '@/components/board';
 import {
   useActiveBoardId,
   useSetActiveBoardId,
@@ -16,9 +16,10 @@ import type { BoardNavItem, BoardType } from '@/types/board';
 
 interface BoardNavClientProps {
   items: BoardNavItem[];
+  footer: ReactNode;
 }
 
-function BoardNavClient({ items }: BoardNavClientProps) {
+function BoardNavClient({ items, footer }: BoardNavClientProps) {
   const activeBoardId = useActiveBoardId();
   const setActiveBoardId = useSetActiveBoardId();
   const setBoardTypeMap = useSetBoardTypeMap();
@@ -112,7 +113,22 @@ function BoardNavClient({ items }: BoardNavClientProps) {
 
   return (
     <>
-      <BoardNav items={items} activeId={activeBoardId} onItemSelect={handleItemSelect} />
+      {/* Mobile: CategorySelector 드롭다운 (tablet 이상에서 숨김) */}
+      <div className="tablet:hidden">
+        <CategorySelector
+          className="shadow-[0_5px_20px_rgba(17,33,49,0.2)]"
+          items={items}
+          activeId={activeBoardId}
+          onItemSelect={handleItemSelect}
+          filterAll={false}
+        />
+      </div>
+
+      {/* Tablet+: 사이드바 (mobile에서 숨김) */}
+      <aside className="tablet:flex hidden shrink-0 flex-col gap-400">
+        <BoardNav items={items} activeId={activeBoardId} onItemSelect={handleItemSelect} />
+        {footer}
+      </aside>
 
       <CommentDirtyGuardDialog
         open={guardOpen}
