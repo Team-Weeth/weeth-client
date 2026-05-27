@@ -12,16 +12,28 @@ import {
   HomeIcon,
   MenuIcon,
 } from '@/assets/icons';
-import { Icon, Sheet, SheetClose, SheetContent, SheetTrigger } from '@/components/ui';
+import { Divider, Icon, Sheet, SheetClose, SheetContent, SheetTrigger } from '@/components/ui';
 import { cn } from '@/lib/cn';
-import { useLogout } from '@/hooks';
+import { useBoardList, useLogout } from '@/hooks';
 import { useIsAdmin } from '@/hooks/shared';
+import { useActiveBoardId } from '@/stores/useBoardNavStore';
 
 function MobileNavSheet() {
   const pathname = usePathname();
   const { clubId } = useParams<{ clubId: string }>();
   const { isAdmin } = useIsAdmin();
   const handleLogout = useLogout();
+  const { data: rawBoards } = useBoardList();
+  const activeBoardId = useActiveBoardId();
+
+  const isPostingPage = pathname.includes('/write') || /\/board\/edit\/\d+$/.test(pathname);
+  const isBoardPage = pathname.startsWith(`/${clubId}/board`) && !isPostingPage;
+
+  const boards = rawBoards
+    ? rawBoards.some((b) => b.type === 'ALL')
+      ? rawBoards
+      : [{ id: null as null, name: '전체', type: 'ALL' as const }, ...rawBoards]
+    : undefined;
 
   const navItems = [
     { id: 'home', label: 'HOME', href: `/${clubId}/home`, icon: HomeIcon },
@@ -73,6 +85,38 @@ function MobileNavSheet() {
                       {label}
                     </Link>
                   </SheetClose>
+                  {id === 'board' && isBoardPage && boards && (
+                    <div className="flex flex-col gap-200 pl-[32px]">
+                      {boards.map((board, index) => {
+                        const prevBoard = boards[index - 1];
+                        const showDivider =
+                          !!prevBoard && prevBoard.type !== 'GENERAL' && board.type === 'GENERAL';
+                        const isActiveBoard = board.id === activeBoardId;
+                        const boardHref =
+                          board.id === null ? `/${clubId}/board` : `/${clubId}/board/${board.id}`;
+
+                        return (
+                          <Fragment key={board.id ?? 'all'}>
+                            {showDivider && <Divider className="my-100" />}
+                            <SheetClose asChild>
+                              <Link
+                                href={boardHref}
+                                className={cn(
+                                  'typo-button1 rounded-md px-400 py-200 transition-colors',
+                                  isActiveBoard
+                                    ? 'text-brand-primary'
+                                    : 'text-text-normal hover:bg-container-neutral-interaction',
+                                )}
+                                aria-current={isActiveBoard ? 'page' : undefined}
+                              >
+                                {board.name}
+                              </Link>
+                            </SheetClose>
+                          </Fragment>
+                        );
+                      })}
+                    </div>
+                  )}
                 </Fragment>
               );
             })}
