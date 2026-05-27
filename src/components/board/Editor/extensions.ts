@@ -81,7 +81,14 @@ export const editorExtensions = [
       rel: 'noopener noreferrer nofollow',
     },
   }),
-  Table.configure({
+  Table.extend({
+    addKeyboardShortcuts() {
+      return {
+        'Alt-t': () =>
+          this.editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run(),
+      };
+    },
+  }).configure({
     resizable: true,
     handleWidth: 5,
     cellMinWidth: 100,
