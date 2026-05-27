@@ -5,6 +5,7 @@ import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { AdminCloseIcon } from '@/assets/icons/admin';
 import { CreateGeneralScheduleForm } from '@/components/admin/schedule/modal/CreateGeneralScheduleForm';
 import { CreateSessionScheduleForm } from '@/components/admin/schedule/modal/CreateSessionScheduleForm';
+import { SCHEDULE_MODAL_CONTENT_CLASS } from '@/components/admin/schedule/modal/constants';
 import { SCHEDULE_TYPE_LABEL } from '@/constants/admin/schedule.constants';
 import type { ScheduleType } from '@/types/admin/schedule';
 import type { CreateSessionBody } from '@/types/admin/session';
@@ -31,8 +32,9 @@ function CreateScheduleModal({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
-        className="bg-background flex w-215 max-w-[calc(100%-2rem)] min-w-90 flex-col gap-0 overflow-hidden rounded-lg p-0"
+        className={SCHEDULE_MODAL_CONTENT_CLASS}
         showCloseButton={false}
+        adminMobileFullscreen={false}
       >
         {/* Header with tabs */}
         <div className="tablet:px-700 tablet:pt-700 flex items-start justify-between px-400 pt-400">

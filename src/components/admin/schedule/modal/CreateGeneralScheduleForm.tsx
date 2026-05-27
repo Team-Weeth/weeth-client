@@ -12,6 +12,7 @@ import {
   isScheduleTitleValid,
 } from '@/utils/admin/scheduleFormUtils';
 
+import { SCHEDULE_MODAL_FOOTER_CLASS } from './constants';
 import { isDateRangeValid, type ScheduleFormState } from './types';
 
 const INITIAL_FORM: ScheduleFormState = {
@@ -60,7 +61,7 @@ function CreateGeneralScheduleForm({ cardinalNumber, onClose }: CreateGeneralSch
 
   return (
     <>
-      <div className="scrollbar-custom tablet:px-15 max-h-175 overflow-y-auto px-400">
+      <div className="scrollbar-custom tablet:px-15 max-h-175 min-h-0 overflow-y-auto px-400">
         <h2 className="typo-h3 text-text-normal py-400">일정 생성</h2>
         <ScheduleFormBody
           form={form}
@@ -70,7 +71,7 @@ function CreateGeneralScheduleForm({ cardinalNumber, onClose }: CreateGeneralSch
         />
       </div>
 
-      <div className="bg-container-neutral flex items-center justify-end gap-200 px-400 pt-400 pb-500">
+      <div className={SCHEDULE_MODAL_FOOTER_CLASS}>
         <Button variant="secondary" size="lg" onClick={onClose}>
           취소
         </Button>
