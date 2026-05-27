@@ -128,8 +128,11 @@ function LinkInput({ editor, onClose }: LinkInputProps) {
     >
       <div className="flex flex-col gap-200 p-300">
         <div>
-          <p className="typo-caption2 text-text-alternative mb-100">페이지 또는 URL</p>
+          <label htmlFor="link-url" className="typo-caption2 text-text-alternative mb-100 block">
+            페이지 또는 URL
+          </label>
           <Input
+            id="link-url"
             type="url"
             value={url}
             onChange={(e) => setUrl(e.target.value)}
@@ -140,8 +143,11 @@ function LinkInput({ editor, onClose }: LinkInputProps) {
           />
         </div>
         <div>
-          <p className="typo-caption2 text-text-alternative mb-100">링크 제목</p>
+          <label htmlFor="link-title" className="typo-caption2 text-text-alternative mb-100 block">
+            링크 제목
+          </label>
           <Input
+            id="link-title"
             type="text"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
