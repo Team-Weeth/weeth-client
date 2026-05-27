@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 import { Tooltip as TooltipPrimitive } from 'radix-ui';
+import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@/lib/cn';
 import { AdminScopeBoundary } from '@/providers';
 
@@ -26,23 +27,40 @@ function TooltipTrigger({ ...props }: React.ComponentProps<typeof TooltipPrimiti
   return <TooltipPrimitive.Trigger data-slot="tooltip-trigger" {...props} />;
 }
 
+const tooltipContentVariants = cva(
+  'animate-in fade-in-0 zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 z-50 w-fit origin-(--radix-tooltip-content-transform-origin) rounded-sm break-keep [box-shadow:var(--shadow-sm)]',
+  {
+    variants: {
+      variant: {
+        default: 'bg-container-primary-interaction text-text-inverse typo-body2 p-200',
+        sm: 'bg-container-neutral-alternative text-text-strong typo-caption2 px-200 py-100',
+      },
+    },
+    defaultVariants: {
+      variant: 'default',
+    },
+  },
+);
+
+interface TooltipContentProps
+  extends
+    React.ComponentProps<typeof TooltipPrimitive.Content>,
+    VariantProps<typeof tooltipContentVariants> {}
+
 function TooltipContent({
   className,
   sideOffset = 8,
+  variant,
   children,
   ...props
-}: React.ComponentProps<typeof TooltipPrimitive.Content>) {
+}: TooltipContentProps) {
   return (
     <TooltipPrimitive.Portal>
       <AdminScopeBoundary>
         <TooltipPrimitive.Content
           data-slot="tooltip-content"
           sideOffset={sideOffset}
-          className={cn(
-            'animate-in fade-in-0 zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 z-50 w-fit origin-(--radix-tooltip-content-transform-origin)',
-            'bg-container-primary-interaction text-text-inverse typo-body2 rounded-sm p-200 break-keep [box-shadow:var(--shadow-sm)]',
-            className,
-          )}
+          className={cn(tooltipContentVariants({ variant }), className)}
           {...props}
         >
           {children}
@@ -52,4 +70,5 @@ function TooltipContent({
   );
 }
 
-export { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider };
+export { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider, tooltipContentVariants };
+export type { TooltipContentProps };

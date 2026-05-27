@@ -135,7 +135,14 @@ export {
 export { Progress } from './progress';
 export { ProgressBar, type ProgressBarProps } from './ProgressBar';
 
-export { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from './Tooltip';
+export {
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
+  TooltipProvider,
+  tooltipContentVariants,
+} from './Tooltip';
+export type { TooltipContentProps } from './Tooltip';
 
 export { FormCard, type FormCardProps } from './FormCard';
 
