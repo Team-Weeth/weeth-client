@@ -11,7 +11,7 @@ import {
   Minus,
   TableCellsMerge,
   TableCellsSplit,
-  Crown,
+  PanelTop,
   LucideIcon,
 } from 'lucide-react';
 
@@ -28,9 +28,9 @@ export interface TableMenuGroup {
 }
 
 /**
- * 선택된 셀의 행/열 인덱스를 기반으로 제목 행/열을 토글한다.
- * 행 선택 시 제목 행, 열 선택 시 제목 열로 자동 판별한다.
- * tableCell ↔ tableHeader 노드 타입을 변환하고 bold도 함께 적용/제거한다.
+ * 선택된 셀의 행/열 인덱스를 기반으로 제목 행/열을 토글
+ * 행 선택 시 제목 행, 열 선택 시 제목 열로 자동 판별
+ * tableCell ↔ tableHeader 노드 타입을 변환하고 bold도 함께 적용/제거
  */
 function toggleHeaderAuto(editor: TiptapEditor) {
   const { state } = editor;
@@ -214,7 +214,7 @@ export const TABLE_MENU_GROUPS: TableMenuGroup[] = [
     items: [
       {
         label: '제목 토글',
-        icon: Crown,
+        icon: PanelTop,
         command: (editor) => toggleHeaderAuto(editor),
       },
       {
