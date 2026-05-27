@@ -73,33 +73,44 @@ export default function Header({ isMain = true }: HeaderProps) {
         )}
         {isMain && clubId && (
           <div className="flex items-center justify-center gap-200">
-            <MobileWriteButton />
-            {isAdmin && (
-              <button
-                type="button"
-                aria-label="운영진 페이지로 이동"
-                onClick={() => router.push(`/${clubId}/admin`)}
-                className="flex cursor-pointer items-center justify-center rounded-full"
-              >
-                <Icon src={ExitToAppIcon} alt="avatar" size={40} className="text-icon-normal p-2" />
-              </button>
+            {isPostingPage ? (
+              <PostingActions />
+            ) : (
+              <>
+                <MobileWriteButton />
+                {isAdmin && (
+                  <button
+                    type="button"
+                    aria-label="운영진 페이지로 이동"
+                    onClick={() => router.push(`/${clubId}/admin`)}
+                    className="flex cursor-pointer items-center justify-center rounded-full"
+                  >
+                    <Icon
+                      src={ExitToAppIcon}
+                      alt="avatar"
+                      size={40}
+                      className="text-icon-normal p-2"
+                    />
+                  </button>
+                )}
+                <button
+                  type="button"
+                  aria-label="마이페이지로 이동"
+                  onClick={() => router.push(`/${clubId}/mypage`)}
+                  className="cursor-pointer rounded-full"
+                >
+                  <Avatar size={40} type="round">
+                    <AvatarImage
+                      key={profileImageUrl ?? 'fallback'}
+                      src={profileImageUrl ?? undefined}
+                      alt="avatar"
+                      className="object-cover"
+                    />
+                    <AvatarFallback />
+                  </Avatar>
+                </button>
+              </>
             )}
-            <button
-              type="button"
-              aria-label="마이페이지로 이동"
-              onClick={() => router.push(`/${clubId}/mypage`)}
-              className="cursor-pointer rounded-full"
-            >
-              <Avatar size={40} type="round">
-                <AvatarImage
-                  key={profileImageUrl ?? 'fallback'}
-                  src={profileImageUrl ?? undefined}
-                  alt="avatar"
-                  className="object-cover"
-                />
-                <AvatarFallback />
-              </Avatar>
-            </button>
           </div>
         )}
       </header>

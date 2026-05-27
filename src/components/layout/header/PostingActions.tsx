@@ -29,20 +29,25 @@ function PostingActions() {
     <div className="flex items-center gap-200">
       <Button
         variant="secondary"
-        size="md"
-        className="typo-button1 text-text-strong px-4"
+        size="sm"
+        className="tablet:typo-button1 tablet:rounded-md tablet:px-4 text-text-strong"
         onClick={() => history.back()}
       >
         {isEditPage ? '수정 취소' : '작성 취소'}
       </Button>
       <Button
         variant="primary"
-        size="md"
+        size="sm"
         disabled={isPending}
         onClick={handleSubmit}
-        className="typo-button1 gap-100"
+        className="tablet:typo-button1 tablet:rounded-md gap-100"
       >
-        <Icon src={SendIcon} size={20} alt="send" className="text-icon-inverse" />
+        <Icon
+          src={SendIcon}
+          size={20}
+          alt="send"
+          className="tablet:inline-flex text-icon-inverse hidden"
+        />
         {isEditPage
           ? isPending
             ? '수정 중...'
