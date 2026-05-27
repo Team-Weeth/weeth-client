@@ -10,6 +10,7 @@ import { useClubName, useUserProfileImageUrl } from '@/stores';
 import { PostingActions } from './PostingActions';
 import { DefaultActions } from './DefaultActions';
 import { MobileNavSheet } from './MobileNavSheet';
+import { MobileWriteButton } from './MobileWriteButton';
 import { Avatar, AvatarFallback, AvatarImage, Icon } from '@/components/ui';
 import { useIsAdmin } from '@/hooks/shared';
 
@@ -72,6 +73,7 @@ export default function Header({ isMain = true }: HeaderProps) {
         )}
         {isMain && clubId && (
           <div className="flex items-center justify-center gap-200">
+            <MobileWriteButton />
             {isAdmin && (
               <button
                 type="button"
