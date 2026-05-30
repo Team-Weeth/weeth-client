@@ -23,3 +23,4 @@ export { useImageDrop } from './useImageDrop';
 export { useProgressAnimation } from './useProgressAnimation';
 export { useCodeHighlight } from './useCodeHighlight';
 export { useMonthNavigator } from './useMonthNavigator';
+export { useMediaQuery } from './useMediaQuery';

@@ -27,7 +27,7 @@ function ScheduleItem({
   return (
     <div
       className={cn(
-        'border-line flex items-start gap-600 px-500 py-400',
+        'border-line tablet:gap-600 tablet:px-500 tablet:py-400 flex items-start gap-400 px-400 py-300',
         !isLast && 'border-b',
         className,
       )}
@@ -40,7 +40,7 @@ function ScheduleItem({
       </div>
 
       {/* Content column */}
-      <div className="flex flex-1 flex-col justify-center gap-200 self-stretch">
+      <div className="flex min-w-0 flex-1 flex-col justify-center gap-200 self-stretch">
         <span className="typo-sub3 text-text-strong">{schedule.title}</span>
         <div className="flex flex-wrap items-center gap-200">
           <ScheduleTag variant="type">{SCHEDULE_TYPE_LABEL[schedule.type]}</ScheduleTag>
@@ -50,7 +50,7 @@ function ScheduleItem({
       </div>
 
       {/* Action buttons */}
-      <div className="flex shrink-0 items-center gap-200">
+      <div className="tablet:flex-row tablet:items-center flex shrink-0 flex-col items-stretch gap-200">
         <Button variant="secondary" size="md" onClick={onEdit}>
           수정
         </Button>
