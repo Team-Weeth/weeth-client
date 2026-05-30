@@ -27,7 +27,7 @@ function ScheduleItem({
   return (
     <div
       className={cn(
-        'border-line flex items-start gap-400 px-400 py-300 tablet:gap-600 tablet:px-500 tablet:py-400',
+        'border-line tablet:gap-600 tablet:px-500 tablet:py-400 flex items-start gap-400 px-400 py-300',
         !isLast && 'border-b',
         className,
       )}
@@ -50,7 +50,7 @@ function ScheduleItem({
       </div>
 
       {/* Action buttons */}
-      <div className="flex shrink-0 flex-col items-stretch gap-200 tablet:flex-row tablet:items-center">
+      <div className="tablet:flex-row tablet:items-center flex shrink-0 flex-col items-stretch gap-200">
         <Button variant="secondary" size="md" onClick={onEdit}>
           수정
         </Button>

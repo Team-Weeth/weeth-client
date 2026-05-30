@@ -65,7 +65,7 @@ function SessionTabContent({
       {/* 세션 카드 */}
       <div className="bg-container-neutral flex flex-col rounded-lg shadow-sm">
         {/* 카드 헤더 */}
-        <div className="flex h-[72px] items-center justify-between px-400 tablet:px-600">
+        <div className="tablet:px-600 flex h-[72px] items-center justify-between px-400">
           <span className="typo-sub3 text-text-normal">세션</span>
           <Button variant="primary" size="lg" onClick={onCreateSession}>
             <Image src={AdminCalendarEditIcon} alt="" width={20} height={20} className="mr-1" />
@@ -74,7 +74,7 @@ function SessionTabContent({
         </div>
 
         {/* 카드 body */}
-        <div className="p-400 pt-0 tablet:p-600 tablet:pt-0">
+        <div className="tablet:p-600 tablet:pt-0 p-400 pt-0">
           <SessionTable
             groups={sessions}
             onManageAttendance={onManageAttendance}
