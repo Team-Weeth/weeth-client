@@ -79,3 +79,16 @@ No direct commits to main branch.
 ## Detail Rules
 
 Architecture, code style, component guide, state management, and git conventions are documented in `.claude/rules/`. Refer to those files for comprehensive guidance.
+
+## Team Knowledge Base (`docs/`)
+
+`docs/` is the team's shared Obsidian vault — decisions, domain glossary, ADRs, meeting notes, session logs, troubleshooting. When the user asks about *why* a pattern exists, what a domain term means, or what was decided, **read `docs/` first** before grepping code.
+
+Key entry points:
+- `docs/홈.md` — map of contents
+- `docs/아키텍처/도메인-용어집.md` — Cardinal, Session, Board, etc.
+- `docs/아키텍처/결정-기록/` — ADRs (the *why*)
+- `docs/트러블슈팅/` — known pitfalls
+- `docs/로그/세션로그-{name}-{date}.md` — daily session logs
+
+When making notable decisions, hitting tricky bugs, or finishing a session, write to the appropriate `docs/` file. The user often asks for this explicitly ("ADR로 만들어줘", "트러블슈팅에 추가해줘", "오늘 세션로그 정리").
