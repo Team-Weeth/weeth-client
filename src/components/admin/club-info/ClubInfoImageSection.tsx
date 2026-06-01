@@ -21,9 +21,9 @@ function ClubInfoImageSection({
 }: ClubInfoImageSectionProps) {
   return (
     <AdminInfoCard title="이미지" titleGapClassName="mt-400" contentClassName="gap-0">
-      <div className="flex w-full gap-500">
+      <div className="tablet:flex-row tablet:gap-500 flex w-full flex-col gap-400">
         <ImageUploadField
-          className="w-47 shrink-0"
+          className="tablet:w-47 tablet:shrink-0 w-full"
           label="프로필 이미지"
           title="클릭하여 업로드"
           description="정사각형 권장"
@@ -34,7 +34,7 @@ function ClubInfoImageSection({
           onReset={onProfileReset}
         />
         <ImageUploadField
-          className="min-w-0 flex-1"
+          className="tablet:flex-1 min-h-50 w-full min-w-0"
           label="배경 이미지"
           title="클릭 혹은 파일을 이곳에 드롭하세요"
           description="1440 × 364 px 권장"

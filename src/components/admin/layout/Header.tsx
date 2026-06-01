@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { usePathname } from 'next/navigation';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel } from '@/components/ui';
 import { useLogout } from '@/hooks';
+import { useIsAdminEditMode } from '@/stores';
 
 const PAGE_TITLES: Record<string, string> = {
   '/admin/member': '멤버 관리',
@@ -17,8 +18,11 @@ export function Header() {
   const handleLogout = useLogout();
   const pathname = usePathname();
   const [logoutOpen, setLogoutOpen] = useState(false);
+  const isEditMode = useIsAdminEditMode();
 
   const title = Object.entries(PAGE_TITLES).find(([path]) => pathname.includes(path))?.[1];
+
+  if (isEditMode) return null;
 
   return (
     <>

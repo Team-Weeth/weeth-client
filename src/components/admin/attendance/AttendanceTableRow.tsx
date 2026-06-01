@@ -14,7 +14,7 @@ function AttendanceTableRow({ isEditing, position }: AttendanceTableRowProps) {
       {/* left cell */}
       <div
         className={cn(
-          'border-line flex h-[48px] min-w-0 flex-1 items-center border-r border-b border-l px-400 py-300',
+          'border-line tablet:px-400 flex h-[48px] min-w-0 flex-1 items-center border-r border-b border-l px-300 py-300',
           isTop && 'rounded-tl-sm border-t',
           isBottom && 'rounded-bl-sm',
         )}
@@ -27,7 +27,7 @@ function AttendanceTableRow({ isEditing, position }: AttendanceTableRowProps) {
         <>
           <div
             className={cn(
-              'border-line flex w-[79px] items-center justify-center border-r border-b px-400 py-300',
+              'border-line tablet:w-[79px] tablet:px-400 flex w-[56px] items-center justify-center border-r border-b px-200 py-300',
               isTop && 'border-t',
             )}
           >
@@ -35,7 +35,7 @@ function AttendanceTableRow({ isEditing, position }: AttendanceTableRowProps) {
           </div>
           <div
             className={cn(
-              'border-line flex w-[79px] items-center justify-center border-r border-b px-400 py-300',
+              'border-line tablet:w-[79px] tablet:px-400 flex w-[56px] items-center justify-center border-r border-b px-200 py-300',
               isTop && 'rounded-tr-sm border-t',
               isBottom && 'rounded-br-sm',
             )}
@@ -46,7 +46,7 @@ function AttendanceTableRow({ isEditing, position }: AttendanceTableRowProps) {
       ) : (
         <div
           className={cn(
-            'border-line flex w-[158px] items-center justify-center border-r border-b px-400 py-300',
+            'border-line tablet:w-[158px] tablet:px-400 flex w-[112px] items-center justify-center border-r border-b px-200 py-300',
             isTop && 'rounded-tr-sm border-t',
             isBottom && 'rounded-br-sm',
           )}
