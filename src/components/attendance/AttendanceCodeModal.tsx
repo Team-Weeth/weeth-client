@@ -61,7 +61,7 @@ function AttendanceCodeModal({
   const hasShownRef = useRef(false);
   const confirmTimeoutRef = useRef<number | null>(null);
 
-  const { status, expiredAt: sseExpiredAt } = useAttendanceSSE();
+  const { status, expiredAt: sseExpiredAt } = useAttendanceSSE({ enabled: open });
   const isLoading = status === null;
   const { minutes, seconds, isExpired } = useRemainingTime(sseExpiredAt ?? '');
   const isComplete = code.length === 6;
@@ -244,8 +244,8 @@ function AttendanceCodeModal({
               <InputOTP value={code} onChange={setCode} />
 
               {isLoading ? (
-                <p className="typo-caption2 text-text-alternative text-center">
-                  출석 정보를 불러오는 중...
+                <p className="typo-caption2 invisible text-center" aria-hidden>
+                  &nbsp;
                 </p>
               ) : !isExpired ? (
                 <p className="typo-caption2 text-text-strong text-center">

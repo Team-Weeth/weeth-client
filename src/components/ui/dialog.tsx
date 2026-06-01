@@ -8,7 +8,6 @@ import { cn } from '@/lib/cn';
 import { Button } from '@/components/ui/Button';
 import { Divider } from '@/components/ui/Divider';
 import { Icon } from '@/components/ui/Icon';
-// import { AdminMobileBlockedContent } from '@/components/admin/AdminMobileBlockedContent';
 import { AdminScopeBoundary, useIsAdminScope } from '@/providers';
 
 function Dialog({ ...props }: React.ComponentProps<typeof DialogPrimitive.Root>) {
@@ -52,10 +51,13 @@ function DialogContent({
   overlayClassName,
   children,
   showCloseButton = true,
+  adminMobileFullscreen = true,
   ...props
 }: React.ComponentProps<typeof DialogPrimitive.Content> & {
   showCloseButton?: boolean;
   overlayClassName?: string;
+  /** admin 스코프에서 tablet 미만일 때 전체화면으로 전환할지 여부 (기본 true) */
+  adminMobileFullscreen?: boolean;
 }) {
   const isAdminScope = useIsAdminScope();
 
@@ -68,17 +70,13 @@ function DialogContent({
         className={cn(
           'bg-container-neutral data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 fixed top-[50%] left-[50%] z-[80] grid w-78.75 max-w-[calc(100%-2rem)] translate-x-[-50%] translate-y-[-50%] rounded-lg border p-400 shadow-lg duration-200 outline-none sm:max-w-lg',
           isAdminScope &&
+            adminMobileFullscreen &&
             'max-tablet:inset-0 max-tablet:top-0 max-tablet:left-0 max-tablet:h-screen max-tablet:w-screen max-tablet:max-w-none max-tablet:translate-x-0 max-tablet:translate-y-0 max-tablet:rounded-none max-tablet:border-0 max-tablet:p-0',
           className,
         )}
         {...props}
       >
         {children}
-        {/* {isAdminScope ? (
-          <AdminMobileBlockedContent>{children}</AdminMobileBlockedContent>
-        ) : (
-          children
-        )} */}
         {showCloseButton && (
           <DialogPrimitive.Close
             data-slot="dialog-close"

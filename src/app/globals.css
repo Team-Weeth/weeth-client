@@ -758,6 +758,79 @@ select:focus {
   content: none !important;
 }
 
+/* 표 (Table) */
+.ProseMirror .tableWrapper {
+  overflow-x: auto;
+  margin: var(--spacing-400) 0;
+}
+
+.ProseMirror .tableWrapper table {
+  margin: 0;
+}
+
+.ProseMirror table {
+  border-collapse: collapse;
+  width: 100%;
+  table-layout: fixed;
+  overflow: hidden;
+}
+
+.ProseMirror th,
+.ProseMirror td {
+  border: 1px solid var(--line);
+  padding: var(--spacing-200) var(--spacing-300);
+  vertical-align: top;
+  position: relative;
+  min-width: 100px;
+}
+
+.ProseMirror th {
+  background-color: var(--container-neutral-alternative);
+  font-weight: 600;
+}
+
+.ProseMirror th > p,
+.ProseMirror td > p {
+  margin: 0;
+}
+
+.ProseMirror .selectedCell::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-color: var(--container-primary-alternative);
+  opacity: 0.3;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.ProseMirror .column-resize-handle {
+  position: absolute;
+  top: 0;
+  right: -2px;
+  bottom: -2px;
+  width: 2px;
+  background-color: var(--brand-primary);
+  pointer-events: none;
+  z-index: 20;
+}
+
+.ProseMirror.resize-cursor {
+  cursor: col-resize;
+}
+
+/* 테이블 gap (위/아래 paragraph 삽입 영역) */
+.ProseMirror .table-gap {
+  height: 20px;
+  position: relative;
+  cursor: text;
+}
+
+/* 링크 */
+.ProseMirror a {
+  @apply text-text-alternative underline underline-offset-2;
+}
+
 /* 인라인 코드 */
 .ProseMirror p:has(> code:not(pre code)) {
   @apply py-100;
