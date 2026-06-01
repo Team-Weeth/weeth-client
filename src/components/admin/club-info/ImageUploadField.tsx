@@ -93,7 +93,10 @@ function PreviewContent({
             variant="secondary"
             size="md"
             className="typo-button1 w-full gap-100 px-400 py-200"
-            onClick={onReupload}
+            onClick={(e) => {
+              e.stopPropagation();
+              onReupload();
+            }}
           >
             <Icon src={AdminCloudUploadIcon} alt="upload" size={16} className="text-icon-strong" />
             이미지 업로드
@@ -103,7 +106,10 @@ function PreviewContent({
             variant="secondary"
             size="md"
             className="typo-button1 w-full px-400 py-200"
-            onClick={onReset}
+            onClick={(e) => {
+              e.stopPropagation();
+              onReset();
+            }}
           >
             기본 이미지로 변경
           </Button>
