@@ -21,13 +21,21 @@ interface CategorySelectorProps {
   items: BoardNavItem[];
   activeId: number | null;
   onItemSelect?: (id: number | null) => void;
+  /** false로 설정하면 드롭다운 목록에서 ALL 타입 항목을 필터링하지 않음 (기본값: true) */
+  filterAll?: boolean;
 }
 
 /**
  * 글쓰기 페이지의 카테고리(채널) 선택 드롭다운
  * 현재 선택된 채널을 Breadcrumb으로 표시하고, 클릭 시 ChannelList 드롭다운을 노출
  */
-function CategorySelector({ className, items, activeId, onItemSelect }: CategorySelectorProps) {
+function CategorySelector({
+  className,
+  items,
+  activeId,
+  onItemSelect,
+  filterAll = true,
+}: CategorySelectorProps) {
   const [open, setOpen] = useState(false);
   const activeItem = items.find((item) => item.id === activeId);
   const clubName = useClubName();
@@ -45,7 +53,7 @@ function CategorySelector({ className, items, activeId, onItemSelect }: Category
     <DropdownMenu open={open} onOpenChange={setOpen}>
       <DropdownMenuTrigger
         className={cn(
-          'bg-container-neutral flex h-[40px] items-center self-stretch rounded-lg py-200 pr-200 pl-300',
+          'bg-container-neutral flex h-[40px] w-full items-center rounded-lg py-200 pr-200 pl-300',
           className,
         )}
       >
@@ -64,7 +72,7 @@ function CategorySelector({ className, items, activeId, onItemSelect }: Category
       >
         <ChannelList
           className="w-full"
-          items={items.filter((item) => item.type !== 'ALL')}
+          items={filterAll ? items.filter((item) => item.type !== 'ALL') : items}
           activeId={activeId}
           onItemSelect={handleItemSelect}
         />

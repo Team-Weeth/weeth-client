@@ -1,8 +1,8 @@
 import type { BoardType } from '@/types/board';
 
 export const BOARD_TYPE_ORDER: Record<BoardType, number> = {
-  NOTICE: 0,
-  ALL: 1,
+  ALL: 0,
+  NOTICE: 1,
   GENERAL: 2,
 };
 
