@@ -6,6 +6,12 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "cap:sync": "cap sync",
+    "cap:open:ios": "cap open ios",
+    "cap:open:android": "cap open android",
+    "cap:dev:ios": "CAP_SERVER_URL=http://localhost:3000 cap run ios",
+    "cap:dev:android": "CAP_SERVER_URL=http://10.0.2.2:3000 cap run android",
+    "cap:prod:sync": "CAP_SERVER_URL=https://weeth.kr cap sync",
     "typecheck": "tsc --noEmit",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
@@ -17,6 +23,10 @@
     "generate:tests": "tsx scripts/generate-tests.ts"
   },
   "dependencies": {
+    "@capacitor/android": "^8.3.4",
+    "@capacitor/cli": "^8.3.4",
+    "@capacitor/core": "^8.3.4",
+    "@capacitor/ios": "^8.3.4",
     "@dnd-kit/core": "^6.3.1",
     "@dnd-kit/sortable": "^10.0.0",
     "@dnd-kit/utilities": "^3.2.2",
