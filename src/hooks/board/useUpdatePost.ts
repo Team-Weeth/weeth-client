@@ -41,7 +41,7 @@ export function useUpdatePost() {
       queryClient.removeQueries({
         queryKey: ['posts', 'detail', clubId, result.boardId, result.id],
       });
-      queryClient.invalidateQueries({ queryKey: ['posts'] });
+      queryClient.invalidateQueries({ queryKey: ['posts', clubId] });
       queryClient.invalidateQueries({ queryKey: ['home', 'recent-posts', clubId] });
       queryClient.invalidateQueries({ queryKey: ['home', 'recent-notices', clubId] });
       queryClient.invalidateQueries({ queryKey: ['home', 'unread-notice', clubId] });
