@@ -12,9 +12,8 @@ import {
 } from '@/lib/apis/cookies';
 
 function isDevLoginEnabled() {
-  return (
-    process.env.NODE_ENV === 'development' || process.env.NEXT_PUBLIC_ENABLE_DEV_LOGIN === 'true'
-  );
+  if (process.env.NODE_ENV === 'production') return false;
+  return process.env.NODE_ENV === 'development' || process.env.ENABLE_DEV_LOGIN === 'true';
 }
 
 async function devLoginAction(formData: FormData) {

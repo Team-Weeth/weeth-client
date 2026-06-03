@@ -1,4 +1,4 @@
-package com.getcapacitor.myapp;
+package kr.weeth.client;
 
 import static org.junit.Assert.*;
 
