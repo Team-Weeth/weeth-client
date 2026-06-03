@@ -1,17 +1,12 @@
 import { CreateClubForm } from '@/components/auth/hub';
-import { apiServer } from '@/lib/apis';
-
-interface School {
-  schoolName: string;
-  region: string;
-}
+import { universityServerApi } from '@/lib/apis/university.server';
 
 export default async function CreateClubPage() {
   let schoolNames: string[] = [];
   let schoolLoadError = false;
 
   try {
-    const json = await apiServer.get<{ data: School[] }>('/university/schools');
+    const json = await universityServerApi.getSchools();
     const schools = json.data;
     const counts = schools.reduce<Record<string, number>>((acc, s) => {
       acc[s.schoolName] = (acc[s.schoolName] ?? 0) + 1;
