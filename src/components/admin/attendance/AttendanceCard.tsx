@@ -82,15 +82,15 @@ function AttendanceCard({
       <div className={cn('overflow-hidden rounded-md', className)} {...props}>
         <button
           type="button"
-          className="border-line flex h-[72px] w-full cursor-pointer items-center justify-between rounded-md border px-600"
+          className="border-line tablet:h-[72px] tablet:px-600 tablet:py-0 flex min-h-[72px] w-full cursor-pointer items-center justify-between gap-300 rounded-md border px-400 py-300"
           onClick={handleExpand}
         >
-          <div className="flex items-center gap-300">
-            <span className="typo-sub1 text-text-normal">{date}</span>
-            <span className="typo-sub1 text-text-normal">{title}</span>
+          <div className="flex min-w-0 flex-1 flex-wrap items-center gap-x-300 gap-y-100 text-left">
+            <span className="typo-sub1 text-text-normal shrink-0">{date}</span>
+            <span className="typo-sub1 text-text-normal min-w-0 break-all">{title}</span>
             {isCurrentWeek && <Badge>이번 주</Badge>}
           </div>
-          <Icon src={ArrowDownIcon} size={24} className="text-icon-normal" />
+          <Icon src={ArrowDownIcon} size={24} className="text-icon-normal shrink-0" />
         </button>
       </div>
     );
@@ -101,28 +101,28 @@ function AttendanceCard({
       {/* Green header */}
       <button
         type="button"
-        className="bg-container-primary flex h-[72px] w-full cursor-pointer items-center justify-between px-600"
+        className="bg-container-primary tablet:h-[72px] tablet:px-600 tablet:py-0 flex min-h-[72px] w-full cursor-pointer items-center justify-between gap-300 px-400 py-300"
         onClick={collapse}
       >
-        <div className="flex items-center gap-300">
-          <span className="typo-sub1 text-text-inverse">{date}</span>
-          <span className="typo-sub1 text-text-inverse">{title}</span>
+        <div className="flex min-w-0 flex-1 flex-wrap items-center gap-x-300 gap-y-100 text-left">
+          <span className="typo-sub1 text-text-inverse shrink-0">{date}</span>
+          <span className="typo-sub1 text-text-inverse min-w-0 break-all">{title}</span>
           {isCurrentWeek && (
-            <span className="typo-caption1 rounded-[5px] bg-white/30 px-200 py-100 text-white">
+            <span className="typo-caption1 shrink-0 rounded-[5px] bg-white/30 px-200 py-100 text-white">
               이번 주
             </span>
           )}
         </div>
-        <span className="flex items-center justify-center">
+        <span className="flex shrink-0 items-center justify-center">
           <Icon src={ArrowDownIcon} size={24} className="rotate-180 text-white" />
         </span>
       </button>
 
       {/* Body */}
-      <div className="flex flex-col gap-600 p-450">
+      <div className="tablet:gap-600 tablet:p-450 flex flex-col gap-400 p-300">
         {/* Search + Actions */}
-        <div className="flex items-center justify-between">
-          <div className="bg-container-neutral relative h-12 w-[492px] rounded-sm">
+        <div className="tablet:flex-row tablet:items-center tablet:justify-between flex flex-col gap-300">
+          <div className="bg-container-neutral tablet:w-[492px] relative h-12 w-full rounded-sm">
             <Icon
               src={SearchIcon}
               size={24}
@@ -138,7 +138,7 @@ function AttendanceCard({
             />
           </div>
           {isEditing ? (
-            <div className="flex gap-200">
+            <div className="flex justify-end gap-200">
               <Button variant="secondary" size="lg" onClick={handleCancel} disabled={isSaving}>
                 취소
               </Button>
@@ -147,7 +147,12 @@ function AttendanceCard({
               </Button>
             </div>
           ) : (
-            <Button variant="secondary" size="lg" onClick={startEdit}>
+            <Button
+              variant="secondary"
+              size="lg"
+              onClick={startEdit}
+              className="tablet:w-auto w-full"
+            >
               수정
             </Button>
           )}

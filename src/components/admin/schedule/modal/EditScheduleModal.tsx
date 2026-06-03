@@ -26,6 +26,7 @@ import {
   toInitialScheduleForm,
 } from '@/utils/admin/scheduleFormUtils';
 
+import { SCHEDULE_MODAL_FOOTER_CLASS } from './constants';
 import { DiscardConfirmArea } from './DiscardConfirmArea';
 import { EditModalShell } from './EditModalShell';
 import { ScheduleFormBody } from './ScheduleFormBody';
@@ -207,7 +208,7 @@ function EditScheduleModalContent({
       </div>
 
       {/* Body */}
-      <div className="scrollbar-custom tablet:px-700 max-h-175 overflow-y-auto px-400">
+      <div className="scrollbar-custom tablet:px-700 max-h-175 min-h-0 overflow-y-auto px-400">
         <h2 className="typo-h3 text-text-normal py-400">일반 일정 수정</h2>
         <ScheduleFormBody
           form={form}
@@ -218,7 +219,7 @@ function EditScheduleModalContent({
       </div>
 
       {/* Footer */}
-      <div className="bg-container-neutral flex items-center justify-end gap-200 px-400 pt-400 pb-500">
+      <div className={SCHEDULE_MODAL_FOOTER_CLASS}>
         <DiscardConfirmArea
           open={discardSource === 'cancel'}
           onOpenChange={closeDiscardAlert('cancel')}

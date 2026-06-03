@@ -2,12 +2,15 @@
 
 import { EditorContent, FloatingMenu } from '@tiptap/react';
 import { usePostEditor } from './usePostEditor';
+import { useLinkPopup } from './useLinkPopup';
 import { BubbleMenuBar } from './BubbleMenu';
+import { TableMenu } from './TableMenu';
 import { SlashMenuContent } from './SlashMenu';
+import { LinkInput } from './LinkInput';
 import { ImageList } from '../ImageList';
 import { FileList } from '../FileList';
 import { useFileUpload } from '@/hooks/useFileUpload';
-import { createMediaItems } from '@/constants/board/slashMenu';
+import { createMediaItems, createLinkItem } from '@/constants/board/slashMenu';
 
 const floatingMenuTippyOptions = {
   duration: 100,
@@ -46,6 +49,12 @@ export default function Editor({ initialContent }: EditorProps = {}) {
     processFiles,
     initialContent,
   });
+  const {
+    pos: linkInputPos,
+    openFromSlashMenu,
+    handleEditorClick,
+    close: closeLinkInput,
+  } = useLinkPopup(editor);
 
   if (!editor) return null;
 
@@ -71,6 +80,7 @@ export default function Editor({ initialContent }: EditorProps = {}) {
       />
 
       <BubbleMenuBar editor={editor} containerRef={containerRef} />
+      <TableMenu editor={editor} containerRef={containerRef} />
 
       <FloatingMenu
         editor={editor}
@@ -88,14 +98,23 @@ export default function Editor({ initialContent }: EditorProps = {}) {
             extraGroups={[
               {
                 title: '미디어',
-                items: createMediaItems(picker.openImagePicker, picker.openFilePicker),
+                items: [
+                  ...createMediaItems(picker.openImagePicker, picker.openFilePicker),
+                  createLinkItem(openFromSlashMenu),
+                ],
               },
             ]}
           />
         )}
       </FloatingMenu>
 
-      <div className="relative">
+      {linkInputPos && (
+        <div className="fixed z-50" style={{ top: linkInputPos.top, left: linkInputPos.left }}>
+          <LinkInput editor={editor} onClose={closeLinkInput} />
+        </div>
+      )}
+
+      <div className="relative" onClick={handleEditorClick}>
         <EditorContent editor={editor} className="max-w-none" />
       </div>
 

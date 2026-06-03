@@ -1,5 +1,5 @@
 import { Editor as TiptapEditor } from '@tiptap/core';
-import { Type, Bold, Italic, Code2, Heading1, Heading2, Heading3 } from 'lucide-react';
+import { Type, Bold, Italic, Code2, Heading1, Heading2, Heading3, Link2 } from 'lucide-react';
 import { MenuItem } from '@/types/editor';
 
 export type BubbleActiveKey =
@@ -7,6 +7,7 @@ export type BubbleActiveKey =
   | 'bold'
   | 'italic'
   | 'code'
+  | 'link'
   | 'heading1'
   | 'heading2'
   | 'heading3';
@@ -41,6 +42,13 @@ export const MARK_BUTTONS: BubbleMenuItem[] = [
     command: (e: TiptapEditor) => e.chain().focus().toggleCode().run(),
   },
 ];
+
+export const LINK_BUTTON: BubbleMenuItem = {
+  key: 'link',
+  label: '링크',
+  icon: Link2,
+  command: () => {},
+};
 
 export const HEADING_BUTTONS: BubbleMenuItem[] = [
   {
