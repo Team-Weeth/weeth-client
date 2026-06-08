@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useParams, usePathname, useRouter } from 'next/navigation';
-import { AdminForumIcon, AdminCalendarIcon, AdminSettingIcon } from '@/assets/icons/admin';
+import { AdminForumIcon, AdminCalendarIcon, AdminSettingIcon, AdminDueIcon } from '@/assets/icons/admin';
 import { CheckRoundIcon, ExitIcon, PeopleIcon } from '@/assets/icons';
 
 import {
@@ -51,6 +51,7 @@ function LNB() {
       path: `/${clubId}/admin/attendance`,
     },
     { id: 'board', icon: AdminForumIcon, label: '게시판 관리', path: `/${clubId}/admin/board` },
+    { id: 'dues', icon: AdminDueIcon, label: '회비 관리', path: `/${clubId}/admin/dues` },
   ];
 
   const infoNavItems = [

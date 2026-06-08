@@ -29,3 +29,6 @@ export { default as AdminBoardMoveIcon } from './ic_admin_board_move.svg';
 
 export { default as AdminToggleOpenIcon } from './ic_admin_toggle_open.svg';
 export { default as AdminToggleCloseIcon } from './ic_admin_toggle_close.svg';
+
+export { default as AdminDueIcon } from './ic_admin_due.svg';
+export { default as AdminReceiptIcon } from './ic_admin_receipt.svg';
