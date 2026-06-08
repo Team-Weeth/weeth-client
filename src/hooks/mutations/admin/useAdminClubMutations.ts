@@ -4,6 +4,7 @@ import { adminClubApi } from '@/lib/apis/adminClub';
 import type { UpdateClubBody } from '@/lib/apis/adminClub';
 import { revalidatePublicClub } from '@/lib/actions/club';
 import { useClubId } from '@/stores';
+import { adminQueryKeys } from '@/hooks/queries/admin/adminQueryKeys';
 
 export function useUpdateClub() {
   const queryClient = useQueryClient();
@@ -18,7 +19,7 @@ export function useUpdateClub() {
       if (clubId) revalidatePublicClub(clubId);
     },
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin', 'club', clubId] });
+      queryClient.invalidateQueries({ queryKey: adminQueryKeys.club(clubId) });
     },
   });
 }
@@ -36,7 +37,7 @@ export function useDeleteClubProfileImage() {
       if (clubId) revalidatePublicClub(clubId);
     },
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin', 'club', clubId] });
+      queryClient.invalidateQueries({ queryKey: adminQueryKeys.club(clubId) });
     },
   });
 }
@@ -54,7 +55,7 @@ export function useDeleteClubBackgroundImage() {
       if (clubId) revalidatePublicClub(clubId);
     },
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin', 'club', clubId] });
+      queryClient.invalidateQueries({ queryKey: adminQueryKeys.club(clubId) });
     },
   });
 }

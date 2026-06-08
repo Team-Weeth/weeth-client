@@ -1,0 +1,27 @@
+export const adminQueryKeys = {
+  all: ['admin'] as const,
+
+  club: (clubId: string | null) => ['admin', 'club', clubId] as const,
+
+  members: (clubId: string | null) => ['admin', 'members', clubId] as const,
+
+  boards: (clubId: string | null) => ['admin', 'boards', clubId] as const,
+
+  // 월간 일정 — 세션/이벤트 뮤테이션이 schedules prefix로 prefix invalidate
+  schedules: (clubId: string | null) => ['admin', 'schedules', clubId] as const,
+  monthlySchedule: (clubId: string | null, year: number, month: number) =>
+    ['admin', 'schedules', clubId, year, month] as const,
+  scheduleDetail: (clubId: string | null, eventId: number | null) =>
+    ['admin', 'schedule', clubId, eventId] as const,
+
+  // 세션 — 출석/일정 모두 같은 엔드포인트를 공유하므로 단일 prefix
+  sessions: (clubId: string | null) => ['admin', 'sessions', clubId] as const,
+  sessionsByCardinal: (clubId: string | null, cardinal: number | null) =>
+    ['admin', 'sessions', clubId, cardinal] as const,
+  sessionDetail: (clubId: string | null, sessionId: number | null) =>
+    ['admin', 'sessionDetail', clubId, sessionId] as const,
+
+  // 출석 상세
+  attendance: (clubId: string | null, sessionId: number | null) =>
+    ['admin', 'attendance', clubId, sessionId] as const,
+} as const;

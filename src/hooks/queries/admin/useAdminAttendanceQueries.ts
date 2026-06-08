@@ -6,12 +6,13 @@ import { ATTENDANCE_ERROR_MESSAGE } from '@/constants/attendance/error';
 import { useClubId } from '@/stores';
 import { toastSuccess, toastError } from '@/stores/useToastStore';
 import type { ApiResponse } from '@/types/common';
+import { adminQueryKeys } from './adminQueryKeys';
 
 export function useAdminSessions(cardinal: number | null) {
   const clubId = useClubId();
 
   return useQuery({
-    queryKey: ['admin', 'sessions', clubId, cardinal],
+    queryKey: adminQueryKeys.sessionsByCardinal(clubId, cardinal),
     queryFn: async () => {
       const res = await adminAttendanceApi.getSessions(clubId!, cardinal ?? undefined);
       return res.data.data;
@@ -26,12 +27,14 @@ export function useAdminAttendance(sessionId: number | null, options?: { enabled
   const clubId = useClubId();
 
   return useQuery({
-    queryKey: ['admin', 'attendance', clubId, sessionId],
+    queryKey: adminQueryKeys.attendance(clubId, sessionId),
     queryFn: async () => {
       const res = await adminAttendanceApi.getAttendanceBySession(clubId!, sessionId!);
       return res.data.data;
     },
     enabled: !!clubId && sessionId !== null && (options?.enabled ?? true),
+    staleTime: 0,
+    gcTime: 5 * 60 * 1000,
   });
 }
 
@@ -46,7 +49,7 @@ export function useUpdateAttendanceStatus(sessionId: number) {
         updates.map((u) => ({ attendanceId: u.id, status: u.status })),
       ),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin', 'attendance', clubId, sessionId] });
+      queryClient.invalidateQueries({ queryKey: adminQueryKeys.attendance(clubId, sessionId) });
       toastSuccess('출석 상태가 저장되었습니다.');
     },
     onError: (error: AxiosError<ApiResponse<unknown>>) => {

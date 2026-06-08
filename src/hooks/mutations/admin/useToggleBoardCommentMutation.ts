@@ -3,7 +3,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { adminBoardApi, type UpdateBoardCommentBody } from '@/lib/apis/adminBoard';
 import { useClubId } from '@/stores';
 import type { MutationCallbacks } from '@/types/common';
-import { adminBoardQueryKeys } from './boardQueryKeys';
+import { adminQueryKeys } from '@/hooks/queries/admin/adminQueryKeys';
 
 export function useToggleBoardCommentMutation(callbacks?: MutationCallbacks<unknown>) {
   const clubId = useClubId();
@@ -16,7 +16,7 @@ export function useToggleBoardCommentMutation(callbacks?: MutationCallbacks<unkn
       return adminBoardApi.updateBoardComment(clubId, boardId, body);
     },
     onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: adminBoardQueryKeys.list(clubId) });
+      await queryClient.invalidateQueries({ queryKey: adminQueryKeys.boards(clubId) });
       callbacks?.onSuccess?.();
     },
     onError: callbacks?.onError,
