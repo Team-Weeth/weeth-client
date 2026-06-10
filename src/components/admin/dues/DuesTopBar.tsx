@@ -1,7 +1,7 @@
 'use client';
 
 import { AdminSettingIcon } from '@/assets/icons/admin';
-import { QuestionMarkIcon } from '@/assets/icons';
+import { QuestionCircleIcon } from '@/assets/icons';
 import { Icon, Switch } from '@/components/ui';
 import { cn } from '@/lib/cn';
 
@@ -11,12 +11,18 @@ interface DuesTopBarProps extends React.HTMLAttributes<HTMLDivElement> {
   onSettingsClick?: () => void;
 }
 
-function DuesTopBar({ className, isPublic, onPublicChange, onSettingsClick, ...props }: DuesTopBarProps) {
+function DuesTopBar({
+  className,
+  isPublic,
+  onPublicChange,
+  onSettingsClick,
+  ...props
+}: DuesTopBarProps) {
   return (
     <div className={cn('flex items-center justify-end gap-300', className)} {...props}>
-      <div className="flex items-center gap-200">
-        <span className="typo-body2 text-text-normal">부원에게 공개</span>
-        <Icon src={QuestionMarkIcon} size={16} className="text-icon-alternative" />
+      <div className="bg-container-neutral flex items-center gap-200 rounded-md px-300 py-200">
+        <span className="typo-sub3 text-text-normal">부원에게 공개</span>
+        <Icon src={QuestionCircleIcon} size={24} className="text-icon-alternative" />
         <Switch checked={isPublic} onCheckedChange={onPublicChange} />
       </div>
       <button

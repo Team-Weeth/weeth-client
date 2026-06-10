@@ -51,7 +51,7 @@ function AccountInfoCard({
         <span className="typo-sub3 text-text-normal truncate">
           {bankName} {accountNumber} {holderName}
         </span>
-        <span className="typo-caption2 text-text-alternative">
+        <span className="typo-caption2 text-text-alternative overflow-hidden whitespace-nowrap">
           회비 계좌 정보 ({isPublic ? '공개 중' : '비공개'})
         </span>
       </div>

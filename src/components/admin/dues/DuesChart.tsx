@@ -1,4 +1,8 @@
-import { Card } from '@/components/ui';
+'use client';
+
+import { Bar, BarChart, Cell, LabelList, XAxis } from 'recharts';
+import type { LabelProps } from 'recharts';
+import { Card, ChartContainer, type ChartConfig } from '@/components/ui';
 import { cn } from '@/lib/cn';
 
 interface MonthlyData {
@@ -10,20 +14,50 @@ interface DuesChartProps {
   className?: string;
   data: MonthlyData[];
   activeMonth: string;
+  onMonthChange?: (month: string) => void;
   periodStart: string;
   periodEnd: string;
   activeExpense: number;
   activeIncome: number;
 }
 
+const chartConfig = {} satisfies ChartConfig;
+
 function formatAmount(amount: number) {
   return amount.toLocaleString('ko-KR');
+}
+
+interface BarLabelProps extends LabelProps {
+  data: MonthlyData[];
+  activeMonth: string;
+}
+
+function BarLabel({ x, y, width, value, index, data, activeMonth }: BarLabelProps) {
+  const item = data[index as number];
+  if (!item) return null;
+
+  const isActive = item.month === activeMonth;
+  const label = Number(value) === 0 ? '0' : `${formatAmount(Number(value))}원`;
+
+  return (
+    <text
+      x={Number(x) + Number(width) / 2}
+      y={Number(y) - 6}
+      textAnchor="middle"
+      fontSize={12}
+      fontWeight={isActive ? 600 : 400}
+      fill={isActive ? 'var(--color-brand-primary)' : 'var(--color-text-alternative)'}
+    >
+      {label}
+    </text>
+  );
 }
 
 function DuesChart({
   className,
   data,
   activeMonth,
+  onMonthChange,
   periodStart,
   periodEnd,
   activeExpense,
@@ -31,7 +65,6 @@ function DuesChart({
 }: DuesChartProps) {
   const activeData = data.find((d) => d.month === activeMonth);
   const maxAmount = Math.max(...data.map((d) => d.amount), 1);
-  const CHART_HEIGHT = 180;
 
   return (
     <Card className={cn('flex flex-col gap-500 p-400 tablet:p-600', className)}>
@@ -43,70 +76,67 @@ function DuesChart({
           </span>
         </div>
 
-        <div className="flex flex-col items-end gap-100">
-          <span className="typo-sub3 text-text-strong">
-            {activeMonth} &nbsp;{formatAmount(activeData?.amount ?? 0)} 원
-          </span>
-          <span className="typo-caption2 text-state-error">
-            지출 &nbsp;-{formatAmount(activeExpense)} 원
-          </span>
-          <span className="typo-caption2 text-brand-secondary">
-            수입 &nbsp;+{formatAmount(activeIncome)} 원
-          </span>
+        <div
+          className="bg-container-neutral rounded-md shrink-0 overflow-hidden"
+          style={{ boxShadow: '0px 1px 5px 0px rgba(17,33,49,0.15)', minWidth: 180 }}
+        >
+          <div className="flex items-center justify-between gap-300 px-300 py-200">
+            <span className="typo-caption2 text-text-normal">{activeMonth}</span>
+            <span className="typo-sub3 text-text-strong">{formatAmount(activeData?.amount ?? 0)} 원</span>
+          </div>
+          <div className="border-line border-t" />
+          <div className="flex items-center justify-between px-300 py-100">
+            <span className="typo-caption2 text-text-alternative">지출</span>
+            <span className="typo-caption2 text-state-error">-{formatAmount(activeExpense)} 원</span>
+          </div>
+          <div className="flex items-center justify-between px-300 py-100">
+            <span className="typo-caption2 text-text-alternative">수입</span>
+            <span className="typo-caption2 text-state-success">+{formatAmount(activeIncome)} 원</span>
+          </div>
         </div>
       </div>
 
-      <div className="flex flex-col gap-200">
-        {/* Y axis label */}
-        <span className="typo-caption2 text-text-disabled">
-          {formatAmount(maxAmount)}원
-        </span>
+      <div className="flex flex-col gap-100">
+        <span className="typo-caption2 text-text-disabled">{formatAmount(maxAmount)}원</span>
 
-        {/* Bars */}
-        <div className="flex items-end gap-300" style={{ height: CHART_HEIGHT }}>
-          {data.map((item) => {
-            const isActive = item.month === activeMonth;
-            const barHeight = item.amount > 0 ? Math.max((item.amount / maxAmount) * CHART_HEIGHT, 4) : 0;
-
-            return (
-              <div key={item.month} className="flex flex-1 flex-col items-center gap-200">
-                {isActive && item.amount > 0 && (
-                  <span className="typo-caption2 text-brand-primary whitespace-nowrap">
-                    {formatAmount(item.amount)}원
-                  </span>
+        <ChartContainer config={chartConfig} className="h-[260px] w-full">
+          <BarChart
+            data={data}
+            margin={{ top: 24, right: 0, bottom: 0, left: 0 }}
+            maxBarSize={46}
+            barCategoryGap="20%"
+            onClick={(payload: unknown) => {
+              const month = (payload as { activePayload?: { payload: MonthlyData }[] } | null)?.activePayload?.[0]?.payload?.month;
+              if (month) onMonthChange?.(month);
+            }}
+          >
+            <XAxis
+              dataKey="month"
+              axisLine={{ stroke: 'var(--color-line)' }}
+              tickLine={false}
+              tick={{ fontSize: 13, fill: 'var(--color-text-alternative)' }}
+              dy={8}
+            />
+            <Bar dataKey="amount" radius={[8, 8, 0, 0]} cursor="pointer" isAnimationActive={false}>
+              {data.map((item) => (
+                <Cell
+                  key={item.month}
+                  fill={
+                    item.month === activeMonth
+                      ? 'var(--color-brand-primary)'
+                      : 'var(--color-container-neutral-alternative)'
+                  }
+                />
+              ))}
+              <LabelList
+                dataKey="amount"
+                content={(props: LabelProps) => (
+                  <BarLabel {...props} data={data} activeMonth={activeMonth} />
                 )}
-                <div
-                  className="flex w-full flex-col justify-end"
-                  style={{ height: CHART_HEIGHT - 20 }}
-                >
-                  <div
-                    style={{ height: barHeight }}
-                    className={cn(
-                      'w-full rounded-t-sm',
-                      isActive ? 'bg-brand-primary' : 'bg-container-neutral-alternative',
-                    )}
-                  />
-                </div>
-              </div>
-            );
-          })}
-        </div>
-
-        {/* X axis labels */}
-        <div className="flex gap-300">
-          {data.map((item) => (
-            <div key={item.month} className="flex flex-1 justify-center">
-              <span
-                className={cn(
-                  'typo-caption2',
-                  item.month === activeMonth ? 'text-brand-primary' : 'text-text-alternative',
-                )}
-              >
-                {item.month}
-              </span>
-            </div>
-          ))}
-        </div>
+              />
+            </Bar>
+          </BarChart>
+        </ChartContainer>
       </div>
     </Card>
   );
