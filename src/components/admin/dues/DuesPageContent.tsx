@@ -2,11 +2,13 @@
 
 import { useState } from 'react';
 
+import type { Cardinal } from '@/types/admin/cardinal';
 import { DuesTopBar } from './DuesTopBar';
 import { DuesBalanceCard } from './DuesBalanceCard';
 import { DuesChart, type MonthlyData } from './DuesChart';
 import { DuesTransactionTable, type DuesTransaction } from './DuesTransactionTable';
 import { DuesGenerationFilter } from './DuesGenerationFilter';
+import { useCardinalSelector } from '@/hooks';
 
 const MOCK_MONTHLY_DATA: MonthlyData[] = [
   { month: '3월', amount: 1425000 },
@@ -103,11 +105,17 @@ const MOCK_TRANSACTIONS: DuesTransaction[] = [
 function DuesPageContent() {
   const [isPublic, setIsPublic] = useState(true);
   const [activeMonth, setActiveMonth] = useState('4월');
+  const { cardinals, setSelectedCardinalId, activeCardinal } = useCardinalSelector();
 
   return (
-    <div className="tablet:p-700 flex flex-col gap-400 p-400">
+    <div className="tablet:p-700 flex min-w-[340px] flex-col gap-400 p-400">
       <DuesTopBar isPublic={isPublic} onPublicChange={setIsPublic} />
-      <DuesGenerationFilter generation="7기" lastUpdated="2026. 7. 20(목) 14:00" />
+      <DuesGenerationFilter
+        cardinals={cardinals}
+        activeCardinal={activeCardinal}
+        lastUpdated="2026. 7. 20(목) 14:00"
+        onSelect={setSelectedCardinalId}
+      />
       <div className="tablet:flex-row flex flex-col gap-1">
         <DuesBalanceCard currentBalance={152129} totalDues={1425000} />
         <DuesChart
