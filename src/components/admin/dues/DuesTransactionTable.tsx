@@ -140,9 +140,11 @@ function DuesTransactionTable({
                 <TableHead className="typo-body2 text-text-alternative min-w-32">거래처</TableHead>
                 <TableHead className="typo-body2 text-text-alternative w-32">금액(원)</TableHead>
                 <TableHead className="typo-body2 text-text-alternative w-32">총 잔액</TableHead>
-                <TableHead className="typo-body2 text-text-alternative hidden w-32 tablet:table-cell">일자</TableHead>
-                <TableHead className="hidden w-14 tablet:table-cell" />
-                <TableHead className="hidden w-14 tablet:table-cell" />
+                <TableHead className="typo-body2 text-text-alternative tablet:table-cell hidden w-32">
+                  일자
+                </TableHead>
+                <TableHead className="tablet:table-cell hidden w-14" />
+                <TableHead className="tablet:table-cell hidden w-14" />
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -179,21 +181,23 @@ function DuesTransactionTable({
                     <TableCell className="typo-body2 text-text-strong">
                       {tx.totalBalance.toLocaleString('ko-KR')}
                     </TableCell>
-                    <TableCell className="typo-body2 text-text-strong hidden tablet:table-cell">{tx.date}</TableCell>
-                    <TableCell className="hidden tablet:table-cell">
+                    <TableCell className="typo-body2 text-text-strong tablet:table-cell hidden">
+                      {tx.date}
+                    </TableCell>
+                    <TableCell className="tablet:table-cell hidden">
                       <button
                         type="button"
-                        className="text-icon-normal hover:text-icon-strong cursor-pointer"
+                        className="text-icon-alternative hover:text-icon-strong cursor-pointer"
                         aria-label="영수증 보기"
                       >
                         <Icon src={AdminReceiptIcon} alt="영수증" size={24} />
                       </button>
                     </TableCell>
-                    <TableCell className="hidden tablet:table-cell">
+                    <TableCell className="tablet:table-cell hidden">
                       <button
                         type="button"
                         onClick={() => onMoreClick?.(tx)}
-                        className="hover:bg-container-neutral-interaction flex size-6 cursor-pointer items-center justify-center rounded-sm"
+                        className="text-icon-alternative hover:text-icon-strong cursor-pointer"
                         aria-label="더보기"
                       >
                         <Icon src={MoreHorizIcon} alt="더보기" size={16} />

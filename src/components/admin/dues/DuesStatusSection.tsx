@@ -1,7 +1,14 @@
 'use client';
 
 import { CopyIcon } from '@/assets/icons';
-import { Card, Icon, Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui';
+import {
+  Card,
+  Icon,
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui';
 import { cn } from '@/lib/cn';
 import { toastSuccess } from '@/stores/useToastStore';
 
@@ -25,7 +32,7 @@ function PaymentStatusCard({ paidCount, totalCount, onViewDetail }: PaymentStatu
         onClick={onViewDetail}
         className="bg-button-neutral typo-button2 text-text-strong hover:bg-container-neutral-interaction cursor-pointer rounded-sm px-300 py-200"
       >
-        확인
+        조회
       </button>
     </Card>
   );
@@ -75,7 +82,7 @@ function AccountInfoCard({
         type="button"
         onClick={handleCopy}
         aria-label="계좌번호 복사"
-        className="text-icon-normal hover:text-icon-strong ml-300 shrink-0 cursor-pointer"
+        className="text-icon-alternative hover:text-icon-strong ml-300 shrink-0 cursor-pointer"
       >
         <Icon src={CopyIcon} size={20} />
       </button>

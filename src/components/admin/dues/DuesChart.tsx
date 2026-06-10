@@ -1,6 +1,6 @@
 'use client';
 
-import { Bar, BarChart, Cell, LabelList, XAxis } from 'recharts';
+import { Bar, BarChart, Cell, LabelList, Tooltip as RechartsTooltip, XAxis } from 'recharts';
 import type { LabelProps } from 'recharts';
 import { Card, ChartContainer, type ChartConfig } from '@/components/ui';
 import { cn } from '@/lib/cn';
@@ -121,18 +121,14 @@ function DuesChart({
       </div>
 
       <div className="flex flex-col gap-100">
-        <ChartContainer config={chartConfig} className="h-[260px] w-full">
+        <ChartContainer config={chartConfig} className="h-[260px] w-full [&_*:focus]:outline-none">
           <BarChart
             data={data}
             margin={{ top: 24, right: 0, bottom: 0, left: 0 }}
             maxBarSize={46}
             barCategoryGap="20%"
-            onClick={(payload: unknown) => {
-              const month = (payload as { activePayload?: { payload: MonthlyData }[] } | null)
-                ?.activePayload?.[0]?.payload?.month;
-              if (month) onMonthChange?.(month);
-            }}
           >
+            <RechartsTooltip content={() => null} cursor={false} />
             <XAxis
               dataKey="month"
               axisLine={{ stroke: 'var(--color-line)' }}
@@ -140,7 +136,14 @@ function DuesChart({
               tick={{ fontSize: 13, fill: 'var(--color-text-alternative)' }}
               dy={8}
             />
-            <Bar dataKey="amount" radius={[8, 8, 0, 0]} cursor="pointer" isAnimationActive={false}>
+            <Bar
+              dataKey="amount"
+              radius={[8, 8, 0, 0]}
+              cursor="pointer"
+              isAnimationActive={false}
+              activeBar={false}
+              onClick={(data: MonthlyData) => onMonthChange?.(data.month)}
+            >
               {data.map((item) => (
                 <Cell
                   key={item.month}
