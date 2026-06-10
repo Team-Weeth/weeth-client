@@ -1,8 +1,9 @@
 'use client';
 
 import { CopyIcon } from '@/assets/icons';
-import { Card, Icon } from '@/components/ui';
+import { Card, Icon, Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui';
 import { cn } from '@/lib/cn';
+import { toastSuccess } from '@/stores/useToastStore';
 
 interface PaymentStatusCardProps {
   paidCount: number;
@@ -45,19 +46,34 @@ function AccountInfoCard({
   isPublic,
   onCopy,
 }: AccountInfoCardProps) {
+  const fullText = `${bankName} ${accountNumber} ${holderName}`;
+  const isOverflow = fullText.length > 20;
+  const displayText = isOverflow ? `${fullText.slice(0, 20)}...` : fullText;
+
+  const handleCopy = async () => {
+    await navigator.clipboard.writeText(fullText);
+    toastSuccess('계좌번호가 복사되었습니다.');
+    onCopy?.();
+  };
+
   return (
     <Card className="flex flex-row items-center justify-between p-400">
       <div className="flex min-w-0 flex-col gap-100">
-        <span className="typo-sub3 text-text-normal truncate">
-          {bankName} {accountNumber} {holderName}
-        </span>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <span className="typo-sub3 text-text-normal">{displayText}</span>
+            </TooltipTrigger>
+            {isOverflow && <TooltipContent variant="sm">{fullText}</TooltipContent>}
+          </Tooltip>
+        </TooltipProvider>
         <span className="typo-caption2 text-text-alternative overflow-hidden whitespace-nowrap">
           회비 계좌 정보 ({isPublic ? '공개 중' : '비공개'})
         </span>
       </div>
       <button
         type="button"
-        onClick={onCopy}
+        onClick={handleCopy}
         aria-label="계좌번호 복사"
         className="text-icon-normal hover:text-icon-strong ml-300 shrink-0 cursor-pointer"
       >

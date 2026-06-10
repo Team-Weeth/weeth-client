@@ -23,7 +23,7 @@ function DuesBalanceCard({
 }: DuesBalanceCardProps) {
   return (
     <Card className={cn('tablet:p-600 flex flex-col gap-400 p-400', className)}>
-      <p className="typo-body1 text-text-alternative">현재 남은 금액은</p>
+      <p className="typo-h3 text-text-strong">현재 남은 금액은</p>
 
       <div className="flex items-end gap-200">
         <span className="text-text-strong text-[36px] leading-[44px] font-bold tracking-[-0.18px]">
@@ -49,10 +49,11 @@ function DuesBalanceCard({
         </button>
       </div>
       <DuesStatusSection
+        className="mt-14"
         paidCount={3}
         totalCount={24}
         bankName="국민은행"
-        accountNumber="12-12412-1231"
+        accountNumber="1002-860-719061"
         holderName="가전대oo부"
         isAccountPublic
       />

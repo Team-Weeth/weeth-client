@@ -4,6 +4,8 @@ import { Bar, BarChart, Cell, LabelList, XAxis } from 'recharts';
 import type { LabelProps } from 'recharts';
 import { Card, ChartContainer, type ChartConfig } from '@/components/ui';
 import { cn } from '@/lib/cn';
+import { QuestionCircleIcon } from '@/assets/icons';
+import { Icon, Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui';
 
 interface MonthlyData {
   month: string;
@@ -67,38 +69,58 @@ function DuesChart({
   const maxAmount = Math.max(...data.map((d) => d.amount), 1);
 
   return (
-    <Card className={cn('flex flex-col gap-500 p-400 tablet:p-600', className)}>
+    <Card className={cn('tablet:p-600 flex flex-col gap-500 p-400', className)}>
       <div className="flex items-start justify-between gap-400">
         <div className="flex flex-col gap-100">
           <span className="typo-sub3 text-text-strong">월별 잔액 추이</span>
-          <span className="typo-caption2 text-text-alternative">
-            {periodStart} - {periodEnd}
-          </span>
+          <div className="flex flex-row items-center gap-1">
+            <span className="typo-caption2 text-text-alternative">
+              {periodStart} - {periodEnd}
+            </span>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger>
+                  <Icon
+                    src={QuestionCircleIcon}
+                    size={24}
+                    className="text-icon-alternative flex self-center"
+                  />
+                </TooltipTrigger>
+                <TooltipContent>
+                  총 회비를 처음 등록한 월부터 현재 월까지 표시됩니다.
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </div>
         </div>
 
         <div
-          className="bg-container-neutral rounded-md shrink-0 overflow-hidden"
+          className="bg-container-neutral shrink-0 overflow-hidden rounded-md"
           style={{ boxShadow: '0px 1px 5px 0px rgba(17,33,49,0.15)', minWidth: 180 }}
         >
           <div className="flex items-center justify-between gap-300 px-300 py-200">
             <span className="typo-caption2 text-text-normal">{activeMonth}</span>
-            <span className="typo-sub3 text-text-strong">{formatAmount(activeData?.amount ?? 0)} 원</span>
+            <span className="typo-sub3 text-text-strong">
+              {formatAmount(activeData?.amount ?? 0)} 원
+            </span>
           </div>
           <div className="border-line border-t" />
           <div className="flex items-center justify-between px-300 py-100">
             <span className="typo-caption2 text-text-alternative">지출</span>
-            <span className="typo-caption2 text-state-error">-{formatAmount(activeExpense)} 원</span>
+            <span className="typo-caption2 text-state-error">
+              -{formatAmount(activeExpense)} 원
+            </span>
           </div>
           <div className="flex items-center justify-between px-300 py-100">
             <span className="typo-caption2 text-text-alternative">수입</span>
-            <span className="typo-caption2 text-state-success">+{formatAmount(activeIncome)} 원</span>
+            <span className="typo-caption2 text-state-success">
+              +{formatAmount(activeIncome)} 원
+            </span>
           </div>
         </div>
       </div>
 
       <div className="flex flex-col gap-100">
-        <span className="typo-caption2 text-text-disabled">{formatAmount(maxAmount)}원</span>
-
         <ChartContainer config={chartConfig} className="h-[260px] w-full">
           <BarChart
             data={data}
@@ -106,7 +128,8 @@ function DuesChart({
             maxBarSize={46}
             barCategoryGap="20%"
             onClick={(payload: unknown) => {
-              const month = (payload as { activePayload?: { payload: MonthlyData }[] } | null)?.activePayload?.[0]?.payload?.month;
+              const month = (payload as { activePayload?: { payload: MonthlyData }[] } | null)
+                ?.activePayload?.[0]?.payload?.month;
               if (month) onMonthChange?.(month);
             }}
           >
