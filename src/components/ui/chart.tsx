@@ -17,7 +17,13 @@ interface ChartContainerProps extends React.HTMLAttributes<HTMLDivElement> {
   ref?: React.Ref<HTMLDivElement>;
 }
 
-function ChartContainer({ className, children, config: _config, ref, ...props }: ChartContainerProps) {
+function ChartContainer({
+  className,
+  children,
+  config: _config,
+  ref,
+  ...props
+}: ChartContainerProps) {
   return (
     <div
       ref={ref}
