@@ -72,7 +72,7 @@ function DuesChart({
     <Card className={cn('tablet:p-600 flex flex-col gap-500 p-400', className)}>
       <div className="flex items-start justify-between gap-400">
         <div className="flex flex-col gap-100">
-          <span className="typo-sub3 text-text-strong">월별 잔액 추이</span>
+          <span className="typo-h3 text-text-strong">월별 잔액 추이</span>
           <div className="flex flex-row items-center gap-1">
             <span className="typo-caption2 text-text-alternative">
               {periodStart} - {periodEnd}

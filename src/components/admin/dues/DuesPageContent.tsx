@@ -27,6 +27,7 @@ const MOCK_TRANSACTIONS: DuesTransaction[] = [
     counterparty: '거래처 내용',
     amount: 0,
     totalBalance: 0,
+    date: '2000.00.00',
   },
   {
     id: 2,
@@ -35,6 +36,7 @@ const MOCK_TRANSACTIONS: DuesTransaction[] = [
     counterparty: '거래처 내용',
     amount: 0,
     totalBalance: 0,
+    date: '2000.00.00',
   },
   {
     id: 3,
@@ -43,6 +45,7 @@ const MOCK_TRANSACTIONS: DuesTransaction[] = [
     counterparty: '거래처 내용',
     amount: 0,
     totalBalance: 0,
+    date: '2000.00.00',
   },
   {
     id: 4,
@@ -51,6 +54,7 @@ const MOCK_TRANSACTIONS: DuesTransaction[] = [
     counterparty: '거래처 내용',
     amount: 0,
     totalBalance: 0,
+    date: '2000.00.00',
   },
   {
     id: 5,
@@ -59,6 +63,7 @@ const MOCK_TRANSACTIONS: DuesTransaction[] = [
     counterparty: '거래처 내용',
     amount: 0,
     totalBalance: 0,
+    date: '2000.00.00',
   },
   {
     id: 6,
@@ -67,6 +72,7 @@ const MOCK_TRANSACTIONS: DuesTransaction[] = [
     counterparty: '거래처 내용',
     amount: 0,
     totalBalance: 0,
+    date: '2000.00.00',
   },
   {
     id: 7,
@@ -75,6 +81,7 @@ const MOCK_TRANSACTIONS: DuesTransaction[] = [
     counterparty: '거래처 내용',
     amount: 0,
     totalBalance: 0,
+    date: '2000.00.00',
   },
   {
     id: 8,
@@ -83,6 +90,7 @@ const MOCK_TRANSACTIONS: DuesTransaction[] = [
     counterparty: '거래처 내용',
     amount: 0,
     totalBalance: 0,
+    date: '2000.00.00',
   },
   {
     id: 9,
@@ -91,6 +99,7 @@ const MOCK_TRANSACTIONS: DuesTransaction[] = [
     counterparty: '거래처 내용',
     amount: 0,
     totalBalance: 0,
+    date: '2000.00.00',
   },
   {
     id: 10,
@@ -99,6 +108,7 @@ const MOCK_TRANSACTIONS: DuesTransaction[] = [
     counterparty: '거래처 내용',
     amount: 0,
     totalBalance: 0,
+    date: '2000.00.00',
   },
 ];
 

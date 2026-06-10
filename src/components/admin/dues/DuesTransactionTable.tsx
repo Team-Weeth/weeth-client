@@ -1,17 +1,17 @@
 'use client';
 
+import Image from 'next/image';
 import { useState } from 'react';
 
 import {
-  Card,
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableHeader,
   TableRow,
-  Tag,
 } from '@/components/ui';
+import { MoreHorizIcon } from '@/assets/icons';
 import { cn } from '@/lib/cn';
 
 type TransactionType = 'income' | 'expense' | 'dues';
@@ -23,6 +23,7 @@ interface DuesTransaction {
   counterparty: string;
   amount: number;
   totalBalance: number;
+  date: string;
 }
 
 type FilterTab = 'all' | 'expense' | 'income' | 'dues';
@@ -35,37 +36,39 @@ interface TabConfig {
 
 interface DuesTransactionTableProps extends React.HTMLAttributes<HTMLDivElement> {
   transactions: DuesTransaction[];
+  onReceiptClick?: (transaction: DuesTransaction) => void;
+  onMoreClick?: (transaction: DuesTransaction) => void;
 }
-
-const TYPE_LABEL: Record<TransactionType, string> = {
-  income: '수입',
-  expense: '지출',
-  dues: '회비',
-};
 
 function TransactionTypeTag({ type }: { type: TransactionType }) {
   if (type === 'income') {
     return (
-      <Tag variant="primary" className="bg-brand-primary/10 text-brand-primary">
+      <span className="typo-caption1 inline-flex h-6 items-center justify-center rounded-[5px] bg-state-success/10 px-200 py-100 text-state-success whitespace-nowrap">
         수입
-      </Tag>
+      </span>
     );
   }
   if (type === 'dues') {
     return (
-      <Tag className="bg-brand-secondary/10 text-brand-secondary">
+      <span className="typo-caption1 inline-flex h-6 items-center justify-center rounded-[5px] bg-brand-primary/10 px-200 py-100 text-brand-primary whitespace-nowrap">
         회비
-      </Tag>
+      </span>
     );
   }
   return (
-    <Tag className="bg-state-caution/10 text-state-caution">
+    <span className="typo-caption1 inline-flex h-6 items-center justify-center rounded-[5px] bg-state-error/10 px-200 py-100 text-state-error whitespace-nowrap">
       지출
-    </Tag>
+    </span>
   );
 }
 
-function DuesTransactionTable({ className, transactions, ...props }: DuesTransactionTableProps) {
+function DuesTransactionTable({
+  className,
+  transactions,
+  onReceiptClick,
+  onMoreClick,
+  ...props
+}: DuesTransactionTableProps) {
   const [activeTab, setActiveTab] = useState<FilterTab>('all');
   const [sortDesc, setSortDesc] = useState(true);
 
@@ -89,23 +92,29 @@ function DuesTransactionTable({ className, transactions, ...props }: DuesTransac
   const sorted = sortDesc ? [...filtered] : [...filtered].reverse();
 
   return (
-    <div className={cn('flex flex-col gap-400', className)} {...props}>
-      <span className="typo-sub3 text-text-strong">거래 내역</span>
+    <div
+      className={cn(
+        'bg-container-neutral flex flex-col gap-600 rounded-lg p-450',
+        className,
+      )}
+      {...props}
+    >
+      <span className="typo-h3 text-text-strong">거래 내역</span>
 
-      <Card className="flex flex-col gap-0 overflow-hidden p-0">
-        {/* Tabs + Sort */}
-        <div className="flex items-center justify-between gap-300 border-b border-line px-400 py-300">
-          <div className="flex items-center gap-100">
+      <div className="flex flex-col gap-400">
+        {/* Chips + Sort */}
+        <div className="flex flex-wrap items-center justify-between gap-200">
+          <div className="flex items-center gap-[5px]">
             {tabs.map((tab) => (
               <button
                 key={tab.key}
                 type="button"
                 onClick={() => setActiveTab(tab.key)}
                 className={cn(
-                  'typo-button2 cursor-pointer rounded-sm px-300 py-200 transition-colors',
+                  'typo-button2 min-w-10 cursor-pointer rounded-[10px] px-400 py-200 transition-colors',
                   activeTab === tab.key
-                    ? 'bg-container-primary text-text-inverse'
-                    : 'text-text-alternative hover:bg-container-neutral-interaction',
+                    ? 'bg-button-neutral text-text-strong'
+                    : 'border border-line text-text-normal hover:bg-container-neutral-interaction',
                 )}
               >
                 {tab.label} {tab.count}
@@ -116,62 +125,99 @@ function DuesTransactionTable({ className, transactions, ...props }: DuesTransac
           <button
             type="button"
             onClick={() => setSortDesc((prev) => !prev)}
-            className="typo-caption1 text-text-alternative hover:text-text-normal cursor-pointer"
+            className="typo-button2 min-w-10 cursor-pointer rounded-[10px] border border-line px-400 py-200 text-text-normal transition-colors hover:bg-container-neutral-interaction"
           >
             {sortDesc ? '최근 순' : '오래된 순'}
           </button>
         </div>
 
-        <Table wrapperClassName="overflow-auto">
-          <TableHeader className="bg-container-neutral">
-            <TableRow className="border-0 hover:bg-transparent">
-              <TableHead className="typo-body2 text-text-alternative w-20">상태</TableHead>
-              <TableHead className="typo-body2 text-text-alternative">수입/지출 내용</TableHead>
-              <TableHead className="typo-body2 text-text-alternative">거래처</TableHead>
-              <TableHead className="typo-body2 text-text-alternative text-right">금액(원)</TableHead>
-              <TableHead className="typo-body2 text-text-alternative text-right">총 잔액</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {sorted.length === 0 ? (
-              <TableRow className="hover:bg-transparent">
-                <TableCell colSpan={5} className="py-700 text-center">
-                  <span className="typo-body2 text-text-alternative">거래 내역이 없습니다.</span>
-                </TableCell>
+        <div className="border-line overflow-x-auto rounded-sm border">
+          <Table>
+            <TableHeader className="bg-container-neutral-alternative">
+              <TableRow className="border-line border-b hover:bg-transparent">
+                <TableHead className="typo-body2 text-text-alternative w-[88px]">상태</TableHead>
+                <TableHead className="typo-body2 text-text-alternative min-w-32">
+                  수입/지출 내용
+                </TableHead>
+                <TableHead className="typo-body2 text-text-alternative min-w-32">거래처</TableHead>
+                <TableHead className="typo-body2 text-text-alternative w-32">금액(원)</TableHead>
+                <TableHead className="typo-body2 text-text-alternative w-32">총 잔액</TableHead>
+                <TableHead className="typo-body2 text-text-alternative w-32">일자</TableHead>
+                <TableHead className="w-14" />
+                <TableHead className="w-14" />
               </TableRow>
-            ) : (
-              sorted.map((tx) => (
-                <TableRow
-                  key={tx.id}
-                  className="hover:bg-container-neutral-interaction border-0 cursor-default"
-                >
-                  <TableCell>
-                    <TransactionTypeTag type={tx.type} />
-                  </TableCell>
-                  <TableCell className="typo-body2 text-text-strong">{tx.content}</TableCell>
-                  <TableCell className="typo-body2 text-text-normal">{tx.counterparty}</TableCell>
-                  <TableCell
-                    className={cn(
-                      'typo-body2 text-right',
-                      tx.type === 'income' || tx.type === 'dues'
-                        ? 'text-brand-secondary'
-                        : 'text-state-error',
-                    )}
-                  >
-                    {tx.type === 'income' || tx.type === 'dues' ? '+' : '-'}&nbsp;
-                    {tx.amount.toLocaleString('ko-KR')}
-                  </TableCell>
-                  <TableCell className="typo-body2 text-text-normal text-right">
-                    {tx.totalBalance.toLocaleString('ko-KR')}
+            </TableHeader>
+            <TableBody>
+              {sorted.length === 0 ? (
+                <TableRow className="hover:bg-transparent">
+                  <TableCell colSpan={8} className="py-700 text-center">
+                    <span className="typo-body2 text-text-alternative">거래 내역이 없습니다.</span>
                   </TableCell>
                 </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
-      </Card>
+              ) : (
+                sorted.map((tx) => (
+                  <TableRow
+                    key={tx.id}
+                    className="border-line hover:bg-container-neutral-interaction border-t cursor-default"
+                  >
+                    <TableCell>
+                      <TransactionTypeTag type={tx.type} />
+                    </TableCell>
+                    <TableCell className="typo-body2 text-text-strong">{tx.content}</TableCell>
+                    <TableCell className="typo-body2 text-text-strong">{tx.counterparty}</TableCell>
+                    <TableCell
+                      className={cn(
+                        'typo-body2',
+                        tx.type === 'income' || tx.type === 'dues'
+                          ? 'text-state-success'
+                          : 'text-state-error',
+                      )}
+                    >
+                      <span className="flex items-center gap-100">
+                        <span>{tx.type === 'income' || tx.type === 'dues' ? '+' : '-'}</span>
+                        <span>{tx.amount.toLocaleString('ko-KR')}</span>
+                      </span>
+                    </TableCell>
+                    <TableCell className="typo-body2 text-text-strong">
+                      {tx.totalBalance.toLocaleString('ko-KR')}
+                    </TableCell>
+                    <TableCell className="typo-body2 text-text-strong">{tx.date}</TableCell>
+                    <TableCell>
+                      {onReceiptClick && (
+                        <button
+                          type="button"
+                          onClick={() => onReceiptClick(tx)}
+                          className="hover:bg-container-neutral-interaction flex size-6 cursor-pointer items-center justify-center rounded-sm"
+                          aria-label="영수증 보기"
+                        >
+                          <Image src={MoreHorizIcon} alt="" width={16} height={16} />
+                        </button>
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      <button
+                        type="button"
+                        onClick={() => onMoreClick?.(tx)}
+                        className="hover:bg-container-neutral-interaction flex size-6 cursor-pointer items-center justify-center rounded-sm"
+                        aria-label="더보기"
+                      >
+                        <Image src={MoreHorizIcon} alt="" width={16} height={16} />
+                      </button>
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
+            </TableBody>
+          </Table>
+        </div>
+      </div>
     </div>
   );
 }
 
-export { DuesTransactionTable, type DuesTransactionTableProps, type DuesTransaction, type TransactionType };
+export {
+  DuesTransactionTable,
+  type DuesTransactionTableProps,
+  type DuesTransaction,
+  type TransactionType,
+};
