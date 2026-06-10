@@ -69,7 +69,7 @@ function DuesChart({
   const maxAmount = Math.max(...data.map((d) => d.amount), 1);
 
   return (
-    <Card className={cn('tablet:p-600 flex flex-col gap-500 p-400', className)}>
+    <Card className={cn('tablet:p-600 min-[360px] flex flex-1 flex-col gap-500 p-400', className)}>
       <div className="flex items-start justify-between gap-400">
         <div className="flex flex-col gap-100">
           <span className="typo-h3 text-text-strong">월별 잔액 추이</span>

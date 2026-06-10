@@ -1,9 +1,9 @@
 'use client';
 
-import Image from 'next/image';
 import { useState } from 'react';
 
 import {
+  Icon,
   Table,
   TableBody,
   TableCell,
@@ -13,6 +13,7 @@ import {
 } from '@/components/ui';
 import { MoreHorizIcon } from '@/assets/icons';
 import { cn } from '@/lib/cn';
+import { AdminReceiptIcon } from '@/assets/icons/admin';
 
 type TransactionType = 'income' | 'expense' | 'dues';
 
@@ -43,20 +44,20 @@ interface DuesTransactionTableProps extends React.HTMLAttributes<HTMLDivElement>
 function TransactionTypeTag({ type }: { type: TransactionType }) {
   if (type === 'income') {
     return (
-      <span className="typo-caption1 inline-flex h-6 items-center justify-center rounded-[5px] bg-state-success/10 px-200 py-100 text-state-success whitespace-nowrap">
+      <span className="typo-caption1 bg-state-success/10 text-state-success inline-flex h-6 items-center justify-center rounded-[5px] px-200 py-100 whitespace-nowrap">
         수입
       </span>
     );
   }
   if (type === 'dues') {
     return (
-      <span className="typo-caption1 inline-flex h-6 items-center justify-center rounded-[5px] bg-brand-primary/10 px-200 py-100 text-brand-primary whitespace-nowrap">
+      <span className="typo-caption1 bg-brand-primary/10 text-brand-primary inline-flex h-6 items-center justify-center rounded-[5px] px-200 py-100 whitespace-nowrap">
         회비
       </span>
     );
   }
   return (
-    <span className="typo-caption1 inline-flex h-6 items-center justify-center rounded-[5px] bg-state-error/10 px-200 py-100 text-state-error whitespace-nowrap">
+    <span className="typo-caption1 bg-state-error/10 text-state-error inline-flex h-6 items-center justify-center rounded-[5px] px-200 py-100 whitespace-nowrap">
       지출
     </span>
   );
@@ -93,10 +94,7 @@ function DuesTransactionTable({
 
   return (
     <div
-      className={cn(
-        'bg-container-neutral flex flex-col gap-600 rounded-lg p-450',
-        className,
-      )}
+      className={cn('bg-container-neutral flex flex-col gap-600 rounded-lg p-450', className)}
       {...props}
     >
       <span className="typo-h3 text-text-strong">거래 내역</span>
@@ -114,7 +112,7 @@ function DuesTransactionTable({
                   'typo-button2 min-w-10 cursor-pointer rounded-[10px] px-400 py-200 transition-colors',
                   activeTab === tab.key
                     ? 'bg-button-neutral text-text-strong'
-                    : 'border border-line text-text-normal hover:bg-container-neutral-interaction',
+                    : 'border-line text-text-normal hover:bg-container-neutral-interaction border',
                 )}
               >
                 {tab.label} {tab.count}
@@ -125,7 +123,7 @@ function DuesTransactionTable({
           <button
             type="button"
             onClick={() => setSortDesc((prev) => !prev)}
-            className="typo-button2 min-w-10 cursor-pointer rounded-[10px] border border-line px-400 py-200 text-text-normal transition-colors hover:bg-container-neutral-interaction"
+            className="typo-button2 border-line text-text-normal hover:bg-container-neutral-interaction min-w-10 cursor-pointer rounded-[10px] border px-400 py-200 transition-colors"
           >
             {sortDesc ? '최근 순' : '오래된 순'}
           </button>
@@ -142,9 +140,9 @@ function DuesTransactionTable({
                 <TableHead className="typo-body2 text-text-alternative min-w-32">거래처</TableHead>
                 <TableHead className="typo-body2 text-text-alternative w-32">금액(원)</TableHead>
                 <TableHead className="typo-body2 text-text-alternative w-32">총 잔액</TableHead>
-                <TableHead className="typo-body2 text-text-alternative w-32">일자</TableHead>
-                <TableHead className="w-14" />
-                <TableHead className="w-14" />
+                <TableHead className="typo-body2 text-text-alternative hidden w-32 tablet:table-cell">일자</TableHead>
+                <TableHead className="hidden w-14 tablet:table-cell" />
+                <TableHead className="hidden w-14 tablet:table-cell" />
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -158,7 +156,7 @@ function DuesTransactionTable({
                 sorted.map((tx) => (
                   <TableRow
                     key={tx.id}
-                    className="border-line hover:bg-container-neutral-interaction border-t cursor-default"
+                    className="border-line hover:bg-container-neutral-interaction cursor-default border-t"
                   >
                     <TableCell>
                       <TransactionTypeTag type={tx.type} />
@@ -181,27 +179,24 @@ function DuesTransactionTable({
                     <TableCell className="typo-body2 text-text-strong">
                       {tx.totalBalance.toLocaleString('ko-KR')}
                     </TableCell>
-                    <TableCell className="typo-body2 text-text-strong">{tx.date}</TableCell>
-                    <TableCell>
-                      {onReceiptClick && (
-                        <button
-                          type="button"
-                          onClick={() => onReceiptClick(tx)}
-                          className="hover:bg-container-neutral-interaction flex size-6 cursor-pointer items-center justify-center rounded-sm"
-                          aria-label="영수증 보기"
-                        >
-                          <Image src={MoreHorizIcon} alt="" width={16} height={16} />
-                        </button>
-                      )}
+                    <TableCell className="typo-body2 text-text-strong hidden tablet:table-cell">{tx.date}</TableCell>
+                    <TableCell className="hidden tablet:table-cell">
+                      <button
+                        type="button"
+                        className="text-icon-normal hover:text-icon-strong cursor-pointer"
+                        aria-label="영수증 보기"
+                      >
+                        <Icon src={AdminReceiptIcon} alt="영수증" size={24} />
+                      </button>
                     </TableCell>
-                    <TableCell>
+                    <TableCell className="hidden tablet:table-cell">
                       <button
                         type="button"
                         onClick={() => onMoreClick?.(tx)}
                         className="hover:bg-container-neutral-interaction flex size-6 cursor-pointer items-center justify-center rounded-sm"
                         aria-label="더보기"
                       >
-                        <Image src={MoreHorizIcon} alt="" width={16} height={16} />
+                        <Icon src={MoreHorizIcon} alt="더보기" size={16} />
                       </button>
                     </TableCell>
                   </TableRow>
