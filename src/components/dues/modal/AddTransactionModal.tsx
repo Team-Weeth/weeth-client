@@ -31,14 +31,18 @@ interface AddTransactionModalProps {
 const DESCRIPTION_MAX = 30;
 const VENDOR_MAX = 30;
 
-const DEFAULT_FORM: TransactionFormData = {
-  type: 'EXPENSE',
-  amount: '',
-  description: '',
-  vendor: '',
-  date: '',
-  receiptFile: null,
-};
+function getDefaultForm(): TransactionFormData {
+  const today = new Date();
+  const pad = (n: number) => String(n).padStart(2, '0');
+  return {
+    type: 'EXPENSE',
+    amount: '',
+    description: '',
+    vendor: '',
+    date: `${today.getFullYear()}-${pad(today.getMonth() + 1)}-${pad(today.getDate())}`,
+    receiptFile: null,
+  };
+}
 
 const TRANSACTION_TYPE_LABEL: Record<TransactionType, string> = {
   EXPENSE: '지출',
@@ -46,13 +50,13 @@ const TRANSACTION_TYPE_LABEL: Record<TransactionType, string> = {
 };
 
 function AddTransactionModal({ open, onOpenChange, onSubmit }: AddTransactionModalProps) {
-  const [form, setForm] = useState<TransactionFormData>(DEFAULT_FORM);
+  const [form, setForm] = useState<TransactionFormData>(getDefaultForm);
   const [prevOpen, setPrevOpen] = useState(open);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   if (prevOpen !== open) {
     setPrevOpen(open);
-    if (open) setForm(DEFAULT_FORM);
+    if (open) setForm(getDefaultForm());
   }
 
   const { isDragging, dragHandlers } = useImageDrop({
