@@ -41,6 +41,15 @@ function PaymentStatusBadge({ status }: { status: PaymentStatus }) {
   );
 }
 
+const COLUMNS = [
+  { key: 'select', label: '선택', className: 'w-[88px]' },
+  { key: 'name', label: '이름', className: 'min-w-32' },
+  { key: 'major', label: '학과', className: 'min-w-32' },
+  { key: 'phone', label: '연락처', className: 'w-[148px]' },
+  { key: 'status', label: '납부 현황', className: 'w-32' },
+  { key: 'action', label: '', className: 'w-[109px]' },
+] as const;
+
 interface DuesMemberPaymentTableProps extends React.HTMLAttributes<HTMLDivElement> {
   members: DuesMember[];
   onViewMember?: (member: DuesMember) => void;
@@ -150,12 +159,14 @@ function DuesMemberPaymentTable({
           <Table>
             <TableHeader className="bg-container-neutral-alternative">
               <TableRow className="border-line border-b hover:bg-transparent">
-                <TableHead className="typo-body2 text-text-alternative w-[88px]">선택</TableHead>
-                <TableHead className="typo-body2 text-text-alternative min-w-32">이름</TableHead>
-                <TableHead className="typo-body2 text-text-alternative min-w-32">학과</TableHead>
-                <TableHead className="typo-body2 text-text-alternative w-[148px]">연락처</TableHead>
-                <TableHead className="typo-body2 text-text-alternative w-32">납부 현황</TableHead>
-                <TableHead className="w-[109px]" />
+                {COLUMNS.map((col) => (
+                  <TableHead
+                    key={col.key}
+                    className={cn(col.label && 'typo-body2 text-text-alternative', col.className)}
+                  >
+                    {col.label}
+                  </TableHead>
+                ))}
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -188,15 +199,13 @@ function DuesMemberPaymentTable({
                               : 'border-button-neutral',
                           )}
                         >
-                          {selectedIds.has(member.id) && (
-                            <Icon src={CheckIcon} alt="" size={10} />
-                          )}
+                          {selectedIds.has(member.id) && <Icon src={CheckIcon} alt="" size={10} />}
                         </div>
                       </button>
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center gap-400">
-                        <div className="bg-container-neutral-interaction text-text-alternative typo-caption1 flex h-10 w-10 shrink-0 items-center justify-center rounded-md overflow-hidden">
+                        <div className="bg-container-neutral-interaction text-text-alternative typo-caption1 flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-md">
                           {member.avatarInitial ?? member.name.slice(0, 1)}
                         </div>
                         <span className="typo-body2 text-text-strong min-w-0 truncate">
@@ -216,7 +225,7 @@ function DuesMemberPaymentTable({
                         className="text-text-alternative hover:text-text-normal typo-button2 flex cursor-pointer items-center gap-100 transition-colors"
                       >
                         <span>멤버정보</span>
-                        <Icon src={ArrowRightIcon} alt="" size={16} />
+                        <Icon src={ArrowRightIcon} alt="" size={12} />
                       </button>
                     </TableCell>
                   </TableRow>
