@@ -6,15 +6,24 @@ import { AdminCloseIcon } from '@/assets/icons/admin';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { ModalIconButton } from '@/components/admin/modal/ModalIconButton';
 import { SCHEDULE_MODAL_CONTENT_CLASS } from '@/components/admin/schedule/modal/constants';
-import { TransactionForm, type TransactionFormData } from '@/components/dues/modal/TransactionForm';
+import {
+  TransactionForm,
+  type TransactionFormData,
+} from '@/components/dues/modal/TransactionForm';
 
-interface AddTransactionModalProps {
+interface EditTransactionModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  initialValues?: Partial<TransactionFormData>;
   onSubmit?: (data: TransactionFormData) => void;
 }
 
-function AddTransactionModal({ open, onOpenChange, onSubmit }: AddTransactionModalProps) {
+function EditTransactionModal({
+  open,
+  onOpenChange,
+  initialValues,
+  onSubmit,
+}: EditTransactionModalProps) {
   const [formKey, setFormKey] = useState(0);
   const [prevOpen, setPrevOpen] = useState(open);
 
@@ -33,12 +42,13 @@ function AddTransactionModal({ open, onOpenChange, onSubmit }: AddTransactionMod
         adminMobileFullscreen={false}
       >
         <div className="flex h-24 shrink-0 items-center justify-between px-600">
-          <h2 className="typo-h3 text-text-normal">거래내역 추가</h2>
+          <h2 className="typo-h3 text-text-normal">거래내역 수정</h2>
           <ModalIconButton icon={AdminCloseIcon} label="닫기" onClick={handleClose} />
         </div>
 
         <TransactionForm
           key={formKey}
+          initialValues={initialValues}
           onSubmit={(data) => {
             onSubmit?.(data);
             handleClose();
@@ -50,4 +60,4 @@ function AddTransactionModal({ open, onOpenChange, onSubmit }: AddTransactionMod
   );
 }
 
-export { AddTransactionModal, type AddTransactionModalProps };
+export { EditTransactionModal, type EditTransactionModalProps };
