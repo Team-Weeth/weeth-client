@@ -13,6 +13,7 @@ import {
 } from '@/components/ui';
 import { MoreHorizIcon } from '@/assets/icons';
 import { cn } from '@/lib/cn';
+import { formatAmount } from '@/lib/formatAmount';
 import { AdminReceiptIcon } from '@/assets/icons/admin';
 
 type TransactionType = 'income' | 'expense' | 'dues';
@@ -41,24 +42,22 @@ interface DuesTransactionTableProps extends React.HTMLAttributes<HTMLDivElement>
   onMoreClick?: (transaction: DuesTransaction) => void;
 }
 
+const TYPE_TAG_CONFIG: Record<TransactionType, { label: string; className: string }> = {
+  income: { label: '수입', className: 'bg-state-success/10 text-state-success' },
+  dues: { label: '회비', className: 'bg-brand-primary/10 text-brand-primary' },
+  expense: { label: '지출', className: 'bg-state-error/10 text-state-error' },
+};
+
 function TransactionTypeTag({ type }: { type: TransactionType }) {
-  if (type === 'income') {
-    return (
-      <span className="typo-caption1 bg-state-success/10 text-state-success inline-flex h-6 items-center justify-center rounded-[5px] px-200 py-100 whitespace-nowrap">
-        수입
-      </span>
-    );
-  }
-  if (type === 'dues') {
-    return (
-      <span className="typo-caption1 bg-brand-primary/10 text-brand-primary inline-flex h-6 items-center justify-center rounded-[5px] px-200 py-100 whitespace-nowrap">
-        회비
-      </span>
-    );
-  }
+  const { label, className } = TYPE_TAG_CONFIG[type];
   return (
-    <span className="typo-caption1 bg-state-error/10 text-state-error inline-flex h-6 items-center justify-center rounded-[5px] px-200 py-100 whitespace-nowrap">
-      지출
+    <span
+      className={cn(
+        'typo-caption1 inline-flex h-6 items-center justify-center rounded-[5px] px-200 py-100 whitespace-nowrap',
+        className,
+      )}
+    >
+      {label}
     </span>
   );
 }
@@ -73,16 +72,17 @@ function DuesTransactionTable({
   const [activeTab, setActiveTab] = useState<FilterTab>('all');
   const [sortDesc, setSortDesc] = useState(true);
 
+  const counts = transactions.reduce(
+    (acc, t) => { acc[t.type] += 1; return acc; },
+    { income: 0, expense: 0, dues: 0 } as Record<TransactionType, number>,
+  );
   const allCount = transactions.length;
-  const expenseCount = transactions.filter((t) => t.type === 'expense').length;
-  const incomeCount = transactions.filter((t) => t.type === 'income').length;
-  const duesCount = transactions.filter((t) => t.type === 'dues').length;
 
   const tabs: TabConfig[] = [
     { key: 'all', label: '전체', count: allCount },
-    { key: 'expense', label: '지출', count: expenseCount },
-    { key: 'income', label: '수입', count: incomeCount },
-    { key: 'dues', label: '회비', count: duesCount },
+    { key: 'expense', label: '지출', count: counts.expense },
+    { key: 'income', label: '수입', count: counts.income },
+    { key: 'dues', label: '회비', count: counts.dues },
   ];
 
   const filtered = transactions.filter((t) => {
@@ -168,18 +168,16 @@ function DuesTransactionTable({
                     <TableCell
                       className={cn(
                         'typo-body2',
-                        tx.type === 'income' || tx.type === 'dues'
-                          ? 'text-state-success'
-                          : 'text-state-error',
+                        tx.type !== 'expense' ? 'text-state-success' : 'text-state-error',
                       )}
                     >
                       <span className="flex items-center gap-100">
-                        <span>{tx.type === 'income' || tx.type === 'dues' ? '+' : '-'}</span>
-                        <span>{tx.amount.toLocaleString('ko-KR')}</span>
+                        <span>{tx.type !== 'expense' ? '+' : '-'}</span>
+                        <span>{formatAmount(tx.amount)}</span>
                       </span>
                     </TableCell>
                     <TableCell className="typo-body2 text-text-strong">
-                      {tx.totalBalance.toLocaleString('ko-KR')}
+                      {formatAmount(tx.totalBalance)}
                     </TableCell>
                     <TableCell className="typo-body2 text-text-strong tablet:table-cell hidden">
                       {tx.date}

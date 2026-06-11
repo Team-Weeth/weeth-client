@@ -147,7 +147,10 @@ function DuesChart({
               cursor="pointer"
               isAnimationActive={false}
               activeBar={false}
-              onClick={(data) => onMonthChange?.((data as unknown as MonthlyData).month)}
+              onClick={(barData) => {
+                const month = (barData as { payload?: MonthlyData } | undefined)?.payload?.month;
+                if (month) onMonthChange?.(month);
+              }}
             >
               {data.map((item) => (
                 <Cell

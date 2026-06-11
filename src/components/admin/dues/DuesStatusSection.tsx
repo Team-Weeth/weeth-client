@@ -20,7 +20,7 @@ interface PaymentStatusCardProps {
 
 function PaymentStatusCard({ paidCount, totalCount, onViewDetail }: PaymentStatusCardProps) {
   return (
-    <Card className="flex flex-row items-center justify-between p-400">
+    <Card className="flex flex-row items-center justify-between p-400 shadow-none">
       <div className="flex flex-col gap-100">
         <span className="typo-sub3 text-text-normal">
           {paidCount}명 / {totalCount}명
@@ -64,7 +64,7 @@ function AccountInfoCard({
   };
 
   return (
-    <Card className="flex flex-row items-center justify-between p-400">
+    <Card className="flex flex-row items-center justify-between p-400 shadow-none">
       <div className="flex min-w-0 flex-col gap-100">
         <TooltipProvider>
           <Tooltip>
