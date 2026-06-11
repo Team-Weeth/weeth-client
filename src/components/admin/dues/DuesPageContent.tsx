@@ -5,8 +5,9 @@ import { useState } from 'react';
 import type { Cardinal } from '@/types/admin/cardinal';
 import { DuesTopBar } from './DuesTopBar';
 import { DuesBalanceCard } from './DuesBalanceCard';
-import { DuesChart, type MonthlyData } from './DuesChart';
-import { DuesTransactionTable, type DuesTransaction } from './DuesTransactionTable';
+import type { MonthlyData, DuesTransaction } from '@/types/admin/dues';
+import { DuesChart } from './DuesChart';
+import { DuesTransactionTable } from './DuesTransactionTable';
 import { DuesGenerationFilter } from './DuesGenerationFilter';
 import { useCardinalSelector } from '@/hooks';
 

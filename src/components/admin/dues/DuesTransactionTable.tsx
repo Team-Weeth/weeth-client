@@ -15,18 +15,7 @@ import { MoreHorizIcon } from '@/assets/icons';
 import { cn } from '@/lib/cn';
 import { formatAmount } from '@/lib/formatAmount';
 import { AdminReceiptIcon } from '@/assets/icons/admin';
-
-type TransactionType = 'income' | 'expense' | 'dues';
-
-interface DuesTransaction {
-  id: number;
-  type: TransactionType;
-  content: string;
-  counterparty: string;
-  amount: number;
-  totalBalance: number;
-  date: string;
-}
+import type { TransactionType, DuesTransaction } from '@/types/admin/dues';
 
 type FilterTab = 'all' | 'expense' | 'income' | 'dues';
 
@@ -42,19 +31,22 @@ interface DuesTransactionTableProps extends React.HTMLAttributes<HTMLDivElement>
   onMoreClick?: (transaction: DuesTransaction) => void;
 }
 
-const TYPE_TAG_CONFIG: Record<TransactionType, { label: string; className: string }> = {
-  income: { label: '수입', className: 'bg-state-success/10 text-state-success' },
-  dues: { label: '회비', className: 'bg-brand-primary/10 text-brand-primary' },
-  expense: { label: '지출', className: 'bg-state-error/10 text-state-error' },
+const TRANSACTION_TYPE_META: Record<
+  TransactionType,
+  { label: string; tagClassName: string; amountSign: '+' | '-'; amountClassName: string }
+> = {
+  income:  { label: '수입', tagClassName: 'bg-state-success/10 text-state-success', amountSign: '+', amountClassName: 'text-state-success' },
+  dues:    { label: '회비', tagClassName: 'bg-brand-primary/10 text-brand-primary', amountSign: '+', amountClassName: 'text-state-success' },
+  expense: { label: '지출', tagClassName: 'bg-state-error/10 text-state-error',     amountSign: '-', amountClassName: 'text-state-error'   },
 };
 
 function TransactionTypeTag({ type }: { type: TransactionType }) {
-  const { label, className } = TYPE_TAG_CONFIG[type];
+  const { label, tagClassName } = TRANSACTION_TYPE_META[type];
   return (
     <span
       className={cn(
         'typo-caption1 inline-flex h-6 items-center justify-center rounded-[5px] px-200 py-100 whitespace-nowrap',
-        className,
+        tagClassName,
       )}
     >
       {label}
@@ -80,9 +72,11 @@ function DuesTransactionTable({
 
   const tabs: TabConfig[] = [
     { key: 'all', label: '전체', count: allCount },
-    { key: 'expense', label: '지출', count: counts.expense },
-    { key: 'income', label: '수입', count: counts.income },
-    { key: 'dues', label: '회비', count: counts.dues },
+    ...(['expense', 'income', 'dues'] as const).map((key) => ({
+      key,
+      label: TRANSACTION_TYPE_META[key].label,
+      count: counts[key],
+    })),
   ];
 
   const filtered = transactions.filter((t) => {
@@ -166,13 +160,10 @@ function DuesTransactionTable({
                     <TableCell className="typo-body2 text-text-strong">{tx.content}</TableCell>
                     <TableCell className="typo-body2 text-text-strong">{tx.counterparty}</TableCell>
                     <TableCell
-                      className={cn(
-                        'typo-body2',
-                        tx.type !== 'expense' ? 'text-state-success' : 'text-state-error',
-                      )}
+                      className={cn('typo-body2', TRANSACTION_TYPE_META[tx.type].amountClassName)}
                     >
                       <span className="flex items-center gap-100">
-                        <span>{tx.type !== 'expense' ? '+' : '-'}</span>
+                        <span>{TRANSACTION_TYPE_META[tx.type].amountSign}</span>
                         <span>{formatAmount(tx.amount)}</span>
                       </span>
                     </TableCell>

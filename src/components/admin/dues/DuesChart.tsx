@@ -5,6 +5,7 @@ import type { LabelProps } from 'recharts';
 import { cn } from '@/lib/cn';
 import { formatAmount } from '@/lib/formatAmount';
 import { QuestionCircleIcon } from '@/assets/icons';
+import type { MonthlyData } from '@/types/admin/dues';
 import {
   Icon,
   Tooltip,
@@ -15,11 +16,6 @@ import {
   ChartContainer,
   type ChartConfig,
 } from '@/components/ui';
-
-interface MonthlyData {
-  month: string;
-  amount: number;
-}
 
 interface DuesChartProps {
   className?: string;
