@@ -43,10 +43,7 @@ interface StatCardProps {
 function StatCard({ label, value, action, onAction, className }: StatCardProps) {
   return (
     <Card
-      className={cn(
-        'flex flex-1 flex-row items-center justify-between px-400 py-300',
-        className,
-      )}
+      className={cn('flex flex-1 flex-row items-center justify-between px-400 py-300', className)}
     >
       <div className="flex flex-col gap-100">
         <span className="typo-sub3 text-text-normal">{value}</span>
@@ -87,10 +84,7 @@ function AccountCard({
 
   return (
     <Card
-      className={cn(
-        'flex flex-1 flex-row items-center justify-between px-400 py-300',
-        className,
-      )}
+      className={cn('flex flex-1 flex-row items-center justify-between px-400 py-300', className)}
     >
       <div className="flex min-w-0 flex-col gap-100">
         <span className="typo-sub3 text-text-normal truncate">{fullText}</span>
@@ -128,9 +122,9 @@ function DuesPaymentStatusPageContent() {
           type="button"
           onClick={() => router.push(`/${clubId}/admin/dues`)}
           aria-label="뒤로가기"
-          className="bg-button-neutral hover:bg-container-neutral-interaction w-fit cursor-pointer rounded-sm p-200 transition-colors"
+          className="bg-button-neutral hover:bg-container-neutral-interaction flex w-fit cursor-pointer items-center justify-center rounded-sm p-200"
         >
-          <Icon src={BackIcon} alt="뒤로가기" size={24} />
+          <Icon src={BackIcon} alt="뒤로가기" size={18} />
         </button>
         <h1 className="text-text-strong text-[28px] leading-[36px] font-bold tracking-[-0.14px]">
           {generationLabel} 회비 납부 현황
@@ -143,7 +137,7 @@ function DuesPaymentStatusPageContent() {
           totalCollected={MOCK_TOTAL_COLLECTED}
           totalTarget={MOCK_TOTAL_TARGET}
         />
-        <div className="flex w-full flex-col gap-400 tablet:w-[339px]">
+        <div className="tablet:w-[339px] flex w-full flex-col gap-400">
           <StatCard label="미납 인원" value={`${unpaidCount}명`} action="현황 업데이트" />
           <StatCard label="납부 대상" value={`${totalCount}명`} action="수정" />
           <AccountCard {...MOCK_ACCOUNT} />
