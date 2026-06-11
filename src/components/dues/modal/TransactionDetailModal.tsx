@@ -1,9 +1,10 @@
 'use client';
 
+import { useState } from 'react';
+
 import Image from 'next/image';
 
 import { AdminCloseIcon, AdminMeatballIcon } from '@/assets/icons/admin';
-import { MoreHorizIcon } from '@/assets/icons';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -19,8 +20,6 @@ import { ModalIconButton } from '@/components/admin/modal/ModalIconButton';
 import { SCHEDULE_MODAL_CONTENT_CLASS } from '@/components/admin/schedule/modal/constants';
 import { cn } from '@/lib/cn';
 import type { TransactionType } from '@/components/dues/modal/TransactionForm';
-import { CustomAlertDialog } from '@/components/alert';
-import { useState } from 'react';
 
 interface TransactionDetail {
   type: TransactionType;
@@ -36,6 +35,7 @@ interface TransactionDetailModalProps {
   onOpenChange: (open: boolean) => void;
   transaction: TransactionDetail;
   onEdit?: () => void;
+  onDelete?: () => void;
 }
 
 const TYPE_CONFIG: Record<TransactionType, { label: string; className: string }> = {
@@ -59,6 +59,7 @@ function TransactionDetailModal({
   onOpenChange,
   transaction,
   onEdit,
+  onDelete,
 }: TransactionDetailModalProps) {
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const { type, amount, description, vendor, date, receiptUrl } = transaction;
@@ -172,7 +173,16 @@ function TransactionDetailModal({
         title="내역을 삭제하시겠어요?"
         description="삭제한 내역은 복구할 수 없습니다."
       >
-        <AlertDialogAction onClick={() => console.log('거래내역삭제')}>확인</AlertDialogAction>
+        <AlertDialogAction
+          onClick={() => {
+            // TODO: API 연동
+            onDelete?.();
+            setDeleteConfirmOpen(false);
+            onOpenChange(false);
+          }}
+        >
+          확인
+        </AlertDialogAction>
         <AlertDialogCancel>취소</AlertDialogCancel>
       </AlertDialog>
     </Dialog>

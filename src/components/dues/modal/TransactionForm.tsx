@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 
 import { AdminCloudUploadIcon } from '@/assets/icons/admin';
@@ -56,11 +56,18 @@ function TransactionForm({ initialValues, onSubmit, onCancel }: TransactionFormP
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   // const [isOcrLoading, setIsOcrLoading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const previewUrlRef = useRef<string | null>(null);
+
+  useEffect(() => {
+    return () => { if (previewUrlRef.current) URL.revokeObjectURL(previewUrlRef.current); };
+  }, []);
 
   const setReceiptFile = (file: File | null) => {
-    if (previewUrl) URL.revokeObjectURL(previewUrl);
+    if (previewUrlRef.current) URL.revokeObjectURL(previewUrlRef.current);
+    const newUrl = file ? URL.createObjectURL(file) : null;
+    previewUrlRef.current = newUrl;
     setForm((prev) => ({ ...prev, receiptFile: file }));
-    setPreviewUrl(file ? URL.createObjectURL(file) : null);
+    setPreviewUrl(newUrl);
   };
 
   const { isDragging, dragHandlers } = useImageDrop({ onDrop: setReceiptFile });

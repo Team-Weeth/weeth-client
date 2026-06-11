@@ -21,14 +21,16 @@ export default function DuesPageContent() {
   const [editOpen, setEditOpen] = useState(false);
   const [editingTransaction, setEditingTransaction] = useState<Partial<TransactionFormData>>();
 
-  const handleAddSubmit = (data: TransactionFormData) => {
+  const handleAddSubmit = () => {
     // TODO: API 연동
-    console.log('추가:', data);
   };
 
-  const handleEditSubmit = (data: TransactionFormData) => {
+  const handleEditSubmit = () => {
     // TODO: API 연동
-    console.log('수정:', data);
+  };
+
+  const handleDelete = () => {
+    // TODO: API 연동
   };
 
   const openEdit = (transaction: TransactionDetail) => {
@@ -77,6 +79,7 @@ export default function DuesPageContent() {
         onOpenChange={setDetailOpen}
         transaction={MOCK_TRANSACTION}
         onEdit={() => openEdit(MOCK_TRANSACTION)}
+        onDelete={handleDelete}
       />
       <EditTransactionModal
         open={editOpen}
