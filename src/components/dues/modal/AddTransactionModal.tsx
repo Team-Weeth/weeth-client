@@ -3,13 +3,15 @@
 import { useRef, useState } from 'react';
 import Image from 'next/image';
 
-import { AdminCloseIcon, AdminCloudUploadIcon } from '@/assets/icons/admin';
+import { AdminCloseIcon, AdminCloudUploadIcon, AdminReceiptIcon } from '@/assets/icons/admin';
 import { Button, CalendarPicker } from '@/components/ui';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { ModalIconButton } from '@/components/admin/modal/ModalIconButton';
 import { useImageDrop } from '@/hooks/useImageDrop';
+import { analyzeReceipt } from '@/lib/actions/ocr';
 import { cn } from '@/lib/cn';
 import { SCHEDULE_MODAL_CONTENT_CLASS } from '@/components/admin/schedule/modal/constants';
+import { toastError, toastSuccess } from '@/stores/useToastStore';
 
 type TransactionType = 'EXPENSE' | 'INCOME';
 
@@ -52,18 +54,60 @@ const TRANSACTION_TYPE_LABEL: Record<TransactionType, string> = {
 function AddTransactionModal({ open, onOpenChange, onSubmit }: AddTransactionModalProps) {
   const [form, setForm] = useState<TransactionFormData>(getDefaultForm);
   const [prevOpen, setPrevOpen] = useState(open);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [isOcrLoading, setIsOcrLoading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   if (prevOpen !== open) {
     setPrevOpen(open);
-    if (open) setForm(getDefaultForm());
+    if (open) {
+      setForm(getDefaultForm());
+      if (previewUrl) URL.revokeObjectURL(previewUrl);
+      setPreviewUrl(null);
+    }
   }
 
-  const { isDragging, dragHandlers } = useImageDrop({
-    onDrop: (file) => setForm((prev) => ({ ...prev, receiptFile: file })),
-  });
+  const setReceiptFile = (file: File | null) => {
+    if (previewUrl) URL.revokeObjectURL(previewUrl);
+    setForm((prev) => ({ ...prev, receiptFile: file }));
+    setPreviewUrl(file ? URL.createObjectURL(file) : null);
+  };
+
+  const { isDragging, dragHandlers } = useImageDrop({ onDrop: setReceiptFile });
 
   const handleClose = () => onOpenChange(false);
+
+  const handleOcrAnalyze = async () => {
+    if (!form.receiptFile) return;
+    setIsOcrLoading(true);
+    try {
+      const fd = new FormData();
+      fd.append('image', form.receiptFile);
+      const result = await analyzeReceipt(fd);
+
+      setForm((prev) => ({
+        ...prev,
+        ...(result.amount !== undefined && { amount: result.amount }),
+        ...(result.vendor !== undefined && {
+          vendor: result.vendor!.slice(0, VENDOR_MAX),
+        }),
+        ...(result.date !== undefined && { date: result.date }),
+      }));
+
+      const filled = [
+        result.amount && '금액',
+        result.vendor && '거래처',
+        result.date && '일자',
+      ]
+        .filter(Boolean)
+        .join(', ');
+      toastSuccess(filled ? `${filled}이(가) 자동 입력되었습니다.` : '분석 완료');
+    } catch (e) {
+      toastError(e instanceof Error ? e.message : '영수증 분석에 실패했습니다.');
+    } finally {
+      setIsOcrLoading(false);
+    }
+  };
 
   const sign = form.type === 'EXPENSE' ? '-' : '+';
   const descriptionLabel = form.type === 'EXPENSE' ? '지출 내용' : '수입 내용';
@@ -195,33 +239,91 @@ function AddTransactionModal({ open, onOpenChange, onSubmit }: AddTransactionMod
           </div>
 
           {/* 영수증 첨부 */}
-          <div className="flex flex-col">
+          <div className="flex flex-col gap-200">
             <span className="typo-sub3 text-text-normal flex h-12 items-center px-400">
               영수증 첨부
             </span>
+
             <button
               type="button"
               onClick={() => fileInputRef.current?.click()}
               {...dragHandlers}
               className={cn(
-                'bg-container-neutral-alternative flex h-44 w-full cursor-pointer flex-col items-center justify-center gap-300 rounded-sm border p-400 transition-colors',
+                'bg-container-neutral-alternative flex h-44 w-full cursor-pointer rounded-sm border p-400 transition-colors',
                 isDragging
                   ? 'border-brand-primary bg-container-neutral-interaction border-dashed'
                   : 'border-transparent',
+                previewUrl ? 'items-center gap-300' : 'flex-col items-center justify-center gap-300',
               )}
             >
-              <Image src={AdminCloudUploadIcon} alt="upload" width={32} height={32} />
-              <span className="typo-sub1 text-text-strong text-center">
-                {form.receiptFile ? form.receiptFile.name : '클릭 혹은 파일을 이곳에 드롭하세요'}
-              </span>
+              {previewUrl ? (
+                <>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={previewUrl}
+                    alt="영수증 미리보기"
+                    className="h-full max-w-20 rounded-sm object-contain"
+                  />
+                  <div className="flex flex-1 flex-col items-start gap-100 overflow-hidden">
+                    <span className="typo-body2 text-text-strong w-full truncate text-left">
+                      {form.receiptFile?.name}
+                    </span>
+                    <span className="typo-caption2 text-text-alternative">클릭하여 변경</span>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <Image src={AdminCloudUploadIcon} alt="upload" width={32} height={32} />
+                  <span className="typo-sub1 text-text-strong text-center">
+                    클릭 혹은 파일을 이곳에 드롭하세요
+                  </span>
+                </>
+              )}
             </button>
+
+            {form.receiptFile && (
+              <Button
+                variant="secondary"
+                size="lg"
+                className="w-full gap-200"
+                onClick={handleOcrAnalyze}
+                disabled={isOcrLoading}
+              >
+                {isOcrLoading ? (
+                  <svg
+                    className="size-4 animate-spin"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    aria-hidden="true"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    />
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+                    />
+                  </svg>
+                ) : (
+                  <Image src={AdminReceiptIcon} alt="" width={16} height={16} />
+                )}
+                {isOcrLoading ? '분석 중...' : '영수증 자동 분석'}
+              </Button>
+            )}
+
             <input
               ref={fileInputRef}
               type="file"
               accept="image/*"
               onChange={(e) => {
                 const file = e.target.files?.[0];
-                if (file) setForm((prev) => ({ ...prev, receiptFile: file }));
+                if (file) setReceiptFile(file);
                 e.target.value = '';
               }}
               className="hidden"
