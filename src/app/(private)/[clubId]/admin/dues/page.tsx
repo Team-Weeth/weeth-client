@@ -4,20 +4,20 @@ import { useState } from 'react';
 
 import { AdminPlusIcon } from '@/assets/icons/admin';
 import { Button, Icon } from '@/components/ui';
-import { AddTransactionModal, EditTransactionModal } from '@/components/dues';
-import type { TransactionFormData } from '@/components/dues';
+import { AddTransactionModal, EditTransactionModal, TransactionDetailModal } from '@/components/dues';
+import type { TransactionDetail, TransactionFormData } from '@/components/dues';
 
-const MOCK_TRANSACTION: TransactionFormData = {
+const MOCK_TRANSACTION: TransactionDetail = {
   type: 'EXPENSE',
-  amount: '50000',
+  amount: '123000',
   description: '스터디 지원금',
   vendor: '인프런',
-  date: '2025-06-01',
-  receiptFile: null,
+  date: '2026-07-20',
 };
 
 export default function DuesPageContent() {
   const [addOpen, setAddOpen] = useState(false);
+  const [detailOpen, setDetailOpen] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
   const [editingTransaction, setEditingTransaction] = useState<Partial<TransactionFormData>>();
 
@@ -31,8 +31,16 @@ export default function DuesPageContent() {
     console.log('수정:', data);
   };
 
-  const openEdit = (transaction: Partial<TransactionFormData>) => {
-    setEditingTransaction(transaction);
+  const openEdit = (transaction: TransactionDetail) => {
+    setDetailOpen(false);
+    setEditingTransaction({
+      type: transaction.type,
+      amount: transaction.amount,
+      description: transaction.description,
+      vendor: transaction.vendor,
+      date: transaction.date,
+      receiptFile: null,
+    });
     setEditOpen(true);
   };
 
@@ -47,22 +55,29 @@ export default function DuesPageContent() {
       </div>
 
       {/* 테스트용 거래내역 행 */}
-      <div className="bg-container-neutral flex items-center justify-between rounded-md px-500 py-400">
+      <button
+        type="button"
+        onClick={() => setDetailOpen(true)}
+        className="bg-container-neutral flex items-center justify-between rounded-md px-500 py-400 text-left"
+      >
         <div className="flex flex-col gap-100">
           <span className="typo-sub3 text-text-normal">{MOCK_TRANSACTION.description}</span>
           <span className="typo-caption2 text-text-alternative">
             {MOCK_TRANSACTION.vendor} · {MOCK_TRANSACTION.date}
           </span>
         </div>
-        <div className="flex items-center gap-300">
-          <span className="typo-sub3 text-state-error">-{Number(MOCK_TRANSACTION.amount).toLocaleString()}원</span>
-          <Button variant="secondary" size="sm" onClick={() => openEdit(MOCK_TRANSACTION)}>
-            수정
-          </Button>
-        </div>
-      </div>
+        <span className="typo-sub3 text-state-error">
+          -{Number(MOCK_TRANSACTION.amount).toLocaleString()}원
+        </span>
+      </button>
 
       <AddTransactionModal open={addOpen} onOpenChange={setAddOpen} onSubmit={handleAddSubmit} />
+      <TransactionDetailModal
+        open={detailOpen}
+        onOpenChange={setDetailOpen}
+        transaction={MOCK_TRANSACTION}
+        onEdit={() => openEdit(MOCK_TRANSACTION)}
+      />
       <EditTransactionModal
         open={editOpen}
         onOpenChange={setEditOpen}
