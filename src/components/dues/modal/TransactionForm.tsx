@@ -3,12 +3,13 @@
 import { useRef, useState } from 'react';
 import Image from 'next/image';
 
-import { AdminCloudUploadIcon, AdminReceiptIcon } from '@/assets/icons/admin';
+import { AdminCloudUploadIcon } from '@/assets/icons/admin';
+// import { AdminReceiptIcon } from '@/assets/icons/admin';
 import { Button, CalendarPicker, Icon } from '@/components/ui';
 import { useImageDrop } from '@/hooks/useImageDrop';
-import { analyzeReceipt } from '@/lib/actions/ocr';
+// import { analyzeReceipt } from '@/lib/actions/ocr';
 import { cn } from '@/lib/cn';
-import { toastError, toastSuccess } from '@/stores/useToastStore';
+// import { toastError, toastSuccess } from '@/stores/useToastStore';
 import { CloseCircleIcon } from '@/assets/icons';
 
 type TransactionType = 'EXPENSE' | 'INCOME';
@@ -53,7 +54,7 @@ function getDefaultForm(initial?: Partial<TransactionFormData>): TransactionForm
 function TransactionForm({ initialValues, onSubmit, onCancel }: TransactionFormProps) {
   const [form, setForm] = useState<TransactionFormData>(() => getDefaultForm(initialValues));
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-  const [isOcrLoading, setIsOcrLoading] = useState(false);
+  // const [isOcrLoading, setIsOcrLoading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const setReceiptFile = (file: File | null) => {
@@ -64,31 +65,29 @@ function TransactionForm({ initialValues, onSubmit, onCancel }: TransactionFormP
 
   const { isDragging, dragHandlers } = useImageDrop({ onDrop: setReceiptFile });
 
-  const handleOcrAnalyze = async () => {
-    if (!form.receiptFile) return;
-    setIsOcrLoading(true);
-    try {
-      const fd = new FormData();
-      fd.append('image', form.receiptFile);
-      const result = await analyzeReceipt(fd);
-
-      setForm((prev) => ({
-        ...prev,
-        ...(result.amount !== undefined && { amount: result.amount }),
-        ...(result.vendor !== undefined && { vendor: result.vendor!.slice(0, VENDOR_MAX) }),
-        ...(result.date !== undefined && { date: result.date }),
-      }));
-
-      const filled = [result.amount && '금액', result.vendor && '거래처', result.date && '일자']
-        .filter(Boolean)
-        .join(', ');
-      toastSuccess(filled ? `${filled}이(가) 자동 입력되었습니다.` : '분석 완료');
-    } catch (e) {
-      toastError(e instanceof Error ? e.message : '영수증 분석에 실패했습니다.');
-    } finally {
-      setIsOcrLoading(false);
-    }
-  };
+  // const handleOcrAnalyze = async () => {
+  //   if (!form.receiptFile) return;
+  //   setIsOcrLoading(true);
+  //   try {
+  //     const fd = new FormData();
+  //     fd.append('image', form.receiptFile);
+  //     const result = await analyzeReceipt(fd);
+  //     setForm((prev) => ({
+  //       ...prev,
+  //       ...(result.amount !== undefined && { amount: result.amount }),
+  //       ...(result.vendor !== undefined && { vendor: result.vendor!.slice(0, VENDOR_MAX) }),
+  //       ...(result.date !== undefined && { date: result.date }),
+  //     }));
+  //     const filled = [result.amount && '금액', result.vendor && '거래처', result.date && '일자']
+  //       .filter(Boolean)
+  //       .join(', ');
+  //     toastSuccess(filled ? `${filled}이(가) 자동 입력되었습니다.` : '분석 완료');
+  //   } catch (e) {
+  //     toastError(e instanceof Error ? e.message : '영수증 분석에 실패했습니다.');
+  //   } finally {
+  //     setIsOcrLoading(false);
+  //   }
+  // };
 
   const sign = form.type === 'EXPENSE' ? '-' : '+';
   const descriptionLabel = form.type === 'EXPENSE' ? '지출 내용' : '수입 내용';
@@ -263,6 +262,7 @@ function TransactionForm({ initialValues, onSubmit, onCancel }: TransactionFormP
             )}
           </button>
 
+          {/* OCR 자동 분석 버튼 — 추후 활성화
           {form.receiptFile && (
             <Button
               variant="secondary"
@@ -272,25 +272,9 @@ function TransactionForm({ initialValues, onSubmit, onCancel }: TransactionFormP
               disabled={isOcrLoading}
             >
               {isOcrLoading ? (
-                <svg
-                  className="size-4 animate-spin"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  aria-hidden="true"
-                >
-                  <circle
-                    className="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    strokeWidth="4"
-                  />
-                  <path
-                    className="opacity-75"
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
-                  />
+                <svg className="size-4 animate-spin" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
                 </svg>
               ) : (
                 <Image src={AdminReceiptIcon} alt="" width={16} height={16} />
@@ -298,6 +282,7 @@ function TransactionForm({ initialValues, onSubmit, onCancel }: TransactionFormP
               {isOcrLoading ? '분석 중...' : '영수증 자동 분석'}
             </Button>
           )}
+          */}
 
           <input
             ref={fileInputRef}
