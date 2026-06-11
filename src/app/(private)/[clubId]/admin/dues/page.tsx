@@ -4,7 +4,11 @@ import { useState } from 'react';
 
 import { AdminPlusIcon } from '@/assets/icons/admin';
 import { Button, Icon } from '@/components/ui';
-import { AddTransactionModal, EditTransactionModal, TransactionDetailModal } from '@/components/dues';
+import {
+  AddTransactionModal,
+  EditTransactionModal,
+  TransactionDetailModal,
+} from '@/components/dues';
 import type { TransactionDetail, TransactionFormData } from '@/components/dues';
 
 const MOCK_TRANSACTION: TransactionDetail = {

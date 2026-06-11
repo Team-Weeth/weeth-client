@@ -56,13 +56,15 @@ function parseReceiptText(lines: string[]): OcrReceiptResult {
   }
 
   // 거래처: 숫자·날짜·'영수증' 노이즈를 제외한 첫 의미 있는 텍스트
-  result.vendor = lines.find(
-    (t) =>
-      t.trim().length >= 2 &&
-      !/^[\d\s,.\-/]+$/.test(t) &&
-      !/\d{4}년/.test(t) &&
-      !/영수증|receipt/i.test(t),
-  )?.trim();
+  result.vendor = lines
+    .find(
+      (t) =>
+        t.trim().length >= 2 &&
+        !/^[\d\s,.\-/]+$/.test(t) &&
+        !/\d{4}년/.test(t) &&
+        !/영수증|receipt/i.test(t),
+    )
+    ?.trim();
 
   return result;
 }
@@ -77,21 +79,18 @@ export async function analyzeReceipt(formData: FormData): Promise<OcrReceiptResu
   const buffer = await file.arrayBuffer();
   const base64 = Buffer.from(buffer).toString('base64');
 
-  const res = await fetch(
-    `https://vision.googleapis.com/v1/images:annotate?key=${apiKey}`,
-    {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        requests: [
-          {
-            image: { content: base64 },
-            features: [{ type: 'DOCUMENT_TEXT_DETECTION' }],
-          },
-        ],
-      }),
-    },
-  );
+  const res = await fetch(`https://vision.googleapis.com/v1/images:annotate?key=${apiKey}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      requests: [
+        {
+          image: { content: base64 },
+          features: [{ type: 'DOCUMENT_TEXT_DETECTION' }],
+        },
+      ],
+    }),
+  });
 
   if (!res.ok) {
     const errorBody = await res.text().catch(() => '');
@@ -106,6 +105,9 @@ export async function analyzeReceipt(formData: FormData): Promise<OcrReceiptResu
   const text = response?.fullTextAnnotation?.text;
   if (!text) throw new Error('영수증에서 텍스트를 인식하지 못했습니다. 이미지를 확인해주세요.');
 
-  const lines = text.split('\n').map((l) => l.trim()).filter(Boolean);
+  const lines = text
+    .split('\n')
+    .map((l) => l.trim())
+    .filter(Boolean);
   return parseReceiptText(lines);
 }

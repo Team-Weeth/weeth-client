@@ -4,10 +4,7 @@ import { AdminCloseIcon } from '@/assets/icons/admin';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { ModalIconButton } from '@/components/admin/modal/ModalIconButton';
 import { SCHEDULE_MODAL_CONTENT_CLASS } from '@/components/admin/schedule/modal/constants';
-import {
-  TransactionForm,
-  type TransactionFormData,
-} from '@/components/dues/modal/TransactionForm';
+import { TransactionForm, type TransactionFormData } from '@/components/dues/modal/TransactionForm';
 import { useResetKeyOnOpen } from '@/hooks/useResetKeyOnOpen';
 
 interface EditTransactionModalProps {

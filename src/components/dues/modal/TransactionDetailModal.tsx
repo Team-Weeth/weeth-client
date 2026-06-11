@@ -2,8 +2,6 @@
 
 import { useState } from 'react';
 
-import Image from 'next/image';
-
 import { AdminCloseIcon, AdminMeatballIcon } from '@/assets/icons/admin';
 import {
   AlertDialog,

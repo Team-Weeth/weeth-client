@@ -59,7 +59,9 @@ function TransactionForm({ initialValues, onSubmit, onCancel }: TransactionFormP
   const previewUrlRef = useRef<string | null>(null);
 
   useEffect(() => {
-    return () => { if (previewUrlRef.current) URL.revokeObjectURL(previewUrlRef.current); };
+    return () => {
+      if (previewUrlRef.current) URL.revokeObjectURL(previewUrlRef.current);
+    };
   }, []);
 
   const setReceiptFile = (file: File | null) => {
