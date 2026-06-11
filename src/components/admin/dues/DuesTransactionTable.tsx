@@ -35,9 +35,24 @@ const TRANSACTION_TYPE_META: Record<
   TransactionType,
   { label: string; tagClassName: string; amountSign: '+' | '-'; amountClassName: string }
 > = {
-  income:  { label: '수입', tagClassName: 'bg-state-success/10 text-state-success', amountSign: '+', amountClassName: 'text-state-success' },
-  dues:    { label: '회비', tagClassName: 'bg-brand-primary/10 text-brand-primary', amountSign: '+', amountClassName: 'text-state-success' },
-  expense: { label: '지출', tagClassName: 'bg-state-error/10 text-state-error',     amountSign: '-', amountClassName: 'text-state-error'   },
+  income: {
+    label: '수입',
+    tagClassName: 'bg-state-success/10 text-state-success',
+    amountSign: '+',
+    amountClassName: 'text-state-success',
+  },
+  dues: {
+    label: '회비',
+    tagClassName: 'bg-brand-primary/10 text-brand-primary',
+    amountSign: '+',
+    amountClassName: 'text-state-success',
+  },
+  expense: {
+    label: '지출',
+    tagClassName: 'bg-state-error/10 text-state-error',
+    amountSign: '-',
+    amountClassName: 'text-state-error',
+  },
 };
 
 function TransactionTypeTag({ type }: { type: TransactionType }) {
@@ -65,7 +80,10 @@ function DuesTransactionTable({
   const [sortDesc, setSortDesc] = useState(true);
 
   const counts = transactions.reduce(
-    (acc, t) => { acc[t.type] += 1; return acc; },
+    (acc, t) => {
+      acc[t.type] += 1;
+      return acc;
+    },
     { income: 0, expense: 0, dues: 0 } as Record<TransactionType, number>,
   );
   const allCount = transactions.length;
