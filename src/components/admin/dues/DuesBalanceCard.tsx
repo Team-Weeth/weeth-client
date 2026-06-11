@@ -8,6 +8,7 @@ interface DuesBalanceCardProps {
   totalDues: number;
   onAddTransaction?: () => void;
   onSetTotalDues?: () => void;
+  onViewPaymentDetail?: () => void;
 }
 
 function formatAmount(amount: number) {
@@ -20,6 +21,7 @@ function DuesBalanceCard({
   totalDues,
   onAddTransaction,
   onSetTotalDues,
+  onViewPaymentDetail,
 }: DuesBalanceCardProps) {
   return (
     <Card className={cn('tablet:p-600 flex flex-col gap-400 p-400', className)}>
@@ -56,6 +58,7 @@ function DuesBalanceCard({
         accountNumber="1002-860-719061"
         holderName="가전대oo부"
         isAccountPublic
+        onViewPaymentDetail={onViewPaymentDetail}
       />
     </Card>
   );
