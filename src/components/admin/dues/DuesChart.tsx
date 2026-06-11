@@ -2,10 +2,19 @@
 
 import { Bar, BarChart, Cell, LabelList, Tooltip as RechartsTooltip, XAxis } from 'recharts';
 import type { LabelProps } from 'recharts';
-import { Card, ChartContainer, type ChartConfig } from '@/components/ui';
 import { cn } from '@/lib/cn';
+import { formatAmount } from '@/lib/formatAmount';
 import { QuestionCircleIcon } from '@/assets/icons';
-import { Icon, Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui';
+import {
+  Icon,
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+  Card,
+  ChartContainer,
+  type ChartConfig,
+} from '@/components/ui';
 
 interface MonthlyData {
   month: string;
@@ -24,10 +33,6 @@ interface DuesChartProps {
 }
 
 const chartConfig = {} satisfies ChartConfig;
-
-function formatAmount(amount: number) {
-  return amount.toLocaleString('ko-KR');
-}
 
 interface BarLabelProps extends LabelProps {
   data: MonthlyData[];

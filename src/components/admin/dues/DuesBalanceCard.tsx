@@ -1,5 +1,6 @@
 import { Card } from '@/components/ui';
 import { cn } from '@/lib/cn';
+import { formatAmount } from '@/lib/formatAmount';
 import { DuesStatusSection } from './DuesStatusSection';
 
 interface DuesBalanceCardProps {
@@ -8,10 +9,6 @@ interface DuesBalanceCardProps {
   totalDues: number;
   onAddTransaction?: () => void;
   onSetTotalDues?: () => void;
-}
-
-function formatAmount(amount: number) {
-  return amount.toLocaleString('ko-KR');
 }
 
 function DuesBalanceCard({
