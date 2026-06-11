@@ -4,11 +4,12 @@ import { useRef, useState } from 'react';
 import Image from 'next/image';
 
 import { AdminCloudUploadIcon, AdminReceiptIcon } from '@/assets/icons/admin';
-import { Button, CalendarPicker } from '@/components/ui';
+import { Button, CalendarPicker, Icon } from '@/components/ui';
 import { useImageDrop } from '@/hooks/useImageDrop';
 import { analyzeReceipt } from '@/lib/actions/ocr';
 import { cn } from '@/lib/cn';
 import { toastError, toastSuccess } from '@/stores/useToastStore';
+import { CloseCircleIcon } from '@/assets/icons';
 
 type TransactionType = 'EXPENSE' | 'INCOME';
 
@@ -221,7 +222,7 @@ function TransactionForm({ initialValues, onSubmit, onCancel }: TransactionFormP
               isDragging
                 ? 'border-brand-primary bg-container-neutral-interaction border-dashed'
                 : 'border-transparent',
-              previewUrl ? 'items-center gap-300' : 'flex-col items-center justify-center gap-300',
+              previewUrl ? 'items-start gap-300' : 'flex-col items-center justify-center gap-300',
             )}
           >
             {previewUrl ? (
@@ -232,12 +233,25 @@ function TransactionForm({ initialValues, onSubmit, onCancel }: TransactionFormP
                   alt="영수증 미리보기"
                   className="h-full max-w-20 rounded-sm object-contain"
                 />
-                <div className="flex flex-1 flex-col items-start gap-100 overflow-hidden">
+                <div className="flex flex-1 flex-col gap-100 self-center overflow-hidden">
                   <span className="typo-body2 text-text-strong w-full truncate text-left">
                     {form.receiptFile?.name}
                   </span>
-                  <span className="typo-caption2 text-text-alternative">클릭하여 변경</span>
+                  <span className="typo-caption2 text-text-alternative self-start">
+                    클릭하여 변경
+                  </span>
                 </div>
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setReceiptFile(null);
+                  }}
+                  className="text-icon-alternative hover:text-icon-normal flex shrink-0 align-top transition-colors"
+                  aria-label="영수증 삭제"
+                >
+                  <Icon src={CloseCircleIcon} size={22} />
+                </button>
               </>
             ) : (
               <>
@@ -312,4 +326,9 @@ function TransactionForm({ initialValues, onSubmit, onCancel }: TransactionFormP
   );
 }
 
-export { TransactionForm, type TransactionFormData, type TransactionFormProps, type TransactionType };
+export {
+  TransactionForm,
+  type TransactionFormData,
+  type TransactionFormProps,
+  type TransactionType,
+};
