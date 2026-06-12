@@ -5,7 +5,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { BackIcon, CopyIcon } from '@/assets/icons';
 import { Card, Icon } from '@/components/ui';
 import { cn } from '@/lib/cn';
-import { toastSuccess } from '@/stores/useToastStore';
+import { toastError, toastSuccess } from '@/stores/useToastStore';
 import { useCardinalSelector } from '@/hooks';
 
 import { DuesMemberPaymentTable, type DuesMember } from './DuesMemberPaymentTable';
@@ -79,8 +79,12 @@ function AccountCard({
   const fullText = `${bankName} ${accountNumber} ${holderName}`;
 
   const handleCopy = async () => {
-    await navigator.clipboard.writeText(fullText);
-    toastSuccess('계좌번호가 복사되었습니다.');
+    try {
+      await navigator.clipboard.writeText(fullText);
+      toastSuccess('계좌번호가 복사되었습니다.');
+    } catch {
+      toastError('복사에 실패했습니다. 직접 선택해서 복사해 주세요.');
+    }
   };
 
   return (
@@ -149,7 +153,7 @@ function DuesPaymentStatusPageContent() {
       <DuesMemberPaymentTable
         members={MOCK_MEMBERS}
         onViewMember={(member) => {
-          router.push(`/${clubId}/admin/member?name=${encodeURIComponent(member.name)}`);
+          router.push(`/${clubId}/admin/member/${member.id}`);
         }}
       />
     </div>
