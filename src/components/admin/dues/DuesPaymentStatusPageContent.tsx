@@ -52,7 +52,7 @@ function StatCard({ label, value, action, onAction, className }: StatCardProps) 
       <button
         type="button"
         onClick={onAction}
-        className="bg-button-neutral typo-button2 text-text-strong hover:bg-container-neutral-interaction ml-300 shrink-0 cursor-pointer rounded-sm px-300 py-200 transition-colors"
+        className="bg-button-neutral typo-button2 text-text-strong hover:bg-button-neutral-interaction ml-300 shrink-0 cursor-pointer rounded-sm px-300 py-200 transition-colors"
       >
         {action}
       </button>
@@ -60,6 +60,7 @@ function StatCard({ label, value, action, onAction, className }: StatCardProps) 
   );
 }
 
+//TODO: 회비 메인 UI 머지되면 거기서 쓰이는 컴포넌트 추출해서 재사용하기
 interface AccountCardProps {
   bankName: string;
   accountNumber: string;

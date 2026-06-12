@@ -4,7 +4,6 @@ import { useState } from 'react';
 
 import { useParams, useRouter } from 'next/navigation';
 
-import type { Cardinal } from '@/types/admin/cardinal';
 import { useCardinalSelector } from '@/hooks';
 import { DuesTopBar } from './DuesTopBar';
 import { DuesBalanceCard } from './DuesBalanceCard';

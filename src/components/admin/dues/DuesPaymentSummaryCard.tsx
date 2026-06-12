@@ -23,12 +23,7 @@ function DuesPaymentSummaryCard({
   const percentage = totalTarget > 0 ? Math.round((totalCollected / totalTarget) * 100) : 0;
 
   return (
-    <Card
-      className={cn(
-        'flex min-w-[339px] flex-1 flex-col overflow-hidden p-400',
-        className,
-      )}
-    >
+    <Card className={cn('flex min-w-[339px] flex-1 flex-col overflow-hidden p-400', className)}>
       <p className="typo-h3 text-text-normal">총 수납액</p>
 
       <div className="mt-400 flex items-end gap-200">
@@ -51,7 +46,7 @@ function DuesPaymentSummaryCard({
         <button
           type="button"
           onClick={onSetTotal}
-          className="bg-button-neutral typo-button1 text-text-strong hover:bg-container-neutral-interaction cursor-pointer rounded-md px-400 py-300 transition-colors"
+          className="bg-button-neutral typo-button1 text-text-strong hover:bg-button-neutral-interaction cursor-pointer rounded-md px-400 py-300 transition-colors"
         >
           총 회비 설정
         </button>
