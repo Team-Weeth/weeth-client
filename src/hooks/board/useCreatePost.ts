@@ -35,7 +35,7 @@ export function useCreatePost() {
     },
     onSuccess: (result) => {
       const { _allowNavigation } = usePostStore.getState();
-      queryClient.invalidateQueries({ queryKey: ['posts'] });
+      queryClient.invalidateQueries({ queryKey: ['posts', clubId] });
       queryClient.invalidateQueries({ queryKey: ['home', 'recent-posts', clubId] });
       queryClient.invalidateQueries({ queryKey: ['home', 'recent-notices', clubId] });
       queryClient.invalidateQueries({ queryKey: ['home', 'unread-notice', clubId] });

@@ -45,6 +45,7 @@ export function useUpdateAttendanceStatus(sessionId: number) {
       ),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin', 'attendance', clubId, sessionId] });
+      queryClient.invalidateQueries({ queryKey: ['attendance', clubId] });
       toastSuccess('출석 상태가 저장되었습니다.');
     },
     onError: (error: AxiosError<ApiResponse<unknown>>) => {
