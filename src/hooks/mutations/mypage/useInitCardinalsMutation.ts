@@ -1,6 +1,8 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { mypageApi } from '@/lib/apis/mypage';
 import { useClubId } from '@/stores/useClubStore';
+import type { ProfileStatus } from '@/types/home';
+import type { ClubDto, MyMember } from '@/types/mypage';
 
 export function useInitCardinalsMutation() {
   const queryClient = useQueryClient();
@@ -11,7 +13,39 @@ export function useInitCardinalsMutation() {
       if (!clubId) throw new Error('clubId가 없습니다');
       return mypageApi.initCardinals(clubId, cardinals);
     },
-    onSuccess: () => {
+    onSuccess: (_, cardinals) => {
+      if (clubId) {
+        const nextCardinals = [...cardinals].sort((a, b) => a - b);
+
+        queryClient.setQueryData<MyMember>(['mypage', 'me', clubId], (old) => {
+          if (!old) return old;
+          return {
+            ...old,
+            cardinals: nextCardinals,
+          };
+        });
+
+        queryClient.setQueryData<ClubDto[]>(['mypage', 'clubs'], (old) => {
+          if (!old) return old;
+          return old.map((club) =>
+            club.id === clubId
+              ? {
+                  ...club,
+                  cardinals: nextCardinals,
+                }
+              : club,
+          );
+        });
+
+        queryClient.setQueryData<ProfileStatus>(['home', 'profile-status', clubId], (old) => {
+          if (!old) return old;
+          return {
+            ...old,
+            cardinalAssigned: nextCardinals.length > 0,
+          };
+        });
+      }
+
       queryClient.invalidateQueries({ queryKey: ['mypage', 'clubs'] });
       if (clubId) {
         queryClient.invalidateQueries({ queryKey: ['mypage', 'me', clubId] });

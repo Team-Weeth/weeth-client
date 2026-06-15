@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 
 import { attendanceApi } from '@/lib/apis/attendance';
+import { ATTENDANCE_QR_GC_TIME } from '@/constants/attendance';
 
 function useQRCode(clubId: string | null, sessionId: number | null) {
   return useQuery({
@@ -11,7 +12,7 @@ function useQRCode(clubId: string | null, sessionId: number | null) {
     },
     enabled: !!clubId && sessionId != null,
     staleTime: Infinity,
-    gcTime: Infinity,
+    gcTime: ATTENDANCE_QR_GC_TIME,
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
   });

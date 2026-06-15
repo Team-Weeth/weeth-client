@@ -5,6 +5,9 @@ import { useClubId } from '@/stores/useClubStore';
 import type { MutationCallbacks } from '@/types';
 import type { HomeDashboard } from '@/types/home';
 
+const HOME_DASHBOARD_STALE_TIME = 5 * 60 * 1000;
+const HOME_DASHBOARD_GC_TIME = 30 * 60 * 1000;
+
 interface UseHomeQueryOptions<TData> {
   select?: (data: HomeDashboard) => TData;
   callback?: Pick<MutationCallbacks, 'onSuccess'>;
@@ -18,7 +21,8 @@ export function useHomeQuery<TData = HomeDashboard>(options?: UseHomeQueryOption
     queryKey: ['home', clubId],
     queryFn: () => homeApi.getDashboard(clubId!).then((res) => res.data.data),
     enabled: !!clubId,
-    staleTime: Infinity, // 홈 진입 시 1회만 조회 후 캐싱 (회의 결정)
+    staleTime: HOME_DASHBOARD_STALE_TIME,
+    gcTime: HOME_DASHBOARD_GC_TIME,
     select: options?.select,
   });
 
