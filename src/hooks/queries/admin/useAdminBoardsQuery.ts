@@ -5,13 +5,13 @@ import { useClubId } from '@/stores';
 import { toBoard } from '@/utils/admin/boardMapper';
 // import { TRASH_RETENTION_DAYS } from '@/constants/admin/board.constants';
 import type { TrashedBoard } from '@/types/admin/board';
-import { adminBoardQueryKeys } from './boardQueryKeys';
+import { adminQueryKeys } from './adminQueryKeys';
 
 export function useAdminBoardsQuery() {
   const clubId = useClubId();
 
   return useQuery({
-    queryKey: adminBoardQueryKeys.list(clubId),
+    queryKey: adminQueryKeys.boards(clubId),
     queryFn: async () => {
       const res = await adminBoardApi.getBoards(clubId!);
       const all = res.data.data;

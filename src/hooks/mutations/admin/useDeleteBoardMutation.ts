@@ -3,7 +3,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { adminBoardApi } from '@/lib/apis/adminBoard';
 import { useClubId } from '@/stores';
 import type { MutationCallbacks } from '@/types/common';
-import { adminBoardQueryKeys } from './boardQueryKeys';
+import { adminQueryKeys } from '@/hooks/queries/admin/adminQueryKeys';
 
 export function useDeleteBoardMutation(callbacks?: MutationCallbacks<unknown>) {
   const clubId = useClubId();
@@ -16,7 +16,7 @@ export function useDeleteBoardMutation(callbacks?: MutationCallbacks<unknown>) {
       return adminBoardApi.deleteBoard(clubId, boardId);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: adminBoardQueryKeys.list(clubId) });
+      queryClient.invalidateQueries({ queryKey: adminQueryKeys.boards(clubId) });
       callbacks?.onSuccess?.();
     },
     onError: callbacks?.onError,
