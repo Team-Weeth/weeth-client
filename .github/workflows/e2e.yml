@@ -1,0 +1,88 @@
+name: E2E
+
+on:
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  e2e:
+    name: Playwright E2E
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.28.0
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Install Playwright browsers
+        run: pnpm exec playwright install chromium --with-deps
+
+      - name: Playwright E2E
+        id: playwright
+        continue-on-error: true
+        run: pnpm test:e2e
+        env:
+          CI: true
+          DEV_ACCESS_TOKEN: ${{ secrets.DEV_ACCESS_TOKEN }}
+
+      - name: Upload Playwright report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 7
+
+      - name: PR E2E 결과 코멘트
+        if: always()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const outcome = '${{ steps.playwright.outcome }}';
+
+            const icon = (o) =>
+              o === 'success' ? '✅' : o === 'failure' ? '❌' : '⏭️';
+            const label = (o) =>
+              o === 'success' ? '통과' : o === 'failure' ? '실패' : '건너뜀';
+
+            const body = [
+              '## PR E2E 테스트 결과',
+              '',
+              `${icon(outcome)} **Playwright:** ${label(outcome)}`,
+              '',
+              outcome === 'success'
+                ? '🎉 E2E 테스트를 통과했습니다!'
+                : '⚠️ E2E 테스트에 실패했습니다. 확인 후 수정해주세요.',
+            ].join('\n');
+
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body,
+            });
+
+      - name: Fail workflow if E2E failed
+        if: always()
+        run: |
+          playwright_outcome="${{ steps.playwright.outcome }}"
+          echo "Playwright: ${playwright_outcome}"
+
+          if [ "${playwright_outcome}" = "failure" ]; then
+            echo "::error::E2E 테스트 실패"
+            exit 1
+          fi
