@@ -1,4 +1,7 @@
 import { defineConfig, devices } from '@playwright/test';
+import dotenv from 'dotenv';
+
+dotenv.config({ path: '.env.local' });
 
 export default defineConfig({
   testDir: './e2e',
@@ -16,12 +19,24 @@ export default defineConfig({
 
   projects: [
     {
+      name: 'setup',
+      testMatch: /auth\.setup\.ts/,
+    },
+    {
       name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
+      use: {
+        ...devices['Desktop Chrome'],
+        storageState: 'e2e/.auth/user.json',
+      },
+      dependencies: ['setup'],
     },
     {
       name: 'mobile-chrome',
-      use: { ...devices['Pixel 5'] },
+      use: {
+        ...devices['Pixel 5'],
+        storageState: 'e2e/.auth/user.json',
+      },
+      dependencies: ['setup'],
     },
   ],
 
