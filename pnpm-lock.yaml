@@ -294,6 +294,9 @@ importers:
       jest-environment-jsdom:
         specifier: ^30.2.0
         version: 30.2.0
+      jest-fixed-jsdom:
+        specifier: ^0.0.11
+        version: 0.0.11(jest-environment-jsdom@30.2.0)
       msw:
         specifier: ^2.14.6
         version: 2.14.6(@types/node@20.19.33)(typescript@5.9.3)
@@ -315,6 +318,9 @@ importers:
       typescript:
         specifier: ^5
         version: 5.9.3
+      undici:
+        specifier: ^8.5.0
+        version: 8.5.0
 
 packages:
 
@@ -4681,6 +4687,12 @@ packages:
     resolution: {integrity: sha512-ElU8v92QJ9UrYsKrxDIKCxu6PfNj4Hdcktcn0JX12zqNdqWHB0N+hwOnnBBXvjLd2vApZtuLUGs1QSY+MsXoNA==}
     engines: {node: ^18.14.0 || ^20.0.0 || ^22.0.0 || >=24.0.0}
 
+  jest-fixed-jsdom@0.0.11:
+    resolution: {integrity: sha512-3UkjgM79APnmLVDnelrxdwz4oybD5qw6NLyayl7iCX8C8tJHeqjL9fmNrRlIrNiVJSXkF5t9ZPJ+xlM0kSwwYg==}
+    engines: {node: '>=18.0.0'}
+    peerDependencies:
+      jest-environment-jsdom: '>=28.0.0'
+
   jest-haste-map@30.2.0:
     resolution: {integrity: sha512-sQA/jCb9kNt+neM0anSj6eZhLZUIhQgwDt7cPGjumgLM4rXsfb9kpnlacmvZz3Q5tb80nS+oG/if+NBKrHC+Xw==}
     engines: {node: ^18.14.0 || ^20.0.0 || ^22.0.0 || >=24.0.0}
@@ -6281,6 +6293,10 @@ packages:
 
   undici-types@6.21.0:
     resolution: {integrity: sha512-iwDZqg0QAGrg9Rav5H4n0M64c3mkR59cJ6wQp+7C4nI0gsmExaedaYLNO44eT4AtBBwjbTiGPMlt2Md0T9H9JQ==}
+
+  undici@8.5.0:
+    resolution: {integrity: sha512-xamtWoB1EshgjpmlXd7GGm2VfdDtw1+rD8uhry8pSNW3If6S8E0m2T2+orSKeZXEn/aPJMviCpDBA65WJt8zhg==}
+    engines: {node: '>=22.19.0'}
 
   unist-util-is@6.0.1:
     resolution: {integrity: sha512-LsiILbtBETkDz8I9p1dQ0uyRUWuaQzd/cuEeS1hoRSyW5E5XGmTzlwY1OrNzzakGowI9Dr/I8HVaw4hTtnxy8g==}
@@ -11293,6 +11309,10 @@ snapshots:
       jest-util: 30.2.0
       jest-validate: 30.2.0
 
+  jest-fixed-jsdom@0.0.11(jest-environment-jsdom@30.2.0):
+    dependencies:
+      jest-environment-jsdom: 30.2.0
+
   jest-haste-map@30.2.0:
     dependencies:
       '@jest/types': 30.2.0
@@ -13124,6 +13144,8 @@ snapshots:
       which-boxed-primitive: 1.1.1
 
   undici-types@6.21.0: {}
+
+  undici@8.5.0: {}
 
   unist-util-is@6.0.1:
     dependencies:
