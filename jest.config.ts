@@ -24,15 +24,26 @@ const config: Config = {
 
   collectCoverageFrom: [
     'src/**/*.{ts,tsx}',
+    // 타입 정의
     '!src/**/*.d.ts',
+    // 배럴 export
     '!src/**/index.ts',
-    '!src/app/layout.tsx',
+    // Next.js App Router 파일 (프레임워크 관리, 단위 테스트 대상 아님)
+    '!src/app/**',
+    // 테스트용 mock 파일
+    '!src/mocks/**',
+    // 프로바이더 래퍼 (얇은 프레임워크 통합 레이어)
+    '!src/providers/**',
+    // 타입 전용 파일
+    '!src/types/**',
+    // 에셋
+    '!src/assets/**',
   ],
   coverageDirectory: 'coverage',
   coverageProvider: 'v8',
-  coverageReporters: ['text', 'lcov', 'json-summary'],
+  coverageReporters: ['text', 'lcov', 'json-summary', 'html'],
 
-  // coverageThreshold: 테스트가 충분히 쌓이면 활성화
+  // 테스트가 충분히 쌓이면 수치를 높여가며 관리
   // coverageThreshold: {
   //   global: { branches: 50, functions: 50, lines: 50, statements: 50 },
   // },
