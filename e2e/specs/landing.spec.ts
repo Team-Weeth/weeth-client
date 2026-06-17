@@ -6,10 +6,17 @@ test.describe('랜딩 페이지', () => {
     await expect(page).toHaveTitle(/위드/);
   });
 
-  test('로그인 페이지로 이동한다', async ({ page }) => {
+  test('로그인 페이지로 이동한다', async ({ page, context, isMobile }) => {
+    // storageState로 주입된 인증 쿠키를 제거해 미들웨어 리다이렉트 방지
+    await context.clearCookies();
     await page.goto('/landing');
-    const loginButton = page.getByRole('link', { name: /로그인/ });
-    await loginButton.click();
-    await expect(page).toHaveURL(/sign-in/);
+
+    if (isMobile) {
+      // 모바일: 로그인 링크가 Sheet 안에 있으므로 햄버거 메뉴 먼저 오픈
+      await page.getByRole('button', { name: '메뉴 열기' }).click();
+    }
+
+    await page.getByRole('link', { name: '로그인' }).click();
+    await expect(page).toHaveURL(/\/login/);
   });
 });
