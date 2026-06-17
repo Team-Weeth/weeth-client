@@ -21,13 +21,13 @@ Weeth 클라이언트의 테스트 환경 사용법과 작성 규칙을 다룹�
 
 ## 1. 테스트 스택 개요
 
-| 유형 | 도구 | 대상 |
-|------|------|------|
-| 단위 테스트 | Jest + React Testing Library | 컴포넌트, 유틸 함수 |
-| 훅 테스트 | Jest + `renderHook` | 커스텀 훅 (`use*.ts`) |
-| 통합 테스트 | RTL + MSW | 컴포넌트 + API 연동 흐름 |
-| E2E 테스트 | Playwright | 핵심 사용자 시나리오 전체 |
-| 시각적 회귀 | Playwright Screenshot | UI 변경 전후 비교 |
+| 유형        | 도구                         | 대상                      |
+| ----------- | ---------------------------- | ------------------------- |
+| 단위 테스트 | Jest + React Testing Library | 컴포넌트, 유틸 함수       |
+| 훅 테스트   | Jest + `renderHook`          | 커스텀 훅 (`use*.ts`)     |
+| 통합 테스트 | RTL + MSW                    | 컴포넌트 + API 연동 흐름  |
+| E2E 테스트  | Playwright                   | 핵심 사용자 시나리오 전체 |
+| 시각적 회귀 | Playwright Screenshot        | UI 변경 전후 비교         |
 
 **우선순위:** 단위 < 통합 (가성비 최고) < E2E < 시각적 회귀
 
@@ -103,23 +103,20 @@ describe('Button', () => {
 ### 4-2. cva variant 테스트 — `it.each` 사용
 
 ```tsx
-it.each(['primary', 'secondary', 'tertiary'] as const)(
-  'variant="%s"로 렌더링된다',
-  (variant) => {
-    render(<Button variant={variant}>클릭</Button>);
-    expect(screen.getByRole('button')).toBeInTheDocument();
-  },
-);
+it.each(['primary', 'secondary', 'tertiary'] as const)('variant="%s"로 렌더링된다', (variant) => {
+  render(<Button variant={variant}>클릭</Button>);
+  expect(screen.getByRole('button')).toBeInTheDocument();
+});
 ```
 
 ### 4-3. 필수 케이스
 
-| 케이스 | 확인 항목 |
-|--------|----------|
-| **Smoke** | 크래시 없이 렌더링됨 |
-| **Props / variant** | 다른 variant가 다른 결과를 냄 |
-| **User interaction** | 클릭, 입력 등 이벤트가 동작함 |
-| **Accessibility** | role, label, aria 속성이 올바름 |
+| 케이스               | 확인 항목                       |
+| -------------------- | ------------------------------- |
+| **Smoke**            | 크래시 없이 렌더링됨            |
+| **Props / variant**  | 다른 variant가 다른 결과를 냄   |
+| **User interaction** | 클릭, 입력 등 이벤트가 동작함   |
+| **Accessibility**    | role, label, aria 속성이 올바름 |
 
 ### 4-4. 쿼리 우선순위
 
@@ -211,9 +208,7 @@ function renderWithQuery(ui: React.ReactElement) {
   const queryClient = new QueryClient({
     defaultOptions: { queries: { retry: false } }, // 테스트에서 재시도 비활성화
   });
-  return render(
-    <QueryClientProvider client={queryClient}>{ui}</QueryClientProvider>,
-  );
+  return render(<QueryClientProvider client={queryClient}>{ui}</QueryClientProvider>);
 }
 
 it('게시글 목록을 렌더링한다', async () => {
@@ -354,10 +349,10 @@ test.describe('게시판', () => {
 ### 8-3. Locator 우선순위
 
 ```ts
-page.getByRole('button', { name: '제출' })  // 1순위 — 접근성 기반
-page.getByLabel('이메일')                    // 2순위 — 폼 라벨
-page.getByText('공지사항')                   // 3순위 — 화면 텍스트
-page.getByTestId('submit-btn')              // 최후 수단
+page.getByRole('button', { name: '제출' }); // 1순위 — 접근성 기반
+page.getByLabel('이메일'); // 2순위 — 폼 라벨
+page.getByText('공지사항'); // 3순위 — 화면 텍스트
+page.getByTestId('submit-btn'); // 최후 수단
 ```
 
 ### 8-4. 인증이 필요한 테스트
@@ -394,13 +389,13 @@ pnpm exec playwright test --update-snapshots
 
 ### 반드시 지킬 것
 
-| 항목 | 이유 |
-|------|------|
-| 이벤트는 `userEvent.setup()` 사용 | `fireEvent`는 실제 브라우저 동작과 다름 |
-| 비동기 렌더링은 `findBy*` 사용 | `getBy*`는 DOM이 생기기 전에 실패함 |
-| `act()` 안에서 상태 변경 | 경고 없이 테스트가 불안정해짐 |
-| `new Date()` 의존 훅에서 `jest.useFakeTimers()` | 실행 시점에 따라 테스트 결과가 달라짐 |
-| React Query 컴포넌트에 `retry: false` | 실패 시 재시도 대기로 테스트가 느려짐 |
+| 항목                                            | 이유                                    |
+| ----------------------------------------------- | --------------------------------------- |
+| 이벤트는 `userEvent.setup()` 사용               | `fireEvent`는 실제 브라우저 동작과 다름 |
+| 비동기 렌더링은 `findBy*` 사용                  | `getBy*`는 DOM이 생기기 전에 실패함     |
+| `act()` 안에서 상태 변경                        | 경고 없이 테스트가 불안정해짐           |
+| `new Date()` 의존 훅에서 `jest.useFakeTimers()` | 실행 시점에 따라 테스트 결과가 달라짐   |
+| React Query 컴포넌트에 `retry: false`           | 실패 시 재시도 대기로 테스트가 느려짐   |
 
 ### 하지 말 것
 
@@ -429,6 +424,7 @@ const item = screen.getByText('API 응답 데이터');
 PR이 `main` 또는 `develop`에 올라오면 `.github/workflows/e2e.yml`이 자동으로 실행됩니다.
 
 **워크플로 동작 순서:**
+
 1. 의존성 설치 (`pnpm install --frozen-lockfile`)
 2. Playwright 브라우저 설치 (`chromium`)
 3. `DEV_ACCESS_TOKEN` secret으로 인증 처리
@@ -437,6 +433,7 @@ PR이 `main` 또는 `develop`에 올라오면 `.github/workflows/e2e.yml`이 자
 6. `playwright-report/` 아티팩트 7일 보관
 
 **CI secret 설정** (최초 1회, 레포 관리자):
+
 - GitHub 레포 → Settings → Secrets → `DEV_ACCESS_TOKEN` 등록
 
 **Jest 단위 테스트 CI 실행:**
