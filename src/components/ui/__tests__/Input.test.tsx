@@ -28,16 +28,12 @@ describe('Input', () => {
   describe('clearable', () => {
     it('clearable 없이는 지우기 버튼이 없다', () => {
       render(<Input value="텍스트" onChange={() => {}} />);
-      expect(
-        screen.queryByRole('button', { name: '입력 내용 지우기' }),
-      ).not.toBeInTheDocument();
+      expect(screen.queryByRole('button', { name: '입력 내용 지우기' })).not.toBeInTheDocument();
     });
 
     it('clearable=true이고 값이 없으면 지우기 버튼이 없다', () => {
       render(<Input value="" clearable onChange={() => {}} />);
-      expect(
-        screen.queryByRole('button', { name: '입력 내용 지우기' }),
-      ).not.toBeInTheDocument();
+      expect(screen.queryByRole('button', { name: '입력 내용 지우기' })).not.toBeInTheDocument();
     });
 
     it('clearable=true이고 값이 있으면 지우기 버튼이 나타난다', () => {
@@ -56,9 +52,7 @@ describe('Input', () => {
 
     it('disabled 상태에서는 값이 있어도 지우기 버튼이 없다', () => {
       render(<Input value="텍스트" clearable disabled onChange={() => {}} />);
-      expect(
-        screen.queryByRole('button', { name: '입력 내용 지우기' }),
-      ).not.toBeInTheDocument();
+      expect(screen.queryByRole('button', { name: '입력 내용 지우기' })).not.toBeInTheDocument();
     });
   });
 });
