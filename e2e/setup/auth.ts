@@ -1,7 +1,7 @@
 import { test as setup } from '@playwright/test';
 import path from 'path';
 
-export const authFile = path.join(__dirname, '.auth/user.json');
+export const authFile = path.join(__dirname, '../.auth/user.json');
 
 setup('authenticate', async ({ browser }) => {
   const context = await browser.newContext();
