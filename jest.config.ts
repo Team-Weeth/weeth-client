@@ -55,13 +55,6 @@ const jestConfig = createJestConfig(config);
 
 // createJestConfig 병합 동작:
 //   transformIgnorePatterns = [...Next.js 생성 패턴, ...커스텀 패턴]
-//
-// Next.js는 transpilePackages(기본값: ['geist'])를 기반으로 패턴을 생성하고,
-// 커스텀 패턴을 그 뒤에 추가한다.
-// MSW의 ESM 전이 의존성들은 transpilePackages에 없으므로
-// Next.js 생성 패턴이 먼저 차단하고, 뒤에 추가된 커스텀 패턴은 효과가 없다.
-//
-// 해결: 최종 config를 받아서 Next.js가 생성한 패턴 안에 ESM 패키지를 직접 주입한다.
 const resolvedJestConfig = async () => {
   const cfg = await (jestConfig as () => Promise<Config>)();
 

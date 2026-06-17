@@ -109,18 +109,7 @@ git diff main...HEAD --name-only --diff-filter=AM
 
 ---
 
-### 2. generate:tests 스크립트 먼저 시도
-
-`.env.local`에 `ANTHROPIC_API_KEY`가 설정되어 있으면 CLI 스크립트 실행:
-
-```bash
-pnpm generate:tests $ARGUMENTS
-```
-
-- 성공하면 생성된 파일 경로를 보여주고 종료
-- API 키가 없거나 스크립트 실패 → 3단계로 이동
-
-### 3. 테스트 타입 결정
+### 2. 테스트 타입 결정
 
 | 조건 | 타입 |
 |------|------|
@@ -128,7 +117,7 @@ pnpm generate:tests $ARGUMENTS
 | React Query / lib/apis로 데이터를 fetch하는 파일 | 통합 테스트 (RTL + MSW) |
 | 순수 컴포넌트 / 유틸 / 훅 (API 호출 없음) | 단위 테스트 |
 
-### 4. 해당 타입의 예시를 읽은 뒤 테스트 작성
+### 3. 해당 타입의 예시를 읽은 뒤 테스트 작성
 
 | 타입 | 예시 파일 |
 |------|----------|
@@ -160,13 +149,42 @@ pnpm generate:tests $ARGUMENTS
 - 구현 세부사항(내부 state, ref 직접 접근) 테스트 금지
 - 항상 `userEvent.setup()` 사용, `fireEvent` 금지
 
-### 5. 기존 테스트 처리
+### 4. 기존 테스트 처리
 
 테스트 파일이 이미 존재하는 경우:
 - 현재 통과 중인 테스트는 모두 유지
 - 누락된 케이스만 추가 (점진적 업데이트)
 
-### 6. 완료 후
+### 5. 완료 후 — 테스트 실행 및 커버리지 확인
 
-- 생성/수정된 파일 경로를 링크로 표시
-- `pnpm test` 실행 여부를 사용자에게 질문
+#### 5-1. 현재 브랜치에서 작성된 테스트 파일 수집
+
+```bash
+git diff main...HEAD --name-only --diff-filter=AM | grep -E '(__tests__|\.test\.|\.spec\.)'
+```
+
+#### 5-2. 소스 파일 경로 도출
+
+테스트 파일 경로에서 대응하는 소스 파일을 계산한다:
+
+| 테스트 파일 | 소스 파일 |
+|------------|---------|
+| `src/hooks/__tests__/useFoo.test.ts` | `src/hooks/useFoo.ts` |
+| `src/components/ui/__tests__/Button.test.tsx` | `src/components/ui/Button.tsx` |
+
+규칙: `__tests__/` 제거 + `.test.ts` → `.ts` / `.test.tsx` → `.tsx`
+
+#### 5-3. 커버리지 포함 테스트 실행
+
+수집한 테스트 파일과 소스 파일을 이용해 실행한다:
+
+```bash
+pnpm test <테스트파일1> <테스트파일2> ... --coverage --collectCoverageFrom='["<소스파일1>","<소스파일2>",...]'
+```
+
+#### 5-4. 결과 처리
+
+| 결과 | 처리 |
+|------|------|
+| 전부 PASS | 커버리지 테이블을 그대로 표시하고 종료 |
+| 일부 FAIL | 실패 케이스를 수정한 뒤 5-3 재실행 |
