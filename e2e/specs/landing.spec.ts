@@ -16,7 +16,8 @@ test.describe('랜딩 페이지', () => {
       await page.getByRole('button', { name: '메뉴 열기' }).click();
     }
 
-    await page.getByRole('link', { name: '로그인' }).click();
-    await expect(page).toHaveURL(/\/login/);
+    const loginLink = page.getByRole('link', { name: '로그인' });
+    await loginLink.waitFor({ state: 'visible' });
+    await Promise.all([page.waitForURL(/\/login/), loginLink.click()]);
   });
 });
