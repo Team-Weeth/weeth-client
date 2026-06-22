@@ -58,9 +58,10 @@ interface TextInputFieldProps {
   onChange: (value: string) => void;
   placeholder?: string;
   maxLength: number;
+  error?: string;
 }
 
-function TextInputField({ id, label, value, onChange, placeholder, maxLength }: TextInputFieldProps) {
+function TextInputField({ id, label, value, onChange, placeholder, maxLength, error }: TextInputFieldProps) {
   return (
     <div className="flex flex-col">
       <label htmlFor={id} className="typo-sub3 text-text-normal flex h-12 items-center px-400">
@@ -75,16 +76,26 @@ function TextInputField({ id, label, value, onChange, placeholder, maxLength }: 
           placeholder={placeholder}
           className="bg-container-neutral typo-body1 placeholder:text-text-alternative text-text-normal h-12 w-full rounded-sm px-400 py-300 focus:outline-none"
         />
-        <span className="typo-caption2 text-text-alternative ml-auto pr-100">
-          {value.length}/{maxLength}
-        </span>
+        <div className="flex items-center justify-between">
+          {error ? (
+            <span className="typo-caption2 text-state-error">{error}</span>
+          ) : (
+            <span />
+          )}
+          <span className="typo-caption2 text-text-alternative pr-100">
+            {value.length}/{maxLength}
+          </span>
+        </div>
       </div>
     </div>
   );
 }
 
+type FormErrors = Partial<Record<'amount' | 'description' | 'vendor', string>>;
+
 function TransactionForm({ initialValues, onSubmit, onCancel }: TransactionFormProps) {
   const [form, setForm] = useState<TransactionFormData>(() => getDefaultForm(initialValues));
+  const [errors, setErrors] = useState<FormErrors>({});
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   // const [isOcrLoading, setIsOcrLoading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -129,6 +140,15 @@ function TransactionForm({ initialValues, onSubmit, onCancel }: TransactionFormP
   //     setIsOcrLoading(false);
   //   }
   // };
+
+  const validate = (): boolean => {
+    const next: FormErrors = {};
+    if (!form.amount || Number(form.amount) === 0) next.amount = '금액을 입력해주세요';
+    if (!form.description.trim()) next.description = '내용을 입력해주세요';
+    if (!form.vendor.trim()) next.vendor = '거래처를 입력해주세요';
+    setErrors(next);
+    return Object.keys(next).length === 0;
+  };
 
   const sign = form.type === 'EXPENSE' ? '-' : '+';
   const descriptionLabel = form.type === 'EXPENSE' ? '지출 내용' : '수입 내용';
@@ -177,12 +197,16 @@ function TransactionForm({ initialValues, onSubmit, onCancel }: TransactionFormP
               onChange={(e) => {
                 const raw = e.target.value.replace(/\D/g, '');
                 setForm((prev) => ({ ...prev, amount: raw }));
+                if (errors.amount) setErrors((prev) => ({ ...prev, amount: undefined }));
               }}
               placeholder="0"
               className="typo-body1 placeholder:text-text-alternative text-text-normal min-w-0 flex-1 bg-transparent focus:outline-none"
             />
             <span className="typo-body1 text-text-normal shrink-0">원</span>
           </div>
+          {errors.amount && (
+            <span className="typo-caption2 text-state-error px-400">{errors.amount}</span>
+          )}
         </div>
 
         {/* 지출/수입 내용 */}
@@ -190,9 +214,13 @@ function TransactionForm({ initialValues, onSubmit, onCancel }: TransactionFormP
           id="transaction-description"
           label={descriptionLabel}
           value={form.description}
-          onChange={(value) => setForm((prev) => ({ ...prev, description: value }))}
+          onChange={(value) => {
+            setForm((prev) => ({ ...prev, description: value }));
+            if (errors.description) setErrors((prev) => ({ ...prev, description: undefined }));
+          }}
           placeholder={descriptionPlaceholder}
           maxLength={DESCRIPTION_MAX}
+          error={errors.description}
         />
 
         {/* 거래처 */}
@@ -200,9 +228,13 @@ function TransactionForm({ initialValues, onSubmit, onCancel }: TransactionFormP
           id="transaction-vendor"
           label="거래처"
           value={form.vendor}
-          onChange={(value) => setForm((prev) => ({ ...prev, vendor: value }))}
+          onChange={(value) => {
+            setForm((prev) => ({ ...prev, vendor: value }));
+            if (errors.vendor) setErrors((prev) => ({ ...prev, vendor: undefined }));
+          }}
           placeholder="거래처를 입력해주세요 (ex. 인프런)"
           maxLength={VENDOR_MAX}
+          error={errors.vendor}
         />
 
         {/* 일자 */}
@@ -314,7 +346,7 @@ function TransactionForm({ initialValues, onSubmit, onCancel }: TransactionFormP
         <Button variant="secondary" size="lg" onClick={onCancel}>
           취소
         </Button>
-        <Button variant="primary" size="lg" onClick={() => onSubmit(form)}>
+        <Button variant="primary" size="lg" onClick={() => { if (validate()) onSubmit(form); }}>
           저장
         </Button>
       </div>
