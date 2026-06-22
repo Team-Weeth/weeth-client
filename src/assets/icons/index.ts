@@ -56,3 +56,4 @@ export { default as LocationIcon } from './location.svg';
 export { default as ProfileCompleteIcon } from './profile_complete.svg';
 export { default as TaskFinishedIcon } from './task_finished.svg';
 export { default as RushIcon } from './rush.svg';
+export { default as QuestionCircleIcon } from './question_circle.svg';

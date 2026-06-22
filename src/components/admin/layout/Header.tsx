@@ -12,6 +12,7 @@ const PAGE_TITLES: Record<string, string> = {
   '/admin/attendance': '출석 관리',
   '/admin/board': '게시판 관리',
   '/admin/club-info': '동아리 관리',
+  '/admin/dues': '회비 관리',
 };
 
 export function Header() {
