@@ -61,7 +61,15 @@ interface TextInputFieldProps {
   error?: string;
 }
 
-function TextInputField({ id, label, value, onChange, placeholder, maxLength, error }: TextInputFieldProps) {
+function TextInputField({
+  id,
+  label,
+  value,
+  onChange,
+  placeholder,
+  maxLength,
+  error,
+}: TextInputFieldProps) {
   return (
     <div className="flex flex-col">
       <label htmlFor={id} className="typo-sub3 text-text-normal flex h-12 items-center px-400">
@@ -77,11 +85,7 @@ function TextInputField({ id, label, value, onChange, placeholder, maxLength, er
           className="bg-container-neutral typo-body1 placeholder:text-text-alternative text-text-normal h-12 w-full rounded-sm px-400 py-300 focus:outline-none"
         />
         <div className="flex items-center justify-between">
-          {error ? (
-            <span className="typo-caption2 text-state-error">{error}</span>
-          ) : (
-            <span />
-          )}
+          {error ? <span className="typo-caption2 text-state-error">{error}</span> : <span />}
           <span className="typo-caption2 text-text-alternative pr-100">
             {value.length}/{maxLength}
           </span>
@@ -257,7 +261,9 @@ function TransactionForm({ initialValues, onSubmit, onCancel }: TransactionFormP
             role="button"
             tabIndex={0}
             onClick={() => fileInputRef.current?.click()}
-            onKeyDown={(e) => e.key === 'Enter' || e.key === ' ' ? fileInputRef.current?.click() : undefined}
+            onKeyDown={(e) =>
+              e.key === 'Enter' || e.key === ' ' ? fileInputRef.current?.click() : undefined
+            }
             {...dragHandlers}
             className={cn(
               'bg-container-neutral-alternative flex h-44 w-full cursor-pointer rounded-sm border p-400 transition-colors',
@@ -346,7 +352,13 @@ function TransactionForm({ initialValues, onSubmit, onCancel }: TransactionFormP
         <Button variant="secondary" size="lg" onClick={onCancel}>
           취소
         </Button>
-        <Button variant="primary" size="lg" onClick={() => { if (validate()) onSubmit(form); }}>
+        <Button
+          variant="primary"
+          size="lg"
+          onClick={() => {
+            if (validate()) onSubmit(form);
+          }}
+        >
           저장
         </Button>
       </div>

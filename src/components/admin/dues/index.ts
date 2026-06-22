@@ -11,14 +11,8 @@ export {
   type TransactionType,
 } from './DuesTransactionTable';
 
-export {
-  AddTransactionModal,
-  type AddTransactionModalProps,
-} from './modal/AddTransactionModal';
-export {
-  EditTransactionModal,
-  type EditTransactionModalProps,
-} from './modal/EditTransactionModal';
+export { AddTransactionModal, type AddTransactionModalProps } from './modal/AddTransactionModal';
+export { EditTransactionModal, type EditTransactionModalProps } from './modal/EditTransactionModal';
 export {
   TransactionDetailModal,
   type TransactionDetail,

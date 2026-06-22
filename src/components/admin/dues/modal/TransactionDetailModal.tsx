@@ -150,11 +150,7 @@ function TransactionDetailModal({
             {receiptUrl ? (
               <>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={receiptUrl}
-                  alt=""
-                  className="size-10 shrink-0 rounded-sm object-cover"
-                />
+                <img src={receiptUrl} alt="" className="size-10 shrink-0 rounded-sm object-cover" />
                 <div className="flex flex-col gap-100">
                   <p className="typo-sub1 text-text-strong">영수증</p>
                   <p className="typo-body2 text-text-alternative">원본 보기</p>
