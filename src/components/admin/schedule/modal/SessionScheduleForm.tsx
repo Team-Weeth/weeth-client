@@ -21,7 +21,7 @@ import {
 import { addYearsToDateInput } from '@/utils/shared/date';
 import type { Cardinal } from '@/types/admin/cardinal';
 
-import { SessionInfoBanner } from '../session/SessionInfoBanner';
+import { SessionInfoBanner } from '@/components/admin/schedule/session/SessionInfoBanner';
 
 import type { ScheduleFormState, SessionFormState } from './types';
 

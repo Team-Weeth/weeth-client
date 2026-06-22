@@ -8,6 +8,7 @@ export function useDeleteComment(boardId: number, postId: number) {
     mutationFn: (commentId: number) => commentApi.delete(postId, commentId),
     successMessage: '댓글이 삭제되었습니다.',
     errorMessage: '댓글 삭제에 실패했습니다.',
+    invalidatePostList: true,
   });
 
   const deleteComment = (commentId: number) => {

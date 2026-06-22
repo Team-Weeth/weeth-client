@@ -15,6 +15,7 @@ import type {
   UpdateSessionBody,
 } from '@/types/admin/session';
 import { MutationCallbacks } from '@/types';
+import { adminQueryKeys } from './adminQueryKeys';
 
 /** 세션 update(20305)/delete(20306) 응답이 "CLOSED 포함, force 필요" 에러인지 판별 */
 function isSessionForceRequiredError(error: unknown): boolean {
@@ -39,12 +40,14 @@ export function useAdminMonthlySchedules(year: number, month: number) {
   const { start, end } = toMonthRange(year, month);
 
   return useQuery({
-    queryKey: ['admin', 'schedules', clubId, year, month],
+    queryKey: adminQueryKeys.monthlySchedule(clubId, year, month),
     queryFn: async () => {
       const res = await adminScheduleApi.getMonthly(clubId!, start, end);
       return res.data.data;
     },
     enabled: !!clubId,
+    staleTime: 5 * 60 * 1000,
+    gcTime: 10 * 60 * 1000,
   });
 }
 
@@ -52,12 +55,14 @@ export function useAdminSessionList(cardinal?: number | null) {
   const clubId = useClubId();
 
   return useQuery({
-    queryKey: ['admin', 'sessionList', clubId, cardinal ?? null],
+    queryKey: adminQueryKeys.sessionsByCardinal(clubId, cardinal ?? null),
     queryFn: async () => {
       const res = await adminScheduleApi.getSessionList(clubId!, cardinal ?? undefined);
       return res.data.data;
     },
     enabled: !!clubId,
+    staleTime: 5 * 60 * 1000,
+    gcTime: 10 * 60 * 1000,
   });
 }
 
@@ -65,7 +70,7 @@ export function useAdminScheduleDetail(eventId: number) {
   const clubId = useClubId();
 
   return useSuspenseQuery({
-    queryKey: ['admin', 'schedule', clubId, eventId],
+    queryKey: adminQueryKeys.scheduleDetail(clubId, eventId),
     queryFn: () => adminScheduleApi.getEventDetail(clubId!, eventId).then((res) => res.data.data),
     staleTime: 5 * 60 * 1000,
   });
@@ -75,7 +80,7 @@ export function useAdminSessionDetail(sessionId: number) {
   const clubId = useClubId();
 
   return useSuspenseQuery({
-    queryKey: ['admin', 'sessionDetail', clubId, sessionId],
+    queryKey: adminQueryKeys.sessionDetail(clubId, sessionId),
     queryFn: () =>
       adminScheduleApi.getSessionDetail(clubId!, sessionId).then((res) => res.data.data),
     staleTime: 60 * 1000,
@@ -89,7 +94,7 @@ export function useCreateSchedule() {
   return useMutation({
     mutationFn: (body: CreateEventBody) => adminScheduleApi.createEvent(clubId!, body),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin', 'schedules'] });
+      queryClient.invalidateQueries({ queryKey: adminQueryKeys.schedules(clubId) });
     },
     onError: (error) => {
       const code = isAxiosError(error) ? error.response?.data?.code : undefined;
@@ -105,9 +110,8 @@ export function useCreateSession(callback?: MutationCallbacks) {
   return useMutation({
     mutationFn: (body: CreateSessionBody) => adminScheduleApi.createSession(clubId!, body),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin', 'sessionList'] });
-      queryClient.invalidateQueries({ queryKey: ['admin', 'sessions'] });
-      queryClient.invalidateQueries({ queryKey: ['admin', 'schedules'] });
+      queryClient.invalidateQueries({ queryKey: adminQueryKeys.sessions(clubId) });
+      queryClient.invalidateQueries({ queryKey: adminQueryKeys.schedules(clubId) });
       toastSuccess('세션이 생성되었습니다');
       callback?.onSuccess?.();
     },
@@ -133,11 +137,10 @@ export function useUpdateSession(callback?: MutationCallbacks) {
   return useMutation({
     mutationFn: ({ sessionId, body, scope, force }: UpdateSessionVariables) =>
       adminScheduleApi.updateSession(clubId!, sessionId, body, { scope, force }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin', 'sessionList'] });
-      queryClient.invalidateQueries({ queryKey: ['admin', 'sessions'] });
-      queryClient.invalidateQueries({ queryKey: ['admin', 'sessionDetail'] });
-      queryClient.invalidateQueries({ queryKey: ['admin', 'schedules'] });
+    onSuccess: (_, { sessionId }) => {
+      queryClient.invalidateQueries({ queryKey: adminQueryKeys.sessions(clubId) });
+      queryClient.invalidateQueries({ queryKey: adminQueryKeys.sessionDetail(clubId, sessionId) });
+      queryClient.invalidateQueries({ queryKey: adminQueryKeys.schedules(clubId) });
       toastSuccess('세션이 수정되었습니다');
       callback?.onSuccess?.();
     },
@@ -168,9 +171,8 @@ export function useDeleteSession(callback?: MutationCallbacks) {
     mutationFn: ({ sessionId, scope, force }: DeleteSessionVariables) =>
       adminScheduleApi.deleteSession(clubId!, sessionId, { scope, force }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin', 'sessionList'] });
-      queryClient.invalidateQueries({ queryKey: ['admin', 'sessions'] });
-      queryClient.invalidateQueries({ queryKey: ['admin', 'schedules'] });
+      queryClient.invalidateQueries({ queryKey: adminQueryKeys.sessions(clubId) });
+      queryClient.invalidateQueries({ queryKey: adminQueryKeys.schedules(clubId) });
       toastSuccess('세션이 삭제되었습니다');
       callback?.onSuccess?.();
     },
@@ -200,9 +202,8 @@ export function useDeleteSessionGroup(callback?: MutationCallbacks) {
     mutationFn: ({ groupId, force }: DeleteSessionGroupVariables) =>
       adminScheduleApi.deleteSessionGroup(clubId!, groupId, { force }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin', 'sessionList'] });
-      queryClient.invalidateQueries({ queryKey: ['admin', 'sessions'] });
-      queryClient.invalidateQueries({ queryKey: ['admin', 'schedules'] });
+      queryClient.invalidateQueries({ queryKey: adminQueryKeys.sessions(clubId) });
+      queryClient.invalidateQueries({ queryKey: adminQueryKeys.schedules(clubId) });
       toastSuccess('세션 그룹이 삭제되었습니다');
       callback?.onSuccess?.();
     },
@@ -226,7 +227,7 @@ export function useUpdateSchedule() {
     mutationFn: ({ eventId, body }: { eventId: number; body: UpdateEventBody }) =>
       adminScheduleApi.updateEvent(clubId!, eventId, body),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin', 'schedules'] });
+      queryClient.invalidateQueries({ queryKey: adminQueryKeys.schedules(clubId) });
     },
     onError: (error) => {
       const code = isAxiosError(error) ? error.response?.data?.code : undefined;
@@ -245,7 +246,7 @@ export function useDeleteSchedule(callback?: MutationCallbacks) {
       if (callback?.onSuccess) {
         callback.onSuccess();
       }
-      queryClient.invalidateQueries({ queryKey: ['admin', 'schedules'] });
+      queryClient.invalidateQueries({ queryKey: adminQueryKeys.schedules(clubId) });
     },
     onError: (error) => {
       const code = isAxiosError(error) ? error.response?.data?.code : undefined;

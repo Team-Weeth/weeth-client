@@ -10,6 +10,7 @@ interface UseCommentMutationOptions<TVariables> {
   mutationFn: (variables: TVariables) => Promise<unknown>;
   successMessage: string;
   errorMessage: string;
+  invalidatePostList?: boolean;
 }
 
 export function useCommentMutation<TVariables>({
@@ -18,6 +19,7 @@ export function useCommentMutation<TVariables>({
   mutationFn,
   successMessage,
   errorMessage,
+  invalidatePostList = false,
 }: UseCommentMutationOptions<TVariables>) {
   const queryClient = useQueryClient();
   const clubId = useClubId();
@@ -26,6 +28,10 @@ export function useCommentMutation<TVariables>({
     mutationFn,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['posts', 'detail', clubId, boardId, postId] });
+      if (invalidatePostList) {
+        queryClient.invalidateQueries({ queryKey: ['posts', clubId] });
+        queryClient.invalidateQueries({ queryKey: ['home', 'recent-posts', clubId] });
+      }
       toast({ title: successMessage, variant: 'success' });
     },
     onError: (error) => {

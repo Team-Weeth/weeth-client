@@ -31,3 +31,4 @@ export { default as AdminToggleOpenIcon } from './ic_admin_toggle_open.svg';
 export { default as AdminToggleCloseIcon } from './ic_admin_toggle_close.svg';
 
 export { default as AdminReceiptIcon } from './ic_admin_receipt.svg';
+export { default as AdminDuesIcon } from './ic_admin_dues.svg';

@@ -1,5 +1,6 @@
 // src/utils/shared/index.ts
 export { formatPhone } from './formatPhone';
+export { deduplicateSchoolNames } from './school';
 export { getApiErrorCode } from './getApiErrorCode';
 export {
   getAppOrigin,
