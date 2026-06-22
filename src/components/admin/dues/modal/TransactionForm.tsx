@@ -51,6 +51,38 @@ function getDefaultForm(initial?: Partial<TransactionFormData>): TransactionForm
   };
 }
 
+interface TextInputFieldProps {
+  id: string;
+  label: string;
+  value: string;
+  onChange: (value: string) => void;
+  placeholder?: string;
+  maxLength: number;
+}
+
+function TextInputField({ id, label, value, onChange, placeholder, maxLength }: TextInputFieldProps) {
+  return (
+    <div className="flex flex-col">
+      <label htmlFor={id} className="typo-sub3 text-text-normal flex h-12 items-center px-400">
+        {label}
+      </label>
+      <div className="flex flex-col gap-200">
+        <input
+          id={id}
+          type="text"
+          value={value}
+          onChange={(e) => onChange(e.target.value.slice(0, maxLength))}
+          placeholder={placeholder}
+          className="bg-container-neutral typo-body1 placeholder:text-text-alternative text-text-normal h-12 w-full rounded-sm px-400 py-300 focus:outline-none"
+        />
+        <span className="typo-caption2 text-text-alternative ml-auto pr-100">
+          {value.length}/{maxLength}
+        </span>
+      </div>
+    </div>
+  );
+}
+
 function TransactionForm({ initialValues, onSubmit, onCancel }: TransactionFormProps) {
   const [form, setForm] = useState<TransactionFormData>(() => getDefaultForm(initialValues));
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
@@ -154,56 +186,24 @@ function TransactionForm({ initialValues, onSubmit, onCancel }: TransactionFormP
         </div>
 
         {/* 지출/수입 내용 */}
-        <div className="flex flex-col">
-          <label
-            htmlFor="transaction-description"
-            className="typo-sub3 text-text-normal flex h-12 items-center px-400"
-          >
-            {descriptionLabel}
-          </label>
-          <div className="flex flex-col gap-200">
-            <input
-              id="transaction-description"
-              type="text"
-              value={form.description}
-              onChange={(e) => {
-                if (e.target.value.length > DESCRIPTION_MAX) return;
-                setForm((prev) => ({ ...prev, description: e.target.value }));
-              }}
-              placeholder={descriptionPlaceholder}
-              className="bg-container-neutral typo-body1 placeholder:text-text-alternative text-text-normal h-12 w-full rounded-sm px-400 py-300 focus:outline-none"
-            />
-            <span className="typo-caption2 text-text-alternative ml-auto pr-100">
-              {form.description.length}/{DESCRIPTION_MAX}
-            </span>
-          </div>
-        </div>
+        <TextInputField
+          id="transaction-description"
+          label={descriptionLabel}
+          value={form.description}
+          onChange={(value) => setForm((prev) => ({ ...prev, description: value }))}
+          placeholder={descriptionPlaceholder}
+          maxLength={DESCRIPTION_MAX}
+        />
 
         {/* 거래처 */}
-        <div className="flex flex-col">
-          <label
-            htmlFor="transaction-vendor"
-            className="typo-sub3 text-text-normal flex h-12 items-center px-400"
-          >
-            거래처
-          </label>
-          <div className="flex flex-col gap-200">
-            <input
-              id="transaction-vendor"
-              type="text"
-              value={form.vendor}
-              onChange={(e) => {
-                if (e.target.value.length > VENDOR_MAX) return;
-                setForm((prev) => ({ ...prev, vendor: e.target.value }));
-              }}
-              placeholder="거래처를 입력해주세요 (ex. 인프런)"
-              className="bg-container-neutral typo-body1 placeholder:text-text-alternative text-text-normal h-12 w-full rounded-sm px-400 py-300 focus:outline-none"
-            />
-            <span className="typo-caption2 text-text-alternative ml-auto pr-100">
-              {form.vendor.length}/{VENDOR_MAX}
-            </span>
-          </div>
-        </div>
+        <TextInputField
+          id="transaction-vendor"
+          label="거래처"
+          value={form.vendor}
+          onChange={(value) => setForm((prev) => ({ ...prev, vendor: value }))}
+          placeholder="거래처를 입력해주세요 (ex. 인프런)"
+          maxLength={VENDOR_MAX}
+        />
 
         {/* 일자 */}
         <div className="flex flex-col">
@@ -221,9 +221,11 @@ function TransactionForm({ initialValues, onSubmit, onCancel }: TransactionFormP
             영수증 첨부
           </span>
 
-          <button
-            type="button"
+          <div
+            role="button"
+            tabIndex={0}
             onClick={() => fileInputRef.current?.click()}
+            onKeyDown={(e) => e.key === 'Enter' || e.key === ' ' ? fileInputRef.current?.click() : undefined}
             {...dragHandlers}
             className={cn(
               'bg-container-neutral-alternative flex h-44 w-full cursor-pointer rounded-sm border p-400 transition-colors',
@@ -269,7 +271,7 @@ function TransactionForm({ initialValues, onSubmit, onCancel }: TransactionFormP
                 </span>
               </>
             )}
-          </button>
+          </div>
 
           {/* OCR 자동 분석 버튼 — 추후 활성화
           {form.receiptFile && (

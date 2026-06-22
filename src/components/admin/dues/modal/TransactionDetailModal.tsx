@@ -32,8 +32,8 @@ interface TransactionDetailModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   transaction: TransactionDetail;
-  onEdit?: () => void;
-  onDelete?: () => void;
+  onEdit: () => void;
+  onDelete: () => void;
 }
 
 const TYPE_CONFIG: Record<TransactionType, { label: string; className: string }> = {
