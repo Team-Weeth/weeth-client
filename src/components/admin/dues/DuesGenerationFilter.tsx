@@ -39,7 +39,7 @@ function DuesGenerationFilter({
       : '기수 선택';
 
   return (
-    <div className={cn('flex flex-col items-start gap-200', className)} {...props}>
+    <div className={cn('flex flex-row items-start gap-200', className)} {...props}>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <button

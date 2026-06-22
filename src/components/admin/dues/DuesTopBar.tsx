@@ -1,8 +1,9 @@
 'use client';
 
-import { AdminSettingIcon } from '@/assets/icons/admin';
+import { AdminPlusIcon, AdminSettingIcon } from '@/assets/icons/admin';
 import { QuestionCircleIcon } from '@/assets/icons';
 import {
+  Button,
   Icon,
   Switch,
   Tooltip,
@@ -16,6 +17,7 @@ interface DuesTopBarProps extends React.HTMLAttributes<HTMLDivElement> {
   isPublic: boolean;
   onPublicChange: (value: boolean) => void;
   onSettingsClick?: () => void;
+  onAddClick?: () => void;
 }
 
 function DuesTopBar({
@@ -23,6 +25,7 @@ function DuesTopBar({
   isPublic,
   onPublicChange,
   onSettingsClick,
+  onAddClick,
   ...props
 }: DuesTopBarProps) {
   return (
@@ -48,6 +51,7 @@ function DuesTopBar({
 
           <Switch checked={isPublic} onCheckedChange={onPublicChange} />
         </div>
+
         <button
           type="button"
           onClick={onSettingsClick}
