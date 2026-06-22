@@ -25,12 +25,14 @@ import { EditBoardModal } from '@/components/admin/board/modal/EditBoardModal';
 // TODO: 휴지통 API 정상화되면 TrashBoardModal import 복원
 import { useBoardDragReorder } from '@/hooks/admin';
 import { useAdminBoardsQuery } from '@/hooks/queries/admin/useAdminBoardsQuery';
-import { useCreateBoardMutation } from '@/hooks/queries/admin/useCreateBoardMutation';
-import { useUpdateBoardMutation } from '@/hooks/queries/admin/useUpdateBoardMutation';
-import { useToggleBoardCommentMutation } from '@/hooks/queries/admin/useToggleBoardCommentMutation';
-import { useDeleteBoardMutation } from '@/hooks/queries/admin/useDeleteBoardMutation';
-import { useUpdateBoardOrderMutation } from '@/hooks/queries/admin/useUpdateBoardOrderMutation';
-import { adminBoardQueryKeys } from '@/hooks/queries/admin/boardQueryKeys';
+import {
+  useCreateBoardMutation,
+  useUpdateBoardMutation,
+  useToggleBoardCommentMutation,
+  useDeleteBoardMutation,
+  useUpdateBoardOrderMutation,
+} from '@/hooks/mutations/admin';
+import { adminQueryKeys } from '@/hooks/queries/admin/adminQueryKeys';
 import { ADMIN_BOARD_ERROR, getApiErrorCode, getApiErrorMessage } from '@/lib/apis/adminBoard';
 import { useClubId } from '@/stores';
 import { toastError, toastSuccess } from '@/stores/useToastStore';
@@ -96,7 +98,7 @@ function BoardPageContent() {
   // TODO: 휴지통 API 정상화되면 복원
   // const [trashModalOpen, setTrashModalOpen] = useState(false);
 
-  const cacheKey = adminBoardQueryKeys.list(clubId);
+  const cacheKey = adminQueryKeys.boards(clubId);
   const updateCache = (updater: (prev: BoardListCache) => BoardListCache) => {
     queryClient.setQueryData<BoardListCache>(cacheKey, (prev) => (prev ? updater(prev) : prev));
   };

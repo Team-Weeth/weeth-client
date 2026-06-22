@@ -4,12 +4,18 @@ import { useState } from 'react';
 
 import { useParams, useRouter } from 'next/navigation';
 
+import type { MonthlyData, DuesTransaction } from '@/types/admin/dues';
 import { useCardinalSelector } from '@/hooks';
 import { DuesTopBar } from './DuesTopBar';
 import { DuesBalanceCard } from './DuesBalanceCard';
-import { DuesChart, type MonthlyData } from './DuesChart';
-import { DuesTransactionTable, type DuesTransaction } from './DuesTransactionTable';
+import { DuesChart } from './DuesChart';
+import { DuesTransactionTable } from './DuesTransactionTable';
 import { DuesGenerationFilter } from './DuesGenerationFilter';
+import { AddTransactionModal } from './modal/AddTransactionModal';
+import { EditTransactionModal } from './modal/EditTransactionModal';
+import { TransactionDetailModal } from './modal/TransactionDetailModal';
+import type { TransactionDetail } from './modal/TransactionDetailModal';
+import type { TransactionFormData } from './modal/TransactionForm';
 
 const MOCK_MONTHLY_DATA: MonthlyData[] = [
   { month: '3월', amount: 1425000 },
@@ -113,6 +119,16 @@ const MOCK_TRANSACTIONS: DuesTransaction[] = [
   },
 ];
 
+function toTransactionDetail(tx: DuesTransaction): TransactionDetail {
+  return {
+    type: tx.type === 'expense' ? 'EXPENSE' : 'INCOME',
+    amount: String(tx.amount),
+    description: tx.content,
+    vendor: tx.counterparty,
+    date: tx.date,
+  };
+}
+
 function DuesPageContent() {
   const [isPublic, setIsPublic] = useState(true);
   const [activeMonth, setActiveMonth] = useState('4월');
@@ -120,9 +136,37 @@ function DuesPageContent() {
   const router = useRouter();
   const { clubId } = useParams<{ clubId: string }>();
 
+  const [addOpen, setAddOpen] = useState(false);
+  const [detailOpen, setDetailOpen] = useState(false);
+  const [editOpen, setEditOpen] = useState(false);
+  const [selectedTransaction, setSelectedTransaction] = useState<DuesTransaction | null>(null);
+  const [editingValues, setEditingValues] = useState<Partial<TransactionFormData>>();
+
+  const handleMoreClick = (tx: DuesTransaction) => {
+    setSelectedTransaction(tx);
+    setDetailOpen(true);
+  };
+
+  const handleEditOpen = () => {
+    if (!selectedTransaction) return;
+    setDetailOpen(false);
+    setEditingValues({
+      type: selectedTransaction.type === 'expense' ? 'EXPENSE' : 'INCOME',
+      amount: String(selectedTransaction.amount),
+      description: selectedTransaction.content,
+      vendor: selectedTransaction.counterparty,
+      date: selectedTransaction.date,
+    });
+    setEditOpen(true);
+  };
+
   return (
-    <div className="tablet:p-700 flex min-w-[340px] flex-col gap-400 p-400">
-      <DuesTopBar isPublic={isPublic} onPublicChange={setIsPublic} />
+    <div className="tablet:p-700 flex min-w-85 flex-col gap-400 p-400">
+      <DuesTopBar
+        isPublic={isPublic}
+        onPublicChange={setIsPublic}
+        onAddClick={() => setAddOpen(true)}
+      />
       <DuesGenerationFilter
         cardinals={cardinals}
         activeCardinal={activeCardinal}
@@ -145,7 +189,34 @@ function DuesPageContent() {
           activeIncome={23}
         />
       </div>
-      <DuesTransactionTable transactions={MOCK_TRANSACTIONS} />
+      <DuesTransactionTable transactions={MOCK_TRANSACTIONS} onMoreClick={handleMoreClick} />
+
+      <AddTransactionModal
+        open={addOpen}
+        onOpenChange={setAddOpen}
+        onSubmit={() => {
+          // TODO: API 연동
+        }}
+      />
+      {selectedTransaction && (
+        <TransactionDetailModal
+          open={detailOpen}
+          onOpenChange={setDetailOpen}
+          transaction={toTransactionDetail(selectedTransaction)}
+          onEdit={handleEditOpen}
+          onDelete={() => {
+            // TODO: API 연동
+          }}
+        />
+      )}
+      <EditTransactionModal
+        open={editOpen}
+        onOpenChange={setEditOpen}
+        initialValues={editingValues}
+        onSubmit={() => {
+          // TODO: API 연동
+        }}
+      />
     </div>
   );
 }

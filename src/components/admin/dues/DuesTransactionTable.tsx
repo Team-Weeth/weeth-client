@@ -14,8 +14,7 @@ import {
 import { MoreHorizIcon } from '@/assets/icons';
 import { cn } from '@/lib/cn';
 import { AdminReceiptIcon } from '@/assets/icons/admin';
-
-type TransactionType = 'income' | 'expense' | 'dues';
+import { TransactionType } from '@/types/admin/dues';
 
 interface DuesTransaction {
   id: number;
@@ -27,7 +26,7 @@ interface DuesTransaction {
   date: string;
 }
 
-type FilterTab = 'all' | 'expense' | 'income' | 'dues';
+type FilterTab = 'all' | TransactionType;
 
 interface TabConfig {
   key: FilterTab;
@@ -158,7 +157,8 @@ function DuesTransactionTable({
                 sorted.map((tx) => (
                   <TableRow
                     key={tx.id}
-                    className="border-line hover:bg-container-neutral-interaction cursor-default border-t"
+                    onClick={() => onMoreClick?.(tx)}
+                    className="border-line hover:bg-container-neutral-interaction cursor-pointer border-t"
                   >
                     <TableCell>
                       <TransactionTypeTag type={tx.type} />

@@ -17,9 +17,11 @@ interface CalendarPickerProps {
   minDate?: string;
   /** 선택 가능한 최대 날짜 (YYYY-MM-DD). 초과 날짜는 비활성화. */
   maxDate?: string;
+  /** 트리거 버튼에 적용할 추가 className */
+  className?: string;
 }
 
-function CalendarPicker({ value, onChange, minDate, maxDate }: CalendarPickerProps) {
+function CalendarPicker({ value, onChange, minDate, maxDate, className }: CalendarPickerProps) {
   const parsedDate = value ? new Date(value) : new Date();
 
   const [open, setOpen] = useState(false);
@@ -89,7 +91,10 @@ function CalendarPicker({ value, onChange, minDate, maxDate }: CalendarPickerPro
       <PopoverPrimitive.Trigger asChild>
         <button
           type="button"
-          className="bg-container-neutral data-[state=open]:border-brand-primary data-[state=open]:ring-brand-primary/15 flex h-10 w-32 cursor-pointer items-center rounded-sm border border-transparent px-300 transition-shadow data-[state=open]:ring-4"
+          className={cn(
+            'bg-container-neutral data-[state=open]:border-brand-primary data-[state=open]:ring-brand-primary/15 flex h-10 w-32 cursor-pointer items-center rounded-sm border border-transparent px-300 transition-shadow data-[state=open]:ring-4',
+            className,
+          )}
         >
           <span className="typo-body1 text-text-normal">
             {value ? formatDateDisplay(value) : '날짜 선택'}

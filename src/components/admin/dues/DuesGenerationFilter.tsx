@@ -4,17 +4,22 @@ import Image from 'next/image';
 import { ArrowDownIcon } from '@/assets/icons';
 import { cn } from '@/lib/cn';
 import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui';
 import type { Cardinal } from '@/types/admin/cardinal';
+import { formatLastUpdated } from '@/utils/shared/date';
 
 interface DuesGenerationFilterProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onSelect'> {
   cardinals: Cardinal[];
   activeCardinal?: Cardinal;
   lastUpdated: string;
+  updaterProfileImage?: string;
   onSelect: (id: number) => void;
 }
 
@@ -23,6 +28,7 @@ function DuesGenerationFilter({
   cardinals,
   activeCardinal,
   lastUpdated,
+  updaterProfileImage,
   onSelect,
   ...props
 }: DuesGenerationFilterProps) {
@@ -33,7 +39,7 @@ function DuesGenerationFilter({
       : '기수 선택';
 
   return (
-    <div className={cn('flex flex-col items-start gap-200', className)} {...props}>
+    <div className={cn('flex flex-row items-start gap-200', className)} {...props}>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <button
@@ -52,7 +58,15 @@ function DuesGenerationFilter({
           ))}
         </DropdownMenuContent>
       </DropdownMenu>
-      <span className="typo-caption2 text-text-alternative">최근 업데이트 : {lastUpdated}</span>
+      <div className="bg-container-neutral flex items-center gap-200 rounded-md px-300 py-200">
+        <span className="typo-body1` text-text-alternative">
+          마지막 수정&nbsp;&nbsp;{formatLastUpdated(lastUpdated)}
+        </span>
+        <Avatar size={24}>
+          <AvatarImage src={updaterProfileImage} alt="마지막 수정자 프로필" />
+          <AvatarFallback />
+        </Avatar>
+      </div>
     </div>
   );
 }

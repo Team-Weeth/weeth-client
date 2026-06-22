@@ -22,7 +22,7 @@ export default async function ClubPage({ params, searchParams }: ClubPageProps) 
   try {
     const response = await fetch(`${API_BASE_PATH}/clubs/${clubId}`, {
       headers: { 'Content-Type': 'application/json' },
-      cache: 'no-store',
+      next: { revalidate: 300, tags: [`public-club-${clubId}`] },
     });
 
     if (!response.ok) {

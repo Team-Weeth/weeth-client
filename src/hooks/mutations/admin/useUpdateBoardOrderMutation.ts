@@ -4,7 +4,7 @@ import { adminBoardApi, getApiErrorMessage } from '@/lib/apis/adminBoard';
 import { useClubId } from '@/stores';
 import { toastError, toastSuccess } from '@/stores/useToastStore';
 import type { MutationCallbacks } from '@/types/common';
-import { adminBoardQueryKeys } from './boardQueryKeys';
+import { adminQueryKeys } from '@/hooks/queries/admin/adminQueryKeys';
 
 export function useUpdateBoardOrderMutation(callbacks?: MutationCallbacks<unknown>) {
   const clubId = useClubId();
@@ -22,7 +22,7 @@ export function useUpdateBoardOrderMutation(callbacks?: MutationCallbacks<unknow
     },
     onError: (err) => {
       toastError(getApiErrorMessage(err));
-      queryClient.invalidateQueries({ queryKey: adminBoardQueryKeys.list(clubId) });
+      queryClient.invalidateQueries({ queryKey: adminQueryKeys.boards(clubId) });
       callbacks?.onError?.(err);
     },
     onMutate: callbacks?.onMutate,

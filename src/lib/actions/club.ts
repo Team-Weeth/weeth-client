@@ -11,6 +11,10 @@ export async function revalidateDashboard(clubId: string) {
   updateTag(`dashboard-${clubId}`);
 }
 
+export async function revalidatePublicClub(clubId: string) {
+  updateTag(`public-club-${clubId}`);
+}
+
 export async function setClubCookie(clubId: string, clubName: string) {
   const cookieStore = await cookies();
   cookieStore.set(CLUB_ID_KEY, clubId, CLUB_COOKIE_OPTIONS);
