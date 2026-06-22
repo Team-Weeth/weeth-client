@@ -105,11 +105,15 @@ function DuesChart({
           <div className="border-line border-t" />
           <div className="flex items-center justify-between px-300 py-100">
             <span className="typo-body2 text-text-alternative">지출</span>
-            <span className="typo-sub1 text-state-error">-{formatAmount(activeExpense)} 원</span>
+            <span className="typo-body2 text-state-error">
+              -{formatAmount(activeExpense)} <span className="text-text-alternative">원</span>
+            </span>
           </div>
           <div className="flex items-center justify-between px-300 py-100">
             <span className="typo-body2 text-text-alternative">수입</span>
-            <span className="typo-sub1 text-state-success">+{formatAmount(activeIncome)} 원</span>
+            <span className="typo-body2 text-state-success">
+              +{formatAmount(activeIncome)} <span className="text-text-alternative">원</span>
+            </span>
           </div>
         </div>
       </div>

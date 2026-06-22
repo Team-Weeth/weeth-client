@@ -51,10 +51,7 @@ function DuesTopBar({
 
           <Switch checked={isPublic} onCheckedChange={onPublicChange} />
         </div>
-        <Button variant="primary" size="sm" onClick={onAddClick} className="gap-100">
-          <Icon src={AdminPlusIcon} size={16} alt="" className="text-icon-inverse" />
-          거래내역 추가
-        </Button>
+
         <button
           type="button"
           onClick={onSettingsClick}
