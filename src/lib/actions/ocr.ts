@@ -40,7 +40,7 @@ function parseReceiptText(lines: string[]): OcrReceiptResult {
         const m = lines[j].match(/[\d,]+/);
         if (m) {
           const num = parseInt(m[0].replace(/,/g, ''));
-          if (num >= 100) {
+          if (!Number.isNaN(num) && num >= 100) {
             result.amount = String(num);
             break outer;
           }
@@ -51,7 +51,7 @@ function parseReceiptText(lines: string[]): OcrReceiptResult {
   if (!result.amount) {
     const nums = lines
       .flatMap((t) => [...t.matchAll(/[\d,]+/g)].map((m) => parseInt(m[0].replace(/,/g, ''))))
-      .filter((n) => n >= 1000);
+      .filter((n) => !Number.isNaN(n) && n >= 1000);
     if (nums.length) result.amount = String(Math.max(...nums));
   }
 
@@ -94,7 +94,8 @@ export async function analyzeReceipt(formData: FormData): Promise<OcrReceiptResu
 
   if (!res.ok) {
     const errorBody = await res.text().catch(() => '');
-    throw new Error(`OCR API 오류 (${res.status}): ${errorBody}`);
+    console.error('Google Vision API error:', res.status, errorBody);
+    throw new Error('OCR 처리 중 오류가 발생했습니다.');
   }
 
   const data: GoogleVisionResponse = await res.json();
