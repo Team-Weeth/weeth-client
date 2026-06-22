@@ -20,9 +20,8 @@ function DuesPaymentSummaryCard({
   onUpdatePayment,
   onSetTotal,
 }: DuesPaymentSummaryCardProps) {
-  const percentage = totalTarget > 0
-    ? Math.min(100, Math.round((totalCollected / totalTarget) * 100))
-    : 0;
+  const percentage =
+    totalTarget > 0 ? Math.min(100, Math.round((totalCollected / totalTarget) * 100)) : 0;
 
   return (
     <Card className={cn('flex min-w-[339px] flex-1 flex-col overflow-hidden p-400', className)}>
