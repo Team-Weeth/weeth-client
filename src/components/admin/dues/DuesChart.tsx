@@ -67,7 +67,7 @@ function DuesChart({
   activeIncome,
 }: DuesChartProps) {
   const activeData = data.find((d) => d.month === activeMonth);
-  const maxAmount = Math.max(...data.map((d) => d.amount), 1);
+  // const maxAmount = Math.max(...data.map((d) => d.amount), 1);
 
   return (
     <Card className={cn('tablet:p-600 min-[360px] flex flex-1 flex-col gap-500 p-400', className)}>
@@ -95,28 +95,21 @@ function DuesChart({
           </div>
         </div>
 
-        <div
-          className="bg-container-neutral shrink-0 overflow-hidden rounded-md"
-          style={{ boxShadow: '0px 1px 5px 0px rgba(17,33,49,0.15)', minWidth: 180 }}
-        >
+        <div className="bg-container-neutral w-min-45 shrink-0 overflow-hidden rounded-md shadow-sm">
           <div className="flex items-center justify-between gap-300 px-300 py-200">
-            <span className="typo-caption2 text-text-normal">{activeMonth}</span>
-            <span className="typo-sub3 text-text-strong">
+            <span className="typo-body2 text-text-normal">{activeMonth}</span>
+            <span className="typo-sub1 text-text-strong">
               {formatAmount(activeData?.amount ?? 0)} 원
             </span>
           </div>
           <div className="border-line border-t" />
           <div className="flex items-center justify-between px-300 py-100">
-            <span className="typo-caption2 text-text-alternative">지출</span>
-            <span className="typo-caption2 text-state-error">
-              -{formatAmount(activeExpense)} 원
-            </span>
+            <span className="typo-body2 text-text-alternative">지출</span>
+            <span className="typo-sub1 text-state-error">-{formatAmount(activeExpense)} 원</span>
           </div>
           <div className="flex items-center justify-between px-300 py-100">
-            <span className="typo-caption2 text-text-alternative">수입</span>
-            <span className="typo-caption2 text-state-success">
-              +{formatAmount(activeIncome)} 원
-            </span>
+            <span className="typo-body2 text-text-alternative">수입</span>
+            <span className="typo-sub1 text-state-success">+{formatAmount(activeIncome)} 원</span>
           </div>
         </div>
       </div>

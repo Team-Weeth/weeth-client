@@ -20,7 +20,7 @@ function DuesBalanceCard({
 }: DuesBalanceCardProps) {
   return (
     <Card className={cn('tablet:p-600 flex flex-col gap-400 p-400', className)}>
-      <p className="typo-h3 text-text-strong">현재 남은 금액은</p>
+      <p className="typo-h1 text-text-strong">현재 남은 금액은</p>
 
       <div className="flex items-end gap-200">
         <span className="text-text-strong text-[36px] leading-[44px] font-bold tracking-[-0.18px]">

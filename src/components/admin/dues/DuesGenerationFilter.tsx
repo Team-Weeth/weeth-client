@@ -59,7 +59,7 @@ function DuesGenerationFilter({
         </DropdownMenuContent>
       </DropdownMenu>
       <div className="bg-container-neutral flex items-center gap-200 rounded-md px-300 py-200">
-        <span className="typo-caption2 text-text-alternative">
+        <span className="typo-body1` text-text-alternative">
           마지막 수정&nbsp;&nbsp;{formatLastUpdated(lastUpdated)}
         </span>
         <Avatar size={24}>
