@@ -17,7 +17,7 @@ import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { ModalIconButton } from '@/components/admin/modal/ModalIconButton';
 import { SCHEDULE_MODAL_CONTENT_CLASS } from '@/components/admin/schedule/modal/constants';
 import { cn } from '@/lib/cn';
-import type { TransactionType } from '@/components/dues/modal/TransactionForm';
+import type { TransactionType } from './TransactionForm';
 
 interface TransactionDetail {
   type: TransactionType;
@@ -64,7 +64,8 @@ function TransactionDetailModal({
 
   const typeConfig = TYPE_CONFIG[type];
   const sign = type === 'EXPENSE' ? '- ' : '+ ';
-  const formattedAmount = Number(amount).toLocaleString('ko-KR');
+  const numAmount = Number(amount);
+  const formattedAmount = (isNaN(numAmount) ? 0 : numAmount).toLocaleString('ko-KR');
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
