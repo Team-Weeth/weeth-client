@@ -1,7 +1,9 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 
+import { ArrowRightIcon } from '@/assets/icons';
 import { AdminCloseIcon, AdminMeatballIcon } from '@/assets/icons/admin';
 import {
   AlertDialog,
@@ -25,6 +27,8 @@ interface TransactionDetail {
   description: string;
   vendor: string;
   date: string;
+  category?: string;
+  registrant?: string;
   receiptUrl?: string;
 }
 
@@ -47,11 +51,6 @@ const TYPE_CONFIG: Record<TransactionType, { label: string; className: string }>
   },
 };
 
-const FIELD_LABEL: Record<TransactionType, string> = {
-  EXPENSE: '지출 내용',
-  INCOME: '수입 내용',
-};
-
 function TransactionDetailModal({
   open,
   onOpenChange,
@@ -60,12 +59,13 @@ function TransactionDetailModal({
   onDelete,
 }: TransactionDetailModalProps) {
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
-  const { type, amount, description, vendor, date, receiptUrl } = transaction;
+  const { type, amount, description, vendor, date, category, registrant, receiptUrl } = transaction;
 
   const typeConfig = TYPE_CONFIG[type];
-  const sign = type === 'EXPENSE' ? '- ' : '+ ';
+  const sign = type === 'EXPENSE' ? '-' : '+';
   const numAmount = Number(amount);
   const formattedAmount = (isNaN(numAmount) ? 0 : numAmount).toLocaleString('ko-KR');
+  const classificationLabel = category ? `${typeConfig.label} · ${category}` : typeConfig.label;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -75,7 +75,7 @@ function TransactionDetailModal({
         adminMobileFullscreen={false}
       >
         {/* Header */}
-        <div className="flex h-20 shrink-0 items-center justify-between px-600">
+        <div className="flex h-24 shrink-0 items-center justify-between px-600">
           <h2 className="typo-h3 text-text-normal">거래내역 상세</h2>
           <div className="flex items-center">
             <DropdownMenu>
@@ -88,7 +88,6 @@ function TransactionDetailModal({
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
-
             <ModalIconButton
               icon={AdminCloseIcon}
               label="닫기"
@@ -98,59 +97,89 @@ function TransactionDetailModal({
         </div>
 
         {/* Body */}
-        <div className="scrollbar-custom flex flex-1 flex-col gap-700 overflow-y-auto px-[71px] py-500">
-          {/* 타입 + 설명 + 금액 */}
-          <div className="flex flex-col gap-400">
-            <div className="flex items-center gap-200">
+        <div className="scrollbar-custom flex flex-1 flex-col gap-400 overflow-y-auto px-[71px] pt-700 pb-600">
+          {/* 상세 정보 카드 */}
+          <div className="bg-container-neutral flex flex-col gap-400 rounded-lg p-450">
+            {/* 뱃지 + 금액 + 설명 */}
+            <div className="flex flex-col gap-200">
               <span
                 className={cn(
-                  'typo-caption1 flex h-6 items-center justify-center rounded-[5px] px-200 py-100',
+                  'typo-caption1 flex h-6 w-fit items-center justify-center rounded-[5px] px-200 py-100',
                   typeConfig.className,
                 )}
               >
                 {typeConfig.label}
               </span>
-              <span className="typo-sub3 text-text-normal">{description}</span>
-            </div>
-            <p className="typo-h2 text-text-normal">
-              {sign}
-              {formattedAmount}원
-            </p>
-          </div>
-
-          {/* 상세 필드 */}
-          <div className="flex flex-col gap-200">
-            <div className="bg-container-neutral typo-sub3 flex h-12 items-center gap-600 rounded-sm px-400">
-              <span className="text-text-alternative w-[52px] shrink-0">{FIELD_LABEL[type]}</span>
-              <span className="text-text-strong">{description}</span>
+              <div className="flex flex-col gap-200">
+                <p className="typo-h2 text-text-strong">
+                  {sign}
+                  {formattedAmount}원
+                </p>
+                <p className="typo-sub3 text-text-strong">{description}</p>
+              </div>
             </div>
 
-            <div className="bg-container-neutral typo-sub3 flex h-12 items-center gap-600 rounded-sm px-400">
-              <span className="text-text-alternative w-[52px] shrink-0">거래처</span>
-              <span className="text-text-strong">{vendor}</span>
-            </div>
+            {/* 구분선 */}
+            <div className="bg-line h-px w-full" />
 
-            <div className="bg-container-neutral typo-sub3 flex h-12 items-center gap-600 rounded-sm px-400">
-              <span className="text-text-alternative w-[52px] shrink-0">일자</span>
-              <span className="text-text-strong">{date.replace(/-/g, '.')}</span>
-            </div>
-
-            {/* 영수증 */}
-            <div className="bg-container-neutral flex flex-col gap-300 rounded-sm px-400 py-[13px]">
-              <span className="typo-sub3 text-text-alternative w-[52px]">영수증</span>
-              {receiptUrl ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  src={receiptUrl}
-                  alt="영수증"
-                  className="h-44 w-full rounded-sm object-cover"
-                />
-              ) : (
-                <div className="bg-container-neutral-alternative flex h-44 items-center justify-center rounded-sm">
-                  <span className="typo-body2 text-text-disabled">첨부된 영수증이 없습니다</span>
+            {/* 필드 리스트 */}
+            <div className="flex flex-col gap-200">
+              <div className="flex items-center justify-between py-100">
+                <span className="typo-caption2 text-text-alternative">거래처</span>
+                <span className="typo-caption1 text-text-strong">{vendor}</span>
+              </div>
+              <div className="flex items-center justify-between py-100">
+                <span className="typo-caption2 text-text-alternative">일자</span>
+                <span className="typo-caption1 text-text-strong">{date.replace(/-/g, '. ')}</span>
+              </div>
+              <div className="flex items-center justify-between py-100">
+                <span className="typo-caption2 text-text-alternative">분류</span>
+                <span className="typo-caption1 text-text-strong">{classificationLabel}</span>
+              </div>
+              {registrant && (
+                <div className="flex items-center justify-between py-100">
+                  <span className="typo-caption2 text-text-alternative">등록자</span>
+                  <span className="typo-caption1 text-text-strong">{registrant}</span>
                 </div>
               )}
             </div>
+          </div>
+
+          {/* 영수증 카드 */}
+          <div className="bg-container-neutral relative flex items-center gap-200 rounded-lg p-450">
+            {receiptUrl ? (
+              <>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={receiptUrl}
+                  alt=""
+                  className="size-10 shrink-0 rounded-sm object-cover"
+                />
+                <div className="flex flex-col gap-100">
+                  <p className="typo-sub1 text-text-strong">영수증</p>
+                  <p className="typo-body2 text-text-alternative">원본 보기</p>
+                </div>
+                <Image
+                  src={ArrowRightIcon}
+                  alt=""
+                  width={24}
+                  height={24}
+                  className="ml-auto shrink-0"
+                />
+                <a
+                  href={receiptUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="absolute inset-0 rounded-lg"
+                  aria-label="영수증 원본 보기"
+                />
+              </>
+            ) : (
+              <div className="flex flex-col gap-100">
+                <p className="typo-sub1 text-text-strong">영수증</p>
+                <p className="typo-body2 text-text-disabled">첨부된 영수증이 없습니다</p>
+              </div>
+            )}
           </div>
         </div>
 
@@ -164,6 +193,7 @@ function TransactionDetailModal({
           </Button>
         </div>
       </DialogContent>
+
       {/* 삭제 확인 */}
       <AlertDialog
         status="danger"
@@ -174,7 +204,6 @@ function TransactionDetailModal({
       >
         <AlertDialogAction
           onClick={() => {
-            // TODO: API 연동
             onDelete?.();
             setDeleteConfirmOpen(false);
             onOpenChange(false);

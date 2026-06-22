@@ -157,7 +157,8 @@ function DuesTransactionTable({
                 sorted.map((tx) => (
                   <TableRow
                     key={tx.id}
-                    className="border-line hover:bg-container-neutral-interaction cursor-default border-t"
+                    onClick={() => onMoreClick?.(tx)}
+                    className="border-line hover:bg-container-neutral-interaction cursor-pointer border-t"
                   >
                     <TableCell>
                       <TransactionTypeTag type={tx.type} />
