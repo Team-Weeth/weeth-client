@@ -12,9 +12,10 @@ pnpm typecheck   # TypeScript
 pnpm lint        # ESLint (0 errors; warnings ok)
 pnpm format:check  # Prettier
 pnpm build       # Next.js build
+pnpm test        # Jest 전체
 ```
 
-If `pnpm typecheck` / `pnpm build` fail with missing-module errors, run `pnpm install` first and retry. If `pnpm format:check` fails on files touched in this branch, run `pnpm prettier --write <paths>` on only those files before proceeding.
+If `pnpm typecheck` / `pnpm build` fail with missing-module errors, run `pnpm install` first and retry. If `pnpm format:check` fails on files touched in this branch, run `pnpm prettier --write <paths>` on only those files before proceeding. If `pnpm test` fails on tests unrelated to this branch's changes, note it in the PR body.
 
 Do not proceed to Step 1 until all four checks are green (or failures are confirmed pre-existing and unrelated).
 
