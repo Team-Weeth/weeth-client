@@ -1,19 +1,16 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { useRouter } from 'next/navigation';
 import { BackOrHomeButton } from '../BackOrHomeButton';
 
-const mockBack = jest.fn();
-const mockPush = jest.fn();
-
-jest.mock('next/navigation', () => ({
-  useRouter: () => ({ back: mockBack, push: mockPush }),
-  usePathname: () => '/',
-  useSearchParams: () => new URLSearchParams(),
-}));
-
 describe('BackOrHomeButton', () => {
+  let mockBack: jest.Mock;
+  let mockPush: jest.Mock;
+
   beforeEach(() => {
-    jest.clearAllMocks();
+    const router = useRouter();
+    mockBack = router.back as jest.Mock;
+    mockPush = router.push as jest.Mock;
     Object.defineProperty(document, 'referrer', { value: '', configurable: true });
     Object.defineProperty(window.history, 'length', { value: 1, configurable: true });
   });
