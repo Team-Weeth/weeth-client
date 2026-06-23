@@ -1,5 +1,7 @@
 'use client';
 
+import { useState } from 'react';
+
 import { useParams, useRouter } from 'next/navigation';
 
 import { BackIcon, CopyIcon } from '@/assets/icons';
@@ -113,6 +115,7 @@ function DuesPaymentStatusPageContent() {
   const router = useRouter();
   const { clubId } = useParams<{ clubId: string }>();
   const { activeCardinal } = useCardinalSelector({ autoSelectLatest: true });
+  const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
 
   const unpaidCount = MOCK_MEMBERS.filter((m) => m.status === 'unpaid').length;
   const totalCount = MOCK_MEMBERS.length;
@@ -120,42 +123,77 @@ function DuesPaymentStatusPageContent() {
   const generationLabel = activeCardinal ? `${activeCardinal.cardinalNumber}기` : '';
 
   return (
-    <div className="tablet:p-700 flex min-w-[340px] flex-col gap-700 p-400">
-      {/* 헤더 */}
-      <div className="flex flex-col gap-400">
-        <button
-          type="button"
-          onClick={() => router.push(`/${clubId}/admin/dues`)}
-          aria-label="뒤로가기"
-          className="bg-button-neutral hover:bg-container-neutral-interaction flex w-fit cursor-pointer items-center justify-center rounded-sm p-200"
-        >
-          <Icon src={BackIcon} alt="뒤로가기" size={18} />
-        </button>
-        <h1 className="text-text-strong text-[28px] leading-[36px] font-bold tracking-[-0.14px]">
-          {generationLabel} 회비 납부 현황
-        </h1>
-      </div>
-
-      {/* 상단 섹션 */}
-      <div className="flex flex-wrap items-stretch gap-600">
-        <DuesPaymentSummaryCard
-          totalCollected={MOCK_TOTAL_COLLECTED}
-          totalTarget={MOCK_TOTAL_TARGET}
-        />
-        <div className="tablet:w-[339px] flex w-full flex-col gap-400">
-          <StatCard label="미납 인원" value={`${unpaidCount}명`} action="현황 업데이트" />
-          <StatCard label="납부 대상" value={`${totalCount}명`} action="수정" />
-          <AccountCard {...MOCK_ACCOUNT} />
+    <div className="flex min-w-85 flex-col">
+      {/* Selection top bar — sticky top-0 z-10 -mt-15 로 Header 영역에 오버레이 */}
+      {selectedIds.size > 0 && (
+        <div className="bg-container-primary sticky top-0 z-10 -mt-15 flex h-15 items-center justify-between px-400">
+          <div className="flex items-center gap-300">
+            <button
+              type="button"
+              onClick={() => setSelectedIds(new Set())}
+              aria-label="선택 해제"
+              className="text-text-inverse hover:bg-container-primary-interaction cursor-pointer rounded-sm p-200 transition-colors"
+            >
+              <Icon src={BackIcon} alt="" size={24} />
+            </button>
+            <span className="typo-sub3 text-text-inverse">{selectedIds.size}명 선택됨</span>
+          </div>
+          <div className="flex gap-200">
+            <button
+              type="button"
+              className="bg-button-neutral typo-button1 text-text-strong hover:bg-button-neutral-interaction cursor-pointer rounded-md px-400 py-200 transition-colors"
+            >
+              환불 처리
+            </button>
+            <button
+              type="button"
+              className="bg-button-neutral typo-button1 text-text-strong hover:bg-button-neutral-interaction cursor-pointer rounded-md px-400 py-200 transition-colors"
+            >
+              납부 완료
+            </button>
+          </div>
         </div>
-      </div>
+      )}
 
-      {/* 부원별 납부현황 테이블 */}
-      <DuesMemberPaymentTable
-        members={MOCK_MEMBERS}
-        onViewMember={(member) => {
-          router.push(`/${clubId}/admin/member/${member.id}`);
-        }}
-      />
+      <div className="tablet:p-700 flex flex-col gap-700 p-400">
+        {/* 헤더 */}
+        <div className="flex flex-col gap-400">
+          <button
+            type="button"
+            onClick={() => router.push(`/${clubId}/admin/dues`)}
+            aria-label="뒤로가기"
+            className="bg-button-neutral hover:bg-container-neutral-interaction flex w-fit cursor-pointer items-center justify-center rounded-sm p-200"
+          >
+            <Icon src={BackIcon} alt="뒤로가기" size={18} />
+          </button>
+          <h1 className="text-text-strong text-[28px] leading-9 font-bold tracking-[-0.14px]">
+            {generationLabel} 회비 납부 현황
+          </h1>
+        </div>
+
+        {/* 상단 섹션 */}
+        <div className="flex flex-wrap items-stretch gap-600">
+          <DuesPaymentSummaryCard
+            totalCollected={MOCK_TOTAL_COLLECTED}
+            totalTarget={MOCK_TOTAL_TARGET}
+          />
+          <div className="tablet:w-84.75 flex w-full flex-col gap-400">
+            <StatCard label="미납 인원" value={`${unpaidCount}명`} action="현황 업데이트" />
+            <StatCard label="납부 대상" value={`${totalCount}명`} action="수정" />
+            <AccountCard {...MOCK_ACCOUNT} />
+          </div>
+        </div>
+
+        {/* 부원별 납부현황 테이블 */}
+        <DuesMemberPaymentTable
+          members={MOCK_MEMBERS}
+          selectedIds={selectedIds}
+          onSelectionChange={setSelectedIds}
+          onViewMember={(member) => {
+            router.push(`/${clubId}/admin/member/${member.id}`);
+          }}
+        />
+      </div>
     </div>
   );
 }

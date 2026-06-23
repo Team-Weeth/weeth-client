@@ -29,8 +29,8 @@ interface DuesMember {
 function PaymentStatusBadge({ status }: { status: PaymentStatus }) {
   if (status === 'paid') {
     return (
-      <span className="typo-caption1 bg-state-success/10 text-state-success inline-flex h-6 items-center justify-center rounded-[5px] px-200 py-100 whitespace-nowrap">
-        납부완료
+      <span className="typo-caption1 bg-brand-primary/10 text-brand-primary inline-flex h-6 items-center justify-center rounded-[5px] px-200 py-100 whitespace-nowrap">
+        완료
       </span>
     );
   }
@@ -53,18 +53,21 @@ const COLUMNS = [
 interface DuesMemberPaymentTableProps extends React.HTMLAttributes<HTMLDivElement> {
   members: DuesMember[];
   onViewMember?: (member: DuesMember) => void;
+  selectedIds: Set<number>;
+  onSelectionChange: (ids: Set<number>) => void;
 }
 
 function DuesMemberPaymentTable({
   className,
   members,
   onViewMember,
+  selectedIds,
+  onSelectionChange,
   ...props
 }: DuesMemberPaymentTableProps) {
   const [activeFilter, setActiveFilter] = useState<FilterType>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [sortUnpaidFirst, setSortUnpaidFirst] = useState(false);
-  const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
 
   const totalCount = members.length;
   const paidCount = members.filter((m) => m.status === 'paid').length;
@@ -91,12 +94,10 @@ function DuesMemberPaymentTable({
     });
 
   const toggleSelect = (id: number) => {
-    setSelectedIds((prev) => {
-      const next = new Set(prev);
-      if (next.has(id)) next.delete(id);
-      else next.add(id);
-      return next;
-    });
+    const next = new Set(selectedIds);
+    if (next.has(id)) next.delete(id);
+    else next.add(id);
+    onSelectionChange(next);
   };
 
   return (
