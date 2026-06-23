@@ -67,6 +67,18 @@ export function groupByStartDate<T extends { start: string }>(items: T[]): [stri
   return Array.from(groupedByDate.entries());
 }
 
+// '2026. 7. 20(목) 14:00'
+export function formatLastUpdated(isoString: string): string {
+  const date = new Date(isoString);
+  const year = date.getFullYear();
+  const month = date.getMonth() + 1;
+  const day = date.getDate();
+  const dayOfWeek = DAY_META[date.getDay()].ko;
+  const hours = String(date.getHours()).padStart(2, '0');
+  const minutes = String(date.getMinutes()).padStart(2, '0');
+  return `${year}. ${month}. ${day}(${dayOfWeek}) ${hours}:${minutes}`;
+}
+
 export function getDaysInMonth(year: number, month: number): number {
   return new Date(year, month, 0).getDate();
 }

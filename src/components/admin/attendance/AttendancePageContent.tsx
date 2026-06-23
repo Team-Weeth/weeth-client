@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, Card, Skeleton } from '@/components/ui';
@@ -20,26 +20,23 @@ function AttendancePageContent() {
   const isDirty = dirtyCardIds.size > 0;
   const { open, onConfirm, onCancel } = useNavigationGuard({ enabled: isDirty });
 
-  const handleDirtyChange = useCallback((sessionId: number, dirty: boolean) => {
+  const handleDirtyChange = (sessionId: number, dirty: boolean) => {
     setDirtyCardIds((prev) => {
       const next = new Set(prev);
       if (dirty) next.add(sessionId);
       else next.delete(sessionId);
       return next;
     });
-  }, []);
+  };
 
-  const handleCardinalSelect = useCallback(
-    (id: number | null) => {
-      if (isDirty) {
-        setPendingCardinalId(id);
-        setCardinalDialogOpen(true);
-      } else {
-        setSelectedCardinalId(id);
-      }
-    },
-    [isDirty, setSelectedCardinalId],
-  );
+  const handleCardinalSelect = (id: number | null) => {
+    if (isDirty) {
+      setPendingCardinalId(id);
+      setCardinalDialogOpen(true);
+    } else {
+      setSelectedCardinalId(id);
+    }
+  };
 
   const confirmCardinalChange = () => {
     setDirtyCardIds(new Set());
