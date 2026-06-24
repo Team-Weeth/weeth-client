@@ -66,29 +66,12 @@ jobs:
                 : '⚠️ 테스트에 실패했습니다. 확인 후 수정해주세요.',
             ].join('\n');
 
-            const { data: comments } = await github.rest.issues.listComments({
+            await github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: context.issue.number,
+              body,
             });
-            const existing = comments.find(
-              (c) => c.user.login === 'github-actions[bot]' && c.body.includes('## PR 테스트 결과'),
-            );
-            if (existing) {
-              await github.rest.issues.updateComment({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                comment_id: existing.id,
-                body,
-              });
-            } else {
-              await github.rest.issues.createComment({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: context.issue.number,
-                body,
-              });
-            }
 
       - name: Fail workflow if tests failed
         if: always()
