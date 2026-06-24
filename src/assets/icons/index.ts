@@ -1,4 +1,5 @@
 export { default as ArrowDownIcon } from './arrow_down.svg';
+export { default as ArrowFillDownIcon } from './arrow_fill_down.svg';
 export { default as ArrowLeftIcon } from './arrow_left.svg';
 export { default as ArrowRightIcon } from './arrow_right.svg';
 export { default as ChatIcon } from './chat.svg';
@@ -19,6 +20,7 @@ export { default as LogoInitialIcon } from './logo/logo_initial_Origin.svg';
 export { default as LogoGrayIcon } from './logo/logo_gray_Origin.svg';
 export { default as FooterLogoIcon } from './logo/logo_full_Footer.svg';
 export { default as PaperclipIcon } from './paperclip.svg';
+export { default as Penalty2Icon } from './penalty-2.svg';
 export { default as NewIcon } from './new.svg';
 export { default as DeleteIcon } from './delete.svg';
 export { default as PeopleIcon } from './people.svg';
@@ -57,3 +59,4 @@ export { default as ProfileCompleteIcon } from './profile_complete.svg';
 export { default as TaskFinishedIcon } from './task_finished.svg';
 export { default as RushIcon } from './rush.svg';
 export { default as QuestionCircleIcon } from './question_circle.svg';
+export { default as DotIcon } from './dot.svg';
