@@ -1,7 +1,7 @@
 import { DateTimeInput } from '@/components/ui';
 
-import { isDateRangeValid } from '../modal/types';
-import type { ScheduleFormState } from '../modal/types';
+import { isDateRangeValid } from '@/components/admin/schedule/modal/types';
+import type { ScheduleFormState } from '@/components/admin/schedule/modal/types';
 
 interface ScheduleDateRangeFieldsProps {
   form: ScheduleFormState;
