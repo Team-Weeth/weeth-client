@@ -2,7 +2,7 @@
 
 import { BackIcon } from '@/assets/icons';
 import { Icon } from '@/components/ui';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 
 function BackButton() {
   const router = useRouter();

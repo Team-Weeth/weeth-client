@@ -10,7 +10,9 @@ import { cn } from '@/lib/cn';
 import { useDuesSetupActions, useDuesSetupValues } from '@/stores/useDuesSetupStore';
 
 import { DuesSetupStepIndicator } from './DuesSetupStepIndicator';
-import { BackButton } from '../BackButton';
+import { BackButton } from '@/components/admin/dues';
+import { FormCard } from './FormCard';
+import { NextButton } from './NextButton';
 
 const NAME_MAX = 30;
 const DESCRIPTION_MAX = 30;
@@ -44,14 +46,7 @@ function DuesSetupStep1() {
         {/* 스텝 인디케이터 */}
         <DuesSetupStepIndicator currentStep={1} />
 
-        {/* 폼 카드 */}
-        <div className="bg-container-neutral flex flex-col gap-600 rounded-lg px-400 py-450">
-          {/* 섹션 헤더 */}
-          <div className="flex flex-col gap-200">
-            <span className="typo-caption1 text-text-alternative">기본 정보 (1/5)</span>
-            <h2 className="typo-h3 text-text-normal">총 회비의 기본 정보를 입력해주세요</h2>
-          </div>
-
+        <FormCard title="기본 정보" step={1} description="총 회비의 기본 정보를 입력해주세요">
           {/* 필드 행: 회비금액 + 회비 이름 */}
           <div className="flex gap-400">
             {/* 1인당 회비금액 */}
@@ -159,20 +154,11 @@ function DuesSetupStep1() {
               </div>
             </div>
           </div>
-        </div>
+        </FormCard>
       </div>
 
       {/* 다음으로 버튼 */}
-      <div className="flex justify-end">
-        <button
-          type="button"
-          onClick={handleNext}
-          className="bg-button-primary hover:bg-button-primary-interaction typo-button1 text-text-inverse flex cursor-pointer items-center gap-100 rounded-md px-400 py-300 transition-colors"
-        >
-          다음으로
-          <Image src={ArrowRightIcon} alt="" width={20} height={20} />
-        </button>
-      </div>
+      <NextButton handleNext={handleNext} />
     </div>
   );
 }
