@@ -1,177 +1,190 @@
 ---
 name: write-tests
-description: "Writes Jest + React Testing Library tests for components, hooks, and pages."
-argument-hint: "[file path]"
+description: "Writes Jest + React Testing Library tests for components, hooks, and pages. Supports unit tests and integration tests with MSW."
+argument-hint: "[file path | --suggest] [--integration]"
 disable-model-invocation: true
 allowed-tools: Glob, Grep, Read, Bash, Write, Edit
 ---
 
-# Write Tests
+# 테스트 작성
 
-Analyzes the target file and writes Jest + React Testing Library tests.
+대상 파일을 분석하여 Jest + React Testing Library 테스트를 작성합니다.
 
-## Arguments
+전략, 규칙, 파일 위치 컨벤션은 `.claude/rules/testing.md`를 참고하세요.
 
-Specify the file path to test via `$ARGUMENTS`.
+## 인수
 
-- `/write-tests src/components/ui/Button.tsx`
-- `/write-tests src/hooks/useAutoScroll.ts`
-- `/write-tests` (if omitted, use the currently open file in IDE or ask the user)
+- `/write-tests src/components/ui/Button.tsx` — 단위 테스트
+- `/write-tests src/hooks/useAutoScroll.ts` — 훅 테스트
+- `/write-tests src/components/board/PostList.tsx --integration` — MSW 통합 테스트
+- `/write-tests --suggest` — 현재 브랜치 변경 파일을 분석해 테스트 작성 대상 추천
+- `/write-tests` (생략 시 IDE에서 현재 열린 파일을 대상으로 하거나 사용자에게 질문)
 
-## Workflow (follow in order)
+## 워크플로 (순서대로 따르세요)
 
-### 1. Identify the target file
+### 1. 대상 파일 확인
 
-- If a path is given via `$ARGUMENTS`, use it as-is
-- Otherwise, target the currently open file in the IDE
-- If still unclear, ask the user
+| 조건 | 동작 |
+|------|------|
+| `$ARGUMENTS`가 `--suggest` | **[추천 모드]** 로 이동 |
+| `$ARGUMENTS`가 파일 경로 | 해당 파일로 2단계 진행 |
+| `$ARGUMENTS` 없음 | **[추천 모드]** 로 이동 (자동) |
 
-### 2. Try the generate:tests script first
+---
 
-If `ANTHROPIC_API_KEY` is set in `.env.local`, run the CLI script:
+## [추천 모드] `--suggest`
+
+### S1. 브랜치 변경 파일 수집
 
 ```bash
-pnpm generate:tests $ARGUMENTS
+git diff main...HEAD --name-only --diff-filter=AM
 ```
 
-- On success, show the generated file path and stop
-- If API key is missing or the script fails → proceed to step 3
+결과에서 아래 항목을 **제외**한다:
 
-### 3. Write tests directly
+| 제외 패턴 | 이유 |
+|-----------|------|
+| `*.d.ts` | 타입 선언만 있음 |
+| `**/index.ts` | 배럴 export |
+| `src/types/**` | 타입 전용 |
+| `src/constants/**` | 상수 전용 |
+| `src/assets/**` | 에셋 |
+| `src/mocks/**` | 테스트 픽스처 자체 |
+| `src/providers/**` | 얇은 프레임워크 통합 레이어 |
+| `src/app/**` | Next.js 프레임워크 파일 |
+| `**/__tests__/**` | 이미 테스트 파일 |
+| `*.test.*` / `*.spec.*` | 이미 테스트 파일 |
 
-Read the target file with Read, then write tests following the rules below.
+### S2. 각 파일 분류
 
-#### Output path convention
+남은 파일을 **빠르게 읽어** 아래 기준으로 분류한다:
 
-| Source file | Test file |
-|---|---|
+| 분류 | 판단 기준 | 권장 명령 |
+|------|----------|----------|
+| **훅** | `src/hooks/` 경로이고 `use`로 시작 | `/write-tests {path}` |
+| **통합** | `useQuery` / `useSuspenseQuery` / `lib/apis/` import 존재 | `/write-tests {path} --integration` |
+| **UI 컴포넌트** | `src/components/ui/` 경로 | `/write-tests {path}` |
+| **도메인 컴포넌트** | `src/components/{feature}/` + API 호출 없음 | `/write-tests {path}` |
+| **도메인 컴포넌트** | `src/components/{feature}/` + API 호출 있음 | `/write-tests {path} --integration` |
+| **유틸** | `src/lib/` 경로 | `/write-tests {path}` |
+| **제외** | 위 어디에도 해당 안 됨 | — |
+
+### S3. 추천 목록 출력
+
+아래 형식으로 출력한다:
+
+```
+## 테스트 작성 추천 목록
+
+### 우선순위 높음
+- `src/hooks/useXxx.ts` — 커스텀 훅, 상태/사이드이펙트 로직 포함
+  → `/write-tests src/hooks/useXxx.ts`
+
+### 우선순위 중간
+- `src/components/board/PostList.tsx` — React Query 사용, API 연동
+  → `/write-tests src/components/board/PostList.tsx --integration`
+
+### 우선순위 낮음 (선택)
+- `src/components/ui/Badge.tsx` — 단순 표시 컴포넌트
+  → `/write-tests src/components/ui/Badge.tsx`
+
+### 제외됨
+- `src/constants/routes.ts` — 상수 전용
+- `src/types/post.ts` — 타입 선언만 있음
+```
+
+우선순위 기준:
+- **높음**: 훅, 복잡한 상태/계산 로직 포함 파일
+- **중간**: API 연동 컴포넌트 (통합 테스트 필요)
+- **낮음**: 단순 UI 컴포넌트, 유틸
+
+### S4. 사용자에게 질문
+
+추천 목록 출력 후 물어본다:
+
+> "전체 목록을 순서대로 작성할까요, 아니면 특정 파일을 골라드릴까요?"
+
+- 전체 진행: 우선순위 높음 → 중간 → 낮음 순으로 각 파일에 대해 **[일반 모드] 2단계** 부터 실행
+- 특정 파일 선택: 선택된 파일만 진행
+
+---
+
+### 2. 테스트 타입 결정
+
+| 조건 | 타입 |
+|------|------|
+| `--integration` 플래그 있음 | 통합 테스트 (RTL + MSW) |
+| React Query / lib/apis로 데이터를 fetch하는 파일 | 통합 테스트 (RTL + MSW) |
+| 순수 컴포넌트 / 유틸 / 훅 (API 호출 없음) | 단위 테스트 |
+
+### 3. 해당 타입의 예시를 읽은 뒤 테스트 작성
+
+| 타입 | 예시 파일 |
+|------|----------|
+| UI 컴포넌트 | [examples/Button.test.md](examples/Button.test.md) |
+| 훅 | [examples/useMonthNavigator.test.md](examples/useMonthNavigator.test.md) |
+| 통합 테스트 (React Query + MSW) | [examples/HomeDashboard.integration.test.md](examples/HomeDashboard.integration.test.md) |
+
+#### 출력 경로 컨벤션
+
+| 소스 파일 | 테스트 파일 |
+|----------|------------|
 | `src/components/ui/Button.tsx` | `src/components/ui/__tests__/Button.test.tsx` |
 | `src/hooks/useAutoScroll.ts` | `src/hooks/__tests__/useAutoScroll.test.ts` |
 | `src/app/page.tsx` | `src/app/__tests__/page.test.tsx` |
 
-Extension: `.tsx` → `.test.tsx`, `.ts` → `.test.ts`
+확장자: `.tsx` → `.test.tsx`, `.ts` → `.test.ts`
 
-#### Required test cases
+#### 필수 테스트 케이스
 
-1. **Smoke test** — verify it renders without crashing
-2. **Props / variant behavior** — verify different variant props produce different visual behavior
-3. **User interactions** — include tests for clicks, inputs, and other events if present
-4. **Accessibility** — verify role, label, and other a11y attributes
+1. **Smoke 테스트** — 크래시 없이 렌더링되는지 확인
+2. **Props / variant 동작** — 다른 variant prop이 다른 결과를 내는지 확인
+3. **사용자 인터랙션** — 클릭, 입력 등 이벤트 테스트 (존재하는 경우)
+4. **접근성** — role, label, aria 속성 확인
 
-#### Test writing rules
+#### 금지 사항
 
-```tsx
-// ✅ Imports
-import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-// @testing-library/jest-dom is globally registered — no import needed
+- Tailwind 클래스명 단언 금지: `expect(el).toHaveClass('bg-button-primary')` ❌
+- `next/image`, `next/navigation` 재모킹 금지 (`jest.setup.tsx`에서 이미 처리됨)
+- 구현 세부사항(내부 state, ref 직접 접근) 테스트 금지
+- 항상 `userEvent.setup()` 사용, `fireEvent` 금지
 
-// ✅ Always use userEvent.setup()
-const user = userEvent.setup();
-await user.click(element);
+### 4. 기존 테스트 처리
 
-// ✅ Query priority
-// getByRole > getByLabelText > getByText > getByTestId
+테스트 파일이 이미 존재하는 경우:
+- 현재 통과 중인 테스트는 모두 유지
+- 누락된 케이스만 추가 (점진적 업데이트)
 
-// ❌ Forbidden
-// Do not assert Tailwind class names: expect(el).toHaveClass('bg-button-primary')
-// Do not re-mock next/image or next/navigation (already handled in jest.setup.ts)
-// Do not test implementation details (internal state, direct ref access, etc.)
+### 5. 완료 후 — 테스트 실행 및 커버리지 확인
+
+#### 5-1. 현재 브랜치에서 작성된 테스트 파일 수집
+
+```bash
+git diff main...HEAD --name-only --diff-filter=AM | grep -E '(__tests__|\.test\.|\.spec\.)'
 ```
 
-#### cva variant test pattern
+#### 5-2. 소스 파일 경로 도출
 
-```tsx
-it.each([
-  ['primary'],
-  ['secondary'],
-] as const)('renders variant=%s', (variant) => {
-  render(<Component variant={variant} />);
-  expect(screen.getByRole('button')).toBeInTheDocument();
-});
+테스트 파일 경로에서 대응하는 소스 파일을 계산한다:
+
+| 테스트 파일 | 소스 파일 |
+|------------|---------|
+| `src/hooks/__tests__/useFoo.test.ts` | `src/hooks/useFoo.ts` |
+| `src/components/ui/__tests__/Button.test.tsx` | `src/components/ui/Button.tsx` |
+
+규칙: `__tests__/` 제거 + `.test.ts` → `.ts` / `.test.tsx` → `.tsx`
+
+#### 5-3. 커버리지 포함 테스트 실행
+
+수집한 테스트 파일과 소스 파일을 이용해 실행한다:
+
+```bash
+pnpm test <테스트파일1> <테스트파일2> ... --coverage --collectCoverageFrom='["<소스파일1>","<소스파일2>",...]'
 ```
 
-#### forwardRef component
+#### 5-4. 결과 처리
 
-```tsx
-it('attaches ref to the DOM element', () => {
-  const ref = React.createRef<HTMLButtonElement>();
-  render(<Button ref={ref}>Click</Button>);
-  expect(ref.current).toBeInstanceOf(HTMLButtonElement);
-});
-```
-
-#### Hook tests — renderHook + act
-
-For hook files (`.ts`), use `renderHook` + `act` instead of `render`.
-
-```tsx
-import { renderHook, act } from '@testing-library/react';
-import { useCounter } from '@/hooks/useCounter';
-
-// ✅ Basic usage — check initial value
-it('initial count is 0', () => {
-  const { result } = renderHook(() => useCounter());
-  expect(result.current.count).toBe(0);
-});
-
-// ✅ State change — wrap in act()
-it('increments count by 1 when increment is called', () => {
-  const { result } = renderHook(() => useCounter());
-  act(() => {
-    result.current.increment();
-  });
-  expect(result.current.count).toBe(1);
-});
-
-// ✅ Async state change — await act()
-it('fills data after async fetch', async () => {
-  const { result } = renderHook(() => useFetchData());
-  await act(async () => {
-    await result.current.load();
-  });
-  expect(result.current.data).not.toBeNull();
-});
-
-// ✅ Props change — rerender
-it('resets count when initialValue prop changes', () => {
-  const { result, rerender } = renderHook(
-    ({ initialValue }) => useCounter(initialValue),
-    { initialProps: { initialValue: 0 } },
-  );
-  rerender({ initialValue: 10 });
-  expect(result.current.count).toBe(10);
-});
-
-// ✅ Hooks that need userEvent (DOM interaction)
-it('responds to input events', async () => {
-  const user = userEvent.setup();
-  const { result } = renderHook(() => useSearch());
-
-  const input = document.createElement('input');
-  document.body.appendChild(input);
-
-  await user.type(input, 'hello');
-  // assert result.current state ...
-});
-```
-
-> **Rules**
-> - All hook calls that cause state or side effects must run inside `act()`
-> - Async hooks: `await act(async () => { ... })`
-> - Isolate external dependencies (APIs, timers) with `jest.mock` / `jest.useFakeTimers`
-
-### 4. Handle existing tests
-
-If the test file already exists:
-- Keep all currently passing tests
-- Only add missing cases (incremental update)
-
-### 5. After completion
-
-- Show the created/modified file path as a link
-- Ask the user whether to run `pnpm test`
-
-## Supporting Files
-
-- Example test: [examples/Button.test.md](examples/Button.test.md)
+| 결과 | 처리 |
+|------|------|
+| 전부 PASS | 커버리지 테이블을 그대로 표시하고 종료 |
+| 일부 FAIL | 실패 케이스를 수정한 뒤 5-3 재실행 |
