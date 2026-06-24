@@ -14,3 +14,15 @@ export interface MonthlyData {
   month: string;
   amount: number;
 }
+
+export type PaymentStatus = 'paid' | 'unpaid';
+export type FilterType = 'all' | 'paid' | 'unpaid';
+
+export interface DuesMember {
+  id: number;
+  name: string;
+  major: string;
+  phone: string;
+  status: PaymentStatus;
+  avatarInitial?: string;
+}

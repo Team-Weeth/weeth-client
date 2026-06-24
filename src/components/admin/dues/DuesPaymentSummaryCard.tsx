@@ -1,9 +1,6 @@
 import { Card } from '@/components/ui';
 import { cn } from '@/lib/cn';
-
-function formatAmount(amount: number) {
-  return amount.toLocaleString('ko-KR');
-}
+import { formatAmount } from '@/lib/formatAmount';
 
 interface DuesPaymentSummaryCardProps {
   className?: string;
@@ -21,7 +18,9 @@ function DuesPaymentSummaryCard({
   onSetTotal,
 }: DuesPaymentSummaryCardProps) {
   const percentage =
-    totalTarget > 0 ? Math.min(100, Math.round((totalCollected / totalTarget) * 100)) : 0;
+    totalTarget > 0
+      ? Math.max(0, Math.min(100, Math.round((totalCollected / totalTarget) * 100)))
+      : 0;
 
   return (
     <Card className={cn('flex min-w-[339px] flex-1 flex-col overflow-hidden p-400', className)}>

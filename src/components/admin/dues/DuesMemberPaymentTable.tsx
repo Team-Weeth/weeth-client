@@ -13,18 +13,7 @@ import {
   TableRow,
 } from '@/components/ui';
 import { cn } from '@/lib/cn';
-
-type PaymentStatus = 'paid' | 'unpaid';
-type FilterType = 'all' | 'paid' | 'unpaid';
-
-interface DuesMember {
-  id: number;
-  name: string;
-  major: string;
-  phone: string;
-  status: PaymentStatus;
-  avatarInitial?: string;
-}
+import { DuesMember, FilterType, PaymentStatus } from '@/types/admin/dues';
 
 function PaymentStatusBadge({ status }: { status: PaymentStatus }) {
   if (status === 'paid') {
@@ -116,12 +105,7 @@ function DuesMemberPaymentTable({
                 key={f.key}
                 type="button"
                 onClick={() => setActiveFilter(f.key)}
-                className={cn(
-                  'typo-button2 min-w-10 shrink-0 cursor-pointer rounded-[10px] px-400 py-200 transition-colors',
-                  activeFilter === f.key
-                    ? 'bg-button-neutral text-text-strong'
-                    : 'border-line text-text-normal hover:bg-container-neutral-interaction border',
-                )}
+                className="typo-button2 border-line text-text-normal hover:bg-container-neutral-interaction min-w-10 shrink-0 cursor-pointer rounded-[10px] border px-400 py-200 transition-colors"
               >
                 {f.label} {f.count}
               </button>
@@ -130,12 +114,7 @@ function DuesMemberPaymentTable({
           <button
             type="button"
             onClick={() => setSortUnpaidFirst((prev) => !prev)}
-            className={cn(
-              'typo-button2 min-w-10 shrink-0 cursor-pointer rounded-[10px] px-400 py-200 transition-colors',
-              sortUnpaidFirst
-                ? 'bg-button-neutral text-text-strong'
-                : 'border-line text-text-normal hover:bg-container-neutral-interaction border',
-            )}
+            className="typo-button2 border-line text-text-normal hover:bg-container-neutral-interaction min-w-10 shrink-0 cursor-pointer rounded-[10px] border px-400 py-200 transition-colors"
           >
             {sortUnpaidFirst ? '이름 순' : '미납 순'}
           </button>
@@ -143,7 +122,7 @@ function DuesMemberPaymentTable({
 
         {/* 검색바 */}
         <div className="bg-container-neutral-alternative relative h-[48px] w-full max-w-[339px] overflow-hidden rounded-sm">
-          <div className="text-icon-alternative absolute top-1/2 left-400 -translate-y-1/2">
+          <div className="text-icon-alternative absolute top-1/2 left-400 flex -translate-y-1/2 self-center">
             <Icon src={SearchIcon} alt="" size={24} />
           </div>
           <input
