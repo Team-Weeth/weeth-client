@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 
-import { ArrowRightIcon, CheckIcon, SearchIcon } from '@/assets/icons';
+import { ArrowRightIcon, CheckIcon } from '@/assets/icons';
 import {
   Icon,
   Table,
@@ -122,7 +122,7 @@ function DuesMemberPaymentTable({
         </div>
 
         {/* 검색바 */}
-        <DuesSearchBar searchQuery={searchQuery} setSearchQuery={} />
+        <DuesSearchBar searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
 
         {/* 테이블 */}
         <div className="border-line overflow-x-auto rounded-sm border">

@@ -554,6 +554,10 @@ select:focus {
   letter-spacing: var(--letter-spacing);
 }
 
+@utility tag-base {
+  @apply typo-caption1 inline-flex h-6 items-center justify-center rounded-[5px] px-200 py-100 whitespace-nowrap;
+}
+
 @utility typo-social {
   font-family:
     'SF Pro',

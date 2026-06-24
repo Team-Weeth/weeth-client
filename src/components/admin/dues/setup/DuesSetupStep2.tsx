@@ -3,26 +3,15 @@
 import { useState, useEffect, useMemo } from 'react';
 
 import { useRouter, useParams } from 'next/navigation';
-import Image from 'next/image';
 
-import { SearchIcon, ArrowLeftIcon, ArrowRightIcon } from '@/assets/icons';
 import { BackButton, DuesSearchBar } from '@/components/admin/dues';
 import {
-  Avatar,
-  AvatarFallback,
-  Icon,
   Pagination,
   PaginationContent,
   PaginationItem,
   PaginationLink,
   PaginationNext,
   PaginationPrevious,
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
 } from '@/components/ui';
 import { cn } from '@/lib/cn';
 import { MOCK_PAYMENT_TARGETS } from '@/constants/mock';
@@ -30,6 +19,7 @@ import { useDuesSetupValues, useDuesSetupActions } from '@/stores/useDuesSetupSt
 
 import {
   DuesSetupStepIndicator,
+  DuesMemberTable,
   NextButton,
   PrevButton,
 } from '@/components/admin/dues/setup/components';
@@ -37,12 +27,6 @@ import {
 type TabType = 'all' | 'selected' | 'excluded';
 
 const PAGE_SIZE = 10;
-
-const ROLE_LABEL: Record<string, string> = {
-  LEAD: '리더',
-  ADMIN: '관리자',
-  USER: '일반멤버',
-};
 
 function DuesSetupStep2() {
   const router = useRouter();
@@ -152,76 +136,11 @@ function DuesSetupStep2() {
           </div>
 
           {/* 테이블 */}
-          <Table>
-            <TableHeader>
-              <TableRow className="bg-container-neutral-alternative">
-                <TableHead className="typo-caption1 text-text-alternative w-16 text-center">
-                  선택
-                </TableHead>
-                <TableHead className="typo-caption1 text-text-alternative">이름</TableHead>
-                <TableHead className="typo-caption1 text-text-alternative">학과</TableHead>
-                <TableHead className="typo-caption1 text-text-alternative">직급</TableHead>
-                <TableHead className="typo-caption1 text-text-alternative text-right">
-                  납부 현황
-                </TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {pagedTargets.map(({ targetId, paymentTargetInfo }) => {
-                const { clubMemberId, name, department, memberRole } = paymentTargetInfo;
-                const isSelected = selectedSet.has(clubMemberId);
-                return (
-                  <TableRow
-                    key={targetId}
-                    className="cursor-pointer"
-                    onClick={() => toggleMember(clubMemberId)}
-                  >
-                    <TableCell className="text-center">
-                      <input
-                        type="checkbox"
-                        checked={isSelected}
-                        onChange={() => toggleMember(clubMemberId)}
-                        onClick={(e) => e.stopPropagation()}
-                        className="accent-brand-primary size-4 cursor-pointer"
-                      />
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center gap-300">
-                        <Avatar size={40}>
-                          <AvatarFallback>{name[0]}</AvatarFallback>
-                        </Avatar>
-                        <span className="typo-body2 text-text-normal">{name}</span>
-                      </div>
-                    </TableCell>
-                    <TableCell className="typo-body2 text-text-normal">{department}</TableCell>
-                    <TableCell className="typo-body2 text-text-normal">
-                      {ROLE_LABEL[memberRole] ?? memberRole}
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <span
-                        className={cn(
-                          'typo-body2',
-                          isSelected ? 'text-brand-primary' : 'text-text-alternative',
-                        )}
-                      >
-                        {isSelected ? '선택됨' : '제외됨'}
-                      </span>
-                    </TableCell>
-                  </TableRow>
-                );
-              })}
-              {pagedTargets.length === 0 && (
-                <TableRow>
-                  <TableCell
-                    colSpan={5}
-                    className="typo-body2 text-text-alternative py-700 text-center"
-                  >
-                    멤버가 없습니다
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
+          <DuesMemberTable
+            pagedTargets={pagedTargets}
+            selectedSet={selectedSet}
+            toggleMember={toggleMember}
+          />
 
           {/* 페이지네이션 */}
           {totalPages > 1 && (

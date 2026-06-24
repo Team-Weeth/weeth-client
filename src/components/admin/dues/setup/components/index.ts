@@ -3,3 +3,4 @@ export { DuesSetupStepIndicator, type DuesSetupStepIndicatorProps } from './Dues
 export { NextButton } from './NextButton';
 export { PrevButton } from './PrevButton';
 export { FormCard } from './FormCard';
+export { DuesMemberTable } from './DuesMemberTable';
