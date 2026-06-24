@@ -29,3 +29,5 @@ export {
 export { type TransactionFormData } from './modal/TransactionForm';
 
 export { BackButton } from './BackButton';
+
+export { DuesSearchBar, type DuesSearchBarProps } from './DuesSearchBar';

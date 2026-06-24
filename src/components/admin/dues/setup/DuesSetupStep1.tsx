@@ -8,7 +8,11 @@ import { cn } from '@/lib/cn';
 import { useDuesSetupActions, useDuesSetupValues } from '@/stores/useDuesSetupStore';
 
 import { BackButton } from '@/components/admin/dues';
-import { DuesSetupStepIndicator, FormCard, NextButton } from './components';
+import {
+  DuesSetupStepIndicator,
+  FormCard,
+  NextButton,
+} from '@/components/admin/dues/setup/components';
 
 const NAME_MAX = 30;
 const DESCRIPTION_MAX = 30;

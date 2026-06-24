@@ -44,6 +44,88 @@ export const MOCK_CLUBS: ClubDto[] = [
 export const MOCK_AVAILABLE_CARDINALS = [8, 7, 6, 5, 3, 2, 1];
 
 export const MOCK_UNIVERSITIES = ['가천대학교', '고려대학교', '연세대학교', '서울대학교'];
+
+// ─── 납부 대상 Mock ───────────────────────────────────────────────────────────
+
+export interface MockPaymentTargetInfo {
+  userId: number;
+  clubMemberId: number;
+  name: string;
+  tel: string;
+  school: string;
+  department: string;
+  memberRole: 'LEAD' | 'ADMIN' | 'USER';
+  memberStatus: 'ACTIVE' | 'INACTIVE';
+  profileImageUrl: string | null;
+}
+
+export interface MockPaymentTarget {
+  targetId: number;
+  paymentTargetInfo: MockPaymentTargetInfo;
+  targetStatus: 'TARGETED' | 'EXCLUDED';
+  paymentStatus: 'UNPAID' | 'PAID' | 'CONFIRMED';
+  dueAmount: number;
+  paidAmount: number;
+  paidAt: string | null;
+  confirmedBy: number | null;
+  memo: string | null;
+}
+
+const MOCK_MEMBERS: Pick<
+  MockPaymentTargetInfo,
+  'name' | 'department' | 'memberRole'
+>[] = [
+  { name: '김지수', department: '컴퓨터공학과', memberRole: 'LEAD' },
+  { name: '이도윤', department: '소프트웨어학과', memberRole: 'ADMIN' },
+  { name: '박서연', department: '정보통신공학과', memberRole: 'USER' },
+  { name: '최민준', department: '전자공학과', memberRole: 'USER' },
+  { name: '정하은', department: '경영학과', memberRole: 'USER' },
+  { name: '윤지호', department: '산업공학과', memberRole: 'USER' },
+  { name: '강나연', department: '컴퓨터공학과', memberRole: 'USER' },
+  { name: '조현우', department: '소프트웨어학과', memberRole: 'ADMIN' },
+  { name: '임서영', department: '정보통신공학과', memberRole: 'USER' },
+  { name: '한지민', department: '전자공학과', memberRole: 'USER' },
+  { name: '신민서', department: '경영학과', memberRole: 'USER' },
+  { name: '오승현', department: '산업공학과', memberRole: 'USER' },
+  { name: '문예린', department: '컴퓨터공학과', memberRole: 'USER' },
+  { name: '권태양', department: '소프트웨어학과', memberRole: 'USER' },
+  { name: '류하진', department: '정보통신공학과', memberRole: 'USER' },
+  { name: '배수현', department: '전자공학과', memberRole: 'USER' },
+  { name: '유재원', department: '경영학과', memberRole: 'USER' },
+  { name: '남가은', department: '산업공학과', memberRole: 'USER' },
+  { name: '고도현', department: '컴퓨터공학과', memberRole: 'USER' },
+  { name: '천지우', department: '소프트웨어학과', memberRole: 'USER' },
+  { name: '장미래', department: '정보통신공학과', memberRole: 'USER' },
+  { name: '허성민', department: '전자공학과', memberRole: 'USER' },
+  { name: '노은채', department: '경영학과', memberRole: 'USER' },
+  { name: '서준혁', department: '산업공학과', memberRole: 'USER' },
+  { name: '공하늘', department: '컴퓨터공학과', memberRole: 'USER' },
+];
+
+/** 납부 대상 Mock 데이터 — 25명 (TARGETED 20, EXCLUDED 5) */
+export const MOCK_PAYMENT_TARGETS: MockPaymentTarget[] = MOCK_MEMBERS.map(
+  ({ name, department, memberRole }, idx) => ({
+    targetId: idx + 1,
+    paymentTargetInfo: {
+      userId: idx + 1,
+      clubMemberId: idx + 1,
+      name,
+      tel: `0101234${String(idx).padStart(4, '0')}`,
+      school: '가천대학교',
+      department,
+      memberRole,
+      memberStatus: 'ACTIVE',
+      profileImageUrl: null,
+    },
+    targetStatus: idx < 20 ? 'TARGETED' : 'EXCLUDED',
+    paymentStatus: 'UNPAID',
+    dueAmount: 50000,
+    paidAmount: 0,
+    paidAt: null,
+    confirmedBy: null,
+    memo: null,
+  }),
+);
 export const MOCK_DEPARTMENTS = [
   '컴퓨터공학과',
   '소프트웨어학과',

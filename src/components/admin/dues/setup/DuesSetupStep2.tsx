@@ -3,15 +3,20 @@
 import { useState, useEffect, useMemo } from 'react';
 
 import { useRouter, useParams } from 'next/navigation';
-import { useQuery } from '@tanstack/react-query';
 import Image from 'next/image';
 
 import { SearchIcon, ArrowLeftIcon, ArrowRightIcon } from '@/assets/icons';
-import { BackButton } from '@/components/admin/dues';
+import { BackButton, DuesSearchBar } from '@/components/admin/dues';
 import {
   Avatar,
   AvatarFallback,
   Icon,
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
   Table,
   TableBody,
   TableCell,
@@ -20,10 +25,14 @@ import {
   TableRow,
 } from '@/components/ui';
 import { cn } from '@/lib/cn';
-import { adminMemberApi } from '@/lib/apis/adminMember';
+import { MOCK_PAYMENT_TARGETS } from '@/constants/mock';
 import { useDuesSetupValues, useDuesSetupActions } from '@/stores/useDuesSetupStore';
 
-import { DuesSetupStepIndicator } from './component/DuesSetupStepIndicator';
+import {
+  DuesSetupStepIndicator,
+  NextButton,
+  PrevButton,
+} from '@/components/admin/dues/setup/components';
 
 type TabType = 'all' | 'selected' | 'excluded';
 
@@ -46,39 +55,34 @@ function DuesSetupStep2() {
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
 
-  const { data: members = [] } = useQuery({
-    queryKey: ['admin', 'members', clubId],
-    queryFn: () => adminMemberApi.getMembers(clubId).then((res) => res.data.data),
-    staleTime: 5 * 60 * 1000,
-  });
-
-  // 첫 진입 시 ACTIVE 멤버 전체 선택으로 초기화
+  // 첫 진입 시 TARGETED 멤버로 초기화
   useEffect(() => {
-    if (!memberIdsInitialized && members.length > 0) {
-      const activeIds = members
-        .filter((m) => m.memberStatus === 'ACTIVE')
-        .map((m) => m.clubMemberId);
-      setField({ selectedMemberIds: activeIds, memberIdsInitialized: true });
+    if (!memberIdsInitialized) {
+      const targetedIds = MOCK_PAYMENT_TARGETS.filter((t) => t.targetStatus === 'TARGETED').map(
+        (t) => t.paymentTargetInfo.clubMemberId,
+      );
+      setField({ selectedMemberIds: targetedIds, memberIdsInitialized: true });
     }
-  }, [members, memberIdsInitialized, setField]);
+  }, [memberIdsInitialized, setField]);
 
   const selectedSet = useMemo(() => new Set(selectedMemberIds), [selectedMemberIds]);
 
-  const filteredMembers = useMemo(() => {
-    const active = members.filter((m) => m.memberStatus === 'ACTIVE');
+  const filteredTargets = useMemo(() => {
     const byTab =
       tab === 'selected'
-        ? active.filter((m) => selectedSet.has(m.clubMemberId))
+        ? MOCK_PAYMENT_TARGETS.filter((t) => selectedSet.has(t.paymentTargetInfo.clubMemberId))
         : tab === 'excluded'
-          ? active.filter((m) => !selectedSet.has(m.clubMemberId))
-          : active;
-    return search.trim() ? byTab.filter((m) => m.name.includes(search.trim())) : byTab;
-  }, [members, tab, search, selectedSet]);
+          ? MOCK_PAYMENT_TARGETS.filter((t) => !selectedSet.has(t.paymentTargetInfo.clubMemberId))
+          : MOCK_PAYMENT_TARGETS;
+    return search.trim()
+      ? byTab.filter((t) => t.paymentTargetInfo.name.includes(search.trim()))
+      : byTab;
+  }, [tab, search, selectedSet]);
 
-  const totalPages = Math.max(1, Math.ceil(filteredMembers.length / PAGE_SIZE));
-  const pagedMembers = filteredMembers.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+  const totalPages = Math.max(1, Math.ceil(filteredTargets.length / PAGE_SIZE));
+  const pagedTargets = filteredTargets.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
-  const totalCount = members.filter((m) => m.memberStatus === 'ACTIVE').length;
+  const totalCount = MOCK_PAYMENT_TARGETS.length;
   const selectedCount = selectedMemberIds.length;
   const excludedCount = totalCount - selectedCount;
 
@@ -144,21 +148,7 @@ function DuesSetupStep2() {
             </div>
 
             {/* 검색바 */}
-            <div className="bg-container-neutral-alternative flex items-center gap-200 rounded-sm px-400 py-300">
-              <Icon
-                src={SearchIcon}
-                alt="검색"
-                size={18}
-                className="text-icon-alternative shrink-0"
-              />
-              <input
-                type="text"
-                value={search}
-                onChange={(e) => handleSearch(e.target.value)}
-                placeholder="이름으로 검색하기"
-                className="typo-body2 placeholder:text-text-alternative text-text-normal min-w-0 flex-1 bg-transparent focus:outline-none"
-              />
-            </div>
+            <DuesSearchBar searchQuery={search} setSearchQuery={handleSearch} />
           </div>
 
           {/* 테이블 */}
@@ -177,19 +167,20 @@ function DuesSetupStep2() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {pagedMembers.map((member) => {
-                const isSelected = selectedSet.has(member.clubMemberId);
+              {pagedTargets.map(({ targetId, paymentTargetInfo }) => {
+                const { clubMemberId, name, department, memberRole } = paymentTargetInfo;
+                const isSelected = selectedSet.has(clubMemberId);
                 return (
                   <TableRow
-                    key={member.clubMemberId}
+                    key={targetId}
                     className="cursor-pointer"
-                    onClick={() => toggleMember(member.clubMemberId)}
+                    onClick={() => toggleMember(clubMemberId)}
                   >
                     <TableCell className="text-center">
                       <input
                         type="checkbox"
                         checked={isSelected}
-                        onChange={() => toggleMember(member.clubMemberId)}
+                        onChange={() => toggleMember(clubMemberId)}
                         onClick={(e) => e.stopPropagation()}
                         className="accent-brand-primary size-4 cursor-pointer"
                       />
@@ -197,16 +188,14 @@ function DuesSetupStep2() {
                     <TableCell>
                       <div className="flex items-center gap-300">
                         <Avatar size={40}>
-                          <AvatarFallback>{member.name[0]}</AvatarFallback>
+                          <AvatarFallback>{name[0]}</AvatarFallback>
                         </Avatar>
-                        <span className="typo-body2 text-text-normal">{member.name}</span>
+                        <span className="typo-body2 text-text-normal">{name}</span>
                       </div>
                     </TableCell>
+                    <TableCell className="typo-body2 text-text-normal">{department}</TableCell>
                     <TableCell className="typo-body2 text-text-normal">
-                      {member.department}
-                    </TableCell>
-                    <TableCell className="typo-body2 text-text-normal">
-                      {ROLE_LABEL[member.memberRole] ?? member.memberRole}
+                      {ROLE_LABEL[memberRole] ?? memberRole}
                     </TableCell>
                     <TableCell className="text-right">
                       <span
@@ -221,7 +210,7 @@ function DuesSetupStep2() {
                   </TableRow>
                 );
               })}
-              {pagedMembers.length === 0 && (
+              {pagedTargets.length === 0 && (
                 <TableRow>
                   <TableCell
                     colSpan={5}
@@ -236,63 +225,52 @@ function DuesSetupStep2() {
 
           {/* 페이지네이션 */}
           {totalPages > 1 && (
-            <div className="flex items-center justify-center gap-100">
-              <button
-                type="button"
-                onClick={() => setPage((p) => Math.max(1, p - 1))}
-                disabled={page === 1}
-                className="flex size-8 cursor-pointer items-center justify-center rounded-sm transition-colors disabled:cursor-not-allowed disabled:opacity-40"
-                aria-label="이전 페이지"
-              >
-                <Image src={ArrowLeftIcon} alt="" width={16} height={16} />
-              </button>
-              {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
-                <button
-                  key={p}
-                  type="button"
-                  onClick={() => setPage(p)}
-                  className={cn(
-                    'typo-body2 flex size-8 cursor-pointer items-center justify-center rounded-sm transition-colors',
-                    p === page
-                      ? 'bg-container-primary text-text-inverse'
-                      : 'text-text-alternative hover:bg-container-neutral-interaction',
-                  )}
-                >
-                  {p}
-                </button>
-              ))}
-              <button
-                type="button"
-                onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-                disabled={page === totalPages}
-                className="flex size-8 cursor-pointer items-center justify-center rounded-sm transition-colors disabled:cursor-not-allowed disabled:opacity-40"
-                aria-label="다음 페이지"
-              >
-                <Image src={ArrowRightIcon} alt="" width={16} height={16} />
-              </button>
-            </div>
+            <Pagination>
+              <PaginationContent>
+                <PaginationItem>
+                  <PaginationPrevious
+                    href="#"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setPage((p) => Math.max(1, p - 1));
+                    }}
+                    className={cn(page === 1 && 'pointer-events-none opacity-40')}
+                  />
+                </PaginationItem>
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
+                  <PaginationItem key={p}>
+                    <PaginationLink
+                      href="#"
+                      isActive={p === page}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        setPage(p);
+                      }}
+                    >
+                      {p}
+                    </PaginationLink>
+                  </PaginationItem>
+                ))}
+                <PaginationItem>
+                  <PaginationNext
+                    href="#"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setPage((p) => Math.min(totalPages, p + 1));
+                    }}
+                    className={cn(page === totalPages && 'pointer-events-none opacity-40')}
+                  />
+                </PaginationItem>
+              </PaginationContent>
+            </Pagination>
           )}
         </div>
       </div>
 
       {/* 하단 네비게이션 */}
       <div className="flex items-center justify-between">
-        <button
-          type="button"
-          onClick={() => router.push(`/${clubId}/admin/dues/setup/1`)}
-          className="bg-button-neutral hover:bg-container-neutral-interaction typo-button1 text-text-normal flex cursor-pointer items-center gap-100 rounded-md px-400 py-300 transition-colors"
-        >
-          <Image src={ArrowLeftIcon} alt="" width={20} height={20} />
-          이전으로
-        </button>
-        <button
-          type="button"
-          onClick={() => router.push(`/${clubId}/admin/dues/setup/3`)}
-          className="bg-button-primary hover:bg-button-primary-interaction typo-button1 text-text-inverse flex cursor-pointer items-center gap-100 rounded-md px-400 py-300 transition-colors"
-        >
-          다음으로
-          <Image src={ArrowRightIcon} alt="" width={20} height={20} />
-        </button>
+        <PrevButton handlePrev={() => router.push(`/${clubId}/admin/dues/setup/1`)} />
+        <NextButton handleNext={() => router.push(`/${clubId}/admin/dues/setup/3`)} />
       </div>
     </div>
   );
