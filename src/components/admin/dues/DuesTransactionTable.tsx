@@ -43,23 +43,15 @@ interface DuesTransactionTableProps extends React.HTMLAttributes<HTMLDivElement>
 function TransactionTypeTag({ type }: { type: TransactionType }) {
   if (type === 'income') {
     return (
-      <span className="typo-caption1 bg-state-success/10 text-state-success inline-flex h-6 items-center justify-center rounded-[5px] px-200 py-100 whitespace-nowrap">
-        수입
-      </span>
+      <span className="typo-caption1 bg-state-success/10 text-state-success tag-base">수입</span>
     );
   }
   if (type === 'dues') {
     return (
-      <span className="typo-caption1 bg-brand-primary/10 text-brand-primary inline-flex h-6 items-center justify-center rounded-[5px] px-200 py-100 whitespace-nowrap">
-        회비
-      </span>
+      <span className="typo-caption1 bg-brand-primary/10 text-brand-primary tag-base">회비</span>
     );
   }
-  return (
-    <span className="typo-caption1 bg-state-error/10 text-state-error inline-flex h-6 items-center justify-center rounded-[5px] px-200 py-100 whitespace-nowrap">
-      지출
-    </span>
-  );
+  return <span className="typo-caption1 bg-state-error/10 text-state-error tag-base">지출</span>;
 }
 
 function DuesTransactionTable({

@@ -11,6 +11,10 @@ const initialState = {
   // Step 2: 납부 대상
   selectedMemberIds: [] as number[],
   memberIdsInitialized: false,
+  // Step 3: 이월 설정
+  carryOverOption: 'none' as 'none' | 'carry',
+  carryOverDescription: '',
+  carryOverInitialized: false,
 };
 
 export type DuesSetupState = typeof initialState;
@@ -37,6 +41,9 @@ export const useDuesSetupValues = () =>
       description: state.description,
       selectedMemberIds: state.selectedMemberIds,
       memberIdsInitialized: state.memberIdsInitialized,
+      carryOverOption: state.carryOverOption,
+      carryOverDescription: state.carryOverDescription,
+      carryOverInitialized: state.carryOverInitialized,
     })),
   );
 

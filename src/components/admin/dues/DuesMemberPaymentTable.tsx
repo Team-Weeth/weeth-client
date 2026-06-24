@@ -19,16 +19,10 @@ import { DuesSearchBar } from './DuesSearchBar';
 function PaymentStatusBadge({ status }: { status: PaymentStatus }) {
   if (status === 'paid') {
     return (
-      <span className="typo-caption1 bg-brand-primary/10 text-brand-primary inline-flex h-6 items-center justify-center rounded-[5px] px-200 py-100 whitespace-nowrap">
-        완료
-      </span>
+      <span className="typo-caption1 bg-brand-primary/10 text-brand-primary tag-base">완료</span>
     );
   }
-  return (
-    <span className="typo-caption1 bg-state-error/10 text-state-error inline-flex h-6 items-center justify-center rounded-[5px] px-200 py-100 whitespace-nowrap">
-      미납
-    </span>
-  );
+  return <span className="typo-caption1 bg-state-error/10 text-state-error tag-base">미납</span>;
 }
 
 const COLUMNS = [

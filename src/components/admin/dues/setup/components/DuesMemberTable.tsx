@@ -8,6 +8,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui';
+import { Checkbox } from '@/components/ui/checkbox';
 import type { MockPaymentTarget } from '@/constants/mock';
 
 const ROLE_LABEL: Record<string, string> = {
@@ -18,9 +19,7 @@ const ROLE_LABEL: Record<string, string> = {
 
 function SelectionStatusBadge({ isSelected }: { isSelected: boolean }) {
   if (isSelected) {
-    return (
-      <span className="tag-base bg-state-success/10 text-state-success">선택됨</span>
-    );
+    return <span className="tag-base bg-state-success/10 text-state-success">선택됨</span>;
   }
   return <span className="tag-base text-text-alternative">제외됨</span>;
 }
@@ -58,12 +57,11 @@ function DuesMemberTable({ pagedTargets, selectedSet, toggleMember }: DuesMember
               onClick={() => toggleMember(clubMemberId)}
             >
               <TableCell className="text-center">
-                <input
-                  type="checkbox"
+                <Checkbox
+                  id="select-all-checkbox"
+                  name="select-all-checkbox"
                   checked={isSelected}
-                  onChange={() => toggleMember(clubMemberId)}
-                  onClick={(e) => e.stopPropagation()}
-                  className="accent-brand-primary size-4 cursor-pointer"
+                  onCheckedChange={() => toggleMember(clubMemberId)}
                 />
               </TableCell>
               <TableCell>

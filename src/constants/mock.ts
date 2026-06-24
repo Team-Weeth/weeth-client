@@ -126,6 +126,13 @@ export const MOCK_PAYMENT_TARGETS: MockPaymentTarget[] = MOCK_MEMBERS.map(
     memo: null,
   }),
 );
+// ─── 이월 잔액 Mock ───────────────────────────────────────────────────────────
+// null = 이전 기수 정보 없음, object = 이전 기수 잔액 존재
+export const MOCK_PREVIOUS_BALANCE: { balance: number; generationNumber: number } | null = {
+  balance: 240000,
+  generationNumber: 3,
+};
+
 export const MOCK_DEPARTMENTS = [
   '컴퓨터공학과',
   '소프트웨어학과',
