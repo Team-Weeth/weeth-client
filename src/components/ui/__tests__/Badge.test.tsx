@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import { Badge } from '../Badge';
+import { Badge } from '@/components/ui/Badge';
 
 describe('Badge', () => {
   it('children을 렌더링한다', () => {

@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import { Tag } from '../tag';
+import { Tag } from '@/components/ui/tag';
 
 describe('Tag', () => {
   it('children을 렌더링한다', () => {

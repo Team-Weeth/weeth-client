@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { Chip, ChipList } from '../chips';
+import { Chip, ChipList } from '@/components/ui/chips';
 
 describe('Chip', () => {
   it('children을 렌더링한다', () => {

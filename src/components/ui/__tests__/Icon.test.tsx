@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import { Icon } from '../Icon';
+import { Icon } from '@/components/ui/Icon';
 
 const mockIcon = { src: '/mock-icon.svg', height: 20, width: 20 };
 

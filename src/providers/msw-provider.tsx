@@ -16,14 +16,17 @@ export function MSWProvider({ children }: { children: React.ReactNode }) {
       return;
     }
 
-    import('@/mocks/browser').then(({ worker }) => {
-      worker.start({ onUnhandledRequest: 'bypass' }).then(() => {
+    import('@/mocks/browser')
+      .then(({ worker }) => worker.start({ onUnhandledRequest: 'bypass' }))
+      .then(() => {
         mswInitialized = true;
+      })
+      .catch(console.error)
+      .finally(() => {
         setReady(true);
       });
-    });
   }, []);
 
   if (!ready) return null;
-  return <>{children}</>;
+  return children;
 }
