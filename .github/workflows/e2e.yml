@@ -89,7 +89,7 @@ jobs:
               repo: context.repo.repo,
               issue_number: context.issue.number,
             });
-            const existing = comments.findLast(
+            const existing = comments.find(
               (c) => c.user.login === 'github-actions[bot]' && c.body.includes('## PR E2E 테스트 결과'),
             );
             if (existing) {
