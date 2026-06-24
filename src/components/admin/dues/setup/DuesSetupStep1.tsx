@@ -2,17 +2,13 @@
 
 import { useState } from 'react';
 
-import Image from 'next/image';
 import { useRouter, useParams } from 'next/navigation';
 
-import { ArrowRightIcon } from '@/assets/icons';
 import { cn } from '@/lib/cn';
 import { useDuesSetupActions, useDuesSetupValues } from '@/stores/useDuesSetupStore';
 
-import { DuesSetupStepIndicator } from './DuesSetupStepIndicator';
 import { BackButton } from '@/components/admin/dues';
-import { FormCard } from './FormCard';
-import { NextButton } from './NextButton';
+import { DuesSetupStepIndicator, FormCard, NextButton } from './components';
 
 const NAME_MAX = 30;
 const DESCRIPTION_MAX = 30;

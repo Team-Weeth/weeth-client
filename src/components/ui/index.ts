@@ -164,3 +164,13 @@ export { MobileBlocker, type MobileBlockerProps } from './MobileBlocker';
 export { BackOrHomeButton, type BackOrHomeButtonProps } from './BackOrHomeButton';
 
 export { ChartContainer, type ChartConfig } from './chart';
+
+export {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationPrevious,
+  PaginationNext,
+  PaginationEllipsis,
+} from './pagination';

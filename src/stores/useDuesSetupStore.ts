@@ -8,6 +8,9 @@ const initialState = {
   amount: '',
   name: '',
   description: '',
+  // Step 2: 납부 대상
+  selectedMemberIds: [] as number[],
+  memberIdsInitialized: false,
 };
 
 export type DuesSetupState = typeof initialState;
@@ -32,6 +35,8 @@ export const useDuesSetupValues = () =>
       amount: state.amount,
       name: state.name,
       description: state.description,
+      selectedMemberIds: state.selectedMemberIds,
+      memberIdsInitialized: state.memberIdsInitialized,
     })),
   );
 
