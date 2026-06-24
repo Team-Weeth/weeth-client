@@ -9,13 +9,14 @@ import { useCardinalSelector } from '@/hooks';
 import { DuesTopBar } from './DuesTopBar';
 import { DuesBalanceCard } from './DuesBalanceCard';
 import { DuesChart } from './DuesChart';
-import { DuesTransactionTable } from './DuesTransactionTable';
+
 import { DuesGenerationFilter } from './DuesGenerationFilter';
 import { AddTransactionModal } from './modal/AddTransactionModal';
 import { EditTransactionModal } from './modal/EditTransactionModal';
 import { TransactionDetailModal } from './modal/TransactionDetailModal';
 import type { TransactionDetail } from './modal/TransactionDetailModal';
 import type { TransactionFormData } from './modal/TransactionForm';
+import { DuesTransactionTable } from './DuesTransactionTable';
 
 const MOCK_MONTHLY_DATA: MonthlyData[] = [
   { month: '3월', amount: 1425000 },
