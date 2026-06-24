@@ -12,13 +12,16 @@ setup('authenticate', async ({ browser }) => {
     );
   }
 
+  const baseURL = process.env.PLAYWRIGHT_BASE_URL ?? 'http://localhost:3000';
+  const domain = new URL(baseURL).hostname;
+
   const context = await browser.newContext();
 
   await context.addCookies([
     {
       name: 'access_token',
       value: token,
-      domain: 'localhost',
+      domain,
       path: '/',
     },
   ]);
