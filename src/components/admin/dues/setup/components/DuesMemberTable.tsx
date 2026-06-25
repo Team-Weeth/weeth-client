@@ -21,7 +21,7 @@ function SelectionStatusBadge({ isSelected }: { isSelected: boolean }) {
   if (isSelected) {
     return <span className="tag-base bg-state-success/10 text-state-success">선택됨</span>;
   }
-  return <span className="tag-base text-text-alternative">제외됨</span>;
+  return <span className="tag-base bg-text-alternative/10 text-text-alternative">제외됨</span>;
 }
 
 interface DuesMemberTableProps {

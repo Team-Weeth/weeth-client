@@ -555,7 +555,18 @@ select:focus {
 }
 
 @utility tag-base {
-  @apply typo-caption1 inline-flex h-6 items-center justify-center rounded-[5px] px-200 py-100 whitespace-nowrap;
+  display: inline-flex;
+  height: 24px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 5px;
+  padding-inline: var(--spacing-200);
+  padding-block: var(--spacing-100);
+  white-space: nowrap;
+  font-size: var(--caption1-size);
+  line-height: var(--caption1-line-height);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--letter-spacing);
 }
 
 @utility typo-social {
