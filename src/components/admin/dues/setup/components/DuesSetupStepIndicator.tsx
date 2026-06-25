@@ -1,3 +1,6 @@
+import Image from 'next/image';
+
+import { CheckIcon } from '@/assets/icons';
 import { cn } from '@/lib/cn';
 
 const STEPS = [
@@ -19,7 +22,6 @@ function DuesSetupStepIndicator({ currentStep, className }: DuesSetupStepIndicat
       {STEPS.map(({ step, label }) => {
         const isActive = step === currentStep;
         const isCompleted = step < currentStep;
-        const isHighlighted = isActive || isCompleted;
 
         return (
           <div key={step} className="flex min-w-0 flex-1 flex-col gap-200">
@@ -27,15 +29,15 @@ function DuesSetupStepIndicator({ currentStep, className }: DuesSetupStepIndicat
               <div
                 className={cn(
                   'typo-caption1 text-text-inverse flex size-4 shrink-0 items-center justify-center rounded-full',
-                  isHighlighted ? 'bg-container-primary' : 'bg-icon-alternative',
+                  isActive || isCompleted ? 'bg-container-primary' : 'bg-icon-alternative',
                 )}
               >
-                {step}
+                {isCompleted ? <Image src={CheckIcon} alt="완료" width={10} height={10} /> : step}
               </div>
               <span
                 className={cn(
                   'typo-sub3 whitespace-nowrap',
-                  isHighlighted ? 'text-brand-primary' : 'text-text-alternative',
+                  isActive ? 'text-brand-primary' : 'text-text-alternative',
                 )}
               >
                 {label}
@@ -45,7 +47,7 @@ function DuesSetupStepIndicator({ currentStep, className }: DuesSetupStepIndicat
               <div
                 className={cn(
                   'h-full w-full rounded',
-                  isHighlighted ? 'bg-container-primary' : 'bg-container-neutral-interaction',
+                  isActive || isCompleted ? 'bg-container-primary' : 'bg-container-neutral-interaction',
                 )}
               />
             </div>
