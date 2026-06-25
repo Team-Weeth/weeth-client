@@ -2,14 +2,14 @@
 
 import { BackIcon } from '@/assets/icons';
 import { Icon } from '@/components/ui';
-import { useRouter } from 'next/navigation';
+import { useDuesSetupNavigation } from './setup/useDuesSetupNavigation';
 
 function BackButton() {
-  const router = useRouter();
+  const { goToDues } = useDuesSetupNavigation();
   return (
     <button
       type="button"
-      onClick={() => router.back()}
+      onClick={goToDues}
       aria-label="뒤로가기"
       className="bg-button-neutral hover:bg-container-neutral-interaction flex w-fit cursor-pointer items-center justify-center rounded-sm p-200"
     >

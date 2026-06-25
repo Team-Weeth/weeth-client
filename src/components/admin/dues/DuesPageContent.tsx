@@ -17,6 +17,7 @@ import { TransactionDetailModal } from './modal/TransactionDetailModal';
 import type { TransactionDetail } from './modal/TransactionDetailModal';
 import type { TransactionFormData } from './modal/TransactionForm';
 import { DuesTransactionTable } from './DuesTransactionTable';
+import { DuesTutorialModal } from './modal/DuesTutorialModal';
 
 const MOCK_MONTHLY_DATA: MonthlyData[] = [
   { month: '3월', amount: 1425000 },
@@ -137,6 +138,9 @@ function DuesPageContent() {
   const router = useRouter();
   const { clubId } = useParams<{ clubId: string }>();
 
+  // TODO: 총 회비 정보 입력 안 됐을 때만 모달 띄우기
+  const [tutorialOpen, setTutorialOpen] = useState(true);
+
   const [addOpen, setAddOpen] = useState(false);
   const [detailOpen, setDetailOpen] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
@@ -175,10 +179,12 @@ function DuesPageContent() {
         onSelect={setSelectedCardinalId}
       />
       <div className="tablet:flex-row flex flex-col gap-1">
+        {/* TODO: 온보딩 현재 진행 중인 스텝으로 보내주기 */}
         <DuesBalanceCard
           currentBalance={152129}
           totalDues={1425000}
           onViewPaymentDetail={() => router.push(`/${clubId}/admin/dues/payment-status`)}
+          onSetTotalDues={() => router.push(`/${clubId}/admin/dues/setup/1`)}
         />
         <DuesChart
           data={MOCK_MONTHLY_DATA}
@@ -217,6 +223,11 @@ function DuesPageContent() {
         onSubmit={() => {
           // TODO: API 연동
         }}
+      />
+      <DuesTutorialModal
+        open={tutorialOpen}
+        onOpenChange={setTutorialOpen}
+        onStart={() => router.push(`/${clubId}/admin/dues/setup/1`)}
       />
     </div>
   );

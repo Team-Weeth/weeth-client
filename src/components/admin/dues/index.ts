@@ -28,6 +28,7 @@ export {
 } from './modal/TransactionDetailModal';
 export { type TransactionFormData } from './modal/TransactionForm';
 export { PaymentTargetModal, type PaymentTargetModalProps } from './modal/PaymentTargetModal';
+export { DuesTutorialModal, type DuesTutorialModalProps } from './modal/DuesTutorialModal';
 
 export { BackButton } from './BackButton';
 
