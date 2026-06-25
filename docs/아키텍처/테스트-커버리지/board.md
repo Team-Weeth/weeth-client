@@ -1,6 +1,6 @@
 # 테스트 커버리지 — Board 도메인
 
-`src/components/board/` 하위 파일의 단위·훅 테스트 커버리지를 기록한다.
+`src/components/board/` 및 `src/hooks/board/` 하위 파일의 단위·훅 테스트 커버리지를 기록한다.
 
 ---
 
@@ -113,6 +113,100 @@ URL 정규화 순수 함수. **보안 케이스** 중심으로 작성.
 
 > **전제조건**: `DEV_ACCESS_TOKEN` 설정 + 쓰기 가능한 게시판이 있는 클럽
 > clubId는 `/club/select` 리다이렉트로 동적 추출 (별도 환경변수 불필요)
+
+---
+
+---
+
+## PostEditorShell 주변 (`src/components/board/` + `src/hooks/board/`)
+
+**측정일**: 2026-06-25
+**테스트 파일**: `src/components/board/__tests__/` · `src/hooks/board/__tests__/`
+**총 테스트 수**: 34개
+
+### 파일별 커버리지
+
+#### 측정 전 (기존)
+
+| 파일 | Statements | Branches | Functions | Lines |
+|------|-----------|---------|---------|-------|
+| `TitleInput.tsx` | **0%** | **0%** | **0%** | **0%** |
+| `validatePost.ts` | **0%** | **0%** | **0%** | **0%** |
+| `resolveFilesPayload.ts` | **0%** | **0%** | **0%** | **0%** |
+| `useDirtyActionGuard.ts` | **0%** | **0%** | **0%** | **0%** |
+
+#### 측정 후 (개선)
+
+| 파일 | Statements | Branches | Functions | Lines |
+|------|-----------|---------|---------|-------|
+| `TitleInput.tsx` | **100%** | **100%** | **100%** | **100%** |
+| `validatePost.ts` | **100%** | **100%** | **100%** | **100%** |
+| `resolveFilesPayload.ts` | **100%** | **100%** | **100%** | **100%** |
+| `useDirtyActionGuard.ts` | **100%** | **100%** | **100%** | **100%** |
+
+### 테스트 구성
+
+#### `validatePost.test.ts` (10개)
+
+게시글 제출 전 유효성 검사 함수. toast 사이드 이펙트 포함.
+
+| 케이스 | 검증 내용 |
+|--------|---------|
+| `clubId === null` | false + error toast |
+| `title = ''` | false + error toast |
+| `title = '   '` (공백만) | false (trim 적용) |
+| `title = ' 제목 '` | true (trim 후 내용 있음) |
+| content 빈 HTML `<p></p>` | false + error toast |
+| content 빈 문자열 | false |
+| content 텍스트 있는 HTML | true |
+| 업로드 중인 파일 (`!uploaded && file`) | false + error toast |
+| 업로드 완료 파일 (`uploaded=true`) | true |
+| `file` 프로퍼티 없는 항목 (기존 서버 파일) | 업로드 중으로 간주하지 않음 |
+
+> `toast` mock, `isHtmlEmpty`는 실제 함수 사용 (순수 함수라 mock 불필요)
+
+#### `resolveFilesPayload.test.ts` (7개)
+
+작성/수정 모드 파일 payload 결정 함수. snapshot 비교 로직.
+
+| 케이스 | 검증 내용 |
+|--------|---------|
+| 작성 모드 (`snapshot=null`) | 전체 파일 → 4개 필드 매핑 |
+| 작성 모드, 파일 없음 | 빈 배열 반환 |
+| 수정 모드, 변경 없음 | `null` 반환 |
+| 수정 모드, 파일 순서만 다름 | `null` 반환 (내용 동일) |
+| 수정 모드, 새 파일 추가 | 전체 파일 반환 |
+| 수정 모드, 기존 파일 삭제 | 남은 파일 반환 |
+| 수정 모드, snapshot·current 모두 비어 있음 | `null` 반환 |
+
+#### `useDirtyActionGuard.test.ts` (9개)
+
+dirty 상태일 때 액션을 가로채는 훅. 외부 의존성 없음.
+
+| 케이스 | 검증 내용 |
+|--------|---------|
+| 초기 상태 | `pendingAction=null`, `guardOpen=false` |
+| `requestAction` (isDirty=false) | `false` 반환, 상태 불변 |
+| `requestAction` (isDirty=true) | `true` 반환, `guardOpen=true`, `pendingAction=id` |
+| `requestAction` 연속 호출 | 마지막 id로 덮어씀 |
+| `confirm` (pending 있음) | id 반환, 초기화 |
+| `confirm` (pending 없음) | `null` 반환 |
+| `cancel` | `pendingAction=null`, `guardOpen=false` |
+| cancel 후 requestAction 재호출 | 정상 동작 |
+
+#### `TitleInput.test.tsx` (8개)
+
+textarea 기반 제목 입력 컴포넌트. Enter 차단 · IME 대응.
+
+| 케이스 | 검증 내용 |
+|--------|---------|
+| 렌더링 | placeholder "제목" 노출 |
+| Enter 입력 | 줄바꿈(`\n`) 추가되지 않음 |
+| Enter + `onKeyDown` prop | 외부 핸들러는 여전히 호출됨 |
+| 일반 키 입력 | 차단하지 않음 |
+| `onChange` prop | 입력마다 호출됨 |
+| maxLength(100) | 100자 초과 입력 잘림 |
+| `className` prop | wrapper div에 적용됨 |
 
 ---
 
