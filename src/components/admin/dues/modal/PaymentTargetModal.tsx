@@ -79,7 +79,7 @@ function PaymentTargetModal({ open, onOpenChange, selectedMemberIds }: PaymentTa
         {/* Header */}
         <div className="flex h-24 shrink-0 items-center justify-between px-600">
           <h2 className="typo-h3 text-text-normal">납부 대상</h2>
-          <ModalIconButton icon={AdminCloseIcon} label="닫기" onClick={handleClose} />
+          <ModalIconButton size={20} icon={AdminCloseIcon} label="닫기" onClick={handleClose} />
         </div>
 
         {/* Body */}
