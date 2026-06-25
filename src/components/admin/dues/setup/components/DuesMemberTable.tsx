@@ -8,7 +8,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui';
-import { Checkbox } from '@/components/ui/checkbox';
+import { Checkbox } from '@/components/ui';
 import type { MockPaymentTarget } from '@/constants/mock';
 
 const ROLE_LABEL: Record<string, string> = {
@@ -58,8 +58,9 @@ function DuesMemberTable({ pagedTargets, selectedSet, toggleMember }: DuesMember
             >
               <TableCell className="text-center">
                 <Checkbox
-                  id="select-all-checkbox"
-                  name="select-all-checkbox"
+                  color="primary"
+                  id="select-member-checkbox"
+                  name="select-member-checkbox"
                   checked={isSelected}
                   onCheckedChange={() => toggleMember(clubMemberId)}
                 />

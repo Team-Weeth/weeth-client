@@ -7,10 +7,10 @@ function PrevButton({ handlePrev }: { handlePrev: () => void }) {
       <button
         type="button"
         onClick={handlePrev}
-        className="bg-button-primary hover:bg-button-primary-interaction typo-button1 text-text-inverse flex cursor-pointer items-center gap-100 rounded-md px-400 py-300 transition-colors"
+        className="bg-button-neutral hover:bg-button-neutral-interaction typo-button1 text-text-strong flex cursor-pointer items-center gap-100 rounded-md px-400 py-300 transition-colors"
       >
-        이전으로
         <Icon src={ArrowLeftIcon} alt="" size={12} />
+        이전으로
       </button>
     </div>
   );

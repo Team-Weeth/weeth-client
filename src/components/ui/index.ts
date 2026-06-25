@@ -5,6 +5,9 @@
 export { Button, buttonVariants } from './Button';
 export type { ButtonProps } from './Button';
 
+export { Checkbox, checkboxVariants } from './Checkbox';
+export type { CheckboxProps } from './Checkbox';
+
 export { Input } from './Input';
 export type { InputProps } from './Input';
 
