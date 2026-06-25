@@ -27,17 +27,25 @@ function SelectionStatusBadge({ isSelected }: { isSelected: boolean }) {
 interface DuesMemberTableProps {
   pagedTargets: MockPaymentTarget[];
   selectedSet: Set<number>;
-  toggleMember: (id: number) => void;
+  toggleMember?: (id: number) => void;
+  readOnly?: boolean;
 }
 
-function DuesMemberTable({ pagedTargets, selectedSet, toggleMember }: DuesMemberTableProps) {
+function DuesMemberTable({
+  pagedTargets,
+  selectedSet,
+  toggleMember,
+  readOnly = false,
+}: DuesMemberTableProps) {
   return (
     <Table>
       <TableHeader>
         <TableRow className="bg-container-neutral-alternative">
-          <TableHead className="typo-caption1 text-text-alternative w-16 text-center">
-            선택
-          </TableHead>
+          {!readOnly && (
+            <TableHead className="typo-caption1 text-text-alternative w-16 text-center">
+              선택
+            </TableHead>
+          )}
           <TableHead className="typo-caption1 text-text-alternative">이름</TableHead>
           <TableHead className="typo-caption1 text-text-alternative">학과</TableHead>
           <TableHead className="typo-caption1 text-text-alternative">직급</TableHead>
@@ -53,18 +61,20 @@ function DuesMemberTable({ pagedTargets, selectedSet, toggleMember }: DuesMember
           return (
             <TableRow
               key={targetId}
-              className="cursor-pointer"
-              onClick={() => toggleMember(clubMemberId)}
+              className={readOnly ? undefined : 'cursor-pointer'}
+              onClick={readOnly ? undefined : () => toggleMember?.(clubMemberId)}
             >
-              <TableCell className="text-center">
-                <Checkbox
-                  color="primary"
-                  id="select-member-checkbox"
-                  name="select-member-checkbox"
-                  checked={isSelected}
-                  onCheckedChange={() => toggleMember(clubMemberId)}
-                />
-              </TableCell>
+              {!readOnly && (
+                <TableCell className="text-center">
+                  <Checkbox
+                    color="primary"
+                    id="select-member-checkbox"
+                    name="select-member-checkbox"
+                    checked={isSelected}
+                    onCheckedChange={() => toggleMember?.(clubMemberId)}
+                  />
+                </TableCell>
+              )}
               <TableCell>
                 <div className="flex items-center gap-300">
                   <Avatar size={40}>
@@ -85,7 +95,10 @@ function DuesMemberTable({ pagedTargets, selectedSet, toggleMember }: DuesMember
         })}
         {pagedTargets.length === 0 && (
           <TableRow>
-            <TableCell colSpan={5} className="typo-body2 text-text-alternative py-700 text-center">
+            <TableCell
+              colSpan={readOnly ? 4 : 5}
+              className="typo-body2 text-text-alternative py-700 text-center"
+            >
               멤버가 없습니다
             </TableCell>
           </TableRow>

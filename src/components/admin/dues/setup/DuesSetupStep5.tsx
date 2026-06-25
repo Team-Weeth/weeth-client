@@ -1,17 +1,18 @@
 'use client';
 
-import { useMemo, type ReactNode } from 'react';
+import { useMemo, useState, type ReactNode } from 'react';
 
 import Image from 'next/image';
 import { useRouter, useParams } from 'next/navigation';
 
 import { EditIcon, ArrowRightIcon, ArrowLeftIcon, QuestionCircleIcon } from '@/assets/icons';
-import { BackButton } from '@/components/admin/dues';
+import { BackButton, PaymentTargetModal } from '@/components/admin/dues';
 import {
   Avatar,
   AvatarFallback,
   AvatarGroup,
   AvatarGroupCount,
+  Card,
   Icon,
   Tooltip,
   TooltipContent,
@@ -34,7 +35,7 @@ interface InfoRowProps {
 
 function InfoRow({ label, value, valueClassName }: InfoRowProps) {
   return (
-    <div className="grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)] gap-200">
+    <div className="grid grid-cols-[2fr_3fr] gap-300">
       <span className="typo-body2 text-text-alternative">{label}</span>
       <span className={cn('typo-body2 text-text-strong', valueClassName)}>{value}</span>
     </div>
@@ -49,20 +50,20 @@ interface InfoCardProps {
 
 function InfoCard({ title, onEdit, children }: InfoCardProps) {
   return (
-    <div className="bg-container-neutral flex flex-col gap-300 rounded-lg p-400">
+    <Card className="shadow-none">
       <div className="flex items-center justify-between">
         <span className="typo-sub3 text-text-strong">{title}</span>
         <button
           type="button"
           onClick={onEdit}
-          className="text-icon-alternative hover:text-icon-normal cursor-pointer transition-colors"
+          className="bg-button-neutral text-icon-alternative hover:text-icon-normal flex cursor-pointer self-center rounded-sm p-1 transition-colors"
           aria-label={`${title} 수정`}
         >
           <Icon src={EditIcon} alt="" size={18} />
         </button>
       </div>
       <div className="flex flex-col gap-200">{children}</div>
-    </div>
+    </Card>
   );
 }
 
@@ -84,6 +85,7 @@ function DuesSetupStep5() {
     isAccountPublic,
   } = useDuesSetupValues();
   const { reset } = useDuesSetupActions();
+  const [isPaymentTargetModalOpen, setIsPaymentTargetModalOpen] = useState(false);
 
   const hasPreviousBalance = MOCK_PREVIOUS_BALANCE !== null;
   const previousBalance = MOCK_PREVIOUS_BALANCE?.balance ?? 0;
@@ -140,15 +142,20 @@ function DuesSetupStep5() {
                   <TooltipTrigger asChild>
                     <div className="flex cursor-default items-center gap-100">
                       <span className="typo-caption1 text-text-alternative">예상 관리 금액</span>
-                      <Icon src={QuestionCircleIcon} alt="설명" size={16} className="text-icon-alternative" />
+                      <Icon
+                        src={QuestionCircleIcon}
+                        alt="설명"
+                        size={20}
+                        className="text-icon-alternative"
+                      />
                     </div>
                   </TooltipTrigger>
-                  <TooltipContent>예상 회비 수입 + 이월 금액</TooltipContent>
+                  <TooltipContent>
+                    예상 관리 금액은 실제 계산된 금액과 차이가 있을 수 있습니다.
+                  </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
-              <span className="typo-h2 text-text-strong">
-                {expectedTotal.toLocaleString()} 원
-              </span>
+              <span className="typo-h2 text-text-strong">{expectedTotal.toLocaleString()} 원</span>
             </div>
             <div className="flex flex-col gap-100 text-right">
               <div className="flex items-center justify-end gap-200">
@@ -207,18 +214,24 @@ function DuesSetupStep5() {
               <InfoRow label="제외 대상" value={`${excludedCount} 명`} />
               <div className="grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)] gap-200">
                 <span className="typo-body2 text-text-alternative">선택된 멤버</span>
-                <AvatarGroup>
-                  {displayedAvatars.map((t) => (
-                    <Avatar key={t.paymentTargetInfo.clubMemberId} size={24} colorScheme="primary">
-                      <AvatarFallback>{t.paymentTargetInfo.name[0]}</AvatarFallback>
-                    </Avatar>
-                  ))}
-                  {remainingCount > 0 && (
-                    <AvatarGroupCount className="size-6 text-xs">
-                      +{remainingCount}
-                    </AvatarGroupCount>
-                  )}
-                </AvatarGroup>
+                <button
+                  type="button"
+                  onClick={() => setIsPaymentTargetModalOpen(true)}
+                  className="cursor-pointer"
+                >
+                  <AvatarGroup>
+                    {displayedAvatars.map((t) => (
+                      <Avatar key={t.paymentTargetInfo.clubMemberId} size={24} colorScheme="primary">
+                        <AvatarFallback>{t.paymentTargetInfo.name[0]}</AvatarFallback>
+                      </Avatar>
+                    ))}
+                    {remainingCount > 0 && (
+                      <AvatarGroupCount className="size-6 text-xs">
+                        +{remainingCount}
+                      </AvatarGroupCount>
+                    )}
+                  </AvatarGroup>
+                </button>
               </div>
             </InfoCard>
 
@@ -233,6 +246,12 @@ function DuesSetupStep5() {
           </div>
         </FormCard>
       </div>
+
+      <PaymentTargetModal
+        open={isPaymentTargetModalOpen}
+        onOpenChange={setIsPaymentTargetModalOpen}
+        selectedMemberIds={selectedMemberIds}
+      />
 
       {/* 하단 네비게이션 */}
       <div className="flex items-center justify-between">
