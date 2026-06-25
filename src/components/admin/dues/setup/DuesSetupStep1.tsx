@@ -13,6 +13,7 @@ import {
   FormCard,
   NextButton,
 } from '@/components/admin/dues/setup/components';
+import { ScheduleTextField } from '@/components/admin/schedule/general/ScheduleTextField';
 
 const NAME_MAX = 30;
 const DESCRIPTION_MAX = 30;
@@ -92,68 +93,29 @@ function DuesSetupStep1() {
             </div>
 
             {/* 회비 이름 */}
-            <div className="flex min-w-0 flex-1 flex-col">
-              <label
-                htmlFor="dues-name"
-                className="typo-sub3 text-text-normal flex h-12 items-center px-400"
-              >
-                회비 이름
-              </label>
-              <div className="flex flex-col gap-200">
-                <input
-                  id="dues-name"
-                  type="text"
-                  value={name}
-                  onChange={(e) => {
-                    setField({ name: e.target.value.slice(0, NAME_MAX) });
-                    if (errors.name) setErrors((prev) => ({ ...prev, name: undefined }));
-                  }}
-                  placeholder={`${generationNumber}기 정기회비`}
-                  className={cn(
-                    'bg-container-neutral-alternative typo-body1 placeholder:text-text-alternative text-text-normal h-12 w-full rounded-sm px-400 py-300 focus:outline-none',
-                    errors.name && 'ring-state-error ring-1',
-                  )}
-                />
-                <div className="flex items-center justify-between px-400">
-                  {errors.name ? (
-                    <span className="typo-caption2 text-state-error">{errors.name}</span>
-                  ) : (
-                    <span />
-                  )}
-                  <span className="typo-caption2 text-text-alternative ml-auto">
-                    {name.length}/{NAME_MAX}
-                  </span>
-                </div>
-              </div>
-            </div>
+            <ScheduleTextField
+              label="회비 이름"
+              value={name}
+              onChange={(value) => {
+                setField({ name: value });
+                if (errors.name) setErrors((prev) => ({ ...prev, name: undefined }));
+              }}
+              placeholder={`${generationNumber}기 정기회비`}
+              maxLength={NAME_MAX}
+              error={errors.name}
+              className="bg-container-neutral-alternative"
+            />
           </div>
 
           {/* 회비 설명 (선택) */}
-          <div className="flex flex-col">
-            <label
-              htmlFor="dues-description"
-              className="typo-sub3 text-text-normal flex h-12 items-center px-400"
-            >
-              회비 설명 (선택)
-            </label>
-            <div className="flex flex-col gap-200">
-              <input
-                id="dues-description"
-                type="text"
-                value={description}
-                onChange={(e) =>
-                  setField({ description: e.target.value.slice(0, DESCRIPTION_MAX) })
-                }
-                placeholder="설명을 작성해주세요"
-                className="bg-container-neutral-alternative typo-body1 placeholder:text-text-alternative text-text-normal h-12 w-full rounded-sm px-400 py-300 focus:outline-none"
-              />
-              <div className="flex items-center justify-end px-400">
-                <span className="typo-caption2 text-text-alternative">
-                  {description.length}/{DESCRIPTION_MAX}
-                </span>
-              </div>
-            </div>
-          </div>
+          <ScheduleTextField
+            label="회비 설명 (선택)"
+            value={description}
+            onChange={(value) => setField({ description: value })}
+            placeholder="설명을 작성해주세요"
+            maxLength={DESCRIPTION_MAX}
+            className="bg-container-neutral-alternative"
+          />
         </FormCard>
       </div>
 

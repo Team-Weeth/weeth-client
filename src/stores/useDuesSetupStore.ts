@@ -15,6 +15,12 @@ const initialState = {
   carryOverOption: 'none' as 'none' | 'carry',
   carryOverDescription: '',
   carryOverInitialized: false,
+  // Step 4: 계좌 공개
+  accountNumber: '',
+  bankName: '',
+  accountHolder: '',
+  accountGuide: '',
+  isAccountPublic: false,
 };
 
 export type DuesSetupState = typeof initialState;
@@ -44,6 +50,11 @@ export const useDuesSetupValues = () =>
       carryOverOption: state.carryOverOption,
       carryOverDescription: state.carryOverDescription,
       carryOverInitialized: state.carryOverInitialized,
+      accountNumber: state.accountNumber,
+      bankName: state.bankName,
+      accountHolder: state.accountHolder,
+      accountGuide: state.accountGuide,
+      isAccountPublic: state.isAccountPublic,
     })),
   );
 
