@@ -1,14 +1,7 @@
 import type { ReactNode } from 'react';
 
 import { EditIcon } from '@/assets/icons';
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarGroup,
-  AvatarGroupCount,
-  Card,
-  Icon,
-} from '@/components/ui';
+import { Avatar, AvatarFallback, AvatarGroup, AvatarGroupCount, Card, Icon } from '@/components/ui';
 import { cn } from '@/lib/cn';
 
 interface InfoRowProps {
@@ -145,13 +138,9 @@ function SettingResultCardGrid({
       <InfoCard title="납부 대상" onEdit={() => goToStep(2)}>
         <InfoRow label="납부 대상" value={`${selectedCount} 명`} />
         <InfoRow label="제외 대상" value={`${excludedCount} 명`} />
-        <div className="grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)] gap-200">
+        <div className="grid grid-cols-[2fr_3fr] gap-200">
           <span className="typo-body2 text-text-alternative">선택된 멤버</span>
-          <button
-            type="button"
-            onClick={onOpenPaymentTargetModal}
-            className="cursor-pointer"
-          >
+          <button type="button" onClick={onOpenPaymentTargetModal} className="cursor-pointer">
             <AvatarGroup>
               {displayedAvatars.map((t) => (
                 <Avatar key={t.paymentTargetInfo.clubMemberId} size={24} colorScheme="primary">
@@ -159,9 +148,7 @@ function SettingResultCardGrid({
                 </Avatar>
               ))}
               {remainingCount > 0 && (
-                <AvatarGroupCount className="size-6 text-xs">
-                  +{remainingCount}
-                </AvatarGroupCount>
+                <AvatarGroupCount className="size-6 text-xs">+{remainingCount}</AvatarGroupCount>
               )}
             </AvatarGroup>
           </button>
@@ -172,7 +159,7 @@ function SettingResultCardGrid({
       <InfoCard title="계좌 공개" onEdit={() => goToStep(4)}>
         <InfoRow label="계좌 공개 여부" value={isAccountPublic ? '공개함' : '비공개'} />
         {bankName && <InfoRow label="은행" value={bankName} />}
-        {accountNumber && <InfoRow label="계좌번호" value={accountNumber} />}
+        {accountNumber && <InfoRow label="계좌번호" value={accountNumber} valueClassName="truncate" />}
         {accountHolder && <InfoRow label="예금주" value={accountHolder} />}
         {accountGuide && <InfoRow label="안내 문구" value={accountGuide} />}
       </InfoCard>
@@ -180,4 +167,11 @@ function SettingResultCardGrid({
   );
 }
 
-export { InfoRow, InfoCard, SettingResultCardGrid, type InfoRowProps, type InfoCardProps, type SettingResultCardGridProps };
+export {
+  InfoRow,
+  InfoCard,
+  SettingResultCardGrid,
+  type InfoRowProps,
+  type InfoCardProps,
+  type SettingResultCardGridProps,
+};
