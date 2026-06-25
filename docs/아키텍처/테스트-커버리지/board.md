@@ -210,9 +210,74 @@ textarea 기반 제목 입력 컴포넌트. Enter 차단 · IME 대응.
 
 ---
 
+---
+
+## Editor 확장 (`src/components/board/Editor/`)
+
+**측정일**: 2026-06-25
+**테스트 파일**: `src/components/board/Editor/__tests__/`
+**추가 테스트 수**: 34개 (IndentExtension 18개 + LinkInput 16개)
+
+### 파일별 커버리지
+
+#### 측정 전 (기존)
+
+| 파일 | Statements | Branches | Functions | Lines |
+|------|-----------|---------|---------|-------|
+| `IndentExtension.ts` | **0%** | **0%** | **0%** | **0%** |
+| `LinkInput.tsx` | **0%** | **0%** | **0%** | **0%** |
+
+#### 측정 후 (개선)
+
+| 파일 | Statements | Branches | Functions | Lines |
+|------|-----------|---------|---------|-------|
+| `IndentExtension.ts` | **98.43%** | **73.68%** | **100%** | **98.43%** |
+| `LinkInput.tsx` | **98.89%** | **90.62%** | **100%** | **98.89%** |
+
+> Branch 미커버 사유
+> - `IndentExtension.ts` L98-99: Shift-Tab에서 `liftListItem` 실패 시 `updateListIndent(-1)` — 중첩 리스트 필요, E2E 대상
+> - `LinkInput.tsx` L126-127: popup 내 비입력 영역 `mousedown` → `e.preventDefault()` — 포커스 보존 방어 코드
+
+### 테스트 구성
+
+#### `IndentExtension.test.ts` (18개)
+
+실제 `@tiptap/core` Editor 인스턴스(Document + Paragraph + Text + BulletList + ListItem + IndentExtension)로 테스트.
+
+| 케이스 | 검증 내용 |
+|--------|---------|
+| `parseHTML` | `data-indent="3"` → `attrs.indent=3`, 없으면 기본값 0 |
+| `renderHTML` | indent=0 → 속성 없음, indent=1 → `data-indent="1"` + `margin-left: 2rem` |
+| Tab (비리스트) | indent 0→1, 3→4, 4(최대)→4 유지 |
+| Shift-Tab (비리스트) | indent 2→1, 0→0 유지 |
+| Backspace (비리스트) | 시작+indent=1→0, 시작+indent=0→미처리, 중간→미처리 |
+| Tab (리스트 첫 번째) | `updateListIndent(1)` → 리스트 블록 indent 증가 |
+| Tab (리스트 두 번째) | `sinkListItem` → 중첩 구조 생성 |
+| Shift-Tab (리스트) | `liftListItem` → 아이템이 paragraph로 이탈 |
+| Backspace (리스트 시작) | `liftListItem` → 아이템이 paragraph로 이탈 |
+| Backspace (리스트 중간) | Extension 미처리 → 구조 유지 |
+
+#### `LinkInput.test.tsx` (16개)
+
+`editor` 객체, `@tiptap/core`의 `getMarkRange`, `@/hooks/useClickOutside` mock.
+
+| 케이스 | 검증 내용 |
+|--------|---------|
+| 렌더링 | href 초기값, 선택 텍스트 → title, 링크 범위 텍스트 → title, isEditing에 따른 "링크 제거" 버튼 표시 |
+| applyLink — URL 비어있음 | editor 명령 미호출 |
+| applyLink — 미선택·비편집 | `insertContent` 새 링크 삽입 |
+| applyLink — 미선택·편집·title 변경 | `extendMarkRange` + `insertContent` |
+| applyLink — 미선택·편집·title 미변경 | `extendMarkRange` + `setLink` |
+| applyLink — 선택 있음·title 동일 | `extendMarkRange` + `setLink` |
+| applyLink — 선택 있음·title 변경 | `insertContent` |
+| applyLink 후 | `onClose` 호출 |
+| removeLink | `unsetLink` + `run` + `onClose` |
+| Escape | `onClose` 호출 |
+| 외부 클릭·URL 있음 | `applyLink` 실행 |
+| 외부 클릭·URL 없음 | `onClose` 호출 |
+
+---
+
 ## 추가 예정 (단위)
 
-| 파일 | 우선순위 | 비고 |
-|------|---------|------|
-| `IndentExtension.ts` | 중간 | Tab/Shift-Tab/Backspace 들여쓰기 로직 |
-| `LinkInput.tsx` | 중간 | applyLink 분기 (빈 선택, 기존 링크 편집) |
+*(우선순위 중간 항목 완료)*
