@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 
 import { QuestionCircleIcon } from '@/assets/icons';
 import { BackButton, PaymentTargetModal } from '@/components/admin/dues';
@@ -46,12 +46,8 @@ function DuesSetupStep5() {
   const selectedCount = selectedMemberIds.length;
   const excludedCount = totalCount - selectedCount;
 
-  const selectedTargets = useMemo(
-    () =>
-      MOCK_PAYMENT_TARGETS.filter((t) =>
-        selectedMemberIds.includes(t.paymentTargetInfo.clubMemberId),
-      ),
-    [selectedMemberIds],
+  const selectedTargets = MOCK_PAYMENT_TARGETS.filter((t) =>
+    selectedMemberIds.includes(t.paymentTargetInfo.clubMemberId),
   );
 
   const displayedAvatars = selectedTargets.slice(0, MAX_AVATAR_DISPLAY);

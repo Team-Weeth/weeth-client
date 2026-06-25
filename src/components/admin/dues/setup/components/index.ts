@@ -13,3 +13,5 @@ export {
   type InfoRowProps,
   type InfoCardProps,
 } from './SettingResultCardGrid';
+export { DuesPagination, type DuesPaginationProps } from './DuesPagination';
+export { DuesTabs, type DuesTabsProps } from './DuesTabs';

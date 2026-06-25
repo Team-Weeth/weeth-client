@@ -16,7 +16,7 @@ import {
 import { useDuesSetupNavigation } from '@/components/admin/dues/setup/useDuesSetupNavigation';
 
 import { ScheduleTextareaField } from '@/components/admin/schedule/general/ScheduleTextareaField';
-import { ScheduleTextField } from '../../schedule/general/ScheduleTextField';
+import { ScheduleTextField } from '@/components/admin/schedule/general/ScheduleTextField';
 
 const DESCRIPTION_MAX = 30;
 

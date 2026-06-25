@@ -47,7 +47,9 @@ function DuesSetupStepIndicator({ currentStep, className }: DuesSetupStepIndicat
               <div
                 className={cn(
                   'h-full w-full rounded',
-                  isActive || isCompleted ? 'bg-container-primary' : 'bg-container-neutral-interaction',
+                  isActive || isCompleted
+                    ? 'bg-container-primary'
+                    : 'bg-container-neutral-interaction',
                 )}
               />
             </div>

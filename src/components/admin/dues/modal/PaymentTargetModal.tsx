@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState } from 'react';
 
 import { AdminCloseIcon } from '@/assets/icons/admin';
 import { ModalIconButton } from '@/components/admin/modal/ModalIconButton';
@@ -8,19 +8,14 @@ import {
   SCHEDULE_MODAL_CONTENT_CLASS,
   SCHEDULE_MODAL_FOOTER_CLASS,
 } from '@/components/admin/schedule/modal/constants';
-import { DuesMemberTable } from '@/components/admin/dues/setup/components';
-import { DuesSearchBar } from '@/components/admin/dues/DuesSearchBar';
 import {
-  Button,
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from '@/components/ui';
+  DuesMemberTable,
+  DuesPagination,
+  DuesTabs,
+} from '@/components/admin/dues/setup/components';
+import { DuesSearchBar } from '@/components/admin/dues/DuesSearchBar';
+import { Button } from '@/components/ui';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
-import { cn } from '@/lib/cn';
 import { MOCK_PAYMENT_TARGETS } from '@/constants/mock';
 
 const PAGE_SIZE = 10;
@@ -38,21 +33,19 @@ function PaymentTargetModal({ open, onOpenChange, selectedMemberIds }: PaymentTa
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
 
-  const selectedSet = useMemo(() => new Set(selectedMemberIds), [selectedMemberIds]);
+  const selectedSet = new Set(selectedMemberIds);
 
   const totalCount = MOCK_PAYMENT_TARGETS.length;
   const selectedCount = selectedMemberIds.length;
   const excludedCount = totalCount - selectedCount;
 
-  const filteredTargets = useMemo(() => {
-    const byTab =
-      tab === 'selected'
-        ? MOCK_PAYMENT_TARGETS.filter((t) => selectedSet.has(t.paymentTargetInfo.clubMemberId))
-        : MOCK_PAYMENT_TARGETS.filter((t) => !selectedSet.has(t.paymentTargetInfo.clubMemberId));
-    return search.trim()
-      ? byTab.filter((t) => t.paymentTargetInfo.name.includes(search.trim()))
-      : byTab;
-  }, [tab, search, selectedSet]);
+  const byTab =
+    tab === 'selected'
+      ? MOCK_PAYMENT_TARGETS.filter((t) => selectedSet.has(t.paymentTargetInfo.clubMemberId))
+      : MOCK_PAYMENT_TARGETS.filter((t) => !selectedSet.has(t.paymentTargetInfo.clubMemberId));
+  const filteredTargets = search.trim()
+    ? byTab.filter((t) => t.paymentTargetInfo.name.includes(search.trim()))
+    : byTab;
 
   const totalPages = Math.max(1, Math.ceil(filteredTargets.length / PAGE_SIZE));
   const pagedTargets = filteredTargets.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
@@ -86,28 +79,14 @@ function PaymentTargetModal({ open, onOpenChange, selectedMemberIds }: PaymentTa
         <div className="scrollbar-custom flex flex-1 flex-col gap-400 overflow-y-auto px-[71px] pt-300 pb-400">
           {/* Tabs + Search */}
           <div className="flex items-center justify-between gap-400">
-            <div className="flex gap-200">
-              {(
-                [
-                  { key: 'selected', label: `선택됨 ${selectedCount}` },
-                  { key: 'excluded', label: `제외됨 ${excludedCount}` },
-                ] as const
-              ).map(({ key, label }) => (
-                <button
-                  key={key}
-                  type="button"
-                  onClick={() => handleTabChange(key)}
-                  className={cn(
-                    'typo-body2 text-text-strong cursor-pointer rounded-sm border px-300 py-200 transition-colors',
-                    tab === key
-                      ? 'bg-button-neutral border-transparent'
-                      : 'border-border bg-transparent',
-                  )}
-                >
-                  {label}
-                </button>
-              ))}
-            </div>
+            <DuesTabs
+              tabs={[
+                { key: 'selected', label: `선택됨 ${selectedCount}` },
+                { key: 'excluded', label: `제외됨 ${excludedCount}` },
+              ]}
+              activeTab={tab}
+              onTabChange={handleTabChange}
+            />
             <DuesSearchBar searchQuery={search} setSearchQuery={handleSearch} />
           </div>
 
@@ -116,44 +95,7 @@ function PaymentTargetModal({ open, onOpenChange, selectedMemberIds }: PaymentTa
 
           {/* Pagination */}
           {totalPages > 1 && (
-            <Pagination>
-              <PaginationContent>
-                <PaginationItem>
-                  <PaginationPrevious
-                    href="#"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      setPage((p) => Math.max(1, p - 1));
-                    }}
-                    className={cn(page === 1 && 'pointer-events-none opacity-40')}
-                  />
-                </PaginationItem>
-                {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
-                  <PaginationItem key={p}>
-                    <PaginationLink
-                      href="#"
-                      isActive={p === page}
-                      onClick={(e) => {
-                        e.preventDefault();
-                        setPage(p);
-                      }}
-                    >
-                      {p}
-                    </PaginationLink>
-                  </PaginationItem>
-                ))}
-                <PaginationItem>
-                  <PaginationNext
-                    href="#"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      setPage((p) => Math.min(totalPages, p + 1));
-                    }}
-                    className={cn(page === totalPages && 'pointer-events-none opacity-40')}
-                  />
-                </PaginationItem>
-              </PaginationContent>
-            </Pagination>
+            <DuesPagination page={page} totalPages={totalPages} onPageChange={setPage} />
           )}
         </div>
 

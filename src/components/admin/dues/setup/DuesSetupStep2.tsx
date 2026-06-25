@@ -1,23 +1,16 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 
 import { BackButton, DuesSearchBar } from '@/components/admin/dues';
-import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from '@/components/ui';
-import { cn } from '@/lib/cn';
 import { MOCK_PAYMENT_TARGETS } from '@/constants/mock';
 import { useDuesSetupValues, useDuesSetupActions } from '@/stores/useDuesSetupStore';
 
 import {
   DuesSetupStepIndicator,
   DuesMemberTable,
+  DuesPagination,
+  DuesTabs,
   NextButton,
   PrevButton,
 } from '@/components/admin/dues/setup/components';
@@ -47,19 +40,17 @@ function DuesSetupStep2() {
     }
   }, [memberIdsInitialized, setField]);
 
-  const selectedSet = useMemo(() => new Set(selectedMemberIds), [selectedMemberIds]);
+  const selectedSet = new Set(selectedMemberIds);
 
-  const filteredTargets = useMemo(() => {
-    const byTab =
-      tab === 'selected'
-        ? MOCK_PAYMENT_TARGETS.filter((t) => selectedSet.has(t.paymentTargetInfo.clubMemberId))
-        : tab === 'excluded'
-          ? MOCK_PAYMENT_TARGETS.filter((t) => !selectedSet.has(t.paymentTargetInfo.clubMemberId))
-          : MOCK_PAYMENT_TARGETS;
-    return search.trim()
-      ? byTab.filter((t) => t.paymentTargetInfo.name.includes(search.trim()))
-      : byTab;
-  }, [tab, search, selectedSet]);
+  const byTab =
+    tab === 'selected'
+      ? MOCK_PAYMENT_TARGETS.filter((t) => selectedSet.has(t.paymentTargetInfo.clubMemberId))
+      : tab === 'excluded'
+        ? MOCK_PAYMENT_TARGETS.filter((t) => !selectedSet.has(t.paymentTargetInfo.clubMemberId))
+        : MOCK_PAYMENT_TARGETS;
+  const filteredTargets = search.trim()
+    ? byTab.filter((t) => t.paymentTargetInfo.name.includes(search.trim()))
+    : byTab;
 
   const totalPages = Math.max(1, Math.ceil(filteredTargets.length / PAGE_SIZE));
   const pagedTargets = filteredTargets.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
@@ -105,29 +96,15 @@ function DuesSetupStep2() {
 
           {/* 탭 + 검색 */}
           <div className="flex flex-col gap-400">
-            <div className="flex gap-200">
-              {(
-                [
-                  { key: 'all', label: `전체 ${totalCount}` },
-                  { key: 'selected', label: `선택됨 ${selectedCount}` },
-                  { key: 'excluded', label: `제외됨 ${excludedCount}` },
-                ] as const
-              ).map(({ key, label }) => (
-                <button
-                  key={key}
-                  type="button"
-                  onClick={() => handleTabChange(key)}
-                  className={cn(
-                    'typo-body2 cursor-pointer rounded-sm border px-300 py-200 transition-colors',
-                    tab === key
-                      ? 'bg-container-neutral-alternative text-text-strong border-transparent'
-                      : 'text-text-alternative border-border bg-transparent',
-                  )}
-                >
-                  {label}
-                </button>
-              ))}
-            </div>
+            <DuesTabs
+              tabs={[
+                { key: 'all', label: `전체 ${totalCount}` },
+                { key: 'selected', label: `선택됨 ${selectedCount}` },
+                { key: 'excluded', label: `제외됨 ${excludedCount}` },
+              ]}
+              activeTab={tab}
+              onTabChange={handleTabChange}
+            />
 
             {/* 검색바 */}
             <DuesSearchBar searchQuery={search} setSearchQuery={handleSearch} />
@@ -142,44 +119,7 @@ function DuesSetupStep2() {
 
           {/* 페이지네이션 */}
           {totalPages > 1 && (
-            <Pagination>
-              <PaginationContent>
-                <PaginationItem>
-                  <PaginationPrevious
-                    href="#"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      setPage((p) => Math.max(1, p - 1));
-                    }}
-                    className={cn(page === 1 && 'pointer-events-none opacity-40')}
-                  />
-                </PaginationItem>
-                {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
-                  <PaginationItem key={p}>
-                    <PaginationLink
-                      href="#"
-                      isActive={p === page}
-                      onClick={(e) => {
-                        e.preventDefault();
-                        setPage(p);
-                      }}
-                    >
-                      {p}
-                    </PaginationLink>
-                  </PaginationItem>
-                ))}
-                <PaginationItem>
-                  <PaginationNext
-                    href="#"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      setPage((p) => Math.min(totalPages, p + 1));
-                    }}
-                    className={cn(page === totalPages && 'pointer-events-none opacity-40')}
-                  />
-                </PaginationItem>
-              </PaginationContent>
-            </Pagination>
+            <DuesPagination page={page} totalPages={totalPages} onPageChange={setPage} />
           )}
         </div>
       </div>

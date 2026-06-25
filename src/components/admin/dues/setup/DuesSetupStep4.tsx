@@ -73,7 +73,8 @@ function DuesSetupStep4() {
               value={accountNumber}
               onChange={(value) => {
                 setField({ accountNumber: value });
-                if (errors.accountNumber) setErrors((prev) => ({ ...prev, accountNumber: undefined }));
+                if (errors.accountNumber)
+                  setErrors((prev) => ({ ...prev, accountNumber: undefined }));
               }}
               placeholder="계좌번호를 입력해주세요"
               maxLength={20}
@@ -101,7 +102,8 @@ function DuesSetupStep4() {
               value={accountHolder}
               onChange={(value) => {
                 setField({ accountHolder: value });
-                if (errors.accountHolder) setErrors((prev) => ({ ...prev, accountHolder: undefined }));
+                if (errors.accountHolder)
+                  setErrors((prev) => ({ ...prev, accountHolder: undefined }));
               }}
               placeholder="ex)가천대 검도부"
               maxLength={HOLDER_MAX}

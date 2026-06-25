@@ -159,7 +159,9 @@ function SettingResultCardGrid({
       <InfoCard title="계좌 공개" onEdit={() => goToStep(4)}>
         <InfoRow label="계좌 공개 여부" value={isAccountPublic ? '공개함' : '비공개'} />
         {bankName && <InfoRow label="은행" value={bankName} />}
-        {accountNumber && <InfoRow label="계좌번호" value={accountNumber} valueClassName="truncate" />}
+        {accountNumber && (
+          <InfoRow label="계좌번호" value={accountNumber} valueClassName="truncate" />
+        )}
         {accountHolder && <InfoRow label="예금주" value={accountHolder} />}
         {accountGuide && <InfoRow label="안내 문구" value={accountGuide} />}
       </InfoCard>
