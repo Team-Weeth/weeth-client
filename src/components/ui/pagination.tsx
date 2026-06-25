@@ -53,11 +53,7 @@ function PaginationLink({ className, isActive, ...props }: PaginationLinkProps) 
 
 function PaginationPrevious({ className, ...props }: React.ComponentProps<typeof PaginationLink>) {
   return (
-    <PaginationLink
-      aria-label="이전 페이지"
-      className={cn('size-8', className)}
-      {...props}
-    >
+    <PaginationLink aria-label="이전 페이지" className={cn('size-8', className)} {...props}>
       <ChevronLeftIcon className="size-4" />
     </PaginationLink>
   );
@@ -65,11 +61,7 @@ function PaginationPrevious({ className, ...props }: React.ComponentProps<typeof
 
 function PaginationNext({ className, ...props }: React.ComponentProps<typeof PaginationLink>) {
   return (
-    <PaginationLink
-      aria-label="다음 페이지"
-      className={cn('size-8', className)}
-      {...props}
-    >
+    <PaginationLink aria-label="다음 페이지" className={cn('size-8', className)} {...props}>
       <ChevronRightIcon className="size-4" />
     </PaginationLink>
   );

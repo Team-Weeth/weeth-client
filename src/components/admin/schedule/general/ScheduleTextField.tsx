@@ -37,11 +37,7 @@ function ScheduleTextField({
       />
       {(error || maxLength !== undefined) && (
         <div className="mt-100 flex items-center justify-between px-100">
-          {error ? (
-            <span className="typo-caption2 text-state-error">{error}</span>
-          ) : (
-            <span />
-          )}
+          {error ? <span className="typo-caption2 text-state-error">{error}</span> : <span />}
           {maxLength !== undefined && (
             <span className="typo-caption2 text-text-alternative">
               {value.length}/{maxLength}

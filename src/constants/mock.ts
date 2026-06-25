@@ -71,10 +71,7 @@ export interface MockPaymentTarget {
   memo: string | null;
 }
 
-const MOCK_MEMBERS: Pick<
-  MockPaymentTargetInfo,
-  'name' | 'department' | 'memberRole'
->[] = [
+const MOCK_MEMBERS: Pick<MockPaymentTargetInfo, 'name' | 'department' | 'memberRole'>[] = [
   { name: '김지수', department: '컴퓨터공학과', memberRole: 'LEAD' },
   { name: '이도윤', department: '소프트웨어학과', memberRole: 'ADMIN' },
   { name: '박서연', department: '정보통신공학과', memberRole: 'USER' },
