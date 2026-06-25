@@ -16,6 +16,7 @@ import {
   CarryOverCard,
 } from '@/components/admin/dues/setup/components';
 
+import { ScheduleTextareaField } from '@/components/admin/schedule/general/ScheduleTextareaField';
 import { ScheduleTextField } from '../../schedule/general/ScheduleTextField';
 
 const DESCRIPTION_MAX = 30;
@@ -94,6 +95,7 @@ function DuesSetupStep3() {
               onChange={(value) => setField({ carryOverDescription: value })}
               placeholder="설명을 작성해주세요"
               maxLength={DESCRIPTION_MAX}
+              className="bg-container-neutral-alternative"
             />
           )}
         </FormCard>
