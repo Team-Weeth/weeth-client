@@ -2,8 +2,6 @@
 
 import { useState, useEffect, useMemo } from 'react';
 
-import { useRouter, useParams } from 'next/navigation';
-
 import { BackButton, DuesSearchBar } from '@/components/admin/dues';
 import {
   Pagination,
@@ -23,14 +21,14 @@ import {
   NextButton,
   PrevButton,
 } from '@/components/admin/dues/setup/components';
+import { useDuesSetupNavigation } from '@/components/admin/dues/setup/useDuesSetupNavigation';
 
 type TabType = 'all' | 'selected' | 'excluded';
 
 const PAGE_SIZE = 10;
 
 function DuesSetupStep2() {
-  const router = useRouter();
-  const { clubId } = useParams<{ clubId: string }>();
+  const { goToStep } = useDuesSetupNavigation();
 
   const { generationNumber, selectedMemberIds, memberIdsInitialized } = useDuesSetupValues();
   const { setField } = useDuesSetupActions();
@@ -188,8 +186,8 @@ function DuesSetupStep2() {
 
       {/* 하단 네비게이션 */}
       <div className="flex items-center justify-between">
-        <PrevButton handlePrev={() => router.push(`/${clubId}/admin/dues/setup/1`)} />
-        <NextButton handleNext={() => router.push(`/${clubId}/admin/dues/setup/3`)} />
+        <PrevButton handlePrev={() => goToStep(1)} />
+        <NextButton handleNext={() => goToStep(3)} />
       </div>
     </div>
   );

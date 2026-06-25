@@ -2,8 +2,6 @@
 
 import { useState } from 'react';
 
-import { useRouter, useParams } from 'next/navigation';
-
 import { BackButton } from '@/components/admin/dues';
 import { Switch } from '@/components/ui';
 import { useDuesSetupValues, useDuesSetupActions } from '@/stores/useDuesSetupStore';
@@ -14,6 +12,7 @@ import {
   NextButton,
   PrevButton,
 } from '@/components/admin/dues/setup/components';
+import { useDuesSetupNavigation } from '@/components/admin/dues/setup/useDuesSetupNavigation';
 
 import { ScheduleTextField } from '@/components/admin/schedule/general/ScheduleTextField';
 
@@ -27,8 +26,7 @@ interface Errors {
 }
 
 function DuesSetupStep4() {
-  const router = useRouter();
-  const { clubId } = useParams<{ clubId: string }>();
+  const { goToStep } = useDuesSetupNavigation();
 
   const {
     generationNumber,
@@ -49,7 +47,7 @@ function DuesSetupStep4() {
     if (!accountHolder.trim()) next.accountHolder = '예금주를 입력해주세요';
     setErrors(next);
     if (Object.keys(next).length > 0) return;
-    router.push(`/${clubId}/admin/dues/setup/5`);
+    goToStep(5);
   };
 
   return (
@@ -133,7 +131,7 @@ function DuesSetupStep4() {
 
       {/* 하단 네비게이션 */}
       <div className="flex items-center justify-between">
-        <PrevButton handlePrev={() => router.push(`/${clubId}/admin/dues/setup/3`)} />
+        <PrevButton handlePrev={() => goToStep(3)} />
         <NextButton handleNext={handleNext} />
       </div>
     </div>

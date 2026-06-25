@@ -2,8 +2,6 @@
 
 import { useEffect } from 'react';
 
-import { useRouter, useParams } from 'next/navigation';
-
 import { BackButton } from '@/components/admin/dues';
 import { MOCK_PREVIOUS_BALANCE } from '@/constants/mock';
 import { useDuesSetupValues, useDuesSetupActions } from '@/stores/useDuesSetupStore';
@@ -15,6 +13,7 @@ import {
   PrevButton,
   CarryOverCard,
 } from '@/components/admin/dues/setup/components';
+import { useDuesSetupNavigation } from '@/components/admin/dues/setup/useDuesSetupNavigation';
 
 import { ScheduleTextareaField } from '@/components/admin/schedule/general/ScheduleTextareaField';
 import { ScheduleTextField } from '../../schedule/general/ScheduleTextField';
@@ -22,8 +21,7 @@ import { ScheduleTextField } from '../../schedule/general/ScheduleTextField';
 const DESCRIPTION_MAX = 30;
 
 function DuesSetupStep3() {
-  const router = useRouter();
-  const { clubId } = useParams<{ clubId: string }>();
+  const { goToStep } = useDuesSetupNavigation();
 
   const { generationNumber, carryOverOption, carryOverDescription, carryOverInitialized } =
     useDuesSetupValues();
@@ -103,8 +101,8 @@ function DuesSetupStep3() {
 
       {/* 하단 네비게이션 */}
       <div className="flex items-center justify-between">
-        <PrevButton handlePrev={() => router.push(`/${clubId}/admin/dues/setup/2`)} />
-        <NextButton handleNext={() => router.push(`/${clubId}/admin/dues/setup/4`)} />
+        <PrevButton handlePrev={() => goToStep(2)} />
+        <NextButton handleNext={() => goToStep(4)} />
       </div>
     </div>
   );

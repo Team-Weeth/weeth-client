@@ -2,8 +2,6 @@
 
 import { useState } from 'react';
 
-import { useRouter, useParams } from 'next/navigation';
-
 import { cn } from '@/lib/cn';
 import { useDuesSetupActions, useDuesSetupValues } from '@/stores/useDuesSetupStore';
 
@@ -13,14 +11,14 @@ import {
   FormCard,
   NextButton,
 } from '@/components/admin/dues/setup/components';
+import { useDuesSetupNavigation } from '@/components/admin/dues/setup/useDuesSetupNavigation';
 import { ScheduleTextField } from '@/components/admin/schedule/general/ScheduleTextField';
 
 const NAME_MAX = 30;
 const DESCRIPTION_MAX = 30;
 
 function DuesSetupStep1() {
-  const router = useRouter();
-  const { clubId } = useParams<{ clubId: string }>();
+  const { goToStep } = useDuesSetupNavigation();
   const { amount, name, description, generationNumber } = useDuesSetupValues();
   const { setField } = useDuesSetupActions();
 
@@ -32,7 +30,7 @@ function DuesSetupStep1() {
     if (!name.trim()) next.name = '회비 이름을 입력해주세요';
     setErrors(next);
     if (Object.keys(next).length > 0) return;
-    router.push(`/${clubId}/admin/dues/setup/2`);
+    goToStep(2);
   };
 
   return (

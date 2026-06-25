@@ -5,3 +5,11 @@ export { PrevButton } from './PrevButton';
 export { FormCard } from './FormCard';
 export { DuesMemberTable } from './DuesMemberTable';
 export { CarryOverCard } from './CarryOverCard';
+export {
+  SettingResultCardGrid,
+  InfoRow,
+  InfoCard,
+  type SettingResultCardGridProps,
+  type InfoRowProps,
+  type InfoCardProps,
+} from './SettingResultCardGrid';
