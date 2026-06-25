@@ -38,7 +38,10 @@ function DuesMemberTable({
   readOnly = false,
 }: DuesMemberTableProps) {
   return (
-    <Table>
+    <Table
+      wrapperClassName="rounded-sm border"
+      className="border-separate border-spacing-0 [&_thead_tr_th]:rounded-none [&_thead_tr_th:first-child]:rounded-tl-sm [&_thead_tr_th:last-child]:rounded-tr-sm [&_tbody_tr:last-child_td:first-child]:rounded-bl-sm [&_tbody_tr:last-child_td:last-child]:rounded-br-sm"
+    >
       <TableHeader>
         <TableRow className="bg-container-neutral-alternative">
           {!readOnly && (
