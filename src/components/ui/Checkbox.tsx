@@ -11,8 +11,7 @@ const checkboxVariants = cva(
   {
     variants: {
       color: {
-        primary:
-          'data-[state=checked]:border-brand-primary data-[state=checked]:bg-brand-primary',
+        primary: 'data-[state=checked]:border-brand-primary data-[state=checked]:bg-brand-primary',
         alternative:
           'data-[state=checked]:border-icon-alternative data-[state=checked]:bg-icon-alternative',
       },
@@ -24,7 +23,8 @@ const checkboxVariants = cva(
 );
 
 interface CheckboxProps
-  extends Omit<React.ComponentProps<typeof CheckboxPrimitive.Root>, 'color'>,
+  extends
+    Omit<React.ComponentProps<typeof CheckboxPrimitive.Root>, 'color'>,
     VariantProps<typeof checkboxVariants> {}
 
 function Checkbox({ className, color, ...props }: CheckboxProps) {
