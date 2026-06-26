@@ -2,7 +2,10 @@
 
 import { useState } from 'react';
 
+import { useParams, useRouter } from 'next/navigation';
+
 import type { MonthlyData, DuesTransaction } from '@/types/admin/dues';
+import { useCardinalSelector } from '@/hooks';
 import { DuesTopBar } from './DuesTopBar';
 import { DuesBalanceCard } from './DuesBalanceCard';
 import { DuesChart } from './DuesChart';
@@ -13,7 +16,6 @@ import { EditTransactionModal } from './modal/EditTransactionModal';
 import { TransactionDetailModal } from './modal/TransactionDetailModal';
 import type { TransactionDetail } from './modal/TransactionDetailModal';
 import type { TransactionFormData } from './modal/TransactionForm';
-import { useCardinalSelector } from '@/hooks';
 
 const MOCK_MONTHLY_DATA: MonthlyData[] = [
   { month: '3월', amount: 1425000 },
@@ -131,6 +133,8 @@ function DuesPageContent() {
   const [isPublic, setIsPublic] = useState(true);
   const [activeMonth, setActiveMonth] = useState('4월');
   const { cardinals, setSelectedCardinalId, activeCardinal } = useCardinalSelector();
+  const router = useRouter();
+  const { clubId } = useParams<{ clubId: string }>();
 
   const [addOpen, setAddOpen] = useState(false);
   const [detailOpen, setDetailOpen] = useState(false);
@@ -170,7 +174,11 @@ function DuesPageContent() {
         onSelect={setSelectedCardinalId}
       />
       <div className="tablet:flex-row flex flex-col gap-1">
-        <DuesBalanceCard currentBalance={152129} totalDues={1425000} />
+        <DuesBalanceCard
+          currentBalance={152129}
+          totalDues={1425000}
+          onViewPaymentDetail={() => router.push(`/${clubId}/admin/dues/payment-status`)}
+        />
         <DuesChart
           data={MOCK_MONTHLY_DATA}
           activeMonth={activeMonth}

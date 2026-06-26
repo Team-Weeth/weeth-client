@@ -49,6 +49,28 @@ git branch --show-current
 
 ## Step 4. Output
 
+### PR Title
+
+Generate the title using this format: `[Type] WTH-{number}: 작업 내용 요약`
+
+Map PR type → prefix:
+
+| PR Type | Prefix |
+|---------|--------|
+| 새로운 기능 추가 | `[Feat]` |
+| 버그 수정 | `[Fix]` |
+| 코드 리팩토링 | `[Refactor]` |
+| 코드에 영향 없는 변경사항 | `[Style]` |
+| 주석 추가 및 수정 | `[Chore]` |
+| 문서 수정 | `[Docs]` |
+| 빌드/패키지 매니저 수정 | `[Chore]` |
+| 파일 혹은 폴더명 수정 | `[Chore]` |
+| 파일 혹은 폴더 삭제 | `[Chore]` |
+
+Example: `[Feat] WTH-42: 회비 납부현황 페이지 구현`
+
+### PR Body
+
 Fill [template.md](template.md) with analysis results.
 Leave screenshot section with a placeholder for user to fill in.
 
