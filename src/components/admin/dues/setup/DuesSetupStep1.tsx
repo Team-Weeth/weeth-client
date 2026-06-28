@@ -51,6 +51,54 @@ function DuesSetupStep1() {
       .catch(() => {});
   }, [accountId, latestCardinal, clubId, setField]);
 
+  const STEP_MAP: Record<string, number> = {
+    BASIC: 1,
+    PAYMENT_TARGET: 2,
+    CARRY_OVER: 3,
+    BANK_ACCOUNT: 4,
+  };
+
+  const handleContinue = async () => {
+    if (accountId === null) return;
+    setDraftAlert((prev) => ({ ...prev, open: false }));
+
+    const res = await duesApi.getRegistrationStatus(clubId, accountId).catch(() => null);
+    if (!res) return;
+
+    const { registrationStep, basic, carryOver, bankAccount } = res.data.data;
+
+    if (basic) {
+      setField({
+        name: basic.name,
+        amount: String(basic.duesAmount),
+        description: basic.description ?? '',
+      });
+    }
+
+    if (carryOver) {
+      setField({
+        carryOverOption: carryOver.enabled ? 'carry' : 'none',
+        carryOverDescription: carryOver.memo ?? '',
+        carryOverInitialized: true,
+      });
+    }
+
+    if (bankAccount) {
+      setField({
+        isAccountPublic: bankAccount.bankAccountVisible,
+        bankName: bankAccount.bankAccount?.bankName ?? '',
+        accountNumber: bankAccount.bankAccount?.accountNumber ?? '',
+        accountHolder: bankAccount.bankAccount?.holder ?? '',
+        accountGuide: bankAccount.bankAccount?.guide ?? '',
+      });
+    }
+
+    const targetStep = STEP_MAP[registrationStep] ?? 1;
+    if (targetStep > 1) {
+      goToStep(targetStep);
+    }
+  };
+
   const handleNext = () => {
     const next: { amount?: string; name?: string } = {};
     if (!amount || Number(amount) === 0) next.amount = '회비 금액을 입력해주세요';
@@ -67,7 +115,7 @@ function DuesSetupStep1() {
       <DuesDraftAlert
         open={draftAlert.open}
         lastModifiedByName={draftAlert.lastModifiedByName}
-        onContinue={() => setDraftAlert((prev) => ({ ...prev, open: false }))}
+        onContinue={() => { handleContinue(); }}
         onNew={async () => {
           if (accountId === null) return;
           setDraftAlert({ open: false, lastModifiedByName: null });
