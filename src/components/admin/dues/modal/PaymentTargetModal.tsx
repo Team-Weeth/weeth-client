@@ -12,7 +12,7 @@ import {
 import { DuesSearchBar } from '@/components/admin/dues/DuesSearchBar';
 import { Button } from '@/components/ui';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
-import usePaymentTargetFilter from '@/hooks/admin/usePaymentTargetFilter';
+import { usePaymentTargetFilter } from '@/hooks/admin';
 
 interface PaymentTargetModalProps {
   open: boolean;

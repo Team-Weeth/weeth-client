@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 
 import { BackButton, DuesSearchBar } from '@/components/admin/dues';
 import { MOCK_PAYMENT_TARGETS } from '@/constants/mock';
@@ -15,7 +15,7 @@ import {
   PrevButton,
 } from '@/components/admin/dues/setup/components';
 import { useDuesSetupNavigation } from '@/components/admin/dues/setup/useDuesSetupNavigation';
-import usePaymentTargetFilter from '@/hooks/admin/usePaymentTargetFilter';
+import { usePaymentTargetFilter } from '@/hooks/admin';
 
 function DuesSetupStep2() {
   const { goToStep } = useDuesSetupNavigation();

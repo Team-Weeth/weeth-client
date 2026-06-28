@@ -7,7 +7,7 @@ const PAGE_SIZE = 10;
 
 type TabType = 'selected' | 'excluded' | 'all';
 
-export default function usePaymentTargetFilter(selectedMemberIds: number[]) {
+function usePaymentTargetFilter(selectedMemberIds: number[]) {
   const [tab, setTab] = useState<TabType>('selected');
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
@@ -27,7 +27,11 @@ export default function usePaymentTargetFilter(selectedMemberIds: number[]) {
     : byTab;
 
   const totalPages = Math.max(1, Math.ceil(filteredTargets.length / PAGE_SIZE));
-  const pagedTargets = filteredTargets.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+  const currentPage = Math.min(page, totalPages);
+  const pagedTargets = filteredTargets.slice(
+    (currentPage - 1) * PAGE_SIZE,
+    currentPage * PAGE_SIZE,
+  );
 
   const handleTabChange = (next: TabType) => {
     setTab(next);
@@ -40,6 +44,7 @@ export default function usePaymentTargetFilter(selectedMemberIds: number[]) {
   };
 
   return {
+    totalCount,
     selectedCount,
     tab,
     search,
@@ -53,3 +58,5 @@ export default function usePaymentTargetFilter(selectedMemberIds: number[]) {
     handleSearch,
   };
 }
+
+export { usePaymentTargetFilter };

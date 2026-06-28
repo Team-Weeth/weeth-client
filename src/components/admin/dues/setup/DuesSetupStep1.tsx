@@ -74,7 +74,10 @@ function DuesSetupStep1() {
                       if (errors.amount) setErrors((prev) => ({ ...prev, amount: undefined }));
                     }}
                     placeholder="0"
-                    className="typo-sub3 placeholder:text-text-alternative text-text-alternative min-w-0 flex-1 bg-transparent focus:outline-none"
+                    className={cn(
+                      'typo-sub3 placeholder:text-text-alternative min-w-0 flex-1 bg-transparent focus:outline-none',
+                      amount ? 'text-text-normal' : 'text-text-alternative',
+                    )}
                   />
                   <span className="typo-body1 text-text-normal shrink-0">원</span>
                 </div>
@@ -91,18 +94,20 @@ function DuesSetupStep1() {
             </div>
 
             {/* 회비 이름 */}
-            <ScheduleTextField
-              label="회비 이름"
-              value={name}
-              onChange={(value) => {
-                setField({ name: value });
-                if (errors.name) setErrors((prev) => ({ ...prev, name: undefined }));
-              }}
-              placeholder={`${generationNumber}기 정기회비`}
-              maxLength={NAME_MAX}
-              error={errors.name}
-              className="bg-container-neutral-alternative"
-            />
+            <div className="min-w-0 flex-1">
+              <ScheduleTextField
+                label="회비 이름"
+                value={name}
+                onChange={(value) => {
+                  setField({ name: value });
+                  if (errors.name) setErrors((prev) => ({ ...prev, name: undefined }));
+                }}
+                placeholder={`${generationNumber}기 정기회비`}
+                maxLength={NAME_MAX}
+                error={errors.name}
+                className="bg-container-neutral-alternative"
+              />
+            </div>
           </div>
 
           {/* 회비 설명 (선택) */}
