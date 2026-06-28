@@ -44,6 +44,45 @@ export interface SaveBasicBody {
   description: string;
 }
 
+export interface PaymentTargetInfo {
+  userId: number;
+  clubMemberId: number;
+  name: string;
+  tel: string;
+  school: string;
+  department: string;
+  memberRole: 'LEAD' | 'ADMIN' | 'USER';
+  memberStatus: 'ACTIVE' | 'INACTIVE';
+  profileImageUrl: string | null;
+}
+
+export interface PaymentTarget {
+  targetId: number;
+  paymentTargetInfo: PaymentTargetInfo;
+  targetStatus: 'TARGETED' | 'EXCLUDED';
+  paymentStatus: 'UNPAID' | 'PAID' | 'CONFIRMED';
+  dueAmount: number;
+  paidAmount: number;
+  paidAt: string | null;
+  confirmedBy: number | null;
+  memo: string | null;
+}
+
+export interface PaymentTargetsData {
+  summary: {
+    totalCount: number;
+    targetedCount: number;
+    excludedCount: number;
+  };
+  targets: {
+    content: PaymentTarget[];
+    pageNumber: number;
+    pageSize: number;
+    totalElements: number;
+    totalPages: number;
+  };
+}
+
 export type TransactionType = 'income' | 'expense' | 'dues';
 
 export interface DuesTransaction {

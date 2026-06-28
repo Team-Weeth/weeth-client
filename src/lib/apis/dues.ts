@@ -1,6 +1,11 @@
 import { apiClient } from '@/lib/apis/client';
 import type { ApiResponse } from '@/types/common';
-import type { DuesDraftData, RegistrationStatus, SaveBasicBody } from '@/types/admin/dues';
+import type {
+  DuesDraftData,
+  PaymentTargetsData,
+  RegistrationStatus,
+  SaveBasicBody,
+} from '@/types/admin/dues';
 
 export const duesApi = {
   createDraft: (clubId: string, cardinalNumber: number) =>
@@ -20,4 +25,10 @@ export const duesApi = {
 
   saveBasic: (clubId: string, accountId: number, body: SaveBasicBody) =>
     apiClient.patch(`/admin/clubs/${clubId}/accounts/${accountId}/registration/basic`, body),
+
+  getPaymentTargets: (clubId: string, accountId: number, size = 1000) =>
+    apiClient.get<ApiResponse<PaymentTargetsData>>(
+      `/admin/clubs/${clubId}/accounts/${accountId}/payment-targets`,
+      { params: { page: 0, size } },
+    ),
 };

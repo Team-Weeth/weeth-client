@@ -1,10 +1,12 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { useParams } from 'next/navigation';
 
 import { BackButton, DuesSearchBar } from '@/components/admin/dues';
-import { MOCK_PAYMENT_TARGETS } from '@/constants/mock';
+import { duesApi } from '@/lib/apis/dues';
 import { useDuesSetupValues, useDuesSetupActions } from '@/stores/useDuesSetupStore';
+import type { PaymentTarget } from '@/types/admin/dues';
 
 import {
   DuesSetupStepIndicator,
@@ -18,10 +20,33 @@ import { useDuesSetupNavigation } from '@/components/admin/dues/setup/useDuesSet
 import { usePaymentTargetFilter } from '@/hooks/admin';
 
 function DuesSetupStep2() {
+  const { clubId } = useParams<{ clubId: string }>();
   const { goToStep } = useDuesSetupNavigation();
 
-  const { cardinalNumber, selectedMemberIds, memberIdsInitialized } = useDuesSetupValues();
+  const { accountId, cardinalNumber, selectedMemberIds, memberIdsInitialized } =
+    useDuesSetupValues();
   const { setField } = useDuesSetupActions();
+
+  const [allTargets, setAllTargets] = useState<PaymentTarget[]>([]);
+
+  useEffect(() => {
+    if (accountId === null) return;
+
+    duesApi
+      .getPaymentTargets(clubId, accountId)
+      .then((res) => {
+        const targets = res.data.data.targets.content;
+        setAllTargets(targets);
+
+        if (!memberIdsInitialized) {
+          const targetedIds = targets
+            .filter((t) => t.targetStatus === 'TARGETED')
+            .map((t) => t.paymentTargetInfo.clubMemberId);
+          setField({ selectedMemberIds: targetedIds, memberIdsInitialized: true });
+        }
+      })
+      .catch(() => {});
+  }, [accountId, clubId, memberIdsInitialized, setField]);
 
   const {
     totalCount,
@@ -36,17 +61,7 @@ function DuesSetupStep2() {
     pagedTargets,
     handleTabChange,
     handleSearch,
-  } = usePaymentTargetFilter(selectedMemberIds);
-
-  // 첫 진입 시 TARGETED 멤버로 초기화
-  useEffect(() => {
-    if (!memberIdsInitialized) {
-      const targetedIds = MOCK_PAYMENT_TARGETS.filter((t) => t.targetStatus === 'TARGETED').map(
-        (t) => t.paymentTargetInfo.clubMemberId,
-      );
-      setField({ selectedMemberIds: targetedIds, memberIdsInitialized: true });
-    }
-  }, [memberIdsInitialized, setField]);
+  } = usePaymentTargetFilter(allTargets, selectedMemberIds);
 
   const toggleMember = (id: number) => {
     const next = selectedSet.has(id)

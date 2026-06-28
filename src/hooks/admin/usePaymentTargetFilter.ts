@@ -1,27 +1,31 @@
 'use client';
 
-import { MOCK_PAYMENT_TARGETS } from '@/constants/mock';
 import { useState } from 'react';
+
+import type { PaymentTarget } from '@/types/admin/dues';
 
 const PAGE_SIZE = 10;
 
 type TabType = 'selected' | 'excluded' | 'all';
 
-function usePaymentTargetFilter(selectedMemberIds: number[]) {
-  const [tab, setTab] = useState<TabType>('selected');
+function usePaymentTargetFilter(allTargets: PaymentTarget[], selectedMemberIds: number[]) {
+  const [tab, setTab] = useState<TabType>('all');
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
 
   const selectedSet = new Set(selectedMemberIds);
 
-  const totalCount = MOCK_PAYMENT_TARGETS.length;
+  const totalCount = allTargets.length;
   const selectedCount = selectedMemberIds.length;
   const excludedCount = totalCount - selectedCount;
 
   const byTab =
-    tab === 'selected'
-      ? MOCK_PAYMENT_TARGETS.filter((t) => selectedSet.has(t.paymentTargetInfo.clubMemberId))
-      : MOCK_PAYMENT_TARGETS.filter((t) => !selectedSet.has(t.paymentTargetInfo.clubMemberId));
+    tab === 'all'
+      ? allTargets
+      : tab === 'selected'
+        ? allTargets.filter((t) => selectedSet.has(t.paymentTargetInfo.clubMemberId))
+        : allTargets.filter((t) => !selectedSet.has(t.paymentTargetInfo.clubMemberId));
+
   const filteredTargets = search.trim()
     ? byTab.filter((t) => t.paymentTargetInfo.name.includes(search.trim()))
     : byTab;
