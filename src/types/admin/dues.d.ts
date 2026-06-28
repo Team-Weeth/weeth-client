@@ -38,6 +38,12 @@ export interface RegistrationStatus {
   } | null;
 }
 
+export interface SaveBasicBody {
+  name: string;
+  duesAmount: number;
+  description: string;
+}
+
 export type TransactionType = 'income' | 'expense' | 'dues';
 
 export interface DuesTransaction {

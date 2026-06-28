@@ -99,12 +99,21 @@ function DuesSetupStep1() {
     }
   };
 
-  const handleNext = () => {
+  const handleNext = async () => {
     const next: { amount?: string; name?: string } = {};
     if (!amount || Number(amount) === 0) next.amount = '회비 금액을 입력해주세요';
     if (!name.trim()) next.name = '회비 이름을 입력해주세요';
     setErrors(next);
-    if (Object.keys(next).length > 0) return;
+    if (Object.keys(next).length > 0 || accountId === null) return;
+
+    await duesApi
+      .saveBasic(clubId, accountId, {
+        name: name.trim(),
+        duesAmount: Number(amount),
+        description: description.trim(),
+      })
+      .catch(() => {});
+
     goToStep(2);
   };
 
