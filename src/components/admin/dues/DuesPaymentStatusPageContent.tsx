@@ -12,6 +12,7 @@ import { useCardinalSelector } from '@/hooks';
 
 import { DuesMemberPaymentTable, type DuesMember } from './DuesMemberPaymentTable';
 import { DuesPaymentSummaryCard } from './DuesPaymentSummaryCard';
+import { BackButton } from './BackButton';
 
 const MOCK_MEMBERS: DuesMember[] = [
   { id: 1, name: '김위드', major: '경영학과', phone: '010-1234-1234', status: 'unpaid' },
@@ -158,14 +159,7 @@ function DuesPaymentStatusPageContent() {
       <div className="tablet:p-700 flex flex-col gap-700 p-400">
         {/* 헤더 */}
         <div className="flex flex-col gap-400">
-          <button
-            type="button"
-            onClick={() => router.push(`/${clubId}/admin/dues`)}
-            aria-label="뒤로가기"
-            className="bg-button-neutral hover:bg-container-neutral-interaction flex w-fit cursor-pointer items-center justify-center rounded-sm p-200"
-          >
-            <Icon src={BackIcon} alt="뒤로가기" size={18} />
-          </button>
+          <BackButton />
           <h1 className="text-text-strong text-[28px] leading-9 font-bold tracking-[-0.14px]">
             {generationLabel} 회비 납부 현황
           </h1>
