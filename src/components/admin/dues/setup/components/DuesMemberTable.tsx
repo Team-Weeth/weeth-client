@@ -7,8 +7,9 @@ import {
   TableHead,
   TableHeader,
   TableRow,
+  Checkbox,
 } from '@/components/ui';
-import { Checkbox } from '@/components/ui';
+
 import type { MockPaymentTarget } from '@/constants/mock';
 
 const ROLE_LABEL: Record<string, string> = {
@@ -53,7 +54,7 @@ function DuesMemberTable({
           <TableHead className="typo-caption1 text-text-alternative">학과</TableHead>
           <TableHead className="typo-caption1 text-text-alternative">직급</TableHead>
           <TableHead className="typo-caption1 text-text-alternative text-right">
-            납부 현황
+            납부 대상
           </TableHead>
         </TableRow>
       </TableHeader>
@@ -68,7 +69,7 @@ function DuesMemberTable({
               onClick={readOnly ? undefined : () => toggleMember?.(clubMemberId)}
             >
               {!readOnly && (
-                <TableCell className="text-center">
+                <TableCell className="text-center" onClick={(e) => e.stopPropagation()}>
                   <Checkbox
                     color="primary"
                     id={`select-member-${clubMemberId}`}

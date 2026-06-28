@@ -15,7 +15,6 @@ import {
 } from '@/components/admin/dues/setup/components';
 import { useDuesSetupNavigation } from '@/components/admin/dues/setup/useDuesSetupNavigation';
 
-import { ScheduleTextareaField } from '@/components/admin/schedule/general/ScheduleTextareaField';
 import { ScheduleTextField } from '@/components/admin/schedule/general/ScheduleTextField';
 
 const DESCRIPTION_MAX = 30;
@@ -35,7 +34,7 @@ function DuesSetupStep3() {
   useEffect(() => {
     if (!carryOverInitialized) {
       setField({
-        carryOverOption: hasPreviousBalance ? 'none' : 'carry',
+        carryOverOption: hasPreviousBalance ? 'carry' : 'none',
         carryOverInitialized: true,
       });
     }

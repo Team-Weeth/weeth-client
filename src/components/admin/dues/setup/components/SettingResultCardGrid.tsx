@@ -13,8 +13,8 @@ interface InfoRowProps {
 function InfoRow({ label, value, valueClassName }: InfoRowProps) {
   return (
     <div className="grid grid-cols-[2fr_3fr] gap-300">
-      <span className="typo-body2 text-text-alternative">{label}</span>
-      <span className={cn('typo-body2 text-text-strong', valueClassName)}>{value}</span>
+      <span className="typo-sub3 text-text-alternative">{label}</span>
+      <span className={cn('typo-sub3 text-text-alternative', valueClassName)}>{value}</span>
     </div>
   );
 }
@@ -29,7 +29,7 @@ function InfoCard({ title, onEdit, children }: InfoCardProps) {
   return (
     <Card className="shadow-none">
       <div className="flex items-center justify-between">
-        <span className="typo-sub3 text-text-strong">{title}</span>
+        <span className="typo-sub1 text-text-normal">{title}</span>
         <button
           type="button"
           onClick={onEdit}

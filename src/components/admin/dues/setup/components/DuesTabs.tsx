@@ -20,10 +20,10 @@ function DuesTabs<T extends string>({ tabs, activeTab, onTabChange }: DuesTabsPr
           type="button"
           onClick={() => onTabChange(key)}
           className={cn(
-            'typo-body2 cursor-pointer rounded-sm border px-300 py-200 transition-colors',
+            'typo-button2 cursor-pointer rounded-sm border px-400 py-200 transition-colors',
             activeTab === key
               ? 'bg-container-neutral-alternative text-text-strong border-transparent'
-              : 'border-border text-text-alternative bg-transparent',
+              : 'border-border text-text-normal bg-transparent',
           )}
         >
           {label}

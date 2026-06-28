@@ -12,6 +12,8 @@ function CarryOverCard({ title, description, selected, onClick }: CarryOverCardP
     <button
       type="button"
       onClick={onClick}
+      role="radio"
+      aria-checked={selected}
       className={cn(
         'flex flex-1 cursor-pointer items-center justify-between rounded-lg border p-400 text-left transition-colors',
         selected ? 'border-brand-primary' : 'border-border',

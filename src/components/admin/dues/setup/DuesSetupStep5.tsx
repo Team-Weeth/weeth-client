@@ -51,7 +51,7 @@ function DuesSetupStep5() {
   );
 
   const displayedAvatars = selectedTargets.slice(0, MAX_AVATAR_DISPLAY);
-  const remainingCount = selectedTargets.length - MAX_AVATAR_DISPLAY;
+  const remainingCount = Math.max(0, selectedTargets.length - MAX_AVATAR_DISPLAY);
 
   const expectedDuesIncome = Number(amount) * selectedCount;
   const carryOverAmount = carryOverOption === 'carry' ? previousBalance : 0;

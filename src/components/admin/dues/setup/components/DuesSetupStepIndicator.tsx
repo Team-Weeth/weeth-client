@@ -1,7 +1,6 @@
-import Image from 'next/image';
-
 import { CheckIcon } from '@/assets/icons';
 import { cn } from '@/lib/cn';
+import { Icon } from '@/components/ui';
 
 const STEPS = [
   { step: 1, label: '기본 정보' },
@@ -32,7 +31,7 @@ function DuesSetupStepIndicator({ currentStep, className }: DuesSetupStepIndicat
                   isActive || isCompleted ? 'bg-container-primary' : 'bg-icon-alternative',
                 )}
               >
-                {isCompleted ? <Image src={CheckIcon} alt="완료" width={10} height={10} /> : step}
+                {isCompleted ? <Icon src={CheckIcon} alt="완료" size={14} /> : step}
               </div>
               <span
                 className={cn(
