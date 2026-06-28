@@ -8,8 +8,12 @@ const PAGE_SIZE = 10;
 
 type TabType = 'selected' | 'excluded' | 'all';
 
-function usePaymentTargetFilter(allTargets: PaymentTarget[], selectedMemberIds: number[]) {
-  const [tab, setTab] = useState<TabType>('all');
+function usePaymentTargetFilter(
+  allTargets: PaymentTarget[],
+  selectedMemberIds: number[],
+  initialTab: TabType = 'all',
+) {
+  const [tab, setTab] = useState<TabType>(initialTab);
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
 
