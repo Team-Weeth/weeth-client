@@ -9,4 +9,7 @@ export const duesApi = {
       null,
       { params: { cardinalNumber } },
     ),
+
+  discardDraft: (clubId: string, accountId: number) =>
+    apiClient.delete(`/admin/clubs/${clubId}/accounts/${accountId}/registration/draft`),
 };

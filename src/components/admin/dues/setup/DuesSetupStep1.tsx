@@ -25,7 +25,7 @@ function DuesSetupStep1() {
   const { clubId } = useParams<{ clubId: string }>();
   const { goToStep } = useDuesSetupNavigation();
   const { accountId, amount, name, description } = useDuesSetupValues();
-  const { setField } = useDuesSetupActions();
+  const { setField, reset } = useDuesSetupActions();
   const { latestCardinal } = useCardinalSelector();
 
   const [errors, setErrors] = useState<{ amount?: string; name?: string }>({});
@@ -68,11 +68,11 @@ function DuesSetupStep1() {
         open={draftAlert.open}
         lastModifiedByName={draftAlert.lastModifiedByName}
         onContinue={() => setDraftAlert((prev) => ({ ...prev, open: false }))}
-        onNew={() => {
-          // TODO: 초안 폐기 API 호출 후 재생성 필요
-          // 현재는 폼 필드만 초기화 (accountId 유지하여 API 재호출 방지)
-          setField({ amount: '', name: '', description: '' });
+        onNew={async () => {
+          if (accountId === null) return;
           setDraftAlert({ open: false, lastModifiedByName: null });
+          await duesApi.discardDraft(clubId, accountId).catch(() => {});
+          reset(); // accountId → null → useEffect 재실행 → createDraft 호출
         }}
       />
 
