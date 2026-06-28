@@ -70,6 +70,35 @@ function DuesSetupStep2() {
     setField({ selectedMemberIds: next });
   };
 
+  const handleNext = async () => {
+    if (accountId === null) return;
+
+    const currentSelected = new Set(selectedMemberIds);
+
+    // 원본 상태 대비 변경된 멤버만 델타로 전달
+    const targetedClubMemberIds = allTargets
+      .filter(
+        (t) =>
+          t.targetStatus === 'EXCLUDED' &&
+          currentSelected.has(t.paymentTargetInfo.clubMemberId),
+      )
+      .map((t) => t.paymentTargetInfo.clubMemberId);
+
+    const excludedClubMemberIds = allTargets
+      .filter(
+        (t) =>
+          t.targetStatus === 'TARGETED' &&
+          !currentSelected.has(t.paymentTargetInfo.clubMemberId),
+      )
+      .map((t) => t.paymentTargetInfo.clubMemberId);
+
+    await duesApi
+      .savePaymentTargets(clubId, accountId, { targetedClubMemberIds, excludedClubMemberIds })
+      .catch(() => {});
+
+    goToStep(3);
+  };
+
   return (
     <div className="flex min-w-85 flex-col gap-700 p-700">
       {/* 헤더 */}
@@ -121,7 +150,7 @@ function DuesSetupStep2() {
       {/* 하단 네비게이션 */}
       <div className="flex items-center justify-between">
         <PrevButton handlePrev={() => goToStep(1)} />
-        <NextButton handleNext={() => goToStep(3)} />
+        <NextButton handleNext={handleNext} />
       </div>
     </div>
   );

@@ -68,6 +68,11 @@ export interface PaymentTarget {
   memo: string | null;
 }
 
+export interface SavePaymentTargetsBody {
+  targetedClubMemberIds: number[];
+  excludedClubMemberIds: number[];
+}
+
 export interface PaymentTargetsData {
   summary: {
     totalCount: number;

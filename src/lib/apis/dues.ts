@@ -5,6 +5,7 @@ import type {
   PaymentTargetsData,
   RegistrationStatus,
   SaveBasicBody,
+  SavePaymentTargetsBody,
 } from '@/types/admin/dues';
 
 export const duesApi = {
@@ -31,4 +32,7 @@ export const duesApi = {
       `/admin/clubs/${clubId}/accounts/${accountId}/payment-targets`,
       { params: { page: 0, size } },
     ),
+
+  savePaymentTargets: (clubId: string, accountId: number, body: SavePaymentTargetsBody) =>
+    apiClient.patch(`/admin/clubs/${clubId}/accounts/${accountId}/payment-targets`, body),
 };
