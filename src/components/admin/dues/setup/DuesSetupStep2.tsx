@@ -15,10 +15,7 @@ import {
   PrevButton,
 } from '@/components/admin/dues/setup/components';
 import { useDuesSetupNavigation } from '@/components/admin/dues/setup/useDuesSetupNavigation';
-
-type TabType = 'all' | 'selected' | 'excluded';
-
-const PAGE_SIZE = 10;
+import usePaymentTargetFilter from '@/hooks/admin/usePaymentTargetFilter';
 
 function DuesSetupStep2() {
   const { goToStep } = useDuesSetupNavigation();
@@ -26,9 +23,20 @@ function DuesSetupStep2() {
   const { generationNumber, selectedMemberIds, memberIdsInitialized } = useDuesSetupValues();
   const { setField } = useDuesSetupActions();
 
-  const [tab, setTab] = useState<TabType>('all');
-  const [search, setSearch] = useState('');
-  const [page, setPage] = useState(1);
+  const {
+    totalCount,
+    selectedCount,
+    tab,
+    search,
+    selectedSet,
+    page,
+    setPage,
+    excludedCount,
+    totalPages,
+    pagedTargets,
+    handleTabChange,
+    handleSearch,
+  } = usePaymentTargetFilter(selectedMemberIds);
 
   // 첫 진입 시 TARGETED 멤버로 초기화
   useEffect(() => {
@@ -40,40 +48,11 @@ function DuesSetupStep2() {
     }
   }, [memberIdsInitialized, setField]);
 
-  const selectedSet = new Set(selectedMemberIds);
-
-  const byTab =
-    tab === 'selected'
-      ? MOCK_PAYMENT_TARGETS.filter((t) => selectedSet.has(t.paymentTargetInfo.clubMemberId))
-      : tab === 'excluded'
-        ? MOCK_PAYMENT_TARGETS.filter((t) => !selectedSet.has(t.paymentTargetInfo.clubMemberId))
-        : MOCK_PAYMENT_TARGETS;
-  const filteredTargets = search.trim()
-    ? byTab.filter((t) => t.paymentTargetInfo.name.includes(search.trim()))
-    : byTab;
-
-  const totalPages = Math.max(1, Math.ceil(filteredTargets.length / PAGE_SIZE));
-  const pagedTargets = filteredTargets.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
-
-  const totalCount = MOCK_PAYMENT_TARGETS.length;
-  const selectedCount = selectedMemberIds.length;
-  const excludedCount = totalCount - selectedCount;
-
   const toggleMember = (id: number) => {
     const next = selectedSet.has(id)
       ? selectedMemberIds.filter((x) => x !== id)
       : [...selectedMemberIds, id];
     setField({ selectedMemberIds: next });
-  };
-
-  const handleTabChange = (next: TabType) => {
-    setTab(next);
-    setPage(1);
-  };
-
-  const handleSearch = (value: string) => {
-    setSearch(value);
-    setPage(1);
   };
 
   return (

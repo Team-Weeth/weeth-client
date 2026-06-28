@@ -1,7 +1,3 @@
-'use client';
-
-import { useState } from 'react';
-
 import { AdminCloseIcon } from '@/assets/icons/admin';
 import { ModalIconButton } from '@/components/admin/modal/ModalIconButton';
 import {
@@ -16,11 +12,7 @@ import {
 import { DuesSearchBar } from '@/components/admin/dues/DuesSearchBar';
 import { Button } from '@/components/ui';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
-import { MOCK_PAYMENT_TARGETS } from '@/constants/mock';
-
-const PAGE_SIZE = 10;
-
-type TabType = 'selected' | 'excluded';
+import usePaymentTargetFilter from '@/hooks/admin/usePaymentTargetFilter';
 
 interface PaymentTargetModalProps {
   open: boolean;
@@ -29,37 +21,19 @@ interface PaymentTargetModalProps {
 }
 
 function PaymentTargetModal({ open, onOpenChange, selectedMemberIds }: PaymentTargetModalProps) {
-  const [tab, setTab] = useState<TabType>('selected');
-  const [search, setSearch] = useState('');
-  const [page, setPage] = useState(1);
-
-  const selectedSet = new Set(selectedMemberIds);
-
-  const totalCount = MOCK_PAYMENT_TARGETS.length;
-  const selectedCount = selectedMemberIds.length;
-  const excludedCount = totalCount - selectedCount;
-
-  const byTab =
-    tab === 'selected'
-      ? MOCK_PAYMENT_TARGETS.filter((t) => selectedSet.has(t.paymentTargetInfo.clubMemberId))
-      : MOCK_PAYMENT_TARGETS.filter((t) => !selectedSet.has(t.paymentTargetInfo.clubMemberId));
-  const filteredTargets = search.trim()
-    ? byTab.filter((t) => t.paymentTargetInfo.name.includes(search.trim()))
-    : byTab;
-
-  const totalPages = Math.max(1, Math.ceil(filteredTargets.length / PAGE_SIZE));
-  const pagedTargets = filteredTargets.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
-
-  const handleTabChange = (next: TabType) => {
-    setTab(next);
-    setPage(1);
-  };
-
-  const handleSearch = (value: string) => {
-    setSearch(value);
-    setPage(1);
-  };
-
+  const {
+    selectedCount,
+    tab,
+    search,
+    selectedSet,
+    page,
+    setPage,
+    excludedCount,
+    totalPages,
+    pagedTargets,
+    handleTabChange,
+    handleSearch,
+  } = usePaymentTargetFilter(selectedMemberIds);
   const handleClose = () => onOpenChange(false);
 
   return (
