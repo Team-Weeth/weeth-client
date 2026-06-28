@@ -1,3 +1,9 @@
+export interface DuesDraftData {
+  accountId: number;
+  isNew: boolean;
+  lastModifiedByName: string | null;
+}
+
 export type TransactionType = 'income' | 'expense' | 'dues';
 
 export interface DuesTransaction {

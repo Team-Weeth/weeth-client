@@ -1,4 +1,5 @@
 export { DuesSetupStepIndicator, type DuesSetupStepIndicatorProps } from './DuesSetupStepIndicator';
+export { DuesDraftAlert } from './DuesDraftAlert';
 
 export { NextButton } from './NextButton';
 export { PrevButton } from './PrevButton';

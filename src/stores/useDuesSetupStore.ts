@@ -3,6 +3,7 @@ import { combine, devtools, persist } from 'zustand/middleware';
 import { useShallow } from 'zustand/react/shallow';
 
 const initialState = {
+  accountId: null as number | null,
   cardinalNumber: 0,
   // Step 1: 기본 정보
   amount: '',
@@ -41,6 +42,7 @@ export const useDuesSetupStore = create(
 export const useDuesSetupValues = () =>
   useDuesSetupStore(
     useShallow((state) => ({
+      accountId: state.accountId,
       cardinalNumber: state.cardinalNumber,
       amount: state.amount,
       name: state.name,

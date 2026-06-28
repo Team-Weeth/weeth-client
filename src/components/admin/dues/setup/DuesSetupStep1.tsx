@@ -1,13 +1,17 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useParams } from 'next/navigation';
 
 import { cn } from '@/lib/cn';
+import { duesApi } from '@/lib/apis/dues';
 import { useDuesSetupActions, useDuesSetupValues } from '@/stores/useDuesSetupStore';
+import { useCardinalSelector } from '@/hooks/useCardinalSelector';
 
 import { BackButton } from '@/components/admin/dues';
 import {
   DuesSetupStepIndicator,
+  DuesDraftAlert,
   FormCard,
   NextButton,
 } from '@/components/admin/dues/setup/components';
@@ -18,11 +22,34 @@ const NAME_MAX = 30;
 const DESCRIPTION_MAX = 30;
 
 function DuesSetupStep1() {
+  const { clubId } = useParams<{ clubId: string }>();
   const { goToStep } = useDuesSetupNavigation();
-  const { amount, name, description, cardinalNumber } = useDuesSetupValues();
+  const { accountId, amount, name, description } = useDuesSetupValues();
   const { setField } = useDuesSetupActions();
+  const { latestCardinal } = useCardinalSelector();
 
   const [errors, setErrors] = useState<{ amount?: string; name?: string }>({});
+  const [draftAlert, setDraftAlert] = useState<{
+    open: boolean;
+    lastModifiedByName: string | null;
+  }>({ open: false, lastModifiedByName: null });
+
+  // accountId가 null인 경우에만 초안 생성 API 호출
+  // Step2 이전 버튼으로 돌아온 경우 accountId가 이미 설정되어 있으므로 호출하지 않음
+  useEffect(() => {
+    if (accountId !== null || !latestCardinal) return;
+
+    duesApi
+      .createDraft(clubId, latestCardinal.cardinalNumber)
+      .then((res) => {
+        const { accountId: id, isNew, lastModifiedByName } = res.data.data;
+        setField({ accountId: id });
+        if (!isNew) {
+          setDraftAlert({ open: true, lastModifiedByName });
+        }
+      })
+      .catch(() => {});
+  }, [accountId, latestCardinal, clubId, setField]);
 
   const handleNext = () => {
     const next: { amount?: string; name?: string } = {};
@@ -33,98 +60,114 @@ function DuesSetupStep1() {
     goToStep(2);
   };
 
+  const cardinalNumber = latestCardinal?.cardinalNumber ?? 0;
+
   return (
-    <div className="flex min-w-85 flex-col gap-700 p-700">
-      {/* 헤더 */}
-      <div className="flex flex-col gap-300">
-        <BackButton />
-        <h1 className="typo-h2 text-text-strong">{cardinalNumber}기 총 회비 설정</h1>
-      </div>
+    <>
+      <DuesDraftAlert
+        open={draftAlert.open}
+        lastModifiedByName={draftAlert.lastModifiedByName}
+        onContinue={() => setDraftAlert((prev) => ({ ...prev, open: false }))}
+        onNew={() => {
+          // TODO: 초안 폐기 API 호출 후 재생성 필요
+          // 현재는 폼 필드만 초기화 (accountId 유지하여 API 재호출 방지)
+          setField({ amount: '', name: '', description: '' });
+          setDraftAlert({ open: false, lastModifiedByName: null });
+        }}
+      />
 
-      <div className="flex flex-col gap-600">
-        {/* 스텝 인디케이터 */}
-        <DuesSetupStepIndicator currentStep={1} />
+      <div className="flex min-w-85 flex-col gap-700 p-700">
+        {/* 헤더 */}
+        <div className="flex flex-col gap-300">
+          <BackButton />
+          <h1 className="typo-h2 text-text-strong">{cardinalNumber}기 총 회비 설정</h1>
+        </div>
 
-        <FormCard title="기본 정보" step={1} description="총 회비의 기본 정보를 입력해주세요">
-          {/* 필드 행: 회비금액 + 회비 이름 */}
-          <div className="flex gap-400">
-            {/* 1인당 회비금액 */}
-            <div className="flex min-w-0 flex-1 flex-col">
-              <label
-                htmlFor="dues-amount"
-                className="typo-sub3 text-text-normal flex h-12 items-center px-400"
-              >
-                1인 당 회비금액
-              </label>
-              <div className="flex flex-col gap-200">
-                <div
-                  className={cn(
-                    'bg-container-neutral-alternative flex h-12 items-center gap-200 rounded-sm px-400',
-                    errors.amount && 'ring-state-error ring-1',
-                  )}
+        <div className="flex flex-col gap-600">
+          {/* 스텝 인디케이터 */}
+          <DuesSetupStepIndicator currentStep={1} />
+
+          <FormCard title="기본 정보" step={1} description="총 회비의 기본 정보를 입력해주세요">
+            {/* 필드 행: 회비금액 + 회비 이름 */}
+            <div className="flex gap-400">
+              {/* 1인당 회비금액 */}
+              <div className="flex min-w-0 flex-1 flex-col">
+                <label
+                  htmlFor="dues-amount"
+                  className="typo-sub3 text-text-normal flex h-12 items-center px-400"
                 >
-                  <input
-                    id="dues-amount"
-                    type="text"
-                    inputMode="numeric"
-                    value={amount}
-                    onChange={(e) => {
-                      const raw = e.target.value.replace(/\D/g, '');
-                      setField({ amount: raw });
-                      if (errors.amount) setErrors((prev) => ({ ...prev, amount: undefined }));
-                    }}
-                    placeholder="0"
+                  1인 당 회비금액
+                </label>
+                <div className="flex flex-col gap-200">
+                  <div
                     className={cn(
-                      'typo-sub3 placeholder:text-text-alternative min-w-0 flex-1 bg-transparent focus:outline-none',
-                      amount ? 'text-text-normal' : 'text-text-alternative',
+                      'bg-container-neutral-alternative flex h-12 items-center gap-200 rounded-sm px-400',
+                      errors.amount && 'ring-state-error ring-1',
                     )}
-                  />
-                  <span className="typo-body1 text-text-normal shrink-0">원</span>
+                  >
+                    <input
+                      id="dues-amount"
+                      type="text"
+                      inputMode="numeric"
+                      value={amount}
+                      onChange={(e) => {
+                        const raw = e.target.value.replace(/\D/g, '');
+                        setField({ amount: raw });
+                        if (errors.amount) setErrors((prev) => ({ ...prev, amount: undefined }));
+                      }}
+                      placeholder="0"
+                      className={cn(
+                        'typo-sub3 placeholder:text-text-alternative min-w-0 flex-1 bg-transparent focus:outline-none',
+                        amount ? 'text-text-normal' : 'text-text-alternative',
+                      )}
+                    />
+                    <span className="typo-body1 text-text-normal shrink-0">원</span>
+                  </div>
+                  <div className="flex items-start px-400">
+                    {errors.amount ? (
+                      <span className="typo-caption2 text-state-error">{errors.amount}</span>
+                    ) : (
+                      <span className="typo-caption2 text-text-alternative">
+                        회비 금액은 등록 후에도 수정할 수 있습니다.
+                      </span>
+                    )}
+                  </div>
                 </div>
-                <div className="flex items-start px-400">
-                  {errors.amount ? (
-                    <span className="typo-caption2 text-state-error">{errors.amount}</span>
-                  ) : (
-                    <span className="typo-caption2 text-text-alternative">
-                      회비 금액은 등록 후에도 수정할 수 있습니다.
-                    </span>
-                  )}
-                </div>
+              </div>
+
+              {/* 회비 이름 */}
+              <div className="min-w-0 flex-1">
+                <ScheduleTextField
+                  label="회비 이름"
+                  value={name}
+                  onChange={(value) => {
+                    setField({ name: value });
+                    if (errors.name) setErrors((prev) => ({ ...prev, name: undefined }));
+                  }}
+                  placeholder={`${cardinalNumber}기 정기회비`}
+                  maxLength={NAME_MAX}
+                  error={errors.name}
+                  className="bg-container-neutral-alternative"
+                />
               </div>
             </div>
 
-            {/* 회비 이름 */}
-            <div className="min-w-0 flex-1">
-              <ScheduleTextField
-                label="회비 이름"
-                value={name}
-                onChange={(value) => {
-                  setField({ name: value });
-                  if (errors.name) setErrors((prev) => ({ ...prev, name: undefined }));
-                }}
-                placeholder={`${cardinalNumber}기 정기회비`}
-                maxLength={NAME_MAX}
-                error={errors.name}
-                className="bg-container-neutral-alternative"
-              />
-            </div>
-          </div>
+            {/* 회비 설명 (선택) */}
+            <ScheduleTextField
+              label="회비 설명 (선택)"
+              value={description}
+              onChange={(value) => setField({ description: value })}
+              placeholder="설명을 작성해주세요"
+              maxLength={DESCRIPTION_MAX}
+              className="bg-container-neutral-alternative"
+            />
+          </FormCard>
+        </div>
 
-          {/* 회비 설명 (선택) */}
-          <ScheduleTextField
-            label="회비 설명 (선택)"
-            value={description}
-            onChange={(value) => setField({ description: value })}
-            placeholder="설명을 작성해주세요"
-            maxLength={DESCRIPTION_MAX}
-            className="bg-container-neutral-alternative"
-          />
-        </FormCard>
+        {/* 다음으로 버튼 */}
+        <NextButton handleNext={handleNext} />
       </div>
-
-      {/* 다음으로 버튼 */}
-      <NextButton handleNext={handleNext} />
-    </div>
+    </>
   );
 }
 
