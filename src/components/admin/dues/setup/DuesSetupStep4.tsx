@@ -29,7 +29,7 @@ function DuesSetupStep4() {
   const { goToStep } = useDuesSetupNavigation();
 
   const {
-    generationNumber,
+    cardinalNumber,
     accountNumber,
     bankName,
     accountHolder,
@@ -55,7 +55,7 @@ function DuesSetupStep4() {
       {/* 헤더 */}
       <div className="flex flex-col gap-300">
         <BackButton />
-        <h1 className="typo-h2 text-text-strong">{generationNumber}기 총 회비 설정</h1>
+        <h1 className="typo-h2 text-text-strong">{cardinalNumber}기 총 회비 설정</h1>
       </div>
 
       <div className="flex flex-col gap-600">

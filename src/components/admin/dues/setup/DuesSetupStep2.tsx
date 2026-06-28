@@ -20,7 +20,7 @@ import { usePaymentTargetFilter } from '@/hooks/admin';
 function DuesSetupStep2() {
   const { goToStep } = useDuesSetupNavigation();
 
-  const { generationNumber, selectedMemberIds, memberIdsInitialized } = useDuesSetupValues();
+  const { cardinalNumber, selectedMemberIds, memberIdsInitialized } = useDuesSetupValues();
   const { setField } = useDuesSetupActions();
 
   const {
@@ -60,7 +60,7 @@ function DuesSetupStep2() {
       {/* 헤더 */}
       <div className="flex flex-col gap-300">
         <BackButton />
-        <h1 className="typo-h2 text-text-strong">{generationNumber}기 총 회비 설정</h1>
+        <h1 className="typo-h2 text-text-strong">{cardinalNumber}기 총 회비 설정</h1>
       </div>
 
       <div className="flex flex-col gap-600">

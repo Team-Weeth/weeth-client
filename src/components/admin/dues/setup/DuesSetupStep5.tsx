@@ -23,7 +23,7 @@ function DuesSetupStep5() {
   const { goToStep, goToDues } = useDuesSetupNavigation();
 
   const {
-    generationNumber,
+    cardinalNumber,
     amount,
     name,
     selectedMemberIds,
@@ -40,7 +40,7 @@ function DuesSetupStep5() {
 
   const hasPreviousBalance = MOCK_PREVIOUS_BALANCE !== null;
   const previousBalance = MOCK_PREVIOUS_BALANCE?.balance ?? 0;
-  const previousGeneration = MOCK_PREVIOUS_BALANCE?.generationNumber ?? generationNumber - 1;
+  const previousGeneration = MOCK_PREVIOUS_BALANCE?.generationNumber ?? cardinalNumber - 1;
 
   const totalCount = MOCK_PAYMENT_TARGETS.length;
   const selectedCount = selectedMemberIds.length;
@@ -68,7 +68,7 @@ function DuesSetupStep5() {
       {/* 헤더 */}
       <div className="flex flex-col gap-300">
         <BackButton />
-        <h1 className="typo-h2 text-text-strong">{generationNumber}기 총 회비 설정</h1>
+        <h1 className="typo-h2 text-text-strong">{cardinalNumber}기 총 회비 설정</h1>
       </div>
 
       <div className="flex flex-col gap-600">
@@ -77,7 +77,7 @@ function DuesSetupStep5() {
         <FormCard
           title="최종 확인"
           step={5}
-          description={`${generationNumber}기 총 회비 설정을 확인해주세요`}
+          description={`${cardinalNumber}기 총 회비 설정을 확인해주세요`}
         >
           {/* 예상 관리 금액 요약 배너 */}
           <div className="bg-container-primary-alternative flex items-center justify-between rounded-lg px-500 py-400">
@@ -120,7 +120,7 @@ function DuesSetupStep5() {
 
           {/* 4개 정보 카드 2×2 그리드 */}
           <SettingResultCardGrid
-            generationNumber={generationNumber}
+            cardinalNumber={cardinalNumber}
             amount={amount}
             name={name}
             selectedCount={selectedCount}

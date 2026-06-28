@@ -19,7 +19,7 @@ const DESCRIPTION_MAX = 30;
 
 function DuesSetupStep1() {
   const { goToStep } = useDuesSetupNavigation();
-  const { amount, name, description, generationNumber } = useDuesSetupValues();
+  const { amount, name, description, cardinalNumber } = useDuesSetupValues();
   const { setField } = useDuesSetupActions();
 
   const [errors, setErrors] = useState<{ amount?: string; name?: string }>({});
@@ -38,7 +38,7 @@ function DuesSetupStep1() {
       {/* 헤더 */}
       <div className="flex flex-col gap-300">
         <BackButton />
-        <h1 className="typo-h2 text-text-strong">{generationNumber}기 총 회비 설정</h1>
+        <h1 className="typo-h2 text-text-strong">{cardinalNumber}기 총 회비 설정</h1>
       </div>
 
       <div className="flex flex-col gap-600">
@@ -102,7 +102,7 @@ function DuesSetupStep1() {
                   setField({ name: value });
                   if (errors.name) setErrors((prev) => ({ ...prev, name: undefined }));
                 }}
-                placeholder={`${generationNumber}기 정기회비`}
+                placeholder={`${cardinalNumber}기 정기회비`}
                 maxLength={NAME_MAX}
                 error={errors.name}
                 className="bg-container-neutral-alternative"

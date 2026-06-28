@@ -3,7 +3,7 @@ import { combine, devtools, persist } from 'zustand/middleware';
 import { useShallow } from 'zustand/react/shallow';
 
 const initialState = {
-  generationNumber: 0,
+  cardinalNumber: 0,
   // Step 1: 기본 정보
   amount: '',
   name: '',
@@ -41,7 +41,7 @@ export const useDuesSetupStore = create(
 export const useDuesSetupValues = () =>
   useDuesSetupStore(
     useShallow((state) => ({
-      generationNumber: state.generationNumber,
+      cardinalNumber: state.cardinalNumber,
       amount: state.amount,
       name: state.name,
       description: state.description,

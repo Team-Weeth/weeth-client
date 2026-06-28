@@ -53,7 +53,7 @@ interface PaymentTargetAvatar {
 
 interface SettingResultCardGridProps {
   // Step 1: 기본 정보
-  generationNumber: number;
+  cardinalNumber: number;
   amount: string;
   name: string;
   // Step 2: 납부 대상
@@ -79,7 +79,7 @@ interface SettingResultCardGridProps {
 }
 
 function SettingResultCardGrid({
-  generationNumber,
+  cardinalNumber,
   amount,
   name,
   selectedCount,
@@ -103,7 +103,7 @@ function SettingResultCardGrid({
     <div className="grid grid-cols-2 gap-400">
       {/* 기본 정보 */}
       <InfoCard title="기본 정보" onEdit={() => goToStep(1)}>
-        <InfoRow label="기수" value={`${generationNumber} 기`} />
+        <InfoRow label="기수" value={`${cardinalNumber} 기`} />
         <InfoRow label="회비 이름" value={name || '-'} />
         <InfoRow label="1인 회비 금액" value={`${Number(amount).toLocaleString()} 원`} />
       </InfoCard>

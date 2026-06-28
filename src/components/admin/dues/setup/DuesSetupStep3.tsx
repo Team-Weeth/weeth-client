@@ -22,13 +22,13 @@ const DESCRIPTION_MAX = 30;
 function DuesSetupStep3() {
   const { goToStep } = useDuesSetupNavigation();
 
-  const { generationNumber, carryOverOption, carryOverDescription, carryOverInitialized } =
+  const { cardinalNumber, carryOverOption, carryOverDescription, carryOverInitialized } =
     useDuesSetupValues();
   const { setField } = useDuesSetupActions();
 
   const hasPreviousBalance = MOCK_PREVIOUS_BALANCE !== null;
   const previousBalance = MOCK_PREVIOUS_BALANCE?.balance ?? 0;
-  const previousGeneration = MOCK_PREVIOUS_BALANCE?.generationNumber ?? generationNumber - 1;
+  const previousGeneration = MOCK_PREVIOUS_BALANCE?.generationNumber ?? cardinalNumber - 1;
 
   // 첫 진입 시 기본값 설정
   useEffect(() => {
@@ -45,7 +45,7 @@ function DuesSetupStep3() {
       {/* 헤더 */}
       <div className="flex flex-col gap-300">
         <BackButton />
-        <h1 className="typo-h2 text-text-strong">{generationNumber}기 총 회비 설정</h1>
+        <h1 className="typo-h2 text-text-strong">{cardinalNumber}기 총 회비 설정</h1>
       </div>
 
       <div className="flex flex-col gap-600">
