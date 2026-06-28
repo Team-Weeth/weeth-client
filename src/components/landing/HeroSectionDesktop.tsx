@@ -127,6 +127,8 @@ function HeroSectionDesktop({ className }: HeroSectionProps) {
                     src={HeroSectionCardImage}
                     alt="Hero Section Card Image"
                     fill
+                    priority
+                    sizes="(max-width: 1440px) 30vw, 430px"
                     className="object-contain"
                   />
                 </motion.div>
