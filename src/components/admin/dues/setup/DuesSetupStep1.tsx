@@ -24,7 +24,7 @@ const DESCRIPTION_MAX = 30;
 function DuesSetupStep1() {
   const { clubId } = useParams<{ clubId: string }>();
   const { goToStep } = useDuesSetupNavigation();
-  const { accountId, amount, name, description } = useDuesSetupValues();
+  const { accountId, isFreshEntry, amount, name, description } = useDuesSetupValues();
   const { setField, reset } = useDuesSetupActions();
   const { latestCardinal } = useCardinalSelector();
 
@@ -34,8 +34,10 @@ function DuesSetupStep1() {
     lastModifiedByName: string | null;
   }>({ open: false, lastModifiedByName: null });
 
-  // accountId가 null인 경우에만 초안 생성 API 호출
-  // Step2 이전 버튼으로 돌아온 경우 accountId가 이미 설정되어 있으므로 호출하지 않음
+  // accountId가 null인 경우에만 초안 생성 API 호출 (accountId 확보 목적)
+  // - Step2 이전 버튼으로 돌아온 경우: accountId가 메모리에 남아 있어 호출하지 않음
+  // - 새로고침 등으로 accountId가 비워진 경우에도 accountId 확보를 위해 호출은 하되,
+  //   "이어서 작성" alert는 메인에서 신규 진입(isFreshEntry)했을 때만 노출한다.
   useEffect(() => {
     if (accountId !== null || !latestCardinal) return;
 
@@ -43,13 +45,13 @@ function DuesSetupStep1() {
       .createDraft(clubId, latestCardinal.cardinalNumber)
       .then((res) => {
         const { accountId: id, isNew, lastModifiedByName } = res.data.data;
-        setField({ accountId: id });
-        if (!isNew) {
+        setField({ accountId: id, isFreshEntry: false });
+        if (!isNew && isFreshEntry) {
           setDraftAlert({ open: true, lastModifiedByName });
         }
       })
       .catch(() => {});
-  }, [accountId, latestCardinal, clubId, setField]);
+  }, [accountId, isFreshEntry, latestCardinal, clubId, setField]);
 
   const STEP_MAP: Record<string, number> = {
     BASIC: 1,
@@ -57,6 +59,8 @@ function DuesSetupStep1() {
     CARRY_OVER: 3,
     BANK_ACCOUNT: 4,
   };
+
+  const cardinalNumber = latestCardinal?.cardinalNumber ?? 0;
 
   const handleContinue = async () => {
     if (accountId === null) return;
@@ -66,6 +70,8 @@ function DuesSetupStep1() {
     if (!res) return;
 
     const { registrationStep, basic, carryOver, bankAccount } = res.data.data;
+
+    setField({ cardinalNumber: cardinalNumber });
 
     if (basic) {
       setField({
@@ -106,6 +112,8 @@ function DuesSetupStep1() {
     setErrors(next);
     if (Object.keys(next).length > 0 || accountId === null) return;
 
+    setField({ cardinalNumber });
+
     await duesApi
       .saveBasic(clubId, accountId, {
         name: name.trim(),
@@ -117,14 +125,14 @@ function DuesSetupStep1() {
     goToStep(2);
   };
 
-  const cardinalNumber = latestCardinal?.cardinalNumber ?? 0;
-
   return (
     <>
       <DuesDraftAlert
         open={draftAlert.open}
         lastModifiedByName={draftAlert.lastModifiedByName}
-        onContinue={() => { handleContinue(); }}
+        onContinue={() => {
+          handleContinue();
+        }}
         onNew={async () => {
           if (accountId === null) return;
           setDraftAlert({ open: false, lastModifiedByName: null });

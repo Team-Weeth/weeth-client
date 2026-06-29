@@ -70,6 +70,7 @@ function DuesSetupStep2() {
     setField({ selectedMemberIds: next });
   };
 
+  // TODO: 대상자 선택 안 되면 못 넘어가게(null 값 안 들어가게 하기)
   const handleNext = async () => {
     if (accountId === null) return;
 
@@ -79,16 +80,14 @@ function DuesSetupStep2() {
     const targetedClubMemberIds = allTargets
       .filter(
         (t) =>
-          t.targetStatus === 'EXCLUDED' &&
-          currentSelected.has(t.paymentTargetInfo.clubMemberId),
+          t.targetStatus === 'EXCLUDED' && currentSelected.has(t.paymentTargetInfo.clubMemberId),
       )
       .map((t) => t.paymentTargetInfo.clubMemberId);
 
     const excludedClubMemberIds = allTargets
       .filter(
         (t) =>
-          t.targetStatus === 'TARGETED' &&
-          !currentSelected.has(t.paymentTargetInfo.clubMemberId),
+          t.targetStatus === 'TARGETED' && !currentSelected.has(t.paymentTargetInfo.clubMemberId),
       )
       .map((t) => t.paymentTargetInfo.clubMemberId);
 

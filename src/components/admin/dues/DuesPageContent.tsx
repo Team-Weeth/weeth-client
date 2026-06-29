@@ -6,6 +6,7 @@ import { useParams, useRouter } from 'next/navigation';
 
 import type { MonthlyData, DuesTransaction } from '@/types/admin/dues';
 import { useCardinalSelector } from '@/hooks';
+import { useDuesSetupActions } from '@/stores/useDuesSetupStore';
 import { DuesTopBar } from './DuesTopBar';
 import { DuesBalanceCard } from './DuesBalanceCard';
 import { DuesChart } from './DuesChart';
@@ -137,6 +138,15 @@ function DuesPageContent() {
   const { cardinals, setSelectedCardinalId, activeCardinal } = useCardinalSelector();
   const router = useRouter();
   const { clubId } = useParams<{ clubId: string }>();
+  const { reset, setField } = useDuesSetupActions();
+
+  // 메인 화면에서 온보딩 신규 진입 시: store 초기화 + 신규 진입 플래그 세팅 후 step1로 이동
+  // (accountId 잔존값을 비워 createDraft 재호출을 보장하고, alert 노출을 신규 진입으로 한정)
+  const startDuesSetup = () => {
+    reset();
+    setField({ isFreshEntry: true });
+    router.push(`/${clubId}/admin/dues/setup/1`);
+  };
 
   // TODO: 총 회비 정보 입력 안 됐을 때만 모달 띄우기
   const [tutorialOpen, setTutorialOpen] = useState(true);
@@ -184,7 +194,7 @@ function DuesPageContent() {
           currentBalance={152129}
           totalDues={1425000}
           onViewPaymentDetail={() => router.push(`/${clubId}/admin/dues/payment-status`)}
-          onSetTotalDues={() => router.push(`/${clubId}/admin/dues/setup/1`)}
+          onSetTotalDues={startDuesSetup}
         />
         <DuesChart
           data={MOCK_MONTHLY_DATA}
@@ -227,7 +237,7 @@ function DuesPageContent() {
       <DuesTutorialModal
         open={tutorialOpen}
         onOpenChange={setTutorialOpen}
-        onStart={() => router.push(`/${clubId}/admin/dues/setup/1`)}
+        onStart={startDuesSetup}
       />
     </div>
   );
