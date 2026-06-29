@@ -6,6 +6,11 @@ jest.mock('@tiptap/react', () => ({ useEditor: jest.fn() }));
 jest.mock('@/stores/usePostStore');
 // editorExtensions 의존성 차단 (lowlight 등 heavy import 방지)
 jest.mock('@/components/board/Editor/extensions', () => ({ editorExtensions: [] }));
+// TextSelection.near는 실제 ProseMirror 문서가 필요하므로 mock
+jest.mock('@tiptap/pm/state', () => ({
+  ...jest.requireActual('@tiptap/pm/state'),
+  TextSelection: { near: jest.fn(() => ({})) },
+}));
 
 const useEditorMock = useEditor as jest.Mock;
 
@@ -38,6 +43,73 @@ let capturedConfig = {} as CapturedEditorConfig;
 const minimalView = {
   state: { selection: { $from: {} } },
 };
+
+// 백틱 인라인 코드 단축키 테스트용 view mock
+function createBacktickView(textBefore: string) {
+  const blockStart = 1;
+  const fromPos = blockStart + textBefore.length;
+  const tr = {
+    replaceWith: jest.fn().mockReturnThis(),
+    removeStoredMark: jest.fn().mockReturnThis(),
+  };
+  return {
+    view: {
+      state: {
+        selection: { $from: { start: jest.fn(() => blockStart), pos: fromPos } },
+        doc: { textBetween: jest.fn().mockReturnValue(textBefore) },
+        schema: {
+          marks: { code: { create: jest.fn(() => ({})) } },
+          text: jest.fn(() => ({})),
+        },
+        tr,
+      },
+      dispatch: jest.fn(),
+    },
+    tr,
+  };
+}
+
+// Backspace UX 개선 테스트용 view mock
+interface BackspaceViewOptions {
+  parentType: string;
+  nodeBeforeType?: string | null;
+  parentOffset?: number;
+}
+
+function createBackspaceView({
+  parentType,
+  nodeBeforeType = null,
+  parentOffset = 0,
+}: BackspaceViewOptions) {
+  const nodeBefore = nodeBeforeType ? { type: { name: nodeBeforeType } } : null;
+  const tr = {
+    setBlockType: jest.fn().mockReturnThis(),
+    delete: jest.fn().mockReturnThis(),
+    mapping: { map: jest.fn(() => 3) },
+    setSelection: jest.fn().mockReturnThis(),
+    doc: { resolve: jest.fn(() => ({})) },
+  };
+  return {
+    view: {
+      state: {
+        selection: {
+          $from: {
+            parentOffset,
+            pos: 5,
+            before: jest.fn(() => 4),
+            after: jest.fn(() => 10),
+            parent: { type: { name: parentType }, textContent: '' },
+          },
+        },
+        doc: { resolve: jest.fn(() => ({ nodeBefore })) },
+        schema: { nodes: { paragraph: {} } },
+        tr,
+      },
+      dispatch: jest.fn(),
+    },
+    tr,
+  };
+}
 
 // 슬래시 메뉴를 열기 위해 onUpdate를 직접 호출하는 헬퍼
 function openSlashMenu() {
@@ -142,6 +214,101 @@ describe('usePostEditor', () => {
       renderHook(() => usePostEditor());
 
       const result = capturedConfig.editorProps.handleDrop({}, {});
+
+      expect(result).toBe(false);
+    });
+  });
+
+  describe('handleKeyDown — 백틱 인라인 코드 단축키', () => {
+    it('이전 백틱이 있고 내부 텍스트가 있으면 code mark를 적용하고 true를 반환한다', () => {
+      renderHook(() => usePostEditor());
+      const { view, tr } = createBacktickView('hello `world');
+      const event = { key: '`', preventDefault: jest.fn() };
+
+      const result = capturedConfig.editorProps.handleKeyDown(view, event);
+
+      expect(event.preventDefault).toHaveBeenCalled();
+      expect(tr.replaceWith).toHaveBeenCalled();
+      expect(tr.removeStoredMark).toHaveBeenCalled();
+      expect(view.dispatch).toHaveBeenCalledWith(tr);
+      expect(result).toBe(true);
+    });
+
+    it('이전 백틱이 없으면 false를 반환한다', () => {
+      renderHook(() => usePostEditor());
+      const { view } = createBacktickView('hello world');
+      const event = { key: '`', preventDefault: jest.fn() };
+
+      const result = capturedConfig.editorProps.handleKeyDown(view, event);
+
+      expect(event.preventDefault).not.toHaveBeenCalled();
+      expect(result).toBe(false);
+    });
+
+    it('백틱 이후 내부 텍스트가 없으면 false를 반환한다', () => {
+      renderHook(() => usePostEditor());
+      // 텍스트가 정확히 "`" 로 끝남 → openIndex 찾지만 innerText === ''
+      const { view } = createBacktickView('hello `');
+      const event = { key: '`', preventDefault: jest.fn() };
+
+      const result = capturedConfig.editorProps.handleKeyDown(view, event);
+
+      expect(event.preventDefault).not.toHaveBeenCalled();
+      expect(result).toBe(false);
+    });
+  });
+
+  describe('handleKeyDown — Backspace UX 개선', () => {
+    it('빈 헤딩에서 Backspace → paragraph로 전환하고 true를 반환한다', () => {
+      renderHook(() => usePostEditor());
+      const { view, tr } = createBackspaceView({ parentType: 'heading' });
+      const event = { key: 'Backspace', preventDefault: jest.fn() };
+
+      const result = capturedConfig.editorProps.handleKeyDown(view, event);
+
+      expect(tr.setBlockType).toHaveBeenCalled();
+      expect(view.dispatch).toHaveBeenCalled();
+      expect(result).toBe(true);
+    });
+
+    it.each(['bulletList', 'orderedList', 'taskList'])(
+      '빈 paragraph가 %s 바로 뒤에 있을 때 Backspace → 리스트 재진입 방지하고 true를 반환한다',
+      (listType) => {
+        renderHook(() => usePostEditor());
+        const { view, tr } = createBackspaceView({
+          parentType: 'paragraph',
+          nodeBeforeType: listType,
+        });
+        const event = { key: 'Backspace', preventDefault: jest.fn() };
+
+        const result = capturedConfig.editorProps.handleKeyDown(view, event);
+
+        expect(tr.delete).toHaveBeenCalled();
+        expect(tr.setSelection).toHaveBeenCalled();
+        expect(view.dispatch).toHaveBeenCalled();
+        expect(result).toBe(true);
+      },
+    );
+
+    it('빈 paragraph이지만 앞 노드가 리스트가 아니면 false를 반환한다', () => {
+      renderHook(() => usePostEditor());
+      const { view } = createBackspaceView({
+        parentType: 'paragraph',
+        nodeBeforeType: 'paragraph',
+      });
+      const event = { key: 'Backspace', preventDefault: jest.fn() };
+
+      const result = capturedConfig.editorProps.handleKeyDown(view, event);
+
+      expect(result).toBe(false);
+    });
+
+    it('커서가 블록 시작이 아니면(parentOffset > 0) false를 반환한다', () => {
+      renderHook(() => usePostEditor());
+      const { view } = createBackspaceView({ parentType: 'heading', parentOffset: 1 });
+      const event = { key: 'Backspace', preventDefault: jest.fn() };
+
+      const result = capturedConfig.editorProps.handleKeyDown(view, event);
 
       expect(result).toBe(false);
     });
