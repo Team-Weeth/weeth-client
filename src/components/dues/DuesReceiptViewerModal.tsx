@@ -2,10 +2,10 @@
 
 import { useEffect, useState } from 'react';
 
-import { ArrowLeftIcon, ArrowRightIcon, DeleteIcon } from '@/assets/icons';
+import { DeleteIcon } from '@/assets/icons';
 import { Icon } from '@/components/ui';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
-import { cn } from '@/lib/cn';
+import { DuesReceiptPageButton } from './DuesReceiptPageButton';
 
 interface DuesReceiptViewerModalProps {
   open: boolean;
@@ -57,7 +57,11 @@ function DuesReceiptViewerModal({ open, onOpenChange, receiptUrls }: DuesReceipt
 
         <div className="relative flex min-h-0 flex-1 items-center justify-center px-450 py-450">
           {hasMultipleReceipts && (
-            <ReceiptPageButton direction="previous" onClick={handlePrevious} className="left-450" />
+            <DuesReceiptPageButton
+              direction="previous"
+              onClick={handlePrevious}
+              className="left-450"
+            />
           )}
 
           {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -68,37 +72,13 @@ function DuesReceiptViewerModal({ open, onOpenChange, receiptUrls }: DuesReceipt
           />
 
           {hasMultipleReceipts && (
-            <ReceiptPageButton direction="next" onClick={handleNext} className="right-450" />
+            <DuesReceiptPageButton direction="next" onClick={handleNext} className="right-450" />
           )}
         </div>
 
         <footer className="h-20 shrink-0" aria-hidden="true" />
       </DialogContent>
     </Dialog>
-  );
-}
-
-interface ReceiptPageButtonProps {
-  direction: 'previous' | 'next';
-  onClick: () => void;
-  className?: string;
-}
-
-function ReceiptPageButton({ direction, onClick, className }: ReceiptPageButtonProps) {
-  const isPrevious = direction === 'previous';
-
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      className={cn(
-        'absolute top-1/2 flex size-10 -translate-y-1/2 cursor-pointer items-center justify-center text-white transition-opacity hover:opacity-70',
-        className,
-      )}
-      aria-label={isPrevious ? '이전 영수증 보기' : '다음 영수증 보기'}
-    >
-      <Icon src={isPrevious ? ArrowLeftIcon : ArrowRightIcon} size={16} />
-    </button>
   );
 }
 
