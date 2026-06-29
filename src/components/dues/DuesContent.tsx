@@ -93,7 +93,7 @@ function DuesContent() {
   };
 
   return (
-    <main className="mx-auto flex w-full max-w-[1250px] flex-col gap-700 px-450 pt-600 pb-800">
+    <main className="mx-auto flex w-full max-w-dues flex-col gap-700 px-450 pt-600 pb-800">
       <div className="flex items-end justify-between gap-400">
         <div className="flex flex-col gap-300">
           <Breadcrumb>
