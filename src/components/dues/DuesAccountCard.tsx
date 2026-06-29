@@ -3,8 +3,8 @@
 import { CopyIcon } from '@/assets/icons';
 import { Icon } from '@/components/ui';
 import { cn } from '@/lib/cn';
-import { toastSuccess } from '@/stores/useToastStore';
 import type { DuesAccount } from '@/types/dues';
+import { copyTextToClipboard } from '@/utils/shared/clipboard';
 
 interface DuesAccountCardProps {
   account: DuesAccount;
@@ -25,8 +25,10 @@ function DuesAccountCard({
   const isHighlight = variant === 'highlight';
 
   const handleCopy = async () => {
-    await navigator.clipboard.writeText(`${accountText} ${account.holderName}`);
-    toastSuccess(copyMessage);
+    await copyTextToClipboard(`${accountText} ${account.holderName}`, {
+      successMessage: copyMessage,
+      errorMessage: '계좌번호 복사에 실패했어요',
+    });
   };
 
   return (

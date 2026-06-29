@@ -31,8 +31,21 @@ function sortDuesTransactions(transactions: DuesTransaction[]) {
   return [...transactions].sort((a, b) => {
     if (a.type === 'dues' && b.type !== 'dues') return -1;
     if (a.type !== 'dues' && b.type === 'dues') return 1;
-    return 0;
+
+    const dateCompare = compareDateDesc(a.date, b.date);
+    if (dateCompare !== 0) return dateCompare;
+
+    return b.id - a.id;
   });
+}
+
+function compareDateDesc(aDate: string, bDate: string) {
+  return getDateSortValue(bDate) - getDateSortValue(aDate);
+}
+
+function getDateSortValue(dateStr: string) {
+  const [year = 0, month = 0, day = 0] = dateStr.split('-').map(Number);
+  return year * 10000 + month * 100 + day;
 }
 
 function getTransactionCounts(transactions: DuesTransaction[]) {

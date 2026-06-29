@@ -35,7 +35,7 @@ function DuesReceiptViewerModal({ open, onOpenChange, receiptUrls }: DuesReceipt
         showCloseButton={false}
         adminMobileFullscreen={false}
         overlayClassName="bg-transparent"
-        className="max-tablet:h-[calc(100dvh-160px)] max-tablet:max-w-[calc(100%-36px)] flex h-[520px] max-h-[calc(100dvh-80px)] w-full max-w-[760px] flex-col gap-0 rounded-lg border-0 bg-[#1E2021] p-0 text-white shadow-lg"
+        className="max-tablet:h-[calc(100dvh-160px)] max-tablet:max-w-[calc(100%-36px)] flex h-[520px] max-h-[calc(100dvh-80px)] w-full max-w-[760px] flex-col gap-0 rounded-lg border-0 bg-neutral-800 p-0 text-white shadow-lg"
       >
         <div className="flex items-center justify-between p-450">
           <DialogTitle className="typo-sub1 text-white">

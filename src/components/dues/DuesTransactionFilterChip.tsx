@@ -13,6 +13,7 @@ function DuesTransactionFilterChip({
   return (
     <button
       type={type}
+      aria-pressed={active}
       className={cn(
         'typo-button2 text-text-normal hover:bg-button-neutral-interaction border-line cursor-pointer rounded-[10px] border px-400 py-200 transition-colors',
         active ? 'bg-button-neutral border-transparent' : 'bg-transparent',

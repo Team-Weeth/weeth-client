@@ -43,10 +43,7 @@ function DuesTransactionDetailCard({ transaction }: DuesTransactionDetailCardPro
           />
           <DuesTransactionDetailRow label="일자" value={formatDateDisplay(transaction.date)} />
           <DuesTransactionDetailRow label="분류" value={categoryText} />
-          <DuesTransactionDetailRow
-            label="등록자"
-            value={transaction.registrant ?? '운영진 김검도'}
-          />
+          <DuesTransactionDetailRow label="등록자" value={transaction.registrant ?? '-'} />
         </dl>
       </div>
     </section>
