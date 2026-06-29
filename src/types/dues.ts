@@ -27,5 +27,6 @@ export interface DuesTransaction {
   category?: string;
   registrant?: string;
   receiptUrl?: string;
+  receiptUrls?: string[];
   receiptThumbnailUrl?: string;
 }

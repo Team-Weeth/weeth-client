@@ -13,3 +13,4 @@ export {
   DuesTransactionDetailModal,
   type DuesTransactionDetailModalProps,
 } from './DuesTransactionDetailModal';
+export { DuesReceiptViewerModal, type DuesReceiptViewerModalProps } from './DuesReceiptViewerModal';

@@ -1,5 +1,7 @@
 'use client';
 
+import { useState } from 'react';
+
 import { ArrowRightIcon, DeleteIcon } from '@/assets/icons';
 import { Icon } from '@/components/ui';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
@@ -7,6 +9,7 @@ import { cn } from '@/lib/cn';
 import { formatAmount } from '@/lib/formatAmount';
 import type { DuesTransaction, DuesTransactionType } from '@/types/dues';
 import { formatDateDisplay } from '@/utils/shared/date';
+import { DuesReceiptViewerModal } from './DuesReceiptViewerModal';
 
 interface DuesTransactionDetailModalProps {
   open: boolean;
@@ -37,12 +40,15 @@ function DuesTransactionDetailModal({
   onOpenChange,
   transaction,
 }: DuesTransactionDetailModalProps) {
+  const [receiptViewerOpen, setReceiptViewerOpen] = useState(false);
+
   if (!transaction) return null;
 
   const typeConfig = TYPE_CONFIG[transaction.type];
   const categoryText = transaction.category
     ? `${typeConfig.label} · ${transaction.category}`
     : typeConfig.label;
+  const receiptUrls = getReceiptUrls(transaction);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -97,8 +103,18 @@ function DuesTransactionDetailModal({
             </div>
           </section>
 
-          <ReceiptCard transaction={transaction} />
+          <ReceiptCard
+            transaction={transaction}
+            receiptUrls={receiptUrls}
+            onOpenReceiptViewer={() => setReceiptViewerOpen(true)}
+          />
         </div>
+
+        <DuesReceiptViewerModal
+          open={receiptViewerOpen}
+          onOpenChange={setReceiptViewerOpen}
+          receiptUrls={receiptUrls}
+        />
       </DialogContent>
     </Dialog>
   );
@@ -113,18 +129,25 @@ function DetailRow({ label, value }: { label: string; value: string }) {
   );
 }
 
-function ReceiptCard({ transaction }: { transaction: DuesTransaction }) {
-  const hasReceipt = Boolean(transaction.receiptUrl);
+interface ReceiptCardProps {
+  transaction: DuesTransaction;
+  receiptUrls: string[];
+  onOpenReceiptViewer: () => void;
+}
+
+function ReceiptCard({ transaction, receiptUrls, onOpenReceiptViewer }: ReceiptCardProps) {
+  const hasReceipt = receiptUrls.length > 0;
+  const thumbnailUrl = transaction.receiptThumbnailUrl ?? receiptUrls[0];
   const className = cn(
-    'bg-container-neutral flex items-start gap-300 rounded-lg p-450',
+    'bg-container-neutral flex items-start gap-300 rounded-lg p-450 text-left',
     hasReceipt && 'hover:bg-container-neutral-interaction cursor-pointer transition-colors',
   );
   const content = (
     <>
       <div className="bg-container-neutral-alternative flex size-12 shrink-0 items-center justify-center overflow-hidden rounded-sm">
-        {transaction.receiptThumbnailUrl ? (
+        {thumbnailUrl ? (
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={transaction.receiptThumbnailUrl} alt="" className="size-full object-cover" />
+          <img src={thumbnailUrl} alt="" className="size-full object-cover" />
         ) : (
           <span className="typo-caption2 text-text-alternative">영수증</span>
         )}
@@ -145,20 +168,27 @@ function ReceiptCard({ transaction }: { transaction: DuesTransaction }) {
     </>
   );
 
-  if (transaction.receiptUrl) {
+  if (hasReceipt) {
     return (
-      <a
-        href={transaction.receiptUrl}
-        target="_blank"
-        rel="noopener noreferrer"
+      <button
+        type="button"
+        onClick={onOpenReceiptViewer}
         className={className}
+        aria-label="영수증 원본 보기"
       >
         {content}
-      </a>
+      </button>
     );
   }
 
   return <section className={className}>{content}</section>;
+}
+
+function getReceiptUrls(transaction: DuesTransaction) {
+  const receiptUrls =
+    transaction.receiptUrls ?? (transaction.receiptUrl ? [transaction.receiptUrl] : []);
+
+  return receiptUrls.filter(Boolean);
 }
 
 export { DuesTransactionDetailModal, type DuesTransactionDetailModalProps };

@@ -48,7 +48,8 @@ const MOCK_TRANSACTIONS: DuesTransaction[] = [
     counterparty: '인프런',
     category: '운영비',
     registrant: '운영진 김검도',
-    receiptUrl: '#',
+    receiptUrls: ['/mock-receipt.svg', '/mock-receipt.svg', '/mock-receipt.svg'],
+    receiptThumbnailUrl: '/mock-receipt.svg',
   },
   {
     id: 4,
