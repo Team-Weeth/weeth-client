@@ -2,7 +2,7 @@ import { Skeleton } from '@/components/ui';
 
 function DuesPageSkeleton() {
   return (
-    <main className="mx-auto flex w-full max-w-dues flex-col gap-700 px-450 pt-600 pb-800">
+    <main className="max-w-dues mx-auto flex w-full flex-col gap-700 px-450 pt-600 pb-800">
       <div className="flex items-end justify-between gap-400">
         <div className="flex flex-col gap-300">
           <Skeleton className="h-4 w-16" />
