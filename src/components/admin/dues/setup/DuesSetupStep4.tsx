@@ -1,9 +1,11 @@
 'use client';
 
 import { useState } from 'react';
+import { useParams } from 'next/navigation';
 
 import { BackButton } from '@/components/admin/dues';
 import { Switch } from '@/components/ui';
+import { duesApi } from '@/lib/apis/dues';
 import { useDuesSetupValues, useDuesSetupActions } from '@/stores/useDuesSetupStore';
 
 import {
@@ -26,9 +28,11 @@ interface Errors {
 }
 
 function DuesSetupStep4() {
+  const { clubId } = useParams<{ clubId: string }>();
   const { goToStep } = useDuesSetupNavigation();
 
   const {
+    accountId,
     cardinalNumber,
     accountNumber,
     bankName,
@@ -40,13 +44,27 @@ function DuesSetupStep4() {
 
   const [errors, setErrors] = useState<Errors>({});
 
-  const handleNext = () => {
+  const handleNext = async () => {
     const next: Errors = {};
     if (!accountNumber.trim()) next.accountNumber = '계좌번호를 입력해주세요';
     if (!bankName.trim()) next.bankName = '은행을 입력해주세요';
     if (!accountHolder.trim()) next.accountHolder = '예금주를 입력해주세요';
     setErrors(next);
     if (Object.keys(next).length > 0) return;
+    if (accountId === null) return;
+
+    await duesApi
+      .saveBankAccount(clubId, accountId, {
+        bankAccountVisible: isAccountPublic,
+        bankAccount: {
+          bankName: bankName.trim(),
+          accountNumber: accountNumber.trim(),
+          holder: accountHolder.trim(),
+          guide: accountGuide.trim() || null,
+        },
+      })
+      .catch(() => {});
+
     goToStep(5);
   };
 

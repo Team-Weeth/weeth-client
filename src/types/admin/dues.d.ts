@@ -85,6 +85,16 @@ export interface SavePaymentTargetsBody {
   excludedClubMemberIds: number[];
 }
 
+export interface SaveBankAccountBody {
+  bankAccountVisible: boolean;
+  bankAccount: {
+    bankName: string;
+    accountNumber: string;
+    holder: string;
+    guide: string | null;
+  };
+}
+
 export interface PaymentTargetsData {
   summary: {
     totalCount: number;
