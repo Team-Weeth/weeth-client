@@ -10,7 +10,7 @@ interface UseCardinalSelectorOptions {
 }
 
 function useCardinalSelector({ autoSelectLatest = false }: UseCardinalSelectorOptions = {}) {
-  const { data: cardinals = [] } = useCardinals();
+  const { data: cardinals = [], isPending, isFetching } = useCardinals();
   const [selectedCardinalId, setSelectedCardinalId] = useState<number | null>(null);
 
   const latestCardinal =
@@ -32,6 +32,7 @@ function useCardinalSelector({ autoSelectLatest = false }: UseCardinalSelectorOp
     setSelectedCardinalId,
     activeCardinal,
     latestCardinal,
+    isLoading: isPending || (isFetching && cardinals.length === 0),
   };
 }
 
