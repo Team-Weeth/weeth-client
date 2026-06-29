@@ -51,6 +51,5 @@ next-env.d.ts
 # Sentry Config File
 .env.sentry-build-plugin
 
-# Obsidian per-user state
-docs/.obsidian/workspace.json
-docs/.obsidian/workspaces.json
+# Obsidian
+docs/.obsidian/
