@@ -6,72 +6,72 @@ disable-model-invocation: true
 allowed-tools: Glob, Grep, Read, Bash, Write, Edit
 ---
 
-# 테스트 작성
+# Write Tests
 
-대상 파일을 분석하여 Jest + React Testing Library 테스트를 작성합니다.
+Analyzes the target file and writes Jest + React Testing Library tests.
 
-전략, 규칙, 파일 위치 컨벤션은 `.claude/rules/testing.md`를 참고하세요.
+For strategy, rules, and file location conventions, refer to `.claude/rules/testing.md`.
 
-## 인수
+## Arguments
 
-- `/write-tests src/components/ui/Button.tsx` — 단위 테스트
-- `/write-tests src/hooks/useAutoScroll.ts` — 훅 테스트
-- `/write-tests src/components/board/PostList.tsx --integration` — MSW 통합 테스트
-- `/write-tests --suggest` — 현재 브랜치 변경 파일을 분석해 테스트 작성 대상 추천
-- `/write-tests` (생략 시 IDE에서 현재 열린 파일을 대상으로 하거나 사용자에게 질문)
+- `/write-tests src/components/ui/Button.tsx` — unit test
+- `/write-tests src/hooks/useAutoScroll.ts` — hook test
+- `/write-tests src/components/board/PostList.tsx --integration` — MSW integration test
+- `/write-tests --suggest` — analyze changed files on the current branch and recommend test targets
+- `/write-tests` (omitted) — target the currently open file in the IDE, or ask the user
 
-## 워크플로 (순서대로 따르세요)
+## Workflow (follow in order)
 
-### 1. 대상 파일 확인
+### 1. Identify the target file
 
-| 조건 | 동작 |
-|------|------|
-| `$ARGUMENTS`가 `--suggest` | **[추천 모드]** 로 이동 |
-| `$ARGUMENTS`가 파일 경로 | 해당 파일로 2단계 진행 |
-| `$ARGUMENTS` 없음 | **[추천 모드]** 로 이동 (자동) |
+| Condition | Action |
+|-----------|--------|
+| `$ARGUMENTS` is `--suggest` | Go to **[Suggest Mode]** |
+| `$ARGUMENTS` is a file path | Proceed to step 2 with that file |
+| `$ARGUMENTS` is empty | Go to **[Suggest Mode]** (automatic) |
 
 ---
 
-## [추천 모드] `--suggest`
+## [Suggest Mode] `--suggest`
 
-### S1. 브랜치 변경 파일 수집
+### S1. Collect changed files on the branch
 
 ```bash
 git diff main...HEAD --name-only --diff-filter=AM
 ```
 
-결과에서 아래 항목을 **제외**한다:
+**Exclude** the following from the results:
 
-| 제외 패턴 | 이유 |
-|-----------|------|
-| `*.d.ts` | 타입 선언만 있음 |
-| `**/index.ts` | 배럴 export |
-| `src/types/**` | 타입 전용 |
-| `src/constants/**` | 상수 전용 |
-| `src/assets/**` | 에셋 |
-| `src/mocks/**` | 테스트 픽스처 자체 |
-| `src/providers/**` | 얇은 프레임워크 통합 레이어 |
-| `src/app/**` | Next.js 프레임워크 파일 |
-| `**/__tests__/**` | 이미 테스트 파일 |
-| `*.test.*` / `*.spec.*` | 이미 테스트 파일 |
+| Exclusion pattern | Reason |
+|-------------------|--------|
+| `*.d.ts` | Type declarations only |
+| `**/index.ts` | Barrel exports |
+| `src/types/**` | Types only |
+| `src/constants/**` | Constants only |
+| `src/assets/**` | Assets |
+| `src/mocks/**` | Test fixtures themselves |
+| `src/providers/**` | Thin framework integration layer |
+| `src/app/**` | Next.js framework files |
+| `**/__tests__/**` | Already test files |
+| `*.test.*` / `*.spec.*` | Already test files |
 
-### S2. 각 파일 분류
+### S2. Classify each file
 
-남은 파일을 **빠르게 읽어** 아래 기준으로 분류한다:
+**Quickly read** the remaining files and classify them by the following criteria:
 
-| 분류 | 판단 기준 | 권장 명령 |
-|------|----------|----------|
-| **훅** | `src/hooks/` 경로이고 `use`로 시작 | `/write-tests {path}` |
-| **통합** | `useQuery` / `useSuspenseQuery` / `lib/apis/` import 존재 | `/write-tests {path} --integration` |
-| **UI 컴포넌트** | `src/components/ui/` 경로 | `/write-tests {path}` |
-| **도메인 컴포넌트** | `src/components/{feature}/` + API 호출 없음 | `/write-tests {path}` |
-| **도메인 컴포넌트** | `src/components/{feature}/` + API 호출 있음 | `/write-tests {path} --integration` |
-| **유틸** | `src/lib/` 경로 | `/write-tests {path}` |
-| **제외** | 위 어디에도 해당 안 됨 | — |
+| Classification | Criteria | Recommended command |
+|----------------|----------|---------------------|
+| **Hook** | Path under `src/hooks/` and starts with `use` | `/write-tests {path}` |
+| **Integration** | Imports `useQuery` / `useSuspenseQuery` / `lib/apis/` | `/write-tests {path} --integration` |
+| **UI component** | Path under `src/components/ui/` | `/write-tests {path}` |
+| **Domain component** | `src/components/{feature}/` + no API calls | `/write-tests {path}` |
+| **Domain component** | `src/components/{feature}/` + has API calls | `/write-tests {path} --integration` |
+| **Utility** | Path under `src/lib/` | `/write-tests {path}` |
+| **Excluded** | Doesn't fit any of the above | — |
 
-### S3. 추천 목록 출력
+### S3. Output recommendation list
 
-아래 형식으로 출력한다:
+Output in the following format:
 
 ```
 ## 테스트 작성 추천 목록
@@ -93,112 +93,112 @@ git diff main...HEAD --name-only --diff-filter=AM
 - `src/types/post.ts` — 타입 선언만 있음
 ```
 
-우선순위 기준:
-- **높음**: 훅, 복잡한 상태/계산 로직 포함 파일
-- **중간**: API 연동 컴포넌트 (통합 테스트 필요)
-- **낮음**: 단순 UI 컴포넌트, 유틸
+Priority criteria:
+- **High**: hooks, files with complex state/computation logic
+- **Medium**: API-integrated components (require integration tests)
+- **Low**: simple UI components, utilities
 
-### S4. 사용자에게 질문
+### S4. Ask the user
 
-추천 목록 출력 후 물어본다:
+After outputting the recommendation list, ask:
 
 > "전체 목록을 순서대로 작성할까요, 아니면 특정 파일을 골라드릴까요?"
 
-- 전체 진행: 우선순위 높음 → 중간 → 낮음 순으로 각 파일에 대해 **[일반 모드] 2단계** 부터 실행
-- 특정 파일 선택: 선택된 파일만 진행
+- Proceed with all: run **[Normal Mode] from step 2** for each file in order: high → medium → low priority
+- Pick specific files: proceed only with the selected files
 
 ---
 
-### 2. 테스트 타입 결정
+### 2. Determine the test type
 
-| 조건 | 타입 |
-|------|------|
-| `--integration` 플래그 있음 | 통합 테스트 (RTL + MSW) |
-| React Query / lib/apis로 데이터를 fetch하는 파일 | 통합 테스트 (RTL + MSW) |
-| 순수 컴포넌트 / 유틸 / 훅 (API 호출 없음) | 단위 테스트 |
+| Condition | Type |
+|-----------|------|
+| `--integration` flag present | Integration test (RTL + MSW) |
+| File fetches data via React Query / lib/apis | Integration test (RTL + MSW) |
+| Pure component / utility / hook (no API calls) | Unit test |
 
-### 3. 해당 타입의 예시를 읽은 뒤 테스트 작성
+### 3. Read the relevant example, then write the test
 
-| 타입 | 예시 파일 |
-|------|----------|
-| UI 컴포넌트 | [examples/Button.test.md](examples/Button.test.md) |
-| 훅 | [examples/useMonthNavigator.test.md](examples/useMonthNavigator.test.md) |
-| 통합 테스트 (React Query + MSW) | [examples/HomeDashboard.integration.test.md](examples/HomeDashboard.integration.test.md) |
+| Type | Example file |
+|------|-------------|
+| UI component | [examples/Button.test.md](examples/Button.test.md) |
+| Hook | [examples/useMonthNavigator.test.md](examples/useMonthNavigator.test.md) |
+| Integration test (React Query + MSW) | [examples/HomeDashboard.integration.test.md](examples/HomeDashboard.integration.test.md) |
 
-#### 출력 경로 컨벤션
+#### Output path convention
 
-| 소스 파일 | 테스트 파일 |
-|----------|------------|
+| Source file | Test file |
+|-------------|-----------|
 | `src/components/ui/Button.tsx` | `src/components/ui/__tests__/Button.test.tsx` |
 | `src/hooks/useAutoScroll.ts` | `src/hooks/__tests__/useAutoScroll.test.ts` |
 | `src/app/page.tsx` | `src/app/__tests__/page.test.tsx` |
 
-확장자: `.tsx` → `.test.tsx`, `.ts` → `.test.ts`
+Extension: `.tsx` → `.test.tsx`, `.ts` → `.test.ts`
 
-#### 필수 테스트 케이스
+#### Required test cases
 
-1. **Smoke 테스트** — 크래시 없이 렌더링되는지 확인
-2. **Props / variant 동작** — 다른 variant prop이 다른 결과를 내는지 확인
-3. **사용자 인터랙션** — 클릭, 입력 등 이벤트 테스트 (존재하는 경우)
-4. **접근성** — role, label, aria 속성 확인
+1. **Smoke test** — verify it renders without crashing
+2. **Props / variant behavior** — verify different variant props produce different results
+3. **User interactions** — test events like click, input (if applicable)
+4. **Accessibility** — verify role, label, aria attributes
 
-#### 금지 사항
+#### Prohibited
 
-- Tailwind 클래스명 단언 금지: `expect(el).toHaveClass('bg-button-primary')` ❌
-- `next/image`, `next/navigation` 재모킹 금지 (`jest.setup.tsx`에서 이미 처리됨)
-- 구현 세부사항(내부 state, ref 직접 접근) 테스트 금지
-- 항상 `userEvent.setup()` 사용, `fireEvent` 금지
+- No asserting Tailwind class names: `expect(el).toHaveClass('bg-button-primary')` ❌
+- No re-mocking `next/image` or `next/navigation` (already handled in `jest.setup.tsx`)
+- No testing implementation details (internal state, direct ref access)
+- Always use `userEvent.setup()`; `fireEvent` is forbidden
 
-### 4. 기존 테스트 처리
+### 4. Handle existing tests
 
-테스트 파일이 이미 존재하는 경우:
-- 현재 통과 중인 테스트는 모두 유지
-- 누락된 케이스만 추가 (점진적 업데이트)
+If the test file already exists:
+- Keep all currently passing tests
+- Only add missing cases (incremental update)
 
-### 5. 완료 후 — 테스트 실행 및 커버리지 확인
+### 5. After completion — run tests and check coverage
 
-#### 5-1. 현재 브랜치에서 작성된 테스트 파일 수집
+#### 5-1. Collect test files written on the current branch
 
 ```bash
 git diff main...HEAD --name-only --diff-filter=AM | grep -E '(__tests__|\.test\.|\.spec\.)'
 ```
 
-#### 5-2. 소스 파일 경로 도출
+#### 5-2. Derive source file paths
 
-테스트 파일 경로에서 대응하는 소스 파일을 계산한다:
+Calculate the corresponding source file from each test file path:
 
-| 테스트 파일 | 소스 파일 |
-|------------|---------|
+| Test file | Source file |
+|-----------|-------------|
 | `src/hooks/__tests__/useFoo.test.ts` | `src/hooks/useFoo.ts` |
 | `src/components/ui/__tests__/Button.test.tsx` | `src/components/ui/Button.tsx` |
 
-규칙: `__tests__/` 제거 + `.test.ts` → `.ts` / `.test.tsx` → `.tsx`
+Rule: remove `__tests__/` + `.test.ts` → `.ts` / `.test.tsx` → `.tsx`
 
-#### 5-3. 커버리지 포함 테스트 실행
+#### 5-3. Run tests with coverage
 
-수집한 테스트 파일과 소스 파일을 이용해 실행한다:
+Run using the collected test files and source files:
 
 ```bash
-pnpm test <테스트파일1> <테스트파일2> ... --coverage --collectCoverageFrom='["<소스파일1>","<소스파일2>",...]'
+pnpm test <test-file-1> <test-file-2> ... --coverage --collectCoverageFrom='["<source-file-1>","<source-file-2>",...]'
 ```
 
-#### 5-4. 결과 처리
+#### 5-4. Handle results
 
-| 결과 | 처리 |
-|------|------|
-| 전부 PASS | 6단계로 진행 |
-| 일부 FAIL | 실패 케이스를 수정한 뒤 5-3 재실행 |
+| Result | Action |
+|--------|--------|
+| All PASS | Proceed to step 6 |
+| Some FAIL | Fix failing cases, then re-run 5-3 |
 
-### 6. 커버리지 문서 기록
+### 6. Record coverage documentation
 
-모든 테스트가 PASS된 후, 측정값을 `docs/아키텍처/테스트-커버리지/` 에 기록한다.
+After all tests PASS, record the measurements in `docs/아키텍처/테스트-커버리지/`.
 
-#### 6-1. 도메인 파일 결정
+#### 6-1. Determine the domain file
 
-소스 파일 경로에서 도메인을 추출한다:
+Extract the domain from the source file path:
 
-| 소스 파일 경로 패턴 | 도메인 파일 |
-|--------------------|------------|
+| Source file path pattern | Domain file |
+|--------------------------|-------------|
 | `src/components/board/**` | `docs/아키텍처/테스트-커버리지/board.md` |
 | `src/components/admin/**` | `docs/아키텍처/테스트-커버리지/admin.md` |
 | `src/components/auth/**` | `docs/아키텍처/테스트-커버리지/auth.md` |
@@ -207,66 +207,66 @@ pnpm test <테스트파일1> <테스트파일2> ... --coverage --collectCoverage
 | `src/components/ui/**` | `docs/아키텍처/테스트-커버리지/ui.md` |
 | `src/hooks/**` | `docs/아키텍처/테스트-커버리지/hooks.md` |
 | `src/lib/**` | `docs/아키텍처/테스트-커버리지/lib.md` |
-| 여러 도메인 혼재 | 각 도메인 파일에 분리 기록 |
+| Multiple domains mixed | Record separately in each domain file |
 
-#### 6-2. 도메인 파일 업데이트
+#### 6-2. Update the domain file
 
-도메인 파일이 **이미 존재**하면 해당 소스 파일의 섹션을 찾아 수치를 갱신한다.
-**없으면** 아래 형식으로 새로 생성한다:
+If the domain file **already exists**, find the section for that source file and update the numbers.
+If it **does not exist**, create it with the following format:
 
 ```markdown
-# 테스트 커버리지 — {도메인} 도메인
+# Test Coverage — {Domain} Domain
 
-`src/components/{도메인}/` 하위 파일의 단위·훅 테스트 커버리지를 기록한다.
+Records unit/hook test coverage for files under `src/components/{domain}/`.
 
 ---
 
-## {컴포넌트/훅 그룹명} (`src/...`)
+## {Component/Hook Group Name} (`src/...`)
 
-**측정일**: YYYY-MM-DD
-**테스트 파일**: `src/.../__tests__/`
-**총 테스트 수**: N개
+**Measured**: YYYY-MM-DD
+**Test file**: `src/.../__tests__/`
+**Total tests**: N
 
-### 파일별 커버리지
+### Coverage by file
 
-| 파일 | Statements | Branches | Functions | Lines |
+| File | Statements | Branches | Functions | Lines |
 |------|-----------|---------|---------|-------|
-| `파일명.ts` | X% | X% | X% | X% |
-| **전체 평균** | X% | X% | X% | X% |
+| `filename.ts` | X% | X% | X% | X% |
+| **Overall average** | X% | X% | X% | X% |
 
-### 테스트 구성
+### Test composition
 
-#### `파일명.test.ts` (N개)
+#### `filename.test.ts` (N tests)
 
-한 줄 설명.
+One-line description.
 
-| 케이스 | 검증 내용 |
-|--------|---------|
+| Case | What is verified |
+|------|-----------------|
 | ... | ... |
 
-### 미커버 브랜치
+### Uncovered branches
 
-| 라인 | 내용 | 이유 |
-|-----|------|------|
+| Line | Content | Reason |
+|------|---------|--------|
 | ... | ... | ... |
 
 ---
 
-## 추가 예정
+## Planned
 
-| 파일 | 우선순위 | 비고 |
-|------|---------|------|
+| File | Priority | Notes |
+|------|----------|-------|
 | ... | ... | ... |
 ```
 
-미커버 브랜치가 없으면 해당 섹션은 생략한다.
+If there are no uncovered branches, omit that section.
 
-#### 6-3. 인덱스 파일 업데이트
+#### 6-3. Update the index file
 
-`docs/아키텍처/테스트-커버리지.md` 의 도메인 목록 테이블에 해당 도메인이 없으면 한 줄 추가한다:
+If the domain is not already in the domain list table of `docs/아키텍처/테스트-커버리지.md`, add one row:
 
 ```markdown
-| {도메인} | [[테스트-커버리지/{도메인}]] | YYYY-MM-DD |
+| {domain} | [[테스트-커버리지/{domain}]] | YYYY-MM-DD |
 ```
 
-이미 있으면 최근 측정일만 갱신한다.
+If it already exists, only update the last measured date.
