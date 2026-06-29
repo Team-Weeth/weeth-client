@@ -58,6 +58,8 @@ function DuesSetupStep1() {
     PAYMENT_TARGET: 2,
     CARRY_OVER: 3,
     BANK_ACCOUNT: 4,
+    // 등록 완료(REVIEW) 장부 복원 시에는 최종 확인 화면(5단계)부터 노출
+    REVIEW: 5,
   };
 
   const cardinalNumber = latestCardinal?.cardinalNumber ?? 0;
@@ -97,6 +99,15 @@ function DuesSetupStep1() {
         accountHolder: bankAccount.bankAccount?.holder ?? '',
         accountGuide: bankAccount.bankAccount?.guide ?? '',
       });
+    }
+
+    // 납부 대상은 status 응답에 멤버 ID가 없어(개수만 제공) 목록 API로 별도 복원한다.
+    const targetsRes = await duesApi.getPaymentTargets(clubId, accountId).catch(() => null);
+    if (targetsRes) {
+      const targetedIds = targetsRes.data.data.targets.content
+        .filter((t) => t.targetStatus === 'TARGETED')
+        .map((t) => t.paymentTargetInfo.clubMemberId);
+      setField({ selectedMemberIds: targetedIds, memberIdsInitialized: true });
     }
 
     const targetStep = STEP_MAP[registrationStep] ?? 1;

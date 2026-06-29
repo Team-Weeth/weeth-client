@@ -4,7 +4,12 @@ export interface DuesDraftData {
   lastModifiedByName: string | null;
 }
 
-export type RegistrationStep = 'BASIC' | 'PAYMENT_TARGET' | 'CARRY_OVER' | 'BANK_ACCOUNT';
+export type RegistrationStep =
+  | 'BASIC'
+  | 'PAYMENT_TARGET'
+  | 'CARRY_OVER'
+  | 'BANK_ACCOUNT'
+  | 'REVIEW';
 
 export interface RegistrationStatus {
   accountId: number;
