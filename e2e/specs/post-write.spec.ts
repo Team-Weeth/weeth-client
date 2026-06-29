@@ -77,9 +77,7 @@ test.describe('게시글 작성', () => {
 
   // ── 유효성 검사 ──────────────────────────────────────────────────────────
 
-  test('제목을 입력하지 않으면 에러 토스트가 표시되고 작성 페이지에 잔류한다', async ({
-    page,
-  }) => {
+  test('제목을 입력하지 않으면 에러 토스트가 표시되고 작성 페이지에 잔류한다', async ({ page }) => {
     const editor = await openWriteEditor(page, writeUrl);
 
     // 내용만 입력하고 제목은 비워 둠
@@ -92,9 +90,7 @@ test.describe('게시글 작성', () => {
     expect(page.url()).toContain('/write');
   });
 
-  test('내용을 입력하지 않으면 에러 토스트가 표시되고 작성 페이지에 잔류한다', async ({
-    page,
-  }) => {
+  test('내용을 입력하지 않으면 에러 토스트가 표시되고 작성 페이지에 잔류한다', async ({ page }) => {
     await openWriteEditor(page, writeUrl);
 
     // 제목만 입력하고 본문은 비워 둠
@@ -141,9 +137,7 @@ test.describe('게시글 작성', () => {
     expect(page.url()).toContain('/write');
   });
 
-  test('게시 완료 후 상세 페이지에서 이탈 확인 다이얼로그가 표시되지 않는다', async ({
-    page,
-  }) => {
+  test('게시 완료 후 상세 페이지에서 이탈 확인 다이얼로그가 표시되지 않는다', async ({ page }) => {
     // _allowNavigation?.() 호출 체인 검증:
     // useCreatePost onSuccess → store._allowNavigation() → allowNavigation() → isLeaving=true
     // + reset() → hasChanges=false → enabled=false

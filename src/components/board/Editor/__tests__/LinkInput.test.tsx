@@ -40,15 +40,18 @@ interface MockEditorOptions {
 }
 
 function createMockEditor(options: MockEditorOptions = {}) {
-  const { href = '', selectedText = '', isEditing = false, empty = true, linkRangeText = '' } =
-    options;
+  const {
+    href = '',
+    selectedText = '',
+    isEditing = false,
+    empty = true,
+    linkRangeText = '',
+  } = options;
 
   const chain = createChainMock();
   const $from = {};
 
-  getMarkRange.mockReturnValue(
-    linkRangeText ? { from: 0, to: linkRangeText.length } : null,
-  );
+  getMarkRange.mockReturnValue(linkRangeText ? { from: 0, to: linkRangeText.length } : null);
 
   const editor = {
     getAttributes: jest.fn().mockReturnValue({ href }),

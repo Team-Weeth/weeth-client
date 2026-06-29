@@ -156,9 +156,7 @@ describe('IndentExtension', () => {
     let listEditor: Editor;
 
     beforeEach(() => {
-      listEditor = createListEditor(
-        '<ul><li><p>First</p></li><li><p>Second</p></li></ul>',
-      );
+      listEditor = createListEditor('<ul><li><p>First</p></li><li><p>Second</p></li></ul>');
     });
 
     afterEach(() => {

@@ -110,10 +110,7 @@ describe('usePostEditor', () => {
     it('파일이 없으면 false를 반환한다', () => {
       renderHook(() => usePostEditor());
 
-      const result = capturedConfig.editorProps.handlePaste(
-        {},
-        { clipboardData: { files: [] } },
-      );
+      const result = capturedConfig.editorProps.handlePaste({}, { clipboardData: { files: [] } });
 
       expect(result).toBe(false);
     });
@@ -147,10 +144,7 @@ describe('usePostEditor', () => {
     it('파일이 없으면 false를 반환한다', () => {
       renderHook(() => usePostEditor());
 
-      const result = capturedConfig.editorProps.handleDrop(
-        {},
-        { dataTransfer: { files: [] } },
-      );
+      const result = capturedConfig.editorProps.handleDrop({}, { dataTransfer: { files: [] } });
 
       expect(result).toBe(false);
     });

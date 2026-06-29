@@ -97,10 +97,9 @@ test.describe('게시글 수정 후 상세 페이지 리다이렉트', () => {
     await page.getByRole('button', { name: '수정 완료' }).click();
 
     // 회귀 검증: 수정 페이지에 잔류하면 waitForURL이 타임아웃으로 실패
-    await page.waitForURL(
-      new RegExp(`/${clubId}/board/${testBoardId}/${testPostId}$`),
-      { timeout: 10_000 },
-    );
+    await page.waitForURL(new RegExp(`/${clubId}/board/${testBoardId}/${testPostId}$`), {
+      timeout: 10_000,
+    });
 
     expect(page.url()).not.toContain('/edit/');
     expect(page.url()).toMatch(new RegExp(`/${clubId}/board/${testBoardId}/${testPostId}$`));
@@ -129,9 +128,7 @@ test.describe('게시글 수정 후 상세 페이지 리다이렉트', () => {
     await expect(page.getByText('변경 사항이 저장되지 않았어요')).toBeVisible({ timeout: 5_000 });
   });
 
-  test('수정 완료 후 상세 페이지에서 이탈 확인 다이얼로그가 표시되지 않는다', async ({
-    page,
-  }) => {
+  test('수정 완료 후 상세 페이지에서 이탈 확인 다이얼로그가 표시되지 않는다', async ({ page }) => {
     // _allowNavigation?.() 호출 체인 검증:
     // useUpdatePost onSuccess → store._allowNavigation() → allowNavigation() → isLeaving=true
     // + reset() → hasChanges=false → enabled=false
@@ -143,10 +140,9 @@ test.describe('게시글 수정 후 상세 페이지 리다이렉트', () => {
     await page.getByPlaceholder('제목').fill('[E2E] allowNavigation 검증용 수정 게시글');
 
     await page.getByRole('button', { name: '수정 완료' }).click();
-    await page.waitForURL(
-      new RegExp(`/${clubId}/board/${testBoardId}/${testPostId}$`),
-      { timeout: 10_000 },
-    );
+    await page.waitForURL(new RegExp(`/${clubId}/board/${testBoardId}/${testPostId}$`), {
+      timeout: 10_000,
+    });
 
     // 상세 페이지에서 가드 다이얼로그가 보이면 안 됨
     await expect(page.getByText('변경 사항이 저장되지 않았어요')).not.toBeVisible();
