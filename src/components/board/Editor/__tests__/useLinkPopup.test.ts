@@ -1,5 +1,5 @@
 import { renderHook, act } from '@testing-library/react';
-import { useLinkPopup } from '../useLinkPopup';
+import { useLinkPopup } from '@/components/board/Editor/useLinkPopup';
 import type { Editor } from '@tiptap/core';
 
 function createMockEditor() {
@@ -9,6 +9,20 @@ function createMockEditor() {
       coordsAtPos: jest.fn(() => ({ bottom: 100, left: 50 })),
     },
   } as unknown as Editor;
+}
+
+function mockRect(bottom: number, left: number): DOMRect {
+  return {
+    bottom,
+    left,
+    top: 0,
+    right: 0,
+    width: 0,
+    height: 0,
+    x: 0,
+    y: 0,
+    toJSON: () => ({}),
+  } as DOMRect;
 }
 
 describe('useLinkPopup', () => {
@@ -65,17 +79,7 @@ describe('useLinkPopup', () => {
 
       const anchor = document.createElement('a');
       anchor.setAttribute('href', 'https://example.com');
-      jest.spyOn(anchor, 'getBoundingClientRect').mockReturnValue({
-        bottom: 200,
-        left: 100,
-        top: 0,
-        right: 0,
-        width: 0,
-        height: 0,
-        x: 0,
-        y: 0,
-        toJSON: () => ({}),
-      } as DOMRect);
+      jest.spyOn(anchor, 'getBoundingClientRect').mockReturnValue(mockRect(200, 100));
 
       act(() => {
         result.current.handleEditorClick({ target: anchor } as unknown as React.MouseEvent);
@@ -89,17 +93,7 @@ describe('useLinkPopup', () => {
 
       const anchor = document.createElement('a');
       anchor.setAttribute('href', 'https://example.com');
-      jest.spyOn(anchor, 'getBoundingClientRect').mockReturnValue({
-        bottom: 200,
-        left: 100,
-        top: 0,
-        right: 0,
-        width: 0,
-        height: 0,
-        x: 0,
-        y: 0,
-        toJSON: () => ({}),
-      } as DOMRect);
+      jest.spyOn(anchor, 'getBoundingClientRect').mockReturnValue(mockRect(200, 100));
       const span = document.createElement('span');
       anchor.appendChild(span);
 

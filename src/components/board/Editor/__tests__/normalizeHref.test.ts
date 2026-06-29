@@ -1,4 +1,4 @@
-import { normalizeHref } from '../normalizeHref';
+import { normalizeHref } from '@/components/board/Editor/normalizeHref';
 
 describe('normalizeHref', () => {
   describe('허용된 스킴은 그대로 반환한다', () => {

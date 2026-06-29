@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { BoundTitleInput } from '../BoundTitleInput';
+import { BoundTitleInput } from '@/components/board/BoundTitleInput';
 
 // ──────────────────────────────────────────────
 // PostStore mock

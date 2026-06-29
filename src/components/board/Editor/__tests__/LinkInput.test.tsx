@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { LinkInput } from '../LinkInput';
+import { LinkInput } from '@/components/board/Editor/LinkInput';
 
 // ── @tiptap/core: getMarkRange만 mock ─────────────
 jest.mock('@tiptap/core', () => ({
@@ -83,9 +83,6 @@ describe('LinkInput', () => {
     });
   });
 
-  // ──────────────────────────────────────────────
-  // 렌더링
-  // ──────────────────────────────────────────────
   describe('렌더링', () => {
     it('editor.getAttributes("link").href로 URL 초기값을 설정한다', () => {
       const { editor } = createMockEditor({ href: 'https://example.com' });
@@ -118,9 +115,6 @@ describe('LinkInput', () => {
     });
   });
 
-  // ──────────────────────────────────────────────
-  // applyLink (Enter 키)
-  // ──────────────────────────────────────────────
   describe('applyLink (Enter 키)', () => {
     it('URL이 비어 있으면 editor 명령을 호출하지 않는다', async () => {
       const user = userEvent.setup();
@@ -239,9 +233,6 @@ describe('LinkInput', () => {
     });
   });
 
-  // ──────────────────────────────────────────────
-  // removeLink
-  // ──────────────────────────────────────────────
   describe('removeLink', () => {
     it('"링크 제거" 버튼 클릭 시 unsetLink를 호출하고 onClose를 호출한다', async () => {
       const onClose = jest.fn();
@@ -257,9 +248,6 @@ describe('LinkInput', () => {
     });
   });
 
-  // ──────────────────────────────────────────────
-  // 키보드 단축키
-  // ──────────────────────────────────────────────
   describe('키보드 단축키', () => {
     it('Escape 키를 누르면 onClose를 호출한다', async () => {
       const onClose = jest.fn();
@@ -274,9 +262,6 @@ describe('LinkInput', () => {
     });
   });
 
-  // ──────────────────────────────────────────────
-  // 외부 클릭 (useClickOutside)
-  // ──────────────────────────────────────────────
   describe('외부 클릭 (useClickOutside)', () => {
     it('URL이 있으면 applyLink를 실행한다', async () => {
       const user = userEvent.setup();

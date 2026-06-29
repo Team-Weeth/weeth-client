@@ -4,7 +4,7 @@ import Document from '@tiptap/extension-document';
 import ListItem from '@tiptap/extension-list-item';
 import Paragraph from '@tiptap/extension-paragraph';
 import Text from '@tiptap/extension-text';
-import { IndentExtension } from '../IndentExtension';
+import { IndentExtension } from '@/components/board/Editor/IndentExtension';
 
 function createEditor(content = '<p>Hello</p>'): Editor {
   const el = document.createElement('div');
@@ -38,9 +38,6 @@ describe('IndentExtension', () => {
     document.body.innerHTML = '';
   });
 
-  // ──────────────────────────────────────────────
-  // parseHTML
-  // ──────────────────────────────────────────────
   describe('parseHTML — data-indent 파싱', () => {
     it('data-indent="3"이 있으면 attrs.indent=3을 반환한다', () => {
       editor.commands.setContent('<p data-indent="3">Hello</p>');
@@ -52,9 +49,6 @@ describe('IndentExtension', () => {
     });
   });
 
-  // ──────────────────────────────────────────────
-  // renderHTML
-  // ──────────────────────────────────────────────
   describe('renderHTML — HTML 직렬화', () => {
     it('indent=0이면 data-indent와 margin-left style을 추가하지 않는다', () => {
       const html = editor.getHTML();
@@ -76,9 +70,6 @@ describe('IndentExtension', () => {
     });
   });
 
-  // ──────────────────────────────────────────────
-  // Tab (비리스트)
-  // ──────────────────────────────────────────────
   describe('Tab (비리스트 컨텍스트)', () => {
     it('indent 0 → 1로 증가한다', () => {
       editor.commands.setTextSelection(1);
@@ -101,9 +92,6 @@ describe('IndentExtension', () => {
     });
   });
 
-  // ──────────────────────────────────────────────
-  // Shift-Tab (비리스트)
-  // ──────────────────────────────────────────────
   describe('Shift-Tab (비리스트 컨텍스트)', () => {
     it('indent 2 → 1로 감소한다', () => {
       editor.commands.setContent('<p data-indent="2">Hello</p>');
@@ -119,9 +107,6 @@ describe('IndentExtension', () => {
     });
   });
 
-  // ──────────────────────────────────────────────
-  // Backspace (비리스트)
-  // ──────────────────────────────────────────────
   describe('Backspace (비리스트 컨텍스트)', () => {
     it('커서가 블록 시작(offset=0)이고 indent=1이면 indent를 0으로 감소시킨다', () => {
       editor.commands.setContent('<p data-indent="1">Hello</p>');
@@ -146,9 +131,6 @@ describe('IndentExtension', () => {
     });
   });
 
-  // ──────────────────────────────────────────────
-  // 리스트 컨텍스트 (BulletList + ListItem)
-  // ──────────────────────────────────────────────
   // 토큰 위치 계산 (<ul><li><p>First</p></li><li><p>Second</p></li></ul>):
   //   pos 3  = first listItem paragraph content start  (indexInList=0)
   //   pos 12 = second listItem paragraph content start (indexInList=1)
@@ -164,38 +146,32 @@ describe('IndentExtension', () => {
     });
 
     it('Tab — 첫 번째 아이템(indexInList=0): 리스트 블록 indent가 증가한다', () => {
-      listEditor.commands.setTextSelection(3); // inside first listItem
+      listEditor.commands.setTextSelection(3);
       listEditor.commands.keyboardShortcut('Tab');
-      // IndentExtension.updateListIndent(1) → bulletList.attrs.indent = 1
       expect(listEditor.state.doc.firstChild?.attrs.indent).toBe(1);
     });
 
     it('Tab — 두 번째 아이템(indexInList=1): sinkListItem으로 중첩 구조가 된다', () => {
-      listEditor.commands.setTextSelection(12); // inside second listItem
+      listEditor.commands.setTextSelection(12);
       listEditor.commands.keyboardShortcut('Tab');
-      // sinkListItem 성공 → root bulletList에 1개 아이템만 남음
       expect(listEditor.state.doc.firstChild?.childCount).toBe(1);
     });
 
     it('Shift-Tab — 리스트 아이템: liftListItem으로 리스트 밖으로 이탈한다', () => {
       listEditor.commands.setTextSelection(3);
       listEditor.commands.keyboardShortcut('Shift-Tab');
-      // liftListItem 성공 → 첫 번째 아이템이 paragraph로 변환됨
-      // doc의 첫 번째 노드가 더 이상 bulletList가 아님 (paragraph가 됨)
       expect(listEditor.state.doc.firstChild?.type.name).toBe('paragraph');
     });
 
     it('Backspace — 커서가 리스트 아이템 시작(offset=0): liftListItem으로 이탈한다', () => {
       listEditor.commands.setTextSelection(3);
       listEditor.commands.keyboardShortcut('Backspace');
-      // liftListItem → 첫 번째 아이템이 paragraph로 변환됨
       expect(listEditor.state.doc.firstChild?.type.name).toBe('paragraph');
     });
 
     it('Backspace — 커서가 리스트 아이템 중간(offset>0): Extension이 처리하지 않는다', () => {
       listEditor.commands.setTextSelection(5); // inside "First", offset=2
       listEditor.commands.keyboardShortcut('Backspace');
-      // Extension returns false → document structure unchanged (still bulletList)
       expect(listEditor.state.doc.firstChild?.type.name).toBe('bulletList');
     });
   });

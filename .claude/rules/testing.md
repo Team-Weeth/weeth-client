@@ -42,6 +42,13 @@ e2e/auth.spec.ts                 ← Playwright E2E
 3. **User interactions** — test events like click, input
 4. **Accessibility** — verify role, label, aria attributes
 
+### Code Style in Test Files
+
+- **`@/` alias required** — same rule as source code; relative paths (`'../'`) are forbidden in test files too, including `jest.mock()` paths
+- **No ASCII section dividers** — `// ──────────────────────────────────────────────` style lines are forbidden; use `describe()` blocks for grouping instead
+- **No redundant inline comments** — never add a comment inside `it()` that restates what the test name already says; only add when the WHY is non-obvious (e.g., a subtle invariant or a positional calculation)
+- **Extract shared helpers** — mock objects or setup code used in 2+ tests must be extracted into a top-level helper function (e.g., `function mockRect(...)`, `function createMockEditor(...)`)
+
 ---
 
 ## Hook Test Rules (renderHook + act)

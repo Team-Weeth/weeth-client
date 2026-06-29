@@ -1,11 +1,8 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { CategorySelector } from '../CategorySelector';
+import { CategorySelector } from '@/components/board/CategorySelector';
 import type { BoardNavItem } from '@/types/board';
 
-// ──────────────────────────────────────────────
-// Mocks
-// ──────────────────────────────────────────────
 jest.mock('@/stores', () => ({
   useClubName: jest.fn(() => '위드'),
 }));
@@ -89,9 +86,6 @@ const { ChannelList } = jest.requireMock('@/components/board/ChannelList') as {
   ChannelList: jest.Mock;
 };
 
-// ──────────────────────────────────────────────
-// Fixtures
-// ──────────────────────────────────────────────
 const ITEMS: BoardNavItem[] = [
   { id: null, type: 'ALL', label: '전체' },
   { id: 1, type: 'NOTICE', label: '공지사항' },
@@ -103,9 +97,6 @@ describe('CategorySelector', () => {
     ChannelList.mockClear();
   });
 
-  // ──────────────────────────────────────────────
-  // 렌더링
-  // ──────────────────────────────────────────────
   describe('렌더링', () => {
     it('크래시 없이 렌더링된다', () => {
       render(<CategorySelector items={ITEMS} activeId={1} />);
@@ -123,9 +114,6 @@ describe('CategorySelector', () => {
     });
   });
 
-  // ──────────────────────────────────────────────
-  // 드롭다운 열기/닫기
-  // ──────────────────────────────────────────────
   describe('드롭다운 열기/닫기', () => {
     it('초기에는 드롭다운이 닫혀 있다', () => {
       render(<CategorySelector items={ITEMS} activeId={1} />);
@@ -152,9 +140,6 @@ describe('CategorySelector', () => {
     });
   });
 
-  // ──────────────────────────────────────────────
-  // filterAll
-  // ──────────────────────────────────────────────
   describe('filterAll', () => {
     it('filterAll=true(기본값)이면 ALL 타입 항목이 ChannelList에 전달되지 않는다', async () => {
       const user = userEvent.setup();
@@ -179,9 +164,6 @@ describe('CategorySelector', () => {
     });
   });
 
-  // ──────────────────────────────────────────────
-  // onItemSelect 콜백
-  // ──────────────────────────────────────────────
   describe('onItemSelect', () => {
     it('채널 선택 시 onItemSelect가 해당 id로 호출된다', async () => {
       const user = userEvent.setup();
@@ -206,9 +188,6 @@ describe('CategorySelector', () => {
     });
   });
 
-  // ──────────────────────────────────────────────
-  // ChannelList에 전달되는 props
-  // ──────────────────────────────────────────────
   describe('ChannelList props 전달', () => {
     it('activeId가 ChannelList에 그대로 전달된다', async () => {
       const user = userEvent.setup();

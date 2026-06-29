@@ -1,5 +1,5 @@
 import { renderHook, act } from '@testing-library/react';
-import { useSlashMenu } from '../useSlashMenu';
+import { useSlashMenu } from '@/components/board/Editor/useSlashMenu';
 import type { MenuItem } from '@/types/editor';
 
 // DEFAULT_GROUPS를 비워 extraGroups로만 테스트 데이터를 제어한다
@@ -46,7 +46,6 @@ function buildMockEditor(initialNodeBefore = '') {
     off: jest.fn(),
     view: { dom },
     chain: jest.fn(() => chainMock),
-    // 테스트용 헬퍼
     _setNodeBefore: (text: string) => {
       _nodeBeforeText = text;
     },
@@ -127,8 +126,8 @@ describe('useSlashMenu', () => {
 
     it('두 그룹이 있을 때 두 번째 그룹의 offset은 첫 번째 그룹 항목 수이다', () => {
       const { editor } = createEditorHandle('/');
-      const groupA = makeItems(['A1', 'A2', 'A3']); // 3개
-      const groupB = makeItems(['B1', 'B2']); // 2개
+      const groupA = makeItems(['A1', 'A2', 'A3']);
+      const groupB = makeItems(['B1', 'B2']);
       const onClose = jest.fn();
 
       const { result } = renderHook(() =>
@@ -177,20 +176,18 @@ describe('useSlashMenu', () => {
 
     it('ArrowDown: 마지막 항목에서 첫 항목으로 wrap된다', () => {
       const { editor, dom } = createEditorHandle('/');
-      const items = makeItems(['A', 'B']); // 2개
+      const items = makeItems(['A', 'B']);
       const onClose = jest.fn();
 
       const { result } = renderHook(() =>
         useSlashMenu(editor as never, onClose, [{ title: '테스트', items }]),
       );
 
-      // 마지막 항목(index 1)으로 이동
       act(() => {
         dom.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true }));
       });
       expect(result.current.selectedIndex).toBe(1);
 
-      // wrap → 첫 항목(index 0)
       act(() => {
         dom.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true }));
       });
@@ -199,20 +196,18 @@ describe('useSlashMenu', () => {
 
     it('ArrowUp: 첫 항목에서 마지막 항목으로 wrap된다', () => {
       const { editor, dom } = createEditorHandle('/');
-      const items = makeItems(['A', 'B', 'C']); // 3개
+      const items = makeItems(['A', 'B', 'C']);
       const onClose = jest.fn();
 
       const { result } = renderHook(() =>
         useSlashMenu(editor as never, onClose, [{ title: '테스트', items }]),
       );
 
-      expect(result.current.selectedIndex).toBe(0);
-
       act(() => {
         dom.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowUp', bubbles: true }));
       });
 
-      expect(result.current.selectedIndex).toBe(2); // 마지막 index = 3 - 1
+      expect(result.current.selectedIndex).toBe(2);
     });
 
     it('Escape: onClose를 호출한다', () => {
@@ -240,7 +235,6 @@ describe('useSlashMenu', () => {
       const onClose = jest.fn();
 
       renderHook(() => useSlashMenu(editor as never, onClose, [{ title: '테스트', items }]));
-      // selectedIndex = 0 → commandA가 실행되어야 함
 
       act(() => {
         dom.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
@@ -263,7 +257,6 @@ describe('useSlashMenu', () => {
 
       renderHook(() => useSlashMenu(editor as never, onClose, [{ title: '테스트', items }]));
 
-      // index 1로 이동 후 Enter
       act(() => {
         dom.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true }));
       });
@@ -286,13 +279,11 @@ describe('useSlashMenu', () => {
         useSlashMenu(editor as never, onClose, [{ title: '테스트', items }]),
       );
 
-      // ArrowDown으로 index 이동
       act(() => {
         dom.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true }));
       });
       expect(result.current.selectedIndex).toBe(1);
 
-      // 쿼리 변경 → index 리셋
       act(() => {
         setNodeBefore('/항목B');
         triggerUpdate();
@@ -315,7 +306,6 @@ describe('useSlashMenu', () => {
       });
       expect(result.current.selectedIndex).toBe(1);
 
-      // 동일한 nodeBefore로 update 트리거 → 쿼리 불변 → index 유지
       act(() => {
         triggerUpdate();
       });
@@ -327,7 +317,6 @@ describe('useSlashMenu', () => {
   describe('엣지 케이스', () => {
     it('항목이 없을 때 키보드 이벤트를 무시한다 (selectedIndex 불변)', () => {
       // STYLE_ITEMS = [] + extraGroups 없음 → flatItems = []
-      // query = '' 이므로 onClose 자동 호출도 없음
       const { editor, dom } = createEditorHandle('/');
       const onClose = jest.fn();
 
@@ -339,13 +328,11 @@ describe('useSlashMenu', () => {
         dom.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true }));
       });
 
-      // items.length === 0 early return → selectedIndex 불변
       expect(result.current.selectedIndex).toBe(0);
       expect(onClose).not.toHaveBeenCalled();
     });
 
     it('nodeBefore가 null이면 빈 쿼리로 처리하고 모든 항목을 반환한다', () => {
-      // initialNodeBefore = '' → nodeBefore: null → getSlashQuery → null ?? '' = ''
       const { editor } = createEditorHandle('');
       const items = makeItems(['A', 'B']);
       const onClose = jest.fn();
@@ -354,7 +341,6 @@ describe('useSlashMenu', () => {
         useSlashMenu(editor as never, onClose, [{ title: '테스트', items }]),
       );
 
-      // query = '' → 모든 항목 표시, onClose 미호출
       expect(result.current.flatItems).toHaveLength(2);
       expect(onClose).not.toHaveBeenCalled();
     });
