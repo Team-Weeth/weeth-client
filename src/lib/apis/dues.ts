@@ -1,6 +1,7 @@
 import { apiClient } from '@/lib/apis/client';
 import type { ApiResponse } from '@/types/common';
 import type {
+  CarryOverSource,
   DuesDraftData,
   PaymentTargetsData,
   RegistrationStatus,
@@ -35,4 +36,9 @@ export const duesApi = {
 
   savePaymentTargets: (clubId: string, accountId: number, body: SavePaymentTargetsBody) =>
     apiClient.patch(`/admin/clubs/${clubId}/accounts/${accountId}/payment-targets`, body),
+
+  getCarryOverSource: (clubId: string, accountId: number) =>
+    apiClient.get<ApiResponse<CarryOverSource>>(
+      `/admin/clubs/${clubId}/accounts/${accountId}/registration/carry-over/source`,
+    ),
 };

@@ -68,6 +68,12 @@ export interface PaymentTarget {
   memo: string | null;
 }
 
+export interface CarryOverSource {
+  hasPreviousAccount: boolean;
+  cardinalNumber: number;
+  balance: number;
+}
+
 export interface SavePaymentTargetsBody {
   targetedClubMemberIds: number[];
   excludedClubMemberIds: number[];

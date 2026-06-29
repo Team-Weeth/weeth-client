@@ -1,10 +1,12 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { useParams } from 'next/navigation';
 
 import { BackButton } from '@/components/admin/dues';
-import { MOCK_PREVIOUS_BALANCE } from '@/constants/mock';
+import { duesApi } from '@/lib/apis/dues';
 import { useDuesSetupValues, useDuesSetupActions } from '@/stores/useDuesSetupStore';
+import type { CarryOverSource } from '@/types/admin/dues';
 
 import {
   DuesSetupStepIndicator,
@@ -14,31 +16,42 @@ import {
   CarryOverCard,
 } from '@/components/admin/dues/setup/components';
 import { useDuesSetupNavigation } from '@/components/admin/dues/setup/useDuesSetupNavigation';
-
 import { ScheduleTextField } from '@/components/admin/schedule/general/ScheduleTextField';
 
 const DESCRIPTION_MAX = 30;
 
 function DuesSetupStep3() {
+  const { clubId } = useParams<{ clubId: string }>();
   const { goToStep } = useDuesSetupNavigation();
 
-  const { cardinalNumber, carryOverOption, carryOverDescription, carryOverInitialized } =
+  const { accountId, cardinalNumber, carryOverOption, carryOverDescription, carryOverInitialized } =
     useDuesSetupValues();
   const { setField } = useDuesSetupActions();
 
-  const hasPreviousBalance = MOCK_PREVIOUS_BALANCE !== null;
-  const previousBalance = MOCK_PREVIOUS_BALANCE?.balance ?? 0;
-  const previousGeneration = MOCK_PREVIOUS_BALANCE?.generationNumber ?? cardinalNumber - 1;
+  const [source, setSource] = useState<CarryOverSource | null>(null);
 
-  // 첫 진입 시 기본값 설정
   useEffect(() => {
-    if (!carryOverInitialized) {
-      setField({
-        carryOverOption: hasPreviousBalance ? 'carry' : 'none',
-        carryOverInitialized: true,
-      });
-    }
-  }, [carryOverInitialized, hasPreviousBalance, setField]);
+    if (accountId === null) return;
+
+    duesApi
+      .getCarryOverSource(clubId, accountId)
+      .then((res) => {
+        const data = res.data.data;
+        setSource(data);
+
+        if (!carryOverInitialized) {
+          setField({
+            carryOverOption: data.hasPreviousAccount ? 'carry' : 'none',
+            carryOverInitialized: true,
+          });
+        }
+      })
+      .catch(() => {});
+  }, [accountId, clubId, carryOverInitialized, setField]);
+
+  const hasPreviousBalance = source?.hasPreviousAccount ?? false;
+  const previousBalance = source?.balance ?? 0;
+  const previousGeneration = source?.cardinalNumber ?? cardinalNumber - 1;
 
   return (
     <div className="flex min-w-85 flex-col gap-700 p-700">
@@ -84,7 +97,7 @@ function DuesSetupStep3() {
             />
           </div>
 
-          {/* 이월하기 선택 + 이전 기수 정보 없을 때: 설명 입력 */}
+          {/* 이월하기 선택 시: 설명 입력 */}
           {carryOverOption === 'carry' && (
             <ScheduleTextField
               value={carryOverDescription}
