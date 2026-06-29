@@ -55,7 +55,7 @@ function DuesLeftSection({ dues }: DuesLeftSectionProps) {
             <div className="flex flex-col gap-200">
               <DuesPaymentButton account={publicAccount} />
               <p className="typo-caption2 text-text-alternative text-center">
-                입금 후 운영진이 확인하면 납부 완료로 바뀌어요.
+                입금 후 운영진이 확인하면 '납부 완료'로 바뀌어요.
               </p>
             </div>
           </>
