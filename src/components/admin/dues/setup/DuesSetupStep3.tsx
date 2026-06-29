@@ -53,6 +53,20 @@ function DuesSetupStep3() {
   const previousBalance = source?.balance ?? 0;
   const previousGeneration = source?.cardinalNumber ?? cardinalNumber - 1;
 
+  const handleNext = async () => {
+    if (accountId === null) return;
+
+    await duesApi
+      .saveCarryOver(clubId, accountId, {
+        enabled: carryOverOption === 'carry',
+        amount: previousBalance,
+        memo: carryOverDescription.trim(),
+      })
+      .catch(() => {});
+
+    goToStep(4);
+  };
+
   return (
     <div className="flex min-w-85 flex-col gap-700 p-700">
       {/* 헤더 */}
@@ -94,6 +108,7 @@ function DuesSetupStep3() {
               description="아래 금액을 작성해주세요"
               selected={carryOverOption === 'carry'}
               onClick={() => setField({ carryOverOption: 'carry' })}
+              disabled={!hasPreviousBalance}
             />
           </div>
 
@@ -114,7 +129,7 @@ function DuesSetupStep3() {
       {/* 하단 네비게이션 */}
       <div className="flex items-center justify-between">
         <PrevButton handlePrev={() => goToStep(2)} />
-        <NextButton handleNext={() => goToStep(4)} />
+        <NextButton handleNext={handleNext} />
       </div>
     </div>
   );

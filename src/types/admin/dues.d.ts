@@ -68,6 +68,12 @@ export interface PaymentTarget {
   memo: string | null;
 }
 
+export interface SaveCarryOverBody {
+  enabled: boolean;
+  amount: number;
+  memo: string;
+}
+
 export interface CarryOverSource {
   hasPreviousAccount: boolean;
   cardinalNumber: number;

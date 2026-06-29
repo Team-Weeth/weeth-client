@@ -174,7 +174,7 @@ function DuesSetupStep1() {
                       id="dues-amount"
                       type="text"
                       inputMode="numeric"
-                      value={amount}
+                      value={amount ? Number(amount).toLocaleString() : ''}
                       onChange={(e) => {
                         const raw = e.target.value.replace(/\D/g, '');
                         setField({ amount: raw });
