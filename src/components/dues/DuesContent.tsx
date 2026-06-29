@@ -45,6 +45,10 @@ const MOCK_TRANSACTIONS: DuesTransaction[] = [
     description: '인프런 외 4곳',
     amount: 123000,
     date: '2026-07-20',
+    counterparty: '인프런',
+    category: '운영비',
+    registrant: '운영진 김검도',
+    receiptUrl: '#',
   },
   {
     id: 4,
@@ -53,6 +57,9 @@ const MOCK_TRANSACTIONS: DuesTransaction[] = [
     description: '인프런 외 4곳',
     amount: 123000,
     date: '2026-07-20',
+    counterparty: '인프런',
+    category: '운영비',
+    registrant: '운영진 김검도',
   },
   {
     id: 5,
@@ -61,6 +68,9 @@ const MOCK_TRANSACTIONS: DuesTransaction[] = [
     description: '인프런 외 4곳',
     amount: 123000,
     date: '2026-07-20',
+    counterparty: '인프런',
+    category: '운영비',
+    registrant: '운영진 김검도',
   },
 ];
 

@@ -23,4 +23,9 @@ export interface DuesTransaction {
   description: string;
   amount: number;
   date: string;
+  counterparty?: string;
+  category?: string;
+  registrant?: string;
+  receiptUrl?: string;
+  receiptThumbnailUrl?: string;
 }

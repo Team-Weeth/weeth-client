@@ -8,6 +8,7 @@ import { cn } from '@/lib/cn';
 import { formatAmount } from '@/lib/formatAmount';
 import type { DuesTransaction, DuesTransactionType } from '@/types/dues';
 import { formatCompactDateDisplay } from '@/utils/shared/date';
+import { DuesTransactionDetailModal } from './DuesTransactionDetailModal';
 
 type DuesTransactionFilter = 'all' | DuesTransactionType;
 
@@ -30,6 +31,7 @@ function DuesTransactionSection({
   className,
 }: DuesTransactionSectionProps) {
   const [activeFilter, setActiveFilter] = useState<DuesTransactionFilter>('all');
+  const [selectedTransaction, setSelectedTransaction] = useState<DuesTransaction | null>(null);
   const counts = useMemo(() => getTransactionCounts(transactions), [transactions]);
   const filteredTransactions = useMemo(() => {
     const nextTransactions =
@@ -44,37 +46,52 @@ function DuesTransactionSection({
     });
   }, [activeFilter, transactions]);
 
+  const handleTransactionClick = (transaction: DuesTransaction) => {
+    setSelectedTransaction(transaction);
+    onTransactionClick?.(transaction);
+  };
+
   return (
-    <section
-      className={cn(
-        'bg-container-neutral flex min-h-[420px] flex-1 flex-col rounded-lg p-500',
-        className,
-      )}
-    >
-      <h2 className="typo-sub1 text-text-strong">거래 내역</h2>
+    <>
+      <section
+        className={cn(
+          'bg-container-neutral flex min-h-[420px] flex-1 flex-col rounded-lg p-500',
+          className,
+        )}
+      >
+        <h2 className="typo-sub1 text-text-strong">거래 내역</h2>
 
-      <div className="mt-500 flex flex-wrap gap-[5px]">
-        {FILTERS.map((filter) => (
-          <TransactionFilterChip
-            key={filter.key}
-            active={activeFilter === filter.key}
-            onClick={() => setActiveFilter(filter.key)}
-          >
-            {filter.label} {counts[filter.key]}
-          </TransactionFilterChip>
-        ))}
-      </div>
+        <div className="mt-500 flex flex-wrap gap-[5px]">
+          {FILTERS.map((filter) => (
+            <TransactionFilterChip
+              key={filter.key}
+              active={activeFilter === filter.key}
+              onClick={() => setActiveFilter(filter.key)}
+            >
+              {filter.label} {counts[filter.key]}
+            </TransactionFilterChip>
+          ))}
+        </div>
 
-      <div className="mt-500 flex flex-col gap-400">
-        {filteredTransactions.map((transaction) => (
-          <DuesTransactionListItem
-            key={transaction.id}
-            transaction={transaction}
-            onClick={() => onTransactionClick?.(transaction)}
-          />
-        ))}
-      </div>
-    </section>
+        <div className="mt-500 flex flex-col gap-400">
+          {filteredTransactions.map((transaction) => (
+            <DuesTransactionListItem
+              key={transaction.id}
+              transaction={transaction}
+              onClick={() => handleTransactionClick(transaction)}
+            />
+          ))}
+        </div>
+      </section>
+
+      <DuesTransactionDetailModal
+        open={selectedTransaction !== null}
+        onOpenChange={(open) => {
+          if (!open) setSelectedTransaction(null);
+        }}
+        transaction={selectedTransaction}
+      />
+    </>
   );
 }
 
