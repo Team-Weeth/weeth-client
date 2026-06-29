@@ -1,7 +1,5 @@
 'use client';
 
-import { useState } from 'react';
-
 import { ArrowFillDownIcon } from '@/assets/icons';
 import {
   DropdownMenu,
@@ -28,7 +26,6 @@ function CardinalDropdown({
   onSelectAll,
   className,
 }: CardinalDropdownProps) {
-  const [open, setOpen] = useState(false);
   const sortedCardinals = [...cardinals].sort((a, b) => b.cardinalNumber - a.cardinalNumber);
   const label = activeCardinal
     ? `${activeCardinal.cardinalNumber}기`
@@ -39,12 +36,12 @@ function CardinalDropdown({
         : '기수';
 
   return (
-    <DropdownMenu open={open} onOpenChange={setOpen}>
+    <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <button
           type="button"
           className={cn(
-            'bg-button-neutral typo-button1 text-text-strong hover:bg-button-neutral-interaction flex cursor-pointer items-center justify-center gap-100 rounded-md px-400 py-200',
+            'bg-button-neutral typo-button1 text-text-strong hover:bg-button-neutral-interaction group flex cursor-pointer items-center justify-center gap-100 rounded-md px-400 py-200',
             className,
           )}
         >
@@ -52,10 +49,7 @@ function CardinalDropdown({
           <Icon
             src={ArrowFillDownIcon}
             size={20}
-            className={cn(
-              'text-icon-normal transition-transform duration-200',
-              open && 'rotate-180',
-            )}
+            className="text-icon-normal transition-transform duration-200 group-data-[state=open]:rotate-180"
           />
         </button>
       </DropdownMenuTrigger>

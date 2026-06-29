@@ -2,7 +2,7 @@
 
 import { Button } from '@/components/ui';
 import type { DuesAccount } from '@/types/dues';
-import { copyTextToClipboard } from '@/utils/shared/clipboard';
+import { copyDuesAccountToClipboard } from '@/utils/dues/duesAccount';
 
 interface DuesPaymentButtonProps {
   account: DuesAccount;
@@ -10,13 +10,7 @@ interface DuesPaymentButtonProps {
 
 function DuesPaymentButton({ account }: DuesPaymentButtonProps) {
   const handleClick = async () => {
-    await copyTextToClipboard(
-      `${account.bankName} ${account.accountNumber} ${account.holderName}`,
-      {
-        successMessage: '계좌번호를 복사했어요',
-        errorMessage: '계좌번호 복사에 실패했어요',
-      },
-    );
+    await copyDuesAccountToClipboard(account);
   };
 
   return (

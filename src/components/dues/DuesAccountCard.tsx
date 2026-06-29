@@ -4,7 +4,7 @@ import { CopyIcon } from '@/assets/icons';
 import { Icon } from '@/components/ui';
 import { cn } from '@/lib/cn';
 import type { DuesAccount } from '@/types/dues';
-import { copyTextToClipboard } from '@/utils/shared/clipboard';
+import { copyDuesAccountToClipboard } from '@/utils/dues/duesAccount';
 
 interface DuesAccountCardProps {
   account: DuesAccount;
@@ -25,9 +25,8 @@ function DuesAccountCard({
   const isHighlight = variant === 'highlight';
 
   const handleCopy = async () => {
-    await copyTextToClipboard(`${accountText} ${account.holderName}`, {
+    await copyDuesAccountToClipboard(account, {
       successMessage: copyMessage,
-      errorMessage: '계좌번호 복사에 실패했어요',
     });
   };
 
