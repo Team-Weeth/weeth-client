@@ -93,6 +93,17 @@ export function formatDateDisplay(dateStr: string): string {
   return `${year}. ${month}. ${day}`;
 }
 
+export function formatCompactDateDisplay(dateStr: string): string {
+  if (!dateStr) return '';
+  const date = new Date(dateStr);
+  if (Number.isNaN(date.getTime())) return dateStr;
+
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}.${month}.${day}`;
+}
+
 export function formatTimeDisplay(timeStr: string): string {
   if (!timeStr) return '';
   const [h, m] = timeStr.split(':').map(Number);

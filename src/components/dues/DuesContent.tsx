@@ -3,8 +3,9 @@
 import { Breadcrumb, BreadcrumbItem, BreadcrumbList, BreadcrumbPage } from '@/components/ui';
 import { CardinalDropdown } from '@/components/common';
 import { DuesLeftSection } from '@/components/dues/DuesLeftSection';
+import { DuesTransactionSection } from '@/components/dues/DuesTransactionSection';
 import { useCardinalSelector } from '@/hooks';
-import type { DuesSummary } from '@/types/dues';
+import type { DuesSummary, DuesTransaction } from '@/types/dues';
 
 const MOCK_DUES: DuesSummary = {
   cardinalNumber: 7,
@@ -19,6 +20,49 @@ const MOCK_DUES: DuesSummary = {
     holderName: '가천대 검도부',
   },
 };
+
+const MOCK_TRANSACTIONS: DuesTransaction[] = [
+  {
+    id: 1,
+    type: 'dues',
+    title: '4월 회비',
+    description: '납부될 때마다 합산돼요',
+    amount: 1100000,
+    date: '2026-07-20',
+  },
+  {
+    id: 2,
+    type: 'income',
+    title: '통장 이자',
+    description: '은행',
+    amount: 27,
+    date: '2026-07-20',
+  },
+  {
+    id: 3,
+    type: 'expense',
+    title: '스터디 지원',
+    description: '인프런 외 4곳',
+    amount: 123000,
+    date: '2026-07-20',
+  },
+  {
+    id: 4,
+    type: 'expense',
+    title: '스터디 지원',
+    description: '인프런 외 4곳',
+    amount: 123000,
+    date: '2026-07-20',
+  },
+  {
+    id: 5,
+    type: 'expense',
+    title: '스터디 지원',
+    description: '인프런 외 4곳',
+    amount: 123000,
+    date: '2026-07-20',
+  },
+];
 
 function DuesContent() {
   const { cardinals, activeCardinal, latestCardinal, setSelectedCardinalId } = useCardinalSelector({
@@ -52,9 +96,7 @@ function DuesContent() {
 
       <div className="desktop:flex-row flex flex-col gap-500">
         <DuesLeftSection dues={dues} />
-        <section className="bg-container-neutral min-h-[420px] flex-1 rounded-lg p-500">
-          <h2 className="typo-sub1 text-text-strong">거래 내역</h2>
-        </section>
+        <DuesTransactionSection transactions={MOCK_TRANSACTIONS} />
       </div>
     </main>
   );

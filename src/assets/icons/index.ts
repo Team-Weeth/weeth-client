@@ -1,5 +1,7 @@
 export { default as ArrowDownIcon } from './arrow_down.svg';
 export { default as ArrowFillDownIcon } from './arrow_fill_down.svg';
+export { default as ArrowDecreaseIcon } from './arrow_decrease.svg';
+export { default as ArrowIncreaseIcon } from './arrow_increase.svg';
 export { default as ArrowLeftIcon } from './arrow_left.svg';
 export { default as ArrowRightIcon } from './arrow_right.svg';
 export { default as ChatIcon } from './chat.svg';
@@ -27,6 +29,7 @@ export { default as PeopleIcon } from './people.svg';
 export { default as SearchIcon } from './search.svg';
 export { default as PinIcon } from './pin.svg';
 export { default as MoreVerticalIcon } from './more_vertical.svg';
+export { default as NoneIcon } from './none.svg';
 export { default as ReplyIcon } from './reply.svg';
 export { default as FolderPlusIcon } from './folder_plus.svg';
 export { default as SendIcon } from './send.svg';
