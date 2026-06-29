@@ -12,6 +12,10 @@
 
 # testing
 /coverage
+/playwright-report
+/test-results
+/blob-report
+e2e/.auth/
 
 # next.js
 /.next/
@@ -47,6 +51,5 @@ next-env.d.ts
 # Sentry Config File
 .env.sentry-build-plugin
 
-# Obsidian per-user state
-docs/.obsidian/workspace.json
-docs/.obsidian/workspaces.json
+# Obsidian
+docs/.obsidian/

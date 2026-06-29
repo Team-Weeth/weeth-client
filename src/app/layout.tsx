@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import type { ReactNode } from 'react';
 import { Toaster } from '@/components/ui';
-import { QueryProvider } from '@/providers';
+import { QueryProvider, MSWProvider } from '@/providers';
 import { Inter } from 'next/font/google';
 import { ThemeProvider } from '@/providers/theme-provider';
 import { cn } from '@/lib/cn';
@@ -104,14 +104,16 @@ y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
             />
           </noscript>
         )}
-        <QueryProvider>
-          <ThemeProvider>
-            <TooltipProvider>
-              {children}
-              <Toaster />
-            </TooltipProvider>
-          </ThemeProvider>
-        </QueryProvider>
+        <MSWProvider>
+          <QueryProvider>
+            <ThemeProvider>
+              <TooltipProvider>
+                {children}
+                <Toaster />
+              </TooltipProvider>
+            </ThemeProvider>
+          </QueryProvider>
+        </MSWProvider>
       </body>
       {isProduction && <GoogleAnalytics gaId="G-9RW2TCLMVF" />}
     </html>

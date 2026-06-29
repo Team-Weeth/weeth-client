@@ -1,5 +1,9 @@
 {
   "mcpServers": {
+    "playwright": {
+      "command": "npx",
+      "args": ["-y", "@playwright/mcp@latest"]
+    },
     "weeth-api": {
       "command": "npx",
       "args": ["-y", "@ivotoby/openapi-mcp-server"],

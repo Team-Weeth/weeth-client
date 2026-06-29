@@ -6,6 +6,12 @@ const eslintConfig = defineConfig([
   ...nextVitals,
   ...nextTs,
   globalIgnores(['.next/**', 'out/**', 'build/**', 'next-env.d.ts']),
+  {
+    files: ['**/__tests__/**', '**/*.{test,spec}.{ts,tsx}'],
+    rules: {
+      '@next/next/no-html-link-for-pages': 'off',
+    },
+  },
 ]);
 
 export default eslintConfig;

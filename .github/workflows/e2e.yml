@@ -1,0 +1,103 @@
+name: E2E
+
+on:
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  e2e:
+    name: Playwright E2E
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with:
+          persist-credentials: false
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1 # v4
+        with:
+          version: 10.28.0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 22
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Cache Playwright browsers
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+        id: playwright-cache
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-chromium-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
+
+      - name: Install Playwright browsers
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
+        run: pnpm exec playwright install chromium --with-deps
+
+      - name: Install Playwright system dependencies
+        if: steps.playwright-cache.outputs.cache-hit == 'true'
+        run: pnpm exec playwright install-deps chromium
+
+      - name: Playwright E2E
+        id: playwright
+        continue-on-error: true
+        run: pnpm test:e2e
+        env:
+          CI: true
+          DEV_ACCESS_TOKEN: ${{ secrets.DEV_ACCESS_TOKEN }}
+
+      - name: Upload Playwright report
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 7
+
+      - name: PR E2E 결과 코멘트
+        if: always()
+        uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b # v7
+        with:
+          script: |
+            const outcome = '${{ steps.playwright.outcome }}';
+
+            const icon = (o) =>
+              o === 'success' ? '✅' : o === 'failure' ? '❌' : '⏭️';
+            const label = (o) =>
+              o === 'success' ? '통과' : o === 'failure' ? '실패' : '건너뜀';
+
+            const body = [
+              '## PR E2E 테스트 결과',
+              '',
+              `${icon(outcome)} **Playwright:** ${label(outcome)}`,
+              '',
+              outcome === 'success'
+                ? '🎉 E2E 테스트를 통과했습니다!'
+                : '⚠️ E2E 테스트에 실패했습니다. 확인 후 수정해주세요.',
+            ].join('\n');
+
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body,
+            });
+
+      - name: Fail workflow if E2E failed
+        if: always()
+        run: |
+          playwright_outcome="${{ steps.playwright.outcome }}"
+          echo "Playwright: ${playwright_outcome}"
+
+          if [ "${playwright_outcome}" = "failure" ]; then
+            echo "::error::E2E 테스트 실패"
+            exit 1
+          fi
