@@ -1,6 +1,6 @@
 'use client';
 
-import { Button } from '@/components/ui';
+import { Button } from '@/components/ui/Button';
 import type { DuesAccount } from '@/types/dues';
 import { copyDuesAccountToClipboard } from '@/utils/dues/duesAccount';
 
