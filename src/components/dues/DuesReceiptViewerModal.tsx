@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 import { DeleteIcon } from '@/assets/icons';
 import { Icon } from '@/components/ui';
@@ -18,10 +18,6 @@ function DuesReceiptViewerModal({ open, onOpenChange, receiptUrls }: DuesReceipt
   const receiptCount = receiptUrls.length;
   const activeReceiptUrl = receiptUrls[activeIndex];
   const hasMultipleReceipts = receiptCount > 1;
-
-  useEffect(() => {
-    if (open) setActiveIndex(0);
-  }, [open, receiptUrls]);
 
   const handlePrevious = () => {
     setActiveIndex((prevIndex) => (prevIndex === 0 ? receiptCount - 1 : prevIndex - 1));

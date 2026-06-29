@@ -58,6 +58,7 @@ function DuesTransactionDetailModal({
         </div>
 
         <DuesReceiptViewerModal
+          key={receiptViewerOpen ? 'receipt-viewer-open' : 'receipt-viewer-closed'}
           open={receiptViewerOpen}
           onOpenChange={setReceiptViewerOpen}
           receiptUrls={receiptUrls}
