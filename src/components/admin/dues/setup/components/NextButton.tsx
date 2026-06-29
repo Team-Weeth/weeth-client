@@ -1,13 +1,26 @@
 import { ArrowRightIcon } from '@/assets/icons';
 import { Icon } from '@/components/ui';
+import { cn } from '@/lib/cn';
 
-function NextButton({ last = false, handleNext }: { last?: boolean; handleNext: () => void }) {
+function NextButton({
+  last = false,
+  handleNext,
+  disabled = false,
+}: {
+  last?: boolean;
+  handleNext: () => void;
+  disabled?: boolean;
+}) {
   return (
     <div className="flex justify-end">
       <button
         type="button"
         onClick={handleNext}
-        className="bg-button-primary hover:bg-button-primary-interaction typo-button1 text-text-inverse flex cursor-pointer items-center gap-100 rounded-md px-400 py-300 transition-colors"
+        disabled={disabled}
+        className={cn(
+          'bg-button-primary hover:bg-button-primary-interaction typo-button1 text-text-inverse flex cursor-pointer items-center gap-100 rounded-md px-400 py-300 transition-colors',
+          disabled && 'cursor-not-allowed opacity-50',
+        )}
       >
         {last ? '저장하고 완료하기' : '다음으로'}
         <Icon src={ArrowRightIcon} alt="" size={12} />

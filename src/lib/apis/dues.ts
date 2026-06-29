@@ -52,4 +52,7 @@ export const duesApi = {
       `/admin/clubs/${clubId}/accounts/${accountId}/registration/bank-account`,
       body,
     ),
+
+  completeRegistration: (clubId: string, accountId: number) =>
+    apiClient.post(`/admin/clubs/${clubId}/accounts/${accountId}/registration/complete`),
 };

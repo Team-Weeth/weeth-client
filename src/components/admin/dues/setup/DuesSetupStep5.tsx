@@ -1,12 +1,17 @@
 'use client';
 
 import { useState } from 'react';
+import { useParams } from 'next/navigation';
 
 import { QuestionCircleIcon } from '@/assets/icons';
 import { BackButton, PaymentTargetModal } from '@/components/admin/dues';
 import { Icon, Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui';
+import { DUES_REGISTRATION_ERROR_CODE } from '@/constants/errorCode';
 import { MOCK_PAYMENT_TARGETS, MOCK_PREVIOUS_BALANCE } from '@/constants/mock';
+import { duesApi } from '@/lib/apis/dues';
 import { useDuesSetupValues, useDuesSetupActions } from '@/stores/useDuesSetupStore';
+import { toastError, toastSuccess } from '@/stores/useToastStore';
+import { getApiErrorCode } from '@/utils/shared/getApiErrorCode';
 
 import {
   DuesSetupStepIndicator,
@@ -20,9 +25,11 @@ import { useDuesSetupNavigation } from '@/components/admin/dues/setup/useDuesSet
 const MAX_AVATAR_DISPLAY = 4;
 
 function DuesSetupStep5() {
+  const { clubId } = useParams<{ clubId: string }>();
   const { goToStep, goToDues } = useDuesSetupNavigation();
 
   const {
+    accountId,
     cardinalNumber,
     amount,
     name,
@@ -37,6 +44,7 @@ function DuesSetupStep5() {
   } = useDuesSetupValues();
   const { reset } = useDuesSetupActions();
   const [isPaymentTargetModalOpen, setIsPaymentTargetModalOpen] = useState(false);
+  const [isCompleting, setIsCompleting] = useState(false);
 
   const hasPreviousBalance = MOCK_PREVIOUS_BALANCE !== null;
   const previousBalance = MOCK_PREVIOUS_BALANCE?.balance ?? 0;
@@ -57,10 +65,41 @@ function DuesSetupStep5() {
   const carryOverAmount = carryOverOption === 'carry' ? previousBalance : 0;
   const expectedTotal = expectedDuesIncome + carryOverAmount;
 
-  const handleComplete = () => {
-    // TODO: API 연결 후 실제 저장 로직 추가
-    reset();
-    goToDues();
+  const handleComplete = async () => {
+    if (accountId === null || isCompleting) return;
+
+    setIsCompleting(true);
+    try {
+      await duesApi.completeRegistration(clubId, accountId);
+      toastSuccess('회비 등록이 완료되었습니다.');
+      reset();
+      goToDues();
+    } catch (error) {
+      const code = getApiErrorCode(error);
+
+      switch (code) {
+        case DUES_REGISTRATION_ERROR_CODE.ALREADY_COMPLETED:
+          // 이미 완료된 장부 — 더 진행할 필요 없이 목록으로 이동
+          toastError('이미 등록이 완료된 장부입니다.');
+          reset();
+          goToDues();
+          break;
+        case DUES_REGISTRATION_ERROR_CODE.NOT_COMPLETED:
+          // 미완료 단계 존재 — 처음 단계로 돌려보내 누락 단계 저장 유도
+          toastError('저장되지 않은 단계가 있습니다. 각 단계를 다시 확인해주세요.');
+          goToStep(1);
+          break;
+        case DUES_REGISTRATION_ERROR_CODE.CARRY_OVER_MISMATCH:
+          // 이월 금액 불일치 — 이월 설정(3단계)에서 재원 재조회 후 다시 저장 필요
+          toastError('이전 기수 잔액이 변경되었습니다. 이월 설정을 다시 저장한 뒤 재시도해주세요.');
+          goToStep(3);
+          break;
+        default:
+          toastError('회비 등록 완료에 실패했습니다. 잠시 후 다시 시도해주세요.');
+      }
+    } finally {
+      setIsCompleting(false);
+    }
   };
 
   return (
@@ -152,7 +191,7 @@ function DuesSetupStep5() {
       {/* 하단 네비게이션 */}
       <div className="flex items-center justify-between">
         <PrevButton handlePrev={() => goToStep(4)} />
-        <NextButton handleNext={handleComplete} last />
+        <NextButton handleNext={handleComplete} disabled={isCompleting} last />
       </div>
     </div>
   );
