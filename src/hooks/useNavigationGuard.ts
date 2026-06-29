@@ -24,6 +24,7 @@ function useNavigationGuard({ enabled }: UseNavigationGuardOptions) {
   const [open, setOpen] = useState(false);
   const router = useRouter();
   const enabledRef = useRef(enabled);
+  const prevEnabledRef = useRef(enabled);
   const isLeaving = useRef(false);
   const guardUrl = useRef('');
   const pendingUrl = useRef<string | null>(null);
@@ -52,14 +53,20 @@ function useNavigationGuard({ enabled }: UseNavigationGuardOptions) {
 
   // enabled가 true가 될 때 guard entry를 push
   useEffect(() => {
+    const prevEnabled = prevEnabledRef.current;
+    prevEnabledRef.current = enabled;
+
     if (!enabled) {
       hasGuardEntry.current = isGuardEntry();
       return;
     }
-    if (isLeaving.current) return;
+    // enabled가 다시 true가 되면 leaving 상태 초기화 (버그1 수정)
+    isLeaving.current = false;
 
     guardUrl.current = location.href;
-    if (!isGuardEntry()) {
+    // false → true 전환 시 항상 push (버그1: SPA 내 재편집 시 가드 복원)
+    // 그 외에는 guard entry가 없을 때만 push
+    if (!prevEnabled || !isGuardEntry()) {
       history.pushState(GUARD_STATE, '', location.href);
     }
     hasGuardEntry.current = true;
@@ -91,7 +98,6 @@ function useNavigationGuard({ enabled }: UseNavigationGuardOptions) {
     // <a> 클릭을 캡처 단계에서 가로채서 Next.js Link 내비게이션을 차단
     const handleClick = (e: MouseEvent) => {
       if (!enabledRef.current) return;
-      if (isLeaving.current) return;
       // ctrl/cmd/shift 등 새 탭/새 창 클릭은 무시
       if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
 
@@ -147,13 +153,9 @@ function useNavigationGuard({ enabled }: UseNavigationGuardOptions) {
 
   const onCancel = () => {
     pendingUrl.current = null;
-
-    if (isLeaving.current) {
-      isLeaving.current = false;
-      return;
-    }
+    isLeaving.current = false;
     setOpen(false);
-    // 뒤로가기로 guard entry를 벗어난 경우에만 재설정
+    // 뒤로가기/이탈 시도 후 취소: guard entry 복원
     if (!isGuardEntry()) {
       history.pushState(GUARD_STATE, '', guardUrl.current);
       hasGuardEntry.current = true;
