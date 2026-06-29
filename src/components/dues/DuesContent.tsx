@@ -3,6 +3,7 @@
 import { Breadcrumb, BreadcrumbItem, BreadcrumbList, BreadcrumbPage } from '@/components/ui';
 import { CardinalDropdown } from '@/components/common';
 import { DuesLeftSection } from '@/components/dues/DuesLeftSection';
+import { DuesPageSkeleton } from '@/components/dues/DuesPageSkeleton';
 import { DuesTransactionSection } from '@/components/dues/DuesTransactionSection';
 import { useCardinalSelector } from '@/hooks';
 import type { DuesSummary, DuesTransaction } from '@/types/dues';
@@ -76,9 +77,15 @@ const MOCK_TRANSACTIONS: DuesTransaction[] = [
 ];
 
 function DuesContent() {
-  const { cardinals, activeCardinal, latestCardinal, setSelectedCardinalId } = useCardinalSelector({
-    autoSelectLatest: true,
-  });
+  const { cardinals, activeCardinal, latestCardinal, setSelectedCardinalId, isLoading } =
+    useCardinalSelector({
+      autoSelectLatest: true,
+    });
+
+  if (isLoading) {
+    return <DuesPageSkeleton />;
+  }
+
   const selectedCardinal = activeCardinal ?? latestCardinal;
   const dues = {
     ...MOCK_DUES,

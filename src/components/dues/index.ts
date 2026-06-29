@@ -1,4 +1,5 @@
 export { DuesContent } from './DuesContent';
+export { DuesPageSkeleton } from './DuesPageSkeleton';
 export { DuesLeftSection, type DuesLeftSectionProps } from './DuesLeftSection';
 export {
   DuesPaymentStatusBanner,
