@@ -133,7 +133,7 @@ describe('CategorySelector', () => {
       const user = userEvent.setup();
       render(<CategorySelector items={ITEMS} activeId={1} onItemSelect={jest.fn()} />);
 
-      await user.click(screen.getByRole('button')); // 트리거 → 열림
+      await user.click(screen.getByRole('button'));
       await user.click(screen.getByRole('button', { name: '자유게시판' }));
 
       expect(screen.queryByTestId('dropdown-content')).not.toBeInTheDocument();

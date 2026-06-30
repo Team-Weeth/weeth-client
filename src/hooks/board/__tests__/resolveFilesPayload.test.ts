@@ -16,9 +16,6 @@ function makeFile(overrides: Partial<UploadFileItem> = {}): UploadFileItem {
 }
 
 describe('resolveFilesPayload', () => {
-  // ──────────────────────────────────────────────
-  // 작성 모드: snapshotFileIds === null
-  // ──────────────────────────────────────────────
   describe('작성 모드 (snapshotFileIds === null)', () => {
     it('모든 파일을 CreatePostFile 형식(4개 필드)으로 매핑해 반환한다', () => {
       const files = [
@@ -49,9 +46,6 @@ describe('resolveFilesPayload', () => {
     });
   });
 
-  // ──────────────────────────────────────────────
-  // 수정 모드: snapshotFileIds !== null
-  // ──────────────────────────────────────────────
   describe('수정 모드 (snapshotFileIds !== null)', () => {
     it('파일 변경이 없으면 null을 반환한다', () => {
       const files = [

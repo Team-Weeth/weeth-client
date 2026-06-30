@@ -2,18 +2,12 @@ import { renderHook, act } from '@testing-library/react';
 import { useDirtyActionGuard } from '../useDirtyActionGuard';
 
 describe('useDirtyActionGuard', () => {
-  // ──────────────────────────────────────────────
-  // 초기 상태
-  // ──────────────────────────────────────────────
   it('초기 상태: pendingAction=null, guardOpen=false', () => {
     const { result } = renderHook(() => useDirtyActionGuard(false));
     expect(result.current.pendingAction).toBeNull();
     expect(result.current.guardOpen).toBe(false);
   });
 
-  // ──────────────────────────────────────────────
-  // requestAction
-  // ──────────────────────────────────────────────
   describe('requestAction', () => {
     it('isDirty=false이면 false를 반환하고 상태가 변하지 않는다', () => {
       const { result } = renderHook(() => useDirtyActionGuard(false));
@@ -51,9 +45,6 @@ describe('useDirtyActionGuard', () => {
     });
   });
 
-  // ──────────────────────────────────────────────
-  // confirm
-  // ──────────────────────────────────────────────
   describe('confirm', () => {
     it('pendingAction id를 반환하고 guardOpen이 닫힌다', () => {
       const { result } = renderHook(() => useDirtyActionGuard(true));
@@ -83,9 +74,6 @@ describe('useDirtyActionGuard', () => {
     });
   });
 
-  // ──────────────────────────────────────────────
-  // cancel
-  // ──────────────────────────────────────────────
   describe('cancel', () => {
     it('pendingAction을 초기화하고 guardOpen이 닫힌다', () => {
       const { result } = renderHook(() => useDirtyActionGuard(true));
@@ -103,9 +91,6 @@ describe('useDirtyActionGuard', () => {
     });
   });
 
-  // ──────────────────────────────────────────────
-  // confirm/cancel 후 재사용
-  // ──────────────────────────────────────────────
   it('cancel 후 requestAction을 다시 호출하면 정상 동작한다', () => {
     const { result } = renderHook(() => useDirtyActionGuard(true));
 

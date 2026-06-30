@@ -30,9 +30,6 @@ describe('validatePost', () => {
     toast.mockClear();
   });
 
-  // ──────────────────────────────────────────────
-  // clubId 검증
-  // ──────────────────────────────────────────────
   describe('clubId', () => {
     it('null이면 false를 반환하고 error toast를 호출한다', () => {
       expect(validatePost({ ...VALID, clubId: null })).toBe(false);
@@ -40,9 +37,6 @@ describe('validatePost', () => {
     });
   });
 
-  // ──────────────────────────────────────────────
-  // title 검증
-  // ──────────────────────────────────────────────
   describe('title', () => {
     it('빈 문자열이면 false를 반환한다', () => {
       expect(validatePost({ ...VALID, title: '' })).toBe(false);
@@ -59,9 +53,6 @@ describe('validatePost', () => {
     });
   });
 
-  // ──────────────────────────────────────────────
-  // content 검증
-  // ──────────────────────────────────────────────
   describe('content', () => {
     it('빈 HTML 태그(<p></p>)만 있으면 false를 반환한다', () => {
       expect(validatePost({ ...VALID, content: '<p></p>' })).toBe(false);
@@ -77,9 +68,6 @@ describe('validatePost', () => {
     });
   });
 
-  // ──────────────────────────────────────────────
-  // files 검증
-  // ──────────────────────────────────────────────
   describe('files', () => {
     it('uploaded=false이고 file 객체가 있으면 업로드 중으로 간주해 false를 반환한다', () => {
       const uploading = makeFile({ uploaded: false, file: new File([''], 'img.png') });
@@ -98,9 +86,6 @@ describe('validatePost', () => {
     });
   });
 
-  // ──────────────────────────────────────────────
-  // 전체 통과
-  // ──────────────────────────────────────────────
   it('모든 조건이 충족되면 true를 반환하고 toast를 호출하지 않는다', () => {
     expect(validatePost(VALID)).toBe(true);
     expect(toast).not.toHaveBeenCalled();
