@@ -174,7 +174,7 @@ Calculate the corresponding source file from each test file path:
 
 Rule: remove `__tests__/` + `.test.ts` → `.ts` / `.test.tsx` → `.tsx`
 
-#### 5-3. Run tests with coverage
+#### 5-3. Run Jest tests with coverage
 
 Run using the collected test files and source files:
 
@@ -182,12 +182,34 @@ Run using the collected test files and source files:
 pnpm test <test-file-1> <test-file-2> ... --coverage --collectCoverageFrom='["<source-file-1>","<source-file-2>",...]'
 ```
 
-#### 5-4. Handle results
+#### 5-4. Handle Jest results
+
+| Result | Action |
+|--------|--------|
+| All PASS | Proceed to step 5-5 |
+| Some FAIL | Fix failing cases, then re-run 5-3 |
+
+#### 5-5. Playwright E2E (conditional)
+
+Run the related E2E spec if any of the source files match the patterns below. Skip if none match.
+
+| Source file path pattern | Spec to run |
+|--------------------------|-------------|
+| `src/hooks/useNavigationGuard*` | `e2e/specs/post-write.spec.ts` `e2e/specs/post-edit.spec.ts` |
+| `src/components/board/Editor/**` | `e2e/specs/editor.spec.ts` |
+| `src/components/board/PostCard/**` | `e2e/specs/post-write.spec.ts` `e2e/specs/post-edit.spec.ts` |
+| `src/hooks/board/**` (post-related) | `e2e/specs/post-write.spec.ts` `e2e/specs/post-edit.spec.ts` |
+
+```bash
+# DEV_ACCESS_TOKEN must be set in .env.local
+pnpm exec playwright test <matching-spec-file>
+```
 
 | Result | Action |
 |--------|--------|
 | All PASS | Proceed to step 6 |
-| Some FAIL | Fix failing cases, then re-run 5-3 |
+| FAIL — caused by this branch | Review together with Jest fixes |
+| FAIL — pre-existing unrelated failure | Document the cause, then proceed to step 6 |
 
 ### 6. Record coverage documentation
 
