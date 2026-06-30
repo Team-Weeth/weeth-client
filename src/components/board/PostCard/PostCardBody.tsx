@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react';
 import { useEditor, EditorContent } from '@tiptap/react';
-import DOMPurify from 'dompurify';
+import DOMPurify from 'isomorphic-dompurify';
 import { cn } from '@/lib/cn';
 import { useLineClamp } from '@/hooks/useLineClamp';
 import { editorExtensions } from '@/components/board/Editor/extensions';
@@ -16,10 +16,7 @@ interface PostCardBodyProps {
 }
 
 function PostCardBody({ className, content, expandable = false }: PostCardBodyProps) {
-  const sanitized =
-    typeof window !== 'undefined'
-      ? DOMPurify.sanitize(content, { ADD_ATTR: ['target', 'rel', 'colwidth'] })
-      : content;
+  const sanitized = DOMPurify.sanitize(content, { ADD_ATTR: ['target', 'rel', 'colwidth'] });
 
   const { ref, isClamped, isExpanded, setIsExpanded } = useLineClamp<HTMLDivElement>(
     expandable,
