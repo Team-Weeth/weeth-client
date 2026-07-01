@@ -10,6 +10,7 @@ import { duesBankAccountSchema, type DuesBankAccountFormData } from '@/lib/schem
 import { BackButton } from '@/components/admin/dues';
 import { Switch } from '@/components/ui';
 import { useDuesSetupValues, useDuesSetupActions } from '@/stores/useDuesSetupStore';
+import { toastError } from '@/stores/useToastStore';
 import { useSaveDuesBankAccount } from '@/hooks/mutations/admin';
 
 import {
@@ -41,7 +42,9 @@ function DuesSetupStep4() {
   } = useDuesSetupValues();
   const { setField } = useDuesSetupActions();
 
-  const saveBankAccount = useSaveDuesBankAccount(clubId, accountId);
+  const saveBankAccount = useSaveDuesBankAccount(clubId, accountId, {
+    onError: () => toastError('계좌 정보 저장에 실패했습니다. 잠시 후 다시 시도해주세요.'),
+  });
 
   const {
     control,

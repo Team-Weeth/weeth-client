@@ -43,7 +43,37 @@ function DuesSetupStep5() {
     isAccountPublic,
   } = useDuesSetupValues();
   const { reset, setField } = useDuesSetupActions();
-  const completeRegistration = useCompleteDuesRegistration(clubId, accountId);
+  const completeRegistration = useCompleteDuesRegistration(clubId, accountId, {
+    onSuccess: () => {
+      toastSuccess('회비 등록이 완료되었습니다.');
+      reset();
+      goToDues();
+    },
+    onError: (error) => {
+      const code = getApiErrorCode(error);
+
+      switch (code) {
+        case DUES_REGISTRATION_ERROR_CODE.ALREADY_COMPLETED:
+          // 이미 완료된 장부 — 더 진행할 필요 없이 목록으로 이동
+          toastError('이미 등록이 완료된 장부입니다.');
+          reset();
+          goToDues();
+          break;
+        case DUES_REGISTRATION_ERROR_CODE.NOT_COMPLETED:
+          // 미완료 단계 존재 — 처음 단계로 돌려보내 누락 단계 저장 유도
+          toastError('저장되지 않은 단계가 있습니다. 각 단계를 다시 확인해주세요.');
+          goToStep(1);
+          break;
+        case DUES_REGISTRATION_ERROR_CODE.CARRY_OVER_MISMATCH:
+          // 이월 금액 불일치 — 이월 설정(3단계)에서 재원 재조회 후 다시 저장 필요
+          toastError('이전 기수 잔액이 변경되었습니다. 이월 설정을 다시 저장한 뒤 재시도해주세요.');
+          goToStep(3);
+          break;
+        default:
+          toastError('회비 등록 완료에 실패했습니다. 잠시 후 다시 시도해주세요.');
+      }
+    },
+  });
   const [isPaymentTargetModalOpen, setIsPaymentTargetModalOpen] = useState(false);
 
   const hasPreviousBalance = MOCK_PREVIOUS_BALANCE !== null;
@@ -71,38 +101,9 @@ function DuesSetupStep5() {
     goToStep(step);
   };
 
-  const handleComplete = async () => {
+  const handleComplete = () => {
     if (accountId === null || completeRegistration.isPending) return;
-
-    try {
-      await completeRegistration.mutateAsync();
-      toastSuccess('회비 등록이 완료되었습니다.');
-      reset();
-      goToDues();
-    } catch (error) {
-      const code = getApiErrorCode(error);
-
-      switch (code) {
-        case DUES_REGISTRATION_ERROR_CODE.ALREADY_COMPLETED:
-          // 이미 완료된 장부 — 더 진행할 필요 없이 목록으로 이동
-          toastError('이미 등록이 완료된 장부입니다.');
-          reset();
-          goToDues();
-          break;
-        case DUES_REGISTRATION_ERROR_CODE.NOT_COMPLETED:
-          // 미완료 단계 존재 — 처음 단계로 돌려보내 누락 단계 저장 유도
-          toastError('저장되지 않은 단계가 있습니다. 각 단계를 다시 확인해주세요.');
-          goToStep(1);
-          break;
-        case DUES_REGISTRATION_ERROR_CODE.CARRY_OVER_MISMATCH:
-          // 이월 금액 불일치 — 이월 설정(3단계)에서 재원 재조회 후 다시 저장 필요
-          toastError('이전 기수 잔액이 변경되었습니다. 이월 설정을 다시 저장한 뒤 재시도해주세요.');
-          goToStep(3);
-          break;
-        default:
-          toastError('회비 등록 완료에 실패했습니다. 잠시 후 다시 시도해주세요.');
-      }
-    }
+    completeRegistration.mutate();
   };
 
   return (

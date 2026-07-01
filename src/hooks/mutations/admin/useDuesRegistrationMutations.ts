@@ -2,7 +2,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { duesApi } from '@/lib/apis/dues';
 import { adminQueryKeys } from '@/hooks/queries/admin/adminQueryKeys';
-import { toastError } from '@/stores/useToastStore';
+import type { MutationCallbacks } from '@/types/common';
 import type {
   DuesDraftData,
   SaveBankAccountBody,
@@ -14,33 +14,46 @@ import type {
 /**
  * 회비 등록(온보딩) 뮤테이션 훅.
  *
- * 각 스텝의 저장/생성/삭제 요청을 담당한다. 저장 실패 시 onError 토스트로
- * 사용자에게 알리므로, 컴포넌트는 mutateAsync를 try/catch로 감싸 실패 시
- * 다음 스텝 이동을 막으면 된다.
- *
- * 예외: completeRegistration은 에러 코드별 분기가 필요해 기본 토스트를 두지
- * 않고 호출부에서 처리한다.
+ * 각 스텝의 저장/생성/삭제 요청을 담당한다. 성공/실패 처리는 호출부가
+ * `callbacks`로 주입한다(토스트·네비게이션 등). 내부에서는 관련 쿼리
+ * invalidate 같은 공통 후처리만 담당한다.
  */
 
 const REQUIRE_ACCOUNT = 'accountId가 없습니다';
 
-export function useCreateDuesDraft(clubId: string) {
+export function useCreateDuesDraft(clubId: string, callbacks?: MutationCallbacks<unknown>) {
   return useMutation({
     mutationFn: (cardinalNumber: number) =>
       duesApi.createDraft(clubId, cardinalNumber).then((res) => res.data.data as DuesDraftData),
+    onSuccess: callbacks?.onSuccess,
+    onError: callbacks?.onError,
+    onMutate: callbacks?.onMutate,
+    onSettled: callbacks?.onSettled,
   });
 }
 
-export function useDiscardDuesDraft(clubId: string, accountId: number | null) {
+export function useDiscardDuesDraft(
+  clubId: string,
+  accountId: number | null,
+  callbacks?: MutationCallbacks<unknown>,
+) {
   return useMutation({
     mutationFn: () => {
       if (accountId === null) throw new Error(REQUIRE_ACCOUNT);
       return duesApi.discardDraft(clubId, accountId);
     },
+    onSuccess: callbacks?.onSuccess,
+    onError: callbacks?.onError,
+    onMutate: callbacks?.onMutate,
+    onSettled: callbacks?.onSettled,
   });
 }
 
-export function useSaveDuesBasic(clubId: string, accountId: number | null) {
+export function useSaveDuesBasic(
+  clubId: string,
+  accountId: number | null,
+  callbacks?: MutationCallbacks<unknown>,
+) {
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -48,16 +61,23 @@ export function useSaveDuesBasic(clubId: string, accountId: number | null) {
       if (accountId === null) throw new Error(REQUIRE_ACCOUNT);
       return duesApi.saveBasic(clubId, accountId, body);
     },
-    onError: () => toastError('기본 정보 저장에 실패했습니다. 잠시 후 다시 시도해주세요.'),
+    onSuccess: callbacks?.onSuccess,
+    onError: callbacks?.onError,
+    onMutate: callbacks?.onMutate,
     onSettled: () => {
       queryClient.invalidateQueries({
         queryKey: adminQueryKeys.duesRegistrationStatus(clubId, accountId),
       });
+      callbacks?.onSettled?.();
     },
   });
 }
 
-export function useSaveDuesPaymentTargets(clubId: string, accountId: number | null) {
+export function useSaveDuesPaymentTargets(
+  clubId: string,
+  accountId: number | null,
+  callbacks?: MutationCallbacks<unknown>,
+) {
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -65,16 +85,23 @@ export function useSaveDuesPaymentTargets(clubId: string, accountId: number | nu
       if (accountId === null) throw new Error(REQUIRE_ACCOUNT);
       return duesApi.savePaymentTargets(clubId, accountId, body);
     },
-    onError: () => toastError('납부 대상 저장에 실패했습니다. 잠시 후 다시 시도해주세요.'),
+    onSuccess: callbacks?.onSuccess,
+    onError: callbacks?.onError,
+    onMutate: callbacks?.onMutate,
     onSettled: () => {
       queryClient.invalidateQueries({
         queryKey: adminQueryKeys.duesPaymentTargets(clubId, accountId),
       });
+      callbacks?.onSettled?.();
     },
   });
 }
 
-export function useSaveDuesCarryOver(clubId: string, accountId: number | null) {
+export function useSaveDuesCarryOver(
+  clubId: string,
+  accountId: number | null,
+  callbacks?: MutationCallbacks<unknown>,
+) {
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -82,16 +109,23 @@ export function useSaveDuesCarryOver(clubId: string, accountId: number | null) {
       if (accountId === null) throw new Error(REQUIRE_ACCOUNT);
       return duesApi.saveCarryOver(clubId, accountId, body);
     },
-    onError: () => toastError('이월 설정 저장에 실패했습니다. 잠시 후 다시 시도해주세요.'),
+    onSuccess: callbacks?.onSuccess,
+    onError: callbacks?.onError,
+    onMutate: callbacks?.onMutate,
     onSettled: () => {
       queryClient.invalidateQueries({
         queryKey: adminQueryKeys.duesRegistrationStatus(clubId, accountId),
       });
+      callbacks?.onSettled?.();
     },
   });
 }
 
-export function useSaveDuesBankAccount(clubId: string, accountId: number | null) {
+export function useSaveDuesBankAccount(
+  clubId: string,
+  accountId: number | null,
+  callbacks?: MutationCallbacks<unknown>,
+) {
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -99,16 +133,23 @@ export function useSaveDuesBankAccount(clubId: string, accountId: number | null)
       if (accountId === null) throw new Error(REQUIRE_ACCOUNT);
       return duesApi.saveBankAccount(clubId, accountId, body);
     },
-    onError: () => toastError('계좌 정보 저장에 실패했습니다. 잠시 후 다시 시도해주세요.'),
+    onSuccess: callbacks?.onSuccess,
+    onError: callbacks?.onError,
+    onMutate: callbacks?.onMutate,
     onSettled: () => {
       queryClient.invalidateQueries({
         queryKey: adminQueryKeys.duesRegistrationStatus(clubId, accountId),
       });
+      callbacks?.onSettled?.();
     },
   });
 }
 
-export function useCompleteDuesRegistration(clubId: string, accountId: number | null) {
+export function useCompleteDuesRegistration(
+  clubId: string,
+  accountId: number | null,
+  callbacks?: MutationCallbacks<unknown>,
+) {
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -116,8 +157,12 @@ export function useCompleteDuesRegistration(clubId: string, accountId: number | 
       if (accountId === null) throw new Error(REQUIRE_ACCOUNT);
       return duesApi.completeRegistration(clubId, accountId);
     },
+    onSuccess: callbacks?.onSuccess,
+    onError: callbacks?.onError,
+    onMutate: callbacks?.onMutate,
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ['admin', 'dues'] });
+      callbacks?.onSettled?.();
     },
   });
 }

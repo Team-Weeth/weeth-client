@@ -5,6 +5,7 @@ import { useParams } from 'next/navigation';
 
 import { BackButton } from '@/components/admin/dues';
 import { useDuesSetupValues, useDuesSetupActions } from '@/stores/useDuesSetupStore';
+import { toastError } from '@/stores/useToastStore';
 import { useDuesCarryOverSourceQuery } from '@/hooks/queries/admin';
 import { useSaveDuesCarryOver } from '@/hooks/mutations/admin';
 
@@ -30,7 +31,9 @@ function DuesSetupStep3() {
   const { setField } = useDuesSetupActions();
 
   const { data: source } = useDuesCarryOverSourceQuery(clubId, accountId);
-  const saveCarryOver = useSaveDuesCarryOver(clubId, accountId);
+  const saveCarryOver = useSaveDuesCarryOver(clubId, accountId, {
+    onError: () => toastError('이월 설정 저장에 실패했습니다. 잠시 후 다시 시도해주세요.'),
+  });
 
   // 최초 조회 시 이전 기수 잔액 유무에 따라 이월 옵션 기본값을 store에 복원한다(1회).
   useEffect(() => {

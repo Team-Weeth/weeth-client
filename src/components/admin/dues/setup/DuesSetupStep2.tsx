@@ -5,6 +5,7 @@ import { useParams } from 'next/navigation';
 
 import { BackButton, DuesSearchBar } from '@/components/admin/dues';
 import { useDuesSetupValues, useDuesSetupActions } from '@/stores/useDuesSetupStore';
+import { toastError } from '@/stores/useToastStore';
 import { useDuesPaymentTargetsQuery } from '@/hooks/queries/admin';
 import { useSaveDuesPaymentTargets } from '@/hooks/mutations/admin';
 
@@ -29,7 +30,9 @@ function DuesSetupStep2() {
   const { setField } = useDuesSetupActions();
 
   const { data } = useDuesPaymentTargetsQuery(clubId, accountId);
-  const savePaymentTargets = useSaveDuesPaymentTargets(clubId, accountId);
+  const savePaymentTargets = useSaveDuesPaymentTargets(clubId, accountId, {
+    onError: () => toastError('납부 대상 저장에 실패했습니다. 잠시 후 다시 시도해주세요.'),
+  });
 
   const allTargets = data?.targets.content ?? [];
 

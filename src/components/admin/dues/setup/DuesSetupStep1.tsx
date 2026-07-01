@@ -10,6 +10,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { cn } from '@/lib/cn';
 import { duesBasicSchema, type DuesBasicFormData } from '@/lib/schemas/duesSetup';
 import { useDuesSetupActions, useDuesSetupValues } from '@/stores/useDuesSetupStore';
+import { toastError } from '@/stores/useToastStore';
 import { useCardinalSelector } from '@/hooks/useCardinalSelector';
 import { useCreateDuesDraft, useDiscardDuesDraft, useSaveDuesBasic } from '@/hooks/mutations/admin';
 import {
@@ -41,7 +42,9 @@ function DuesSetupStep1() {
 
   const createDraft = useCreateDuesDraft(clubId);
   const discardDraft = useDiscardDuesDraft(clubId, accountId);
-  const saveBasic = useSaveDuesBasic(clubId, accountId);
+  const saveBasic = useSaveDuesBasic(clubId, accountId, {
+    onError: () => toastError('기본 정보 저장에 실패했습니다. 잠시 후 다시 시도해주세요.'),
+  });
 
   const {
     control,
@@ -77,7 +80,7 @@ function DuesSetupStep1() {
   // accountId가 null인 경우에만 초안 생성 API 호출 (accountId 확보 목적)
   // - Step2 이전 버튼으로 돌아온 경우: accountId가 메모리에 남아 있어 호출하지 않음
   // - 새로고침 등으로 accountId가 비워진 경우에도 accountId 확보를 위해 호출은 하되,
-  //   "이어서 작성" alert는 메인에서 신규 진입(isFreshEntry)했을 때만 노출한다.
+  //   "이어서 작성" alert는 메인에서 신규 진입(isFreshEntry)했을 때만 노출
   useEffect(() => {
     if (accountId !== null || !latestCardinal) return;
 
