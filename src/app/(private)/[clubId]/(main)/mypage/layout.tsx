@@ -6,7 +6,7 @@ interface MyPageLayoutProps {
 
 export default function MyPageLayout({ children }: MyPageLayoutProps) {
   return (
-    <div className="mx-auto flex w-full items-start gap-500 px-16 pt-450 pb-[80px]">
+    <div className="desktop:px-16 tablet:pt-450 mx-auto flex w-full items-start gap-500 px-450 pb-[80px]">
       <aside className="tablet:flex hidden shrink-0">
         <MyPageNav />
       </aside>
