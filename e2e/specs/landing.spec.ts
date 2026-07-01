@@ -10,6 +10,8 @@ test.describe('랜딩 페이지', () => {
     // storageState로 주입된 인증 쿠키를 제거해 미들웨어 리다이렉트 방지
     await context.clearCookies();
     await page.goto('/landing');
+    // hydration 완료 후 framer-motion 헤더 애니메이션이 안정화될 때까지 대기
+    await page.waitForLoadState('networkidle');
 
     if (isMobile) {
       // 모바일: 로그인 링크가 Sheet 안에 있으므로 햄버거 메뉴 먼저 오픈
@@ -17,7 +19,6 @@ test.describe('랜딩 페이지', () => {
     }
 
     const loginLink = page.getByRole('link', { name: '로그인' });
-    await loginLink.waitFor({ state: 'visible' });
     await Promise.all([page.waitForURL(/\/login/), loginLink.click()]);
   });
 });

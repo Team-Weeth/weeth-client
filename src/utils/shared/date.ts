@@ -93,6 +93,14 @@ export function formatDateDisplay(dateStr: string): string {
   return `${year}. ${month}. ${day}`;
 }
 
+export function formatCompactDateDisplay(dateStr: string): string {
+  if (!dateStr) return '';
+  const [year, month, day] = dateStr.split('-');
+  if (!year || !month || !day) return dateStr;
+
+  return `${year}.${month.padStart(2, '0')}.${day.padStart(2, '0')}`;
+}
+
 export function formatTimeDisplay(timeStr: string): string {
   if (!timeStr) return '';
   const [h, m] = timeStr.split(':').map(Number);

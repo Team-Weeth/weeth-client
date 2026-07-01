@@ -16,6 +16,7 @@
   --breakpoint-mobile: 360px;
   --breakpoint-tablet: 696px;
   --breakpoint-desktop: 1440px;
+  --container-dues: 1250px;
 }
 
 :root {
@@ -573,6 +574,21 @@ select:focus {
 @utility typo-button2 {
   font-size: var(--button2-size);
   line-height: var(--button2-line-height);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--letter-spacing);
+}
+
+@utility tag-base {
+  display: inline-flex;
+  height: 24px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 5px;
+  padding-inline: var(--spacing-200);
+  padding-block: var(--spacing-100);
+  white-space: nowrap;
+  font-size: var(--caption1-size);
+  line-height: var(--caption1-line-height);
   font-weight: var(--font-weight-semibold);
   letter-spacing: var(--letter-spacing);
 }

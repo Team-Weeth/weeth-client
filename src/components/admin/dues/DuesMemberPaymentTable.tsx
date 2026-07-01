@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 
-import { ArrowRightIcon, CheckIcon, SearchIcon } from '@/assets/icons';
+import { ArrowRightIcon, CheckIcon } from '@/assets/icons';
 import {
   Icon,
   Table,
@@ -14,20 +14,15 @@ import {
 } from '@/components/ui';
 import { cn } from '@/lib/cn';
 import { DuesMember, FilterType, PaymentStatus } from '@/types/admin/dues';
+import { DuesSearchBar } from './DuesSearchBar';
 
 function PaymentStatusBadge({ status }: { status: PaymentStatus }) {
   if (status === 'paid') {
     return (
-      <span className="typo-caption1 bg-brand-primary/10 text-brand-primary inline-flex h-6 items-center justify-center rounded-[5px] px-200 py-100 whitespace-nowrap">
-        완료
-      </span>
+      <span className="typo-caption1 bg-brand-primary/10 text-brand-primary tag-base">완료</span>
     );
   }
-  return (
-    <span className="typo-caption1 bg-state-error/10 text-state-error inline-flex h-6 items-center justify-center rounded-[5px] px-200 py-100 whitespace-nowrap">
-      미납
-    </span>
-  );
+  return <span className="typo-caption1 bg-state-error/10 text-state-error tag-base">미납</span>;
 }
 
 const COLUMNS = [
@@ -121,18 +116,7 @@ function DuesMemberPaymentTable({
         </div>
 
         {/* 검색바 */}
-        <div className="bg-container-neutral-alternative relative h-[48px] w-full max-w-[339px] overflow-hidden rounded-sm">
-          <div className="text-icon-alternative absolute top-1/2 left-400 flex -translate-y-1/2 self-center">
-            <Icon src={SearchIcon} alt="" size={24} />
-          </div>
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="이름으로 검색하기"
-            className="typo-body2 placeholder:text-text-alternative text-text-strong h-full w-full bg-transparent pr-400 pl-[52px] outline-none"
-          />
-        </div>
+        <DuesSearchBar searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
 
         {/* 테이블 */}
         <div className="border-line overflow-x-auto rounded-sm border">

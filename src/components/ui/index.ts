@@ -5,6 +5,9 @@
 export { Button, buttonVariants } from './Button';
 export type { ButtonProps } from './Button';
 
+export { Checkbox, checkboxVariants } from './Checkbox';
+export type { CheckboxProps } from './Checkbox';
+
 export { Input } from './Input';
 export type { InputProps } from './Input';
 
@@ -164,3 +167,13 @@ export { MobileBlocker, type MobileBlockerProps } from './MobileBlocker';
 export { BackOrHomeButton, type BackOrHomeButtonProps } from './BackOrHomeButton';
 
 export { ChartContainer, type ChartConfig } from './chart';
+
+export {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationPrevious,
+  PaginationNext,
+  PaginationEllipsis,
+} from './pagination';

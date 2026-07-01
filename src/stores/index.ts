@@ -25,6 +25,12 @@ export {
 } from './useBoardNavStore';
 export { useCreateClubDraftStore } from './useCreateClubDraftStore';
 export {
+  useDuesSetupStore,
+  useDuesSetupValues,
+  useDuesSetupActions,
+  type DuesSetupState,
+} from './useDuesSetupStore';
+export {
   useAdminHeaderStore,
   useIsAdminEditMode,
   useSetAdminEditMode,
