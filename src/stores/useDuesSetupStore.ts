@@ -7,6 +7,9 @@ const initialState = {
   // 메인 화면에서 막 신규 진입했는지 여부 (메모리 전용 — partialize 제외)
   // true일 때만 step1에서 "이어서 작성" alert를 노출한다.
   isFreshEntry: false,
+  // 최종 확인(5)에서 편집 버튼으로 진입했을 때 "돌아갈 스텝" (메모리 전용 — partialize 제외)
+  // null이면 일반 선형 흐름, 값이 있으면 "다음으로" 대신 해당 스텝으로 복귀한다.
+  returnStep: null as number | null,
   cardinalNumber: 0,
   // Step 1: 기본 정보
   amount: '',
@@ -73,6 +76,7 @@ export const useDuesSetupValues = () =>
     useShallow((state) => ({
       accountId: state.accountId,
       isFreshEntry: state.isFreshEntry,
+      returnStep: state.returnStep,
       cardinalNumber: state.cardinalNumber,
       amount: state.amount,
       name: state.name,

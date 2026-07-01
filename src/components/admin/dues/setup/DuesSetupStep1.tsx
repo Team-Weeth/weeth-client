@@ -184,7 +184,7 @@ function DuesSetupStep1() {
       )();
     });
 
-  const { goNext } = useDuesStepNavigator(1, commitStep);
+  const { goNext, isEditMode } = useDuesStepNavigator(1, commitStep);
 
   return (
     <>
@@ -306,7 +306,7 @@ function DuesSetupStep1() {
         </div>
 
         {/* 다음으로 버튼 */}
-        <NextButton handleNext={goNext} />
+        <NextButton handleNext={goNext} editMode={isEditMode} />
       </div>
     </>
   );

@@ -61,7 +61,7 @@ function DuesSetupStep3() {
     }
   };
 
-  const { goNext } = useDuesStepNavigator(3, commitStep);
+  const { goNext, isEditMode } = useDuesStepNavigator(3, commitStep);
 
   return (
     <div className="flex min-w-85 flex-col gap-700 p-700">
@@ -125,7 +125,7 @@ function DuesSetupStep3() {
       {/* 하단 네비게이션 */}
       <div className="flex items-center justify-between">
         <PrevButton handlePrev={() => goToStep(2)} />
-        <NextButton handleNext={goNext} />
+        <NextButton handleNext={goNext} editMode={isEditMode} />
       </div>
     </div>
   );

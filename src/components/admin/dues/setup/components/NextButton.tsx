@@ -4,10 +4,12 @@ import { cn } from '@/lib/cn';
 
 function NextButton({
   last = false,
+  editMode = false,
   handleNext,
   disabled = false,
 }: {
   last?: boolean;
+  editMode?: boolean;
   handleNext: () => void;
   disabled?: boolean;
 }) {
@@ -22,7 +24,7 @@ function NextButton({
           disabled && 'cursor-not-allowed opacity-50',
         )}
       >
-        {last ? '저장하고 완료하기' : '다음으로'}
+        {editMode ? '수정 완료' : last ? '저장하고 완료하기' : '다음으로'}
         <Icon src={ArrowRightIcon} alt="" size={12} />
       </button>
     </div>

@@ -42,7 +42,7 @@ function DuesSetupStep5() {
     accountGuide,
     isAccountPublic,
   } = useDuesSetupValues();
-  const { reset } = useDuesSetupActions();
+  const { reset, setField } = useDuesSetupActions();
   const completeRegistration = useCompleteDuesRegistration(clubId, accountId);
   const [isPaymentTargetModalOpen, setIsPaymentTargetModalOpen] = useState(false);
 
@@ -64,6 +64,12 @@ function DuesSetupStep5() {
   const expectedDuesIncome = Number(amount) * selectedCount;
   const carryOverAmount = carryOverOption === 'carry' ? previousBalance : 0;
   const expectedTotal = expectedDuesIncome + carryOverAmount;
+
+  // 편집 버튼 → 해당 스텝으로 이동하되, 저장 후 최종 확인(5)으로 복귀하도록 표시를 남긴다.
+  const handleEditStep = (step: number) => {
+    setField({ returnStep: 5 });
+    goToStep(step);
+  };
 
   const handleComplete = async () => {
     if (accountId === null || completeRegistration.isPending) return;
@@ -174,7 +180,7 @@ function DuesSetupStep5() {
             bankName={bankName}
             accountHolder={accountHolder}
             accountGuide={accountGuide}
-            goToStep={goToStep}
+            onEditStep={handleEditStep}
           />
         </FormCard>
       </div>
