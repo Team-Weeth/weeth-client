@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useRef, useState } from 'react';
 
 import { Breadcrumb, BreadcrumbItem, BreadcrumbList, BreadcrumbPage } from '@/components/ui';
 import { CardinalDropdown } from '@/components/common';
@@ -16,6 +16,7 @@ import { useDuesCardinals, useDuesMe, useDuesTransactions } from '@/hooks/querie
 function DuesContent() {
   const [selectedCardinalId, setSelectedCardinalId] = useState<number | null>(null);
   const [isCardinalTransitioning, setIsCardinalTransitioning] = useState(false);
+  const transitionTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const { data: cardinals = [], isLoading } = useDuesCardinals();
   const latestCardinal = cardinals.find((cardinal) => cardinal.status === 'IN_PROGRESS');
   const selectedCardinal =
@@ -36,23 +37,26 @@ function DuesContent() {
     isFetching: isTransactionsFetching,
     isFetchingNextPage,
   } = useDuesTransactions(selectedCardinal?.cardinalNumber);
-  const isLeftSectionLoading = isDuesLoading || isCardinalTransitioning;
+  const isLeftSectionLoading = isDuesLoading || isDuesFetching || isCardinalTransitioning;
   const isTransactionSectionLoading =
-    isTransactionsLoading || (isCardinalTransitioning && !isFetchingNextPage);
+    isTransactionsLoading ||
+    (isTransactionsFetching && !isFetchingNextPage) ||
+    (isCardinalTransitioning && !isFetchingNextPage);
 
   const handleSelectCardinal = (cardinalId: number) => {
+    if (selectedCardinal?.id === cardinalId) return;
+
     setSelectedCardinalId(cardinalId);
     setIsCardinalTransitioning(true);
-  };
 
-  useEffect(() => {
-    const isFetchingSelectedCardinal =
-      isDuesFetching || (isTransactionsFetching && !isFetchingNextPage);
-
-    if (isCardinalTransitioning && !isFetchingSelectedCardinal) {
-      setIsCardinalTransitioning(false);
+    if (transitionTimeoutRef.current) {
+      clearTimeout(transitionTimeoutRef.current);
     }
-  }, [isCardinalTransitioning, isDuesFetching, isFetchingNextPage, isTransactionsFetching]);
+
+    transitionTimeoutRef.current = setTimeout(() => {
+      setIsCardinalTransitioning(false);
+    }, 250);
+  };
 
   if (isLoading) {
     return <DuesPageSkeleton />;
