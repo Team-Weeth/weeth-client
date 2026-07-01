@@ -3,11 +3,12 @@
 import { useState } from 'react';
 import dynamic from 'next/dynamic';
 import { cn } from '@/lib/cn';
-import { Avatar, AvatarFallback, AvatarImage, Divider, Icon, Tag } from '@/components/ui';
-import { PeopleIcon } from '@/assets/icons';
+import { Avatar, AvatarFallback, AvatarImage, Button, Divider, Icon, Tag } from '@/components/ui';
+import { ArrowRightIcon, PeopleIcon } from '@/assets/icons';
 import type { ClubDto } from '@/types/mypage';
 import { cardClass } from './InfoCard';
 import { MyPageDropdownMenu } from './LeaveClubDropdownMenu';
+import { useRouter } from 'next/navigation';
 
 const SetCardinalModal = dynamic(() =>
   import('./SetCardinalModal').then((m) => ({ default: m.SetCardinalModal })),
@@ -18,11 +19,12 @@ interface ClubInfoCardProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 function ClubInfoCard({ club, className }: ClubInfoCardProps) {
+  const router = useRouter();
   const [modalOpen, setModalOpen] = useState(false);
 
   return (
     <>
-      <div className={cn('w-[314px]', cardClass, className)}>
+      <div className={cn('tablet:w-[314px] w-[250px]', cardClass, className)}>
         <div className="flex flex-col gap-300">
           <div className="flex flex-col gap-6">
             <div className="flex items-start justify-between">
@@ -42,9 +44,11 @@ function ClubInfoCard({ club, className }: ClubInfoCardProps) {
             </div>
 
             <div className="flex flex-col">
-              <span className="typo-sub1 text-text-strong mb-[2px]">{club.name}</span>
+              <span className="tablet:typo-sub1 typo-sub3 text-text-strong mb-[2px]">
+                {club.name}
+              </span>
               {club.description && (
-                <p className="typo-body2 text-text-normal mb-[6px] line-clamp-1">
+                <p className="tablet:typo-body2 typo-caption2 text-text-normal mb-[6px] line-clamp-1">
                   {club.description}
                 </p>
               )}
@@ -54,9 +58,9 @@ function ClubInfoCard({ club, className }: ClubInfoCardProps) {
               </div>
               <div className="bg-container-neutral-alternative flex gap-2 rounded-md px-400 py-300">
                 <Avatar
-                  size={64}
+                  size={40}
                   type="round"
-                  className="border-line size-[64px] rounded-full border"
+                  className="border-line tablet:size-[64px] size-10 rounded-full border"
                 >
                   {club.profileImageUrl && (
                     <AvatarImage src={club.profileImageUrl} alt={club.name} />
@@ -64,9 +68,11 @@ function ClubInfoCard({ club, className }: ClubInfoCardProps) {
                   <AvatarFallback variant="club" />
                 </Avatar>
                 <div className="flex flex-col justify-center gap-1">
-                  <span className="typo-sub3 text-text-strong">{club.name}</span>
+                  <span className="tablet:typo-sub3 typo-button2 text-text-strong">
+                    {club.name}
+                  </span>
                   {club.description && (
-                    <p className="typo-body2 text-text-alternative line-clamp-1">
+                    <p className="tablet:typo-body2 typo-caption2 text-text-alternative line-clamp-1">
                       {club.description}
                     </p>
                   )}
@@ -77,7 +83,7 @@ function ClubInfoCard({ club, className }: ClubInfoCardProps) {
           <div className="flex flex-col gap-450">
             <Divider />
             <div className="flex flex-col gap-2">
-              <span className="typo-sub3 text-text-alternative">활동 기수</span>
+              <span className="tablet:typo-sub3 typo-button2 text-text-alternative">활동 기수</span>
               <div className="flex flex-wrap gap-100">
                 {club.cardinals.length > 0 ? (
                   <div className="flex items-center gap-100">
@@ -103,6 +109,15 @@ function ClubInfoCard({ club, className }: ClubInfoCardProps) {
                 )}
               </div>
             </div>
+            <Button
+              variant="secondary"
+              size="lg"
+              className="flex gap-100"
+              onClick={() => router.push(`/${club.id}/home`)}
+            >
+              동아리 입장하기
+              <Icon src={ArrowRightIcon} className="text-icon-normal p-1" size={20} />
+            </Button>
           </div>
         </div>
       </div>
