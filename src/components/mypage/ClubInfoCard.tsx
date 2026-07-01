@@ -1,13 +1,13 @@
 'use client';
 
 import { useState } from 'react';
-import Link from 'next/link';
 import dynamic from 'next/dynamic';
 import { cn } from '@/lib/cn';
-import { Avatar, AvatarFallback, AvatarImage, Button, Divider, Icon, Tag } from '@/components/ui';
-import { ExitIcon, PeopleIcon } from '@/assets/icons';
+import { Avatar, AvatarFallback, AvatarImage, Divider, Icon, Tag } from '@/components/ui';
+import { PeopleIcon } from '@/assets/icons';
 import type { ClubDto } from '@/types/mypage';
 import { cardClass } from './InfoCard';
+import { MyPageDropdownMenu } from './LeaveClubDropdownMenu';
 
 const SetCardinalModal = dynamic(() =>
   import('./SetCardinalModal').then((m) => ({ default: m.SetCardinalModal })),
@@ -22,9 +22,9 @@ function ClubInfoCard({ club, className }: ClubInfoCardProps) {
 
   return (
     <>
-      <div className={cn('w-[340px]', cardClass, className)}>
+      <div className={cn('w-[314px]', cardClass, className)}>
         <div className="flex flex-col gap-300">
-          <div className="flex flex-col gap-4 px-200">
+          <div className="flex flex-col gap-6">
             <div className="flex items-start justify-between">
               <div className="flex items-center">
                 <Avatar
@@ -38,28 +38,45 @@ function ClubInfoCard({ club, className }: ClubInfoCardProps) {
                   <AvatarFallback variant="club" />
                 </Avatar>
               </div>
-              <Link
-                href={`/${club.id}/home`}
-                className="text-icon-alternative hover:text-icon-normal transition-colors"
-              >
-                <Icon src={ExitIcon} size={24} alt="클럽 홈으로 이동" />
-              </Link>
+              <MyPageDropdownMenu />
             </div>
 
-            <div className="flex flex-col gap-100 pt-[6px]">
-              <span className="typo-sub1 text-text-strong">{club.name}</span>
+            <div className="flex flex-col">
+              <span className="typo-sub1 text-text-strong mb-[2px]">{club.name}</span>
               {club.description && (
-                <p className="typo-body2 text-text-alternative line-clamp-1">{club.description}</p>
+                <p className="typo-body2 text-text-normal mb-[6px] line-clamp-1">
+                  {club.description}
+                </p>
               )}
+              <div className="text-text-alternative mb-300 flex items-center gap-100">
+                <Icon src={PeopleIcon} size={16} className="text-icon-altenative" />
+                <span className="typo-caption1 text-text-alternative">{club.memberCount}명</span>
+              </div>
+              <div className="bg-container-neutral-alternative flex gap-2 rounded-md px-400 py-300">
+                <Avatar
+                  size={64}
+                  type="round"
+                  className="border-line size-[64px] rounded-full border"
+                >
+                  {club.profileImageUrl && (
+                    <AvatarImage src={club.profileImageUrl} alt={club.name} />
+                  )}
+                  <AvatarFallback variant="club" />
+                </Avatar>
+                <div className="flex flex-col justify-center gap-1">
+                  <span className="typo-sub3 text-text-strong">{club.name}</span>
+                  {club.description && (
+                    <p className="typo-body2 text-text-alternative line-clamp-1">
+                      {club.description}
+                    </p>
+                  )}
+                </div>
+              </div>
             </div>
           </div>
           <div className="flex flex-col gap-450">
-            <div className="text-text-alternative flex items-center gap-200 px-[10px]">
-              <Icon src={PeopleIcon} size={16} className="text-icon-normal" />
-              <span className="typo-button2 text-text-normal">{club.memberCount}명</span>
-            </div>
             <Divider />
-            <div className="flex flex-col gap-2 px-[10px]">
+            <div className="flex flex-col gap-2">
               <span className="typo-sub3 text-text-alternative">활동 기수</span>
               <div className="flex flex-wrap gap-100">
                 {club.cardinals.length > 0 ? (
@@ -71,14 +88,18 @@ function ClubInfoCard({ club, className }: ClubInfoCardProps) {
                     ))}
                   </div>
                 ) : (
-                  <Button
-                    variant="secondary"
-                    size="sm"
-                    className="w-full"
-                    onClick={() => setModalOpen(true)}
-                  >
-                    기수 설정하기
-                  </Button>
+                  <div className="flex w-full items-center justify-between">
+                    <Tag className="text-text-alternative inline-flex items-center gap-100 bg-[#9095991A]">
+                      미설정
+                    </Tag>
+                    <button
+                      type="button"
+                      className="typo-caption1 text-text-alternative underline"
+                      onClick={() => setModalOpen(true)}
+                    >
+                      기수 설정하기
+                    </button>
+                  </div>
                 )}
               </div>
             </div>
