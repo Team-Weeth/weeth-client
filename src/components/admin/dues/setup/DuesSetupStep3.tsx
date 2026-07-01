@@ -68,7 +68,7 @@ function DuesSetupStep3() {
     return true;
   };
 
-  const { maxReachedStep, goNext, goToReachedStep } = useDuesStepNavigator(3, commitStep);
+  const { goNext } = useDuesStepNavigator(3, commitStep);
 
   return (
     <div className="flex min-w-85 flex-col gap-700 p-700">
@@ -79,11 +79,7 @@ function DuesSetupStep3() {
       </div>
 
       <div className="flex flex-col gap-600">
-        <DuesSetupStepIndicator
-          currentStep={3}
-          maxReachedStep={maxReachedStep}
-          onStepClick={goToReachedStep}
-        />
+        <DuesSetupStepIndicator currentStep={3} />
 
         <FormCard title="이월 설정" step={3} description="이전 기수에서 이월할 잔액을 설정해주세요">
           {/* 이전 기수 잔액 정보 카드 */}

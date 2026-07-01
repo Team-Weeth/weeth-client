@@ -21,7 +21,6 @@ import {
   SettingResultCardGrid,
 } from '@/components/admin/dues/setup/components';
 import { useDuesSetupNavigation } from '@/components/admin/dues/setup/useDuesSetupNavigation';
-import { useDuesStepNavigator } from '@/components/admin/dues/setup/useDuesStepNavigator';
 
 const MAX_AVATAR_DISPLAY = 4;
 
@@ -44,9 +43,6 @@ function DuesSetupStep5() {
     isAccountPublic,
   } = useDuesSetupValues();
   const { reset } = useDuesSetupActions();
-
-  // 최종 확인 단계는 편집 필드가 없어 commit은 no-op — 인디케이터로 이전 단계 이동만 지원
-  const { maxReachedStep, goToReachedStep } = useDuesStepNavigator(5, () => true);
   const [isPaymentTargetModalOpen, setIsPaymentTargetModalOpen] = useState(false);
   const [isCompleting, setIsCompleting] = useState(false);
 
@@ -115,11 +111,7 @@ function DuesSetupStep5() {
       </div>
 
       <div className="flex flex-col gap-600">
-        <DuesSetupStepIndicator
-          currentStep={5}
-          maxReachedStep={maxReachedStep}
-          onStepClick={goToReachedStep}
-        />
+        <DuesSetupStepIndicator currentStep={5} />
 
         <FormCard
           title="최종 확인"

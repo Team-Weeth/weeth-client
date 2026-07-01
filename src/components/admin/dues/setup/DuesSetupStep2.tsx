@@ -83,7 +83,7 @@ function DuesSetupStep2() {
     return true;
   };
 
-  const { maxReachedStep, goNext, goToReachedStep } = useDuesStepNavigator(2, commitStep);
+  const { goNext } = useDuesStepNavigator(2, commitStep);
 
   return (
     <div className="flex min-w-85 flex-col gap-700 p-700">
@@ -94,11 +94,7 @@ function DuesSetupStep2() {
       </div>
 
       <div className="flex flex-col gap-600">
-        <DuesSetupStepIndicator
-          currentStep={2}
-          maxReachedStep={maxReachedStep}
-          onStepClick={goToReachedStep}
-        />
+        <DuesSetupStepIndicator currentStep={2} />
 
         <div className="bg-container-neutral flex flex-col gap-600 rounded-lg px-400 py-450">
           {/* 섹션 헤더 */}

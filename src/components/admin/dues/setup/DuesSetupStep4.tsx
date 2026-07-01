@@ -69,7 +69,7 @@ function DuesSetupStep4() {
     return true;
   };
 
-  const { maxReachedStep, goNext, goToReachedStep } = useDuesStepNavigator(4, commitStep);
+  const { goNext } = useDuesStepNavigator(4, commitStep);
 
   return (
     <div className="flex min-w-85 flex-col gap-700 p-700">
@@ -80,11 +80,7 @@ function DuesSetupStep4() {
       </div>
 
       <div className="flex flex-col gap-600">
-        <DuesSetupStepIndicator
-          currentStep={4}
-          maxReachedStep={maxReachedStep}
-          onStepClick={goToReachedStep}
-        />
+        <DuesSetupStepIndicator currentStep={4} />
 
         <FormCard
           title="계좌 공개"

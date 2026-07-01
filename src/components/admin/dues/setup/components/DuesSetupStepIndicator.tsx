@@ -12,37 +12,18 @@ const STEPS = [
 
 interface DuesSetupStepIndicatorProps {
   currentStep: number;
-  /** 지금까지 도달한 최고 단계 — 이 단계까지 클릭 이동 허용 */
-  maxReachedStep?: number;
-  /** 단계 클릭 핸들러 (없으면 인디케이터는 표시 전용) */
-  onStepClick?: (step: number) => void;
   className?: string;
 }
 
-function DuesSetupStepIndicator({
-  currentStep,
-  maxReachedStep = currentStep,
-  onStepClick,
-  className,
-}: DuesSetupStepIndicatorProps) {
+function DuesSetupStepIndicator({ currentStep, className }: DuesSetupStepIndicatorProps) {
   return (
     <div className={cn('flex w-full items-center gap-200', className)}>
       {STEPS.map(({ step, label }) => {
         const isActive = step === currentStep;
         const isCompleted = step < currentStep;
-        const isClickable = !!onStepClick && step <= maxReachedStep && step !== currentStep;
 
         return (
-          <button
-            key={step}
-            type="button"
-            disabled={!isClickable}
-            onClick={isClickable ? () => onStepClick(step) : undefined}
-            className={cn(
-              'flex min-w-0 flex-1 flex-col gap-200 text-left',
-              isClickable ? 'cursor-pointer' : 'cursor-default',
-            )}
-          >
+          <div key={step} className="flex min-w-0 flex-1 flex-col gap-200">
             <div className="flex items-center gap-100">
               <div
                 className={cn(
@@ -71,7 +52,7 @@ function DuesSetupStepIndicator({
                 )}
               />
             </div>
-          </button>
+          </div>
         );
       })}
     </div>

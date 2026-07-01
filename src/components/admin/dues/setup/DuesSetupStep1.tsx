@@ -111,8 +111,6 @@ function DuesSetupStep1() {
     }
 
     const targetStep = STEP_MAP[registrationStep] ?? 1;
-    // 복원한 단계가 지금까지 도달한 최고 단계 → 인디케이터 자유 이동 범위로 설정
-    setField({ maxReachedStep: targetStep });
     if (targetStep > 1) {
       goToStep(targetStep);
     }
@@ -138,7 +136,7 @@ function DuesSetupStep1() {
     return true;
   };
 
-  const { maxReachedStep, goNext, goToReachedStep } = useDuesStepNavigator(1, commitStep);
+  const { goNext } = useDuesStepNavigator(1, commitStep);
 
   return (
     <>
@@ -165,11 +163,7 @@ function DuesSetupStep1() {
 
         <div className="flex flex-col gap-600">
           {/* 스텝 인디케이터 */}
-          <DuesSetupStepIndicator
-            currentStep={1}
-            maxReachedStep={maxReachedStep}
-            onStepClick={goToReachedStep}
-          />
+          <DuesSetupStepIndicator currentStep={1} />
 
           <FormCard title="기본 정보" step={1} description="총 회비의 기본 정보를 입력해주세요">
             {/* 필드 행: 회비금액 + 회비 이름 */}
