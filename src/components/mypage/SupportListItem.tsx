@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { cn } from '@/lib/cn';
-import { Icon } from '@/components/ui';
+import { Button, Icon } from '@/components/ui';
 import { ArrowRightIcon, CopyIcon } from '@/assets/icons';
 import { toastSuccess } from '@/stores/useToastStore';
 
@@ -10,6 +10,7 @@ interface SupportListItemProps extends React.HTMLAttributes<HTMLButtonElement> {
   variant?: 'link' | 'copy';
   href?: string;
   copyText?: string;
+  layout?: 'card' | 'row';
 }
 
 function SupportListItem({
@@ -18,30 +19,68 @@ function SupportListItem({
   variant = 'link',
   href,
   copyText,
+  layout = 'card',
   className,
+  onClick,
   ...props
 }: SupportListItemProps) {
+  const hasSubContent = !!description || variant === 'copy';
+  const isRow = layout === 'row';
+
   const content = (
     <>
-      <div className="flex w-full flex-col gap-100">
-        <span className="typo-button1 text-text-strong">{title}</span>
-        <div className="flex flex-row items-center gap-200">
-          {description && <p className="typo-body2 text-text-alternative">{description}</p>}
-          {variant === 'copy' && (
-            <Icon src={CopyIcon} size={16} className="text-icon-alternative" alt="복사버튼" />
+      <div
+        className={cn(
+          'flex w-full',
+          isRow ? 'items-center justify-between gap-100' : 'flex-col',
+          !isRow && hasSubContent && 'gap-100',
+        )}
+      >
+        <div className={cn('flex min-w-0', isRow ? 'items-center' : 'w-full flex-col')}>
+          <span className={'typo-button1 text-text-strong'}>{title}</span>
+          {!isRow && hasSubContent && (
+            <div className="flex flex-row items-center gap-200">
+              {description && <p className="typo-body2 text-text-alternative">{description}</p>}
+              {variant === 'copy' && (
+                <Icon src={CopyIcon} size={16} className="text-icon-alternative" alt="복사버튼" />
+              )}
+            </div>
           )}
         </div>
-      </div>
-      <span className="text-icon-alternative absolute top-3.75 right-300">
-        {variant === 'link' && (
-          <Icon src={ArrowRightIcon} size={12} className="text-icon-normal" alt="페이지 이동버튼" />
+
+        {isRow ? (
+          variant === 'copy' ? (
+            <Button variant="secondary" size="sm">
+              복사하기
+            </Button>
+          ) : (
+            <Icon
+              src={ArrowRightIcon}
+              size={12}
+              className="text-icon-normal"
+              alt="페이지 이동버튼"
+            />
+          )
+        ) : (
+          <span className="text-icon-alternative absolute top-3.75 right-300">
+            {variant === 'link' && (
+              <Icon
+                src={ArrowRightIcon}
+                size={12}
+                className="text-icon-normal"
+                alt="페이지 이동버튼"
+              />
+            )}
+          </span>
         )}
-      </span>
+      </div>
     </>
   );
 
   const baseClass = cn(
-    'bg-container-neutral relative flex w-full cursor-pointer flex-col items-start rounded-lg p-400 text-left',
+    isRow
+      ? 'relative flex w-full cursor-pointer flex-col items-start px-400 py-300 text-left'
+      : 'bg-container-neutral relative flex w-full cursor-pointer flex-col items-start rounded-lg px-400 py-300 text-left',
     className,
   );
 
@@ -53,11 +92,12 @@ function SupportListItem({
     );
   }
 
-  const handleClick = () => {
+  const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     if (copyText) {
       navigator.clipboard.writeText(copyText);
       toastSuccess('복사되었습니다!');
     }
+    onClick?.(e);
   };
 
   return (
