@@ -63,7 +63,7 @@ const ProfileSection = ({
           <div className="flex items-center justify-between gap-400">
             <h1 className="typo-h3 text-text-strong">{name}</h1>
             {schoolLabel && (
-              <span className="typo-caption2 text-text-alternative bg-container-neutral-alternative shrink-0 rounded-md px-2 py-1">
+              <span className="desktop:flex typo-caption2 text-text-alternative bg-container-neutral-alternative hidden shrink-0 rounded-md px-2 py-1">
                 {schoolLabel}
               </span>
             )}
@@ -95,6 +95,11 @@ const ProfileSection = ({
               )}
             </div>
           )}
+          {schoolLabel && (
+            <span className="desktop:hidden typo-caption2 text-text-alternative bg-container-neutral-alternative mt-3 w-fit shrink-0 rounded-md px-2 py-1">
+              {schoolLabel}
+            </span>
+          )}
         </div>
 
         <div className="bg-container-neutral-alternative mt-5 flex h-[112px] items-center justify-center overflow-hidden rounded-md">
@@ -103,13 +108,13 @@ const ProfileSection = ({
             className="flex flex-1 flex-col items-center justify-center gap-2 py-200"
             onClick={() => router.push(`/${clubId}/mypage/posts`)}
           >
-            <span className="typo-sub3 text-text-alternative flex items-center gap-2">
+            <span className="tablet:typo-sub3 typo-button2 text-text-alternative flex items-center gap-2">
               내가 쓴 글
               <div className="bg-icon-alternative flex size-[18px] items-center justify-center rounded-full">
                 <Icon src={ArrowRightIcon} alt="" size={8} className="text-icon-inverse pl-[1px]" />
               </div>
             </span>
-            <span className="typo-h3 text-text-strong">{postCount}개</span>
+            <span className="tablet:typo-h3 typo-sub1 text-text-strong">{postCount}개</span>
           </button>
 
           <div className="bg-button-neutral-interaction h-[80px] w-px" />
@@ -119,13 +124,13 @@ const ProfileSection = ({
             className="flex flex-1 flex-col items-center justify-center gap-2 py-200"
             onClick={() => router.push(`/${clubId}/mypage/sessions`)}
           >
-            <span className="typo-sub3 text-text-alternative flex items-center gap-2">
+            <span className="tablet:typo-sub3 typo-button2 text-text-alternative flex items-center gap-2">
               출석한 세션
               <div className="bg-icon-alternative flex size-[18px] items-center justify-center rounded-full">
                 <Icon src={ArrowRightIcon} alt="" size={8} className="text-icon-inverse pl-[1px]" />
               </div>
             </span>
-            <span className="typo-h3 text-text-strong">{sessionCount}개</span>
+            <span className="tablet:typo-h3 typo-sub1 text-text-strong">{sessionCount}개</span>
           </button>
         </div>
       </div>
