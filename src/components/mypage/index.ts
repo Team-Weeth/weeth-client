@@ -12,6 +12,7 @@ export { ProfileSection, type ProfileSectionProps } from './ProfileSection';
 export { InfoSection, type InfoSectionProps } from './InfoSection';
 export { InfoCard, type InfoCardProps, type InfoCardItem } from './InfoCard';
 export { ThemeToggle, type ThemeToggleProps } from './ThemeToggle';
+export { ThemeModePageContent, type ThemeModePageContentProps } from './ThemeModePageContent';
 export { LogoutConfirmDialog, type LogoutConfirmDialogProps } from './LogoutConfirmDialog';
 export { SupportListItem, type SupportListItemProps } from './SupportListItem';
 export { MyPageDropdownMenu } from './MyPageDropdownMenu';
