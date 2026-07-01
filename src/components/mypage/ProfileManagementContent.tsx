@@ -19,8 +19,8 @@ function ProfileManagementContent({ className, ...props }: ProfileManagementCont
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
   return (
-    <div className={cn('flex min-w-0 flex-1 flex-col gap-6', className)} {...props}>
-      <div className="flex items-start gap-1">
+    <div className={cn('tablet:gap-6 flex min-w-0 flex-1 flex-col', className)} {...props}>
+      <div className="tablet:items-start flex items-center gap-1">
         <button
           type="button"
           onClick={() => router.back()}
@@ -28,17 +28,20 @@ function ProfileManagementContent({ className, ...props }: ProfileManagementCont
         >
           <Icon src={BackIcon} size={21} className="text-icon-normal p-1" />
         </button>
-        <div className="flex flex-col gap-1">
-          <h1 className="typo-h3 text-text-normal">프로필 관리</h1>
-          <p className="typo-body2 text-text-alternative">
+        <div className="flex flex-col">
+          <h1 className="tablet:typo-h3 typo-sub1 text-text-normal">프로필 관리</h1>
+          <p className="tablet:flex typo-body2 text-text-alternative hidden">
             같은 프로필을 사용하는 동아리에는 프로필 사진, 이름, 소개글이 함께 반영돼요.
           </p>
         </div>
       </div>
+      <div className="tablet:hidden bg-container-neutral-alternative typo-body2 text-text-normal mb-450 flex w-full rounded-md px-[18px] py-4">
+        같은 프로필을 사용하는 동아리에는 프로필 사진, 이름, 소개글이 함께 반영돼요.
+      </div>
 
       <div className="bg-container-neutral flex flex-col rounded-lg p-450">
         <p className="typo-sub1 text-text-alternative mb-[18px]">사용 중인 프로필 {clubs.length}</p>
-        <div className="grid grid-cols-3 gap-x-300 gap-y-8">
+        <div className="desktop:grid desktop:grid-cols-3 desktop:gap-x-300 desktop:gap-y-8 flex flex-col gap-8">
           {clubs.map((club) => (
             <ProfileCard
               key={club.id}
