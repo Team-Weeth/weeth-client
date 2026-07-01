@@ -1,7 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
+import { useMediaQuery } from '@/hooks';
 import { cn } from '@/lib/cn';
 import { useThemeStore } from '@/stores/theme-store';
 import { InfoSection } from './InfoSection';
@@ -20,7 +21,9 @@ const THEME_MODE_LABELS: Record<ThemeMode, string> = {
 };
 
 function MyPageSettingsContent({ className, ...props }: MyPageSettingsContentProps) {
+  const router = useRouter();
   const { clubId } = useParams<{ clubId: string }>();
+  const isBelowTablet = useMediaQuery('(max-width: 695.98px)');
   const mode = useThemeStore((state) => state.mode);
   const hasHydrated = useThemeStore((state) => state.hasHydrated);
   const setMode = useThemeStore((state) => state.setMode);
@@ -30,6 +33,10 @@ function MyPageSettingsContent({ className, ...props }: MyPageSettingsContentPro
   const [withdrawOpen, setWithdrawOpen] = useState(false);
 
   const handleOpenThemeModal = () => {
+    if (isBelowTablet) {
+      router.push(`/${clubId}/mypage/settings/theme`);
+      return;
+    }
     setSelectedThemeMode(mode);
     setIsThemeModalOpen(true);
   };
@@ -69,7 +76,7 @@ function MyPageSettingsContent({ className, ...props }: MyPageSettingsContentPro
             />
           </div>
 
-          <div className="my-2 px-400">
+          <div className="tablet:px-400 my-2">
             <div className="bg-line h-px w-full" />
           </div>
 
@@ -88,7 +95,7 @@ function MyPageSettingsContent({ className, ...props }: MyPageSettingsContentPro
             />
           </div>
 
-          <div className="my-2 px-400">
+          <div className="tablet:px-400 my-2">
             <div className="bg-line h-px w-full" />
           </div>
 
