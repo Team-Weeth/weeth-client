@@ -7,7 +7,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Controller, useForm } from 'react-hook-form';
 import { useQueryClient } from '@tanstack/react-query';
 
-import { cn } from '@/lib/cn';
 import { duesBasicSchema, type DuesBasicFormData } from '@/lib/schemas/duesSetup';
 import { useDuesSetupActions, useDuesSetupValues } from '@/stores/useDuesSetupStore';
 import { toastError } from '@/stores/useToastStore';
@@ -24,6 +23,7 @@ import {
   DuesDraftAlert,
   FormCard,
   NextButton,
+  DuesAmountField,
 } from '@/components/admin/dues/setup/components';
 import { useDuesSetupNavigation } from '@/components/admin/dues/setup/useDuesSetupNavigation';
 import { useDuesStepNavigator } from '@/components/admin/dues/setup/useDuesStepNavigator';
@@ -134,6 +134,7 @@ function DuesSetupStep1() {
     if (carryOver) {
       setField({
         carryOverOption: carryOver.enabled ? 'carry' : 'none',
+        carryOverAmount: carryOver.amount ? String(carryOver.amount) : '',
         carryOverDescription: carryOver.memo ?? '',
         carryOverInitialized: true,
       });
@@ -220,54 +221,22 @@ function DuesSetupStep1() {
             {/* 필드 행: 회비금액 + 회비 이름 */}
             <div className="flex gap-400">
               {/* 1인당 회비금액 */}
-              <div className="flex min-w-0 flex-1 flex-col">
-                <label
-                  htmlFor="dues-amount"
-                  className="typo-sub3 text-text-normal flex h-12 items-center px-400"
-                >
-                  1인 당 회비금액
-                </label>
-                <Controller
-                  control={control}
-                  name="amount"
-                  render={({ field }) => (
-                    <div className="flex flex-col gap-200">
-                      <div
-                        className={cn(
-                          'bg-container-neutral-alternative flex h-12 items-center gap-200 rounded-sm px-400',
-                          errors.amount && 'ring-state-error ring-1',
-                        )}
-                      >
-                        <input
-                          id="dues-amount"
-                          type="text"
-                          inputMode="numeric"
-                          value={field.value ? Number(field.value).toLocaleString() : ''}
-                          onChange={(e) => field.onChange(e.target.value.replace(/\D/g, ''))}
-                          onBlur={field.onBlur}
-                          placeholder="0"
-                          className={cn(
-                            'typo-sub3 placeholder:text-text-alternative min-w-0 flex-1 bg-transparent focus:outline-none',
-                            field.value ? 'text-text-normal' : 'text-text-alternative',
-                          )}
-                        />
-                        <span className="typo-body1 text-text-normal shrink-0">원</span>
-                      </div>
-                      <div className="flex items-start px-400">
-                        {errors.amount ? (
-                          <span className="typo-caption2 text-state-error">
-                            {errors.amount.message}
-                          </span>
-                        ) : (
-                          <span className="typo-caption2 text-text-alternative">
-                            회비 금액은 등록 후에도 수정할 수 있습니다.
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                  )}
-                />
-              </div>
+              <Controller
+                control={control}
+                name="amount"
+                render={({ field }) => (
+                  <DuesAmountField
+                    id="dues-amount"
+                    label="1인 당 회비금액"
+                    className="flex-1"
+                    value={field.value}
+                    onChange={field.onChange}
+                    onBlur={field.onBlur}
+                    error={errors.amount?.message}
+                    helperText="회비 금액은 등록 후에도 수정할 수 있습니다."
+                  />
+                )}
+              />
 
               {/* 회비 이름 */}
               <div className="min-w-0 flex-1">

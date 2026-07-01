@@ -20,6 +20,8 @@ const initialState = {
   memberIdsInitialized: false,
   // Step 3: 이월 설정
   carryOverOption: 'none' as 'none' | 'carry',
+  // 이전 기수 정보가 없을 때 직접 입력하는 이월 금액 (숫자 문자열)
+  carryOverAmount: '',
   carryOverDescription: '',
   carryOverInitialized: false,
   // Step 4: 계좌 공개
@@ -51,6 +53,7 @@ export const useDuesSetupStore = create(
           selectedMemberIds: state.selectedMemberIds,
           memberIdsInitialized: state.memberIdsInitialized,
           carryOverOption: state.carryOverOption,
+          carryOverAmount: state.carryOverAmount,
           carryOverDescription: state.carryOverDescription,
           carryOverInitialized: state.carryOverInitialized,
           accountNumber: state.accountNumber,
@@ -84,6 +87,7 @@ export const useDuesSetupValues = () =>
       selectedMemberIds: state.selectedMemberIds,
       memberIdsInitialized: state.memberIdsInitialized,
       carryOverOption: state.carryOverOption,
+      carryOverAmount: state.carryOverAmount,
       carryOverDescription: state.carryOverDescription,
       carryOverInitialized: state.carryOverInitialized,
       accountNumber: state.accountNumber,

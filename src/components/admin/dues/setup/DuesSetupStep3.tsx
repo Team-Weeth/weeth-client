@@ -1,13 +1,12 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 
 import { BackButton } from '@/components/admin/dues';
+import { duesApi } from '@/lib/apis/dues';
 import { useDuesSetupValues, useDuesSetupActions } from '@/stores/useDuesSetupStore';
-import { toastError } from '@/stores/useToastStore';
-import { useDuesCarryOverSourceQuery } from '@/hooks/queries/admin';
-import { useSaveDuesCarryOver } from '@/hooks/mutations/admin';
+import type { CarryOverSource } from '@/types/admin/dues';
 
 import {
   DuesSetupStepIndicator,
@@ -15,9 +14,9 @@ import {
   NextButton,
   PrevButton,
   CarryOverCard,
+  DuesAmountField,
 } from '@/components/admin/dues/setup/components';
 import { useDuesSetupNavigation } from '@/components/admin/dues/setup/useDuesSetupNavigation';
-import { useDuesStepNavigator } from '@/components/admin/dues/setup/useDuesStepNavigator';
 import { ScheduleTextField } from '@/components/admin/schedule/general/ScheduleTextField';
 
 const DESCRIPTION_MAX = 30;
@@ -26,45 +25,54 @@ function DuesSetupStep3() {
   const { clubId } = useParams<{ clubId: string }>();
   const { goToStep } = useDuesSetupNavigation();
 
-  const { accountId, cardinalNumber, carryOverOption, carryOverDescription, carryOverInitialized } =
-    useDuesSetupValues();
+  const {
+    accountId,
+    cardinalNumber,
+    carryOverOption,
+    carryOverAmount,
+    carryOverDescription,
+    carryOverInitialized,
+  } = useDuesSetupValues();
   const { setField } = useDuesSetupActions();
 
-  const { data: source } = useDuesCarryOverSourceQuery(clubId, accountId);
-  const saveCarryOver = useSaveDuesCarryOver(clubId, accountId, {
-    onError: () => toastError('이월 설정 저장에 실패했습니다. 잠시 후 다시 시도해주세요.'),
-  });
+  const [source, setSource] = useState<CarryOverSource | null>(null);
 
-  // 최초 조회 시 이전 기수 잔액 유무에 따라 이월 옵션 기본값을 store에 복원한다(1회).
   useEffect(() => {
-    if (!source || carryOverInitialized) return;
+    if (accountId === null) return;
 
-    setField({
-      carryOverOption: source.hasPreviousAccount ? 'carry' : 'none',
-      carryOverInitialized: true,
-    });
-  }, [source, carryOverInitialized, setField]);
+    duesApi
+      .getCarryOverSource(clubId, accountId)
+      .then((res) => {
+        const data = res.data.data;
+        setSource(data);
+
+        if (!carryOverInitialized) {
+          setField({
+            carryOverOption: data.hasPreviousAccount ? 'carry' : 'none',
+            carryOverInitialized: true,
+          });
+        }
+      })
+      .catch(() => {});
+  }, [accountId, clubId, carryOverInitialized, setField]);
 
   const hasPreviousBalance = source?.hasPreviousAccount ?? false;
   const previousBalance = source?.balance ?? 0;
   const previousGeneration = source?.cardinalNumber ?? cardinalNumber - 1;
 
-  const commitStep = async () => {
-    if (accountId === null) return false;
+  const handleNext = async () => {
+    if (accountId === null) return;
 
-    try {
-      await saveCarryOver.mutateAsync({
+    await duesApi
+      .saveCarryOver(clubId, accountId, {
         enabled: carryOverOption === 'carry',
-        amount: previousBalance,
+        amount: hasPreviousBalance ? previousBalance : Number(carryOverAmount || 0),
         memo: carryOverDescription.trim(),
-      });
-      return true;
-    } catch {
-      return false;
-    }
-  };
+      })
+      .catch(() => {});
 
-  const { goNext, isEditMode } = useDuesStepNavigator(3, commitStep);
+    goToStep(4);
+  };
 
   return (
     <div className="flex min-w-85 flex-col gap-700 p-700">
@@ -104,23 +112,34 @@ function DuesSetupStep3() {
             />
             <CarryOverCard
               title="잔액을 이번 기수로 이월하기"
-              description="아래 설명을 작성해주세요"
+              description={
+                hasPreviousBalance
+                  ? '이전 기수 잔액이 자동으로 이월됩니다.'
+                  : '아래에 금액을 작성해주세요'
+              }
               selected={carryOverOption === 'carry'}
               onClick={() => setField({ carryOverOption: 'carry' })}
-              disabled={!hasPreviousBalance}
             />
           </div>
 
-          {/* 이월하기 선택 시: 설명 입력 */}
-          {carryOverOption === 'carry' && (
-            <ScheduleTextField
-              value={carryOverDescription}
-              label="이월 금액 설명 (선택)"
-              onChange={(value) => setField({ carryOverDescription: value })}
-              placeholder="설명을 작성해주세요"
-              maxLength={DESCRIPTION_MAX}
-              className="bg-container-neutral-alternative"
-            />
+          {/* 이전 기수 정보가 없는 경우: 이월 금액 직접 입력 */}
+          {carryOverOption === 'carry' && !hasPreviousBalance && (
+            <>
+              <DuesAmountField
+                id="carry-over-amount"
+                label="이월 금액"
+                value={carryOverAmount}
+                onChange={(value) => setField({ carryOverAmount: value })}
+              />
+              <ScheduleTextField
+                value={carryOverDescription}
+                label="이월 금액 설명 (선택)"
+                onChange={(value) => setField({ carryOverDescription: value })}
+                placeholder="설명을 작성해주세요"
+                maxLength={DESCRIPTION_MAX}
+                className="bg-container-neutral-alternative"
+              />
+            </>
           )}
         </FormCard>
       </div>
@@ -128,7 +147,7 @@ function DuesSetupStep3() {
       {/* 하단 네비게이션 */}
       <div className="flex items-center justify-between">
         <PrevButton handlePrev={() => goToStep(2)} />
-        <NextButton handleNext={goNext} editMode={isEditMode} />
+        <NextButton handleNext={handleNext} />
       </div>
     </div>
   );
