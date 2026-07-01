@@ -54,6 +54,73 @@ export interface DuesMeResponse {
   };
 }
 
+export interface DuesTransactionCounts {
+  all: number;
+  expense: number;
+  income: number;
+  dues: number;
+}
+
+export interface DuesTransactionSummary {
+  label: string;
+  totalAmount: number;
+  description: string;
+}
+
+export type DuesTransactionApiFilter = 'ALL' | 'INCOME' | 'DUES' | 'EXPENSE';
+export type DuesTransactionApiSort = 'LATEST' | 'OLDEST' | 'AMOUNT_DESC' | 'AMOUNT_ASC';
+export type DuesTransactionApiDirection = 'INCOME' | 'EXPENSE';
+
+export interface DuesTransactionApiItem {
+  transactionId: number;
+  type: string;
+  direction: DuesTransactionApiDirection;
+  title: string;
+  source: string | null;
+  amount: number;
+  transactedAt: string;
+  hasReceipt: boolean;
+}
+
+export interface DuesTransactionPage {
+  content: DuesTransactionApiItem[];
+  pageNumber: number;
+  pageSize: number;
+  numberOfElements: number;
+  hasNext: boolean;
+}
+
+export interface DuesTransactionsResponse {
+  counts: DuesTransactionCounts;
+  duesSummary: DuesTransactionSummary | null;
+  transactions: DuesTransactionPage;
+}
+
+export interface DuesReceiptFile {
+  fileId: number;
+  fileName: string;
+  fileUrl: string;
+  storageKey: string;
+  fileSize: number;
+  contentType: string;
+  status: 'UPLOADED' | 'PENDING' | 'DELETED';
+}
+
+export interface DuesTransactionDetailResponse {
+  transactionId: number;
+  type: string;
+  direction: DuesTransactionApiDirection;
+  title: string;
+  source: string | null;
+  amount: number;
+  transactedAt: string;
+  category: string | null;
+  registeredByName: string | null;
+  memo: string | null;
+  hasReceipt: boolean;
+  receipts: DuesReceiptFile[];
+}
+
 export type DuesTransactionType = 'income' | 'expense' | 'dues';
 
 export interface DuesTransaction {

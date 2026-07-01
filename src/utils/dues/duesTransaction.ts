@@ -1,4 +1,4 @@
-import type { DuesTransaction, DuesTransactionType } from '@/types/dues';
+import type { DuesTransaction, DuesTransactionCounts, DuesTransactionType } from '@/types/dues';
 
 type DuesTransactionFilter = 'all' | DuesTransactionType;
 
@@ -29,6 +29,9 @@ const DUES_TRANSACTION_TYPE_CONFIG = {
 
 function sortDuesTransactions(transactions: DuesTransaction[]) {
   return [...transactions].sort((a, b) => {
+    if (a.id === -1) return -1;
+    if (b.id === -1) return 1;
+
     if (a.type === 'dues' && b.type !== 'dues') return -1;
     if (a.type !== 'dues' && b.type === 'dues') return 1;
 
@@ -57,6 +60,13 @@ function getTransactionCounts(transactions: DuesTransaction[]) {
   } satisfies Record<DuesTransactionFilter, number>;
 }
 
+function mergeTransactionCounts(
+  fallbackCounts: ReturnType<typeof getTransactionCounts>,
+  counts?: DuesTransactionCounts,
+) {
+  return counts ?? fallbackCounts;
+}
+
 function getReceiptUrls(transaction: DuesTransaction) {
   const receiptUrls =
     transaction.receiptUrls ?? (transaction.receiptUrl ? [transaction.receiptUrl] : []);
@@ -69,6 +79,7 @@ export {
   DUES_TRANSACTION_TYPE_CONFIG,
   getReceiptUrls,
   getTransactionCounts,
+  mergeTransactionCounts,
   sortDuesTransactions,
   type DuesTransactionFilter,
 };

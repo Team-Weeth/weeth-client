@@ -14,6 +14,8 @@ interface DuesTransactionListItemProps {
 function DuesTransactionListItem({ transaction, onClick }: DuesTransactionListItemProps) {
   const isIncomeLike = transaction.type === 'income' || transaction.type === 'dues';
   const amountPrefix = isIncomeLike ? '+' : '-';
+  const dateText = formatCompactDateDisplay(transaction.date);
+  const descriptionText = [transaction.description, dateText].filter(Boolean).join(' · ');
 
   return (
     <button
@@ -30,9 +32,9 @@ function DuesTransactionListItem({ transaction, onClick }: DuesTransactionListIt
           )}
           <span className="typo-sub3 text-text-strong truncate">{transaction.title}</span>
         </div>
-        <span className="typo-caption2 text-text-alternative truncate">
-          {transaction.description} · {formatCompactDateDisplay(transaction.date)}
-        </span>
+        {descriptionText && (
+          <span className="typo-caption2 text-text-alternative truncate">{descriptionText}</span>
+        )}
       </div>
 
       <span

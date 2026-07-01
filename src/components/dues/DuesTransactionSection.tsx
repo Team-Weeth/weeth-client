@@ -1,12 +1,15 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import { cn } from '@/lib/cn';
-import type { DuesTransaction } from '@/types/dues';
+import type { DuesTransaction, DuesTransactionCounts } from '@/types/dues';
+import { useIntersectionObserver } from '@/hooks/board/useIntersectionObserver';
+import { useDuesTransactionDetail } from '@/hooks/queries';
 import {
   DUES_TRANSACTION_FILTERS,
   getTransactionCounts,
+  mergeTransactionCounts,
   sortDuesTransactions,
   type DuesTransactionFilter,
 } from '@/utils/dues/duesTransaction';
@@ -15,19 +18,40 @@ import { DuesTransactionFilterChip } from './DuesTransactionFilterChip';
 import { DuesTransactionListItem } from './DuesTransactionListItem';
 
 interface DuesTransactionSectionProps {
+  cardinal?: number;
   transactions: DuesTransaction[];
+  counts?: DuesTransactionCounts;
+  hasNextPage?: boolean;
+  isFetchingNextPage?: boolean;
+  onFetchNextPage?: () => void;
   onTransactionClick?: (transaction: DuesTransaction) => void;
   className?: string;
 }
 
 function DuesTransactionSection({
+  cardinal,
   transactions,
+  counts: apiCounts,
+  hasNextPage = false,
+  isFetchingNextPage = false,
+  onFetchNextPage,
   onTransactionClick,
   className,
 }: DuesTransactionSectionProps) {
   const [activeFilter, setActiveFilter] = useState<DuesTransactionFilter>('all');
   const [selectedTransaction, setSelectedTransaction] = useState<DuesTransaction | null>(null);
-  const counts = useMemo(() => getTransactionCounts(transactions), [transactions]);
+  const { data: transactionDetail } = useDuesTransactionDetail(
+    cardinal,
+    selectedTransaction && selectedTransaction.id > 0 ? selectedTransaction.id : undefined,
+  );
+  const fallbackCounts = useMemo(() => getTransactionCounts(transactions), [transactions]);
+  const counts = useMemo(
+    () => mergeTransactionCounts(fallbackCounts, apiCounts),
+    [apiCounts, fallbackCounts],
+  );
+  const { ref: sentinelRef, isIntersecting } = useIntersectionObserver({
+    rootMargin: '160px',
+  });
   const filteredTransactions = useMemo(() => {
     const nextTransactions =
       activeFilter === 'all'
@@ -41,6 +65,12 @@ function DuesTransactionSection({
     setSelectedTransaction(transaction);
     onTransactionClick?.(transaction);
   };
+
+  useEffect(() => {
+    if (isIntersecting && hasNextPage && !isFetchingNextPage) {
+      onFetchNextPage?.();
+    }
+  }, [hasNextPage, isFetchingNextPage, isIntersecting, onFetchNextPage]);
 
   return (
     <>
@@ -72,6 +102,12 @@ function DuesTransactionSection({
               onClick={() => handleTransactionClick(transaction)}
             />
           ))}
+          <div ref={sentinelRef} className="h-px w-full" />
+          {isFetchingNextPage && (
+            <p className="typo-caption2 text-text-alternative py-200 text-center">
+              거래 내역을 더 불러오는 중이에요.
+            </p>
+          )}
         </div>
       </section>
 
@@ -80,7 +116,7 @@ function DuesTransactionSection({
         onOpenChange={(open) => {
           if (!open) setSelectedTransaction(null);
         }}
-        transaction={selectedTransaction}
+        transaction={transactionDetail ?? selectedTransaction}
       />
     </>
   );
