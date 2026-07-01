@@ -112,6 +112,7 @@ function EditProfileContent({ className, schools, majors, ...props }: EditProfil
       },
     );
   };
+  const submitForm = handleSubmit(onSubmit);
 
   if (isMePending || !me) {
     return <EditProfileSkeleton className={className} {...props} />;
@@ -121,12 +122,12 @@ function EditProfileContent({ className, schools, majors, ...props }: EditProfil
     <>
       <div
         className={cn(
-          'mx-auto flex w-full max-w-[1088px] flex-col gap-4 px-450 pt-450 pb-[80px]',
+          'tablet:px-450 tablet:pt-450 tablet:gap-4 tablet:pb-[80px] mx-auto flex w-full max-w-[1088px] flex-col gap-300 pb-[140px]',
           className,
         )}
         {...props}
       >
-        <div className="flex items-start gap-1">
+        <div className="flex items-center gap-1">
           <button
             type="button"
             onClick={() => router.back()}
@@ -135,14 +136,11 @@ function EditProfileContent({ className, schools, majors, ...props }: EditProfil
             <Icon src={BackIcon} size={21} className="text-icon-normal p-1" />
           </button>
           <div className="flex flex-col gap-1">
-            <h1 className="typo-h3 text-text-normal">개인정보 수정</h1>
+            <h1 className="tablet:typo-h3 typo-sub1 text-text-normal">개인정보 수정</h1>
           </div>
         </div>
 
-        <form
-          onSubmit={handleSubmit(onSubmit)}
-          className="flex flex-col items-center gap-600 pt-450"
-        >
+        <form onSubmit={submitForm} className="flex flex-col items-center gap-600 pt-450">
           <div className="flex w-full max-w-[640px] flex-col gap-600">
             <div className="flex flex-col gap-500">
               <PersonalInfoFields control={control} />
@@ -152,12 +150,23 @@ function EditProfileContent({ className, schools, majors, ...props }: EditProfil
               type="submit"
               size="lg"
               disabled={isPending || !isValid || !hasChanges}
-              className="w-full"
+              className="tablet:flex hidden w-full"
             >
               {isPending ? '수정 중...' : '수정 완료'}
             </Button>
           </div>
         </form>
+      </div>
+      <div className="tablet:hidden fixed inset-x-0 bottom-12 z-20 px-450">
+        <Button
+          type="button"
+          size="lg"
+          disabled={isPending || !isValid || !hasChanges}
+          className="w-full"
+          onClick={submitForm}
+        >
+          {isPending ? '수정 중...' : '수정 완료'}
+        </Button>
       </div>
       <AlertDialog
         status="danger"
