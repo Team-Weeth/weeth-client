@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { Breadcrumb, BreadcrumbItem, BreadcrumbList, BreadcrumbPage } from '@/components/ui';
 import { CardinalDropdown } from '@/components/common';
@@ -15,6 +15,7 @@ import { useDuesCardinals, useDuesMe, useDuesTransactions } from '@/hooks/querie
 
 function DuesContent() {
   const [selectedCardinalId, setSelectedCardinalId] = useState<number | null>(null);
+  const [isCardinalTransitioning, setIsCardinalTransitioning] = useState(false);
   const { data: cardinals = [], isLoading } = useDuesCardinals();
   const latestCardinal = cardinals.find((cardinal) => cardinal.status === 'IN_PROGRESS');
   const selectedCardinal =
@@ -24,6 +25,7 @@ function DuesContent() {
   const {
     data: dues,
     isLoading: isDuesLoading,
+    isFetching: isDuesFetching,
     isError: isDuesError,
   } = useDuesMe(selectedCardinal?.cardinalNumber);
   const {
@@ -31,8 +33,26 @@ function DuesContent() {
     fetchNextPage,
     hasNextPage,
     isLoading: isTransactionsLoading,
+    isFetching: isTransactionsFetching,
     isFetchingNextPage,
   } = useDuesTransactions(selectedCardinal?.cardinalNumber);
+  const isLeftSectionLoading = isDuesLoading || isCardinalTransitioning;
+  const isTransactionSectionLoading =
+    isTransactionsLoading || (isCardinalTransitioning && !isFetchingNextPage);
+
+  const handleSelectCardinal = (cardinalId: number) => {
+    setSelectedCardinalId(cardinalId);
+    setIsCardinalTransitioning(true);
+  };
+
+  useEffect(() => {
+    const isFetchingSelectedCardinal =
+      isDuesFetching || (isTransactionsFetching && !isFetchingNextPage);
+
+    if (isCardinalTransitioning && !isFetchingSelectedCardinal) {
+      setIsCardinalTransitioning(false);
+    }
+  }, [isCardinalTransitioning, isDuesFetching, isFetchingNextPage, isTransactionsFetching]);
 
   if (isLoading) {
     return <DuesPageSkeleton />;
@@ -54,12 +74,12 @@ function DuesContent() {
         <CardinalDropdown
           cardinals={cardinals}
           activeCardinal={selectedCardinal}
-          onSelect={setSelectedCardinalId}
+          onSelect={handleSelectCardinal}
         />
       </div>
 
       <div className="desktop:flex-row flex flex-col gap-500">
-        {isDuesLoading ? (
+        {isLeftSectionLoading ? (
           <DuesLeftSectionSkeleton />
         ) : dues ? (
           <DuesLeftSection dues={dues} />
@@ -73,7 +93,7 @@ function DuesContent() {
             </p>
           </section>
         )}
-        {isTransactionsLoading ? (
+        {isTransactionSectionLoading ? (
           <DuesTransactionSectionSkeleton />
         ) : (
           <DuesTransactionSection
