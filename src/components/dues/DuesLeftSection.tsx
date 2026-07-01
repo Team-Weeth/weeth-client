@@ -48,7 +48,11 @@ function DuesLeftSection({ dues }: DuesLeftSectionProps) {
   return (
     <aside className="desktop:w-[374px] flex w-full flex-col gap-450">
       <DuesPaymentStatusBanner isPaid={false} />
-      <DuesAmountCard cardinalNumber={dues.cardinalNumber} amount={dues.duesAmount}>
+      <DuesAmountCard
+        cardinalNumber={dues.cardinalNumber}
+        amount={dues.duesAmount}
+        title={dues.accountName}
+      >
         {publicAccount ? (
           <>
             <DuesAccountCard account={publicAccount} />

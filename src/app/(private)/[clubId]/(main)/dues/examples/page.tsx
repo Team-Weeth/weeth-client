@@ -2,14 +2,20 @@ import { DuesLeftSection } from '@/components/dues';
 import type { DuesSummary } from '@/types/dues';
 
 const BASE_DUES: Omit<DuesSummary, 'isPaid' | 'isAccountPublic'> = {
+  accountId: 12,
+  accountName: '7기 회비',
   cardinalNumber: 7,
   duesAmount: 60000,
   currentBalance: 152129,
   targetBalance: 1425000,
+  isTargeted: true,
+  paidAmount: 0,
+  dueAmount: 60000,
   account: {
     bankName: '국민은행',
     accountNumber: '12-12412-1231',
     holderName: '가천대 검도부',
+    guide: '이름_회비 형식으로 입금해 주세요.',
   },
 };
 

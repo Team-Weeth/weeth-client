@@ -1,26 +1,14 @@
 'use client';
 
+import { useState } from 'react';
+
 import { Breadcrumb, BreadcrumbItem, BreadcrumbList, BreadcrumbPage } from '@/components/ui';
 import { CardinalDropdown } from '@/components/common';
 import { DuesLeftSection } from '@/components/dues/DuesLeftSection';
-import { DuesPageSkeleton } from '@/components/dues/DuesPageSkeleton';
+import { DuesLeftSectionSkeleton, DuesPageSkeleton } from '@/components/dues/DuesPageSkeleton';
 import { DuesTransactionSection } from '@/components/dues/DuesTransactionSection';
-import { useCardinalSelector } from '@/hooks';
-import type { DuesSummary, DuesTransaction } from '@/types/dues';
-
-const MOCK_DUES: DuesSummary = {
-  cardinalNumber: 7,
-  duesAmount: 60000,
-  currentBalance: 152129,
-  targetBalance: 1425000,
-  isPaid: false,
-  isAccountPublic: true,
-  account: {
-    bankName: '국민은행',
-    accountNumber: '12-12412-1231',
-    holderName: '가천대 검도부',
-  },
-};
+import { useDuesCardinals, useDuesMe } from '@/hooks/queries';
+import type { DuesTransaction } from '@/types/dues';
 
 const MOCK_TRANSACTIONS: DuesTransaction[] = [
   {
@@ -77,20 +65,22 @@ const MOCK_TRANSACTIONS: DuesTransaction[] = [
 ];
 
 function DuesContent() {
-  const { cardinals, activeCardinal, latestCardinal, setSelectedCardinalId, isLoading } =
-    useCardinalSelector({
-      autoSelectLatest: true,
-    });
+  const [selectedCardinalId, setSelectedCardinalId] = useState<number | null>(null);
+  const { data: cardinals = [], isLoading } = useDuesCardinals();
+  const latestCardinal = cardinals.find((cardinal) => cardinal.status === 'IN_PROGRESS');
+  const selectedCardinal =
+    cardinals.find((cardinal) => cardinal.id === selectedCardinalId) ??
+    latestCardinal ??
+    cardinals[0];
+  const {
+    data: dues,
+    isLoading: isDuesLoading,
+    isError: isDuesError,
+  } = useDuesMe(selectedCardinal?.cardinalNumber);
 
   if (isLoading) {
     return <DuesPageSkeleton />;
   }
-
-  const selectedCardinal = activeCardinal ?? latestCardinal;
-  const dues = {
-    ...MOCK_DUES,
-    cardinalNumber: selectedCardinal?.cardinalNumber ?? MOCK_DUES.cardinalNumber,
-  };
 
   return (
     <main className="max-w-dues mx-auto flex w-full flex-col gap-700 px-450 pt-600 pb-800">
@@ -113,7 +103,20 @@ function DuesContent() {
       </div>
 
       <div className="desktop:flex-row flex flex-col gap-500">
-        <DuesLeftSection dues={dues} />
+        {isDuesLoading ? (
+          <DuesLeftSectionSkeleton />
+        ) : dues ? (
+          <DuesLeftSection dues={dues} />
+        ) : (
+          <section className="desktop:w-[374px] bg-container-neutral flex w-full flex-col gap-200 rounded-lg p-450">
+            <h2 className="typo-sub2 text-text-strong">회비 정보를 불러오지 못했어요.</h2>
+            <p className="typo-body2 text-text-alternative">
+              {isDuesError
+                ? '선택한 기수의 회비 장부가 없거나 아직 공개되지 않았어요.'
+                : '다른 기수를 선택해 다시 확인해 주세요.'}
+            </p>
+          </section>
+        )}
         <DuesTransactionSection transactions={MOCK_TRANSACTIONS} />
       </div>
     </main>

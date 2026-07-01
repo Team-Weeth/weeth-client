@@ -2,16 +2,56 @@ export interface DuesAccount {
   bankName: string;
   accountNumber: string;
   holderName: string;
+  guide?: string;
 }
 
 export interface DuesSummary {
+  accountId: number;
+  accountName: string;
   cardinalNumber: number;
   duesAmount: number;
   currentBalance: number;
   targetBalance: number;
+  isTargeted: boolean;
   isPaid: boolean;
   isAccountPublic: boolean;
   account?: DuesAccount;
+  paidAmount: number;
+  dueAmount: number;
+  paidAt?: string;
+}
+
+export type DuesPaymentStatus = 'PAID' | 'UNPAID';
+
+export interface DuesCardinal {
+  cardinal: number;
+  name: string;
+  isLatest: boolean;
+}
+
+export interface DuesMeResponse {
+  accountId: number;
+  cardinal: number;
+  accountName: string;
+  duesAmount: number;
+  myPayment: {
+    targeted: boolean;
+    status: DuesPaymentStatus;
+    dueAmount: number;
+    paidAmount: number;
+    paidAt: string | null;
+  };
+  bankAccountVisible: boolean;
+  bankAccount: {
+    bankName: string;
+    accountNumber: string;
+    holder: string;
+    guide: string;
+  } | null;
+  balance: {
+    currentBalance: number;
+    goalAmount: number;
+  };
 }
 
 export type DuesTransactionType = 'income' | 'expense' | 'dues';
