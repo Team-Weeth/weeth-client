@@ -1,12 +1,12 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useParams } from 'next/navigation';
 
 import { BackButton } from '@/components/admin/dues';
-import { duesApi } from '@/lib/apis/dues';
 import { useDuesSetupValues, useDuesSetupActions } from '@/stores/useDuesSetupStore';
-import type { CarryOverSource } from '@/types/admin/dues';
+import { useDuesCarryOverSourceQuery } from '@/hooks/queries/admin';
+import { useSaveDuesCarryOver } from '@/hooks/mutations/admin';
 
 import {
   DuesSetupStepIndicator,
@@ -29,26 +29,18 @@ function DuesSetupStep3() {
     useDuesSetupValues();
   const { setField } = useDuesSetupActions();
 
-  const [source, setSource] = useState<CarryOverSource | null>(null);
+  const { data: source } = useDuesCarryOverSourceQuery(clubId, accountId);
+  const saveCarryOver = useSaveDuesCarryOver(clubId, accountId);
 
+  // 최초 조회 시 이전 기수 잔액 유무에 따라 이월 옵션 기본값을 store에 복원한다(1회).
   useEffect(() => {
-    if (accountId === null) return;
+    if (!source || carryOverInitialized) return;
 
-    duesApi
-      .getCarryOverSource(clubId, accountId)
-      .then((res) => {
-        const data = res.data.data;
-        setSource(data);
-
-        if (!carryOverInitialized) {
-          setField({
-            carryOverOption: data.hasPreviousAccount ? 'carry' : 'none',
-            carryOverInitialized: true,
-          });
-        }
-      })
-      .catch(() => {});
-  }, [accountId, clubId, carryOverInitialized, setField]);
+    setField({
+      carryOverOption: source.hasPreviousAccount ? 'carry' : 'none',
+      carryOverInitialized: true,
+    });
+  }, [source, carryOverInitialized, setField]);
 
   const hasPreviousBalance = source?.hasPreviousAccount ?? false;
   const previousBalance = source?.balance ?? 0;
@@ -57,15 +49,16 @@ function DuesSetupStep3() {
   const commitStep = async () => {
     if (accountId === null) return false;
 
-    await duesApi
-      .saveCarryOver(clubId, accountId, {
+    try {
+      await saveCarryOver.mutateAsync({
         enabled: carryOverOption === 'carry',
         amount: previousBalance,
         memo: carryOverDescription.trim(),
-      })
-      .catch(() => {});
-
-    return true;
+      });
+      return true;
+    } catch {
+      return false;
+    }
   };
 
   const { goNext } = useDuesStepNavigator(3, commitStep);

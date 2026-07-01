@@ -1,12 +1,12 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useParams } from 'next/navigation';
 
 import { BackButton, DuesSearchBar } from '@/components/admin/dues';
-import { duesApi } from '@/lib/apis/dues';
 import { useDuesSetupValues, useDuesSetupActions } from '@/stores/useDuesSetupStore';
-import type { PaymentTarget } from '@/types/admin/dues';
+import { useDuesPaymentTargetsQuery } from '@/hooks/queries/admin';
+import { useSaveDuesPaymentTargets } from '@/hooks/mutations/admin';
 
 import {
   DuesSetupStepIndicator,
@@ -28,26 +28,20 @@ function DuesSetupStep2() {
     useDuesSetupValues();
   const { setField } = useDuesSetupActions();
 
-  const [allTargets, setAllTargets] = useState<PaymentTarget[]>([]);
+  const { data } = useDuesPaymentTargetsQuery(clubId, accountId);
+  const savePaymentTargets = useSaveDuesPaymentTargets(clubId, accountId);
 
+  const allTargets = data?.targets.content ?? [];
+
+  // 최초 조회 시 서버의 기존 대상(TARGETED)을 store에 복원한다(1회).
   useEffect(() => {
-    if (accountId === null) return;
+    if (!data || memberIdsInitialized) return;
 
-    duesApi
-      .getPaymentTargets(clubId, accountId)
-      .then((res) => {
-        const targets = res.data.data.targets.content;
-        setAllTargets(targets);
-
-        if (!memberIdsInitialized) {
-          const targetedIds = targets
-            .filter((t) => t.targetStatus === 'TARGETED')
-            .map((t) => t.paymentTargetInfo.clubMemberId);
-          setField({ selectedMemberIds: targetedIds, memberIdsInitialized: true });
-        }
-      })
-      .catch(() => {});
-  }, [accountId, clubId, memberIdsInitialized, setField]);
+    const targetedIds = data.targets.content
+      .filter((t) => t.targetStatus === 'TARGETED')
+      .map((t) => t.paymentTargetInfo.clubMemberId);
+    setField({ selectedMemberIds: targetedIds, memberIdsInitialized: true });
+  }, [data, memberIdsInitialized, setField]);
 
   const {
     totalCount,
@@ -76,11 +70,12 @@ function DuesSetupStep2() {
     if (accountId === null) return false;
 
     // 스냅샷 방식(전체 교체): 선택된 대상 ID만 전달하면 미선택 회원은 자동 제외된다
-    await duesApi
-      .savePaymentTargets(clubId, accountId, { targetedClubMemberIds: selectedMemberIds })
-      .catch(() => {});
-
-    return true;
+    try {
+      await savePaymentTargets.mutateAsync({ targetedClubMemberIds: selectedMemberIds });
+      return true;
+    } catch {
+      return false;
+    }
   };
 
   const { goNext } = useDuesStepNavigator(2, commitStep);

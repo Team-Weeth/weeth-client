@@ -8,10 +8,10 @@ import { BackButton, PaymentTargetModal } from '@/components/admin/dues';
 import { Icon, Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui';
 import { DUES_REGISTRATION_ERROR_CODE } from '@/constants/errorCode';
 import { MOCK_PAYMENT_TARGETS, MOCK_PREVIOUS_BALANCE } from '@/constants/mock';
-import { duesApi } from '@/lib/apis/dues';
 import { useDuesSetupValues, useDuesSetupActions } from '@/stores/useDuesSetupStore';
 import { toastError, toastSuccess } from '@/stores/useToastStore';
 import { getApiErrorCode } from '@/utils/shared/getApiErrorCode';
+import { useCompleteDuesRegistration } from '@/hooks/mutations/admin';
 
 import {
   DuesSetupStepIndicator,
@@ -43,8 +43,8 @@ function DuesSetupStep5() {
     isAccountPublic,
   } = useDuesSetupValues();
   const { reset } = useDuesSetupActions();
+  const completeRegistration = useCompleteDuesRegistration(clubId, accountId);
   const [isPaymentTargetModalOpen, setIsPaymentTargetModalOpen] = useState(false);
-  const [isCompleting, setIsCompleting] = useState(false);
 
   const hasPreviousBalance = MOCK_PREVIOUS_BALANCE !== null;
   const previousBalance = MOCK_PREVIOUS_BALANCE?.balance ?? 0;
@@ -66,11 +66,10 @@ function DuesSetupStep5() {
   const expectedTotal = expectedDuesIncome + carryOverAmount;
 
   const handleComplete = async () => {
-    if (accountId === null || isCompleting) return;
+    if (accountId === null || completeRegistration.isPending) return;
 
-    setIsCompleting(true);
     try {
-      await duesApi.completeRegistration(clubId, accountId);
+      await completeRegistration.mutateAsync();
       toastSuccess('회비 등록이 완료되었습니다.');
       reset();
       goToDues();
@@ -97,8 +96,6 @@ function DuesSetupStep5() {
         default:
           toastError('회비 등록 완료에 실패했습니다. 잠시 후 다시 시도해주세요.');
       }
-    } finally {
-      setIsCompleting(false);
     }
   };
 
@@ -191,7 +188,7 @@ function DuesSetupStep5() {
       {/* 하단 네비게이션 */}
       <div className="flex items-center justify-between">
         <PrevButton handlePrev={() => goToStep(4)} />
-        <NextButton handleNext={handleComplete} disabled={isCompleting} last />
+        <NextButton handleNext={handleComplete} disabled={completeRegistration.isPending} last />
       </div>
     </div>
   );

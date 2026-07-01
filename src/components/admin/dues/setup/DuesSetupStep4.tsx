@@ -5,8 +5,8 @@ import { useParams } from 'next/navigation';
 
 import { BackButton } from '@/components/admin/dues';
 import { Switch } from '@/components/ui';
-import { duesApi } from '@/lib/apis/dues';
 import { useDuesSetupValues, useDuesSetupActions } from '@/stores/useDuesSetupStore';
+import { useSaveDuesBankAccount } from '@/hooks/mutations/admin';
 
 import {
   DuesSetupStepIndicator,
@@ -43,6 +43,8 @@ function DuesSetupStep4() {
   } = useDuesSetupValues();
   const { setField } = useDuesSetupActions();
 
+  const saveBankAccount = useSaveDuesBankAccount(clubId, accountId);
+
   const [errors, setErrors] = useState<Errors>({});
 
   const commitStep = async () => {
@@ -54,8 +56,8 @@ function DuesSetupStep4() {
     if (Object.keys(next).length > 0) return false;
     if (accountId === null) return false;
 
-    await duesApi
-      .saveBankAccount(clubId, accountId, {
+    try {
+      await saveBankAccount.mutateAsync({
         bankAccountVisible: isAccountPublic,
         bankAccount: {
           bankName: bankName.trim(),
@@ -63,10 +65,11 @@ function DuesSetupStep4() {
           holder: accountHolder.trim(),
           guide: accountGuide.trim() || null,
         },
-      })
-      .catch(() => {});
-
-    return true;
+      });
+      return true;
+    } catch {
+      return false;
+    }
   };
 
   const { goNext } = useDuesStepNavigator(4, commitStep);

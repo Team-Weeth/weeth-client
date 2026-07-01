@@ -3,10 +3,16 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 
+import { useQueryClient } from '@tanstack/react-query';
+
 import { cn } from '@/lib/cn';
-import { duesApi } from '@/lib/apis/dues';
 import { useDuesSetupActions, useDuesSetupValues } from '@/stores/useDuesSetupStore';
 import { useCardinalSelector } from '@/hooks/useCardinalSelector';
+import { useCreateDuesDraft, useDiscardDuesDraft, useSaveDuesBasic } from '@/hooks/mutations/admin';
+import {
+  duesRegistrationStatusQueryOptions,
+  duesPaymentTargetsQueryOptions,
+} from '@/hooks/queries/admin';
 
 import { BackButton } from '@/components/admin/dues';
 import {
@@ -28,12 +34,19 @@ function DuesSetupStep1() {
   const { accountId, isFreshEntry, amount, name, description } = useDuesSetupValues();
   const { setField, reset } = useDuesSetupActions();
   const { latestCardinal } = useCardinalSelector();
+  const queryClient = useQueryClient();
+
+  const createDraft = useCreateDuesDraft(clubId);
+  const discardDraft = useDiscardDuesDraft(clubId, accountId);
+  const saveBasic = useSaveDuesBasic(clubId, accountId);
 
   const [errors, setErrors] = useState<{ amount?: string; name?: string }>({});
   const [draftAlert, setDraftAlert] = useState<{
     open: boolean;
     lastModifiedByName: string | null;
   }>({ open: false, lastModifiedByName: null });
+
+  const { mutate: createDraftMutate } = createDraft;
 
   // accountId가 null인 경우에만 초안 생성 API 호출 (accountId 확보 목적)
   // - Step2 이전 버튼으로 돌아온 경우: accountId가 메모리에 남아 있어 호출하지 않음
@@ -42,17 +55,15 @@ function DuesSetupStep1() {
   useEffect(() => {
     if (accountId !== null || !latestCardinal) return;
 
-    duesApi
-      .createDraft(clubId, latestCardinal.cardinalNumber)
-      .then((res) => {
-        const { accountId: id, isNew, lastModifiedByName } = res.data.data;
+    createDraftMutate(latestCardinal.cardinalNumber, {
+      onSuccess: ({ accountId: id, isNew, lastModifiedByName }) => {
         setField({ accountId: id, isFreshEntry: false });
         if (!isNew && isFreshEntry) {
           setDraftAlert({ open: true, lastModifiedByName });
         }
-      })
-      .catch(() => {});
-  }, [accountId, isFreshEntry, latestCardinal, clubId, setField]);
+      },
+    });
+  }, [accountId, isFreshEntry, latestCardinal, createDraftMutate, setField]);
 
   const STEP_MAP: Record<string, number> = {
     BASIC: 1,
@@ -68,10 +79,14 @@ function DuesSetupStep1() {
     if (accountId === null) return;
     setDraftAlert((prev) => ({ ...prev, open: false }));
 
-    const res = await duesApi.getRegistrationStatus(clubId, accountId).catch(() => null);
-    if (!res) return;
+    // "이어서 작성"은 사용자 인터랙션으로 트리거되는 lazy 복원이라 useQuery 대신
+    // fetchQuery로 조회한다(캐시 키는 Step2/3의 useQuery와 공유).
+    const status = await queryClient
+      .fetchQuery(duesRegistrationStatusQueryOptions(clubId, accountId))
+      .catch(() => null);
+    if (!status) return;
 
-    const { registrationStep, basic, carryOver, bankAccount } = res.data.data;
+    const { registrationStep, basic, carryOver, bankAccount } = status;
 
     setField({ cardinalNumber: cardinalNumber });
 
@@ -102,9 +117,11 @@ function DuesSetupStep1() {
     }
 
     // 납부 대상은 status 응답에 멤버 ID가 없어(개수만 제공) 목록 API로 별도 복원한다.
-    const targetsRes = await duesApi.getPaymentTargets(clubId, accountId).catch(() => null);
-    if (targetsRes) {
-      const targetedIds = targetsRes.data.data.targets.content
+    const targetsData = await queryClient
+      .fetchQuery(duesPaymentTargetsQueryOptions(clubId, accountId))
+      .catch(() => null);
+    if (targetsData) {
+      const targetedIds = targetsData.targets.content
         .filter((t) => t.targetStatus === 'TARGETED')
         .map((t) => t.paymentTargetInfo.clubMemberId);
       setField({ selectedMemberIds: targetedIds, memberIdsInitialized: true });
@@ -125,15 +142,16 @@ function DuesSetupStep1() {
 
     setField({ cardinalNumber });
 
-    await duesApi
-      .saveBasic(clubId, accountId, {
+    try {
+      await saveBasic.mutateAsync({
         name: name.trim(),
         duesAmount: Number(amount),
         description: description.trim(),
-      })
-      .catch(() => {});
-
-    return true;
+      });
+      return true;
+    } catch {
+      return false;
+    }
   };
 
   const { goNext } = useDuesStepNavigator(1, commitStep);
@@ -149,7 +167,7 @@ function DuesSetupStep1() {
         onNew={async () => {
           if (accountId === null) return;
           setDraftAlert({ open: false, lastModifiedByName: null });
-          await duesApi.discardDraft(clubId, accountId).catch(() => {});
+          await discardDraft.mutateAsync().catch(() => {});
           reset(); // accountId → null → useEffect 재실행 → createDraft 호출
         }}
       />
