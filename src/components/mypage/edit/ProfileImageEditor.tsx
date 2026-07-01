@@ -2,23 +2,32 @@
 
 import { useRef, useState } from 'react';
 import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
   Icon,
   DropdownMenu,
   DropdownMenuTrigger,
   DropdownMenuContent,
   DropdownMenuItem,
   Divider,
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
 } from '@/components/ui';
-import { EditIcon } from '@/assets/icons';
+import { CameraIcon } from '@/assets/icons';
+import { cn } from '@/lib/cn';
+import type { AvatarProps } from '@/components/ui';
 
 interface ProfileImageEditorProps {
   name: string;
   profileImageUrl?: string;
   onFileChange?: (file: File) => void;
   onResetImage?: () => void;
+  className?: string;
+  avatarSize?: AvatarProps['size'];
+  avatarClassName?: string;
+  fallbackClassName?: string;
+  triggerClassName?: string;
+  triggerIconClassName?: string;
+  triggerIconSize?: number;
 }
 
 function ProfileImageEditor({
@@ -26,6 +35,13 @@ function ProfileImageEditor({
   profileImageUrl,
   onFileChange,
   onResetImage,
+  className,
+  avatarSize = 128,
+  avatarClassName,
+  fallbackClassName,
+  triggerClassName,
+  triggerIconClassName,
+  triggerIconSize = 16,
 }: ProfileImageEditorProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const previewUrlRef = useRef<string | null>(null);
@@ -56,15 +72,15 @@ function ProfileImageEditor({
   const displayUrl = isReset ? null : (previewUrl ?? profileImageUrl ?? null);
 
   return (
-    <div className="relative inline-block">
-      <Avatar size={128} type="round">
+    <div className={cn('relative inline-block', className)}>
+      <Avatar size={avatarSize} type="round" className={avatarClassName}>
         <AvatarImage
           key={displayUrl ?? 'fallback'}
           src={displayUrl ?? undefined}
           alt={name}
           className="object-cover"
         />
-        <AvatarFallback />
+        <AvatarFallback className={fallbackClassName} />
       </Avatar>
       <input
         ref={fileInputRef}
@@ -79,9 +95,17 @@ function ProfileImageEditor({
           <button
             type="button"
             aria-label="프로필 이미지 수정"
-            className="bg-button-neutral hover:bg-button-neutral-interaction absolute right-0 bottom-0 flex size-[40px] cursor-pointer items-center justify-center rounded-sm transition-all duration-200"
+            className={cn(
+              'bg-container-neutral border-button-neutral absolute -right-[2px] bottom-[2px] flex size-6 cursor-pointer items-center justify-center rounded-full border transition-all duration-200',
+              triggerClassName,
+            )}
           >
-            <Icon src={EditIcon} size={24} className="text-icon-normal" alt="편집 아이콘" />
+            <Icon
+              src={CameraIcon}
+              size={triggerIconSize}
+              className={cn('text-icon-normal', triggerIconClassName)}
+              alt="프로필 이미지 수정"
+            />
           </button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="start" side="bottom">
