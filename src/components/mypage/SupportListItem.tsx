@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { cn } from '@/lib/cn';
-import { Button, Icon } from '@/components/ui';
+import { Icon } from '@/components/ui';
 import { ArrowRightIcon, CopyIcon } from '@/assets/icons';
 import { toastSuccess } from '@/stores/useToastStore';
 
@@ -50,9 +50,9 @@ function SupportListItem({
 
         {isRow ? (
           variant === 'copy' ? (
-            <Button variant="secondary" size="sm">
+            <span className="bg-button-neutral typo-button2 text-text-strong inline-flex shrink-0 items-center justify-center rounded-sm px-300 py-200">
               복사하기
-            </Button>
+            </span>
           ) : (
             <Icon
               src={ArrowRightIcon}
