@@ -29,7 +29,7 @@ function MyPageSessionsContent({
 
   return (
     <div className={cn('flex min-w-0 flex-1 flex-col gap-4', className)} {...props}>
-      <div className="flex items-start gap-1">
+      <div className="flex items-center gap-1">
         <button
           type="button"
           onClick={() => router.back()}
@@ -38,7 +38,7 @@ function MyPageSessionsContent({
           <Icon src={BackIcon} size={21} className="text-icon-normal p-1" />
         </button>
         <div className="flex flex-col gap-1">
-          <h1 className="typo-h3 text-text-normal">출석한 세션</h1>
+          <h1 className="tablet:typo-h3 typo-sub1 text-text-normal">출석한 세션</h1>
         </div>
       </div>
 
