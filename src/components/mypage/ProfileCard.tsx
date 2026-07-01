@@ -59,7 +59,7 @@ function ProfileCard({ profile, clubs, availableProfiles }: ProfileCardProps) {
                     <AvatarImage src={club.profileImageUrl ?? undefined} alt={club.name} />
                     <AvatarFallback variant="club" />
                   </Avatar>
-                  <span className="typo-body2 text-text-normal">{club.name}</span>
+                  <span className="desktop:typo-body2 typo-sub3 text-text-normal">{club.name}</span>
                 </div>
                 <Button variant="primarySoft" size="sm" onClick={() => setSelectedClub(club)}>
                   변경
