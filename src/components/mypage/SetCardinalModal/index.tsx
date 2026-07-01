@@ -88,7 +88,7 @@ function SetCardinalModal({ open, onOpenChange, club, onSave }: SetCardinalModal
   ];
 
   const { title, body, footer } = STEPS[step - 1];
-  const overline = `'${club.name}' 활동 기수 설정`;
+  const overline = `${club.name}`;
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
