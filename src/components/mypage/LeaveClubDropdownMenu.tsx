@@ -23,7 +23,7 @@ function MyPageDropdownMenu() {
             className="flex size-[24px] cursor-pointer items-center justify-center rounded-sm"
             aria-label="더보기"
           >
-            <Icon src={AdminMeatballIcon} size={24} className="text-icon-normal" />
+            <Icon src={AdminMeatballIcon} size={24} className="text-icon-alternative" />
           </button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
