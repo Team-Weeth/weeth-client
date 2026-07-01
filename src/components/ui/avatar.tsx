@@ -13,8 +13,10 @@ const avatarVariants = cva('group/avatar relative flex shrink-0 overflow-hidden 
     },
     size: {
       128: 'size-32',
+      100: 'size-25',
       64: 'size-16',
       40: 'size-10',
+      36: 'size-9',
       24: 'size-6',
     },
     colorScheme: {
@@ -25,8 +27,10 @@ const avatarVariants = cva('group/avatar relative flex shrink-0 overflow-hidden 
   },
   compoundVariants: [
     { type: 'square', size: 128, className: 'rounded-[32px]' },
+    { type: 'square', size: 100, className: 'rounded-[25px]' },
     { type: 'square', size: 64, className: 'rounded-lg' },
     { type: 'square', size: 40, className: 'rounded-md' },
+    { type: 'square', size: 36, className: 'rounded-md' },
     { type: 'square', size: 24, className: 'rounded-[6px]' },
   ],
   defaultVariants: {
