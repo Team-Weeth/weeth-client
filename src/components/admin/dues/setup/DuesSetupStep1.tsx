@@ -73,7 +73,8 @@ function DuesSetupStep1() {
 
     const { registrationStep, basic, carryOver, bankAccount } = res.data.data;
 
-    setField({ cardinalNumber: cardinalNumber });
+    // 이미 등록 완료된 장부면 수정 모드로 진입 (최종 단계에서 complete 생략)
+    setField({ cardinalNumber: cardinalNumber, isEditMode: registrationStep === 'REVIEW' });
 
     if (basic) {
       setField({

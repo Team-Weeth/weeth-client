@@ -74,25 +74,9 @@ function DuesSetupStep2() {
   const handleNext = async () => {
     if (accountId === null) return;
 
-    const currentSelected = new Set(selectedMemberIds);
-
-    // 원본 상태 대비 변경된 멤버만 델타로 전달
-    const targetedClubMemberIds = allTargets
-      .filter(
-        (t) =>
-          t.targetStatus === 'EXCLUDED' && currentSelected.has(t.paymentTargetInfo.clubMemberId),
-      )
-      .map((t) => t.paymentTargetInfo.clubMemberId);
-
-    const excludedClubMemberIds = allTargets
-      .filter(
-        (t) =>
-          t.targetStatus === 'TARGETED' && !currentSelected.has(t.paymentTargetInfo.clubMemberId),
-      )
-      .map((t) => t.paymentTargetInfo.clubMemberId);
-
+    // 스냅샷 방식(전체 교체): 선택된 대상 ID만 전달하면 미선택 회원은 자동 제외된다
     await duesApi
-      .savePaymentTargets(clubId, accountId, { targetedClubMemberIds, excludedClubMemberIds })
+      .savePaymentTargets(clubId, accountId, { targetedClubMemberIds: selectedMemberIds })
       .catch(() => {});
 
     goToStep(3);

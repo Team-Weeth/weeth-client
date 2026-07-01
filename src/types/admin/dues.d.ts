@@ -87,7 +87,6 @@ export interface CarryOverSource {
 
 export interface SavePaymentTargetsBody {
   targetedClubMemberIds: number[];
-  excludedClubMemberIds: number[];
 }
 
 export interface SaveBankAccountBody {

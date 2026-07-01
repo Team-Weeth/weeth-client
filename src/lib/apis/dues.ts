@@ -37,7 +37,10 @@ export const duesApi = {
     ),
 
   savePaymentTargets: (clubId: string, accountId: number, body: SavePaymentTargetsBody) =>
-    apiClient.patch(`/admin/clubs/${clubId}/accounts/${accountId}/payment-targets`, body),
+    apiClient.put(
+      `/admin/clubs/${clubId}/accounts/${accountId}/registration/payment-targets`,
+      body,
+    ),
 
   getCarryOverSource: (clubId: string, accountId: number) =>
     apiClient.get<ApiResponse<CarryOverSource>>(
