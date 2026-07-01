@@ -16,6 +16,7 @@ import {
   NextButton,
 } from '@/components/admin/dues/setup/components';
 import { useDuesSetupNavigation } from '@/components/admin/dues/setup/useDuesSetupNavigation';
+import { useDuesStepNavigator } from '@/components/admin/dues/setup/useDuesStepNavigator';
 import { ScheduleTextField } from '@/components/admin/schedule/general/ScheduleTextField';
 
 const NAME_MAX = 30;
@@ -115,17 +116,19 @@ function DuesSetupStep1() {
     }
 
     const targetStep = STEP_MAP[registrationStep] ?? 1;
+    // 복원한 단계가 지금까지 도달한 최고 단계 → 인디케이터 자유 이동 범위로 설정
+    setField({ maxReachedStep: targetStep });
     if (targetStep > 1) {
       goToStep(targetStep);
     }
   };
 
-  const handleNext = async () => {
+  const commitStep = async () => {
     const next: { amount?: string; name?: string } = {};
     if (!amount || Number(amount) === 0) next.amount = '회비 금액을 입력해주세요';
     if (!name.trim()) next.name = '회비 이름을 입력해주세요';
     setErrors(next);
-    if (Object.keys(next).length > 0 || accountId === null) return;
+    if (Object.keys(next).length > 0 || accountId === null) return false;
 
     setField({ cardinalNumber });
 
@@ -137,8 +140,10 @@ function DuesSetupStep1() {
       })
       .catch(() => {});
 
-    goToStep(2);
+    return true;
   };
+
+  const { maxReachedStep, goNext, goToReachedStep } = useDuesStepNavigator(1, commitStep);
 
   return (
     <>
@@ -165,7 +170,11 @@ function DuesSetupStep1() {
 
         <div className="flex flex-col gap-600">
           {/* 스텝 인디케이터 */}
-          <DuesSetupStepIndicator currentStep={1} />
+          <DuesSetupStepIndicator
+            currentStep={1}
+            maxReachedStep={maxReachedStep}
+            onStepClick={goToReachedStep}
+          />
 
           <FormCard title="기본 정보" step={1} description="총 회비의 기본 정보를 입력해주세요">
             {/* 필드 행: 회비금액 + 회비 이름 */}
@@ -245,7 +254,7 @@ function DuesSetupStep1() {
         </div>
 
         {/* 다음으로 버튼 */}
-        <NextButton handleNext={handleNext} />
+        <NextButton handleNext={goNext} />
       </div>
     </>
   );

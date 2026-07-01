@@ -17,6 +17,7 @@ import {
   PrevButton,
 } from '@/components/admin/dues/setup/components';
 import { useDuesSetupNavigation } from '@/components/admin/dues/setup/useDuesSetupNavigation';
+import { useDuesStepNavigator } from '@/components/admin/dues/setup/useDuesStepNavigator';
 import { usePaymentTargetFilter } from '@/hooks/admin';
 
 function DuesSetupStep2() {
@@ -71,16 +72,18 @@ function DuesSetupStep2() {
   };
 
   // TODO: 대상자 선택 안 되면 못 넘어가게(null 값 안 들어가게 하기)
-  const handleNext = async () => {
-    if (accountId === null) return;
+  const commitStep = async () => {
+    if (accountId === null) return false;
 
     // 스냅샷 방식(전체 교체): 선택된 대상 ID만 전달하면 미선택 회원은 자동 제외된다
     await duesApi
       .savePaymentTargets(clubId, accountId, { targetedClubMemberIds: selectedMemberIds })
       .catch(() => {});
 
-    goToStep(3);
+    return true;
   };
+
+  const { maxReachedStep, goNext, goToReachedStep } = useDuesStepNavigator(2, commitStep);
 
   return (
     <div className="flex min-w-85 flex-col gap-700 p-700">
@@ -91,7 +94,11 @@ function DuesSetupStep2() {
       </div>
 
       <div className="flex flex-col gap-600">
-        <DuesSetupStepIndicator currentStep={2} />
+        <DuesSetupStepIndicator
+          currentStep={2}
+          maxReachedStep={maxReachedStep}
+          onStepClick={goToReachedStep}
+        />
 
         <div className="bg-container-neutral flex flex-col gap-600 rounded-lg px-400 py-450">
           {/* 섹션 헤더 */}
@@ -133,7 +140,7 @@ function DuesSetupStep2() {
       {/* 하단 네비게이션 */}
       <div className="flex items-center justify-between">
         <PrevButton handlePrev={() => goToStep(1)} />
-        <NextButton handleNext={handleNext} />
+        <NextButton handleNext={goNext} />
       </div>
     </div>
   );

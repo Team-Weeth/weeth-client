@@ -16,6 +16,7 @@ import {
   CarryOverCard,
 } from '@/components/admin/dues/setup/components';
 import { useDuesSetupNavigation } from '@/components/admin/dues/setup/useDuesSetupNavigation';
+import { useDuesStepNavigator } from '@/components/admin/dues/setup/useDuesStepNavigator';
 import { ScheduleTextField } from '@/components/admin/schedule/general/ScheduleTextField';
 
 const DESCRIPTION_MAX = 30;
@@ -53,8 +54,8 @@ function DuesSetupStep3() {
   const previousBalance = source?.balance ?? 0;
   const previousGeneration = source?.cardinalNumber ?? cardinalNumber - 1;
 
-  const handleNext = async () => {
-    if (accountId === null) return;
+  const commitStep = async () => {
+    if (accountId === null) return false;
 
     await duesApi
       .saveCarryOver(clubId, accountId, {
@@ -64,8 +65,10 @@ function DuesSetupStep3() {
       })
       .catch(() => {});
 
-    goToStep(4);
+    return true;
   };
+
+  const { maxReachedStep, goNext, goToReachedStep } = useDuesStepNavigator(3, commitStep);
 
   return (
     <div className="flex min-w-85 flex-col gap-700 p-700">
@@ -76,7 +79,11 @@ function DuesSetupStep3() {
       </div>
 
       <div className="flex flex-col gap-600">
-        <DuesSetupStepIndicator currentStep={3} />
+        <DuesSetupStepIndicator
+          currentStep={3}
+          maxReachedStep={maxReachedStep}
+          onStepClick={goToReachedStep}
+        />
 
         <FormCard title="이월 설정" step={3} description="이전 기수에서 이월할 잔액을 설정해주세요">
           {/* 이전 기수 잔액 정보 카드 */}
@@ -129,7 +136,7 @@ function DuesSetupStep3() {
       {/* 하단 네비게이션 */}
       <div className="flex items-center justify-between">
         <PrevButton handlePrev={() => goToStep(2)} />
-        <NextButton handleNext={handleNext} />
+        <NextButton handleNext={goNext} />
       </div>
     </div>
   );

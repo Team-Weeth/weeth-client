@@ -15,6 +15,7 @@ import {
   PrevButton,
 } from '@/components/admin/dues/setup/components';
 import { useDuesSetupNavigation } from '@/components/admin/dues/setup/useDuesSetupNavigation';
+import { useDuesStepNavigator } from '@/components/admin/dues/setup/useDuesStepNavigator';
 
 import { ScheduleTextField } from '@/components/admin/schedule/general/ScheduleTextField';
 
@@ -44,14 +45,14 @@ function DuesSetupStep4() {
 
   const [errors, setErrors] = useState<Errors>({});
 
-  const handleNext = async () => {
+  const commitStep = async () => {
     const next: Errors = {};
     if (!accountNumber.trim()) next.accountNumber = '계좌번호를 입력해주세요';
     if (!bankName.trim()) next.bankName = '은행을 입력해주세요';
     if (!accountHolder.trim()) next.accountHolder = '예금주를 입력해주세요';
     setErrors(next);
-    if (Object.keys(next).length > 0) return;
-    if (accountId === null) return;
+    if (Object.keys(next).length > 0) return false;
+    if (accountId === null) return false;
 
     await duesApi
       .saveBankAccount(clubId, accountId, {
@@ -65,8 +66,10 @@ function DuesSetupStep4() {
       })
       .catch(() => {});
 
-    goToStep(5);
+    return true;
   };
+
+  const { maxReachedStep, goNext, goToReachedStep } = useDuesStepNavigator(4, commitStep);
 
   return (
     <div className="flex min-w-85 flex-col gap-700 p-700">
@@ -77,7 +80,11 @@ function DuesSetupStep4() {
       </div>
 
       <div className="flex flex-col gap-600">
-        <DuesSetupStepIndicator currentStep={4} />
+        <DuesSetupStepIndicator
+          currentStep={4}
+          maxReachedStep={maxReachedStep}
+          onStepClick={goToReachedStep}
+        />
 
         <FormCard
           title="계좌 공개"
@@ -152,7 +159,7 @@ function DuesSetupStep4() {
       {/* 하단 네비게이션 */}
       <div className="flex items-center justify-between">
         <PrevButton handlePrev={() => goToStep(3)} />
-        <NextButton handleNext={handleNext} />
+        <NextButton handleNext={goNext} />
       </div>
     </div>
   );

@@ -7,6 +7,8 @@ const initialState = {
   // 메인 화면에서 막 신규 진입했는지 여부 (메모리 전용 — partialize 제외)
   // true일 때만 step1에서 "이어서 작성" alert를 노출한다.
   isFreshEntry: false,
+  // 지금까지 도달한 최고 단계 — 인디케이터에서 이 단계까지 자유 이동 허용
+  maxReachedStep: 1,
   cardinalNumber: 0,
   // Step 1: 기본 정보
   amount: '',
@@ -41,6 +43,7 @@ export const useDuesSetupStore = create(
         // accountId는 메모리에만 유지 (새로고침/재접속 시 null 초기화 → 초안 생성 API 재호출)
         // 같은 세션 내 Step2 → Step1 이동 시에는 메모리 값으로 재호출 방지
         partialize: (state) => ({
+          maxReachedStep: state.maxReachedStep,
           cardinalNumber: state.cardinalNumber,
           amount: state.amount,
           name: state.name,
@@ -73,6 +76,7 @@ export const useDuesSetupValues = () =>
     useShallow((state) => ({
       accountId: state.accountId,
       isFreshEntry: state.isFreshEntry,
+      maxReachedStep: state.maxReachedStep,
       cardinalNumber: state.cardinalNumber,
       amount: state.amount,
       name: state.name,
