@@ -29,7 +29,11 @@ function MyPageNav({ className, ...props }: React.ComponentProps<'nav'>) {
             pathname.startsWith(`/${clubId}/mypage/edit`) ||
             pathname.startsWith(`/${clubId}/mypage/posts`) ||
             pathname.startsWith(`/${clubId}/mypage/sessions`);
-          const isActive = pathname === href || (item.id === 'profile' && isProfileSubPath);
+          const isSettingsSubPath = pathname.startsWith(`/${clubId}/mypage/settings/`);
+          const isActive =
+            pathname === href ||
+            (item.id === 'profile' && isProfileSubPath) ||
+            (item.id === 'settings' && isSettingsSubPath);
           return (
             <li key={item.id}>
               <Link
