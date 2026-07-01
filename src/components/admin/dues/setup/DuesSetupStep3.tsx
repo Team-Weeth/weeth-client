@@ -105,7 +105,7 @@ function DuesSetupStep3() {
             />
             <CarryOverCard
               title="잔액을 이번 기수로 이월하기"
-              description="아래 금액을 작성해주세요"
+              description="아래 설명을 작성해주세요"
               selected={carryOverOption === 'carry'}
               onClick={() => setField({ carryOverOption: 'carry' })}
               disabled={!hasPreviousBalance}

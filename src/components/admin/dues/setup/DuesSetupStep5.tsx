@@ -30,7 +30,6 @@ function DuesSetupStep5() {
 
   const {
     accountId,
-    isEditMode,
     cardinalNumber,
     amount,
     name,
@@ -68,14 +67,6 @@ function DuesSetupStep5() {
 
   const handleComplete = async () => {
     if (accountId === null || isCompleting) return;
-
-    // 수정 모드: 각 단계 patch는 이미 반영되었고, 완료 장부 재-complete는 20104이므로 생략
-    if (isEditMode) {
-      toastSuccess('회비 정보가 수정되었습니다.');
-      reset();
-      goToDues();
-      return;
-    }
 
     setIsCompleting(true);
     try {
