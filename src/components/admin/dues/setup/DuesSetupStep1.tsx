@@ -24,7 +24,7 @@ const DESCRIPTION_MAX = 30;
 
 function DuesSetupStep1() {
   const { clubId } = useParams<{ clubId: string }>();
-  const { goToStep, goToDues } = useDuesSetupNavigation();
+  const { goToStep } = useDuesSetupNavigation();
   const { accountId, isFreshEntry, amount, name, description } = useDuesSetupValues();
   const { setField, reset } = useDuesSetupActions();
   const { latestCardinal } = useCardinalSelector();
@@ -59,6 +59,7 @@ function DuesSetupStep1() {
     PAYMENT_TARGET: 2,
     CARRY_OVER: 3,
     BANK_ACCOUNT: 4,
+    REVIEW: 5,
   };
 
   const cardinalNumber = latestCardinal?.cardinalNumber ?? 0;
@@ -71,12 +72,6 @@ function DuesSetupStep1() {
     if (!res) return;
 
     const { registrationStep, basic, carryOver, bankAccount } = res.data.data;
-
-    // 이미 등록 완료(REVIEW)된 장부는 온보딩 수정 대상이 아님 → 대시보드에서 확인
-    if (registrationStep === 'REVIEW') {
-      goToDues();
-      return;
-    }
 
     setField({ cardinalNumber: cardinalNumber });
 
