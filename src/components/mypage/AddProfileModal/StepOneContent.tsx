@@ -5,6 +5,7 @@ import { Controller, useWatch } from 'react-hook-form';
 import { Button, DialogClose, Input } from '@/components/ui';
 import { FormFieldWrapper } from '@/components/auth/hub';
 import type { EditProfileFormData } from '@/lib/schemas/editProfile';
+import { CharacterCountRow } from '../CharacterCountRow';
 import { ProfileBackgroundImageEditor } from '../edit/ProfileBackgroundImageEditor';
 import { ProfileImageEditor } from '../edit/ProfileImageEditor';
 
@@ -15,21 +16,6 @@ interface StepOneContentProps {
   errors: FieldErrors<Pick<EditProfileFormData, 'name' | 'bio'>>;
   onCancel: () => void;
   onNext: () => void;
-}
-
-function CharacterCountRow({ error, value }: { error?: string; value: string }) {
-  return (
-    <div className="grid min-h-4 grid-cols-[minmax(0,1fr)_auto] items-start gap-200">
-      <div className="min-w-0">
-        {error ? (
-          <span className="typo-caption2 text-state-error block truncate">{error}</span>
-        ) : null}
-      </div>
-      <span className="typo-caption2 text-text-alternative shrink-0 text-right">
-        {value.length}/{MAX_LENGTH}
-      </span>
-    </div>
-  );
 }
 
 function StepOneContent({ control, errors, onCancel, onNext }: StepOneContentProps) {
@@ -68,7 +54,11 @@ function StepOneContent({ control, errors, onCancel, onNext }: StepOneContentPro
                   className="bg-background border-line typo-body1 text-text-strong placeholder:text-text-alternative rounded-lg p-300"
                   aria-label="이름"
                 />
-                <CharacterCountRow error={errors.name?.message} value={field.value ?? ''} />
+                <CharacterCountRow
+                  error={errors.name?.message}
+                  value={field.value ?? ''}
+                  maxLength={MAX_LENGTH}
+                />
               </div>
             </FormFieldWrapper>
           )}
@@ -91,7 +81,11 @@ function StepOneContent({ control, errors, onCancel, onNext }: StepOneContentPro
                   className="bg-background border-line typo-body1 text-text-strong placeholder:text-text-alternative rounded-lg p-300"
                   aria-label="소개글"
                 />
-                <CharacterCountRow error={errors.bio?.message} value={field.value ?? ''} />
+                <CharacterCountRow
+                  error={errors.bio?.message}
+                  value={field.value ?? ''}
+                  maxLength={MAX_LENGTH}
+                />
               </div>
             </FormFieldWrapper>
           )}
