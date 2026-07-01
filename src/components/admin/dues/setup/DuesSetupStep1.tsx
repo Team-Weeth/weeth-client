@@ -3,9 +3,12 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Controller, useForm } from 'react-hook-form';
 import { useQueryClient } from '@tanstack/react-query';
 
 import { cn } from '@/lib/cn';
+import { duesBasicSchema, type DuesBasicFormData } from '@/lib/schemas/duesSetup';
 import { useDuesSetupActions, useDuesSetupValues } from '@/stores/useDuesSetupStore';
 import { useCardinalSelector } from '@/hooks/useCardinalSelector';
 import { useCreateDuesDraft, useDiscardDuesDraft, useSaveDuesBasic } from '@/hooks/mutations/admin';
@@ -40,7 +43,30 @@ function DuesSetupStep1() {
   const discardDraft = useDiscardDuesDraft(clubId, accountId);
   const saveBasic = useSaveDuesBasic(clubId, accountId);
 
-  const [errors, setErrors] = useState<{ amount?: string; name?: string }>({});
+  const {
+    control,
+    handleSubmit,
+    watch,
+    reset: resetForm,
+    formState: { errors },
+  } = useForm<DuesBasicFormData>({
+    resolver: zodResolver(duesBasicSchema),
+    defaultValues: { amount, name, description },
+    mode: 'onChange',
+  });
+
+  // rhf → store 동기화 (persist/새로고침 복원용 — store가 소스는 아니지만 값은 계속 유지한다)
+  useEffect(() => {
+    const subscription = watch((values) => {
+      setField({
+        amount: values.amount ?? '',
+        name: values.name ?? '',
+        description: values.description ?? '',
+      });
+    });
+    return () => subscription.unsubscribe();
+  }, [watch, setField]);
+
   const [draftAlert, setDraftAlert] = useState<{
     open: boolean;
     lastModifiedByName: string | null;
@@ -91,11 +117,15 @@ function DuesSetupStep1() {
     setField({ cardinalNumber: cardinalNumber });
 
     if (basic) {
-      setField({
+      const basicValues: DuesBasicFormData = {
         name: basic.name,
         amount: String(basic.duesAmount),
         description: basic.description ?? '',
-      });
+      };
+      setField(basicValues);
+      // rhf는 defaultValues가 마운트 시 고정이므로, Step1에 머무는 경우
+      // 복원 값이 입력창에 반영되도록 폼을 리셋한다.
+      resetForm(basicValues);
     }
 
     if (carryOver) {
@@ -133,26 +163,26 @@ function DuesSetupStep1() {
     }
   };
 
-  const commitStep = async () => {
-    const next: { amount?: string; name?: string } = {};
-    if (!amount || Number(amount) === 0) next.amount = '회비 금액을 입력해주세요';
-    if (!name.trim()) next.name = '회비 이름을 입력해주세요';
-    setErrors(next);
-    if (Object.keys(next).length > 0 || accountId === null) return false;
-
-    setField({ cardinalNumber });
-
-    try {
-      await saveBasic.mutateAsync({
-        name: name.trim(),
-        duesAmount: Number(amount),
-        description: description.trim(),
-      });
-      return true;
-    } catch {
-      return false;
-    }
-  };
+  const commitStep = () =>
+    new Promise<boolean>((resolve) => {
+      handleSubmit(
+        async (values) => {
+          if (accountId === null) return resolve(false);
+          setField({ cardinalNumber });
+          try {
+            await saveBasic.mutateAsync({
+              name: values.name,
+              duesAmount: Number(values.amount),
+              description: values.description.trim(),
+            });
+            resolve(true);
+          } catch {
+            resolve(false);
+          }
+        },
+        () => resolve(false), // 검증 실패 → 다음 단계로 이동 차단
+      )();
+    });
 
   const { goNext } = useDuesStepNavigator(1, commitStep);
 
@@ -194,68 +224,83 @@ function DuesSetupStep1() {
                 >
                   1인 당 회비금액
                 </label>
-                <div className="flex flex-col gap-200">
-                  <div
-                    className={cn(
-                      'bg-container-neutral-alternative flex h-12 items-center gap-200 rounded-sm px-400',
-                      errors.amount && 'ring-state-error ring-1',
-                    )}
-                  >
-                    <input
-                      id="dues-amount"
-                      type="text"
-                      inputMode="numeric"
-                      value={amount ? Number(amount).toLocaleString() : ''}
-                      onChange={(e) => {
-                        const raw = e.target.value.replace(/\D/g, '');
-                        setField({ amount: raw });
-                        if (errors.amount) setErrors((prev) => ({ ...prev, amount: undefined }));
-                      }}
-                      placeholder="0"
-                      className={cn(
-                        'typo-sub3 placeholder:text-text-alternative min-w-0 flex-1 bg-transparent focus:outline-none',
-                        amount ? 'text-text-normal' : 'text-text-alternative',
-                      )}
-                    />
-                    <span className="typo-body1 text-text-normal shrink-0">원</span>
-                  </div>
-                  <div className="flex items-start px-400">
-                    {errors.amount ? (
-                      <span className="typo-caption2 text-state-error">{errors.amount}</span>
-                    ) : (
-                      <span className="typo-caption2 text-text-alternative">
-                        회비 금액은 등록 후에도 수정할 수 있습니다.
-                      </span>
-                    )}
-                  </div>
-                </div>
+                <Controller
+                  control={control}
+                  name="amount"
+                  render={({ field }) => (
+                    <div className="flex flex-col gap-200">
+                      <div
+                        className={cn(
+                          'bg-container-neutral-alternative flex h-12 items-center gap-200 rounded-sm px-400',
+                          errors.amount && 'ring-state-error ring-1',
+                        )}
+                      >
+                        <input
+                          id="dues-amount"
+                          type="text"
+                          inputMode="numeric"
+                          value={field.value ? Number(field.value).toLocaleString() : ''}
+                          onChange={(e) => field.onChange(e.target.value.replace(/\D/g, ''))}
+                          onBlur={field.onBlur}
+                          placeholder="0"
+                          className={cn(
+                            'typo-sub3 placeholder:text-text-alternative min-w-0 flex-1 bg-transparent focus:outline-none',
+                            field.value ? 'text-text-normal' : 'text-text-alternative',
+                          )}
+                        />
+                        <span className="typo-body1 text-text-normal shrink-0">원</span>
+                      </div>
+                      <div className="flex items-start px-400">
+                        {errors.amount ? (
+                          <span className="typo-caption2 text-state-error">
+                            {errors.amount.message}
+                          </span>
+                        ) : (
+                          <span className="typo-caption2 text-text-alternative">
+                            회비 금액은 등록 후에도 수정할 수 있습니다.
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                />
               </div>
 
               {/* 회비 이름 */}
               <div className="min-w-0 flex-1">
-                <ScheduleTextField
-                  label="회비 이름"
-                  value={name}
-                  onChange={(value) => {
-                    setField({ name: value });
-                    if (errors.name) setErrors((prev) => ({ ...prev, name: undefined }));
-                  }}
-                  placeholder={`${cardinalNumber}기 정기회비`}
-                  maxLength={NAME_MAX}
-                  error={errors.name}
-                  className="bg-container-neutral-alternative"
+                <Controller
+                  control={control}
+                  name="name"
+                  render={({ field }) => (
+                    <ScheduleTextField
+                      label="회비 이름"
+                      value={field.value}
+                      onChange={field.onChange}
+                      placeholder={`${cardinalNumber}기 정기회비`}
+                      maxLength={NAME_MAX}
+                      error={errors.name?.message}
+                      className="bg-container-neutral-alternative"
+                    />
+                  )}
                 />
               </div>
             </div>
 
             {/* 회비 설명 (선택) */}
-            <ScheduleTextField
-              label="회비 설명 (선택)"
-              value={description}
-              onChange={(value) => setField({ description: value })}
-              placeholder="설명을 작성해주세요"
-              maxLength={DESCRIPTION_MAX}
-              className="bg-container-neutral-alternative"
+            <Controller
+              control={control}
+              name="description"
+              render={({ field }) => (
+                <ScheduleTextField
+                  label="회비 설명 (선택)"
+                  value={field.value}
+                  onChange={field.onChange}
+                  placeholder="설명을 작성해주세요"
+                  maxLength={DESCRIPTION_MAX}
+                  error={errors.description?.message}
+                  className="bg-container-neutral-alternative"
+                />
+              )}
             />
           </FormCard>
         </div>

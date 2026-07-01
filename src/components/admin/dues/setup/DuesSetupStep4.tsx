@@ -1,8 +1,12 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect } from 'react';
 import { useParams } from 'next/navigation';
 
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Controller, useForm } from 'react-hook-form';
+
+import { duesBankAccountSchema, type DuesBankAccountFormData } from '@/lib/schemas/duesSetup';
 import { BackButton } from '@/components/admin/dues';
 import { Switch } from '@/components/ui';
 import { useDuesSetupValues, useDuesSetupActions } from '@/stores/useDuesSetupStore';
@@ -22,12 +26,6 @@ import { ScheduleTextField } from '@/components/admin/schedule/general/ScheduleT
 const HOLDER_MAX = 30;
 const GUIDE_MAX = 30;
 
-interface Errors {
-  accountNumber?: string;
-  bankName?: string;
-  accountHolder?: string;
-}
-
 function DuesSetupStep4() {
   const { clubId } = useParams<{ clubId: string }>();
   const { goToStep } = useDuesSetupNavigation();
@@ -45,32 +43,54 @@ function DuesSetupStep4() {
 
   const saveBankAccount = useSaveDuesBankAccount(clubId, accountId);
 
-  const [errors, setErrors] = useState<Errors>({});
+  const {
+    control,
+    handleSubmit,
+    watch,
+    formState: { errors },
+  } = useForm<DuesBankAccountFormData>({
+    resolver: zodResolver(duesBankAccountSchema),
+    defaultValues: { accountNumber, bankName, accountHolder, accountGuide, isAccountPublic },
+    mode: 'onChange',
+  });
 
-  const commitStep = async () => {
-    const next: Errors = {};
-    if (!accountNumber.trim()) next.accountNumber = '계좌번호를 입력해주세요';
-    if (!bankName.trim()) next.bankName = '은행을 입력해주세요';
-    if (!accountHolder.trim()) next.accountHolder = '예금주를 입력해주세요';
-    setErrors(next);
-    if (Object.keys(next).length > 0) return false;
-    if (accountId === null) return false;
-
-    try {
-      await saveBankAccount.mutateAsync({
-        bankAccountVisible: isAccountPublic,
-        bankAccount: {
-          bankName: bankName.trim(),
-          accountNumber: accountNumber.trim(),
-          holder: accountHolder.trim(),
-          guide: accountGuide.trim() || null,
-        },
+  // rhf → store 동기화 (persist/새로고침 복원용)
+  useEffect(() => {
+    const subscription = watch((values) => {
+      setField({
+        accountNumber: values.accountNumber ?? '',
+        bankName: values.bankName ?? '',
+        accountHolder: values.accountHolder ?? '',
+        accountGuide: values.accountGuide ?? '',
+        isAccountPublic: values.isAccountPublic ?? false,
       });
-      return true;
-    } catch {
-      return false;
-    }
-  };
+    });
+    return () => subscription.unsubscribe();
+  }, [watch, setField]);
+
+  const commitStep = () =>
+    new Promise<boolean>((resolve) => {
+      handleSubmit(
+        async (values) => {
+          if (accountId === null) return resolve(false);
+          try {
+            await saveBankAccount.mutateAsync({
+              bankAccountVisible: values.isAccountPublic,
+              bankAccount: {
+                bankName: values.bankName,
+                accountNumber: values.accountNumber,
+                holder: values.accountHolder,
+                guide: values.accountGuide.trim() || null,
+              },
+            });
+            resolve(true);
+          } catch {
+            resolve(false);
+          }
+        },
+        () => resolve(false), // 검증 실패 → 다음 단계로 이동 차단
+      )();
+    });
 
   const { goNext } = useDuesStepNavigator(4, commitStep);
 
@@ -92,64 +112,81 @@ function DuesSetupStep4() {
         >
           {/* 행 1: 계좌번호 + 은행 */}
           <div className="grid grid-cols-2 gap-400">
-            <ScheduleTextField
-              label="계좌번호"
-              value={accountNumber}
-              onChange={(value) => {
-                setField({ accountNumber: value });
-                if (errors.accountNumber)
-                  setErrors((prev) => ({ ...prev, accountNumber: undefined }));
-              }}
-              placeholder="계좌번호를 입력해주세요"
-              maxLength={20}
-              error={errors.accountNumber}
-              className="bg-container-neutral-alternative"
+            <Controller
+              control={control}
+              name="accountNumber"
+              render={({ field }) => (
+                <ScheduleTextField
+                  label="계좌번호"
+                  value={field.value}
+                  onChange={field.onChange}
+                  placeholder="계좌번호를 입력해주세요"
+                  maxLength={20}
+                  error={errors.accountNumber?.message}
+                  className="bg-container-neutral-alternative"
+                />
+              )}
             />
             {/* TODO: 은행 선택 드롭다운 만들기 */}
-            <ScheduleTextField
-              label="은행"
-              value={bankName}
-              onChange={(value) => {
-                setField({ bankName: value });
-                if (errors.bankName) setErrors((prev) => ({ ...prev, bankName: undefined }));
-              }}
-              placeholder="ex)카카오뱅크"
-              error={errors.bankName}
-              className="bg-container-neutral-alternative"
+            <Controller
+              control={control}
+              name="bankName"
+              render={({ field }) => (
+                <ScheduleTextField
+                  label="은행"
+                  value={field.value}
+                  onChange={field.onChange}
+                  placeholder="ex)카카오뱅크"
+                  error={errors.bankName?.message}
+                  className="bg-container-neutral-alternative"
+                />
+              )}
             />
           </div>
 
           {/* 행 2: 예금주 + 안내 문구 */}
           <div className="grid grid-cols-2 gap-400">
-            <ScheduleTextField
-              label="예금주"
-              value={accountHolder}
-              onChange={(value) => {
-                setField({ accountHolder: value });
-                if (errors.accountHolder)
-                  setErrors((prev) => ({ ...prev, accountHolder: undefined }));
-              }}
-              placeholder="ex)가천대 검도부"
-              maxLength={HOLDER_MAX}
-              error={errors.accountHolder}
-              className="bg-container-neutral-alternative"
+            <Controller
+              control={control}
+              name="accountHolder"
+              render={({ field }) => (
+                <ScheduleTextField
+                  label="예금주"
+                  value={field.value}
+                  onChange={field.onChange}
+                  placeholder="ex)가천대 검도부"
+                  maxLength={HOLDER_MAX}
+                  error={errors.accountHolder?.message}
+                  className="bg-container-neutral-alternative"
+                />
+              )}
             />
-            <ScheduleTextField
-              label="안내 문구 (선택)"
-              value={accountGuide}
-              onChange={(value) => setField({ accountGuide: value })}
-              placeholder="부원에게 계좌나 입금 안내를 해보세요"
-              maxLength={GUIDE_MAX}
-              className="bg-container-neutral-alternative"
+            <Controller
+              control={control}
+              name="accountGuide"
+              render={({ field }) => (
+                <ScheduleTextField
+                  label="안내 문구 (선택)"
+                  value={field.value}
+                  onChange={field.onChange}
+                  placeholder="부원에게 계좌나 입금 안내를 해보세요"
+                  maxLength={GUIDE_MAX}
+                  error={errors.accountGuide?.message}
+                  className="bg-container-neutral-alternative"
+                />
+              )}
             />
           </div>
 
           {/* 계좌 공개 토글 */}
           <div className="border-border flex items-center justify-between rounded-lg border p-400">
             <span className="typo-sub1 text-text-strong">멤버에게 계좌를 공개</span>
-            <Switch
-              checked={isAccountPublic}
-              onCheckedChange={(checked) => setField({ isAccountPublic: checked })}
+            <Controller
+              control={control}
+              name="isAccountPublic"
+              render={({ field }) => (
+                <Switch checked={field.value} onCheckedChange={field.onChange} />
+              )}
             />
           </div>
         </FormCard>
