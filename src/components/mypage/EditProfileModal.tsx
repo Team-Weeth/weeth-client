@@ -2,14 +2,8 @@
 
 import { useState } from 'react';
 import { DeleteIcon } from '@/assets/icons';
-import {
-  Button,
-  Dialog,
-  DialogContent,
-  DialogTitle,
-  Icon,
-} from '@/components/ui';
-import { useEditProfileForm } from '@/hooks';
+import { Button, Dialog, DialogContent, DialogTitle, Icon } from '@/components/ui';
+import { useEditProfileForm } from '@/hooks/mypage';
 import type { ClubDto } from '@/types/mypage';
 import { DeleteProfileDialog } from './DeleteProfileDialog';
 import { EditProfileFormContent } from './EditProfileFormContent';

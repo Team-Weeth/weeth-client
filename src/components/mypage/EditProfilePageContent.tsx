@@ -4,7 +4,7 @@ import { useMemo, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { BackIcon } from '@/assets/icons';
 import { Button, Icon } from '@/components/ui';
-import { useEditProfileForm } from '@/hooks';
+import { useEditProfileForm } from '@/hooks/mypage';
 import { useMyPageQueries } from '@/hooks/queries/mypage/useMyPageQueries';
 import { DeleteProfileDialog } from './DeleteProfileDialog';
 import { EditProfileFormContent } from './EditProfileFormContent';
