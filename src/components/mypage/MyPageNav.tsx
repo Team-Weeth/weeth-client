@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useParams, usePathname } from 'next/navigation';
+import { isMyPageProfileSubPath, isMyPageSettingsSubPath } from '@/constants/mypage/routes';
 import { cn } from '@/lib/cn';
 
 const NAV_ITEMS = [
@@ -24,12 +25,8 @@ function MyPageNav({ className, ...props }: React.ComponentProps<'nav'>) {
       <ul className="flex flex-col gap-200 px-450 py-400" role="list">
         {NAV_ITEMS.map((item) => {
           const href = `/${clubId}${item.href}`;
-          const isProfileSubPath =
-            pathname.startsWith(`/${clubId}/mypage/profiles`) ||
-            pathname.startsWith(`/${clubId}/mypage/edit`) ||
-            pathname.startsWith(`/${clubId}/mypage/posts`) ||
-            pathname.startsWith(`/${clubId}/mypage/sessions`);
-          const isSettingsSubPath = pathname.startsWith(`/${clubId}/mypage/settings/`);
+          const isProfileSubPath = isMyPageProfileSubPath(pathname, clubId);
+          const isSettingsSubPath = isMyPageSettingsSubPath(pathname, clubId);
           const isActive =
             pathname === href ||
             (item.id === 'profile' && isProfileSubPath) ||
