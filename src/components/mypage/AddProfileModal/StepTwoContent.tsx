@@ -16,9 +16,16 @@ interface StepTwoContentProps {
   onToggleClub: (clubId: string) => void;
   onPrev: () => void;
   onConfirm: () => void;
+  mobileFixedFooter?: boolean;
 }
 
-function StepTwoContent({ selectedClubIds, onToggleClub, onPrev, onConfirm }: StepTwoContentProps) {
+function StepTwoContent({
+  selectedClubIds,
+  onToggleClub,
+  onPrev,
+  onConfirm,
+  mobileFixedFooter = false,
+}: StepTwoContentProps) {
   return (
     <div className="flex flex-col gap-400">
       <div className="divide-line h-[370px] divide-y">
@@ -62,7 +69,13 @@ function StepTwoContent({ selectedClubIds, onToggleClub, onPrev, onConfirm }: St
         })}
       </div>
 
-      <div className="flex gap-200">
+      <div
+        className={cn(
+          'flex gap-200',
+          mobileFixedFooter &&
+            'tablet:static tablet:px-0 bg-background fixed inset-x-0 bottom-12 z-20 px-450',
+        )}
+      >
         <Button variant="secondary" size="lg" className="flex-1" onClick={onPrev}>
           이전
         </Button>
