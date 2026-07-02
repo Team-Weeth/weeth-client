@@ -8,6 +8,9 @@ export {
   type ProfileManagementContentProps,
 } from './ProfileManagementContent';
 export { ActiveClubList, type ActiveClubListProps } from './ActiveClubList';
+export { AddProfilePageContent, type AddProfilePageContentProps } from './AddProfilePageContent';
+export { DeleteProfileDialog, type DeleteProfileDialogProps } from './DeleteProfileDialog';
+export { EditProfilePageContent } from './EditProfilePageContent';
 export { ProfileSection, type ProfileSectionProps } from './ProfileSection';
 export { InfoSection, type InfoSectionProps } from './InfoSection';
 export { InfoCard, type InfoCardProps, type InfoCardItem } from './InfoCard';
