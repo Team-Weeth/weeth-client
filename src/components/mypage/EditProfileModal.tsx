@@ -1,28 +1,18 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { Controller, useForm, useWatch } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
+import { useState } from 'react';
 import { DeleteIcon } from '@/assets/icons';
-import { FormFieldWrapper } from '@/components/auth/hub';
 import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
   Button,
   Dialog,
   DialogContent,
   DialogTitle,
   Icon,
-  Input,
 } from '@/components/ui';
-import { editProfileSchema, type EditProfileFormData } from '@/lib/schemas/editProfile';
+import { useEditProfileForm } from '@/hooks';
 import type { ClubDto } from '@/types/mypage';
-import { CharacterCountRow } from './CharacterCountRow';
-import { ProfileBackgroundImageEditor } from './edit/ProfileBackgroundImageEditor';
-import { ProfileImageEditor } from './edit/ProfileImageEditor';
-
-const MAX_LENGTH = 30;
+import { DeleteProfileDialog } from './DeleteProfileDialog';
+import { EditProfileFormContent } from './EditProfileFormContent';
 
 interface EditProfileModalProps {
   open: boolean;
@@ -31,36 +21,16 @@ interface EditProfileModalProps {
 }
 
 function EditProfileModal({ open, profile, onOpenChange }: EditProfileModalProps) {
-  const editProfileModalSchema = editProfileSchema.pick({ name: true, bio: true });
   const {
     control,
-    reset,
+    resetToProfile,
+    name,
     formState: { errors },
-  } = useForm<Pick<EditProfileFormData, 'name' | 'bio'>>({
-    resolver: zodResolver(editProfileModalSchema),
-    mode: 'onChange',
-    reValidateMode: 'onChange',
-    defaultValues: {
-      name: profile.name,
-      bio: profile.description,
-    },
-  });
+  } = useEditProfileForm(profile, open);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const name = useWatch({ control, name: 'name' }) ?? '';
-
-  useEffect(() => {
-    if (!open) return;
-    reset({
-      name: profile.name,
-      bio: profile.description,
-    });
-  }, [open, profile.description, profile.name, reset]);
 
   const handleClose = () => {
-    reset({
-      name: profile.name,
-      bio: profile.description,
-    });
+    resetToProfile();
     setIsDeleteDialogOpen(false);
     onOpenChange(false);
   };
@@ -93,74 +63,12 @@ function EditProfileModal({ open, profile, onOpenChange }: EditProfileModalProps
           </button>
         </div>
 
-        <div>
-          <ProfileBackgroundImageEditor />
-
-          <div className="relative flex justify-center">
-            <ProfileImageEditor
-              name={name || profile.name}
-              profileImageUrl={profile.profileImageUrl ?? undefined}
-              className="-mt-[60px]"
-              avatarSize={100}
-            />
-          </div>
-        </div>
-
-        <div className="flex flex-col gap-2 pt-6">
-          <Controller
-            name="name"
-            control={control}
-            render={({ field }) => (
-              <FormFieldWrapper label="이름">
-                <div className="flex flex-col gap-100">
-                  <Input
-                    {...field}
-                    type="text"
-                    clearable
-                    value={field.value ?? ''}
-                    error={!!errors.name}
-                    maxLength={MAX_LENGTH}
-                    placeholder="이름을 입력하세요"
-                    className="bg-background border-line typo-body1 text-text-strong placeholder:text-text-alternative rounded-lg p-300"
-                    aria-label="이름"
-                  />
-                  <CharacterCountRow
-                    error={errors.name?.message}
-                    value={field.value ?? ''}
-                    maxLength={MAX_LENGTH}
-                  />
-                </div>
-              </FormFieldWrapper>
-            )}
-          />
-
-          <Controller
-            name="bio"
-            control={control}
-            render={({ field }) => (
-              <FormFieldWrapper label="소개글 (선택)">
-                <div className="flex flex-col gap-100">
-                  <Input
-                    {...field}
-                    type="text"
-                    clearable
-                    value={field.value ?? ''}
-                    error={!!errors.bio}
-                    maxLength={MAX_LENGTH}
-                    placeholder="소개글을 입력하세요"
-                    className="bg-background border-line typo-body1 text-text-strong placeholder:text-text-alternative rounded-lg p-300"
-                    aria-label="소개글"
-                  />
-                  <CharacterCountRow
-                    error={errors.bio?.message}
-                    value={field.value ?? ''}
-                    maxLength={MAX_LENGTH}
-                  />
-                </div>
-              </FormFieldWrapper>
-            )}
-          />
-        </div>
+        <EditProfileFormContent
+          control={control}
+          errors={errors}
+          fallbackName={profile.name}
+          profileImageUrl={profile.profileImageUrl ?? undefined}
+        />
 
         <Button
           variant="secondary"
@@ -187,16 +95,11 @@ function EditProfileModal({ open, profile, onOpenChange }: EditProfileModalProps
         </div>
       </DialogContent>
 
-      <AlertDialog
+      <DeleteProfileDialog
         open={isDeleteDialogOpen}
         onOpenChange={setIsDeleteDialogOpen}
-        status="danger"
-        title="이 프로필을 삭제하시겠어요?"
-        description={'삭제된 프로필은 복구할 수 없습니다.\n신중히 확인 후 진행해 주세요.'}
-      >
-        <AlertDialogAction onClick={handleDelete}>삭제</AlertDialogAction>
-        <AlertDialogCancel>취소</AlertDialogCancel>
-      </AlertDialog>
+        onDelete={handleDelete}
+      />
     </Dialog>
   );
 }
