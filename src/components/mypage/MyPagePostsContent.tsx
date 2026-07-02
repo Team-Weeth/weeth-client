@@ -13,7 +13,7 @@ function MyPagePostsContent({ className, ...props }: MyPagePostsContentProps) {
 
   return (
     <div className={cn('flex min-w-0 flex-1 flex-col gap-4', className)} {...props}>
-      <div className="flex items-center gap-1">
+      <div className="tablet:py-0 flex items-center gap-1 py-300">
         <button
           type="button"
           onClick={() => router.back()}

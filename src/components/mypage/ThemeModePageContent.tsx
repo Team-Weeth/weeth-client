@@ -31,7 +31,7 @@ function ThemeModePageContent({ className, ...props }: ThemeModePageContentProps
       className={cn('tablet:hidden flex min-w-0 flex-1 flex-col gap-4 pb-[140px]', className)}
       {...props}
     >
-      <div className="flex items-center gap-1">
+      <div className="flex items-center gap-1 py-300">
         <button
           type="button"
           onClick={() => router.back()}
