@@ -1,7 +1,9 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { EditIcon, InfoCircleIcon } from '@/assets/icons';
+import { useMediaQuery } from '@/hooks';
 import { Avatar, AvatarFallback, AvatarImage, Button, Icon } from '@/components/ui';
 import type { ClubDto } from '@/types/mypage';
 import { EditProfileModal } from './EditProfileModal';
@@ -14,9 +16,20 @@ interface ProfileCardProps {
   availableProfiles: ClubDto[];
 }
 
-function ProfileCard({ profile, clubs, availableProfiles }: ProfileCardProps) {
+function ProfileCard({ profile, clubs, clubId, availableProfiles }: ProfileCardProps) {
+  const router = useRouter();
+  const isBelowTablet = useMediaQuery('(max-width: 695.98px)');
   const [selectedClub, setSelectedClub] = useState<ClubDto | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+
+  const handleOpenEditProfile = () => {
+    if (isBelowTablet) {
+      router.push(`/${clubId}/mypage/profiles/${profile.id}/edit`);
+      return;
+    }
+
+    setIsEditModalOpen(true);
+  };
 
   return (
     <>
@@ -34,7 +47,7 @@ function ProfileCard({ profile, clubs, availableProfiles }: ProfileCardProps) {
           </div>
           <button
             type="button"
-            onClick={() => setIsEditModalOpen(true)}
+            onClick={handleOpenEditProfile}
             className="absolute top-2 right-2 cursor-pointer p-1"
             aria-label="프로필 수정"
           >
