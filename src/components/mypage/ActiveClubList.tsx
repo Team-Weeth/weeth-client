@@ -81,7 +81,7 @@ function ProfileManageCard({ clubId }: { clubId: string }) {
     <>
       <Link
         href={`/${clubId}/mypage/profiles`}
-        className="desktop:flex bg-container-neutral-alternative hidden h-[220px] flex-col items-center justify-center gap-2 rounded-lg p-450"
+        className="tablet:flex bg-container-neutral-alternative hidden h-[220px] flex-col items-center justify-center gap-2 rounded-lg p-450"
       >
         <Icon src={SettingIcon} size={32} className="text-icon-normal" />
         <span className="typo-button1 text-text-strong">프로필 관리</span>
