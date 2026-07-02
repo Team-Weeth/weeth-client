@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useParams } from 'next/navigation';
+import { useMediaQuery } from '@/hooks';
 import { Button, Icon } from '@/components/ui';
 import { cn } from '@/lib/cn';
 import { useMyPageQueries } from '@/hooks/queries/mypage/useMyPageQueries';
@@ -15,12 +16,22 @@ type ProfileManagementContentProps = React.HTMLAttributes<HTMLDivElement>;
 function ProfileManagementContent({ className, ...props }: ProfileManagementContentProps) {
   const router = useRouter();
   const { clubId } = useParams<{ clubId: string }>();
+  const isBelowTablet = useMediaQuery('(max-width: 695.98px)');
   const [, { data: clubs = [] }] = useMyPageQueries(clubId);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
+  const handleOpenAddProfile = () => {
+    if (isBelowTablet) {
+      router.push(`/${clubId}/mypage/profiles/add`);
+      return;
+    }
+
+    setIsAddModalOpen(true);
+  };
+
   return (
     <div className={cn('tablet:gap-6 flex min-w-0 flex-1 flex-col', className)} {...props}>
-      <div className="tablet:items-start flex items-center gap-1">
+      <div className="tablet:items-start flex items-center gap-1 py-300">
         <button
           type="button"
           onClick={() => router.back()}
@@ -113,7 +124,7 @@ function ProfileManagementContent({ className, ...props }: ProfileManagementCont
           variant="secondary"
           size="lg"
           className="mt-6 gap-100"
-          onClick={() => setIsAddModalOpen(true)}
+          onClick={handleOpenAddProfile}
         >
           <Icon src={AddRoundIcon} size={13} className="text-icon-normal" />
           <span className="typo-button1 text-text-strong">프로필 추가하기</span>
