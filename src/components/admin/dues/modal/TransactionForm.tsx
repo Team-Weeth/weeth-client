@@ -11,6 +11,7 @@ import { useImageDrop } from '@/hooks/useImageDrop';
 import { cn } from '@/lib/cn';
 // import { toastError, toastSuccess } from '@/stores/useToastStore';
 import { CloseCircleIcon } from '@/assets/icons';
+import { formatAmount } from '@/lib/formatAmount';
 
 type TransactionType = 'EXPENSE' | 'INCOME';
 
@@ -197,7 +198,7 @@ function TransactionForm({ initialValues, onSubmit, onCancel }: TransactionFormP
               id="transaction-amount"
               type="text"
               inputMode="numeric"
-              value={form.amount.toLocaleString()}
+              value={formatAmount(Number(form.amount))}
               onChange={(e) => {
                 const raw = e.target.value.replace(/\D/g, '');
                 setForm((prev) => ({ ...prev, amount: raw }));
