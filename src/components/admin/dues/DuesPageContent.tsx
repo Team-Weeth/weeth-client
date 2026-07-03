@@ -69,10 +69,7 @@ function DuesPageContent() {
   );
   const isNotRegistered = isDuesNotRegisteredError(dashboardError);
 
-  const { data: transactions, error: transactionError } = useAdminDuesTransactionsQuery(
-    clubId,
-    dashboard?.accountId ?? 0,
-  );
+  const { data: transactions } = useAdminDuesTransactionsQuery(clubId, dashboard?.accountId ?? 0);
 
   const { mutate: createTransaction } = useCreateTransaction(clubId, dashboard?.accountId ?? null, {
     onSuccess: () => toastSuccess('거래내역이 추가되었습니다.'),
@@ -163,7 +160,6 @@ function DuesPageContent() {
           holderName={dashboard?.bankAccount?.holder ?? ''}
           isAccountPublic={dashboard?.bankAccountPublic ?? false}
           onViewPaymentDetail={() => router.push(`/${clubId}/admin/dues/payment-status`)}
-          onSetTotalDues={startDuesSetup}
           onAddTransaction={handleAddTransaction}
         />
         <DuesChart

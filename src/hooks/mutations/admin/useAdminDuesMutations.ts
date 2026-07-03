@@ -30,13 +30,22 @@ export interface UpdateTransactionVars extends CreateTransactionVars {
   transactionId: number;
 }
 
+/**
+ * 서버 transactedAt은 LocalDateTime을 요구한다. 폼에서 오는 'YYYY-MM-DD'(날짜만)는
+ * 시각이 없어 역직렬화에 실패("입력 포맷이 올바르지 않습니다.")하므로 자정 시각을 붙인다.
+ */
+function toLocalDateTime(value: string): string {
+  return value.includes('T') ? value : `${value}T00:00:00`;
+}
+
 /** 영수증이 있으면 S3 업로드 후 storageKey를 채워 요청 바디로 변환한다. */
 async function toTransactionBody({
   receiptFile,
+  transactedAt,
   ...rest
 }: CreateTransactionVars): Promise<TransactionBody> {
   const files = receiptFile ? [await uploadFile(receiptFile, 'RECEIPT')] : [];
-  return { ...rest, files };
+  return { ...rest, transactedAt: toLocalDateTime(transactedAt), files };
 }
 
 /**

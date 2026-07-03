@@ -160,7 +160,7 @@ function DuesPaymentStatusPageContent() {
       toastSuccess('납부가 정정되었습니다.');
       clearSelection();
     },
-    onError: () => toastError('납부 정정에 실패했습니다.'),
+    onError: () => toastError('납부가 완료된 대상이 아닙니다.'),
   });
 
   const { mutate: refund } = useRefundPaymentTargets(clubId, accountId, {

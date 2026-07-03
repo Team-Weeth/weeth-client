@@ -182,7 +182,7 @@ function DuesMemberPaymentTable({
                     <TableCell>
                       <PaymentStatusBadge status={member.status} />
                     </TableCell>
-                    <TableCell>
+                    {/* <TableCell>
                       <button
                         type="button"
                         onClick={() => onViewMember?.(member)}
@@ -191,7 +191,7 @@ function DuesMemberPaymentTable({
                         <span>멤버정보</span>
                         <Icon src={ArrowRightIcon} alt="" size={12} />
                       </button>
-                    </TableCell>
+                    </TableCell> */}
                   </TableRow>
                 ))
               )}

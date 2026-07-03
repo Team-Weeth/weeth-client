@@ -14,7 +14,6 @@ interface DuesBalanceCardProps {
   holderName: string;
   isAccountPublic: boolean;
   onAddTransaction?: () => void;
-  onSetTotalDues?: () => void;
   onViewPaymentDetail?: () => void;
 }
 
@@ -29,7 +28,6 @@ function DuesBalanceCard({
   holderName,
   isAccountPublic,
   onAddTransaction,
-  onSetTotalDues,
   onViewPaymentDetail,
 }: DuesBalanceCardProps) {
   return (
@@ -50,13 +48,6 @@ function DuesBalanceCard({
           className="bg-button-primary typo-button1 text-text-inverse hover:bg-button-primary-interaction cursor-pointer rounded-md px-400 py-300"
         >
           내역 추가
-        </button>
-        <button
-          type="button"
-          onClick={onSetTotalDues}
-          className="bg-button-neutral typo-button1 text-text-strong hover:bg-container-neutral-interaction cursor-pointer rounded-md px-400 py-300"
-        >
-          총 회비 설정
         </button>
       </div>
       <DuesStatusSection
