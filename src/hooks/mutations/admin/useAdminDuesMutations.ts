@@ -92,3 +92,31 @@ export function useUpdateTransaction(
     },
   });
 }
+
+/**
+ * 회비 거래내역 삭제(소프트 삭제) 뮤테이션 훅.
+ *
+ * 서버가 삭제 후 장부 잔액을 원복하므로 create/update와 동일하게 거래내역·대시보드
+ * 쿼리를 invalidate한다. 시스템 거래(CARRY_OVER 등)는 서버에서 삭제가 거부된다.
+ */
+export function useDeleteTransaction(
+  clubId: string,
+  accountId: number | null,
+  callbacks?: MutationCallbacks<unknown>,
+) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (transactionId: number) => {
+      if (!clubId || accountId === null) throw new Error(REQUIRE_ACCOUNT);
+      return duesApi.deleteTransaction(clubId, accountId, transactionId);
+    },
+    onSuccess: callbacks?.onSuccess,
+    onError: callbacks?.onError,
+    onMutate: callbacks?.onMutate,
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: [...adminQueryKeys.all, 'dues'] });
+      callbacks?.onSettled?.();
+    },
+  });
+}

@@ -23,6 +23,7 @@ import { DuesTutorialModal } from './modal/DuesTutorialModal';
 import { useAdminDuesTransactionsQuery } from '@/hooks/queries/admin/useAdminDuesQueries';
 import {
   useCreateTransaction,
+  useDeleteTransaction,
   useUpdateTransaction,
 } from '@/hooks/mutations/admin/useAdminDuesMutations';
 import { toastError, toastSuccess } from '@/stores/useToastStore';
@@ -81,6 +82,11 @@ function DuesPageContent() {
   const { mutate: updateTransaction } = useUpdateTransaction(clubId, dashboard?.accountId ?? null, {
     onSuccess: () => toastSuccess('거래내역이 수정되었습니다.'),
     onError: () => toastError('거래내역 수정에 실패했습니다.'),
+  });
+
+  const { mutate: deleteTransaction } = useDeleteTransaction(clubId, dashboard?.accountId ?? null, {
+    onSuccess: () => toastSuccess('거래내역이 삭제되었습니다.'),
+    onError: () => toastError('거래내역 삭제에 실패했습니다.'),
   });
 
   // 월별 잔액 추이 차트 데이터 (yearMonth → 'N월', endingBalance → 막대 높이)
@@ -188,9 +194,7 @@ function DuesPageContent() {
           onOpenChange={setDetailOpen}
           transaction={toTransactionDetail(selectedTransaction)}
           onEdit={handleEditOpen}
-          onDelete={() => {
-            // TODO: API 연동
-          }}
+          onDelete={() => deleteTransaction(selectedTransaction.id)}
         />
       )}
       <EditTransactionModal
