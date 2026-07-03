@@ -20,8 +20,7 @@ export function useDuesDashboardQuery(clubId: string, cardinalNumber: number | n
       cardinalNumber !== null
         ? () => duesApi.getDashboard(clubId, cardinalNumber).then((res) => res.data.data)
         : skipToken,
-    retry: (failureCount, error) =>
-      !isDuesNotRegisteredError(error) && failureCount < 3,
+    retry: (failureCount, error) => !isDuesNotRegisteredError(error) && failureCount < 3,
   });
 }
 

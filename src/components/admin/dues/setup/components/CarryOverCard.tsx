@@ -8,7 +8,13 @@ interface CarryOverCardProps {
   disabled?: boolean;
 }
 
-function CarryOverCard({ title, description, selected, onClick, disabled = false }: CarryOverCardProps) {
+function CarryOverCard({
+  title,
+  description,
+  selected,
+  onClick,
+  disabled = false,
+}: CarryOverCardProps) {
   return (
     <button
       type="button"
