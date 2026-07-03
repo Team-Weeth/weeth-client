@@ -108,6 +108,11 @@ export interface BulkPaidBody {
   memo: string;
 }
 
+/** 부원 거래 내역 공개 여부 수정 */
+export interface MemberVisibilityBody {
+  visible: boolean;
+}
+
 export interface SaveBankAccountBody {
   bankAccountVisible: boolean;
   bankAccount: {

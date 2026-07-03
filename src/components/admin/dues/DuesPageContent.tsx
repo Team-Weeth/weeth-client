@@ -24,6 +24,7 @@ import { useAdminDuesTransactionsQuery } from '@/hooks/queries/admin/useAdminDue
 import {
   useCreateTransaction,
   useDeleteTransaction,
+  useUpdateMemberVisibility,
   useUpdateTransaction,
 } from '@/hooks/mutations/admin/useAdminDuesMutations';
 import { toastError, toastSuccess } from '@/stores/useToastStore';
@@ -53,6 +54,8 @@ function toTransactionDetail(tx: DuesTransaction): TransactionDetail {
 }
 
 function DuesPageContent() {
+  // TODO: 대시보드 응답에 부원 공개 여부(member-visibility) 필드 추가 요청함(백엔드 대기 중).
+  // 추가되면 useState(true) 기본값 대신 dashboard 값으로 초기화할 것.
   const [isPublic, setIsPublic] = useState(true);
   const [activeMonth, setActiveMonth] = useState('');
   const { cardinals, setSelectedCardinalId, activeCardinal } = useCardinalSelector({
@@ -85,6 +88,22 @@ function DuesPageContent() {
     onSuccess: () => toastSuccess('거래내역이 삭제되었습니다.'),
     onError: () => toastError('거래내역 삭제에 실패했습니다.'),
   });
+
+  const { mutate: updateMemberVisibility } = useUpdateMemberVisibility(
+    clubId,
+    dashboard?.accountId ?? null,
+    {
+      onError: () => toastError('공개 설정 변경에 실패했습니다.'),
+    },
+  );
+
+  // 낙관적 업데이트: 스위치는 즉시 반영하고, 실패 시 이전 값으로 되돌린다.
+  const handlePublicChange = (value: boolean) => {
+    setIsPublic(value);
+    updateMemberVisibility(value, {
+      onError: () => setIsPublic(!value),
+    });
+  };
 
   // 월별 잔액 추이 차트 데이터 (yearMonth → 'N월', endingBalance → 막대 높이)
   const monthlyData: MonthlyData[] =
@@ -139,7 +158,7 @@ function DuesPageContent() {
     <div className="tablet:p-700 flex min-w-85 flex-col gap-400 p-400">
       <DuesTopBar
         isPublic={isPublic}
-        onPublicChange={setIsPublic}
+        onPublicChange={handlePublicChange}
         onAddClick={() => setAddOpen(true)}
       />
       <DuesGenerationFilter

@@ -8,6 +8,7 @@ import type {
   BulkPaidBody,
   BulkRefundBody,
   BulkUnpaidBody,
+  MemberVisibilityBody,
   TransactionBody,
   TransactionDirection,
 } from '@/types/admin/dues';
@@ -44,7 +45,7 @@ async function toTransactionBody({
   transactedAt,
   ...rest
 }: CreateTransactionVars): Promise<TransactionBody> {
-  const files = receiptFile ? [await uploadFile(receiptFile, 'RECEIPT')] : [];
+  const files = receiptFile ? [await uploadFile(receiptFile, 'ACCOUNT_TRANSACTION')] : [];
   return { ...rest, transactedAt: toLocalDateTime(transactedAt), files };
 }
 
@@ -181,6 +182,35 @@ export function useMarkPaymentTargetsPaid(
     mutationFn: (body: BulkPaidBody) => {
       if (!clubId || accountId === null) throw new Error(REQUIRE_ACCOUNT);
       return duesApi.markPaymentTargetsPaid(clubId, accountId, body);
+    },
+    onSuccess: callbacks?.onSuccess,
+    onError: callbacks?.onError,
+    onMutate: callbacks?.onMutate,
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: [...adminQueryKeys.all, 'dues'] });
+      callbacks?.onSettled?.();
+    },
+  });
+}
+
+/**
+ * 부원 거래 내역 공개 여부 수정 뮤테이션 훅.
+ *
+ * 공개 시 부원 서비스에 회비 탭이 표시되고, 비공개 시 숨겨진다. 공개 상태는 대시보드에도
+ * 반영되므로 dues prefix 전체를 invalidate한다.
+ */
+export function useUpdateMemberVisibility(
+  clubId: string,
+  accountId: number | null,
+  callbacks?: MutationCallbacks<unknown>,
+) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (visible: boolean) => {
+      if (!clubId || accountId === null) throw new Error(REQUIRE_ACCOUNT);
+      const body: MemberVisibilityBody = { visible };
+      return duesApi.updateMemberVisibility(clubId, accountId, body);
     },
     onSuccess: callbacks?.onSuccess,
     onError: callbacks?.onError,

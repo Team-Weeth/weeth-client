@@ -236,7 +236,9 @@ function DuesPaymentStatusPageContent() {
         <div className="flex flex-wrap items-stretch gap-600">
           <DuesPaymentSummaryCard totalCollected={totalCollected} totalTarget={totalTarget} />
           <div className="tablet:w-84.75 flex w-full flex-col gap-400">
+            {/* TODO: onAction 핸들러 넘기기 (미납 현황 업데이트) */}
             <StatCard label="미납 인원" value={`${unpaidCount}명`} action="현황 업데이트" />
+            {/* TODO: onAction 핸들러 넘기기 (납부 대상 수정 - savePaymentTargets 재사용) */}
             <StatCard label="납부 대상" value={`${totalCount}명`} action="수정" />
             {account && (
               <AccountCard

@@ -4,7 +4,7 @@ import type { ApiResponse } from '@/types/common';
 export type OwnerType =
   | 'POST'
   | 'COMMENT'
-  | 'RECEIPT'
+  | 'ACCOUNT_TRANSACTION'
   | 'CLUB_MEMBER_PROFILE'
   | 'CLUB_PROFILE'
   | 'CLUB_BACKGROUND';
