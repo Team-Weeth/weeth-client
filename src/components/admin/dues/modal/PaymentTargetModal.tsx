@@ -1,6 +1,5 @@
 'use client';
 
-import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 
 import { AdminCloseIcon } from '@/assets/icons/admin';
@@ -17,9 +16,8 @@ import {
 import { DuesSearchBar } from '@/components/admin/dues/DuesSearchBar';
 import { Button } from '@/components/ui';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
-import { duesApi } from '@/lib/apis/dues';
 import { useDuesSetupValues } from '@/stores/useDuesSetupStore';
-import type { PaymentTarget } from '@/types/admin/dues';
+import { useDuesPaymentTargetsQuery } from '@/hooks/queries/admin';
 import { usePaymentTargetFilter } from '@/hooks/admin';
 
 interface PaymentTargetModalProps {
@@ -31,16 +29,9 @@ interface PaymentTargetModalProps {
 function PaymentTargetModal({ open, onOpenChange, selectedMemberIds }: PaymentTargetModalProps) {
   const { clubId } = useParams<{ clubId: string }>();
   const { accountId } = useDuesSetupValues();
-  const [allTargets, setAllTargets] = useState<PaymentTarget[]>([]);
 
-  useEffect(() => {
-    if (!open || accountId === null) return;
-
-    duesApi
-      .getPaymentTargets(clubId, accountId)
-      .then((res) => setAllTargets(res.data.data.targets.content))
-      .catch(() => {});
-  }, [open, clubId, accountId]);
+  const { data } = useDuesPaymentTargetsQuery(clubId, accountId);
+  const allTargets = data?.targets.content ?? [];
 
   const {
     selectedCount,

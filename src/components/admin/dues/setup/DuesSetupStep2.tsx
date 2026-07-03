@@ -68,9 +68,12 @@ function DuesSetupStep2() {
     setField({ selectedMemberIds: next });
   };
 
-  // TODO: 대상자 선택 안 되면 못 넘어가게(null 값 안 들어가게 하기)
   const commitStep = async () => {
     if (accountId === null) return false;
+    if (selectedMemberIds.length === 0) {
+      toastError('납부 대상을 1명 이상 선택해주세요.');
+      return false;
+    }
 
     // 스냅샷 방식(전체 교체): 선택된 대상 ID만 전달하면 미선택 회원은 자동 제외된다
     try {
