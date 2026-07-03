@@ -1,3 +1,4 @@
+import { TransactionDirection } from './dues.d';
 export interface DuesDraftData {
   accountId: number;
   isNew: boolean;
@@ -223,4 +224,21 @@ export interface TransactionsInfo {
     totalElements: number;
     totalPages: number;
   };
+}
+
+export interface TransactionBody {
+  type: TransactionDirection;
+  amount: number;
+  title: string;
+  source: string;
+  transactedAt: string;
+  memo: string;
+  files: [
+    {
+      fileName: string;
+      storageKey: string;
+      fileSize: number;
+      contentType: string;
+    },
+  ];
 }
