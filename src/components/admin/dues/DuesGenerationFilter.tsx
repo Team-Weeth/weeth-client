@@ -60,7 +60,7 @@ function DuesGenerationFilter({
       </DropdownMenu>
       <div className="bg-container-neutral flex items-center gap-200 rounded-md px-300 py-200">
         <span className="typo-body1` text-text-alternative">
-          마지막 수정&nbsp;&nbsp;{formatLastUpdated(lastUpdated)}
+          마지막 수정&nbsp;&nbsp;{lastUpdated ? formatLastUpdated(lastUpdated) : '-'}
         </span>
         <Avatar size={24}>
           <AvatarImage src={updaterProfileImage} alt="마지막 수정자 프로필" />
