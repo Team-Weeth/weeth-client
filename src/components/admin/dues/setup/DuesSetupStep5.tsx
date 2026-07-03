@@ -7,10 +7,10 @@ import { QuestionCircleIcon } from '@/assets/icons';
 import { BackButton, PaymentTargetModal } from '@/components/admin/dues';
 import { Icon, Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui';
 import { DUES_REGISTRATION_ERROR_CODE } from '@/constants/errorCode';
-import { MOCK_PAYMENT_TARGETS, MOCK_PREVIOUS_BALANCE } from '@/constants/mock';
 import { useDuesSetupValues, useDuesSetupActions } from '@/stores/useDuesSetupStore';
 import { toastError, toastSuccess } from '@/stores/useToastStore';
 import { getApiErrorCode } from '@/utils/shared/getApiErrorCode';
+import { useDuesPaymentTargetsQuery, useDuesCarryOverSourceQuery } from '@/hooks/queries/admin';
 import { useCompleteDuesRegistration } from '@/hooks/mutations/admin';
 
 import {
@@ -43,6 +43,10 @@ function DuesSetupStep5() {
     isAccountPublic,
   } = useDuesSetupValues();
   const { reset, setField } = useDuesSetupActions();
+
+  const { data: paymentTargetsData } = useDuesPaymentTargetsQuery(clubId, accountId);
+  const { data: carryOverSource } = useDuesCarryOverSourceQuery(clubId, accountId);
+
   const completeRegistration = useCompleteDuesRegistration(clubId, accountId, {
     onSuccess: () => {
       toastSuccess('회비 등록이 완료되었습니다.');
@@ -76,15 +80,16 @@ function DuesSetupStep5() {
   });
   const [isPaymentTargetModalOpen, setIsPaymentTargetModalOpen] = useState(false);
 
-  const hasPreviousBalance = MOCK_PREVIOUS_BALANCE !== null;
-  const previousBalance = MOCK_PREVIOUS_BALANCE?.balance ?? 0;
-  const previousGeneration = MOCK_PREVIOUS_BALANCE?.generationNumber ?? cardinalNumber - 1;
+  const hasPreviousBalance = carryOverSource?.hasPreviousAccount ?? false;
+  const previousBalance = carryOverSource?.balance ?? 0;
+  const previousGeneration = carryOverSource?.cardinalNumber ?? cardinalNumber - 1;
 
-  const totalCount = MOCK_PAYMENT_TARGETS.length;
+  const allTargets = paymentTargetsData?.targets.content ?? [];
+  const totalCount = allTargets.length;
   const selectedCount = selectedMemberIds.length;
   const excludedCount = totalCount - selectedCount;
 
-  const selectedTargets = MOCK_PAYMENT_TARGETS.filter((t) =>
+  const selectedTargets = allTargets.filter((t) =>
     selectedMemberIds.includes(t.paymentTargetInfo.clubMemberId),
   );
 
