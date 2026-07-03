@@ -1,3 +1,4 @@
+import { TransactionType } from './dues.d';
 export interface DuesDraftData {
   accountId: number;
   isNew: boolean;
@@ -151,7 +152,7 @@ export interface DuesDashboard {
   }[];
 }
 
-export type TransactionType = 'income' | 'expense' | 'dues';
+export type TransactionType = 'CARRY_OVER' | 'DUES' | 'INCOME' | 'EXPENSE' | 'REFUND';
 
 export interface DuesTransaction {
   id: number;
@@ -178,4 +179,43 @@ export interface DuesMember {
   phone: string;
   status: PaymentStatus;
   avatarInitial?: string;
+}
+
+export interface TransactionsInfo {
+  counts: {
+    all: number;
+    expense: number;
+    income: number;
+    dues: number;
+  };
+  transactions: {
+    content: [
+      {
+        transactionId: number;
+        type: TransactionType;
+        direction: Pick<TransactionType, 'INCOME' | 'EXPENSE'>;
+        title: string;
+        source: string;
+        amount: number;
+        transactedAt: string;
+        memo: string;
+        hasReceipt: number;
+        receipts: [
+          {
+            fileId: number;
+            fileName: string;
+            fileUrl: string;
+            storageKey: string;
+            fileSize: number;
+            contentType: string;
+            status: 'UPLOADED' | 'DELETED';
+          },
+        ];
+      },
+    ];
+    pageNumber: number;
+    pageSize: number;
+    totalElements: number;
+    totalPages: number;
+  };
 }
