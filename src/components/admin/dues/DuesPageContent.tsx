@@ -21,6 +21,8 @@ import type { TransactionFormData } from './modal/TransactionForm';
 import { DuesTransactionTable } from './DuesTransactionTable';
 import { DuesTutorialModal } from './modal/DuesTutorialModal';
 import { useAdminDuesTransactionsQuery } from '@/hooks/queries/admin/useAdminDuesQueries';
+import { useCreateTransaction } from '@/hooks/mutations/admin/useAdminDuesMutations';
+import { toastError, toastSuccess } from '@/stores/useToastStore';
 
 // 'YYYY-MM' → 'N월'
 function toMonthLabel(yearMonth: string): string {
@@ -67,6 +69,11 @@ function DuesPageContent() {
     clubId,
     dashboard?.accountId ?? 0,
   );
+
+  const { mutate: createTransaction } = useCreateTransaction(clubId, dashboard?.accountId ?? null, {
+    onSuccess: () => toastSuccess('거래내역이 추가되었습니다.'),
+    onError: () => toastError('거래내역 추가에 실패했습니다.'),
+  });
 
   // 월별 잔액 추이 차트 데이터 (yearMonth → 'N월', endingBalance → 막대 높이)
   const monthlyData: MonthlyData[] =
@@ -155,8 +162,16 @@ function DuesPageContent() {
       <AddTransactionModal
         open={addOpen}
         onOpenChange={setAddOpen}
-        onSubmit={() => {
-          // TODO: API 연동
+        onSubmit={(data) => {
+          createTransaction({
+            type: data.type,
+            amount: Number(data.amount),
+            title: data.description,
+            source: data.vendor,
+            transactedAt: data.date,
+            memo: '',
+            receiptFile: data.receiptFile,
+          });
         }}
       />
       {selectedTransaction && (

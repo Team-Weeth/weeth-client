@@ -226,6 +226,13 @@ export interface TransactionsInfo {
   };
 }
 
+export interface TransactionFileBody {
+  fileName: string;
+  storageKey: string;
+  fileSize: number;
+  contentType: string;
+}
+
 export interface TransactionBody {
   type: TransactionDirection;
   amount: number;
@@ -233,12 +240,5 @@ export interface TransactionBody {
   source: string;
   transactedAt: string;
   memo: string;
-  files: [
-    {
-      fileName: string;
-      storageKey: string;
-      fileSize: number;
-      contentType: string;
-    },
-  ];
+  files: TransactionFileBody[];
 }
