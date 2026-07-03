@@ -1,7 +1,7 @@
 import { skipToken, useQuery } from '@tanstack/react-query';
 
 import { DUES_NOT_REGISTERED_CODE } from '@/constants/admin/dues.constants';
-import { duesApi } from '@/lib/apis/dues';
+import { duesApi } from '@/lib/apis/adminDues';
 import { getApiErrorCode } from '@/utils/shared/getApiErrorCode';
 
 import { adminQueryKeys } from './adminQueryKeys';

@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
-import { duesApi } from '@/lib/apis/dues';
+import { duesApi } from '@/lib/apis/adminDues';
 import { adminQueryKeys } from '@/hooks/queries/admin/adminQueryKeys';
 import type { MutationCallbacks } from '@/types/common';
 import type {

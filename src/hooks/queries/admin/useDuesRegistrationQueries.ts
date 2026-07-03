@@ -1,6 +1,6 @@
 import { queryOptions, skipToken, useQuery } from '@tanstack/react-query';
 
-import { duesApi } from '@/lib/apis/dues';
+import { duesApi } from '@/lib/apis/adminDues';
 
 import { adminQueryKeys } from './adminQueryKeys';
 

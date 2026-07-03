@@ -18,4 +18,4 @@ export { adminAttendanceApi } from './adminAttendance';
 export { adminBoardApi } from './adminBoard';
 export type { AdminBoardDto } from './adminBoard';
 export { adminScheduleApi } from './adminSchedule';
-export { duesApi } from './dues';
+export { duesApi } from './adminDues';
