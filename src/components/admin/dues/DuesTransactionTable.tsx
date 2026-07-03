@@ -14,17 +14,7 @@ import {
 import { MoreHorizIcon } from '@/assets/icons';
 import { cn } from '@/lib/cn';
 import { AdminReceiptIcon } from '@/assets/icons/admin';
-import { TransactionType } from '@/types/admin/dues';
-
-interface DuesTransaction {
-  id: number;
-  type: TransactionType;
-  content: string;
-  counterparty: string;
-  amount: number;
-  totalBalance: number;
-  date: string;
-}
+import type { DuesTransaction, TransactionType } from '@/types/admin/dues';
 
 type FilterTab = 'all' | TransactionType;
 
@@ -36,28 +26,26 @@ interface TabConfig {
 
 interface DuesTransactionTableProps extends React.HTMLAttributes<HTMLDivElement> {
   transactions: DuesTransaction[];
-  onReceiptClick?: (transaction: DuesTransaction) => void;
   onMoreClick?: (transaction: DuesTransaction) => void;
 }
 
+/** 거래내역 타입별 태그 라벨/색상 */
+const TRANSACTION_TYPE_TAG: Record<TransactionType, { label: string; className: string }> = {
+  CARRY_OVER: { label: '이월', className: 'bg-brand-secondary/10 text-brand-secondary' },
+  DUES: { label: '회비', className: 'bg-brand-primary/10 text-brand-primary' },
+  INCOME: { label: '수입', className: 'bg-state-success/10 text-state-success' },
+  EXPENSE: { label: '지출', className: 'bg-state-error/10 text-state-error' },
+  REFUND: { label: '환불', className: 'bg-brand-purple/10 text-brand-purple' },
+};
+
 function TransactionTypeTag({ type }: { type: TransactionType }) {
-  if (type === 'income') {
-    return (
-      <span className="typo-caption1 bg-state-success/10 text-state-success tag-base">수입</span>
-    );
-  }
-  if (type === 'dues') {
-    return (
-      <span className="typo-caption1 bg-brand-primary/10 text-brand-primary tag-base">회비</span>
-    );
-  }
-  return <span className="typo-caption1 bg-state-error/10 text-state-error tag-base">지출</span>;
+  const { label, className } = TRANSACTION_TYPE_TAG[type];
+  return <span className={cn('typo-caption1 tag-base', className)}>{label}</span>;
 }
 
 function DuesTransactionTable({
   className,
   transactions,
-  onReceiptClick,
   onMoreClick,
   ...props
 }: DuesTransactionTableProps) {
@@ -65,15 +53,15 @@ function DuesTransactionTable({
   const [sortDesc, setSortDesc] = useState(true);
 
   const allCount = transactions.length;
-  const expenseCount = transactions.filter((t) => t.type === 'expense').length;
-  const incomeCount = transactions.filter((t) => t.type === 'income').length;
-  const duesCount = transactions.filter((t) => t.type === 'dues').length;
+  const expenseCount = transactions.filter((t) => t.type === 'EXPENSE').length;
+  const incomeCount = transactions.filter((t) => t.type === 'INCOME').length;
+  const duesCount = transactions.filter((t) => t.type === 'DUES').length;
 
   const tabs: TabConfig[] = [
     { key: 'all', label: '전체', count: allCount },
-    { key: 'expense', label: '지출', count: expenseCount },
-    { key: 'income', label: '수입', count: incomeCount },
-    { key: 'dues', label: '회비', count: duesCount },
+    { key: 'EXPENSE', label: '지출', count: expenseCount },
+    { key: 'INCOME', label: '수입', count: incomeCount },
+    { key: 'DUES', label: '회비', count: duesCount },
   ];
 
   const filtered = transactions.filter((t) => {
@@ -160,13 +148,11 @@ function DuesTransactionTable({
                     <TableCell
                       className={cn(
                         'typo-body2',
-                        tx.type === 'income' || tx.type === 'dues'
-                          ? 'text-state-success'
-                          : 'text-state-error',
+                        tx.direction === 'INCOME' ? 'text-state-success' : 'text-state-error',
                       )}
                     >
                       <span className="flex items-center gap-100">
-                        <span>{tx.type === 'income' || tx.type === 'dues' ? '+' : '-'}</span>
+                        <span>{tx.direction === 'INCOME' ? '+' : '-'}</span>
                         <span>{tx.amount.toLocaleString('ko-KR')}</span>
                       </span>
                     </TableCell>
@@ -208,6 +194,7 @@ function DuesTransactionTable({
 
 export {
   DuesTransactionTable,
+  TRANSACTION_TYPE_TAG,
   type DuesTransactionTableProps,
   type DuesTransaction,
   type TransactionType,

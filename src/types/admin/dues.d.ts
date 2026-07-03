@@ -1,4 +1,3 @@
-import { TransactionType } from './dues.d';
 export interface DuesDraftData {
   accountId: number;
   isNew: boolean;
@@ -154,14 +153,20 @@ export interface DuesDashboard {
 
 export type TransactionType = 'CARRY_OVER' | 'DUES' | 'INCOME' | 'EXPENSE' | 'REFUND';
 
+/** 금액 부호/색상 판별용 방향 (수입/지출) */
+export type TransactionDirection = 'INCOME' | 'EXPENSE';
+
 export interface DuesTransaction {
   id: number;
   type: TransactionType;
+  direction: TransactionDirection;
   content: string;
   counterparty: string;
   amount: number;
   totalBalance: number;
   date: string;
+  hasReceipt: boolean;
+  receiptUrl?: string;
 }
 
 export interface MonthlyData {
@@ -181,6 +186,29 @@ export interface DuesMember {
   avatarInitial?: string;
 }
 
+export interface TransactionReceipt {
+  fileId: number;
+  fileName: string;
+  fileUrl: string;
+  storageKey: string;
+  fileSize: number;
+  contentType: string;
+  status: 'UPLOADED' | 'DELETED';
+}
+
+export interface TransactionItem {
+  transactionId: number;
+  type: TransactionType;
+  direction: TransactionDirection;
+  title: string;
+  source: string;
+  amount: number;
+  transactedAt: string;
+  memo: string;
+  hasReceipt: number;
+  receipts: TransactionReceipt[];
+}
+
 export interface TransactionsInfo {
   counts: {
     all: number;
@@ -189,30 +217,7 @@ export interface TransactionsInfo {
     dues: number;
   };
   transactions: {
-    content: [
-      {
-        transactionId: number;
-        type: TransactionType;
-        direction: Pick<TransactionType, 'INCOME' | 'EXPENSE'>;
-        title: string;
-        source: string;
-        amount: number;
-        transactedAt: string;
-        memo: string;
-        hasReceipt: number;
-        receipts: [
-          {
-            fileId: number;
-            fileName: string;
-            fileUrl: string;
-            storageKey: string;
-            fileSize: number;
-            contentType: string;
-            status: 'UPLOADED' | 'DELETED';
-          },
-        ];
-      },
-    ];
+    content: TransactionItem[];
     pageNumber: number;
     pageSize: number;
     totalElements: number;

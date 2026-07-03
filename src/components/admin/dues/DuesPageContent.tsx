@@ -20,6 +20,7 @@ import type { TransactionDetail } from './modal/TransactionDetailModal';
 import type { TransactionFormData } from './modal/TransactionForm';
 import { DuesTransactionTable } from './DuesTransactionTable';
 import { DuesTutorialModal } from './modal/DuesTutorialModal';
+import { useAdminDuesTransactionsQuery } from '@/hooks/queries/admin/useAdminDuesQueries';
 
 // 'YYYY-MM' → 'N월'
 function toMonthLabel(yearMonth: string): string {
@@ -33,107 +34,15 @@ function toPeriodLabel(yearMonth: string | undefined): string {
   return `${year}.${month}.`;
 }
 
-// TODO: 거래 내역 목록 API 연동 (대시보드 응답에는 내역이 포함되지 않음)
-const MOCK_TRANSACTIONS: DuesTransaction[] = [
-  {
-    id: 1,
-    type: 'income',
-    content: '수입 내용',
-    counterparty: '거래처 내용',
-    amount: 0,
-    totalBalance: 0,
-    date: '2000.00.00',
-  },
-  {
-    id: 2,
-    type: 'income',
-    content: '수입 내용',
-    counterparty: '거래처 내용',
-    amount: 0,
-    totalBalance: 0,
-    date: '2000.00.00',
-  },
-  {
-    id: 3,
-    type: 'expense',
-    content: '지출 내용',
-    counterparty: '거래처 내용',
-    amount: 0,
-    totalBalance: 0,
-    date: '2000.00.00',
-  },
-  {
-    id: 4,
-    type: 'expense',
-    content: '지출 내용',
-    counterparty: '거래처 내용',
-    amount: 0,
-    totalBalance: 0,
-    date: '2000.00.00',
-  },
-  {
-    id: 5,
-    type: 'expense',
-    content: '지출 내용',
-    counterparty: '거래처 내용',
-    amount: 0,
-    totalBalance: 0,
-    date: '2000.00.00',
-  },
-  {
-    id: 6,
-    type: 'expense',
-    content: '지출 내용',
-    counterparty: '거래처 내용',
-    amount: 0,
-    totalBalance: 0,
-    date: '2000.00.00',
-  },
-  {
-    id: 7,
-    type: 'expense',
-    content: '지출 내용',
-    counterparty: '거래처 내용',
-    amount: 0,
-    totalBalance: 0,
-    date: '2000.00.00',
-  },
-  {
-    id: 8,
-    type: 'dues',
-    content: '지출 내용',
-    counterparty: '거래처 내용',
-    amount: 0,
-    totalBalance: 0,
-    date: '2000.00.00',
-  },
-  {
-    id: 9,
-    type: 'dues',
-    content: '지출 내용',
-    counterparty: '거래처 내용',
-    amount: 0,
-    totalBalance: 0,
-    date: '2000.00.00',
-  },
-  {
-    id: 10,
-    type: 'dues',
-    content: '지출 내용',
-    counterparty: '거래처 내용',
-    amount: 0,
-    totalBalance: 0,
-    date: '2000.00.00',
-  },
-];
-
 function toTransactionDetail(tx: DuesTransaction): TransactionDetail {
   return {
-    type: tx.type === 'expense' ? 'EXPENSE' : 'INCOME',
+    type: tx.type,
+    direction: tx.direction,
     amount: String(tx.amount),
     description: tx.content,
     vendor: tx.counterparty,
     date: tx.date,
+    receiptUrl: tx.receiptUrl,
   };
 }
 
@@ -153,6 +62,11 @@ function DuesPageContent() {
     activeCardinal?.cardinalNumber ?? null,
   );
   const isNotRegistered = isDuesNotRegisteredError(dashboardError);
+
+  const { data: transactions, error: transactionError } = useAdminDuesTransactionsQuery(
+    clubId,
+    dashboard?.accountId ?? 0,
+  );
 
   // 월별 잔액 추이 차트 데이터 (yearMonth → 'N월', endingBalance → 막대 높이)
   const monthlyData: MonthlyData[] =
@@ -190,7 +104,7 @@ function DuesPageContent() {
     if (!selectedTransaction) return;
     setDetailOpen(false);
     setEditingValues({
-      type: selectedTransaction.type === 'expense' ? 'EXPENSE' : 'INCOME',
+      type: selectedTransaction.direction === 'EXPENSE' ? 'EXPENSE' : 'INCOME',
       amount: String(selectedTransaction.amount),
       description: selectedTransaction.content,
       vendor: selectedTransaction.counterparty,
@@ -214,7 +128,6 @@ function DuesPageContent() {
         onSelect={setSelectedCardinalId}
       />
       <div className="tablet:flex-row flex flex-col gap-1">
-        {/* TODO: 온보딩 현재 진행 중인 스텝으로 보내주기 */}
         <DuesBalanceCard
           currentBalance={dashboard?.summary.currentBalance ?? 0}
           totalDues={dashboard?.summary.totalAmount ?? 0}
@@ -237,7 +150,7 @@ function DuesPageContent() {
           activeIncome={activeBalance?.income ?? 0}
         />
       </div>
-      <DuesTransactionTable transactions={MOCK_TRANSACTIONS} onMoreClick={handleMoreClick} />
+      <DuesTransactionTable transactions={transactions ?? []} onMoreClick={handleMoreClick} />
 
       <AddTransactionModal
         open={addOpen}
