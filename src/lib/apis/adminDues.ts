@@ -10,9 +10,15 @@ import type {
   SaveBasicBody,
   SaveCarryOverBody,
   SavePaymentTargetsBody,
+  TransactionsInfo,
 } from '@/types/admin/dues';
 
 export const duesApi = {
+  getTransactions: (clubId: string, accountId: number) =>
+    apiClient.get<ApiResponse<TransactionsInfo>>(
+      `/admin/clubs/${clubId}/accounts/${accountId}/transactions`,
+    ),
+
   // 회비 대시보드 조회 — cardinal 경로 변수는 기수 번호(cardinalNumber)
   getDashboard: (clubId: string, cardinalNumber: number) =>
     apiClient.get<ApiResponse<DuesDashboard>>(
