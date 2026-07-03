@@ -1,12 +1,13 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useParams } from 'next/navigation';
 
 import { BackButton } from '@/components/admin/dues';
-import { duesApi } from '@/lib/apis/dues';
 import { useDuesSetupValues, useDuesSetupActions } from '@/stores/useDuesSetupStore';
-import type { CarryOverSource } from '@/types/admin/dues';
+import { toastError } from '@/stores/useToastStore';
+import { useDuesCarryOverSourceQuery } from '@/hooks/queries/admin';
+import { useSaveDuesCarryOver } from '@/hooks/mutations/admin';
 
 import {
   DuesSetupStepIndicator,
@@ -17,6 +18,7 @@ import {
   DuesAmountField,
 } from '@/components/admin/dues/setup/components';
 import { useDuesSetupNavigation } from '@/components/admin/dues/setup/useDuesSetupNavigation';
+import { useDuesStepNavigator } from '@/components/admin/dues/setup/useDuesStepNavigator';
 import { ScheduleTextField } from '@/components/admin/schedule/general/ScheduleTextField';
 
 const DESCRIPTION_MAX = 30;
@@ -35,44 +37,41 @@ function DuesSetupStep3() {
   } = useDuesSetupValues();
   const { setField } = useDuesSetupActions();
 
-  const [source, setSource] = useState<CarryOverSource | null>(null);
+  const { data: source } = useDuesCarryOverSourceQuery(clubId, accountId);
+  const saveCarryOver = useSaveDuesCarryOver(clubId, accountId, {
+    onError: () => toastError('이월 설정 저장에 실패했습니다. 잠시 후 다시 시도해주세요.'),
+  });
 
+  // 최초 조회 시 이전 기수 잔액 유무로 이월 옵션 기본값을 설정한다(1회).
   useEffect(() => {
-    if (accountId === null) return;
+    if (!source || carryOverInitialized) return;
 
-    duesApi
-      .getCarryOverSource(clubId, accountId)
-      .then((res) => {
-        const data = res.data.data;
-        setSource(data);
-
-        if (!carryOverInitialized) {
-          setField({
-            carryOverOption: data.hasPreviousAccount ? 'carry' : 'none',
-            carryOverInitialized: true,
-          });
-        }
-      })
-      .catch(() => {});
-  }, [accountId, clubId, carryOverInitialized, setField]);
+    setField({
+      carryOverOption: source.hasPreviousAccount ? 'carry' : 'none',
+      carryOverInitialized: true,
+    });
+  }, [source, carryOverInitialized, setField]);
 
   const hasPreviousBalance = source?.hasPreviousAccount ?? false;
   const previousBalance = source?.balance ?? 0;
   const previousGeneration = source?.cardinalNumber ?? cardinalNumber - 1;
 
-  const handleNext = async () => {
-    if (accountId === null) return;
+  const commitStep = async () => {
+    if (accountId === null) return false;
 
-    await duesApi
-      .saveCarryOver(clubId, accountId, {
+    try {
+      await saveCarryOver.mutateAsync({
         enabled: carryOverOption === 'carry',
         amount: hasPreviousBalance ? previousBalance : Number(carryOverAmount || 0),
         memo: carryOverDescription.trim(),
-      })
-      .catch(() => {});
-
-    goToStep(4);
+      });
+      return true;
+    } catch {
+      return false;
+    }
   };
+
+  const { goNext, isEditMode } = useDuesStepNavigator(3, commitStep);
 
   return (
     <div className="flex min-w-85 flex-col gap-700 p-700">
@@ -147,7 +146,7 @@ function DuesSetupStep3() {
       {/* 하단 네비게이션 */}
       <div className="flex items-center justify-between">
         <PrevButton handlePrev={() => goToStep(2)} />
-        <NextButton handleNext={handleNext} />
+        <NextButton handleNext={goNext} editMode={isEditMode} />
       </div>
     </div>
   );
