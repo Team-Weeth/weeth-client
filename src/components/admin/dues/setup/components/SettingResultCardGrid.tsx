@@ -53,7 +53,7 @@ interface PaymentTargetAvatar {
 
 interface SettingResultCardGridProps {
   // Step 1: 기본 정보
-  generationNumber: number;
+  cardinalNumber: number;
   amount: string;
   name: string;
   // Step 2: 납부 대상
@@ -74,12 +74,12 @@ interface SettingResultCardGridProps {
   bankName?: string;
   accountHolder?: string;
   accountGuide?: string;
-  // 네비게이션
-  goToStep: (step: number) => void;
+  // 편집 버튼 → 해당 스텝으로 이동 (최종 확인으로 복귀하도록 returnStep을 설정한다)
+  onEditStep: (step: number) => void;
 }
 
 function SettingResultCardGrid({
-  generationNumber,
+  cardinalNumber,
   amount,
   name,
   selectedCount,
@@ -97,19 +97,19 @@ function SettingResultCardGrid({
   bankName,
   accountHolder,
   accountGuide,
-  goToStep,
+  onEditStep,
 }: SettingResultCardGridProps) {
   return (
     <div className="grid grid-cols-2 gap-400">
       {/* 기본 정보 */}
-      <InfoCard title="기본 정보" onEdit={() => goToStep(1)}>
-        <InfoRow label="기수" value={`${generationNumber} 기`} />
+      <InfoCard title="기본 정보" onEdit={() => onEditStep(1)}>
+        <InfoRow label="기수" value={`${cardinalNumber} 기`} />
         <InfoRow label="회비 이름" value={name || '-'} />
         <InfoRow label="1인 회비 금액" value={`${Number(amount).toLocaleString()} 원`} />
       </InfoCard>
 
       {/* 이월 설정 */}
-      <InfoCard title="이월 설정" onEdit={() => goToStep(3)}>
+      <InfoCard title="이월 설정" onEdit={() => onEditStep(3)}>
         {hasPreviousBalance ? (
           <>
             <InfoRow label="이전 기수" value={`${previousGeneration} 기`} />
@@ -135,7 +135,7 @@ function SettingResultCardGrid({
       </InfoCard>
 
       {/* 납부 대상 */}
-      <InfoCard title="납부 대상" onEdit={() => goToStep(2)}>
+      <InfoCard title="납부 대상" onEdit={() => onEditStep(2)}>
         <InfoRow label="납부 대상" value={`${selectedCount} 명`} />
         <InfoRow label="제외 대상" value={`${excludedCount} 명`} />
         <div className="grid grid-cols-[2fr_3fr] gap-200">
@@ -156,8 +156,8 @@ function SettingResultCardGrid({
       </InfoCard>
 
       {/* 계좌 공개 */}
-      <InfoCard title="계좌 공개" onEdit={() => goToStep(4)}>
-        <InfoRow label="계좌 공개 여부" value={isAccountPublic ? '공개함' : '비공개'} />
+      <InfoCard title="계좌 공개" onEdit={() => onEditStep(4)}>
+        <InfoRow label="계좌 공개" value={isAccountPublic ? '공개함' : '비공개'} />
         {bankName && <InfoRow label="은행" value={bankName} />}
         {accountNumber && (
           <InfoRow label="계좌번호" value={accountNumber} valueClassName="truncate" />

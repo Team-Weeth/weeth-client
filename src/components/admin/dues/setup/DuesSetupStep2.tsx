@@ -1,10 +1,13 @@
 'use client';
 
 import { useEffect } from 'react';
+import { useParams } from 'next/navigation';
 
 import { BackButton, DuesSearchBar } from '@/components/admin/dues';
-import { MOCK_PAYMENT_TARGETS } from '@/constants/mock';
 import { useDuesSetupValues, useDuesSetupActions } from '@/stores/useDuesSetupStore';
+import { toastError } from '@/stores/useToastStore';
+import { useDuesPaymentTargetsQuery } from '@/hooks/queries/admin';
+import { useSaveDuesPaymentTargets } from '@/hooks/mutations/admin';
 
 import {
   DuesSetupStepIndicator,
@@ -15,13 +18,33 @@ import {
   PrevButton,
 } from '@/components/admin/dues/setup/components';
 import { useDuesSetupNavigation } from '@/components/admin/dues/setup/useDuesSetupNavigation';
+import { useDuesStepNavigator } from '@/components/admin/dues/setup/useDuesStepNavigator';
 import { usePaymentTargetFilter } from '@/hooks/admin';
 
 function DuesSetupStep2() {
+  const { clubId } = useParams<{ clubId: string }>();
   const { goToStep } = useDuesSetupNavigation();
 
-  const { generationNumber, selectedMemberIds, memberIdsInitialized } = useDuesSetupValues();
+  const { accountId, cardinalNumber, selectedMemberIds, memberIdsInitialized } =
+    useDuesSetupValues();
   const { setField } = useDuesSetupActions();
+
+  const { data } = useDuesPaymentTargetsQuery(clubId, accountId);
+  const savePaymentTargets = useSaveDuesPaymentTargets(clubId, accountId, {
+    onError: () => toastError('납부 대상 저장에 실패했습니다. 잠시 후 다시 시도해주세요.'),
+  });
+
+  const allTargets = data?.targets.content ?? [];
+
+  // 최초 조회 시 서버의 기존 대상(TARGETED)을 store에 복원한다(1회).
+  useEffect(() => {
+    if (!data || memberIdsInitialized) return;
+
+    const targetedIds = data.targets.content
+      .filter((t) => t.targetStatus === 'TARGETED')
+      .map((t) => t.paymentTargetInfo.clubMemberId);
+    setField({ selectedMemberIds: targetedIds, memberIdsInitialized: true });
+  }, [data, memberIdsInitialized, setField]);
 
   const {
     totalCount,
@@ -36,17 +59,7 @@ function DuesSetupStep2() {
     pagedTargets,
     handleTabChange,
     handleSearch,
-  } = usePaymentTargetFilter(selectedMemberIds);
-
-  // 첫 진입 시 TARGETED 멤버로 초기화
-  useEffect(() => {
-    if (!memberIdsInitialized) {
-      const targetedIds = MOCK_PAYMENT_TARGETS.filter((t) => t.targetStatus === 'TARGETED').map(
-        (t) => t.paymentTargetInfo.clubMemberId,
-      );
-      setField({ selectedMemberIds: targetedIds, memberIdsInitialized: true });
-    }
-  }, [memberIdsInitialized, setField]);
+  } = usePaymentTargetFilter(allTargets, selectedMemberIds);
 
   const toggleMember = (id: number) => {
     const next = selectedSet.has(id)
@@ -55,12 +68,30 @@ function DuesSetupStep2() {
     setField({ selectedMemberIds: next });
   };
 
+  const commitStep = async () => {
+    if (accountId === null) return false;
+    if (selectedMemberIds.length === 0) {
+      toastError('납부 대상을 1명 이상 선택해주세요.');
+      return false;
+    }
+
+    // 스냅샷 방식(전체 교체): 선택된 대상 ID만 전달하면 미선택 회원은 자동 제외된다
+    try {
+      await savePaymentTargets.mutateAsync({ targetedClubMemberIds: selectedMemberIds });
+      return true;
+    } catch {
+      return false;
+    }
+  };
+
+  const { goNext, isEditMode } = useDuesStepNavigator(2, commitStep);
+
   return (
     <div className="flex min-w-85 flex-col gap-700 p-700">
       {/* 헤더 */}
       <div className="flex flex-col gap-300">
         <BackButton />
-        <h1 className="typo-h2 text-text-strong">{generationNumber}기 총 회비 설정</h1>
+        <h1 className="typo-h2 text-text-strong">{cardinalNumber}기 총 회비 설정</h1>
       </div>
 
       <div className="flex flex-col gap-600">
@@ -106,7 +137,7 @@ function DuesSetupStep2() {
       {/* 하단 네비게이션 */}
       <div className="flex items-center justify-between">
         <PrevButton handlePrev={() => goToStep(1)} />
-        <NextButton handleNext={() => goToStep(3)} />
+        <NextButton handleNext={goNext} editMode={isEditMode} />
       </div>
     </div>
   );

@@ -1,3 +1,7 @@
+'use client';
+
+import { useParams } from 'next/navigation';
+
 import { AdminCloseIcon } from '@/assets/icons/admin';
 import { ModalIconButton } from '@/components/admin/modal/ModalIconButton';
 import {
@@ -12,6 +16,8 @@ import {
 import { DuesSearchBar } from '@/components/admin/dues/DuesSearchBar';
 import { Button } from '@/components/ui';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
+import { useDuesSetupValues } from '@/stores/useDuesSetupStore';
+import { useDuesPaymentTargetsQuery } from '@/hooks/queries/admin';
 import { usePaymentTargetFilter } from '@/hooks/admin';
 
 interface PaymentTargetModalProps {
@@ -21,6 +27,12 @@ interface PaymentTargetModalProps {
 }
 
 function PaymentTargetModal({ open, onOpenChange, selectedMemberIds }: PaymentTargetModalProps) {
+  const { clubId } = useParams<{ clubId: string }>();
+  const { accountId } = useDuesSetupValues();
+
+  const { data } = useDuesPaymentTargetsQuery(clubId, accountId);
+  const allTargets = data?.targets.content ?? [];
+
   const {
     selectedCount,
     tab,
@@ -33,7 +45,8 @@ function PaymentTargetModal({ open, onOpenChange, selectedMemberIds }: PaymentTa
     pagedTargets,
     handleTabChange,
     handleSearch,
-  } = usePaymentTargetFilter(selectedMemberIds);
+  } = usePaymentTargetFilter(allTargets, selectedMemberIds, 'selected');
+
   const handleClose = () => onOpenChange(false);
 
   return (

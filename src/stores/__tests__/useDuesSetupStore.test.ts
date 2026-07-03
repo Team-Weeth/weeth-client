@@ -7,7 +7,7 @@ import {
 } from '@/stores/useDuesSetupStore';
 
 const defaultState = {
-  generationNumber: 0,
+  cardinalNumber: 0,
   amount: '',
   name: '',
   description: '',
@@ -32,7 +32,7 @@ describe('초기 상태', () => {
   it('모든 필드가 기본값으로 초기화된다', () => {
     const state = useDuesSetupStore.getState();
 
-    expect(state.generationNumber).toBe(0);
+    expect(state.cardinalNumber).toBe(0);
     expect(state.amount).toBe('');
     expect(state.name).toBe('');
     expect(state.description).toBe('');
@@ -53,7 +53,7 @@ describe('setField', () => {
   it('Step 1 기본 정보 필드를 업데이트한다', () => {
     act(() => {
       useDuesSetupStore.getState().setField({
-        generationNumber: 10,
+        cardinalNumber: 10,
         amount: '50000',
         name: '2025년 1학기 회비',
         description: '정기 회비입니다',
@@ -61,7 +61,7 @@ describe('setField', () => {
     });
 
     const state = useDuesSetupStore.getState();
-    expect(state.generationNumber).toBe(10);
+    expect(state.cardinalNumber).toBe(10);
     expect(state.amount).toBe('50000');
     expect(state.name).toBe('2025년 1학기 회비');
     expect(state.description).toBe('정기 회비입니다');
@@ -155,13 +155,13 @@ describe('reset', () => {
 describe('useDuesSetupValues', () => {
   it('스토어의 모든 상태 필드를 반환한다', () => {
     act(() => {
-      useDuesSetupStore.getState().setField({ amount: '20000', generationNumber: 7 });
+      useDuesSetupStore.getState().setField({ amount: '20000', cardinalNumber: 7 });
     });
 
     const { result } = renderHook(() => useDuesSetupValues());
 
     expect(result.current.amount).toBe('20000');
-    expect(result.current.generationNumber).toBe(7);
+    expect(result.current.cardinalNumber).toBe(7);
     expect(result.current.selectedMemberIds).toEqual([]);
     expect(result.current.carryOverOption).toBe('none');
   });

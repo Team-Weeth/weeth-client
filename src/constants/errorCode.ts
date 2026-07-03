@@ -20,3 +20,12 @@ export const CARDINAL_ERROR_CODE = {
   /** 이미 존재하는 기수 */
   ALREADY_EXISTS: 21001,
 } as const;
+
+export const DUES_REGISTRATION_ERROR_CODE = {
+  /** 이미 완료된 장부 */
+  ALREADY_COMPLETED: 20104,
+  /** 모든 단계가 저장되지 않은 미완료 상태 */
+  NOT_COMPLETED: 20107,
+  /** 이월 금액이 완료 시점의 이전 기수 잔액과 다름 — 이월 설정 재저장 후 재시도 필요 */
+  CARRY_OVER_MISMATCH: 20108,
+} as const;
