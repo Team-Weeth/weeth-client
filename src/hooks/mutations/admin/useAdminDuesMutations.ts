@@ -196,8 +196,8 @@ export function useMarkPaymentTargetsPaid(
 /**
  * 부원 거래 내역 공개 여부 수정 뮤테이션 훅.
  *
- * 공개 시 부원 서비스에 회비 탭이 표시되고, 비공개 시 숨겨진다. 공개 상태는 대시보드에도
- * 반영되므로 dues prefix 전체를 invalidate한다.
+ * 공개 시 부원 서비스에 회비 탭이 표시되고, 비공개 시 숨겨진다.
+
  */
 export function useUpdateMemberVisibility(
   clubId: string,
@@ -216,7 +216,7 @@ export function useUpdateMemberVisibility(
     onError: callbacks?.onError,
     onMutate: callbacks?.onMutate,
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: [...adminQueryKeys.all, 'dues'] });
+      queryClient.invalidateQueries({ queryKey: ['admin', 'dues', 'dashboard'] });
       callbacks?.onSettled?.();
     },
   });
