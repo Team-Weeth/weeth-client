@@ -2,6 +2,7 @@ import { apiClient } from '@/lib/apis/client';
 import type { ApiResponse } from '@/types/common';
 import type {
   CarryOverSource,
+  DuesDashboard,
   DuesDraftData,
   PaymentTargetsData,
   RegistrationStatus,
@@ -12,6 +13,12 @@ import type {
 } from '@/types/admin/dues';
 
 export const duesApi = {
+  // 회비 대시보드 조회 — cardinal 경로 변수는 기수 번호(cardinalNumber)
+  getDashboard: (clubId: string, cardinalNumber: number) =>
+    apiClient.get<ApiResponse<DuesDashboard>>(
+      `/admin/clubs/${clubId}/accounts/${cardinalNumber}/dashboard`,
+    ),
+
   createDraft: (clubId: string, cardinalNumber: number) =>
     apiClient.post<ApiResponse<DuesDraftData>>(`/admin/clubs/${clubId}/accounts/drafts`, null, {
       params: { cardinalNumber },

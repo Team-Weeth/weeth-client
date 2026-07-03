@@ -25,6 +25,10 @@ export const adminQueryKeys = {
   attendance: (clubId: string | null, sessionId: number | null) =>
     ['admin', 'attendance', clubId, sessionId] as const,
 
+  // 회비 대시보드 — 기수 번호(cardinalNumber) 단위로 스코프
+  duesDashboard: (clubId: string, cardinalNumber: number | null) =>
+    ['admin', 'dues', 'dashboard', clubId, cardinalNumber] as const,
+
   // 회비 등록(온보딩) — accountId 단위로 스코프
   duesRegistrationStatus: (clubId: string, accountId: number | null) =>
     ['admin', 'dues', 'registrationStatus', clubId, accountId] as const,

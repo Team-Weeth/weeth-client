@@ -28,3 +28,4 @@ export {
   duesPaymentTargetsQueryOptions,
   duesCarryOverSourceQueryOptions,
 } from './useDuesRegistrationQueries';
+export { useDuesDashboardQuery, isDuesNotRegisteredError } from './useDuesDashboardQuery';

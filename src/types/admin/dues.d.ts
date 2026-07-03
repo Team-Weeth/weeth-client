@@ -114,6 +114,43 @@ export interface PaymentTargetsData {
   };
 }
 
+export interface DuesDashboard {
+  accountId: number;
+  summary: {
+    totalAmount: number;
+    currentBalance: number;
+  };
+  paymentSummary: {
+    paidCount: number;
+    totalTargetCount: number;
+  };
+  bankAccountPublic: boolean;
+  bankAccount: {
+    bankName: string;
+    accountNumber: string;
+    holder: string;
+    guide: string | null;
+  } | null;
+  lastModified: {
+    modifiedAt: string;
+    modifiedBy: {
+      userId: number;
+      name: string;
+      profileImageUrl: string | null;
+    };
+  } | null;
+  period: {
+    startYearMonth: string;
+    endYearMonth: string;
+  };
+  monthlyBalances: {
+    yearMonth: string;
+    income: number;
+    expense: number;
+    endingBalance: number;
+  }[];
+}
+
 export type TransactionType = 'income' | 'expense' | 'dues';
 
 export interface DuesTransaction {

@@ -6,6 +6,7 @@ import { useParams, useRouter } from 'next/navigation';
 
 import type { MonthlyData, DuesTransaction } from '@/types/admin/dues';
 import { useCardinalSelector } from '@/hooks';
+import { isDuesNotRegisteredError, useDuesDashboardQuery } from '@/hooks/queries/admin';
 import { useDuesSetupActions } from '@/stores/useDuesSetupStore';
 import { DuesTopBar } from './DuesTopBar';
 import { DuesBalanceCard } from './DuesBalanceCard';
@@ -135,10 +136,19 @@ function toTransactionDetail(tx: DuesTransaction): TransactionDetail {
 function DuesPageContent() {
   const [isPublic, setIsPublic] = useState(true);
   const [activeMonth, setActiveMonth] = useState('4월');
-  const { cardinals, setSelectedCardinalId, activeCardinal } = useCardinalSelector();
+  const { cardinals, setSelectedCardinalId, activeCardinal } = useCardinalSelector({
+    autoSelectLatest: true,
+  });
   const router = useRouter();
   const { clubId } = useParams<{ clubId: string }>();
   const { reset, setField } = useDuesSetupActions();
+
+  // 회비 대시보드 조회. 등록이 완료되지 않은 장부(20112)면 온보딩 튜토리얼 모달을 띄운다.
+  const { error: dashboardError } = useDuesDashboardQuery(
+    clubId,
+    activeCardinal?.cardinalNumber ?? null,
+  );
+  const isNotRegistered = isDuesNotRegisteredError(dashboardError);
 
   // 메인 화면에서 온보딩 신규 진입 시: store 초기화 + 신규 진입 플래그 세팅 후 step1로 이동
   // (accountId 잔존값을 비워 createDraft 재호출을 보장하고, alert 노출을 신규 진입으로 한정)
@@ -147,9 +157,6 @@ function DuesPageContent() {
     setField({ isFreshEntry: true });
     router.push(`/${clubId}/admin/dues/setup/1`);
   };
-
-  // TODO: 총 회비 정보 입력 안 됐을 때만 모달 띄우기
-  const [tutorialOpen, setTutorialOpen] = useState(true);
 
   const [addOpen, setAddOpen] = useState(false);
   const [detailOpen, setDetailOpen] = useState(false);
@@ -234,11 +241,8 @@ function DuesPageContent() {
           // TODO: API 연동
         }}
       />
-      <DuesTutorialModal
-        open={tutorialOpen}
-        onOpenChange={setTutorialOpen}
-        onStart={startDuesSetup}
-      />
+      {/* 등록 미완료 장부(20112): 온보딩 완료 전까지 닫히지 않도록 고정 표시 */}
+      <DuesTutorialModal open={isNotRegistered} onOpenChange={() => {}} onStart={startDuesSetup} />
     </div>
   );
 }
