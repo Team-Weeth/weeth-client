@@ -1,6 +1,9 @@
 import { apiClient } from '@/lib/apis/client';
 import type { ApiResponse } from '@/types/common';
 import type {
+  BulkPaidBody,
+  BulkRefundBody,
+  BulkUnpaidBody,
   CarryOverSource,
   DuesDashboard,
   DuesDraftData,
@@ -87,4 +90,17 @@ export const duesApi = {
 
   completeRegistration: (clubId: string, accountId: number) =>
     apiClient.post(`/admin/clubs/${clubId}/accounts/${accountId}/registration/complete`),
+
+  // ----- 납부 대상 벌크 처리 ------
+  // 납부 정정(벌크): 잘못 확인한 납부를 취소하고 회비 거래를 원복
+  markPaymentTargetsUnpaid: (clubId: string, accountId: number, body: BulkUnpaidBody) =>
+    apiClient.patch(`/admin/clubs/${clubId}/accounts/${accountId}/payment-targets/unpaid`, body),
+
+  // 환불(벌크): 납부 완료 대상을 환불 처리하고 시스템 환불 지출 거래 생성
+  refundPaymentTargets: (clubId: string, accountId: number, body: BulkRefundBody) =>
+    apiClient.patch(`/admin/clubs/${clubId}/accounts/${accountId}/payment-targets/refund`, body),
+
+  // 납부 확인(벌크): 대상을 납부 완료 처리하고 시스템 회비 수입 거래 생성
+  markPaymentTargetsPaid: (clubId: string, accountId: number, body: BulkPaidBody) =>
+    apiClient.patch(`/admin/clubs/${clubId}/accounts/${accountId}/payment-targets/paid`, body),
 };

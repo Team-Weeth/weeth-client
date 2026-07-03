@@ -90,6 +90,24 @@ export interface SavePaymentTargetsBody {
   targetedClubMemberIds: number[];
 }
 
+/** 납부 대상 벌크 처리 — 납부 정정(납부 취소 후 회비 거래 원복) */
+export interface BulkUnpaidBody {
+  targetIds: number[];
+}
+
+/** 납부 대상 벌크 처리 — 환불(납부 완료 대상을 환불 처리, 환불 지출 거래 생성) */
+export interface BulkRefundBody {
+  targetIds: number[];
+  memo: string;
+}
+
+/** 납부 대상 벌크 처리 — 납부 완료(회비 수입 거래 생성) */
+export interface BulkPaidBody {
+  targetIds: number[];
+  paidAt: string;
+  memo: string;
+}
+
 export interface SaveBankAccountBody {
   bankAccountVisible: boolean;
   bankAccount: {

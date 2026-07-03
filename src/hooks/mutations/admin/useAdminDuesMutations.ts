@@ -4,7 +4,13 @@ import { duesApi } from '@/lib/apis/adminDues';
 import { uploadFile } from '@/lib/apis/upload';
 import { adminQueryKeys } from '@/hooks/queries/admin/adminQueryKeys';
 import type { MutationCallbacks } from '@/types/common';
-import type { TransactionBody, TransactionDirection } from '@/types/admin/dues';
+import type {
+  BulkPaidBody,
+  BulkRefundBody,
+  BulkUnpaidBody,
+  TransactionBody,
+  TransactionDirection,
+} from '@/types/admin/dues';
 
 const REQUIRE_ACCOUNT = 'accountId가 없습니다';
 
@@ -82,6 +88,90 @@ export function useUpdateTransaction(
       if (!clubId || accountId === null) throw new Error(REQUIRE_ACCOUNT);
       const body = await toTransactionBody(vars);
       return duesApi.updateTransaction(clubId, accountId, transactionId, body);
+    },
+    onSuccess: callbacks?.onSuccess,
+    onError: callbacks?.onError,
+    onMutate: callbacks?.onMutate,
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: [...adminQueryKeys.all, 'dues'] });
+      callbacks?.onSettled?.();
+    },
+  });
+}
+
+/**
+ * 납부 대상 벌크 "납부 정정" 뮤테이션 훅.
+ *
+ * 잘못 확인한 납부를 취소하고 해당 회비 거래를 원복한다. 납부 상태·거래내역·대시보드가
+ * 모두 바뀌므로 dues prefix 전체를 invalidate한다.
+ */
+export function useMarkPaymentTargetsUnpaid(
+  clubId: string,
+  accountId: number | null,
+  callbacks?: MutationCallbacks<unknown>,
+) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (body: BulkUnpaidBody) => {
+      if (!clubId || accountId === null) throw new Error(REQUIRE_ACCOUNT);
+      return duesApi.markPaymentTargetsUnpaid(clubId, accountId, body);
+    },
+    onSuccess: callbacks?.onSuccess,
+    onError: callbacks?.onError,
+    onMutate: callbacks?.onMutate,
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: [...adminQueryKeys.all, 'dues'] });
+      callbacks?.onSettled?.();
+    },
+  });
+}
+
+/**
+ * 납부 대상 벌크 "환불 처리" 뮤테이션 훅.
+ *
+ * 납부 완료 대상을 환불 처리하고 시스템 환불 지출 거래를 생성한다(납부 이력은 보존).
+ * 거래내역·대시보드에 영향을 주므로 dues prefix 전체를 invalidate한다.
+ */
+export function useRefundPaymentTargets(
+  clubId: string,
+  accountId: number | null,
+  callbacks?: MutationCallbacks<unknown>,
+) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (body: BulkRefundBody) => {
+      if (!clubId || accountId === null) throw new Error(REQUIRE_ACCOUNT);
+      return duesApi.refundPaymentTargets(clubId, accountId, body);
+    },
+    onSuccess: callbacks?.onSuccess,
+    onError: callbacks?.onError,
+    onMutate: callbacks?.onMutate,
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: [...adminQueryKeys.all, 'dues'] });
+      callbacks?.onSettled?.();
+    },
+  });
+}
+
+/**
+ * 납부 대상 벌크 "납부 완료" 뮤테이션 훅.
+ *
+ * 대상들을 납부 완료 처리하고 시스템 회비 수입 거래를 생성한다. 거래내역·대시보드에
+ * 영향을 주므로 dues prefix 전체를 invalidate한다.
+ */
+export function useMarkPaymentTargetsPaid(
+  clubId: string,
+  accountId: number | null,
+  callbacks?: MutationCallbacks<unknown>,
+) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (body: BulkPaidBody) => {
+      if (!clubId || accountId === null) throw new Error(REQUIRE_ACCOUNT);
+      return duesApi.markPaymentTargetsPaid(clubId, accountId, body);
     },
     onSuccess: callbacks?.onSuccess,
     onError: callbacks?.onError,

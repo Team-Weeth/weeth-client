@@ -10,6 +10,11 @@ import { cn } from '@/lib/cn';
 import { toastError, toastSuccess } from '@/stores/useToastStore';
 import { useCardinalSelector } from '@/hooks';
 import { useDuesDashboardQuery, useDuesPaymentTargetsQuery } from '@/hooks/queries/admin';
+import {
+  useMarkPaymentTargetsPaid,
+  useMarkPaymentTargetsUnpaid,
+  useRefundPaymentTargets,
+} from '@/hooks/mutations/admin/useAdminDuesMutations';
 import type { PaymentTarget } from '@/types/admin/dues';
 
 import { DuesMemberPaymentTable, type DuesMember } from './DuesMemberPaymentTable';
@@ -27,6 +32,13 @@ function toDuesMember(target: PaymentTarget): DuesMember {
     // PAID/CONFIRMED → 납부완료, UNPAID → 미납
     status: paymentStatus === 'UNPAID' ? 'unpaid' : 'paid',
   };
+}
+
+// 서버가 요구하는 'YYYY-MM-DDTHH:mm:ss'(로컬 시각) 포맷으로 현재 시각을 만든다.
+function nowLocalDateTime(): string {
+  const now = new Date();
+  const pad = (n: number) => String(n).padStart(2, '0');
+  return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}T${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
 }
 
 interface StatCardProps {
@@ -113,10 +125,7 @@ function DuesPaymentStatusPageContent() {
   const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
 
   // 대시보드로 accountId·계좌 정보를 확보한 뒤 납부 대상 목록을 조회한다.
-  const { data: dashboard } = useDuesDashboardQuery(
-    clubId,
-    activeCardinal?.cardinalNumber ?? null,
-  );
+  const { data: dashboard } = useDuesDashboardQuery(clubId, activeCardinal?.cardinalNumber ?? null);
   const { data: paymentTargets } = useDuesPaymentTargetsQuery(clubId, dashboard?.accountId ?? null);
 
   // 실제 납부 대상(TARGETED)만 집계·표시. 제외된(EXCLUDED) 부원은 제외한다.
@@ -133,6 +142,42 @@ function DuesPaymentStatusPageContent() {
   const totalCount = members.length;
 
   const generationLabel = activeCardinal ? `${activeCardinal.cardinalNumber}기` : '';
+
+  // 선택 상태(selectedIds)는 clubMemberId를 담고 있으나, 벌크 API는 targetId를 요구한다.
+  const targetIdByMemberId = new Map(
+    targeted.map((t) => [t.paymentTargetInfo.clubMemberId, t.targetId]),
+  );
+  const selectedTargetIds = () =>
+    [...selectedIds]
+      .map((memberId) => targetIdByMemberId.get(memberId))
+      .filter((id): id is number => id !== undefined);
+
+  const clearSelection = () => setSelectedIds(new Set());
+  const accountId = dashboard?.accountId ?? null;
+
+  const { mutate: markUnpaid } = useMarkPaymentTargetsUnpaid(clubId, accountId, {
+    onSuccess: () => {
+      toastSuccess('납부가 정정되었습니다.');
+      clearSelection();
+    },
+    onError: () => toastError('납부 정정에 실패했습니다.'),
+  });
+
+  const { mutate: refund } = useRefundPaymentTargets(clubId, accountId, {
+    onSuccess: () => {
+      toastSuccess('환불 처리되었습니다.');
+      clearSelection();
+    },
+    onError: () => toastError('환불 처리에 실패했습니다.'),
+  });
+
+  const { mutate: markPaid } = useMarkPaymentTargetsPaid(clubId, accountId, {
+    onSuccess: () => {
+      toastSuccess('납부 완료 처리되었습니다.');
+      clearSelection();
+    },
+    onError: () => toastError('납부 완료 처리에 실패했습니다.'),
+  });
 
   return (
     <div className="flex min-w-85 flex-col">
@@ -153,12 +198,23 @@ function DuesPaymentStatusPageContent() {
           <div className="flex gap-200">
             <button
               type="button"
+              onClick={() => markUnpaid({ targetIds: selectedTargetIds() })}
+              className="bg-button-neutral typo-button1 text-text-strong hover:bg-button-neutral-interaction cursor-pointer rounded-md px-400 py-200 transition-colors"
+            >
+              납부 정정
+            </button>
+            <button
+              type="button"
+              onClick={() => refund({ targetIds: selectedTargetIds(), memo: '' })}
               className="bg-button-neutral typo-button1 text-text-strong hover:bg-button-neutral-interaction cursor-pointer rounded-md px-400 py-200 transition-colors"
             >
               환불 처리
             </button>
             <button
               type="button"
+              onClick={() =>
+                markPaid({ targetIds: selectedTargetIds(), paidAt: nowLocalDateTime(), memo: '' })
+              }
               className="bg-button-neutral typo-button1 text-text-strong hover:bg-button-neutral-interaction cursor-pointer rounded-md px-400 py-200 transition-colors"
             >
               납부 완료

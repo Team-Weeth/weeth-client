@@ -121,6 +121,10 @@ function DuesPageContent() {
     setDetailOpen(true);
   };
 
+  const handleAddTransaction = () => {
+    setAddOpen(true);
+  };
+
   const handleEditOpen = () => {
     if (!selectedTransaction) return;
     setDetailOpen(false);
@@ -160,6 +164,7 @@ function DuesPageContent() {
           isAccountPublic={dashboard?.bankAccountPublic ?? false}
           onViewPaymentDetail={() => router.push(`/${clubId}/admin/dues/payment-status`)}
           onSetTotalDues={startDuesSetup}
+          onAddTransaction={handleAddTransaction}
         />
         <DuesChart
           data={monthlyData}
