@@ -216,7 +216,7 @@ export function useUpdateMemberVisibility(
     onError: callbacks?.onError,
     onMutate: callbacks?.onMutate,
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin', 'dues', 'dashboard'] });
+      queryClient.invalidateQueries({ queryKey: [...adminQueryKeys.all, 'dues', 'dashboard'] });
       callbacks?.onSettled?.();
     },
   });

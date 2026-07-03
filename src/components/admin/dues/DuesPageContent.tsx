@@ -159,7 +159,7 @@ function DuesPageContent() {
       <DuesTopBar
         isPublic={isPublic}
         onPublicChange={handlePublicChange}
-        onAddClick={() => setAddOpen(true)}
+        onAddClick={handleAddTransaction}
       />
       <DuesGenerationFilter
         cardinals={cardinals}

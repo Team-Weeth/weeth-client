@@ -8,6 +8,7 @@ import { BackIcon, CopyIcon } from '@/assets/icons';
 import { Card, Icon } from '@/components/ui';
 import { cn } from '@/lib/cn';
 import { toastError, toastSuccess } from '@/stores/useToastStore';
+import { copyDuesAccountToClipboard } from '@/utils/dues/duesAccount';
 import { useCardinalSelector } from '@/hooks';
 import { useDuesDashboardQuery, useDuesPaymentTargetsQuery } from '@/hooks/queries/admin';
 import {
@@ -87,14 +88,14 @@ function AccountCard({
 }: AccountCardProps) {
   const fullText = `${bankName} ${accountNumber} ${holderName}`;
 
-  const handleCopy = async () => {
-    try {
-      await navigator.clipboard.writeText(fullText);
-      toastSuccess('계좌번호가 복사되었습니다.');
-    } catch {
-      toastError('복사에 실패했습니다. 직접 선택해서 복사해 주세요.');
-    }
-  };
+  const handleCopy = () =>
+    copyDuesAccountToClipboard(
+      { bankName, accountNumber, holderName },
+      {
+        successMessage: '계좌번호가 복사되었습니다.',
+        errorMessage: '복사에 실패했습니다. 직접 선택해서 복사해 주세요.',
+      },
+    );
 
   return (
     <Card
@@ -160,7 +161,7 @@ function DuesPaymentStatusPageContent() {
       toastSuccess('납부가 정정되었습니다.');
       clearSelection();
     },
-    onError: () => toastError('납부가 완료된 대상이 아닙니다.'),
+    onError: () => toastError('납부 정정에 실패했습니다.'),
   });
 
   const { mutate: refund } = useRefundPaymentTargets(clubId, accountId, {

@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 
 import { cn } from '@/lib/cn';
 import type { DuesTransaction } from '@/types/dues';
@@ -27,15 +27,12 @@ function DuesTransactionSection({
 }: DuesTransactionSectionProps) {
   const [activeFilter, setActiveFilter] = useState<DuesTransactionFilter>('all');
   const [selectedTransaction, setSelectedTransaction] = useState<DuesTransaction | null>(null);
-  const counts = useMemo(() => getTransactionCounts(transactions), [transactions]);
-  const filteredTransactions = useMemo(() => {
-    const nextTransactions =
-      activeFilter === 'all'
-        ? transactions
-        : transactions.filter((transaction) => transaction.type === activeFilter);
-
-    return sortDuesTransactions(nextTransactions);
-  }, [activeFilter, transactions]);
+  const counts = getTransactionCounts(transactions);
+  const nextTransactions =
+    activeFilter === 'all'
+      ? transactions
+      : transactions.filter((transaction) => transaction.type === activeFilter);
+  const filteredTransactions = sortDuesTransactions(nextTransactions);
 
   const handleTransactionClick = (transaction: DuesTransaction) => {
     setSelectedTransaction(transaction);
