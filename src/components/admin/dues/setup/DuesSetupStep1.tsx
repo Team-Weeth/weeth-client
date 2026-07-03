@@ -11,6 +11,7 @@ import { duesBasicSchema, type DuesBasicFormData } from '@/lib/schemas/duesSetup
 import { useDuesSetupActions, useDuesSetupValues } from '@/stores/useDuesSetupStore';
 import { toastError } from '@/stores/useToastStore';
 import { useCardinalSelector } from '@/hooks/useCardinalSelector';
+import { useSyncFormToStore } from '@/hooks/useSyncFormToStore';
 import { useCreateDuesDraft, useDiscardDuesDraft, useSaveDuesBasic } from '@/hooks/mutations/admin';
 import {
   duesRegistrationStatusQueryOptions,
@@ -31,6 +32,15 @@ import { ScheduleTextField } from '@/components/admin/schedule/general/ScheduleT
 
 const NAME_MAX = 30;
 const DESCRIPTION_MAX = 30;
+
+// 서버 registrationStep(문자열) → 온보딩 스텝 번호 매핑
+const STEP_MAP: Record<string, number> = {
+  BASIC: 1,
+  PAYMENT_TARGET: 2,
+  CARRY_OVER: 3,
+  BANK_ACCOUNT: 4,
+  REVIEW: 5,
+};
 
 function DuesSetupStep1() {
   const { clubId } = useParams<{ clubId: string }>();
@@ -59,16 +69,13 @@ function DuesSetupStep1() {
   });
 
   // rhf → store 동기화 (persist/새로고침 복원용 — store가 소스는 아니지만 값은 계속 유지한다)
-  useEffect(() => {
-    const subscription = watch((values) => {
-      setField({
-        amount: values.amount ?? '',
-        name: values.name ?? '',
-        description: values.description ?? '',
-      });
+  useSyncFormToStore(watch, (values) => {
+    setField({
+      amount: values.amount ?? '',
+      name: values.name ?? '',
+      description: values.description ?? '',
     });
-    return () => subscription.unsubscribe();
-  }, [watch, setField]);
+  });
 
   const [draftAlert, setDraftAlert] = useState<{
     open: boolean;
@@ -93,14 +100,6 @@ function DuesSetupStep1() {
       },
     });
   }, [accountId, isFreshEntry, latestCardinal, createDraftMutate, setField]);
-
-  const STEP_MAP: Record<string, number> = {
-    BASIC: 1,
-    PAYMENT_TARGET: 2,
-    CARRY_OVER: 3,
-    BANK_ACCOUNT: 4,
-    REVIEW: 5,
-  };
 
   const cardinalNumber = latestCardinal?.cardinalNumber ?? 0;
 

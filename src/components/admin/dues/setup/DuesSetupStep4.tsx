@@ -1,6 +1,5 @@
 'use client';
 
-import { useEffect } from 'react';
 import { useParams } from 'next/navigation';
 
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -11,6 +10,7 @@ import { BackButton } from '@/components/admin/dues';
 import { Switch } from '@/components/ui';
 import { useDuesSetupValues, useDuesSetupActions } from '@/stores/useDuesSetupStore';
 import { toastError } from '@/stores/useToastStore';
+import { useSyncFormToStore } from '@/hooks/useSyncFormToStore';
 import { useSaveDuesBankAccount } from '@/hooks/mutations/admin';
 
 import {
@@ -58,18 +58,15 @@ function DuesSetupStep4() {
   });
 
   // rhf → store 동기화 (persist/새로고침 복원용)
-  useEffect(() => {
-    const subscription = watch((values) => {
-      setField({
-        accountNumber: values.accountNumber ?? '',
-        bankName: values.bankName ?? '',
-        accountHolder: values.accountHolder ?? '',
-        accountGuide: values.accountGuide ?? '',
-        isAccountPublic: values.isAccountPublic ?? false,
-      });
+  useSyncFormToStore(watch, (values) => {
+    setField({
+      accountNumber: values.accountNumber ?? '',
+      bankName: values.bankName ?? '',
+      accountHolder: values.accountHolder ?? '',
+      accountGuide: values.accountGuide ?? '',
+      isAccountPublic: values.isAccountPublic ?? false,
     });
-    return () => subscription.unsubscribe();
-  }, [watch, setField]);
+  });
 
   const commitStep = () =>
     new Promise<boolean>((resolve) => {
