@@ -5,7 +5,6 @@ import { useParams } from 'next/navigation';
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Controller, useForm } from 'react-hook-form';
-import { useQueryClient } from '@tanstack/react-query';
 
 import { duesBasicSchema, type DuesBasicFormData } from '@/lib/schemas/duesSetup';
 import { useDuesSetupActions, useDuesSetupValues } from '@/stores/useDuesSetupStore';
@@ -13,10 +12,6 @@ import { toastError } from '@/stores/useToastStore';
 import { useCardinalSelector } from '@/hooks/useCardinalSelector';
 import { useSyncFormToStore } from '@/hooks/useSyncFormToStore';
 import { useCreateDuesDraft, useDiscardDuesDraft, useSaveDuesBasic } from '@/hooks/mutations/admin';
-import {
-  duesRegistrationStatusQueryOptions,
-  duesPaymentTargetsQueryOptions,
-} from '@/hooks/queries/admin';
 
 import { BackButton } from '@/components/admin/dues';
 import {
@@ -26,29 +21,18 @@ import {
   NextButton,
   DuesAmountField,
 } from '@/components/admin/dues/setup/components';
-import { useDuesSetupNavigation } from '@/components/admin/dues/setup/useDuesSetupNavigation';
 import { useDuesStepNavigator } from '@/components/admin/dues/setup/useDuesStepNavigator';
+import { useRestoreDuesDraft } from '@/components/admin/dues/setup/useRestoreDuesDraft';
 import { ScheduleTextField } from '@/components/admin/schedule/general/ScheduleTextField';
 
 const NAME_MAX = 30;
 const DESCRIPTION_MAX = 30;
 
-// 서버 registrationStep(문자열) → 온보딩 스텝 번호 매핑
-const STEP_MAP: Record<string, number> = {
-  BASIC: 1,
-  PAYMENT_TARGET: 2,
-  CARRY_OVER: 3,
-  BANK_ACCOUNT: 4,
-  REVIEW: 5,
-};
-
 function DuesSetupStep1() {
   const { clubId } = useParams<{ clubId: string }>();
-  const { goToStep } = useDuesSetupNavigation();
   const { accountId, isFreshEntry, amount, name, description } = useDuesSetupValues();
   const { setField, reset } = useDuesSetupActions();
   const { latestCardinal } = useCardinalSelector();
-  const queryClient = useQueryClient();
 
   const createDraft = useCreateDuesDraft(clubId);
   const discardDraft = useDiscardDuesDraft(clubId, accountId);
@@ -103,67 +87,13 @@ function DuesSetupStep1() {
 
   const cardinalNumber = latestCardinal?.cardinalNumber ?? 0;
 
+  const restoreDraft = useRestoreDuesDraft(clubId, accountId, cardinalNumber);
+
   const handleContinue = async () => {
-    if (accountId === null) return;
     setDraftAlert((prev) => ({ ...prev, open: false }));
-
-    // "이어서 작성"은 사용자 인터랙션으로 트리거되는 lazy 복원이라 useQuery 대신
-    // fetchQuery로 조회한다(캐시 키는 Step2/3의 useQuery와 공유).
-    const status = await queryClient
-      .fetchQuery(duesRegistrationStatusQueryOptions(clubId, accountId))
-      .catch(() => null);
-    if (!status) return;
-
-    const { registrationStep, basic, carryOver, bankAccount } = status;
-
-    setField({ cardinalNumber: cardinalNumber });
-
-    if (basic) {
-      const basicValues: DuesBasicFormData = {
-        name: basic.name,
-        amount: String(basic.duesAmount),
-        description: basic.description ?? '',
-      };
-      setField(basicValues);
-      // rhf는 defaultValues가 마운트 시 고정이므로, Step1에 머무는 경우
-      // 복원 값이 입력창에 반영되도록 폼을 리셋한다.
-      resetForm(basicValues);
-    }
-
-    if (carryOver) {
-      setField({
-        carryOverOption: carryOver.enabled ? 'carry' : 'none',
-        carryOverAmount: carryOver.amount ? String(carryOver.amount) : '',
-        carryOverDescription: carryOver.memo ?? '',
-        carryOverInitialized: true,
-      });
-    }
-
-    if (bankAccount) {
-      setField({
-        isAccountPublic: bankAccount.bankAccountVisible,
-        bankName: bankAccount.bankAccount?.bankName ?? '',
-        accountNumber: bankAccount.bankAccount?.accountNumber ?? '',
-        accountHolder: bankAccount.bankAccount?.holder ?? '',
-        accountGuide: bankAccount.bankAccount?.guide ?? '',
-      });
-    }
-
-    // 납부 대상은 status 응답에 멤버 ID가 없어(개수만 제공) 목록 API로 별도 복원한다.
-    const targetsData = await queryClient
-      .fetchQuery(duesPaymentTargetsQueryOptions(clubId, accountId))
-      .catch(() => null);
-    if (targetsData) {
-      const targetedIds = targetsData.targets.content
-        .filter((t) => t.targetStatus === 'TARGETED')
-        .map((t) => t.paymentTargetInfo.clubMemberId);
-      setField({ selectedMemberIds: targetedIds, memberIdsInitialized: true });
-    }
-
-    const targetStep = STEP_MAP[registrationStep] ?? 1;
-    if (targetStep > 1) {
-      goToStep(targetStep);
-    }
+    // rhf는 defaultValues가 마운트 시 고정이므로, Step1에 머무는 경우
+    // 복원한 기본 정보가 입력창에 반영되도록 폼을 리셋한다.
+    await restoreDraft({ onBasicRestored: (values) => resetForm(values) });
   };
 
   const commitStep = () =>
