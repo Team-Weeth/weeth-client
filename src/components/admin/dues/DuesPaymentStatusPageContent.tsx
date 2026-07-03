@@ -9,31 +9,25 @@ import { Card, Icon } from '@/components/ui';
 import { cn } from '@/lib/cn';
 import { toastError, toastSuccess } from '@/stores/useToastStore';
 import { useCardinalSelector } from '@/hooks';
+import { useDuesDashboardQuery, useDuesPaymentTargetsQuery } from '@/hooks/queries/admin';
+import type { PaymentTarget } from '@/types/admin/dues';
 
 import { DuesMemberPaymentTable, type DuesMember } from './DuesMemberPaymentTable';
 import { DuesPaymentSummaryCard } from './DuesPaymentSummaryCard';
 import { BackButton } from './BackButton';
 
-const MOCK_MEMBERS: DuesMember[] = [
-  { id: 1, name: '김위드', major: '경영학과', phone: '010-1234-1234', status: 'unpaid' },
-  { id: 2, name: '이위드', major: '컴퓨터공학과', phone: '010-2345-2345', status: 'paid' },
-  { id: 3, name: '박위드', major: '소프트웨어학과', phone: '010-3456-3456', status: 'paid' },
-  { id: 4, name: '최위드', major: '전자공학과', phone: '010-4567-4567', status: 'unpaid' },
-  { id: 5, name: '정위드', major: '경영학과', phone: '010-5678-5678', status: 'paid' },
-  { id: 6, name: '강위드', major: '컴퓨터공학과', phone: '010-6789-6789', status: 'unpaid' },
-  { id: 7, name: '조위드', major: '소프트웨어학과', phone: '010-7890-7890', status: 'paid' },
-  { id: 8, name: '윤위드', major: '전자공학과', phone: '010-8901-8901', status: 'paid' },
-];
-
-const MOCK_ACCOUNT = {
-  bankName: '국민은행',
-  accountNumber: '12-12412-1231',
-  holderName: '가천대oo부',
-  isPublic: true,
-};
-
-const MOCK_TOTAL_COLLECTED = 1300000;
-const MOCK_TOTAL_TARGET = 1390000;
+// 납부 대상(PaymentTarget) → 테이블이 쓰는 DuesMember 형태로 변환
+function toDuesMember(target: PaymentTarget): DuesMember {
+  const { paymentTargetInfo, paymentStatus } = target;
+  return {
+    id: paymentTargetInfo.clubMemberId,
+    name: paymentTargetInfo.name,
+    major: paymentTargetInfo.department,
+    phone: paymentTargetInfo.tel,
+    // PAID/CONFIRMED → 납부완료, UNPAID → 미납
+    status: paymentStatus === 'UNPAID' ? 'unpaid' : 'paid',
+  };
+}
 
 interface StatCardProps {
   label: string;
@@ -118,8 +112,25 @@ function DuesPaymentStatusPageContent() {
   const { activeCardinal } = useCardinalSelector({ autoSelectLatest: true });
   const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
 
-  const unpaidCount = MOCK_MEMBERS.filter((m) => m.status === 'unpaid').length;
-  const totalCount = MOCK_MEMBERS.length;
+  // 대시보드로 accountId·계좌 정보를 확보한 뒤 납부 대상 목록을 조회한다.
+  const { data: dashboard } = useDuesDashboardQuery(
+    clubId,
+    activeCardinal?.cardinalNumber ?? null,
+  );
+  const { data: paymentTargets } = useDuesPaymentTargetsQuery(clubId, dashboard?.accountId ?? null);
+
+  // 실제 납부 대상(TARGETED)만 집계·표시. 제외된(EXCLUDED) 부원은 제외한다.
+  const targeted = (paymentTargets?.targets.content ?? []).filter(
+    (t) => t.targetStatus === 'TARGETED',
+  );
+  const members: DuesMember[] = targeted.map(toDuesMember);
+  const totalTarget = targeted.reduce((sum, t) => sum + t.dueAmount, 0);
+  const totalCollected = targeted.reduce((sum, t) => sum + t.paidAmount, 0);
+
+  const account = dashboard?.bankAccount;
+
+  const unpaidCount = members.filter((m) => m.status === 'unpaid').length;
+  const totalCount = members.length;
 
   const generationLabel = activeCardinal ? `${activeCardinal.cardinalNumber}기` : '';
 
@@ -167,20 +178,24 @@ function DuesPaymentStatusPageContent() {
 
         {/* 상단 섹션 */}
         <div className="flex flex-wrap items-stretch gap-600">
-          <DuesPaymentSummaryCard
-            totalCollected={MOCK_TOTAL_COLLECTED}
-            totalTarget={MOCK_TOTAL_TARGET}
-          />
+          <DuesPaymentSummaryCard totalCollected={totalCollected} totalTarget={totalTarget} />
           <div className="tablet:w-84.75 flex w-full flex-col gap-400">
             <StatCard label="미납 인원" value={`${unpaidCount}명`} action="현황 업데이트" />
             <StatCard label="납부 대상" value={`${totalCount}명`} action="수정" />
-            <AccountCard {...MOCK_ACCOUNT} />
+            {account && (
+              <AccountCard
+                bankName={account.bankName}
+                accountNumber={account.accountNumber}
+                holderName={account.holder}
+                isPublic={dashboard?.bankAccountPublic ?? false}
+              />
+            )}
           </div>
         </div>
 
         {/* 부원별 납부현황 테이블 */}
         <DuesMemberPaymentTable
-          members={MOCK_MEMBERS}
+          members={members}
           selectedIds={selectedIds}
           onSelectionChange={setSelectedIds}
           onViewMember={(member) => {
