@@ -18,6 +18,17 @@ export const duesApi = {
   createTransaction: (clubId: string, accountId: number, body: TransactionBody) =>
     apiClient.post(`/admin/clubs/${clubId}/accounts/${accountId}/transactions`, body),
 
+  updateTransaction: (
+    clubId: string,
+    accountId: number,
+    transactionId: number,
+    body: TransactionBody,
+  ) =>
+    apiClient.patch(
+      `/admin/clubs/${clubId}/accounts/${accountId}/transactions/${transactionId}`,
+      body,
+    ),
+
   getTransactions: (clubId: string, accountId: number) =>
     apiClient.get<ApiResponse<TransactionsInfo>>(
       `/admin/clubs/${clubId}/accounts/${accountId}/transactions`,

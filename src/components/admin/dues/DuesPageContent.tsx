@@ -21,7 +21,10 @@ import type { TransactionFormData } from './modal/TransactionForm';
 import { DuesTransactionTable } from './DuesTransactionTable';
 import { DuesTutorialModal } from './modal/DuesTutorialModal';
 import { useAdminDuesTransactionsQuery } from '@/hooks/queries/admin/useAdminDuesQueries';
-import { useCreateTransaction } from '@/hooks/mutations/admin/useAdminDuesMutations';
+import {
+  useCreateTransaction,
+  useUpdateTransaction,
+} from '@/hooks/mutations/admin/useAdminDuesMutations';
 import { toastError, toastSuccess } from '@/stores/useToastStore';
 
 // 'YYYY-MM' → 'N월'
@@ -73,6 +76,11 @@ function DuesPageContent() {
   const { mutate: createTransaction } = useCreateTransaction(clubId, dashboard?.accountId ?? null, {
     onSuccess: () => toastSuccess('거래내역이 추가되었습니다.'),
     onError: () => toastError('거래내역 추가에 실패했습니다.'),
+  });
+
+  const { mutate: updateTransaction } = useUpdateTransaction(clubId, dashboard?.accountId ?? null, {
+    onSuccess: () => toastSuccess('거래내역이 수정되었습니다.'),
+    onError: () => toastError('거래내역 수정에 실패했습니다.'),
   });
 
   // 월별 잔액 추이 차트 데이터 (yearMonth → 'N월', endingBalance → 막대 높이)
@@ -189,8 +197,18 @@ function DuesPageContent() {
         open={editOpen}
         onOpenChange={setEditOpen}
         initialValues={editingValues}
-        onSubmit={() => {
-          // TODO: API 연동
+        onSubmit={(data) => {
+          if (!selectedTransaction) return;
+          updateTransaction({
+            transactionId: selectedTransaction.id,
+            type: data.type,
+            amount: Number(data.amount),
+            title: data.description,
+            source: data.vendor,
+            transactedAt: data.date,
+            memo: '',
+            receiptFile: data.receiptFile,
+          });
         }}
       />
       {/* 등록 미완료 장부(20112): 온보딩 완료 전까지 닫히지 않도록 고정 표시 */}

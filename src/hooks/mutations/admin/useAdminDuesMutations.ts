@@ -19,6 +19,20 @@ export interface CreateTransactionVars {
   receiptFile: File | null;
 }
 
+/** 거래내역 수정 뮤테이션 변수 — 추가 변수 + 대상 거래 ID */
+export interface UpdateTransactionVars extends CreateTransactionVars {
+  transactionId: number;
+}
+
+/** 영수증이 있으면 S3 업로드 후 storageKey를 채워 요청 바디로 변환한다. */
+async function toTransactionBody({
+  receiptFile,
+  ...rest
+}: CreateTransactionVars): Promise<TransactionBody> {
+  const files = receiptFile ? [await uploadFile(receiptFile, 'RECEIPT')] : [];
+  return { ...rest, files };
+}
+
 /**
  * 회비 거래내역(수입/지출) 추가 뮤테이션 훅.
  *
@@ -34,12 +48,9 @@ export function useCreateTransaction(
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ receiptFile, ...rest }: CreateTransactionVars) => {
+    mutationFn: async (vars: CreateTransactionVars) => {
       if (!clubId || accountId === null) throw new Error(REQUIRE_ACCOUNT);
-
-      const files = receiptFile ? [await uploadFile(receiptFile, 'RECEIPT')] : [];
-      const body: TransactionBody = { ...rest, files };
-
+      const body = await toTransactionBody(vars);
       return duesApi.createTransaction(clubId, accountId, body);
     },
     onSuccess: callbacks?.onSuccess,
@@ -47,6 +58,35 @@ export function useCreateTransaction(
     onMutate: callbacks?.onMutate,
     onSettled: () => {
       // 거래 추가는 거래내역 목록과 대시보드(잔액·월별 추이)에 모두 영향
+      queryClient.invalidateQueries({ queryKey: [...adminQueryKeys.all, 'dues'] });
+      callbacks?.onSettled?.();
+    },
+  });
+}
+
+/**
+ * 회비 거래내역 수정 뮤테이션 훅.
+ *
+ * 금액 변경 시 서버가 장부 잔액을 재계산하므로, create와 동일하게 거래내역·대시보드
+ * 쿼리를 invalidate한다. 시스템 거래(CARRY_OVER 등)는 서버에서 수정이 거부된다.
+ */
+export function useUpdateTransaction(
+  clubId: string,
+  accountId: number | null,
+  callbacks?: MutationCallbacks<unknown>,
+) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ transactionId, ...vars }: UpdateTransactionVars) => {
+      if (!clubId || accountId === null) throw new Error(REQUIRE_ACCOUNT);
+      const body = await toTransactionBody(vars);
+      return duesApi.updateTransaction(clubId, accountId, transactionId, body);
+    },
+    onSuccess: callbacks?.onSuccess,
+    onError: callbacks?.onError,
+    onMutate: callbacks?.onMutate,
+    onSettled: () => {
       queryClient.invalidateQueries({ queryKey: [...adminQueryKeys.all, 'dues'] });
       callbacks?.onSettled?.();
     },
