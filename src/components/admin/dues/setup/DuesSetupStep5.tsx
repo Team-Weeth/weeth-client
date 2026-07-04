@@ -1,12 +1,17 @@
 'use client';
 
 import { useState } from 'react';
+import { useParams } from 'next/navigation';
 
 import { QuestionCircleIcon } from '@/assets/icons';
 import { BackButton, PaymentTargetModal } from '@/components/admin/dues';
 import { Icon, Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui';
-import { MOCK_PAYMENT_TARGETS, MOCK_PREVIOUS_BALANCE } from '@/constants/mock';
+import { DUES_REGISTRATION_ERROR_CODE } from '@/constants/errorCode';
 import { useDuesSetupValues, useDuesSetupActions } from '@/stores/useDuesSetupStore';
+import { toastError, toastSuccess } from '@/stores/useToastStore';
+import { getApiErrorCode } from '@/utils/shared/getApiErrorCode';
+import { useDuesPaymentTargetsQuery, useDuesCarryOverSourceQuery } from '@/hooks/queries/admin';
+import { useCompleteDuesRegistration } from '@/hooks/mutations/admin';
 
 import {
   DuesSetupStepIndicator,
@@ -15,15 +20,17 @@ import {
   PrevButton,
   SettingResultCardGrid,
 } from '@/components/admin/dues/setup/components';
-import { useDuesSetupNavigation } from '@/components/admin/dues/setup/useDuesSetupNavigation';
+import { useDuesSetupNavigation } from '@/hooks/admin/useDuesSetupNavigation';
 
 const MAX_AVATAR_DISPLAY = 4;
 
 function DuesSetupStep5() {
+  const { clubId } = useParams<{ clubId: string }>();
   const { goToStep, goToDues } = useDuesSetupNavigation();
 
   const {
-    generationNumber,
+    accountId,
+    cardinalNumber,
     amount,
     name,
     selectedMemberIds,
@@ -35,18 +42,54 @@ function DuesSetupStep5() {
     accountGuide,
     isAccountPublic,
   } = useDuesSetupValues();
-  const { reset } = useDuesSetupActions();
+  const { reset, setField } = useDuesSetupActions();
+
+  const { data: paymentTargetsData } = useDuesPaymentTargetsQuery(clubId, accountId);
+  const { data: carryOverSource } = useDuesCarryOverSourceQuery(clubId, accountId);
+
+  const completeRegistration = useCompleteDuesRegistration(clubId, accountId, {
+    onSuccess: () => {
+      toastSuccess('회비 등록이 완료되었습니다.');
+      reset();
+      goToDues();
+    },
+    onError: (error) => {
+      const code = getApiErrorCode(error);
+
+      switch (code) {
+        case DUES_REGISTRATION_ERROR_CODE.ALREADY_COMPLETED:
+          // 이미 완료된 장부 — 더 진행할 필요 없이 목록으로 이동
+          toastError('이미 등록이 완료된 장부입니다.');
+          reset();
+          goToDues();
+          break;
+        case DUES_REGISTRATION_ERROR_CODE.NOT_COMPLETED:
+          // 미완료 단계 존재 — 처음 단계로 돌려보내 누락 단계 저장 유도
+          toastError('저장되지 않은 단계가 있습니다. 각 단계를 다시 확인해주세요.');
+          goToStep(1);
+          break;
+        case DUES_REGISTRATION_ERROR_CODE.CARRY_OVER_MISMATCH:
+          // 이월 금액 불일치 — 이월 설정(3단계)에서 재원 재조회 후 다시 저장 필요
+          toastError('이전 기수 잔액이 변경되었습니다. 이월 설정을 다시 저장한 뒤 재시도해주세요.');
+          goToStep(3);
+          break;
+        default:
+          toastError('회비 등록 완료에 실패했습니다. 잠시 후 다시 시도해주세요.');
+      }
+    },
+  });
   const [isPaymentTargetModalOpen, setIsPaymentTargetModalOpen] = useState(false);
 
-  const hasPreviousBalance = MOCK_PREVIOUS_BALANCE !== null;
-  const previousBalance = MOCK_PREVIOUS_BALANCE?.balance ?? 0;
-  const previousGeneration = MOCK_PREVIOUS_BALANCE?.generationNumber ?? generationNumber - 1;
+  const hasPreviousBalance = carryOverSource?.hasPreviousAccount ?? false;
+  const previousBalance = carryOverSource?.balance ?? 0;
+  const previousGeneration = carryOverSource?.cardinalNumber ?? cardinalNumber - 1;
 
-  const totalCount = MOCK_PAYMENT_TARGETS.length;
+  const allTargets = paymentTargetsData?.targets.content ?? [];
+  const totalCount = allTargets.length;
   const selectedCount = selectedMemberIds.length;
   const excludedCount = totalCount - selectedCount;
 
-  const selectedTargets = MOCK_PAYMENT_TARGETS.filter((t) =>
+  const selectedTargets = allTargets.filter((t) =>
     selectedMemberIds.includes(t.paymentTargetInfo.clubMemberId),
   );
 
@@ -57,10 +100,15 @@ function DuesSetupStep5() {
   const carryOverAmount = carryOverOption === 'carry' ? previousBalance : 0;
   const expectedTotal = expectedDuesIncome + carryOverAmount;
 
+  // 편집 버튼 → 해당 스텝으로 이동하되, 저장 후 최종 확인(5)으로 복귀하도록 표시를 남긴다.
+  const handleEditStep = (step: number) => {
+    setField({ returnStep: 5 });
+    goToStep(step);
+  };
+
   const handleComplete = () => {
-    // TODO: API 연결 후 실제 저장 로직 추가
-    reset();
-    goToDues();
+    if (accountId === null || completeRegistration.isPending) return;
+    completeRegistration.mutate();
   };
 
   return (
@@ -68,7 +116,7 @@ function DuesSetupStep5() {
       {/* 헤더 */}
       <div className="flex flex-col gap-300">
         <BackButton />
-        <h1 className="typo-h2 text-text-strong">{generationNumber}기 총 회비 설정</h1>
+        <h1 className="typo-h2 text-text-strong">{cardinalNumber}기 총 회비 설정</h1>
       </div>
 
       <div className="flex flex-col gap-600">
@@ -77,7 +125,7 @@ function DuesSetupStep5() {
         <FormCard
           title="최종 확인"
           step={5}
-          description={`${generationNumber}기 총 회비 설정을 확인해주세요`}
+          description={`${cardinalNumber}기 총 회비 설정을 확인해주세요`}
         >
           {/* 예상 관리 금액 요약 배너 */}
           <div className="bg-container-primary-alternative flex items-center justify-between rounded-lg px-500 py-400">
@@ -120,7 +168,7 @@ function DuesSetupStep5() {
 
           {/* 4개 정보 카드 2×2 그리드 */}
           <SettingResultCardGrid
-            generationNumber={generationNumber}
+            cardinalNumber={cardinalNumber}
             amount={amount}
             name={name}
             selectedCount={selectedCount}
@@ -138,7 +186,7 @@ function DuesSetupStep5() {
             bankName={bankName}
             accountHolder={accountHolder}
             accountGuide={accountGuide}
-            goToStep={goToStep}
+            onEditStep={handleEditStep}
           />
         </FormCard>
       </div>
@@ -152,7 +200,7 @@ function DuesSetupStep5() {
       {/* 하단 네비게이션 */}
       <div className="flex items-center justify-between">
         <PrevButton handlePrev={() => goToStep(4)} />
-        <NextButton handleNext={handleComplete} last />
+        <NextButton handleNext={handleComplete} disabled={completeRegistration.isPending} last />
       </div>
     </div>
   );

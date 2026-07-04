@@ -21,3 +21,11 @@ export {
 } from './useAdminScheduleQueries';
 export { useAdminBoardsQuery } from './useAdminBoardsQuery';
 export { useAdminClubQuery } from './useAdminClubQuery';
+export {
+  useDuesPaymentTargetsQuery,
+  useDuesCarryOverSourceQuery,
+  duesRegistrationStatusQueryOptions,
+  duesPaymentTargetsQueryOptions,
+  duesCarryOverSourceQueryOptions,
+} from './useDuesSetupQueries';
+export { useDuesDashboardQuery, isDuesNotRegisteredError } from './useDuesDashboardQuery';
