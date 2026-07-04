@@ -64,7 +64,7 @@ function useRestoreDuesDraft(clubId: string, accountId: number | null, cardinalN
     if (carryOver) {
       setField({
         carryOverOption: carryOver.enabled ? 'carry' : 'none',
-        carryOverAmount: carryOver.amount ? String(carryOver.amount) : '',
+        carryOverAmount: carryOver.amount != null ? String(carryOver.amount) : '',
         carryOverDescription: carryOver.memo ?? '',
         carryOverInitialized: true,
       });

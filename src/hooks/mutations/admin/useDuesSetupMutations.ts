@@ -92,6 +92,9 @@ export function useSaveDuesPaymentTargets(
       queryClient.invalidateQueries({
         queryKey: adminQueryKeys.duesPaymentTargets(clubId, accountId),
       });
+      queryClient.invalidateQueries({
+        queryKey: adminQueryKeys.duesRegistrationStatus(clubId, accountId),
+      });
       callbacks?.onSettled?.();
     },
   });
