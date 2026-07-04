@@ -34,9 +34,7 @@ export const duesApi = {
     ),
 
   deleteTransaction: (clubId: string, accountId: number, transactionId: number) =>
-    apiClient.delete(
-      `/admin/clubs/${clubId}/accounts/${accountId}/transactions/${transactionId}`,
-    ),
+    apiClient.delete(`/admin/clubs/${clubId}/accounts/${accountId}/transactions/${transactionId}`),
 
   getTransactions: (clubId: string, accountId: number) =>
     apiClient.get<ApiResponse<TransactionsInfo>>(
