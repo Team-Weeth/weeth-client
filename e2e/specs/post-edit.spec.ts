@@ -22,9 +22,9 @@ test.describe('게시글 수정 후 상세 페이지 리다이렉트', () => {
     try {
       clubId = await resolveClubId(page);
 
-      await openEditor(page, `/${clubId}/board/write`);
+      const editor = await openEditor(page, `/${clubId}/board/write`);
       await page.getByPlaceholder('제목').fill('[E2E] 수정 리다이렉트 테스트용 게시글');
-      await page.keyboard.type('E2E 테스트 자동 생성 게시글입니다.');
+      await editor.type('E2E 테스트 자동 생성 게시글입니다.');
       await page.getByRole('button', { name: '게시하기' }).click();
 
       await page.waitForURL(new RegExp(`/${clubId}/board/\\d+/\\d+`), { timeout: 15_000 });

@@ -82,9 +82,9 @@ test.describe('게시글 작성', () => {
   });
 
   test('게시 완료 후 상세 페이지에서 이탈 확인 다이얼로그가 표시되지 않는다', async ({ page }) => {
-    await openEditor(page, writeUrl);
+    const editor = await openEditor(page, writeUrl);
     await page.getByPlaceholder('제목').fill('[E2E] allowNavigation 검증용 게시글');
-    await page.keyboard.type('_allowNavigation 체인 테스트.');
+    await editor.type('_allowNavigation 체인 테스트.');
 
     await page.getByRole('button', { name: '게시하기' }).click();
     await page.waitForURL(/\/board\/\d+\/\d+$/, { timeout: 15_000 });
