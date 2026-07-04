@@ -13,12 +13,14 @@ export async function resolveClubId(page: Page): Promise<string> {
   const pathMatch = new URL(page.url()).pathname.match(/^\/([^/]+)\/home/);
   if (pathMatch) return pathMatch[1];
 
-  // 여러 클럽: 목록에서 첫 번째 홈 링크 파싱
-  const firstLink = page.locator('a[href*="/home"]').first();
-  await firstLink.waitFor({ state: 'visible', timeout: 10_000 });
-  const href = (await firstLink.getAttribute('href')) ?? '';
-  const hrefMatch = href.match(/^\/([^/]+)\//);
-  if (hrefMatch) return hrefMatch[1];
+  // 여러 클럽: 첫 번째 "바로가기" 버튼 클릭 후 URL에서 clubId 파싱
+  // ClubList는 <a href> 대신 router.push()를 쓰므로 버튼을 직접 클릭한다.
+  const firstButton = page.getByRole('button', { name: '바로가기' }).first();
+  await firstButton.waitFor({ state: 'visible', timeout: 10_000 });
+  await firstButton.click();
+  await page.waitForURL(/\/[^/]+\/home/, { timeout: 10_000 });
+  const navMatch = new URL(page.url()).pathname.match(/^\/([^/]+)\/home/);
+  if (navMatch) return navMatch[1];
 
   throw new Error(
     'clubId를 가져올 수 없습니다.\n' +
