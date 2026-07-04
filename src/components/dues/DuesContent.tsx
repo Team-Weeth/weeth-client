@@ -1,8 +1,10 @@
 'use client';
 
 import { useRef, useState } from 'react';
+import Image from 'next/image';
 import { useUnmount } from 'react-use';
 
+import { EmptyListIcon } from '@/assets/icons';
 import { Breadcrumb, BreadcrumbItem, BreadcrumbList, BreadcrumbPage } from '@/components/ui';
 import { CardinalDropdown } from '@/components/common';
 import { DuesLeftSection } from '@/components/dues/DuesLeftSection';
@@ -13,6 +15,12 @@ import {
 } from '@/components/dues/DuesPageSkeleton';
 import { DuesTransactionSection } from '@/components/dues/DuesTransactionSection';
 import { useDuesCardinals, useDuesMe, useDuesTransactions } from '@/hooks/queries';
+
+const HELP_MAIL_ADDRESS = 'help@weeth.kr';
+
+const handleContactClick = () => {
+  window.location.href = `mailto:${HELP_MAIL_ADDRESS}`;
+};
 
 function DuesContent() {
   const [selectedCardinalId, setSelectedCardinalId] = useState<number | null>(null);
@@ -28,7 +36,6 @@ function DuesContent() {
     data: dues,
     isLoading: isDuesLoading,
     isFetching: isDuesFetching,
-    isError: isDuesError,
   } = useDuesMe(selectedCardinal?.cardinalNumber);
   const {
     data: transactionData,
@@ -43,6 +50,7 @@ function DuesContent() {
     isTransactionsLoading ||
     (isTransactionsFetching && !isFetchingNextPage) ||
     (isCardinalTransitioning && !isFetchingNextPage);
+  const shouldShowEmptyState = !isLeftSectionLoading && !dues;
 
   const handleSelectCardinal = (cardinalId: number) => {
     if (selectedCardinal?.id === cardinalId) return;
@@ -89,36 +97,52 @@ function DuesContent() {
         />
       </div>
 
-      <div className="desktop:flex-row flex flex-col gap-500">
-        {isLeftSectionLoading ? (
-          <DuesLeftSectionSkeleton />
-        ) : dues ? (
-          <DuesLeftSection dues={dues} />
-        ) : (
-          <section className="desktop:w-[374px] bg-container-neutral flex w-full flex-col gap-200 rounded-lg p-450">
-            <h2 className="typo-sub2 text-text-strong">회비 정보를 불러오지 못했어요.</h2>
-            <p className="typo-body2 text-text-alternative">
-              {isDuesError
-                ? '선택한 기수의 회비 장부가 없거나 아직 공개되지 않았어요.'
-                : '다른 기수를 선택해 다시 확인해 주세요.'}
-            </p>
-          </section>
-        )}
-        {isTransactionSectionLoading ? (
-          <DuesTransactionSectionSkeleton />
-        ) : (
-          <DuesTransactionSection
-            cardinal={selectedCardinal?.cardinalNumber}
-            transactions={transactionData?.transactions ?? []}
-            counts={transactionData?.counts}
-            hasNextPage={hasNextPage}
-            isFetchingNextPage={isFetchingNextPage}
-            onFetchNextPage={fetchNextPage}
-          />
-        )}
-      </div>
+      {shouldShowEmptyState ? (
+        <DuesEmptyState />
+      ) : (
+        <div className="desktop:flex-row flex flex-col gap-500">
+          {isLeftSectionLoading ? (
+            <DuesLeftSectionSkeleton />
+          ) : (
+            dues && <DuesLeftSection dues={dues} />
+          )}
+          {isTransactionSectionLoading ? (
+            <DuesTransactionSectionSkeleton />
+          ) : (
+            <DuesTransactionSection
+              cardinal={selectedCardinal?.cardinalNumber}
+              transactions={transactionData?.transactions ?? []}
+              counts={transactionData?.counts}
+              hasNextPage={hasNextPage}
+              isFetchingNextPage={isFetchingNextPage}
+              onFetchNextPage={fetchNextPage}
+            />
+          )}
+        </div>
+      )}
     </main>
   );
 }
 
-export { DuesContent };
+function DuesEmptyState() {
+  return (
+    <section className="flex min-h-[520px] w-full flex-col items-center justify-center py-300 text-center">
+      <Image src={EmptyListIcon} width={226} height={226} alt="" aria-hidden />
+      <div className="flex flex-col items-center gap-[10px]">
+        <h2 className="typo-h3 text-text-alternative">아직 회비 내역이 기록되지 않았나봐요!</h2>
+        <div className="flex items-center justify-center gap-[10px]">
+          <span className="typo-body2 text-text-alternative">혹시 문제가 발생했나요?</span>
+          <button
+            type="button"
+            onClick={handleContactClick}
+            className="typo-button2 text-text-alternative hover:text-text-normal cursor-pointer rounded-sm px-0 py-200"
+          >
+            문의하기
+          </button>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+export { DuesContent, DuesEmptyState };

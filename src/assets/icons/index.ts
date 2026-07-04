@@ -63,3 +63,4 @@ export { default as TaskFinishedIcon } from './task_finished.svg';
 export { default as RushIcon } from './rush.svg';
 export { default as QuestionCircleIcon } from './question_circle.svg';
 export { default as DotIcon } from './dot.svg';
+export { default as EmptyListIcon } from './empty_list.svg';

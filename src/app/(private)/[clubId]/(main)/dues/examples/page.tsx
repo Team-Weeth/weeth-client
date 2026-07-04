@@ -1,3 +1,4 @@
+import { DuesEmptyState } from '@/components/dues/DuesContent';
 import { DuesLeftSection } from '@/components/dues';
 import type { DuesSummary } from '@/types/dues';
 
@@ -118,6 +119,18 @@ export default function DuesExamplesPage() {
       </div>
 
       <div className="desktop:grid-cols-2 grid grid-cols-1 gap-500">
+        <section className="border-line desktop:col-span-2 flex flex-col gap-300 rounded-lg border p-400">
+          <div className="flex flex-col gap-100">
+            <h2 className="typo-sub1 text-text-strong">총회비 미등록 · 전체 Empty State</h2>
+            <p className="typo-body2 text-text-alternative">
+              선택한 기수에 회비 정보가 없을 때 실제 페이지에서 보이는 중앙 empty UI예요.
+            </p>
+          </div>
+          <div className="bg-background rounded-lg">
+            <DuesEmptyState />
+          </div>
+        </section>
+
         {EXAMPLES.map(({ title, description, dues }) => (
           <section
             key={title}
