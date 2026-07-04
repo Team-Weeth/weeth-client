@@ -1,3 +1,5 @@
+import type { PageResponse } from '@/types/common';
+
 export interface DuesAccount {
   bankName: string;
   accountNumber: string;
@@ -71,7 +73,7 @@ export type DuesTransactionApiFilter = 'ALL' | 'INCOME' | 'DUES' | 'EXPENSE';
 export type DuesTransactionApiSort = 'LATEST' | 'OLDEST' | 'AMOUNT_DESC' | 'AMOUNT_ASC';
 export type DuesTransactionApiDirection = 'INCOME' | 'EXPENSE';
 
-export interface DuesTransactionApiItem {
+export interface DuesTransactionBaseResponse {
   transactionId: number;
   type: string;
   direction: DuesTransactionApiDirection;
@@ -82,13 +84,9 @@ export interface DuesTransactionApiItem {
   hasReceipt: boolean;
 }
 
-export interface DuesTransactionPage {
-  content: DuesTransactionApiItem[];
-  pageNumber: number;
-  pageSize: number;
-  numberOfElements: number;
-  hasNext: boolean;
-}
+export type DuesTransactionApiItem = DuesTransactionBaseResponse;
+
+export type DuesTransactionPage = PageResponse<DuesTransactionApiItem>;
 
 export interface DuesTransactionsResponse {
   counts: DuesTransactionCounts;
@@ -106,18 +104,10 @@ export interface DuesReceiptFile {
   status: 'UPLOADED' | 'PENDING' | 'DELETED';
 }
 
-export interface DuesTransactionDetailResponse {
-  transactionId: number;
-  type: string;
-  direction: DuesTransactionApiDirection;
-  title: string;
-  source: string | null;
-  amount: number;
-  transactedAt: string;
+export interface DuesTransactionDetailResponse extends DuesTransactionBaseResponse {
   category: string | null;
   registeredByName: string | null;
   memo: string | null;
-  hasReceipt: boolean;
   receipts: DuesReceiptFile[];
 }
 

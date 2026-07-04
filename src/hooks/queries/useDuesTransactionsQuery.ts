@@ -2,76 +2,14 @@ import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 
 import { duesApi } from '@/lib/apis/dues';
 import { useClubId } from '@/stores';
-import type {
-  DuesTransaction,
-  DuesTransactionApiItem,
-  DuesTransactionCounts,
-  DuesTransactionDetailResponse,
-  DuesTransactionsResponse,
-} from '@/types/dues';
+import type { DuesTransactionCounts } from '@/types/dues';
+import {
+  createDuesSummaryTransaction,
+  mapApiTransactionDetailToDuesTransaction,
+  mapApiTransactionToDuesTransaction,
+} from '@/utils/dues/duesTransaction';
 
 const DUES_TRANSACTIONS_PAGE_SIZE = 20;
-
-function mapApiTransactionToDuesTransaction(transaction: DuesTransactionApiItem): DuesTransaction {
-  return {
-    id: transaction.transactionId,
-    type: getDuesTransactionType(transaction),
-    title: transaction.title,
-    description: transaction.source ?? getTransactionFallbackDescription(transaction.type),
-    amount: transaction.amount,
-    date: transaction.transactedAt.split('T')[0] ?? transaction.transactedAt,
-    counterparty: transaction.source ?? undefined,
-    category: getTransactionFallbackDescription(transaction.type),
-  };
-}
-
-function mapApiTransactionDetailToDuesTransaction(
-  transaction: DuesTransactionDetailResponse,
-): DuesTransaction {
-  return {
-    id: transaction.transactionId,
-    type: getDuesTransactionType(transaction),
-    title: transaction.title,
-    description:
-      transaction.source ?? transaction.memo ?? getTransactionFallbackDescription(transaction.type),
-    amount: transaction.amount,
-    date: transaction.transactedAt.split('T')[0] ?? transaction.transactedAt,
-    counterparty: transaction.source ?? undefined,
-    category: transaction.category ?? getTransactionFallbackDescription(transaction.type),
-    registrant: transaction.registeredByName ?? undefined,
-    receiptUrls: transaction.receipts.map((receipt) => receipt.fileUrl),
-    receiptThumbnailUrl: transaction.receipts[0]?.fileUrl,
-  };
-}
-
-function getDuesTransactionType(
-  transaction: Pick<DuesTransactionApiItem, 'type' | 'direction'>,
-): DuesTransaction['type'] {
-  if (transaction.type === 'DUES') return 'dues';
-
-  return transaction.direction === 'INCOME' ? 'income' : 'expense';
-}
-
-function getTransactionFallbackDescription(type: string) {
-  if (type === 'CARRY_OVER') return '이월';
-
-  return '';
-}
-
-function createDuesSummaryTransaction(
-  duesSummary: DuesTransactionsResponse['duesSummary'],
-): DuesTransaction | null {
-  if (!duesSummary) return null;
-
-  return {
-    id: -1,
-    type: 'dues',
-    title: duesSummary.label,
-    description: duesSummary.description,
-    amount: duesSummary.totalAmount,
-    date: '',
-  };
-}
 
 function useDuesTransactions(cardinal?: number) {
   const clubId = useClubId();

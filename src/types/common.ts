@@ -37,3 +37,11 @@ export interface Slice<T> {
   last: boolean;
   empty: boolean;
 }
+
+export interface PageResponse<T> {
+  content: T[];
+  pageNumber: number;
+  pageSize: number;
+  numberOfElements: number;
+  hasNext: boolean;
+}

@@ -1,6 +1,7 @@
 'use client';
 
 import { useRef, useState } from 'react';
+import { useUnmount } from 'react-use';
 
 import { Breadcrumb, BreadcrumbItem, BreadcrumbList, BreadcrumbPage } from '@/components/ui';
 import { CardinalDropdown } from '@/components/common';
@@ -57,6 +58,12 @@ function DuesContent() {
       setIsCardinalTransitioning(false);
     }, 250);
   };
+
+  useUnmount(() => {
+    if (transitionTimeoutRef.current) {
+      clearTimeout(transitionTimeoutRef.current);
+    }
+  });
 
   if (isLoading) {
     return <DuesPageSkeleton />;

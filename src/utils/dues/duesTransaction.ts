@@ -1,4 +1,11 @@
-import type { DuesTransaction, DuesTransactionCounts, DuesTransactionType } from '@/types/dues';
+import type {
+  DuesTransaction,
+  DuesTransactionApiItem,
+  DuesTransactionCounts,
+  DuesTransactionDetailResponse,
+  DuesTransactionType,
+  DuesTransactionsResponse,
+} from '@/types/dues';
 
 type DuesTransactionFilter = 'all' | DuesTransactionType;
 
@@ -26,6 +33,67 @@ const DUES_TRANSACTION_TYPE_CONFIG = {
     sign: '+',
   },
 } satisfies Record<DuesTransactionType, { label: string; chipClassName: string; sign: '+' | '-' }>;
+
+function mapApiTransactionToDuesTransaction(transaction: DuesTransactionApiItem): DuesTransaction {
+  return {
+    id: transaction.transactionId,
+    type: getDuesTransactionType(transaction),
+    title: transaction.title,
+    description: transaction.source ?? getTransactionFallbackDescription(transaction.type),
+    amount: transaction.amount,
+    date: transaction.transactedAt.split('T')[0],
+    counterparty: transaction.source ?? undefined,
+    category: getTransactionFallbackDescription(transaction.type),
+  };
+}
+
+function mapApiTransactionDetailToDuesTransaction(
+  transaction: DuesTransactionDetailResponse,
+): DuesTransaction {
+  return {
+    id: transaction.transactionId,
+    type: getDuesTransactionType(transaction),
+    title: transaction.title,
+    description:
+      transaction.source ?? transaction.memo ?? getTransactionFallbackDescription(transaction.type),
+    amount: transaction.amount,
+    date: transaction.transactedAt.split('T')[0],
+    counterparty: transaction.source ?? undefined,
+    category: transaction.category ?? getTransactionFallbackDescription(transaction.type),
+    registrant: transaction.registeredByName ?? undefined,
+    receiptUrls: transaction.receipts.map((receipt) => receipt.fileUrl),
+    receiptThumbnailUrl: transaction.receipts[0]?.fileUrl,
+  };
+}
+
+function getDuesTransactionType(
+  transaction: Pick<DuesTransactionApiItem, 'type' | 'direction'>,
+): DuesTransaction['type'] {
+  if (transaction.type === 'DUES') return 'dues';
+
+  return transaction.direction === 'INCOME' ? 'income' : 'expense';
+}
+
+function getTransactionFallbackDescription(type: string) {
+  if (type === 'CARRY_OVER') return '이월';
+
+  return '기타';
+}
+
+function createDuesSummaryTransaction(
+  duesSummary: DuesTransactionsResponse['duesSummary'],
+): DuesTransaction | null {
+  if (!duesSummary) return null;
+
+  return {
+    id: -1,
+    type: 'dues',
+    title: duesSummary.label,
+    description: duesSummary.description,
+    amount: duesSummary.totalAmount,
+    date: '',
+  };
+}
 
 function sortDuesTransactions(transactions: DuesTransaction[]) {
   return [...transactions].sort((a, b) => {
@@ -77,8 +145,11 @@ function getReceiptUrls(transaction: DuesTransaction) {
 export {
   DUES_TRANSACTION_FILTERS,
   DUES_TRANSACTION_TYPE_CONFIG,
+  createDuesSummaryTransaction,
   getReceiptUrls,
   getTransactionCounts,
+  mapApiTransactionDetailToDuesTransaction,
+  mapApiTransactionToDuesTransaction,
   mergeTransactionCounts,
   sortDuesTransactions,
   type DuesTransactionFilter,
