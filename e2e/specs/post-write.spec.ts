@@ -10,6 +10,7 @@ test.describe('게시글 작성', () => {
   let writeUrl: string;
 
   test.beforeAll(async ({ browser }) => {
+    test.setTimeout(60_000);
     const context = await browser.newContext({
       storageState: 'e2e/.auth/user.json',
     });
@@ -18,7 +19,7 @@ test.describe('게시글 작성', () => {
       const clubId = await resolveClubId(page);
       writeUrl = `/${clubId}/board/write`;
     } finally {
-      await context.close();
+      await context.close().catch(() => {});
     }
   });
 

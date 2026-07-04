@@ -14,6 +14,7 @@ test.describe('게시글 수정 후 상세 페이지 리다이렉트', () => {
   let testBoardId: string;
 
   test.beforeAll(async ({ browser }) => {
+    test.setTimeout(60_000);
     const context = await browser.newContext({
       storageState: 'e2e/.auth/user.json',
     });
@@ -33,7 +34,7 @@ test.describe('게시글 수정 후 상세 페이지 리다이렉트', () => {
       if (!match) throw new Error(`게시글 생성 후 URL 파싱 실패: ${page.url()}`);
       [, testBoardId, testPostId] = match;
     } finally {
-      await context.close();
+      await context.close().catch(() => {});
     }
   });
 

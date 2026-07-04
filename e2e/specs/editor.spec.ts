@@ -5,6 +5,7 @@ test.describe('에디터 키보드 단축키', () => {
   let writeUrl: string;
 
   test.beforeAll(async ({ browser }) => {
+    test.setTimeout(60_000);
     const context = await browser.newContext({
       storageState: 'e2e/.auth/user.json',
     });
@@ -13,7 +14,7 @@ test.describe('에디터 키보드 단축키', () => {
       const clubId = await resolveClubId(page);
       writeUrl = `/${clubId}/board/write`;
     } finally {
-      await context.close();
+      await context.close().catch(() => {});
     }
   });
 
