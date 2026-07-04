@@ -4,23 +4,25 @@ import { type Page } from '@playwright/test';
  * 인증된 사용자의 clubId를 동적으로 가져온다.
  *
  * 전제 조건: DEV_ACCESS_TOKEN이 유효하고 가입된 클럽이 1개 이상 있어야 한다.
+ * CI 환경에서 pnpm dev cold start 지연을 감안해 리다이렉트를 최대 30초 대기한다.
  */
 export async function resolveClubId(page: Page): Promise<string> {
+  const clubIdFromUrl = () => new URL(page.url()).pathname.match(/^\/([^/]+)\/home/)?.[1];
+
   await page.goto('/club/select');
-  // 단일 클럽이면 /{clubId}/home 으로 자동 리다이렉트
-  await page.waitForURL(/\/[^/]+\/home/, { timeout: 10_000 }).catch(() => {});
+  await page.waitForURL(/\/[^/]+\/home/, { timeout: 30_000 }).catch(() => {});
 
-  const pathMatch = new URL(page.url()).pathname.match(/^\/([^/]+)\/home/);
-  if (pathMatch) return pathMatch[1];
+  const singleClubId = clubIdFromUrl();
+  if (singleClubId) return singleClubId;
 
-  // 여러 클럽: 첫 번째 "바로가기" 버튼 클릭 후 URL에서 clubId 파싱
-  // ClubList는 <a href> 대신 router.push()를 쓰므로 버튼을 직접 클릭한다.
+  // ClubList는 router.push()를 사용하므로 <a href> 대신 버튼을 직접 클릭한다.
   const firstButton = page.getByRole('button', { name: '바로가기' }).first();
   await firstButton.waitFor({ state: 'visible', timeout: 10_000 });
   await firstButton.click();
   await page.waitForURL(/\/[^/]+\/home/, { timeout: 10_000 });
-  const navMatch = new URL(page.url()).pathname.match(/^\/([^/]+)\/home/);
-  if (navMatch) return navMatch[1];
+
+  const multiClubId = clubIdFromUrl();
+  if (multiClubId) return multiClubId;
 
   throw new Error(
     'clubId를 가져올 수 없습니다.\n' +
