@@ -2,7 +2,7 @@
 
 import { BackIcon } from '@/assets/icons';
 import { Icon } from '@/components/ui';
-import { useDuesSetupNavigation } from './setup/useDuesSetupNavigation';
+import { useDuesSetupNavigation } from '../../../hooks/admin/useDuesSetupNavigation';
 
 function BackButton() {
   const { goToDues } = useDuesSetupNavigation();

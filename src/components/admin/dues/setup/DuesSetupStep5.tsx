@@ -20,7 +20,7 @@ import {
   PrevButton,
   SettingResultCardGrid,
 } from '@/components/admin/dues/setup/components';
-import { useDuesSetupNavigation } from '@/components/admin/dues/setup/useDuesSetupNavigation';
+import { useDuesSetupNavigation } from '@/hooks/admin/useDuesSetupNavigation';
 
 const MAX_AVATAR_DISPLAY = 4;
 

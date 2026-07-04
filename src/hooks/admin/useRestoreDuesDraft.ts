@@ -6,7 +6,7 @@ import {
   duesPaymentTargetsQueryOptions,
 } from '@/hooks/queries/admin';
 
-import { useDuesSetupNavigation } from '@/components/admin/dues/setup/useDuesSetupNavigation';
+import { useDuesSetupNavigation } from '@/hooks/admin/useDuesSetupNavigation';
 
 import type { DuesBasicFormData } from '@/lib/schemas/duesSetup';
 
