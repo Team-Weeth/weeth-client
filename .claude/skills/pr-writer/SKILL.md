@@ -5,19 +5,29 @@ description: Analyzes code changes and generates a PR body following .github/pul
 
 ## Step 0. Pre-flight Checks (Required — run BEFORE PR creation)
 
-Run these four checks and verify each passes. If a check fails on newly changed files, fix and re-run; if it fails on pre-existing issues unrelated to this branch, note it in the PR body.
+Run these checks and verify each passes. If a check fails on newly changed files, fix and re-run; if it fails on pre-existing issues unrelated to this branch, note it in the PR body.
 
 ```bash
-pnpm typecheck   # TypeScript
-pnpm lint        # ESLint (0 errors; warnings ok)
+pnpm typecheck     # TypeScript
+pnpm lint          # ESLint (0 errors; warnings ok)
 pnpm format:check  # Prettier
-pnpm build       # Next.js build
-pnpm test        # Jest 전체
+pnpm build         # Next.js build
+pnpm test          # all Jest tests
 ```
 
 If `pnpm typecheck` / `pnpm build` fail with missing-module errors, run `pnpm install` first and retry. If `pnpm format:check` fails on files touched in this branch, run `pnpm prettier --write <paths>` on only those files before proceeding. If `pnpm test` fails on tests unrelated to this branch's changes, note it in the PR body.
 
-Do not proceed to Step 1 until all four checks are green (or failures are confirmed pre-existing and unrelated).
+**Playwright E2E (conditional)** — Run if any of the following apply to this branch:
+- Added or modified files under `e2e/`
+- Changed pages/components/hooks covered by E2E specs (`board/write`, `board/edit`, editor-related)
+
+```bash
+pnpm exec playwright test   # DEV_ACCESS_TOKEN must be set in .env.local
+```
+
+If new specs fail, fix and re-run before proceeding. If pre-existing specs unrelated to this branch fail, note it in the PR body.
+
+Do not proceed to Step 1 until all checks are green (or failures are confirmed pre-existing and unrelated).
 
 ## Step 1. Analyze Changes
 ```bash
