@@ -19,8 +19,8 @@ import {
   NextButton,
   PrevButton,
 } from '@/components/admin/dues/setup/components';
-import { useDuesSetupNavigation } from '@/components/admin/dues/setup/useDuesSetupNavigation';
-import { useDuesStepNavigator } from '@/components/admin/dues/setup/useDuesStepNavigator';
+import { useDuesSetupNavigation } from '@/hooks/admin/useDuesSetupNavigation';
+import { useDuesStepNavigator } from '@/hooks/admin/useDuesStepNavigator';
 
 import { ScheduleTextField } from '@/components/admin/schedule/general/ScheduleTextField';
 
@@ -195,7 +195,11 @@ function DuesSetupStep4() {
       {/* 하단 네비게이션 */}
       <div className="flex items-center justify-between">
         <PrevButton handlePrev={() => goToStep(3)} />
-        <NextButton handleNext={goNext} editMode={isEditMode} />
+        <NextButton
+          handleNext={goNext}
+          editMode={isEditMode}
+          disabled={saveBankAccount.isPending}
+        />
       </div>
     </div>
   );

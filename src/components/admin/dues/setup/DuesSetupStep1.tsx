@@ -21,8 +21,8 @@ import {
   NextButton,
   DuesAmountField,
 } from '@/components/admin/dues/setup/components';
-import { useDuesStepNavigator } from '@/components/admin/dues/setup/useDuesStepNavigator';
-import { useRestoreDuesDraft } from '@/components/admin/dues/setup/useRestoreDuesDraft';
+import { useDuesStepNavigator } from '@/hooks/admin/useDuesStepNavigator';
+import { useRestoreDuesDraft } from '@/hooks/admin/useRestoreDuesDraft';
 import { ScheduleTextField } from '@/components/admin/schedule/general/ScheduleTextField';
 
 const NAME_MAX = 30;

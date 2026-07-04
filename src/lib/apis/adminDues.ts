@@ -68,11 +68,38 @@ export const duesApi = {
   saveBasic: (clubId: string, accountId: number, body: SaveBasicBody) =>
     apiClient.patch(`/admin/clubs/${clubId}/accounts/${accountId}/registration/basic`, body),
 
-  getPaymentTargets: (clubId: string, accountId: number, size = 100) =>
-    apiClient.get<ApiResponse<PaymentTargetsData>>(
-      `/admin/clubs/${clubId}/accounts/${accountId}/registration/payment-targets`,
-      { params: { page: 0, size } },
-    ),
+  // 소비자(Step2/Step5/PaymentTargetModal)가 targets.content를 전체 목록으로
+  // 사용하므로, 여러 페이지로 나뉘어 오면 모든 페이지를 합쳐 단일 목록으로 내려준다.
+  getPaymentTargets: async (clubId: string, accountId: number, size = 100) => {
+    const url = `/admin/clubs/${clubId}/accounts/${accountId}/registration/payment-targets`;
+
+    const firstResponse = await apiClient.get<ApiResponse<PaymentTargetsData>>(url, {
+      params: { page: 0, size },
+    });
+
+    const { targets } = firstResponse.data.data;
+    if (targets.totalPages <= 1) return firstResponse;
+
+    const remainingContents = await Promise.all(
+      Array.from({ length: targets.totalPages - 1 }, (_, index) =>
+        apiClient
+          .get<ApiResponse<PaymentTargetsData>>(url, { params: { page: index + 1, size } })
+          .then((res) => res.data.data.targets.content),
+      ),
+    );
+
+    const mergedContent = [targets.content, ...remainingContents].flat();
+    firstResponse.data.data = {
+      ...firstResponse.data.data,
+      targets: {
+        ...targets,
+        content: mergedContent,
+        pageNumber: 0,
+        pageSize: mergedContent.length,
+      },
+    };
+    return firstResponse;
+  },
 
   savePaymentTargets: (clubId: string, accountId: number, body: SavePaymentTargetsBody) =>
     apiClient.put(

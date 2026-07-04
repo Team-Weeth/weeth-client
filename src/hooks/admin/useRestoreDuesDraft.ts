@@ -6,7 +6,7 @@ import {
   duesPaymentTargetsQueryOptions,
 } from '@/hooks/queries/admin';
 
-import { useDuesSetupNavigation } from '@/components/admin/dues/setup/useDuesSetupNavigation';
+import { useDuesSetupNavigation } from '@/hooks/admin/useDuesSetupNavigation';
 
 import type { DuesBasicFormData } from '@/lib/schemas/duesSetup';
 
@@ -64,7 +64,7 @@ function useRestoreDuesDraft(clubId: string, accountId: number | null, cardinalN
     if (carryOver) {
       setField({
         carryOverOption: carryOver.enabled ? 'carry' : 'none',
-        carryOverAmount: carryOver.amount ? String(carryOver.amount) : '',
+        carryOverAmount: carryOver.amount != null ? String(carryOver.amount) : '',
         carryOverDescription: carryOver.memo ?? '',
         carryOverInitialized: true,
       });

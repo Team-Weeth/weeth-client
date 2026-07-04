@@ -17,8 +17,8 @@ import {
   NextButton,
   PrevButton,
 } from '@/components/admin/dues/setup/components';
-import { useDuesSetupNavigation } from '@/components/admin/dues/setup/useDuesSetupNavigation';
-import { useDuesStepNavigator } from '@/components/admin/dues/setup/useDuesStepNavigator';
+import { useDuesSetupNavigation } from '@/hooks/admin/useDuesSetupNavigation';
+import { useDuesStepNavigator } from '@/hooks/admin/useDuesStepNavigator';
 import { usePaymentTargetFilter } from '@/hooks/admin';
 
 function DuesSetupStep2() {
@@ -137,7 +137,11 @@ function DuesSetupStep2() {
       {/* 하단 네비게이션 */}
       <div className="flex items-center justify-between">
         <PrevButton handlePrev={() => goToStep(1)} />
-        <NextButton handleNext={goNext} editMode={isEditMode} />
+        <NextButton
+          handleNext={goNext}
+          editMode={isEditMode}
+          disabled={savePaymentTargets.isPending}
+        />
       </div>
     </div>
   );

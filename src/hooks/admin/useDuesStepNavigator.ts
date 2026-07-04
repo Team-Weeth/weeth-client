@@ -1,6 +1,6 @@
 import { useDuesSetupActions, useDuesSetupValues } from '@/stores/useDuesSetupStore';
 
-import { useDuesSetupNavigation } from '@/components/admin/dues/setup/useDuesSetupNavigation';
+import { useDuesSetupNavigation } from '@/hooks/admin/useDuesSetupNavigation';
 
 const LAST_STEP = 5;
 

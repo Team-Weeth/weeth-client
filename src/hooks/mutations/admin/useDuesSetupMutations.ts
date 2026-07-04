@@ -21,13 +21,19 @@ import type {
 
 const REQUIRE_ACCOUNT = 'accountId가 없습니다';
 
+function baseCallbacks(callbacks?: MutationCallbacks<unknown>) {
+  return {
+    onSuccess: callbacks?.onSuccess,
+    onError: callbacks?.onError,
+    onMutate: callbacks?.onMutate,
+  } as const;
+}
+
 export function useCreateDuesDraft(clubId: string, callbacks?: MutationCallbacks<unknown>) {
   return useMutation({
     mutationFn: (cardinalNumber: number) =>
       duesApi.createDraft(clubId, cardinalNumber).then((res) => res.data.data as DuesDraftData),
-    onSuccess: callbacks?.onSuccess,
-    onError: callbacks?.onError,
-    onMutate: callbacks?.onMutate,
+    ...baseCallbacks(callbacks),
     onSettled: callbacks?.onSettled,
   });
 }
@@ -42,9 +48,7 @@ export function useDiscardDuesDraft(
       if (accountId === null) throw new Error(REQUIRE_ACCOUNT);
       return duesApi.discardDraft(clubId, accountId);
     },
-    onSuccess: callbacks?.onSuccess,
-    onError: callbacks?.onError,
-    onMutate: callbacks?.onMutate,
+    ...baseCallbacks(callbacks),
     onSettled: callbacks?.onSettled,
   });
 }
@@ -61,9 +65,7 @@ export function useSaveDuesBasic(
       if (accountId === null) throw new Error(REQUIRE_ACCOUNT);
       return duesApi.saveBasic(clubId, accountId, body);
     },
-    onSuccess: callbacks?.onSuccess,
-    onError: callbacks?.onError,
-    onMutate: callbacks?.onMutate,
+    ...baseCallbacks(callbacks),
     onSettled: () => {
       queryClient.invalidateQueries({
         queryKey: adminQueryKeys.duesRegistrationStatus(clubId, accountId),
@@ -85,12 +87,13 @@ export function useSaveDuesPaymentTargets(
       if (accountId === null) throw new Error(REQUIRE_ACCOUNT);
       return duesApi.savePaymentTargets(clubId, accountId, body);
     },
-    onSuccess: callbacks?.onSuccess,
-    onError: callbacks?.onError,
-    onMutate: callbacks?.onMutate,
+    ...baseCallbacks(callbacks),
     onSettled: () => {
       queryClient.invalidateQueries({
         queryKey: adminQueryKeys.duesPaymentTargets(clubId, accountId),
+      });
+      queryClient.invalidateQueries({
+        queryKey: adminQueryKeys.duesRegistrationStatus(clubId, accountId),
       });
       callbacks?.onSettled?.();
     },
@@ -109,9 +112,7 @@ export function useSaveDuesCarryOver(
       if (accountId === null) throw new Error(REQUIRE_ACCOUNT);
       return duesApi.saveCarryOver(clubId, accountId, body);
     },
-    onSuccess: callbacks?.onSuccess,
-    onError: callbacks?.onError,
-    onMutate: callbacks?.onMutate,
+    ...baseCallbacks(callbacks),
     onSettled: () => {
       queryClient.invalidateQueries({
         queryKey: adminQueryKeys.duesRegistrationStatus(clubId, accountId),
@@ -133,9 +134,7 @@ export function useSaveDuesBankAccount(
       if (accountId === null) throw new Error(REQUIRE_ACCOUNT);
       return duesApi.saveBankAccount(clubId, accountId, body);
     },
-    onSuccess: callbacks?.onSuccess,
-    onError: callbacks?.onError,
-    onMutate: callbacks?.onMutate,
+    ...baseCallbacks(callbacks),
     onSettled: () => {
       queryClient.invalidateQueries({
         queryKey: adminQueryKeys.duesRegistrationStatus(clubId, accountId),
@@ -157,9 +156,7 @@ export function useCompleteDuesRegistration(
       if (accountId === null) throw new Error(REQUIRE_ACCOUNT);
       return duesApi.completeRegistration(clubId, accountId);
     },
-    onSuccess: callbacks?.onSuccess,
-    onError: callbacks?.onError,
-    onMutate: callbacks?.onMutate,
+    ...baseCallbacks(callbacks),
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ['admin', 'dues'] });
       callbacks?.onSettled?.();
