@@ -13,8 +13,12 @@ import {
   TableRow,
 } from '@/components/ui';
 import { cn } from '@/lib/cn';
+import { DuesPagination } from '@/components/admin/dues/setup/components';
 import { DuesMember, FilterType, PaymentStatus } from '@/types/admin/dues';
 import { DuesSearchBar } from './DuesSearchBar';
+
+/** 페이지당 부원 수 */
+const ITEMS_PER_PAGE = 10;
 
 function PaymentStatusBadge({ status }: { status: PaymentStatus }) {
   if (status === 'paid') {
@@ -52,6 +56,7 @@ function DuesMemberPaymentTable({
   const [activeFilter, setActiveFilter] = useState<FilterType>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [sortUnpaidFirst, setSortUnpaidFirst] = useState(false);
+  const [page, setPage] = useState(1);
 
   const totalCount = members.length;
   const paidCount = members.filter((m) => m.status === 'paid').length;
@@ -77,6 +82,25 @@ function DuesMemberPaymentTable({
       return 0;
     });
 
+  const totalPages = Math.max(1, Math.ceil(filtered.length / ITEMS_PER_PAGE));
+  const currentPage = Math.min(page, totalPages);
+  const paged = filtered.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
+
+  const handleFilterChange = (key: FilterType) => {
+    setActiveFilter(key);
+    setPage(1);
+  };
+
+  const handleSortToggle = () => {
+    setSortUnpaidFirst((prev) => !prev);
+    setPage(1);
+  };
+
+  const handleSearchChange = (value: string) => {
+    setSearchQuery(value);
+    setPage(1);
+  };
+
   const toggleSelect = (id: number) => {
     const next = new Set(selectedIds);
     if (next.has(id)) next.delete(id);
@@ -99,7 +123,7 @@ function DuesMemberPaymentTable({
               <button
                 key={f.key}
                 type="button"
-                onClick={() => setActiveFilter(f.key)}
+                onClick={() => handleFilterChange(f.key)}
                 className="typo-button2 border-line text-text-normal hover:bg-container-neutral-interaction min-w-10 shrink-0 cursor-pointer rounded-[10px] border px-400 py-200 transition-colors"
               >
                 {f.label} {f.count}
@@ -108,7 +132,7 @@ function DuesMemberPaymentTable({
           </div>
           <button
             type="button"
-            onClick={() => setSortUnpaidFirst((prev) => !prev)}
+            onClick={handleSortToggle}
             className="typo-button2 border-line text-text-normal hover:bg-container-neutral-interaction min-w-10 shrink-0 cursor-pointer rounded-[10px] border px-400 py-200 transition-colors"
           >
             {sortUnpaidFirst ? '이름 순' : '미납 순'}
@@ -116,7 +140,7 @@ function DuesMemberPaymentTable({
         </div>
 
         {/* 검색바 */}
-        <DuesSearchBar searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
+        <DuesSearchBar searchQuery={searchQuery} setSearchQuery={handleSearchChange} />
 
         {/* 테이블 */}
         <div className="border-line overflow-x-auto rounded-sm border">
@@ -134,7 +158,7 @@ function DuesMemberPaymentTable({
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filtered.length === 0 ? (
+              {paged.length === 0 ? (
                 <TableRow className="hover:bg-transparent">
                   <TableCell colSpan={6} className="py-700 text-center">
                     <span className="typo-body2 text-text-alternative">
@@ -143,7 +167,7 @@ function DuesMemberPaymentTable({
                   </TableCell>
                 </TableRow>
               ) : (
-                filtered.map((member) => (
+                paged.map((member) => (
                   <TableRow
                     key={member.id}
                     className="border-line hover:bg-container-neutral-interaction border-t"
@@ -198,6 +222,10 @@ function DuesMemberPaymentTable({
             </TableBody>
           </Table>
         </div>
+
+        {totalPages > 1 && (
+          <DuesPagination page={currentPage} totalPages={totalPages} onPageChange={setPage} />
+        )}
       </div>
     </div>
   );

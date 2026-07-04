@@ -3,6 +3,9 @@
 import { useState } from 'react';
 
 import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
   Icon,
   Table,
   TableBody,
@@ -56,6 +59,7 @@ function DuesTransactionTable({
   const [activeTab, setActiveTab] = useState<FilterTab>('all');
   const [sortDesc, setSortDesc] = useState(true);
   const [page, setPage] = useState(1);
+  // const [receiptUrl, setReceiptUrl] = useState<string | null>(null);
 
   const allCount = transactions.length;
   const expenseCount = transactions.filter((t) => t.type === 'EXPENSE').length;
@@ -181,15 +185,21 @@ function DuesTransactionTable({
                     <TableCell className="typo-body2 text-text-strong tablet:table-cell hidden">
                       {tx.date}
                     </TableCell>
-                    <TableCell className="tablet:table-cell hidden">
+                    {/* TODO: 영수증 정상화시 복구 */}
+                    {/* <TableCell className="tablet:table-cell hidden">
                       <button
                         type="button"
-                        className="text-icon-alternative hover:text-icon-strong cursor-pointer"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          if (tx.receiptUrl) setReceiptUrl(tx.receiptUrl);
+                        }}
+                        disabled={!tx.receiptUrl}
+                        className="text-icon-alternative hover:text-icon-strong cursor-pointer disabled:cursor-not-allowed disabled:opacity-40"
                         aria-label="영수증 보기"
                       >
                         <Icon src={AdminReceiptIcon} alt="영수증" size={24} />
                       </button>
-                    </TableCell>
+                    </TableCell> */}
                     <TableCell className="tablet:table-cell hidden">
                       <button
                         type="button"
@@ -211,6 +221,24 @@ function DuesTransactionTable({
           <DuesPagination page={currentPage} totalPages={totalPages} onPageChange={setPage} />
         )}
       </div>
+
+      {/* <Dialog open={!!receiptUrl} onOpenChange={(open) => !open && setReceiptUrl(null)}>
+        <DialogContent
+          showCloseButton={false}
+          adminMobileFullscreen={false}
+          className="w-auto max-w-[calc(100%-2rem)] border-0 bg-transparent p-0 shadow-none sm:max-w-2xl"
+        >
+          <DialogTitle className="sr-only">영수증</DialogTitle>
+          {receiptUrl && (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={receiptUrl}
+              alt="영수증"
+              className="max-h-[85vh] w-full rounded-lg object-contain"
+            />
+          )}
+        </DialogContent>
+      </Dialog> */}
     </div>
   );
 }
