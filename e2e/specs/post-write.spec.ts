@@ -43,7 +43,7 @@ test.describe('게시글 작성', () => {
 
     await page.getByRole('button', { name: '게시하기' }).click();
 
-    await expect(page.getByText('제목을 입력해주세요.')).toBeVisible({ timeout: 5_000 });
+    await expect(page.getByText('제목을 입력해주세요.', { exact: true })).toBeVisible({ timeout: 5_000 });
     expect(page.url()).toContain('/write');
   });
 
@@ -54,7 +54,7 @@ test.describe('게시글 작성', () => {
 
     await page.getByRole('button', { name: '게시하기' }).click();
 
-    await expect(page.getByText('내용을 입력해주세요.')).toBeVisible({ timeout: 5_000 });
+    await expect(page.getByText('내용을 입력해주세요.', { exact: true })).toBeVisible({ timeout: 5_000 });
     expect(page.url()).toContain('/write');
   });
 
