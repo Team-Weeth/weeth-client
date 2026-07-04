@@ -14,6 +14,7 @@ function mapDuesMeToSummary(data: DuesMeResponse): DuesSummary {
     currentBalance: data.balance.currentBalance,
     targetBalance: data.balance.goalAmount,
     isTargeted: data.myPayment.targeted,
+    paymentStatus: data.myPayment.status,
     isPaid: data.myPayment.status === 'PAID',
     isAccountPublic: data.bankAccountVisible,
     account: data.bankAccount

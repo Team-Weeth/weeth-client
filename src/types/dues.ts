@@ -15,6 +15,7 @@ export interface DuesSummary {
   currentBalance: number;
   targetBalance: number;
   isTargeted: boolean;
+  paymentStatus: DuesPaymentStatus;
   isPaid: boolean;
   isAccountPublic: boolean;
   account?: DuesAccount;
@@ -23,7 +24,7 @@ export interface DuesSummary {
   paidAt?: string;
 }
 
-export type DuesPaymentStatus = 'PAID' | 'UNPAID';
+export type DuesPaymentStatus = 'PAID' | 'UNPAID' | 'EXCLUDED' | 'REFUNDED';
 
 export interface DuesCardinal {
   cardinal: number;

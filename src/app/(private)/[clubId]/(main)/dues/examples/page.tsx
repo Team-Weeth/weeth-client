@@ -1,7 +1,7 @@
 import { DuesLeftSection } from '@/components/dues';
 import type { DuesSummary } from '@/types/dues';
 
-const BASE_DUES: Omit<DuesSummary, 'isPaid' | 'isAccountPublic'> = {
+const BASE_DUES: Omit<DuesSummary, 'paymentStatus' | 'isPaid' | 'isAccountPublic'> = {
   accountId: 12,
   accountName: '7기 회비',
   cardinalNumber: 7,
@@ -29,6 +29,7 @@ const EXAMPLES: Array<{
     description: '미납 안내, 계좌 정보, 계좌 복사하고 납부하기 버튼이 보여요.',
     dues: {
       ...BASE_DUES,
+      paymentStatus: 'UNPAID',
       isPaid: false,
       isAccountPublic: true,
     },
@@ -38,6 +39,7 @@ const EXAMPLES: Array<{
     description: '미납 안내와 운영진 문의 문구만 보여요.',
     dues: {
       ...BASE_DUES,
+      paymentStatus: 'UNPAID',
       isPaid: false,
       isAccountPublic: false,
     },
@@ -47,6 +49,7 @@ const EXAMPLES: Array<{
     description: '납부 완료 상태와 계좌 정보가 보이고 복사 버튼은 없어요.',
     dues: {
       ...BASE_DUES,
+      paymentStatus: 'PAID',
       isPaid: true,
       isAccountPublic: true,
     },
@@ -56,7 +59,48 @@ const EXAMPLES: Array<{
     description: '납부 완료 상태와 운영진 문의 문구가 보여요.',
     dues: {
       ...BASE_DUES,
+      paymentStatus: 'PAID',
       isPaid: true,
+      isAccountPublic: false,
+    },
+  },
+  {
+    title: '회비 환불 완료 · 계좌 공개 O',
+    description: '환불 완료 상태와 계좌 정보가 보여요.',
+    dues: {
+      ...BASE_DUES,
+      paymentStatus: 'REFUNDED',
+      isPaid: false,
+      isAccountPublic: true,
+    },
+  },
+  {
+    title: '회비 환불 완료 · 계좌 공개 X',
+    description: '환불 완료 상태와 운영진 문의 문구가 보여요.',
+    dues: {
+      ...BASE_DUES,
+      paymentStatus: 'REFUNDED',
+      isPaid: false,
+      isAccountPublic: false,
+    },
+  },
+  {
+    title: '회비 납부 제외 대상 · 계좌 공개 O',
+    description: '납부 제외 상태와 계좌 정보가 보여요.',
+    dues: {
+      ...BASE_DUES,
+      paymentStatus: 'EXCLUDED',
+      isPaid: false,
+      isAccountPublic: true,
+    },
+  },
+  {
+    title: '회비 납부 제외 대상 · 계좌 공개 X',
+    description: '납부 제외 상태와 운영진 문의 문구가 보여요.',
+    dues: {
+      ...BASE_DUES,
+      paymentStatus: 'EXCLUDED',
+      isPaid: false,
       isAccountPublic: false,
     },
   },
@@ -69,7 +113,7 @@ export default function DuesExamplesPage() {
         <p className="typo-caption1 text-text-alternative">회비 UI 예제</p>
         <h1 className="typo-h1 text-text-strong">회비 상태별 왼쪽 섹션</h1>
         <p className="typo-body1 text-text-alternative">
-          회비 납부 여부와 계좌 공개 여부에 따른 4가지 UI를 한 번에 확인할 수 있어요.
+          회비 납부 상태와 계좌 공개 여부에 따른 UI를 한 번에 확인할 수 있어요.
         </p>
       </div>
 
