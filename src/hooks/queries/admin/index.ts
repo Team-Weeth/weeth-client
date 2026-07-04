@@ -27,5 +27,5 @@ export {
   duesRegistrationStatusQueryOptions,
   duesPaymentTargetsQueryOptions,
   duesCarryOverSourceQueryOptions,
-} from './useDuesRegistrationQueries';
+} from './useDuesSetupQueries';
 export { useDuesDashboardQuery, isDuesNotRegisteredError } from './useDuesDashboardQuery';

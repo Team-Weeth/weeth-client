@@ -24,4 +24,4 @@ export {
   useSaveDuesCarryOver,
   useSaveDuesBankAccount,
   useCompleteDuesRegistration,
-} from './useDuesRegistrationMutations';
+} from './useDuesSetupMutations';
