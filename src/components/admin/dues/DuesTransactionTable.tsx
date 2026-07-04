@@ -14,9 +14,13 @@ import {
 import { MoreHorizIcon } from '@/assets/icons';
 import { cn } from '@/lib/cn';
 import { AdminReceiptIcon } from '@/assets/icons/admin';
+import { DuesPagination } from '@/components/admin/dues/setup/components';
 import type { DuesTransaction, TransactionType } from '@/types/admin/dues';
 
 type FilterTab = 'all' | TransactionType;
+
+/** 페이지당 거래 내역 수 */
+const ITEMS_PER_PAGE = 10;
 
 interface TabConfig {
   key: FilterTab;
@@ -51,6 +55,7 @@ function DuesTransactionTable({
 }: DuesTransactionTableProps) {
   const [activeTab, setActiveTab] = useState<FilterTab>('all');
   const [sortDesc, setSortDesc] = useState(true);
+  const [page, setPage] = useState(1);
 
   const allCount = transactions.length;
   const expenseCount = transactions.filter((t) => t.type === 'EXPENSE').length;
@@ -71,6 +76,20 @@ function DuesTransactionTable({
 
   const sorted = sortDesc ? [...filtered] : [...filtered].reverse();
 
+  const totalPages = Math.max(1, Math.ceil(sorted.length / ITEMS_PER_PAGE));
+  const currentPage = Math.min(page, totalPages);
+  const paged = sorted.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
+
+  const handleTabChange = (key: FilterTab) => {
+    setActiveTab(key);
+    setPage(1);
+  };
+
+  const handleSortToggle = () => {
+    setSortDesc((prev) => !prev);
+    setPage(1);
+  };
+
   return (
     <div
       className={cn('bg-container-neutral flex flex-col gap-600 rounded-lg p-450', className)}
@@ -86,7 +105,7 @@ function DuesTransactionTable({
               <button
                 key={tab.key}
                 type="button"
-                onClick={() => setActiveTab(tab.key)}
+                onClick={() => handleTabChange(tab.key)}
                 className={cn(
                   'typo-button2 min-w-10 cursor-pointer rounded-[10px] px-400 py-200 transition-colors',
                   activeTab === tab.key
@@ -101,7 +120,7 @@ function DuesTransactionTable({
 
           <button
             type="button"
-            onClick={() => setSortDesc((prev) => !prev)}
+            onClick={handleSortToggle}
             className="typo-button2 border-line text-text-normal hover:bg-container-neutral-interaction min-w-10 cursor-pointer rounded-[10px] border px-400 py-200 transition-colors"
           >
             {sortDesc ? '최근 순' : '오래된 순'}
@@ -127,14 +146,14 @@ function DuesTransactionTable({
               </TableRow>
             </TableHeader>
             <TableBody>
-              {sorted.length === 0 ? (
+              {paged.length === 0 ? (
                 <TableRow className="hover:bg-transparent">
                   <TableCell colSpan={8} className="py-700 text-center">
                     <span className="typo-body2 text-text-alternative">거래 내역이 없습니다.</span>
                   </TableCell>
                 </TableRow>
               ) : (
-                sorted.map((tx) => (
+                paged.map((tx) => (
                   <TableRow
                     key={tx.id}
                     onClick={() => onMoreClick?.(tx)}
@@ -187,6 +206,10 @@ function DuesTransactionTable({
             </TableBody>
           </Table>
         </div>
+
+        {totalPages > 1 && (
+          <DuesPagination page={currentPage} totalPages={totalPages} onPageChange={setPage} />
+        )}
       </div>
     </div>
   );
