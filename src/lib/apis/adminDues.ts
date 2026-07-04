@@ -55,9 +55,16 @@ export const duesApi = {
       ),
     );
 
-    targets.content = [targets.content, ...remainingContents].flat();
-    targets.pageNumber = 0;
-    targets.pageSize = targets.content.length;
+    const mergedContent = [targets.content, ...remainingContents].flat();
+    firstResponse.data.data = {
+      ...firstResponse.data.data,
+      targets: {
+        ...targets,
+        content: mergedContent,
+        pageNumber: 0,
+        pageSize: mergedContent.length,
+      },
+    };
     return firstResponse;
   },
 
