@@ -1,4 +1,6 @@
-import { DuesEmptyState } from '@/components/dues/DuesContent';
+'use client';
+
+import { DuesEmptyState, DuesErrorState } from '@/components/dues/DuesContent';
 import { DuesLeftSection } from '@/components/dues';
 import type { DuesSummary } from '@/types/dues';
 
@@ -128,6 +130,18 @@ export default function DuesExamplesPage() {
           </div>
           <div className="bg-background rounded-lg">
             <DuesEmptyState />
+          </div>
+        </section>
+
+        <section className="border-line desktop:col-span-2 flex flex-col gap-300 rounded-lg border p-400">
+          <div className="flex flex-col gap-100">
+            <h2 className="typo-sub1 text-text-strong">API 로드 실패 · Error State</h2>
+            <p className="typo-body2 text-text-alternative">
+              회비 정보 조회 API가 실패했을 때 empty state와 같은 아이콘으로 보이는 재시도 UI예요.
+            </p>
+          </div>
+          <div className="bg-background rounded-lg">
+            <DuesErrorState onRetry={() => window.alert('다시 시도 버튼 클릭')} />
           </div>
         </section>
 

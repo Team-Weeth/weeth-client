@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useRef, useState, type ReactNode } from 'react';
 import Image from 'next/image';
 import { useUnmount } from 'react-use';
 
@@ -15,6 +15,7 @@ import {
 } from '@/components/dues/DuesPageSkeleton';
 import { DuesTransactionSection } from '@/components/dues/DuesTransactionSection';
 import { useDuesCardinals, useDuesMe, useDuesTransactions } from '@/hooks/queries';
+import { useClubId } from '@/stores';
 
 const HELP_MAIL_ADDRESS = 'help@weeth.kr';
 
@@ -23,34 +24,60 @@ const handleContactClick = () => {
 };
 
 function DuesContent() {
+  const clubId = useClubId();
   const [selectedCardinalId, setSelectedCardinalId] = useState<number | null>(null);
   const [isCardinalTransitioning, setIsCardinalTransitioning] = useState(false);
   const transitionTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const { data: cardinals = [], isLoading } = useDuesCardinals();
-  const latestCardinal = cardinals.find((cardinal) => cardinal.status === 'IN_PROGRESS');
+  const {
+    data: cardinals = [],
+    isLoading,
+    isError: isCardinalsError,
+    refetch: refetchCardinals,
+  } = useDuesCardinals();
+  const latestCardinal = cardinals.reduce<(typeof cardinals)[number] | undefined>(
+    (latest, cardinal) => {
+      if (cardinal.status === 'IN_PROGRESS') return cardinal;
+      if (latest?.status === 'IN_PROGRESS') return latest;
+      if (!latest) return cardinal;
+
+      return cardinal.cardinalNumber > latest.cardinalNumber ? cardinal : latest;
+    },
+    undefined,
+  );
   const selectedCardinal =
-    cardinals.find((cardinal) => cardinal.id === selectedCardinalId) ??
-    latestCardinal ??
-    cardinals[0];
+    cardinals.find((cardinal) => cardinal.id === selectedCardinalId) ?? latestCardinal;
   const {
     data: dues,
     isLoading: isDuesLoading,
-    isFetching: isDuesFetching,
+    isError: isDuesError,
+    refetch: refetchDues,
   } = useDuesMe(selectedCardinal?.cardinalNumber);
   const {
     data: transactionData,
     fetchNextPage,
     hasNextPage,
     isLoading: isTransactionsLoading,
-    isFetching: isTransactionsFetching,
+    isError: isTransactionsError,
     isFetchingNextPage,
+    refetch: refetchTransactions,
   } = useDuesTransactions(selectedCardinal?.cardinalNumber);
-  const isLeftSectionLoading = isDuesLoading || isDuesFetching || isCardinalTransitioning;
+  const isPageLoading = !clubId || isLoading;
+  const isLeftSectionLoading = !!selectedCardinal && (isDuesLoading || isCardinalTransitioning);
   const isTransactionSectionLoading =
-    isTransactionsLoading ||
-    (isTransactionsFetching && !isFetchingNextPage) ||
-    (isCardinalTransitioning && !isFetchingNextPage);
-  const shouldShowEmptyState = !isLeftSectionLoading && !dues;
+    !!selectedCardinal && (isTransactionsLoading || isCardinalTransitioning);
+  const shouldShowErrorState =
+    !isPageLoading &&
+    (isCardinalsError ||
+      isDuesError ||
+      (isTransactionsError && !transactionData?.transactions.length));
+  const shouldShowEmptyState =
+    !isPageLoading && !shouldShowErrorState && !isLeftSectionLoading && !dues;
+
+  const handleRetry = () => {
+    if (isCardinalsError) void refetchCardinals();
+    if (isDuesError) void refetchDues();
+    if (isTransactionsError) void refetchTransactions();
+  };
 
   const handleSelectCardinal = (cardinalId: number) => {
     if (selectedCardinal?.id === cardinalId) return;
@@ -73,7 +100,7 @@ function DuesContent() {
     }
   });
 
-  if (isLoading) {
+  if (isPageLoading) {
     return <DuesPageSkeleton />;
   }
 
@@ -97,7 +124,9 @@ function DuesContent() {
         />
       </div>
 
-      {shouldShowEmptyState ? (
+      {shouldShowErrorState ? (
+        <DuesErrorState onRetry={handleRetry} />
+      ) : shouldShowEmptyState ? (
         <DuesEmptyState />
       ) : (
         <div className="desktop:flex-row flex flex-col gap-500">
@@ -124,25 +153,63 @@ function DuesContent() {
   );
 }
 
+function DuesErrorState({ onRetry }: { onRetry: () => void }) {
+  return (
+    <DuesStatusState
+      title="회비 정보를 불러오지 못했어요"
+      description="잠시 후 다시 시도해 주세요."
+      action={
+        <button
+          type="button"
+          onClick={onRetry}
+          className="typo-button2 text-text-alternative hover:text-text-normal cursor-pointer rounded-sm px-0 py-200"
+        >
+          다시 시도
+        </button>
+      }
+    />
+  );
+}
+
 function DuesEmptyState() {
+  return (
+    <DuesStatusState
+      title="아직 회비 내역이 기록되지 않았나봐요!"
+      description="혹시 문제가 발생했나요?"
+      action={
+        <button
+          type="button"
+          onClick={handleContactClick}
+          className="typo-button2 text-text-alternative hover:text-text-normal cursor-pointer rounded-sm px-0 py-200"
+        >
+          문의하기
+        </button>
+      }
+    />
+  );
+}
+
+function DuesStatusState({
+  title,
+  description,
+  action,
+}: {
+  title: string;
+  description: string;
+  action: ReactNode;
+}) {
   return (
     <section className="flex min-h-[520px] w-full flex-col items-center justify-center py-300 text-center">
       <Image src={EmptyListIcon} width={226} height={226} alt="" aria-hidden />
       <div className="flex flex-col items-center gap-[10px]">
-        <h2 className="typo-h3 text-text-alternative">아직 회비 내역이 기록되지 않았나봐요!</h2>
+        <h2 className="typo-h3 text-text-alternative">{title}</h2>
         <div className="flex items-center justify-center gap-[10px]">
-          <span className="typo-body2 text-text-alternative">혹시 문제가 발생했나요?</span>
-          <button
-            type="button"
-            onClick={handleContactClick}
-            className="typo-button2 text-text-alternative hover:text-text-normal cursor-pointer rounded-sm px-0 py-200"
-          >
-            문의하기
-          </button>
+          <span className="typo-body2 text-text-alternative">{description}</span>
+          {action}
         </div>
       </div>
     </section>
   );
 }
 
-export { DuesContent, DuesEmptyState };
+export { DuesContent, DuesEmptyState, DuesErrorState };

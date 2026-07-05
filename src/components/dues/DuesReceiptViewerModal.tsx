@@ -107,7 +107,9 @@ function PdfReceiptPreview({ receipt }: { receipt: DuesReceiptFile }) {
       document.body.appendChild(anchor);
       anchor.click();
       anchor.remove();
-      URL.revokeObjectURL(objectUrl);
+      setTimeout(() => {
+        URL.revokeObjectURL(objectUrl);
+      }, 1000);
     } catch {
       toastError('파일 다운로드에 실패했습니다.');
     } finally {

@@ -51,6 +51,8 @@ function mapApiTransactionToDuesTransaction(transaction: DuesTransactionApiItem)
 function mapApiTransactionDetailToDuesTransaction(
   transaction: DuesTransactionDetailResponse,
 ): DuesTransaction {
+  const receipts = getUploadedReceipts(transaction.receipts);
+
   return {
     id: transaction.transactionId,
     type: getDuesTransactionType(transaction),
@@ -62,9 +64,9 @@ function mapApiTransactionDetailToDuesTransaction(
     counterparty: transaction.source ?? undefined,
     category: transaction.category ?? getTransactionFallbackDescription(transaction.type),
     registrant: transaction.registeredByName ?? undefined,
-    receipts: transaction.receipts,
-    receiptUrls: transaction.receipts.map((receipt) => receipt.fileUrl),
-    receiptThumbnailUrl: transaction.receipts[0]?.fileUrl,
+    receipts,
+    receiptUrls: receipts.map((receipt) => receipt.fileUrl),
+    receiptThumbnailUrl: receipts[0]?.fileUrl,
   };
 }
 
@@ -145,7 +147,7 @@ function getReceiptUrls(transaction: DuesTransaction) {
 }
 
 function getReceiptFiles(transaction: DuesTransaction): DuesReceiptFile[] {
-  if (transaction.receipts) return transaction.receipts;
+  if (transaction.receipts) return getUploadedReceipts(transaction.receipts);
 
   return getReceiptUrls(transaction).map((fileUrl, index) => ({
     fileId: index,
@@ -156,6 +158,10 @@ function getReceiptFiles(transaction: DuesTransaction): DuesReceiptFile[] {
     contentType: '',
     status: 'UPLOADED',
   }));
+}
+
+function getUploadedReceipts(receipts: DuesReceiptFile[]) {
+  return receipts.filter((receipt) => receipt.status === 'UPLOADED');
 }
 
 function isPdfReceipt(receipt: Pick<DuesReceiptFile, 'contentType' | 'fileName' | 'fileUrl'>) {
