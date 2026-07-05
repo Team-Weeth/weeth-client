@@ -1,11 +1,7 @@
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
 
 import { duesApi } from '@/lib/apis/adminDues';
-import type {
-  DuesTransaction,
-  TransactionCounts,
-  TransactionsParams,
-} from '@/types/admin/dues';
+import type { DuesTransaction, TransactionCounts, TransactionsParams } from '@/types/admin/dues';
 
 import { adminQueryKeys } from './adminQueryKeys';
 
@@ -42,7 +38,7 @@ export function useAdminDuesTransactionsQuery(
         // TODO: 서버가 러닝 밸런스(총 잔액)를 내려주지 않아 0으로 채움 — 백엔드 필드 추가 필요
         totalBalance: 0,
         date: tx.transactedAt.slice(0, 10),
-        hasReceipt: tx.hasReceipt > 0,
+        hasReceipt: tx.hasReceipt,
         receiptUrl: tx.receipts[0]?.fileUrl,
       })),
     }),

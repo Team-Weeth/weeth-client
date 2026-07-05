@@ -1,4 +1,3 @@
-import { TransactionDirection } from './dues.d';
 export interface DuesDraftData {
   accountId: number;
   isNew: boolean;
@@ -251,7 +250,7 @@ export interface TransactionItem {
   amount: number;
   transactedAt: string;
   memo: string;
-  hasReceipt: number;
+  hasReceipt: boolean;
   receipts: TransactionReceipt[];
 }
 
