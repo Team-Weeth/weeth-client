@@ -3,6 +3,7 @@ import type {
   DuesTransactionApiItem,
   DuesTransactionCounts,
   DuesTransactionDetailResponse,
+  DuesReceiptFile,
   DuesTransactionType,
   DuesTransactionsResponse,
 } from '@/types/dues';
@@ -61,6 +62,7 @@ function mapApiTransactionDetailToDuesTransaction(
     counterparty: transaction.source ?? undefined,
     category: transaction.category ?? getTransactionFallbackDescription(transaction.type),
     registrant: transaction.registeredByName ?? undefined,
+    receipts: transaction.receipts,
     receiptUrls: transaction.receipts.map((receipt) => receipt.fileUrl),
     receiptThumbnailUrl: transaction.receipts[0]?.fileUrl,
   };
@@ -142,12 +144,36 @@ function getReceiptUrls(transaction: DuesTransaction) {
   return receiptUrls.filter(Boolean);
 }
 
+function getReceiptFiles(transaction: DuesTransaction): DuesReceiptFile[] {
+  if (transaction.receipts) return transaction.receipts;
+
+  return getReceiptUrls(transaction).map((fileUrl, index) => ({
+    fileId: index,
+    fileName: `receipt-${index + 1}`,
+    fileUrl,
+    storageKey: '',
+    fileSize: 0,
+    contentType: '',
+    status: 'UPLOADED',
+  }));
+}
+
+function isPdfReceipt(receipt: Pick<DuesReceiptFile, 'contentType' | 'fileName' | 'fileUrl'>) {
+  return (
+    receipt.contentType === 'application/pdf' ||
+    receipt.fileName.toLowerCase().endsWith('.pdf') ||
+    receipt.fileUrl.toLowerCase().includes('.pdf')
+  );
+}
+
 export {
   DUES_TRANSACTION_FILTERS,
   DUES_TRANSACTION_TYPE_CONFIG,
   createDuesSummaryTransaction,
+  getReceiptFiles,
   getReceiptUrls,
   getTransactionCounts,
+  isPdfReceipt,
   mapApiTransactionDetailToDuesTransaction,
   mapApiTransactionToDuesTransaction,
   mergeTransactionCounts,

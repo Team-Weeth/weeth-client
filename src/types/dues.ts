@@ -127,4 +127,5 @@ export interface DuesTransaction {
   receiptUrl?: string;
   receiptUrls?: string[];
   receiptThumbnailUrl?: string;
+  receipts?: DuesReceiptFile[];
 }
