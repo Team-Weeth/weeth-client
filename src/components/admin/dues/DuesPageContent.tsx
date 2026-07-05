@@ -165,7 +165,9 @@ function DuesPageContent() {
     setAddOpen(true);
   };
 
-  const handleSetting = () => {};
+  const handleSetting = () => {
+    router.push(`/${clubId}/admin/dues/setting`);
+  };
 
   const handleEditOpen = () => {
     if (!selectedTransaction) return;

@@ -10,6 +10,7 @@ export {
   type TransactionType,
 } from './DuesTransactionTable';
 export { DuesPaymentStatusPageContent } from './DuesPaymentStatusPageContent';
+export { DuesSettingPageContent } from './DuesSettingPageContent';
 export { DuesPaymentSummaryCard, type DuesPaymentSummaryCardProps } from './DuesPaymentSummaryCard';
 export {
   DuesMemberPaymentTable,
