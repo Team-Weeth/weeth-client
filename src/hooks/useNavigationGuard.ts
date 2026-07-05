@@ -24,6 +24,7 @@ function useNavigationGuard({ enabled }: UseNavigationGuardOptions) {
   const [open, setOpen] = useState(false);
   const router = useRouter();
   const enabledRef = useRef(enabled);
+  const prevEnabledRef = useRef(enabled);
   const isLeaving = useRef(false);
   const guardUrl = useRef('');
   const pendingUrl = useRef<string | null>(null);
@@ -52,14 +53,18 @@ function useNavigationGuard({ enabled }: UseNavigationGuardOptions) {
 
   // enabled가 true가 될 때 guard entry를 push
   useEffect(() => {
+    const prevEnabled = prevEnabledRef.current;
+    prevEnabledRef.current = enabled;
+
     if (!enabled) {
       hasGuardEntry.current = isGuardEntry();
       return;
     }
-    if (isLeaving.current) return;
+    isLeaving.current = false;
 
     guardUrl.current = location.href;
-    if (!isGuardEntry()) {
+    // 그 외에는 guard entry가 없을 때만 push
+    if (!prevEnabled || !isGuardEntry()) {
       history.pushState(GUARD_STATE, '', location.href);
     }
     hasGuardEntry.current = true;
@@ -147,13 +152,9 @@ function useNavigationGuard({ enabled }: UseNavigationGuardOptions) {
 
   const onCancel = () => {
     pendingUrl.current = null;
-
-    if (isLeaving.current) {
-      isLeaving.current = false;
-      return;
-    }
+    isLeaving.current = false;
     setOpen(false);
-    // 뒤로가기로 guard entry를 벗어난 경우에만 재설정
+    // 뒤로가기/이탈 시도 후 취소: guard entry 복원
     if (!isGuardEntry()) {
       history.pushState(GUARD_STATE, '', guardUrl.current);
       hasGuardEntry.current = true;

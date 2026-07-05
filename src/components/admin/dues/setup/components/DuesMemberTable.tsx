@@ -10,7 +10,7 @@ import {
   Checkbox,
 } from '@/components/ui';
 
-import type { MockPaymentTarget } from '@/constants/mock';
+import type { PaymentTarget } from '@/types/admin/dues';
 
 const ROLE_LABEL: Record<string, string> = {
   LEAD: '리더',
@@ -26,7 +26,7 @@ function SelectionStatusBadge({ isSelected }: { isSelected: boolean }) {
 }
 
 interface DuesMemberTableProps {
-  pagedTargets: MockPaymentTarget[];
+  pagedTargets: PaymentTarget[];
   selectedSet: Set<number>;
   toggleMember?: (id: number) => void;
   readOnly?: boolean;

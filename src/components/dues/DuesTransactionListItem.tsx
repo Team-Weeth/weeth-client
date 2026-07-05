@@ -3,6 +3,7 @@ import { Icon } from '@/components/ui';
 import { cn } from '@/lib/cn';
 import { formatAmount } from '@/lib/formatAmount';
 import type { DuesTransaction } from '@/types/dues';
+import { DUES_TRANSACTION_TYPE_CONFIG } from '@/utils/dues/duesTransaction';
 import { formatCompactDateDisplay } from '@/utils/shared/date';
 import { DuesTransactionTypeIcon } from './DuesTransactionTypeIcon';
 
@@ -13,7 +14,7 @@ interface DuesTransactionListItemProps {
 
 function DuesTransactionListItem({ transaction, onClick }: DuesTransactionListItemProps) {
   const isIncomeLike = transaction.type === 'income' || transaction.type === 'dues';
-  const amountPrefix = isIncomeLike ? '+' : '-';
+  const amountPrefix = DUES_TRANSACTION_TYPE_CONFIG[transaction.type].sign;
   const dateText = formatCompactDateDisplay(transaction.date);
   const descriptionText = [transaction.description, dateText].filter(Boolean).join(' · ');
 

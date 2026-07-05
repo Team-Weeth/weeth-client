@@ -7,7 +7,6 @@ export { DuesChart, type DuesChartProps, type MonthlyData } from './DuesChart';
 export {
   DuesTransactionTable,
   type DuesTransactionTableProps,
-  type DuesTransaction,
   type TransactionType,
 } from './DuesTransactionTable';
 export { DuesPaymentStatusPageContent } from './DuesPaymentStatusPageContent';

@@ -7,7 +7,6 @@ interface DuesPaymentSummaryCardProps {
   totalCollected: number;
   totalTarget: number;
   onUpdatePayment?: () => void;
-  onSetTotal?: () => void;
 }
 
 function DuesPaymentSummaryCard({
@@ -15,7 +14,6 @@ function DuesPaymentSummaryCard({
   totalCollected,
   totalTarget,
   onUpdatePayment,
-  onSetTotal,
 }: DuesPaymentSummaryCardProps) {
   const percentage =
     totalTarget > 0
@@ -42,13 +40,6 @@ function DuesPaymentSummaryCard({
           className="bg-button-primary typo-button1 text-text-inverse hover:bg-button-primary-interaction cursor-pointer rounded-md px-400 py-300 transition-colors"
         >
           납부 현황 업데이트
-        </button>
-        <button
-          type="button"
-          onClick={onSetTotal}
-          className="bg-button-neutral typo-button1 text-text-strong hover:bg-button-neutral-interaction cursor-pointer rounded-md px-400 py-300 transition-colors"
-        >
-          총 회비 설정
         </button>
       </div>
 

@@ -19,10 +19,12 @@ import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { ModalIconButton } from '@/components/admin/modal/ModalIconButton';
 import { SCHEDULE_MODAL_CONTENT_CLASS } from '@/components/admin/schedule/modal/constants';
 import { cn } from '@/lib/cn';
-import type { TransactionType } from './TransactionForm';
+import { TRANSACTION_TYPE_TAG } from '../DuesTransactionTable';
+import type { TransactionDirection, TransactionType } from '@/types/admin/dues';
 
 interface TransactionDetail {
   type: TransactionType;
+  direction: TransactionDirection;
   amount: string;
   description: string;
   vendor: string;
@@ -40,17 +42,6 @@ interface TransactionDetailModalProps {
   onDelete: () => void;
 }
 
-const TYPE_CONFIG: Record<TransactionType, { label: string; className: string }> = {
-  EXPENSE: {
-    label: '지출',
-    className: 'bg-state-error/10 text-state-error',
-  },
-  INCOME: {
-    label: '수입',
-    className: 'bg-state-success/10 text-state-success',
-  },
-};
-
 function TransactionDetailModal({
   open,
   onOpenChange,
@@ -59,10 +50,11 @@ function TransactionDetailModal({
   onDelete,
 }: TransactionDetailModalProps) {
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
-  const { type, amount, description, vendor, date, category, registrant, receiptUrl } = transaction;
+  const { type, direction, amount, description, vendor, date, category, registrant, receiptUrl } =
+    transaction;
 
-  const typeConfig = TYPE_CONFIG[type];
-  const sign = type === 'EXPENSE' ? '-' : '+';
+  const typeConfig = TRANSACTION_TYPE_TAG[type];
+  const sign = direction === 'INCOME' ? '+' : '-';
   const numAmount = Number(amount);
   const formattedAmount = (isNaN(numAmount) ? 0 : numAmount).toLocaleString('ko-KR');
   const classificationLabel = category ? `${typeConfig.label} · ${category}` : typeConfig.label;

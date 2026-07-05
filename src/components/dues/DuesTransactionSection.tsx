@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { cn } from '@/lib/cn';
 import type { DuesTransaction, DuesTransactionCounts } from '@/types/dues';
@@ -44,22 +44,16 @@ function DuesTransactionSection({
     cardinal,
     selectedTransaction && selectedTransaction.id > 0 ? selectedTransaction.id : undefined,
   );
-  const fallbackCounts = useMemo(() => getTransactionCounts(transactions), [transactions]);
-  const counts = useMemo(
-    () => mergeTransactionCounts(fallbackCounts, apiCounts),
-    [apiCounts, fallbackCounts],
-  );
+  const fallbackCounts = getTransactionCounts(transactions);
+  const counts = mergeTransactionCounts(fallbackCounts, apiCounts);
   const { ref: sentinelRef, isIntersecting } = useIntersectionObserver({
     rootMargin: '160px',
   });
-  const filteredTransactions = useMemo(() => {
-    const nextTransactions =
-      activeFilter === 'all'
-        ? transactions
-        : transactions.filter((transaction) => transaction.type === activeFilter);
-
-    return sortDuesTransactions(nextTransactions);
-  }, [activeFilter, transactions]);
+  const nextTransactions =
+    activeFilter === 'all'
+      ? transactions
+      : transactions.filter((transaction) => transaction.type === activeFilter);
+  const filteredTransactions = sortDuesTransactions(nextTransactions);
 
   const handleTransactionClick = (transaction: DuesTransaction) => {
     setSelectedTransaction(transaction);
