@@ -45,12 +45,10 @@ function nowLocalDateTime(): string {
 interface StatCardProps {
   label: string;
   value: string;
-  action: string;
-  onAction?: () => void;
   className?: string;
 }
 
-function StatCard({ label, value, action, onAction, className }: StatCardProps) {
+function StatCard({ label, value, className }: StatCardProps) {
   return (
     <Card
       className={cn('flex flex-1 flex-row items-center justify-between px-400 py-300', className)}
@@ -59,13 +57,6 @@ function StatCard({ label, value, action, onAction, className }: StatCardProps) 
         <span className="typo-sub3 text-text-normal">{value}</span>
         <span className="typo-caption2 text-text-alternative">{label}</span>
       </div>
-      <button
-        type="button"
-        onClick={onAction}
-        className="bg-button-neutral typo-button2 text-text-strong hover:bg-button-neutral-interaction ml-300 shrink-0 cursor-pointer rounded-sm px-300 py-200 transition-colors"
-      >
-        {action}
-      </button>
     </Card>
   );
 }
@@ -237,10 +228,9 @@ function DuesPaymentStatusPageContent() {
         <div className="flex flex-wrap items-stretch gap-600">
           <DuesPaymentSummaryCard totalCollected={totalCollected} totalTarget={totalTarget} />
           <div className="tablet:w-84.75 flex w-full flex-col gap-400">
-            {/* TODO: onAction 핸들러 넘기기 (미납 현황 업데이트) */}
-            <StatCard label="미납 인원" value={`${unpaidCount}명`} action="현황 업데이트" />
-            {/* TODO: onAction 핸들러 넘기기 (납부 대상 수정 - savePaymentTargets 재사용) */}
-            <StatCard label="납부 대상" value={`${totalCount}명`} action="수정" />
+            <StatCard label="미납 인원" value={`${unpaidCount}명`} />
+
+            <StatCard label="납부 대상" value={`${totalCount}명`} />
             {account && (
               <AccountCard
                 bankName={account.bankName}

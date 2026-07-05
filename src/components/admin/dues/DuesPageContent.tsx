@@ -165,6 +165,8 @@ function DuesPageContent() {
     setAddOpen(true);
   };
 
+  const handleSetting = () => {};
+
   const handleEditOpen = () => {
     if (!selectedTransaction) return;
     setDetailOpen(false);
@@ -184,6 +186,7 @@ function DuesPageContent() {
         isPublic={isPublic}
         onPublicChange={handlePublicChange}
         onAddClick={handleAddTransaction}
+        onSettingsClick={handleSetting}
       />
       <DuesGenerationFilter
         cardinals={cardinals}
