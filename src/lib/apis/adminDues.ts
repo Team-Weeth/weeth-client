@@ -16,6 +16,7 @@ import type {
   SavePaymentTargetsBody,
   TransactionBody,
   TransactionsInfo,
+  TransactionsParams,
 } from '@/types/admin/dues';
 
 export const duesApi = {
@@ -36,9 +37,10 @@ export const duesApi = {
   deleteTransaction: (clubId: string, accountId: number, transactionId: number) =>
     apiClient.delete(`/admin/clubs/${clubId}/accounts/${accountId}/transactions/${transactionId}`),
 
-  getTransactions: (clubId: string, accountId: number) =>
+  getTransactions: (clubId: string, accountId: number, params?: TransactionsParams) =>
     apiClient.get<ApiResponse<TransactionsInfo>>(
       `/admin/clubs/${clubId}/accounts/${accountId}/transactions`,
+      { params },
     ),
 
   // 부원 거래 내역 공개 여부 수정

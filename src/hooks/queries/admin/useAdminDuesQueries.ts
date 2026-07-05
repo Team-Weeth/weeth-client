@@ -1,19 +1,38 @@
-import { useQuery } from '@tanstack/react-query';
+import { keepPreviousData, useQuery } from '@tanstack/react-query';
 
 import { duesApi } from '@/lib/apis/adminDues';
-import type { DuesTransaction } from '@/types/admin/dues';
+import type {
+  DuesTransaction,
+  TransactionCounts,
+  TransactionsParams,
+} from '@/types/admin/dues';
 
 import { adminQueryKeys } from './adminQueryKeys';
 
-export function useAdminDuesTransactionsQuery(clubId: string, accountId: number) {
+/** 테이블이 사용하는 거래내역 조회 결과 — 목록 + 필터별 건수 + 총 페이지 수 */
+export interface DuesTransactionsResult {
+  counts: TransactionCounts;
+  totalPages: number;
+  transactions: DuesTransaction[];
+}
+
+export function useAdminDuesTransactionsQuery(
+  clubId: string,
+  accountId: number,
+  params?: TransactionsParams,
+) {
   return useQuery({
-    queryKey: adminQueryKeys.duesTransactions(clubId, accountId),
-    queryFn: () => duesApi.getTransactions(clubId, accountId).then((res) => res.data.data),
+    queryKey: adminQueryKeys.duesTransactions(clubId, accountId, params),
+    queryFn: () => duesApi.getTransactions(clubId, accountId, params).then((res) => res.data.data),
     enabled: !!clubId && accountId > 0,
     staleTime: 5 * 60 * 1000,
-    // API 응답(TransactionsInfo)을 테이블이 쓰는 DuesTransaction[] 형태로 변환
-    select: (data): DuesTransaction[] =>
-      data.transactions.content.map((tx) => ({
+    // 필터/정렬/페이지 전환 시 이전 데이터를 유지해 깜빡임 없이 부드럽게 전환
+    placeholderData: keepPreviousData,
+    // API 응답(TransactionsInfo)을 테이블이 쓰는 형태로 변환
+    select: (data): DuesTransactionsResult => ({
+      counts: data.counts,
+      totalPages: data.transactions.totalPages,
+      transactions: data.transactions.content.map((tx) => ({
         id: tx.transactionId,
         type: tx.type,
         direction: tx.direction,
@@ -26,5 +45,6 @@ export function useAdminDuesTransactionsQuery(clubId: string, accountId: number)
         hasReceipt: tx.hasReceipt > 0,
         receiptUrl: tx.receipts[0]?.fileUrl,
       })),
+    }),
   });
 }

@@ -1,3 +1,5 @@
+import type { TransactionsParams } from '@/types/admin/dues';
+
 export const adminQueryKeys = {
   all: ['admin'] as const,
 
@@ -25,9 +27,12 @@ export const adminQueryKeys = {
   attendance: (clubId: string | null, sessionId: number | null) =>
     ['admin', 'attendance', clubId, sessionId] as const,
 
-  // 회비 거래내역
-  duesTransactions: (clubId: string | null, accountId: number | null) =>
-    ['admin', 'dues', 'transactions', clubId, accountId] as const,
+  // 회비 거래내역 — 필터/정렬/페이지 파라미터별로 캐시 분리
+  duesTransactions: (
+    clubId: string | null,
+    accountId: number | null,
+    params?: TransactionsParams,
+  ) => ['admin', 'dues', 'transactions', clubId, accountId, params] as const,
 
   // 회비 대시보드 — 기수 번호(cardinalNumber) 단위로 스코프
   duesDashboard: (clubId: string, cardinalNumber: number | null) =>

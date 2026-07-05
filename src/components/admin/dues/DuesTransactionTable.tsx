@@ -1,11 +1,6 @@
 'use client';
 
-import { useState } from 'react';
-
 import {
-  Dialog,
-  DialogContent,
-  DialogTitle,
   Icon,
   Table,
   TableBody,
@@ -16,23 +11,34 @@ import {
 } from '@/components/ui';
 import { MoreHorizIcon } from '@/assets/icons';
 import { cn } from '@/lib/cn';
-import { AdminReceiptIcon } from '@/assets/icons/admin';
 import { DuesPagination } from '@/components/admin/dues/setup/components';
-import type { DuesTransaction, TransactionType } from '@/types/admin/dues';
-
-type FilterTab = 'all' | TransactionType;
-
-/** 페이지당 거래 내역 수 */
-const ITEMS_PER_PAGE = 10;
+import type {
+  DuesTransaction,
+  TransactionCounts,
+  TransactionFilter,
+  TransactionType,
+} from '@/types/admin/dues';
 
 interface TabConfig {
-  key: FilterTab;
+  key: TransactionFilter;
   label: string;
   count: number;
 }
 
 interface DuesTransactionTableProps extends React.HTMLAttributes<HTMLDivElement> {
   transactions: DuesTransaction[];
+  /** 필터 탭별 거래 건수 (서버 집계) */
+  counts: TransactionCounts;
+  /** 현재 활성 필터 탭 */
+  activeTab: TransactionFilter;
+  onTabChange: (tab: TransactionFilter) => void;
+  /** true = 최근 순(LATEST), false = 오래된 순(OLDEST) */
+  sortDesc: boolean;
+  onSortToggle: () => void;
+  /** 현재 페이지 (1-base) */
+  page: number;
+  totalPages: number;
+  onPageChange: (page: number) => void;
   onMoreClick?: (transaction: DuesTransaction) => void;
 }
 
@@ -53,46 +59,25 @@ function TransactionTypeTag({ type }: { type: TransactionType }) {
 function DuesTransactionTable({
   className,
   transactions,
+  counts,
+  activeTab,
+  onTabChange,
+  sortDesc,
+  onSortToggle,
+  page,
+  totalPages,
+  onPageChange,
   onMoreClick,
   ...props
 }: DuesTransactionTableProps) {
-  const [activeTab, setActiveTab] = useState<FilterTab>('all');
-  const [sortDesc, setSortDesc] = useState(true);
-  const [page, setPage] = useState(1);
   // const [receiptUrl, setReceiptUrl] = useState<string | null>(null);
 
-  const allCount = transactions.length;
-  const expenseCount = transactions.filter((t) => t.type === 'EXPENSE').length;
-  const incomeCount = transactions.filter((t) => t.type === 'INCOME').length;
-  const duesCount = transactions.filter((t) => t.type === 'DUES').length;
-
   const tabs: TabConfig[] = [
-    { key: 'all', label: '전체', count: allCount },
-    { key: 'EXPENSE', label: '지출', count: expenseCount },
-    { key: 'INCOME', label: '수입', count: incomeCount },
-    { key: 'DUES', label: '회비', count: duesCount },
+    { key: 'ALL', label: '전체', count: counts.all },
+    { key: 'EXPENSE', label: '지출', count: counts.expense },
+    { key: 'INCOME', label: '수입', count: counts.income },
+    { key: 'DUES', label: '회비', count: counts.dues },
   ];
-
-  const filtered = transactions.filter((t) => {
-    if (activeTab === 'all') return true;
-    return t.type === activeTab;
-  });
-
-  const sorted = sortDesc ? [...filtered] : [...filtered].reverse();
-
-  const totalPages = Math.max(1, Math.ceil(sorted.length / ITEMS_PER_PAGE));
-  const currentPage = Math.min(page, totalPages);
-  const paged = sorted.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
-
-  const handleTabChange = (key: FilterTab) => {
-    setActiveTab(key);
-    setPage(1);
-  };
-
-  const handleSortToggle = () => {
-    setSortDesc((prev) => !prev);
-    setPage(1);
-  };
 
   return (
     <div
@@ -109,7 +94,7 @@ function DuesTransactionTable({
               <button
                 key={tab.key}
                 type="button"
-                onClick={() => handleTabChange(tab.key)}
+                onClick={() => onTabChange(tab.key)}
                 className={cn(
                   'typo-button2 min-w-10 cursor-pointer rounded-[10px] px-400 py-200 transition-colors',
                   activeTab === tab.key
@@ -124,7 +109,7 @@ function DuesTransactionTable({
 
           <button
             type="button"
-            onClick={handleSortToggle}
+            onClick={onSortToggle}
             className="typo-button2 border-line text-text-normal hover:bg-container-neutral-interaction min-w-10 cursor-pointer rounded-[10px] border px-400 py-200 transition-colors"
           >
             {sortDesc ? '최근 순' : '오래된 순'}
@@ -150,14 +135,14 @@ function DuesTransactionTable({
               </TableRow>
             </TableHeader>
             <TableBody>
-              {paged.length === 0 ? (
+              {transactions.length === 0 ? (
                 <TableRow className="hover:bg-transparent">
                   <TableCell colSpan={8} className="py-700 text-center">
                     <span className="typo-body2 text-text-alternative">거래 내역이 없습니다.</span>
                   </TableCell>
                 </TableRow>
               ) : (
-                paged.map((tx) => (
+                transactions.map((tx) => (
                   <TableRow
                     key={tx.id}
                     onClick={() => onMoreClick?.(tx)}
@@ -218,7 +203,7 @@ function DuesTransactionTable({
         </div>
 
         {totalPages > 1 && (
-          <DuesPagination page={currentPage} totalPages={totalPages} onPageChange={setPage} />
+          <DuesPagination page={page} totalPages={totalPages} onPageChange={onPageChange} />
         )}
       </div>
 
@@ -247,6 +232,5 @@ export {
   DuesTransactionTable,
   TRANSACTION_TYPE_TAG,
   type DuesTransactionTableProps,
-  type DuesTransaction,
   type TransactionType,
 };

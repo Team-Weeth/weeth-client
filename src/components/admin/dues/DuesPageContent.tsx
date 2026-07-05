@@ -4,7 +4,7 @@ import { useState } from 'react';
 
 import { useParams, useRouter } from 'next/navigation';
 
-import type { MonthlyData, DuesTransaction } from '@/types/admin/dues';
+import type { MonthlyData, DuesTransaction, TransactionFilter } from '@/types/admin/dues';
 import { useCardinalSelector } from '@/hooks';
 import { isDuesNotRegisteredError, useDuesDashboardQuery } from '@/hooks/queries/admin';
 import { useDuesSetupActions } from '@/stores/useDuesSetupStore';
@@ -72,7 +72,31 @@ function DuesPageContent() {
   );
   const isNotRegistered = isDuesNotRegisteredError(dashboardError);
 
-  const { data: transactions } = useAdminDuesTransactionsQuery(clubId, dashboard?.accountId ?? 0);
+  // 거래내역 필터/정렬/페이지 — 서버 파라미터로 전달 (page는 UI 1-base → API 0-base 변환)
+  const [txFilter, setTxFilter] = useState<TransactionFilter>('ALL');
+  const [txSortDesc, setTxSortDesc] = useState(true);
+  const [txPage, setTxPage] = useState(1);
+
+  const { data: transactionsData } = useAdminDuesTransactionsQuery(
+    clubId,
+    dashboard?.accountId ?? 0,
+    {
+      filter: txFilter,
+      sort: txSortDesc ? 'LATEST' : 'OLDEST',
+      page: txPage - 1,
+      size: 10,
+    },
+  );
+
+  const handleTxTabChange = (tab: TransactionFilter) => {
+    setTxFilter(tab);
+    setTxPage(1);
+  };
+
+  const handleTxSortToggle = () => {
+    setTxSortDesc((prev) => !prev);
+    setTxPage(1);
+  };
 
   const { mutate: createTransaction } = useCreateTransaction(clubId, dashboard?.accountId ?? null, {
     onSuccess: () => toastSuccess('거래내역이 추가되었습니다.'),
@@ -191,7 +215,18 @@ function DuesPageContent() {
           activeIncome={activeBalance?.income ?? 0}
         />
       </div>
-      <DuesTransactionTable transactions={transactions ?? []} onMoreClick={handleMoreClick} />
+      <DuesTransactionTable
+        transactions={transactionsData?.transactions ?? []}
+        counts={transactionsData?.counts ?? { all: 0, expense: 0, income: 0, dues: 0 }}
+        activeTab={txFilter}
+        onTabChange={handleTxTabChange}
+        sortDesc={txSortDesc}
+        onSortToggle={handleTxSortToggle}
+        page={txPage}
+        totalPages={transactionsData?.totalPages ?? 1}
+        onPageChange={setTxPage}
+        onMoreClick={handleMoreClick}
+      />
 
       <AddTransactionModal
         open={addOpen}
