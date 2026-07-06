@@ -35,6 +35,7 @@ function useImagePreview({ initialImageUrl, onFileChange, onResetImage }: UseIma
     setPreviewUrl(url);
     setIsReset(false);
     onFileChange?.(file);
+    e.target.value = '';
   };
 
   const handleReset = () => {
