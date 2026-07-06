@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 
-import { useParams, useRouter } from 'next/navigation';
+import { useParams } from 'next/navigation';
 
 import { CopyIcon } from '@/assets/icons';
 import { Card, Icon } from '@/components/ui';
@@ -112,7 +112,6 @@ function AccountCard({
 }
 
 function DuesPaymentStatusPageContent() {
-  const router = useRouter();
   const { clubId } = useParams<{ clubId: string }>();
   const { activeCardinal } = useCardinalSelector({ autoSelectLatest: true });
   const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
@@ -219,9 +218,6 @@ function DuesPaymentStatusPageContent() {
           members={members}
           selectedIds={selectedIds}
           onSelectionChange={setSelectedIds}
-          onViewMember={(member) => {
-            router.push(`/${clubId}/admin/member/${member.id}`);
-          }}
         />
       </div>
     </div>

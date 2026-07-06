@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 
-import { ArrowRightIcon, CheckIcon } from '@/assets/icons';
+import { CheckIcon } from '@/assets/icons';
 import {
   Icon,
   Table,
@@ -36,12 +36,10 @@ const COLUMNS = [
   { key: 'major', label: '학과', className: 'min-w-32' },
   { key: 'phone', label: '연락처', className: 'w-[148px]' },
   { key: 'status', label: '납부 현황', className: 'w-32' },
-  { key: 'action', label: '', className: 'w-[109px]' },
 ] as const;
 
 interface DuesMemberPaymentTableProps extends React.HTMLAttributes<HTMLDivElement> {
   members: DuesMember[];
-  onViewMember?: (member: DuesMember) => void;
   selectedIds: Set<number>;
   onSelectionChange: (ids: Set<number>) => void;
 }
@@ -49,7 +47,6 @@ interface DuesMemberPaymentTableProps extends React.HTMLAttributes<HTMLDivElemen
 function DuesMemberPaymentTable({
   className,
   members,
-  onViewMember,
   selectedIds,
   onSelectionChange,
   ...props
@@ -172,7 +169,7 @@ function DuesMemberPaymentTable({
             <TableBody>
               {paged.length === 0 ? (
                 <TableRow className="hover:bg-transparent">
-                  <TableCell colSpan={6} className="py-700 text-center">
+                  <TableCell colSpan={COLUMNS.length} className="py-700 text-center">
                     <span className="typo-body2 text-text-alternative">
                       해당하는 부원이 없습니다.
                     </span>
@@ -190,28 +187,35 @@ function DuesMemberPaymentTable({
                     className="border-line hover:bg-container-neutral-interaction border-t"
                   >
                     <TableCell>
-                      <button
-                        type="button"
-                        onClick={() => toggleSelect(member.id, member.status)}
-                        disabled={isDisabled}
-                        aria-label={isSelected ? '선택 해제' : '선택'}
-                        title={isDisabled ? '납부 상태가 같은 부원끼리만 선택할 수 있어요.' : undefined}
-                        className={cn(
-                          'flex items-center justify-center',
-                          isDisabled ? 'cursor-not-allowed opacity-40' : 'cursor-pointer',
-                        )}
+                      {/* disabled 버튼은 title 툴팁이 뜨지 않으므로 span으로 감싸 안내를 노출한다. */}
+                      <span
+                        title={
+                          isDisabled ? '납부 상태가 같은 부원끼리만 선택할 수 있어요.' : undefined
+                        }
+                        className="inline-flex"
                       >
-                        <div
+                        <button
+                          type="button"
+                          onClick={() => toggleSelect(member.id, member.status)}
+                          disabled={isDisabled}
+                          aria-label={isSelected ? '선택 해제' : '선택'}
                           className={cn(
-                            'flex h-4 w-4 items-center justify-center rounded-[3px] border transition-colors',
-                            isSelected
-                              ? 'border-brand-primary bg-brand-primary'
-                              : 'border-button-neutral',
+                            'flex items-center justify-center',
+                            isDisabled ? 'cursor-not-allowed opacity-40' : 'cursor-pointer',
                           )}
                         >
-                          {isSelected && <Icon src={CheckIcon} alt="" size={10} />}
-                        </div>
-                      </button>
+                          <div
+                            className={cn(
+                              'flex h-4 w-4 items-center justify-center rounded-[3px] border transition-colors',
+                              isSelected
+                                ? 'border-brand-primary bg-brand-primary'
+                                : 'border-button-neutral',
+                            )}
+                          >
+                            {isSelected && <Icon src={CheckIcon} alt="" size={10} />}
+                          </div>
+                        </button>
+                      </span>
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center gap-400">
@@ -230,16 +234,6 @@ function DuesMemberPaymentTable({
                     <TableCell>
                       <PaymentStatusBadge status={member.status} />
                     </TableCell>
-                    {/* <TableCell>
-                      <button
-                        type="button"
-                        onClick={() => onViewMember?.(member)}
-                        className="text-text-alternative hover:text-text-normal typo-button2 flex cursor-pointer items-center gap-100 transition-colors"
-                      >
-                        <span>멤버정보</span>
-                        <Icon src={ArrowRightIcon} alt="" size={12} />
-                      </button>
-                    </TableCell> */}
                   </TableRow>
                   );
                 })

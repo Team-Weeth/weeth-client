@@ -11,6 +11,7 @@ import type {
   TransactionItem,
 } from '@/types/admin/dues';
 import { useCardinalSelector } from '@/hooks';
+import { useDuesVisibilityToggle } from '@/hooks/admin';
 import { isDuesNotRegisteredError, useDuesDashboardQuery } from '@/hooks/queries/admin';
 import { useDuesSetupActions } from '@/stores/useDuesSetupStore';
 import { DuesPageSkeleton } from './DuesPageSkeleton';
@@ -33,7 +34,6 @@ import {
 import {
   useCreateTransaction,
   useDeleteTransaction,
-  useUpdateMemberVisibility,
   useUpdateTransaction,
 } from '@/hooks/mutations/admin/useAdminDuesMutations';
 import { toastError, toastSuccess } from '@/stores/useToastStore';
@@ -79,9 +79,6 @@ function detailToTransactionDetail(detail: TransactionItem): TransactionDetail {
 }
 
 function DuesPageContent() {
-  // TODO: 대시보드 응답에 부원 공개 여부(member-visibility) 필드 추가 요청함(백엔드 대기 중).
-  // 추가되면 useState(true) 기본값 대신 dashboard 값으로 초기화할 것.
-  const [isPublic, setIsPublic] = useState(true);
   const [activeMonth, setActiveMonth] = useState('');
   const { cardinals, setSelectedCardinalId, activeCardinal } = useCardinalSelector({
     autoSelectLatest: true,
@@ -139,21 +136,10 @@ function DuesPageContent() {
     onError: () => toastError('거래내역 삭제에 실패했습니다.'),
   });
 
-  const { mutate: updateMemberVisibility } = useUpdateMemberVisibility(
+  const { isPublic, handlePublicChange } = useDuesVisibilityToggle(
     clubId,
     dashboard?.accountId ?? null,
-    {
-      onError: () => toastError('공개 설정 변경에 실패했습니다.'),
-    },
   );
-
-  // 낙관적 업데이트: 스위치는 즉시 반영하고, 실패 시 이전 값으로 되돌린다.
-  const handlePublicChange = (value: boolean) => {
-    setIsPublic(value);
-    updateMemberVisibility(value, {
-      onError: () => setIsPublic(!value),
-    });
-  };
 
   // 월별 잔액 추이 차트 데이터 (yearMonth → 'N월', endingBalance → 막대 높이)
   const monthlyData: MonthlyData[] =
@@ -216,9 +202,10 @@ function DuesPageContent() {
     setEditOpen(true);
   };
 
-  // 대시보드 로딩 중(기수 선택 대기 포함)에는 스켈레톤을 노출한다.
+  // 기수가 선택된 상태에서 대시보드 로딩 중일 때만 스켈레톤을 노출한다.
+  // 기수가 하나도 없으면 activeCardinal이 계속 null(쿼리 skipToken)이라 스켈레톤이 무한 노출되므로 제외한다.
   // 등록 미완료(20112)는 에러 상태라 isPending=false이므로 아래 튜토리얼 모달 흐름으로 넘어간다.
-  if (isDashboardPending) {
+  if (activeCardinal && isDashboardPending) {
     return <DuesPageSkeleton />;
   }
 

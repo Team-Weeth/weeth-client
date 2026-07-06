@@ -8,13 +8,12 @@ import { useQuery } from '@tanstack/react-query';
 
 import { Switch } from '@/components/ui';
 import { useCardinalSelector } from '@/hooks';
+import { useDuesVisibilityToggle } from '@/hooks/admin';
 import {
   duesRegistrationStatusQueryOptions,
   useDuesDashboardQuery,
   useDuesPaymentTargetsQuery,
 } from '@/hooks/queries/admin';
-import { useUpdateMemberVisibility } from '@/hooks/mutations/admin/useAdminDuesMutations';
-import { toastError } from '@/stores/useToastStore';
 
 import { BackButton } from './BackButton';
 import { PaymentTargetModal } from './modal/PaymentTargetModal';
@@ -50,22 +49,9 @@ function DuesSettingPageContent() {
   const { data: status } = useQuery(duesRegistrationStatusQueryOptions(clubId, accountId));
   const { data: paymentTargets } = useDuesPaymentTargetsQuery(clubId, accountId);
 
-  // TODO: 대시보드 응답에 부원 공개 여부(member-visibility) 필드 추가 요청함(백엔드 대기 중).
-  // 추가되면 useState(true) 기본값 대신 서버 값으로 초기화할 것.
-  const [isPublic, setIsPublic] = useState(true);
   const [isPaymentTargetModalOpen, setIsPaymentTargetModalOpen] = useState(false);
 
-  const { mutate: updateMemberVisibility } = useUpdateMemberVisibility(clubId, accountId, {
-    onError: () => toastError('공개 설정 변경에 실패했습니다.'),
-  });
-
-  // 낙관적 업데이트: 스위치는 즉시 반영하고, 실패 시 이전 값으로 되돌린다.
-  const handlePublicChange = (value: boolean) => {
-    setIsPublic(value);
-    updateMemberVisibility(value, {
-      onError: () => setIsPublic(!value),
-    });
-  };
+  const { isPublic, handlePublicChange } = useDuesVisibilityToggle(clubId, accountId);
 
   const cardinalNumber = activeCardinal?.cardinalNumber ?? 0;
 
@@ -77,9 +63,6 @@ function DuesSettingPageContent() {
   const remainingCount = Math.max(0, targetedMembers.length - MAX_AVATAR_DISPLAY);
 
   const hasPreviousBalance = status?.previousAccountBalance != null;
-
-  // TODO: 카드별 "수정" 동작 연결 예정. (온보딩 스텝 이동은 하지 않기로 함)
-  const handleEditStep = () => {};
 
   return (
     <div className="tablet:p-700 flex min-w-85 flex-col gap-700 p-400">
@@ -110,7 +93,6 @@ function DuesSettingPageContent() {
             bankName={status?.bankAccount?.bankAccount?.bankName ?? undefined}
             accountHolder={status?.bankAccount?.bankAccount?.holder ?? undefined}
             accountGuide={status?.bankAccount?.bankAccount?.guide ?? undefined}
-            onEditStep={handleEditStep}
           />
         </SettingSection>
 
