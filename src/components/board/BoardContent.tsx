@@ -24,9 +24,15 @@ function toDisplayImages(files: FileItem[]) {
 
 interface BoardContentProps {
   boardId: number | null;
+  onlyCurrentUser?: boolean;
+  emptyMessage?: string;
 }
 
-function BoardContent({ boardId }: BoardContentProps) {
+function BoardContent({
+  boardId,
+  onlyCurrentUser = false,
+  emptyMessage = '아직 게시글이 없습니다.',
+}: BoardContentProps) {
   const router = useRouter();
   const { clubId } = useParams<{ clubId: string }>();
   const currentUserId = useUserId();
@@ -43,6 +49,10 @@ function BoardContent({ boardId }: BoardContentProps) {
   const { ref: sentinelRef, isIntersecting } = useIntersectionObserver({
     rootMargin: '200px',
   });
+  const filteredPosts =
+    onlyCurrentUser && currentUserId != null
+      ? posts?.filter((post) => post.author.id === currentUserId)
+      : posts;
 
   useEffect(() => {
     if (!isError || !error) return;
@@ -72,16 +82,16 @@ function BoardContent({ boardId }: BoardContentProps) {
       </main>
     );
 
-  if (!posts || posts.length === 0)
+  if (!filteredPosts || filteredPosts.length === 0)
     return (
       <main className="flex min-w-0 flex-1 flex-col items-center justify-center py-800">
-        <p className="typo-body1 text-text-alternative">아직 게시글이 없습니다.</p>
+        <p className="typo-body1 text-text-alternative">{emptyMessage}</p>
       </main>
     );
 
   return (
     <main className="flex min-w-0 flex-1 flex-col gap-400">
-      {posts.map((post) => (
+      {filteredPosts.map((post) => (
         <PostCard.Root key={post.id} className="relative">
           <PostCard.Header>
             <PostCard.Author

@@ -64,3 +64,8 @@ export { default as RushIcon } from './rush.svg';
 export { default as QuestionCircleIcon } from './question_circle.svg';
 export { default as DotIcon } from './dot.svg';
 export { default as EmptyListIcon } from './empty_list.svg';
+export { default as PhoneIcon } from './phone.svg';
+export { default as MailIcon } from './mail.svg';
+export { default as SettingIcon } from './setting.svg';
+export { default as AddRoundIcon } from './add_round.svg';
+export { default as CalendarIcon } from './calendar.svg';

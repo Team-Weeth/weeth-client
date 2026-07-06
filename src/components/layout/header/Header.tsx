@@ -5,6 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useParams, usePathname, useRouter } from 'next/navigation';
 import { LogoGrayIcon, ExitToAppIcon } from '@/assets/icons';
+import { shouldHideMobileHeaderOnMyPage } from '@/constants/mypage/routes';
 import { cn } from '@/lib/cn';
 import { useClubName, useUserProfileImageUrl } from '@/stores';
 import { PostingActions } from './PostingActions';
@@ -32,6 +33,7 @@ export default function Header({ isMain = true }: HeaderProps) {
   const profileImageUrl = useUserProfileImageUrl();
   const { isAdmin } = useIsAdmin();
   const isPostingPage = pathname.includes('/write') || /\/board\/edit\/\d+$/.test(pathname);
+  const shouldHideMobileHeader = shouldHideMobileHeaderOnMyPage(pathname, clubId);
 
   const NAV_ITEMS = [
     { id: 'board', label: '게시판', href: `/${clubId}/board` },
@@ -65,56 +67,58 @@ export default function Header({ isMain = true }: HeaderProps) {
         visible ? 'translate-y-0' : '-translate-y-full',
       )}
     >
-      <header className="tablet:hidden bg-background flex items-center justify-between gap-100 py-3 pr-450 pl-200">
-        {isMain && (
-          <div className="flex items-center justify-center gap-100">
-            <MobileNavSheet />
-            <span className="typo-sub1 text-text-normal px-1">{clubName}</span>
-          </div>
-        )}
-        {isMain && clubId && (
-          <div className="flex items-center justify-center gap-200">
-            {isPostingPage ? (
-              <PostingActions />
-            ) : (
-              <>
-                <MobileWriteButton />
-                {isAdmin && (
+      {!shouldHideMobileHeader && (
+        <header className="tablet:hidden bg-background flex items-center justify-between gap-100 py-3 pr-450 pl-200">
+          {isMain && (
+            <div className="flex items-center justify-center gap-100">
+              <MobileNavSheet />
+              <span className="typo-sub1 text-text-normal px-1">{clubName}</span>
+            </div>
+          )}
+          {isMain && clubId && (
+            <div className="flex items-center justify-center gap-200">
+              {isPostingPage ? (
+                <PostingActions />
+              ) : (
+                <>
+                  <MobileWriteButton />
+                  {isAdmin && (
+                    <button
+                      type="button"
+                      aria-label="운영진 페이지로 이동"
+                      onClick={() => router.push(`/${clubId}/admin`)}
+                      className="flex cursor-pointer items-center justify-center rounded-full"
+                    >
+                      <Icon
+                        src={ExitToAppIcon}
+                        alt="avatar"
+                        size={40}
+                        className="text-icon-normal p-2"
+                      />
+                    </button>
+                  )}
                   <button
                     type="button"
-                    aria-label="운영진 페이지로 이동"
-                    onClick={() => router.push(`/${clubId}/admin`)}
-                    className="flex cursor-pointer items-center justify-center rounded-full"
+                    aria-label="마이페이지로 이동"
+                    onClick={() => router.push(`/${clubId}/mypage`)}
+                    className="cursor-pointer rounded-full"
                   >
-                    <Icon
-                      src={ExitToAppIcon}
-                      alt="avatar"
-                      size={40}
-                      className="text-icon-normal p-2"
-                    />
+                    <Avatar size={40} type="round">
+                      <AvatarImage
+                        key={profileImageUrl ?? 'fallback'}
+                        src={profileImageUrl ?? undefined}
+                        alt="avatar"
+                        className="object-cover"
+                      />
+                      <AvatarFallback />
+                    </Avatar>
                   </button>
-                )}
-                <button
-                  type="button"
-                  aria-label="마이페이지로 이동"
-                  onClick={() => router.push(`/${clubId}/mypage`)}
-                  className="cursor-pointer rounded-full"
-                >
-                  <Avatar size={40} type="round">
-                    <AvatarImage
-                      key={profileImageUrl ?? 'fallback'}
-                      src={profileImageUrl ?? undefined}
-                      alt="avatar"
-                      className="object-cover"
-                    />
-                    <AvatarFallback />
-                  </Avatar>
-                </button>
-              </>
-            )}
-          </div>
-        )}
-      </header>
+                </>
+              )}
+            </div>
+          )}
+        </header>
+      )}
       <header className="tablet:flex bg-background hidden w-full items-center justify-between px-5 py-3">
         <div className="flex items-center gap-4">
           <Logo href={isMain ? `/${clubId}/home` : '/'} />
