@@ -11,7 +11,7 @@ import {
 import { AdminMeatballIcon } from '@/assets/icons/admin';
 import { WithdrawConfirmDialog } from './WithdrawConfirmDialog';
 
-function MyPageDropdownMenu() {
+function LeaveClubDropdownMenu() {
   const [withdrawOpen, setWithdrawOpen] = useState(false);
 
   return (
@@ -38,4 +38,4 @@ function MyPageDropdownMenu() {
   );
 }
 
-export { MyPageDropdownMenu };
+export { LeaveClubDropdownMenu };

@@ -7,7 +7,7 @@ import { Avatar, AvatarFallback, AvatarImage, Button, Divider, Icon, Tag } from 
 import { ArrowRightIcon, PeopleIcon } from '@/assets/icons';
 import type { ClubDto } from '@/types/mypage';
 import { cardClass } from './InfoCard';
-import { MyPageDropdownMenu } from './LeaveClubDropdownMenu';
+import { LeaveClubDropdownMenu } from './LeaveClubDropdownMenu';
 import { useRouter } from 'next/navigation';
 
 const SetCardinalModal = dynamic(() =>
@@ -40,7 +40,7 @@ function ClubInfoCard({ club, className }: ClubInfoCardProps) {
                   <AvatarFallback variant="club" />
                 </Avatar>
               </div>
-              <MyPageDropdownMenu />
+              <LeaveClubDropdownMenu />
             </div>
 
             <div className="flex flex-col">
@@ -53,7 +53,7 @@ function ClubInfoCard({ club, className }: ClubInfoCardProps) {
                 </p>
               )}
               <div className="text-text-alternative mb-300 flex items-center gap-100">
-                <Icon src={PeopleIcon} size={16} className="text-icon-altenative" />
+                <Icon src={PeopleIcon} size={16} className="text-icon-alternative" />
                 <span className="typo-caption1 text-text-alternative">{club.memberCount}명</span>
               </div>
               <div className="bg-container-neutral-alternative flex gap-2 rounded-md px-400 py-300">
