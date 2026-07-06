@@ -81,14 +81,14 @@ function ProfileManageCard({ clubId }: { clubId: string }) {
     <>
       <Link
         href={`/${clubId}/mypage/profiles`}
-        className="tablet:flex bg-container-neutral-alternative hidden h-[220px] flex-col items-center justify-center gap-2 rounded-lg p-450"
+        className="tablet:flex bg-container-neutral-alternative hover:bg-container-neutral-interaction hidden h-[220px] flex-col items-center justify-center gap-2 rounded-lg p-450"
       >
         <Icon src={SettingIcon} size={32} className="text-icon-normal" />
         <span className="typo-button1 text-text-strong">프로필 관리</span>
       </Link>
       <Link
         href={`/${clubId}/mypage/profiles`}
-        className="bg-container-neutral-alternative tablet:hidden tablet:h-[128px] tablet:w-[140px] flex shrink-0 items-center justify-center gap-3 rounded-md px-400 py-300"
+        className="bg-container-neutral-alternative hover:bg-container-neutral-interaction tablet:hidden tablet:h-[128px] tablet:w-[140px] flex shrink-0 items-center justify-center gap-3 rounded-md px-400 py-300"
       >
         <Icon src={SettingIcon} size={20} className="text-icon-normal" />
         <span className="typo-button1 text-text-strong">프로필 관리</span>
