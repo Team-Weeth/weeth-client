@@ -2,7 +2,8 @@
 
 import { DeleteIcon } from '@/assets/icons';
 import { Button, Dialog, DialogContent, DialogTitle, Icon } from '@/components/ui';
-import { ThemeModeSelector, type ThemeMode } from './ThemeModeSelector';
+import type { ThemeMode } from '@/types/theme';
+import { ThemeModeSelector } from './ThemeModeSelector';
 
 interface ThemeModeModalProps {
   open: boolean;

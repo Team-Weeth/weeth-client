@@ -6,7 +6,8 @@ import { BackIcon } from '@/assets/icons';
 import { useThemeStore } from '@/stores/theme-store';
 import { Button, Icon } from '@/components/ui';
 import { cn } from '@/lib/cn';
-import { ThemeModeSelector, type ThemeMode } from './ThemeModeSelector';
+import type { ThemeMode } from '@/types/theme';
+import { ThemeModeSelector } from './ThemeModeSelector';
 
 type ThemeModePageContentProps = React.HTMLAttributes<HTMLDivElement>;
 

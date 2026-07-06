@@ -7,8 +7,7 @@ import ThemeDarkImage from '@/assets/image/theme/theme_dark.png';
 import ThemeLightImage from '@/assets/image/theme/theme_light.png';
 import { Icon } from '@/components/ui';
 import { cn } from '@/lib/cn';
-
-type ThemeMode = 'auto' | 'light' | 'dark';
+import type { ThemeMode } from '@/types/theme';
 
 const THEME_MODE_OPTIONS: {
   value: ThemeMode;
@@ -39,7 +38,7 @@ function ThemePreviewCard({
     <div className="flex flex-col items-center gap-2">
       <div
         className={cn(
-          'tablet:tablet:h-[72px] tablet:w-[104px] h-[110px] w-[160px] overflow-hidden rounded-[10px] transition-colors',
+          'tablet:h-[72px] tablet:w-[104px] h-[110px] w-[160px] overflow-hidden rounded-[10px] transition-colors',
           selected ? 'ring-button-primary ring-2' : 'ring-0',
         )}
       >
