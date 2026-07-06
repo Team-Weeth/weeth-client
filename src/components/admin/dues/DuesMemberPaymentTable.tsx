@@ -102,10 +102,21 @@ function DuesMemberPaymentTable({
     setPage(1);
   };
 
-  const toggleSelect = (id: number) => {
+  // 현재 선택된 멤버들의 납부 상태(모두 동일하게 유지된다). 선택이 없으면 null.
+  const selectedStatus: PaymentStatus | null =
+    selectedIds.size === 0
+      ? null
+      : (members.find((m) => selectedIds.has(m.id))?.status ?? null);
+
+  const toggleSelect = (id: number, status: PaymentStatus) => {
     const next = new Set(selectedIds);
-    if (next.has(id)) next.delete(id);
-    else next.add(id);
+    if (next.has(id)) {
+      next.delete(id);
+    } else {
+      // 첫 선택 상태와 다른 상태는 함께 선택할 수 없다(벌크 액션이 일부에게 무의미해지는 것 방지).
+      if (selectedStatus !== null && status !== selectedStatus) return;
+      next.add(id);
+    }
     onSelectionChange(next);
   };
 
@@ -168,7 +179,12 @@ function DuesMemberPaymentTable({
                   </TableCell>
                 </TableRow>
               ) : (
-                paged.map((member) => (
+                paged.map((member) => {
+                  const isSelected = selectedIds.has(member.id);
+                  // 선택 진행 중이고, 현재 선택 상태와 다른 상태의 멤버는 함께 선택할 수 없다.
+                  const isDisabled =
+                    !isSelected && selectedStatus !== null && member.status !== selectedStatus;
+                  return (
                   <TableRow
                     key={member.id}
                     className="border-line hover:bg-container-neutral-interaction border-t"
@@ -176,19 +192,24 @@ function DuesMemberPaymentTable({
                     <TableCell>
                       <button
                         type="button"
-                        onClick={() => toggleSelect(member.id)}
-                        aria-label={selectedIds.has(member.id) ? '선택 해제' : '선택'}
-                        className="flex cursor-pointer items-center justify-center"
+                        onClick={() => toggleSelect(member.id, member.status)}
+                        disabled={isDisabled}
+                        aria-label={isSelected ? '선택 해제' : '선택'}
+                        title={isDisabled ? '납부 상태가 같은 부원끼리만 선택할 수 있어요.' : undefined}
+                        className={cn(
+                          'flex items-center justify-center',
+                          isDisabled ? 'cursor-not-allowed opacity-40' : 'cursor-pointer',
+                        )}
                       >
                         <div
                           className={cn(
                             'flex h-4 w-4 items-center justify-center rounded-[3px] border transition-colors',
-                            selectedIds.has(member.id)
+                            isSelected
                               ? 'border-brand-primary bg-brand-primary'
                               : 'border-button-neutral',
                           )}
                         >
-                          {selectedIds.has(member.id) && <Icon src={CheckIcon} alt="" size={10} />}
+                          {isSelected && <Icon src={CheckIcon} alt="" size={10} />}
                         </div>
                       </button>
                     </TableCell>
@@ -220,7 +241,8 @@ function DuesMemberPaymentTable({
                       </button>
                     </TableCell> */}
                   </TableRow>
-                ))
+                  );
+                })
               )}
             </TableBody>
           </Table>
