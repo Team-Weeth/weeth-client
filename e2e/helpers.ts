@@ -35,6 +35,20 @@ export async function resolveClubId(page: Page): Promise<string> {
 }
 
 /**
+ * E2E 테스트 중 생성된 게시글을 정리한다.
+ * afterAll에서 호출하며, 실패해도 테스트 결과에 영향을 주지 않는다.
+ */
+export async function deletePost(clubId: string, boardId: string, postId: string): Promise<void> {
+  const baseUrl = process.env.NEXT_PUBLIC_API_URL ?? 'https://api-dev.v4.weeth.kr';
+  const token = process.env.DEV_ACCESS_TOKEN;
+  if (!token) return;
+  await fetch(`${baseUrl}/clubs/${clubId}/boards/${boardId}/posts/${postId}`, {
+    method: 'DELETE',
+    headers: { Authorization: `Bearer ${token}` },
+  }).catch(() => {});
+}
+
+/**
  * 게시글 작성/수정 페이지로 이동한 뒤 ProseMirror 에디터 Locator를 반환한다.
  * Editor는 dynamic import(ssr:false)로 로드되므로 최대 15초 대기한다.
  */
