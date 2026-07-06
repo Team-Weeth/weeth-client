@@ -81,4 +81,4 @@ function DuesTransactionItemSkeleton() {
   );
 }
 
-export { DuesPageSkeleton };
+export { DuesLeftSectionSkeleton, DuesPageSkeleton, DuesTransactionSectionSkeleton };

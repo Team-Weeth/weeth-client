@@ -2,9 +2,14 @@ import { useState } from 'react';
 
 interface UseImageDropOptions {
   onDrop: (file: File) => void;
+  accept?: (file: File) => boolean;
 }
 
-function useImageDrop({ onDrop }: UseImageDropOptions) {
+function isImageFile(file: File) {
+  return file.type.startsWith('image/');
+}
+
+function useImageDrop({ onDrop, accept = isImageFile }: UseImageDropOptions) {
   const [isDragging, setIsDragging] = useState(false);
 
   const dragHandlers = {
@@ -20,7 +25,7 @@ function useImageDrop({ onDrop }: UseImageDropOptions) {
       e.preventDefault();
       setIsDragging(false);
       const file = e.dataTransfer.files?.[0];
-      if (file && file.type.startsWith('image/')) {
+      if (file && accept(file)) {
         onDrop(file);
       }
     },
