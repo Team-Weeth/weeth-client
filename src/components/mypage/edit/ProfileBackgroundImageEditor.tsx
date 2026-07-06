@@ -1,6 +1,5 @@
 'use client';
 
-import { useRef, useState } from 'react';
 import Image from 'next/image';
 import { CameraIcon } from '@/assets/icons';
 import {
@@ -11,12 +10,14 @@ import {
   DropdownMenuTrigger,
   Icon,
 } from '@/components/ui';
+import { useImagePreview } from '@/hooks/mypage';
 import { cn } from '@/lib/cn';
 
 interface ProfileBackgroundImageEditorProps {
   backgroundImageUrl?: string;
   onFileChange?: (file: File) => void;
   onResetImage?: () => void;
+  priority?: boolean;
   className?: string;
   imageClassName?: string;
   triggerClassName?: string;
@@ -28,39 +29,18 @@ function ProfileBackgroundImageEditor({
   backgroundImageUrl,
   onFileChange,
   onResetImage,
+  priority = false,
   className,
   imageClassName,
   triggerClassName,
   triggerIconClassName,
   triggerIconSize = 16,
 }: ProfileBackgroundImageEditorProps) {
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const previewUrlRef = useRef<string | null>(null);
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-  const [isReset, setIsReset] = useState(false);
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    if (previewUrlRef.current) URL.revokeObjectURL(previewUrlRef.current);
-    const url = URL.createObjectURL(file);
-    previewUrlRef.current = url;
-    setPreviewUrl(url);
-    setIsReset(false);
-    onFileChange?.(file);
-  };
-
-  const handleReset = () => {
-    if (previewUrlRef.current) {
-      URL.revokeObjectURL(previewUrlRef.current);
-      previewUrlRef.current = null;
-    }
-    setPreviewUrl(null);
-    setIsReset(true);
-    onResetImage?.();
-  };
-
-  const displayUrl = isReset ? null : (previewUrl ?? backgroundImageUrl ?? null);
+  const { fileInputRef, displayUrl, isPreview, handleChange, handleReset } = useImagePreview({
+    initialImageUrl: backgroundImageUrl,
+    onFileChange,
+    onResetImage,
+  });
 
   return (
     <div className={cn('bg-brand-primary relative overflow-hidden rounded-t-[12px]', className)}>
@@ -69,7 +49,8 @@ function ProfileBackgroundImageEditor({
           src={displayUrl}
           alt=""
           fill
-          unoptimized
+          priority={priority}
+          unoptimized={isPreview}
           className={cn('absolute inset-0 object-cover', imageClassName)}
         />
       )}

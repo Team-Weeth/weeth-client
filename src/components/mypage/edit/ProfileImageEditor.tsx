@@ -1,6 +1,5 @@
 'use client';
 
-import { useRef, useState } from 'react';
 import {
   Icon,
   DropdownMenu,
@@ -13,6 +12,7 @@ import {
   AvatarImage,
 } from '@/components/ui';
 import { CameraIcon } from '@/assets/icons';
+import { useImagePreview } from '@/hooks/mypage';
 import { cn } from '@/lib/cn';
 import type { AvatarProps } from '@/components/ui';
 
@@ -43,33 +43,11 @@ function ProfileImageEditor({
   triggerIconClassName,
   triggerIconSize = 16,
 }: ProfileImageEditorProps) {
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const previewUrlRef = useRef<string | null>(null);
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-  const [isReset, setIsReset] = useState(false);
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    if (previewUrlRef.current) URL.revokeObjectURL(previewUrlRef.current);
-    const url = URL.createObjectURL(file);
-    previewUrlRef.current = url;
-    setPreviewUrl(url);
-    setIsReset(false);
-    onFileChange?.(file);
-  };
-
-  const handleReset = () => {
-    if (previewUrlRef.current) {
-      URL.revokeObjectURL(previewUrlRef.current);
-      previewUrlRef.current = null;
-    }
-    setPreviewUrl(null);
-    setIsReset(true);
-    onResetImage?.();
-  };
-
-  const displayUrl = isReset ? null : (previewUrl ?? profileImageUrl ?? null);
+  const { fileInputRef, displayUrl, handleChange, handleReset } = useImagePreview({
+    initialImageUrl: profileImageUrl,
+    onFileChange,
+    onResetImage,
+  });
 
   return (
     <div className={cn('relative inline-block', className)}>
