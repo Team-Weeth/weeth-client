@@ -1,6 +1,7 @@
 import { BackIcon } from '@/assets/icons';
 import { Icon } from '@/components/ui';
 import { cn } from '@/lib/cn';
+import type { PaymentStatus } from '@/types/admin/dues';
 
 interface MemberActionButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   ref?: React.Ref<HTMLButtonElement>;
@@ -25,6 +26,8 @@ function MemberActionButton({ className, ref, ...props }: MemberActionButtonProp
 interface MemberSelectHeaderProps {
   /** 현재 선택된 부원 수 */
   selectedCount: number;
+  /** 현재 선택된 부원들의 납부 상태(선택은 동일 상태로만 이루어진다) */
+  selectedStatus: PaymentStatus;
   /** 선택 해제 */
   onClear: () => void;
   /** 납부 정정 */
@@ -37,16 +40,22 @@ interface MemberSelectHeaderProps {
 
 function MemberSelectHeader({
   selectedCount,
+  selectedStatus,
   onClear,
   onMarkUnpaid,
   onRefund,
   onMarkPaid,
 }: MemberSelectHeaderProps) {
-  const actions = [
-    { label: '납부 정정', onClick: onMarkUnpaid },
-    { label: '환불 처리', onClick: onRefund },
-    { label: '납부 완료', onClick: onMarkPaid },
-  ];
+  // 벌크 액션은 선택된 납부 상태에 따라 유효한 것만 노출한다.
+  // - 납부 정정·환불 처리: 이미 납부된(paid) 대상에만 의미가 있다.
+  // - 납부 완료: 아직 미납(unpaid) 대상에만 의미가 있다.
+  const actions =
+    selectedStatus === 'paid'
+      ? [
+          { label: '납부 정정', onClick: onMarkUnpaid },
+          { label: '환불 처리', onClick: onRefund },
+        ]
+      : [{ label: '납부 완료', onClick: onMarkPaid }];
 
   return (
     <div className="bg-container-primary tablet:px-400 sticky top-0 z-10 -mt-15 flex h-15 items-center justify-between gap-200 px-300">

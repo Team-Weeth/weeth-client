@@ -252,6 +252,9 @@ export interface TransactionItem {
   memo: string;
   hasReceipt: boolean;
   receipts: TransactionReceipt[];
+  // 상세 응답에만 포함되는 필드 (목록 응답에는 없음)
+  category?: string;
+  registeredByName?: string;
 }
 
 export interface TransactionsInfo {

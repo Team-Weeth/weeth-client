@@ -147,6 +147,10 @@ function DuesPaymentStatusPageContent() {
   const clearSelection = () => setSelectedIds(new Set());
   const accountId = dashboard?.accountId ?? null;
 
+  // 선택은 동일 상태로만 이루어지므로, 첫 선택 멤버의 상태가 곧 선택 상태다.
+  const selectedStatus =
+    selectedIds.size === 0 ? null : (members.find((m) => selectedIds.has(m.id))?.status ?? null);
+
   const { mutate: markUnpaid } = useMarkPaymentTargetsUnpaid(clubId, accountId, {
     onSuccess: () => {
       toastSuccess('납부가 정정되었습니다.');
@@ -174,9 +178,10 @@ function DuesPaymentStatusPageContent() {
   return (
     <div className="flex min-w-85 flex-col">
       {/* Selection top bar — sticky top-0 z-10 -mt-15 로 Header 영역에 오버레이 */}
-      {selectedIds.size > 0 && (
+      {selectedStatus !== null && (
         <MemberSelectHeader
           selectedCount={selectedIds.size}
+          selectedStatus={selectedStatus}
           onClear={clearSelection}
           onMarkUnpaid={() => markUnpaid({ targetIds: selectedTargetIds() })}
           onRefund={() => refund({ targetIds: selectedTargetIds(), memo: '' })}

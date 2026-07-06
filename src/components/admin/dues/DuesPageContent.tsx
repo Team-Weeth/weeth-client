@@ -73,6 +73,8 @@ function detailToTransactionDetail(detail: TransactionItem): TransactionDetail {
     vendor: detail.source,
     date: detail.transactedAt.slice(0, 10),
     memo: detail.memo || undefined,
+    category: detail.category || undefined,
+    registrant: detail.registeredByName || undefined,
     receiptUrl: detail.receipts[0]?.fileUrl,
     receipts: detail.receipts,
   };
