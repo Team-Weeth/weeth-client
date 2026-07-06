@@ -4,10 +4,17 @@ import { useState } from 'react';
 
 import { useParams, useRouter } from 'next/navigation';
 
-import type { MonthlyData, DuesTransaction, TransactionFilter } from '@/types/admin/dues';
+import type {
+  MonthlyData,
+  DuesTransaction,
+  TransactionFilter,
+  TransactionItem,
+} from '@/types/admin/dues';
 import { useCardinalSelector } from '@/hooks';
+import { useDuesVisibilityToggle } from '@/hooks/admin';
 import { isDuesNotRegisteredError, useDuesDashboardQuery } from '@/hooks/queries/admin';
 import { useDuesSetupActions } from '@/stores/useDuesSetupStore';
+import { DuesPageSkeleton } from './DuesPageSkeleton';
 import { DuesTopBar } from './DuesTopBar';
 import { DuesBalanceCard } from './DuesBalanceCard';
 import { DuesChart } from './DuesChart';
@@ -20,11 +27,13 @@ import type { TransactionDetail } from './modal/TransactionDetailModal';
 import type { TransactionFormData } from './modal/TransactionForm';
 import { DuesTransactionTable } from './DuesTransactionTable';
 import { DuesTutorialModal } from './modal/DuesTutorialModal';
-import { useAdminDuesTransactionsQuery } from '@/hooks/queries/admin/useAdminDuesQueries';
+import {
+  useAdminDuesTransactionsQuery,
+  useAdminDuesTransactionQuery,
+} from '@/hooks/queries/admin/useAdminDuesQueries';
 import {
   useCreateTransaction,
   useDeleteTransaction,
-  useUpdateMemberVisibility,
   useUpdateTransaction,
 } from '@/hooks/mutations/admin/useAdminDuesMutations';
 import { toastError, toastSuccess } from '@/stores/useToastStore';
@@ -41,6 +50,7 @@ function toPeriodLabel(yearMonth: string | undefined): string {
   return `${year}.${month}.`;
 }
 
+// 목록 데이터(DuesTransaction) → 상세 모달용. 상세 응답 도착 전 폴백으로 사용한다.
 function toTransactionDetail(tx: DuesTransaction): TransactionDetail {
   return {
     type: tx.type,
@@ -53,10 +63,24 @@ function toTransactionDetail(tx: DuesTransaction): TransactionDetail {
   };
 }
 
+// 상세 응답(TransactionItem) → 상세 모달용. 목록에 없는 메모·영수증 정보까지 반영한다.
+function detailToTransactionDetail(detail: TransactionItem): TransactionDetail {
+  return {
+    type: detail.type,
+    direction: detail.direction,
+    amount: String(detail.amount),
+    description: detail.title,
+    vendor: detail.source,
+    date: detail.transactedAt.slice(0, 10),
+    memo: detail.memo || undefined,
+    category: detail.category || undefined,
+    registrant: detail.registeredByName || undefined,
+    receiptUrl: detail.receipts[0]?.fileUrl,
+    receipts: detail.receipts,
+  };
+}
+
 function DuesPageContent() {
-  // TODO: 대시보드 응답에 부원 공개 여부(member-visibility) 필드 추가 요청함(백엔드 대기 중).
-  // 추가되면 useState(true) 기본값 대신 dashboard 값으로 초기화할 것.
-  const [isPublic, setIsPublic] = useState(true);
   const [activeMonth, setActiveMonth] = useState('');
   const { cardinals, setSelectedCardinalId, activeCardinal } = useCardinalSelector({
     autoSelectLatest: true,
@@ -66,10 +90,11 @@ function DuesPageContent() {
   const { reset, setField } = useDuesSetupActions();
 
   // 회비 대시보드 조회. 등록이 완료되지 않은 장부(20112)면 온보딩 튜토리얼 모달을 띄운다.
-  const { data: dashboard, error: dashboardError } = useDuesDashboardQuery(
-    clubId,
-    activeCardinal?.cardinalNumber ?? null,
-  );
+  const {
+    data: dashboard,
+    error: dashboardError,
+    isPending: isDashboardPending,
+  } = useDuesDashboardQuery(clubId, activeCardinal?.cardinalNumber ?? null);
   const isNotRegistered = isDuesNotRegisteredError(dashboardError);
 
   // 거래내역 필터/정렬/페이지 — 서버 파라미터로 전달 (page는 UI 1-base → API 0-base 변환)
@@ -113,21 +138,10 @@ function DuesPageContent() {
     onError: () => toastError('거래내역 삭제에 실패했습니다.'),
   });
 
-  const { mutate: updateMemberVisibility } = useUpdateMemberVisibility(
+  const { isPublic, handlePublicChange } = useDuesVisibilityToggle(
     clubId,
     dashboard?.accountId ?? null,
-    {
-      onError: () => toastError('공개 설정 변경에 실패했습니다.'),
-    },
   );
-
-  // 낙관적 업데이트: 스위치는 즉시 반영하고, 실패 시 이전 값으로 되돌린다.
-  const handlePublicChange = (value: boolean) => {
-    setIsPublic(value);
-    updateMemberVisibility(value, {
-      onError: () => setIsPublic(!value),
-    });
-  };
 
   // 월별 잔액 추이 차트 데이터 (yearMonth → 'N월', endingBalance → 막대 높이)
   const monthlyData: MonthlyData[] =
@@ -156,6 +170,14 @@ function DuesPageContent() {
   const [selectedTransaction, setSelectedTransaction] = useState<DuesTransaction | null>(null);
   const [editingValues, setEditingValues] = useState<Partial<TransactionFormData>>();
 
+  // 상세 모달이 열려 있을 때만 선택된 거래의 단건 상세(메모·영수증 포함)를 조회한다.
+  const { data: transactionDetail } = useAdminDuesTransactionQuery(
+    clubId,
+    dashboard?.accountId ?? 0,
+    selectedTransaction?.id ?? null,
+    detailOpen,
+  );
+
   const handleMoreClick = (tx: DuesTransaction) => {
     setSelectedTransaction(tx);
     setDetailOpen(true);
@@ -163,6 +185,10 @@ function DuesPageContent() {
 
   const handleAddTransaction = () => {
     setAddOpen(true);
+  };
+
+  const handleSetting = () => {
+    router.push(`/${clubId}/admin/dues/setting`);
   };
 
   const handleEditOpen = () => {
@@ -178,12 +204,20 @@ function DuesPageContent() {
     setEditOpen(true);
   };
 
+  // 기수가 선택된 상태에서 대시보드 로딩 중일 때만 스켈레톤을 노출한다.
+  // 기수가 하나도 없으면 activeCardinal이 계속 null(쿼리 skipToken)이라 스켈레톤이 무한 노출되므로 제외한다.
+  // 등록 미완료(20112)는 에러 상태라 isPending=false이므로 아래 튜토리얼 모달 흐름으로 넘어간다.
+  if (activeCardinal && isDashboardPending) {
+    return <DuesPageSkeleton />;
+  }
+
   return (
     <div className="tablet:p-700 flex min-w-85 flex-col gap-400 p-400">
       <DuesTopBar
         isPublic={isPublic}
         onPublicChange={handlePublicChange}
         onAddClick={handleAddTransaction}
+        onSettingsClick={handleSetting}
       />
       <DuesGenerationFilter
         cardinals={cardinals}
@@ -247,7 +281,11 @@ function DuesPageContent() {
         <TransactionDetailModal
           open={detailOpen}
           onOpenChange={setDetailOpen}
-          transaction={toTransactionDetail(selectedTransaction)}
+          transaction={
+            transactionDetail && transactionDetail.transactionId === selectedTransaction.id
+              ? detailToTransactionDetail(transactionDetail)
+              : toTransactionDetail(selectedTransaction)
+          }
           onEdit={handleEditOpen}
           onDelete={() => deleteTransaction(selectedTransaction.id)}
         />

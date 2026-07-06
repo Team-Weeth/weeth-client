@@ -2,9 +2,9 @@
 
 import { useState } from 'react';
 
-import { useParams, useRouter } from 'next/navigation';
+import { useParams } from 'next/navigation';
 
-import { BackIcon, CopyIcon } from '@/assets/icons';
+import { CopyIcon } from '@/assets/icons';
 import { Card, Icon } from '@/components/ui';
 import { cn } from '@/lib/cn';
 import { toastError, toastSuccess } from '@/stores/useToastStore';
@@ -21,6 +21,7 @@ import type { PaymentTarget } from '@/types/admin/dues';
 import { DuesMemberPaymentTable, type DuesMember } from './DuesMemberPaymentTable';
 import { DuesPaymentSummaryCard } from './DuesPaymentSummaryCard';
 import { BackButton } from './BackButton';
+import { MemberSelectHeader } from './MemberSelectHeader';
 
 // 납부 대상(PaymentTarget) → 테이블이 쓰는 DuesMember 형태로 변환
 function toDuesMember(target: PaymentTarget): DuesMember {
@@ -45,12 +46,10 @@ function nowLocalDateTime(): string {
 interface StatCardProps {
   label: string;
   value: string;
-  action: string;
-  onAction?: () => void;
   className?: string;
 }
 
-function StatCard({ label, value, action, onAction, className }: StatCardProps) {
+function StatCard({ label, value, className }: StatCardProps) {
   return (
     <Card
       className={cn('flex flex-1 flex-row items-center justify-between px-400 py-300', className)}
@@ -59,13 +58,6 @@ function StatCard({ label, value, action, onAction, className }: StatCardProps) 
         <span className="typo-sub3 text-text-normal">{value}</span>
         <span className="typo-caption2 text-text-alternative">{label}</span>
       </div>
-      <button
-        type="button"
-        onClick={onAction}
-        className="bg-button-neutral typo-button2 text-text-strong hover:bg-button-neutral-interaction ml-300 shrink-0 cursor-pointer rounded-sm px-300 py-200 transition-colors"
-      >
-        {action}
-      </button>
     </Card>
   );
 }
@@ -120,7 +112,6 @@ function AccountCard({
 }
 
 function DuesPaymentStatusPageContent() {
-  const router = useRouter();
   const { clubId } = useParams<{ clubId: string }>();
   const { activeCardinal } = useCardinalSelector({ autoSelectLatest: true });
   const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
@@ -156,6 +147,10 @@ function DuesPaymentStatusPageContent() {
   const clearSelection = () => setSelectedIds(new Set());
   const accountId = dashboard?.accountId ?? null;
 
+  // 선택은 동일 상태로만 이루어지므로, 첫 선택 멤버의 상태가 곧 선택 상태다.
+  const selectedStatus =
+    selectedIds.size === 0 ? null : (members.find((m) => selectedIds.has(m.id))?.status ?? null);
+
   const { mutate: markUnpaid } = useMarkPaymentTargetsUnpaid(clubId, accountId, {
     onSuccess: () => {
       toastSuccess('납부가 정정되었습니다.');
@@ -183,45 +178,17 @@ function DuesPaymentStatusPageContent() {
   return (
     <div className="flex min-w-85 flex-col">
       {/* Selection top bar — sticky top-0 z-10 -mt-15 로 Header 영역에 오버레이 */}
-      {selectedIds.size > 0 && (
-        <div className="bg-container-primary sticky top-0 z-10 -mt-15 flex h-15 items-center justify-between px-400">
-          <div className="flex items-center gap-300">
-            <button
-              type="button"
-              onClick={() => setSelectedIds(new Set())}
-              aria-label="선택 해제"
-              className="text-text-inverse hover:bg-container-primary-interaction cursor-pointer rounded-sm p-200 transition-colors"
-            >
-              <Icon src={BackIcon} alt="" size={24} />
-            </button>
-            <span className="typo-sub3 text-text-inverse">{selectedIds.size}명 선택됨</span>
-          </div>
-          <div className="flex gap-200">
-            <button
-              type="button"
-              onClick={() => markUnpaid({ targetIds: selectedTargetIds() })}
-              className="bg-button-neutral typo-button1 text-text-strong hover:bg-button-neutral-interaction cursor-pointer rounded-md px-400 py-200 transition-colors"
-            >
-              납부 정정
-            </button>
-            <button
-              type="button"
-              onClick={() => refund({ targetIds: selectedTargetIds(), memo: '' })}
-              className="bg-button-neutral typo-button1 text-text-strong hover:bg-button-neutral-interaction cursor-pointer rounded-md px-400 py-200 transition-colors"
-            >
-              환불 처리
-            </button>
-            <button
-              type="button"
-              onClick={() =>
-                markPaid({ targetIds: selectedTargetIds(), paidAt: nowLocalDateTime(), memo: '' })
-              }
-              className="bg-button-neutral typo-button1 text-text-strong hover:bg-button-neutral-interaction cursor-pointer rounded-md px-400 py-200 transition-colors"
-            >
-              납부 완료
-            </button>
-          </div>
-        </div>
+      {selectedStatus !== null && (
+        <MemberSelectHeader
+          selectedCount={selectedIds.size}
+          selectedStatus={selectedStatus}
+          onClear={clearSelection}
+          onMarkUnpaid={() => markUnpaid({ targetIds: selectedTargetIds() })}
+          onRefund={() => refund({ targetIds: selectedTargetIds(), memo: '' })}
+          onMarkPaid={() =>
+            markPaid({ targetIds: selectedTargetIds(), paidAt: nowLocalDateTime(), memo: '' })
+          }
+        />
       )}
 
       <div className="tablet:p-700 flex flex-col gap-700 p-400">
@@ -237,10 +204,9 @@ function DuesPaymentStatusPageContent() {
         <div className="flex flex-wrap items-stretch gap-600">
           <DuesPaymentSummaryCard totalCollected={totalCollected} totalTarget={totalTarget} />
           <div className="tablet:w-84.75 flex w-full flex-col gap-400">
-            {/* TODO: onAction 핸들러 넘기기 (미납 현황 업데이트) */}
-            <StatCard label="미납 인원" value={`${unpaidCount}명`} action="현황 업데이트" />
-            {/* TODO: onAction 핸들러 넘기기 (납부 대상 수정 - savePaymentTargets 재사용) */}
-            <StatCard label="납부 대상" value={`${totalCount}명`} action="수정" />
+            <StatCard label="미납 인원" value={`${unpaidCount}명`} />
+
+            <StatCard label="납부 대상" value={`${totalCount}명`} />
             {account && (
               <AccountCard
                 bankName={account.bankName}
@@ -257,9 +223,6 @@ function DuesPaymentStatusPageContent() {
           members={members}
           selectedIds={selectedIds}
           onSelectionChange={setSelectedIds}
-          onViewMember={(member) => {
-            router.push(`/${clubId}/admin/member/${member.id}`);
-          }}
         />
       </div>
     </div>

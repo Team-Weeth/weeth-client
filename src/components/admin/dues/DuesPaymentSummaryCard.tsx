@@ -6,14 +6,12 @@ interface DuesPaymentSummaryCardProps {
   className?: string;
   totalCollected: number;
   totalTarget: number;
-  onUpdatePayment?: () => void;
 }
 
 function DuesPaymentSummaryCard({
   className,
   totalCollected,
   totalTarget,
-  onUpdatePayment,
 }: DuesPaymentSummaryCardProps) {
   const percentage =
     totalTarget > 0
@@ -21,7 +19,7 @@ function DuesPaymentSummaryCard({
       : 0;
 
   return (
-    <Card className={cn('flex min-w-[339px] flex-1 flex-col overflow-hidden p-400', className)}>
+    <Card className={cn('flex min-w-[300px] flex-1 flex-col overflow-hidden p-400', className)}>
       <p className="typo-h3 text-text-normal">총 수납액</p>
 
       <div className="mt-400 flex items-end gap-200">
@@ -31,16 +29,6 @@ function DuesPaymentSummaryCard({
         <span className="typo-body2 text-text-alternative mb-100">
           /{formatAmount(totalTarget)}원
         </span>
-      </div>
-
-      <div className="mt-400 flex flex-wrap items-center gap-300">
-        <button
-          type="button"
-          onClick={onUpdatePayment}
-          className="bg-button-primary typo-button1 text-text-inverse hover:bg-button-primary-interaction cursor-pointer rounded-md px-400 py-300 transition-colors"
-        >
-          납부 현황 업데이트
-        </button>
       </div>
 
       <div className="mt-auto pt-500">

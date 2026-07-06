@@ -1,6 +1,6 @@
 import { skipToken, useQuery } from '@tanstack/react-query';
 
-import { DUES_NOT_REGISTERED_CODE } from '@/constants/admin/dues.constants';
+import { DUES_NOT_EXIST_CODE, DUES_NOT_REGISTERED_CODE } from '@/constants/admin/dues.constants';
 import { duesApi } from '@/lib/apis/adminDues';
 import { getApiErrorCode } from '@/utils/shared/getApiErrorCode';
 
@@ -26,5 +26,8 @@ export function useDuesDashboardQuery(clubId: string, cardinalNumber: number | n
 
 /** 대시보드 조회 에러가 "등록 미완료 장부(20112)"인지 판별 */
 export function isDuesNotRegisteredError(error: unknown): boolean {
-  return getApiErrorCode(error) === DUES_NOT_REGISTERED_CODE;
+  return (
+    getApiErrorCode(error) === DUES_NOT_REGISTERED_CODE ||
+    getApiErrorCode(error) === DUES_NOT_EXIST_CODE
+  );
 }
