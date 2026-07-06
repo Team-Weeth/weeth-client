@@ -2,3 +2,4 @@ export { useFlattenedSessions, type FlattenedSession } from './useFlattenedSessi
 export { useSessionMutations } from './useSessionMutations';
 export { useBoardDragReorder } from './useBoardDragReorder';
 export { usePaymentTargetFilter } from './usePaymentTargetFilter';
+export { useDuesVisibilityToggle } from './useDuesVisibilityToggle';

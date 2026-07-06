@@ -4,6 +4,7 @@
 /node_modules
 /.pnp
 .pnp.*
+.pnpm-store/
 .yarn/*
 !.yarn/patches
 !.yarn/plugins
@@ -11,7 +12,7 @@
 !.yarn/versions
 
 # testing
-/coverage
+/coverage*
 /playwright-report
 /test-results
 /blob-report

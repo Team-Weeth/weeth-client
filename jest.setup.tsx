@@ -1,6 +1,13 @@
 import '@testing-library/jest-dom';
 import { server } from '@/mocks/server';
 
+// lottie-web은 canvas.getContext()를 사용하는데 JSDOM에 미구현
+// @/components/ui 배럴을 import하는 테스트 모두에 영향하므로 전역 mock 처리
+jest.mock('lottie-react', () => ({
+  __esModule: true,
+  default: () => null,
+}));
+
 beforeAll(() => server.listen({ onUnhandledRequest: 'error' }));
 afterEach(() => server.resetHandlers());
 afterAll(() => server.close());
