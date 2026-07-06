@@ -39,6 +39,14 @@ const TRANSACTION_TYPE_LABEL: Record<TransactionType, string> = {
   INCOME: '수입',
 };
 
+function isPdfFile(file: File) {
+  return file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf');
+}
+
+function isReceiptUploadFile(file: File) {
+  return file.type.startsWith('image/') || isPdfFile(file);
+}
+
 function getDefaultForm(initial?: Partial<TransactionFormData>): TransactionFormData {
   const today = new Date();
   const pad = (n: number) => String(n).padStart(2, '0');
@@ -62,6 +70,7 @@ function TransactionForm({ initialValues, onSubmit, onCancel }: TransactionFormP
   // const [isOcrLoading, setIsOcrLoading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const previewUrlRef = useRef<string | null>(null);
+  const isPdfReceipt = form.receiptFile ? isPdfFile(form.receiptFile) : false;
 
   useEffect(() => {
     return () => {
@@ -77,7 +86,10 @@ function TransactionForm({ initialValues, onSubmit, onCancel }: TransactionFormP
     setPreviewUrl(newUrl);
   };
 
-  const { isDragging, dragHandlers } = useImageDrop({ onDrop: setReceiptFile });
+  const { isDragging, dragHandlers } = useImageDrop({
+    onDrop: setReceiptFile,
+    accept: isReceiptUploadFile,
+  });
 
   const validate = (): boolean => {
     const next: FormErrors = {};
@@ -209,12 +221,18 @@ function TransactionForm({ initialValues, onSubmit, onCancel }: TransactionFormP
           >
             {previewUrl ? (
               <>
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={previewUrl}
-                  alt="영수증 미리보기"
-                  className="h-full max-w-20 rounded-sm object-contain"
-                />
+                {isPdfReceipt ? (
+                  <div className="bg-container-neutral flex h-full w-20 shrink-0 items-center justify-center rounded-sm">
+                    <span className="typo-caption1 text-text-alternative">PDF</span>
+                  </div>
+                ) : (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={previewUrl}
+                    alt="영수증 미리보기"
+                    className="h-full max-w-20 rounded-sm object-contain"
+                  />
+                )}
                 <div className="flex flex-1 flex-col gap-100 self-center overflow-hidden">
                   <span className="typo-body2 text-text-strong w-full truncate text-left">
                     {form.receiptFile?.name}
@@ -239,7 +257,7 @@ function TransactionForm({ initialValues, onSubmit, onCancel }: TransactionFormP
               <>
                 <Image src={AdminCloudUploadIcon} alt="upload" width={32} height={32} />
                 <span className="typo-sub1 text-text-strong text-center">
-                  클릭 혹은 파일을 이곳에 드롭하세요
+                  클릭 혹은 이미지/PDF 파일을 이곳에 드롭하세요
                 </span>
               </>
             )}
@@ -248,10 +266,10 @@ function TransactionForm({ initialValues, onSubmit, onCancel }: TransactionFormP
           <input
             ref={fileInputRef}
             type="file"
-            accept="image/*"
+            accept="image/*,application/pdf"
             onChange={(e) => {
               const file = e.target.files?.[0];
-              if (file) setReceiptFile(file);
+              if (file && isReceiptUploadFile(file)) setReceiptFile(file);
               e.target.value = '';
             }}
             className="hidden"
