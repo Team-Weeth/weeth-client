@@ -34,3 +34,4 @@ export { DuesTutorialModal, type DuesTutorialModalProps } from './modal/DuesTuto
 export { BackButton } from './BackButton';
 
 export { DuesSearchBar, type DuesSearchBarProps } from './DuesSearchBar';
+export { MemberSelectHeader } from './MemberSelectHeader';

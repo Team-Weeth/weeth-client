@@ -4,7 +4,7 @@ import { useState } from 'react';
 
 import { useParams, useRouter } from 'next/navigation';
 
-import { BackIcon, CopyIcon } from '@/assets/icons';
+import { CopyIcon } from '@/assets/icons';
 import { Card, Icon } from '@/components/ui';
 import { cn } from '@/lib/cn';
 import { toastError, toastSuccess } from '@/stores/useToastStore';
@@ -21,6 +21,7 @@ import type { PaymentTarget } from '@/types/admin/dues';
 import { DuesMemberPaymentTable, type DuesMember } from './DuesMemberPaymentTable';
 import { DuesPaymentSummaryCard } from './DuesPaymentSummaryCard';
 import { BackButton } from './BackButton';
+import { MemberSelectHeader } from './MemberSelectHeader';
 
 // 납부 대상(PaymentTarget) → 테이블이 쓰는 DuesMember 형태로 변환
 function toDuesMember(target: PaymentTarget): DuesMember {
@@ -175,44 +176,15 @@ function DuesPaymentStatusPageContent() {
     <div className="flex min-w-85 flex-col">
       {/* Selection top bar — sticky top-0 z-10 -mt-15 로 Header 영역에 오버레이 */}
       {selectedIds.size > 0 && (
-        <div className="bg-container-primary sticky top-0 z-10 -mt-15 flex h-15 items-center justify-between px-400">
-          <div className="flex items-center gap-300">
-            <button
-              type="button"
-              onClick={() => setSelectedIds(new Set())}
-              aria-label="선택 해제"
-              className="text-text-inverse hover:bg-container-primary-interaction flex cursor-pointer self-center rounded-sm p-200 transition-colors"
-            >
-              <Icon src={BackIcon} alt="" size={18} />
-            </button>
-            <span className="typo-sub3 text-text-inverse">{selectedIds.size}명 선택됨</span>
-          </div>
-          <div className="flex gap-200">
-            <button
-              type="button"
-              onClick={() => markUnpaid({ targetIds: selectedTargetIds() })}
-              className="bg-button-neutral typo-button1 text-text-strong hover:bg-button-neutral-interaction cursor-pointer rounded-md px-400 py-200 transition-colors"
-            >
-              납부 정정
-            </button>
-            <button
-              type="button"
-              onClick={() => refund({ targetIds: selectedTargetIds(), memo: '' })}
-              className="bg-button-neutral typo-button1 text-text-strong hover:bg-button-neutral-interaction cursor-pointer rounded-md px-400 py-200 transition-colors"
-            >
-              환불 처리
-            </button>
-            <button
-              type="button"
-              onClick={() =>
-                markPaid({ targetIds: selectedTargetIds(), paidAt: nowLocalDateTime(), memo: '' })
-              }
-              className="bg-button-neutral typo-button1 text-text-strong hover:bg-button-neutral-interaction cursor-pointer rounded-md px-400 py-200 transition-colors"
-            >
-              납부 완료
-            </button>
-          </div>
-        </div>
+        <MemberSelectHeader
+          selectedCount={selectedIds.size}
+          onClear={clearSelection}
+          onMarkUnpaid={() => markUnpaid({ targetIds: selectedTargetIds() })}
+          onRefund={() => refund({ targetIds: selectedTargetIds(), memo: '' })}
+          onMarkPaid={() =>
+            markPaid({ targetIds: selectedTargetIds(), paidAt: nowLocalDateTime(), memo: '' })
+          }
+        />
       )}
 
       <div className="tablet:p-700 flex flex-col gap-700 p-400">
