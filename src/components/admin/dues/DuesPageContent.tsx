@@ -4,7 +4,12 @@ import { useState } from 'react';
 
 import { useParams, useRouter } from 'next/navigation';
 
-import type { MonthlyData, DuesTransaction, TransactionFilter } from '@/types/admin/dues';
+import type {
+  MonthlyData,
+  DuesTransaction,
+  TransactionFilter,
+  TransactionItem,
+} from '@/types/admin/dues';
 import { useCardinalSelector } from '@/hooks';
 import { isDuesNotRegisteredError, useDuesDashboardQuery } from '@/hooks/queries/admin';
 import { useDuesSetupActions } from '@/stores/useDuesSetupStore';
@@ -20,7 +25,10 @@ import type { TransactionDetail } from './modal/TransactionDetailModal';
 import type { TransactionFormData } from './modal/TransactionForm';
 import { DuesTransactionTable } from './DuesTransactionTable';
 import { DuesTutorialModal } from './modal/DuesTutorialModal';
-import { useAdminDuesTransactionsQuery } from '@/hooks/queries/admin/useAdminDuesQueries';
+import {
+  useAdminDuesTransactionsQuery,
+  useAdminDuesTransactionQuery,
+} from '@/hooks/queries/admin/useAdminDuesQueries';
 import {
   useCreateTransaction,
   useDeleteTransaction,
@@ -41,6 +49,7 @@ function toPeriodLabel(yearMonth: string | undefined): string {
   return `${year}.${month}.`;
 }
 
+// 목록 데이터(DuesTransaction) → 상세 모달용. 상세 응답 도착 전 폴백으로 사용한다.
 function toTransactionDetail(tx: DuesTransaction): TransactionDetail {
   return {
     type: tx.type,
@@ -50,6 +59,20 @@ function toTransactionDetail(tx: DuesTransaction): TransactionDetail {
     vendor: tx.counterparty,
     date: tx.date,
     receiptUrl: tx.receiptUrl,
+  };
+}
+
+// 상세 응답(TransactionItem) → 상세 모달용. 목록에 없는 메모·영수증 정보까지 반영한다.
+function detailToTransactionDetail(detail: TransactionItem): TransactionDetail {
+  return {
+    type: detail.type,
+    direction: detail.direction,
+    amount: String(detail.amount),
+    description: detail.title,
+    vendor: detail.source,
+    date: detail.transactedAt.slice(0, 10),
+    memo: detail.memo || undefined,
+    receiptUrl: detail.receipts[0]?.fileUrl,
   };
 }
 
@@ -156,6 +179,14 @@ function DuesPageContent() {
   const [selectedTransaction, setSelectedTransaction] = useState<DuesTransaction | null>(null);
   const [editingValues, setEditingValues] = useState<Partial<TransactionFormData>>();
 
+  // 상세 모달이 열려 있을 때만 선택된 거래의 단건 상세(메모·영수증 포함)를 조회한다.
+  const { data: transactionDetail } = useAdminDuesTransactionQuery(
+    clubId,
+    dashboard?.accountId ?? 0,
+    selectedTransaction?.id ?? null,
+    detailOpen,
+  );
+
   const handleMoreClick = (tx: DuesTransaction) => {
     setSelectedTransaction(tx);
     setDetailOpen(true);
@@ -252,7 +283,11 @@ function DuesPageContent() {
         <TransactionDetailModal
           open={detailOpen}
           onOpenChange={setDetailOpen}
-          transaction={toTransactionDetail(selectedTransaction)}
+          transaction={
+            transactionDetail && transactionDetail.transactionId === selectedTransaction.id
+              ? detailToTransactionDetail(transactionDetail)
+              : toTransactionDetail(selectedTransaction)
+          }
           onEdit={handleEditOpen}
           onDelete={() => deleteTransaction(selectedTransaction.id)}
         />

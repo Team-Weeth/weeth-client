@@ -29,6 +29,7 @@ interface TransactionDetail {
   description: string;
   vendor: string;
   date: string;
+  memo?: string;
   category?: string;
   registrant?: string;
   receiptUrl?: string;
@@ -50,8 +51,18 @@ function TransactionDetailModal({
   onDelete,
 }: TransactionDetailModalProps) {
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
-  const { type, direction, amount, description, vendor, date, category, registrant, receiptUrl } =
-    transaction;
+  const {
+    type,
+    direction,
+    amount,
+    description,
+    vendor,
+    date,
+    memo,
+    category,
+    registrant,
+    receiptUrl,
+  } = transaction;
 
   const typeConfig = TRANSACTION_TYPE_TAG[type];
   const sign = direction === 'INCOME' ? '+' : '-';
@@ -132,6 +143,14 @@ function TransactionDetailModal({
                 <div className="flex items-center justify-between py-100">
                   <span className="typo-caption2 text-text-alternative">등록자</span>
                   <span className="typo-caption1 text-text-strong">{registrant}</span>
+                </div>
+              )}
+              {memo && (
+                <div className="flex items-start justify-between gap-400 py-100">
+                  <span className="typo-caption2 text-text-alternative shrink-0">메모</span>
+                  <span className="typo-caption1 text-text-strong text-right break-words">
+                    {memo}
+                  </span>
                 </div>
               )}
             </div>

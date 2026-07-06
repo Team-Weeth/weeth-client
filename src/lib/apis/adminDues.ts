@@ -15,6 +15,7 @@ import type {
   SaveCarryOverBody,
   SavePaymentTargetsBody,
   TransactionBody,
+  TransactionItem,
   TransactionsInfo,
   TransactionsParams,
 } from '@/types/admin/dues';
@@ -41,6 +42,11 @@ export const duesApi = {
     apiClient.get<ApiResponse<TransactionsInfo>>(
       `/admin/clubs/${clubId}/accounts/${accountId}/transactions`,
       { params },
+    ),
+
+  getTransaction: (clubId: string, accountId: number, transactionId: number) =>
+    apiClient.get<ApiResponse<TransactionItem>>(
+      `/admin/clubs/${clubId}/accounts/${accountId}/transactions/${transactionId}`,
     ),
 
   // 부원 거래 내역 공개 여부 수정
