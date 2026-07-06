@@ -6,7 +6,7 @@ import { DeleteIcon } from '@/assets/icons';
 import { Icon } from '@/components/ui';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import type { DuesTransaction } from '@/types/dues';
-import { getReceiptFiles } from '@/utils/dues/duesTransaction';
+import { getReceiptFiles, isPdfReceipt } from '@/utils/dues/duesTransaction';
 import { DuesReceiptCard } from './DuesReceiptCard';
 import { DuesReceiptViewerModal } from './DuesReceiptViewerModal';
 import { DuesTransactionDetailCard } from './DuesTransactionDetailCard';
@@ -27,6 +27,7 @@ function DuesTransactionDetailModal({
   if (!transaction) return null;
 
   const receiptFiles = getReceiptFiles(transaction);
+  const imageReceiptFiles = receiptFiles.filter((receipt) => !isPdfReceipt(receipt));
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -61,7 +62,7 @@ function DuesTransactionDetailModal({
           key={receiptViewerOpen ? 'receipt-viewer-open' : 'receipt-viewer-closed'}
           open={receiptViewerOpen}
           onOpenChange={setReceiptViewerOpen}
-          receiptFiles={receiptFiles}
+          receiptFiles={imageReceiptFiles}
         />
       </DialogContent>
     </Dialog>
