@@ -48,6 +48,20 @@ function DuesReceiptCard({ transaction, receiptFiles, onOpenReceiptViewer }: Due
   );
 
   if (hasReceipt) {
+    if (isPdf) {
+      return (
+        <a
+          href={firstReceipt.fileUrl}
+          target="_blank"
+          rel="noreferrer"
+          className={className}
+          aria-label="PDF 영수증 원본 보기"
+        >
+          {content}
+        </a>
+      );
+    }
+
     return (
       <button
         type="button"
