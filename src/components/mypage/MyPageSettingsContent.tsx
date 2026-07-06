@@ -5,6 +5,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { useMediaQuery } from '@/hooks';
 import { cn } from '@/lib/cn';
 import { useThemeStore } from '@/stores/theme-store';
+import type { ThemeMode } from '@/types/theme';
 import { InfoSection } from './InfoSection';
 import { LogoutConfirmDialog } from './LogoutConfirmDialog';
 import { SupportListItem } from './SupportListItem';
@@ -12,7 +13,6 @@ import { ThemeModeModal } from './ThemeModeModal';
 import { WithdrawConfirmDialog } from './WithdrawConfirmDialog';
 
 type MyPageSettingsContentProps = React.HTMLAttributes<HTMLDivElement>;
-type ThemeMode = 'auto' | 'light' | 'dark';
 
 const THEME_MODE_LABELS: Record<ThemeMode, string> = {
   auto: '자동',
