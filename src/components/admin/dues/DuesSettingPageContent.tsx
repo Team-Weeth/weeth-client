@@ -2,7 +2,7 @@
 
 import { useState, type ReactNode } from 'react';
 
-import { useParams, useRouter } from 'next/navigation';
+import { useParams } from 'next/navigation';
 
 import { useQuery } from '@tanstack/react-query';
 
@@ -14,7 +14,6 @@ import {
   useDuesPaymentTargetsQuery,
 } from '@/hooks/queries/admin';
 import { useUpdateMemberVisibility } from '@/hooks/mutations/admin/useAdminDuesMutations';
-import { useDuesSetupActions } from '@/stores/useDuesSetupStore';
 import { toastError } from '@/stores/useToastStore';
 
 import { BackButton } from './BackButton';
@@ -41,10 +40,8 @@ function SettingSection({ title, children }: SettingSectionProps) {
 }
 
 function DuesSettingPageContent() {
-  const router = useRouter();
   const { clubId } = useParams<{ clubId: string }>();
   const { activeCardinal } = useCardinalSelector({ autoSelectLatest: true });
-  const { setField } = useDuesSetupActions();
 
   // 대시보드로 accountId를 확보한 뒤 등록 상태·납부 대상 목록을 조회한다.
   const { data: dashboard } = useDuesDashboardQuery(clubId, activeCardinal?.cardinalNumber ?? null);
@@ -81,38 +78,8 @@ function DuesSettingPageContent() {
 
   const hasPreviousBalance = status?.previousAccountBalance != null;
 
-  // 수정 버튼 → 셋업 스텝으로 이동. 스텝이 store 값을 읽어 화면을 그리므로,
-  // 이동 전에 등록 상태 응답으로 store를 전 단계 rehydrate한다. (useRestoreDuesDraft와 동일 패턴)
-  const handleEditStep = (step: number) => {
-    if (accountId === null) return;
-
-    setField({
-      accountId,
-      cardinalNumber,
-      selectedMemberIds,
-      memberIdsInitialized: true,
-      ...(status?.basic && {
-        name: status.basic.name,
-        amount: String(status.basic.duesAmount),
-        description: status.basic.description ?? '',
-      }),
-      ...(status?.carryOver && {
-        carryOverOption: status.carryOver.enabled ? 'carry' : 'none',
-        carryOverAmount: status.carryOver.amount != null ? String(status.carryOver.amount) : '',
-        carryOverDescription: status.carryOver.memo ?? '',
-        carryOverInitialized: true,
-      }),
-      ...(status?.bankAccount && {
-        isAccountPublic: status.bankAccount.bankAccountVisible,
-        bankName: status.bankAccount.bankAccount?.bankName ?? '',
-        accountNumber: status.bankAccount.bankAccount?.accountNumber ?? '',
-        accountHolder: status.bankAccount.bankAccount?.holder ?? '',
-        accountGuide: status.bankAccount.bankAccount?.guide ?? '',
-      }),
-    });
-
-    router.push(`/${clubId}/admin/dues/setup/${step}`);
-  };
+  // TODO: 카드별 "수정" 동작 연결 예정. (온보딩 스텝 이동은 하지 않기로 함)
+  const handleEditStep = () => {};
 
   return (
     <div className="tablet:p-700 flex min-w-85 flex-col gap-700 p-400">
