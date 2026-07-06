@@ -1,4 +1,5 @@
 export { DuesPageContent } from './DuesPageContent';
+export { DuesPageSkeleton } from './DuesPageSkeleton';
 export { DuesGenerationFilter, type DuesGenerationFilterProps } from './DuesGenerationFilter';
 export { DuesTopBar, type DuesTopBarProps } from './DuesTopBar';
 export { DuesBalanceCard, type DuesBalanceCardProps } from './DuesBalanceCard';

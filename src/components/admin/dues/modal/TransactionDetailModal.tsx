@@ -21,6 +21,9 @@ import { SCHEDULE_MODAL_CONTENT_CLASS } from '@/components/admin/schedule/modal/
 import { cn } from '@/lib/cn';
 import { TRANSACTION_TYPE_TAG } from '../DuesTransactionTable';
 import type { TransactionDirection, TransactionType } from '@/types/admin/dues';
+import { DuesReceiptCard, DuesReceiptViewerModal } from '@/components/dues';
+import { getReceiptFiles } from '@/utils/dues/duesTransaction';
+import type { DuesReceiptFile, DuesTransaction } from '@/types/dues';
 
 interface TransactionDetail {
   type: TransactionType;
@@ -33,6 +36,7 @@ interface TransactionDetail {
   category?: string;
   registrant?: string;
   receiptUrl?: string;
+  receipts?: DuesReceiptFile[];
 }
 
 interface TransactionDetailModalProps {
@@ -51,6 +55,7 @@ function TransactionDetailModal({
   onDelete,
 }: TransactionDetailModalProps) {
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const [receiptViewerOpen, setReceiptViewerOpen] = useState(false);
   const {
     type,
     direction,
@@ -62,6 +67,7 @@ function TransactionDetailModal({
     category,
     registrant,
     receiptUrl,
+    receipts,
   } = transaction;
 
   const typeConfig = TRANSACTION_TYPE_TAG[type];
@@ -69,6 +75,18 @@ function TransactionDetailModal({
   const numAmount = Number(amount);
   const formattedAmount = (isNaN(numAmount) ? 0 : numAmount).toLocaleString('ko-KR');
   const classificationLabel = category ? `${typeConfig.label} · ${category}` : typeConfig.label;
+
+  const receiptTransaction: DuesTransaction = {
+    id: 0,
+    type: direction === 'INCOME' ? 'income' : 'expense',
+    title: description,
+    description,
+    amount: isNaN(numAmount) ? 0 : numAmount,
+    date,
+    receipts,
+    receiptUrl,
+  };
+  const receiptFiles = getReceiptFiles(receiptTransaction);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -156,38 +174,18 @@ function TransactionDetailModal({
             </div>
           </div>
 
-          {/* 영수증 카드 */}
-          <div className="bg-container-neutral relative flex items-center gap-200 rounded-lg p-450">
-            {receiptUrl ? (
-              <>
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={receiptUrl} alt="" className="size-10 shrink-0 rounded-sm object-cover" />
-                <div className="flex flex-col gap-100">
-                  <p className="typo-sub1 text-text-strong">영수증</p>
-                  <p className="typo-body2 text-text-alternative">원본 보기</p>
-                </div>
-                <Image
-                  src={ArrowRightIcon}
-                  alt=""
-                  width={24}
-                  height={24}
-                  className="ml-auto shrink-0"
-                />
-                <a
-                  href={receiptUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="absolute inset-0 rounded-lg"
-                  aria-label="영수증 원본 보기"
-                />
-              </>
-            ) : (
-              <div className="flex flex-col gap-100">
-                <p className="typo-sub1 text-text-strong">영수증</p>
-                <p className="typo-body2 text-text-disabled">첨부된 영수증이 없습니다</p>
-              </div>
-            )}
-          </div>
+          <DuesReceiptCard
+            transaction={receiptTransaction}
+            receiptFiles={receiptFiles}
+            onOpenReceiptViewer={() => setReceiptViewerOpen(true)}
+          />
+
+          <DuesReceiptViewerModal
+            key={receiptViewerOpen ? 'receipt-viewer-open' : 'receipt-viewer-closed'}
+            open={receiptViewerOpen}
+            onOpenChange={setReceiptViewerOpen}
+            receiptFiles={receiptFiles}
+          />
         </div>
 
         {/* Footer */}

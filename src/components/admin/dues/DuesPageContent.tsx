@@ -13,6 +13,7 @@ import type {
 import { useCardinalSelector } from '@/hooks';
 import { isDuesNotRegisteredError, useDuesDashboardQuery } from '@/hooks/queries/admin';
 import { useDuesSetupActions } from '@/stores/useDuesSetupStore';
+import { DuesPageSkeleton } from './DuesPageSkeleton';
 import { DuesTopBar } from './DuesTopBar';
 import { DuesBalanceCard } from './DuesBalanceCard';
 import { DuesChart } from './DuesChart';
@@ -73,6 +74,7 @@ function detailToTransactionDetail(detail: TransactionItem): TransactionDetail {
     date: detail.transactedAt.slice(0, 10),
     memo: detail.memo || undefined,
     receiptUrl: detail.receipts[0]?.fileUrl,
+    receipts: detail.receipts,
   };
 }
 
@@ -89,10 +91,11 @@ function DuesPageContent() {
   const { reset, setField } = useDuesSetupActions();
 
   // 회비 대시보드 조회. 등록이 완료되지 않은 장부(20112)면 온보딩 튜토리얼 모달을 띄운다.
-  const { data: dashboard, error: dashboardError } = useDuesDashboardQuery(
-    clubId,
-    activeCardinal?.cardinalNumber ?? null,
-  );
+  const {
+    data: dashboard,
+    error: dashboardError,
+    isPending: isDashboardPending,
+  } = useDuesDashboardQuery(clubId, activeCardinal?.cardinalNumber ?? null);
   const isNotRegistered = isDuesNotRegisteredError(dashboardError);
 
   // 거래내역 필터/정렬/페이지 — 서버 파라미터로 전달 (page는 UI 1-base → API 0-base 변환)
@@ -212,6 +215,12 @@ function DuesPageContent() {
     });
     setEditOpen(true);
   };
+
+  // 대시보드 로딩 중(기수 선택 대기 포함)에는 스켈레톤을 노출한다.
+  // 등록 미완료(20112)는 에러 상태라 isPending=false이므로 아래 튜토리얼 모달 흐름으로 넘어간다.
+  if (isDashboardPending) {
+    return <DuesPageSkeleton />;
+  }
 
   return (
     <div className="tablet:p-700 flex min-w-85 flex-col gap-400 p-400">
