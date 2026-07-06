@@ -17,23 +17,25 @@ function MyPageContent({ className, ...props }: MyPageContentProps) {
   const [{ data: me }, { data: clubs }] = useMyPageQueries(clubId);
   const displayName = me?.name ?? '';
 
+  const profileSection = me ? (
+    <ProfileSection
+      name={displayName}
+      bio={me.bio ?? undefined}
+      profileImageUrl={me.profileImageUrl ?? undefined}
+      tel={me.tel ?? undefined}
+      email={me.email ?? undefined}
+      school={me.school ?? undefined}
+      department={me.department ?? undefined}
+    />
+  ) : (
+    <ProfileSectionSkeleton />
+  );
+
   return (
     <>
       <div className={cn('tablet:flex hidden min-w-0 flex-1 flex-col gap-4', className)} {...props}>
         <p className="typo-h3 text-text-normal">프로필</p>
-        {me ? (
-          <ProfileSection
-            name={displayName}
-            bio={me.bio ?? undefined}
-            profileImageUrl={me.profileImageUrl ?? undefined}
-            tel={me.tel ?? undefined}
-            email={me.email ?? undefined}
-            school={me.school ?? undefined}
-            department={me.department ?? undefined}
-          />
-        ) : (
-          <ProfileSectionSkeleton />
-        )}
+        {profileSection}
         <ActiveClubList clubs={clubs} clubId={clubId} />
       </div>
       <div
@@ -54,19 +56,7 @@ function MyPageContent({ className, ...props }: MyPageContentProps) {
         </div>
         <div className="flex flex-col gap-500">
           <div className="flex flex-col gap-4">
-            {me ? (
-              <ProfileSection
-                name={displayName}
-                bio={me.bio ?? undefined}
-                profileImageUrl={me.profileImageUrl ?? undefined}
-                tel={me.tel ?? undefined}
-                email={me.email ?? undefined}
-                school={me.school ?? undefined}
-                department={me.department ?? undefined}
-              />
-            ) : (
-              <ProfileSectionSkeleton />
-            )}
+            {profileSection}
             <ActiveClubList clubs={clubs} clubId={clubId} />
           </div>
           <div className="flex flex-col gap-4">
