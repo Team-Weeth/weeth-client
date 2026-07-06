@@ -13,6 +13,7 @@ import {
   TableRow,
 } from '@/components/ui';
 import { cn } from '@/lib/cn';
+import { formatPhone } from '@/utils/shared';
 import { DuesPagination } from '@/components/admin/dues/setup/components';
 import { DuesMember, FilterType, PaymentStatus } from '@/types/admin/dues';
 import { DuesSearchBar } from './DuesSearchBar';
@@ -202,7 +203,9 @@ function DuesMemberPaymentTable({
                       </div>
                     </TableCell>
                     <TableCell className="typo-body2 text-text-strong">{member.major}</TableCell>
-                    <TableCell className="typo-body2 text-text-strong">{member.phone}</TableCell>
+                    <TableCell className="typo-body2 text-text-strong">
+                      {formatPhone(member.phone)}
+                    </TableCell>
                     <TableCell>
                       <PaymentStatusBadge status={member.status} />
                     </TableCell>

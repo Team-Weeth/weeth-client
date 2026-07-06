@@ -181,9 +181,9 @@ function DuesPaymentStatusPageContent() {
               type="button"
               onClick={() => setSelectedIds(new Set())}
               aria-label="선택 해제"
-              className="text-text-inverse hover:bg-container-primary-interaction cursor-pointer rounded-sm p-200 transition-colors"
+              className="text-text-inverse hover:bg-container-primary-interaction flex cursor-pointer self-center rounded-sm p-200 transition-colors"
             >
-              <Icon src={BackIcon} alt="" size={24} />
+              <Icon src={BackIcon} alt="" size={18} />
             </button>
             <span className="typo-sub3 text-text-inverse">{selectedIds.size}명 선택됨</span>
           </div>
