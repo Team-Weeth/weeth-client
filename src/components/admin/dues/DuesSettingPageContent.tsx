@@ -84,7 +84,9 @@ function DuesSettingPageContent() {
             remainingCount={remainingCount}
             onOpenPaymentTargetModal={() => setIsPaymentTargetModalOpen(true)}
             hasPreviousBalance={hasPreviousBalance}
-            previousGeneration={status?.previousAccountBalance?.cardinalNumber ?? cardinalNumber - 1}
+            previousGeneration={
+              status?.previousAccountBalance?.cardinalNumber ?? cardinalNumber - 1
+            }
             previousBalance={status?.previousAccountBalance?.balance ?? 0}
             carryOverOption={status?.carryOver?.enabled ? 'carry' : 'none'}
             carryOverDescription={status?.carryOver?.memo ?? undefined}

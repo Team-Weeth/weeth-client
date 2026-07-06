@@ -35,8 +35,11 @@ export const adminQueryKeys = {
   ) => ['admin', 'dues', 'transactions', clubId, accountId, params] as const,
 
   // 회비 거래내역 상세 — accountId + transactionId 단위로 스코프
-  duesTransaction: (clubId: string | null, accountId: number | null, transactionId: number | null) =>
-    ['admin', 'dues', 'transaction', clubId, accountId, transactionId] as const,
+  duesTransaction: (
+    clubId: string | null,
+    accountId: number | null,
+    transactionId: number | null,
+  ) => ['admin', 'dues', 'transaction', clubId, accountId, transactionId] as const,
 
   // 회비 대시보드 — 기수 번호(cardinalNumber) 단위로 스코프
   duesDashboard: (clubId: string, cardinalNumber: number | null) =>

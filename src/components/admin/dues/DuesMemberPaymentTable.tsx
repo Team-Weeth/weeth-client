@@ -101,9 +101,7 @@ function DuesMemberPaymentTable({
 
   // 현재 선택된 멤버들의 납부 상태(모두 동일하게 유지된다). 선택이 없으면 null.
   const selectedStatus: PaymentStatus | null =
-    selectedIds.size === 0
-      ? null
-      : (members.find((m) => selectedIds.has(m.id))?.status ?? null);
+    selectedIds.size === 0 ? null : (members.find((m) => selectedIds.has(m.id))?.status ?? null);
 
   const toggleSelect = (id: number, status: PaymentStatus) => {
     const next = new Set(selectedIds);
@@ -182,59 +180,59 @@ function DuesMemberPaymentTable({
                   const isDisabled =
                     !isSelected && selectedStatus !== null && member.status !== selectedStatus;
                   return (
-                  <TableRow
-                    key={member.id}
-                    className="border-line hover:bg-container-neutral-interaction border-t"
-                  >
-                    <TableCell>
-                      {/* disabled 버튼은 title 툴팁이 뜨지 않으므로 span으로 감싸 안내를 노출한다. */}
-                      <span
-                        title={
-                          isDisabled ? '납부 상태가 같은 부원끼리만 선택할 수 있어요.' : undefined
-                        }
-                        className="inline-flex"
-                      >
-                        <button
-                          type="button"
-                          onClick={() => toggleSelect(member.id, member.status)}
-                          disabled={isDisabled}
-                          aria-label={isSelected ? '선택 해제' : '선택'}
-                          className={cn(
-                            'flex items-center justify-center',
-                            isDisabled ? 'cursor-not-allowed opacity-40' : 'cursor-pointer',
-                          )}
+                    <TableRow
+                      key={member.id}
+                      className="border-line hover:bg-container-neutral-interaction border-t"
+                    >
+                      <TableCell>
+                        {/* disabled 버튼은 title 툴팁이 뜨지 않으므로 span으로 감싸 안내를 노출한다. */}
+                        <span
+                          title={
+                            isDisabled ? '납부 상태가 같은 부원끼리만 선택할 수 있어요.' : undefined
+                          }
+                          className="inline-flex"
                         >
-                          <div
+                          <button
+                            type="button"
+                            onClick={() => toggleSelect(member.id, member.status)}
+                            disabled={isDisabled}
+                            aria-label={isSelected ? '선택 해제' : '선택'}
                             className={cn(
-                              'flex h-4 w-4 items-center justify-center rounded-[3px] border transition-colors',
-                              isSelected
-                                ? 'border-brand-primary bg-brand-primary'
-                                : 'border-button-neutral',
+                              'flex items-center justify-center',
+                              isDisabled ? 'cursor-not-allowed opacity-40' : 'cursor-pointer',
                             )}
                           >
-                            {isSelected && <Icon src={CheckIcon} alt="" size={10} />}
-                          </div>
-                        </button>
-                      </span>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center gap-400">
-                        <div className="bg-container-neutral-interaction text-text-alternative typo-caption1 flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-md">
-                          {member.avatarInitial ?? member.name.slice(0, 1)}
-                        </div>
-                        <span className="typo-body2 text-text-strong min-w-0 truncate">
-                          {member.name}
+                            <div
+                              className={cn(
+                                'flex h-4 w-4 items-center justify-center rounded-[3px] border transition-colors',
+                                isSelected
+                                  ? 'border-brand-primary bg-brand-primary'
+                                  : 'border-button-neutral',
+                              )}
+                            >
+                              {isSelected && <Icon src={CheckIcon} alt="" size={10} />}
+                            </div>
+                          </button>
                         </span>
-                      </div>
-                    </TableCell>
-                    <TableCell className="typo-body2 text-text-strong">{member.major}</TableCell>
-                    <TableCell className="typo-body2 text-text-strong">
-                      {formatPhone(member.phone)}
-                    </TableCell>
-                    <TableCell>
-                      <PaymentStatusBadge status={member.status} />
-                    </TableCell>
-                  </TableRow>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex items-center gap-400">
+                          <div className="bg-container-neutral-interaction text-text-alternative typo-caption1 flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-md">
+                            {member.avatarInitial ?? member.name.slice(0, 1)}
+                          </div>
+                          <span className="typo-body2 text-text-strong min-w-0 truncate">
+                            {member.name}
+                          </span>
+                        </div>
+                      </TableCell>
+                      <TableCell className="typo-body2 text-text-strong">{member.major}</TableCell>
+                      <TableCell className="typo-body2 text-text-strong">
+                        {formatPhone(member.phone)}
+                      </TableCell>
+                      <TableCell>
+                        <PaymentStatusBadge status={member.status} />
+                      </TableCell>
+                    </TableRow>
                   );
                 })
               )}

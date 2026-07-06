@@ -87,7 +87,10 @@ function DuesTransactionTableSkeleton() {
         <div className="border-line flex flex-col overflow-hidden rounded-sm border">
           <Skeleton className="h-12 w-full rounded-none" />
           {Array.from({ length: 5 }, (_, index) => (
-            <div key={index} className="border-line flex items-center gap-400 border-t px-400 py-300">
+            <div
+              key={index}
+              className="border-line flex items-center gap-400 border-t px-400 py-300"
+            >
               <Skeleton className="h-6 w-12 shrink-0 rounded-sm" />
               <Skeleton className="h-5 flex-1" />
               <Skeleton className="h-5 w-24 shrink-0" />

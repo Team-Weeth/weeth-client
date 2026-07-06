@@ -58,7 +58,7 @@ function DuesGenerationFilter({
           ))}
         </DropdownMenuContent>
       </DropdownMenu>
-      <div className="bg-container-neutral flex flex-1 items-center justify-between gap-200 rounded-md px-300 py-200 tablet:flex-none tablet:justify-start">
+      <div className="bg-container-neutral tablet:flex-none tablet:justify-start flex flex-1 items-center justify-between gap-200 rounded-md px-300 py-200">
         <span className="typo-body1 text-text-alternative">
           마지막 수정
           <br className="tablet:hidden" />
