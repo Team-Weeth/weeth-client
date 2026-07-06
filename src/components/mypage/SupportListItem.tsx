@@ -27,6 +27,24 @@ function SupportListItem({
   const hasSubContent = !!description || variant === 'copy';
   const isRow = layout === 'row';
 
+  const renderAction = () => {
+    if (isRow && variant === 'copy') {
+      return (
+        <span className="bg-button-neutral typo-button2 text-text-strong inline-flex shrink-0 items-center justify-center rounded-sm px-300 py-200">
+          복사하기
+        </span>
+      );
+    }
+
+    if (variant === 'link') {
+      return (
+        <Icon src={ArrowRightIcon} size={12} className="text-icon-normal" alt="페이지 이동버튼" />
+      );
+    }
+
+    return null;
+  };
+
   const content = (
     <>
       <div
@@ -49,28 +67,10 @@ function SupportListItem({
         </div>
 
         {isRow ? (
-          variant === 'copy' ? (
-            <span className="bg-button-neutral typo-button2 text-text-strong inline-flex shrink-0 items-center justify-center rounded-sm px-300 py-200">
-              복사하기
-            </span>
-          ) : (
-            <Icon
-              src={ArrowRightIcon}
-              size={12}
-              className="text-icon-normal"
-              alt="페이지 이동버튼"
-            />
-          )
+          renderAction()
         ) : (
           <span className="text-icon-alternative absolute top-3.75 right-300">
-            {variant === 'link' && (
-              <Icon
-                src={ArrowRightIcon}
-                size={12}
-                className="text-icon-normal"
-                alt="페이지 이동버튼"
-              />
-            )}
+            {renderAction()}
           </span>
         )}
       </div>
