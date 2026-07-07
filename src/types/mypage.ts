@@ -17,6 +17,16 @@ export interface MyMember {
   bio: string | null;
 }
 
+export interface ProfileData {
+  name: string;
+  bio?: string;
+  profileImageUrl?: string;
+  tel?: string;
+  email?: string;
+  school?: string;
+  department?: string;
+}
+
 export interface ClubDto {
   id: string;
   name: string;

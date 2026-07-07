@@ -20,6 +20,7 @@ import {
   FormCard,
   NextButton,
   DuesAmountField,
+  SetupHeader,
 } from '@/components/admin/dues/setup/components';
 import { useDuesStepNavigator } from '@/hooks/admin/useDuesStepNavigator';
 import { useRestoreDuesDraft } from '@/hooks/admin/useRestoreDuesDraft';
@@ -137,10 +138,7 @@ function DuesSetupStep1() {
 
       <div className="flex min-w-85 flex-col gap-700 p-700">
         {/* 헤더 */}
-        <div className="flex flex-col gap-300">
-          <BackButton />
-          <h1 className="typo-h2 text-text-strong">{cardinalNumber}기 총 회비 설정</h1>
-        </div>
+        <SetupHeader cardinalNumber={cardinalNumber} />
 
         <div className="flex flex-col gap-600">
           {/* 스텝 인디케이터 */}

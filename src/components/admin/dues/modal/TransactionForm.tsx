@@ -11,6 +11,8 @@ import { useImageDrop } from '@/hooks/useImageDrop';
 import { cn } from '@/lib/cn';
 // import { toastError, toastSuccess } from '@/stores/useToastStore';
 import { CloseCircleIcon } from '@/assets/icons';
+import { formatAmount } from '@/lib/formatAmount';
+import { DuesTextInputField } from './DuesTextInputField';
 
 type TransactionType = 'EXPENSE' | 'INCOME';
 
@@ -37,6 +39,14 @@ const TRANSACTION_TYPE_LABEL: Record<TransactionType, string> = {
   INCOME: '수입',
 };
 
+function isPdfFile(file: File) {
+  return file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf');
+}
+
+function isReceiptUploadFile(file: File) {
+  return file.type.startsWith('image/') || isPdfFile(file);
+}
+
 function getDefaultForm(initial?: Partial<TransactionFormData>): TransactionFormData {
   const today = new Date();
   const pad = (n: number) => String(n).padStart(2, '0');
@@ -51,50 +61,6 @@ function getDefaultForm(initial?: Partial<TransactionFormData>): TransactionForm
   };
 }
 
-interface TextInputFieldProps {
-  id: string;
-  label: string;
-  value: string;
-  onChange: (value: string) => void;
-  placeholder?: string;
-  maxLength: number;
-  error?: string;
-}
-
-function TextInputField({
-  id,
-  label,
-  value,
-  onChange,
-  placeholder,
-  maxLength,
-  error,
-}: TextInputFieldProps) {
-  return (
-    <div className="flex flex-col">
-      <label htmlFor={id} className="typo-sub3 text-text-normal flex h-12 items-center px-400">
-        {label}
-      </label>
-      <div className="flex flex-col gap-200">
-        <input
-          id={id}
-          type="text"
-          value={value}
-          onChange={(e) => onChange(e.target.value.slice(0, maxLength))}
-          placeholder={placeholder}
-          className="bg-container-neutral typo-body1 placeholder:text-text-alternative text-text-normal h-12 w-full rounded-sm px-400 py-300 focus:outline-none"
-        />
-        <div className="flex items-center justify-between">
-          {error ? <span className="typo-caption2 text-state-error">{error}</span> : <span />}
-          <span className="typo-caption2 text-text-alternative pr-100">
-            {value.length}/{maxLength}
-          </span>
-        </div>
-      </div>
-    </div>
-  );
-}
-
 type FormErrors = Partial<Record<'amount' | 'description' | 'vendor', string>>;
 
 function TransactionForm({ initialValues, onSubmit, onCancel }: TransactionFormProps) {
@@ -104,6 +70,7 @@ function TransactionForm({ initialValues, onSubmit, onCancel }: TransactionFormP
   // const [isOcrLoading, setIsOcrLoading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const previewUrlRef = useRef<string | null>(null);
+  const isPdfReceipt = form.receiptFile ? isPdfFile(form.receiptFile) : false;
 
   useEffect(() => {
     return () => {
@@ -119,31 +86,10 @@ function TransactionForm({ initialValues, onSubmit, onCancel }: TransactionFormP
     setPreviewUrl(newUrl);
   };
 
-  const { isDragging, dragHandlers } = useImageDrop({ onDrop: setReceiptFile });
-
-  // const handleOcrAnalyze = async () => {
-  //   if (!form.receiptFile) return;
-  //   setIsOcrLoading(true);
-  //   try {
-  //     const fd = new FormData();
-  //     fd.append('image', form.receiptFile);
-  //     const result = await analyzeReceipt(fd);
-  //     setForm((prev) => ({
-  //       ...prev,
-  //       ...(result.amount !== undefined && { amount: result.amount }),
-  //       ...(result.vendor !== undefined && { vendor: result.vendor!.slice(0, VENDOR_MAX) }),
-  //       ...(result.date !== undefined && { date: result.date }),
-  //     }));
-  //     const filled = [result.amount && '금액', result.vendor && '거래처', result.date && '일자']
-  //       .filter(Boolean)
-  //       .join(', ');
-  //     toastSuccess(filled ? `${filled}이(가) 자동 입력되었습니다.` : '분석 완료');
-  //   } catch (e) {
-  //     toastError(e instanceof Error ? e.message : '영수증 분석에 실패했습니다.');
-  //   } finally {
-  //     setIsOcrLoading(false);
-  //   }
-  // };
+  const { isDragging, dragHandlers } = useImageDrop({
+    onDrop: setReceiptFile,
+    accept: isReceiptUploadFile,
+  });
 
   const validate = (): boolean => {
     const next: FormErrors = {};
@@ -197,7 +143,7 @@ function TransactionForm({ initialValues, onSubmit, onCancel }: TransactionFormP
               id="transaction-amount"
               type="text"
               inputMode="numeric"
-              value={form.amount}
+              value={formatAmount(Number(form.amount))}
               onChange={(e) => {
                 const raw = e.target.value.replace(/\D/g, '');
                 setForm((prev) => ({ ...prev, amount: raw }));
@@ -214,7 +160,7 @@ function TransactionForm({ initialValues, onSubmit, onCancel }: TransactionFormP
         </div>
 
         {/* 지출/수입 내용 */}
-        <TextInputField
+        <DuesTextInputField
           id="transaction-description"
           label={descriptionLabel}
           value={form.description}
@@ -228,7 +174,7 @@ function TransactionForm({ initialValues, onSubmit, onCancel }: TransactionFormP
         />
 
         {/* 거래처 */}
-        <TextInputField
+        <DuesTextInputField
           id="transaction-vendor"
           label="거래처"
           value={form.vendor}
@@ -275,12 +221,18 @@ function TransactionForm({ initialValues, onSubmit, onCancel }: TransactionFormP
           >
             {previewUrl ? (
               <>
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={previewUrl}
-                  alt="영수증 미리보기"
-                  className="h-full max-w-20 rounded-sm object-contain"
-                />
+                {isPdfReceipt ? (
+                  <div className="bg-container-neutral flex h-full w-20 shrink-0 items-center justify-center rounded-sm">
+                    <span className="typo-caption1 text-text-alternative">PDF</span>
+                  </div>
+                ) : (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={previewUrl}
+                    alt="영수증 미리보기"
+                    className="h-full max-w-20 rounded-sm object-contain"
+                  />
+                )}
                 <div className="flex flex-1 flex-col gap-100 self-center overflow-hidden">
                   <span className="typo-body2 text-text-strong w-full truncate text-left">
                     {form.receiptFile?.name}
@@ -305,41 +257,19 @@ function TransactionForm({ initialValues, onSubmit, onCancel }: TransactionFormP
               <>
                 <Image src={AdminCloudUploadIcon} alt="upload" width={32} height={32} />
                 <span className="typo-sub1 text-text-strong text-center">
-                  클릭 혹은 파일을 이곳에 드롭하세요
+                  클릭 혹은 이미지/PDF 파일을 이곳에 드롭하세요
                 </span>
               </>
             )}
           </div>
 
-          {/* OCR 자동 분석 버튼 — 추후 활성화
-          {form.receiptFile && (
-            <Button
-              variant="secondary"
-              size="lg"
-              className="w-full gap-200"
-              onClick={handleOcrAnalyze}
-              disabled={isOcrLoading}
-            >
-              {isOcrLoading ? (
-                <svg className="size-4 animate-spin" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-                </svg>
-              ) : (
-                <Image src={AdminReceiptIcon} alt="" width={16} height={16} />
-              )}
-              {isOcrLoading ? '분석 중...' : '영수증 자동 분석'}
-            </Button>
-          )}
-          */}
-
           <input
             ref={fileInputRef}
             type="file"
-            accept="image/*"
+            accept="image/*,application/pdf"
             onChange={(e) => {
               const file = e.target.files?.[0];
-              if (file) setReceiptFile(file);
+              if (file && isReceiptUploadFile(file)) setReceiptFile(file);
               e.target.value = '';
             }}
             className="hidden"

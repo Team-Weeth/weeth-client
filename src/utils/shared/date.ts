@@ -108,3 +108,23 @@ export function formatTimeDisplay(timeStr: string): string {
   const displayHour = h % 12 || 12;
   return `${period} ${displayHour}:${String(m).padStart(2, '0')}`;
 }
+
+export function formatSessionDateParts(start: string): {
+  day: string;
+  weekday: string;
+  timeLabel: string;
+} {
+  const date = new Date(start);
+  const month = date.getMonth() + 1;
+  const day = date.getDate();
+  const hours = date.getHours();
+  const minutes = String(date.getMinutes()).padStart(2, '0');
+  const period = hours < 12 ? '오전' : '오후';
+  const displayHour = hours % 12 || 12;
+
+  return {
+    day: String(day),
+    weekday: DAY_META[date.getDay()].en.toUpperCase(),
+    timeLabel: `${month}월 ${day}일 ${period} ${displayHour}:${minutes}`,
+  };
+}

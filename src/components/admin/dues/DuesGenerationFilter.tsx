@@ -44,7 +44,7 @@ function DuesGenerationFilter({
         <DropdownMenuTrigger asChild>
           <button
             type="button"
-            className="bg-button-neutral typo-button2 text-text-strong hover:bg-button-neutral-interaction flex cursor-pointer items-center gap-100 rounded-sm px-300 py-200"
+            className="bg-button-neutral typo-button2 text-text-strong hover:bg-button-neutral-interaction flex shrink-0 cursor-pointer items-center gap-100 rounded-sm px-300 py-200 whitespace-nowrap"
           >
             {displayLabel}
             <Image src={ArrowDownIcon} alt="아래 방향 화살표" width={16} height={16} />
@@ -58,9 +58,12 @@ function DuesGenerationFilter({
           ))}
         </DropdownMenuContent>
       </DropdownMenu>
-      <div className="bg-container-neutral flex items-center gap-200 rounded-md px-300 py-200">
-        <span className="typo-body1` text-text-alternative">
-          마지막 수정&nbsp;&nbsp;{formatLastUpdated(lastUpdated)}
+      <div className="bg-container-neutral tablet:flex-none tablet:justify-start flex flex-1 items-center justify-between gap-200 rounded-md px-300 py-200">
+        <span className="typo-body1 text-text-alternative">
+          마지막 수정
+          <br className="tablet:hidden" />
+          <span className="tablet:inline hidden">&nbsp;&nbsp;</span>
+          {lastUpdated ? formatLastUpdated(lastUpdated) : '-'}
         </span>
         <Avatar size={24}>
           <AvatarImage src={updaterProfileImage} alt="마지막 수정자 프로필" />

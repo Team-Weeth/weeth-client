@@ -55,7 +55,7 @@ function DuesTopBar({
         <button
           type="button"
           onClick={onSettingsClick}
-          className="border-line bg-button-neutral typo-button2 text-text-strong hover:bg-container-neutral-interaction flex cursor-pointer items-center gap-100 rounded-sm border px-300 py-200"
+          className="border-line bg-button-neutral typo-button2 text-text-strong hover:bg-container-neutral-interaction flex shrink-0 cursor-pointer items-center gap-100 rounded-sm border px-300 py-200 whitespace-nowrap"
         >
           <Icon src={AdminSettingIcon} size={16} className="text-icon-normal" />
           설정

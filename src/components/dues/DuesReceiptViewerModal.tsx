@@ -5,18 +5,19 @@ import { useState } from 'react';
 import { DeleteIcon } from '@/assets/icons';
 import { Icon } from '@/components/ui';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
+import type { DuesReceiptFile } from '@/types/dues';
 import { DuesReceiptPageButton } from './DuesReceiptPageButton';
 
 interface DuesReceiptViewerModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  receiptUrls: string[];
+  receiptFiles: DuesReceiptFile[];
 }
 
-function DuesReceiptViewerModal({ open, onOpenChange, receiptUrls }: DuesReceiptViewerModalProps) {
+function DuesReceiptViewerModal({ open, onOpenChange, receiptFiles }: DuesReceiptViewerModalProps) {
   const [activeIndex, setActiveIndex] = useState(0);
-  const receiptCount = receiptUrls.length;
-  const activeReceiptUrl = receiptUrls[activeIndex];
+  const receiptCount = receiptFiles.length;
+  const activeReceipt = receiptFiles[activeIndex];
   const hasMultipleReceipts = receiptCount > 1;
 
   const handlePrevious = () => {
@@ -27,7 +28,7 @@ function DuesReceiptViewerModal({ open, onOpenChange, receiptUrls }: DuesReceipt
     setActiveIndex((prevIndex) => (prevIndex === receiptCount - 1 ? 0 : prevIndex + 1));
   };
 
-  if (!activeReceiptUrl) return null;
+  if (!activeReceipt) return null;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -62,7 +63,7 @@ function DuesReceiptViewerModal({ open, onOpenChange, receiptUrls }: DuesReceipt
 
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src={activeReceiptUrl}
+            src={activeReceipt.fileUrl}
             alt={`영수증 원본 ${activeIndex + 1}`}
             className="max-h-full max-w-full object-contain"
           />

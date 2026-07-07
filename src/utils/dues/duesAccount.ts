@@ -6,10 +6,6 @@ interface CopyDuesAccountOptions {
   errorMessage?: string;
 }
 
-function formatDuesAccountText(account: DuesAccount) {
-  return `${account.bankName} ${account.accountNumber} ${account.holderName}`;
-}
-
 async function copyDuesAccountToClipboard(
   account: DuesAccount,
   {
@@ -23,4 +19,4 @@ async function copyDuesAccountToClipboard(
   });
 }
 
-export { copyDuesAccountToClipboard, formatDuesAccountText, type CopyDuesAccountOptions };
+export { copyDuesAccountToClipboard, type CopyDuesAccountOptions };

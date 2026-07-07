@@ -1,96 +1,108 @@
 'use client';
 
+import { useRef, useState, type ReactNode } from 'react';
+import Image from 'next/image';
+import { useUnmount } from 'react-use';
+
+import { EmptyListIcon } from '@/assets/icons';
 import { Breadcrumb, BreadcrumbItem, BreadcrumbList, BreadcrumbPage } from '@/components/ui';
 import { CardinalDropdown } from '@/components/common';
 import { DuesLeftSection } from '@/components/dues/DuesLeftSection';
-import { DuesPageSkeleton } from '@/components/dues/DuesPageSkeleton';
+import {
+  DuesLeftSectionSkeleton,
+  DuesPageSkeleton,
+  DuesTransactionSectionSkeleton,
+} from '@/components/dues/DuesPageSkeleton';
 import { DuesTransactionSection } from '@/components/dues/DuesTransactionSection';
-import { useCardinalSelector } from '@/hooks';
-import type { DuesSummary, DuesTransaction } from '@/types/dues';
+import { useDuesCardinals, useDuesMe, useDuesTransactions } from '@/hooks/queries';
+import { useClubId } from '@/stores';
 
-const MOCK_DUES: DuesSummary = {
-  cardinalNumber: 7,
-  duesAmount: 60000,
-  currentBalance: 152129,
-  targetBalance: 1425000,
-  isPaid: false,
-  isAccountPublic: true,
-  account: {
-    bankName: '국민은행',
-    accountNumber: '12-12412-1231',
-    holderName: '가천대 검도부',
-  },
+const HELP_MAIL_ADDRESS = 'help@weeth.kr';
+
+const handleContactClick = () => {
+  window.location.href = `mailto:${HELP_MAIL_ADDRESS}`;
 };
 
-const MOCK_TRANSACTIONS: DuesTransaction[] = [
-  {
-    id: 1,
-    type: 'dues',
-    title: '4월 회비',
-    description: '납부될 때마다 합산돼요',
-    amount: 1100000,
-    date: '2026-07-20',
-  },
-  {
-    id: 2,
-    type: 'income',
-    title: '통장 이자',
-    description: '은행',
-    amount: 27,
-    date: '2026-07-20',
-  },
-  {
-    id: 3,
-    type: 'expense',
-    title: '스터디 지원',
-    description: '인프런 외 4곳',
-    amount: 123000,
-    date: '2026-07-20',
-    counterparty: '인프런',
-    category: '운영비',
-    registrant: '운영진 김검도',
-    receiptUrls: ['/mock-receipt.svg', '/mock-receipt.svg', '/mock-receipt.svg'],
-    receiptThumbnailUrl: '/mock-receipt.svg',
-  },
-  {
-    id: 4,
-    type: 'expense',
-    title: '스터디 지원',
-    description: '인프런 외 4곳',
-    amount: 123000,
-    date: '2026-07-20',
-    counterparty: '인프런',
-    category: '운영비',
-    registrant: '운영진 김검도',
-  },
-  {
-    id: 5,
-    type: 'expense',
-    title: '스터디 지원',
-    description: '인프런 외 4곳',
-    amount: 123000,
-    date: '2026-07-20',
-    counterparty: '인프런',
-    category: '운영비',
-    registrant: '운영진 김검도',
-  },
-];
-
 function DuesContent() {
-  const { cardinals, activeCardinal, latestCardinal, setSelectedCardinalId, isLoading } =
-    useCardinalSelector({
-      autoSelectLatest: true,
-    });
+  const clubId = useClubId();
+  const [selectedCardinalId, setSelectedCardinalId] = useState<number | null>(null);
+  const [isCardinalTransitioning, setIsCardinalTransitioning] = useState(false);
+  const transitionTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const {
+    data: cardinals = [],
+    isLoading,
+    isError: isCardinalsError,
+    refetch: refetchCardinals,
+  } = useDuesCardinals();
+  const latestCardinal = cardinals.reduce<(typeof cardinals)[number] | undefined>(
+    (latest, cardinal) => {
+      if (cardinal.status === 'IN_PROGRESS') return cardinal;
+      if (latest?.status === 'IN_PROGRESS') return latest;
+      if (!latest) return cardinal;
 
-  if (isLoading) {
+      return cardinal.cardinalNumber > latest.cardinalNumber ? cardinal : latest;
+    },
+    undefined,
+  );
+  const selectedCardinal =
+    cardinals.find((cardinal) => cardinal.id === selectedCardinalId) ?? latestCardinal;
+  const {
+    data: dues,
+    isLoading: isDuesLoading,
+    isError: isDuesError,
+    refetch: refetchDues,
+  } = useDuesMe(selectedCardinal?.cardinalNumber);
+  const {
+    data: transactionData,
+    fetchNextPage,
+    hasNextPage,
+    isLoading: isTransactionsLoading,
+    isError: isTransactionsError,
+    isFetchingNextPage,
+    refetch: refetchTransactions,
+  } = useDuesTransactions(selectedCardinal?.cardinalNumber);
+  const isPageLoading = !clubId || isLoading;
+  const isLeftSectionLoading = !!selectedCardinal && (isDuesLoading || isCardinalTransitioning);
+  const isTransactionSectionLoading =
+    !!selectedCardinal && (isTransactionsLoading || isCardinalTransitioning);
+  const shouldShowErrorState =
+    !isPageLoading &&
+    (isCardinalsError ||
+      isDuesError ||
+      (isTransactionsError && !transactionData?.transactions.length));
+  const shouldShowEmptyState =
+    !isPageLoading && !shouldShowErrorState && !isLeftSectionLoading && !dues;
+
+  const handleRetry = () => {
+    if (isCardinalsError) void refetchCardinals();
+    if (isDuesError) void refetchDues();
+    if (isTransactionsError) void refetchTransactions();
+  };
+
+  const handleSelectCardinal = (cardinalId: number) => {
+    if (selectedCardinal?.id === cardinalId) return;
+
+    setSelectedCardinalId(cardinalId);
+    setIsCardinalTransitioning(true);
+
+    if (transitionTimeoutRef.current) {
+      clearTimeout(transitionTimeoutRef.current);
+    }
+
+    transitionTimeoutRef.current = setTimeout(() => {
+      setIsCardinalTransitioning(false);
+    }, 250);
+  };
+
+  useUnmount(() => {
+    if (transitionTimeoutRef.current) {
+      clearTimeout(transitionTimeoutRef.current);
+    }
+  });
+
+  if (isPageLoading) {
     return <DuesPageSkeleton />;
   }
-
-  const selectedCardinal = activeCardinal ?? latestCardinal;
-  const dues = {
-    ...MOCK_DUES,
-    cardinalNumber: selectedCardinal?.cardinalNumber ?? MOCK_DUES.cardinalNumber,
-  };
 
   return (
     <main className="max-w-dues mx-auto flex w-full flex-col gap-700 px-450 pt-600 pb-800">
@@ -108,16 +120,96 @@ function DuesContent() {
         <CardinalDropdown
           cardinals={cardinals}
           activeCardinal={selectedCardinal}
-          onSelect={setSelectedCardinalId}
+          onSelect={handleSelectCardinal}
         />
       </div>
 
-      <div className="desktop:flex-row flex flex-col gap-500">
-        <DuesLeftSection dues={dues} />
-        <DuesTransactionSection transactions={MOCK_TRANSACTIONS} />
-      </div>
+      {shouldShowErrorState ? (
+        <DuesErrorState onRetry={handleRetry} />
+      ) : shouldShowEmptyState ? (
+        <DuesEmptyState />
+      ) : (
+        <div className="desktop:flex-row flex flex-col gap-500">
+          {isLeftSectionLoading ? (
+            <DuesLeftSectionSkeleton />
+          ) : (
+            dues && <DuesLeftSection dues={dues} />
+          )}
+          {isTransactionSectionLoading ? (
+            <DuesTransactionSectionSkeleton />
+          ) : (
+            <DuesTransactionSection
+              cardinal={selectedCardinal?.cardinalNumber}
+              transactions={transactionData?.transactions ?? []}
+              counts={transactionData?.counts}
+              hasNextPage={hasNextPage}
+              isFetchingNextPage={isFetchingNextPage}
+              onFetchNextPage={fetchNextPage}
+            />
+          )}
+        </div>
+      )}
     </main>
   );
 }
 
-export { DuesContent };
+function DuesErrorState({ onRetry }: { onRetry: () => void }) {
+  return (
+    <DuesStatusState
+      title="회비 정보를 불러오지 못했어요"
+      description="잠시 후 다시 시도해 주세요."
+      action={
+        <button
+          type="button"
+          onClick={onRetry}
+          className="typo-button2 text-text-alternative hover:text-text-normal cursor-pointer rounded-sm px-0 py-200"
+        >
+          다시 시도
+        </button>
+      }
+    />
+  );
+}
+
+function DuesEmptyState() {
+  return (
+    <DuesStatusState
+      title="아직 회비 내역이 기록되지 않았나봐요!"
+      description="혹시 문제가 발생했나요?"
+      action={
+        <button
+          type="button"
+          onClick={handleContactClick}
+          className="typo-button2 text-text-alternative hover:text-text-normal cursor-pointer rounded-sm px-0 py-200"
+        >
+          문의하기
+        </button>
+      }
+    />
+  );
+}
+
+function DuesStatusState({
+  title,
+  description,
+  action,
+}: {
+  title: string;
+  description: string;
+  action: ReactNode;
+}) {
+  return (
+    <section className="flex min-h-[520px] w-full flex-col items-center justify-center py-300 text-center">
+      <Image src={EmptyListIcon} width={226} height={226} alt="" aria-hidden />
+      <div className="flex flex-col items-center gap-[10px]">
+        <h2 className="typo-h3 text-text-alternative">{title}</h2>
+        <div className="flex items-center justify-center gap-[10px]">
+          <span className="typo-body2 text-text-alternative">{description}</span>
+          {action}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+export { DuesContent, DuesEmptyState, DuesErrorState };

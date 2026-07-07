@@ -8,7 +8,8 @@ import { DuesPaymentButton } from '@/components/dues/DuesPaymentButton';
 import { DuesPaymentStatusBanner } from '@/components/dues/DuesPaymentStatusBanner';
 import { Icon } from '@/components/ui';
 import { formatAmount } from '@/lib/formatAmount';
-import type { DuesSummary } from '@/types/dues';
+import { cn } from '@/lib/cn';
+import type { DuesPaymentStatus, DuesSummary } from '@/types/dues';
 
 interface DuesLeftSectionProps {
   dues: DuesSummary;
@@ -16,8 +17,9 @@ interface DuesLeftSectionProps {
 
 function DuesLeftSection({ dues }: DuesLeftSectionProps) {
   const publicAccount = dues.isAccountPublic ? dues.account : undefined;
+  const paymentStatus = getDisplayPaymentStatus(dues);
 
-  if (dues.isPaid) {
+  if (paymentStatus !== 'UNPAID') {
     return (
       <aside className="desktop:w-[374px] flex w-full flex-col gap-450">
         <DuesBalanceCard
@@ -34,13 +36,7 @@ function DuesLeftSection({ dues }: DuesLeftSectionProps) {
           </div>
         )}
 
-        <div className="bg-container-primary-alternative flex items-center justify-between rounded-md px-400 py-300">
-          <span className="typo-sub3 text-brand-primary flex items-center gap-200">
-            <Icon src={DotIcon} size={4} className="text-brand-primary" />
-            나의 회비 납부 완료
-          </span>
-          <span className="typo-sub3 text-text-alternative">{formatAmount(dues.duesAmount)}원</span>
-        </div>
+        <DuesPaymentResultBadge status={paymentStatus} amount={dues.duesAmount} />
       </aside>
     );
   }
@@ -48,7 +44,11 @@ function DuesLeftSection({ dues }: DuesLeftSectionProps) {
   return (
     <aside className="desktop:w-[374px] flex w-full flex-col gap-450">
       <DuesPaymentStatusBanner isPaid={false} />
-      <DuesAmountCard cardinalNumber={dues.cardinalNumber} amount={dues.duesAmount}>
+      <DuesAmountCard
+        cardinalNumber={dues.cardinalNumber}
+        amount={dues.duesAmount}
+        title={dues.accountName}
+      >
         {publicAccount ? (
           <>
             <DuesAccountCard account={publicAccount} />
@@ -66,6 +66,75 @@ function DuesLeftSection({ dues }: DuesLeftSectionProps) {
       <DuesBalanceCard currentBalance={dues.currentBalance} targetBalance={dues.targetBalance} />
     </aside>
   );
+}
+
+interface DuesPaymentResultBadgeProps {
+  status: Exclude<DuesPaymentStatus, 'UNPAID'>;
+  amount: number;
+}
+
+const PAYMENT_RESULT_CONFIG = {
+  PAID: {
+    label: '나의 회비 납부 완료',
+    containerClassName: 'bg-container-primary-alternative',
+    textClassName: 'text-brand-primary',
+    showAmount: true,
+  },
+  REFUNDED: {
+    label: '나의 회비 환불 완료',
+    containerClassName: 'bg-container-secondary-alternative',
+    textClassName: 'text-brand-secondary',
+    showAmount: true,
+  },
+  EXCLUDED: {
+    label: '이번 기수 회비 납부 대상이 아니에요',
+    containerClassName: 'bg-container-neutral-alternative',
+    textClassName: 'text-text-alternative',
+    showAmount: false,
+  },
+} satisfies Record<
+  Exclude<DuesPaymentStatus, 'UNPAID'>,
+  {
+    label: string;
+    containerClassName: string;
+    textClassName: string;
+    showAmount: boolean;
+  }
+>;
+
+function DuesPaymentResultBadge({ status, amount }: DuesPaymentResultBadgeProps) {
+  const config = PAYMENT_RESULT_CONFIG[status];
+
+  return (
+    <div
+      className={cn(
+        'flex items-center justify-between rounded-md px-400 py-300',
+        config.containerClassName,
+      )}
+    >
+      <span className={cn('typo-sub3 flex items-center gap-200', config.textClassName)}>
+        <Icon src={DotIcon} size={4} className={config.textClassName} />
+        {config.label}
+      </span>
+      {config.showAmount && (
+        <span className="typo-sub3 text-text-alternative">{formatAmount(amount)}원</span>
+      )}
+    </div>
+  );
+}
+
+function getDisplayPaymentStatus(dues: DuesSummary): DuesPaymentStatus {
+  if (isPaymentResultStatus(dues.paymentStatus) || dues.paymentStatus === 'UNPAID') {
+    return dues.paymentStatus;
+  }
+
+  return dues.isPaid ? 'PAID' : 'UNPAID';
+}
+
+function isPaymentResultStatus(
+  status: DuesPaymentStatus,
+): status is Exclude<DuesPaymentStatus, 'UNPAID'> {
+  return status in PAYMENT_RESULT_CONFIG;
 }
 
 export { DuesLeftSection, type DuesLeftSectionProps };

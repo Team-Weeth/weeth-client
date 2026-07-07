@@ -1,17 +1,20 @@
 import { ArrowRightIcon } from '@/assets/icons';
 import { Icon } from '@/components/ui';
 import { cn } from '@/lib/cn';
-import type { DuesTransaction } from '@/types/dues';
+import type { DuesReceiptFile, DuesTransaction } from '@/types/dues';
+import { isPdfReceipt } from '@/utils/dues/duesTransaction';
 
 interface DuesReceiptCardProps {
   transaction: DuesTransaction;
-  receiptUrls: string[];
+  receiptFiles: DuesReceiptFile[];
   onOpenReceiptViewer: () => void;
 }
 
-function DuesReceiptCard({ transaction, receiptUrls, onOpenReceiptViewer }: DuesReceiptCardProps) {
-  const hasReceipt = receiptUrls.length > 0;
-  const thumbnailUrl = transaction.receiptThumbnailUrl ?? receiptUrls[0];
+function DuesReceiptCard({ transaction, receiptFiles, onOpenReceiptViewer }: DuesReceiptCardProps) {
+  const hasReceipt = receiptFiles.length > 0;
+  const firstReceipt = receiptFiles[0];
+  const thumbnailUrl = transaction.receiptThumbnailUrl ?? firstReceipt?.fileUrl;
+  const isPdf = firstReceipt ? isPdfReceipt(firstReceipt) : false;
   const className = cn(
     'bg-container-neutral flex items-start gap-300 rounded-lg p-450 text-left',
     hasReceipt && 'hover:bg-container-neutral-interaction cursor-pointer transition-colors',
@@ -19,7 +22,9 @@ function DuesReceiptCard({ transaction, receiptUrls, onOpenReceiptViewer }: Dues
   const content = (
     <>
       <div className="bg-container-neutral-alternative flex size-12 shrink-0 items-center justify-center overflow-hidden rounded-sm">
-        {thumbnailUrl ? (
+        {isPdf ? (
+          <span className="typo-caption1 text-text-alternative">PDF</span>
+        ) : thumbnailUrl ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img src={thumbnailUrl} alt="" className="size-full object-cover" />
         ) : (
@@ -43,6 +48,20 @@ function DuesReceiptCard({ transaction, receiptUrls, onOpenReceiptViewer }: Dues
   );
 
   if (hasReceipt) {
+    if (isPdf) {
+      return (
+        <a
+          href={firstReceipt.fileUrl}
+          target="_blank"
+          rel="noreferrer"
+          className={className}
+          aria-label="PDF 영수증 원본 보기"
+        >
+          {content}
+        </a>
+      );
+    }
+
     return (
       <button
         type="button"

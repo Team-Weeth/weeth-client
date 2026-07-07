@@ -89,6 +89,29 @@ export interface SavePaymentTargetsBody {
   targetedClubMemberIds: number[];
 }
 
+/** 납부 대상 벌크 처리 — 납부 정정(납부 취소 후 회비 거래 원복) */
+export interface BulkUnpaidBody {
+  targetIds: number[];
+}
+
+/** 납부 대상 벌크 처리 — 환불(납부 완료 대상을 환불 처리, 환불 지출 거래 생성) */
+export interface BulkRefundBody {
+  targetIds: number[];
+  memo: string;
+}
+
+/** 납부 대상 벌크 처리 — 납부 완료(회비 수입 거래 생성) */
+export interface BulkPaidBody {
+  targetIds: number[];
+  paidAt: string;
+  memo: string;
+}
+
+/** 부원 거래 내역 공개 여부 수정 */
+export interface MemberVisibilityBody {
+  visible: boolean;
+}
+
 export interface SaveBankAccountBody {
   bankAccountVisible: boolean;
   bankAccount: {
@@ -151,16 +174,44 @@ export interface DuesDashboard {
   }[];
 }
 
-export type TransactionType = 'income' | 'expense' | 'dues';
+export type TransactionType = 'CARRY_OVER' | 'DUES' | 'INCOME' | 'EXPENSE' | 'REFUND';
+
+/** 금액 부호/색상 판별용 방향 (수입/지출) */
+export type TransactionDirection = Extract<TransactionType, 'INCOME' | 'EXPENSE'>;
+
+/** 거래내역 필터 탭 (전체/수입/지출/회비) — 서버 filter 파라미터 값 */
+export type TransactionFilter = 'ALL' | 'INCOME' | 'EXPENSE' | 'DUES';
+
+/** 거래내역 정렬 옵션 — 서버 sort 파라미터 값 */
+export type TransactionSort = 'LATEST' | 'OLDEST' | 'AMOUNT_DESC' | 'AMOUNT_ASC';
+
+/** 거래내역 목록 조회 쿼리 파라미터 (page는 0-base) */
+export interface TransactionsParams {
+  filter?: TransactionFilter;
+  sort?: TransactionSort;
+  page?: number;
+  size?: number;
+}
+
+/** 필터 탭별 거래 건수 */
+export interface TransactionCounts {
+  all: number;
+  expense: number;
+  income: number;
+  dues: number;
+}
 
 export interface DuesTransaction {
   id: number;
   type: TransactionType;
+  direction: TransactionDirection;
   content: string;
   counterparty: string;
   amount: number;
   totalBalance: number;
   date: string;
+  hasReceipt: boolean;
+  receiptUrl?: string;
 }
 
 export interface MonthlyData {
@@ -178,4 +229,58 @@ export interface DuesMember {
   phone: string;
   status: PaymentStatus;
   avatarInitial?: string;
+}
+
+export interface TransactionReceipt {
+  fileId: number;
+  fileName: string;
+  fileUrl: string;
+  storageKey: string;
+  fileSize: number;
+  contentType: string;
+  status: 'UPLOADED' | 'DELETED';
+}
+
+export interface TransactionItem {
+  transactionId: number;
+  type: TransactionType;
+  direction: TransactionDirection;
+  title: string;
+  source: string;
+  amount: number;
+  transactedAt: string;
+  memo: string;
+  hasReceipt: boolean;
+  receipts: TransactionReceipt[];
+  // 상세 응답에만 포함되는 필드 (목록 응답에는 없음)
+  category?: string;
+  registeredByName?: string;
+}
+
+export interface TransactionsInfo {
+  counts: TransactionCounts;
+  transactions: {
+    content: TransactionItem[];
+    pageNumber: number;
+    pageSize: number;
+    totalElements: number;
+    totalPages: number;
+  };
+}
+
+export interface TransactionFileBody {
+  fileName: string;
+  storageKey: string;
+  fileSize: number;
+  contentType: string;
+}
+
+export interface TransactionBody {
+  type: TransactionDirection;
+  amount: number;
+  title: string;
+  source: string;
+  transactedAt: string;
+  memo: string;
+  files: TransactionFileBody[];
 }
