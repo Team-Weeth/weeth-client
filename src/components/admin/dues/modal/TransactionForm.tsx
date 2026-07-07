@@ -306,7 +306,14 @@ function TransactionForm({ initialValues, onSubmit, onCancel }: TransactionFormP
             취소
           </Button>
           <Button variant="primary" size="lg" onClick={handleSubmit} disabled={isSubmitting}>
-            {isSubmitting ? '저장 중...' : '저장'}
+            {isSubmitting ? (
+              <span className="flex items-center gap-200">
+                <span className="size-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
+                저장 중
+              </span>
+            ) : (
+              '저장'
+            )}
           </Button>
         </div>
       </div>
