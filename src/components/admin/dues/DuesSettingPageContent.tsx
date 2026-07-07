@@ -101,7 +101,7 @@ function DuesSettingPageContent() {
         <SettingSection title="회비 공개 범위">
           <div className="bg-container-neutral flex items-center justify-between rounded-lg p-400">
             <div className="flex flex-col gap-100">
-              <span className="typo-sub2 text-text-strong">전체 회비 내역 공개</span>
+              <span className="typo-sub1 text-text-strong">전체 회비 내역 공개</span>
               <span className="typo-body2 text-text-alternative">
                 부원이 회비 사용 내역을 볼 수 있어요
               </span>

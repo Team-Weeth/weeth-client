@@ -64,7 +64,7 @@ function PaymentTargetModal({
         </div>
 
         {/* Body */}
-        <div className="scrollbar-custom flex flex-1 flex-col gap-400 overflow-y-auto px-[71px] pt-300 pb-400">
+        <div className="scrollbar-custom tablet:px-[71px] flex flex-1 flex-col gap-400 overflow-y-auto px-600 pt-300 pb-400">
           {/* Tabs + Search */}
           <div className="tablet:flex-row flex flex-col items-center justify-between gap-400">
             <DuesTabs

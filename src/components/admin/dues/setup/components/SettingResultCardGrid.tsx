@@ -103,7 +103,7 @@ function SettingResultCardGrid({
   onEditStep,
 }: SettingResultCardGridProps) {
   return (
-    <div className="grid grid-cols-2 gap-400">
+    <div className="tablet:grid tablet:grid-cols-2 flex flex-col gap-400">
       {/* 기본 정보 */}
       <InfoCard title="기본 정보" onEdit={onEditStep ? () => onEditStep(1) : undefined}>
         <InfoRow label="기수" value={`${cardinalNumber} 기`} />
