@@ -39,7 +39,7 @@ import {
 import { toastError, toastSuccess } from '@/stores/useToastStore';
 import { toMonthLabel, toPeriodLabel } from '@/utils/shared/date';
 
-// 목록 데이터(DuesTransaction) → 상세 모달용. 상세 응답 도착 전 폴백으로 사용한다.
+// 목록 데이터 (영수증 오기 전 다른 포맷 채워놓는 용)
 function toTransactionDetail(tx: DuesTransaction): TransactionDetail {
   return {
     type: tx.type,
@@ -52,7 +52,7 @@ function toTransactionDetail(tx: DuesTransaction): TransactionDetail {
   };
 }
 
-// 상세 응답(TransactionItem) → 상세 모달용. 목록에 없는 메모·영수증 정보까지 반영한다.
+// 거래내역 상세 데이터 (영수증 데이터 포함)
 function detailToTransactionDetail(detail: TransactionItem): TransactionDetail {
   return {
     type: detail.type,
@@ -86,7 +86,7 @@ function DuesPageContent() {
   } = useDuesDashboardQuery(clubId, activeCardinal?.cardinalNumber ?? null);
   const isNotRegistered = isDuesNotRegisteredError(dashboardError);
 
-  // 거래내역 필터/정렬/페이지 — 서버 파라미터로 전달 (page는 UI 1-base → API 0-base 변환)
+  // 거래내역 필터/정렬/페이지 — 서버 파라미터로 전달
   const [txFilter, setTxFilter] = useState<TransactionFilter>('ALL');
   const [txSortDesc, setTxSortDesc] = useState(true);
   const [txPage, setTxPage] = useState(1);
@@ -164,7 +164,7 @@ function DuesPageContent() {
   const [selectedTransaction, setSelectedTransaction] = useState<DuesTransaction | null>(null);
   const [editingValues, setEditingValues] = useState<Partial<TransactionFormData>>();
 
-  // 상세 모달이 열려 있을 때만 선택된 거래의 단건 상세(메모·영수증 포함)를 조회한다.
+  // 상세 모달이 열려 있을 때만 선택된 거래의 단건 상세를 조회한
   const { data: transactionDetail } = useAdminDuesTransactionQuery(
     clubId,
     dashboard?.accountId ?? 0,
@@ -179,6 +179,18 @@ function DuesPageContent() {
 
   const handleAddTransaction = () => {
     setAddOpen(true);
+  };
+
+  const handleAddSubmit = async (data: TransactionFormData) => {
+    await createTransaction({
+      type: data.type,
+      amount: Number(data.amount),
+      title: data.description,
+      source: data.vendor,
+      transactedAt: data.date,
+      memo: '',
+      receiptFile: data.receiptFile,
+    });
   };
 
   const handleSetting = () => {
@@ -196,6 +208,20 @@ function DuesPageContent() {
       date: selectedTransaction.date,
     });
     setEditOpen(true);
+  };
+
+  const handleEditSubmit = async (data: TransactionFormData) => {
+    if (!selectedTransaction) return;
+    await updateTransaction({
+      transactionId: selectedTransaction.id,
+      type: data.type,
+      amount: Number(data.amount),
+      title: data.description,
+      source: data.vendor,
+      transactedAt: data.date,
+      memo: '',
+      receiptFile: data.receiptFile,
+    });
   };
 
   // 기수가 선택된 상태에서 대시보드 로딩 중일 때만 스켈레톤을 노출한다.
@@ -255,21 +281,7 @@ function DuesPageContent() {
         onMoreClick={handleMoreClick}
       />
 
-      <AddTransactionModal
-        open={addOpen}
-        onOpenChange={setAddOpen}
-        onSubmit={async (data) => {
-          await createTransaction({
-            type: data.type,
-            amount: Number(data.amount),
-            title: data.description,
-            source: data.vendor,
-            transactedAt: data.date,
-            memo: '',
-            receiptFile: data.receiptFile,
-          });
-        }}
-      />
+      <AddTransactionModal open={addOpen} onOpenChange={setAddOpen} onSubmit={handleAddSubmit} />
       {selectedTransaction && (
         <TransactionDetailModal
           open={detailOpen}
@@ -287,21 +299,9 @@ function DuesPageContent() {
         open={editOpen}
         onOpenChange={setEditOpen}
         initialValues={editingValues}
-        onSubmit={async (data) => {
-          if (!selectedTransaction) return;
-          await updateTransaction({
-            transactionId: selectedTransaction.id,
-            type: data.type,
-            amount: Number(data.amount),
-            title: data.description,
-            source: data.vendor,
-            transactedAt: data.date,
-            memo: '',
-            receiptFile: data.receiptFile,
-          });
-        }}
+        onSubmit={handleEditSubmit}
       />
-      {/* 등록 미완료 장부(20112): 온보딩 완료 전까지 닫히지 않도록 고정 표시 */}
+
       <DuesTutorialModal open={isNotRegistered} onOpenChange={() => {}} onStart={startDuesSetup} />
     </div>
   );

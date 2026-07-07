@@ -65,7 +65,7 @@ export interface PaymentTarget {
   targetId: number;
   paymentTargetInfo: PaymentTargetInfo;
   targetStatus: 'TARGETED' | 'EXCLUDED';
-  paymentStatus: 'UNPAID' | 'PAID' | 'CONFIRMED';
+  paymentStatus: 'UNPAID' | 'PAID' | 'REFUNDED';
   dueAmount: number;
   paidAmount: number;
   paidAt: string | null;

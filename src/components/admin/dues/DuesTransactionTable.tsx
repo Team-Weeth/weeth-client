@@ -9,7 +9,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui';
-import { MoreHorizIcon } from '@/assets/icons';
+import { ConvertIcon, MoreHorizIcon } from '@/assets/icons';
 import { cn } from '@/lib/cn';
 import { DuesPagination } from '@/components/admin/dues/setup/components';
 import type {
@@ -112,6 +112,7 @@ function DuesTransactionTable({
             onClick={onSortToggle}
             className="typo-button2 border-line text-text-normal hover:bg-container-neutral-interaction min-w-10 cursor-pointer rounded-[10px] border px-400 py-200 transition-colors"
           >
+            <Icon src={ConvertIcon} size={18} alt="날짜정렬전환" />
             {sortDesc ? '최근 순' : '오래된 순'}
           </button>
         </div>
