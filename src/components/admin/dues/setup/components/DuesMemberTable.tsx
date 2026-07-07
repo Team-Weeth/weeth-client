@@ -51,7 +51,9 @@ function DuesMemberTable({
             </TableHead>
           )}
           <TableHead className="typo-caption1 text-text-alternative">이름</TableHead>
-          <TableHead className="typo-caption1 text-text-alternative">학과</TableHead>
+          <TableHead className="typo-caption1 text-text-alternative tablet:table-cell hidden">
+            학과
+          </TableHead>
           <TableHead className="typo-caption1 text-text-alternative">직급</TableHead>
           <TableHead className="typo-caption1 text-text-alternative text-right">
             납부 대상
@@ -81,13 +83,15 @@ function DuesMemberTable({
               )}
               <TableCell>
                 <div className="flex items-center gap-300">
-                  <Avatar size={40}>
+                  <Avatar size={40} className="tablet:flex hidden">
                     <AvatarFallback>{name[0]}</AvatarFallback>
                   </Avatar>
                   <span className="typo-body2 text-text-normal">{name}</span>
                 </div>
               </TableCell>
-              <TableCell className="typo-body2 text-text-normal">{department}</TableCell>
+              <TableCell className="typo-body2 text-text-normal tablet:table-cell hidden">
+                {department}
+              </TableCell>
               <TableCell className="typo-body2 text-text-normal">
                 {ROLE_LABEL[memberRole] ?? memberRole}
               </TableCell>

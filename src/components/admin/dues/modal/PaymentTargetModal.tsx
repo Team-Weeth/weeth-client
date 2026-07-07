@@ -14,6 +14,7 @@ import {
 import { DuesSearchBar } from '@/components/admin/dues/DuesSearchBar';
 import { Button } from '@/components/ui';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
+import { cn } from '@/lib/cn';
 import { usePaymentTargetFilter } from '@/hooks/admin';
 
 import type { PaymentTarget } from '@/types/admin/dues';
@@ -52,7 +53,7 @@ function PaymentTargetModal({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
-        className={SCHEDULE_MODAL_CONTENT_CLASS}
+        className={cn(SCHEDULE_MODAL_CONTENT_CLASS, 'h-180')}
         showCloseButton={false}
         adminMobileFullscreen={false}
       >
