@@ -114,6 +114,7 @@ function DuesSettingPageContent() {
       <PaymentTargetModal
         open={isPaymentTargetModalOpen}
         onOpenChange={setIsPaymentTargetModalOpen}
+        targets={paymentTargets?.targets.content ?? []}
         selectedMemberIds={selectedMemberIds}
       />
     </div>

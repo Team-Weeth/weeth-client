@@ -192,6 +192,7 @@ function DuesSetupStep5() {
       <PaymentTargetModal
         open={isPaymentTargetModalOpen}
         onOpenChange={setIsPaymentTargetModalOpen}
+        targets={allTargets}
         selectedMemberIds={selectedMemberIds}
       />
 
