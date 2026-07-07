@@ -12,6 +12,7 @@ import { cn } from '@/lib/cn';
 // import { toastError, toastSuccess } from '@/stores/useToastStore';
 import { CloseCircleIcon } from '@/assets/icons';
 import { formatAmount } from '@/lib/formatAmount';
+import { getApiErrorMessage } from '@/utils/shared';
 import { DuesTextInputField } from './DuesTextInputField';
 
 type TransactionType = 'EXPENSE' | 'INCOME';
@@ -27,7 +28,7 @@ interface TransactionFormData {
 
 interface TransactionFormProps {
   initialValues?: Partial<TransactionFormData>;
-  onSubmit: (data: TransactionFormData) => void;
+  onSubmit: (data: TransactionFormData) => void | Promise<void>;
   onCancel: () => void;
 }
 
@@ -66,6 +67,8 @@ type FormErrors = Partial<Record<'amount' | 'description' | 'vendor', string>>;
 function TransactionForm({ initialValues, onSubmit, onCancel }: TransactionFormProps) {
   const [form, setForm] = useState<TransactionFormData>(() => getDefaultForm(initialValues));
   const [errors, setErrors] = useState<FormErrors>({});
+  const [submitError, setSubmitError] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   // const [isOcrLoading, setIsOcrLoading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -98,6 +101,21 @@ function TransactionForm({ initialValues, onSubmit, onCancel }: TransactionFormP
     if (!form.vendor.trim()) next.vendor = '거래처를 입력해주세요';
     setErrors(next);
     return Object.keys(next).length === 0;
+  };
+
+  // 제출 결과(성공 시 모달 닫기)를 상위에서 알 수 있도록 onSubmit의 반환 Promise를 기다린다.
+  // 잔액 부족 등 서버 에러(예: 500 "잔액이 부족합니다...")면 모달을 유지한 채 메시지를 노출한다.
+  const handleSubmit = async () => {
+    if (!validate()) return;
+    setSubmitError(null);
+    setIsSubmitting(true);
+    try {
+      await onSubmit(form);
+    } catch (err) {
+      setSubmitError(getApiErrorMessage(err) ?? '저장에 실패했습니다. 잠시 후 다시 시도해주세요.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const sign = form.type === 'EXPENSE' ? '-' : '+';
@@ -148,6 +166,7 @@ function TransactionForm({ initialValues, onSubmit, onCancel }: TransactionFormP
                 const raw = e.target.value.replace(/\D/g, '');
                 setForm((prev) => ({ ...prev, amount: raw }));
                 if (errors.amount) setErrors((prev) => ({ ...prev, amount: undefined }));
+                if (submitError) setSubmitError(null);
               }}
               placeholder="0"
               className="typo-body1 placeholder:text-text-alternative text-text-normal min-w-0 flex-1 bg-transparent focus:outline-none"
@@ -278,19 +297,18 @@ function TransactionForm({ initialValues, onSubmit, onCancel }: TransactionFormP
       </div>
 
       {/* Footer */}
-      <div className="bg-container-neutral flex shrink-0 items-center justify-end gap-200 px-400 pt-400 pb-500">
-        <Button variant="secondary" size="lg" onClick={onCancel}>
-          취소
-        </Button>
-        <Button
-          variant="primary"
-          size="lg"
-          onClick={() => {
-            if (validate()) onSubmit(form);
-          }}
-        >
-          저장
-        </Button>
+      <div className="bg-container-neutral flex shrink-0 flex-col gap-200 px-400 pt-400 pb-500">
+        {submitError && (
+          <span className="typo-body2 text-state-error flex self-end px-400">{submitError}</span>
+        )}
+        <div className="flex items-center justify-end gap-200">
+          <Button variant="secondary" size="lg" onClick={onCancel} disabled={isSubmitting}>
+            취소
+          </Button>
+          <Button variant="primary" size="lg" onClick={handleSubmit} disabled={isSubmitting}>
+            {isSubmitting ? '저장 중...' : '저장'}
+          </Button>
+        </div>
       </div>
     </>
   );

@@ -123,15 +123,19 @@ function DuesPageContent() {
     setTxPage(1);
   };
 
-  const { mutate: createTransaction } = useCreateTransaction(clubId, dashboard?.accountId ?? null, {
-    onSuccess: () => toastSuccess('거래내역이 추가되었습니다.'),
-    onError: () => toastError('거래내역 추가에 실패했습니다.'),
-  });
+  // 잔액 부족 등 실패 메시지는 모달이 닫히기 전에 폼 내부에 인라인으로 노출하므로
+  // create/update는 mutateAsync로 에러를 폼까지 전파한다(제네릭 에러 토스트는 생략).
+  const { mutateAsync: createTransaction } = useCreateTransaction(
+    clubId,
+    dashboard?.accountId ?? null,
+    { onSuccess: () => toastSuccess('거래내역이 추가되었습니다.') },
+  );
 
-  const { mutate: updateTransaction } = useUpdateTransaction(clubId, dashboard?.accountId ?? null, {
-    onSuccess: () => toastSuccess('거래내역이 수정되었습니다.'),
-    onError: () => toastError('거래내역 수정에 실패했습니다.'),
-  });
+  const { mutateAsync: updateTransaction } = useUpdateTransaction(
+    clubId,
+    dashboard?.accountId ?? null,
+    { onSuccess: () => toastSuccess('거래내역이 수정되었습니다.') },
+  );
 
   const { mutate: deleteTransaction } = useDeleteTransaction(clubId, dashboard?.accountId ?? null, {
     onSuccess: () => toastSuccess('거래내역이 삭제되었습니다.'),
@@ -265,8 +269,8 @@ function DuesPageContent() {
       <AddTransactionModal
         open={addOpen}
         onOpenChange={setAddOpen}
-        onSubmit={(data) => {
-          createTransaction({
+        onSubmit={async (data) => {
+          await createTransaction({
             type: data.type,
             amount: Number(data.amount),
             title: data.description,
@@ -294,9 +298,9 @@ function DuesPageContent() {
         open={editOpen}
         onOpenChange={setEditOpen}
         initialValues={editingValues}
-        onSubmit={(data) => {
+        onSubmit={async (data) => {
           if (!selectedTransaction) return;
-          updateTransaction({
+          await updateTransaction({
             transactionId: selectedTransaction.id,
             type: data.type,
             amount: Number(data.amount),
