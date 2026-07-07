@@ -221,8 +221,13 @@ export interface MonthlyData {
   amount: number;
 }
 
-export type PaymentStatus = 'paid' | 'unpaid';
-export type FilterType = 'all' | 'paid' | 'unpaid';
+/**
+ * 테이블 행에 표시되는 납부 대상의 상태.
+ * - `excluded`: 납부 대상에서 제외됨(targetStatus EXCLUDED)
+ * - `paid` / `unpaid` / `refunded`: 대상(TARGETED)의 납부 상태(paymentStatus)
+ */
+export type PaymentStatus = 'paid' | 'unpaid' | 'refunded' | 'excluded';
+export type FilterType = 'all' | PaymentStatus;
 
 export interface DuesMember {
   id: number;

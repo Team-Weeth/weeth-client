@@ -23,16 +23,24 @@ import { DuesPaymentSummaryCard } from './DuesPaymentSummaryCard';
 import { BackButton } from './BackButton';
 import { MemberSelectHeader } from './MemberSelectHeader';
 
+// PaymentTarget의 targetStatus/paymentStatus를 테이블 행 표시 상태로 합친다.
+// EXCLUDED(제외)면 납부 상태와 무관하게 'excluded', 그 외에는 납부 상태를 그대로 매핑한다.
+function toMemberStatus(target: PaymentTarget): DuesMember['status'] {
+  if (target.targetStatus === 'EXCLUDED') return 'excluded';
+  if (target.paymentStatus === 'PAID') return 'paid';
+  if (target.paymentStatus === 'REFUNDED') return 'refunded';
+  return 'unpaid';
+}
+
 // 납부 대상(PaymentTarget) → 테이블이 쓰는 DuesMember 형태로 변환
 function toDuesMember(target: PaymentTarget): DuesMember {
-  const { paymentTargetInfo, paymentStatus } = target;
+  const { paymentTargetInfo } = target;
   return {
     id: paymentTargetInfo.clubMemberId,
     name: paymentTargetInfo.name,
     major: paymentTargetInfo.department,
     phone: paymentTargetInfo.tel,
-    // PAID/CONFIRMED → 납부완료, UNPAID → 미납
-    status: paymentStatus === 'UNPAID' ? 'unpaid' : 'paid',
+    status: toMemberStatus(target),
   };
 }
 
@@ -120,18 +128,17 @@ function DuesPaymentStatusPageContent() {
   const { data: dashboard } = useDuesDashboardQuery(clubId, activeCardinal?.cardinalNumber ?? null);
   const { data: paymentTargets } = useDuesPaymentTargetsQuery(clubId, dashboard?.accountId ?? null);
 
-  // 실제 납부 대상(TARGETED)만 집계·표시. 제외된(EXCLUDED) 부원은 제외한다.
-  const targeted = (paymentTargets?.targets.content ?? []).filter(
-    (t) => t.targetStatus === 'TARGETED',
-  );
-  const members: DuesMember[] = targeted.map(toDuesMember);
+  // 테이블에는 제외(EXCLUDED) 부원까지 모두 노출하되, 집계는 실제 납부 대상(TARGETED)만 사용한다.
+  const allTargets = paymentTargets?.targets.content ?? [];
+  const targeted = allTargets.filter((t) => t.targetStatus === 'TARGETED');
+  const members: DuesMember[] = allTargets.map(toDuesMember);
   const totalTarget = targeted.reduce((sum, t) => sum + t.dueAmount, 0);
   const totalCollected = targeted.reduce((sum, t) => sum + t.paidAmount, 0);
 
   const account = dashboard?.bankAccount;
 
-  const unpaidCount = members.filter((m) => m.status === 'unpaid').length;
-  const totalCount = members.length;
+  const unpaidCount = targeted.filter((t) => t.paymentStatus === 'UNPAID').length;
+  const totalCount = targeted.length;
 
   const generationLabel = activeCardinal ? `${activeCardinal.cardinalNumber}기` : '';
 

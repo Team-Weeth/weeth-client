@@ -48,7 +48,7 @@ function MemberSelectHeader({
 }: MemberSelectHeaderProps) {
   // 벌크 액션은 선택된 납부 상태에 따라 유효한 것만 노출한다.
   // - 납부 정정·환불 처리: 이미 납부된(paid) 대상에만 의미가 있다.
-  // - 납부 완료: 아직 미납(unpaid) 대상에만 의미가 있다.
+  // - 납부 완료: 아직 미납(unpaid)이거나 환불(refunded)된 대상에 의미가 있다.
   const actions =
     selectedStatus === 'paid'
       ? [

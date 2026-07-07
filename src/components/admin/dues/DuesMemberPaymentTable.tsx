@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 
-import { CheckIcon } from '@/assets/icons';
+import { CheckIcon, ConvertIcon } from '@/assets/icons';
 import {
   Icon,
   Table,
@@ -21,13 +21,16 @@ import { DuesSearchBar } from './DuesSearchBar';
 /** 페이지당 부원 수 */
 const ITEMS_PER_PAGE = 10;
 
+const STATUS_BADGE: Record<PaymentStatus, { label: string; className: string }> = {
+  paid: { label: '완료', className: 'bg-brand-primary/10 text-brand-primary' },
+  unpaid: { label: '미납', className: 'bg-state-error/10 text-state-error' },
+  refunded: { label: '환불', className: 'bg-brand-secondary/10 text-brand-secondary' },
+  excluded: { label: '제외', className: 'bg-container-neutral-alternative text-text-alternative' },
+};
+
 function PaymentStatusBadge({ status }: { status: PaymentStatus }) {
-  if (status === 'paid') {
-    return (
-      <span className="typo-caption1 bg-brand-primary/10 text-brand-primary tag-base">완료</span>
-    );
-  }
-  return <span className="typo-caption1 bg-state-error/10 text-state-error tag-base">미납</span>;
+  const { label, className } = STATUS_BADGE[status];
+  return <span className={cn('typo-caption1 tag-base', className)}>{label}</span>;
 }
 
 const COLUMNS = [
@@ -56,22 +59,19 @@ function DuesMemberPaymentTable({
   const [sortUnpaidFirst, setSortUnpaidFirst] = useState(false);
   const [page, setPage] = useState(1);
 
-  const totalCount = members.length;
-  const paidCount = members.filter((m) => m.status === 'paid').length;
-  const unpaidCount = members.filter((m) => m.status === 'unpaid').length;
+  const countByStatus = (status: PaymentStatus) =>
+    members.filter((m) => m.status === status).length;
 
   const filters: { key: FilterType; label: string; count: number }[] = [
-    { key: 'all', label: '전체', count: totalCount },
-    { key: 'paid', label: '납부완료', count: paidCount },
-    { key: 'unpaid', label: '미납', count: unpaidCount },
+    { key: 'all', label: '전체', count: members.length },
+    { key: 'paid', label: '납부완료', count: countByStatus('paid') },
+    { key: 'unpaid', label: '미납', count: countByStatus('unpaid') },
+    { key: 'refunded', label: '환불', count: countByStatus('refunded') },
+    { key: 'excluded', label: '제외', count: countByStatus('excluded') },
   ];
 
   const filtered = members
-    .filter((m) => {
-      if (activeFilter === 'paid') return m.status === 'paid';
-      if (activeFilter === 'unpaid') return m.status === 'unpaid';
-      return true;
-    })
+    .filter((m) => activeFilter === 'all' || m.status === activeFilter)
     .filter((m) => !searchQuery || m.name.includes(searchQuery))
     .sort((a, b) => {
       if (!sortUnpaidFirst) return 0;
@@ -104,6 +104,8 @@ function DuesMemberPaymentTable({
     selectedIds.size === 0 ? null : (members.find((m) => selectedIds.has(m.id))?.status ?? null);
 
   const toggleSelect = (id: number, status: PaymentStatus) => {
+    // 제외(excluded) 대상은 벌크 납부 액션 대상이 아니므로 선택할 수 없다.
+    if (status === 'excluded') return;
     const next = new Set(selectedIds);
     if (next.has(id)) {
       next.delete(id);
@@ -142,6 +144,7 @@ function DuesMemberPaymentTable({
             onClick={handleSortToggle}
             className="typo-button2 border-line text-text-normal hover:bg-container-neutral-interaction min-w-10 shrink-0 cursor-pointer rounded-[10px] border px-400 py-200 transition-colors"
           >
+            <Icon src={ConvertIcon} size={18} alt="날짜정렬전환" />
             {sortUnpaidFirst ? '이름 순' : '미납 순'}
           </button>
         </div>
@@ -176,9 +179,11 @@ function DuesMemberPaymentTable({
               ) : (
                 paged.map((member) => {
                   const isSelected = selectedIds.has(member.id);
-                  // 선택 진행 중이고, 현재 선택 상태와 다른 상태의 멤버는 함께 선택할 수 없다.
+                  const isExcluded = member.status === 'excluded';
+                  // 제외 대상이거나, 선택 진행 중이고 현재 선택 상태와 다른 상태의 멤버는 함께 선택할 수 없다.
                   const isDisabled =
-                    !isSelected && selectedStatus !== null && member.status !== selectedStatus;
+                    isExcluded ||
+                    (!isSelected && selectedStatus !== null && member.status !== selectedStatus);
                   return (
                     <TableRow
                       key={member.id}
@@ -188,7 +193,11 @@ function DuesMemberPaymentTable({
                         {/* disabled 버튼은 title 툴팁이 뜨지 않으므로 span으로 감싸 안내를 노출한다. */}
                         <span
                           title={
-                            isDisabled ? '납부 상태가 같은 부원끼리만 선택할 수 있어요.' : undefined
+                            isExcluded
+                              ? '제외된 부원은 선택할 수 없어요.'
+                              : isDisabled
+                                ? '납부 상태가 같은 부원끼리만 선택할 수 있어요.'
+                                : undefined
                           }
                           className="inline-flex"
                         >
