@@ -37,18 +37,7 @@ import {
   useUpdateTransaction,
 } from '@/hooks/mutations/admin/useAdminDuesMutations';
 import { toastError, toastSuccess } from '@/stores/useToastStore';
-
-// 'YYYY-MM' → 'N월'
-function toMonthLabel(yearMonth: string): string {
-  return `${Number(yearMonth.split('-')[1])}월`;
-}
-
-// 'YYYY-MM' → 'YYYY.MM.'
-function toPeriodLabel(yearMonth: string | undefined): string {
-  if (!yearMonth) return '';
-  const [year, month] = yearMonth.split('-');
-  return `${year}.${month}.`;
-}
+import { toMonthLabel, toPeriodLabel } from '@/utils/shared/date';
 
 // 목록 데이터(DuesTransaction) → 상세 모달용. 상세 응답 도착 전 폴백으로 사용한다.
 function toTransactionDetail(tx: DuesTransaction): TransactionDetail {
@@ -145,6 +134,7 @@ function DuesPageContent() {
   const { isPublic, handlePublicChange } = useDuesVisibilityToggle(
     clubId,
     dashboard?.accountId ?? null,
+    dashboard?.bankAccountPublic,
   );
 
   // 월별 잔액 추이 차트 데이터 (yearMonth → 'N월', endingBalance → 막대 높이)
@@ -226,8 +216,7 @@ function DuesPageContent() {
       <DuesGenerationFilter
         cardinals={cardinals}
         activeCardinal={activeCardinal}
-        lastUpdated={dashboard?.lastModified?.modifiedAt ?? ''}
-        updaterProfileImage={dashboard?.lastModified?.modifiedBy.profileImageUrl ?? undefined}
+        updaterProfile={dashboard?.lastModified ?? undefined}
         onSelect={setSelectedCardinalId}
       />
       <div className="tablet:flex-row flex flex-col gap-1">

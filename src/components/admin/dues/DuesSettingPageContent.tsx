@@ -51,7 +51,11 @@ function DuesSettingPageContent() {
 
   const [isPaymentTargetModalOpen, setIsPaymentTargetModalOpen] = useState(false);
 
-  const { isPublic, handlePublicChange } = useDuesVisibilityToggle(clubId, accountId);
+  const { isPublic, handlePublicChange } = useDuesVisibilityToggle(
+    clubId,
+    accountId,
+    dashboard?.bankAccountPublic,
+  );
 
   const cardinalNumber = activeCardinal?.cardinalNumber ?? 0;
 

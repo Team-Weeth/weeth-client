@@ -11,15 +11,20 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  TooltipProvider,
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
 } from '@/components/ui';
 import type { Cardinal } from '@/types/admin/cardinal';
 import { formatLastUpdated } from '@/utils/shared/date';
+import { LastModified } from '@/types/admin/dues';
 
 interface DuesGenerationFilterProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onSelect'> {
   cardinals: Cardinal[];
   activeCardinal?: Cardinal;
-  lastUpdated: string;
-  updaterProfileImage?: string;
+
+  updaterProfile?: LastModified;
   onSelect: (id: number) => void;
 }
 
@@ -27,8 +32,7 @@ function DuesGenerationFilter({
   className,
   cardinals,
   activeCardinal,
-  lastUpdated,
-  updaterProfileImage,
+  updaterProfile,
   onSelect,
   ...props
 }: DuesGenerationFilterProps) {
@@ -63,12 +67,22 @@ function DuesGenerationFilter({
           마지막 수정
           <br className="tablet:hidden" />
           <span className="tablet:inline hidden">&nbsp;&nbsp;</span>
-          {lastUpdated ? formatLastUpdated(lastUpdated) : '-'}
+          {updaterProfile?.modifiedAt ? formatLastUpdated(updaterProfile?.modifiedAt) : '-'}
         </span>
-        <Avatar size={24}>
-          <AvatarImage src={updaterProfileImage} alt="마지막 수정자 프로필" />
-          <AvatarFallback />
-        </Avatar>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger>
+              <Avatar size={24}>
+                <AvatarImage
+                  src={updaterProfile?.modifiedBy.profileImageUrl ?? undefined}
+                  alt="마지막 수정자 프로필"
+                />
+                <AvatarFallback />
+              </Avatar>
+            </TooltipTrigger>
+            <TooltipContent>{updaterProfile?.modifiedBy.name}</TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </div>
     </div>
   );

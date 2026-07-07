@@ -137,6 +137,15 @@ export interface PaymentTargetsData {
   };
 }
 
+export interface LastModified {
+  modifiedAt: string;
+  modifiedBy: {
+    userId: number;
+    name: string;
+    profileImageUrl: string | null;
+  };
+}
+
 export interface DuesDashboard {
   accountId: number;
   summary: {
@@ -154,14 +163,7 @@ export interface DuesDashboard {
     holder: string;
     guide: string | null;
   } | null;
-  lastModified: {
-    modifiedAt: string;
-    modifiedBy: {
-      userId: number;
-      name: string;
-      profileImageUrl: string | null;
-    };
-  } | null;
+  lastModified: LastModified | null;
   period: {
     startYearMonth: string;
     endYearMonth: string;
