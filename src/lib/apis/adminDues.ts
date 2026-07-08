@@ -1,6 +1,7 @@
 import { apiClient } from '@/lib/apis/client';
 import type { ApiResponse } from '@/types/common';
 import type {
+  BulkExcludeBody,
   BulkPaidBody,
   BulkRefundBody,
   BulkUnpaidBody,
@@ -141,4 +142,8 @@ export const duesApi = {
   // 납부 확인(벌크): 대상을 납부 완료 처리하고 시스템 회비 수입 거래 생성
   markPaymentTargetsPaid: (clubId: string, accountId: number, body: BulkPaidBody) =>
     apiClient.patch(`/admin/clubs/${clubId}/accounts/${accountId}/payment-targets/paid`, body),
+
+  // 제외(벌크): 선택 부원을 납부 대상에서 제외(미납 대상만 가능, 납부·환불 이력 있으면 불가)
+  excludePaymentTargets: (clubId: string, accountId: number, body: BulkExcludeBody) =>
+    apiClient.patch(`/admin/clubs/${clubId}/accounts/${accountId}/payment-targets/excluded`, body),
 };

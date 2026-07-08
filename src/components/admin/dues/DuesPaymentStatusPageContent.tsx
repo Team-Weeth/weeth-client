@@ -12,6 +12,7 @@ import { copyDuesAccountToClipboard } from '@/utils/dues/duesAccount';
 import { useCardinalSelector } from '@/hooks';
 import { useDuesDashboardQuery, useDuesPaymentTargetsQuery } from '@/hooks/queries/admin';
 import {
+  useExcludePaymentTargets,
   useMarkPaymentTargetsPaid,
   useMarkPaymentTargetsUnpaid,
   useRefundPaymentTargets,
@@ -176,10 +177,18 @@ function DuesPaymentStatusPageContent() {
 
   const { mutate: markPaid } = useMarkPaymentTargetsPaid(clubId, accountId, {
     onSuccess: () => {
-      toastSuccess('납부 완료 처리되었습니다.');
+      toastSuccess('납부가 확인되었습니다.');
       clearSelection();
     },
-    onError: () => toastError('납부 완료 처리에 실패했습니다.'),
+    onError: () => toastError('납부 확인에 실패했습니다.'),
+  });
+
+  const { mutate: exclude } = useExcludePaymentTargets(clubId, accountId, {
+    onSuccess: () => {
+      toastSuccess('납부 대상에서 제외되었습니다.');
+      clearSelection();
+    },
+    onError: () => toastError('제외 처리에 실패했습니다.'),
   });
 
   return (
