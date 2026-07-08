@@ -4,6 +4,8 @@ import { useState } from 'react';
 
 import { CheckIcon } from '@/assets/icons';
 import {
+  Avatar,
+  AvatarFallback,
   Icon,
   Table,
   TableBody,
@@ -70,7 +72,7 @@ function DuesMemberPaymentTable({
 
   const filters: { key: FilterType; label: string; count: number }[] = [
     { key: 'all', label: '전체', count: members.length },
-    { key: 'paid', label: '납부완료', count: countByStatus('paid') },
+    { key: 'paid', label: '완료', count: countByStatus('paid') },
     { key: 'unpaid', label: '미납', count: countByStatus('unpaid') },
     { key: 'refunded', label: '환불', count: countByStatus('refunded') },
     { key: 'excluded', label: '제외', count: countByStatus('excluded') },
@@ -151,7 +153,11 @@ function DuesMemberPaymentTable({
                 {COLUMNS.map((col) => (
                   <TableHead
                     key={col.key}
-                    className={cn(col.label && 'typo-body2 text-text-alternative', col.className)}
+                    className={cn(
+                      col.label && 'typo-body2 text-text-alternative',
+                      col.label === '이름' && 'pl-[70px]',
+                      col.className,
+                    )}
                   >
                     {col.label}
                   </TableHead>
@@ -178,7 +184,10 @@ function DuesMemberPaymentTable({
                   return (
                     <TableRow
                       key={member.id}
-                      className="border-line hover:bg-container-neutral-interaction border-t"
+                      className={cn(
+                        'border-line border-t hover:[&>td]:bg-container-neutral-interaction',
+                        isSelected && '[&>td]:bg-container-neutral-alternative',
+                      )}
                     >
                       <TableCell>
                         {/* disabled 버튼은 title 툴팁이 뜨지 않으므로 span으로 감싸 안내를 노출한다. */}
@@ -216,13 +225,11 @@ function DuesMemberPaymentTable({
                         </span>
                       </TableCell>
                       <TableCell>
-                        <div className="flex items-center gap-400">
-                          <div className="bg-container-neutral-interaction text-text-alternative typo-caption1 flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-md">
-                            {member.avatarInitial ?? member.name.slice(0, 1)}
-                          </div>
-                          <span className="typo-body2 text-text-strong min-w-0 truncate">
-                            {member.name}
-                          </span>
+                        <div className="flex items-center gap-300">
+                          <Avatar size={40}>
+                            <AvatarFallback>{member.name[0]}</AvatarFallback>
+                          </Avatar>
+                          <span className="typo-body1 text-text-normal">{member.name}</span>
                         </div>
                       </TableCell>
                       <TableCell className="typo-body2 text-text-strong">{member.major}</TableCell>

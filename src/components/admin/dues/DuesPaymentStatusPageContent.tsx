@@ -9,6 +9,7 @@ import { Card, Icon } from '@/components/ui';
 import { cn } from '@/lib/cn';
 import { toastError, toastSuccess } from '@/stores/useToastStore';
 import { copyDuesAccountToClipboard } from '@/utils/dues/duesAccount';
+import { getApiErrorMessage } from '@/utils/shared';
 import { useCardinalSelector } from '@/hooks';
 import { useDuesDashboardQuery, useDuesPaymentTargetsQuery } from '@/hooks/queries/admin';
 import {
@@ -172,7 +173,15 @@ function DuesPaymentStatusPageContent() {
       toastSuccess('환불 처리되었습니다.');
       clearSelection();
     },
-    onError: () => toastError('환불 처리에 실패했습니다.'),
+    onError: (error) => {
+      // 잔액 < 환불금이면 서버가 "잔액이 부족합니다. 현재: n, 요청: n" 메시지로 거부한다.
+      const message = getApiErrorMessage(error);
+      if (message?.includes('잔액이 부족')) {
+        toastError('잔액이 부족해 환불이 불가능합니다!');
+        return;
+      }
+      toastError(message ?? '환불 처리에 실패했습니다.');
+    },
   });
 
   const { mutate: markPaid } = useMarkPaymentTargetsPaid(clubId, accountId, {
