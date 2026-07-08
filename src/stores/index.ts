@@ -35,3 +35,9 @@ export {
   useIsAdminEditMode,
   useSetAdminEditMode,
 } from './useAdminHeaderStore';
+export {
+  useSelectedCardinalStore,
+  useSelectedCardinalNumber,
+  useSelectedCardinalActions,
+  type SelectedCardinalState,
+} from './useSelectedCardinalStore';

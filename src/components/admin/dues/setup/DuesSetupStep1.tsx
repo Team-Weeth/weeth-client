@@ -33,7 +33,7 @@ function DuesSetupStep1() {
   const { clubId } = useParams<{ clubId: string }>();
   const { accountId, isFreshEntry, amount, name, description } = useDuesSetupValues();
   const { setField, reset } = useDuesSetupActions();
-  const { latestCardinal } = useCardinalSelector();
+  const { activeCardinal } = useCardinalSelector({ autoSelectLatest: true, scope: 'dues' });
 
   const createDraft = useCreateDuesDraft(clubId);
   const discardDraft = useDiscardDuesDraft(clubId, accountId);
@@ -74,9 +74,9 @@ function DuesSetupStep1() {
   // - 새로고침 등으로 accountId가 비워진 경우에도 accountId 확보를 위해 호출은 하되,
   //   "이어서 작성" alert는 메인에서 신규 진입(isFreshEntry)했을 때만 노출
   useEffect(() => {
-    if (accountId !== null || !latestCardinal) return;
+    if (accountId !== null || !activeCardinal) return;
 
-    createDraftMutate(latestCardinal.cardinalNumber, {
+    createDraftMutate(activeCardinal.cardinalNumber, {
       onSuccess: ({ accountId: id, isNew, lastModifiedByName }) => {
         setField({ accountId: id, isFreshEntry: false });
         if (!isNew && isFreshEntry) {
@@ -84,9 +84,9 @@ function DuesSetupStep1() {
         }
       },
     });
-  }, [accountId, isFreshEntry, latestCardinal, createDraftMutate, setField]);
+  }, [accountId, isFreshEntry, activeCardinal, createDraftMutate, setField]);
 
-  const cardinalNumber = latestCardinal?.cardinalNumber ?? 0;
+  const cardinalNumber = activeCardinal?.cardinalNumber ?? 0;
 
   const restoreDraft = useRestoreDuesDraft(clubId, accountId, cardinalNumber);
 

@@ -121,7 +121,7 @@ function AccountCard({
 
 function DuesPaymentStatusPageContent() {
   const { clubId } = useParams<{ clubId: string }>();
-  const { activeCardinal } = useCardinalSelector({ autoSelectLatest: true });
+  const { activeCardinal } = useCardinalSelector({ autoSelectLatest: true, scope: 'dues' });
   const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
 
   // 대시보드로 accountId·계좌 정보를 확보한 뒤 납부 대상 목록을 조회한다.

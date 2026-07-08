@@ -40,7 +40,7 @@ function SettingSection({ title, children }: SettingSectionProps) {
 
 function DuesSettingPageContent() {
   const { clubId } = useParams<{ clubId: string }>();
-  const { activeCardinal } = useCardinalSelector({ autoSelectLatest: true });
+  const { activeCardinal } = useCardinalSelector({ autoSelectLatest: true, scope: 'dues' });
 
   // 대시보드로 accountId를 확보한 뒤 등록 상태·납부 대상 목록을 조회한다.
   const { data: dashboard } = useDuesDashboardQuery(clubId, activeCardinal?.cardinalNumber ?? null);

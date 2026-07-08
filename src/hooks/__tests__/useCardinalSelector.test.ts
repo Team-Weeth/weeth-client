@@ -2,10 +2,15 @@ import { renderHook, act } from '@testing-library/react';
 
 import { useCardinalSelector } from '@/hooks/useCardinalSelector';
 import { useCardinals } from '@/hooks/queries';
+import { useSelectedCardinalStore } from '@/stores/useSelectedCardinalStore';
 import type { Cardinal } from '@/types/admin/cardinal';
 
 jest.mock('@/hooks/queries', () => ({
   useCardinals: jest.fn(),
+}));
+
+jest.mock('@/stores', () => ({
+  useClubId: () => 'club-1',
 }));
 
 const mockUseCardinals = useCardinals as jest.Mock;
@@ -19,6 +24,7 @@ const CARDINALS: Cardinal[] = [
 describe('useCardinalSelector', () => {
   beforeEach(() => {
     mockUseCardinals.mockReturnValue({ data: CARDINALS });
+    useSelectedCardinalStore.getState().reset();
   });
 
   it('기본값으로 selectedCardinalId가 null이고 activeCardinal이 undefined이다', () => {

@@ -73,6 +73,7 @@ function DuesPageContent() {
   const [activeMonth, setActiveMonth] = useState('');
   const { cardinals, setSelectedCardinalId, activeCardinal } = useCardinalSelector({
     autoSelectLatest: true,
+    scope: 'dues',
   });
   const router = useRouter();
   const { clubId } = useParams<{ clubId: string }>();
