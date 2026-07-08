@@ -42,7 +42,7 @@ function PaymentStatusBadge({ status }: { status: PaymentStatus }) {
 }
 
 const COLUMNS = [
-  { key: 'select', label: '선택', className: 'w-[88px]' },
+  { key: 'select', label: '선택', className: 'w-[64px]' },
   { key: 'name', label: '이름', className: 'min-w-32' },
   { key: 'major', label: '학과', className: 'min-w-32' },
   { key: 'phone', label: '연락처', className: 'w-[148px]' },
@@ -155,7 +155,7 @@ function DuesMemberPaymentTable({
                     key={col.key}
                     className={cn(
                       col.label && 'typo-body2 text-text-alternative',
-                      col.label === '이름' && 'pl-[70px]',
+                      col.label === '이름' && 'pl-[46px]',
                       col.className,
                     )}
                   >

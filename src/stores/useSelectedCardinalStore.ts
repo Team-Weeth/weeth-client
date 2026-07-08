@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import { combine, devtools, persist } from 'zustand/middleware';
 import { useShallow } from 'zustand/react/shallow';
 
-// 선택된 기수를 페이지 이동 간에도 유지하기 위한 전역 스토어.
+// 어드민 회비 페이지에서 선택된 기수를 페이지 이동 간 유지하기 위한 전역 스토어.
 // clubId + scope 조합을 키로 사용해 클럽별/기능별 선택을 분리한다.
 // (예: 회비('dues')와 출석/일정('default') 선택이 서로 섞이지 않도록)
 const initialState = {
