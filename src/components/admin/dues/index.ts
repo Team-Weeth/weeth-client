@@ -35,8 +35,4 @@ export { BackButton } from './BackButton';
 
 export { DuesSearchBar, type DuesSearchBarProps } from './DuesSearchBar';
 export { MemberSelectHeader } from './MemberSelectHeader';
-export {
-  TableTabFilter,
-  type TableTabFilterProps,
-  type TableTabItem,
-} from './TableTabFilter';
+export { TableTabFilter, type TableTabFilterProps, type TableTabItem } from './TableTabFilter';

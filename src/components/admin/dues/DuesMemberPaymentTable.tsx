@@ -185,7 +185,7 @@ function DuesMemberPaymentTable({
                     <TableRow
                       key={member.id}
                       className={cn(
-                        'border-line border-t hover:[&>td]:bg-container-neutral-interaction',
+                        'border-line hover:[&>td]:bg-container-neutral-interaction border-t',
                         isSelected && '[&>td]:bg-container-neutral-alternative',
                       )}
                     >
