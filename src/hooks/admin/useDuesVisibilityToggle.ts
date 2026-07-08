@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { useUpdateMemberVisibility } from '@/hooks/mutations/admin/useAdminDuesMutations';
 import { toastError } from '@/stores/useToastStore';
@@ -32,6 +32,13 @@ export function useDuesVisibilityToggle(
   const { mutate: updateMemberVisibility } = useUpdateMemberVisibility(clubId, accountId, {
     onError: () => toastError('공개 설정 변경에 실패했습니다.'),
   });
+
+  // 언마운트 후 대기 중인 debounce 타이머가 mutation을 실행하지 않도록 정리한다.
+  useEffect(() => {
+    return () => {
+      if (debounceTimerRef.current) clearTimeout(debounceTimerRef.current);
+    };
+  }, []);
 
   // 스위치는 즉시 반영하고, 서버 요청만 debounce하여 연타의 마지막 값만 보낸다.
   const handlePublicChange = (value: boolean) => {

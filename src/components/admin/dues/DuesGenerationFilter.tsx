@@ -16,9 +16,9 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from '@/components/ui';
-import type { Cardinal } from '@/types/admin/cardinal';
 import { formatLastUpdated } from '@/utils/shared/date';
-import { LastModified } from '@/types/admin/dues';
+import type { Cardinal } from '@/types/admin/cardinal';
+import type { LastModified } from '@/types/admin/dues';
 
 interface DuesGenerationFilterProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onSelect'> {
   cardinals: Cardinal[];
@@ -67,7 +67,7 @@ function DuesGenerationFilter({
           마지막 수정
           <br className="tablet:hidden" />
           <span className="tablet:inline hidden">&nbsp;&nbsp;</span>
-          {updaterProfile?.modifiedAt ? formatLastUpdated(updaterProfile?.modifiedAt) : '-'}
+          {updaterProfile?.modifiedAt ? formatLastUpdated(updaterProfile.modifiedAt) : '-'}
         </span>
         <TooltipProvider>
           <Tooltip>

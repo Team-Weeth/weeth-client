@@ -4,12 +4,9 @@ import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 
 import { AdminCloudUploadIcon } from '@/assets/icons/admin';
-// import { AdminReceiptIcon } from '@/assets/icons/admin';
 import { Button, CalendarPicker, Icon } from '@/components/ui';
 import { useImageDrop } from '@/hooks/useImageDrop';
-// import { analyzeReceipt } from '@/lib/actions/ocr';
 import { cn } from '@/lib/cn';
-// import { toastError, toastSuccess } from '@/stores/useToastStore';
 import { CloseCircleIcon } from '@/assets/icons';
 import { formatAmount } from '@/lib/formatAmount';
 import { getApiErrorMessage } from '@/utils/shared';
@@ -70,7 +67,6 @@ function TransactionForm({ initialValues, onSubmit, onCancel }: TransactionFormP
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-  // const [isOcrLoading, setIsOcrLoading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const previewUrlRef = useRef<string | null>(null);
   const isPdfReceipt = form.receiptFile ? isPdfFile(form.receiptFile) : false;

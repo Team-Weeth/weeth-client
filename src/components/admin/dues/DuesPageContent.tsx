@@ -39,7 +39,7 @@ import {
 import { toastError, toastSuccess } from '@/stores/useToastStore';
 import { toMonthLabel, toPeriodLabel } from '@/utils/shared/date';
 
-// 목록 데이터 (영수증 오기 전 다른 포맷 채워놓는 용)
+// 목록 데이터(DuesTransaction) → 상세 모달용. 상세 응답 도착 전 폴백으로 사용한다.
 function toTransactionDetail(tx: DuesTransaction): TransactionDetail {
   return {
     type: tx.type,
@@ -52,7 +52,7 @@ function toTransactionDetail(tx: DuesTransaction): TransactionDetail {
   };
 }
 
-// 거래내역 상세 데이터 (영수증 데이터 포함)
+// 상세 응답(TransactionItem) → 상세 모달용. 목록에 없는 메모·영수증 정보까지 반영한다.
 function detailToTransactionDetail(detail: TransactionItem): TransactionDetail {
   return {
     type: detail.type,
@@ -165,7 +165,7 @@ function DuesPageContent() {
   const [selectedTransaction, setSelectedTransaction] = useState<DuesTransaction | null>(null);
   const [editingValues, setEditingValues] = useState<Partial<TransactionFormData>>();
 
-  // 상세 모달이 열려 있을 때만 선택된 거래의 단건 상세를 조회한
+  // 상세 모달이 열려 있을 때만 선택된 거래의 단건 상세(메모·영수증 포함)를 조회한다.
   const { data: transactionDetail } = useAdminDuesTransactionQuery(
     clubId,
     dashboard?.accountId ?? 0,

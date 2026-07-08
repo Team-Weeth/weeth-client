@@ -10,6 +10,7 @@ import { cn } from '@/lib/cn';
 import { toastError, toastSuccess } from '@/stores/useToastStore';
 import { copyDuesAccountToClipboard } from '@/utils/dues/duesAccount';
 import { getApiErrorMessage } from '@/utils/shared';
+import { DUES_INSUFFICIENT_BALANCE_MESSAGE } from '@/constants/admin/dues.constants';
 import { useCardinalSelector } from '@/hooks';
 import { useDuesDashboardQuery, useDuesPaymentTargetsQuery } from '@/hooks/queries/admin';
 import {
@@ -176,7 +177,7 @@ function DuesPaymentStatusPageContent() {
     onError: (error) => {
       // 잔액 < 환불금이면 서버가 "잔액이 부족합니다. 현재: n, 요청: n" 메시지로 거부한다.
       const message = getApiErrorMessage(error);
-      if (message?.includes('잔액이 부족')) {
+      if (message?.includes(DUES_INSUFFICIENT_BALANCE_MESSAGE)) {
         toastError('잔액이 부족해 환불이 불가능합니다!');
         return;
       }
