@@ -107,6 +107,11 @@ export interface BulkPaidBody {
   memo: string;
 }
 
+/** 납부 대상 벌크 처리 — 제외(미납 대상만 가능, 납부·환불 이력이 있으면 제외 불가) */
+export interface BulkExcludeBody {
+  targetIds: number[];
+}
+
 /** 부원 거래 내역 공개 여부 수정 */
 export interface MemberVisibilityBody {
   visible: boolean;

@@ -21,6 +21,11 @@ import { DuesSearchBar } from './DuesSearchBar';
 /** 페이지당 부원 수 */
 const ITEMS_PER_PAGE = 10;
 
+/** 벌크 액션 대상이 되는(=선택 가능한) 상태. 환불·제외는 처리할 액션이 없어 선택할 수 없다. */
+function isSelectableStatus(status: PaymentStatus): boolean {
+  return status === 'paid' || status === 'unpaid';
+}
+
 const STATUS_BADGE: Record<PaymentStatus, { label: string; className: string }> = {
   paid: { label: '완료', className: 'bg-brand-primary/10 text-brand-primary' },
   unpaid: { label: '미납', className: 'bg-state-error/10 text-state-error' },
@@ -104,8 +109,8 @@ function DuesMemberPaymentTable({
     selectedIds.size === 0 ? null : (members.find((m) => selectedIds.has(m.id))?.status ?? null);
 
   const toggleSelect = (id: number, status: PaymentStatus) => {
-    // 제외(excluded) 대상은 벌크 납부 액션 대상이 아니므로 선택할 수 없다.
-    if (status === 'excluded') return;
+    // 환불·제외 대상은 벌크 액션이 없으므로 선택할 수 없다.
+    if (!isSelectableStatus(status)) return;
     const next = new Set(selectedIds);
     if (next.has(id)) {
       next.delete(id);
@@ -142,9 +147,9 @@ function DuesMemberPaymentTable({
           <button
             type="button"
             onClick={handleSortToggle}
-            className="typo-button2 border-line text-text-normal hover:bg-container-neutral-interaction min-w-10 shrink-0 cursor-pointer rounded-[10px] border px-400 py-200 transition-colors"
+            className="typo-button2 border-line text-text-normal hover:bg-container-neutral-interaction flex min-w-10 shrink-0 cursor-pointer flex-row rounded-[10px] border px-400 py-200 transition-colors"
           >
-            <Icon src={ConvertIcon} size={18} alt="날짜정렬전환" />
+            <Icon src={ConvertIcon} size={18} alt="날짜정렬전환" className="flex self-center" />
             {sortUnpaidFirst ? '이름 순' : '미납 순'}
           </button>
         </div>
@@ -179,10 +184,10 @@ function DuesMemberPaymentTable({
               ) : (
                 paged.map((member) => {
                   const isSelected = selectedIds.has(member.id);
-                  const isExcluded = member.status === 'excluded';
-                  // 제외 대상이거나, 선택 진행 중이고 현재 선택 상태와 다른 상태의 멤버는 함께 선택할 수 없다.
+                  const isSelectable = isSelectableStatus(member.status);
+                  // 선택 불가(환불·제외) 상태이거나, 선택 진행 중이고 현재 선택 상태와 다른 상태의 멤버는 함께 선택할 수 없다.
                   const isDisabled =
-                    isExcluded ||
+                    !isSelectable ||
                     (!isSelected && selectedStatus !== null && member.status !== selectedStatus);
                   return (
                     <TableRow
@@ -193,8 +198,8 @@ function DuesMemberPaymentTable({
                         {/* disabled 버튼은 title 툴팁이 뜨지 않으므로 span으로 감싸 안내를 노출한다. */}
                         <span
                           title={
-                            isExcluded
-                              ? '제외된 부원은 선택할 수 없어요.'
+                            !isSelectable
+                              ? '납부 완료·미납 상태인 부원만 선택할 수 있어요.'
                               : isDisabled
                                 ? '납부 상태가 같은 부원끼리만 선택할 수 있어요.'
                                 : undefined

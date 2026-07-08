@@ -110,9 +110,9 @@ function DuesTransactionTable({
           <button
             type="button"
             onClick={onSortToggle}
-            className="typo-button2 border-line text-text-normal hover:bg-container-neutral-interaction min-w-10 cursor-pointer rounded-[10px] border px-400 py-200 transition-colors"
+            className="typo-button2 border-line text-text-normal hover:bg-container-neutral-interaction flex min-w-10 cursor-pointer flex-row gap-100 rounded-[10px] border px-400 py-200 transition-colors"
           >
-            <Icon src={ConvertIcon} size={18} alt="날짜정렬전환" />
+            <Icon src={ConvertIcon} size={18} alt="날짜정렬전환" className="flex self-center" />
             {sortDesc ? '최근 순' : '오래된 순'}
           </button>
         </div>
