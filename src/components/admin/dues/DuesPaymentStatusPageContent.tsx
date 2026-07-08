@@ -204,6 +204,7 @@ function DuesPaymentStatusPageContent() {
           onMarkPaid={() =>
             markPaid({ targetIds: selectedTargetIds(), paidAt: nowLocalDateTime(), memo: '' })
           }
+          onExclude={() => exclude({ targetIds: selectedTargetIds() })}
         />
       )}
 

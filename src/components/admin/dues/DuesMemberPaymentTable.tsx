@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 
-import { CheckIcon, ConvertIcon } from '@/assets/icons';
+import { CheckIcon } from '@/assets/icons';
 import {
   Icon,
   Table,
@@ -17,6 +17,7 @@ import { formatPhone } from '@/utils/shared';
 import { DuesPagination } from '@/components/admin/dues/setup/components';
 import { DuesMember, FilterType, PaymentStatus } from '@/types/admin/dues';
 import { DuesSearchBar } from './DuesSearchBar';
+import { TableTabFilter } from './TableTabFilter';
 
 /** 페이지당 부원 수 */
 const ITEMS_PER_PAGE = 10;
@@ -131,28 +132,13 @@ function DuesMemberPaymentTable({
 
       <div className="flex flex-col gap-400">
         {/* 필터 칩 + 정렬 */}
-        <div className="flex flex-wrap items-center justify-between gap-y-200">
-          <div className="flex gap-[5px] overflow-x-auto">
-            {filters.map((f) => (
-              <button
-                key={f.key}
-                type="button"
-                onClick={() => handleFilterChange(f.key)}
-                className="typo-button2 border-line text-text-normal hover:bg-container-neutral-interaction min-w-10 shrink-0 cursor-pointer rounded-[10px] border px-400 py-200 transition-colors"
-              >
-                {f.label} {f.count}
-              </button>
-            ))}
-          </div>
-          <button
-            type="button"
-            onClick={handleSortToggle}
-            className="typo-button2 border-line text-text-normal hover:bg-container-neutral-interaction flex min-w-10 shrink-0 cursor-pointer flex-row rounded-[10px] border px-400 py-200 transition-colors"
-          >
-            <Icon src={ConvertIcon} size={18} alt="날짜정렬전환" className="flex self-center" />
-            {sortUnpaidFirst ? '이름 순' : '미납 순'}
-          </button>
-        </div>
+        <TableTabFilter
+          tabs={filters}
+          activeTab={activeFilter}
+          onTabChange={handleFilterChange}
+          sortLabel={sortUnpaidFirst ? '이름 순' : '미납 순'}
+          onSortToggle={handleSortToggle}
+        />
 
         {/* 검색바 */}
         <DuesSearchBar searchQuery={searchQuery} setSearchQuery={handleSearchChange} />

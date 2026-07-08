@@ -40,8 +40,7 @@ export function useAdminDuesTransactionsQuery(
         content: tx.title,
         counterparty: tx.source,
         amount: tx.amount,
-        // TODO: 서버가 러닝 밸런스(총 잔액)를 내려주지 않아 0으로 채움 — 백엔드 필드 추가 필요
-        totalBalance: 0,
+        balanceAfter: tx.balanceAfter,
         date: tx.transactedAt.slice(0, 10),
         hasReceipt: tx.hasReceipt,
         receiptUrl: tx.receipts[0]?.fileUrl,

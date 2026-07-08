@@ -215,7 +215,7 @@ export interface DuesTransaction {
   content: string;
   counterparty: string;
   amount: number;
-  totalBalance: number;
+  balanceAfter: number;
   date: string;
   hasReceipt: boolean;
   receiptUrl?: string;
@@ -261,6 +261,8 @@ export interface TransactionItem {
   source: string;
   amount: number;
   transactedAt: string;
+  /** 이 거래 반영 후 러닝 밸런스(총 잔액) */
+  balanceAfter: number;
   memo: string;
   hasReceipt: boolean;
   receipts: TransactionReceipt[];

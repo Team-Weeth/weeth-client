@@ -9,15 +9,17 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui';
-import { ConvertIcon, MoreHorizIcon } from '@/assets/icons';
+import { MoreHorizIcon } from '@/assets/icons';
 import { cn } from '@/lib/cn';
 import { DuesPagination } from '@/components/admin/dues/setup/components';
+import { TableTabFilter } from '@/components/admin/dues/TableTabFilter';
 import type {
   DuesTransaction,
   TransactionCounts,
   TransactionFilter,
   TransactionType,
 } from '@/types/admin/dues';
+import { formatAmount } from '@/lib/formatAmount';
 
 interface TabConfig {
   key: TransactionFilter;
@@ -48,7 +50,7 @@ const TRANSACTION_TYPE_TAG: Record<TransactionType, { label: string; className: 
   DUES: { label: '회비', className: 'bg-brand-primary/10 text-brand-primary' },
   INCOME: { label: '수입', className: 'bg-state-success/10 text-state-success' },
   EXPENSE: { label: '지출', className: 'bg-state-error/10 text-state-error' },
-  REFUND: { label: '환불', className: 'bg-brand-purple/10 text-brand-purple' },
+  REFUND: { label: '환불', className: 'bg-text-alternative/10 text-text-alternative' },
 };
 
 function TransactionTypeTag({ type }: { type: TransactionType }) {
@@ -70,8 +72,6 @@ function DuesTransactionTable({
   onMoreClick,
   ...props
 }: DuesTransactionTableProps) {
-  // const [receiptUrl, setReceiptUrl] = useState<string | null>(null);
-
   const tabs: TabConfig[] = [
     { key: 'ALL', label: '전체', count: counts.all },
     { key: 'EXPENSE', label: '지출', count: counts.expense },
@@ -88,34 +88,13 @@ function DuesTransactionTable({
 
       <div className="flex flex-col gap-400">
         {/* Chips + Sort */}
-        <div className="flex flex-wrap items-center justify-between gap-200">
-          <div className="flex items-center gap-[5px]">
-            {tabs.map((tab) => (
-              <button
-                key={tab.key}
-                type="button"
-                onClick={() => onTabChange(tab.key)}
-                className={cn(
-                  'typo-button2 min-w-10 cursor-pointer rounded-[10px] px-400 py-200 transition-colors',
-                  activeTab === tab.key
-                    ? 'bg-button-neutral text-text-strong'
-                    : 'border-line text-text-normal hover:bg-container-neutral-interaction border',
-                )}
-              >
-                {tab.label} {tab.count}
-              </button>
-            ))}
-          </div>
-
-          <button
-            type="button"
-            onClick={onSortToggle}
-            className="typo-button2 border-line text-text-normal hover:bg-container-neutral-interaction flex min-w-10 cursor-pointer flex-row gap-100 rounded-[10px] border px-400 py-200 transition-colors"
-          >
-            <Icon src={ConvertIcon} size={18} alt="날짜정렬전환" className="flex self-center" />
-            {sortDesc ? '최근 순' : '오래된 순'}
-          </button>
-        </div>
+        <TableTabFilter
+          tabs={tabs}
+          activeTab={activeTab}
+          onTabChange={onTabChange}
+          sortLabel={sortDesc ? '최근 순' : '오래된 순'}
+          onSortToggle={onSortToggle}
+        />
 
         <div className="border-line overflow-x-auto rounded-sm border">
           <Table>
@@ -162,11 +141,11 @@ function DuesTransactionTable({
                     >
                       <span className="flex items-center gap-100">
                         <span>{tx.direction === 'INCOME' ? '+' : '-'}</span>
-                        <span>{tx.amount.toLocaleString('ko-KR')}</span>
+                        <span>{formatAmount(tx.amount)}</span>
                       </span>
                     </TableCell>
                     <TableCell className="typo-body2 text-text-strong">
-                      {tx.totalBalance.toLocaleString('ko-KR')}
+                      {formatAmount(tx.balanceAfter)}
                     </TableCell>
                     <TableCell className="typo-body2 text-text-strong tablet:table-cell hidden">
                       {tx.date}
@@ -207,24 +186,6 @@ function DuesTransactionTable({
           <DuesPagination page={page} totalPages={totalPages} onPageChange={onPageChange} />
         )}
       </div>
-
-      {/* <Dialog open={!!receiptUrl} onOpenChange={(open) => !open && setReceiptUrl(null)}>
-        <DialogContent
-          showCloseButton={false}
-          adminMobileFullscreen={false}
-          className="w-auto max-w-[calc(100%-2rem)] border-0 bg-transparent p-0 shadow-none sm:max-w-2xl"
-        >
-          <DialogTitle className="sr-only">영수증</DialogTitle>
-          {receiptUrl && (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={receiptUrl}
-              alt="영수증"
-              className="max-h-[85vh] w-full rounded-lg object-contain"
-            />
-          )}
-        </DialogContent>
-      </Dialog> */}
     </div>
   );
 }
