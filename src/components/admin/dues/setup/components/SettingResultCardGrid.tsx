@@ -114,30 +114,13 @@ function SettingResultCardGrid({
 
       {/* 이월 설정 */}
       <InfoCard title="이월 설정" onEdit={onEditStep ? () => onEditStep(3) : undefined}>
-        {hasPreviousBalance ? (
-          <>
-            <InfoRow
-              label="이전 기수"
-              value={carryOverOption === 'carry' ? `${previousGeneration} 기` : '없음'}
-            />
-            <InfoRow
-              label="이월 여부"
-              value={carryOverOption === 'carry' ? '이월함' : '이월 안 함'}
-            />
-            {carryOverOption === 'carry' && (
-              <InfoRow label="이월 금액" value={`${formatAmount(previousBalance)} 원`} />
-            )}
-          </>
-        ) : (
-          <>
-            <InfoRow
-              label="이월 여부"
-              value={carryOverOption === 'carry' ? '이월함' : '이월 안 함'}
-            />
-            {carryOverOption === 'carry' && carryOverAmount && (
-              <InfoRow label="이월 금액" value={formatAmount(Number(carryOverAmount))} />
-            )}
-          </>
+        <InfoRow label="이전 기수" value={hasPreviousBalance ? `${previousGeneration} 기` : '없음'} />
+        <InfoRow label="이월 여부" value={carryOverOption === 'carry' ? '이월함' : '이월 안 함'} />
+        {carryOverOption === 'carry' && (
+          <InfoRow
+            label="이월 금액"
+            value={`${formatAmount(hasPreviousBalance ? previousBalance : Number(carryOverAmount))} 원`}
+          />
         )}
       </InfoCard>
 
