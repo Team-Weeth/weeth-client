@@ -20,6 +20,7 @@ import {
 } from '@/components/admin/dues/setup/components';
 import { useDuesSetupNavigation } from '@/hooks/admin/useDuesSetupNavigation';
 import { useDuesStepNavigator } from '@/hooks/admin/useDuesStepNavigator';
+import { useEnsureDuesAccountId } from '@/hooks/admin';
 import { ScheduleTextField } from '@/components/admin/schedule/general/ScheduleTextField';
 
 const DESCRIPTION_MAX = 30;
@@ -37,6 +38,9 @@ function DuesSetupStep3() {
     carryOverInitialized,
   } = useDuesSetupValues();
   const { setField } = useDuesSetupActions();
+
+  // 새로고침으로 accountId(메모리 전용)가 사라진 경우 초안을 재조회해 복구한다.
+  useEnsureDuesAccountId(clubId);
 
   const { data: source } = useDuesCarryOverSourceQuery(clubId, accountId);
   const saveCarryOver = useSaveDuesCarryOver(clubId, accountId, {

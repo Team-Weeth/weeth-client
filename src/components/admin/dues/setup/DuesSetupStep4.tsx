@@ -22,6 +22,7 @@ import {
 } from '@/components/admin/dues/setup/components';
 import { useDuesSetupNavigation } from '@/hooks/admin/useDuesSetupNavigation';
 import { useDuesStepNavigator } from '@/hooks/admin/useDuesStepNavigator';
+import { useEnsureDuesAccountId } from '@/hooks/admin';
 
 import { ScheduleTextField } from '@/components/admin/schedule/general/ScheduleTextField';
 
@@ -42,6 +43,9 @@ function DuesSetupStep4() {
     isAccountPublic,
   } = useDuesSetupValues();
   const { setField } = useDuesSetupActions();
+
+  // 새로고침으로 accountId(메모리 전용)가 사라진 경우 초안을 재조회해 복구한다.
+  useEnsureDuesAccountId(clubId);
 
   const saveBankAccount = useSaveDuesBankAccount(clubId, accountId, {
     onError: () => toastError('계좌 정보 저장에 실패했습니다. 잠시 후 다시 시도해주세요.'),

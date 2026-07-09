@@ -20,7 +20,7 @@ import {
 } from '@/components/admin/dues/setup/components';
 import { useDuesSetupNavigation } from '@/hooks/admin/useDuesSetupNavigation';
 import { useDuesStepNavigator } from '@/hooks/admin/useDuesStepNavigator';
-import { usePaymentTargetFilter } from '@/hooks/admin';
+import { usePaymentTargetFilter, useEnsureDuesAccountId } from '@/hooks/admin';
 
 function DuesSetupStep2() {
   const { clubId } = useParams<{ clubId: string }>();
@@ -29,6 +29,9 @@ function DuesSetupStep2() {
   const { accountId, cardinalNumber, selectedMemberIds, memberIdsInitialized } =
     useDuesSetupValues();
   const { setField } = useDuesSetupActions();
+
+  // 새로고침으로 accountId(메모리 전용)가 사라진 경우 초안을 재조회해 복구한다.
+  useEnsureDuesAccountId(clubId);
 
   const { data } = useDuesPaymentTargetsQuery(clubId, accountId);
   const savePaymentTargets = useSaveDuesPaymentTargets(clubId, accountId, {
