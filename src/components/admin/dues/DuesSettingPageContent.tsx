@@ -40,7 +40,7 @@ function SettingSection({ title, children }: SettingSectionProps) {
 
 function DuesSettingPageContent() {
   const { clubId } = useParams<{ clubId: string }>();
-  const { activeCardinal } = useCardinalSelector({ autoSelectLatest: true });
+  const { activeCardinal } = useCardinalSelector({ autoSelectLatest: true, scope: 'dues' });
 
   // 대시보드로 accountId를 확보한 뒤 등록 상태·납부 대상 목록을 조회한다.
   const { data: dashboard } = useDuesDashboardQuery(clubId, activeCardinal?.cardinalNumber ?? null);
@@ -51,7 +51,11 @@ function DuesSettingPageContent() {
 
   const [isPaymentTargetModalOpen, setIsPaymentTargetModalOpen] = useState(false);
 
-  const { isPublic, handlePublicChange } = useDuesVisibilityToggle(clubId, accountId);
+  const { isPublic, handlePublicChange } = useDuesVisibilityToggle(
+    clubId,
+    accountId,
+    dashboard?.bankAccountPublic,
+  );
 
   const cardinalNumber = activeCardinal?.cardinalNumber ?? 0;
 
@@ -89,7 +93,9 @@ function DuesSettingPageContent() {
             }
             previousBalance={status?.previousAccountBalance?.balance ?? 0}
             carryOverOption={status?.carryOver?.enabled ? 'carry' : 'none'}
-            carryOverDescription={status?.carryOver?.memo ?? undefined}
+            carryOverAmount={
+              status?.carryOver?.amount != null ? String(status.carryOver.amount) : '0'
+            }
             isAccountPublic={status?.bankAccount?.bankAccountVisible ?? false}
             accountNumber={status?.bankAccount?.bankAccount?.accountNumber ?? undefined}
             bankName={status?.bankAccount?.bankAccount?.bankName ?? undefined}
@@ -101,7 +107,7 @@ function DuesSettingPageContent() {
         <SettingSection title="회비 공개 범위">
           <div className="bg-container-neutral flex items-center justify-between rounded-lg p-400">
             <div className="flex flex-col gap-100">
-              <span className="typo-sub2 text-text-strong">전체 회비 내역 공개</span>
+              <span className="typo-sub1 text-text-strong">전체 회비 내역 공개</span>
               <span className="typo-body2 text-text-alternative">
                 부원이 회비 사용 내역을 볼 수 있어요
               </span>
@@ -114,6 +120,7 @@ function DuesSettingPageContent() {
       <PaymentTargetModal
         open={isPaymentTargetModalOpen}
         onOpenChange={setIsPaymentTargetModalOpen}
+        targets={paymentTargets?.targets.content ?? []}
         selectedMemberIds={selectedMemberIds}
       />
     </div>

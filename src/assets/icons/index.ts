@@ -12,6 +12,7 @@ export { default as LikeFilledIcon } from './like_filled.svg';
 export { default as AvatarIcon } from './avatar.svg';
 export { default as CheckRoundIcon } from './check_round.svg';
 export { default as CloseCircleIcon } from './close_circle.svg';
+export { default as ConvertIcon } from './convert.svg';
 export { default as DeleteForeverIcon } from './delete_forever.svg';
 export { default as EditIcon } from './edit.svg';
 export { default as ExitToAppIcon } from './exit_to_app.svg';

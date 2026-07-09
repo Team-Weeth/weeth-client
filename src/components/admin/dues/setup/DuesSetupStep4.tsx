@@ -6,7 +6,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Controller, useForm } from 'react-hook-form';
 
 import { duesBankAccountSchema, type DuesBankAccountFormData } from '@/lib/schemas/duesSetup';
-import { BackButton } from '@/components/admin/dues';
 import { Switch } from '@/components/ui';
 import { useDuesSetupValues, useDuesSetupActions } from '@/stores/useDuesSetupStore';
 import { toastError } from '@/stores/useToastStore';
@@ -19,9 +18,11 @@ import {
   NextButton,
   PrevButton,
   SetupHeader,
+  DuesSetupStep4Skeleton,
 } from '@/components/admin/dues/setup/components';
 import { useDuesSetupNavigation } from '@/hooks/admin/useDuesSetupNavigation';
 import { useDuesStepNavigator } from '@/hooks/admin/useDuesStepNavigator';
+import { useEnsureDuesAccountId } from '@/hooks/admin';
 
 import { ScheduleTextField } from '@/components/admin/schedule/general/ScheduleTextField';
 
@@ -42,6 +43,9 @@ function DuesSetupStep4() {
     isAccountPublic,
   } = useDuesSetupValues();
   const { setField } = useDuesSetupActions();
+
+  // 새로고침으로 accountId(메모리 전용)가 사라진 경우 초안을 재조회해 복구한다.
+  useEnsureDuesAccountId(clubId);
 
   const saveBankAccount = useSaveDuesBankAccount(clubId, accountId, {
     onError: () => toastError('계좌 정보 저장에 실패했습니다. 잠시 후 다시 시도해주세요.'),
@@ -94,6 +98,9 @@ function DuesSetupStep4() {
     });
 
   const { goNext, isEditMode } = useDuesStepNavigator(4, commitStep);
+
+  // 새로고침 등으로 accountId 복구 전에는 스켈레톤을 노출한다.
+  if (accountId === null) return <DuesSetupStep4Skeleton />;
 
   return (
     <div className="flex min-w-85 flex-col gap-700 p-700">
@@ -192,7 +199,7 @@ function DuesSetupStep4() {
 
       {/* 하단 네비게이션 */}
       <div className="flex items-center justify-between">
-        <PrevButton handlePrev={() => goToStep(3)} />
+        <PrevButton handlePrev={() => goToStep(3)} disabled={isEditMode} />
         <NextButton
           handleNext={goNext}
           editMode={isEditMode}

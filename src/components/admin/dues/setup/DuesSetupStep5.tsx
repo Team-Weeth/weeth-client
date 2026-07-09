@@ -4,13 +4,13 @@ import { useState } from 'react';
 import { useParams } from 'next/navigation';
 
 import { QuestionCircleIcon } from '@/assets/icons';
-import { BackButton, PaymentTargetModal } from '@/components/admin/dues';
+import { PaymentTargetModal } from '@/components/admin/dues';
 import { Icon, Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui';
 import { DUES_REGISTRATION_ERROR_CODE } from '@/constants/errorCode';
 import { useDuesSetupValues, useDuesSetupActions } from '@/stores/useDuesSetupStore';
 import { toastError, toastSuccess } from '@/stores/useToastStore';
 import { getApiErrorCode } from '@/utils/shared/getApiErrorCode';
-import { useDuesPaymentTargetsQuery, useDuesCarryOverSourceQuery } from '@/hooks/queries/admin';
+import { useDuesPaymentTargetsQuery, useDuesRegistrationStatusQuery } from '@/hooks/queries/admin';
 import { useCompleteDuesRegistration } from '@/hooks/mutations/admin';
 
 import {
@@ -20,8 +20,11 @@ import {
   PrevButton,
   SettingResultCardGrid,
   SetupHeader,
+  DuesSetupStep5Skeleton,
 } from '@/components/admin/dues/setup/components';
 import { useDuesSetupNavigation } from '@/hooks/admin/useDuesSetupNavigation';
+import { useEnsureDuesAccountId } from '@/hooks/admin';
+import { formatAmount } from '@/lib/formatAmount';
 
 const MAX_AVATAR_DISPLAY = 4;
 
@@ -36,7 +39,8 @@ function DuesSetupStep5() {
     name,
     selectedMemberIds,
     carryOverOption,
-    carryOverDescription,
+    carryOverAmount,
+    previousAccount,
     accountNumber,
     bankName,
     accountHolder,
@@ -45,8 +49,21 @@ function DuesSetupStep5() {
   } = useDuesSetupValues();
   const { reset, setField } = useDuesSetupActions();
 
-  const { data: paymentTargetsData } = useDuesPaymentTargetsQuery(clubId, accountId);
-  const { data: carryOverSource } = useDuesCarryOverSourceQuery(clubId, accountId);
+  // 새로고침으로 accountId(메모리 전용)가 사라진 경우 초안을 재조회해 복구한다.
+  useEnsureDuesAccountId(clubId);
+
+  const { data: paymentTargetsData, isPending } = useDuesPaymentTargetsQuery(clubId, accountId);
+
+  // 이전 기수 잔액 정보는 Step3에서 store에 담아둔 값을 우선 사용하고,
+  // 새로고침/재진입으로 store가 비어 있으면 회비 등록 현황 조회로 복구한다.
+  const { data: registrationStatus, isPending: isRegistrationPending } =
+    useDuesRegistrationStatusQuery(clubId, accountId);
+  const statusPreviousAccount = registrationStatus?.previousAccountBalance ?? null;
+
+  const hasPreviousBalance = previousAccount?.hasPreviousAccount ?? statusPreviousAccount !== null;
+  const previousGeneration =
+    previousAccount?.cardinalNumber ?? statusPreviousAccount?.cardinalNumber ?? cardinalNumber - 1;
+  const previousBalance = previousAccount?.balance ?? statusPreviousAccount?.balance ?? 0;
 
   const completeRegistration = useCompleteDuesRegistration(clubId, accountId, {
     onSuccess: () => {
@@ -81,10 +98,6 @@ function DuesSetupStep5() {
   });
   const [isPaymentTargetModalOpen, setIsPaymentTargetModalOpen] = useState(false);
 
-  const hasPreviousBalance = carryOverSource?.hasPreviousAccount ?? false;
-  const previousBalance = carryOverSource?.balance ?? 0;
-  const previousGeneration = carryOverSource?.cardinalNumber ?? cardinalNumber - 1;
-
   const allTargets = paymentTargetsData?.targets.content ?? [];
   const totalCount = allTargets.length;
   const selectedCount = selectedMemberIds.length;
@@ -97,9 +110,17 @@ function DuesSetupStep5() {
   const displayedAvatars = selectedTargets.slice(0, MAX_AVATAR_DISPLAY);
   const remainingCount = Math.max(0, selectedTargets.length - MAX_AVATAR_DISPLAY);
 
+  // 이월 금액은 이전 기수 잔액에서 파생된다. store의 carryOverAmount는 비어 있을 수 있어
+  // 그리드(SettingResultCardGrid)와 동일하게 previousBalance를 우선 사용한다.
+  const carryOverValue =
+    carryOverOption === 'carry'
+      ? hasPreviousBalance
+        ? previousBalance
+        : Number(carryOverAmount)
+      : 0;
+
   const expectedDuesIncome = Number(amount) * selectedCount;
-  const carryOverAmount = carryOverOption === 'carry' ? previousBalance : 0;
-  const expectedTotal = expectedDuesIncome + carryOverAmount;
+  const expectedTotal = expectedDuesIncome + carryOverValue;
 
   // 편집 버튼 → 해당 스텝으로 이동하되, 저장 후 최종 확인(5)으로 복귀하도록 표시를 남긴다.
   const handleEditStep = (step: number) => {
@@ -111,6 +132,9 @@ function DuesSetupStep5() {
     if (accountId === null || completeRegistration.isPending) return;
     completeRegistration.mutate();
   };
+
+  // accountId 확보 전(skipToken) 또는 납부 대상 조회 중에는 스켈레톤을 노출한다.
+  if (isPending || isRegistrationPending) return <DuesSetupStep5Skeleton />;
 
   return (
     <div className="flex min-w-85 flex-col gap-700 p-700">
@@ -146,19 +170,19 @@ function DuesSetupStep5() {
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
-              <span className="typo-h2 text-text-strong">{expectedTotal.toLocaleString()} 원</span>
+              <span className="typo-h2 text-text-strong">{formatAmount(expectedTotal)} 원</span>
             </div>
             <div className="flex flex-col gap-100 text-right">
               <div className="flex items-center justify-end gap-200">
                 <span className="typo-body2 text-text-alternative">예상 회비 수입</span>
                 <span className="typo-sub3 text-text-strong">
-                  {expectedDuesIncome.toLocaleString()} 원
+                  {formatAmount(expectedDuesIncome)} 원
                 </span>
               </div>
               <div className="flex items-center justify-end gap-200">
                 <span className="typo-body2 text-text-alternative">이월 금액</span>
                 <span className="typo-sub3 text-text-strong">
-                  {carryOverAmount.toLocaleString()} 원
+                  {formatAmount(carryOverValue)} 원
                 </span>
               </div>
             </div>
@@ -178,7 +202,7 @@ function DuesSetupStep5() {
             previousGeneration={previousGeneration}
             previousBalance={previousBalance}
             carryOverOption={carryOverOption}
-            carryOverDescription={carryOverDescription}
+            carryOverAmount={carryOverAmount}
             isAccountPublic={isAccountPublic}
             accountNumber={accountNumber}
             bankName={bankName}
@@ -192,6 +216,7 @@ function DuesSetupStep5() {
       <PaymentTargetModal
         open={isPaymentTargetModalOpen}
         onOpenChange={setIsPaymentTargetModalOpen}
+        targets={allTargets}
         selectedMemberIds={selectedMemberIds}
       />
 

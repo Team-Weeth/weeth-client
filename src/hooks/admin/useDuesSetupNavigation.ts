@@ -5,7 +5,7 @@ function useDuesSetupNavigation() {
   const { clubId } = useParams<{ clubId: string }>();
 
   const goToStep = (step: number) => router.push(`/${clubId}/admin/dues/setup/${step}`);
-  const goToDues = () => router.push(`/${clubId}/admin/dues`);
+  const goToDues = () => router.replace(`/${clubId}/admin/dues`);
 
   return { goToStep, goToDues };
 }

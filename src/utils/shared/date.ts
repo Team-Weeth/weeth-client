@@ -128,3 +128,15 @@ export function formatSessionDateParts(start: string): {
     timeLabel: `${month}월 ${day}일 ${period} ${displayHour}:${minutes}`,
   };
 }
+
+// 'YYYY-MM' → 'N월'
+export function toMonthLabel(yearMonth: string): string {
+  return `${Number(yearMonth.split('-')[1])}월`;
+}
+
+// 'YYYY-MM' → 'YYYY.MM.'
+export function toPeriodLabel(yearMonth: string | undefined): string {
+  if (!yearMonth) return '';
+  const [year, month] = yearMonth.split('-');
+  return `${year}.${month}.`;
+}

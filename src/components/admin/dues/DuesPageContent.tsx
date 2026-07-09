@@ -37,18 +37,7 @@ import {
   useUpdateTransaction,
 } from '@/hooks/mutations/admin/useAdminDuesMutations';
 import { toastError, toastSuccess } from '@/stores/useToastStore';
-
-// 'YYYY-MM' → 'N월'
-function toMonthLabel(yearMonth: string): string {
-  return `${Number(yearMonth.split('-')[1])}월`;
-}
-
-// 'YYYY-MM' → 'YYYY.MM.'
-function toPeriodLabel(yearMonth: string | undefined): string {
-  if (!yearMonth) return '';
-  const [year, month] = yearMonth.split('-');
-  return `${year}.${month}.`;
-}
+import { toMonthLabel, toPeriodLabel } from '@/utils/shared/date';
 
 // 목록 데이터(DuesTransaction) → 상세 모달용. 상세 응답 도착 전 폴백으로 사용한다.
 function toTransactionDetail(tx: DuesTransaction): TransactionDetail {
@@ -84,6 +73,7 @@ function DuesPageContent() {
   const [activeMonth, setActiveMonth] = useState('');
   const { cardinals, setSelectedCardinalId, activeCardinal } = useCardinalSelector({
     autoSelectLatest: true,
+    scope: 'dues',
   });
   const router = useRouter();
   const { clubId } = useParams<{ clubId: string }>();
@@ -97,7 +87,7 @@ function DuesPageContent() {
   } = useDuesDashboardQuery(clubId, activeCardinal?.cardinalNumber ?? null);
   const isNotRegistered = isDuesNotRegisteredError(dashboardError);
 
-  // 거래내역 필터/정렬/페이지 — 서버 파라미터로 전달 (page는 UI 1-base → API 0-base 변환)
+  // 거래내역 필터/정렬/페이지 — 서버 파라미터로 전달
   const [txFilter, setTxFilter] = useState<TransactionFilter>('ALL');
   const [txSortDesc, setTxSortDesc] = useState(true);
   const [txPage, setTxPage] = useState(1);
@@ -123,15 +113,19 @@ function DuesPageContent() {
     setTxPage(1);
   };
 
-  const { mutate: createTransaction } = useCreateTransaction(clubId, dashboard?.accountId ?? null, {
-    onSuccess: () => toastSuccess('거래내역이 추가되었습니다.'),
-    onError: () => toastError('거래내역 추가에 실패했습니다.'),
-  });
+  // 잔액 부족 등 실패 메시지는 모달이 닫히기 전에 폼 내부에 인라인으로 노출하므로
+  // create/update는 mutateAsync로 에러를 폼까지 전파한다(제네릭 에러 토스트는 생략).
+  const { mutateAsync: createTransaction } = useCreateTransaction(
+    clubId,
+    dashboard?.accountId ?? null,
+    { onSuccess: () => toastSuccess('거래내역이 추가되었습니다.') },
+  );
 
-  const { mutate: updateTransaction } = useUpdateTransaction(clubId, dashboard?.accountId ?? null, {
-    onSuccess: () => toastSuccess('거래내역이 수정되었습니다.'),
-    onError: () => toastError('거래내역 수정에 실패했습니다.'),
-  });
+  const { mutateAsync: updateTransaction } = useUpdateTransaction(
+    clubId,
+    dashboard?.accountId ?? null,
+    { onSuccess: () => toastSuccess('거래내역이 수정되었습니다.') },
+  );
 
   const { mutate: deleteTransaction } = useDeleteTransaction(clubId, dashboard?.accountId ?? null, {
     onSuccess: () => toastSuccess('거래내역이 삭제되었습니다.'),
@@ -141,6 +135,7 @@ function DuesPageContent() {
   const { isPublic, handlePublicChange } = useDuesVisibilityToggle(
     clubId,
     dashboard?.accountId ?? null,
+    dashboard?.bankAccountPublic,
   );
 
   // 월별 잔액 추이 차트 데이터 (yearMonth → 'N월', endingBalance → 막대 높이)
@@ -187,6 +182,18 @@ function DuesPageContent() {
     setAddOpen(true);
   };
 
+  const handleAddSubmit = async (data: TransactionFormData) => {
+    await createTransaction({
+      type: data.type,
+      amount: Number(data.amount),
+      title: data.description,
+      source: data.vendor,
+      transactedAt: data.date,
+      memo: '',
+      receiptFile: data.receiptFile,
+    });
+  };
+
   const handleSetting = () => {
     router.push(`/${clubId}/admin/dues/setting`);
   };
@@ -202,6 +209,20 @@ function DuesPageContent() {
       date: selectedTransaction.date,
     });
     setEditOpen(true);
+  };
+
+  const handleEditSubmit = async (data: TransactionFormData) => {
+    if (!selectedTransaction) return;
+    await updateTransaction({
+      transactionId: selectedTransaction.id,
+      type: data.type,
+      amount: Number(data.amount),
+      title: data.description,
+      source: data.vendor,
+      transactedAt: data.date,
+      memo: '',
+      receiptFile: data.receiptFile,
+    });
   };
 
   // 기수가 선택된 상태에서 대시보드 로딩 중일 때만 스켈레톤을 노출한다.
@@ -222,8 +243,7 @@ function DuesPageContent() {
       <DuesGenerationFilter
         cardinals={cardinals}
         activeCardinal={activeCardinal}
-        lastUpdated={dashboard?.lastModified?.modifiedAt ?? ''}
-        updaterProfileImage={dashboard?.lastModified?.modifiedBy.profileImageUrl ?? undefined}
+        updaterProfile={dashboard?.lastModified ?? undefined}
         onSelect={setSelectedCardinalId}
       />
       <div className="tablet:flex-row flex flex-col gap-1">
@@ -262,21 +282,7 @@ function DuesPageContent() {
         onMoreClick={handleMoreClick}
       />
 
-      <AddTransactionModal
-        open={addOpen}
-        onOpenChange={setAddOpen}
-        onSubmit={(data) => {
-          createTransaction({
-            type: data.type,
-            amount: Number(data.amount),
-            title: data.description,
-            source: data.vendor,
-            transactedAt: data.date,
-            memo: '',
-            receiptFile: data.receiptFile,
-          });
-        }}
-      />
+      <AddTransactionModal open={addOpen} onOpenChange={setAddOpen} onSubmit={handleAddSubmit} />
       {selectedTransaction && (
         <TransactionDetailModal
           open={detailOpen}
@@ -294,21 +300,9 @@ function DuesPageContent() {
         open={editOpen}
         onOpenChange={setEditOpen}
         initialValues={editingValues}
-        onSubmit={(data) => {
-          if (!selectedTransaction) return;
-          updateTransaction({
-            transactionId: selectedTransaction.id,
-            type: data.type,
-            amount: Number(data.amount),
-            title: data.description,
-            source: data.vendor,
-            transactedAt: data.date,
-            memo: '',
-            receiptFile: data.receiptFile,
-          });
-        }}
+        onSubmit={handleEditSubmit}
       />
-      {/* 등록 미완료 장부(20112): 온보딩 완료 전까지 닫히지 않도록 고정 표시 */}
+
       <DuesTutorialModal open={isNotRegistered} onOpenChange={() => {}} onStart={startDuesSetup} />
     </div>
   );

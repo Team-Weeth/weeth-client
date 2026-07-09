@@ -18,3 +18,10 @@ export {
 export { DuesPagination, type DuesPaginationProps } from './DuesPagination';
 export { DuesTabs, type DuesTabsProps } from './DuesTabs';
 export { SetupHeader } from './SetupHeader';
+export {
+  DuesSetupStep1Skeleton,
+  DuesSetupStep2Skeleton,
+  DuesSetupStep3Skeleton,
+  DuesSetupStep4Skeleton,
+  DuesSetupStep5Skeleton,
+} from './DuesSetupStepSkeleton';

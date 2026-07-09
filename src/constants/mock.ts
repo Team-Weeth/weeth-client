@@ -63,7 +63,7 @@ export interface MockPaymentTarget {
   targetId: number;
   paymentTargetInfo: MockPaymentTargetInfo;
   targetStatus: 'TARGETED' | 'EXCLUDED';
-  paymentStatus: 'UNPAID' | 'PAID' | 'CONFIRMED';
+  paymentStatus: 'UNPAID' | 'PAID' | 'REFUNDED';
   dueAmount: number;
   paidAmount: number;
   paidAt: string | null;
@@ -99,29 +99,42 @@ const MOCK_MEMBERS: Pick<MockPaymentTargetInfo, 'name' | 'department' | 'memberR
   { name: '공하늘', department: '컴퓨터공학과', memberRole: 'USER' },
 ];
 
-/** 납부 대상 Mock 데이터 — 25명 (TARGETED 20, EXCLUDED 5) */
+/** 납부 대상 Mock 데이터 — 25명 (TARGETED 20, EXCLUDED 5), 납부/미납/환불 상태 섞음 */
 export const MOCK_PAYMENT_TARGETS: MockPaymentTarget[] = MOCK_MEMBERS.map(
-  ({ name, department, memberRole }, idx) => ({
-    targetId: idx + 1,
-    paymentTargetInfo: {
-      userId: idx + 1,
-      clubMemberId: idx + 1,
-      name,
-      tel: `0101234${String(idx).padStart(4, '0')}`,
-      school: '가천대학교',
-      department,
-      memberRole,
-      memberStatus: 'ACTIVE',
-      profileImageUrl: null,
-    },
-    targetStatus: idx < 20 ? 'TARGETED' : 'EXCLUDED',
-    paymentStatus: 'UNPAID',
-    dueAmount: 50000,
-    paidAmount: 0,
-    paidAt: null,
-    confirmedBy: null,
-    memo: null,
-  }),
+  ({ name, department, memberRole }, idx) => {
+    const targetStatus = idx < 20 ? 'TARGETED' : 'EXCLUDED';
+    // TARGETED만 납부 상태를 섞어 뱃지를 확인할 수 있게 한다(4→PAID, 4→REFUNDED, 나머지 UNPAID).
+    const paymentStatus: MockPaymentTarget['paymentStatus'] =
+      targetStatus === 'EXCLUDED'
+        ? 'UNPAID'
+        : idx % 4 === 0
+          ? 'PAID'
+          : idx % 4 === 1
+            ? 'REFUNDED'
+            : 'UNPAID';
+    const isPaid = paymentStatus === 'PAID';
+    return {
+      targetId: idx + 1,
+      paymentTargetInfo: {
+        userId: idx + 1,
+        clubMemberId: idx + 1,
+        name,
+        tel: `0101234${String(idx).padStart(4, '0')}`,
+        school: '가천대학교',
+        department,
+        memberRole,
+        memberStatus: 'ACTIVE',
+        profileImageUrl: null,
+      },
+      targetStatus,
+      paymentStatus,
+      dueAmount: 50000,
+      paidAmount: isPaid ? 50000 : 0,
+      paidAt: isPaid ? '2026-03-01T12:00:00' : null,
+      confirmedBy: null,
+      memo: null,
+    };
+  },
 );
 // ─── 이월 잔액 Mock ───────────────────────────────────────────────────────────
 // null = 이전 기수 정보 없음, object = 이전 기수 잔액 존재

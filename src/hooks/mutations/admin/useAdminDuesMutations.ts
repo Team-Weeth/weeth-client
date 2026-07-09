@@ -5,6 +5,7 @@ import { uploadFile } from '@/lib/apis/upload';
 import { adminQueryKeys } from '@/hooks/queries/admin/adminQueryKeys';
 import type { MutationCallbacks } from '@/types/common';
 import type {
+  BulkExcludeBody,
   BulkPaidBody,
   BulkRefundBody,
   BulkUnpaidBody,
@@ -182,6 +183,34 @@ export function useMarkPaymentTargetsPaid(
     mutationFn: (body: BulkPaidBody) => {
       if (!clubId || accountId === null) throw new Error(REQUIRE_ACCOUNT);
       return duesApi.markPaymentTargetsPaid(clubId, accountId, body);
+    },
+    onSuccess: callbacks?.onSuccess,
+    onError: callbacks?.onError,
+    onMutate: callbacks?.onMutate,
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: [...adminQueryKeys.all, 'dues'] });
+      callbacks?.onSettled?.();
+    },
+  });
+}
+
+/**
+ * 납부 대상 벌크 "제외" 뮤테이션 훅.
+ *
+ * 선택한 미납 부원을 납부 대상에서 제외한다(납부·환불 이력이 있으면 서버가 거부).
+ * 납부 대상 목록·집계가 바뀌므로 dues prefix 전체를 invalidate한다.
+ */
+export function useExcludePaymentTargets(
+  clubId: string,
+  accountId: number | null,
+  callbacks?: MutationCallbacks<unknown>,
+) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (body: BulkExcludeBody) => {
+      if (!clubId || accountId === null) throw new Error(REQUIRE_ACCOUNT);
+      return duesApi.excludePaymentTargets(clubId, accountId, body);
     },
     onSuccess: callbacks?.onSuccess,
     onError: callbacks?.onError,
