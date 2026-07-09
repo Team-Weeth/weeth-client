@@ -217,7 +217,10 @@ function DuesPaymentStatusPageContent() {
 
   // 기수가 선택된 뒤 대시보드/납부 대상 로딩 중이면 스켈레톤을 노출한다.
   // 대시보드 accountId 확보 전에는 납부 대상 쿼리가 skipToken(pending)이므로 accountId가 있을 때만 그 로딩을 반영한다.
-  if (activeCardinal && (isDashboardPending || (dashboard?.accountId != null && isTargetsPending))) {
+  if (
+    activeCardinal &&
+    (isDashboardPending || (dashboard?.accountId != null && isTargetsPending))
+  ) {
     return <DuesPaymentStatusPageSkeleton />;
   }
 

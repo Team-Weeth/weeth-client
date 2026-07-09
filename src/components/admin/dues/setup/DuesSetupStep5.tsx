@@ -56,7 +56,8 @@ function DuesSetupStep5() {
 
   // 이전 기수 잔액 정보는 Step3에서 store에 담아둔 값을 우선 사용하고,
   // 새로고침/재진입으로 store가 비어 있으면 회비 등록 현황 조회로 복구한다.
-  const { data: registrationStatus } = useDuesRegistrationStatusQuery(clubId, accountId);
+  const { data: registrationStatus, isPending: isRegistrationPending } =
+    useDuesRegistrationStatusQuery(clubId, accountId);
   const statusPreviousAccount = registrationStatus?.previousAccountBalance ?? null;
 
   const hasPreviousBalance = previousAccount?.hasPreviousAccount ?? statusPreviousAccount !== null;
@@ -133,7 +134,7 @@ function DuesSetupStep5() {
   };
 
   // accountId 확보 전(skipToken) 또는 납부 대상 조회 중에는 스켈레톤을 노출한다.
-  if (isPending) return <DuesSetupStep5Skeleton />;
+  if (isPending || isRegistrationPending) return <DuesSetupStep5Skeleton />;
 
   return (
     <div className="flex min-w-85 flex-col gap-700 p-700">

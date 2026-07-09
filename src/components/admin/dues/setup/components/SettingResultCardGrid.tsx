@@ -114,7 +114,10 @@ function SettingResultCardGrid({
 
       {/* 이월 설정 */}
       <InfoCard title="이월 설정" onEdit={onEditStep ? () => onEditStep(3) : undefined}>
-        <InfoRow label="이전 기수" value={hasPreviousBalance ? `${previousGeneration} 기` : '없음'} />
+        <InfoRow
+          label="이전 기수"
+          value={hasPreviousBalance ? `${previousGeneration} 기` : '없음'}
+        />
         <InfoRow label="이월 여부" value={carryOverOption === 'carry' ? '이월함' : '이월 안 함'} />
         {carryOverOption === 'carry' && (
           <InfoRow

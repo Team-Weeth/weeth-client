@@ -99,10 +99,7 @@ function DuesSetupStep2Skeleton() {
         <div className="border-line flex flex-col overflow-hidden rounded-sm border">
           <Skeleton className="h-12 w-full rounded-none" />
           {Array.from({ length: 6 }, (_, i) => (
-            <div
-              key={i}
-              className="border-line flex items-center gap-400 border-t px-400 py-300"
-            >
+            <div key={i} className="border-line flex items-center gap-400 border-t px-400 py-300">
               <Skeleton className="size-5 shrink-0 rounded-sm" />
               <Skeleton className="size-8 shrink-0 rounded-full" />
               <Skeleton className="h-5 flex-1" />
