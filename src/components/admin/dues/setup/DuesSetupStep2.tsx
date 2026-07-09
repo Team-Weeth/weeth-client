@@ -141,7 +141,7 @@ function DuesSetupStep2() {
 
       {/* 하단 네비게이션 */}
       <div className="flex items-center justify-between">
-        <PrevButton handlePrev={() => goToStep(1)} />
+        <PrevButton handlePrev={() => goToStep(1)} disabled={isEditMode} />
         <NextButton
           handleNext={goNext}
           editMode={isEditMode}
