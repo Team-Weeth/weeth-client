@@ -131,17 +131,24 @@ function DuesPaymentStatusPageContent() {
   const { data: dashboard } = useDuesDashboardQuery(clubId, activeCardinal?.cardinalNumber ?? null);
   const { data: paymentTargets } = useDuesPaymentTargetsQuery(clubId, dashboard?.accountId ?? null);
 
-  // 테이블에는 제외(EXCLUDED) 부원까지 모두 노출하되, 집계는 실제 납부 대상(TARGETED)만 사용한다.
+  // 테이블에는 제외(EXCLUDED) 부원까지 모두 노출하되, 벌크 액션은 실제 납부 대상(TARGETED)만 사용한다.
   const allTargets = paymentTargets?.targets.content ?? [];
   const targeted = allTargets.filter((t) => t.targetStatus === 'TARGETED');
   const members: DuesMember[] = allTargets.map(toDuesMember);
-  const totalTarget = targeted.reduce((sum, t) => sum + t.dueAmount, 0);
-  const totalCollected = targeted.reduce((sum, t) => sum + t.paidAmount, 0);
+
+  // 인원 집계는 서버 집계값(paymentSummary)을 신뢰한다. paidCount는 환불 인원을 제외하므로
+  // 미납 = 전체 - 납부완료로 두면 환불 인원이 미납에 포함돼 총 수납액과 방향이 일치한다.
+  const totalCount = dashboard?.paymentSummary.totalTargetCount ?? 0;
+  const paidCount = dashboard?.paymentSummary.paidCount ?? 0;
+  const unpaidCount = totalCount - paidCount;
+
+  // 환불해도 paidAmount는 이력으로 남으므로, 실제 수납액은 PAID 상태만 합산한다.
+  const totalTarget = dashboard?.summary.totalAmount ?? 0;
+  const totalCollected = targeted
+    .filter((t) => t.paymentStatus === 'PAID')
+    .reduce((sum, t) => sum + t.paidAmount, 0);
 
   const account = dashboard?.bankAccount;
-
-  const unpaidCount = targeted.filter((t) => t.paymentStatus === 'UNPAID').length;
-  const totalCount = targeted.length;
 
   const generationLabel = activeCardinal ? `${activeCardinal.cardinalNumber}기` : '';
 

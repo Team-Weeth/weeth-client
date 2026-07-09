@@ -25,7 +25,6 @@ import {
 import { useDuesSetupNavigation } from '@/hooks/admin/useDuesSetupNavigation';
 import { useEnsureDuesAccountId } from '@/hooks/admin';
 import { formatAmount } from '@/lib/formatAmount';
-import { number } from 'zod';
 
 const MAX_AVATAR_DISPLAY = 4;
 
@@ -110,8 +109,17 @@ function DuesSetupStep5() {
   const displayedAvatars = selectedTargets.slice(0, MAX_AVATAR_DISPLAY);
   const remainingCount = Math.max(0, selectedTargets.length - MAX_AVATAR_DISPLAY);
 
+  // 이월 금액은 이전 기수 잔액에서 파생된다. store의 carryOverAmount는 비어 있을 수 있어
+  // 그리드(SettingResultCardGrid)와 동일하게 previousBalance를 우선 사용한다.
+  const carryOverValue =
+    carryOverOption === 'carry'
+      ? hasPreviousBalance
+        ? previousBalance
+        : Number(carryOverAmount)
+      : 0;
+
   const expectedDuesIncome = Number(amount) * selectedCount;
-  const expectedTotal = Number(expectedDuesIncome) + Number(carryOverAmount);
+  const expectedTotal = expectedDuesIncome + carryOverValue;
 
   // 편집 버튼 → 해당 스텝으로 이동하되, 저장 후 최종 확인(5)으로 복귀하도록 표시를 남긴다.
   const handleEditStep = (step: number) => {
@@ -173,7 +181,7 @@ function DuesSetupStep5() {
               <div className="flex items-center justify-end gap-200">
                 <span className="typo-body2 text-text-alternative">이월 금액</span>
                 <span className="typo-sub3 text-text-strong">
-                  {formatAmount(Number(carryOverAmount))} 원
+                  {formatAmount(carryOverValue)} 원
                 </span>
               </div>
             </div>
