@@ -1,9 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import Image from 'next/image';
 
-import { ArrowRightIcon } from '@/assets/icons';
 import { AdminCloseIcon, AdminMeatballIcon } from '@/assets/icons/admin';
 import {
   AlertDialog,
@@ -99,16 +97,18 @@ function TransactionDetailModal({
         <div className="flex h-24 shrink-0 items-center justify-between px-600">
           <h2 className="typo-h3 text-text-normal">거래내역 상세</h2>
           <div className="flex items-center">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <ModalIconButton icon={AdminMeatballIcon} label="메뉴" />
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem destructive onSelect={() => setDeleteConfirmOpen(true)}>
-                  거래내역 삭제
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            {(typeConfig.label === '수입' || typeConfig.label === '지출') && (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <ModalIconButton icon={AdminMeatballIcon} label="메뉴" />
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem destructive onSelect={() => setDeleteConfirmOpen(true)}>
+                    거래내역 삭제
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            )}
             <ModalIconButton
               icon={AdminCloseIcon}
               label="닫기"
@@ -190,9 +190,11 @@ function TransactionDetailModal({
 
         {/* Footer */}
         <div className="bg-container-neutral flex shrink-0 items-center justify-end gap-200 px-400 pt-400 pb-500">
-          <Button variant="secondary" size="lg" onClick={onEdit}>
-            수정
-          </Button>
+          {(typeConfig.label === '수입' || typeConfig.label === '지출') && (
+            <Button variant="secondary" size="lg" onClick={onEdit}>
+              수정
+            </Button>
+          )}
           <Button variant="secondary" size="lg" onClick={() => onOpenChange(false)}>
             확인
           </Button>
