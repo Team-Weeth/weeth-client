@@ -57,6 +57,11 @@ function DuesSetupStep3() {
     });
   }, [source, carryOverInitialized, setField]);
 
+  // 조회한 이전 기수 잔액 정보를 store에 보관해 Step5(최종 확인)에서 재사용한다.
+  useEffect(() => {
+    if (source) setField({ previousAccount: source });
+  }, [source, setField]);
+
   const hasPreviousBalance = source?.hasPreviousAccount ?? false;
   const previousBalance = source?.balance ?? 0;
   const previousGeneration = source?.cardinalNumber ?? cardinalNumber - 1;

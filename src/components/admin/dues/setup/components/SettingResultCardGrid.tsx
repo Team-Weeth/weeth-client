@@ -3,6 +3,7 @@ import type { ReactNode } from 'react';
 import { EditIcon } from '@/assets/icons';
 import { Avatar, AvatarFallback, AvatarGroup, AvatarGroupCount, Card, Icon } from '@/components/ui';
 import { cn } from '@/lib/cn';
+import { formatAmount } from '@/lib/formatAmount';
 
 interface InfoRowProps {
   label: string;
@@ -69,7 +70,7 @@ interface SettingResultCardGridProps {
   previousGeneration: number;
   previousBalance: number;
   carryOverOption: 'none' | 'carry';
-  carryOverDescription?: string;
+  carryOverAmount?: string;
   // Step 4: 계좌 공개
   isAccountPublic: boolean;
   accountNumber?: string;
@@ -94,7 +95,7 @@ function SettingResultCardGrid({
   previousGeneration,
   previousBalance,
   carryOverOption,
-  carryOverDescription,
+  carryOverAmount,
   isAccountPublic,
   accountNumber,
   bankName,
@@ -108,20 +109,23 @@ function SettingResultCardGrid({
       <InfoCard title="기본 정보" onEdit={onEditStep ? () => onEditStep(1) : undefined}>
         <InfoRow label="기수" value={`${cardinalNumber} 기`} />
         <InfoRow label="회비 이름" value={name || '-'} />
-        <InfoRow label="1인 회비 금액" value={`${Number(amount).toLocaleString()} 원`} />
+        <InfoRow label="1인 회비" value={`${formatAmount(Number(amount))} 원`} />
       </InfoCard>
 
       {/* 이월 설정 */}
       <InfoCard title="이월 설정" onEdit={onEditStep ? () => onEditStep(3) : undefined}>
         {hasPreviousBalance ? (
           <>
-            <InfoRow label="이전 기수" value={`${previousGeneration} 기`} />
+            <InfoRow
+              label="이전 기수"
+              value={carryOverOption === 'carry' ? `${previousGeneration} 기` : '없음'}
+            />
             <InfoRow
               label="이월 여부"
               value={carryOverOption === 'carry' ? '이월함' : '이월 안 함'}
             />
             {carryOverOption === 'carry' && (
-              <InfoRow label="이월 금액" value={`${previousBalance.toLocaleString()} 원`} />
+              <InfoRow label="이월 금액" value={`${formatAmount(previousBalance)} 원`} />
             )}
           </>
         ) : (
@@ -130,8 +134,8 @@ function SettingResultCardGrid({
               label="이월 여부"
               value={carryOverOption === 'carry' ? '이월함' : '이월 안 함'}
             />
-            {carryOverOption === 'carry' && carryOverDescription && (
-              <InfoRow label="설명" value={carryOverDescription} />
+            {carryOverOption === 'carry' && carryOverAmount && (
+              <InfoRow label="이월 금액" value={formatAmount(Number(carryOverAmount))} />
             )}
           </>
         )}
@@ -142,7 +146,7 @@ function SettingResultCardGrid({
         <InfoRow label="납부 대상" value={`${selectedCount} 명`} />
         <InfoRow label="제외 대상" value={`${excludedCount} 명`} />
         <div className="grid grid-cols-[2fr_3fr] gap-200">
-          <span className="typo-body2 text-text-alternative">선택된 멤버</span>
+          <span className="typo-sub3 text-text-alternative">선택 멤버</span>
           <button type="button" onClick={onOpenPaymentTargetModal} className="cursor-pointer">
             <AvatarGroup>
               {displayedAvatars.map((t) => (

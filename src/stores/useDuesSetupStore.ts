@@ -2,6 +2,8 @@ import { create } from 'zustand';
 import { combine, devtools, persist } from 'zustand/middleware';
 import { useShallow } from 'zustand/react/shallow';
 
+import type { CarryOverSource } from '@/types/admin/dues';
+
 const initialState = {
   accountId: null as number | null,
   // 메인 화면에서 막 신규 진입했는지 여부 (메모리 전용 — partialize 제외)
@@ -20,6 +22,9 @@ const initialState = {
   memberIdsInitialized: false,
   // Step 3: 이월 설정
   carryOverOption: 'none' as 'none' | 'carry',
+  // Step3에서 조회한 이전 기수 잔액 정보 (메모리 전용 — partialize 제외)
+  // 새로고침/재접속 시 null로 초기화되며, Step5는 이때 회비 등록 현황 조회로 복구한다.
+  previousAccount: null as CarryOverSource | null,
   // 이전 기수 정보가 없을 때 직접 입력하는 이월 금액 (숫자 문자열)
   carryOverAmount: '',
   carryOverDescription: '',
@@ -87,6 +92,7 @@ export const useDuesSetupValues = () =>
       selectedMemberIds: state.selectedMemberIds,
       memberIdsInitialized: state.memberIdsInitialized,
       carryOverOption: state.carryOverOption,
+      previousAccount: state.previousAccount,
       carryOverAmount: state.carryOverAmount,
       carryOverDescription: state.carryOverDescription,
       carryOverInitialized: state.carryOverInitialized,

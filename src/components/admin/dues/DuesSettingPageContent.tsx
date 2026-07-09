@@ -93,7 +93,9 @@ function DuesSettingPageContent() {
             }
             previousBalance={status?.previousAccountBalance?.balance ?? 0}
             carryOverOption={status?.carryOver?.enabled ? 'carry' : 'none'}
-            carryOverDescription={status?.carryOver?.memo ?? undefined}
+            carryOverAmount={
+              status?.carryOver?.amount != null ? String(status.carryOver.amount) : '0'
+            }
             isAccountPublic={status?.bankAccount?.bankAccountVisible ?? false}
             accountNumber={status?.bankAccount?.bankAccount?.accountNumber ?? undefined}
             bankName={status?.bankAccount?.bankAccount?.bankName ?? undefined}

@@ -4,13 +4,13 @@ import { useState } from 'react';
 import { useParams } from 'next/navigation';
 
 import { QuestionCircleIcon } from '@/assets/icons';
-import { BackButton, PaymentTargetModal } from '@/components/admin/dues';
+import { PaymentTargetModal } from '@/components/admin/dues';
 import { Icon, Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui';
 import { DUES_REGISTRATION_ERROR_CODE } from '@/constants/errorCode';
 import { useDuesSetupValues, useDuesSetupActions } from '@/stores/useDuesSetupStore';
 import { toastError, toastSuccess } from '@/stores/useToastStore';
 import { getApiErrorCode } from '@/utils/shared/getApiErrorCode';
-import { useDuesPaymentTargetsQuery, useDuesCarryOverSourceQuery } from '@/hooks/queries/admin';
+import { useDuesPaymentTargetsQuery, useDuesRegistrationStatusQuery } from '@/hooks/queries/admin';
 import { useCompleteDuesRegistration } from '@/hooks/mutations/admin';
 
 import {
@@ -23,6 +23,8 @@ import {
 } from '@/components/admin/dues/setup/components';
 import { useDuesSetupNavigation } from '@/hooks/admin/useDuesSetupNavigation';
 import { useEnsureDuesAccountId } from '@/hooks/admin';
+import { formatAmount } from '@/lib/formatAmount';
+import { number } from 'zod';
 
 const MAX_AVATAR_DISPLAY = 4;
 
@@ -37,7 +39,8 @@ function DuesSetupStep5() {
     name,
     selectedMemberIds,
     carryOverOption,
-    carryOverDescription,
+    carryOverAmount,
+    previousAccount,
     accountNumber,
     bankName,
     accountHolder,
@@ -50,7 +53,16 @@ function DuesSetupStep5() {
   useEnsureDuesAccountId(clubId);
 
   const { data: paymentTargetsData } = useDuesPaymentTargetsQuery(clubId, accountId);
-  const { data: carryOverSource } = useDuesCarryOverSourceQuery(clubId, accountId);
+
+  // 이전 기수 잔액 정보는 Step3에서 store에 담아둔 값을 우선 사용하고,
+  // 새로고침/재진입으로 store가 비어 있으면 회비 등록 현황 조회로 복구한다.
+  const { data: registrationStatus } = useDuesRegistrationStatusQuery(clubId, accountId);
+  const statusPreviousAccount = registrationStatus?.previousAccountBalance ?? null;
+
+  const hasPreviousBalance = previousAccount?.hasPreviousAccount ?? statusPreviousAccount !== null;
+  const previousGeneration =
+    previousAccount?.cardinalNumber ?? statusPreviousAccount?.cardinalNumber ?? cardinalNumber - 1;
+  const previousBalance = previousAccount?.balance ?? statusPreviousAccount?.balance ?? 0;
 
   const completeRegistration = useCompleteDuesRegistration(clubId, accountId, {
     onSuccess: () => {
@@ -85,10 +97,6 @@ function DuesSetupStep5() {
   });
   const [isPaymentTargetModalOpen, setIsPaymentTargetModalOpen] = useState(false);
 
-  const hasPreviousBalance = carryOverSource?.hasPreviousAccount ?? false;
-  const previousBalance = carryOverSource?.balance ?? 0;
-  const previousGeneration = carryOverSource?.cardinalNumber ?? cardinalNumber - 1;
-
   const allTargets = paymentTargetsData?.targets.content ?? [];
   const totalCount = allTargets.length;
   const selectedCount = selectedMemberIds.length;
@@ -102,8 +110,7 @@ function DuesSetupStep5() {
   const remainingCount = Math.max(0, selectedTargets.length - MAX_AVATAR_DISPLAY);
 
   const expectedDuesIncome = Number(amount) * selectedCount;
-  const carryOverAmount = carryOverOption === 'carry' ? previousBalance : 0;
-  const expectedTotal = expectedDuesIncome + carryOverAmount;
+  const expectedTotal = Number(expectedDuesIncome) + Number(carryOverAmount);
 
   // 편집 버튼 → 해당 스텝으로 이동하되, 저장 후 최종 확인(5)으로 복귀하도록 표시를 남긴다.
   const handleEditStep = (step: number) => {
@@ -150,19 +157,19 @@ function DuesSetupStep5() {
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
-              <span className="typo-h2 text-text-strong">{expectedTotal.toLocaleString()} 원</span>
+              <span className="typo-h2 text-text-strong">{formatAmount(expectedTotal)} 원</span>
             </div>
             <div className="flex flex-col gap-100 text-right">
               <div className="flex items-center justify-end gap-200">
                 <span className="typo-body2 text-text-alternative">예상 회비 수입</span>
                 <span className="typo-sub3 text-text-strong">
-                  {expectedDuesIncome.toLocaleString()} 원
+                  {formatAmount(expectedDuesIncome)} 원
                 </span>
               </div>
               <div className="flex items-center justify-end gap-200">
                 <span className="typo-body2 text-text-alternative">이월 금액</span>
                 <span className="typo-sub3 text-text-strong">
-                  {carryOverAmount.toLocaleString()} 원
+                  {formatAmount(Number(carryOverAmount))} 원
                 </span>
               </div>
             </div>
@@ -182,7 +189,7 @@ function DuesSetupStep5() {
             previousGeneration={previousGeneration}
             previousBalance={previousBalance}
             carryOverOption={carryOverOption}
-            carryOverDescription={carryOverDescription}
+            carryOverAmount={carryOverAmount}
             isAccountPublic={isAccountPublic}
             accountNumber={accountNumber}
             bankName={bankName}
