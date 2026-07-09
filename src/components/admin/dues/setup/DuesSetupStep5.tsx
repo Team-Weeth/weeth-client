@@ -20,6 +20,7 @@ import {
   PrevButton,
   SettingResultCardGrid,
   SetupHeader,
+  DuesSetupStep5Skeleton,
 } from '@/components/admin/dues/setup/components';
 import { useDuesSetupNavigation } from '@/hooks/admin/useDuesSetupNavigation';
 import { useEnsureDuesAccountId } from '@/hooks/admin';
@@ -52,7 +53,7 @@ function DuesSetupStep5() {
   // 새로고침으로 accountId(메모리 전용)가 사라진 경우 초안을 재조회해 복구한다.
   useEnsureDuesAccountId(clubId);
 
-  const { data: paymentTargetsData } = useDuesPaymentTargetsQuery(clubId, accountId);
+  const { data: paymentTargetsData, isPending } = useDuesPaymentTargetsQuery(clubId, accountId);
 
   // 이전 기수 잔액 정보는 Step3에서 store에 담아둔 값을 우선 사용하고,
   // 새로고침/재진입으로 store가 비어 있으면 회비 등록 현황 조회로 복구한다.
@@ -122,6 +123,9 @@ function DuesSetupStep5() {
     if (accountId === null || completeRegistration.isPending) return;
     completeRegistration.mutate();
   };
+
+  // accountId 확보 전(skipToken) 또는 납부 대상 조회 중에는 스켈레톤을 노출한다.
+  if (isPending) return <DuesSetupStep5Skeleton />;
 
   return (
     <div className="flex min-w-85 flex-col gap-700 p-700">

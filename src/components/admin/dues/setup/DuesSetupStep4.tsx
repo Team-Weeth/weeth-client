@@ -19,6 +19,7 @@ import {
   NextButton,
   PrevButton,
   SetupHeader,
+  DuesSetupStep4Skeleton,
 } from '@/components/admin/dues/setup/components';
 import { useDuesSetupNavigation } from '@/hooks/admin/useDuesSetupNavigation';
 import { useDuesStepNavigator } from '@/hooks/admin/useDuesStepNavigator';
@@ -98,6 +99,9 @@ function DuesSetupStep4() {
     });
 
   const { goNext, isEditMode } = useDuesStepNavigator(4, commitStep);
+
+  // 새로고침 등으로 accountId 복구 전에는 스켈레톤을 노출한다.
+  if (accountId === null) return <DuesSetupStep4Skeleton />;
 
   return (
     <div className="flex min-w-85 flex-col gap-700 p-700">

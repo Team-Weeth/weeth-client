@@ -17,6 +17,7 @@ import {
   CarryOverCard,
   DuesAmountField,
   SetupHeader,
+  DuesSetupStep3Skeleton,
 } from '@/components/admin/dues/setup/components';
 import { useDuesSetupNavigation } from '@/hooks/admin/useDuesSetupNavigation';
 import { useDuesStepNavigator } from '@/hooks/admin/useDuesStepNavigator';
@@ -42,7 +43,7 @@ function DuesSetupStep3() {
   // 새로고침으로 accountId(메모리 전용)가 사라진 경우 초안을 재조회해 복구한다.
   useEnsureDuesAccountId(clubId);
 
-  const { data: source } = useDuesCarryOverSourceQuery(clubId, accountId);
+  const { data: source, isPending } = useDuesCarryOverSourceQuery(clubId, accountId);
   const saveCarryOver = useSaveDuesCarryOver(clubId, accountId, {
     onError: () => toastError('이월 설정 저장에 실패했습니다. 잠시 후 다시 시도해주세요.'),
   });
@@ -82,6 +83,9 @@ function DuesSetupStep3() {
   };
 
   const { goNext, isEditMode } = useDuesStepNavigator(3, commitStep);
+
+  // accountId 확보 전(skipToken) 또는 이월 재원 조회 중에는 스켈레톤을 노출한다.
+  if (isPending) return <DuesSetupStep3Skeleton />;
 
   return (
     <div className="flex min-w-85 flex-col gap-700 p-700">

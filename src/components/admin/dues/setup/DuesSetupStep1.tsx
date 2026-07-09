@@ -21,6 +21,7 @@ import {
   NextButton,
   DuesAmountField,
   SetupHeader,
+  DuesSetupStep1Skeleton,
 } from '@/components/admin/dues/setup/components';
 import { useDuesStepNavigator } from '@/hooks/admin/useDuesStepNavigator';
 import { useRestoreDuesDraft } from '@/hooks/admin/useRestoreDuesDraft';
@@ -119,6 +120,9 @@ function DuesSetupStep1() {
     });
 
   const { goNext, isEditMode } = useDuesStepNavigator(1, commitStep);
+
+  // 기수 정보가 확정되기 전에는 스켈레톤을 노출한다.
+  if (!activeCardinal) return <DuesSetupStep1Skeleton />;
 
   return (
     <>
