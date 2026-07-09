@@ -95,7 +95,6 @@ function DuesTransactionTable({
           sortLabel={sortDesc ? '최근 순' : '오래된 순'}
           onSortToggle={onSortToggle}
         />
-
         <div className="border-line overflow-x-auto rounded-sm border">
           <Table>
             <TableHeader className="bg-container-neutral-alternative">

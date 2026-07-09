@@ -205,7 +205,7 @@ function DuesSetupStep1() {
         </div>
 
         {/* 다음으로 버튼 */}
-        <NextButton handleNext={goNext} editMode={isEditMode} />
+        <NextButton handleNext={goNext} editMode={isEditMode} disabled={saveBasic.isPending} />
       </div>
     </>
   );
