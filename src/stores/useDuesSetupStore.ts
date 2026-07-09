@@ -51,6 +51,9 @@ export const useDuesSetupStore = create(
         // accountId는 메모리에만 유지 (새로고침/재접속 시 null 초기화 → 초안 생성 API 재호출)
         // 같은 세션 내 Step2 → Step1 이동 시에는 메모리 값으로 재호출 방지
         partialize: (state) => ({
+          // 최종 확인(5)에서 편집 진입 시 새로고침해도 편집 모드/복귀 스텝이 유지되도록 persist한다.
+          // 저장 완료 시 null로 클리어되고, 신규 진입은 reset()을 거치므로 잔존값은 정리된다.
+          returnStep: state.returnStep,
           cardinalNumber: state.cardinalNumber,
           amount: state.amount,
           name: state.name,
