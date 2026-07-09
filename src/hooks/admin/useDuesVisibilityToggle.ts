@@ -21,12 +21,15 @@ export function useDuesVisibilityToggle(
 ) {
   const [isPublic, setIsPublic] = useState(serverIsPublic ?? true);
   const [syncedValue, setSyncedValue] = useState(serverIsPublic);
+  // debounce 콜백이 타이머 설정 시점의 stale한 syncedValue를 참조하지 않도록 ref로 미러링한다.
+  const syncedValueRef = useRef(syncedValue);
   const debounceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // 서버 값이 도착/변경되면 서버 기준으로 재동기화 (낙관적 토글은 그대로 두기 위해 값 변화 시에만)
   if (serverIsPublic !== undefined && serverIsPublic !== syncedValue) {
     setSyncedValue(serverIsPublic);
     setIsPublic(serverIsPublic);
+    syncedValueRef.current = serverIsPublic;
   }
 
   const { mutate: updateMemberVisibility } = useUpdateMemberVisibility(clubId, accountId, {
@@ -48,9 +51,9 @@ export function useDuesVisibilityToggle(
     debounceTimerRef.current = setTimeout(() => {
       debounceTimerRef.current = null;
       // 연타로 서버 값과 같아졌으면(원위치) 불필요한 요청을 생략한다.
-      if (value === syncedValue) return;
+      if (value === syncedValueRef.current) return;
       updateMemberVisibility(value, {
-        onError: () => setIsPublic(syncedValue ?? !value),
+        onError: () => setIsPublic(syncedValueRef.current ?? !value),
       });
     }, TOGGLE_DEBOUNCE_MS);
   };
