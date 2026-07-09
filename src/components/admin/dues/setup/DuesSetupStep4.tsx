@@ -58,7 +58,11 @@ function DuesSetupStep4() {
     formState: { errors },
   } = useForm<DuesBankAccountFormData>({
     resolver: zodResolver(duesBankAccountSchema),
-    defaultValues: { accountNumber, bankName, accountHolder, accountGuide, isAccountPublic },
+    // defaultValues(마운트 1회 스냅샷) 대신 values로 store를 반응형 구독한다.
+    // persist hydration이 첫 렌더보다 늦게 도착해도 폼이 store 값으로 갱신되므로
+    // 새로고침 시 입력값이 유지된다. keepDirtyValues로 편집 중 필드는 보존한다.
+    values: { accountNumber, bankName, accountHolder, accountGuide, isAccountPublic },
+    resetOptions: { keepDirtyValues: true },
     mode: 'onChange',
   });
 

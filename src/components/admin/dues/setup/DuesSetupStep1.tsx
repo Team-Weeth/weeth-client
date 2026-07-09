@@ -49,7 +49,12 @@ function DuesSetupStep1() {
     formState: { errors },
   } = useForm<DuesBasicFormData>({
     resolver: zodResolver(duesBasicSchema),
-    defaultValues: { amount, name, description },
+    // defaultValues(마운트 1회 스냅샷) 대신 values로 store를 반응형 구독한다.
+    // persist hydration이 첫 렌더보다 늦게 도착해도 폼이 store 값으로 갱신되므로
+    // 새로고침 시 입력값(회비금액/이름/설명)이 유지된다.
+    // keepDirtyValues: 사용자가 편집 중인 필드는 store 왕복 갱신으로 덮어쓰지 않는다.
+    values: { amount, name, description },
+    resetOptions: { keepDirtyValues: true },
     mode: 'onChange',
   });
 
