@@ -6,7 +6,6 @@ import { DuesStatusSection } from './DuesStatusSection';
 interface DuesBalanceCardProps {
   className?: string;
   currentBalance: number;
-  totalDues: number;
   paidCount: number;
   totalCount: number;
   bankName: string;
@@ -20,7 +19,6 @@ interface DuesBalanceCardProps {
 function DuesBalanceCard({
   className,
   currentBalance,
-  totalDues,
   paidCount,
   totalCount,
   bankName,
@@ -38,7 +36,6 @@ function DuesBalanceCard({
         <span className="text-text-strong text-[36px] leading-[44px] font-bold tracking-[-0.18px]">
           {formatAmount(currentBalance)}원
         </span>
-        <span className="typo-body2 text-text-alternative mb-100">/{formatAmount(totalDues)}</span>
       </div>
 
       <div className="flex items-center gap-300">

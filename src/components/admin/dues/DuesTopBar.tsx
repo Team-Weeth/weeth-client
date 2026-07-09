@@ -17,7 +17,6 @@ interface DuesTopBarProps extends React.HTMLAttributes<HTMLDivElement> {
   isPublic: boolean;
   onPublicChange: (value: boolean) => void;
   onSettingsClick?: () => void;
-  onAddClick?: () => void;
 }
 
 function DuesTopBar({
@@ -25,7 +24,7 @@ function DuesTopBar({
   isPublic,
   onPublicChange,
   onSettingsClick,
-  onAddClick,
+
   ...props
 }: DuesTopBarProps) {
   return (

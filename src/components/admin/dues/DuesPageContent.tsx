@@ -135,7 +135,7 @@ function DuesPageContent() {
   const { isPublic, handlePublicChange } = useDuesVisibilityToggle(
     clubId,
     dashboard?.accountId ?? null,
-    dashboard?.bankAccountPublic,
+    dashboard?.memberVisible,
   );
 
   // 월별 잔액 추이 차트 데이터 (yearMonth → 'N월', endingBalance → 막대 높이)
@@ -237,7 +237,6 @@ function DuesPageContent() {
       <DuesTopBar
         isPublic={isPublic}
         onPublicChange={handlePublicChange}
-        onAddClick={handleAddTransaction}
         onSettingsClick={handleSetting}
       />
       <DuesGenerationFilter
@@ -249,7 +248,6 @@ function DuesPageContent() {
       <div className="tablet:flex-row flex flex-col gap-1">
         <DuesBalanceCard
           currentBalance={dashboard?.summary.currentBalance ?? 0}
-          totalDues={dashboard?.summary.totalAmount ?? 0}
           paidCount={dashboard?.paymentSummary.paidCount ?? 0}
           totalCount={dashboard?.paymentSummary.totalTargetCount ?? 0}
           bankName={dashboard?.bankAccount?.bankName ?? ''}

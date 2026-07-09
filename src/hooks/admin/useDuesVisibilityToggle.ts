@@ -9,7 +9,7 @@ const TOGGLE_DEBOUNCE_MS = 300;
 /**
  * 회비 내역 공개 여부 토글 상태 + 낙관적 업데이트 훅.
  *
- * 대시보드 응답의 `bankAccountPublic`으로 초기화하고, 이후 서버 값이 바뀌면
+ * 대시보드 응답의 `memberVisible`로 초기화하고, 이후 서버 값이 바뀌면
  * (기수 변경·mutation 후 refetch) 렌더 중에 로컬 토글 상태를 재동기화한다.
  * 스위치는 즉시 반영하고, 실제 요청은 debounce하여 연타의 마지막 값만 전송한다.
  * 요청이 실패하면 서버 값 기준으로 되돌린다.
@@ -54,10 +54,17 @@ export function useDuesVisibilityToggle(
     if (debounceTimerRef.current) clearTimeout(debounceTimerRef.current);
     debounceTimerRef.current = setTimeout(() => {
       debounceTimerRef.current = null;
-      // 연타로 서버 값과 같아졌으면(원위치) 불필요한 요청을 생략한다.
-      if (value === syncedValueRef.current) return;
+      // 연타로 마지막 값이 직전 반영값과 같아졌으면(원위치) 불필요한 요청을 생략한다.
+      const appliedValue = syncedValueRef.current;
+      if (value === appliedValue) return;
+      // 전송한 값을 기준값(baseline)으로 즉시 반영한다. 서버 refetch(memberVisible)가
+      // 도착하기 전 구간에서 같은 방향으로의 다음 토글이 no-op으로 걸러지지 않게 한다.
+      syncedValueRef.current = value;
       updateMemberVisibility(value, {
-        onError: () => setIsPublic(syncedValueRef.current ?? !value),
+        onError: () => {
+          syncedValueRef.current = appliedValue;
+          setIsPublic(appliedValue ?? !value);
+        },
       });
     }, TOGGLE_DEBOUNCE_MS);
   };

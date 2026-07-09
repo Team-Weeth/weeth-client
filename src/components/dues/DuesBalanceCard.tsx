@@ -3,14 +3,12 @@ import { DuesBalanceAmount } from './DuesBalanceAmount';
 
 interface DuesBalanceCardProps {
   currentBalance: number;
-  targetBalance: number;
   compactTitle?: boolean;
   className?: string;
 }
 
 function DuesBalanceCard({
   currentBalance,
-  targetBalance,
   compactTitle = false,
   className,
 }: DuesBalanceCardProps) {
@@ -24,7 +22,7 @@ function DuesBalanceCard({
         >
           현재 남은 금액{compactTitle ? '은' : ''}
         </span>
-        <DuesBalanceAmount currentBalance={currentBalance} targetBalance={targetBalance} />
+        <DuesBalanceAmount currentBalance={currentBalance} />
       </div>
     </section>
   );

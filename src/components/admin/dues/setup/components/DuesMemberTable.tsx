@@ -29,6 +29,8 @@ interface DuesMemberTableProps {
   pagedTargets: PaymentTarget[];
   selectedSet: Set<number>;
   toggleMember?: (id: number) => void;
+  toggleAll?: () => void;
+  allSelected?: boolean | 'indeterminate';
   readOnly?: boolean;
 }
 
@@ -36,6 +38,8 @@ function DuesMemberTable({
   pagedTargets,
   selectedSet,
   toggleMember,
+  toggleAll,
+  allSelected = false,
   readOnly = false,
 }: DuesMemberTableProps) {
   return (
@@ -47,7 +51,17 @@ function DuesMemberTable({
         <TableRow className="bg-container-neutral-alternative">
           {!readOnly && (
             <TableHead className="typo-caption1 text-text-alternative w-16 text-center">
-              선택
+              <div className="flex justify-center">
+                <Checkbox
+                  color="primary"
+                  id="select-all-members"
+                  name="select-all-members"
+                  aria-label="전체 선택"
+                  checked={allSelected}
+                  disabled={pagedTargets.length === 0}
+                  onCheckedChange={() => toggleAll?.()}
+                />
+              </div>
             </TableHead>
           )}
 

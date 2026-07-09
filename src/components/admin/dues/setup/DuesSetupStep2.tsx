@@ -62,6 +62,7 @@ function DuesSetupStep2() {
     excludedCount,
     totalPages,
     pagedTargets,
+    filteredTargets,
     handleTabChange,
     handleSearch,
   } = usePaymentTargetFilter(allTargets, selectedMemberIds);
@@ -71,6 +72,25 @@ function DuesSetupStep2() {
       ? selectedMemberIds.filter((x) => x !== id)
       : [...selectedMemberIds, id];
     setField({ selectedMemberIds: next });
+  };
+
+  // 전체선택은 현재 탭·검색으로 필터된 전체 대상(모든 페이지)을 기준으로 동작한다.
+  const filteredIds = filteredTargets.map((t) => t.paymentTargetInfo.clubMemberId);
+  const selectedFilteredCount = filteredIds.filter((id) => selectedSet.has(id)).length;
+  const allSelected =
+    filteredIds.length === 0 || selectedFilteredCount === 0
+      ? false
+      : selectedFilteredCount === filteredIds.length
+        ? true
+        : 'indeterminate';
+
+  const toggleAll = () => {
+    if (selectedFilteredCount === filteredIds.length) {
+      const filteredSet = new Set(filteredIds);
+      setField({ selectedMemberIds: selectedMemberIds.filter((id) => !filteredSet.has(id)) });
+    } else {
+      setField({ selectedMemberIds: [...new Set([...selectedMemberIds, ...filteredIds])] });
+    }
   };
 
   const commitStep = async () => {
@@ -130,6 +150,8 @@ function DuesSetupStep2() {
             pagedTargets={pagedTargets}
             selectedSet={selectedSet}
             toggleMember={toggleMember}
+            toggleAll={toggleAll}
+            allSelected={allSelected}
           />
 
           {/* 페이지네이션 */}

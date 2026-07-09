@@ -22,11 +22,7 @@ function DuesLeftSection({ dues }: DuesLeftSectionProps) {
   if (paymentStatus !== 'UNPAID') {
     return (
       <aside className="desktop:w-[374px] flex w-full flex-col gap-450">
-        <DuesBalanceCard
-          currentBalance={dues.currentBalance}
-          targetBalance={dues.targetBalance}
-          compactTitle
-        />
+        <DuesBalanceCard currentBalance={dues.currentBalance} compactTitle />
 
         {publicAccount ? (
           <DuesAccountCard account={publicAccount} variant="plain" showCopyButton />
@@ -63,7 +59,7 @@ function DuesLeftSection({ dues }: DuesLeftSectionProps) {
           <p className="typo-body2 text-text-alternative">회비 계좌는 운영진에게 문의해 주세요.</p>
         )}
       </DuesAmountCard>
-      <DuesBalanceCard currentBalance={dues.currentBalance} targetBalance={dues.targetBalance} />
+      <DuesBalanceCard currentBalance={dues.currentBalance} />
     </aside>
   );
 }

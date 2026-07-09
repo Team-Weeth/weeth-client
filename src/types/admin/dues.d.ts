@@ -161,6 +161,9 @@ export interface DuesDashboard {
     paidCount: number;
     totalTargetCount: number;
   };
+  /** 부원에게 회비 탭 공개 여부 (member-visibility 토글의 서버 상태) */
+  memberVisible: boolean;
+  /** 계좌번호 공개 여부 (계좌 카드 마스킹 판단) */
   bankAccountPublic: boolean;
   bankAccount: {
     bankName: string;
