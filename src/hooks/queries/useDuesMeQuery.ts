@@ -12,7 +12,6 @@ function mapDuesMeToSummary(data: DuesMeResponse): DuesSummary {
     cardinalNumber: data.cardinal,
     duesAmount: data.duesAmount,
     currentBalance: data.balance.currentBalance,
-    targetBalance: data.balance.goalAmount,
     isTargeted: data.myPayment.targeted,
     paymentStatus: data.myPayment.status,
     isPaid: data.myPayment.status === 'PAID',

@@ -1,9 +1,8 @@
 'use client';
 
-import { AdminPlusIcon, AdminSettingIcon } from '@/assets/icons/admin';
+import { AdminSettingIcon } from '@/assets/icons/admin';
 import { QuestionCircleIcon } from '@/assets/icons';
 import {
-  Button,
   Icon,
   Switch,
   Tooltip,
@@ -27,7 +26,6 @@ function DuesTopBar({
   onPublicChange,
   onSettingsClick,
   disabled = false,
-
   ...props
 }: DuesTopBarProps) {
   return (

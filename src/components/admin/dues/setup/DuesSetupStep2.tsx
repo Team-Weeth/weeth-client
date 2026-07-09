@@ -77,8 +77,8 @@ function DuesSetupStep2() {
   // 전체선택은 현재 탭·검색으로 필터된 전체 대상(모든 페이지)을 기준으로 동작한다.
   const filteredIds = filteredTargets.map((t) => t.paymentTargetInfo.clubMemberId);
   const selectedFilteredCount = filteredIds.filter((id) => selectedSet.has(id)).length;
-  const allSelected =
-    filteredIds.length === 0 || selectedFilteredCount === 0
+  const allSelected: boolean | 'indeterminate' =
+    selectedFilteredCount === 0
       ? false
       : selectedFilteredCount === filteredIds.length
         ? true

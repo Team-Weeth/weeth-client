@@ -13,7 +13,6 @@ export interface DuesSummary {
   cardinalNumber: number;
   duesAmount: number;
   currentBalance: number;
-  targetBalance: number;
   isTargeted: boolean;
   paymentStatus: DuesPaymentStatus;
   isPaid: boolean;
