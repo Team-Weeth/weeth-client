@@ -170,7 +170,7 @@ function TransactionForm({ initialValues, onSubmit, onCancel }: TransactionFormP
             <span className="typo-body1 text-text-normal shrink-0">원</span>
           </div>
           {errors.amount && (
-            <span className="typo-caption2 text-state-error px-400">{errors.amount}</span>
+            <span className="typo-caption2 text-state-error py-200">{errors.amount}</span>
           )}
         </div>
 
