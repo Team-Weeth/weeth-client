@@ -26,7 +26,7 @@ import { TransactionDetailModal } from './modal/TransactionDetailModal';
 import type { TransactionDetail } from './modal/TransactionDetailModal';
 import type { TransactionFormData } from './modal/TransactionForm';
 import { DuesTransactionTable } from './DuesTransactionTable';
-import { DuesTutorialModal } from './modal/DuesTutorialModal';
+import { DuesOnboardingOverlay } from './DuesOnboardingOverlay';
 import {
   useAdminDuesTransactionsQuery,
   useAdminDuesTransactionQuery,
@@ -238,47 +238,53 @@ function DuesPageContent() {
         isPublic={isPublic}
         onPublicChange={handlePublicChange}
         onSettingsClick={handleSetting}
+        disabled={isNotRegistered}
       />
       <DuesGenerationFilter
+        isNotRegistered={isNotRegistered}
         cardinals={cardinals}
         activeCardinal={activeCardinal}
         updaterProfile={dashboard?.lastModified ?? undefined}
         onSelect={setSelectedCardinalId}
       />
-      <div className="tablet:flex-row flex flex-col gap-1">
-        <DuesBalanceCard
-          currentBalance={dashboard?.summary.currentBalance ?? 0}
-          paidCount={dashboard?.paymentSummary.paidCount ?? 0}
-          totalCount={dashboard?.paymentSummary.totalTargetCount ?? 0}
-          bankName={dashboard?.bankAccount?.bankName ?? ''}
-          accountNumber={dashboard?.bankAccount?.accountNumber ?? ''}
-          holderName={dashboard?.bankAccount?.holder ?? ''}
-          isAccountPublic={dashboard?.bankAccountPublic ?? false}
-          onViewPaymentDetail={() => router.push(`/${clubId}/admin/dues/payment-status`)}
-          onAddTransaction={handleAddTransaction}
+      {/* 미등록 기수(20112)일 때는 콘텐츠 영역만 오버레이로 덮어 상단 기수 필터는 조작 가능하게 둔다 */}
+      <div className="relative flex flex-col gap-400">
+        <div className="tablet:flex-row flex flex-col gap-1">
+          <DuesBalanceCard
+            currentBalance={dashboard?.summary.currentBalance ?? 0}
+            paidCount={dashboard?.paymentSummary.paidCount ?? 0}
+            totalCount={dashboard?.paymentSummary.totalTargetCount ?? 0}
+            bankName={dashboard?.bankAccount?.bankName ?? ''}
+            accountNumber={dashboard?.bankAccount?.accountNumber ?? ''}
+            holderName={dashboard?.bankAccount?.holder ?? ''}
+            isAccountPublic={dashboard?.bankAccountPublic ?? false}
+            onViewPaymentDetail={() => router.push(`/${clubId}/admin/dues/payment-status`)}
+            onAddTransaction={handleAddTransaction}
+          />
+          <DuesChart
+            data={monthlyData}
+            activeMonth={effectiveMonth}
+            onMonthChange={setActiveMonth}
+            periodStart={toPeriodLabel(dashboard?.period.startYearMonth)}
+            periodEnd={toPeriodLabel(dashboard?.period.endYearMonth)}
+            activeExpense={activeBalance?.expense ?? 0}
+            activeIncome={activeBalance?.income ?? 0}
+          />
+        </div>
+        <DuesTransactionTable
+          transactions={transactionsData?.transactions ?? []}
+          counts={transactionsData?.counts ?? { all: 0, expense: 0, income: 0, dues: 0 }}
+          activeTab={txFilter}
+          onTabChange={handleTxTabChange}
+          sortDesc={txSortDesc}
+          onSortToggle={handleTxSortToggle}
+          page={txPage}
+          totalPages={transactionsData?.totalPages ?? 1}
+          onPageChange={setTxPage}
+          onMoreClick={handleMoreClick}
         />
-        <DuesChart
-          data={monthlyData}
-          activeMonth={effectiveMonth}
-          onMonthChange={setActiveMonth}
-          periodStart={toPeriodLabel(dashboard?.period.startYearMonth)}
-          periodEnd={toPeriodLabel(dashboard?.period.endYearMonth)}
-          activeExpense={activeBalance?.expense ?? 0}
-          activeIncome={activeBalance?.income ?? 0}
-        />
+        {isNotRegistered && <DuesOnboardingOverlay onStart={startDuesSetup} />}
       </div>
-      <DuesTransactionTable
-        transactions={transactionsData?.transactions ?? []}
-        counts={transactionsData?.counts ?? { all: 0, expense: 0, income: 0, dues: 0 }}
-        activeTab={txFilter}
-        onTabChange={handleTxTabChange}
-        sortDesc={txSortDesc}
-        onSortToggle={handleTxSortToggle}
-        page={txPage}
-        totalPages={transactionsData?.totalPages ?? 1}
-        onPageChange={setTxPage}
-        onMoreClick={handleMoreClick}
-      />
 
       <AddTransactionModal open={addOpen} onOpenChange={setAddOpen} onSubmit={handleAddSubmit} />
       {selectedTransaction && (
@@ -300,8 +306,6 @@ function DuesPageContent() {
         initialValues={editingValues}
         onSubmit={handleEditSubmit}
       />
-
-      <DuesTutorialModal open={isNotRegistered} onOpenChange={() => {}} onStart={startDuesSetup} />
     </div>
   );
 }

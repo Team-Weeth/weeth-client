@@ -23,7 +23,7 @@ import type { LastModified } from '@/types/admin/dues';
 interface DuesGenerationFilterProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onSelect'> {
   cardinals: Cardinal[];
   activeCardinal?: Cardinal;
-
+  isNotRegistered: boolean;
   updaterProfile?: LastModified;
   onSelect: (id: number) => void;
 }
@@ -31,6 +31,7 @@ interface DuesGenerationFilterProps extends Omit<React.HTMLAttributes<HTMLDivEle
 function DuesGenerationFilter({
   className,
   cardinals,
+  isNotRegistered,
   activeCardinal,
   updaterProfile,
   onSelect,
@@ -62,28 +63,30 @@ function DuesGenerationFilter({
           ))}
         </DropdownMenuContent>
       </DropdownMenu>
-      <div className="bg-container-neutral tablet:flex-none tablet:justify-start flex flex-1 items-center justify-between gap-200 rounded-md px-300 py-200">
-        <span className="typo-body1 text-text-alternative">
-          마지막 수정
-          <br className="tablet:hidden" />
-          <span className="tablet:inline hidden">&nbsp;&nbsp;</span>
-          {updaterProfile?.modifiedAt ? formatLastUpdated(updaterProfile.modifiedAt) : '-'}
-        </span>
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger>
-              <Avatar size={24}>
-                <AvatarImage
-                  src={updaterProfile?.modifiedBy.profileImageUrl ?? undefined}
-                  alt="마지막 수정자 프로필"
-                />
-                <AvatarFallback />
-              </Avatar>
-            </TooltipTrigger>
-            <TooltipContent>{updaterProfile?.modifiedBy.name}</TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
-      </div>
+      {!isNotRegistered && (
+        <div className="bg-container-neutral tablet:flex-none tablet:justify-start flex flex-1 items-center justify-between gap-200 rounded-md px-300 py-200">
+          <span className="typo-body1 text-text-alternative">
+            마지막 수정
+            <br className="tablet:hidden" />
+            <span className="tablet:inline hidden">&nbsp;&nbsp;</span>
+            {updaterProfile?.modifiedAt ? formatLastUpdated(updaterProfile.modifiedAt) : '-'}
+          </span>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger>
+                <Avatar size={24}>
+                  <AvatarImage
+                    src={updaterProfile?.modifiedBy.profileImageUrl ?? undefined}
+                    alt="마지막 수정자 프로필"
+                  />
+                  <AvatarFallback />
+                </Avatar>
+              </TooltipTrigger>
+              <TooltipContent>{updaterProfile?.modifiedBy.name}</TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </div>
+      )}
     </div>
   );
 }

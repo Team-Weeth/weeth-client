@@ -31,6 +31,14 @@ export {
 export { type TransactionFormData } from './modal/TransactionForm';
 export { PaymentTargetModal, type PaymentTargetModalProps } from './modal/PaymentTargetModal';
 export { DuesTutorialModal, type DuesTutorialModalProps } from './modal/DuesTutorialModal';
+export {
+  DuesOnboardingContent,
+  type DuesOnboardingContentProps,
+} from './DuesOnboardingContent';
+export {
+  DuesOnboardingOverlay,
+  type DuesOnboardingOverlayProps,
+} from './DuesOnboardingOverlay';
 
 export { BackButton } from './BackButton';
 
