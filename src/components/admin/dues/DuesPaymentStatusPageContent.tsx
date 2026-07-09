@@ -23,6 +23,7 @@ import type { PaymentTarget } from '@/types/admin/dues';
 
 import { DuesMemberPaymentTable, type DuesMember } from './DuesMemberPaymentTable';
 import { DuesPaymentSummaryCard } from './DuesPaymentSummaryCard';
+import { DuesPaymentStatusPageSkeleton } from './DuesPaymentStatusPageSkeleton';
 import { BackButton } from './BackButton';
 import { MemberSelectHeader } from './MemberSelectHeader';
 
@@ -128,8 +129,14 @@ function DuesPaymentStatusPageContent() {
   const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
 
   // 대시보드로 accountId·계좌 정보를 확보한 뒤 납부 대상 목록을 조회한다.
-  const { data: dashboard } = useDuesDashboardQuery(clubId, activeCardinal?.cardinalNumber ?? null);
-  const { data: paymentTargets } = useDuesPaymentTargetsQuery(clubId, dashboard?.accountId ?? null);
+  const { data: dashboard, isPending: isDashboardPending } = useDuesDashboardQuery(
+    clubId,
+    activeCardinal?.cardinalNumber ?? null,
+  );
+  const { data: paymentTargets, isPending: isTargetsPending } = useDuesPaymentTargetsQuery(
+    clubId,
+    dashboard?.accountId ?? null,
+  );
 
   // 테이블에는 제외(EXCLUDED) 부원까지 모두 노출하되, 벌크 액션은 실제 납부 대상(TARGETED)만 사용한다.
   const allTargets = paymentTargets?.targets.content ?? [];
@@ -207,6 +214,12 @@ function DuesPaymentStatusPageContent() {
     },
     onError: () => toastError('제외 처리에 실패했습니다.'),
   });
+
+  // 기수가 선택된 뒤 대시보드/납부 대상 로딩 중이면 스켈레톤을 노출한다.
+  // 대시보드 accountId 확보 전에는 납부 대상 쿼리가 skipToken(pending)이므로 accountId가 있을 때만 그 로딩을 반영한다.
+  if (activeCardinal && (isDashboardPending || (dashboard?.accountId != null && isTargetsPending))) {
+    return <DuesPaymentStatusPageSkeleton />;
+  }
 
   return (
     <div className="flex min-w-85 flex-col">

@@ -216,7 +216,7 @@ function DuesMemberPaymentTable({
                                 'flex h-4 w-4 items-center justify-center rounded-[3px] border transition-colors',
                                 isSelected
                                   ? 'border-brand-primary bg-brand-primary'
-                                  : 'border-button-neutral',
+                                  : 'border-icon-alternative',
                               )}
                             >
                               {isSelected && <Icon src={CheckIcon} alt="" size={10} />}

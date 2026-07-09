@@ -11,6 +11,7 @@ export {
   type TransactionType,
 } from './DuesTransactionTable';
 export { DuesPaymentStatusPageContent } from './DuesPaymentStatusPageContent';
+export { DuesPaymentStatusPageSkeleton } from './DuesPaymentStatusPageSkeleton';
 export { DuesSettingPageContent } from './DuesSettingPageContent';
 export { DuesPaymentSummaryCard, type DuesPaymentSummaryCardProps } from './DuesPaymentSummaryCard';
 export {
