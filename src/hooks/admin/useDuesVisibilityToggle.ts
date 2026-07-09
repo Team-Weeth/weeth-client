@@ -29,8 +29,12 @@ export function useDuesVisibilityToggle(
   if (serverIsPublic !== undefined && serverIsPublic !== syncedValue) {
     setSyncedValue(serverIsPublic);
     setIsPublic(serverIsPublic);
-    syncedValueRef.current = serverIsPublic;
   }
+
+  // syncedValue의 ref 미러링은 렌더를 순수하게 유지하기 위해 렌더 밖(effect)에서 처리한다.
+  useEffect(() => {
+    syncedValueRef.current = syncedValue;
+  }, [syncedValue]);
 
   const { mutate: updateMemberVisibility } = useUpdateMemberVisibility(clubId, accountId, {
     onError: () => toastError('공개 설정 변경에 실패했습니다.'),

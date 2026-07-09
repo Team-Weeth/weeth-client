@@ -304,6 +304,7 @@ function TransactionForm({ initialValues, onSubmit, onCancel }: TransactionFormP
           <Button variant="primary" size="lg" onClick={handleSubmit} disabled={isSubmitting}>
             {isSubmitting ? (
               <span className="flex items-center gap-200">
+                {/* TODO: 인라인 스피너를 공통 Spinner UI 컴포넌트로 추출 (ImageCard 등에도 유사 구현 존재) */}
                 <span className="size-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
                 저장 중
               </span>

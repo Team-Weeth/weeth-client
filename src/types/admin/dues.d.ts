@@ -240,7 +240,6 @@ export interface DuesMember {
   major: string;
   phone: string;
   status: PaymentStatus;
-  avatarInitial?: string;
 }
 
 export interface TransactionReceipt {
