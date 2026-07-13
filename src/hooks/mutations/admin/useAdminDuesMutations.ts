@@ -228,18 +228,14 @@ export function useExcludePaymentTargets(
  * 공개 시 부원 서비스에 회비 탭이 표시되고, 비공개 시 숨겨진다.
 
  */
-export function useUpdateMemberVisibility(
-  clubId: string,
-  accountId: number | null,
-  callbacks?: MutationCallbacks<unknown>,
-) {
+export function useUpdateMemberVisibility(clubId: string, callbacks?: MutationCallbacks<unknown>) {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: (visible: boolean) => {
-      if (!clubId || accountId === null) throw new Error(REQUIRE_ACCOUNT);
+      if (!clubId) throw new Error(REQUIRE_ACCOUNT);
       const body: MemberVisibilityBody = { visible };
-      return duesApi.updateMemberVisibility(clubId, accountId, body);
+      return duesApi.updateMemberVisibility(clubId, body);
     },
     onSuccess: callbacks?.onSuccess,
     onError: callbacks?.onError,
