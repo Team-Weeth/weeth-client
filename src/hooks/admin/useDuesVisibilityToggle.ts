@@ -36,7 +36,7 @@ export function useDuesVisibilityToggle(
     syncedValueRef.current = syncedValue;
   }, [syncedValue]);
 
-  const { mutate: updateMemberVisibility } = useUpdateMemberVisibility(clubId, accountId, {
+  const { mutate: updateMemberVisibility } = useUpdateMemberVisibility(clubId, {
     onError: () => toastError('공개 설정 변경에 실패했습니다.'),
   });
 

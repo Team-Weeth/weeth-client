@@ -51,8 +51,8 @@ export const duesApi = {
     ),
 
   // 부원 거래 내역 공개 여부 수정
-  updateMemberVisibility: (clubId: string, accountId: number, body: MemberVisibilityBody) =>
-    apiClient.patch(`/admin/clubs/${clubId}/accounts/${accountId}/member-visibility`, body),
+  updateMemberVisibility: (clubId: string, body: MemberVisibilityBody) =>
+    apiClient.patch(`/admin/clubs/${clubId}/accounts/settings/visibility`, body),
 
   // 회비 대시보드 조회
   getDashboard: (clubId: string, cardinalNumber: number) =>
