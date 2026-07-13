@@ -31,6 +31,10 @@ export interface DuesCardinal {
   isLatest: boolean;
 }
 
+export interface DuesVisibilityResponse {
+  visible: boolean;
+}
+
 export interface DuesMeResponse {
   accountId: number;
   cardinal: number;
