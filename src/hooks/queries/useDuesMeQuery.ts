@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 
 import { duesApi } from '@/lib/apis/dues';
+import { shouldRetryDuesQuery } from '@/lib/duesQuery';
 import { useClubId } from '@/stores';
 import type { DuesMeResponse, DuesSummary } from '@/types/dues';
 import type { Cardinal } from '@/types/admin/cardinal';
@@ -51,6 +52,23 @@ function useDuesCardinals() {
     },
     enabled: !!clubId,
     staleTime: 30 * 60 * 1000,
+    retry: shouldRetryDuesQuery,
+  });
+}
+
+function useDuesVisibility() {
+  const clubId = useClubId();
+
+  return useQuery({
+    queryKey: ['dues', 'visibility', clubId],
+    queryFn: async () => {
+      const response = await duesApi.getVisibility(clubId!);
+
+      return response.data.data;
+    },
+    enabled: !!clubId,
+    staleTime: 30 * 60 * 1000,
+    retry: shouldRetryDuesQuery,
   });
 }
 
@@ -65,8 +83,8 @@ function useDuesMe(cardinal?: number) {
       return mapDuesMeToSummary(response.data.data);
     },
     enabled: !!clubId && typeof cardinal === 'number',
-    retry: false,
+    retry: shouldRetryDuesQuery,
   });
 }
 
-export { useDuesCardinals, useDuesMe, mapDuesMeToSummary };
+export { useDuesCardinals, useDuesVisibility, useDuesMe, mapDuesMeToSummary };

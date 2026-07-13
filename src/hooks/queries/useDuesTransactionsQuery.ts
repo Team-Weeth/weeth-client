@@ -1,6 +1,7 @@
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 
 import { duesApi } from '@/lib/apis/dues';
+import { shouldRetryDuesQuery } from '@/lib/duesQuery';
 import { useClubId } from '@/stores';
 import type { DuesTransactionCounts } from '@/types/dues';
 import {
@@ -42,6 +43,7 @@ function useDuesTransactions(cardinal?: number) {
       };
     },
     enabled: !!clubId && typeof cardinal === 'number',
+    retry: shouldRetryDuesQuery,
   });
 }
 
@@ -60,6 +62,7 @@ function useDuesTransactionDetail(cardinal?: number, transactionId?: number) {
       typeof cardinal === 'number' &&
       typeof transactionId === 'number' &&
       transactionId > 0,
+    retry: shouldRetryDuesQuery,
   });
 }
 

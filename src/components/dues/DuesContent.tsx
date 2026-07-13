@@ -15,6 +15,7 @@ import {
 } from '@/components/dues/DuesPageSkeleton';
 import { DuesTransactionSection } from '@/components/dues/DuesTransactionSection';
 import { useDuesCardinals, useDuesMe, useDuesTransactions } from '@/hooks/queries';
+import { parseApiError } from '@/lib/error';
 import { useClubId } from '@/stores';
 
 const HELP_MAIL_ADDRESS = 'help@weeth.kr';
@@ -23,7 +24,23 @@ const handleContactClick = () => {
   window.location.href = `mailto:${HELP_MAIL_ADDRESS}`;
 };
 
-function DuesContent() {
+interface DuesContentProps {
+  initialIsPrivate?: boolean;
+}
+
+function DuesContent({ initialIsPrivate = false }: DuesContentProps) {
+  if (initialIsPrivate) {
+    return (
+      <DuesPageLayout cardinals={[]} onSelectCardinal={() => {}}>
+        <DuesPrivateState />
+      </DuesPageLayout>
+    );
+  }
+
+  return <DuesInteractiveContent />;
+}
+
+function DuesInteractiveContent() {
   const clubId = useClubId();
   const [selectedCardinalId, setSelectedCardinalId] = useState<number | null>(null);
   const [isCardinalTransitioning, setIsCardinalTransitioning] = useState(false);
@@ -32,6 +49,7 @@ function DuesContent() {
     data: cardinals = [],
     isLoading,
     isError: isCardinalsError,
+    error: cardinalsError,
     refetch: refetchCardinals,
   } = useDuesCardinals();
   const latestCardinal = cardinals.reduce<(typeof cardinals)[number] | undefined>(
@@ -50,6 +68,7 @@ function DuesContent() {
     data: dues,
     isLoading: isDuesLoading,
     isError: isDuesError,
+    error: duesError,
     refetch: refetchDues,
   } = useDuesMe(selectedCardinal?.cardinalNumber);
   const {
@@ -58,6 +77,7 @@ function DuesContent() {
     hasNextPage,
     isLoading: isTransactionsLoading,
     isError: isTransactionsError,
+    error: transactionsError,
     isFetchingNextPage,
     refetch: refetchTransactions,
   } = useDuesTransactions(selectedCardinal?.cardinalNumber);
@@ -65,8 +85,12 @@ function DuesContent() {
   const isLeftSectionLoading = !!selectedCardinal && (isDuesLoading || isCardinalTransitioning);
   const isTransactionSectionLoading =
     !!selectedCardinal && (isTransactionsLoading || isCardinalTransitioning);
+  const isForbiddenError = [cardinalsError, duesError, transactionsError].some(
+    (error) => parseApiError(error)?.status === 403,
+  );
   const shouldShowErrorState =
     !isPageLoading &&
+    !isForbiddenError &&
     (isCardinalsError ||
       isDuesError ||
       (isTransactionsError && !transactionData?.transactions.length));
@@ -105,26 +129,14 @@ function DuesContent() {
   }
 
   return (
-    <main className="max-w-dues mx-auto flex w-full flex-col gap-700 px-450 pt-600 pb-800">
-      <div className="flex items-end justify-between gap-400">
-        <div className="flex flex-col gap-300">
-          <Breadcrumb>
-            <BreadcrumbList>
-              <BreadcrumbItem>
-                <BreadcrumbPage>회비</BreadcrumbPage>
-              </BreadcrumbItem>
-            </BreadcrumbList>
-          </Breadcrumb>
-          <h1 className="typo-h2 text-text-strong">회비</h1>
-        </div>
-        <CardinalDropdown
-          cardinals={cardinals}
-          activeCardinal={selectedCardinal}
-          onSelect={handleSelectCardinal}
-        />
-      </div>
-
-      {shouldShowErrorState ? (
+    <DuesPageLayout
+      cardinals={cardinals}
+      activeCardinal={selectedCardinal}
+      onSelectCardinal={handleSelectCardinal}
+    >
+      {isForbiddenError ? (
+        <DuesPrivateState />
+      ) : shouldShowErrorState ? (
         <DuesErrorState onRetry={handleRetry} />
       ) : shouldShowEmptyState ? (
         <DuesEmptyState />
@@ -149,7 +161,52 @@ function DuesContent() {
           )}
         </div>
       )}
+    </DuesPageLayout>
+  );
+}
+
+function DuesPageLayout({
+  cardinals,
+  activeCardinal,
+  onSelectCardinal,
+  children,
+}: {
+  cardinals: Parameters<typeof CardinalDropdown>[0]['cardinals'];
+  activeCardinal?: Parameters<typeof CardinalDropdown>[0]['activeCardinal'];
+  onSelectCardinal: Parameters<typeof CardinalDropdown>[0]['onSelect'];
+  children: ReactNode;
+}) {
+  return (
+    <main className="max-w-dues mx-auto flex w-full flex-col gap-700 px-450 pt-600 pb-800">
+      <div className="flex items-end justify-between gap-400">
+        <div className="flex flex-col gap-300">
+          <Breadcrumb>
+            <BreadcrumbList>
+              <BreadcrumbItem>
+                <BreadcrumbPage>회비</BreadcrumbPage>
+              </BreadcrumbItem>
+            </BreadcrumbList>
+          </Breadcrumb>
+          <h1 className="typo-h2 text-text-strong">회비</h1>
+        </div>
+        <CardinalDropdown
+          cardinals={cardinals}
+          activeCardinal={activeCardinal}
+          onSelect={onSelectCardinal}
+        />
+      </div>
+
+      {children}
     </main>
+  );
+}
+
+function DuesPrivateState() {
+  return (
+    <DuesStatusState
+      title="회비가 공개되지 않았어요"
+      description="운영진이 회비를 공개하면 확인할 수 있어요."
+    />
   );
 }
 
@@ -196,7 +253,7 @@ function DuesStatusState({
 }: {
   title: string;
   description: string;
-  action: ReactNode;
+  action?: ReactNode;
 }) {
   return (
     <section className="flex min-h-[520px] w-full flex-col items-center justify-center py-300 text-center">
@@ -205,7 +262,7 @@ function DuesStatusState({
         <h2 className="typo-h3 text-text-alternative">{title}</h2>
         <div className="flex items-center justify-center gap-[10px]">
           <span className="typo-body2 text-text-alternative">{description}</span>
-          {action}
+          {action ? action : null}
         </div>
       </div>
     </section>
