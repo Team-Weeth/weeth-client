@@ -86,10 +86,9 @@ export default function Header({ isMain = true }: HeaderProps) {
                 <>
                   <MobileWriteButton />
                   {isAdmin && (
-                    <button
-                      type="button"
+                    <Link
+                      href={`/${clubId}/admin`}
                       aria-label="운영진 페이지로 이동"
-                      onClick={() => router.push(`/${clubId}/admin`)}
                       className="flex cursor-pointer items-center justify-center rounded-full"
                     >
                       <Icon
@@ -98,7 +97,7 @@ export default function Header({ isMain = true }: HeaderProps) {
                         size={40}
                         className="text-icon-normal p-2"
                       />
-                    </button>
+                    </Link>
                   )}
                   <button
                     type="button"
