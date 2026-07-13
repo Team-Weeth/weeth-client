@@ -23,6 +23,7 @@ const avatarVariants = cva('group/avatar relative flex shrink-0 overflow-hidden 
       default: '',
       primary: '',
       secondary: '',
+      line: 'border border-line',
     },
   },
   compoundVariants: [
