@@ -1,15 +1,16 @@
 'use client';
 
+import Link from 'next/link';
 import { useParams, usePathname, useRouter } from 'next/navigation';
 import dynamic from 'next/dynamic';
-
-import { Avatar, AvatarFallback, AvatarImage, Button, Icon } from '@/components/ui';
+import { Avatar, AvatarFallback, AvatarImage, Button, Icon, buttonVariants } from '@/components/ui';
 import { EditIcon, ExitToAppIcon } from '@/assets/icons';
 import { useWritePost } from '@/hooks/home/useWritePost';
 import { useIsAdmin } from '@/hooks/shared';
 import { useUserProfileImageUrl } from '@/stores';
 import { useBoardList } from '@/hooks';
 import { useActiveBoardId } from '@/stores/useBoardNavStore';
+import { cn } from '@/lib/cn';
 
 const CardinalMissingModal = dynamic(() =>
   import('@/components/home/CardinalMissingModal').then((m) => m.CardinalMissingModal),
@@ -60,15 +61,16 @@ function DefaultActions() {
           </Button>
         )}
         {isAdmin && (
-          <Button
-            variant="secondary"
-            size="md"
-            onClick={() => router.push(`/${clubId}/admin`)}
-            className="typo-button1 text-text-strong gap-100"
+          <Link
+            href={`/${clubId}/admin`}
+            className={cn(
+              buttonVariants({ variant: 'secondary', size: 'md' }),
+              'typo-button1 text-text-strong gap-100',
+            )}
           >
             <Icon src={ExitToAppIcon} alt="exit" size={20} className="text-icon-normal" />
             운영진
-          </Button>
+          </Link>
         )}
         <button
           type="button"
