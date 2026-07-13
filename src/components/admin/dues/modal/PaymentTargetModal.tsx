@@ -1,7 +1,5 @@
 'use client';
 
-import { useParams } from 'next/navigation';
-
 import { AdminCloseIcon } from '@/assets/icons/admin';
 import { ModalIconButton } from '@/components/admin/modal/ModalIconButton';
 import {
@@ -16,23 +14,26 @@ import {
 import { DuesSearchBar } from '@/components/admin/dues/DuesSearchBar';
 import { Button } from '@/components/ui';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
-import { useDuesSetupValues } from '@/stores/useDuesSetupStore';
-import { useDuesPaymentTargetsQuery } from '@/hooks/queries/admin';
+import { cn } from '@/lib/cn';
 import { usePaymentTargetFilter } from '@/hooks/admin';
+
+import type { PaymentTarget } from '@/types/admin/dues';
 
 interface PaymentTargetModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  // 납부 대상 전체 목록. accountId 출처가 호출처마다 다르므로(온보딩=스토어,
+  // 설정 페이지=대시보드) 모달이 직접 조회하지 않고 부모가 조회한 결과를 주입한다.
+  targets: PaymentTarget[];
   selectedMemberIds: number[];
 }
 
-function PaymentTargetModal({ open, onOpenChange, selectedMemberIds }: PaymentTargetModalProps) {
-  const { clubId } = useParams<{ clubId: string }>();
-  const { accountId } = useDuesSetupValues();
-
-  const { data } = useDuesPaymentTargetsQuery(clubId, accountId);
-  const allTargets = data?.targets.content ?? [];
-
+function PaymentTargetModal({
+  open,
+  onOpenChange,
+  targets,
+  selectedMemberIds,
+}: PaymentTargetModalProps) {
   const {
     selectedCount,
     tab,
@@ -45,14 +46,14 @@ function PaymentTargetModal({ open, onOpenChange, selectedMemberIds }: PaymentTa
     pagedTargets,
     handleTabChange,
     handleSearch,
-  } = usePaymentTargetFilter(allTargets, selectedMemberIds, 'selected');
+  } = usePaymentTargetFilter(targets, selectedMemberIds, 'selected');
 
   const handleClose = () => onOpenChange(false);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
-        className={SCHEDULE_MODAL_CONTENT_CLASS}
+        className={cn(SCHEDULE_MODAL_CONTENT_CLASS, 'h-180')}
         showCloseButton={false}
         adminMobileFullscreen={false}
       >
@@ -63,9 +64,9 @@ function PaymentTargetModal({ open, onOpenChange, selectedMemberIds }: PaymentTa
         </div>
 
         {/* Body */}
-        <div className="scrollbar-custom flex flex-1 flex-col gap-400 overflow-y-auto px-[71px] pt-300 pb-400">
+        <div className="scrollbar-custom tablet:px-[71px] flex flex-1 flex-col gap-400 overflow-y-auto px-600 pt-300 pb-400">
           {/* Tabs + Search */}
-          <div className="flex items-center justify-between gap-400">
+          <div className="tablet:flex-row flex flex-col items-center justify-between gap-400">
             <DuesTabs
               tabs={[
                 { key: 'selected', label: `선택됨 ${selectedCount}` },

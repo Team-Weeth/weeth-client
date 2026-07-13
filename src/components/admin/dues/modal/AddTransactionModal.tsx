@@ -10,7 +10,7 @@ import { useResetKeyOnOpen } from '@/hooks/useResetKeyOnOpen';
 interface AddTransactionModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onSubmit?: (data: TransactionFormData) => void;
+  onSubmit?: (data: TransactionFormData) => void | Promise<void>;
 }
 
 function AddTransactionModal({ open, onOpenChange, onSubmit }: AddTransactionModalProps) {
@@ -31,8 +31,9 @@ function AddTransactionModal({ open, onOpenChange, onSubmit }: AddTransactionMod
 
         <TransactionForm
           key={formKey}
-          onSubmit={(data) => {
-            onSubmit?.(data);
+          onSubmit={async (data) => {
+            // 제출이 실패하면(예: 잔액 부족) 예외가 폼으로 전파돼 모달이 닫히지 않는다.
+            await onSubmit?.(data);
             handleClose();
           }}
           onCancel={handleClose}

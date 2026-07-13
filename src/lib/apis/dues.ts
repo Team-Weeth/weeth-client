@@ -7,9 +7,14 @@ import type {
   DuesTransactionApiFilter,
   DuesTransactionApiSort,
   DuesTransactionsResponse,
+  DuesVisibilityResponse,
 } from '@/types/dues';
 
 export const duesApi = {
+  getVisibility: (clubId: string) =>
+    apiClient.get<ApiResponse<DuesVisibilityResponse>>(
+      `/clubs/${clubId}/accounts/settings/visibility`,
+    ),
   getCardinals: (clubId: string) =>
     apiClient.get<ApiResponse<DuesCardinal[]>>(`/clubs/${clubId}/accounts/cardinals`),
   getMyDues: (clubId: string, cardinal: number) =>

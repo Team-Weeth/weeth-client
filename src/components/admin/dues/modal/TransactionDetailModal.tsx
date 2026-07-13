@@ -1,9 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import Image from 'next/image';
 
-import { ArrowRightIcon } from '@/assets/icons';
 import { AdminCloseIcon, AdminMeatballIcon } from '@/assets/icons/admin';
 import {
   AlertDialog,
@@ -71,6 +69,8 @@ function TransactionDetailModal({
   } = transaction;
 
   const typeConfig = TRANSACTION_TYPE_TAG[type];
+  // 수입·지출 거래만 수정·삭제 가능 (회비·환불은 시스템 생성 거래라 편집 불가)
+  const isEditable = type === 'EXPENSE' || type === 'INCOME';
   const sign = direction === 'INCOME' ? '+' : '-';
   const numAmount = Number(amount);
   const formattedAmount = (isNaN(numAmount) ? 0 : numAmount).toLocaleString('ko-KR');
@@ -99,16 +99,18 @@ function TransactionDetailModal({
         <div className="flex h-24 shrink-0 items-center justify-between px-600">
           <h2 className="typo-h3 text-text-normal">거래내역 상세</h2>
           <div className="flex items-center">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <ModalIconButton icon={AdminMeatballIcon} label="메뉴" />
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem destructive onSelect={() => setDeleteConfirmOpen(true)}>
-                  거래내역 삭제
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            {isEditable && (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <ModalIconButton icon={AdminMeatballIcon} label="메뉴" />
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem destructive onSelect={() => setDeleteConfirmOpen(true)}>
+                    거래내역 삭제
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            )}
             <ModalIconButton
               icon={AdminCloseIcon}
               label="닫기"
@@ -190,9 +192,11 @@ function TransactionDetailModal({
 
         {/* Footer */}
         <div className="bg-container-neutral flex shrink-0 items-center justify-end gap-200 px-400 pt-400 pb-500">
-          <Button variant="secondary" size="lg" onClick={onEdit}>
-            수정
-          </Button>
+          {isEditable && (
+            <Button variant="secondary" size="lg" onClick={onEdit}>
+              수정
+            </Button>
+          )}
           <Button variant="secondary" size="lg" onClick={() => onOpenChange(false)}>
             확인
           </Button>

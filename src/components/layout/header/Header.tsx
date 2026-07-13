@@ -13,6 +13,7 @@ import { DefaultActions } from './DefaultActions';
 import { MobileNavSheet } from './MobileNavSheet';
 import { MobileWriteButton } from './MobileWriteButton';
 import { Avatar, AvatarFallback, AvatarImage, Icon } from '@/components/ui';
+import { useDuesVisibility } from '@/hooks/queries';
 import { useIsAdmin } from '@/hooks/shared';
 
 interface HeaderProps {
@@ -32,14 +33,16 @@ export default function Header({ isMain = true }: HeaderProps) {
   const clubName = useClubName();
   const profileImageUrl = useUserProfileImageUrl();
   const { isAdmin } = useIsAdmin();
+  const { data: duesVisibility } = useDuesVisibility();
+  const isDuesVisible = duesVisibility?.visible === true;
   const isPostingPage = pathname.includes('/write') || /\/board\/edit\/\d+$/.test(pathname);
   const shouldHideMobileHeader = shouldHideMobileHeaderOnMyPage(pathname, clubId);
 
   const NAV_ITEMS = [
     { id: 'board', label: '게시판', href: `/${clubId}/board` },
     { id: 'attendance', label: '출석', href: `/${clubId}/attendance` },
-    { id: 'dues', label: '회비', href: `/${clubId}/dues` },
-  ];
+    ...(isDuesVisible ? [{ id: 'dues', label: '회비', href: `/${clubId}/dues` }] : []),
+  ] as const;
   const [visible, setVisible] = useState(true);
   const lastScrollY = useRef(0);
 

@@ -29,6 +29,8 @@ interface DuesMemberTableProps {
   pagedTargets: PaymentTarget[];
   selectedSet: Set<number>;
   toggleMember?: (id: number) => void;
+  toggleAll?: () => void;
+  allSelected?: boolean | 'indeterminate';
   readOnly?: boolean;
 }
 
@@ -36,6 +38,8 @@ function DuesMemberTable({
   pagedTargets,
   selectedSet,
   toggleMember,
+  toggleAll,
+  allSelected = false,
   readOnly = false,
 }: DuesMemberTableProps) {
   return (
@@ -47,11 +51,25 @@ function DuesMemberTable({
         <TableRow className="bg-container-neutral-alternative">
           {!readOnly && (
             <TableHead className="typo-caption1 text-text-alternative w-16 text-center">
-              선택
+              <div className="flex justify-center">
+                <Checkbox
+                  color="primary"
+                  id="select-all-members"
+                  name="select-all-members"
+                  aria-label="전체 선택"
+                  checked={allSelected}
+                  disabled={pagedTargets.length === 0}
+                  onCheckedChange={() => toggleAll?.()}
+                />
+              </div>
             </TableHead>
           )}
-          <TableHead className="typo-caption1 text-text-alternative">이름</TableHead>
-          <TableHead className="typo-caption1 text-text-alternative">학과</TableHead>
+
+          <TableHead className="typo-caption1 text-text-alternative pl-[75px]">이름</TableHead>
+
+          <TableHead className="typo-caption1 text-text-alternative tablet:table-cell hidden">
+            학과
+          </TableHead>
           <TableHead className="typo-caption1 text-text-alternative">직급</TableHead>
           <TableHead className="typo-caption1 text-text-alternative text-right">
             납부 대상
@@ -84,11 +102,13 @@ function DuesMemberTable({
                   <Avatar size={40}>
                     <AvatarFallback>{name[0]}</AvatarFallback>
                   </Avatar>
-                  <span className="typo-body2 text-text-normal">{name}</span>
+                  <span className="typo-body1 text-text-normal">{name}</span>
                 </div>
               </TableCell>
-              <TableCell className="typo-body2 text-text-normal">{department}</TableCell>
-              <TableCell className="typo-body2 text-text-normal">
+              <TableCell className="typo-body1 text-text-normal tablet:table-cell hidden">
+                {department}
+              </TableCell>
+              <TableCell className="typo-body1 text-text-normal">
                 {ROLE_LABEL[memberRole] ?? memberRole}
               </TableCell>
               <TableCell className="text-right">

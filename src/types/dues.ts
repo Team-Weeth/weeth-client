@@ -13,7 +13,6 @@ export interface DuesSummary {
   cardinalNumber: number;
   duesAmount: number;
   currentBalance: number;
-  targetBalance: number;
   isTargeted: boolean;
   paymentStatus: DuesPaymentStatus;
   isPaid: boolean;
@@ -30,6 +29,10 @@ export interface DuesCardinal {
   cardinal: number;
   name: string;
   isLatest: boolean;
+}
+
+export interface DuesVisibilityResponse {
+  visible: boolean;
 }
 
 export interface DuesMeResponse {

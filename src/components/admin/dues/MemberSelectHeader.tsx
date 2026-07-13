@@ -34,8 +34,10 @@ interface MemberSelectHeaderProps {
   onMarkUnpaid: () => void;
   /** 환불 처리 */
   onRefund: () => void;
-  /** 납부 완료 */
+  /** 납부 확인 */
   onMarkPaid: () => void;
+  /** 납부 대상 제외 */
+  onExclude: () => void;
 }
 
 function MemberSelectHeader({
@@ -45,17 +47,24 @@ function MemberSelectHeader({
   onMarkUnpaid,
   onRefund,
   onMarkPaid,
+  onExclude,
 }: MemberSelectHeaderProps) {
   // 벌크 액션은 선택된 납부 상태에 따라 유효한 것만 노출한다.
-  // - 납부 정정·환불 처리: 이미 납부된(paid) 대상에만 의미가 있다.
-  // - 납부 완료: 아직 미납(unpaid) 대상에만 의미가 있다.
+  // - 납부 완료(paid): 환불 처리·납부 정정
+  // - 미납(unpaid): 납부 확인·제외
+  // (환불·제외 상태는 선택 자체가 불가하므로 노출할 액션이 없다)
   const actions =
     selectedStatus === 'paid'
       ? [
-          { label: '납부 정정', onClick: onMarkUnpaid },
           { label: '환불 처리', onClick: onRefund },
+          { label: '납부 정정', onClick: onMarkUnpaid },
         ]
-      : [{ label: '납부 완료', onClick: onMarkPaid }];
+      : selectedStatus === 'unpaid'
+        ? [
+            { label: '납부 확인', onClick: onMarkPaid },
+            { label: '제외', onClick: onExclude },
+          ]
+        : [];
 
   return (
     <div className="bg-container-primary tablet:px-400 sticky top-0 z-10 -mt-15 flex h-15 items-center justify-between gap-200 px-300">

@@ -44,6 +44,10 @@ export function duesCarryOverSourceQueryOptions(clubId: string, accountId: numbe
   });
 }
 
+export function useDuesRegistrationStatusQuery(clubId: string, accountId: number | null) {
+  return useQuery(duesRegistrationStatusQueryOptions(clubId, accountId));
+}
+
 export function useDuesPaymentTargetsQuery(clubId: string, accountId: number | null) {
   return useQuery(duesPaymentTargetsQueryOptions(clubId, accountId));
 }
