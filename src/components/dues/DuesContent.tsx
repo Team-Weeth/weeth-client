@@ -15,9 +15,11 @@ import {
 } from '@/components/dues/DuesPageSkeleton';
 import { DuesTransactionSection } from '@/components/dues/DuesTransactionSection';
 import { useDuesCardinals, useDuesMe, useDuesTransactions } from '@/hooks/queries';
+import { parseApiError } from '@/lib/error';
 import { useClubId } from '@/stores';
 
 const HELP_MAIL_ADDRESS = 'help@weeth.kr';
+const DUES_PRIVATE_ERROR_CODE = 20114;
 
 const handleContactClick = () => {
   window.location.href = `mailto:${HELP_MAIL_ADDRESS}`;
@@ -32,6 +34,7 @@ function DuesContent() {
     data: cardinals = [],
     isLoading,
     isError: isCardinalsError,
+    error: cardinalsError,
     refetch: refetchCardinals,
   } = useDuesCardinals();
   const latestCardinal = cardinals.reduce<(typeof cardinals)[number] | undefined>(
@@ -50,6 +53,7 @@ function DuesContent() {
     data: dues,
     isLoading: isDuesLoading,
     isError: isDuesError,
+    error: duesError,
     refetch: refetchDues,
   } = useDuesMe(selectedCardinal?.cardinalNumber);
   const {
@@ -58,6 +62,7 @@ function DuesContent() {
     hasNextPage,
     isLoading: isTransactionsLoading,
     isError: isTransactionsError,
+    error: transactionsError,
     isFetchingNextPage,
     refetch: refetchTransactions,
   } = useDuesTransactions(selectedCardinal?.cardinalNumber);
@@ -65,8 +70,12 @@ function DuesContent() {
   const isLeftSectionLoading = !!selectedCardinal && (isDuesLoading || isCardinalTransitioning);
   const isTransactionSectionLoading =
     !!selectedCardinal && (isTransactionsLoading || isCardinalTransitioning);
+  const isDuesPrivateError = [cardinalsError, duesError, transactionsError].some(
+    (error) => parseApiError(error)?.code === DUES_PRIVATE_ERROR_CODE,
+  );
   const shouldShowErrorState =
     !isPageLoading &&
+    !isDuesPrivateError &&
     (isCardinalsError ||
       isDuesError ||
       (isTransactionsError && !transactionData?.transactions.length));
@@ -124,7 +133,9 @@ function DuesContent() {
         />
       </div>
 
-      {shouldShowErrorState ? (
+      {isDuesPrivateError ? (
+        <DuesPrivateState />
+      ) : shouldShowErrorState ? (
         <DuesErrorState onRetry={handleRetry} />
       ) : shouldShowEmptyState ? (
         <DuesEmptyState />
@@ -150,6 +161,15 @@ function DuesContent() {
         </div>
       )}
     </main>
+  );
+}
+
+function DuesPrivateState() {
+  return (
+    <DuesStatusState
+      title="회비가 공개되지 않았어요"
+      description="운영진이 회비를 공개하면 확인할 수 있어요."
+    />
   );
 }
 
@@ -196,7 +216,7 @@ function DuesStatusState({
 }: {
   title: string;
   description: string;
-  action: ReactNode;
+  action?: ReactNode;
 }) {
   return (
     <section className="flex min-h-[520px] w-full flex-col items-center justify-center py-300 text-center">
@@ -205,7 +225,7 @@ function DuesStatusState({
         <h2 className="typo-h3 text-text-alternative">{title}</h2>
         <div className="flex items-center justify-center gap-[10px]">
           <span className="typo-body2 text-text-alternative">{description}</span>
-          {action}
+          {action ? action : null}
         </div>
       </div>
     </section>
