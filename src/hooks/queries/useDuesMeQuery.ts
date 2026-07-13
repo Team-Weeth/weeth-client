@@ -1,18 +1,10 @@
 import { useQuery } from '@tanstack/react-query';
 
 import { duesApi } from '@/lib/apis/dues';
-import { parseApiError } from '@/lib/error';
+import { shouldRetryDuesQuery } from '@/lib/duesQuery';
 import { useClubId } from '@/stores';
 import type { DuesMeResponse, DuesSummary } from '@/types/dues';
 import type { Cardinal } from '@/types/admin/cardinal';
-
-const DUES_PRIVATE_ERROR_CODE = 20114;
-
-function shouldRetryDuesQuery(failureCount: number, error: unknown) {
-  if (parseApiError(error)?.code === DUES_PRIVATE_ERROR_CODE) return false;
-
-  return failureCount < 3;
-}
 
 function mapDuesMeToSummary(data: DuesMeResponse): DuesSummary {
   return {

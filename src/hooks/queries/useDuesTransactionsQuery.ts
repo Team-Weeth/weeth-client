@@ -1,7 +1,7 @@
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 
 import { duesApi } from '@/lib/apis/dues';
-import { parseApiError } from '@/lib/error';
+import { shouldRetryDuesQuery } from '@/lib/duesQuery';
 import { useClubId } from '@/stores';
 import type { DuesTransactionCounts } from '@/types/dues';
 import {
@@ -11,13 +11,6 @@ import {
 } from '@/utils/dues/duesTransaction';
 
 const DUES_TRANSACTIONS_PAGE_SIZE = 20;
-const DUES_PRIVATE_ERROR_CODE = 20114;
-
-function shouldRetryDuesQuery(failureCount: number, error: unknown) {
-  if (parseApiError(error)?.code === DUES_PRIVATE_ERROR_CODE) return false;
-
-  return failureCount < 3;
-}
 
 function useDuesTransactions(cardinal?: number) {
   const clubId = useClubId();
