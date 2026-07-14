@@ -229,7 +229,7 @@ function DuesMemberPaymentTable({
                         <div className="flex items-center gap-300">
                           <Avatar size={40} colorScheme="line">
                             <AvatarImage
-                              key={member.id ?? 'fallback'}
+                              key={member.id}
                               src={member.profileImageUrl}
                               alt="avatar"
                               className="object-cover"

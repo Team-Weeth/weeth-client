@@ -20,8 +20,7 @@ function DuesOnboardingContent({ onStart }: DuesOnboardingContentProps) {
         <div className="flex flex-col gap-200">
           <p className="typo-sub1 text-text-strong">해당 기수의 총 회비 정보를 입력해주세요</p>
           <p className="typo-body2 text-text-alternative">
-            총 회비 정보를 입력하고 회비 기록을 이어나가세요. <br />
-            회비 정보는 비공개로 시작돼요.
+            총 회비 정보를 입력하고 회비 기록을 이어나가세요. 회비 정보는 비공개로 시작돼요.
           </p>
         </div>
       </div>

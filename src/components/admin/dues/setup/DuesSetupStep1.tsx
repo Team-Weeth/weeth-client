@@ -133,7 +133,11 @@ function DuesSetupStep1() {
       <AlertDialog
         open={draftAlert.open}
         title="이어서 작성할까요?"
-        description={`이전 작성자 : ${draftAlert.lastModifiedByName}`}
+        description={
+          draftAlert.lastModifiedByName != null
+            ? `작성 중인 내용이 있어요.\n(이전 작성자 : ${draftAlert.lastModifiedByName})`
+            : '작성 중인 내용이 있어요.'
+        }
       >
         <div className="border-line flex flex-col gap-200 border-t">
           <Button
