@@ -37,7 +37,7 @@ import {
   useUpdateTransaction,
 } from '@/hooks/mutations/admin/useAdminDuesMutations';
 import { toastError, toastSuccess } from '@/stores/useToastStore';
-import { toMonthLabel, toPeriodLabel } from '@/utils/shared/date';
+import { toDateInputValue, toMonthLabel, toPeriodLabel } from '@/utils/shared/date';
 
 // 목록 데이터(DuesTransaction) → 상세 모달용. 상세 응답 도착 전 폴백으로 사용한다.
 function toTransactionDetail(tx: DuesTransaction): TransactionDetail {
@@ -182,6 +182,11 @@ function DuesPageContent() {
     setAddOpen(true);
   };
 
+  // 거래내역 일자 선택 범위: 총 회비 등록 시작 월(startYearMonth) 1일 ~ 오늘
+  const startYearMonth = dashboard?.period.startYearMonth;
+  const transactionMinDate = startYearMonth ? `${startYearMonth}-01` : undefined;
+  const transactionMaxDate = toDateInputValue();
+
   const handleAddSubmit = async (data: TransactionFormData) => {
     await createTransaction({
       type: data.type,
@@ -286,7 +291,13 @@ function DuesPageContent() {
         {isNotRegistered && <DuesOnboardingOverlay onStart={startDuesSetup} />}
       </div>
 
-      <AddTransactionModal open={addOpen} onOpenChange={setAddOpen} onSubmit={handleAddSubmit} />
+      <AddTransactionModal
+        open={addOpen}
+        onOpenChange={setAddOpen}
+        minDate={transactionMinDate}
+        maxDate={transactionMaxDate}
+        onSubmit={handleAddSubmit}
+      />
       {selectedTransaction && (
         <TransactionDetailModal
           open={detailOpen}

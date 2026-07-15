@@ -25,6 +25,10 @@ interface TransactionFormData {
 
 interface TransactionFormProps {
   initialValues?: Partial<TransactionFormData>;
+  /** 일자 선택 가능한 최소 날짜 (YYYY-MM-DD) */
+  minDate?: string;
+  /** 일자 선택 가능한 최대 날짜 (YYYY-MM-DD) */
+  maxDate?: string;
   onSubmit: (data: TransactionFormData) => void | Promise<void>;
   onCancel: () => void;
 }
@@ -61,7 +65,13 @@ function getDefaultForm(initial?: Partial<TransactionFormData>): TransactionForm
 
 type FormErrors = Partial<Record<'amount' | 'description' | 'vendor', string>>;
 
-function TransactionForm({ initialValues, onSubmit, onCancel }: TransactionFormProps) {
+function TransactionForm({
+  initialValues,
+  minDate,
+  maxDate,
+  onSubmit,
+  onCancel,
+}: TransactionFormProps) {
   const [form, setForm] = useState<TransactionFormData>(() => getDefaultForm(initialValues));
   const [errors, setErrors] = useState<FormErrors>({});
   const [submitError, setSubmitError] = useState<string | null>(null);
@@ -208,6 +218,8 @@ function TransactionForm({ initialValues, onSubmit, onCancel }: TransactionFormP
           <CalendarPicker
             value={form.date}
             onChange={(date) => setForm((prev) => ({ ...prev, date }))}
+            minDate={minDate}
+            maxDate={maxDate}
             className="h-12 w-full"
           />
         </div>
