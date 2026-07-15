@@ -7,92 +7,7 @@ jest.mock('@/hooks', () => ({
   useScrollIntoView: jest.fn(() => ({ current: null })),
 }));
 
-jest.mock('@/components/ui', () => {
-  const React = jest.requireActual<typeof import('react')>('react');
-
-  return {
-    Avatar: ({ children }: { children?: React.ReactNode }) => <div>{children}</div>,
-    AvatarImage: ({ alt }: { alt?: string }) => <img alt={alt ?? ''} />,
-    AvatarFallback: () => <div />,
-    Icon: () => null,
-
-    Button: ({
-      children,
-      onClick,
-      disabled,
-      type,
-      'aria-label': ariaLabel,
-      ...rest
-    }: React.ButtonHTMLAttributes<HTMLButtonElement> & { 'aria-label'?: string }) => (
-      <button
-        type={type ?? 'button'}
-        onClick={onClick}
-        disabled={disabled}
-        aria-label={ariaLabel}
-        {...rest}
-      >
-        {children}
-      </button>
-    ),
-
-    Textarea: ({
-      value,
-      onChange,
-      placeholder,
-      disabled,
-      maxLength,
-    }: React.TextareaHTMLAttributes<HTMLTextAreaElement>) => (
-      <textarea
-        value={value}
-        onChange={onChange}
-        placeholder={placeholder}
-        disabled={disabled}
-        maxLength={maxLength}
-      />
-    ),
-
-    AlertDialog: ({
-      open,
-      title,
-      description,
-      children,
-    }: {
-      open?: boolean;
-      title?: string;
-      description?: string;
-      children?: React.ReactNode;
-    }) =>
-      open ? (
-        <div role="alertdialog">
-          {title && <p>{title}</p>}
-          {description && <p>{description}</p>}
-          {children}
-        </div>
-      ) : null,
-
-    AlertDialogAction: ({
-      children,
-      onClick,
-      disabled,
-    }: {
-      children?: React.ReactNode;
-      onClick?: React.MouseEventHandler<HTMLButtonElement>;
-      disabled?: boolean;
-    }) => (
-      <button type="button" onClick={onClick} disabled={disabled}>
-        {children}
-      </button>
-    ),
-
-    AlertDialogCancel: ({
-      children,
-      disabled,
-    }: {
-      children?: React.ReactNode;
-      disabled?: boolean;
-    }) => <button type="button" disabled={disabled}>{children}</button>,
-  };
-});
+jest.mock('@/components/ui', () => jest.requireActual('@/test-utils/uiMocks'));
 
 jest.mock('@/components/board/ActionMenu', () => ({
   ActionMenu: ({
@@ -106,11 +21,7 @@ jest.mock('@/components/board/ActionMenu', () => ({
       <button type="button" aria-label="수정" onClick={onEdit}>
         수정
       </button>
-      <button
-        type="button"
-        aria-label="삭제"
-        onClick={() => onDeleteSelect?.(new Event('select'))}
-      >
+      <button type="button" aria-label="삭제" onClick={() => onDeleteSelect?.(new Event('select'))}>
         삭제
       </button>
     </div>
@@ -227,7 +138,9 @@ describe('CommentItem', () => {
       render(<CommentItem {...makeProps({ isAuthor: true, onDelete })} />);
 
       await user.click(screen.getByRole('button', { name: '삭제' }));
-      await user.click(within(screen.getByRole('alertdialog')).getByRole('button', { name: '삭제' }));
+      await user.click(
+        within(screen.getByRole('alertdialog')).getByRole('button', { name: '삭제' }),
+      );
 
       expect(onDelete).toHaveBeenCalledTimes(1);
     });
@@ -237,7 +150,9 @@ describe('CommentItem', () => {
       render(<CommentItem {...makeProps({ isAuthor: true, onDelete: jest.fn() })} />);
 
       await user.click(screen.getByRole('button', { name: '삭제' }));
-      await user.click(within(screen.getByRole('alertdialog')).getByRole('button', { name: '삭제' }));
+      await user.click(
+        within(screen.getByRole('alertdialog')).getByRole('button', { name: '삭제' }),
+      );
 
       expect(screen.queryByRole('alertdialog')).not.toBeInTheDocument();
     });

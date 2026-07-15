@@ -3,56 +3,7 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { CommentDeleteDialog } from '@/components/board/Comment/CommentDeleteDialog';
 
-jest.mock('@/components/ui', () => {
-  const React = jest.requireActual<typeof import('react')>('react');
-
-  return {
-    AlertDialog: ({
-      open,
-      title,
-      description,
-      children,
-    }: {
-      open?: boolean;
-      title?: string;
-      description?: string;
-      children?: React.ReactNode;
-    }) =>
-      open ? (
-        <div role="alertdialog">
-          {title && <p>{title}</p>}
-          {description && <p>{description}</p>}
-          {children}
-        </div>
-      ) : null,
-
-    AlertDialogAction: ({
-      children,
-      onClick,
-      disabled,
-    }: {
-      children?: React.ReactNode;
-      onClick?: React.MouseEventHandler<HTMLButtonElement>;
-      disabled?: boolean;
-    }) => (
-      <button type="button" onClick={onClick} disabled={disabled}>
-        {children}
-      </button>
-    ),
-
-    AlertDialogCancel: ({
-      children,
-      disabled,
-    }: {
-      children?: React.ReactNode;
-      disabled?: boolean;
-    }) => (
-      <button type="button" disabled={disabled}>
-        {children}
-      </button>
-    ),
-  };
-});
+jest.mock('@/components/ui', () => jest.requireActual('@/test-utils/uiMocks'));
 
 describe('CommentDeleteDialog', () => {
   describe('기본 렌더링', () => {

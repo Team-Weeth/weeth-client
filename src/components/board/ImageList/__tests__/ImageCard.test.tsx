@@ -5,9 +5,7 @@ import { ImageCard } from '@/components/board/ImageList/ImageCard';
 import type { DisplayFile } from '@/types/board';
 
 jest.mock('@/assets/icons', () => ({ CloseCircleIcon: null }));
-jest.mock('@/components/ui', () => ({
-  Icon: () => null,
-}));
+jest.mock('@/components/ui', () => jest.requireActual('@/test-utils/uiMocks'));
 
 function makeFile(overrides: Partial<DisplayFile> = {}): DisplayFile {
   return {
@@ -33,26 +31,24 @@ describe('ImageCard', () => {
   });
 
   describe('업로드 상태', () => {
-    it('uploaded=false이면 이미지에 opacity-50 클래스가 적용된다', () => {
+    it('uploaded=false이면 이미지가 로딩 중 상태로 표시된다', () => {
       render(<ImageCard item={makeFile({ uploaded: false })} />);
-      expect(screen.getByRole('img').className).toContain('opacity-50');
+      expect(screen.getByRole('img')).toHaveAttribute('data-loading', 'true');
     });
 
     it('uploaded=false이면 로딩 스피너가 표시된다', () => {
-      const { container } = render(<ImageCard item={makeFile({ uploaded: false })} />);
-      expect(container.querySelector('.animate-spin')).toBeInTheDocument();
+      render(<ImageCard item={makeFile({ uploaded: false })} />);
+      expect(screen.getByRole('status')).toBeInTheDocument();
     });
 
     it('uploaded=true이면 로딩 스피너가 없다', () => {
-      const { container } = render(<ImageCard item={makeFile({ uploaded: true })} />);
-      expect(container.querySelector('.animate-spin')).not.toBeInTheDocument();
+      render(<ImageCard item={makeFile({ uploaded: true })} />);
+      expect(screen.queryByRole('status')).not.toBeInTheDocument();
     });
 
     it('uploaded 미지정이면 로딩 스피너가 없다', () => {
-      const { container } = render(
-        <ImageCard item={{ id: 'x', fileName: 'f.png', fileUrl: '/f.png' }} />,
-      );
-      expect(container.querySelector('.animate-spin')).not.toBeInTheDocument();
+      render(<ImageCard item={{ id: 'x', fileName: 'f.png', fileUrl: '/f.png' }} />);
+      expect(screen.queryByRole('status')).not.toBeInTheDocument();
     });
   });
 
