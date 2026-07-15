@@ -57,7 +57,6 @@ describe('useFileUpload', () => {
         result.current.processFiles([makeFile('virus.exe', 'application/octet-stream')]);
       });
 
-      // exe는 유효성 검사에서 필터링되므로 uploadToS3 호출 자체가 안 됨
       expect(mockToast).toHaveBeenCalledWith(expect.objectContaining({ variant: 'error' }));
       expect(usePostStore.getState().files).toHaveLength(0);
     });
@@ -70,7 +69,6 @@ describe('useFileUpload', () => {
         result.current.processFiles([oversized]);
       });
 
-      // 크기 초과도 필터링되므로 uploadToS3 호출 자체가 안 됨
       expect(mockToast).toHaveBeenCalledWith(expect.objectContaining({ variant: 'error' }));
       expect(usePostStore.getState().files).toHaveLength(0);
     });
@@ -85,7 +83,6 @@ describe('useFileUpload', () => {
         result.current.processFiles(images);
       });
 
-      // 개수 초과 토스트가 발생해야 함
       expect(mockToast).toHaveBeenCalledWith(
         expect.objectContaining({
           title: expect.stringContaining(`${MAX_IMAGE_FILES}개`),
@@ -142,11 +139,9 @@ describe('useFileUpload', () => {
         result.current.processFiles([makeFile('photo.png')]);
       });
 
-      // 동기적으로 즉시 추가됨
       expect(usePostStore.getState().files).toHaveLength(1);
       expect(usePostStore.getState().files[0].uploaded).toBe(false);
 
-      // 업로드 완료 후 갱신됨
       await waitFor(() => {
         expect(usePostStore.getState().files[0]?.uploaded).toBe(true);
       });
