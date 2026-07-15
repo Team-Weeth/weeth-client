@@ -61,26 +61,24 @@ function ClubInfoCard({ club, className }: ClubInfoCardProps) {
             <Divider />
             <div className="flex flex-col gap-2 px-[10px]">
               <span className="typo-sub3 text-text-alternative">활동 기수</span>
-              <div className="flex flex-wrap gap-100">
-                {club.cardinals.length > 0 ? (
-                  <div className="flex items-center gap-100">
-                    {club.cardinals.map((gen) => (
-                      <Tag key={gen} variant={'primary'}>
-                        {gen}기
-                      </Tag>
-                    ))}
-                  </div>
-                ) : (
-                  <Button
-                    variant="secondary"
-                    size="sm"
-                    className="w-full"
-                    onClick={() => setModalOpen(true)}
-                  >
-                    기수 설정하기
-                  </Button>
-                )}
-              </div>
+              {club.cardinals.length > 0 ? (
+                <div className="flex flex-wrap gap-100">
+                  {club.cardinals.map((gen) => (
+                    <Tag key={gen} variant={'primary'}>
+                      {gen}기
+                    </Tag>
+                  ))}
+                </div>
+              ) : (
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  className="w-full"
+                  onClick={() => setModalOpen(true)}
+                >
+                  기수 설정하기
+                </Button>
+              )}
             </div>
           </div>
         </div>
