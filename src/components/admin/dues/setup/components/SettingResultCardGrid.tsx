@@ -147,7 +147,7 @@ function SettingResultCardGrid({
               {displayedAvatars.map((t) => (
                 <Avatar key={t.paymentTargetInfo.clubMemberId} size={24} colorScheme="primary">
                   <AvatarImage src={t.paymentTargetInfo.profileImageUrl ?? ''} />
-                  <AvatarFallback>{t.paymentTargetInfo.name[0]}</AvatarFallback>
+                  <AvatarFallback />
                 </Avatar>
               ))}
               {remainingCount > 0 && (

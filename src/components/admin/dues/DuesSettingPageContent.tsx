@@ -16,6 +16,7 @@ import {
 } from '@/hooks/queries/admin';
 
 import { BackButton } from './BackButton';
+import { DuesSettingPageSkeleton } from './DuesSettingPageSkeleton';
 import { PaymentTargetModal } from './modal/PaymentTargetModal';
 import { SettingResultCardGrid } from './setup/components';
 
@@ -43,10 +44,15 @@ function DuesSettingPageContent() {
   const { activeCardinal } = useCardinalSelector({ autoSelectLatest: true, scope: 'dues' });
 
   // 대시보드로 accountId를 확보한 뒤 등록 상태·납부 대상 목록을 조회한다.
-  const { data: dashboard } = useDuesDashboardQuery(clubId, activeCardinal?.cardinalNumber ?? null);
+  const { data: dashboard, isPending: isDashboardPending } = useDuesDashboardQuery(
+    clubId,
+    activeCardinal?.cardinalNumber ?? null,
+  );
   const accountId = dashboard?.accountId ?? null;
 
-  const { data: status } = useQuery(duesRegistrationStatusQueryOptions(clubId, accountId));
+  const { data: status, isPending: isStatusPending } = useQuery(
+    duesRegistrationStatusQueryOptions(clubId, accountId),
+  );
   const { data: paymentTargets } = useDuesPaymentTargetsQuery(clubId, accountId);
 
   const [isPaymentTargetModalOpen, setIsPaymentTargetModalOpen] = useState(false);
@@ -67,6 +73,12 @@ function DuesSettingPageContent() {
   const remainingCount = Math.max(0, targetedMembers.length - MAX_AVATAR_DISPLAY);
 
   const hasPreviousBalance = status?.previousAccountBalance != null;
+
+  // 기수가 선택된 뒤 대시보드/등록 상태 로딩 중이면 스켈레톤을 노출한다.
+  // 대시보드 accountId 확보 전에는 등록 상태 쿼리가 skipToken(pending)이므로 accountId가 있을 때만 그 로딩을 반영한다.
+  if (activeCardinal && (isDashboardPending || (accountId != null && isStatusPending))) {
+    return <DuesSettingPageSkeleton />;
+  }
 
   return (
     <div className="tablet:p-700 flex min-w-85 flex-col gap-700 p-400">
