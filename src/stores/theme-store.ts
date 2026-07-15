@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import type { ThemeMode } from '@/types/theme';
+
+type ThemeMode = 'auto' | 'light' | 'dark';
 
 interface ThemeStore {
   mode: ThemeMode;

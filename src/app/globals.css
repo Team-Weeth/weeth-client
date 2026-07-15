@@ -56,10 +56,6 @@
   --pink-700: #8e448a;
   --pink-900: #280526;
 
-  --opacity-60: #ffffff99;
-  --opacity-100: #00c8aa1f;
-  --opacity-200: #00c8aa4d;
-
   --background: var(--neutral-200);
   --background-2: var(--neutral-300);
   --foreground: var(--text-normal);
@@ -70,9 +66,8 @@
   --text-alternative: var(--neutral-600);
   --text-disabled: var(--neutral-500);
   --text-inverse: var(--neutral-0);
-  --text-brand: var(--primary-500);
-
   --container-code: var(--neutral-400);
+
   --code-keyword: #d73a49;
   --code-string: #032f62;
   --code-comment: #6a737d;
@@ -90,15 +85,11 @@
   --container-secondary: var(--secondary-500);
   --container-secondary-interaction: var(--secondary-700);
   --container-secondary-alternative: var(--secondary-100);
-  --container-opacity: var(--opacity-60);
 
   --button-neutral: var(--neutral-400);
   --button-neutral-interaction: var(--neutral-500);
   --button-primary: var(--primary-500);
   --button-primary-interaction: var(--primary-600);
-  --button-primary-subtle: var(--opacity-100);
-  --button-primary-subtle-interaction: var(--opacity-200);
-  --button-disabled: var(--neutral-400);
 
   --icon-normal: var(--neutral-800);
   --icon-strong: var(--neutral-900);
@@ -288,15 +279,6 @@
   --pink-700: #f3a7f0;
   --pink-900: #faddf9;
 
-  --opacity-60: #1e202199;
-  --opacity-100: #355d5a80;
-  --opacity-200: #00c8aa66;
-
-  --button-primary-subtle: var(--opacity-100);
-  --button-primary-subtle-interaction: var(--opacity-200);
-
-  --container-opacity: var(--opacity-60);
-
   --card: oklch(0.205 0 0);
   --card-foreground: oklch(0.985 0 0);
   --popover: oklch(0.205 0 0);
@@ -356,11 +338,6 @@
   --color-button-neutral-interaction: var(--button-neutral-interaction);
   --color-button-primary: var(--button-primary);
   --color-button-primary-interaction: var(--button-primary-interaction);
-  --color-button-primary-subtle: var(--button-primary-subtle);
-  --color-button-primary-subtle-interaction: var(--button-primary-subtle-interaction);
-  --color-button-disabled: var(--button-disabled);
-
-  --color-container-opacity: var(--container-opacity);
 
   --color-icon-normal: var(--icon-normal);
   --color-icon-strong: var(--icon-strong);

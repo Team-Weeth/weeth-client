@@ -1,6 +1,4 @@
 export { MyPageSkeleton } from './MyPageSkeleton';
-export { MyPageActivitySkeleton } from './MyPageActivitySkeleton';
-export { MyPageSettingsSkeleton } from './MyPageSettingsSkeleton';
 export {
   ProfileSectionSkeleton,
   InfoCardSkeleton,

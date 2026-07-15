@@ -1,1 +1,0 @@
-export const MYPAGE_PROFILE_TEXT_MAX_LENGTH = 30;

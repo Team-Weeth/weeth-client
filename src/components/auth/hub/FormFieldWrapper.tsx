@@ -8,7 +8,7 @@ function FieldError({ message }: { message?: string }) {
 }
 
 interface FormFieldWrapperProps {
-  label?: string;
+  label: string;
   error?: string;
   children: React.ReactNode;
 }

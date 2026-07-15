@@ -2,7 +2,8 @@
 
 import { cn } from '@/lib/cn';
 import { useThemeStore } from '@/stores/theme-store';
-import type { ThemeMode } from '@/types/theme';
+
+type ThemeMode = 'auto' | 'light' | 'dark';
 
 const OPTIONS: { value: ThemeMode; label: string }[] = [
   { value: 'auto', label: '자동' },

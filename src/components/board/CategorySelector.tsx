@@ -13,6 +13,7 @@ import {
   Icon,
 } from '@/components/ui';
 import { ChannelList } from '@/components/board/ChannelList';
+import { useClubName } from '@/stores';
 import type { BoardNavItem } from '@/types/board';
 
 interface CategorySelectorProps {
@@ -37,6 +38,9 @@ function CategorySelector({
 }: CategorySelectorProps) {
   const [open, setOpen] = useState(false);
   const activeItem = items.find((item) => item.id === activeId);
+  const clubName = useClubName();
+
+  const boardName = clubName ?? '게시판';
   const channelName = activeItem?.label ?? '';
 
   // 아이템 선택 후 드롭다운 닫기
