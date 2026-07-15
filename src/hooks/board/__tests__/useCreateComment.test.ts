@@ -1,7 +1,6 @@
-import React from 'react';
 import { renderHook, act, waitFor } from '@testing-library/react';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useCreateComment } from '@/hooks/board/useCreateComment';
+import { createQueryClient, createWrapper } from '@/test-utils/query';
 import { commentApi } from '@/lib/apis/comment';
 
 jest.mock('@/lib/apis/comment', () => ({
@@ -19,18 +18,6 @@ jest.mock('@/stores/useToastStore', () => ({
 const mockCreate = commentApi.create as jest.Mock;
 const BOARD_ID = 10;
 const POST_ID = 42;
-
-function createQueryClient() {
-  return new QueryClient({
-    defaultOptions: { queries: { retry: false }, mutations: { retry: false } },
-  });
-}
-
-function createWrapper(queryClient: QueryClient) {
-  return function Wrapper({ children }: { children: React.ReactNode }) {
-    return React.createElement(QueryClientProvider, { client: queryClient }, children);
-  };
-}
 
 describe('useCreateComment', () => {
   describe('반환값', () => {

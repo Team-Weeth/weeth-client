@@ -1,7 +1,6 @@
-import React from 'react';
 import { renderHook, act, waitFor } from '@testing-library/react';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
+import { createQueryClient, createWrapper } from '@/test-utils/query';
 import type { InternalAxiosRequestConfig } from 'axios';
 import { useCommentMutation } from '@/hooks/board/useCommentMutation';
 import { toast } from '@/stores/useToastStore';
@@ -19,18 +18,6 @@ const mockToast = toast as jest.Mock;
 const CLUB_ID = 'club-1';
 const BOARD_ID = 10;
 const POST_ID = 42;
-
-function createQueryClient() {
-  return new QueryClient({
-    defaultOptions: { queries: { retry: false }, mutations: { retry: false } },
-  });
-}
-
-function createWrapper(queryClient: QueryClient) {
-  return function Wrapper({ children }: { children: React.ReactNode }) {
-    return React.createElement(QueryClientProvider, { client: queryClient }, children);
-  };
-}
 
 function makeAxiosError(code: number): AxiosError<{ code: number }> {
   return new AxiosError<{ code: number }>(

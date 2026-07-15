@@ -1,7 +1,6 @@
-import React from 'react';
 import { renderHook, waitFor } from '@testing-library/react';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useBoardList, useBoardPosts } from '@/hooks/board/useBoardQuery';
+import { createQueryClient, createWrapper } from '@/test-utils/query';
 import { boardApi } from '@/lib/apis/board';
 import { useClubId } from '@/stores/useClubStore';
 
@@ -25,18 +24,6 @@ const mockUseClubId = useClubId as jest.Mock;
 beforeEach(() => {
   mockUseClubId.mockReturnValue('club-1');
 });
-
-function createQueryClient() {
-  return new QueryClient({
-    defaultOptions: { queries: { retry: false } },
-  });
-}
-
-function createWrapper(queryClient: QueryClient) {
-  return function Wrapper({ children }: { children: React.ReactNode }) {
-    return React.createElement(QueryClientProvider, { client: queryClient }, children);
-  };
-}
 
 describe('useBoardList', () => {
   it('clubId가 없으면 API를 호출하지 않는다', () => {

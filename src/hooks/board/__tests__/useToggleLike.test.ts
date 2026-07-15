@@ -1,8 +1,7 @@
-import React from 'react';
 import { renderHook, act, waitFor } from '@testing-library/react';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 import type { InfiniteData } from '@tanstack/react-query';
+import { createQueryClient, createWrapper } from '@/test-utils/query';
 import type { AxiosResponse, InternalAxiosRequestConfig } from 'axios';
 import { useToggleLike } from '@/hooks/board/useToggleLike';
 import { boardApi } from '@/lib/apis/board';
@@ -39,21 +38,6 @@ const POST_ID = 42;
 const detailKey = ['posts', 'detail', CLUB_ID, BOARD_ID, POST_ID] as const;
 const listKey = ['posts', CLUB_ID] as const;
 const homePostsKey = ['home', 'recent-posts', CLUB_ID] as const;
-
-function createQueryClient() {
-  return new QueryClient({
-    defaultOptions: {
-      queries: { retry: false },
-      mutations: { retry: false },
-    },
-  });
-}
-
-function createWrapper(queryClient: QueryClient) {
-  return function Wrapper({ children }: { children: React.ReactNode }) {
-    return React.createElement(QueryClientProvider, { client: queryClient }, children);
-  };
-}
 
 function makeLikeResponse(
   isLiked: boolean,
