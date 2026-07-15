@@ -12,9 +12,11 @@ import {
   HomeIcon,
   MenuIcon,
 } from '@/assets/icons';
+import { AdminDuesIcon } from '@/assets/icons/admin';
 import { Divider, Icon, Sheet, SheetClose, SheetContent, SheetTrigger } from '@/components/ui';
 import { cn } from '@/lib/cn';
 import { useBoardList, useLogout } from '@/hooks';
+import { useDuesVisibility } from '@/hooks/queries';
 import { useIsAdmin } from '@/hooks/shared';
 import { useActiveBoardId } from '@/stores/useBoardNavStore';
 
@@ -24,7 +26,9 @@ function MobileNavSheet() {
   const { isAdmin } = useIsAdmin();
   const handleLogout = useLogout();
   const { data: rawBoards } = useBoardList();
+  const { data: duesVisibility } = useDuesVisibility();
   const activeBoardId = useActiveBoardId();
+  const isDuesVisible = duesVisibility?.visible === true;
 
   const isPostingPage = pathname.includes('/write') || /\/board\/edit\/\d+$/.test(pathname);
   const isBoardPage = pathname.startsWith(`/${clubId}/board`) && !isPostingPage;
@@ -39,6 +43,9 @@ function MobileNavSheet() {
     { id: 'home', label: 'HOME', href: `/${clubId}/home`, icon: HomeIcon },
     { id: 'board', label: '게시판', href: `/${clubId}/board`, icon: PinIcon },
     { id: 'attendance', label: '출석', href: `/${clubId}/attendance`, icon: CheckRoundIcon },
+    ...(isDuesVisible
+      ? [{ id: 'dues', label: '회비', href: `/${clubId}/dues`, icon: AdminDuesIcon }]
+      : []),
     { id: 'admin', label: '운영진 서비스', href: `/${clubId}/admin`, icon: ExitIcon },
     { id: 'mypage', label: 'MY', href: `/${clubId}/mypage`, icon: PersonIcon },
   ] as const;

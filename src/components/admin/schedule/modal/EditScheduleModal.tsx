@@ -226,7 +226,12 @@ function EditScheduleModalContent({
           onConfirm={handleDiscardConfirm}
           placement="above-right"
         >
-          <Button variant="secondary" size="lg" onClick={() => handleTryClose('cancel')}>
+          <Button
+            variant="secondary"
+            size="lg"
+            className="max-tablet:w-full"
+            onClick={() => handleTryClose('cancel')}
+          >
             취소
           </Button>
         </DiscardConfirmArea>

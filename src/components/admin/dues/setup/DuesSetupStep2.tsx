@@ -3,7 +3,7 @@
 import { useEffect } from 'react';
 import { useParams } from 'next/navigation';
 
-import { BackButton, DuesSearchBar } from '@/components/admin/dues';
+import { DuesSearchBar } from '@/components/admin/dues';
 import { useDuesSetupValues, useDuesSetupActions } from '@/stores/useDuesSetupStore';
 import { toastError } from '@/stores/useToastStore';
 import { useDuesPaymentTargetsQuery } from '@/hooks/queries/admin';
@@ -17,10 +17,11 @@ import {
   NextButton,
   PrevButton,
   SetupHeader,
+  DuesSetupStep2Skeleton,
 } from '@/components/admin/dues/setup/components';
 import { useDuesSetupNavigation } from '@/hooks/admin/useDuesSetupNavigation';
 import { useDuesStepNavigator } from '@/hooks/admin/useDuesStepNavigator';
-import { usePaymentTargetFilter } from '@/hooks/admin';
+import { usePaymentTargetFilter, useEnsureDuesAccountId } from '@/hooks/admin';
 
 function DuesSetupStep2() {
   const { clubId } = useParams<{ clubId: string }>();
@@ -30,7 +31,10 @@ function DuesSetupStep2() {
     useDuesSetupValues();
   const { setField } = useDuesSetupActions();
 
-  const { data } = useDuesPaymentTargetsQuery(clubId, accountId);
+  // 새로고침으로 accountId(메모리 전용)가 사라진 경우 초안을 재조회해 복구한다.
+  useEnsureDuesAccountId(clubId);
+
+  const { data, isPending } = useDuesPaymentTargetsQuery(clubId, accountId);
   const savePaymentTargets = useSaveDuesPaymentTargets(clubId, accountId, {
     onError: () => toastError('납부 대상 저장에 실패했습니다. 잠시 후 다시 시도해주세요.'),
   });
@@ -58,6 +62,7 @@ function DuesSetupStep2() {
     excludedCount,
     totalPages,
     pagedTargets,
+    filteredTargets,
     handleTabChange,
     handleSearch,
   } = usePaymentTargetFilter(allTargets, selectedMemberIds);
@@ -67,6 +72,25 @@ function DuesSetupStep2() {
       ? selectedMemberIds.filter((x) => x !== id)
       : [...selectedMemberIds, id];
     setField({ selectedMemberIds: next });
+  };
+
+  // 전체선택은 현재 탭·검색으로 필터된 전체 대상(모든 페이지)을 기준으로 동작한다.
+  const filteredIds = filteredTargets.map((t) => t.paymentTargetInfo.clubMemberId);
+  const selectedFilteredCount = filteredIds.filter((id) => selectedSet.has(id)).length;
+  const allSelected: boolean | 'indeterminate' =
+    selectedFilteredCount === 0
+      ? false
+      : selectedFilteredCount === filteredIds.length
+        ? true
+        : 'indeterminate';
+
+  const toggleAll = () => {
+    if (selectedFilteredCount === filteredIds.length) {
+      const filteredSet = new Set(filteredIds);
+      setField({ selectedMemberIds: selectedMemberIds.filter((id) => !filteredSet.has(id)) });
+    } else {
+      setField({ selectedMemberIds: [...new Set([...selectedMemberIds, ...filteredIds])] });
+    }
   };
 
   const commitStep = async () => {
@@ -86,6 +110,9 @@ function DuesSetupStep2() {
   };
 
   const { goNext, isEditMode } = useDuesStepNavigator(2, commitStep);
+
+  // accountId 확보 전(skipToken) 또는 납부 대상 조회 중에는 스켈레톤을 노출한다.
+  if (isPending) return <DuesSetupStep2Skeleton />;
 
   return (
     <div className="flex min-w-85 flex-col gap-700 p-700">
@@ -123,6 +150,8 @@ function DuesSetupStep2() {
             pagedTargets={pagedTargets}
             selectedSet={selectedSet}
             toggleMember={toggleMember}
+            toggleAll={toggleAll}
+            allSelected={allSelected}
           />
 
           {/* 페이지네이션 */}
@@ -134,7 +163,7 @@ function DuesSetupStep2() {
 
       {/* 하단 네비게이션 */}
       <div className="flex items-center justify-between">
-        <PrevButton handlePrev={() => goToStep(1)} />
+        <PrevButton handlePrev={() => goToStep(1)} disabled={isEditMode} />
         <NextButton
           handleNext={goNext}
           editMode={isEditMode}

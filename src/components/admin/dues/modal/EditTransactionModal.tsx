@@ -11,7 +11,7 @@ interface EditTransactionModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   initialValues?: Partial<TransactionFormData>;
-  onSubmit?: (data: TransactionFormData) => void;
+  onSubmit?: (data: TransactionFormData) => void | Promise<void>;
 }
 
 function EditTransactionModal({
@@ -38,8 +38,9 @@ function EditTransactionModal({
         <TransactionForm
           key={formKey}
           initialValues={initialValues}
-          onSubmit={(data) => {
-            onSubmit?.(data);
+          onSubmit={async (data) => {
+            // 제출이 실패하면(예: 잔액 부족) 예외가 폼으로 전파돼 모달이 닫히지 않는다.
+            await onSubmit?.(data);
             handleClose();
           }}
           onCancel={handleClose}

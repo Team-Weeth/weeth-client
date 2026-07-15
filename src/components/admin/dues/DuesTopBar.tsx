@@ -1,9 +1,8 @@
 'use client';
 
-import { AdminPlusIcon, AdminSettingIcon } from '@/assets/icons/admin';
+import { AdminSettingIcon } from '@/assets/icons/admin';
 import { QuestionCircleIcon } from '@/assets/icons';
 import {
-  Button,
   Icon,
   Switch,
   Tooltip,
@@ -17,7 +16,8 @@ interface DuesTopBarProps extends React.HTMLAttributes<HTMLDivElement> {
   isPublic: boolean;
   onPublicChange: (value: boolean) => void;
   onSettingsClick?: () => void;
-  onAddClick?: () => void;
+  /** 계정이 없는 미등록 기수 등에서 공개 토글·설정 진입을 막을 때 사용 */
+  disabled?: boolean;
 }
 
 function DuesTopBar({
@@ -25,7 +25,7 @@ function DuesTopBar({
   isPublic,
   onPublicChange,
   onSettingsClick,
-  onAddClick,
+  disabled = false,
   ...props
 }: DuesTopBarProps) {
   return (
@@ -49,13 +49,14 @@ function DuesTopBar({
             </Tooltip>
           </TooltipProvider>
 
-          <Switch checked={isPublic} onCheckedChange={onPublicChange} />
+          <Switch checked={isPublic} onCheckedChange={onPublicChange} disabled={disabled} />
         </div>
 
         <button
           type="button"
           onClick={onSettingsClick}
-          className="border-line bg-button-neutral typo-button2 text-text-strong hover:bg-container-neutral-interaction flex shrink-0 cursor-pointer items-center gap-100 rounded-sm border px-300 py-200 whitespace-nowrap"
+          disabled={disabled}
+          className="border-line bg-button-neutral typo-button2 text-text-strong hover:bg-container-neutral-interaction flex shrink-0 cursor-pointer items-center gap-100 rounded-sm border px-300 py-200 whitespace-nowrap disabled:cursor-not-allowed disabled:opacity-50"
         >
           <Icon src={AdminSettingIcon} size={16} className="text-icon-normal" />
           설정

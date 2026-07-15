@@ -5,6 +5,7 @@ import { uploadFile } from '@/lib/apis/upload';
 import { adminQueryKeys } from '@/hooks/queries/admin/adminQueryKeys';
 import type { MutationCallbacks } from '@/types/common';
 import type {
+  BulkExcludeBody,
   BulkPaidBody,
   BulkRefundBody,
   BulkUnpaidBody,
@@ -194,12 +195,12 @@ export function useMarkPaymentTargetsPaid(
 }
 
 /**
- * 부원 거래 내역 공개 여부 수정 뮤테이션 훅.
+ * 납부 대상 벌크 "제외" 뮤테이션 훅.
  *
- * 공개 시 부원 서비스에 회비 탭이 표시되고, 비공개 시 숨겨진다.
-
+ * 선택한 미납 부원을 납부 대상에서 제외한다(납부·환불 이력이 있으면 서버가 거부).
+ * 납부 대상 목록·집계가 바뀌므로 dues prefix 전체를 invalidate한다.
  */
-export function useUpdateMemberVisibility(
+export function useExcludePaymentTargets(
   clubId: string,
   accountId: number | null,
   callbacks?: MutationCallbacks<unknown>,
@@ -207,10 +208,34 @@ export function useUpdateMemberVisibility(
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (visible: boolean) => {
+    mutationFn: (body: BulkExcludeBody) => {
       if (!clubId || accountId === null) throw new Error(REQUIRE_ACCOUNT);
+      return duesApi.excludePaymentTargets(clubId, accountId, body);
+    },
+    onSuccess: callbacks?.onSuccess,
+    onError: callbacks?.onError,
+    onMutate: callbacks?.onMutate,
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: [...adminQueryKeys.all, 'dues'] });
+      callbacks?.onSettled?.();
+    },
+  });
+}
+
+/**
+ * 부원 거래 내역 공개 여부 수정 뮤테이션 훅.
+ *
+ * 공개 시 부원 서비스에 회비 탭이 표시되고, 비공개 시 숨겨진다.
+
+ */
+export function useUpdateMemberVisibility(clubId: string, callbacks?: MutationCallbacks<unknown>) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (visible: boolean) => {
+      if (!clubId) throw new Error(REQUIRE_ACCOUNT);
       const body: MemberVisibilityBody = { visible };
-      return duesApi.updateMemberVisibility(clubId, accountId, body);
+      return duesApi.updateMemberVisibility(clubId, body);
     },
     onSuccess: callbacks?.onSuccess,
     onError: callbacks?.onError,

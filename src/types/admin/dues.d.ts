@@ -65,7 +65,7 @@ export interface PaymentTarget {
   targetId: number;
   paymentTargetInfo: PaymentTargetInfo;
   targetStatus: 'TARGETED' | 'EXCLUDED';
-  paymentStatus: 'UNPAID' | 'PAID' | 'CONFIRMED';
+  paymentStatus: 'UNPAID' | 'PAID' | 'REFUNDED';
   dueAmount: number;
   paidAmount: number;
   paidAt: string | null;
@@ -107,6 +107,11 @@ export interface BulkPaidBody {
   memo: string;
 }
 
+/** 납부 대상 벌크 처리 — 제외(미납 대상만 가능, 납부·환불 이력이 있으면 제외 불가) */
+export interface BulkExcludeBody {
+  targetIds: number[];
+}
+
 /** 부원 거래 내역 공개 여부 수정 */
 export interface MemberVisibilityBody {
   visible: boolean;
@@ -137,6 +142,15 @@ export interface PaymentTargetsData {
   };
 }
 
+export interface LastModified {
+  modifiedAt: string;
+  modifiedBy: {
+    userId: number;
+    name: string;
+    profileImageUrl: string | null;
+  };
+}
+
 export interface DuesDashboard {
   accountId: number;
   summary: {
@@ -147,6 +161,9 @@ export interface DuesDashboard {
     paidCount: number;
     totalTargetCount: number;
   };
+  /** 부원에게 회비 탭 공개 여부 (member-visibility 토글의 서버 상태) */
+  memberVisible: boolean;
+  /** 계좌번호 공개 여부 (계좌 카드 마스킹 판단) */
   bankAccountPublic: boolean;
   bankAccount: {
     bankName: string;
@@ -154,14 +171,7 @@ export interface DuesDashboard {
     holder: string;
     guide: string | null;
   } | null;
-  lastModified: {
-    modifiedAt: string;
-    modifiedBy: {
-      userId: number;
-      name: string;
-      profileImageUrl: string | null;
-    };
-  } | null;
+  lastModified: LastModified | null;
   period: {
     startYearMonth: string;
     endYearMonth: string;
@@ -208,7 +218,7 @@ export interface DuesTransaction {
   content: string;
   counterparty: string;
   amount: number;
-  totalBalance: number;
+  balanceAfter: number;
   date: string;
   hasReceipt: boolean;
   receiptUrl?: string;
@@ -219,8 +229,13 @@ export interface MonthlyData {
   amount: number;
 }
 
-export type PaymentStatus = 'paid' | 'unpaid';
-export type FilterType = 'all' | 'paid' | 'unpaid';
+/**
+ * 테이블 행에 표시되는 납부 대상의 상태.
+ * - `excluded`: 납부 대상에서 제외됨(targetStatus EXCLUDED)
+ * - `paid` / `unpaid` / `refunded`: 대상(TARGETED)의 납부 상태(paymentStatus)
+ */
+export type PaymentStatus = 'paid' | 'unpaid' | 'refunded' | 'excluded';
+export type FilterType = 'all' | PaymentStatus;
 
 export interface DuesMember {
   id: number;
@@ -228,7 +243,6 @@ export interface DuesMember {
   major: string;
   phone: string;
   status: PaymentStatus;
-  avatarInitial?: string;
 }
 
 export interface TransactionReceipt {
@@ -249,6 +263,8 @@ export interface TransactionItem {
   source: string;
   amount: number;
   transactedAt: string;
+  /** 이 거래 반영 후 러닝 밸런스(총 잔액) */
+  balanceAfter: number;
   memo: string;
   hasReceipt: boolean;
   receipts: TransactionReceipt[];

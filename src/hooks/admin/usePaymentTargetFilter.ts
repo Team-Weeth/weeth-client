@@ -62,6 +62,7 @@ function usePaymentTargetFilter(
     excludedCount,
     totalPages,
     pagedTargets,
+    filteredTargets,
     handleTabChange,
     handleSearch,
   };

@@ -1,7 +1,7 @@
 'use client';
 
 import { cva, type VariantProps } from 'class-variance-authority';
-import { CheckIcon } from 'lucide-react';
+import { CheckIcon, MinusIcon } from 'lucide-react';
 import { Checkbox as CheckboxPrimitive } from 'radix-ui';
 
 import { cn } from '@/lib/cn';
@@ -27,10 +27,11 @@ interface CheckboxProps
     Omit<React.ComponentProps<typeof CheckboxPrimitive.Root>, 'color'>,
     VariantProps<typeof checkboxVariants> {}
 
-function Checkbox({ className, color, ...props }: CheckboxProps) {
+function Checkbox({ className, color, checked, ...props }: CheckboxProps) {
   return (
     <CheckboxPrimitive.Root
       data-slot="checkbox"
+      checked={checked}
       className={cn(checkboxVariants({ color }), className)}
       {...props}
     >
@@ -38,7 +39,11 @@ function Checkbox({ className, color, ...props }: CheckboxProps) {
         data-slot="checkbox-indicator"
         className="grid place-content-center text-current transition-none"
       >
-        <CheckIcon className="size-3.5" />
+        {checked === 'indeterminate' ? (
+          <MinusIcon className="size-3.5" />
+        ) : (
+          <CheckIcon className="size-3.5" />
+        )}
       </CheckboxPrimitive.Indicator>
     </CheckboxPrimitive.Root>
   );

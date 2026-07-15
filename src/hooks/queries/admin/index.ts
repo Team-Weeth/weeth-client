@@ -24,6 +24,7 @@ export { useAdminClubQuery } from './useAdminClubQuery';
 export {
   useDuesPaymentTargetsQuery,
   useDuesCarryOverSourceQuery,
+  useDuesRegistrationStatusQuery,
   duesRegistrationStatusQueryOptions,
   duesPaymentTargetsQueryOptions,
   duesCarryOverSourceQueryOptions,

@@ -4,6 +4,8 @@ import { useState } from 'react';
 
 import { CheckIcon } from '@/assets/icons';
 import {
+  Avatar,
+  AvatarFallback,
   Icon,
   Table,
   TableBody,
@@ -17,21 +19,30 @@ import { formatPhone } from '@/utils/shared';
 import { DuesPagination } from '@/components/admin/dues/setup/components';
 import { DuesMember, FilterType, PaymentStatus } from '@/types/admin/dues';
 import { DuesSearchBar } from './DuesSearchBar';
+import { TableTabFilter } from './TableTabFilter';
 
 /** 페이지당 부원 수 */
 const ITEMS_PER_PAGE = 10;
 
+/** 벌크 액션 대상이 되는(=선택 가능한) 상태. 환불·제외는 처리할 액션이 없어 선택할 수 없다. */
+function isSelectableStatus(status: PaymentStatus): boolean {
+  return status === 'paid' || status === 'unpaid';
+}
+
+const STATUS_BADGE: Record<PaymentStatus, { label: string; className: string }> = {
+  paid: { label: '완료', className: 'bg-brand-primary/10 text-brand-primary' },
+  unpaid: { label: '미납', className: 'bg-state-error/10 text-state-error' },
+  refunded: { label: '환불', className: 'bg-brand-secondary/10 text-brand-secondary' },
+  excluded: { label: '제외', className: 'bg-container-neutral-alternative text-text-alternative' },
+};
+
 function PaymentStatusBadge({ status }: { status: PaymentStatus }) {
-  if (status === 'paid') {
-    return (
-      <span className="typo-caption1 bg-brand-primary/10 text-brand-primary tag-base">완료</span>
-    );
-  }
-  return <span className="typo-caption1 bg-state-error/10 text-state-error tag-base">미납</span>;
+  const { label, className } = STATUS_BADGE[status];
+  return <span className={cn('typo-caption1 tag-base', className)}>{label}</span>;
 }
 
 const COLUMNS = [
-  { key: 'select', label: '선택', className: 'w-[88px]' },
+  { key: 'select', label: '선택', className: 'w-[64px]' },
   { key: 'name', label: '이름', className: 'min-w-32' },
   { key: 'major', label: '학과', className: 'min-w-32' },
   { key: 'phone', label: '연락처', className: 'w-[148px]' },
@@ -56,22 +67,19 @@ function DuesMemberPaymentTable({
   const [sortUnpaidFirst, setSortUnpaidFirst] = useState(false);
   const [page, setPage] = useState(1);
 
-  const totalCount = members.length;
-  const paidCount = members.filter((m) => m.status === 'paid').length;
-  const unpaidCount = members.filter((m) => m.status === 'unpaid').length;
+  const countByStatus = (status: PaymentStatus) =>
+    members.filter((m) => m.status === status).length;
 
   const filters: { key: FilterType; label: string; count: number }[] = [
-    { key: 'all', label: '전체', count: totalCount },
-    { key: 'paid', label: '납부완료', count: paidCount },
-    { key: 'unpaid', label: '미납', count: unpaidCount },
+    { key: 'all', label: '전체', count: members.length },
+    { key: 'paid', label: '완료', count: countByStatus('paid') },
+    { key: 'unpaid', label: '미납', count: countByStatus('unpaid') },
+    { key: 'refunded', label: '환불', count: countByStatus('refunded') },
+    { key: 'excluded', label: '제외', count: countByStatus('excluded') },
   ];
 
   const filtered = members
-    .filter((m) => {
-      if (activeFilter === 'paid') return m.status === 'paid';
-      if (activeFilter === 'unpaid') return m.status === 'unpaid';
-      return true;
-    })
+    .filter((m) => activeFilter === 'all' || m.status === activeFilter)
     .filter((m) => !searchQuery || m.name.includes(searchQuery))
     .sort((a, b) => {
       if (!sortUnpaidFirst) return 0;
@@ -104,6 +112,8 @@ function DuesMemberPaymentTable({
     selectedIds.size === 0 ? null : (members.find((m) => selectedIds.has(m.id))?.status ?? null);
 
   const toggleSelect = (id: number, status: PaymentStatus) => {
+    // 환불·제외 대상은 벌크 액션이 없으므로 선택할 수 없다.
+    if (!isSelectableStatus(status)) return;
     const next = new Set(selectedIds);
     if (next.has(id)) {
       next.delete(id);
@@ -124,27 +134,13 @@ function DuesMemberPaymentTable({
 
       <div className="flex flex-col gap-400">
         {/* 필터 칩 + 정렬 */}
-        <div className="flex flex-wrap items-center justify-between gap-y-200">
-          <div className="flex gap-[5px] overflow-x-auto">
-            {filters.map((f) => (
-              <button
-                key={f.key}
-                type="button"
-                onClick={() => handleFilterChange(f.key)}
-                className="typo-button2 border-line text-text-normal hover:bg-container-neutral-interaction min-w-10 shrink-0 cursor-pointer rounded-[10px] border px-400 py-200 transition-colors"
-              >
-                {f.label} {f.count}
-              </button>
-            ))}
-          </div>
-          <button
-            type="button"
-            onClick={handleSortToggle}
-            className="typo-button2 border-line text-text-normal hover:bg-container-neutral-interaction min-w-10 shrink-0 cursor-pointer rounded-[10px] border px-400 py-200 transition-colors"
-          >
-            {sortUnpaidFirst ? '이름 순' : '미납 순'}
-          </button>
-        </div>
+        <TableTabFilter
+          tabs={filters}
+          activeTab={activeFilter}
+          onTabChange={handleFilterChange}
+          sortLabel={sortUnpaidFirst ? '이름 순' : '미납 순'}
+          onSortToggle={handleSortToggle}
+        />
 
         {/* 검색바 */}
         <DuesSearchBar searchQuery={searchQuery} setSearchQuery={handleSearchChange} />
@@ -157,7 +153,11 @@ function DuesMemberPaymentTable({
                 {COLUMNS.map((col) => (
                   <TableHead
                     key={col.key}
-                    className={cn(col.label && 'typo-body2 text-text-alternative', col.className)}
+                    className={cn(
+                      col.label && 'typo-body2 text-text-alternative',
+                      col.label === '이름' && 'pl-[46px]',
+                      col.className,
+                    )}
                   >
                     {col.label}
                   </TableHead>
@@ -176,19 +176,28 @@ function DuesMemberPaymentTable({
               ) : (
                 paged.map((member) => {
                   const isSelected = selectedIds.has(member.id);
-                  // 선택 진행 중이고, 현재 선택 상태와 다른 상태의 멤버는 함께 선택할 수 없다.
+                  const isSelectable = isSelectableStatus(member.status);
+                  // 선택 불가(환불·제외) 상태이거나, 선택 진행 중이고 현재 선택 상태와 다른 상태의 멤버는 함께 선택할 수 없다.
                   const isDisabled =
-                    !isSelected && selectedStatus !== null && member.status !== selectedStatus;
+                    !isSelectable ||
+                    (!isSelected && selectedStatus !== null && member.status !== selectedStatus);
                   return (
                     <TableRow
                       key={member.id}
-                      className="border-line hover:bg-container-neutral-interaction border-t"
+                      className={cn(
+                        'border-line hover:[&>td]:bg-container-neutral-interaction border-t',
+                        isSelected && '[&>td]:bg-container-neutral-alternative',
+                      )}
                     >
                       <TableCell>
                         {/* disabled 버튼은 title 툴팁이 뜨지 않으므로 span으로 감싸 안내를 노출한다. */}
                         <span
                           title={
-                            isDisabled ? '납부 상태가 같은 부원끼리만 선택할 수 있어요.' : undefined
+                            !isSelectable
+                              ? '납부 완료·미납 상태인 부원만 선택할 수 있어요.'
+                              : isDisabled
+                                ? '납부 상태가 같은 부원끼리만 선택할 수 있어요.'
+                                : undefined
                           }
                           className="inline-flex"
                         >
@@ -207,7 +216,7 @@ function DuesMemberPaymentTable({
                                 'flex h-4 w-4 items-center justify-center rounded-[3px] border transition-colors',
                                 isSelected
                                   ? 'border-brand-primary bg-brand-primary'
-                                  : 'border-button-neutral',
+                                  : 'border-icon-alternative',
                               )}
                             >
                               {isSelected && <Icon src={CheckIcon} alt="" size={10} />}
@@ -216,13 +225,11 @@ function DuesMemberPaymentTable({
                         </span>
                       </TableCell>
                       <TableCell>
-                        <div className="flex items-center gap-400">
-                          <div className="bg-container-neutral-interaction text-text-alternative typo-caption1 flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-md">
-                            {member.avatarInitial ?? member.name.slice(0, 1)}
-                          </div>
-                          <span className="typo-body2 text-text-strong min-w-0 truncate">
-                            {member.name}
-                          </span>
+                        <div className="flex items-center gap-300">
+                          <Avatar size={40}>
+                            <AvatarFallback>{member.name[0]}</AvatarFallback>
+                          </Avatar>
+                          <span className="typo-body1 text-text-normal">{member.name}</span>
                         </div>
                       </TableCell>
                       <TableCell className="typo-body2 text-text-strong">{member.major}</TableCell>
