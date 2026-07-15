@@ -10,8 +10,18 @@ const mockUseBoardList = useBoardList as jest.Mock;
 
 const mockBoards = [
   { id: null, name: '전체', type: 'ALL' as const },
-  { id: 2, name: '공지사항', type: 'NOTICE' as const, boardConfig: { canWrite: false, canComment: false } },
-  { id: 3, name: '자유게시판', type: 'GENERAL' as const, boardConfig: { canWrite: true, canComment: true } },
+  {
+    id: 2,
+    name: '공지사항',
+    type: 'NOTICE' as const,
+    boardConfig: { canWrite: false, canComment: false },
+  },
+  {
+    id: 3,
+    name: '자유게시판',
+    type: 'GENERAL' as const,
+    boardConfig: { canWrite: true, canComment: true },
+  },
 ];
 
 describe('useWritableBoards', () => {
