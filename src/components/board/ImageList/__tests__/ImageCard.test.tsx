@@ -52,6 +52,23 @@ describe('ImageCard', () => {
     });
   });
 
+  describe('크기·레이아웃 클래스 전달', () => {
+    it('className이 래퍼 컨테이너에 전달된다', () => {
+      render(<ImageCard item={makeFile()} className="test-container" />);
+      expect(screen.getByRole('img').parentElement).toHaveClass('test-container');
+    });
+
+    it('imgClassName이 img 요소에 전달된다', () => {
+      render(<ImageCard item={makeFile()} imgClassName="test-img" />);
+      expect(screen.getByRole('img')).toHaveClass('test-img');
+    });
+
+    it('img에 draggable=false가 설정된다', () => {
+      render(<ImageCard item={makeFile()} />);
+      expect(screen.getByRole('img')).toHaveAttribute('draggable', 'false');
+    });
+  });
+
   describe('삭제 버튼', () => {
     it('removable=true이고 onRemove가 있으면 삭제 버튼이 렌더링된다', () => {
       render(<ImageCard item={makeFile()} removable onRemove={jest.fn()} />);
