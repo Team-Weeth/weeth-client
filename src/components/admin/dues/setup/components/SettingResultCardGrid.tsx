@@ -1,7 +1,15 @@
 import type { ReactNode } from 'react';
 
 import { EditIcon } from '@/assets/icons';
-import { Avatar, AvatarFallback, AvatarGroup, AvatarGroupCount, Card, Icon } from '@/components/ui';
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+  AvatarGroup,
+  AvatarGroupCount,
+  Card,
+  Icon,
+} from '@/components/ui';
 import { cn } from '@/lib/cn';
 import { formatAmount } from '@/lib/formatAmount';
 
@@ -51,6 +59,7 @@ interface PaymentTargetAvatar {
   paymentTargetInfo: {
     clubMemberId: number;
     name: string;
+    profileImageUrl: string | null;
   };
 }
 
@@ -137,6 +146,7 @@ function SettingResultCardGrid({
             <AvatarGroup>
               {displayedAvatars.map((t) => (
                 <Avatar key={t.paymentTargetInfo.clubMemberId} size={24} colorScheme="primary">
+                  <AvatarImage src={t.paymentTargetInfo.profileImageUrl ?? ''} />
                   <AvatarFallback>{t.paymentTargetInfo.name[0]}</AvatarFallback>
                 </Avatar>
               ))}
