@@ -10,7 +10,9 @@ import { useClubName, useUserProfileImageUrl } from '@/stores';
 import { PostingActions } from './PostingActions';
 import { DefaultActions } from './DefaultActions';
 import { MobileNavSheet } from './MobileNavSheet';
+import { MobileWriteButton } from './MobileWriteButton';
 import { Avatar, AvatarFallback, AvatarImage, Icon } from '@/components/ui';
+import { useDuesVisibility } from '@/hooks/queries';
 import { useIsAdmin } from '@/hooks/shared';
 
 interface HeaderProps {
@@ -30,12 +32,15 @@ export default function Header({ isMain = true }: HeaderProps) {
   const clubName = useClubName();
   const profileImageUrl = useUserProfileImageUrl();
   const { isAdmin } = useIsAdmin();
+  const { data: duesVisibility } = useDuesVisibility();
+  const isDuesVisible = duesVisibility?.visible === true;
   const isPostingPage = pathname.includes('/write') || /\/board\/edit\/\d+$/.test(pathname);
 
   const NAV_ITEMS = [
     { id: 'board', label: '게시판', href: `/${clubId}/board` },
     { id: 'attendance', label: '출석', href: `/${clubId}/attendance` },
-  ];
+    ...(isDuesVisible ? [{ id: 'dues', label: '회비', href: `/${clubId}/dues` }] : []),
+  ] as const;
   const [visible, setVisible] = useState(true);
   const lastScrollY = useRef(0);
 
@@ -72,32 +77,43 @@ export default function Header({ isMain = true }: HeaderProps) {
         )}
         {isMain && clubId && (
           <div className="flex items-center justify-center gap-200">
-            {isAdmin && (
-              <button
-                type="button"
-                aria-label="운영진 페이지로 이동"
-                onClick={() => router.push(`/${clubId}/admin`)}
-                className="flex cursor-pointer items-center justify-center rounded-full"
-              >
-                <Icon src={ExitToAppIcon} alt="avatar" size={40} className="text-icon-normal p-2" />
-              </button>
+            {isPostingPage ? (
+              <PostingActions />
+            ) : (
+              <>
+                <MobileWriteButton />
+                {isAdmin && (
+                  <Link
+                    href={`/${clubId}/admin`}
+                    aria-label="운영진 페이지로 이동"
+                    className="flex cursor-pointer items-center justify-center rounded-full"
+                  >
+                    <Icon
+                      src={ExitToAppIcon}
+                      alt="avatar"
+                      size={40}
+                      className="text-icon-normal p-2"
+                    />
+                  </Link>
+                )}
+                <button
+                  type="button"
+                  aria-label="마이페이지로 이동"
+                  onClick={() => router.push(`/${clubId}/mypage`)}
+                  className="cursor-pointer rounded-full"
+                >
+                  <Avatar size={40} type="round">
+                    <AvatarImage
+                      key={profileImageUrl ?? 'fallback'}
+                      src={profileImageUrl ?? undefined}
+                      alt="avatar"
+                      className="object-cover"
+                    />
+                    <AvatarFallback />
+                  </Avatar>
+                </button>
+              </>
             )}
-            <button
-              type="button"
-              aria-label="마이페이지로 이동"
-              onClick={() => router.push(`/${clubId}/mypage`)}
-              className="cursor-pointer rounded-full"
-            >
-              <Avatar size={40} type="round">
-                <AvatarImage
-                  key={profileImageUrl ?? 'fallback'}
-                  src={profileImageUrl ?? undefined}
-                  alt="avatar"
-                  className="object-cover"
-                />
-                <AvatarFallback />
-              </Avatar>
-            </button>
           </div>
         )}
       </header>

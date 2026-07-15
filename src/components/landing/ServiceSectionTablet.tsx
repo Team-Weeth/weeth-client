@@ -232,10 +232,10 @@ function ServiceSectionTablet({
                 )}
               >
                 {active.video ? (
-                  <div className="relative w-full">
-                    {!videoReady.has(activeIndex) ? (
-                      <Skeleton className="aspect-[3840/1888] w-full animate-pulse rounded-[30px] bg-[#E6EAED]" />
-                    ) : null}
+                  <div className="relative aspect-[3840/1888] w-full overflow-hidden rounded-[30px]">
+                    {!videoReady.has(activeIndex) && (
+                      <Skeleton className="absolute inset-0 animate-pulse rounded-[30px] bg-[#E6EAED]" />
+                    )}
                     <video
                       ref={(el) => {
                         videoRefs.current[activeIndex] = el;
@@ -249,10 +249,10 @@ function ServiceSectionTablet({
                       loop
                       muted
                       playsInline
-                      preload="auto"
+                      preload="none"
                       className={cn(
                         'h-auto w-full rounded-[30px]',
-                        !videoReady.has(activeIndex) && 'invisible absolute',
+                        !videoReady.has(activeIndex) && 'invisible',
                       )}
                     />
                   </div>

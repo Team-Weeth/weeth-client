@@ -17,6 +17,7 @@ import {
 } from '@/hooks/mutations/admin';
 import { useAdminClubQuery } from '@/hooks/queries/admin/useAdminClubQuery';
 import { clubInfoSchema, type ClubInfoFormData } from '@/lib/schemas/clubInfo';
+import { useSetAdminEditMode } from '@/stores';
 import { toastSuccess, toastError } from '@/stores/useToastStore';
 import type { ImageState } from '@/types/admin/clubInfo';
 import {
@@ -70,6 +71,16 @@ function ClubInfoPageContent({ schoolNames }: ClubInfoPageContentProps) {
 
   const isEditMode =
     isDirty || profileImage.status !== 'unchanged' || backgroundImage.status !== 'unchanged';
+
+  const setAdminEditMode = useSetAdminEditMode();
+
+  useEffect(() => {
+    setAdminEditMode(isEditMode);
+  }, [isEditMode, setAdminEditMode]);
+
+  useEffect(() => {
+    return () => setAdminEditMode(false);
+  }, [setAdminEditMode]);
 
   const profilePreviewUrl = getImagePreviewUrl(profileImage, club?.profileImageUrl);
   const backgroundPreviewUrl = getImagePreviewUrl(backgroundImage, club?.backgroundImageUrl);
@@ -129,17 +140,17 @@ function ClubInfoPageContent({ schoolNames }: ClubInfoPageContentProps) {
   );
 
   return (
-    <div className="flex w-full flex-col overflow-x-auto">
+    <div className="flex w-full flex-col">
       {isEditMode && (
         <ClubInfoTopBar
-          className="sticky top-0 z-10 -mt-15"
+          className="sticky top-0 z-20"
           onBack={handleResetChanges}
           onSave={handleSave}
           isSaving={isSaving}
         />
       )}
 
-      <div className="flex min-w-3xl flex-col items-start gap-400 px-8 py-12">
+      <div className="tablet:min-w-3xl tablet:px-8 tablet:py-12 flex flex-col items-start gap-400 px-400 py-500">
         <ClubInfoImageSection
           profilePreviewUrl={profilePreviewUrl}
           backgroundPreviewUrl={backgroundPreviewUrl}

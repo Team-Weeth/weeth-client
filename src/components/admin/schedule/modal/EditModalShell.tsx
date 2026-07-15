@@ -4,6 +4,7 @@ import { Suspense } from 'react';
 import type { ReactNode, RefObject } from 'react';
 
 import { Dialog, DialogContent } from '@/components/ui/dialog';
+import { SCHEDULE_MODAL_CONTENT_CLASS } from '@/components/admin/schedule/modal/constants';
 
 interface EditModalShellProps {
   open: boolean;
@@ -44,8 +45,9 @@ function EditModalShell({
       }}
     >
       <DialogContent
-        className="bg-background flex w-215 max-w-215 flex-col gap-0 overflow-hidden rounded-lg p-0"
+        className={SCHEDULE_MODAL_CONTENT_CLASS}
         showCloseButton={false}
+        adminMobileFullscreen={false}
         onPointerDownOutside={(e) => {
           if (hasChangesRef.current) e.preventDefault();
         }}

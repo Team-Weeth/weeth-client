@@ -42,3 +42,9 @@ Thumbs.db
 .claude/
 CLAUDE.md
 .github/pull_request_template.md
+
+# Obsidian vault (외부 앱이 관리하는 파일)
+docs/
+
+# MSW generated file (do not modify manually)
+public/mockServiceWorker.js

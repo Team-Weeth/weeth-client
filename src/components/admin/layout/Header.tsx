@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { usePathname } from 'next/navigation';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel } from '@/components/ui';
 import { useLogout } from '@/hooks';
+import { useIsAdminEditMode } from '@/stores';
 
 const PAGE_TITLES: Record<string, string> = {
   '/admin/member': '멤버 관리',
@@ -11,14 +12,18 @@ const PAGE_TITLES: Record<string, string> = {
   '/admin/attendance': '출석 관리',
   '/admin/board': '게시판 관리',
   '/admin/club-info': '동아리 관리',
+  '/admin/dues': '회비 관리',
 };
 
 export function Header() {
   const handleLogout = useLogout();
   const pathname = usePathname();
   const [logoutOpen, setLogoutOpen] = useState(false);
+  const isEditMode = useIsAdminEditMode();
 
   const title = Object.entries(PAGE_TITLES).find(([path]) => pathname.includes(path))?.[1];
+
+  if (isEditMode) return null;
 
   return (
     <>

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { isAxiosError } from 'axios';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
@@ -25,7 +25,7 @@ import { useMyMemberQuery } from '@/hooks/queries/mypage/useMyMemberQuery';
 import { useUpdateProfileMutation } from '@/hooks/mutations/useUpdateProfileMutation';
 import { toastSuccess, toastError } from '@/stores/useToastStore';
 import { formatPhone } from '@/utils/shared';
-import { EditProfileSkeleton } from '../skeleton';
+import { EditProfileSkeleton } from '@/components/mypage/skeleton';
 import { ProfileImageEditor } from './ProfileImageEditor';
 import { PersonalInfoFields } from './PersonalInfoFields';
 import { SchoolInfoFields } from './SchoolInfoFields';
@@ -44,7 +44,7 @@ function EditProfileContent({ className, schools, majors, ...props }: EditProfil
   const { mutate: updateProfile, isPending } = useUpdateProfileMutation();
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [resetToDefault, setResetToDefault] = useState(false);
-  const editProfileSchema = useMemo(() => createEditProfileSchema(), []);
+  const editProfileSchema = createEditProfileSchema();
 
   const {
     handleSubmit,

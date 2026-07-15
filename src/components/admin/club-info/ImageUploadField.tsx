@@ -56,22 +56,47 @@ function PreviewContent({
   onReupload: () => void;
   onReset: () => void;
 }) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [isActive, setIsActive] = useState(false);
+
+  useEffect(() => {
+    if (!isActive) return;
+    const handleClickOutside = (event: PointerEvent) => {
+      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
+        setIsActive(false);
+      }
+    };
+    document.addEventListener('pointerdown', handleClickOutside);
+    return () => document.removeEventListener('pointerdown', handleClickOutside);
+  }, [isActive]);
+
   return (
     <div
+      ref={containerRef}
       className={cn(
         'group relative flex w-full flex-1 overflow-hidden rounded-sm',
         aspectRatio === '1/1' && 'aspect-square',
       )}
+      onClick={() => setIsActive((prev) => !prev)}
     >
       <Image src={previewUrl} alt="preview" fill className="object-cover" unoptimized />
-      <div className="absolute inset-0 flex flex-col items-center justify-center gap-200 bg-black/50 opacity-0 transition-opacity group-hover:opacity-100 focus-within:opacity-100">
+      <div
+        className={cn(
+          'absolute inset-0 flex flex-col items-center justify-center gap-200 bg-black/50 transition-opacity',
+          'group-hover:pointer-events-auto group-hover:opacity-100 focus-within:opacity-100',
+          isActive ? 'pointer-events-auto opacity-100' : 'pointer-events-none opacity-0',
+        )}
+      >
         <div className="flex w-full max-w-fit flex-col gap-200">
           <Button
             type="button"
             variant="secondary"
             size="md"
             className="typo-button1 w-full gap-100 px-400 py-200"
-            onClick={onReupload}
+            onClick={(e) => {
+              e.stopPropagation();
+              onReupload();
+            }}
           >
             <Icon src={AdminCloudUploadIcon} alt="upload" size={16} className="text-icon-strong" />
             이미지 업로드
@@ -81,7 +106,10 @@ function PreviewContent({
             variant="secondary"
             size="md"
             className="typo-button1 w-full px-400 py-200"
-            onClick={onReset}
+            onClick={(e) => {
+              e.stopPropagation();
+              onReset();
+            }}
           >
             기본 이미지로 변경
           </Button>

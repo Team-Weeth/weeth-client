@@ -8,9 +8,12 @@ import { cn } from '@/lib/cn';
 import {
   MARK_BUTTONS,
   HEADING_BUTTONS,
+  LINK_BUTTON,
   BubbleMenuItem,
   BubbleActiveKey,
 } from '@/constants/board/bubbleMenu';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui';
+import { LinkInput } from '@/components/board/Editor/LinkInput';
 
 const ICON_SIZE = 15;
 
@@ -33,16 +36,18 @@ function getActiveStates(editor: TiptapEditor): Record<BubbleActiveKey, boolean>
   const bold = editor.isActive('bold');
   const italic = editor.isActive('italic');
   const code = editor.isActive('code');
+  const link = editor.isActive('link');
 
   const heading1 = editor.isActive('heading', { level: 1 });
   const heading2 = editor.isActive('heading', { level: 2 });
   const heading3 = editor.isActive('heading', { level: 3 });
 
   return {
-    plainText: !bold && !italic && !code && !heading1 && !heading2 && !heading3,
+    plainText: !bold && !italic && !code && !link && !heading1 && !heading2 && !heading3,
     bold,
     italic,
     code,
+    link,
     heading1,
     heading2,
     heading3,
@@ -76,23 +81,28 @@ function renderButtons(
   active: Record<BubbleActiveKey, boolean>,
 ) {
   return items.map(({ key, label, icon: Icon, command }) => (
-    <button
-      key={key}
-      type="button"
-      aria-label={label}
-      onMouseDown={(e) => {
-        e.preventDefault();
-        command(editor);
-      }}
-      className={cn(bubbleButtonVariants({ active: active[key] }))}
-    >
-      <Icon size={ICON_SIZE} />
-    </button>
+    <Tooltip key={key}>
+      <TooltipTrigger asChild>
+        <button
+          type="button"
+          aria-label={label}
+          onMouseDown={(e) => {
+            e.preventDefault();
+            command(editor);
+          }}
+          className={cn(bubbleButtonVariants({ active: active[key] }))}
+        >
+          <Icon size={ICON_SIZE} />
+        </button>
+      </TooltipTrigger>
+      <TooltipContent variant="sm">{label}</TooltipContent>
+    </Tooltip>
   ));
 }
 
 export function BubbleMenuBar({ editor, containerRef }: BubbleMenuBarProps) {
   const active = useEditorActiveStates(editor);
+  const [showLinkInput, setShowLinkInput] = useState(false);
 
   return (
     <BubbleMenu
@@ -102,11 +112,47 @@ export function BubbleMenuBar({ editor, containerRef }: BubbleMenuBarProps) {
         placement: 'top-start',
         appendTo: () => containerRef.current ?? document.body,
       }}
-      className="border-line bg-container-neutral flex items-center rounded-md border p-100 shadow-md"
+      shouldShow={({ editor: e, state }) => {
+        if (e.isActive('table')) return false;
+        const { from, to } = state.selection;
+        return from !== to;
+      }}
+      className="border-line bg-container-neutral flex flex-col items-start rounded-md border p-100 shadow-md"
     >
-      {renderButtons(MARK_BUTTONS, editor, active)}
-      <div className="bg-line mx-100 h-4 w-px" />
-      {renderButtons(HEADING_BUTTONS, editor, active)}
+      <TooltipProvider>
+        <div className="flex items-center">
+          {renderButtons(MARK_BUTTONS, editor, active)}
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button
+                type="button"
+                aria-label={LINK_BUTTON.label}
+                onMouseDown={(e) => {
+                  e.preventDefault();
+                  setShowLinkInput((prev) => !prev);
+                }}
+                className={cn(bubbleButtonVariants({ active: active.link }))}
+              >
+                <LINK_BUTTON.icon size={ICON_SIZE} />
+              </button>
+            </TooltipTrigger>
+            <TooltipContent variant="sm">{LINK_BUTTON.label}</TooltipContent>
+          </Tooltip>
+          <div className="bg-line mx-100 h-4 w-px" />
+          {renderButtons(HEADING_BUTTONS, editor, active)}
+        </div>
+        {showLinkInput && (
+          <div className="pt-100">
+            <LinkInput
+              editor={editor}
+              onClose={() => {
+                setShowLinkInput(false);
+                editor.commands.blur();
+              }}
+            />
+          </div>
+        )}
+      </TooltipProvider>
     </BubbleMenu>
   );
 }

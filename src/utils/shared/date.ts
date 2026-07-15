@@ -67,6 +67,18 @@ export function groupByStartDate<T extends { start: string }>(items: T[]): [stri
   return Array.from(groupedByDate.entries());
 }
 
+// '2026. 7. 20(목) 14:00'
+export function formatLastUpdated(isoString: string): string {
+  const date = new Date(isoString);
+  const year = date.getFullYear();
+  const month = date.getMonth() + 1;
+  const day = date.getDate();
+  const dayOfWeek = DAY_META[date.getDay()].ko;
+  const hours = String(date.getHours()).padStart(2, '0');
+  const minutes = String(date.getMinutes()).padStart(2, '0');
+  return `${year}. ${month}. ${day}(${dayOfWeek}) ${hours}:${minutes}`;
+}
+
 export function getDaysInMonth(year: number, month: number): number {
   return new Date(year, month, 0).getDate();
 }
@@ -81,10 +93,30 @@ export function formatDateDisplay(dateStr: string): string {
   return `${year}. ${month}. ${day}`;
 }
 
+export function formatCompactDateDisplay(dateStr: string): string {
+  if (!dateStr) return '';
+  const [year, month, day] = dateStr.split('-');
+  if (!year || !month || !day) return dateStr;
+
+  return `${year}.${month.padStart(2, '0')}.${day.padStart(2, '0')}`;
+}
+
 export function formatTimeDisplay(timeStr: string): string {
   if (!timeStr) return '';
   const [h, m] = timeStr.split(':').map(Number);
   const period = h < 12 ? '오전' : '오후';
   const displayHour = h % 12 || 12;
   return `${period} ${displayHour}:${String(m).padStart(2, '0')}`;
+}
+
+// 'YYYY-MM' → 'N월'
+export function toMonthLabel(yearMonth: string): string {
+  return `${Number(yearMonth.split('-')[1])}월`;
+}
+
+// 'YYYY-MM' → 'YYYY.MM.'
+export function toPeriodLabel(yearMonth: string | undefined): string {
+  if (!yearMonth) return '';
+  const [year, month] = yearMonth.split('-');
+  return `${year}.${month}.`;
 }

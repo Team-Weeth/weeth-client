@@ -1,7 +1,7 @@
 ---
 name: write-tests
-description: "Writes Jest + React Testing Library tests for components, hooks, and pages."
-argument-hint: "[file path]"
+description: "Writes Jest + React Testing Library tests for components, hooks, and pages. Supports unit tests and integration tests with MSW."
+argument-hint: "[file path | --suggest] [--integration]"
 disable-model-invocation: true
 allowed-tools: Glob, Grep, Read, Bash, Write, Edit
 ---
@@ -10,41 +10,125 @@ allowed-tools: Glob, Grep, Read, Bash, Write, Edit
 
 Analyzes the target file and writes Jest + React Testing Library tests.
 
+For strategy, rules, and file location conventions, refer to `.claude/rules/testing.md`.
+
 ## Arguments
 
-Specify the file path to test via `$ARGUMENTS`.
-
-- `/write-tests src/components/ui/Button.tsx`
-- `/write-tests src/hooks/useAutoScroll.ts`
-- `/write-tests` (if omitted, use the currently open file in IDE or ask the user)
+- `/write-tests src/components/ui/Button.tsx` — unit test
+- `/write-tests src/hooks/useAutoScroll.ts` — hook test
+- `/write-tests src/components/board/PostList.tsx --integration` — MSW integration test
+- `/write-tests --suggest` — analyze changed files on the current branch and recommend test targets
+- `/write-tests` (omitted) — target the currently open file in the IDE, or ask the user
 
 ## Workflow (follow in order)
 
 ### 1. Identify the target file
 
-- If a path is given via `$ARGUMENTS`, use it as-is
-- Otherwise, target the currently open file in the IDE
-- If still unclear, ask the user
+| Condition | Action |
+|-----------|--------|
+| `$ARGUMENTS` is `--suggest` | Go to **[Suggest Mode]** |
+| `$ARGUMENTS` is a file path | Proceed to step 2 with that file |
+| `$ARGUMENTS` is empty | Go to **[Suggest Mode]** (automatic) |
 
-### 2. Try the generate:tests script first
+---
 
-If `ANTHROPIC_API_KEY` is set in `.env.local`, run the CLI script:
+## [Suggest Mode] `--suggest`
+
+### S1. Collect changed files on the branch
 
 ```bash
-pnpm generate:tests $ARGUMENTS
+git diff main...HEAD --name-only --diff-filter=AM
 ```
 
-- On success, show the generated file path and stop
-- If API key is missing or the script fails → proceed to step 3
+**Exclude** the following from the results:
 
-### 3. Write tests directly
+| Exclusion pattern | Reason |
+|-------------------|--------|
+| `*.d.ts` | Type declarations only |
+| `**/index.ts` | Barrel exports |
+| `src/types/**` | Types only |
+| `src/constants/**` | Constants only |
+| `src/assets/**` | Assets |
+| `src/mocks/**` | Test fixtures themselves |
+| `src/providers/**` | Thin framework integration layer |
+| `src/app/**` | Next.js framework files |
+| `**/__tests__/**` | Already test files |
+| `*.test.*` / `*.spec.*` | Already test files |
 
-Read the target file with Read, then write tests following the rules below.
+### S2. Classify each file
+
+**Quickly read** the remaining files and classify them by the following criteria:
+
+| Classification | Criteria | Recommended command |
+|----------------|----------|---------------------|
+| **Hook** | Path under `src/hooks/` and starts with `use` | `/write-tests {path}` |
+| **Integration** | Imports `useQuery` / `useSuspenseQuery` / `lib/apis/` | `/write-tests {path} --integration` |
+| **UI component** | Path under `src/components/ui/` | `/write-tests {path}` |
+| **Domain component** | `src/components/{feature}/` + no API calls | `/write-tests {path}` |
+| **Domain component** | `src/components/{feature}/` + has API calls | `/write-tests {path} --integration` |
+| **Utility** | Path under `src/lib/` | `/write-tests {path}` |
+| **Excluded** | Doesn't fit any of the above | — |
+
+### S3. Output recommendation list
+
+Output in the following format:
+
+```
+## 테스트 작성 추천 목록
+
+### 우선순위 높음
+- `src/hooks/useXxx.ts` — 커스텀 훅, 상태/사이드이펙트 로직 포함
+  → `/write-tests src/hooks/useXxx.ts`
+
+### 우선순위 중간
+- `src/components/board/PostList.tsx` — React Query 사용, API 연동
+  → `/write-tests src/components/board/PostList.tsx --integration`
+
+### 우선순위 낮음 (선택)
+- `src/components/ui/Badge.tsx` — 단순 표시 컴포넌트
+  → `/write-tests src/components/ui/Badge.tsx`
+
+### 제외됨
+- `src/constants/routes.ts` — 상수 전용
+- `src/types/post.ts` — 타입 선언만 있음
+```
+
+Priority criteria:
+- **High**: hooks, files with complex state/computation logic
+- **Medium**: API-integrated components (require integration tests)
+- **Low**: simple UI components, utilities
+
+### S4. Ask the user
+
+After outputting the recommendation list, ask:
+
+> "전체 목록을 순서대로 작성할까요, 아니면 특정 파일을 골라드릴까요?"
+
+- Proceed with all: run **[Normal Mode] from step 2** for each file in order: high → medium → low priority
+- Pick specific files: proceed only with the selected files
+
+---
+
+### 2. Determine the test type
+
+| Condition | Type |
+|-----------|------|
+| `--integration` flag present | Integration test (RTL + MSW) |
+| File fetches data via React Query / lib/apis | Integration test (RTL + MSW) |
+| Pure component / utility / hook (no API calls) | Unit test |
+
+### 3. Read the relevant example, then write the test
+
+| Type | Example file |
+|------|-------------|
+| UI component | [examples/Button.test.md](examples/Button.test.md) |
+| Hook | [examples/useMonthNavigator.test.md](examples/useMonthNavigator.test.md) |
+| Integration test (React Query + MSW) | [examples/HomeDashboard.integration.test.md](examples/HomeDashboard.integration.test.md) |
 
 #### Output path convention
 
 | Source file | Test file |
-|---|---|
+|-------------|-----------|
 | `src/components/ui/Button.tsx` | `src/components/ui/__tests__/Button.test.tsx` |
 | `src/hooks/useAutoScroll.ts` | `src/hooks/__tests__/useAutoScroll.test.ts` |
 | `src/app/page.tsx` | `src/app/__tests__/page.test.tsx` |
@@ -54,112 +138,16 @@ Extension: `.tsx` → `.test.tsx`, `.ts` → `.test.ts`
 #### Required test cases
 
 1. **Smoke test** — verify it renders without crashing
-2. **Props / variant behavior** — verify different variant props produce different visual behavior
-3. **User interactions** — include tests for clicks, inputs, and other events if present
-4. **Accessibility** — verify role, label, and other a11y attributes
+2. **Props / variant behavior** — verify different variant props produce different results
+3. **User interactions** — test events like click, input (if applicable)
+4. **Accessibility** — verify role, label, aria attributes
 
-#### Test writing rules
+#### Prohibited
 
-```tsx
-// ✅ Imports
-import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-// @testing-library/jest-dom is globally registered — no import needed
-
-// ✅ Always use userEvent.setup()
-const user = userEvent.setup();
-await user.click(element);
-
-// ✅ Query priority
-// getByRole > getByLabelText > getByText > getByTestId
-
-// ❌ Forbidden
-// Do not assert Tailwind class names: expect(el).toHaveClass('bg-button-primary')
-// Do not re-mock next/image or next/navigation (already handled in jest.setup.ts)
-// Do not test implementation details (internal state, direct ref access, etc.)
-```
-
-#### cva variant test pattern
-
-```tsx
-it.each([
-  ['primary'],
-  ['secondary'],
-] as const)('renders variant=%s', (variant) => {
-  render(<Component variant={variant} />);
-  expect(screen.getByRole('button')).toBeInTheDocument();
-});
-```
-
-#### forwardRef component
-
-```tsx
-it('attaches ref to the DOM element', () => {
-  const ref = React.createRef<HTMLButtonElement>();
-  render(<Button ref={ref}>Click</Button>);
-  expect(ref.current).toBeInstanceOf(HTMLButtonElement);
-});
-```
-
-#### Hook tests — renderHook + act
-
-For hook files (`.ts`), use `renderHook` + `act` instead of `render`.
-
-```tsx
-import { renderHook, act } from '@testing-library/react';
-import { useCounter } from '@/hooks/useCounter';
-
-// ✅ Basic usage — check initial value
-it('initial count is 0', () => {
-  const { result } = renderHook(() => useCounter());
-  expect(result.current.count).toBe(0);
-});
-
-// ✅ State change — wrap in act()
-it('increments count by 1 when increment is called', () => {
-  const { result } = renderHook(() => useCounter());
-  act(() => {
-    result.current.increment();
-  });
-  expect(result.current.count).toBe(1);
-});
-
-// ✅ Async state change — await act()
-it('fills data after async fetch', async () => {
-  const { result } = renderHook(() => useFetchData());
-  await act(async () => {
-    await result.current.load();
-  });
-  expect(result.current.data).not.toBeNull();
-});
-
-// ✅ Props change — rerender
-it('resets count when initialValue prop changes', () => {
-  const { result, rerender } = renderHook(
-    ({ initialValue }) => useCounter(initialValue),
-    { initialProps: { initialValue: 0 } },
-  );
-  rerender({ initialValue: 10 });
-  expect(result.current.count).toBe(10);
-});
-
-// ✅ Hooks that need userEvent (DOM interaction)
-it('responds to input events', async () => {
-  const user = userEvent.setup();
-  const { result } = renderHook(() => useSearch());
-
-  const input = document.createElement('input');
-  document.body.appendChild(input);
-
-  await user.type(input, 'hello');
-  // assert result.current state ...
-});
-```
-
-> **Rules**
-> - All hook calls that cause state or side effects must run inside `act()`
-> - Async hooks: `await act(async () => { ... })`
-> - Isolate external dependencies (APIs, timers) with `jest.mock` / `jest.useFakeTimers`
+- No asserting Tailwind class names: `expect(el).toHaveClass('bg-button-primary')` ❌
+- No re-mocking `next/image` or `next/navigation` (already handled in `jest.setup.tsx`)
+- No testing implementation details (internal state, direct ref access)
+- Always use `userEvent.setup()`; `fireEvent` is forbidden
 
 ### 4. Handle existing tests
 
@@ -167,11 +155,140 @@ If the test file already exists:
 - Keep all currently passing tests
 - Only add missing cases (incremental update)
 
-### 5. After completion
+### 5. After completion — run tests and check coverage
 
-- Show the created/modified file path as a link
-- Ask the user whether to run `pnpm test`
+#### 5-1. Collect test files written on the current branch
 
-## Supporting Files
+```bash
+git diff main...HEAD --name-only --diff-filter=AM | grep -E '(__tests__|\.test\.|\.spec\.)'
+```
 
-- Example test: [examples/Button.test.md](examples/Button.test.md)
+#### 5-2. Derive source file paths
+
+Calculate the corresponding source file from each test file path:
+
+| Test file | Source file |
+|-----------|-------------|
+| `src/hooks/__tests__/useFoo.test.ts` | `src/hooks/useFoo.ts` |
+| `src/components/ui/__tests__/Button.test.tsx` | `src/components/ui/Button.tsx` |
+
+Rule: remove `__tests__/` + `.test.ts` → `.ts` / `.test.tsx` → `.tsx`
+
+#### 5-3. Run Jest tests with coverage
+
+Run using the collected test files and source files:
+
+```bash
+pnpm test <test-file-1> <test-file-2> ... --coverage --collectCoverageFrom='["<source-file-1>","<source-file-2>",...]'
+```
+
+#### 5-4. Handle Jest results
+
+| Result | Action |
+|--------|--------|
+| All PASS | Proceed to step 5-5 |
+| Some FAIL | Fix failing cases, then re-run 5-3 |
+
+#### 5-5. Playwright E2E (conditional)
+
+Run the related E2E spec if any of the source files match the patterns below. Skip if none match.
+
+| Source file path pattern | Spec to run |
+|--------------------------|-------------|
+| `src/hooks/useNavigationGuard*` | `e2e/specs/post-write.spec.ts` `e2e/specs/post-edit.spec.ts` |
+| `src/components/board/Editor/**` | `e2e/specs/editor.spec.ts` |
+| `src/components/board/PostCard/**` | `e2e/specs/post-write.spec.ts` `e2e/specs/post-edit.spec.ts` |
+| `src/hooks/board/**` (post-related) | `e2e/specs/post-write.spec.ts` `e2e/specs/post-edit.spec.ts` |
+
+```bash
+# DEV_ACCESS_TOKEN must be set in .env.local
+pnpm exec playwright test <matching-spec-file>
+```
+
+| Result | Action |
+|--------|--------|
+| All PASS | Proceed to step 6 |
+| FAIL — caused by this branch | Review together with Jest fixes |
+| FAIL — pre-existing unrelated failure | Document the cause, then proceed to step 6 |
+
+### 6. Record coverage documentation
+
+After all tests PASS, record the measurements in `docs/아키텍처/테스트-커버리지/`.
+
+#### 6-1. Determine the domain file
+
+Extract the domain from the source file path:
+
+| Source file path pattern | Domain file |
+|--------------------------|-------------|
+| `src/components/board/**` | `docs/아키텍처/테스트-커버리지/board.md` |
+| `src/components/admin/**` | `docs/아키텍처/테스트-커버리지/admin.md` |
+| `src/components/auth/**` | `docs/아키텍처/테스트-커버리지/auth.md` |
+| `src/components/home/**` | `docs/아키텍처/테스트-커버리지/home.md` |
+| `src/components/mypage/**` | `docs/아키텍처/테스트-커버리지/mypage.md` |
+| `src/components/ui/**` | `docs/아키텍처/테스트-커버리지/ui.md` |
+| `src/hooks/**` | `docs/아키텍처/테스트-커버리지/hooks.md` |
+| `src/lib/**` | `docs/아키텍처/테스트-커버리지/lib.md` |
+| Multiple domains mixed | Record separately in each domain file |
+
+#### 6-2. Update the domain file
+
+If the domain file **already exists**, find the section for that source file and update the numbers.
+If it **does not exist**, create it with the following format:
+
+```markdown
+# Test Coverage — {Domain} Domain
+
+Records unit/hook test coverage for files under `src/components/{domain}/`.
+
+---
+
+## {Component/Hook Group Name} (`src/...`)
+
+**Measured**: YYYY-MM-DD
+**Test file**: `src/.../__tests__/`
+**Total tests**: N
+
+### Coverage by file
+
+| File | Statements | Branches | Functions | Lines |
+|------|-----------|---------|---------|-------|
+| `filename.ts` | X% | X% | X% | X% |
+| **Overall average** | X% | X% | X% | X% |
+
+### Test composition
+
+#### `filename.test.ts` (N tests)
+
+One-line description.
+
+| Case | What is verified |
+|------|-----------------|
+| ... | ... |
+
+### Uncovered branches
+
+| Line | Content | Reason |
+|------|---------|--------|
+| ... | ... | ... |
+
+---
+
+## Planned
+
+| File | Priority | Notes |
+|------|----------|-------|
+| ... | ... | ... |
+```
+
+If there are no uncovered branches, omit that section.
+
+#### 6-3. Update the index file
+
+If the domain is not already in the domain list table of `docs/아키텍처/테스트-커버리지.md`, add one row:
+
+```markdown
+| {domain} | [[테스트-커버리지/{domain}]] | YYYY-MM-DD |
+```
+
+If it already exists, only update the last measured date.

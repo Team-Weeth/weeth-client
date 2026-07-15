@@ -1,8 +1,13 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams, usePathname, useRouter } from 'next/navigation';
-import { AdminForumIcon, AdminCalendarIcon, AdminSettingIcon } from '@/assets/icons/admin';
+import {
+  AdminForumIcon,
+  AdminCalendarIcon,
+  AdminSettingIcon,
+  AdminDuesIcon,
+} from '@/assets/icons/admin';
 import { CheckRoundIcon, ExitIcon, PeopleIcon } from '@/assets/icons';
 
 import {
@@ -11,6 +16,7 @@ import {
   AlertDialogCancel,
   TooltipProvider,
 } from '@/components/ui';
+import { useMediaQuery } from '@/hooks';
 import { cn } from '@/lib/cn';
 import { LNBHeader } from '@/components/admin/layout/LNBHeader';
 import { LNBClubInfo } from '@/components/admin/layout/LNBClubInfo';
@@ -23,8 +29,15 @@ function LNB() {
   const pathname = usePathname();
   const router = useRouter();
   const { clubId } = useParams<{ clubId: string }>();
+  // tablet(696px) 미만에서는 기본적으로 접힌 상태로 시작
+  const isBelowTablet = useMediaQuery('(max-width: 695.98px)');
   const [collapsed, setCollapsed] = useState(false);
   const [serviceDialogOpen, setServiceDialogOpen] = useState(false);
+
+  // 브레이크포인트를 넘나들 때 기본 접힘 상태를 동기화
+  useEffect(() => {
+    setCollapsed(isBelowTablet);
+  }, [isBelowTablet]);
 
   const servicePath = `/${clubId}/home`;
 
@@ -43,6 +56,7 @@ function LNB() {
       path: `/${clubId}/admin/attendance`,
     },
     { id: 'board', icon: AdminForumIcon, label: '게시판 관리', path: `/${clubId}/admin/board` },
+    { id: 'dues', icon: AdminDuesIcon, label: '회비 관리', path: `/${clubId}/admin/dues` },
   ];
 
   const infoNavItems = [

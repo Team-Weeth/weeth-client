@@ -43,6 +43,8 @@ function HeroSectionMobile({ className }: HeroSectionProps) {
           src={MobileHeroSectionCardImage}
           alt="Hero Section Card Image"
           fill
+          priority
+          sizes="335px"
           className="object-contain"
         />
       </motion.div>

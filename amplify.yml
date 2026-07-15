@@ -4,16 +4,20 @@ frontend:
     preBuild:
       commands:
         - corepack enable
-        - corepack prepare pnpm@latest --activate
+        - corepack prepare pnpm@10.28.0 --activate
         - pnpm install --frozen-lockfile
     build:
       commands:
         - |
           set -e
-          matched=$(env | grep -E '^(PREVIEW_ACCESS_TOKEN|CLUB_ID)=') || grep_status=$?
+          matched=$(env | grep -E '^(PREVIEW_ACCESS_TOKEN|CLUB_ID|NEXT_PUBLIC_SENTRY_DSN)=') || grep_status=$?
           if [ "${grep_status:-0}" -gt 1 ]; then exit "$grep_status"; fi
           if [ -n "$matched" ]; then printf '%s\n' "$matched" >> .env.production; fi
+          printf 'NEXT_PUBLIC_SENTRY_RELEASE=%s\n' "$AWS_COMMIT_ID" >> .env.production
         - pnpm build
+    postBuild:
+      commands:
+        - find .next -name "*.map" -type f -delete
   artifacts:
     baseDirectory: .next
     files:

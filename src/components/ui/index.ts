@@ -5,6 +5,9 @@
 export { Button, buttonVariants } from './Button';
 export type { ButtonProps } from './Button';
 
+export { Checkbox, checkboxVariants } from './Checkbox';
+export type { CheckboxProps } from './Checkbox';
+
 export { Input } from './Input';
 export type { InputProps } from './Input';
 
@@ -135,7 +138,14 @@ export {
 export { Progress } from './progress';
 export { ProgressBar, type ProgressBarProps } from './ProgressBar';
 
-export { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from './Tooltip';
+export {
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
+  TooltipProvider,
+  tooltipContentVariants,
+} from './Tooltip';
+export type { TooltipContentProps } from './Tooltip';
 
 export { FormCard, type FormCardProps } from './FormCard';
 
@@ -155,3 +165,15 @@ export { Switch, type SwitchProps } from './Switch';
 
 export { MobileBlocker, type MobileBlockerProps } from './MobileBlocker';
 export { BackOrHomeButton, type BackOrHomeButtonProps } from './BackOrHomeButton';
+
+export { ChartContainer, type ChartConfig } from './chart';
+
+export {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationPrevious,
+  PaginationNext,
+  PaginationEllipsis,
+} from './pagination';

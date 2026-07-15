@@ -1,0 +1,73 @@
+import { useEffect, useRef, useState } from 'react';
+
+import { useUpdateMemberVisibility } from '@/hooks/mutations/admin/useAdminDuesMutations';
+import { toastError } from '@/stores/useToastStore';
+
+/** 연타 시 마지막 값만 서버로 전송하기까지의 대기 시간(ms) */
+const TOGGLE_DEBOUNCE_MS = 300;
+
+/**
+ * 회비 내역 공개 여부 토글 상태 + 낙관적 업데이트 훅.
+ *
+ * 대시보드 응답의 `memberVisible`로 초기화하고, 이후 서버 값이 바뀌면
+ * (기수 변경·mutation 후 refetch) 렌더 중에 로컬 토글 상태를 재동기화한다.
+ * 스위치는 즉시 반영하고, 실제 요청은 debounce하여 연타의 마지막 값만 전송한다.
+ * 요청이 실패하면 서버 값 기준으로 되돌린다.
+ */
+export function useDuesVisibilityToggle(
+  clubId: string,
+  accountId: number | null,
+  serverIsPublic: boolean | undefined,
+) {
+  const [isPublic, setIsPublic] = useState(serverIsPublic ?? true);
+  const [syncedValue, setSyncedValue] = useState(serverIsPublic);
+  // debounce 콜백이 타이머 설정 시점의 stale한 syncedValue를 참조하지 않도록 ref로 미러링한다.
+  const syncedValueRef = useRef(syncedValue);
+  const debounceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // 서버 값이 도착/변경되면 서버 기준으로 재동기화 (낙관적 토글은 그대로 두기 위해 값 변화 시에만)
+  if (serverIsPublic !== undefined && serverIsPublic !== syncedValue) {
+    setSyncedValue(serverIsPublic);
+    setIsPublic(serverIsPublic);
+  }
+
+  // syncedValue의 ref 미러링은 렌더를 순수하게 유지하기 위해 렌더 밖(effect)에서 처리한다.
+  useEffect(() => {
+    syncedValueRef.current = syncedValue;
+  }, [syncedValue]);
+
+  const { mutate: updateMemberVisibility } = useUpdateMemberVisibility(clubId, {
+    onError: () => toastError('공개 설정 변경에 실패했습니다.'),
+  });
+
+  // 언마운트 후 대기 중인 debounce 타이머가 mutation을 실행하지 않도록 정리한다.
+  useEffect(() => {
+    return () => {
+      if (debounceTimerRef.current) clearTimeout(debounceTimerRef.current);
+    };
+  }, []);
+
+  // 스위치는 즉시 반영하고, 서버 요청만 debounce하여 연타의 마지막 값만 보낸다.
+  const handlePublicChange = (value: boolean) => {
+    setIsPublic(value);
+
+    if (debounceTimerRef.current) clearTimeout(debounceTimerRef.current);
+    debounceTimerRef.current = setTimeout(() => {
+      debounceTimerRef.current = null;
+      // 연타로 마지막 값이 직전 반영값과 같아졌으면(원위치) 불필요한 요청을 생략한다.
+      const appliedValue = syncedValueRef.current;
+      if (value === appliedValue) return;
+      // 전송한 값을 기준값(baseline)으로 즉시 반영한다. 서버 refetch(memberVisible)가
+      // 도착하기 전 구간에서 같은 방향으로의 다음 토글이 no-op으로 걸러지지 않게 한다.
+      syncedValueRef.current = value;
+      updateMemberVisibility(value, {
+        onError: () => {
+          syncedValueRef.current = appliedValue;
+          setIsPublic(appliedValue ?? !value);
+        },
+      });
+    }, TOGGLE_DEBOUNCE_MS);
+  };
+
+  return { isPublic, handlePublicChange };
+}

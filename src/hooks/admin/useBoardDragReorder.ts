@@ -6,7 +6,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import type { DragEndEvent } from '@dnd-kit/core';
 
 import { useClubId } from '@/stores';
-import { adminBoardQueryKeys } from '@/hooks/queries/admin/boardQueryKeys';
+import { adminQueryKeys } from '@/hooks/queries/admin/adminQueryKeys';
 import type { Board, BoardListCache } from '@/types/admin/board';
 
 interface UseBoardDragReorderParams {
@@ -25,7 +25,7 @@ function useBoardDragReorder({ onReorder, debounceMs = 500 }: UseBoardDragReorde
   const clubId = useClubId();
   const reorderTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const cacheKey = adminBoardQueryKeys.list(clubId);
+  const cacheKey = adminQueryKeys.boards(clubId);
 
   const handleDragStart = () => {
     if (reorderTimerRef.current) {

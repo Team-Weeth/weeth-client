@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, Card, Skeleton } from '@/components/ui';
@@ -20,26 +20,23 @@ function AttendancePageContent() {
   const isDirty = dirtyCardIds.size > 0;
   const { open, onConfirm, onCancel } = useNavigationGuard({ enabled: isDirty });
 
-  const handleDirtyChange = useCallback((sessionId: number, dirty: boolean) => {
+  const handleDirtyChange = (sessionId: number, dirty: boolean) => {
     setDirtyCardIds((prev) => {
       const next = new Set(prev);
       if (dirty) next.add(sessionId);
       else next.delete(sessionId);
       return next;
     });
-  }, []);
+  };
 
-  const handleCardinalSelect = useCallback(
-    (id: number | null) => {
-      if (isDirty) {
-        setPendingCardinalId(id);
-        setCardinalDialogOpen(true);
-      } else {
-        setSelectedCardinalId(id);
-      }
-    },
-    [isDirty, setSelectedCardinalId],
-  );
+  const handleCardinalSelect = (id: number | null) => {
+    if (isDirty) {
+      setPendingCardinalId(id);
+      setCardinalDialogOpen(true);
+    } else {
+      setSelectedCardinalId(id);
+    }
+  };
 
   const confirmCardinalChange = () => {
     setDirtyCardIds(new Set());
@@ -71,7 +68,7 @@ function AttendancePageContent() {
   }, [sessions, targetSessionId]);
 
   return (
-    <div className="flex min-w-0 flex-col gap-400 p-700">
+    <div className="tablet:p-700 flex min-w-0 flex-col gap-400 p-400">
       <CardinalDropdown
         cardinals={cardinals}
         activeCardinal={activeCardinal}
@@ -80,16 +77,16 @@ function AttendancePageContent() {
       />
 
       {isLoading ? (
-        <Card className="mt-400 gap-400 overflow-x-auto px-600 pt-600 pb-[64px]">
-          <div className="min-w-172.5">
+        <Card className="tablet:px-600 tablet:pt-600 mt-400 gap-400 px-400 pt-400 pb-[64px]">
+          <div className="w-full">
             {Array.from({ length: 4 }, (_, i) => (
               <Skeleton key={i} className="mt-400 h-[72px] w-full rounded-md first:mt-0" />
             ))}
           </div>
         </Card>
       ) : sessions.length > 0 ? (
-        <Card className="mt-400 gap-400 overflow-x-auto px-600 pt-600 pb-[64px]">
-          <div className="flex min-w-172.5 flex-col gap-400">
+        <Card className="tablet:px-600 tablet:pt-600 mt-400 gap-400 px-400 pt-400 pb-[64px]">
+          <div className="flex w-full flex-col gap-400">
             {sessions.map((session) => (
               <AttendanceSessionCard
                 key={session.id}
@@ -103,8 +100,8 @@ function AttendancePageContent() {
           </div>
         </Card>
       ) : (
-        <Card className="mt-400 flex items-center justify-center overflow-x-auto px-600 py-800">
-          <div className="min-w-172.5 text-center">
+        <Card className="tablet:px-600 mt-400 flex items-center justify-center px-400 py-800">
+          <div className="w-full text-center">
             <span className="typo-body1 text-text-alternative">등록된 정기모임이 없습니다.</span>
           </div>
         </Card>

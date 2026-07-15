@@ -6,12 +6,13 @@ import type { ClubMemberRole, Member } from '@/types/admin/member';
 import { useClubId } from '@/stores';
 import { useUserStore } from '@/stores/useUserStore';
 import { ROLE_MAP } from '@/utils/admin/memberMapper';
+import { adminQueryKeys } from '@/hooks/queries/admin/adminQueryKeys';
 
 // 멤버 권한 변경
 export function useChangeMemberRole() {
   const queryClient = useQueryClient();
   const clubId = useClubId();
-  const queryKey = ['admin', 'members', clubId];
+  const queryKey = adminQueryKeys.members(clubId);
 
   return useMutation({
     mutationFn: ({
@@ -53,7 +54,7 @@ export function useChangeMemberRole() {
 export function useBanMember() {
   const queryClient = useQueryClient();
   const clubId = useClubId();
-  const queryKey = ['admin', 'members', clubId];
+  const queryKey = adminQueryKeys.members(clubId);
 
   return useMutation({
     mutationFn: (clubMemberId: number) => {
@@ -85,7 +86,7 @@ export function useBanMember() {
 export function useChangeMemberCardinals() {
   const queryClient = useQueryClient();
   const clubId = useClubId();
-  const queryKey = ['admin', 'members', clubId];
+  const queryKey = adminQueryKeys.members(clubId);
 
   return useMutation({
     mutationFn: ({
@@ -126,7 +127,7 @@ export function useChangeMemberCardinals() {
 export function useTransferLead() {
   const queryClient = useQueryClient();
   const clubId = useClubId();
-  const queryKey = ['admin', 'members', clubId];
+  const queryKey = adminQueryKeys.members(clubId);
 
   return useMutation({
     mutationFn: (clubMemberId: number) => {
@@ -147,7 +148,7 @@ export function useTransferLead() {
 export function useRestoreMember() {
   const queryClient = useQueryClient();
   const clubId = useClubId();
-  const queryKey = ['admin', 'members', clubId];
+  const queryKey = adminQueryKeys.members(clubId);
 
   return useMutation({
     mutationFn: (clubMemberId: number) => {

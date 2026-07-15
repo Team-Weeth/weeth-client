@@ -34,8 +34,12 @@ function DiscardAlertDialog({
     setOpen(nextOpen);
     if (nextOpen && triggerRef.current) {
       const rect = triggerRef.current.getBoundingClientRect();
+      const viewportWidth = window.innerWidth;
+      const dialogWidth = Math.min(339, viewportWidth - 16);
+      const margin = 8;
       const top = rect.bottom + 8;
-      const left = placement === 'below-right' ? rect.left : rect.right - 339;
+      const rawLeft = placement === 'below-right' ? rect.left : rect.right - dialogWidth;
+      const left = Math.min(Math.max(rawLeft, margin), viewportWidth - dialogWidth - margin);
       setPosition({ top, left });
     }
   };
@@ -51,7 +55,7 @@ function DiscardAlertDialog({
         />
         <AlertDialogPrimitive.Content
           style={position ? { top: position.top, left: position.left } : undefined}
-          className="bg-background border-line data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 fixed z-50 w-[339px] rounded-lg border shadow-[0px_10px_40px_0px_rgba(0,0,0,0.5)] duration-200"
+          className="bg-background border-line data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 fixed z-50 w-[339px] max-w-[calc(100vw-16px)] rounded-lg border shadow-[0px_10px_40px_0px_rgba(0,0,0,0.5)] duration-200"
         >
           <div className="flex flex-col items-center gap-600 px-400 py-400">
             <div className="bg-state-error/10 flex items-center rounded-full p-300">

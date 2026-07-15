@@ -15,3 +15,4 @@ export * from './UserProfileHeader';
 export * from './CardinalMissingModal';
 export * from './ProfileIncompleteModal';
 export * from './EmptyBox';
+export * from './NoticePopup';

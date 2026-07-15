@@ -1,0 +1,197 @@
+'use client';
+
+import {
+  Icon,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui';
+import { MoreHorizIcon } from '@/assets/icons';
+import { cn } from '@/lib/cn';
+import { DuesPagination } from '@/components/admin/dues/setup/components';
+import { TableTabFilter } from '@/components/admin/dues/TableTabFilter';
+import type {
+  DuesTransaction,
+  TransactionCounts,
+  TransactionFilter,
+  TransactionType,
+} from '@/types/admin/dues';
+import { formatAmount } from '@/lib/formatAmount';
+
+interface TabConfig {
+  key: TransactionFilter;
+  label: string;
+  count: number;
+}
+
+interface DuesTransactionTableProps extends React.HTMLAttributes<HTMLDivElement> {
+  transactions: DuesTransaction[];
+  /** 필터 탭별 거래 건수 (서버 집계) */
+  counts: TransactionCounts;
+  /** 현재 활성 필터 탭 */
+  activeTab: TransactionFilter;
+  onTabChange: (tab: TransactionFilter) => void;
+  /** true = 최근 순(LATEST), false = 오래된 순(OLDEST) */
+  sortDesc: boolean;
+  onSortToggle: () => void;
+  /** 현재 페이지 (1-base) */
+  page: number;
+  totalPages: number;
+  onPageChange: (page: number) => void;
+  onMoreClick?: (transaction: DuesTransaction) => void;
+}
+
+/** 거래내역 타입별 태그 라벨/색상 */
+const TRANSACTION_TYPE_TAG: Record<TransactionType, { label: string; className: string }> = {
+  CARRY_OVER: { label: '이월', className: 'bg-brand-secondary/10 text-brand-secondary' },
+  DUES: { label: '회비', className: 'bg-brand-primary/10 text-brand-primary' },
+  INCOME: { label: '수입', className: 'bg-state-success/10 text-state-success' },
+  EXPENSE: { label: '지출', className: 'bg-state-error/10 text-state-error' },
+  REFUND: { label: '환불', className: 'bg-text-alternative/10 text-text-alternative' },
+};
+
+function TransactionTypeTag({ type }: { type: TransactionType }) {
+  const { label, className } = TRANSACTION_TYPE_TAG[type];
+  return <span className={cn('typo-caption1 tag-base', className)}>{label}</span>;
+}
+
+function DuesTransactionTable({
+  className,
+  transactions,
+  counts,
+  activeTab,
+  onTabChange,
+  sortDesc,
+  onSortToggle,
+  page,
+  totalPages,
+  onPageChange,
+  onMoreClick,
+  ...props
+}: DuesTransactionTableProps) {
+  const tabs: TabConfig[] = [
+    { key: 'ALL', label: '전체', count: counts.all },
+    { key: 'EXPENSE', label: '지출', count: counts.expense },
+    { key: 'INCOME', label: '수입', count: counts.income },
+    { key: 'DUES', label: '회비', count: counts.dues },
+  ];
+
+  return (
+    <div
+      className={cn('bg-container-neutral flex flex-col gap-600 rounded-lg p-450', className)}
+      {...props}
+    >
+      <span className="typo-h3 text-text-strong">거래 내역</span>
+
+      <div className="flex flex-col gap-400">
+        {/* Chips + Sort */}
+        <TableTabFilter
+          tabs={tabs}
+          activeTab={activeTab}
+          onTabChange={onTabChange}
+          sortLabel={sortDesc ? '최근 순' : '오래된 순'}
+          onSortToggle={onSortToggle}
+        />
+        <div className="border-line overflow-x-auto rounded-sm border">
+          <Table>
+            <TableHeader className="bg-container-neutral-alternative">
+              <TableRow className="border-line border-b hover:bg-transparent">
+                <TableHead className="typo-body2 text-text-alternative w-[88px]">상태</TableHead>
+                <TableHead className="typo-body2 text-text-alternative min-w-32">
+                  수입/지출 내용
+                </TableHead>
+                <TableHead className="typo-body2 text-text-alternative min-w-32">거래처</TableHead>
+                <TableHead className="typo-body2 text-text-alternative w-32">금액(원)</TableHead>
+                <TableHead className="typo-body2 text-text-alternative w-32">총 잔액</TableHead>
+                <TableHead className="typo-body2 text-text-alternative tablet:table-cell hidden w-32">
+                  일자
+                </TableHead>
+                <TableHead className="tablet:table-cell hidden w-14" />
+                <TableHead className="tablet:table-cell hidden w-14" />
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {transactions.length === 0 ? (
+                <TableRow className="hover:bg-transparent">
+                  <TableCell colSpan={8} className="py-700 text-center">
+                    <span className="typo-body2 text-text-alternative">거래 내역이 없습니다.</span>
+                  </TableCell>
+                </TableRow>
+              ) : (
+                transactions.map((tx) => (
+                  <TableRow
+                    key={tx.id}
+                    onClick={() => onMoreClick?.(tx)}
+                    className="border-line hover:bg-container-neutral-interaction cursor-pointer border-t"
+                  >
+                    <TableCell>
+                      <TransactionTypeTag type={tx.type} />
+                    </TableCell>
+                    <TableCell className="typo-body2 text-text-strong">{tx.content}</TableCell>
+                    <TableCell className="typo-body2 text-text-strong">{tx.counterparty}</TableCell>
+                    <TableCell
+                      className={cn(
+                        'typo-body2',
+                        tx.direction === 'INCOME' ? 'text-state-success' : 'text-state-error',
+                      )}
+                    >
+                      <span className="flex items-center gap-100">
+                        <span>{tx.direction === 'INCOME' ? '+' : '-'}</span>
+                        <span>{formatAmount(tx.amount)}</span>
+                      </span>
+                    </TableCell>
+                    <TableCell className="typo-body2 text-text-strong">
+                      {formatAmount(tx.balanceAfter)}
+                    </TableCell>
+                    <TableCell className="typo-body2 text-text-strong tablet:table-cell hidden">
+                      {tx.date}
+                    </TableCell>
+                    {/* TODO: 영수증 정상화시 복구 */}
+                    {/* <TableCell className="tablet:table-cell hidden">
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          if (tx.receiptUrl) setReceiptUrl(tx.receiptUrl);
+                        }}
+                        disabled={!tx.receiptUrl}
+                        className="text-icon-alternative hover:text-icon-strong cursor-pointer disabled:cursor-not-allowed disabled:opacity-40"
+                        aria-label="영수증 보기"
+                      >
+                        <Icon src={AdminReceiptIcon} alt="영수증" size={24} />
+                      </button>
+                    </TableCell> */}
+                    <TableCell className="tablet:table-cell hidden">
+                      <button
+                        type="button"
+                        onClick={() => onMoreClick?.(tx)}
+                        className="text-icon-alternative hover:text-icon-strong cursor-pointer"
+                        aria-label="더보기"
+                      >
+                        <Icon src={MoreHorizIcon} alt="더보기" size={16} />
+                      </button>
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
+            </TableBody>
+          </Table>
+        </div>
+
+        {totalPages > 1 && (
+          <DuesPagination page={page} totalPages={totalPages} onPageChange={onPageChange} />
+        )}
+      </div>
+    </div>
+  );
+}
+
+export {
+  DuesTransactionTable,
+  TRANSACTION_TYPE_TAG,
+  type DuesTransactionTableProps,
+  type TransactionType,
+};

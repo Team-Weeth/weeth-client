@@ -12,6 +12,8 @@ import {
   Minus,
   ImageIcon,
   Paperclip,
+  Link2,
+  Table2,
 } from 'lucide-react';
 import { MenuItem } from '@/types/editor';
 
@@ -75,6 +77,13 @@ export const STYLE_ITEMS: MenuItem[] = [
     icon: Minus,
     command: (editor: TiptapEditor) => editor.chain().focus().setHorizontalRule().run(),
   },
+  {
+    label: '표',
+    description: 'Alt+T',
+    icon: Table2,
+    command: (editor: TiptapEditor) =>
+      editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run(),
+  },
 ];
 
 export function createMediaItems(
@@ -93,4 +102,12 @@ export function createMediaItems(
       command: () => openFilePicker(),
     },
   ];
+}
+
+export function createLinkItem(openLinkInput: () => void): MenuItem {
+  return {
+    label: '링크',
+    icon: Link2,
+    command: () => openLinkInput(),
+  };
 }

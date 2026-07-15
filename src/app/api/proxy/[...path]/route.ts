@@ -3,6 +3,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { API_BASE_PATH } from '@/constants/api';
 import { ACCESS_TOKEN_KEY } from '@/lib/apis/cookies';
 
+// Vercel hobby 플랜 최대값 300s (Amplify는 별도 Lambda 타임아웃 설정으로 대응)
+export const maxDuration = 300;
+
 async function handler(request: NextRequest, { params }: { params: Promise<{ path: string[] }> }) {
   if (!API_BASE_PATH) {
     return NextResponse.json({ error: 'API URL not configured' }, { status: 500 });
@@ -25,6 +28,7 @@ async function handler(request: NextRequest, { params }: { params: Promise<{ pat
   }
 
   const hasBody = request.method !== 'GET' && request.method !== 'HEAD';
+  const isSSERequest = request.headers.get('accept')?.includes('text/event-stream');
 
   const response = await fetch(url.toString(), {
     method: request.method,
@@ -35,23 +39,66 @@ async function handler(request: NextRequest, { params }: { params: Promise<{ pat
   } as RequestInit);
 
   const responseHeaders = new Headers(response.headers);
-  responseHeaders.delete('transfer-encoding');
   responseHeaders.delete('content-encoding');
   responseHeaders.delete('set-cookie');
 
-  const isSSE =
-    request.headers.get('accept')?.includes('text/event-stream') && response.ok && response.body;
-
-  if (isSSE) {
+  if (isSSERequest && response.ok && response.body) {
     responseHeaders.set('content-type', 'text/event-stream');
     responseHeaders.set('cache-control', 'no-cache');
+    responseHeaders.set('connection', 'keep-alive');
+    // 중간 프록시 버퍼링 비활성화
+    responseHeaders.set('x-accel-buffering', 'no');
 
-    return new NextResponse(response.body, {
+    const KEEPALIVE_INTERVAL_MS = 30_000;
+    const encoder = new TextEncoder();
+    const keepaliveChunk = encoder.encode(': keepalive\n\n');
+
+    const { readable, writable } = new TransformStream<Uint8Array, Uint8Array>();
+    const writer = writable.getWriter();
+
+    (async () => {
+      const reader = response.body!.getReader();
+      const keepaliveTimer: ReturnType<typeof setInterval> = setInterval(async () => {
+        try {
+          await writer.write(keepaliveChunk);
+        } catch {
+          clearInterval(keepaliveTimer);
+        }
+      }, KEEPALIVE_INTERVAL_MS);
+
+      // 클라이언트 연결 종료 시 upstream reader를 취소하여 리소스 누수 방지
+      const abortHandler = () => {
+        reader.cancel().catch(() => {});
+      };
+      request.signal.addEventListener('abort', abortHandler);
+
+      try {
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          await writer.write(value);
+        }
+      } catch (e) {
+        // 클라이언트 취소(abort)로 인한 종료는 정상 흐름
+        if (!request.signal.aborted) {
+          console.error('[SSE Proxy] stream error:', e);
+        }
+        reader.cancel().catch(() => {});
+      } finally {
+        clearInterval(keepaliveTimer);
+        request.signal.removeEventListener('abort', abortHandler);
+        writer.close().catch(() => {});
+      }
+    })();
+
+    return new NextResponse(readable, {
       status: response.status,
       statusText: response.statusText,
       headers: responseHeaders,
     });
   }
+
+  responseHeaders.delete('transfer-encoding');
 
   const body = await response.arrayBuffer();
 
