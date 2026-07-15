@@ -6,6 +6,7 @@ import { CheckIcon } from '@/assets/icons';
 import {
   Avatar,
   AvatarFallback,
+  AvatarImage,
   Icon,
   Table,
   TableBody,
@@ -226,8 +227,14 @@ function DuesMemberPaymentTable({
                       </TableCell>
                       <TableCell>
                         <div className="flex items-center gap-300">
-                          <Avatar size={40}>
-                            <AvatarFallback>{member.name[0]}</AvatarFallback>
+                          <Avatar size={40} colorScheme="line">
+                            <AvatarImage
+                              key={member.id}
+                              src={member.profileImageUrl}
+                              alt="avatar"
+                              className="object-cover"
+                            />
+                            <AvatarFallback />
                           </Avatar>
                           <span className="typo-body1 text-text-normal">{member.name}</span>
                         </div>

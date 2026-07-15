@@ -10,10 +10,20 @@ import { useResetKeyOnOpen } from '@/hooks/useResetKeyOnOpen';
 interface AddTransactionModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  /** 일자 선택 가능한 최소 날짜 (YYYY-MM-DD) 총 회비 등록 시작 월 기준. */
+  minDate?: string;
+  /** 일자 선택 가능한 최대 날짜 (YYYY-MM-DD) 오늘 날짜. */
+  maxDate?: string;
   onSubmit?: (data: TransactionFormData) => void | Promise<void>;
 }
 
-function AddTransactionModal({ open, onOpenChange, onSubmit }: AddTransactionModalProps) {
+function AddTransactionModal({
+  open,
+  onOpenChange,
+  minDate,
+  maxDate,
+  onSubmit,
+}: AddTransactionModalProps) {
   const formKey = useResetKeyOnOpen(open);
   const handleClose = () => onOpenChange(false);
 
@@ -31,6 +41,8 @@ function AddTransactionModal({ open, onOpenChange, onSubmit }: AddTransactionMod
 
         <TransactionForm
           key={formKey}
+          minDate={minDate}
+          maxDate={maxDate}
           onSubmit={async (data) => {
             // 제출이 실패하면(예: 잔액 부족) 예외가 폼으로 전파돼 모달이 닫히지 않는다.
             await onSubmit?.(data);

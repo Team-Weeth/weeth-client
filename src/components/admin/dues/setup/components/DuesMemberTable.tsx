@@ -8,6 +8,7 @@ import {
   TableHeader,
   TableRow,
   Checkbox,
+  AvatarImage,
 } from '@/components/ui';
 
 import type { PaymentTarget } from '@/types/admin/dues';
@@ -78,7 +79,7 @@ function DuesMemberTable({
       </TableHeader>
       <TableBody>
         {pagedTargets.map(({ targetId, paymentTargetInfo }) => {
-          const { clubMemberId, name, department, memberRole } = paymentTargetInfo;
+          const { clubMemberId, name, department, memberRole, profileImageUrl } = paymentTargetInfo;
           const isSelected = selectedSet.has(clubMemberId);
           return (
             <TableRow
@@ -99,8 +100,13 @@ function DuesMemberTable({
               )}
               <TableCell>
                 <div className="flex items-center gap-300">
-                  <Avatar size={40}>
-                    <AvatarFallback>{name[0]}</AvatarFallback>
+                  <Avatar size={40} colorScheme="line">
+                    <AvatarImage
+                      key={clubMemberId ?? 'fallback'}
+                      src={profileImageUrl ?? ''}
+                      alt="avatar"
+                    />
+                    <AvatarFallback />
                   </Avatar>
                   <span className="typo-body1 text-text-normal">{name}</span>
                 </div>

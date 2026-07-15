@@ -45,6 +45,7 @@ function toDuesMember(target: PaymentTarget): DuesMember {
     major: paymentTargetInfo.department,
     phone: paymentTargetInfo.tel,
     status: toMemberStatus(target),
+    profileImageUrl: paymentTargetInfo.profileImageUrl ?? '',
   };
 }
 

@@ -97,7 +97,7 @@ function useRestoreDuesDraft(clubId: string, accountId: number | null, cardinalN
     // (REVIEW까지 완료한 경우엔 마지막 단계(5)에 머문다.)
     const completedStep = STEP_MAP[registrationStep];
     if (completedStep) {
-      goToStep(Math.min(completedStep + 1, LAST_STEP));
+      goToStep(Math.min(completedStep, LAST_STEP));
     }
   };
 

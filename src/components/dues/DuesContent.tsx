@@ -16,7 +16,7 @@ import {
 import { DuesTransactionSection } from '@/components/dues/DuesTransactionSection';
 import { useDuesCardinals, useDuesMe, useDuesTransactions } from '@/hooks/queries';
 import { parseApiError } from '@/lib/error';
-import { useClubId } from '@/stores';
+import { useClubId, useSelectedCardinalNumber, useSelectedCardinalActions } from '@/stores';
 
 const HELP_MAIL_ADDRESS = 'help@weeth.kr';
 
@@ -42,7 +42,8 @@ function DuesContent({ initialIsPrivate = false }: DuesContentProps) {
 
 function DuesInteractiveContent() {
   const clubId = useClubId();
-  const [selectedCardinalId, setSelectedCardinalId] = useState<number | null>(null);
+  const selectedCardinalNumber = useSelectedCardinalNumber(clubId, 'dues');
+  const { select } = useSelectedCardinalActions();
   const [isCardinalTransitioning, setIsCardinalTransitioning] = useState(false);
   const transitionTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const {
@@ -62,8 +63,12 @@ function DuesInteractiveContent() {
     },
     undefined,
   );
+  // 스토어에 저장된 기수 번호를 현재 기수 목록에서 되찾는다.
+  // (기수가 사라졌으면 매칭되지 않아 자동으로 최신 기수로 대체된다)
   const selectedCardinal =
-    cardinals.find((cardinal) => cardinal.id === selectedCardinalId) ?? latestCardinal;
+    (selectedCardinalNumber != null
+      ? cardinals.find((cardinal) => cardinal.cardinalNumber === selectedCardinalNumber)
+      : undefined) ?? latestCardinal;
   const {
     data: dues,
     isLoading: isDuesLoading,
@@ -106,7 +111,10 @@ function DuesInteractiveContent() {
   const handleSelectCardinal = (cardinalId: number) => {
     if (selectedCardinal?.id === cardinalId) return;
 
-    setSelectedCardinalId(cardinalId);
+    const target = cardinals.find((cardinal) => cardinal.id === cardinalId);
+    if (!clubId || !target) return;
+
+    select(clubId, 'dues', target.cardinalNumber);
     setIsCardinalTransitioning(true);
 
     if (transitionTimeoutRef.current) {

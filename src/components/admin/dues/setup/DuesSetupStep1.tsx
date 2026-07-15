@@ -15,7 +15,6 @@ import { useCreateDuesDraft, useDiscardDuesDraft, useSaveDuesBasic } from '@/hoo
 
 import {
   DuesSetupStepIndicator,
-  DuesDraftAlert,
   FormCard,
   NextButton,
   DuesAmountField,
@@ -25,6 +24,7 @@ import {
 import { useDuesStepNavigator } from '@/hooks/admin/useDuesStepNavigator';
 import { useRestoreDuesDraft } from '@/hooks/admin/useRestoreDuesDraft';
 import { ScheduleTextField } from '@/components/admin/schedule/general/ScheduleTextField';
+import { AlertDialog, Button } from '@/components/ui';
 
 const NAME_MAX = 30;
 const DESCRIPTION_MAX = 30;
@@ -130,19 +130,41 @@ function DuesSetupStep1() {
 
   return (
     <>
-      <DuesDraftAlert
+      <AlertDialog
         open={draftAlert.open}
-        lastModifiedByName={draftAlert.lastModifiedByName}
-        onContinue={() => {
-          handleContinue();
-        }}
-        onNew={async () => {
-          if (accountId === null) return;
-          setDraftAlert({ open: false, lastModifiedByName: null });
-          await discardDraft.mutateAsync().catch(() => {});
-          reset(); // accountId → null → useEffect 재실행 → createDraft 호출
-        }}
-      />
+        title="이어서 작성할까요?"
+        description={
+          draftAlert.lastModifiedByName != null
+            ? `작성 중인 내용이 있어요.\n(이전 작성자 : ${draftAlert.lastModifiedByName})`
+            : '작성 중인 내용이 있어요.'
+        }
+      >
+        <div className="border-line flex flex-col gap-200 border-t">
+          <Button
+            variant="primary"
+            size="lg"
+            className="w-full"
+            onClick={() => {
+              handleContinue();
+            }}
+          >
+            이어서 작성하기
+          </Button>
+          <Button
+            variant="secondary"
+            size="lg"
+            className="w-full"
+            onClick={async () => {
+              if (accountId === null) return;
+              setDraftAlert({ open: false, lastModifiedByName: null });
+              await discardDraft.mutateAsync().catch(() => {});
+              reset(); // accountId → null → useEffect 재실행 → createDraft 호출
+            }}
+          >
+            새로 작성하기
+          </Button>
+        </div>
+      </AlertDialog>
 
       <div className="flex min-w-85 flex-col gap-700 p-700">
         {/* 헤더 */}
