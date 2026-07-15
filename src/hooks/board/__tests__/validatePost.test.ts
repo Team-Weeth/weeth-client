@@ -1,4 +1,4 @@
-import { validatePost } from '../validatePost';
+import { validatePost } from '@/hooks/board/validatePost';
 import type { UploadFileItem } from '@/stores/usePostStore';
 
 jest.mock('@/stores/useToastStore', () => ({ toast: jest.fn() }));

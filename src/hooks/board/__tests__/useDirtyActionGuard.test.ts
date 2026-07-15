@@ -1,5 +1,5 @@
 import { renderHook, act } from '@testing-library/react';
-import { useDirtyActionGuard } from '../useDirtyActionGuard';
+import { useDirtyActionGuard } from '@/hooks/board/useDirtyActionGuard';
 
 describe('useDirtyActionGuard', () => {
   it('초기 상태: pendingAction=null, guardOpen=false', () => {
