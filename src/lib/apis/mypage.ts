@@ -1,6 +1,19 @@
 import { apiClient } from '@/lib/apis/client';
-import type { ClubDto, MyMember } from '@/types/mypage';
-import type { ApiResponse } from '@/types/common';
+import type {
+  ClubDto,
+  MyClubMemberSummary,
+  MyPageAttendedSessionItem,
+  MyPagePostItem,
+  MyPageSummary,
+} from '@/types/mypage';
+import type { ApiResponse, PageResponse } from '@/types/common';
+
+export interface MyPageImagePayload {
+  fileName: string;
+  storageKey: string;
+  fileSize: number;
+  contentType: string;
+}
 
 export interface UpdateUserBody {
   name: string;
@@ -12,21 +25,77 @@ export interface UpdateUserBody {
 }
 
 export interface UpdateClubProfileBody {
-  profileImage?: {
-    fileName: string;
-    storageKey: string;
-    fileSize: number;
-    contentType: string;
-  } | null;
+  profileImage?: MyPageImagePayload | null;
   bio: string;
 }
 
+export interface CreateMultiProfileBody {
+  name: string;
+  profileImage?: MyPageImagePayload;
+  headerImage?: MyPageImagePayload;
+  bio: string;
+  clubIds: string[];
+}
+
+export interface UpdateMultiProfileBody {
+  name: string;
+  profileImage?: MyPageImagePayload;
+  headerImage?: MyPageImagePayload;
+  bio: string;
+}
+
+export interface UpdateClubProfileAssignmentBody {
+  assignments: Array<{
+    clubId: string;
+    profileId: number;
+  }>;
+}
+
+export interface MultiProfileClub {
+  clubId: string;
+  name: string;
+}
+
+export interface MultiProfileResponse {
+  profileId: number;
+  name: string;
+  profileImageUrl: string | null;
+  headerImageUrl: string | null;
+  bio: string | null;
+  usingClubs: MultiProfileClub[];
+}
+
 export const mypageApi = {
-  getMe: (clubId: string) => apiClient.get<ApiResponse<MyMember>>(`/clubs/${clubId}/members/me`),
+  getMyPageSummary: () => apiClient.get<ApiResponse<MyPageSummary>>('/users/me/mypage'),
+  getMyPosts: (clubId: string, params?: { pageNumber?: number; pageSize?: number }) =>
+    apiClient.get<ApiResponse<PageResponse<MyPagePostItem>>>(
+      `/clubs/${clubId}/users/me/mypage/posts`,
+      { params },
+    ),
+  getMyAttendedSessions: (clubId: string, params?: { pageNumber?: number; pageSize?: number }) =>
+    apiClient.get<ApiResponse<PageResponse<MyPageAttendedSessionItem>>>(
+      `/clubs/${clubId}/users/me/mypage/attended-sessions`,
+      { params },
+    ),
+  getMyClubMemberSummary: (clubId: string) =>
+    apiClient.get<ApiResponse<MyClubMemberSummary>>(`/clubs/${clubId}/members/me/summary`),
   getMyClubs: () => apiClient.get<ApiResponse<ClubDto[]>>('/clubs'),
   updateUser: (body: UpdateUserBody) => apiClient.patch('/users', body),
   updateClubProfile: (body: UpdateClubProfileBody) => apiClient.patch('/clubs/members/me', body),
   deleteProfileImage: () => apiClient.delete('/clubs/members/me/profile-image'),
+  createMultiProfile: (body: CreateMultiProfileBody) =>
+    apiClient.post<ApiResponse<MultiProfileResponse>>('/users/me/profiles', body),
+  updateMultiProfile: (profileId: number, body: UpdateMultiProfileBody) =>
+    apiClient.patch<ApiResponse<MultiProfileResponse>>(`/users/me/profiles/${profileId}`, body),
+  deleteMultiProfileProfileImage: (profileId: number) =>
+    apiClient.delete<ApiResponse<string>>(`/users/me/profiles/${profileId}/profile-image`),
+  deleteMultiProfileHeaderImage: (profileId: number) =>
+    apiClient.delete<ApiResponse<string>>(`/users/me/profiles/${profileId}/header-image`),
+  updateClubProfileAssignments: (body: UpdateClubProfileAssignmentBody) =>
+    apiClient.patch<ApiResponse<string>>('/users/me/club-profile-assignments', body),
+  leaveClub: (clubId: string) => apiClient.delete<ApiResponse<string>>(`/clubs/${clubId}/leave`),
+  deleteMultiProfile: (profileId: number) =>
+    apiClient.delete<ApiResponse<string>>(`/users/me/profiles/${profileId}`),
   initCardinals: (clubId: string, cardinals: number[]) =>
     apiClient.post(`/clubs/${clubId}/members/me/cardinals`, { cardinals }),
 };
