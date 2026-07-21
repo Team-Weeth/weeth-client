@@ -12,7 +12,7 @@ const TABLET_CARD_GAP = 12;
 
 function MyPageActivityContent({ className, ...props }: MyPageActivityContentProps) {
   const { clubId } = useParams<{ clubId: string }>();
-  const [, { data: clubs = [] }] = useMyPageQueries(clubId);
+  const { clubs } = useMyPageQueries(clubId);
   const { containerRef, columnCount, isSingleColumn } = useResponsiveGridColumns({
     itemCount: clubs.length,
     minColumnWidth: TABLET_CARD_WIDTH,
