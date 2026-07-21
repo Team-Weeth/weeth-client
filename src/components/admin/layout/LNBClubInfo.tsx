@@ -14,10 +14,10 @@ function LNBClubInfo({ collapsed }: LNBClubInfoProps) {
   return (
     <div
       className={cn(
-        'flex shrink-0 grow items-center py-300',
+        'flex shrink-0 grow cursor-pointer items-center py-300',
         collapsed
-          ? 'group cursor-pointer justify-center'
-          : 'hover:bg-line cursor-pointer gap-[10px] rounded-md px-400 transition-colors',
+          ? 'group justify-center'
+          : 'hover:bg-line gap-[10px] rounded-md px-400 transition-colors',
       )}
     >
       <div
@@ -44,7 +44,9 @@ function LNBClubInfo({ collapsed }: LNBClubInfoProps) {
         <div className="flex min-w-0 flex-col gap-100">
           {club ? (
             <>
-              <span className="typo-caption2 text-text-alternative truncate">{club.schoolName}</span>
+              <span className="typo-caption2 text-text-alternative truncate">
+                {club.schoolName}
+              </span>
               <span className="typo-sub1 text-text-normal truncate">{club.name}</span>
             </>
           ) : (

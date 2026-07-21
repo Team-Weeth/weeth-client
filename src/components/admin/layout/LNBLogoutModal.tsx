@@ -97,7 +97,19 @@ function LNBLogoutModal({ collapsed }: LNBLogoutModalProps) {
 
   return (
     <>
-      <div ref={triggerRef} onClick={openMenu} className="flex grow">
+      <div
+        ref={triggerRef}
+        role="button"
+        tabIndex={0}
+        onClick={openMenu}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            openMenu();
+          }
+        }}
+        className="flex grow"
+      >
         <LNBClubInfo collapsed={collapsed} />
       </div>
 
@@ -118,9 +130,9 @@ function LNBLogoutModal({ collapsed }: LNBLogoutModalProps) {
                 style={{ left: 16, top: menuTop, boxShadow: 'var(--shadow-sm)' }}
               >
                 <DialogPrimitive.Title className="sr-only">동아리 메뉴</DialogPrimitive.Title>
-                {menuSections.map((section, sectionIdx) => (
-                  <Fragment key={sectionIdx}>
-                    {sectionIdx > 0 && <div className="border-line w-full border-t" />}
+                {menuSections.map((section, i) => (
+                  <Fragment key={section[0].label}>
+                    {i > 0 && <div className="border-line w-full border-t" />}
                     {section.map((item) => {
                       const style = variantStyles[item.variant ?? 'default'];
                       return (
