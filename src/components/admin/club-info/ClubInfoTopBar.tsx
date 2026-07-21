@@ -13,6 +13,7 @@ interface ClubInfoTopBarProps extends HTMLAttributes<HTMLDivElement> {
   onBack: () => void;
   onSave: () => void;
   isSaving?: boolean;
+  open?: boolean;
 }
 
 type Placement = 'below-right' | 'below-left';
@@ -88,9 +89,25 @@ function DiscardAlertDialog({
   );
 }
 
-function ClubInfoTopBar({ className, onBack, onSave, isSaving, ...props }: ClubInfoTopBarProps) {
+function ClubInfoTopBar({ className, onBack, onSave, isSaving, open = true, ...props }: ClubInfoTopBarProps) {
   return (
-    <div className={cn('bg-container-primary flex h-15 items-center px-500', className)} {...props}>
+    <div
+      className={cn(
+        'overflow-hidden transition-[height] duration-200',
+        open ? 'h-15' : 'h-0',
+        className,
+      )}
+      {...props}
+    >
+    <div
+      data-state={open ? 'open' : 'closed'}
+      className={cn(
+        'bg-container-primary flex h-15 items-center px-500',
+        'data-[state=open]:animate-in data-[state=open]:fade-in-0',
+        'data-[state=closed]:animate-out data-[state=closed]:fade-out-0',
+        'duration-200',
+      )}
+    >
       <DiscardAlertDialog onAction={onBack} placement="below-right">
         <AlertDialogPrimitive.Trigger asChild>
           <button
@@ -122,6 +139,7 @@ function ClubInfoTopBar({ className, onBack, onSave, isSaving, ...props }: ClubI
           {isSaving ? '저장 중...' : '저장'}
         </Button>
       </div>
+    </div>
     </div>
   );
 }
