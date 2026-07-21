@@ -16,6 +16,7 @@ interface AdminNotification {
 interface NotificationModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  collapsed?: boolean;
   notifications?: AdminNotification[];
   className?: string;
 }
@@ -37,6 +38,7 @@ const ANIMATION_DURATION = 200;
 function NotificationModal({
   open,
   onOpenChange,
+  collapsed = false,
   notifications = [],
   className,
 }: NotificationModalProps) {
@@ -68,7 +70,7 @@ function NotificationModal({
               'duration-200',
               className,
             )}
-            style={{ left: 230, bottom: 22, boxShadow: 'var(--shadow-lg)' }}
+            style={{ left: collapsed ? 88 : 230, bottom: 22, boxShadow: 'var(--shadow-lg)' }}
           >
             <DialogPrimitive.Title className="sr-only">알림</DialogPrimitive.Title>
             <DialogPrimitive.Description className="sr-only">알림 목록</DialogPrimitive.Description>

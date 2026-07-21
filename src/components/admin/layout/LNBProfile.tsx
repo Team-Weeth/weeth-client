@@ -70,7 +70,7 @@ function LNBProfile({ collapsed }: LNBProfileProps) {
           </div>
         )}
       </div>
-      <NotificationModal open={notifOpen} onOpenChange={setNotifOpen} notifications={[]} />
+      <NotificationModal open={notifOpen} onOpenChange={setNotifOpen} collapsed={collapsed} notifications={[]} />
     </>
   );
 }
