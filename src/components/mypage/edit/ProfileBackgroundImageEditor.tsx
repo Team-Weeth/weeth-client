@@ -23,6 +23,7 @@ interface ProfileBackgroundImageEditorProps {
   triggerClassName?: string;
   triggerIconClassName?: string;
   triggerIconSize?: number;
+  showResetAction?: boolean;
 }
 
 function ProfileBackgroundImageEditor({
@@ -35,6 +36,7 @@ function ProfileBackgroundImageEditor({
   triggerClassName,
   triggerIconClassName,
   triggerIconSize = 16,
+  showResetAction = true,
 }: ProfileBackgroundImageEditorProps) {
   const { fileInputRef, displayUrl, isPreview, handleChange, handleReset } = useImagePreview({
     initialImageUrl: backgroundImageUrl,
@@ -43,7 +45,13 @@ function ProfileBackgroundImageEditor({
   });
 
   return (
-    <div className={cn('bg-brand-primary relative overflow-hidden rounded-t-[12px]', className)}>
+    <div
+      className={cn(
+        'relative overflow-hidden rounded-t-[12px]',
+        displayUrl ? 'bg-transparent' : 'bg-brand-primary',
+        className,
+      )}
+    >
       {displayUrl && (
         <Image
           src={displayUrl}
@@ -88,10 +96,14 @@ function ProfileBackgroundImageEditor({
             >
               이미지 업로드
             </DropdownMenuItem>
-            <Divider className="w-[136px]" />
-            <DropdownMenuItem className="text-text-alternative" onSelect={handleReset}>
-              기본 이미지
-            </DropdownMenuItem>
+            {showResetAction && (
+              <>
+                <Divider className="w-[136px]" />
+                <DropdownMenuItem className="text-text-alternative" onSelect={handleReset}>
+                  기본 이미지
+                </DropdownMenuItem>
+              </>
+            )}
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
