@@ -6,9 +6,9 @@ interface NavSectionProps {
 
 function NavSection({ label, collapsed, children }: NavSectionProps) {
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col gap-100 px-400 py-400">
       {label && !collapsed && (
-        <span className="typo-caption1 text-text-alternative px-400 pt-500 pb-300">{label}</span>
+        <span className="typo-caption1 text-text-alternative pt-100 pb-300">{label}</span>
       )}
       {children}
     </div>

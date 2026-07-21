@@ -1,6 +1,6 @@
 'use client';
 
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui';
+import { ClubAvatar } from '@/components/ui';
 import { cn } from '@/lib/cn';
 import { useAdminClubQuery } from '@/hooks/queries/admin/useAdminClubQuery';
 
@@ -14,18 +14,22 @@ function LNBClubInfo({ collapsed }: LNBClubInfoProps) {
   return (
     <div
       className={cn(
-        'border-line bg-container-neutral flex h-[142px] items-start border-b py-400',
-        collapsed ? 'justify-center' : 'flex-col gap-300 px-400',
+        'flex shrink-0 grow items-center rounded-lg py-300',
+        collapsed ? 'justify-center' : 'gap-[10px] px-400',
       )}
     >
-      <Avatar size={40} type="square" colorScheme="secondary">
-        <AvatarImage src={club?.profileImageUrl ?? undefined} alt={club?.name} />
-        <AvatarFallback variant="club" />
-      </Avatar>
+      <div className="rounded-[16.25px] border-[1.25px] border-line shrink-0">
+        <ClubAvatar
+          src={club?.profileImageUrl ?? null}
+          name={club?.name ?? ''}
+          size={50}
+          className="rounded-[15px] border-0"
+        />
+      </div>
       {!collapsed && (
-        <div className="flex flex-col gap-100">
-          <span className="typo-caption2 text-text-alternative">{club?.schoolName}</span>
-          <span className="typo-sub1 text-text-strong">{club?.name}</span>
+        <div className="flex min-w-0 flex-col gap-100">
+          <span className="typo-caption2 text-text-alternative truncate">{club?.schoolName}</span>
+          <span className="typo-sub1 text-text-normal truncate">{club?.name}</span>
         </div>
       )}
     </div>
