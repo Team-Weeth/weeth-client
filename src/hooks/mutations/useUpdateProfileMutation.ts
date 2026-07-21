@@ -8,7 +8,7 @@ import { useUserStore } from '@/stores/useUserStore';
 interface UpdateProfileParams {
   clubId?: string;
   user: UpdateUserBody;
-  clubProfile: Omit<UpdateClubProfileBody, 'profileImage'>;
+  clubProfile?: Omit<UpdateClubProfileBody, 'profileImage'>;
   profileImageFile?: File | null;
   resetImage?: boolean;
 }
@@ -34,18 +34,23 @@ export function useUpdateProfileMutation() {
       profileImageFile,
       resetImage,
     }: UpdateProfileParams) => {
-      const [, profileImage] = await Promise.all([
-        mypageApi.updateUser(user),
-        profileImageFile ? uploadFile(profileImageFile, 'CLUB_MEMBER_PROFILE') : undefined,
-      ]);
+      await mypageApi.updateUser(user);
 
-      await Promise.all([
-        mypageApi.updateClubProfile({
-          bio: clubProfile.bio,
-          ...(profileImage ? { profileImage } : {}),
-        }),
-        resetImage ? mypageApi.deleteProfileImage() : undefined,
-      ]);
+      if (clubProfile || profileImageFile || resetImage) {
+        const profileImage = profileImageFile
+          ? await uploadFile(profileImageFile, 'CLUB_MEMBER_PROFILE')
+          : undefined;
+
+        await Promise.all([
+          clubProfile
+            ? mypageApi.updateClubProfile({
+                bio: clubProfile.bio,
+                ...(profileImage ? { profileImage } : {}),
+              })
+            : undefined,
+          resetImage ? mypageApi.deleteProfileImage() : undefined,
+        ]);
+      }
 
       return { isReset: !!resetImage };
     },
@@ -54,19 +59,50 @@ export function useUpdateProfileMutation() {
       if (!targetClubId) return;
 
       queryClient.setQueryData(
-        ['mypage', 'me', targetClubId],
-        (old: Record<string, unknown> | undefined) => {
+        ['mypage', 'summary'],
+        (
+          old:
+            | {
+                user: {
+                  name: string | null;
+                  email: string | null;
+                  school: string | null;
+                  department: string | null;
+                  studentId: string | null;
+                  tel: string | null;
+                };
+                usingProfiles: Array<{
+                  profileId: number;
+                  name: string;
+                  profileImageUrl: string | null;
+                  headerImageUrl: string | null;
+                  bio: string | null;
+                  clubs: Array<{ clubId: string; name: string }>;
+                }>;
+              }
+            | undefined,
+        ) => {
           if (!old) return old;
           return {
             ...old,
-            name: user.name,
-            email: user.email,
-            school: user.school,
-            department: user.department,
-            studentId: user.studentId,
-            tel: user.tel,
-            bio: clubProfile.bio,
-            ...(isReset && { profileImageUrl: null }),
+            user: {
+              ...old.user,
+              name: user.name,
+              email: user.email,
+              school: user.school,
+              department: user.department,
+              studentId: user.studentId,
+              tel: user.tel,
+            },
+            usingProfiles: old.usingProfiles.map((profile) =>
+              profile.clubs.some((club) => club.clubId === targetClubId)
+                ? {
+                    ...profile,
+                    ...(clubProfile && { bio: clubProfile.bio }),
+                    ...(isReset && { profileImageUrl: null }),
+                  }
+                : profile,
+            ),
           };
         },
       );
@@ -97,28 +133,9 @@ export function useUpdateProfileMutation() {
 
       await queryClient.invalidateQueries({ queryKey: ['home', targetClubId] });
       await queryClient.invalidateQueries({ queryKey: ['home', 'profile-status', targetClubId] });
+      await queryClient.invalidateQueries({ queryKey: ['mypage', 'summary'] });
       void queryClient.invalidateQueries({ queryKey: ['home', 'recent-posts', targetClubId] });
       void queryClient.invalidateQueries({ queryKey: ['posts', targetClubId] });
-
-      if (isReset) {
-        void queryClient.invalidateQueries({ queryKey: ['mypage', 'me', targetClubId] });
-        return;
-      }
-
-      try {
-        const res = await queryClient.fetchQuery({
-          queryKey: ['mypage', 'me', targetClubId],
-          queryFn: () => mypageApi.getMe(targetClubId).then((r) => r.data.data),
-          staleTime: 0,
-        });
-        useUserStore.setState(
-          { name: res.name, profileImageUrl: res.profileImageUrl },
-          false,
-          'syncProfile',
-        );
-      } catch {
-        void queryClient.invalidateQueries({ queryKey: ['mypage', 'me', targetClubId] });
-      }
     },
   });
 }
