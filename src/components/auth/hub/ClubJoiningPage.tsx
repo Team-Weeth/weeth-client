@@ -7,6 +7,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
 import { buttonVariants, ProgressBar } from '@/components/ui';
+import { getHomeTutorialPendingKey } from '@/constants/home/tutorial';
 import { CLUB_JOIN_ERROR_CODE } from '@/constants/errorCode';
 import { useProgressAnimation } from '@/hooks';
 import { setClubCookie } from '@/lib/actions/club';
@@ -60,6 +61,7 @@ function ClubJoiningPage({ clubName, clubId, code }: ClubJoiningPageProps) {
       .join(clubId, code)
       .then(async () => {
         await setClubInfo();
+        window.sessionStorage.setItem(getHomeTutorialPendingKey('member'), clubId);
         apiDoneRef.current = true;
         setStatus('joining');
       })
