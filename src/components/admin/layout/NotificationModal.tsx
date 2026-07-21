@@ -34,6 +34,9 @@ function NotificationItem({ category, content, timestamp }: Omit<AdminNotificati
 }
 
 const ANIMATION_DURATION = 200;
+const LNB_WIDTH_COLLAPSED = 88; // w-22
+const LNB_WIDTH_EXPANDED = 240; // w-60
+const MODAL_LEFT_OFFSET = 10;
 
 function NotificationModal({
   open,
@@ -70,7 +73,12 @@ function NotificationModal({
               'duration-200',
               className,
             )}
-            style={{ left: collapsed ? 88 : 230, bottom: 22, boxShadow: 'var(--shadow-lg)' }}
+            style={{
+              left: collapsed ? LNB_WIDTH_COLLAPSED : LNB_WIDTH_EXPANDED - MODAL_LEFT_OFFSET,
+              bottom: 22,
+              boxShadow: 'var(--shadow-lg)',
+              transition: 'left 200ms',
+            }}
           >
             <DialogPrimitive.Title className="sr-only">알림</DialogPrimitive.Title>
             <DialogPrimitive.Description className="sr-only">알림 목록</DialogPrimitive.Description>
