@@ -10,23 +10,31 @@ interface AddProfileModalHeaderProps {
   step: number;
   title: string;
   onClose: () => void;
+  showSteps?: boolean;
 }
 
-function AddProfileModalHeader({ step, title, onClose }: AddProfileModalHeaderProps) {
+function AddProfileModalHeader({
+  step,
+  title,
+  onClose,
+  showSteps = true,
+}: AddProfileModalHeaderProps) {
   return (
     <div className="flex items-start justify-between pb-400">
       <div className="flex flex-col gap-400">
-        <div className="flex items-center gap-[9px]">
-          {Array.from({ length: TOTAL_STEPS }).map((_, index) => (
-            <div
-              key={index}
-              className={cn(
-                'h-1 w-[58px] rounded-full',
-                step === index + 1 ? 'bg-button-primary' : 'bg-button-neutral',
-              )}
-            />
-          ))}
-        </div>
+        {showSteps && (
+          <div className="flex items-center gap-[9px]">
+            {Array.from({ length: TOTAL_STEPS }).map((_, index) => (
+              <div
+                key={index}
+                className={cn(
+                  'h-1 w-[58px] rounded-full',
+                  step === index + 1 ? 'bg-button-primary' : 'bg-button-neutral',
+                )}
+              />
+            ))}
+          </div>
+        )}
         <DialogTitle className="typo-sub1 text-text-strong">{title}</DialogTitle>
       </div>
       <button

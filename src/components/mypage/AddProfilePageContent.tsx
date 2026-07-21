@@ -1,10 +1,14 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { BackIcon } from '@/assets/icons';
 import { useAddProfileFlow } from '@/hooks/mypage';
+import { useCreateMultiProfileMutation } from '@/hooks/mutations/mypage/useMultiProfileMutations';
+import { useMyPageQueries } from '@/hooks/queries/mypage/useMyPageQueries';
 import { Icon } from '@/components/ui';
 import { cn } from '@/lib/cn';
+import { toastError, toastSuccess } from '@/stores/useToastStore';
+import { getApiErrorMessage } from '@/utils/shared';
 import { StepOneContent } from './AddProfileModal/StepOneContent';
 import { StepTwoContent } from './AddProfileModal/StepTwoContent';
 
@@ -12,24 +16,46 @@ type AddProfilePageContentProps = React.HTMLAttributes<HTMLDivElement>;
 
 function AddProfilePageContent({ className, ...props }: AddProfilePageContentProps) {
   const router = useRouter();
+  const { clubId } = useParams<{ clubId: string }>();
+  const { clubs } = useMyPageQueries(clubId);
   const {
     step,
     setStep,
     selectedClubIds,
+    profileImageFile,
+    headerImageFile,
     control,
     errors,
+    getValues,
     resetFlow,
     handleToggleClub,
     handleNext,
-  } = useAddProfileFlow();
+    setProfileImageFile,
+    setHeaderImageFile,
+  } = useAddProfileFlow(clubs.map((club) => club.id));
+  const createMultiProfileMutation = useCreateMultiProfileMutation();
 
   const handleClose = () => {
     resetFlow();
     router.back();
   };
 
-  const handleConfirm = () => {
-    handleClose();
+  const handleConfirm = async () => {
+    const { name, bio } = getValues();
+
+    try {
+      await createMultiProfileMutation.mutateAsync({
+        name: name.trim(),
+        bio: bio.trim(),
+        clubIds: selectedClubIds,
+        profileImageFile,
+        headerImageFile,
+      });
+      toastSuccess('프로필이 추가되었습니다.');
+      handleClose();
+    } catch (error) {
+      toastError(getApiErrorMessage(error) ?? '프로필 추가에 실패했습니다.');
+    }
   };
 
   return (
@@ -64,6 +90,10 @@ function AddProfilePageContent({ className, ...props }: AddProfilePageContentPro
         <StepOneContent
           control={control}
           errors={errors}
+          onProfileImageChange={setProfileImageFile}
+          onProfileImageReset={() => setProfileImageFile(null)}
+          onHeaderImageChange={setHeaderImageFile}
+          onHeaderImageReset={() => setHeaderImageFile(null)}
           onCancel={handleClose}
           onNext={handleNext}
           cancelAsDialogClose={false}
@@ -71,10 +101,12 @@ function AddProfilePageContent({ className, ...props }: AddProfilePageContentPro
         />
       ) : (
         <StepTwoContent
+          clubs={clubs}
           selectedClubIds={selectedClubIds}
           onToggleClub={handleToggleClub}
           onPrev={() => setStep(1)}
           onConfirm={handleConfirm}
+          isSubmitting={createMultiProfileMutation.isPending}
           mobileFixedFooter
         />
       )}
