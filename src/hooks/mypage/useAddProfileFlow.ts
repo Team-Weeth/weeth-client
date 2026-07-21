@@ -9,10 +9,7 @@ interface UseAddProfileFlowOptions {
   initialSelectedClubIds?: string[];
 }
 
-function useAddProfileFlow(
-  availableClubIds: string[] = [],
-  options?: UseAddProfileFlowOptions,
-) {
+function useAddProfileFlow(availableClubIds: string[] = [], options?: UseAddProfileFlowOptions) {
   const [step, setStep] = useState(1);
   const initialSelectedClubIds = options?.initialSelectedClubIds ?? [];
   const [selectedClubIdsState, setSelectedClubIds] = useState<string[]>(initialSelectedClubIds);
@@ -51,7 +48,8 @@ function useAddProfileFlow(
 
   const handleToggleClub = (clubId: string) => {
     setSelectedClubIds((prev) => {
-      const current = prev.length > 0 ? prev.filter((id) => availableClubIds.includes(id)) : availableClubIds;
+      const current =
+        prev.length > 0 ? prev.filter((id) => availableClubIds.includes(id)) : availableClubIds;
       return current.includes(clubId)
         ? current.filter((id) => id !== clubId)
         : [...current, clubId];

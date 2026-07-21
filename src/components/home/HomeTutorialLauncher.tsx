@@ -96,10 +96,7 @@ function HomeTutorialLauncher() {
           }}
         />
       )}
-      <HomeProfileSetupModal
-        open={profileSetupModalOpen}
-        onOpenChange={setProfileSetupModalOpen}
-      />
+      <HomeProfileSetupModal open={profileSetupModalOpen} onOpenChange={setProfileSetupModalOpen} />
     </>
   );
 }

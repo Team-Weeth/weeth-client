@@ -14,11 +14,7 @@ interface UseProfileSectionActionsParams {
   bio?: string | null;
 }
 
-function useProfileSectionActions({
-  profileId,
-  name,
-  bio,
-}: UseProfileSectionActionsParams) {
+function useProfileSectionActions({ profileId, name, bio }: UseProfileSectionActionsParams) {
   const updateMultiProfileMutation = useUpdateMultiProfileMutation();
   const deleteProfileImageMutation = useDeleteMultiProfileProfileImageMutation();
   const deleteHeaderImageMutation = useDeleteMultiProfileHeaderImageMutation();

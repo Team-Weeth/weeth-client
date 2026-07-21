@@ -40,9 +40,12 @@ function AddProfileModal({
     handleNext,
     setProfileImageFile,
     setHeaderImageFile,
-  } = useAddProfileFlow(clubs.map((club) => club.id), {
-    initialSelectedClubIds,
-  });
+  } = useAddProfileFlow(
+    clubs.map((club) => club.id),
+    {
+      initialSelectedClubIds,
+    },
+  );
   const createMultiProfileMutation = useCreateMultiProfileMutation();
 
   const handleClose = () => {

@@ -153,28 +153,25 @@ export function useUpdateMultiProfileMutation() {
     onSuccess: async (response) => {
       const updatedProfile = response.data.data;
 
-      queryClient.setQueryData(
-        MYPAGE_SUMMARY_QUERY_KEY,
-        (old: MyPageSummary | undefined) => {
-          if (!old) return old;
+      queryClient.setQueryData(MYPAGE_SUMMARY_QUERY_KEY, (old: MyPageSummary | undefined) => {
+        if (!old) return old;
 
-          return {
-            ...old,
-            usingProfiles: old.usingProfiles.map((profile) =>
-              profile.profileId === updatedProfile.profileId
-                ? {
-                    ...profile,
-                    name: updatedProfile.name,
-                    profileImageUrl: updatedProfile.profileImageUrl,
-                    headerImageUrl: updatedProfile.headerImageUrl,
-                    bio: updatedProfile.bio,
-                    clubs: updatedProfile.usingClubs,
-                  }
-                : profile,
-            ),
-          };
-        },
-      );
+        return {
+          ...old,
+          usingProfiles: old.usingProfiles.map((profile) =>
+            profile.profileId === updatedProfile.profileId
+              ? {
+                  ...profile,
+                  name: updatedProfile.name,
+                  profileImageUrl: updatedProfile.profileImageUrl,
+                  headerImageUrl: updatedProfile.headerImageUrl,
+                  bio: updatedProfile.bio,
+                  clubs: updatedProfile.usingClubs,
+                }
+              : profile,
+          ),
+        };
+      });
 
       useUserStore.setState(
         { name: updatedProfile.name, profileImageUrl: updatedProfile.profileImageUrl },
@@ -197,19 +194,16 @@ export function useDeleteMultiProfileProfileImageMutation() {
     mutationFn: ({ profileId }: DeleteMultiProfileImageParams) =>
       mypageApi.deleteMultiProfileProfileImage(profileId),
     onSuccess: async (_, { profileId }) => {
-      queryClient.setQueryData(
-        MYPAGE_SUMMARY_QUERY_KEY,
-        (old: MyPageSummary | undefined) => {
-          if (!old) return old;
+      queryClient.setQueryData(MYPAGE_SUMMARY_QUERY_KEY, (old: MyPageSummary | undefined) => {
+        if (!old) return old;
 
-          return {
-            ...old,
-            usingProfiles: old.usingProfiles.map((profile) =>
-              profile.profileId === profileId ? { ...profile, profileImageUrl: null } : profile,
-            ),
-          };
-        },
-      );
+        return {
+          ...old,
+          usingProfiles: old.usingProfiles.map((profile) =>
+            profile.profileId === profileId ? { ...profile, profileImageUrl: null } : profile,
+          ),
+        };
+      });
 
       useUserStore.setState({ profileImageUrl: null }, false, 'deleteMultiProfileProfileImage');
       await Promise.all([
@@ -227,19 +221,16 @@ export function useDeleteMultiProfileHeaderImageMutation() {
     mutationFn: ({ profileId }: DeleteMultiProfileImageParams) =>
       mypageApi.deleteMultiProfileHeaderImage(profileId),
     onSuccess: async (_, { profileId }) => {
-      queryClient.setQueryData(
-        MYPAGE_SUMMARY_QUERY_KEY,
-        (old: MyPageSummary | undefined) => {
-          if (!old) return old;
+      queryClient.setQueryData(MYPAGE_SUMMARY_QUERY_KEY, (old: MyPageSummary | undefined) => {
+        if (!old) return old;
 
-          return {
-            ...old,
-            usingProfiles: old.usingProfiles.map((profile) =>
-              profile.profileId === profileId ? { ...profile, headerImageUrl: null } : profile,
-            ),
-          };
-        },
-      );
+        return {
+          ...old,
+          usingProfiles: old.usingProfiles.map((profile) =>
+            profile.profileId === profileId ? { ...profile, headerImageUrl: null } : profile,
+          ),
+        };
+      });
 
       await Promise.all([
         queryClient.invalidateQueries({ queryKey: MYPAGE_SUMMARY_QUERY_KEY }),

@@ -96,8 +96,8 @@ function HomeTutorialDialog({
         />
 
         <DialogBody className="gap-0 overflow-hidden rounded-sm px-0 pt-400 pb-0">
-            <Carousel setApi={setApi} opts={{ watchDrag: false }}>
-              <CarouselContent>
+          <Carousel setApi={setApi} opts={{ watchDrag: false }}>
+            <CarouselContent>
               {slides.map((slide, index) => (
                 <CarouselItem key={index}>
                   <Image
