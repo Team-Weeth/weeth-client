@@ -6,6 +6,9 @@ import { Dialog as DialogPrimitive } from 'radix-ui';
 import { AdminScopeBoundary } from '@/providers';
 import { cn } from '@/lib/cn';
 
+const LNB_WIDTH_COLLAPSED = 88; // w-22
+const LNB_WIDTH_EXPANDED = 240; // w-60
+
 interface AdminNotification {
   id: string | number;
   category: string;
@@ -23,7 +26,7 @@ interface NotificationModalProps {
 
 function NotificationItem({ category, content, timestamp }: Omit<AdminNotification, 'id'>) {
   return (
-    <div className="hover:bg-container-neutral-alternative flex cursor-pointer flex-col gap-200 rounded-md px-[10px] py-300 transition-colors">
+    <div className="flex flex-col gap-200 rounded-md px-[10px] py-300">
       <div className="flex flex-col gap-100">
         <span className="typo-caption1 text-text-alternative">{category}</span>
         <span className="typo-sub3 text-text-normal">{content}</span>
@@ -34,8 +37,6 @@ function NotificationItem({ category, content, timestamp }: Omit<AdminNotificati
 }
 
 const ANIMATION_DURATION = 200;
-const LNB_WIDTH_COLLAPSED = 88; // w-22
-const LNB_WIDTH_EXPANDED = 240; // w-60
 const MODAL_LEFT_OFFSET = 10;
 
 function NotificationModal({
@@ -74,10 +75,11 @@ function NotificationModal({
               className,
             )}
             style={{
-              left: collapsed ? LNB_WIDTH_COLLAPSED : LNB_WIDTH_EXPANDED - MODAL_LEFT_OFFSET,
+              left: LNB_WIDTH_COLLAPSED,
               bottom: 22,
               boxShadow: 'var(--shadow-lg)',
-              transition: 'left 200ms',
+              transform: `translateX(${collapsed ? 0 : LNB_WIDTH_EXPANDED - MODAL_LEFT_OFFSET - LNB_WIDTH_COLLAPSED}px)`,
+              transition: 'transform 200ms',
             }}
           >
             <DialogPrimitive.Title className="sr-only">알림</DialogPrimitive.Title>
