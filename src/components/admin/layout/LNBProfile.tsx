@@ -16,7 +16,7 @@ function LNBProfile({ collapsed }: LNBProfileProps) {
     <div
       className={cn(
         'hover:bg-container-neutral-interaction flex cursor-pointer items-center rounded-lg transition-colors',
-        collapsed ? 'h-[65px] w-full justify-center' : 'h-[65px] w-[208px] gap-[38px] pr-200 pl-400',
+        collapsed ? 'size-[56px] self-center justify-center' : 'h-[65px] w-[208px] gap-[38px] pr-200 pl-400',
       )}
     >
       {collapsed ? (
@@ -30,7 +30,7 @@ function LNBProfile({ collapsed }: LNBProfileProps) {
             />
             <AvatarFallback />
           </Avatar>
-          <div className="bg-state-error border-container-neutral absolute right-200 bottom-[10px] size-2.5 rounded-full border" />
+          <div className="bg-state-error border-container-neutral absolute right-0 bottom-[2px] size-2.5 rounded-full border" />
         </div>
       ) : (
         <>
