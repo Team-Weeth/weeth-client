@@ -9,6 +9,7 @@ const clubAvatarVariants = cva('border-line border bg-container-neutral-alternat
     size: {
       128: '',
       40: '',
+      50: 'size-[50px] rounded-[15px]',
       56: 'size-14',
       64: '',
     },
@@ -27,7 +28,7 @@ interface ClubAvatarProps
 }
 
 function ClubAvatar({ src, name, size, className, ...props }: ClubAvatarProps) {
-  const avatarSize = size === 56 ? 64 : (size ?? 40);
+  const avatarSize = size === 56 ? 64 : size === 50 ? 40 : (size ?? 40);
 
   return (
     <Avatar

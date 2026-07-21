@@ -28,12 +28,14 @@ function TooltipTrigger({ ...props }: React.ComponentProps<typeof TooltipPrimiti
 }
 
 const tooltipContentVariants = cva(
-  'animate-in fade-in-0 zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 z-50 w-fit origin-(--radix-tooltip-content-transform-origin) rounded-sm break-keep [box-shadow:var(--shadow-sm)]',
+  'animate-in fade-in-0 zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 z-50 w-fit origin-(--radix-tooltip-content-transform-origin) rounded-sm break-keep',
   {
     variants: {
       variant: {
-        default: 'bg-container-primary-interaction text-text-inverse typo-body2 p-200',
-        sm: 'bg-container-neutral-alternative text-text-strong typo-caption2 px-200 py-100',
+        default:
+          'bg-container-primary-interaction text-text-inverse typo-body2 p-200 [box-shadow:var(--shadow-sm)]',
+        sm: 'bg-container-neutral-alternative text-text-strong typo-caption2 px-200 py-100 [box-shadow:var(--shadow-sm)]',
+        dark: 'typo-sub1 flex items-center justify-center gap-[10px] bg-[#3E444A] px-[14px] py-[10px] text-text-inverse [box-shadow:var(--shadow-md)]',
       },
     },
     defaultVariants: {
