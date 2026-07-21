@@ -19,7 +19,7 @@ import {
 import { useMediaQuery } from '@/hooks';
 import { cn } from '@/lib/cn';
 import { CollapsedDivider } from '@/components/admin/layout/CollapsedDivider';
-import { LNBClubInfo } from '@/components/admin/layout/LNBClubInfo';
+import { LNBLogoutModal } from '@/components/admin/layout/LNBLogoutModal';
 import { LNBProfile } from '@/components/admin/layout/LNBProfile';
 import { NavSection } from '@/components/admin/layout/NavSection';
 import { NavItem } from '@/components/admin/layout/NavItem';
@@ -72,12 +72,12 @@ function LNB() {
     <TooltipProvider>
       <nav
         className={cn(
-          'bg-background flex h-full shrink-0 flex-col transition-[width] duration-200 overflow-x-hidden',
+          'bg-background flex h-full shrink-0 flex-col overflow-x-hidden transition-[width] duration-200',
           collapsed ? 'w-22' : 'w-60',
         )}
       >
-        <div className={cn('flex self-stretch items-start pt-300 pb-100', !collapsed && 'px-400')}>
-          <LNBClubInfo collapsed={collapsed} />
+        <div className={cn('flex items-start self-stretch pt-300 pb-100', !collapsed && 'px-400')}>
+          <LNBLogoutModal collapsed={collapsed} />
         </div>
 
         {collapsed ? (
@@ -183,8 +183,8 @@ function LNB() {
 
         <div
           className={cn(
-            'flex grow shrink-0 flex-col items-start justify-end gap-200 self-stretch',
-            collapsed ? 'px-200 py-400' : 'py-400 px-450',
+            'flex shrink-0 grow flex-col items-start justify-end gap-200 self-stretch',
+            collapsed ? 'px-200 py-400' : 'px-450 py-400',
           )}
         >
           <LNBProfile collapsed={collapsed} />
