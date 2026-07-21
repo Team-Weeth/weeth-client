@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { useParams, useRouter } from 'next/navigation';
 
-import { HOME_TUTORIAL_SLIDES } from '@/constants/home/tutorial';
+import type { HomeTutorialSlide } from '@/constants/home/tutorial';
 import {
   Button,
   Carousel,
@@ -23,15 +23,23 @@ import { PaginationButton } from './PaginationButton';
 interface HomeTutorialDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  slides: HomeTutorialSlide[];
+  onSecondaryAction?: (action: 'open-profile-setup-modal') => void;
 }
 
-function HomeTutorialDialog({ open, onOpenChange }: HomeTutorialDialogProps) {
+function HomeTutorialDialog({
+  open,
+  onOpenChange,
+  slides,
+  onSecondaryAction,
+}: HomeTutorialDialogProps) {
   const router = useRouter();
   const { clubId } = useParams<{ clubId: string }>();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [api, setApi] = useState<CarouselApi>();
   const displayIndex = open ? currentIndex : 0;
-  const currentSlide = HOME_TUTORIAL_SLIDES[displayIndex];
+  const currentSlide = slides[displayIndex];
+  const showPagination = slides.length > 1;
 
   useEffect(() => {
     if (!api) return;
@@ -52,10 +60,14 @@ function HomeTutorialDialog({ open, onOpenChange }: HomeTutorialDialogProps) {
     }
   }, [open, api]);
 
-  const isLastSlide = displayIndex === HOME_TUTORIAL_SLIDES.length - 1;
+  const isLastSlide = displayIndex === slides.length - 1;
 
   const handleSecondary = () => {
     onOpenChange(false);
+    if (currentSlide.secondaryAction) {
+      onSecondaryAction?.(currentSlide.secondaryAction);
+      return;
+    }
     if (currentSlide.secondaryHref) {
       router.push(currentSlide.secondaryHref(clubId));
     }
@@ -77,16 +89,16 @@ function HomeTutorialDialog({ open, onOpenChange }: HomeTutorialDialogProps) {
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent showCloseButton className="w-full max-w-[668px] gap-0 rounded-md p-500">
         <DialogHeader
-          overline="사이트 완성하기"
+          overline={currentSlide.overline ?? '사이트 완성하기'}
           title={currentSlide.title}
           description={currentSlide.description}
           className="min-h-27 pb-300"
         />
 
         <DialogBody className="gap-0 overflow-hidden rounded-sm px-0 pt-400 pb-0">
-          <Carousel setApi={setApi} opts={{ watchDrag: false }}>
-            <CarouselContent>
-              {HOME_TUTORIAL_SLIDES.map((slide, index) => (
+            <Carousel setApi={setApi} opts={{ watchDrag: false }}>
+              <CarouselContent>
+              {slides.map((slide, index) => (
                 <CarouselItem key={index}>
                   <Image
                     src={slide.image}
@@ -104,12 +116,14 @@ function HomeTutorialDialog({ open, onOpenChange }: HomeTutorialDialogProps) {
           showDivider
           className="gap-2.5 pt-400"
           pagination={
-            <PaginationButton
-              currentIndex={displayIndex}
-              total={HOME_TUTORIAL_SLIDES.length}
-              onPrevious={handlePrevious}
-              onNext={handleNext}
-            />
+            showPagination ? (
+              <PaginationButton
+                currentIndex={displayIndex}
+                total={slides.length}
+                onPrevious={handlePrevious}
+                onNext={handleNext}
+              />
+            ) : undefined
           }
         >
           <Button variant="secondary" size="lg" className="w-full" onClick={handleSecondary}>
