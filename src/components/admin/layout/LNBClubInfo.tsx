@@ -16,11 +16,16 @@ function LNBClubInfo({ collapsed }: LNBClubInfoProps) {
       className={cn(
         'flex shrink-0 grow items-center py-300',
         collapsed
-          ? 'justify-center'
+          ? 'group cursor-pointer justify-center'
           : 'hover:bg-line cursor-pointer gap-[10px] rounded-md px-400 transition-colors',
       )}
     >
-      <div className="border-line shrink-0 rounded-[16.25px] border-[1.25px]">
+      <div
+        className={cn(
+          'border-line shrink-0 rounded-[16.25px] border-[1.25px]',
+          collapsed && 'relative',
+        )}
+      >
         {club ? (
           <ClubAvatar
             src={club.profileImageUrl ?? null}
@@ -30,6 +35,9 @@ function LNBClubInfo({ collapsed }: LNBClubInfoProps) {
           />
         ) : (
           <Skeleton className="size-[50px] rounded-[15px]" />
+        )}
+        {collapsed && (
+          <div className="absolute inset-0 rounded-[15px] bg-transparent transition-colors group-hover:bg-black/10" />
         )}
       </div>
       {!collapsed && (
