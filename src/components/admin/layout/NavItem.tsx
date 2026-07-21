@@ -35,6 +35,10 @@ function NavItem({
     />
   );
 
+  const labelEl = !collapsed && (
+    <span className={cn('typo-sub3 whitespace-nowrap', isActive && 'font-bold')}>{label}</span>
+  );
+
   const cls = cn(
     'flex w-full items-center rounded-md transition-colors text-text-normal hover:bg-container-neutral-interaction',
     collapsed ? 'justify-center p-400' : 'gap-300 px-400 py-300',
@@ -50,28 +54,28 @@ function NavItem({
         onClick={() => window.open(path, '_blank', 'noopener,noreferrer')}
       >
         {iconEl}
-        {!collapsed && <span className={cn('typo-sub3 whitespace-nowrap', isActive && 'font-bold')}>{label}</span>}
+        {labelEl}
       </button>
     );
   } else if (onClick) {
     el = (
       <button type="button" className={cn(cls, 'cursor-pointer')} onClick={onClick}>
         {iconEl}
-        {!collapsed && <span className={cn('typo-sub3 whitespace-nowrap', isActive && 'font-bold')}>{label}</span>}
+        {labelEl}
       </button>
     );
   } else if (external) {
     el = (
       <Link href={path} className={cls} target="_blank" rel="noopener noreferrer">
         {iconEl}
-        {!collapsed && <span className={cn('typo-sub3 whitespace-nowrap', isActive && 'font-bold')}>{label}</span>}
+        {labelEl}
       </Link>
     );
   } else {
     el = (
       <Link href={path} className={cls}>
         {iconEl}
-        {!collapsed && <span className={cn('typo-sub3 whitespace-nowrap', isActive && 'font-bold')}>{label}</span>}
+        {labelEl}
       </Link>
     );
   }

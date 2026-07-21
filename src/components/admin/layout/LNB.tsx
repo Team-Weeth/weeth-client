@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useLayoutEffect, useState } from 'react';
 import { useParams, usePathname, useRouter } from 'next/navigation';
 import {
   AdminForumIcon,
@@ -24,6 +24,7 @@ import { LNBProfile } from '@/components/admin/layout/LNBProfile';
 import { NavSection } from '@/components/admin/layout/NavSection';
 import { NavItem } from '@/components/admin/layout/NavItem';
 import { useAdminLNBActions, useAdminLNBCollapsed } from '@/stores/useAdminLNBStore';
+// w-22(88px) / w-60(240px) 값은 LNB_WIDTH_COLLAPSED / LNB_WIDTH_EXPANDED 상수와 동기화
 
 function LNB() {
   const pathname = usePathname();
@@ -35,7 +36,7 @@ function LNB() {
   const [serviceDialogOpen, setServiceDialogOpen] = useState(false);
 
   // 브레이크포인트를 넘나들 때 기본 접힘 상태를 동기화
-  useEffect(() => {
+  useLayoutEffect(() => {
     setCollapsed(isBelowTablet);
   }, [isBelowTablet, setCollapsed]);
 
@@ -68,6 +69,38 @@ function LNB() {
     },
   ];
 
+  const managementNavNodes = managementNavItems.map(({ id, icon, label, path }) => (
+    <NavItem
+      key={id}
+      icon={icon}
+      label={label}
+      path={path}
+      isActive={pathname.startsWith(path)}
+      collapsed={collapsed}
+    />
+  ));
+
+  const infoNavNodes = infoNavItems.map(({ id, icon, label, path }) => (
+    <NavItem
+      key={id}
+      icon={icon}
+      label={label}
+      path={path}
+      isActive={pathname.startsWith(path)}
+      collapsed={collapsed}
+    />
+  ));
+
+  const exitNavNode = (
+    <NavItem
+      icon={ExitIcon}
+      label="Weeth로 이동"
+      path={servicePath}
+      collapsed={collapsed}
+      onClick={() => setServiceDialogOpen(true)}
+    />
+  );
+
   return (
     <TooltipProvider>
       <nav
@@ -82,90 +115,34 @@ function LNB() {
 
         {collapsed ? (
           <div className="border-line flex flex-col border-t border-b">
-            <NavSection collapsed={collapsed}>
-              {managementNavItems.map(({ id, icon, label, path }) => (
-                <NavItem
-                  key={id}
-                  icon={icon}
-                  label={label}
-                  path={path}
-                  isActive={pathname.startsWith(path)}
-                  collapsed={collapsed}
-                />
-              ))}
-            </NavSection>
+            <NavSection collapsed={collapsed}>{managementNavNodes}</NavSection>
           </div>
         ) : (
           <>
             <CollapsedDivider collapsed={collapsed} />
-            <NavSection collapsed={collapsed}>
-              {managementNavItems.map(({ id, icon, label, path }) => (
-                <NavItem
-                  key={id}
-                  icon={icon}
-                  label={label}
-                  path={path}
-                  isActive={pathname.startsWith(path)}
-                  collapsed={collapsed}
-                />
-              ))}
-            </NavSection>
+            <NavSection collapsed={collapsed}>{managementNavNodes}</NavSection>
           </>
         )}
 
         {collapsed ? (
           <div className="border-line flex flex-col items-center justify-center gap-100 self-stretch border-b p-400">
-            {infoNavItems.map(({ id, icon, label, path }) => (
-              <NavItem
-                key={id}
-                icon={icon}
-                label={label}
-                path={path}
-                isActive={pathname.startsWith(path)}
-                collapsed={collapsed}
-              />
-            ))}
+            {infoNavNodes}
           </div>
         ) : (
           <>
             <CollapsedDivider collapsed={collapsed} />
-            <NavSection collapsed={collapsed}>
-              {infoNavItems.map(({ id, icon, label, path }) => (
-                <NavItem
-                  key={id}
-                  icon={icon}
-                  label={label}
-                  path={path}
-                  isActive={pathname.startsWith(path)}
-                  collapsed={collapsed}
-                />
-              ))}
-            </NavSection>
+            <NavSection collapsed={collapsed}>{infoNavNodes}</NavSection>
           </>
         )}
 
         {collapsed ? (
           <div className="border-line flex flex-col items-center justify-center gap-100 self-stretch border-b p-400">
-            <NavItem
-              icon={ExitIcon}
-              label="Weeth로 이동"
-              path={servicePath}
-              collapsed={collapsed}
-              onClick={() => setServiceDialogOpen(true)}
-            />
+            {exitNavNode}
           </div>
         ) : (
           <>
             <CollapsedDivider collapsed={collapsed} />
-            <NavSection collapsed={collapsed}>
-              <NavItem
-                icon={ExitIcon}
-                label="Weeth로 이동"
-                path={servicePath}
-                collapsed={collapsed}
-                onClick={() => setServiceDialogOpen(true)}
-              />
-            </NavSection>
+            <NavSection collapsed={collapsed}>{exitNavNode}</NavSection>
           </>
         )}
 
