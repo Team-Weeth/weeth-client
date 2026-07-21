@@ -3,17 +3,12 @@
 import { AdminMenuIcon, AdminSearchIcon } from '@/assets/icons/admin';
 import { Icon } from '@/components/ui';
 import { cn } from '@/lib/cn';
-import { useIsAdminEditMode } from '@/stores';
 import { useAdminLNBActions, useAdminLNBCollapsed } from '@/stores/useAdminLNBStore';
 import { ThemeModeToggle } from '@/components/admin/layout/ThemeModeToggle';
 
 export function Header() {
   const { toggleCollapsed } = useAdminLNBActions();
   const collapsed = useAdminLNBCollapsed();
-  const isEditMode = useIsAdminEditMode();
-
-  if (isEditMode) return null;
-
   return (
     <header className="bg-background flex shrink-0 items-start px-450 py-300">
       <button
