@@ -40,7 +40,7 @@ function ThemeModeToggle({ className }: ThemeModeToggleProps) {
         aria-label={THEME_LABEL[mode]}
         onClick={handleClick}
         className={cn(
-          'flex size-10 shrink-0 cursor-pointer items-center justify-center rounded-full border border-button-neutral bg-container-neutral transition-colors hover:border-button-neutral-interaction hover:bg-container-neutral-interaction',
+          'border-button-neutral bg-container-neutral hover:border-button-neutral-interaction hover:bg-container-neutral-interaction flex size-10 shrink-0 cursor-pointer items-center justify-center rounded-full border transition-colors',
           className,
         )}
       >
@@ -48,7 +48,7 @@ function ThemeModeToggle({ className }: ThemeModeToggleProps) {
       </button>
       <div
         className={cn(
-          'pointer-events-none fixed right-2 top-14 z-50 whitespace-nowrap rounded-sm',
+          'pointer-events-none fixed top-14 right-4 z-50 rounded-sm whitespace-nowrap',
           'typo-sub1 bg-[#3E444A] px-[14px] py-[10px] text-[#FFF] [box-shadow:var(--shadow-md)]',
           'opacity-0 transition-opacity group-hover:opacity-100',
         )}
