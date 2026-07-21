@@ -1,17 +1,13 @@
 'use client';
 
-import { Fragment, useRef, useState } from 'react';
+import { Fragment, useEffect, useRef, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import type { StaticImageData } from 'next/image';
+import { Dialog as DialogPrimitive } from 'radix-ui';
 
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogPortal,
-  Icon,
-} from '@/components/ui';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, Icon } from '@/components/ui';
 import { AdminRoundLogoutIcon, AdminSymbolIcon } from '@/assets/icons/admin';
+import { AdminScopeBoundary } from '@/providers';
 import { cn } from '@/lib/cn';
 import { LNBClubInfo } from '@/components/admin/layout/LNBClubInfo';
 
@@ -46,13 +42,26 @@ const variantStyles: Record<
   },
 };
 
+const ANIMATION_DURATION = 200;
+
 function LNBLogoutModal({ collapsed }: LNBLogoutModalProps) {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [menuMounted, setMenuMounted] = useState(false);
   const [menuTop, setMenuTop] = useState(0);
   const [logoutDialogOpen, setLogoutDialogOpen] = useState(false);
   const triggerRef = useRef<HTMLDivElement>(null);
   const { clubId } = useParams<{ clubId: string }>();
   const router = useRouter();
+
+  if (menuOpen && !menuMounted) {
+    setMenuMounted(true);
+  }
+
+  useEffect(() => {
+    if (menuOpen) return;
+    const id = setTimeout(() => setMenuMounted(false), ANIMATION_DURATION);
+    return () => clearTimeout(id);
+  }, [menuOpen]);
 
   const openMenu = () => {
     if (triggerRef.current) {
@@ -92,37 +101,49 @@ function LNBLogoutModal({ collapsed }: LNBLogoutModalProps) {
         <LNBClubInfo collapsed={collapsed} />
       </div>
 
-      <AlertDialog open={menuOpen} onOpenChange={setMenuOpen}>
-        <AlertDialogPortal>
-          <div className="fixed inset-0 z-40" onClick={() => setMenuOpen(false)} />
-          <div
-            className="bg-container-neutral fixed z-50 flex w-[242px] flex-col gap-[4px] rounded-md p-[6px]"
-            style={{ left: 16, top: menuTop, boxShadow: 'var(--shadow-sm)' }}
-          >
-            {menuSections.map((section, sectionIdx) => (
-              <Fragment key={sectionIdx}>
-                {sectionIdx > 0 && <div className="border-line w-full border-t" />}
-                {section.map((item) => {
-                  const style = variantStyles[item.variant ?? 'default'];
-                  return (
-                    <button
-                      key={item.label}
-                      className={cn(
-                        'flex w-full items-center gap-100 rounded-sm transition-colors',
-                        style.button,
-                      )}
-                      onClick={item.onClick}
-                    >
-                      <Icon src={item.icon} size={style.iconSize} className={style.iconClass} />
-                      <span className={cn('typo-button2', style.textClass)}>{item.label}</span>
-                    </button>
-                  );
-                })}
-              </Fragment>
-            ))}
-          </div>
-        </AlertDialogPortal>
-      </AlertDialog>
+      <DialogPrimitive.Root open={menuOpen} onOpenChange={setMenuOpen}>
+        {menuMounted && (
+          <DialogPrimitive.Portal forceMount>
+            <AdminScopeBoundary>
+              <div className="fixed inset-0 z-40" onClick={() => setMenuOpen(false)} />
+              <DialogPrimitive.Content
+                forceMount
+                onOpenAutoFocus={(e) => e.preventDefault()}
+                className={cn(
+                  'bg-container-neutral fixed z-50 flex w-[242px] flex-col gap-[4px] rounded-md p-[6px] outline-none',
+                  'data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:slide-in-from-top-2',
+                  'data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:slide-out-to-top-2',
+                  'duration-200',
+                )}
+                style={{ left: 16, top: menuTop, boxShadow: 'var(--shadow-sm)' }}
+              >
+                <DialogPrimitive.Title className="sr-only">동아리 메뉴</DialogPrimitive.Title>
+                {menuSections.map((section, sectionIdx) => (
+                  <Fragment key={sectionIdx}>
+                    {sectionIdx > 0 && <div className="border-line w-full border-t" />}
+                    {section.map((item) => {
+                      const style = variantStyles[item.variant ?? 'default'];
+                      return (
+                        <button
+                          key={item.label}
+                          className={cn(
+                            'flex w-full items-center gap-100 rounded-sm transition-colors',
+                            style.button,
+                          )}
+                          onClick={item.onClick}
+                        >
+                          <Icon src={item.icon} size={style.iconSize} className={style.iconClass} />
+                          <span className={cn('typo-button2', style.textClass)}>{item.label}</span>
+                        </button>
+                      );
+                    })}
+                  </Fragment>
+                ))}
+              </DialogPrimitive.Content>
+            </AdminScopeBoundary>
+          </DialogPrimitive.Portal>
+        )}
+      </DialogPrimitive.Root>
 
       <AlertDialog
         open={logoutDialogOpen}
