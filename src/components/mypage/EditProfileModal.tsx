@@ -1,43 +1,45 @@
 'use client';
 
-import { useState } from 'react';
 import { DeleteIcon } from '@/assets/icons';
 import { Button, Dialog, DialogContent, DialogTitle, Icon } from '@/components/ui';
-import { useEditProfileForm } from '@/hooks/mypage';
-import type { ClubDto } from '@/types/mypage';
+import { useEditProfileActions, useEditProfileForm } from '@/hooks/mypage';
+import type { MyPageUsingProfile } from '@/types/mypage';
 import { DeleteProfileDialog } from './DeleteProfileDialog';
 import { EditProfileFormContent } from './EditProfileFormContent';
 
 interface EditProfileModalProps {
   open: boolean;
-  profile: ClubDto;
+  profile: MyPageUsingProfile;
   onOpenChange: (open: boolean) => void;
 }
 
 function EditProfileModal({ open, profile, onOpenChange }: EditProfileModalProps) {
   const {
     control,
+    getValues,
     resetToProfile,
     name,
     formState: { errors },
   } = useEditProfileForm(profile, open);
-  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-
-  const handleClose = () => {
-    resetToProfile();
-    setIsDeleteDialogOpen(false);
-    onOpenChange(false);
-  };
-
-  const handleOpenDeleteDialog = () => {
-    onOpenChange(false);
-    setIsDeleteDialogOpen(true);
-  };
-
-  const handleDelete = () => {
-    setIsDeleteDialogOpen(false);
-    handleClose();
-  };
+  const {
+    isDeleteDialogOpen,
+    setIsDeleteDialogOpen,
+    setProfileImageFile,
+    setHeaderImageFile,
+    isSubmitting,
+    handleClose,
+    handleOpenDeleteDialog,
+    handleDelete,
+    handleSubmit,
+    handleProfileImageReset,
+    handleHeaderImageReset,
+  } = useEditProfileActions({
+    profile,
+    getValues,
+    resetToProfile,
+    onClose: () => onOpenChange(false),
+    onBeforeOpenDeleteDialog: () => onOpenChange(false),
+  });
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -62,6 +64,15 @@ function EditProfileModal({ open, profile, onOpenChange }: EditProfileModalProps
           errors={errors}
           fallbackName={profile.name}
           profileImageUrl={profile.profileImageUrl ?? undefined}
+          headerImageUrl={profile.headerImageUrl ?? undefined}
+          onProfileImageChange={setProfileImageFile}
+          onProfileImageReset={() => {
+            void handleProfileImageReset();
+          }}
+          onHeaderImageChange={setHeaderImageFile}
+          onHeaderImageReset={() => {
+            void handleHeaderImageReset();
+          }}
         />
 
         <Button
@@ -81,10 +92,12 @@ function EditProfileModal({ open, profile, onOpenChange }: EditProfileModalProps
             variant="primary"
             size="lg"
             className="flex-1"
-            disabled={!name.trim()}
-            onClick={handleClose}
+            disabled={!name.trim() || isSubmitting}
+            onClick={() => {
+              void handleSubmit();
+            }}
           >
-            완료
+            {isSubmitting ? '수정 중...' : '완료'}
           </Button>
         </div>
       </DialogContent>

@@ -15,6 +15,11 @@ interface EditProfileFormContentProps {
   errors: FieldErrors<Pick<EditProfileFormData, 'name' | 'bio'>>;
   fallbackName: string;
   profileImageUrl?: string;
+  headerImageUrl?: string;
+  onProfileImageChange?: (file: File) => void;
+  onProfileImageReset?: () => void;
+  onHeaderImageChange?: (file: File) => void;
+  onHeaderImageReset?: () => void;
   className?: string;
 }
 
@@ -23,18 +28,29 @@ function EditProfileFormContent({
   errors,
   fallbackName,
   profileImageUrl,
+  headerImageUrl,
+  onProfileImageChange,
+  onProfileImageReset,
+  onHeaderImageChange,
+  onHeaderImageReset,
   className,
 }: EditProfileFormContentProps) {
   const name = useWatch({ control, name: 'name' }) ?? '';
 
   return (
     <div className={className}>
-      <ProfileBackgroundImageEditor />
+      <ProfileBackgroundImageEditor
+        backgroundImageUrl={headerImageUrl}
+        onFileChange={onHeaderImageChange}
+        onResetImage={onHeaderImageReset}
+      />
 
       <div className="relative flex justify-center">
         <ProfileImageEditor
           name={name || fallbackName}
           profileImageUrl={profileImageUrl}
+          onFileChange={onProfileImageChange}
+          onResetImage={onProfileImageReset}
           className="-mt-[60px]"
           avatarSize={100}
         />
