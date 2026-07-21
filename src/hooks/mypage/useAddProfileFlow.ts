@@ -5,13 +5,24 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { editProfileSchema, type EditProfileFormData } from '@/lib/schemas/editProfile';
 
-function useAddProfileFlow() {
+interface UseAddProfileFlowOptions {
+  initialSelectedClubIds?: string[];
+}
+
+function useAddProfileFlow(
+  availableClubIds: string[] = [],
+  options?: UseAddProfileFlowOptions,
+) {
   const [step, setStep] = useState(1);
-  const [selectedClubIds, setSelectedClubIds] = useState<string[]>(['1', '2']);
+  const initialSelectedClubIds = options?.initialSelectedClubIds ?? [];
+  const [selectedClubIdsState, setSelectedClubIds] = useState<string[]>(initialSelectedClubIds);
+  const [profileImageFile, setProfileImageFile] = useState<File | null>(null);
+  const [headerImageFile, setHeaderImageFile] = useState<File | null>(null);
   const stepOneSchema = editProfileSchema.pick({ name: true, bio: true });
 
   const {
     control,
+    getValues,
     reset,
     trigger,
     formState: { errors },
@@ -25,16 +36,26 @@ function useAddProfileFlow() {
     },
   });
 
+  const selectedClubIds =
+    selectedClubIdsState.length > 0
+      ? selectedClubIdsState.filter((id) => availableClubIds.includes(id))
+      : availableClubIds;
+
   const resetFlow = () => {
     setStep(1);
     reset({ name: '', bio: '' });
-    setSelectedClubIds(['1', '2']);
+    setSelectedClubIds(initialSelectedClubIds);
+    setProfileImageFile(null);
+    setHeaderImageFile(null);
   };
 
   const handleToggleClub = (clubId: string) => {
-    setSelectedClubIds((prev) =>
-      prev.includes(clubId) ? prev.filter((id) => id !== clubId) : [...prev, clubId],
-    );
+    setSelectedClubIds((prev) => {
+      const current = prev.length > 0 ? prev.filter((id) => availableClubIds.includes(id)) : availableClubIds;
+      return current.includes(clubId)
+        ? current.filter((id) => id !== clubId)
+        : [...current, clubId];
+    });
   };
 
   const handleNext = async () => {
@@ -48,11 +69,16 @@ function useAddProfileFlow() {
     step,
     setStep,
     selectedClubIds,
+    profileImageFile,
+    headerImageFile,
     control,
     errors,
+    getValues,
     resetFlow,
     handleToggleClub,
     handleNext,
+    setProfileImageFile,
+    setHeaderImageFile,
   };
 }
 
