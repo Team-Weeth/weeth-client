@@ -3,9 +3,12 @@
 import { useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { useMediaQuery } from '@/hooks';
+import { useLeaveClubMutation } from '@/hooks/mutations/mypage/useMultiProfileMutations';
 import { cn } from '@/lib/cn';
+import { toastError, toastSuccess } from '@/stores/useToastStore';
 import { useThemeStore } from '@/stores/theme-store';
 import type { ThemeMode } from '@/types/theme';
+import { getApiErrorMessage } from '@/utils/shared';
 import { InfoSection } from './InfoSection';
 import { LogoutConfirmDialog } from './LogoutConfirmDialog';
 import { SupportListItem } from './SupportListItem';
@@ -31,6 +34,7 @@ function MyPageSettingsContent({ className, ...props }: MyPageSettingsContentPro
   const [selectedThemeMode, setSelectedThemeMode] = useState<ThemeMode>('auto');
   const [logoutOpen, setLogoutOpen] = useState(false);
   const [withdrawOpen, setWithdrawOpen] = useState(false);
+  const leaveClubMutation = useLeaveClubMutation();
 
   const handleOpenThemeModal = () => {
     if (isBelowTablet) {
@@ -44,6 +48,16 @@ function MyPageSettingsContent({ className, ...props }: MyPageSettingsContentPro
   const handleConfirmThemeMode = () => {
     setMode(selectedThemeMode);
     setIsThemeModalOpen(false);
+  };
+
+  const handleLeaveClub = async () => {
+    try {
+      await leaveClubMutation.mutateAsync({ clubId });
+      toastSuccess('동아리에서 탈퇴되었습니다.');
+      router.push('/club/select');
+    } catch (error) {
+      toastError(getApiErrorMessage(error) ?? '동아리 탈퇴에 실패했습니다.');
+    }
   };
 
   return (
@@ -117,7 +131,16 @@ function MyPageSettingsContent({ className, ...props }: MyPageSettingsContentPro
         disabled={!hasHydrated}
       />
 
-      <WithdrawConfirmDialog open={withdrawOpen} onOpenChange={setWithdrawOpen} />
+      <WithdrawConfirmDialog
+        open={withdrawOpen}
+        onOpenChange={setWithdrawOpen}
+        onConfirm={() => {
+          void handleLeaveClub();
+        }}
+        title={'동아리에서 탈퇴할까요?'}
+        description={'탈퇴하면 이 동아리의 프로필과 활동 정보를 더 이상 사용할 수 없어요.'}
+        confirmLabel={leaveClubMutation.isPending ? '탈퇴 중...' : '탈퇴하기'}
+      />
       <LogoutConfirmDialog open={logoutOpen} onOpenChange={setLogoutOpen} />
     </div>
   );

@@ -40,18 +40,21 @@ function ClubInfoCard({ club, className }: ClubInfoCardProps) {
                   <AvatarFallback variant="club" />
                 </Avatar>
               </div>
-              <LeaveClubDropdownMenu />
+              <LeaveClubDropdownMenu clubId={club.id} />
             </div>
 
             <div className="flex flex-col">
               <span className="tablet:typo-sub1 typo-sub3 text-text-strong mb-[2px]">
                 {club.name}
               </span>
-              {club.description && (
-                <p className="tablet:typo-body2 typo-caption2 text-text-normal mb-[6px] line-clamp-1">
-                  {club.description}
-                </p>
-              )}
+              <p
+                className={cn(
+                  'tablet:typo-body2 typo-caption2 mb-[6px] line-clamp-1 min-h-[18px]',
+                  club.description ? 'text-text-normal' : 'invisible',
+                )}
+              >
+                {club.description ?? ' '}
+              </p>
               <div className="text-text-alternative mb-300 flex items-center gap-100">
                 <Icon src={PeopleIcon} size={16} className="text-icon-alternative" />
                 <span className="typo-caption1 text-text-alternative">{club.memberCount}명</span>
@@ -84,14 +87,16 @@ function ClubInfoCard({ club, className }: ClubInfoCardProps) {
             <Divider />
             <div className="flex flex-col gap-2">
               <span className="tablet:typo-sub3 typo-button2 text-text-alternative">활동 기수</span>
-              <div className="flex flex-wrap gap-100">
+              <div className="min-w-0">
                 {club.cardinals.length > 0 ? (
-                  <div className="flex items-center gap-100">
-                    {club.cardinals.map((gen) => (
-                      <Tag key={gen} variant={'primary'}>
-                        {gen}기
-                      </Tag>
-                    ))}
+                  <div className="scrollbar-none overflow-x-auto">
+                    <div className="flex w-max items-center gap-100 pr-1">
+                      {club.cardinals.map((gen) => (
+                        <Tag key={gen} variant={'primary'}>
+                          {gen}기
+                        </Tag>
+                      ))}
+                    </div>
                   </div>
                 ) : (
                   <div className="flex w-full items-center justify-between">
