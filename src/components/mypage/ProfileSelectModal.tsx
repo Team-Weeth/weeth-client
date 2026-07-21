@@ -2,6 +2,9 @@
 
 import { useState } from 'react';
 import { CheckIcon, DeleteIcon } from '@/assets/icons';
+import { useUpdateClubProfileAssignmentsMutation } from '@/hooks/mutations/mypage/useMultiProfileMutations';
+import { toastError, toastSuccess } from '@/stores/useToastStore';
+import { getApiErrorMessage } from '@/utils/shared';
 import {
   Avatar,
   AvatarFallback,
@@ -13,13 +16,13 @@ import {
   Icon,
 } from '@/components/ui';
 import { cn } from '@/lib/cn';
-import type { ClubDto } from '@/types/mypage';
+import type { MyPageUsingProfile, MyPageUsingProfileClub } from '@/types/mypage';
 
 interface ProfileSelectModalProps {
   open: boolean;
-  club: ClubDto;
+  club: MyPageUsingProfileClub;
   currentProfileId: string;
-  profiles: ClubDto[];
+  profiles: MyPageUsingProfile[];
   onOpenChange: (open: boolean) => void;
   onConfirm?: (profileId: string) => void;
 }
@@ -33,14 +36,28 @@ function ProfileSelectModal({
   onConfirm,
 }: ProfileSelectModalProps) {
   const [selectedProfileId, setSelectedProfileId] = useState(currentProfileId);
+  const updateAssignmentsMutation = useUpdateClubProfileAssignmentsMutation();
 
   const handleClose = () => {
     onOpenChange(false);
   };
 
-  const handleConfirm = () => {
-    onConfirm?.(selectedProfileId);
-    onOpenChange(false);
+  const handleConfirm = async () => {
+    try {
+      await updateAssignmentsMutation.mutateAsync({
+        assignments: [
+          {
+            clubId: club.clubId,
+            profileId: Number(selectedProfileId),
+          },
+        ],
+      });
+      onConfirm?.(selectedProfileId);
+      toastSuccess('사용 프로필이 변경되었습니다.');
+      onOpenChange(false);
+    } catch (error) {
+      toastError(getApiErrorMessage(error) ?? '사용 프로필 변경에 실패했습니다.');
+    }
   };
 
   return (
@@ -52,7 +69,6 @@ function ProfileSelectModal({
         <div className="flex items-start justify-between pb-400">
           <div className="flex flex-col gap-4">
             <Avatar size={64} type="square">
-              <AvatarImage src={club.profileImageUrl ?? undefined} alt={club.name} />
               <AvatarFallback variant="club" />
             </Avatar>
             <DialogTitle className="typo-sub1 text-text-strong">
@@ -72,13 +88,13 @@ function ProfileSelectModal({
 
         <div className="divide-line h-[232px] divide-y overflow-y-auto py-400">
           {profiles.map((profile) => {
-            const isSelected = profile.id === selectedProfileId;
+            const isSelected = String(profile.profileId) === selectedProfileId;
 
             return (
               <button
-                key={profile.id}
+                key={profile.profileId}
                 type="button"
-                onClick={() => setSelectedProfileId(profile.id)}
+                onClick={() => setSelectedProfileId(String(profile.profileId))}
                 className="flex w-full items-center justify-between py-400 text-left"
               >
                 <div className="flex items-center gap-2">
@@ -88,9 +104,9 @@ function ProfileSelectModal({
                   </Avatar>
                   <div className="flex flex-col gap-1">
                     <p className="typo-sub3 text-text-strong font-medium">{profile.name}</p>
-                    {profile.description && (
+                    {profile.bio && (
                       <p className="typo-caption1 text-text-alternative line-clamp-1">
-                        {profile.description}
+                        {profile.bio}
                       </p>
                     )}
                   </div>
@@ -115,8 +131,16 @@ function ProfileSelectModal({
           <Button variant="secondary" size="lg" className="flex-1" onClick={handleClose}>
             취소
           </Button>
-          <Button variant="primary" size="lg" className="flex-1" onClick={handleConfirm}>
-            확인
+          <Button
+            variant="primary"
+            size="lg"
+            className="flex-1"
+            disabled={updateAssignmentsMutation.isPending}
+            onClick={() => {
+              void handleConfirm();
+            }}
+          >
+            {updateAssignmentsMutation.isPending ? '변경 중...' : '확인'}
           </Button>
         </div>
       </DialogContent>
