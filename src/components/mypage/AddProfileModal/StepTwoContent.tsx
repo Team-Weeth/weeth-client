@@ -1,46 +1,45 @@
 'use client';
 
 import { CheckIcon, PeopleIcon } from '@/assets/icons';
-import { Avatar, AvatarFallback, Button, Icon } from '@/components/ui';
+import { Avatar, AvatarFallback, AvatarImage, Button, Icon } from '@/components/ui';
 import { cn } from '@/lib/cn';
-
-const MOCK_CLUBS = [
-  { id: '1', name: '가천대 검도부', memberCount: 368 },
-  { id: '2', name: '가천대 테니스부', memberCount: 368 },
-  { id: '3', name: '가천대 산악부', memberCount: 368 },
-  { id: '4', name: '가천대 종이접기부', memberCount: 368 },
-];
+import type { MyPageAssignableClub } from '@/types/mypage';
 
 interface StepTwoContentProps {
+  clubs: MyPageAssignableClub[];
   selectedClubIds: string[];
   onToggleClub: (clubId: string) => void;
   onPrev: () => void;
   onConfirm: () => void;
+  isSubmitting?: boolean;
   mobileFixedFooter?: boolean;
 }
 
 function StepTwoContent({
+  clubs,
   selectedClubIds,
   onToggleClub,
   onPrev,
   onConfirm,
+  isSubmitting = false,
   mobileFixedFooter = false,
 }: StepTwoContentProps) {
   return (
     <div className="flex flex-col gap-400">
       <div className="divide-line h-[370px] divide-y">
-        {MOCK_CLUBS.map((club) => {
-          const isSelected = selectedClubIds.includes(club.id);
+        {clubs.map((club) => {
+          const isSelected = selectedClubIds.includes(club.clubId);
 
           return (
             <button
-              key={club.id}
+              key={club.clubId}
               type="button"
-              onClick={() => onToggleClub(club.id)}
+              onClick={() => onToggleClub(club.clubId)}
               className="flex w-full items-center justify-between py-400 text-left"
             >
               <div className="flex items-center gap-300">
                 <Avatar size={36} type="square">
+                  <AvatarImage src={club.clubImage ?? undefined} alt={club.name} />
                   <AvatarFallback variant="club" />
                 </Avatar>
                 <div className="flex flex-col gap-1">
@@ -48,7 +47,7 @@ function StepTwoContent({
                   <div className="flex items-center gap-100">
                     <Icon src={PeopleIcon} size={16} className="text-icon-alternative" />
                     <span className="typo-caption1 text-text-alternative">
-                      {club.memberCount}명
+                      {club.clubMemberNumber}명
                     </span>
                   </div>
                 </div>
@@ -79,7 +78,13 @@ function StepTwoContent({
         <Button variant="secondary" size="lg" className="flex-1" onClick={onPrev}>
           이전
         </Button>
-        <Button variant="primary" size="lg" className="flex-1" onClick={onConfirm}>
+        <Button
+          variant="primary"
+          size="lg"
+          className="flex-1"
+          disabled={selectedClubIds.length === 0 || isSubmitting}
+          onClick={onConfirm}
+        >
           확인
         </Button>
       </div>

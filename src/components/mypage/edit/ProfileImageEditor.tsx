@@ -28,6 +28,7 @@ interface ProfileImageEditorProps {
   triggerClassName?: string;
   triggerIconClassName?: string;
   triggerIconSize?: number;
+  showResetAction?: boolean;
 }
 
 function ProfileImageEditor({
@@ -42,6 +43,7 @@ function ProfileImageEditor({
   triggerClassName,
   triggerIconClassName,
   triggerIconSize = 16,
+  showResetAction = true,
 }: ProfileImageEditorProps) {
   const { fileInputRef, displayUrl, handleChange, handleReset } = useImagePreview({
     initialImageUrl: profileImageUrl,
@@ -93,10 +95,14 @@ function ProfileImageEditor({
           >
             이미지 업로드
           </DropdownMenuItem>
-          <Divider className="w-[136px]" />
-          <DropdownMenuItem className="text-text-alternative" onSelect={handleReset}>
-            기본 이미지
-          </DropdownMenuItem>
+          {showResetAction && (
+            <>
+              <Divider className="w-[136px]" />
+              <DropdownMenuItem className="text-text-alternative" onSelect={handleReset}>
+                기본 이미지
+              </DropdownMenuItem>
+            </>
+          )}
         </DropdownMenuContent>
       </DropdownMenu>
     </div>

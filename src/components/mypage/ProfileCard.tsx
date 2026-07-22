@@ -5,26 +5,37 @@ import { useRouter } from 'next/navigation';
 import { EditIcon, InfoCircleIcon } from '@/assets/icons';
 import { useMediaQuery } from '@/hooks';
 import { Avatar, AvatarFallback, AvatarImage, Button, Icon } from '@/components/ui';
-import type { ClubDto } from '@/types/mypage';
+import type {
+  MyPageAssignableClub,
+  MyPageUsingProfile,
+  MyPageUsingProfileClub,
+} from '@/types/mypage';
 import { EditProfileModal } from './EditProfileModal';
 import { ProfileSelectModal } from './ProfileSelectModal';
 
 interface ProfileCardProps {
-  profile: ClubDto;
-  clubs: ClubDto[];
+  profile: MyPageUsingProfile;
+  clubs: MyPageUsingProfileClub[];
   clubId: string;
-  availableProfiles: ClubDto[];
+  availableProfiles: MyPageUsingProfile[];
+  assignableClubMap: Map<string, MyPageAssignableClub>;
 }
 
-function ProfileCard({ profile, clubs, clubId, availableProfiles }: ProfileCardProps) {
+function ProfileCard({
+  profile,
+  clubs,
+  clubId,
+  availableProfiles,
+  assignableClubMap,
+}: ProfileCardProps) {
   const router = useRouter();
   const isBelowTablet = useMediaQuery('(max-width: 695.98px)');
-  const [selectedClub, setSelectedClub] = useState<ClubDto | null>(null);
+  const [selectedClub, setSelectedClub] = useState<MyPageAssignableClub | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
   const handleOpenEditProfile = () => {
     if (isBelowTablet) {
-      router.push(`/${clubId}/mypage/profiles/${profile.id}/edit`);
+      router.push(`/${clubId}/mypage/profiles/${profile.profileId}/edit`);
       return;
     }
 
@@ -40,9 +51,9 @@ function ProfileCard({ profile, clubs, clubId, availableProfiles }: ProfileCardP
             <AvatarFallback />
           </Avatar>
           <div className="flex min-w-0 flex-1 flex-col justify-center gap-1">
-            <p className="typo-sub3 text-text-strong">{profile.name}</p>
-            {profile.description && (
-              <p className="typo-body2 text-text-alternative line-clamp-1">{profile.description}</p>
+            <p className="typo-sub3 text-text-strong line-clamp-1">{profile.name}</p>
+            {profile.bio && (
+              <p className="typo-body2 text-text-alternative line-clamp-1">{profile.bio}</p>
             )}
           </div>
           <button
@@ -62,23 +73,45 @@ function ProfileCard({ profile, clubs, clubId, availableProfiles }: ProfileCardP
           </div>
         ) : (
           <div className="divide-line divide-y">
-            {clubs.map((club) => (
-              <div
-                key={club.id}
-                className="flex items-center justify-between py-[14px] first:pt-0 last:pb-0"
-              >
-                <div className="flex items-center gap-200">
-                  <Avatar size={36} type="square">
-                    <AvatarImage src={club.profileImageUrl ?? undefined} alt={club.name} />
-                    <AvatarFallback variant="club" />
-                  </Avatar>
-                  <span className="desktop:typo-body2 typo-sub3 text-text-normal">{club.name}</span>
+            {clubs.map((club) => {
+              const assignableClub = assignableClubMap.get(club.clubId);
+
+              return (
+                <div
+                  key={club.clubId}
+                  className="flex items-center justify-between py-[14px] first:pt-0 last:pb-0"
+                >
+                  <div className="flex items-center gap-200">
+                    <Avatar size={36} type="square">
+                      <AvatarImage
+                        src={assignableClub?.clubImage ?? undefined}
+                        alt={assignableClub?.name ?? club.name}
+                      />
+                      <AvatarFallback variant="club" />
+                    </Avatar>
+                    <span className="desktop:typo-body2 typo-sub3 text-text-normal">
+                      {assignableClub?.name ?? club.name}
+                    </span>
+                  </div>
+                  <Button
+                    variant="primarySoft"
+                    size="sm"
+                    onClick={() =>
+                      setSelectedClub(
+                        assignableClub ?? {
+                          clubId: club.clubId,
+                          name: club.name,
+                          clubImage: null,
+                          clubMemberNumber: 0,
+                        },
+                      )
+                    }
+                  >
+                    변경
+                  </Button>
                 </div>
-                <Button variant="primarySoft" size="sm" onClick={() => setSelectedClub(club)}>
-                  변경
-                </Button>
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
       </div>
@@ -87,7 +120,7 @@ function ProfileCard({ profile, clubs, clubId, availableProfiles }: ProfileCardP
         <ProfileSelectModal
           open={!!selectedClub}
           club={selectedClub}
-          currentProfileId={profile.id}
+          currentProfileId={String(profile.profileId)}
           profiles={availableProfiles}
           onOpenChange={(open) => {
             if (!open) setSelectedClub(null);

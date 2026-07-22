@@ -70,3 +70,4 @@ export { default as MailIcon } from './mail.svg';
 export { default as SettingIcon } from './setting.svg';
 export { default as AddRoundIcon } from './add_round.svg';
 export { default as CalendarIcon } from './calendar.svg';
+export { default as AddIcon } from './add.svg';

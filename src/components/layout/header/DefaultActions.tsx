@@ -79,12 +79,14 @@ function DefaultActions() {
           className="cursor-pointer rounded-full"
         >
           <Avatar size={40} type="round">
-            <AvatarImage
-              key={profileImageUrl ?? 'fallback'}
-              src={profileImageUrl ?? undefined}
-              alt="avatar"
-              className="object-cover"
-            />
+            {profileImageUrl && (
+              <AvatarImage
+                key={profileImageUrl}
+                src={profileImageUrl}
+                alt="avatar"
+                className="object-cover"
+              />
+            )}
             <AvatarFallback />
           </Avatar>
         </button>

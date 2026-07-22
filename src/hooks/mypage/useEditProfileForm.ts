@@ -7,7 +7,8 @@ import { editProfileSchema, type EditProfileFormData } from '@/lib/schemas/editP
 
 interface EditProfileFormValuesSource {
   name: string;
-  description: string;
+  description?: string;
+  bio?: string | null;
 }
 
 function useEditProfileForm(profile: EditProfileFormValuesSource | null, enabled = true) {
@@ -19,7 +20,7 @@ function useEditProfileForm(profile: EditProfileFormValuesSource | null, enabled
     reValidateMode: 'onChange',
     defaultValues: {
       name: profile?.name ?? '',
-      bio: profile?.description ?? '',
+      bio: profile?.description ?? profile?.bio ?? '',
     },
   });
 
@@ -31,7 +32,7 @@ function useEditProfileForm(profile: EditProfileFormValuesSource | null, enabled
 
     reset({
       name: profile.name,
-      bio: profile.description,
+      bio: profile.description ?? profile.bio ?? '',
     });
   }, [enabled, profile, reset]);
 
@@ -40,7 +41,7 @@ function useEditProfileForm(profile: EditProfileFormValuesSource | null, enabled
 
     reset({
       name: profile.name,
-      bio: profile.description,
+      bio: profile.description ?? profile.bio ?? '',
     });
   };
 
