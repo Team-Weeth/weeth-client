@@ -157,8 +157,14 @@ function HomeProfileSetupModal({ open, onOpenChange }: HomeProfileSetupModalProp
             )}
           </div>
 
-          <Button variant="secondary" size="lg" onClick={handleCreateProfile} className="my-4 flex">
-            <Icon src={AddIcon} size={18} className="text-icon-normal" />새 프로필 만들기
+          <Button
+            variant="secondary"
+            size="lg"
+            onClick={handleCreateProfile}
+            className="my-4 flex gap-100"
+          >
+            <Icon src={AddIcon} size={18} className="text-icon-normal" />
+            <span className="typo-button1 text-text-strong">새 프로필 만들기</span>
           </Button>
 
           <div className="flex gap-200">
