@@ -1,12 +1,12 @@
 'use client';
 
-import { AdminMenuIcon, AdminSearchIcon } from '@/assets/icons/admin';
+import { AdminMenuIcon } from '@/assets/icons/admin';
+import { ThemeModeToggle } from '@/components/admin/layout/ThemeModeToggle';
 import { Icon } from '@/components/ui';
 import { useAdminLNBActions, useAdminLNBCollapsed } from '@/stores/useAdminLNBStore';
 
 const LNB_WIDTH_COLLAPSED = 88; // w-22
 const LNB_WIDTH_EXPANDED = 240; // w-60
-import { ThemeModeToggle } from '@/components/admin/layout/ThemeModeToggle';
 
 export function Header() {
   const { toggleCollapsed } = useAdminLNBActions();
@@ -15,8 +15,8 @@ export function Header() {
 
   return (
     <header
-      className="bg-background grid shrink-0 transition-[grid-template-columns] duration-200"
-      style={{ gridTemplateColumns: `${lnbWidth}px 1fr auto` }}
+      className="bg-background grid shrink-0 items-center transition-[grid-template-columns] duration-200"
+      style={{ gridTemplateColumns: `${lnbWidth}px 1fr` }}
     >
       {/* LNB 영역: 토글 버튼 */}
       <div className="flex items-center px-450 py-300">
@@ -30,17 +30,18 @@ export function Header() {
         </button>
       </div>
 
-      {/* 검색창 영역 */}
-      <div className="flex items-center py-300">
+      {/* TODO: 검색 기능 구현 후 주석 해제 */}
+      {/* <div className="flex items-center py-300">
         <div className="bg-container-neutral-alternative flex h-10 flex-1 items-center gap-400 rounded-md py-200 pr-400 pl-300">
           <Icon src={AdminSearchIcon} size={20} className="text-icon-alternative shrink-0" />
           <span className="typo-button2 text-text-alternative">검색...</span>
         </div>
-      </div>
+      </div> */}
 
-      {/* 우측 액션: 구분선 - 화면 모드 토글 */}
-      <div className="ml-[38px] flex h-10 shrink-0 items-center gap-700 py-300 pr-450">
-        <div className="bg-line h-6 w-px" />
+      {/* 우측 액션: 화면 모드 토글 */}
+      {/* TODO: 구분선은 검색창 구현 후 재활성화 */}
+      <div className="flex shrink-0 items-center gap-700 justify-self-end py-300 pr-450">
+        {/* <div className="bg-line h-6 w-px" /> */}
         <ThemeModeToggle />
       </div>
     </header>
