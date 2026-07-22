@@ -12,14 +12,14 @@ const TABLET_CARD_GAP = 12;
 
 function MyPageActivityContent({ className, ...props }: MyPageActivityContentProps) {
   const { clubId } = useParams<{ clubId: string }>();
-  const { clubs } = useMyPageQueries(clubId);
+  const { activityClubs } = useMyPageQueries(clubId);
   const { containerRef, columnCount, isSingleColumn } = useResponsiveGridColumns({
-    itemCount: clubs.length,
+    itemCount: activityClubs.length,
     minColumnWidth: TABLET_CARD_WIDTH,
     gap: TABLET_CARD_GAP,
   });
   const mobileCardClassName =
-    clubs.length === 1
+    activityClubs.length === 1
       ? 'w-full shrink-0 tablet:w-full'
       : cn('w-[250px] shrink-0', isSingleColumn ? 'tablet:w-full' : 'tablet:w-[314px]');
 
@@ -38,7 +38,7 @@ function MyPageActivityContent({ className, ...props }: MyPageActivityContentPro
               : `repeat(${columnCount}, 314px)`,
           }}
         >
-          {clubs.map((club) => (
+          {activityClubs.map((club) => (
             <ClubInfoCard key={club.id} club={club} className={mobileCardClassName} />
           ))}
         </div>
