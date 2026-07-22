@@ -23,6 +23,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with:
+          persist-credentials: false
 
       - name: Setup pnpm
         uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1 # v4
@@ -61,6 +63,8 @@ jobs:
           NEXT_PUBLIC_API_URL: https://api-dev.v4.weeth.kr
 
       - name: Commit updated snapshots
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email 'github-actions[bot]@users.noreply.github.com'
@@ -69,5 +73,5 @@ jobs:
             echo "변경된 스냅샷이 없습니다."
           else
             git commit -m "chore: linux e2e 스냅샷 업데이트 [skip ci]"
-            git push
+            git push "https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.git" HEAD:"${{ github.ref_name }}"
           fi

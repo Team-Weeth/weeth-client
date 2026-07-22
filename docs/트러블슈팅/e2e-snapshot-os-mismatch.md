@@ -10,7 +10,7 @@
 
 Playwright는 스냅샷 파일명에 OS 접미사를 자동으로 붙인다.
 
-```
+```text
 로컬(Windows): image-card-single-chromium-win32.png  ← 커밋됨
 CI(Ubuntu):    image-card-single-chromium-linux.png  ← 없음
 ```
