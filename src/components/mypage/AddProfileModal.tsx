@@ -1,9 +1,8 @@
 'use client';
 
-import { useParams } from 'next/navigation';
 import { useAddProfileFlow } from '@/hooks/mypage';
 import { useCreateMultiProfileMutation } from '@/hooks/mutations/mypage/useMultiProfileMutations';
-import { useMyPageQueries } from '@/hooks/queries/mypage/useMyPageQueries';
+import { useAssignableClubsQuery } from '@/hooks/queries/mypage/useMyPageQueries';
 import { Dialog, DialogContent } from '@/components/ui';
 import { toastError, toastSuccess } from '@/stores/useToastStore';
 import { getApiErrorMessage } from '@/utils/shared';
@@ -24,8 +23,8 @@ function AddProfileModal({
   tutorialMode = false,
   initialSelectedClubIds,
 }: AddProfileModalProps) {
-  const { clubId } = useParams<{ clubId: string }>();
-  const { clubs } = useMyPageQueries(clubId);
+  const assignableClubsQuery = useAssignableClubsQuery();
+  const clubs = assignableClubsQuery.data ?? [];
   const {
     step,
     setStep,
@@ -41,7 +40,7 @@ function AddProfileModal({
     setProfileImageFile,
     setHeaderImageFile,
   } = useAddProfileFlow(
-    clubs.map((club) => club.id),
+    clubs.map((club) => club.clubId),
     {
       initialSelectedClubIds,
     },
@@ -118,7 +117,7 @@ function AddProfileModal({
             onToggleClub={handleToggleClub}
             onPrev={() => setStep(1)}
             onConfirm={handleConfirm}
-            isSubmitting={createMultiProfileMutation.isPending}
+            isSubmitting={createMultiProfileMutation.isPending || assignableClubsQuery.isPending}
           />
         )}
       </DialogContent>
