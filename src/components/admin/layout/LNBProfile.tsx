@@ -1,11 +1,10 @@
 'use client';
 
-import { useState } from 'react';
-
 import { Avatar, AvatarFallback, AvatarImage, Skeleton } from '@/components/ui';
 import { cn } from '@/lib/cn';
 import { useUserName, useUserProfileImageUrl } from '@/stores';
-import { NotificationModal } from '@/components/admin/layout/NotificationModal';
+// TODO: 알림 기능 구현 시 NotificationModal 주석 해제
+// import { NotificationModal } from '@/components/admin/layout/NotificationModal';
 
 interface LNBProfileProps {
   collapsed: boolean;
@@ -14,7 +13,8 @@ interface LNBProfileProps {
 function LNBProfile({ collapsed }: LNBProfileProps) {
   const userName = useUserName();
   const profileImageUrl = useUserProfileImageUrl();
-  const [notifOpen, setNotifOpen] = useState(false);
+  // TODO: 알림 기능 구현 시 notifOpen 상태 및 핸들러 주석 해제
+  // const [notifOpen, setNotifOpen] = useState(false);
   // TODO: 알림 기능 구현 시 hasNotification 연결
 
   const avatarEl = userName ? (
@@ -30,8 +30,15 @@ function LNBProfile({ collapsed }: LNBProfileProps) {
   ) : null;
 
   return (
-    <>
-      <div
+    <div
+      className={cn(
+        'flex items-center rounded-lg',
+        collapsed
+          ? 'size-[56px] justify-center self-center'
+          : 'h-[65px] w-full gap-[38px] pr-200 pl-400',
+      )}
+    >
+      {/* TODO: 알림 기능 구현 시 클릭/호버 인터랙션 주석 해제
         role="button"
         tabIndex={0}
         onClick={() => setNotifOpen(true)}
@@ -42,39 +49,35 @@ function LNBProfile({ collapsed }: LNBProfileProps) {
           }
         }}
         className={cn(
-          'hover:bg-container-neutral-interaction flex cursor-pointer items-center rounded-lg transition-colors',
-          collapsed
-            ? 'size-[56px] justify-center self-center'
-            : 'h-[65px] w-full gap-[38px] pr-200 pl-400',
+          'hover:bg-container-neutral-interaction ... cursor-pointer transition-colors',
+          ...
         )}
-      >
-        {collapsed ? (
-          <div className="relative">
-            {avatarEl ?? <Skeleton className="size-10 rounded-full" />}
-          </div>
-        ) : (
-          <div className="flex min-w-0 flex-1 items-center gap-200">
-            {avatarEl ? (
-              <>
-                {avatarEl}
-                <span className="typo-sub1 text-text-normal truncate">{userName}</span>
-              </>
-            ) : (
-              <>
-                <Skeleton className="size-10 shrink-0 rounded-full" />
-                <Skeleton className="h-[19px] w-24 rounded-sm" />
-              </>
-            )}
-          </div>
-        )}
-      </div>
-      <NotificationModal
-        open={notifOpen}
-        onOpenChange={setNotifOpen}
-        collapsed={collapsed}
-        notifications={[]}
-      />
-    </>
+      */}
+      {collapsed ? (
+        <div className="relative">{avatarEl ?? <Skeleton className="size-10 rounded-full" />}</div>
+      ) : (
+        <div className="flex min-w-0 flex-1 items-center gap-200">
+          {avatarEl ? (
+            <>
+              {avatarEl}
+              <span className="typo-sub1 text-text-normal truncate">{userName}</span>
+            </>
+          ) : (
+            <>
+              <Skeleton className="size-10 shrink-0 rounded-full" />
+              <Skeleton className="h-[19px] w-24 rounded-sm" />
+            </>
+          )}
+        </div>
+      )}
+    </div>
+    // TODO: 알림 기능 구현 시 NotificationModal 주석 해제
+    // <NotificationModal
+    //   open={notifOpen}
+    //   onOpenChange={setNotifOpen}
+    //   collapsed={collapsed}
+    //   notifications={[]}
+    // />
   );
 }
 
