@@ -1,10 +1,10 @@
 'use client';
 
-import { useParams, useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { BackIcon } from '@/assets/icons';
 import { useAddProfileFlow } from '@/hooks/mypage';
 import { useCreateMultiProfileMutation } from '@/hooks/mutations/mypage/useMultiProfileMutations';
-import { useMyPageQueries } from '@/hooks/queries/mypage/useMyPageQueries';
+import { useAssignableClubsQuery } from '@/hooks/queries/mypage/useMyPageQueries';
 import { Icon } from '@/components/ui';
 import { cn } from '@/lib/cn';
 import { toastError, toastSuccess } from '@/stores/useToastStore';
@@ -16,8 +16,8 @@ type AddProfilePageContentProps = React.HTMLAttributes<HTMLDivElement>;
 
 function AddProfilePageContent({ className, ...props }: AddProfilePageContentProps) {
   const router = useRouter();
-  const { clubId } = useParams<{ clubId: string }>();
-  const { clubs } = useMyPageQueries(clubId);
+  const assignableClubsQuery = useAssignableClubsQuery();
+  const clubs = assignableClubsQuery.data ?? [];
   const {
     step,
     setStep,
@@ -32,7 +32,7 @@ function AddProfilePageContent({ className, ...props }: AddProfilePageContentPro
     handleNext,
     setProfileImageFile,
     setHeaderImageFile,
-  } = useAddProfileFlow(clubs.map((club) => club.id));
+  } = useAddProfileFlow(clubs.map((club) => club.clubId));
   const createMultiProfileMutation = useCreateMultiProfileMutation();
 
   const handleClose = () => {
@@ -106,7 +106,7 @@ function AddProfilePageContent({ className, ...props }: AddProfilePageContentPro
           onToggleClub={handleToggleClub}
           onPrev={() => setStep(1)}
           onConfirm={handleConfirm}
-          isSubmitting={createMultiProfileMutation.isPending}
+          isSubmitting={createMultiProfileMutation.isPending || assignableClubsQuery.isPending}
           mobileFixedFooter
         />
       )}
