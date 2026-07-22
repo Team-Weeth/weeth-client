@@ -3,10 +3,10 @@
 import { CheckIcon, PeopleIcon } from '@/assets/icons';
 import { Avatar, AvatarFallback, AvatarImage, Button, Icon } from '@/components/ui';
 import { cn } from '@/lib/cn';
-import type { ClubDto } from '@/types/mypage';
+import type { MyPageAssignableClub } from '@/types/mypage';
 
 interface StepTwoContentProps {
-  clubs: ClubDto[];
+  clubs: MyPageAssignableClub[];
   selectedClubIds: string[];
   onToggleClub: (clubId: string) => void;
   onPrev: () => void;
@@ -28,18 +28,18 @@ function StepTwoContent({
     <div className="flex flex-col gap-400">
       <div className="divide-line h-[370px] divide-y">
         {clubs.map((club) => {
-          const isSelected = selectedClubIds.includes(club.id);
+          const isSelected = selectedClubIds.includes(club.clubId);
 
           return (
             <button
-              key={club.id}
+              key={club.clubId}
               type="button"
-              onClick={() => onToggleClub(club.id)}
+              onClick={() => onToggleClub(club.clubId)}
               className="flex w-full items-center justify-between py-400 text-left"
             >
               <div className="flex items-center gap-300">
                 <Avatar size={36} type="square">
-                  <AvatarImage src={club.profileImageUrl ?? undefined} alt={club.name} />
+                  <AvatarImage src={club.clubImage ?? undefined} alt={club.name} />
                   <AvatarFallback variant="club" />
                 </Avatar>
                 <div className="flex flex-col gap-1">
@@ -47,7 +47,7 @@ function StepTwoContent({
                   <div className="flex items-center gap-100">
                     <Icon src={PeopleIcon} size={16} className="text-icon-alternative" />
                     <span className="typo-caption1 text-text-alternative">
-                      {club.memberCount}명
+                      {club.clubMemberNumber}명
                     </span>
                   </div>
                 </div>
