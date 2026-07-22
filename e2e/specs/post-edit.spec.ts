@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { resolveClubId, openEditor } from '../helpers';
+import { resolveClubId, openEditor, deletePost } from '../helpers';
 
 /**
  * 전제 조건:
@@ -35,6 +35,12 @@ test.describe('게시글 수정 후 상세 페이지 리다이렉트', () => {
       [, testBoardId, testPostId] = match;
     } finally {
       await context.close().catch(() => {});
+    }
+  });
+
+  test.afterAll(async () => {
+    if (clubId && testBoardId && testPostId) {
+      await deletePost(clubId, testBoardId, testPostId);
     }
   });
 

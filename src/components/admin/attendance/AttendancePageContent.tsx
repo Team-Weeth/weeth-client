@@ -109,7 +109,7 @@ function AttendancePageContent() {
 
       <AlertDialog
         open={open}
-        onOpenChange={(isOpen) => {
+        onOpenChange={(isOpen: boolean) => {
           if (!isOpen) onCancel();
         }}
         title="변경 사항이 저장되지 않았어요"
