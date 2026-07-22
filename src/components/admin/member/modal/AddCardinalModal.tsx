@@ -60,14 +60,14 @@ function AddCardinalModal({ children, onSubmit }: AddCardinalModalProps) {
             <div className="relative">
               <Input
                 aria-label="기수"
-                type="text"
+                type="number"
                 inputMode="numeric"
                 value={cardinal}
                 onChange={(e) => {
                   const v = (e.target as HTMLInputElement).value.replace(/\D/g, '');
                   if (v === '' || Number(v) > 0) setCardinal(v);
                 }}
-                className="pr-10 text-right"
+                className="pr-10 text-left"
                 placeholder=" "
               />
               <span className="typo-body2 text-text-alternative pointer-events-none absolute top-1/2 right-400 -translate-y-1/2">
