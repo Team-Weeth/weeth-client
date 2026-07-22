@@ -15,12 +15,11 @@ type MyPageContentProps = React.HTMLAttributes<HTMLDivElement>;
 function MyPageContent({ className, ...props }: MyPageContentProps) {
   const { clubId } = useParams<{ clubId: string }>();
   const { me, stats, currentProfile, usingProfiles } = useMyPageQueries(clubId);
-  const displayName = me?.name ?? '';
 
   const profileSection = me ? (
     <ProfileSection
       profileId={currentProfile?.profileId}
-      name={displayName}
+      name={currentProfile?.name ?? me.name ?? ''}
       bio={currentProfile?.bio ?? undefined}
       profileImageUrl={currentProfile?.profileImageUrl ?? undefined}
       headerImageUrl={currentProfile?.headerImageUrl ?? undefined}
