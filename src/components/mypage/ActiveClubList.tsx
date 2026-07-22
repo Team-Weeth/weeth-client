@@ -1,29 +1,29 @@
 import Link from 'next/link';
 import { Avatar, AvatarImage, AvatarFallback, Tag, Icon } from '@/components/ui';
 import { cn } from '@/lib/cn';
-import type { ClubDto } from '@/types/mypage';
+import type { MyPageUsingProfile } from '@/types/mypage';
 import { SettingIcon } from '@/assets/icons';
 
 interface ActiveClubListProps extends React.HTMLAttributes<HTMLDivElement> {
-  clubs?: ClubDto[];
+  profiles?: MyPageUsingProfile[];
   clubId: string;
 }
 
-function ActiveClubList({ clubs = [], clubId, className, ...props }: ActiveClubListProps) {
+function ActiveClubList({ profiles = [], clubId, className, ...props }: ActiveClubListProps) {
   return (
     <div
       className={cn('bg-container-neutral w-full overflow-hidden rounded-lg p-450', className)}
       {...props}
     >
       <p className="tablet:typo-sub1 typo-sub3 text-text-alternative mb-[18px]">
-        사용 중인 프로필 <span>{clubs.length}</span>
+        사용 중인 프로필 <span>{profiles.length}</span>
       </p>
       <div
         className="scrollbar-none tablet:grid tablet:overflow-x-visible flex w-full flex-col gap-4"
         style={{ gridTemplateColumns: 'repeat(auto-fill, 182px)' }}
       >
-        {clubs.map((club) => (
-          <ActiveClubCard key={club.id} club={club} />
+        {profiles.map((profile) => (
+          <ActiveClubCard key={profile.profileId} profile={profile} />
         ))}
         <ProfileManageCard clubId={clubId} />
       </div>
@@ -32,43 +32,49 @@ function ActiveClubList({ clubs = [], clubId, className, ...props }: ActiveClubL
 }
 
 interface ActiveClubCardProps {
-  club: ClubDto;
+  profile: MyPageUsingProfile;
 }
 
-function ActiveClubCard({ club }: ActiveClubCardProps) {
+function ActiveClubCard({ profile }: ActiveClubCardProps) {
   return (
     <>
       <div className="tablet:flex bg-container-neutral-alternative hidden flex-col gap-2 rounded-lg p-450">
         <Avatar size={100} type="round" className="self-center">
-          <AvatarImage src={club.profileImageUrl ?? undefined} alt={club.name} />
+          <AvatarImage src={profile.profileImageUrl ?? undefined} alt={profile.name} />
           <AvatarFallback />
         </Avatar>
         <div className="flex flex-col">
-          <span className="typo-sub3 text-text-strong">{club.name}</span>
-          {club.description && (
-            <span className="typo-body1 text-text-alternative line-clamp-1">
-              {club.description}
-            </span>
-          )}
+          <span className="typo-sub3 text-text-strong line-clamp-1">{profile.name}</span>
+          <span
+            className={cn(
+              'typo-body1 line-clamp-1 min-h-[20px]',
+              profile.bio ? 'text-text-alternative' : 'invisible',
+            )}
+          >
+            {profile.bio ?? ' '}
+          </span>
           <Tag variant="primary" className="mt-2 self-start">
-            {club.name}
+            {profile.clubs.map((club) => club.name).join(', ')}
           </Tag>
         </div>
       </div>
       <div className="tablet:hidden bg-container-neutral-alternative tablet:w-[220px] flex shrink-0 gap-2 rounded-lg p-450">
         <Avatar size={64} type="round">
-          <AvatarImage src={club.profileImageUrl ?? undefined} alt={club.name} />
+          <AvatarImage src={profile.profileImageUrl ?? undefined} alt={profile.name} />
           <AvatarFallback />
         </Avatar>
         <div className="flex flex-col">
-          <span className="typo-sub3 text-text-strong">{club.name}</span>
-          {club.description && (
-            <span className="typo-body2 text-text-alternative line-clamp-1">
-              {club.description}
-            </span>
-          )}
+          <span className="typo-sub3 text-text-strong">{profile.name}</span>
+          <span
+            className={cn(
+              'typo-body2 line-clamp-1 min-h-[18px]',
+              profile.bio ? 'text-text-alternative' : 'invisible',
+            )}
+          >
+            {profile.bio ?? ' '}
+          </span>
           <Tag variant="primary" className="mt-2 self-start">
-            {club.name}
+            {profile.clubs.map((club) => club.name).join(', ')}
           </Tag>
         </div>
       </div>

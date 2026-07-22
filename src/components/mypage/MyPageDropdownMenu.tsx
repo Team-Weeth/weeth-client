@@ -10,7 +10,6 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
   Icon,
 } from '@/components/ui';
@@ -38,7 +37,6 @@ function MyPageDropdownMenu() {
           <DropdownMenuItem asChild>
             <Link href={`/${clubId}/mypage/edit`}>개인정보 수정</Link>
           </DropdownMenuItem>
-          <DropdownMenuSeparator />
         </DropdownMenuContent>
       </DropdownMenu>
 

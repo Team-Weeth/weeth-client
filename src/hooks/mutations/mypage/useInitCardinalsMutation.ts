@@ -2,7 +2,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { mypageApi } from '@/lib/apis/mypage';
 import { useClubId } from '@/stores/useClubStore';
 import type { ProfileStatus } from '@/types/home';
-import type { ClubDto, MyMember } from '@/types/mypage';
+import type { ClubDto } from '@/types/mypage';
 
 export function useInitCardinalsMutation() {
   const queryClient = useQueryClient();
@@ -16,14 +16,6 @@ export function useInitCardinalsMutation() {
     onSuccess: (_, cardinals) => {
       if (clubId) {
         const nextCardinals = [...cardinals].sort((a, b) => a - b);
-
-        queryClient.setQueryData<MyMember>(['mypage', 'me', clubId], (old) => {
-          if (!old) return old;
-          return {
-            ...old,
-            cardinals: nextCardinals,
-          };
-        });
 
         queryClient.setQueryData<ClubDto[]>(['mypage', 'clubs'], (old) => {
           if (!old) return old;
@@ -48,7 +40,6 @@ export function useInitCardinalsMutation() {
 
       queryClient.invalidateQueries({ queryKey: ['mypage', 'clubs'] });
       if (clubId) {
-        queryClient.invalidateQueries({ queryKey: ['mypage', 'me', clubId] });
         queryClient.invalidateQueries({ queryKey: ['home', 'profile-status', clubId] });
       }
     },

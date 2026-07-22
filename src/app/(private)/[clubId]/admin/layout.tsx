@@ -54,10 +54,10 @@ export default async function AdminLayout({
       <ClubIdSyncer clubId={clubId}>
         <AdminScopeProvider>
           <div data-admin className="fixed inset-0 flex flex-col">
+            <Header />
             <div className="flex flex-1 overflow-hidden">
               <LNB />
               <main className="bg-background min-w-0 flex-1 overflow-x-auto overflow-y-auto">
-                <Header />
                 {children}
               </main>
             </div>

@@ -4,6 +4,7 @@ import { Fragment } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { Icon } from '@/components/ui';
 import { ArrowRightIcon, PhoneIcon, MailIcon } from '@/assets/icons';
+import { useProfileSectionActions } from '@/hooks/mypage';
 import { cn } from '@/lib/cn';
 import type { ProfileData } from '@/types/mypage';
 import { ProfileBackgroundImageEditor } from './edit/ProfileBackgroundImageEditor';
@@ -16,9 +17,11 @@ interface ProfileSectionProps extends React.HTMLAttributes<HTMLDivElement>, Prof
 }
 
 const ProfileSection = ({
+  profileId,
   name,
   bio,
   profileImageUrl,
+  headerImageUrl,
   tel,
   email,
   school,
@@ -30,6 +33,16 @@ const ProfileSection = ({
 }: ProfileSectionProps) => {
   const router = useRouter();
   const { clubId } = useParams<{ clubId: string }>();
+  const {
+    handleProfileImageChange,
+    handleHeaderImageChange,
+    handleProfileImageReset,
+    handleHeaderImageReset,
+  } = useProfileSectionActions({
+    profileId,
+    name,
+    bio,
+  });
   const schoolLabel = [school, department].filter(Boolean).join(' · ');
   const activityItems = [
     {
@@ -50,6 +63,13 @@ const ProfileSection = ({
       {...props}
     >
       <ProfileBackgroundImageEditor
+        backgroundImageUrl={headerImageUrl}
+        onFileChange={(file) => {
+          void handleHeaderImageChange(file);
+        }}
+        onResetImage={() => {
+          void handleHeaderImageReset();
+        }}
         priority
         className="h-[190px] rounded-none"
         imageClassName="rounded-none"
@@ -62,6 +82,12 @@ const ProfileSection = ({
           <ProfileImageEditor
             name={name}
             profileImageUrl={profileImageUrl}
+            onFileChange={(file) => {
+              void handleProfileImageChange(file);
+            }}
+            onResetImage={() => {
+              void handleProfileImageReset();
+            }}
             avatarSize={128}
             avatarClassName="border-line border-2"
             triggerClassName="right-0 bottom-0 size-8 border-line"

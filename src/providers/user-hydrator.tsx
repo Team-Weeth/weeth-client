@@ -28,7 +28,7 @@ function UserHydrator({ userInfo, clubInfo, children }: UserHydratorProps) {
     if (currentClub.clubId !== clubInfo.clubId || currentClub.clubName !== clubInfo.clubName) {
       useClubStore.setState(clubInfo, false, 'setClub');
     }
-  }, [clubInfo, userInfo]);
+  }, [userInfo.id, userInfo.profileImageUrl, clubInfo.clubId, clubInfo.clubName]);
 
   return children;
 }

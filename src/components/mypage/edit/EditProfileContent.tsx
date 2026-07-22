@@ -7,9 +7,9 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, Button, Icon } from '@/components/ui';
 import { useNavigationGuard } from '@/hooks/useNavigationGuard';
+import { useMyPageQueries } from '@/hooks/queries/mypage/useMyPageQueries';
 import { cn } from '@/lib/cn';
 import { createEditProfileSchema, type EditProfileFormData } from '@/lib/schemas/editProfile';
-import { useMyMemberQuery } from '@/hooks/queries/mypage/useMyMemberQuery';
 import { useUpdateProfileMutation } from '@/hooks/mutations/useUpdateProfileMutation';
 import { toastSuccess, toastError } from '@/stores/useToastStore';
 import { formatPhone } from '@/utils/shared';
@@ -28,7 +28,7 @@ interface EditProfileContentProps extends React.HTMLAttributes<HTMLDivElement> {
 function EditProfileContent({ className, schools, majors, ...props }: EditProfileContentProps) {
   const router = useRouter();
   const { clubId } = useParams<{ clubId: string }>();
-  const { data: me, isPending: isMePending } = useMyMemberQuery(clubId);
+  const { summaryQuery, me, currentProfile } = useMyPageQueries(clubId);
   const { mutate: updateProfile, isPending } = useUpdateProfileMutation();
   const selectedFile: File | null = null;
   const resetToDefault = false;
@@ -60,7 +60,7 @@ function EditProfileContent({ className, schools, majors, ...props }: EditProfil
 
     const nextValues = {
       name: toFormString(me.name),
-      bio: toFormString(me.bio),
+      bio: toFormString(currentProfile?.bio),
       phone: me.tel ? formatPhone(me.tel) : '',
       email: toFormString(me.email),
       school: toFormString(me.school),
@@ -70,7 +70,7 @@ function EditProfileContent({ className, schools, majors, ...props }: EditProfil
 
     reset(nextValues);
     void trigger(['phone', 'school', 'department', 'studentId']);
-  }, [me, reset, trigger]);
+  }, [currentProfile?.bio, me, reset, trigger]);
 
   const hasChanges = isDirty || !!selectedFile || resetToDefault;
 
@@ -90,11 +90,6 @@ function EditProfileContent({ className, schools, majors, ...props }: EditProfil
           school: data.school,
           department: data.department,
         },
-        clubProfile: {
-          bio: data.bio ?? '',
-        },
-        profileImageFile: selectedFile,
-        resetImage: resetToDefault,
       },
       {
         onSuccess: () => {
@@ -114,7 +109,7 @@ function EditProfileContent({ className, schools, majors, ...props }: EditProfil
   };
   const submitForm = handleSubmit(onSubmit);
 
-  if (isMePending || !me) {
+  if (summaryQuery.isPending || !me) {
     return <EditProfileSkeleton className={className} {...props} />;
   }
 
@@ -127,7 +122,7 @@ function EditProfileContent({ className, schools, majors, ...props }: EditProfil
         )}
         {...props}
       >
-        <div className="flex items-center gap-1">
+        <div className="tablet:pt-0 flex items-center gap-1 pt-300">
           <button
             type="button"
             onClick={() => router.back()}

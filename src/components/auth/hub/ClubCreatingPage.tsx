@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 import { ProgressBar } from '@/components/ui';
+import { getHomeTutorialPendingKey } from '@/constants/home/tutorial';
 import { createClubAction } from '@/lib/actions/club';
 import { useProgressAnimation } from '@/hooks';
 import { useClubActions, useCreateClubDraftStore } from '@/stores';
@@ -16,7 +17,6 @@ interface ClubCreatingPageProps {
 }
 
 type Status = 'idle' | 'requesting' | 'api-done' | 'navigated';
-const HOME_TUTORIAL_PENDING_KEY = 'home-tutorial-pending-club-id';
 
 function ClubCreatingPage({ onCancel }: ClubCreatingPageProps) {
   const router = useRouter();
@@ -29,7 +29,7 @@ function ClubCreatingPage({ onCancel }: ClubCreatingPageProps) {
   const navigate = () => {
     if (status === 'navigated' || !clubIdRef.current) return;
     setStatus('navigated');
-    window.sessionStorage.setItem(HOME_TUTORIAL_PENDING_KEY, clubIdRef.current);
+    window.sessionStorage.setItem(getHomeTutorialPendingKey('lead'), clubIdRef.current);
     resetDraft();
     router.replace(`/${clubIdRef.current}/home`);
   };

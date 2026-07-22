@@ -14,8 +14,13 @@ import { ProfileImageEditor } from '../edit/ProfileImageEditor';
 interface StepOneContentProps {
   control: Control<Pick<EditProfileFormData, 'name' | 'bio'>>;
   errors: FieldErrors<Pick<EditProfileFormData, 'name' | 'bio'>>;
+  onProfileImageChange?: (file: File) => void;
+  onProfileImageReset?: () => void;
+  onHeaderImageChange?: (file: File) => void;
+  onHeaderImageReset?: () => void;
   onCancel: () => void;
   onNext: () => void;
+  nextLabel?: string;
   cancelAsDialogClose?: boolean;
   mobileFixedFooter?: boolean;
 }
@@ -23,8 +28,13 @@ interface StepOneContentProps {
 function StepOneContent({
   control,
   errors,
+  onProfileImageChange,
+  onProfileImageReset,
+  onHeaderImageChange,
+  onHeaderImageReset,
   onCancel,
   onNext,
+  nextLabel = '다음',
   cancelAsDialogClose = true,
   mobileFixedFooter = false,
 }: StepOneContentProps) {
@@ -32,11 +42,16 @@ function StepOneContent({
 
   return (
     <>
-      <ProfileBackgroundImageEditor />
+      <ProfileBackgroundImageEditor
+        onFileChange={onHeaderImageChange}
+        onResetImage={onHeaderImageReset}
+      />
 
       <div className="relative flex justify-center">
         <ProfileImageEditor
           name={name || '프로필'}
+          onFileChange={onProfileImageChange}
+          onResetImage={onProfileImageReset}
           className="-mt-[60px]"
           avatarSize={100}
           avatarClassName="bg-[#EFF1F1]"
@@ -123,7 +138,7 @@ function StepOneContent({
           disabled={!name.trim()}
           onClick={onNext}
         >
-          다음
+          {nextLabel}
         </Button>
       </div>
     </>
