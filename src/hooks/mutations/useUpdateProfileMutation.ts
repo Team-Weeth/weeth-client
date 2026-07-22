@@ -4,6 +4,7 @@ import { uploadFile } from '@/lib/apis/upload';
 import type { UpdateUserBody, UpdateClubProfileBody } from '@/lib/apis/mypage';
 import { useClubId } from '@/stores/useClubStore';
 import { useUserStore } from '@/stores/useUserStore';
+import type { MyPageSummary } from '@/types/mypage';
 
 interface UpdateProfileParams {
   clubId?: string;
@@ -59,29 +60,8 @@ export function useUpdateProfileMutation() {
       if (!targetClubId) return;
 
       queryClient.setQueryData(
-        ['mypage', 'summary'],
-        (
-          old:
-            | {
-                user: {
-                  name: string | null;
-                  email: string | null;
-                  school: string | null;
-                  department: string | null;
-                  studentId: string | null;
-                  tel: string | null;
-                };
-                usingProfiles: Array<{
-                  profileId: number;
-                  name: string;
-                  profileImageUrl: string | null;
-                  headerImageUrl: string | null;
-                  bio: string | null;
-                  clubs: Array<{ clubId: string; name: string }>;
-                }>;
-              }
-            | undefined,
-        ) => {
+        ['mypage', 'summary', targetClubId],
+        (old: MyPageSummary | undefined) => {
           if (!old) return old;
           return {
             ...old,
@@ -103,6 +83,13 @@ export function useUpdateProfileMutation() {
                   }
                 : profile,
             ),
+            currentProfile: old.currentProfile
+              ? {
+                  ...old.currentProfile,
+                  ...(clubProfile && { bio: clubProfile.bio }),
+                  ...(isReset && { profileImageUrl: null }),
+                }
+              : null,
           };
         },
       );
@@ -133,7 +120,7 @@ export function useUpdateProfileMutation() {
 
       await queryClient.invalidateQueries({ queryKey: ['home', targetClubId] });
       await queryClient.invalidateQueries({ queryKey: ['home', 'profile-status', targetClubId] });
-      await queryClient.invalidateQueries({ queryKey: ['mypage', 'summary'] });
+      await queryClient.invalidateQueries({ queryKey: ['mypage', 'summary', targetClubId] });
       void queryClient.invalidateQueries({ queryKey: ['home', 'recent-posts', targetClubId] });
       void queryClient.invalidateQueries({ queryKey: ['posts', targetClubId] });
     },
