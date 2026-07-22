@@ -44,7 +44,7 @@ function ActiveClubCard({ profile }: ActiveClubCardProps) {
           <AvatarFallback />
         </Avatar>
         <div className="flex flex-col">
-          <span className="typo-sub3 text-text-strong">{profile.name}</span>
+          <span className="typo-sub3 text-text-strong line-clamp-1">{profile.name}</span>
           <span
             className={cn(
               'typo-body1 line-clamp-1 min-h-[20px]',
