@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { useLeaveClubMutation } from '@/hooks/mutations/mypage/useMultiProfileMutations';
 import { toastError, toastSuccess } from '@/stores/useToastStore';
 import { getApiErrorMessage } from '@/utils/shared';
@@ -19,6 +20,7 @@ interface LeaveClubDropdownMenuProps {
 }
 
 function LeaveClubDropdownMenu({ clubId }: LeaveClubDropdownMenuProps) {
+  const router = useRouter();
   const [withdrawOpen, setWithdrawOpen] = useState(false);
   const leaveClubMutation = useLeaveClubMutation();
 
@@ -26,6 +28,7 @@ function LeaveClubDropdownMenu({ clubId }: LeaveClubDropdownMenuProps) {
     try {
       await leaveClubMutation.mutateAsync({ clubId });
       toastSuccess('동아리에서 탈퇴되었습니다.');
+      router.push('/club/select');
     } catch (error) {
       toastError(getApiErrorMessage(error) ?? '동아리 탈퇴에 실패했습니다.');
     }
