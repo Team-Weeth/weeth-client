@@ -64,10 +64,7 @@ function BankSelectField({
               src={ArrowDownIcon}
               size={20}
               alt="은행 목록 열기"
-              className={cn(
-                'text-icon-alternative transition-transform',
-                open && 'rotate-180',
-              )}
+              className={cn('text-icon-alternative transition-transform', open && 'rotate-180')}
             />
           </button>
         </Popover.Trigger>
