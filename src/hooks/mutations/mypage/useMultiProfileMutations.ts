@@ -36,8 +36,16 @@ interface LeaveClubParams {
   clubId: string;
 }
 
-const MYPAGE_SUMMARY_QUERY_KEY = ['mypage', 'summary'] as const;
 const HOME_QUERY_KEY = ['home'] as const;
+const MY_PROFILES_QUERY_KEY = ['mypage', 'profiles'] as const;
+
+function getMyPageSummaryQueryKey(clubId: string) {
+  return ['mypage', 'summary', clubId] as const;
+}
+
+function getMyProfileDetailQueryKey(profileId: number) {
+  return ['mypage', 'profiles', profileId] as const;
+}
 
 function updateAssignedProfiles(
   summary: MyPageSummary | undefined,
@@ -103,8 +111,12 @@ export function useCreateMultiProfileMutation() {
       });
     },
     onSuccess: async () => {
+      const currentClubId = useClubStore.getState().clubId;
       await Promise.all([
-        queryClient.invalidateQueries({ queryKey: MYPAGE_SUMMARY_QUERY_KEY }),
+        ...(currentClubId
+          ? [queryClient.invalidateQueries({ queryKey: getMyPageSummaryQueryKey(currentClubId) })]
+          : []),
+        queryClient.invalidateQueries({ queryKey: MY_PROFILES_QUERY_KEY }),
         queryClient.invalidateQueries({ queryKey: ['mypage', 'clubs'] }),
         queryClient.invalidateQueries({ queryKey: HOME_QUERY_KEY }),
       ]);
@@ -118,8 +130,12 @@ export function useDeleteMultiProfileMutation() {
   return useMutation({
     mutationFn: (profileId: number) => mypageApi.deleteMultiProfile(profileId),
     onSuccess: async () => {
+      const currentClubId = useClubStore.getState().clubId;
       await Promise.all([
-        queryClient.invalidateQueries({ queryKey: MYPAGE_SUMMARY_QUERY_KEY }),
+        ...(currentClubId
+          ? [queryClient.invalidateQueries({ queryKey: getMyPageSummaryQueryKey(currentClubId) })]
+          : []),
+        queryClient.invalidateQueries({ queryKey: MY_PROFILES_QUERY_KEY }),
         queryClient.invalidateQueries({ queryKey: ['mypage', 'clubs'] }),
         queryClient.invalidateQueries({ queryKey: HOME_QUERY_KEY }),
       ]);
@@ -151,27 +167,46 @@ export function useUpdateMultiProfileMutation() {
       });
     },
     onSuccess: async (response) => {
+      const currentClubId = useClubStore.getState().clubId;
       const updatedProfile = response.data.data;
 
-      queryClient.setQueryData(MYPAGE_SUMMARY_QUERY_KEY, (old: MyPageSummary | undefined) => {
-        if (!old) return old;
+      if (currentClubId) {
+        queryClient.setQueryData(
+          getMyPageSummaryQueryKey(currentClubId),
+          (old: MyPageSummary | undefined) => {
+            if (!old) return old;
 
-        return {
-          ...old,
-          usingProfiles: old.usingProfiles.map((profile) =>
-            profile.profileId === updatedProfile.profileId
-              ? {
-                  ...profile,
-                  name: updatedProfile.name,
-                  profileImageUrl: updatedProfile.profileImageUrl,
-                  headerImageUrl: updatedProfile.headerImageUrl,
-                  bio: updatedProfile.bio,
-                  clubs: updatedProfile.usingClubs,
-                }
-              : profile,
-          ),
-        };
-      });
+            const usingProfiles = old.usingProfiles.map((profile) =>
+              profile.profileId === updatedProfile.profileId
+                ? {
+                    ...profile,
+                    name: updatedProfile.name,
+                    profileImageUrl: updatedProfile.profileImageUrl,
+                    headerImageUrl: updatedProfile.headerImageUrl,
+                    bio: updatedProfile.bio,
+                    clubs: updatedProfile.usingClubs,
+                  }
+                : profile,
+            );
+            const currentProfile =
+              old.currentProfile?.profileId === updatedProfile.profileId
+                ? {
+                    ...old.currentProfile,
+                    name: updatedProfile.name,
+                    profileImageUrl: updatedProfile.profileImageUrl,
+                    headerImageUrl: updatedProfile.headerImageUrl,
+                    bio: updatedProfile.bio,
+                  }
+                : old.currentProfile;
+
+            return {
+              ...old,
+              usingProfiles,
+              currentProfile,
+            };
+          },
+        );
+      }
 
       useUserStore.setState(
         { name: updatedProfile.name, profileImageUrl: updatedProfile.profileImageUrl },
@@ -180,7 +215,13 @@ export function useUpdateMultiProfileMutation() {
       );
 
       await Promise.all([
-        queryClient.invalidateQueries({ queryKey: MYPAGE_SUMMARY_QUERY_KEY }),
+        ...(currentClubId
+          ? [queryClient.invalidateQueries({ queryKey: getMyPageSummaryQueryKey(currentClubId) })]
+          : []),
+        queryClient.invalidateQueries({ queryKey: MY_PROFILES_QUERY_KEY }),
+        queryClient.invalidateQueries({
+          queryKey: getMyProfileDetailQueryKey(updatedProfile.profileId),
+        }),
         queryClient.invalidateQueries({ queryKey: HOME_QUERY_KEY }),
       ]);
     },
@@ -194,20 +235,34 @@ export function useDeleteMultiProfileProfileImageMutation() {
     mutationFn: ({ profileId }: DeleteMultiProfileImageParams) =>
       mypageApi.deleteMultiProfileProfileImage(profileId),
     onSuccess: async (_, { profileId }) => {
-      queryClient.setQueryData(MYPAGE_SUMMARY_QUERY_KEY, (old: MyPageSummary | undefined) => {
-        if (!old) return old;
+      const currentClubId = useClubStore.getState().clubId;
+      if (currentClubId) {
+        queryClient.setQueryData(
+          getMyPageSummaryQueryKey(currentClubId),
+          (old: MyPageSummary | undefined) => {
+            if (!old) return old;
 
-        return {
-          ...old,
-          usingProfiles: old.usingProfiles.map((profile) =>
-            profile.profileId === profileId ? { ...profile, profileImageUrl: null } : profile,
-          ),
-        };
-      });
+            return {
+              ...old,
+              usingProfiles: old.usingProfiles.map((profile) =>
+                profile.profileId === profileId ? { ...profile, profileImageUrl: null } : profile,
+              ),
+              currentProfile:
+                old.currentProfile?.profileId === profileId
+                  ? { ...old.currentProfile, profileImageUrl: null }
+                  : old.currentProfile,
+            };
+          },
+        );
+      }
 
       useUserStore.setState({ profileImageUrl: null }, false, 'deleteMultiProfileProfileImage');
       await Promise.all([
-        queryClient.invalidateQueries({ queryKey: MYPAGE_SUMMARY_QUERY_KEY }),
+        ...(currentClubId
+          ? [queryClient.invalidateQueries({ queryKey: getMyPageSummaryQueryKey(currentClubId) })]
+          : []),
+        queryClient.invalidateQueries({ queryKey: MY_PROFILES_QUERY_KEY }),
+        queryClient.invalidateQueries({ queryKey: getMyProfileDetailQueryKey(profileId) }),
         queryClient.invalidateQueries({ queryKey: HOME_QUERY_KEY }),
       ]);
     },
@@ -221,19 +276,33 @@ export function useDeleteMultiProfileHeaderImageMutation() {
     mutationFn: ({ profileId }: DeleteMultiProfileImageParams) =>
       mypageApi.deleteMultiProfileHeaderImage(profileId),
     onSuccess: async (_, { profileId }) => {
-      queryClient.setQueryData(MYPAGE_SUMMARY_QUERY_KEY, (old: MyPageSummary | undefined) => {
-        if (!old) return old;
+      const currentClubId = useClubStore.getState().clubId;
+      if (currentClubId) {
+        queryClient.setQueryData(
+          getMyPageSummaryQueryKey(currentClubId),
+          (old: MyPageSummary | undefined) => {
+            if (!old) return old;
 
-        return {
-          ...old,
-          usingProfiles: old.usingProfiles.map((profile) =>
-            profile.profileId === profileId ? { ...profile, headerImageUrl: null } : profile,
-          ),
-        };
-      });
+            return {
+              ...old,
+              usingProfiles: old.usingProfiles.map((profile) =>
+                profile.profileId === profileId ? { ...profile, headerImageUrl: null } : profile,
+              ),
+              currentProfile:
+                old.currentProfile?.profileId === profileId
+                  ? { ...old.currentProfile, headerImageUrl: null }
+                  : old.currentProfile,
+            };
+          },
+        );
+      }
 
       await Promise.all([
-        queryClient.invalidateQueries({ queryKey: MYPAGE_SUMMARY_QUERY_KEY }),
+        ...(currentClubId
+          ? [queryClient.invalidateQueries({ queryKey: getMyPageSummaryQueryKey(currentClubId) })]
+          : []),
+        queryClient.invalidateQueries({ queryKey: MY_PROFILES_QUERY_KEY }),
+        queryClient.invalidateQueries({ queryKey: getMyProfileDetailQueryKey(profileId) }),
         queryClient.invalidateQueries({ queryKey: HOME_QUERY_KEY }),
       ]);
     },
@@ -247,19 +316,37 @@ export function useUpdateClubProfileAssignmentsMutation() {
     mutationFn: ({ assignments }: UpdateClubProfileAssignmentsParams) =>
       mypageApi.updateClubProfileAssignments({ assignments }),
     onSuccess: async (_, { assignments }) => {
+      const currentClubId = useClubStore.getState().clubId;
+      if (!currentClubId) {
+        await queryClient.invalidateQueries({ queryKey: HOME_QUERY_KEY });
+        return;
+      }
+
       const nextSummary = updateAssignedProfiles(
-        queryClient.getQueryData<MyPageSummary>(MYPAGE_SUMMARY_QUERY_KEY),
+        queryClient.getQueryData<MyPageSummary>(getMyPageSummaryQueryKey(currentClubId)),
         assignments,
       );
 
-      queryClient.setQueryData(MYPAGE_SUMMARY_QUERY_KEY, nextSummary);
-
-      const currentClubId = useClubStore.getState().clubId;
       const activeAssignment =
         assignments.find((assignment) => assignment.clubId === currentClubId) ?? assignments[0];
       const activeProfile = nextSummary?.usingProfiles.find(
         (profile) => profile.profileId === activeAssignment?.profileId,
       );
+
+      if (nextSummary) {
+        queryClient.setQueryData(getMyPageSummaryQueryKey(currentClubId), {
+          ...nextSummary,
+          currentProfile: activeProfile
+            ? {
+                profileId: activeProfile.profileId,
+                name: activeProfile.name,
+                profileImageUrl: activeProfile.profileImageUrl,
+                headerImageUrl: activeProfile.headerImageUrl,
+                bio: activeProfile.bio,
+              }
+            : (nextSummary.currentProfile ?? null),
+        });
+      }
 
       if (activeProfile) {
         useUserStore.setState(
@@ -273,7 +360,8 @@ export function useUpdateClubProfileAssignmentsMutation() {
       }
 
       await Promise.all([
-        queryClient.invalidateQueries({ queryKey: MYPAGE_SUMMARY_QUERY_KEY }),
+        queryClient.invalidateQueries({ queryKey: MY_PROFILES_QUERY_KEY }),
+        queryClient.invalidateQueries({ queryKey: getMyPageSummaryQueryKey(currentClubId) }),
         queryClient.invalidateQueries({ queryKey: HOME_QUERY_KEY }),
       ]);
     },
@@ -285,9 +373,9 @@ export function useLeaveClubMutation() {
 
   return useMutation({
     mutationFn: ({ clubId }: LeaveClubParams) => mypageApi.leaveClub(clubId),
-    onSuccess: async () => {
+    onSuccess: async (_, { clubId }) => {
       await Promise.all([
-        queryClient.invalidateQueries({ queryKey: MYPAGE_SUMMARY_QUERY_KEY }),
+        queryClient.invalidateQueries({ queryKey: getMyPageSummaryQueryKey(clubId) }),
         queryClient.invalidateQueries({ queryKey: ['mypage', 'clubs'] }),
         queryClient.invalidateQueries({ queryKey: HOME_QUERY_KEY }),
       ]);
