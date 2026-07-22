@@ -5,7 +5,11 @@ import { useRouter } from 'next/navigation';
 import { EditIcon, InfoCircleIcon } from '@/assets/icons';
 import { useMediaQuery } from '@/hooks';
 import { Avatar, AvatarFallback, AvatarImage, Button, Icon } from '@/components/ui';
-import type { MyPageUsingProfile, MyPageUsingProfileClub } from '@/types/mypage';
+import type {
+  MyPageAssignableClub,
+  MyPageUsingProfile,
+  MyPageUsingProfileClub,
+} from '@/types/mypage';
 import { EditProfileModal } from './EditProfileModal';
 import { ProfileSelectModal } from './ProfileSelectModal';
 
@@ -14,12 +18,19 @@ interface ProfileCardProps {
   clubs: MyPageUsingProfileClub[];
   clubId: string;
   availableProfiles: MyPageUsingProfile[];
+  assignableClubMap: Map<string, MyPageAssignableClub>;
 }
 
-function ProfileCard({ profile, clubs, clubId, availableProfiles }: ProfileCardProps) {
+function ProfileCard({
+  profile,
+  clubs,
+  clubId,
+  availableProfiles,
+  assignableClubMap,
+}: ProfileCardProps) {
   const router = useRouter();
   const isBelowTablet = useMediaQuery('(max-width: 695.98px)');
-  const [selectedClub, setSelectedClub] = useState<MyPageUsingProfileClub | null>(null);
+  const [selectedClub, setSelectedClub] = useState<MyPageAssignableClub | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
   const handleOpenEditProfile = () => {
@@ -62,22 +73,45 @@ function ProfileCard({ profile, clubs, clubId, availableProfiles }: ProfileCardP
           </div>
         ) : (
           <div className="divide-line divide-y">
-            {clubs.map((club) => (
-              <div
-                key={club.clubId}
-                className="flex items-center justify-between py-[14px] first:pt-0 last:pb-0"
-              >
-                <div className="flex items-center gap-200">
-                  <Avatar size={36} type="square">
-                    <AvatarFallback variant="club" />
-                  </Avatar>
-                  <span className="desktop:typo-body2 typo-sub3 text-text-normal">{club.name}</span>
+            {clubs.map((club) => {
+              const assignableClub = assignableClubMap.get(club.clubId);
+
+              return (
+                <div
+                  key={club.clubId}
+                  className="flex items-center justify-between py-[14px] first:pt-0 last:pb-0"
+                >
+                  <div className="flex items-center gap-200">
+                    <Avatar size={36} type="square">
+                      <AvatarImage
+                        src={assignableClub?.clubImage ?? undefined}
+                        alt={assignableClub?.name ?? club.name}
+                      />
+                      <AvatarFallback variant="club" />
+                    </Avatar>
+                    <span className="desktop:typo-body2 typo-sub3 text-text-normal">
+                      {assignableClub?.name ?? club.name}
+                    </span>
+                  </div>
+                  <Button
+                    variant="primarySoft"
+                    size="sm"
+                    onClick={() =>
+                      setSelectedClub(
+                        assignableClub ?? {
+                          clubId: club.clubId,
+                          name: club.name,
+                          clubImage: null,
+                          clubMemberNumber: 0,
+                        },
+                      )
+                    }
+                  >
+                    변경
+                  </Button>
                 </div>
-                <Button variant="primarySoft" size="sm" onClick={() => setSelectedClub(club)}>
-                  변경
-                </Button>
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
       </div>
