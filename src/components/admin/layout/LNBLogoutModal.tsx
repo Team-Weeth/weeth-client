@@ -120,7 +120,6 @@ function LNBLogoutModal({ collapsed }: LNBLogoutModalProps) {
               <div className="fixed inset-0 z-40" onClick={() => setMenuOpen(false)} />
               <DialogPrimitive.Content
                 forceMount
-                onOpenAutoFocus={(e) => e.preventDefault()}
                 className={cn(
                   'bg-container-neutral fixed z-50 flex w-[242px] flex-col gap-[4px] rounded-md p-[6px] outline-none',
                   'data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:slide-in-from-top-2',

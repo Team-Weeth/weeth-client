@@ -22,10 +22,11 @@ export function Header() {
       <div className="flex items-center px-450 py-300">
         <button
           type="button"
+          aria-label={collapsed ? '관리자 메뉴 펼치기' : '관리자 메뉴 접기'}
           onClick={toggleCollapsed}
           className="hover:bg-container-neutral-interaction flex cursor-pointer items-center justify-center rounded-sm p-200 transition-colors"
         >
-          <Icon src={AdminMenuIcon} size={24} className="text-icon-normal" />
+          <Icon src={AdminMenuIcon} size={24} className="text-icon-normal" aria-hidden />
         </button>
       </div>
 

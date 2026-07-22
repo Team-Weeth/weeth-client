@@ -99,6 +99,8 @@ function ClubInfoTopBar({
 }: ClubInfoTopBarProps) {
   return (
     <div
+      inert={!open}
+      aria-hidden={!open || undefined}
       className={cn(
         'overflow-hidden transition-[height] duration-200',
         open ? 'h-15' : 'h-0',

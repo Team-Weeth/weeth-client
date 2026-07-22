@@ -66,7 +66,6 @@ function NotificationModal({
         <AdminScopeBoundary>
           <DialogPrimitive.Content
             forceMount
-            onOpenAutoFocus={(e) => e.preventDefault()}
             className={cn(
               'bg-container-neutral fixed z-50 flex h-[360px] w-[320px] flex-col rounded-md pb-100 outline-none',
               'data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:slide-in-from-bottom-2',
