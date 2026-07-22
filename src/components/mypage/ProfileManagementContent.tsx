@@ -5,11 +5,12 @@ import { useParams } from 'next/navigation';
 import { useMediaQuery } from '@/hooks';
 import { Button, Icon } from '@/components/ui';
 import { cn } from '@/lib/cn';
-import { useMyPageQueries } from '@/hooks/queries/mypage/useMyPageQueries';
+import { useAssignableClubMap, useMyProfilesQuery } from '@/hooks/queries/mypage/useMyPageQueries';
 import { AddRoundIcon, BackIcon } from '@/assets/icons';
 import { useRouter } from 'next/navigation';
 import { AddProfileModal } from './AddProfileModal';
 import { ProfileCard } from './ProfileCard';
+import { ProfileManagementSkeleton } from './skeleton/ProfileManagementSkeleton';
 
 type ProfileManagementContentProps = React.HTMLAttributes<HTMLDivElement>;
 
@@ -17,8 +18,10 @@ function ProfileManagementContent({ className, ...props }: ProfileManagementCont
   const router = useRouter();
   const { clubId } = useParams<{ clubId: string }>();
   const isBelowTablet = useMediaQuery('(max-width: 695.98px)');
-  const { usingProfiles } = useMyPageQueries(clubId);
+  const profilesQuery = useMyProfilesQuery();
+  const { clubMap: assignableClubMap } = useAssignableClubMap();
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const profiles = profilesQuery.data ?? [];
 
   const handleOpenAddProfile = () => {
     if (isBelowTablet) {
@@ -28,6 +31,10 @@ function ProfileManagementContent({ className, ...props }: ProfileManagementCont
 
     setIsAddModalOpen(true);
   };
+
+  if (profilesQuery.isPending) {
+    return <ProfileManagementSkeleton />;
+  }
 
   return (
     <div className={cn('tablet:gap-6 flex min-w-0 flex-1 flex-col', className)} {...props}>
@@ -52,16 +59,17 @@ function ProfileManagementContent({ className, ...props }: ProfileManagementCont
 
       <div className="bg-container-neutral flex flex-col rounded-lg p-450">
         <p className="typo-sub1 text-text-alternative mb-[18px]">
-          사용 중인 프로필 {usingProfiles.length}
+          사용 중인 프로필 {profiles.length}
         </p>
         <div className="desktop:grid desktop:grid-cols-3 desktop:gap-x-300 desktop:gap-y-8 flex flex-col gap-8">
-          {usingProfiles.map((profile) => (
+          {profiles.map((profile) => (
             <ProfileCard
               key={profile.profileId}
               profile={profile}
               clubs={profile.clubs}
               clubId={clubId}
-              availableProfiles={usingProfiles}
+              availableProfiles={profiles}
+              assignableClubMap={assignableClubMap}
             />
           ))}
         </div>
