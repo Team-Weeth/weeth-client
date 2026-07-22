@@ -27,6 +27,7 @@ function EditProfileModal({ open, profile, onOpenChange }: EditProfileModalProps
     setProfileImageFile,
     setHeaderImageFile,
     isSubmitting,
+    isDeleting,
     handleClose,
     handleOpenDeleteDialog,
     handleDelete,
@@ -79,9 +80,10 @@ function EditProfileModal({ open, profile, onOpenChange }: EditProfileModalProps
           variant="secondary"
           size="lg"
           className="text-state-error mt-8"
+          disabled={isDeleting}
           onClick={handleOpenDeleteDialog}
         >
-          프로필 삭제하기
+          {isDeleting ? '삭제 중...' : '프로필 삭제하기'}
         </Button>
 
         <div className="mt-4 flex gap-200">
@@ -106,6 +108,7 @@ function EditProfileModal({ open, profile, onOpenChange }: EditProfileModalProps
         open={isDeleteDialogOpen}
         onOpenChange={setIsDeleteDialogOpen}
         onDelete={handleDelete}
+        isDeleting={isDeleting}
       />
     </Dialog>
   );
