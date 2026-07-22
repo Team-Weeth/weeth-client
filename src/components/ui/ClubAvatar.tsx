@@ -8,10 +8,11 @@ const clubAvatarVariants = cva('border-line border bg-container-neutral-alternat
   variants: {
     size: {
       128: '',
-      40: '',
-      50: 'size-[50px] rounded-[15px]',
-      56: 'size-14',
       64: '',
+      56: 'size-14',
+      50: 'size-[50px] rounded-[15px]',
+      40: '',
+      36: '',
     },
   },
   defaultVariants: {
