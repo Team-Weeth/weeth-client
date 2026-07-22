@@ -114,7 +114,7 @@ function AdminMobileNavSheet() {
       <SheetContent
         side="left"
         className={cn(
-          'tablet:hidden w-full',
+          'tablet:hidden w-full overflow-y-auto',
           view === 'appearance'
             ? 'bg-background top-0 h-dvh pt-0'
             : 'bg-container-neutral top-[61px] h-[calc(100dvh-61px)] pt-300',
