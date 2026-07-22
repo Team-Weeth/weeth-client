@@ -1,6 +1,7 @@
 import { apiClient } from '@/lib/apis/client';
 import type {
   ClubDto,
+  MyPageAssignableClub,
   MyClubMemberSummary,
   MyPageAttendedSessionItem,
   MyPagePostItem,
@@ -66,7 +67,12 @@ export interface MultiProfileResponse {
 }
 
 export const mypageApi = {
-  getMyPageSummary: () => apiClient.get<ApiResponse<MyPageSummary>>('/users/me/mypage'),
+  getMyPageSummary: (clubId: string) =>
+    apiClient.get<ApiResponse<MyPageSummary>>(`/clubs/${clubId}/users/me/mypage`),
+  getMyProfiles: () =>
+    apiClient.get<ApiResponse<{ profiles: MultiProfileResponse[] }>>('/users/me/profiles'),
+  getMyProfileDetail: (profileId: number) =>
+    apiClient.get<ApiResponse<MultiProfileResponse>>(`/users/me/profiles/${profileId}`),
   getMyPosts: (clubId: string, params?: { pageNumber?: number; pageSize?: number }) =>
     apiClient.get<ApiResponse<PageResponse<MyPagePostItem>>>(
       `/clubs/${clubId}/users/me/mypage/posts`,
@@ -79,6 +85,10 @@ export const mypageApi = {
     ),
   getMyClubMemberSummary: (clubId: string) =>
     apiClient.get<ApiResponse<MyClubMemberSummary>>(`/clubs/${clubId}/members/me/summary`),
+  getAssignableClubs: () =>
+    apiClient.get<ApiResponse<{ clubs: MyPageAssignableClub[] }>>(
+      '/users/me/profiles/assignable-clubs',
+    ),
   getMyClubs: () => apiClient.get<ApiResponse<ClubDto[]>>('/clubs'),
   updateUser: (body: UpdateUserBody) => apiClient.patch('/users', body),
   updateClubProfile: (body: UpdateClubProfileBody) => apiClient.patch('/clubs/members/me', body),
