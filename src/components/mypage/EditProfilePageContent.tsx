@@ -5,20 +5,20 @@ import { useParams, useRouter } from 'next/navigation';
 import { BackIcon } from '@/assets/icons';
 import { Button, Icon } from '@/components/ui';
 import { useEditProfileActions, useEditProfileForm } from '@/hooks/mypage';
-import { useMyPageQueries } from '@/hooks/queries/mypage/useMyPageQueries';
+import { useMyProfileDetailQuery } from '@/hooks/queries/mypage/useMyPageQueries';
 import { DeleteProfileDialog } from './DeleteProfileDialog';
 import { EditProfileFormContent } from './EditProfileFormContent';
 import { ProfileManagementSkeleton } from './skeleton/ProfileManagementSkeleton';
 
 function EditProfilePageContent() {
   const router = useRouter();
-  const { clubId, profileId } = useParams<{ clubId: string; profileId: string }>();
-  const { usingProfiles, summaryQuery } = useMyPageQueries(clubId);
-
-  const profile = useMemo(
-    () => usingProfiles.find((item) => String(item.profileId) === profileId),
-    [usingProfiles, profileId],
+  const { profileId } = useParams<{ clubId: string; profileId: string }>();
+  const parsedProfileId = Number(profileId);
+  const profileQuery = useMyProfileDetailQuery(
+    Number.isNaN(parsedProfileId) ? null : parsedProfileId,
   );
+
+  const profile = useMemo(() => profileQuery.data ?? null, [profileQuery.data]);
 
   const {
     control,
@@ -34,6 +34,7 @@ function EditProfilePageContent() {
     setProfileImageFile,
     setHeaderImageFile,
     isSubmitting,
+    isDeleting,
     handleClose,
     handleDelete,
     handleSubmit,
@@ -46,7 +47,7 @@ function EditProfilePageContent() {
     onClose: () => router.back(),
   });
 
-  if (summaryQuery.isPending || !profile) {
+  if (profileQuery.isPending || !profile) {
     return <ProfileManagementSkeleton />;
   }
 
@@ -86,9 +87,10 @@ function EditProfilePageContent() {
           variant="secondary"
           size="lg"
           className="text-state-error mb-4 w-full"
+          disabled={isDeleting}
           onClick={() => setIsDeleteDialogOpen(true)}
         >
-          프로필 삭제하기
+          {isDeleting ? '삭제 중...' : '프로필 삭제하기'}
         </Button>
 
         <div className="flex gap-200">
@@ -113,6 +115,7 @@ function EditProfilePageContent() {
         open={isDeleteDialogOpen}
         onOpenChange={setIsDeleteDialogOpen}
         onDelete={handleDelete}
+        isDeleting={isDeleting}
       />
     </>
   );
