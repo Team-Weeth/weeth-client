@@ -32,11 +32,13 @@ function AppearanceView({ mode, onModeChange, onBack }: AppearanceViewProps) {
         <span className="typo-sub1 text-text-normal">화면 모드</span>
       </div>
 
-      <div className="flex flex-col gap-[10px] px-450">
+      <div role="radiogroup" aria-label="화면 모드" className="flex flex-col gap-[10px] px-450">
         {THEME_OPTIONS.map(({ value, label }, index) => (
           <div key={value}>
             <button
               type="button"
+              role="radio"
+              aria-checked={mode === value}
               onClick={() => onModeChange(value)}
               className="flex w-full items-center justify-between py-300"
             >
