@@ -45,7 +45,7 @@ function ClubInfoCard({ club, className }: ClubInfoCardProps) {
             </div>
 
             <div className="flex flex-col">
-              <span className="tablet:typo-sub1 typo-sub3 text-text-strong mb-[2px]">
+              <span className="tablet:typo-sub1 typo-sub3 text-text-strong mb-[2px] line-clamp-1">
                 {club.name}
               </span>
               <p
@@ -72,7 +72,7 @@ function ClubInfoCard({ club, className }: ClubInfoCardProps) {
                   <AvatarFallback />
                 </Avatar>
                 <div className="flex flex-col justify-center gap-1">
-                  <span className="tablet:typo-sub3 typo-button2 text-text-strong">
+                  <span className="tablet:typo-sub3 typo-button2 text-text-strong line-clamp-1">
                     {assignedProfile?.name ?? '연결된 프로필 없음'}
                   </span>
                   <p
