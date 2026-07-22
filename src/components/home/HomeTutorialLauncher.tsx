@@ -64,6 +64,15 @@ function HomeTutorialLauncher() {
   const isDialogOpen = open || shouldAutoOpen;
 
   useEffect(() => {
+    if (role !== 'LEAD' && pendingLeadClubId === clubId) {
+      window.sessionStorage.removeItem(getHomeTutorialPendingKey('lead'));
+    }
+    if (role !== 'USER' && pendingMemberClubId === clubId) {
+      window.sessionStorage.removeItem(getHomeTutorialPendingKey('member'));
+    }
+  }, [clubId, pendingLeadClubId, pendingMemberClubId, role]);
+
+  useEffect(() => {
     if (!tutorialVariant || pendingClubId !== clubId) return;
     if (hasSeenTutorial) {
       window.sessionStorage.removeItem(getHomeTutorialPendingKey(tutorialVariant));
