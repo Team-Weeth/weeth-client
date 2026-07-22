@@ -51,7 +51,7 @@ function ProfileCard({
             <AvatarFallback />
           </Avatar>
           <div className="flex min-w-0 flex-1 flex-col justify-center gap-1">
-            <p className="typo-sub3 text-text-strong">{profile.name}</p>
+            <p className="typo-sub3 text-text-strong line-clamp-1">{profile.name}</p>
             {profile.bio && (
               <p className="typo-body2 text-text-alternative line-clamp-1">{profile.bio}</p>
             )}
