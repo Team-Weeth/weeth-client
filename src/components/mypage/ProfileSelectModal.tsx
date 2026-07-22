@@ -37,8 +37,10 @@ function ProfileSelectModal({
 }: ProfileSelectModalProps) {
   const [selectedProfileId, setSelectedProfileId] = useState(currentProfileId);
   const updateAssignmentsMutation = useUpdateClubProfileAssignmentsMutation();
+  const isPending = updateAssignmentsMutation.isPending;
 
   const handleClose = () => {
+    if (isPending) return;
     onOpenChange(false);
   };
 
@@ -61,7 +63,13 @@ function ProfileSelectModal({
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog
+      open={open}
+      onOpenChange={(nextOpen) => {
+        if (isPending && !nextOpen) return;
+        onOpenChange(nextOpen);
+      }}
+    >
       <DialogContent
         showCloseButton={false}
         className="bg-background w-[400px] max-w-[calc(100%-2rem)] rounded-xl p-400"
@@ -80,6 +88,7 @@ function ProfileSelectModal({
           <button
             type="button"
             onClick={handleClose}
+            disabled={isPending}
             className="text-icon-normal cursor-pointer p-1"
             aria-label="프로필 선택 닫기"
           >
@@ -129,19 +138,25 @@ function ProfileSelectModal({
         </div>
 
         <div className="flex gap-200 pt-400">
-          <Button variant="secondary" size="lg" className="flex-1" onClick={handleClose}>
+          <Button
+            variant="secondary"
+            size="lg"
+            className="flex-1"
+            disabled={isPending}
+            onClick={handleClose}
+          >
             취소
           </Button>
           <Button
             variant="primary"
             size="lg"
             className="flex-1"
-            disabled={updateAssignmentsMutation.isPending}
+            disabled={isPending}
             onClick={() => {
               void handleConfirm();
             }}
           >
-            {updateAssignmentsMutation.isPending ? '변경 중...' : '확인'}
+            {isPending ? '변경 중...' : '확인'}
           </Button>
         </div>
       </DialogContent>
