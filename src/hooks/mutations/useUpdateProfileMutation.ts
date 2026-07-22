@@ -1,4 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { revalidateHomeDashboard } from '@/lib/actions/home';
 import { mypageApi } from '@/lib/apis/mypage';
 import { uploadFile } from '@/lib/apis/upload';
 import type { UpdateUserBody, UpdateClubProfileBody } from '@/lib/apis/mypage';
@@ -58,6 +59,7 @@ export function useUpdateProfileMutation() {
     onSuccess: async ({ isReset }, { clubId: mutationClubId, user, clubProfile }) => {
       const targetClubId = mutationClubId ?? clubId;
       if (!targetClubId) return;
+      revalidateHomeDashboard(targetClubId);
 
       queryClient.setQueryData(
         ['mypage', 'summary', targetClubId],
