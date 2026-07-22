@@ -1,6 +1,5 @@
 'use client';
 
-import { useMemo } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { BackIcon } from '@/assets/icons';
 import { Button, Icon } from '@/components/ui';
@@ -18,7 +17,7 @@ function EditProfilePageContent() {
     Number.isNaN(parsedProfileId) ? null : parsedProfileId,
   );
 
-  const profile = useMemo(() => profileQuery.data ?? null, [profileQuery.data]);
+  const profile = profileQuery.data ?? null;
 
   const {
     control,
