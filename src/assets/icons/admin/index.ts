@@ -32,3 +32,8 @@ export { default as AdminToggleCloseIcon } from './ic_admin_toggle_close.svg';
 
 export { default as AdminReceiptIcon } from './ic_admin_receipt.svg';
 export { default as AdminDuesIcon } from './ic_admin_dues.svg';
+export { default as AdminMenuIcon } from './ic_admin_menu.svg';
+export { default as AdminContrastIcon } from './ic_admin_contrast.svg';
+export { default as AdminDarkIcon } from './ic_admin_dark.svg';
+export { default as AdminRoundLogoutIcon } from './ic_admin_round_logout.svg';
+export { default as AdminSymbolIcon } from './ic_admin_symbol.svg';

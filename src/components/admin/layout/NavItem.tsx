@@ -6,9 +6,6 @@ import { Icon, Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui';
 import { cn } from '@/lib/cn';
 import { PeopleIcon } from '@/assets/icons';
 
-const baseClass =
-  'flex h-12 items-center transition-colors text-text-normal hover:bg-container-neutral-interaction';
-
 interface NavItemProps {
   icon: typeof PeopleIcon;
   label: string;
@@ -34,14 +31,18 @@ function NavItem({
     <Icon
       src={icon}
       size={24}
-      className={cn('shrink-0', isActive ? 'text-brand-primary' : 'text-icon-alternative')}
+      className={cn('shrink-0', isActive ? 'text-icon-normal' : 'text-icon-alternative')}
     />
   );
 
+  const labelEl = !collapsed && (
+    <span className={cn('typo-sub3 whitespace-nowrap', isActive && 'font-bold')}>{label}</span>
+  );
+
   const cls = cn(
-    baseClass,
-    collapsed ? 'justify-center px-400' : 'gap-300 px-400',
-    isActive && 'bg-container-neutral-interaction text-text-strong',
+    'flex w-full items-center rounded-md transition-colors text-text-normal hover:bg-container-neutral-interaction',
+    collapsed ? 'justify-center p-400' : 'gap-300 px-400 py-300',
+    isActive && 'bg-container-neutral-interaction',
   );
 
   let el: React.ReactNode;
@@ -49,32 +50,32 @@ function NavItem({
   if (openInWindow) {
     el = (
       <button
-        className={cn(cls, 'w-full cursor-pointer')}
+        className={cn(cls, 'cursor-pointer')}
         onClick={() => window.open(path, '_blank', 'noopener,noreferrer')}
       >
         {iconEl}
-        {!collapsed && <span className="typo-sub3">{label}</span>}
+        {labelEl}
       </button>
     );
   } else if (onClick) {
     el = (
-      <button type="button" className={cn(cls, 'w-full cursor-pointer')} onClick={onClick}>
+      <button type="button" className={cn(cls, 'cursor-pointer')} onClick={onClick}>
         {iconEl}
-        {!collapsed && <span className="typo-sub3">{label}</span>}
+        {labelEl}
       </button>
     );
   } else if (external) {
     el = (
       <Link href={path} className={cls} target="_blank" rel="noopener noreferrer">
         {iconEl}
-        {!collapsed && <span className="typo-sub3">{label}</span>}
+        {labelEl}
       </Link>
     );
   } else {
     el = (
       <Link href={path} className={cls}>
         {iconEl}
-        {!collapsed && <span className="typo-sub3">{label}</span>}
+        {labelEl}
       </Link>
     );
   }
@@ -83,7 +84,9 @@ function NavItem({
     return (
       <Tooltip>
         <TooltipTrigger asChild>{el}</TooltipTrigger>
-        <TooltipContent side="right">{label}</TooltipContent>
+        <TooltipContent side="right" sideOffset={6} align="center" variant="dark">
+          {label}
+        </TooltipContent>
       </Tooltip>
     );
   }
