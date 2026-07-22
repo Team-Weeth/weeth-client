@@ -1,4 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { revalidateHomeDashboard } from '@/lib/actions/home';
 import { uploadFile } from '@/lib/apis/upload';
 import { mypageApi } from '@/lib/apis/mypage';
 import type { MyPageSummary, MyPageUsingProfileClub } from '@/types/mypage';
@@ -45,6 +46,10 @@ function getMyPageSummaryQueryKey(clubId: string) {
 
 function getMyProfileDetailQueryKey(profileId: number) {
   return ['mypage', 'profiles', profileId] as const;
+}
+
+function isCurrentClubProfile(clubId: string | null, clubs: MyPageUsingProfileClub[]) {
+  return Boolean(clubId && clubs.some((club) => club.clubId === clubId));
 }
 
 function updateAssignedProfiles(
@@ -112,6 +117,7 @@ export function useCreateMultiProfileMutation() {
     },
     onSuccess: async () => {
       const currentClubId = useClubStore.getState().clubId;
+      if (currentClubId) revalidateHomeDashboard(currentClubId);
       await Promise.all([
         ...(currentClubId
           ? [queryClient.invalidateQueries({ queryKey: getMyPageSummaryQueryKey(currentClubId) })]
@@ -131,6 +137,7 @@ export function useDeleteMultiProfileMutation() {
     mutationFn: (profileId: number) => mypageApi.deleteMultiProfile(profileId),
     onSuccess: async () => {
       const currentClubId = useClubStore.getState().clubId;
+      if (currentClubId) revalidateHomeDashboard(currentClubId);
       await Promise.all([
         ...(currentClubId
           ? [queryClient.invalidateQueries({ queryKey: getMyPageSummaryQueryKey(currentClubId) })]
@@ -169,6 +176,7 @@ export function useUpdateMultiProfileMutation() {
     onSuccess: async (response) => {
       const currentClubId = useClubStore.getState().clubId;
       const updatedProfile = response.data.data;
+      if (currentClubId) revalidateHomeDashboard(currentClubId);
 
       if (currentClubId) {
         queryClient.setQueryData(
@@ -208,11 +216,13 @@ export function useUpdateMultiProfileMutation() {
         );
       }
 
-      useUserStore.setState(
-        { name: updatedProfile.name, profileImageUrl: updatedProfile.profileImageUrl },
-        false,
-        'syncMultiProfile',
-      );
+      if (isCurrentClubProfile(currentClubId, updatedProfile.usingClubs)) {
+        useUserStore.setState(
+          { name: updatedProfile.name, profileImageUrl: updatedProfile.profileImageUrl },
+          false,
+          'syncMultiProfile',
+        );
+      }
 
       await Promise.all([
         ...(currentClubId
@@ -236,11 +246,17 @@ export function useDeleteMultiProfileProfileImageMutation() {
       mypageApi.deleteMultiProfileProfileImage(profileId),
     onSuccess: async (_, { profileId }) => {
       const currentClubId = useClubStore.getState().clubId;
+      let updatedProfileClubs: MyPageUsingProfileClub[] = [];
+      if (currentClubId) revalidateHomeDashboard(currentClubId);
+
       if (currentClubId) {
         queryClient.setQueryData(
           getMyPageSummaryQueryKey(currentClubId),
           (old: MyPageSummary | undefined) => {
             if (!old) return old;
+
+            updatedProfileClubs =
+              old.usingProfiles.find((profile) => profile.profileId === profileId)?.clubs ?? [];
 
             return {
               ...old,
@@ -256,7 +272,9 @@ export function useDeleteMultiProfileProfileImageMutation() {
         );
       }
 
-      useUserStore.setState({ profileImageUrl: null }, false, 'deleteMultiProfileProfileImage');
+      if (isCurrentClubProfile(currentClubId, updatedProfileClubs)) {
+        useUserStore.setState({ profileImageUrl: null }, false, 'deleteMultiProfileProfileImage');
+      }
       await Promise.all([
         ...(currentClubId
           ? [queryClient.invalidateQueries({ queryKey: getMyPageSummaryQueryKey(currentClubId) })]
@@ -277,6 +295,7 @@ export function useDeleteMultiProfileHeaderImageMutation() {
       mypageApi.deleteMultiProfileHeaderImage(profileId),
     onSuccess: async (_, { profileId }) => {
       const currentClubId = useClubStore.getState().clubId;
+      if (currentClubId) revalidateHomeDashboard(currentClubId);
       if (currentClubId) {
         queryClient.setQueryData(
           getMyPageSummaryQueryKey(currentClubId),
@@ -321,17 +340,21 @@ export function useUpdateClubProfileAssignmentsMutation() {
         await queryClient.invalidateQueries({ queryKey: HOME_QUERY_KEY });
         return;
       }
+      revalidateHomeDashboard(currentClubId);
 
       const nextSummary = updateAssignedProfiles(
         queryClient.getQueryData<MyPageSummary>(getMyPageSummaryQueryKey(currentClubId)),
         assignments,
       );
 
-      const activeAssignment =
-        assignments.find((assignment) => assignment.clubId === currentClubId) ?? assignments[0];
-      const activeProfile = nextSummary?.usingProfiles.find(
-        (profile) => profile.profileId === activeAssignment?.profileId,
+      const activeAssignment = assignments.find(
+        (assignment) => assignment.clubId === currentClubId,
       );
+      const activeProfile = activeAssignment
+        ? nextSummary?.usingProfiles.find(
+            (profile) => profile.profileId === activeAssignment.profileId,
+          )
+        : undefined;
 
       if (nextSummary) {
         queryClient.setQueryData(getMyPageSummaryQueryKey(currentClubId), {
@@ -374,6 +397,7 @@ export function useLeaveClubMutation() {
   return useMutation({
     mutationFn: ({ clubId }: LeaveClubParams) => mypageApi.leaveClub(clubId),
     onSuccess: async (_, { clubId }) => {
+      revalidateHomeDashboard(clubId);
       await Promise.all([
         queryClient.invalidateQueries({ queryKey: getMyPageSummaryQueryKey(clubId) }),
         queryClient.invalidateQueries({ queryKey: ['mypage', 'clubs'] }),
