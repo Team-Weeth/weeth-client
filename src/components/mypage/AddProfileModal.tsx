@@ -71,6 +71,8 @@ function AddProfileModal({
   };
 
   const handleStepOneSubmit = async () => {
+    if (createMultiProfileMutation.isPending) return;
+
     const isValid = await handleNext();
     if (!isValid) return;
 
