@@ -1,73 +1,129 @@
+import { useMemo } from 'react';
 import { useQueries, useQuery } from '@tanstack/react-query';
-import { mypageApi } from '@/lib/apis/mypage';
-import type { MyPageSummary, MyPageUsingProfile } from '@/types/mypage';
+import { mypageApi, type MultiProfileResponse } from '@/lib/apis/mypage';
+import type {
+  ClubDto,
+  MyPageActivityClub,
+  MyPageAssignableClub,
+  MyPageCurrentProfile,
+  MyPageUsingProfile,
+} from '@/types/mypage';
 
 const MYPAGE_SUMMARY_STALE_TIME = 10 * 60 * 1000;
 const MYPAGE_SUMMARY_GC_TIME = 30 * 60 * 1000;
 
-export function getCurrentProfileByClubId(summary: MyPageSummary | undefined, clubId: string) {
-  const usingProfiles = summary?.usingProfiles ?? [];
-
-  return (
-    usingProfiles.find((profile) => profile.clubs.some((club) => club.clubId === clubId)) ??
-    usingProfiles[0]
-  );
+function toMyPageUsingProfile(profile: MultiProfileResponse): MyPageUsingProfile {
+  return {
+    profileId: profile.profileId,
+    name: profile.name,
+    profileImageUrl: profile.profileImageUrl,
+    headerImageUrl: profile.headerImageUrl,
+    bio: profile.bio,
+    clubs: profile.usingClubs,
+  };
 }
 
-export function useMyPageSummaryQuery() {
+export function useMyPageSummaryQuery(clubId: string) {
   return useQuery({
-    queryKey: ['mypage', 'summary'],
-    queryFn: () => mypageApi.getMyPageSummary().then((res) => res.data.data),
+    queryKey: ['mypage', 'summary', clubId],
+    queryFn: () => mypageApi.getMyPageSummary(clubId).then((res) => res.data.data),
+    enabled: Boolean(clubId),
     staleTime: MYPAGE_SUMMARY_STALE_TIME,
     gcTime: MYPAGE_SUMMARY_GC_TIME,
   });
 }
 
+export function useMyClubsQuery() {
+  return useQuery({
+    queryKey: ['mypage', 'clubs'],
+    queryFn: () => mypageApi.getMyClubs().then((res) => res.data.data),
+    staleTime: MYPAGE_SUMMARY_STALE_TIME,
+    gcTime: MYPAGE_SUMMARY_GC_TIME,
+  });
+}
+
+export function useMyProfilesQuery() {
+  return useQuery({
+    queryKey: ['mypage', 'profiles'],
+    queryFn: () =>
+      mypageApi
+        .getMyProfiles()
+        .then((res) => res.data.data.profiles.map((profile) => toMyPageUsingProfile(profile))),
+    staleTime: MYPAGE_SUMMARY_STALE_TIME,
+    gcTime: MYPAGE_SUMMARY_GC_TIME,
+  });
+}
+
+export function useMyProfileDetailQuery(profileId: number | null) {
+  return useQuery({
+    queryKey: ['mypage', 'profiles', profileId],
+    queryFn: () =>
+      mypageApi
+        .getMyProfileDetail(profileId as number)
+        .then((res) => toMyPageUsingProfile(res.data.data)),
+    enabled: profileId !== null,
+    staleTime: MYPAGE_SUMMARY_STALE_TIME,
+    gcTime: MYPAGE_SUMMARY_GC_TIME,
+  });
+}
+
+export function useAssignableClubsQuery() {
+  return useQuery({
+    queryKey: ['mypage', 'assignable-clubs'],
+    queryFn: () => mypageApi.getAssignableClubs().then((res) => res.data.data.clubs),
+    staleTime: MYPAGE_SUMMARY_STALE_TIME,
+    gcTime: MYPAGE_SUMMARY_GC_TIME,
+  });
+}
+
+export function useAssignableClubMap() {
+  const query = useAssignableClubsQuery();
+
+  const clubMap = useMemo(
+    () =>
+      new Map<string, MyPageAssignableClub>((query.data ?? []).map((club) => [club.clubId, club])),
+    [query.data],
+  );
+
+  return {
+    ...query,
+    clubMap,
+  };
+}
+
 export function useCurrentClubProfile(clubId: string): {
   summaryQuery: ReturnType<typeof useMyPageSummaryQuery>;
-  currentProfile: MyPageUsingProfile | undefined;
+  currentProfile: MyPageCurrentProfile | null;
 } {
-  const summaryQuery = useMyPageSummaryQuery();
+  const summaryQuery = useMyPageSummaryQuery(clubId);
 
   return {
     summaryQuery,
-    currentProfile: getCurrentProfileByClubId(summaryQuery.data, clubId),
+    currentProfile: summaryQuery.data?.currentProfile ?? null,
   };
 }
 
 export function useMyPageQueries(clubId: string) {
-  const summaryQuery = useMyPageSummaryQuery();
+  const summaryQuery = useMyPageSummaryQuery(clubId);
+  const myClubsQuery = useMyClubsQuery();
 
   const me = summaryQuery.data?.user;
   const stats = summaryQuery.data?.stats;
   const usingProfiles = summaryQuery.data?.usingProfiles ?? [];
-  const currentProfile = getCurrentProfileByClubId(summaryQuery.data, clubId);
-  const rawClubs = usingProfiles.flatMap((profile) =>
-    profile.clubs.map((club) => ({
-      id: club.clubId,
-      name: club.name,
-      schoolName: '',
-      description: profile.bio ?? '',
-      profileImageUrl: profile.profileImageUrl ?? '',
-      memberCount: 0,
-      cardinals: [],
-      memberRole: 'USER' as const,
-      memberStatus: 'ACTIVE' as const,
-    })),
-  );
-  const deduplicatedClubs = Array.from(new Map(rawClubs.map((club) => [club.id, club])).values());
+  const currentProfile = summaryQuery.data?.currentProfile ?? null;
+  const baseClubs = myClubsQuery.data ?? [];
 
   const clubSummaryQueries = useQueries({
-    queries: deduplicatedClubs.map((club) => ({
+    queries: baseClubs.map((club) => ({
       queryKey: ['mypage', 'club-summary', club.id],
       queryFn: () => mypageApi.getMyClubMemberSummary(club.id).then((res) => res.data.data),
-      enabled: Boolean(summaryQuery.data),
+      enabled: baseClubs.length > 0,
       staleTime: MYPAGE_SUMMARY_STALE_TIME,
       gcTime: MYPAGE_SUMMARY_GC_TIME,
     })),
   });
 
-  const clubs = deduplicatedClubs.map((club, index) => {
+  const clubs: ClubDto[] = baseClubs.map((club, index) => {
     const clubSummary = clubSummaryQueries[index]?.data;
 
     return {
@@ -77,12 +133,21 @@ export function useMyPageQueries(clubId: string) {
     };
   });
 
+  const activityClubs: MyPageActivityClub[] = clubs.map((club) => ({
+    ...club,
+    currentProfile:
+      usingProfiles.find((profile) => profile.clubs.some((item) => item.clubId === club.id)) ??
+      null,
+  }));
+
   return {
     summaryQuery,
+    myClubsQuery,
     me,
     stats,
     currentProfile,
     usingProfiles,
     clubs,
+    activityClubs,
   };
 }
