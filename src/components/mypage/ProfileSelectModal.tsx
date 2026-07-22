@@ -16,11 +16,11 @@ import {
   Icon,
 } from '@/components/ui';
 import { cn } from '@/lib/cn';
-import type { MyPageUsingProfile, MyPageUsingProfileClub } from '@/types/mypage';
+import type { MyPageAssignableClub, MyPageUsingProfile } from '@/types/mypage';
 
 interface ProfileSelectModalProps {
   open: boolean;
-  club: MyPageUsingProfileClub;
+  club: MyPageAssignableClub;
   currentProfileId: string;
   profiles: MyPageUsingProfile[];
   onOpenChange: (open: boolean) => void;
@@ -69,6 +69,7 @@ function ProfileSelectModal({
         <div className="flex items-start justify-between pb-400">
           <div className="flex flex-col gap-4">
             <Avatar size={64} type="square">
+              <AvatarImage src={club.clubImage ?? undefined} alt={club.name} />
               <AvatarFallback variant="club" />
             </Avatar>
             <DialogTitle className="typo-sub1 text-text-strong">
@@ -86,7 +87,7 @@ function ProfileSelectModal({
           </button>
         </div>
 
-        <div className="divide-line h-[232px] divide-y overflow-y-auto py-400">
+        <div className="divide-line h-[232px] divide-y overflow-y-auto">
           {profiles.map((profile) => {
             const isSelected = String(profile.profileId) === selectedProfileId;
 
@@ -127,7 +128,7 @@ function ProfileSelectModal({
           })}
         </div>
 
-        <div className="flex gap-200">
+        <div className="flex gap-200 pt-400">
           <Button variant="secondary" size="lg" className="flex-1" onClick={handleClose}>
             취소
           </Button>
