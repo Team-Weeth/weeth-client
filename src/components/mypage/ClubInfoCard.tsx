@@ -5,7 +5,7 @@ import dynamic from 'next/dynamic';
 import { cn } from '@/lib/cn';
 import { Avatar, AvatarFallback, AvatarImage, Button, Divider, Icon, Tag } from '@/components/ui';
 import { ArrowRightIcon, PeopleIcon } from '@/assets/icons';
-import type { ClubDto } from '@/types/mypage';
+import type { MyPageActivityClub } from '@/types/mypage';
 import { cardClass } from './InfoCard';
 import { LeaveClubDropdownMenu } from './LeaveClubDropdownMenu';
 import { useRouter } from 'next/navigation';
@@ -15,12 +15,13 @@ const SetCardinalModal = dynamic(() =>
 );
 
 interface ClubInfoCardProps extends React.HTMLAttributes<HTMLDivElement> {
-  club: ClubDto;
+  club: MyPageActivityClub;
 }
 
 function ClubInfoCard({ club, className }: ClubInfoCardProps) {
   const router = useRouter();
   const [modalOpen, setModalOpen] = useState(false);
+  const assignedProfile = club.currentProfile;
 
   return (
     <>
@@ -65,20 +66,23 @@ function ClubInfoCard({ club, className }: ClubInfoCardProps) {
                   type="round"
                   className="border-line tablet:size-[64px] size-10 rounded-full border"
                 >
-                  {club.profileImageUrl && (
-                    <AvatarImage src={club.profileImageUrl} alt={club.name} />
+                  {assignedProfile?.profileImageUrl && (
+                    <AvatarImage src={assignedProfile.profileImageUrl} alt={assignedProfile.name} />
                   )}
-                  <AvatarFallback variant="club" />
+                  <AvatarFallback />
                 </Avatar>
                 <div className="flex flex-col justify-center gap-1">
                   <span className="tablet:typo-sub3 typo-button2 text-text-strong">
-                    {club.name}
+                    {assignedProfile?.name ?? '연결된 프로필 없음'}
                   </span>
-                  {club.description && (
-                    <p className="tablet:typo-body2 typo-caption2 text-text-alternative line-clamp-1">
-                      {club.description}
-                    </p>
-                  )}
+                  <p
+                    className={cn(
+                      'tablet:typo-body2 typo-caption2 line-clamp-1 min-h-[18px]',
+                      assignedProfile?.bio ? 'text-text-alternative' : 'invisible',
+                    )}
+                  >
+                    {assignedProfile?.bio ?? ' '}
+                  </p>
                 </div>
               </div>
             </div>
