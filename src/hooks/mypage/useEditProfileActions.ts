@@ -113,6 +113,7 @@ function useEditProfileActions({
     headerImageFile,
     setHeaderImageFile,
     isSubmitting: updateMultiProfileMutation.isPending,
+    isDeleting: deleteMultiProfileMutation.isPending,
     handleClose,
     handleOpenDeleteDialog,
     handleDelete,
