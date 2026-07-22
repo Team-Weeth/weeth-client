@@ -7,6 +7,7 @@ import { ArrowRightIcon, PhoneIcon, MailIcon } from '@/assets/icons';
 import { useProfileSectionActions } from '@/hooks/mypage';
 import { cn } from '@/lib/cn';
 import type { ProfileData } from '@/types/mypage';
+import { formatPhone } from '@/utils/shared';
 import { ProfileBackgroundImageEditor } from './edit/ProfileBackgroundImageEditor';
 import { ProfileImageEditor } from './edit/ProfileImageEditor';
 import { MyPageDropdownMenu } from './MyPageDropdownMenu';
@@ -119,7 +120,7 @@ const ProfileSection = ({
                     size={14}
                     className="text-icon-alternative shrink-0"
                   />
-                  {tel}
+                  {formatPhone(tel)}
                 </span>
               )}
               {email && (
