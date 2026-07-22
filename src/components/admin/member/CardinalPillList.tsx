@@ -14,6 +14,7 @@ import {
 import { CARDINAL_ERROR_CODE } from '@/constants/errorCode';
 import { useDragScroll } from '@/hooks';
 import { useCreateCardinal, useSetCurrentCardinal } from '@/hooks/mutations/admin';
+import { cn } from '@/lib/cn';
 import { toastError, toastSuccess } from '@/stores/useToastStore';
 import { getApiErrorCode } from '@/utils/shared';
 import type { Cardinal } from '@/types/admin/cardinal';
@@ -22,12 +23,14 @@ interface CardinalPillListProps {
   cardinals: Cardinal[];
   selectedCardinal: number | 'all';
   onSelectCardinal: (value: number | 'all') => void;
+  className?: string;
 }
 
 function CardinalPillList({
   cardinals,
   selectedCardinal,
   onSelectCardinal,
+  className,
 }: CardinalPillListProps) {
   const { ref: dragScrollRef, onMouseDown } = useDragScroll();
   const { mutate: createCardinal } = useCreateCardinal();
@@ -36,10 +39,16 @@ function CardinalPillList({
   return (
     <div
       ref={dragScrollRef}
-      className="scrollbar-none flex cursor-grab items-center gap-200 overflow-x-auto select-none active:cursor-grabbing"
+      role="tablist"
+      className={cn(
+        'scrollbar-none flex cursor-grab items-center gap-700 overflow-x-auto px-600 select-none active:cursor-grabbing',
+        className,
+      )}
       onMouseDown={onMouseDown}
     >
       <CardinalCard
+        role="tab"
+        aria-selected={selectedCardinal === 'all'}
         variant={selectedCardinal === 'all' ? 'active' : 'normal'}
         title="전체"
         onClick={() => onSelectCardinal('all')}
@@ -50,6 +59,8 @@ function CardinalPillList({
           return (
             <CardinalCard
               key={c.id}
+              role="tab"
+              aria-selected={false}
               variant="normal"
               title={`${c.cardinalNumber}기`}
               onClick={() => onSelectCardinal(c.cardinalNumber)}
@@ -60,6 +71,8 @@ function CardinalPillList({
           <DropdownMenu key={c.id}>
             <DropdownMenuTrigger asChild>
               <CardinalCard
+                role="tab"
+                aria-selected
                 variant="active"
                 title={`${c.cardinalNumber}기`}
                 endIcon={<Icon src={MoreVerticalIcon} size={12} />}

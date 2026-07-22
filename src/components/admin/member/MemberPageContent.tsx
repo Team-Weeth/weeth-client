@@ -9,7 +9,8 @@ import {
   MemberTable,
   MemberTopBar,
 } from '@/components/admin';
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, Card } from '@/components/ui';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, Card, Icon } from '@/components/ui';
+import { AdminChangeIcon, AdminSearchIcon } from '@/assets/icons/admin';
 import { MEMBER_CARDINAL_ERROR_CODE, MEMBER_ROLE_ERROR_CODE } from '@/constants/errorCode';
 import type { ClubMemberRole, Member } from '@/types/admin/member';
 import { useAdminMembers } from '@/hooks/queries/admin';
@@ -176,63 +177,97 @@ function MemberPageContent() {
   };
 
   return (
-    <div className="flex min-w-0 flex-col">
-      {/* Selection top bar */}
-      <MemberTopBar
-        className="sticky top-0 z-10 -mt-15"
-        selectedCount={selectedCount}
-        targetRole={targetRole}
-        targetBanAction={targetBanAction}
-        onBack={handleClearSelection}
-        onChangeRole={
-          targetRole
-            ? () =>
-                submitChangeRole(
-                  selectedMembers.map((m) => m.clubMemberId),
-                  targetRole,
-                )
-            : undefined
-        }
-        onBan={
-          targetBanAction === 'ban'
-            ? () => submitBan(selectedMembers.map((m) => m.clubMemberId))
-            : undefined
-        }
-        onRestore={
-          targetBanAction === 'restore'
-            ? () => submitRestore(selectedMembers.map((m) => m.clubMemberId))
-            : undefined
-        }
-        onChangeCardinals={handleChangeCardinalsForBulk}
-        onTransferLead={
-          isLead && selectedCount === 1
-            ? () => handleTransferLead(selectedMembers[0].clubMemberId)
-            : undefined
-        }
-      />
-
-      {/* Main content */}
-      <div className="flex flex-col gap-400 p-700">
-        <CardinalPillList
-          cardinals={cardinals}
-          selectedCardinal={selectedCardinal}
-          onSelectCardinal={setSelectedCardinal}
-        />
-
-        {/* Search bar */}
-        <Card>
-          <MemberSearchBar isWrapped={false} value={searchValue} onValueChange={setSearchValue} />
-        </Card>
-
-        {/* Member table */}
-        <Card>
-          <MemberTable
-            members={filteredMembers}
-            selectedIds={selectedIds}
-            onSelectionChange={setSelectedIds}
-            onMemberAction={handleMemberAction}
+    <>
+      <div className="flex min-h-full min-w-0 pr-450">
+        <div className="bg-container-neutral flex min-w-0 flex-1 flex-col rounded-t-[20px]">
+          {/* Selection top bar */}
+          <MemberTopBar
+            className="sticky top-0 z-10 -mt-15"
+            selectedCount={selectedCount}
+            targetRole={targetRole}
+            targetBanAction={targetBanAction}
+            onBack={handleClearSelection}
+            onChangeRole={
+              targetRole
+                ? () =>
+                    submitChangeRole(
+                      selectedMembers.map((m) => m.clubMemberId),
+                      targetRole,
+                    )
+                : undefined
+            }
+            onBan={
+              targetBanAction === 'ban'
+                ? () => submitBan(selectedMembers.map((m) => m.clubMemberId))
+                : undefined
+            }
+            onRestore={
+              targetBanAction === 'restore'
+                ? () => submitRestore(selectedMembers.map((m) => m.clubMemberId))
+                : undefined
+            }
+            onChangeCardinals={handleChangeCardinalsForBulk}
+            onTransferLead={
+              isLead && selectedCount === 1
+                ? () => handleTransferLead(selectedMembers[0].clubMemberId)
+                : undefined
+            }
           />
-        </Card>
+
+          <section className="flex shrink-0 flex-col">
+            <div className="flex h-[100px] items-center justify-between px-700 py-700">
+              <h1 className="typo-h2 text-text-strong">멤버관리</h1>
+
+              <div className="flex items-center gap-400">
+                <button
+                  type="button"
+                  className="text-icon-alternative hover:text-icon-strong flex size-9 cursor-pointer items-center justify-center rounded-sm transition-colors"
+                  aria-label="멤버 검색"
+                >
+                  <Icon src={AdminSearchIcon} size={20} />
+                </button>
+                <div className="bg-line h-3.5 w-px" aria-hidden />
+                <button
+                  type="button"
+                  className="typo-sub1 text-text-alternative hover:text-text-strong flex h-9 cursor-pointer items-center gap-200 rounded-sm px-200 transition-colors"
+                >
+                  <Icon src={AdminChangeIcon} size={20} />
+                  기수 순
+                </button>
+              </div>
+            </div>
+
+            <div className="border-line flex h-14 items-end border-b px-700">
+              <CardinalPillList
+                cardinals={cardinals}
+                selectedCardinal={selectedCardinal}
+                onSelectCardinal={setSelectedCardinal}
+              />
+            </div>
+          </section>
+
+          {/* Main content */}
+          <div className="flex flex-col gap-400 p-700">
+            {/* Search bar */}
+            <Card>
+              <MemberSearchBar
+                isWrapped={false}
+                value={searchValue}
+                onValueChange={setSearchValue}
+              />
+            </Card>
+
+            {/* Member table */}
+            <Card>
+              <MemberTable
+                members={filteredMembers}
+                selectedIds={selectedIds}
+                onSelectionChange={setSelectedIds}
+                onMemberAction={handleMemberAction}
+              />
+            </Card>
+          </div>
+        </div>
       </div>
 
       {/* Member detail modal */}
@@ -271,7 +306,7 @@ function MemberPageContent() {
         <AlertDialogAction onClick={handleForceConfirm}>변경</AlertDialogAction>
         <AlertDialogCancel>취소</AlertDialogCancel>
       </AlertDialog>
-    </div>
+    </>
   );
 }
 

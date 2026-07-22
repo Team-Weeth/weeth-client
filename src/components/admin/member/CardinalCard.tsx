@@ -5,12 +5,13 @@ import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@/lib/cn';
 
 const cardinalCardVariants = cva(
-  'typo-button2 inline-flex h-10 min-w-10 shrink-0 cursor-pointer items-center justify-center rounded-md px-400 py-200 whitespace-nowrap',
+  'typo-sub1 relative inline-flex h-14 w-[42px] shrink-0 cursor-pointer items-center justify-center rounded-sm text-center whitespace-nowrap transition-colors',
   {
     variants: {
       variant: {
-        active: 'bg-button-primary text-text-inverse',
-        normal: 'bg-button-neutral border-line text-text-strong border',
+        active:
+          'text-text-strong after:bg-text-strong after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-full after:content-[""]',
+        normal: 'text-text-alternative hover:text-text-normal',
       },
     },
     defaultVariants: {
@@ -39,7 +40,11 @@ function CardinalCard({
     <button
       ref={ref}
       type={type}
-      className={cn(cardinalCardVariants({ variant }), endIcon && 'gap-100', className)}
+      className={cn(
+        cardinalCardVariants({ variant }),
+        endIcon && 'w-auto gap-100 px-100',
+        className,
+      )}
       {...props}
     >
       {title}
