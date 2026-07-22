@@ -66,6 +66,13 @@ export interface MyPageUsingProfileClub {
   name: string;
 }
 
+export interface MyPageAssignableClub {
+  clubId: string;
+  name: string;
+  clubImage: string | null;
+  clubMemberNumber: number;
+}
+
 export interface MyPageUsingProfile {
   profileId: number;
   name: string;
@@ -75,10 +82,23 @@ export interface MyPageUsingProfile {
   clubs: MyPageUsingProfileClub[];
 }
 
+export interface MyPageActivityClub extends ClubDto {
+  currentProfile: MyPageUsingProfile | null;
+}
+
+export interface MyPageCurrentProfile {
+  profileId: number;
+  name: string;
+  profileImageUrl: string | null;
+  headerImageUrl: string | null;
+  bio: string | null;
+}
+
 export interface MyPageSummary {
   user: MyPageSummaryUser;
   stats: MyPageSummaryStats;
   usingProfiles: MyPageUsingProfile[];
+  currentProfile: MyPageCurrentProfile | null;
 }
 
 export interface MyClubMemberSummary {
