@@ -7,8 +7,9 @@ import {
   AdminCalendarIcon,
   AdminSettingIcon,
   AdminDuesIcon,
+  AdminScreenIcon,
 } from '@/assets/icons/admin';
-import { CheckRoundIcon, ExitIcon, PeopleIcon } from '@/assets/icons';
+import { ExitIcon, PeopleIcon } from '@/assets/icons';
 
 import {
   AlertDialog,
@@ -52,7 +53,7 @@ function LNB() {
     },
     {
       id: 'attendance',
-      icon: CheckRoundIcon,
+      icon: AdminScreenIcon,
       label: '출석 관리',
       path: `/${clubId}/admin/attendance`,
     },
@@ -105,7 +106,7 @@ function LNB() {
     <TooltipProvider>
       <nav
         className={cn(
-          'bg-background flex h-full shrink-0 flex-col overflow-x-hidden transition-[width] duration-200',
+          'bg-background tablet:flex hidden h-full shrink-0 flex-col overflow-x-hidden transition-[width] duration-200',
           collapsed ? 'w-22' : 'w-60',
         )}
       >
