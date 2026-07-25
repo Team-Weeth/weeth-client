@@ -71,7 +71,7 @@ function ClubInfoCard({ club, className }: ClubInfoCardProps) {
                   )}
                   <AvatarFallback />
                 </Avatar>
-                <div className="flex flex-col justify-center gap-1">
+                <div className="flex min-w-0 flex-1 flex-col justify-center gap-1">
                   <span className="tablet:typo-sub3 typo-button2 text-text-strong line-clamp-1">
                     {assignedProfile?.name ?? '연결된 프로필 없음'}
                   </span>

@@ -17,7 +17,8 @@ export const createEditProfileSchema = () =>
     studentId: z
       .string()
       .min(6, '학번 전체를 입력해주세요')
-      .max(20, '학번은 20자 이내로 입력해주세요'),
+      .max(20, '학번은 20자 이내로 입력해주세요')
+      .regex(/^\d+$/, '학번은 숫자만 입력 가능합니다'),
   });
 
 export const editProfileSchema = createEditProfileSchema();
