@@ -36,7 +36,7 @@ function SetCardinalModal({ open, onOpenChange, club, onSave }: SetCardinalModal
     handleClose,
     handleToggle,
     handleSave,
-  } = useCardinalModal({ onOpenChange, onSave });
+  } = useCardinalModal({ clubId: club.id, onOpenChange, onSave });
 
   const selectedArray = [...selected];
 

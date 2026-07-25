@@ -13,15 +13,15 @@ const TABLET_CARD_GAP = 12;
 function MyPageActivityContent({ className, ...props }: MyPageActivityContentProps) {
   const { clubId } = useParams<{ clubId: string }>();
   const { activityClubs } = useMyPageQueries(clubId);
+  const hasSingleClub = activityClubs.length === 1;
   const { containerRef, columnCount, isSingleColumn } = useResponsiveGridColumns({
     itemCount: activityClubs.length,
     minColumnWidth: TABLET_CARD_WIDTH,
     gap: TABLET_CARD_GAP,
   });
-  const mobileCardClassName =
-    activityClubs.length === 1
-      ? 'w-full shrink-0 tablet:w-full'
-      : cn('w-[250px] shrink-0', isSingleColumn ? 'tablet:w-full' : 'tablet:w-[314px]');
+  const mobileCardClassName = hasSingleClub
+    ? 'w-[250px] shrink-0 tablet:w-full desktop:w-[314px]'
+    : cn('w-[250px] shrink-0', isSingleColumn ? 'tablet:w-full' : 'tablet:w-[314px]');
 
   return (
     <div className={cn('flex min-w-0 flex-1 flex-col gap-4', className)} {...props}>
@@ -33,9 +33,11 @@ function MyPageActivityContent({ className, ...props }: MyPageActivityContentPro
             'tablet:grid tablet:overflow-x-visible',
           )}
           style={{
-            gridTemplateColumns: isSingleColumn
+            gridTemplateColumns: hasSingleClub
               ? 'minmax(0, 1fr)'
-              : `repeat(${columnCount}, 314px)`,
+              : isSingleColumn
+                ? 'minmax(0, 1fr)'
+                : `repeat(${columnCount}, 314px)`,
           }}
         >
           {activityClubs.map((club) => (

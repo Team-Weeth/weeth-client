@@ -141,7 +141,6 @@ export function useCreateMultiProfileMutation() {
       });
     },
     onSuccess: async (response, { clubIds }) => {
-      const currentClubId = useClubStore.getState().clubId;
       const affectedClubIds = getUniqueClubIds([
         ...clubIds,
         ...(response.data.data.usingClubs ?? []).map((club) => club.clubId),

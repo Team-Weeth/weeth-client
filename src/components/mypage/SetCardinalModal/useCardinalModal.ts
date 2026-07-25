@@ -3,14 +3,15 @@ import { useInitCardinalsMutation } from '@/hooks/mutations/mypage/useInitCardin
 import { toastSuccess, toastError } from '@/stores/useToastStore';
 
 interface UseCardinalModalProps {
+  clubId: string;
   onOpenChange: (open: boolean) => void;
   onSave?: (selected: number[]) => void;
 }
 
-function useCardinalModal({ onOpenChange, onSave }: UseCardinalModalProps) {
+function useCardinalModal({ clubId, onOpenChange, onSave }: UseCardinalModalProps) {
   const [step, setStep] = useState(1);
   const [selected, setSelected] = useState<Set<number>>(new Set());
-  const { mutate: initCardinals, isPending } = useInitCardinalsMutation();
+  const { mutate: initCardinals, isPending } = useInitCardinalsMutation(clubId);
 
   const handleOpenChange = (nextOpen: boolean) => {
     if (!nextOpen) {

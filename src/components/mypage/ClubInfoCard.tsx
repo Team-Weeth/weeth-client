@@ -7,7 +7,7 @@ import { Avatar, AvatarFallback, AvatarImage, Button, Divider, Icon, Tag } from 
 import { ArrowRightIcon, PeopleIcon } from '@/assets/icons';
 import type { MyPageActivityClub } from '@/types/mypage';
 import { cardClass } from './InfoCard';
-import { LeaveClubDropdownMenu } from './LeaveClubDropdownMenu';
+// import { LeaveClubDropdownMenu } from './LeaveClubDropdownMenu';
 import { useRouter } from 'next/navigation';
 
 const SetCardinalModal = dynamic(() =>
@@ -41,11 +41,11 @@ function ClubInfoCard({ club, className }: ClubInfoCardProps) {
                   <AvatarFallback variant="club" />
                 </Avatar>
               </div>
-              <LeaveClubDropdownMenu clubId={club.id} />
+              {/* <LeaveClubDropdownMenu clubId={club.id} /> */}
             </div>
 
             <div className="flex flex-col">
-              <span className="tablet:typo-sub1 typo-sub3 text-text-strong mb-[2px]">
+              <span className="tablet:typo-sub1 typo-sub3 text-text-strong mb-[2px] line-clamp-1">
                 {club.name}
               </span>
               <p
@@ -71,8 +71,8 @@ function ClubInfoCard({ club, className }: ClubInfoCardProps) {
                   )}
                   <AvatarFallback />
                 </Avatar>
-                <div className="flex flex-col justify-center gap-1">
-                  <span className="tablet:typo-sub3 typo-button2 text-text-strong">
+                <div className="flex min-w-0 flex-1 flex-col justify-center gap-1">
+                  <span className="tablet:typo-sub3 typo-button2 text-text-strong line-clamp-1">
                     {assignedProfile?.name ?? '연결된 프로필 없음'}
                   </span>
                   <p
