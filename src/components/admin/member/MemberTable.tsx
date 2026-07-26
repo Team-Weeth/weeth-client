@@ -176,12 +176,11 @@ function MemberTable({
                         <AvatarFallback />
                       </Avatar>
                       <div className="flex min-w-0 flex-col justify-center gap-0.5">
-                        <span className="text-text-strong truncate text-[14px] leading-5 font-semibold tracking-[var(--letter-spacing)]">
+                        <span className="typo-button2 text-text-normal truncate">
                           {member.name}
                         </span>
-                        <span className="text-text-alternative truncate text-[12px] leading-4 font-normal tracking-[var(--letter-spacing)]">
-                          -
-                        </span>
+                        {/* 자기소개가 없는 경우 '-' 표시. TODO : api 응답에 자기소개 추가되어야 함 */}
+                        <span className="typo-caption2 text-text-alternative truncate">-</span>
                       </div>
                     </div>
                   </TableCell>
@@ -344,9 +343,7 @@ function MemberTextCell({
 }) {
   return (
     <TableCell className={cn('h-16 p-0 px-400 py-300', className)}>
-      <span className="text-text-strong block truncate text-[14px] leading-5 font-normal tracking-[var(--letter-spacing)]">
-        {children}
-      </span>
+      <span className="typo-body2 text-text-strong block truncate">{children}</span>
     </TableCell>
   );
 }
@@ -354,9 +351,7 @@ function MemberTextCell({
 function MemberNumberCell({ children }: { children: React.ReactNode }) {
   return (
     <TableCell className="h-16 w-12 p-0 px-100 py-300 text-center">
-      <span className="text-text-strong text-[14px] leading-5 font-normal tracking-[var(--letter-spacing)]">
-        {children}
-      </span>
+      <span className="typo-body2 text-text-strong">{children}</span>
     </TableCell>
   );
 }

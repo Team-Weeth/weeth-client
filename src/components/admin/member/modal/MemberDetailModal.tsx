@@ -85,17 +85,13 @@ function MemberDetailModal({
 
             <div className="flex min-w-0 flex-col gap-100">
               <div className="flex items-center gap-200">
-                <span className="text-text-strong truncate text-[16px] leading-6 font-semibold tracking-[var(--letter-spacing)]">
-                  {member.name}
-                </span>
+                <span className="typo-sub1 text-text-normal truncate">{member.name}</span>
                 {latestCardinal && (
                   <ModalCardinalTag active>{formatCardinalLabel(latestCardinal)}</ModalCardinalTag>
                 )}
               </div>
               <MemberStatusBadge status={member.status} variant="dot" />
-              <p className="text-text-alternative truncate text-[13px] leading-[18px] font-medium tracking-[var(--letter-spacing)]">
-                -
-              </p>
+              <p className="typo-body2 text-text-alternative truncate">-</p>
             </div>
           </section>
 
