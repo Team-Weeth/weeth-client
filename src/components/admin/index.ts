@@ -22,6 +22,7 @@ export { CardinalPillList, type CardinalPillListProps } from './member/CardinalP
 export { MemberDetailModal, type MemberDetailModalProps } from './member/modal/MemberDetailModal';
 export { MemberPageContent } from './member/MemberPageContent';
 export { MemberSearchBar, type MemberSearchBarProps } from './member/MemberSearchBar';
+export { MemberStatusBadge, type MemberStatusBadgeProps } from './member/MemberStatusBadge';
 export { MemberTable } from './member/MemberTable';
 export { MemberTopBar, type MemberTopBarProps } from './member/MemberTopBar';
 export { SchedulePageContent } from './schedule/general/SchedulePageContent';

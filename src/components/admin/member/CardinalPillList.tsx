@@ -41,7 +41,7 @@ function CardinalPillList({
       ref={dragScrollRef}
       role="tablist"
       className={cn(
-        'scrollbar-none flex cursor-grab items-center gap-700 overflow-x-auto px-600 select-none active:cursor-grabbing',
+        'border-line scrollbar-none flex w-max max-w-full cursor-grab items-center gap-700 overflow-x-auto border-b px-600 select-none active:cursor-grabbing',
         className,
       )}
       onMouseDown={onMouseDown}

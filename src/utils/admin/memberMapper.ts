@@ -20,6 +20,7 @@ export function toMember(cm: ClubMember): Member {
     cardinal: cm.cardinals?.join(', ') ?? '',
     attendance: cm.attendanceCount ?? 0,
     absence: cm.absenceCount ?? 0,
+    attendanceRate: cm.attendanceRate ?? 0,
     penaltyCount: cm.penaltyCount ?? 0,
     status: cm.memberStatus,
   };

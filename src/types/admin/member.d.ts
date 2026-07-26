@@ -13,6 +13,7 @@ export interface Member {
   memberRole: ClubMemberRole;
   attendance: number;
   absence: number;
+  attendanceRate: number;
   penaltyCount: number;
   status: MemberStatus;
 }

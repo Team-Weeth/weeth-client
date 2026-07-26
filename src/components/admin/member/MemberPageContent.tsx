@@ -2,15 +2,10 @@
 
 import { useState } from 'react';
 
-import {
-  CardinalPillList,
-  MemberDetailModal,
-  MemberSearchBar,
-  MemberTable,
-  MemberTopBar,
-} from '@/components/admin';
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, Card, Icon } from '@/components/ui';
-import { AdminChangeIcon, AdminSearchIcon } from '@/assets/icons/admin';
+import { CardinalPillList, MemberDetailModal, MemberTable, MemberTopBar } from '@/components/admin';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, Icon } from '@/components/ui';
+import { ConvertIcon } from '@/assets/icons';
+import { AdminSearchIcon } from '@/assets/icons/admin';
 import { MEMBER_CARDINAL_ERROR_CODE, MEMBER_ROLE_ERROR_CODE } from '@/constants/errorCode';
 import type { ClubMemberRole, Member } from '@/types/admin/member';
 import { useAdminMembers } from '@/hooks/queries/admin';
@@ -36,7 +31,6 @@ interface ForceConfirmState {
 
 function MemberPageContent() {
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
-  const [searchValue, setSearchValue] = useState('');
   const [detailMemberId, setDetailMemberId] = useState<string | null>(null);
   const [selectedCardinal, setSelectedCardinal] = useState<number | 'all'>('all');
   const { data: members = [] } = useAdminMembers();
@@ -63,16 +57,7 @@ function MemberPageContent() {
       ? members
       : members.filter((m) => parseCardinals(m.cardinal).includes(String(selectedCardinal)));
 
-  const query = searchValue.trim().toLowerCase();
-  const filteredMembers = query
-    ? cardinalFilteredMembers.filter(
-        (m) =>
-          m.name.toLowerCase().includes(query) ||
-          m.department.toLowerCase().includes(query) ||
-          m.studentId.includes(query) ||
-          m.cardinal.includes(query),
-      )
-    : cardinalFilteredMembers;
+  const filteredMembers = cardinalFilteredMembers;
 
   const selectedMembers = filteredMembers.filter((m) => selectedIds.has(m.id));
   const selectedCount = selectedMembers.length;
@@ -231,13 +216,13 @@ function MemberPageContent() {
                   type="button"
                   className="typo-sub1 text-text-alternative hover:text-text-strong flex h-9 cursor-pointer items-center gap-200 rounded-sm px-200 transition-colors"
                 >
-                  <Icon src={AdminChangeIcon} size={20} />
+                  <Icon src={ConvertIcon} size={20} className="text-icon-alternative" />
                   기수 순
                 </button>
               </div>
             </div>
 
-            <div className="border-line flex h-14 items-end border-b px-700">
+            <div className="flex h-14 items-end overflow-hidden px-700">
               <CardinalPillList
                 cardinals={cardinals}
                 selectedCardinal={selectedCardinal}
@@ -247,25 +232,14 @@ function MemberPageContent() {
           </section>
 
           {/* Main content */}
-          <div className="flex flex-col gap-400 p-700">
-            {/* Search bar */}
-            <Card>
-              <MemberSearchBar
-                isWrapped={false}
-                value={searchValue}
-                onValueChange={setSearchValue}
-              />
-            </Card>
-
+          <div className="flex flex-col p-700">
             {/* Member table */}
-            <Card>
-              <MemberTable
-                members={filteredMembers}
-                selectedIds={selectedIds}
-                onSelectionChange={setSelectedIds}
-                onMemberAction={handleMemberAction}
-              />
-            </Card>
+            <MemberTable
+              members={filteredMembers}
+              selectedIds={selectedIds}
+              onSelectionChange={setSelectedIds}
+              onMemberAction={handleMemberAction}
+            />
           </div>
         </div>
       </div>
