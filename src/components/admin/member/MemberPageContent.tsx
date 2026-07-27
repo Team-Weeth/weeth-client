@@ -2,7 +2,13 @@
 
 import { useState } from 'react';
 
-import { CardinalPillList, MemberDetailModal, MemberTable, MemberTopBar } from '@/components/admin';
+import {
+  CardinalPillList,
+  ChangeCardinalsModal,
+  MemberDetailModal,
+  MemberTable,
+  MemberTopBar,
+} from '@/components/admin';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, Icon } from '@/components/ui';
 import { ConvertIcon } from '@/assets/icons';
 import { AdminSearchIcon } from '@/assets/icons/admin';
@@ -19,20 +25,29 @@ import {
   useTransferLead,
 } from '@/hooks/mutations/admin';
 import { toastError, toastSuccess } from '@/stores/useToastStore';
+import { getCommonCardinals } from '@/utils/admin/cardinalSelectionUtils';
 import { getBulkBanAction, getBulkTargetRole } from '@/utils/admin/memberBulkActions';
 import { parseCardinals } from '@/utils/admin/parseCardinals';
 import { getApiErrorCode } from '@/utils/shared';
 import { runBulkMutation } from '@/utils/shared/runBulkMutation';
 
 interface ForceConfirmState {
-  clubMemberIds: number[];
+  requests: CardinalChangeRequest[];
+}
+
+interface CardinalChangeRequest {
+  clubMemberId: number;
   cardinalIds: number[];
 }
+
+type MemberSortBy = 'cardinal' | 'name';
 
 function MemberPageContent() {
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [detailMemberId, setDetailMemberId] = useState<string | null>(null);
+  const [cardinalModalMemberId, setCardinalModalMemberId] = useState<string | null>(null);
   const [selectedCardinal, setSelectedCardinal] = useState<number | 'all'>('all');
+  const [sortBy, setSortBy] = useState<MemberSortBy>('cardinal');
   const { data: members = [] } = useAdminMembers();
   const { data: cardinals = [] } = useCardinals();
   const { mutateAsync: changeMemberRoleAsync } = useChangeMemberRole();
@@ -47,6 +62,9 @@ function MemberPageContent() {
   const detailMember = detailMemberId
     ? (members.find((m) => m.id === detailMemberId) ?? null)
     : null;
+  const cardinalModalMember = cardinalModalMemberId
+    ? (members.find((m) => m.id === cardinalModalMemberId) ?? null)
+    : null;
 
   const handleMemberAction = (m: Member) => {
     setDetailMemberId(m.id);
@@ -57,10 +75,11 @@ function MemberPageContent() {
       ? members
       : members.filter((m) => parseCardinals(m.cardinal).includes(String(selectedCardinal)));
 
-  const filteredMembers = cardinalFilteredMembers;
+  const filteredMembers = sortMembers(cardinalFilteredMembers, sortBy);
 
   const selectedMembers = filteredMembers.filter((m) => selectedIds.has(m.id));
   const selectedCount = selectedMembers.length;
+  const selectedMemberCardinals = selectedMembers.map((m) => getMemberCardinalNumbers(m.cardinal));
 
   const targetRole = getBulkTargetRole(selectedMembers);
   const targetBanAction = getBulkBanAction(selectedMembers);
@@ -72,27 +91,32 @@ function MemberPageContent() {
     cardinalIds: number[],
     force = false,
   ) => {
+    const requests = clubMemberIds.map((clubMemberId) => ({ clubMemberId, cardinalIds }));
+    await submitCardinalChangeRequests(requests, force);
+  };
+
+  const submitCardinalChangeRequests = async (requests: CardinalChangeRequest[], force = false) => {
     const results = await Promise.allSettled(
-      clubMemberIds.map((clubMemberId) =>
+      requests.map(({ clubMemberId, cardinalIds }) =>
         changeMemberCardinalsAsync({ clubMemberId, cardinalIds, force }),
       ),
     );
 
-    const attendanceFailedIds: number[] = [];
+    const attendanceFailedRequests: CardinalChangeRequest[] = [];
     let otherErrorCount = 0;
 
     results.forEach((result, idx) => {
       if (result.status !== 'rejected') return;
       const code = getApiErrorCode(result.reason);
       if (code === MEMBER_CARDINAL_ERROR_CODE.REMOVAL_HAS_ATTENDANCE) {
-        attendanceFailedIds.push(clubMemberIds[idx]);
+        attendanceFailedRequests.push(requests[idx]);
       } else {
         otherErrorCount += 1;
       }
     });
 
-    if (attendanceFailedIds.length > 0) {
-      setForceConfirm({ clubMemberIds: attendanceFailedIds, cardinalIds });
+    if (attendanceFailedRequests.length > 0) {
+      setForceConfirm({ requests: attendanceFailedRequests });
       return;
     }
 
@@ -129,16 +153,23 @@ function MemberPageContent() {
       error: '복구에 실패했습니다.',
     });
 
-  const handleChangeCardinalsForDetail = (cardinalIds: number[]) => {
-    if (!detailMember) return;
-    submitCardinalsChange([detailMember.clubMemberId], cardinalIds);
-  };
+  const handleChangeCardinalsForBulk = (cardinalIds: number[], cardinalNumbers: number[]) => {
+    const commonCardinalNumbers = new Set(getCommonCardinals(selectedMemberCardinals));
+    const selectedCardinalNumbers = new Set(cardinalNumbers);
+    const cardinalIdByNumber = new Map(cardinals.map((c) => [c.cardinalNumber, c.id]));
 
-  const handleChangeCardinalsForBulk = (cardinalIds: number[]) => {
-    submitCardinalsChange(
-      selectedMembers.map((m) => m.clubMemberId),
-      cardinalIds,
-    );
+    const requests = selectedMembers.map((member) => {
+      const preservedPartialNumbers = getMemberCardinalNumbers(member.cardinal).filter(
+        (cardinal) => !commonCardinalNumbers.has(cardinal),
+      );
+      const nextCardinalIds = [...new Set([...preservedPartialNumbers, ...selectedCardinalNumbers])]
+        .map((cardinal) => cardinalIdByNumber.get(cardinal))
+        .filter((id): id is number => id !== undefined);
+
+      return { clubMemberId: member.clubMemberId, cardinalIds: nextCardinalIds };
+    });
+
+    submitCardinalChangeRequests(requests);
   };
 
   const handleTransferLead = (clubMemberId: number) => {
@@ -156,9 +187,9 @@ function MemberPageContent() {
 
   const handleForceConfirm = () => {
     if (!forceConfirm) return;
-    const { clubMemberIds, cardinalIds } = forceConfirm;
+    const { requests } = forceConfirm;
     setForceConfirm(null);
-    submitCardinalsChange(clubMemberIds, cardinalIds, true);
+    submitCardinalChangeRequests(requests, true);
   };
 
   return (
@@ -167,7 +198,6 @@ function MemberPageContent() {
         <div className="bg-container-neutral flex min-w-0 flex-1 flex-col rounded-t-[20px]">
           {/* Selection top bar */}
           <MemberTopBar
-            className="sticky top-0 z-10 -mt-15"
             selectedCount={selectedCount}
             targetRole={targetRole}
             targetBanAction={targetBanAction}
@@ -192,6 +222,8 @@ function MemberPageContent() {
                 : undefined
             }
             onChangeCardinals={handleChangeCardinalsForBulk}
+            selectedMemberName={selectedMembers[0]?.name}
+            selectedMemberCardinals={selectedMemberCardinals}
             onTransferLead={
               isLead && selectedCount === 1
                 ? () => handleTransferLead(selectedMembers[0].clubMemberId)
@@ -214,10 +246,12 @@ function MemberPageContent() {
                 <div className="bg-line h-3.5 w-px" aria-hidden />
                 <button
                   type="button"
+                  onClick={() => setSortBy((prev) => (prev === 'cardinal' ? 'name' : 'cardinal'))}
                   className="typo-sub1 text-text-alternative hover:text-text-strong flex h-9 cursor-pointer items-center gap-200 rounded-sm px-200 transition-colors"
+                  aria-label={`${sortBy === 'cardinal' ? '이름' : '기수'} 순으로 정렬`}
                 >
                   <Icon src={ConvertIcon} size={20} className="text-icon-alternative" />
-                  기수 순
+                  {sortBy === 'cardinal' ? '기수 순' : '이름 순'}
                 </button>
               </div>
             </div>
@@ -261,10 +295,36 @@ function MemberPageContent() {
               }
             : undefined
         }
-        onChangeCardinals={detailMember ? handleChangeCardinalsForDetail : undefined}
+        onChangeCardinals={
+          detailMember
+            ? () => {
+                setCardinalModalMemberId(detailMember.id);
+                setDetailMemberId(null);
+              }
+            : undefined
+        }
         onTransferLead={
           isLead && detailMember ? () => handleTransferLead(detailMember.clubMemberId) : undefined
         }
+      />
+
+      <ChangeCardinalsModal
+        open={cardinalModalMember !== null}
+        onOpenChange={(open) => {
+          if (!open) setCardinalModalMemberId(null);
+        }}
+        overline={
+          cardinalModalMember
+            ? `'${cardinalModalMember.name}'의 기수를 선택하세요`
+            : '멤버 기수 변경'
+        }
+        memberCardinals={
+          cardinalModalMember ? [getMemberCardinalNumbers(cardinalModalMember.cardinal)] : []
+        }
+        onSubmit={(cardinalIds) => {
+          if (!cardinalModalMember) return;
+          submitCardinalsChange([cardinalModalMember.clubMemberId], cardinalIds);
+        }}
       />
 
       {/* 출석 기록이 있는 기수 삭제 확인 */}
@@ -282,6 +342,29 @@ function MemberPageContent() {
       </AlertDialog>
     </>
   );
+}
+
+function sortMembers(members: Member[], sortBy: MemberSortBy) {
+  return [...members].sort((a, b) => {
+    if (sortBy === 'name') {
+      return a.name.localeCompare(b.name, 'ko');
+    }
+
+    return getLatestCardinalNumber(b.cardinal) - getLatestCardinalNumber(a.cardinal);
+  });
+}
+
+function getLatestCardinalNumber(cardinal: string) {
+  return Math.max(
+    ...parseCardinals(cardinal).map((value) => Number(value.replace('기', '')) || 0),
+    0,
+  );
+}
+
+function getMemberCardinalNumbers(cardinal: string) {
+  return parseCardinals(cardinal)
+    .map((value) => Number(value.replace('기', '')) || 0)
+    .filter(Boolean);
 }
 
 export { MemberPageContent };

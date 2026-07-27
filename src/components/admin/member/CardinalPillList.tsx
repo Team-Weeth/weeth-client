@@ -35,6 +35,7 @@ function CardinalPillList({
   const { ref: dragScrollRef, onMouseDown } = useDragScroll();
   const { mutate: createCardinal } = useCreateCardinal();
   const { mutate: setCurrentCardinal } = useSetCurrentCardinal();
+  const sortedCardinals = [...cardinals].sort((a, b) => b.cardinalNumber - a.cardinalNumber);
 
   return (
     <div
@@ -53,7 +54,7 @@ function CardinalPillList({
         title="전체"
         onClick={() => onSelectCardinal('all')}
       />
-      {cardinals.map((c) => {
+      {sortedCardinals.map((c) => {
         const isActive = selectedCardinal === c.cardinalNumber;
         if (!isActive) {
           return (

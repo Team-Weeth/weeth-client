@@ -11,7 +11,6 @@ import {
 } from '@/components/ui';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { AttendanceProgressBar } from '@/components/attendance';
-import { ChangeCardinalsModal } from '@/components/admin/member/modal/ChangeCardinalsModal';
 import { MemberStatusBadge } from '@/components/admin/member/MemberStatusBadge';
 import { AdminCloseIcon } from '@/assets/icons/admin';
 import { getFooterActions } from '@/constants/admin/memberDetailModal.constants';
@@ -25,7 +24,7 @@ interface MemberDetailModalProps {
   onChangeRole?: () => void;
   onBan?: () => void;
   onRestore?: () => void;
-  onChangeCardinals?: (cardinalIds: number[]) => void;
+  onChangeCardinals?: () => void;
   onTransferLead?: () => void;
 }
 
@@ -170,14 +169,14 @@ function MemberDetailModal({
               </AlertDialog>
             ))}
             {onChangeCardinals && (
-              <ChangeCardinalsModal
-                overline={`'${member.name}' 활동 기수 설정`}
-                onSubmit={onChangeCardinals}
+              <Button
+                variant="secondary"
+                size="md"
+                className="rounded-sm"
+                onClick={onChangeCardinals}
               >
-                <Button variant="secondary" size="md" className="rounded-sm">
-                  기수 변경
-                </Button>
-              </ChangeCardinalsModal>
+                기수 변경
+              </Button>
             )}
           </div>
 

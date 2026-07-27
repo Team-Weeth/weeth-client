@@ -1,6 +1,8 @@
 // admin components index file
 export { AdminMobileBlockedContent } from './AdminMobileBlockedContent';
 export { CardinalDropdown, type CardinalDropdownProps } from './CardinalDropdown';
+export { FloatingSelectionBar, type FloatingSelectionBarProps } from './FloatingSelectionBar';
+export { SelectedCountLabel, type SelectedCountLabelProps } from './SelectedCountLabel';
 export { ModalIconButton, type ModalIconButtonProps } from './modal/ModalIconButton';
 export { AttendanceCard, type AttendanceCardProps } from './attendance/AttendanceCard';
 export { AttendancePageContent } from './attendance/AttendancePageContent';

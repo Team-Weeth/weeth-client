@@ -69,7 +69,7 @@ function AddCardinalModal({ children, onSubmit }: AddCardinalModalProps) {
                 const v = (e.target as HTMLInputElement).value.replace(/\D/g, '');
                 if (v === '' || Number(v) > 0) setCardinal(v);
               }}
-              className="bg-container-neutral-alternative h-[54px] rounded-md border-0 px-400 py-300 pr-10 text-left"
+              className="bg-container-neutral-alternative focus:bg-container-neutral focus:border-container-primary h-[54px] rounded-md border px-400 py-300 pr-10 text-left"
               placeholder=" "
             />
             <span className="typo-body1 text-text-disabled pointer-events-none absolute top-1/2 right-400 -translate-y-1/2">
