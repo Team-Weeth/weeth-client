@@ -28,3 +28,4 @@ export { useResponsiveGridColumns } from './useResponsiveGridColumns';
 export { useResetKeyOnOpen } from './useResetKeyOnOpen';
 export { useSyncFormToStore } from './useSyncFormToStore';
 export { useScrollToTopOnNavigate } from './useScrollToTopOnNavigate';
+export { useScrollToTopOnBlur } from './useScrollToTopOnBlur';

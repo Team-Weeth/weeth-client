@@ -1,8 +1,10 @@
 'use client';
 
+import { useRef } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { BackIcon } from '@/assets/icons';
 import { Button, Icon } from '@/components/ui';
+import { useScrollToTopOnBlur } from '@/hooks';
 import { useEditProfileActions, useEditProfileForm } from '@/hooks/mypage';
 import { useMyProfileDetailQuery } from '@/hooks/queries/mypage/useMyPageQueries';
 import { DeleteProfileDialog } from './DeleteProfileDialog';
@@ -11,6 +13,8 @@ import { ProfileManagementSkeleton } from './skeleton/ProfileManagementSkeleton'
 
 function EditProfilePageContent() {
   const router = useRouter();
+  const formContainerRef = useRef<HTMLDivElement>(null);
+  useScrollToTopOnBlur(formContainerRef);
   const { profileId } = useParams<{ clubId: string; profileId: string }>();
   const parsedProfileId = Number(profileId);
   const profileQuery = useMyProfileDetailQuery(
@@ -52,7 +56,10 @@ function EditProfilePageContent() {
 
   return (
     <>
-      <div className="tablet:hidden flex min-w-0 flex-1 flex-col gap-4 pb-[196px]">
+      <div
+        ref={formContainerRef}
+        className="tablet:hidden flex min-w-0 flex-1 flex-col gap-4 pb-[196px]"
+      >
         <div className="flex items-center gap-1 py-300">
           <button
             type="button"
