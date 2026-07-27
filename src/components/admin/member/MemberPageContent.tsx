@@ -6,12 +6,13 @@ import {
   CardinalPillList,
   ChangeCardinalsModal,
   MemberDetailModal,
+  MemberSearchBar,
   MemberTable,
   MemberTopBar,
+  matchesMemberSearch,
 } from '@/components/admin';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, Icon } from '@/components/ui';
 import { ConvertIcon } from '@/assets/icons';
-import { AdminSearchIcon } from '@/assets/icons/admin';
 import { MEMBER_CARDINAL_ERROR_CODE, MEMBER_ROLE_ERROR_CODE } from '@/constants/errorCode';
 import type { ClubMemberRole, Member } from '@/types/admin/member';
 import { useAdminMembers } from '@/hooks/queries/admin';
@@ -48,6 +49,7 @@ function MemberPageContent() {
   const [cardinalModalMemberId, setCardinalModalMemberId] = useState<string | null>(null);
   const [selectedCardinal, setSelectedCardinal] = useState<number | 'all'>('all');
   const [sortBy, setSortBy] = useState<MemberSortBy>('cardinal');
+  const [searchQuery, setSearchQuery] = useState('');
   const { data: members = [] } = useAdminMembers();
   const { data: cardinals = [] } = useCardinals();
   const { mutateAsync: changeMemberRoleAsync } = useChangeMemberRole();
@@ -75,7 +77,11 @@ function MemberPageContent() {
       ? members
       : members.filter((m) => parseCardinals(m.cardinal).includes(String(selectedCardinal)));
 
-  const filteredMembers = sortMembers(cardinalFilteredMembers, sortBy);
+  const searchedMembers = cardinalFilteredMembers.filter((member) =>
+    matchesMemberSearch(member, searchQuery),
+  );
+
+  const filteredMembers = sortMembers(searchedMembers, sortBy);
 
   const selectedMembers = filteredMembers.filter((m) => selectedIds.has(m.id));
   const selectedCount = selectedMembers.length;
@@ -236,13 +242,7 @@ function MemberPageContent() {
               <h1 className="typo-h2 text-text-strong">멤버관리</h1>
 
               <div className="flex items-center gap-400">
-                <button
-                  type="button"
-                  className="text-icon-alternative hover:text-icon-strong flex size-9 cursor-pointer items-center justify-center rounded-sm transition-colors"
-                  aria-label="멤버 검색"
-                >
-                  <Icon src={AdminSearchIcon} size={20} />
-                </button>
+                <MemberSearchBar value={searchQuery} onValueChange={setSearchQuery} />
                 <div className="bg-line h-3.5 w-px" aria-hidden />
                 <button
                   type="button"

@@ -1,57 +1,105 @@
 'use client';
 
-import Image from 'next/image';
-import { cn } from '@/lib/cn';
+import { useEffect, useRef, useState } from 'react';
+
 import { SearchIcon } from '@/assets/icons';
+import { AdminCloseIcon } from '@/assets/icons/admin';
+import { Icon } from '@/components/ui';
+import { cn } from '@/lib/cn';
 
 interface MemberSearchBarProps extends React.HTMLAttributes<HTMLDivElement> {
-  isWrapped?: boolean;
-  isPenaltyPage?: boolean;
   value: string;
   onValueChange: (value: string) => void;
 }
 
 function MemberSearchBar({
   className,
-  isWrapped = true,
-  isPenaltyPage = false,
   value,
   onValueChange,
   ...props
 }: MemberSearchBarProps) {
-  const inputField = (
-    <div className={cn('relative w-full', !isWrapped && className)} {...(!isWrapped ? props : {})}>
-      <Image
-        src={SearchIcon}
-        alt="검색"
-        width={20}
-        height={20}
-        className="absolute top-1/2 left-400 -translate-y-1/2"
-      />
-      <input
-        type="text"
-        value={value}
-        onChange={(e) => onValueChange(e.target.value)}
-        placeholder="기수, 학번, 이름으로 검색이 가능합니다."
-        className="typo-body1 placeholder:text-text-alternative focus:outline-line focus:border-accent-foreground h-12 w-full rounded-sm border py-300 pr-300 pl-13 focus:outline-[1.5px]"
-      />
-    </div>
-  );
+  const [isOpen, setIsOpen] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
 
-  if (!isWrapped) return inputField;
+  useEffect(() => {
+    if (isOpen) inputRef.current?.focus();
+  }, [isOpen]);
+
+  const handleOpen = () => setIsOpen(true);
+
+  const handleClose = () => {
+    onValueChange('');
+    setIsOpen(false);
+  };
 
   return (
     <div
       className={cn(
-        'flex items-center rounded-lg bg-white px-500 py-3.75 shadow-[0px_3px_8px_0px_rgba(133,141,138,0.2)]',
-        isPenaltyPage ? 'w-[63%] min-w-174' : 'mt-7.5 mb-2.5 w-full min-w-174',
+        'flex h-[34px] items-center justify-end overflow-hidden rounded-[10px] border transition-[width,background-color,border-color] duration-300 ease-out',
+        isOpen
+          ? 'border-line bg-container-neutral-alternative w-[320px] px-[11px] py-200'
+          : 'w-9 border-transparent bg-transparent px-0 py-0',
         className,
       )}
       {...props}
     >
-      {inputField}
+      <button
+        type="button"
+        aria-label="멤버 검색"
+        className={cn(
+          'text-icon-alternative flex size-8 shrink-0 cursor-pointer items-center justify-center rounded-sm transition-colors hover:text-icon-strong',
+          isOpen && 'size-4',
+        )}
+        onClick={handleOpen}
+      >
+        <Icon src={SearchIcon} size={isOpen ? 16 : 20} />
+      </button>
+
+      <input
+        ref={inputRef}
+        type="text"
+        value={value}
+        onChange={(e) => onValueChange(e.target.value)}
+        placeholder="이름, 역할, 학과..."
+        className={cn(
+          'typo-body2 min-w-0 flex-1 bg-transparent py-[2px] pl-200 text-text-normal placeholder:text-text-disabled focus:outline-none',
+          !isOpen && 'pointer-events-none w-0 flex-none p-0 opacity-0',
+        )}
+        tabIndex={isOpen ? 0 : -1}
+      />
+
+      <button
+        type="button"
+        aria-label="검색어 지우기"
+        className={cn(
+          'text-icon-alternative flex shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-sm transition-[width,height,opacity,color] hover:text-icon-strong',
+          isOpen ? 'size-[18px] opacity-100' : 'pointer-events-none size-0 opacity-0',
+        )}
+        onClick={handleClose}
+      >
+        <Icon src={AdminCloseIcon} size={14} />
+      </button>
     </div>
   );
 }
 
-export { MemberSearchBar, type MemberSearchBarProps };
+function matchesMemberSearch(member: {
+  name: string;
+  position: string;
+  department: string;
+  studentId: string;
+  phone: string;
+}, query: string) {
+  const normalizedQuery = query.trim().toLowerCase();
+  if (!normalizedQuery) return true;
+
+  return [member.name, member.position, member.department, member.studentId, member.phone].some(
+    (value) => value.toLowerCase().includes(normalizedQuery),
+  );
+}
+
+export {
+  MemberSearchBar,
+  matchesMemberSearch,
+  type MemberSearchBarProps,
+};

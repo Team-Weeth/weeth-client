@@ -2,14 +2,7 @@
 
 import React, { useState } from 'react';
 
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui';
+import { Table, TableBody, TableHead, TableHeader, TableRow } from '@/components/ui';
 import { cn } from '@/lib/cn';
 import type { Member } from '@/types/admin/member';
 import { MEMBER_TABLE_COLUMNS } from '@/constants/admin/memberTable.constants';
