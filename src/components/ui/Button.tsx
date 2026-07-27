@@ -7,11 +7,13 @@ const buttonVariants = cva(
     variants: {
       variant: {
         primary:
-          'bg-button-primary text-text-inverse hover:bg-button-primary-interaction active:bg-button-primary-interaction disabled:bg-button-neutral disabled:text-text-disabled',
+          'bg-button-primary text-text-inverse hover:bg-button-primary-interaction active:bg-button-primary-interaction disabled:bg-button-disabled disabled:text-text-disabled',
         secondary:
-          'bg-button-neutral text-text-normal hover:bg-button-neutral-interaction active:bg-button-neutral-interaction disabled:bg-button-neutral disabled:text-text-disabled',
+          'bg-button-neutral text-text-normal hover:bg-button-neutral-interaction active:bg-button-neutral-interaction disabled:bg-button-disabled disabled:text-text-disabled',
         tertiary:
           'bg-transparent text-text-normal hover:bg-container-neutral-interaction active:bg-container-neutral-interaction disabled:text-text-disabled',
+        primarySoft:
+          'bg-button-primary-subtle text-brand-primary hover:bg-button-primary-subtle-interaction active:bg-button-primary-subtle-interaction disabled:bg-button-disabled disabled:text-text-disabled',
         danger:
           'bg-state-error text-text-inverse hover:opacity-90 active:opacity-80 disabled:bg-button-neutral disabled:text-text-disabled',
         kakao:
