@@ -20,17 +20,21 @@ function MyPageActivityContent({ className, ...props }: MyPageActivityContentPro
     gap: TABLET_CARD_GAP,
   });
   const mobileCardClassName = hasSingleClub
-    ? 'w-[250px] shrink-0 tablet:w-full desktop:w-[314px]'
+    ? 'w-full tablet:w-full desktop:w-[314px]'
     : cn('w-[250px] shrink-0', isSingleColumn ? 'tablet:w-full' : 'tablet:w-[314px]');
 
   return (
     <div className={cn('flex min-w-0 flex-1 flex-col gap-4', className)} {...props}>
       <p className="typo-h3 text-text-normal">활동정보</p>
-      <div ref={containerRef} className="tablet:mx-0 tablet:px-0 -mx-450 pl-450">
+      <div
+        ref={containerRef}
+        className={cn('tablet:mx-0 tablet:px-0', !hasSingleClub && '-mx-450 pl-450')}
+      >
         <div
           className={cn(
             'scrollbar-none flex gap-300 overflow-x-auto',
             'tablet:grid tablet:overflow-x-visible',
+            !hasSingleClub && 'tablet:pr-0 pr-450',
           )}
           style={{
             gridTemplateColumns: hasSingleClub

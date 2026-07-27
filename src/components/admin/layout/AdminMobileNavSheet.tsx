@@ -51,7 +51,7 @@ function SheetNavItem({
   closeSheet = true,
 }: SheetNavItemProps) {
   const baseClass = cn(
-    'typo-sub1 text-text-normal flex w-full items-center justify-between rounded-md px-400 py-300 transition-colors',
+    'typo-sub1 text-text-normal flex w-full items-center justify-between rounded-md px-400 py-[14px] transition-colors',
     isActive ? 'bg-container-neutral-alternative' : 'hover:bg-background',
   );
 
