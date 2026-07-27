@@ -12,12 +12,7 @@ interface MemberSearchBarProps extends React.HTMLAttributes<HTMLDivElement> {
   onValueChange: (value: string) => void;
 }
 
-function MemberSearchBar({
-  className,
-  value,
-  onValueChange,
-  ...props
-}: MemberSearchBarProps) {
+function MemberSearchBar({ className, value, onValueChange, ...props }: MemberSearchBarProps) {
   const [isOpen, setIsOpen] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -47,7 +42,7 @@ function MemberSearchBar({
         type="button"
         aria-label="멤버 검색"
         className={cn(
-          'text-icon-alternative flex size-8 shrink-0 cursor-pointer items-center justify-center rounded-sm transition-colors hover:text-icon-strong',
+          'text-icon-alternative hover:text-icon-strong flex size-8 shrink-0 cursor-pointer items-center justify-center rounded-sm transition-colors',
           isOpen && 'size-4',
         )}
         onClick={handleOpen}
@@ -62,7 +57,7 @@ function MemberSearchBar({
         onChange={(e) => onValueChange(e.target.value)}
         placeholder="이름, 역할, 학과..."
         className={cn(
-          'typo-body2 min-w-0 flex-1 bg-transparent py-[2px] pl-200 text-text-normal placeholder:text-text-disabled focus:outline-none',
+          'typo-body2 text-text-normal placeholder:text-text-disabled min-w-0 flex-1 bg-transparent py-[2px] pl-200 focus:outline-none',
           !isOpen && 'pointer-events-none w-0 flex-none p-0 opacity-0',
         )}
         tabIndex={isOpen ? 0 : -1}
@@ -72,7 +67,7 @@ function MemberSearchBar({
         type="button"
         aria-label="검색어 지우기"
         className={cn(
-          'text-icon-alternative flex shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-sm transition-[width,height,opacity,color] hover:text-icon-strong',
+          'text-icon-alternative hover:text-icon-strong flex shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-sm transition-[width,height,opacity,color]',
           isOpen ? 'size-[18px] opacity-100' : 'pointer-events-none size-0 opacity-0',
         )}
         onClick={handleClose}
@@ -83,23 +78,4 @@ function MemberSearchBar({
   );
 }
 
-function matchesMemberSearch(member: {
-  name: string;
-  position: string;
-  department: string;
-  studentId: string;
-  phone: string;
-}, query: string) {
-  const normalizedQuery = query.trim().toLowerCase();
-  if (!normalizedQuery) return true;
-
-  return [member.name, member.position, member.department, member.studentId, member.phone].some(
-    (value) => value.toLowerCase().includes(normalizedQuery),
-  );
-}
-
-export {
-  MemberSearchBar,
-  matchesMemberSearch,
-  type MemberSearchBarProps,
-};
+export { MemberSearchBar, type MemberSearchBarProps };
