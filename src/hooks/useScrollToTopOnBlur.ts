@@ -4,24 +4,30 @@ import { useEffect } from 'react';
 
 function useScrollToTopOnBlur(containerRef: React.RefObject<HTMLElement | null>) {
   useEffect(() => {
-    const handleFocusOut = (event: FocusEvent) => {
-      const container = containerRef.current;
-      if (!container || !(event.target instanceof Node) || !container.contains(event.target)) {
-        return;
-      }
+    const viewport = window.visualViewport;
+    if (!viewport) return;
 
-      window.setTimeout(() => {
+    let wasKeyboardOpen = false;
+
+    const handleViewportResize = () => {
+      const isKeyboardOpen = viewport.height < window.innerHeight * 0.85;
+
+      if (wasKeyboardOpen && !isKeyboardOpen) {
+        const container = containerRef.current;
         const active = document.activeElement;
-        const isStillEditing = active instanceof HTMLElement && container.contains(active);
+        const isStillEditing =
+          !!container && active instanceof HTMLElement && container.contains(active);
 
         if (!isStillEditing) {
           window.scrollTo({ top: 0, behavior: 'smooth' });
         }
-      }, 0);
+      }
+
+      wasKeyboardOpen = isKeyboardOpen;
     };
 
-    document.addEventListener('focusout', handleFocusOut);
-    return () => document.removeEventListener('focusout', handleFocusOut);
+    viewport.addEventListener('resize', handleViewportResize);
+    return () => viewport.removeEventListener('resize', handleViewportResize);
   }, [containerRef]);
 }
 
