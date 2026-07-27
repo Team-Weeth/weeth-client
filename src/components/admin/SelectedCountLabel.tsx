@@ -20,14 +20,14 @@ function SelectedCountLabel({
   return (
     <div
       className={cn(
-        'flex shrink-0 items-center gap-200 border-r border-neutral-700 pr-[13px]',
+        'flex shrink-0 items-center gap-200 border-r border-neutral-700 pr-200',
         className,
       )}
       {...props}
     >
       <span
         className={cn(
-          'bg-button-primary text-text-inverse typo-caption1 flex size-[22px] items-center justify-center rounded-full',
+          'bg-button-primary text-text-inverse typo-caption1 flex h-[22px] min-w-[22px] items-center justify-center rounded-full px-[7px]',
           countClassName,
         )}
       >

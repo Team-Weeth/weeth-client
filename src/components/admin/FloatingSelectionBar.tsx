@@ -69,8 +69,9 @@ function FloatingSelectionBar({
     <div
       ref={ref}
       aria-hidden={!isAnimatedVisible}
+      inert={!isAnimatedVisible}
       className={cn(
-        'scrollbar-none fixed bottom-10 left-1/2 z-30 flex max-w-[calc(100%-32px)] items-center gap-[10px] overflow-x-auto rounded-lg bg-neutral-800 px-400 py-300 shadow-[0px_5px_20px_rgba(17,33,49,0.2)] will-change-[transform,opacity]',
+        'scrollbar-none fixed bottom-10 left-1/2 z-30 flex max-w-[calc(100%-32px)] items-center gap-[10px] overflow-x-auto rounded-lg bg-neutral-800 px-400 py-300 shadow-md will-change-[transform,opacity]',
         isAnimatedVisible ? 'pointer-events-auto' : 'pointer-events-none',
         className,
       )}

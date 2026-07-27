@@ -256,12 +256,16 @@ function ModalCardinalTooltip({
   content: string;
 }) {
   return (
-    <span className="group relative inline-flex">
+    <button
+      type="button"
+      className="group relative inline-flex cursor-default"
+      aria-label={`숨겨진 활동기수 ${content}`}
+    >
       <ModalCardinalTag>{children}</ModalCardinalTag>
-      <span className="bg-container-primary-interaction text-text-inverse typo-body2 pointer-events-none absolute right-0 bottom-[calc(100%+8px)] z-50 w-max rounded-sm p-200 opacity-0 [box-shadow:var(--shadow-sm)] transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100">
+      <span className="bg-container-primary-interaction text-text-inverse typo-body2 pointer-events-none absolute right-0 bottom-[calc(100%+8px)] z-50 w-max rounded-sm p-200 opacity-0 shadow-sm transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100">
         {content}
       </span>
-    </span>
+    </button>
   );
 }
 
@@ -293,7 +297,7 @@ function InfoRow({
           alignValue === 'right' ? 'ml-auto text-right' : 'min-w-0 flex-1 break-keep',
         ].join(' ')}
       >
-        {value || '-'}
+        {value ?? '-'}
       </span>
     </div>
   );

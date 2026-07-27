@@ -5,21 +5,18 @@ import type { MemberStatus } from '@/types/admin/member';
 
 const STATUS_LABEL: Record<MemberStatus, string> = {
   ACTIVE: '활동',
-  WAITING: '활동',
   BANNED: '퇴출',
   LEFT: '탈퇴',
 };
 
 const STATUS_DOT_COLOR: Record<MemberStatus, string> = {
   ACTIVE: 'text-brand-primary',
-  WAITING: 'text-brand-primary',
   BANNED: 'text-state-error',
   LEFT: 'text-text-disabled',
 };
 
 const STATUS_PILL_COLOR: Record<MemberStatus, string> = {
   ACTIVE: 'bg-container-primary text-text-inverse',
-  WAITING: 'bg-container-primary text-text-inverse',
   BANNED: 'bg-state-error text-text-inverse',
   LEFT: 'bg-button-neutral-interaction text-text-inverse',
 };
