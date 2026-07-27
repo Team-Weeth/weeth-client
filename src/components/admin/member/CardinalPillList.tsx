@@ -40,7 +40,7 @@ function CardinalPillList({
   return (
     <div
       ref={dragScrollRef}
-      role="tablist"
+      aria-label="기수 필터"
       className={cn(
         'border-line scrollbar-none flex w-max max-w-full cursor-grab items-center gap-700 overflow-x-auto border-b px-600 select-none active:cursor-grabbing',
         className,
@@ -48,8 +48,7 @@ function CardinalPillList({
       onMouseDown={onMouseDown}
     >
       <CardinalCard
-        role="tab"
-        aria-selected={selectedCardinal === 'all'}
+        aria-pressed={selectedCardinal === 'all'}
         variant={selectedCardinal === 'all' ? 'active' : 'normal'}
         title="전체"
         onClick={() => onSelectCardinal('all')}
@@ -60,8 +59,7 @@ function CardinalPillList({
           return (
             <CardinalCard
               key={c.id}
-              role="tab"
-              aria-selected={false}
+              aria-pressed={false}
               variant="normal"
               title={`${c.cardinalNumber}기`}
               onClick={() => onSelectCardinal(c.cardinalNumber)}
@@ -72,8 +70,7 @@ function CardinalPillList({
           <DropdownMenu key={c.id}>
             <DropdownMenuTrigger asChild>
               <CardinalCard
-                role="tab"
-                aria-selected
+                aria-pressed
                 variant="active"
                 title={`${c.cardinalNumber}기`}
                 endIcon={<Icon src={MoreVerticalIcon} size={12} />}
