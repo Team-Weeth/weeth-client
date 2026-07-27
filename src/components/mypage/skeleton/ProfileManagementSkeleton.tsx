@@ -32,18 +32,19 @@ function ProfileManagementCardSkeleton() {
 
 function ProfileManagementSkeleton() {
   return (
-    <div className="flex min-w-0 flex-1 flex-col gap-6">
-      <div className="flex items-start gap-1">
-        <Skeleton className="mt-1 size-8 rounded-md" />
+    <div className="tablet:gap-6 flex min-w-0 flex-1 flex-col">
+      <div className="tablet:items-start flex items-center gap-1 py-300">
+        <Skeleton className="size-8 rounded-md" />
         <div className="flex flex-col gap-1">
-          <Skeleton className="h-9 w-32" />
-          <Skeleton className="h-5 w-[420px] max-w-full" />
+          <Skeleton className="tablet:h-9 tablet:w-32 h-6 w-24" />
+          <Skeleton className="tablet:flex hidden h-5 w-[420px] max-w-full" />
         </div>
       </div>
+      <Skeleton className="tablet:hidden mb-450 h-[52px] w-full rounded-md" />
 
       <div className="bg-container-neutral flex flex-col rounded-lg p-450">
         <Skeleton className="mb-[18px] h-6 w-28" />
-        <div className="grid grid-cols-3 gap-x-300 gap-y-8">
+        <div className="desktop:grid desktop:grid-cols-3 desktop:gap-x-300 desktop:gap-y-8 flex flex-col gap-8">
           {Array.from({ length: 3 }).map((_, index) => (
             <ProfileManagementCardSkeleton key={index} />
           ))}

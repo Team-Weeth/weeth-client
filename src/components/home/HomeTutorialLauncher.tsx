@@ -1,16 +1,20 @@
 'use client';
 
 import { useEffect, useState, useSyncExternalStore } from 'react';
-
+import dynamic from 'next/dynamic';
 import { useParams } from 'next/navigation';
-
 import { useHomeQuery } from '@/hooks/home';
-
+import {
+  HOME_TUTORIAL_SLIDES,
+  getHomeTutorialPendingKey,
+  getHomeTutorialSeenKey,
+  getHomeTutorialVariantByRole,
+} from '@/constants/home/tutorial';
 import { HomeTutorialDialog } from './HomeTutorialDialog';
 import { HomeTutorialButton } from './HomeTutorialButton';
-
-const HOME_TUTORIAL_PENDING_KEY = 'home-tutorial-pending-club-id';
-const HOME_TUTORIAL_SEEN_KEY_PREFIX = 'home-tutorial-seen';
+const HomeProfileSetupModal = dynamic(() =>
+  import('./HomeProfileSetupModal').then((m) => m.HomeProfileSetupModal),
+);
 
 function subscribeTutorialSeen(callback: () => void) {
   window.addEventListener('storage', callback);
@@ -19,44 +23,66 @@ function subscribeTutorialSeen(callback: () => void) {
   };
 }
 
-function getTutorialSeenKey(clubId: string) {
-  return `${HOME_TUTORIAL_SEEN_KEY_PREFIX}:${clubId}`;
-}
-
 function HomeTutorialLauncher() {
   const { clubId } = useParams<{ clubId: string }>();
   const [open, setOpen] = useState(false);
   const [autoOpenDismissed, setAutoOpenDismissed] = useState(false);
+  const [profileSetupModalOpen, setProfileSetupModalOpen] = useState(false);
 
   const { data: role } = useHomeQuery({
     select: (data) => data.myInfo.userInfo.role,
   });
+  const tutorialVariant = getHomeTutorialVariantByRole(role);
+  const slides = tutorialVariant ? HOME_TUTORIAL_SLIDES[tutorialVariant] : [];
   const hasSeenTutorial = useSyncExternalStore(
     subscribeTutorialSeen,
-    () => window.localStorage.getItem(getTutorialSeenKey(clubId)) === 'true',
+    () =>
+      tutorialVariant
+        ? window.localStorage.getItem(getHomeTutorialSeenKey(clubId, tutorialVariant)) === 'true'
+        : false,
     () => false,
   );
-  const pendingClubId = useSyncExternalStore(
+  const pendingLeadClubId = useSyncExternalStore(
     subscribeTutorialSeen,
-    () => window.sessionStorage.getItem(HOME_TUTORIAL_PENDING_KEY),
+    () => window.sessionStorage.getItem(getHomeTutorialPendingKey('lead')),
     () => null,
   );
+  const pendingMemberClubId = useSyncExternalStore(
+    subscribeTutorialSeen,
+    () => window.sessionStorage.getItem(getHomeTutorialPendingKey('member')),
+    () => null,
+  );
+  const pendingClubId =
+    tutorialVariant === 'lead'
+      ? pendingLeadClubId
+      : tutorialVariant === 'member'
+        ? pendingMemberClubId
+        : null;
 
   const shouldAutoOpen =
-    pendingClubId === clubId && role === 'LEAD' && !hasSeenTutorial && !autoOpenDismissed;
+    tutorialVariant !== null && pendingClubId === clubId && !hasSeenTutorial && !autoOpenDismissed;
   const isDialogOpen = open || shouldAutoOpen;
 
   useEffect(() => {
-    if (role === undefined || pendingClubId !== clubId) return;
-    if (role !== 'LEAD' || hasSeenTutorial) {
-      window.sessionStorage.removeItem(HOME_TUTORIAL_PENDING_KEY);
+    if (role !== 'LEAD' && pendingLeadClubId === clubId) {
+      window.sessionStorage.removeItem(getHomeTutorialPendingKey('lead'));
     }
-  }, [clubId, hasSeenTutorial, pendingClubId, role]);
+    if (role !== 'USER' && pendingMemberClubId === clubId) {
+      window.sessionStorage.removeItem(getHomeTutorialPendingKey('member'));
+    }
+  }, [clubId, pendingLeadClubId, pendingMemberClubId, role]);
+
+  useEffect(() => {
+    if (!tutorialVariant || pendingClubId !== clubId) return;
+    if (hasSeenTutorial) {
+      window.sessionStorage.removeItem(getHomeTutorialPendingKey(tutorialVariant));
+    }
+  }, [clubId, hasSeenTutorial, pendingClubId, tutorialVariant]);
 
   const handleOpenChange = (nextOpen: boolean) => {
-    if (!nextOpen && shouldAutoOpen) {
-      window.localStorage.setItem(getTutorialSeenKey(clubId), 'true');
-      window.sessionStorage.removeItem(HOME_TUTORIAL_PENDING_KEY);
+    if (!nextOpen && shouldAutoOpen && tutorialVariant) {
+      window.localStorage.setItem(getHomeTutorialSeenKey(clubId, tutorialVariant), 'true');
+      window.sessionStorage.removeItem(getHomeTutorialPendingKey(tutorialVariant));
       setAutoOpenDismissed(true);
     }
 
@@ -65,9 +91,21 @@ function HomeTutorialLauncher() {
 
   return (
     <>
-      {role === 'LEAD' && <HomeTutorialButton onClick={() => setOpen(true)} />}
+      {tutorialVariant && <HomeTutorialButton onClick={() => setOpen(true)} />}
 
-      <HomeTutorialDialog open={isDialogOpen} onOpenChange={handleOpenChange} />
+      {slides.length > 0 && (
+        <HomeTutorialDialog
+          open={isDialogOpen}
+          onOpenChange={handleOpenChange}
+          slides={slides}
+          onSecondaryAction={(action) => {
+            if (action === 'open-profile-setup-modal') {
+              setProfileSetupModalOpen(true);
+            }
+          }}
+        />
+      )}
+      <HomeProfileSetupModal open={profileSetupModalOpen} onOpenChange={setProfileSetupModalOpen} />
     </>
   );
 }

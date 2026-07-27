@@ -4,8 +4,10 @@ import { Fragment } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { Icon } from '@/components/ui';
 import { ArrowRightIcon, PhoneIcon, MailIcon } from '@/assets/icons';
+import { useProfileSectionActions } from '@/hooks/mypage';
 import { cn } from '@/lib/cn';
 import type { ProfileData } from '@/types/mypage';
+import { formatPhone } from '@/utils/shared';
 import { ProfileBackgroundImageEditor } from './edit/ProfileBackgroundImageEditor';
 import { ProfileImageEditor } from './edit/ProfileImageEditor';
 import { MyPageDropdownMenu } from './MyPageDropdownMenu';
@@ -16,9 +18,11 @@ interface ProfileSectionProps extends React.HTMLAttributes<HTMLDivElement>, Prof
 }
 
 const ProfileSection = ({
+  profileId,
   name,
   bio,
   profileImageUrl,
+  headerImageUrl,
   tel,
   email,
   school,
@@ -30,6 +34,16 @@ const ProfileSection = ({
 }: ProfileSectionProps) => {
   const router = useRouter();
   const { clubId } = useParams<{ clubId: string }>();
+  const {
+    handleProfileImageChange,
+    handleHeaderImageChange,
+    handleProfileImageReset,
+    handleHeaderImageReset,
+  } = useProfileSectionActions({
+    profileId,
+    name,
+    bio,
+  });
   const schoolLabel = [school, department].filter(Boolean).join(' · ');
   const activityItems = [
     {
@@ -50,6 +64,13 @@ const ProfileSection = ({
       {...props}
     >
       <ProfileBackgroundImageEditor
+        backgroundImageUrl={headerImageUrl}
+        onFileChange={(file) => {
+          void handleHeaderImageChange(file);
+        }}
+        onResetImage={() => {
+          void handleHeaderImageReset();
+        }}
         priority
         className="h-[190px] rounded-none"
         imageClassName="rounded-none"
@@ -62,25 +83,36 @@ const ProfileSection = ({
           <ProfileImageEditor
             name={name}
             profileImageUrl={profileImageUrl}
-            avatarSize={128}
-            avatarClassName="border-line border-2"
+            onFileChange={(file) => {
+              void handleProfileImageChange(file);
+            }}
+            onResetImage={() => {
+              void handleProfileImageReset();
+            }}
+            avatarSize={100}
+            avatarClassName="border-line tablet:size-32 border-2"
             triggerClassName="right-0 bottom-0 size-8 border-line"
             triggerIconSize={19}
           />
 
-          <div className="mb-[6px] flex items-center">
+          <div className="tablet:mb-[6px] tablet:flex hidden items-center">
             <MyPageDropdownMenu />
           </div>
         </div>
 
         <div className="mt-[10px] flex flex-col">
           <div className="flex items-center justify-between gap-400">
-            <h1 className="typo-h3 text-text-strong">{name}</h1>
-            {schoolLabel && (
-              <span className="desktop:flex typo-caption2 text-text-alternative bg-container-neutral-alternative hidden shrink-0 rounded-md px-2 py-1">
-                {schoolLabel}
-              </span>
-            )}
+            <div className="flex w-full items-center justify-between">
+              <h1 className="typo-h3 text-text-strong">{name}</h1>
+              {schoolLabel && (
+                <span className="desktop:flex typo-caption2 text-text-alternative bg-container-neutral-alternative hidden shrink-0 rounded-md px-2 py-1">
+                  {schoolLabel}
+                </span>
+              )}
+              <div className="tablet:hidden flex">
+                <MyPageDropdownMenu />
+              </div>
+            </div>
           </div>
           {bio && <p className="typo-body2 text-text-alternative mt-1">{bio}</p>}
           {(tel || email) && (
@@ -93,7 +125,7 @@ const ProfileSection = ({
                     size={14}
                     className="text-icon-alternative shrink-0"
                   />
-                  {tel}
+                  {formatPhone(tel)}
                 </span>
               )}
               {email && (
@@ -110,7 +142,7 @@ const ProfileSection = ({
             </div>
           )}
           {schoolLabel && (
-            <span className="desktop:hidden typo-caption2 text-text-alternative bg-container-neutral-alternative mt-3 w-fit shrink-0 rounded-md px-2 py-1">
+            <span className="desktop:hidden typo-caption2 text-text-alternative bg-container-neutral-alternative mt-3 flex w-fit shrink-0 items-center justify-center rounded-md px-2 py-1">
               {schoolLabel}
             </span>
           )}

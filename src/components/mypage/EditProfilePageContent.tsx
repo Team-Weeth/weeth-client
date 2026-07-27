@@ -1,48 +1,65 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useRef } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { BackIcon } from '@/assets/icons';
 import { Button, Icon } from '@/components/ui';
-import { useEditProfileForm } from '@/hooks/mypage';
-import { useMyPageQueries } from '@/hooks/queries/mypage/useMyPageQueries';
+import { useScrollToTopOnBlur } from '@/hooks';
+import { useEditProfileActions, useEditProfileForm } from '@/hooks/mypage';
+import { useMyProfileDetailQuery } from '@/hooks/queries/mypage/useMyPageQueries';
 import { DeleteProfileDialog } from './DeleteProfileDialog';
 import { EditProfileFormContent } from './EditProfileFormContent';
 import { ProfileManagementSkeleton } from './skeleton/ProfileManagementSkeleton';
 
 function EditProfilePageContent() {
   const router = useRouter();
-  const { clubId, profileId } = useParams<{ clubId: string; profileId: string }>();
-  const [, { data: clubs = [], isPending }] = useMyPageQueries(clubId);
-  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const formContainerRef = useRef<HTMLDivElement>(null);
+  useScrollToTopOnBlur(formContainerRef);
+  const { profileId } = useParams<{ clubId: string; profileId: string }>();
+  const parsedProfileId = Number(profileId);
+  const profileQuery = useMyProfileDetailQuery(
+    Number.isNaN(parsedProfileId) ? null : parsedProfileId,
+  );
 
-  const profile = useMemo(() => clubs.find((club) => club.id === profileId), [clubs, profileId]);
+  const profile = profileQuery.data ?? null;
 
   const {
     control,
+    getValues,
     resetToProfile,
     name,
     formState: { errors },
   } = useEditProfileForm(profile ?? null);
 
-  const handleClose = () => {
-    resetToProfile();
-    setIsDeleteDialogOpen(false);
-    router.back();
-  };
+  const {
+    isDeleteDialogOpen,
+    setIsDeleteDialogOpen,
+    setProfileImageFile,
+    setHeaderImageFile,
+    isSubmitting,
+    isDeleting,
+    handleClose,
+    handleDelete,
+    handleSubmit,
+    handleProfileImageReset,
+    handleHeaderImageReset,
+  } = useEditProfileActions({
+    profile: profile ?? null,
+    getValues,
+    resetToProfile,
+    onClose: () => router.back(),
+  });
 
-  const handleDelete = () => {
-    setIsDeleteDialogOpen(false);
-    handleClose();
-  };
-
-  if (isPending || !profile) {
+  if (profileQuery.isPending || !profile) {
     return <ProfileManagementSkeleton />;
   }
 
   return (
     <>
-      <div className="tablet:hidden flex min-w-0 flex-1 flex-col gap-4 pb-[196px]">
+      <div
+        ref={formContainerRef}
+        className="tablet:hidden flex min-w-0 flex-1 flex-col gap-4 pb-[196px]"
+      >
         <div className="flex items-center gap-1 py-300">
           <button
             type="button"
@@ -59,6 +76,15 @@ function EditProfilePageContent() {
           errors={errors}
           fallbackName={profile.name}
           profileImageUrl={profile.profileImageUrl ?? undefined}
+          headerImageUrl={profile.headerImageUrl ?? undefined}
+          onProfileImageChange={setProfileImageFile}
+          onProfileImageReset={() => {
+            void handleProfileImageReset();
+          }}
+          onHeaderImageChange={setHeaderImageFile}
+          onHeaderImageReset={() => {
+            void handleHeaderImageReset();
+          }}
         />
       </div>
 
@@ -67,9 +93,10 @@ function EditProfilePageContent() {
           variant="secondary"
           size="lg"
           className="text-state-error mb-4 w-full"
+          disabled={isDeleting}
           onClick={() => setIsDeleteDialogOpen(true)}
         >
-          프로필 삭제하기
+          {isDeleting ? '삭제 중...' : '프로필 삭제하기'}
         </Button>
 
         <div className="flex gap-200">
@@ -80,10 +107,12 @@ function EditProfilePageContent() {
             variant="primary"
             size="lg"
             className="flex-1"
-            disabled={!name.trim()}
-            onClick={handleClose}
+            disabled={!name.trim() || isSubmitting}
+            onClick={() => {
+              void handleSubmit();
+            }}
           >
-            완료
+            {isSubmitting ? '수정 중...' : '완료'}
           </Button>
         </div>
       </div>
@@ -92,6 +121,7 @@ function EditProfilePageContent() {
         open={isDeleteDialogOpen}
         onOpenChange={setIsDeleteDialogOpen}
         onDelete={handleDelete}
+        isDeleting={isDeleting}
       />
     </>
   );

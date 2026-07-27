@@ -5,11 +5,12 @@ import { useParams } from 'next/navigation';
 import { useMediaQuery } from '@/hooks';
 import { Button, Icon } from '@/components/ui';
 import { cn } from '@/lib/cn';
-import { useMyPageQueries } from '@/hooks/queries/mypage/useMyPageQueries';
+import { useAssignableClubMap, useMyProfilesQuery } from '@/hooks/queries/mypage/useMyPageQueries';
 import { AddRoundIcon, BackIcon } from '@/assets/icons';
 import { useRouter } from 'next/navigation';
 import { AddProfileModal } from './AddProfileModal';
 import { ProfileCard } from './ProfileCard';
+import { ProfileManagementSkeleton } from './skeleton/ProfileManagementSkeleton';
 
 type ProfileManagementContentProps = React.HTMLAttributes<HTMLDivElement>;
 
@@ -17,8 +18,10 @@ function ProfileManagementContent({ className, ...props }: ProfileManagementCont
   const router = useRouter();
   const { clubId } = useParams<{ clubId: string }>();
   const isBelowTablet = useMediaQuery('(max-width: 695.98px)');
-  const [, { data: clubs = [] }] = useMyPageQueries(clubId);
+  const profilesQuery = useMyProfilesQuery();
+  const { clubMap: assignableClubMap } = useAssignableClubMap();
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const profiles = profilesQuery.data ?? [];
 
   const handleOpenAddProfile = () => {
     if (isBelowTablet) {
@@ -28,6 +31,10 @@ function ProfileManagementContent({ className, ...props }: ProfileManagementCont
 
     setIsAddModalOpen(true);
   };
+
+  if (profilesQuery.isPending) {
+    return <ProfileManagementSkeleton />;
+  }
 
   return (
     <div className={cn('tablet:gap-6 flex min-w-0 flex-1 flex-col', className)} {...props}>
@@ -51,74 +58,20 @@ function ProfileManagementContent({ className, ...props }: ProfileManagementCont
       </div>
 
       <div className="bg-container-neutral flex flex-col rounded-lg p-450">
-        <p className="typo-sub1 text-text-alternative mb-[18px]">사용 중인 프로필 {clubs.length}</p>
+        <p className="typo-sub1 text-text-alternative mb-[18px]">
+          사용 중인 프로필 {profiles.length}
+        </p>
         <div className="desktop:grid desktop:grid-cols-3 desktop:gap-x-300 desktop:gap-y-8 flex flex-col gap-8">
-          {clubs.map((club) => (
+          {profiles.map((profile) => (
             <ProfileCard
-              key={club.id}
-              profile={club}
-              clubs={[club]}
+              key={profile.profileId}
+              profile={profile}
+              clubs={profile.clubs}
               clubId={clubId}
-              availableProfiles={clubs}
+              availableProfiles={profiles}
+              assignableClubMap={assignableClubMap}
             />
           ))}
-          {/* TODO: mock — 빈 프로필 empty state 확인용 */}
-          <ProfileCard
-            profile={{
-              id: 'mock-empty',
-              name: '프로필 2',
-              schoolName: '',
-              description: '소개글입니다.',
-              profileImageUrl: '',
-              memberCount: 0,
-              cardinals: [],
-              memberRole: 'USER',
-              memberStatus: 'ACTIVE',
-            }}
-            clubs={[]}
-            clubId={clubId}
-            availableProfiles={clubs}
-          />
-          {/* TODO: mock — 클럽 2개 확인용 */}
-          <ProfileCard
-            profile={{
-              id: 'mock-multi',
-              name: '프로필 4',
-              schoolName: '',
-              description: '반가워용',
-              profileImageUrl: '',
-              memberCount: 0,
-              cardinals: [],
-              memberRole: 'USER',
-              memberStatus: 'ACTIVE',
-            }}
-            clubs={[
-              {
-                id: 'mock-c1',
-                name: '가천대 검도부',
-                schoolName: '가천대',
-                description: '',
-                profileImageUrl: '',
-                memberCount: 0,
-                cardinals: [],
-                memberRole: 'USER',
-                memberStatus: 'ACTIVE',
-              },
-              {
-                id: 'mock-c2',
-                name: '가천대 테니스부',
-                schoolName: '가천대',
-                description: '',
-                profileImageUrl: '',
-                memberCount: 0,
-                cardinals: [],
-                memberRole: 'USER',
-                memberStatus: 'ACTIVE',
-              },
-            ]}
-            clubId={clubId}
-            availableProfiles={clubs}
-          />
         </div>
         <Button
           variant="secondary"

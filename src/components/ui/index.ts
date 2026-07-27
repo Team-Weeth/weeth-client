@@ -30,6 +30,7 @@ export type { DialogHeaderProps, DialogFooterProps } from './dialog';
 export {
   AlertDialog,
   AlertDialogTrigger,
+  AlertDialogPortal,
   AlertDialogContent,
   AlertDialogHeader,
   AlertDialogFooter,

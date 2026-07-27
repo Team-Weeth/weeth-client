@@ -1,4 +1,4 @@
-import { resolveFilesPayload } from '../resolveFilesPayload';
+import { resolveFilesPayload } from '@/hooks/board/resolveFilesPayload';
 import type { UploadFileItem } from '@/stores/usePostStore';
 
 function makeFile(overrides: Partial<UploadFileItem> = {}): UploadFileItem {

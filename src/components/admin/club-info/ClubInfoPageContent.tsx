@@ -141,14 +141,13 @@ function ClubInfoPageContent({ schoolNames }: ClubInfoPageContentProps) {
 
   return (
     <div className="flex w-full flex-col">
-      {isEditMode && (
-        <ClubInfoTopBar
-          className="sticky top-0 z-20"
-          onBack={handleResetChanges}
-          onSave={handleSave}
-          isSaving={isSaving}
-        />
-      )}
+      <ClubInfoTopBar
+        open={isEditMode}
+        className="sticky top-0 z-20"
+        onBack={handleResetChanges}
+        onSave={handleSave}
+        isSaving={isSaving}
+      />
 
       <div className="tablet:min-w-3xl tablet:px-8 tablet:py-12 flex flex-col items-start gap-400 px-400 py-500">
         <ClubInfoImageSection
