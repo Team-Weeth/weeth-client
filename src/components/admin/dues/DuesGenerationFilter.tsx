@@ -15,6 +15,7 @@ import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
+  Icon,
 } from '@/components/ui';
 import { formatLastUpdated } from '@/utils/shared/date';
 import type { Cardinal } from '@/types/admin/cardinal';
@@ -52,7 +53,12 @@ function DuesGenerationFilter({
             className="bg-button-neutral typo-button2 text-text-strong hover:bg-button-neutral-interaction flex shrink-0 cursor-pointer items-center gap-100 rounded-sm px-300 py-200 whitespace-nowrap"
           >
             {displayLabel}
-            <Image src={ArrowDownIcon} alt="아래 방향 화살표" width={16} height={16} />
+            <Icon
+              src={ArrowDownIcon}
+              alt="아래 방향 화살표"
+              size={16}
+              className="text-icon-normal"
+            />
           </button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="start">

@@ -47,3 +47,4 @@
 - **`next/jest` 임포트 시 `.js` 확장자 필수** — `next/jest.js`로 써야 ESM에서 동작.
 - **React Compiler 켜진 상태에서 수동 `useMemo`/`useCallback`은 노이즈** — 측정 없이 추가 금지. ([[../아키텍처/결정-기록/ADR-001-react-compiler]])
 - **`forwardRef` 사용 금지** — React 19에선 `ref`가 일반 prop. 발견 시 즉시 리팩터링.
+- **revert된 머지를 다시 통합하면 대량 충돌** — `Revert Merge`한 브랜치를 나중에 재머지하면 변경이 안 살아나고 `modify/delete` 충돌 폭발. 파일별로 잡지 말고 `revert의 revert`로 근본 원인부터 제거할 것. ([[git-revert된-머지-재통합-충돌]])

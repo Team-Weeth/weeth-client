@@ -36,6 +36,11 @@ interface ActiveClubCardProps {
 }
 
 function ActiveClubCard({ profile }: ActiveClubCardProps) {
+  const clubLabel =
+    profile.clubs.length > 1
+      ? `${profile.clubs[0].name} 외 ${profile.clubs.length - 1}`
+      : (profile.clubs[0]?.name ?? '');
+
   return (
     <>
       <div className="tablet:flex bg-container-neutral-alternative hidden flex-col gap-2 rounded-lg p-450">
@@ -48,13 +53,13 @@ function ActiveClubCard({ profile }: ActiveClubCardProps) {
           <span
             className={cn(
               'typo-body1 line-clamp-1 min-h-[20px]',
-              profile.bio ? 'text-text-alternative' : 'invisible',
+              profile.bio ? 'text-text-alternative' : 'text-text-disabled',
             )}
           >
-            {profile.bio ?? ' '}
+            {profile.bio ?? '-'}
           </span>
           <Tag variant="primary" className="mt-2 self-start">
-            {profile.clubs.map((club) => club.name).join(', ')}
+            {clubLabel}
           </Tag>
         </div>
       </div>
@@ -68,13 +73,13 @@ function ActiveClubCard({ profile }: ActiveClubCardProps) {
           <span
             className={cn(
               'typo-body2 line-clamp-1 min-h-[18px]',
-              profile.bio ? 'text-text-alternative' : 'invisible',
+              profile.bio ? 'text-text-alternative' : 'text-text-disabled',
             )}
           >
-            {profile.bio ?? ' '}
+            {profile.bio ?? '-'}
           </span>
           <Tag variant="primary" className="mt-2 self-start">
-            {profile.clubs.map((club) => club.name).join(', ')}
+            {clubLabel}
           </Tag>
         </div>
       </div>

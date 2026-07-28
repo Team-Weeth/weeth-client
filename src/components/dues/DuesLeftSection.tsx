@@ -39,7 +39,7 @@ function DuesLeftSection({ dues }: DuesLeftSectionProps) {
 
   return (
     <aside className="desktop:w-[374px] flex w-full flex-col gap-450">
-      <DuesPaymentStatusBanner isPaid={false} />
+      <DuesPaymentStatusBanner targeted={dues.isTargeted} isPaid={false} />
       <DuesAmountCard
         cardinalNumber={dues.cardinalNumber}
         amount={dues.duesAmount}
@@ -49,7 +49,7 @@ function DuesLeftSection({ dues }: DuesLeftSectionProps) {
           <>
             <DuesAccountCard account={publicAccount} />
             <div className="flex flex-col gap-200">
-              <DuesPaymentButton account={publicAccount} />
+              <DuesPaymentButton account={publicAccount} targated={dues.isTargeted} />
               <p className="typo-caption2 text-text-alternative text-center">
                 입금 후 운영진이 확인하면 &apos;납부 완료&apos;로 바뀌어요.
               </p>
