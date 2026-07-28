@@ -25,21 +25,20 @@ import { LNBProfile } from '@/components/admin/layout/LNBProfile';
 import { NavSection } from '@/components/admin/layout/NavSection';
 import { NavItem } from '@/components/admin/layout/NavItem';
 import { useAdminLNBActions, useAdminLNBCollapsed } from '@/stores/useAdminLNBStore';
-// w-22(88px) / w-60(240px) 값은 LNB_WIDTH_COLLAPSED / LNB_WIDTH_EXPANDED 상수와 동기화
 
 function LNB() {
   const pathname = usePathname();
   const router = useRouter();
   const { clubId } = useParams<{ clubId: string }>();
-  const isBelowTablet = useMediaQuery('(max-width: 695.98px)');
+  const isBelowDesktop = useMediaQuery('(max-width: 1023.98px)');
   const collapsed = useAdminLNBCollapsed();
   const { setCollapsed } = useAdminLNBActions();
   const [serviceDialogOpen, setServiceDialogOpen] = useState(false);
 
   // 브레이크포인트를 넘나들 때 기본 접힘 상태를 동기화
   useLayoutEffect(() => {
-    setCollapsed(isBelowTablet);
-  }, [isBelowTablet, setCollapsed]);
+    setCollapsed(isBelowDesktop);
+  }, [isBelowDesktop, setCollapsed]);
 
   const servicePath = `/${clubId}/home`;
 
