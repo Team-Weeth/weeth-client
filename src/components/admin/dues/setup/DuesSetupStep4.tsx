@@ -13,6 +13,7 @@ import { useSyncFormToStore } from '@/hooks/useSyncFormToStore';
 import { useSaveDuesBankAccount } from '@/hooks/mutations/admin';
 
 import {
+  BankSelectField,
   DuesSetupStepIndicator,
   FormCard,
   NextButton,
@@ -136,16 +137,14 @@ function DuesSetupStep4() {
                 />
               )}
             />
-            {/* TODO: 은행 선택 드롭다운 만들기 */}
             <Controller
               control={control}
               name="bankName"
               render={({ field }) => (
-                <ScheduleTextField
+                <BankSelectField
                   label="은행"
                   value={field.value}
                   onChange={field.onChange}
-                  placeholder="ex)카카오뱅크"
                   error={errors.bankName?.message}
                   className="bg-container-neutral-alternative"
                 />

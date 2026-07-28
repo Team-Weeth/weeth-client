@@ -67,6 +67,8 @@ export function useCheckIn(options?: UseCheckInOptions) {
     setCheckedSessionId(sessionId);
     setCodeModalOpen(false);
     options?.onSuccess?.();
+    queryClient.invalidateQueries({ queryKey: ['mypage', 'summary'] });
+    queryClient.invalidateQueries({ queryKey: ['mypage', 'sessions', clubId] });
     queryClient.invalidateQueries({ queryKey: ['attendance', clubId] });
   }
 

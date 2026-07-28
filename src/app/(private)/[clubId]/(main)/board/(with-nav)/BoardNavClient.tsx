@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState, type ReactNode } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useParams, usePathname, useRouter } from 'next/navigation';
 
 import { BoardNav, CategorySelector, CommentDirtyGuardDialog } from '@/components/board';
@@ -16,10 +16,10 @@ import type { BoardNavItem, BoardType } from '@/types/board';
 
 interface BoardNavClientProps {
   items: BoardNavItem[];
-  footer: ReactNode;
+  // footer: ReactNode;
 }
 
-function BoardNavClient({ items, footer }: BoardNavClientProps) {
+function BoardNavClient({ items }: BoardNavClientProps) {
   const activeBoardId = useActiveBoardId();
   const setActiveBoardId = useSetActiveBoardId();
   const setBoardTypeMap = useSetBoardTypeMap();
@@ -127,7 +127,7 @@ function BoardNavClient({ items, footer }: BoardNavClientProps) {
       {/* Tablet+: 사이드바 (mobile에서 숨김) */}
       <aside className="tablet:flex hidden shrink-0 flex-col gap-400">
         <BoardNav items={items} activeId={activeBoardId} onItemSelect={handleItemSelect} />
-        {footer}
+        {/* {footer} */}
       </aside>
 
       <CommentDirtyGuardDialog

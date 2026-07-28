@@ -42,6 +42,7 @@
 
 ## 알려진 함정
 
+- **E2E 스냅샷은 반드시 `Update E2E Snapshots` workflow로 갱신** — 로컬(win32)에서 생성한 스냅샷을 직접 커밋하면 CI(linux)가 비교 불가. ([[e2e-snapshot-os-mismatch]])
 - **`@/lib/apis` 배럴 임포트는 클라이언트에서 빌드 깨짐** — `apiServer`가 `next/headers`를 끌고 옴. 직접 경로(`@/lib/apis/mypage`)로 가져올 것. ([[../아키텍처/결정-기록/ADR-002-data-fetching-strategy]])
 - **`next/jest` 임포트 시 `.js` 확장자 필수** — `next/jest.js`로 써야 ESM에서 동작.
 - **React Compiler 켜진 상태에서 수동 `useMemo`/`useCallback`은 노이즈** — 측정 없이 추가 금지. ([[../아키텍처/결정-기록/ADR-001-react-compiler]])

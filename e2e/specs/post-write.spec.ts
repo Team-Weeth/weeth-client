@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { resolveClubId, openEditor } from '../helpers';
+import { resolveClubId, openEditor, deletePost } from '../helpers';
 
 /**
  * 전제 조건:
@@ -8,6 +8,9 @@ import { resolveClubId, openEditor } from '../helpers';
  */
 test.describe('게시글 작성', () => {
   let writeUrl: string;
+
+  // 테스트 중 실제로 게시된 게시글의 경로를 수집해 afterAll에서 삭제한다.
+  const createdPostPaths: string[] = [];
 
   test.beforeAll(async ({ browser }) => {
     test.setTimeout(60_000);
@@ -23,6 +26,16 @@ test.describe('게시글 작성', () => {
     }
   });
 
+  test.afterAll(async () => {
+    for (const pathname of createdPostPaths) {
+      const match = pathname.match(/^\/([^/]+)\/board\/(\d+)\/(\d+)$/);
+      if (match) {
+        const [, clubId, boardId, postId] = match;
+        await deletePost(clubId, boardId, postId);
+      }
+    }
+  });
+
   test('제목·내용 작성 후 게시하기 클릭 시 상세 페이지로 이동한다', async ({ page }) => {
     const editor = await openEditor(page, writeUrl);
 
@@ -32,6 +45,7 @@ test.describe('게시글 작성', () => {
     await page.getByRole('button', { name: '게시하기' }).click();
 
     await page.waitForURL(/\/board\/\d+\/\d+$/, { timeout: 15_000 });
+    createdPostPaths.push(new URL(page.url()).pathname);
 
     expect(page.url()).not.toContain('/write');
     expect(page.url()).toMatch(/\/board\/\d+\/\d+$/);
@@ -93,6 +107,7 @@ test.describe('게시글 작성', () => {
 
     await page.getByRole('button', { name: '게시하기' }).click();
     await page.waitForURL(/\/board\/\d+\/\d+$/, { timeout: 15_000 });
+    createdPostPaths.push(new URL(page.url()).pathname);
 
     await expect(page.getByText('변경 사항이 저장되지 않았어요')).not.toBeVisible();
   });

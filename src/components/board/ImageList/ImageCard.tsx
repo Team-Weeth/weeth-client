@@ -8,7 +8,11 @@ import type { DisplayFile } from '@/types/board';
 function LoadingOverlay() {
   return (
     <div className="absolute inset-0 flex items-center justify-center bg-black/20">
-      <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+      <div
+        role="status"
+        aria-label="이미지 업로드 중"
+        className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"
+      />
     </div>
   );
 }
@@ -52,6 +56,7 @@ function ImageCard({ item, className, imgClassName, removable, onRemove }: Image
         src={item.fileUrl}
         alt={item.fileName}
         draggable={false}
+        data-loading={item.uploaded === false ? 'true' : undefined}
         className={cn(item.uploaded === false && 'opacity-50', imgClassName)}
       />
 

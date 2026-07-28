@@ -11,23 +11,28 @@ interface BoardLayoutProps {
   params: Promise<{ clubId: string }>;
 }
 
-async function BoardNavLoader({ clubId, footer }: { clubId: string; footer: ReactNode }) {
+async function BoardNavLoader({ clubId }: { clubId: string }) {
   const response = await boardServerApi.getBoards(clubId).catch(() => null);
   const boards = [...(response?.data ?? [])].sort(
     (a, b) => (BOARD_TYPE_ORDER[a.type] ?? 99) - (BOARD_TYPE_ORDER[b.type] ?? 99),
   );
   const items = boards.map(toBoardNavItem);
 
-  return <BoardNavClient items={items} footer={footer} />;
+  return (
+    <BoardNavClient
+      items={items}
+      // footer={footer}
+    />
+  );
 }
 
-export default async function BoardLayout({ children, footer, params }: BoardLayoutProps) {
+export default async function BoardLayout({ children, params }: BoardLayoutProps) {
   const { clubId } = await params;
 
   return (
     <div className="tablet:flex-row tablet:items-start desktop:px-[64px] flex flex-col gap-700 px-450 pt-450 pb-[63px]">
       <Suspense fallback={<BoardNavSkeleton />}>
-        <BoardNavLoader clubId={clubId} footer={footer} />
+        <BoardNavLoader clubId={clubId} />
       </Suspense>
       {children}
     </div>

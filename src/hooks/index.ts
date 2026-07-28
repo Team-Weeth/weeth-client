@@ -24,5 +24,8 @@ export { useProgressAnimation } from './useProgressAnimation';
 export { useCodeHighlight } from './useCodeHighlight';
 export { useMonthNavigator } from './useMonthNavigator';
 export { useMediaQuery } from './useMediaQuery';
+export { useResponsiveGridColumns } from './useResponsiveGridColumns';
 export { useResetKeyOnOpen } from './useResetKeyOnOpen';
 export { useSyncFormToStore } from './useSyncFormToStore';
+export { useScrollToTopOnNavigate } from './useScrollToTopOnNavigate';
+export { useScrollToTopOnBlur } from './useScrollToTopOnBlur';

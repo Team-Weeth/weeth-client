@@ -38,6 +38,8 @@ export function useDeletePost() {
     onSuccess?.();
     // 목록/홈 쿼리는 백그라운드에서 갱신
     queryClient.invalidateQueries({ queryKey: ['posts', clubId] });
+    queryClient.invalidateQueries({ queryKey: ['mypage', 'summary'] });
+    queryClient.invalidateQueries({ queryKey: ['mypage', 'posts', clubId] });
     queryClient.invalidateQueries({ queryKey: ['home', 'recent-posts', clubId] });
     queryClient.invalidateQueries({ queryKey: ['home', 'recent-notices', clubId] });
     queryClient.invalidateQueries({ queryKey: ['home', 'unread-notice', clubId] });

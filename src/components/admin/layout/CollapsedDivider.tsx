@@ -3,9 +3,9 @@ interface CollapsedDividerProps {
 }
 
 function CollapsedDivider({ collapsed }: CollapsedDividerProps) {
-  if (!collapsed) return null;
+  if (collapsed) return null;
 
-  return <div className="border-icon-alternative my-200 w-6 self-center border-b" />;
+  return <div className="border-line w-[200px] shrink-0 self-center border-b" />;
 }
 
 export { CollapsedDivider, type CollapsedDividerProps };
