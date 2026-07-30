@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 
 import { Table, TableBody, TableHead, TableHeader, TableRow } from '@/components/ui';
 import { cn } from '@/lib/cn';
@@ -30,12 +30,9 @@ function MemberTable({
   const [internalSelectedIds, setInternalSelectedIds] = useState<Set<string>>(new Set());
   const selectedIds = controlledSelectedIds ?? internalSelectedIds;
   const setSelectedIds = onSelectionChange ?? setInternalSelectedIds;
-  const [page, setPage] = useState(1);
   const memberListKey = useMemo(() => members.map((member) => member.id).join('|'), [members]);
-
-  useEffect(() => {
-    setPage(1);
-  }, [memberListKey]);
+  const [pagination, setPagination] = useState({ memberListKey, page: 1 });
+  const page = pagination.memberListKey === memberListKey ? pagination.page : 1;
 
   const totalPages = Math.max(1, Math.ceil(members.length / MEMBERS_PER_PAGE));
   const currentPage = Math.min(page, totalPages);
@@ -68,6 +65,10 @@ function MemberTable({
       next.add(id);
     }
     setSelectedIds(next);
+  };
+
+  const handlePageChange = (nextPage: number) => {
+    setPagination({ memberListKey, page: nextPage });
   };
 
   return (
@@ -121,7 +122,11 @@ function MemberTable({
       </div>
 
       {totalPages > 1 && (
-        <MemberPagination page={currentPage} totalPages={totalPages} onPageChange={setPage} />
+        <MemberPagination
+          page={currentPage}
+          totalPages={totalPages}
+          onPageChange={handlePageChange}
+        />
       )}
     </div>
   );
