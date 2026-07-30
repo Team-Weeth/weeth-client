@@ -14,7 +14,7 @@ function AddCardinalButton({ className, ref, type = 'button', ...props }: AddCar
       ref={ref}
       type={type}
       className={cn(
-        'text-icon-normal hover:text-icon-strong flex h-14 w-[42px] shrink-0 cursor-pointer items-center justify-center rounded-sm transition-colors',
+        'text-icon-normal hover:text-icon-strong flex h-14 w-[42px] shrink-0 cursor-pointer items-center justify-center rounded-sm transition-colors hover:bg-neutral-200',
         className,
       )}
       {...props}

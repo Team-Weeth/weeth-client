@@ -30,24 +30,26 @@ function MemberSelectionCheckbox({
       aria-pressed={partial ? 'mixed' : checked}
       aria-label={ariaLabel}
       type="button"
-      className="flex cursor-pointer items-center p-300"
+      className="flex cursor-pointer items-center justify-center p-300"
       onClick={onClick}
     >
-      {partial ? (
-        <span
-          aria-hidden
-          className="bg-brand-primary flex size-[18px] items-center justify-center rounded-[2px]"
-        >
-          <span className="bg-text-inverse h-0.5 w-2 rounded-full" />
-        </span>
-      ) : (
-        <Icon
-          src={checked ? AdminCheckboxIcon : AdminUncheckboxIcon}
-          alt={checked ? checkedLabel : uncheckedLabel}
-          size={20}
-          className={cn(checked ? checkedClassName : uncheckedClassName)}
-        />
-      )}
+      <span className="flex size-5 items-center justify-center">
+        {partial ? (
+          <span
+            aria-hidden
+            className="bg-brand-primary flex size-[18px] items-center justify-center rounded-[2px]"
+          >
+            <span className="bg-text-inverse h-0.5 w-2 rounded-full" />
+          </span>
+        ) : (
+          <Icon
+            src={checked ? AdminCheckboxIcon : AdminUncheckboxIcon}
+            alt={checked ? checkedLabel : uncheckedLabel}
+            size={20}
+            className={cn(checked ? checkedClassName : uncheckedClassName)}
+          />
+        )}
+      </span>
     </button>
   );
 }

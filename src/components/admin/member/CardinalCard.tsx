@@ -5,7 +5,7 @@ import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@/lib/cn';
 
 const cardinalCardVariants = cva(
-  'typo-sub1 relative inline-flex h-14 w-[42px] shrink-0 cursor-pointer items-center justify-center rounded-sm text-center whitespace-nowrap transition-colors',
+  'typo-sub1 relative inline-flex h-14 w-[42px] shrink-0 cursor-pointer items-center justify-center rounded-sm text-center whitespace-nowrap transition-colors hover:bg-neutral-200',
   {
     variants: {
       variant: {

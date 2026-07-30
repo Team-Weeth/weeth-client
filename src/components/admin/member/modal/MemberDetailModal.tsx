@@ -14,8 +14,9 @@ import { AttendanceProgressBar } from '@/components/attendance';
 import { MemberStatusBadge } from '@/components/admin/member/MemberStatusBadge';
 import { AdminCloseIcon } from '@/assets/icons/admin';
 import { getFooterActions } from '@/constants/admin/memberDetailModal.constants';
+import { cn } from '@/lib/cn';
 import { parseCardinals } from '@/utils/admin/parseCardinals';
-import type { ClubMemberRole, Member } from '@/types/admin/member';
+import type { Member } from '@/types/admin/member';
 
 interface MemberDetailModalProps {
   open: boolean;
@@ -61,7 +62,7 @@ function MemberDetailModal({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
-        className="bg-background flex w-215 max-w-[calc(100%-2rem)] flex-col gap-0 overflow-hidden rounded-lg p-0"
+        className="bg-background flex w-[770px] max-w-[calc(100%-2rem)] flex-col gap-0 overflow-hidden rounded-lg p-0"
         showCloseButton={false}
       >
         <div className="flex items-center justify-between px-700 pt-700 pb-500">
@@ -94,18 +95,18 @@ function MemberDetailModal({
             </div>
           </section>
 
-          <div className="tablet:grid-cols-2 grid grid-cols-1 gap-500">
-            <section className="border-line bg-container-neutral rounded-md border px-500 py-[18px]">
+          <div className="tablet:grid-cols-2 grid grid-cols-1 gap-[14px]">
+            <section className="border-line bg-container-neutral rounded-md border px-500 py-450">
               <p className="typo-body2 text-text-disabled mb-[14px]">회원 정보</p>
 
-              <div className="flex flex-col gap-[14px]">
+              <div className="flex flex-col gap-300">
                 {personalInfo.map(({ label, value }) => (
                   <InfoRow key={label} label={label} value={value} />
                 ))}
               </div>
             </section>
 
-            <section className="border-line bg-container-neutral rounded-md border px-500 py-[18px]">
+            <section className="border-line bg-container-neutral rounded-md border px-500 py-450">
               <p className="typo-body2 text-text-disabled mb-[14px]">활동 정보</p>
 
               <div className="flex items-start gap-600">
@@ -189,15 +190,8 @@ function MemberDetailModal({
   );
 }
 
-const MEMBER_ROLE_LABEL: Record<ClubMemberRole, string> = {
-  USER: '사용자',
-  ADMIN: '관리자',
-  LEAD: '리더',
-};
-
 function getModalPersonalInfo(member: Member) {
   return [
-    { label: '직급', value: MEMBER_ROLE_LABEL[member.memberRole] },
     { label: '역할', value: member.position },
     { label: '학과', value: member.department },
     { label: '학번', value: member.studentId },
@@ -212,7 +206,6 @@ function getModalActivityStats(member: Member) {
     { label: '출석', value: member.attendance },
     { label: '결석', value: member.absence },
     { label: '패널티', value: member.penaltyCount },
-    { label: '경고', value: 0 },
   ];
 }
 
@@ -237,11 +230,10 @@ function ModalCardinalTag({
 }) {
   return (
     <span
-      className={
-        active
-          ? 'bg-container-primary-alternative text-brand-primary inline-flex h-6 items-center rounded-[5px] px-200 text-[13px] leading-[18px] font-semibold tracking-[var(--letter-spacing)]'
-          : 'bg-container-neutral-alternative text-text-alternative inline-flex h-6 items-center rounded-[5px] px-200 text-[13px] leading-[18px] font-semibold tracking-[var(--letter-spacing)]'
-      }
+      className={cn(
+        'typo-caption1 inline-flex h-6 items-center rounded-[5px] px-200',
+        active ? 'bg-primary-500/10 text-brand-primary' : 'text-text-alternative bg-neutral-700/5',
+      )}
     >
       {children}
     </span>

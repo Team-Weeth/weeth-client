@@ -16,10 +16,9 @@ interface MemberTableRowProps {
 }
 
 const TEXT_CELL_CLASS_BY_ID = {
-  position: 'w-[118px]',
+  role: 'w-[118px]',
   department: 'w-[190px]',
   studentId: 'w-[138px]',
-  role: 'w-[98px]',
   phone: 'w-[146px]',
 } as const;
 
@@ -27,10 +26,9 @@ const NUMBER_CELL_VALUES = ['attendance', 'absence', 'penaltyCount'] as const;
 
 function MemberTableRow({ member, selected, onToggle, onMemberAction }: MemberTableRowProps) {
   const textCells = [
-    { id: 'position', value: member.position },
+    { id: 'role', value: member.position },
     { id: 'department', value: member.department },
     { id: 'studentId', value: member.studentId },
-    { id: 'role', value: member.position },
     { id: 'phone', value: member.phone },
   ] as const;
 
@@ -64,7 +62,7 @@ function MemberTableRow({ member, selected, onToggle, onMemberAction }: MemberTa
       {NUMBER_CELL_VALUES.map((key) => (
         <MemberNumberCell key={key}>{member[key]}</MemberNumberCell>
       ))}
-      <MemberNumberCell>0</MemberNumberCell>
+      <TableCell className="h-16 w-12 p-0 px-100 py-300" aria-hidden />
 
       {textCells.slice(3).map(({ id, value }) => (
         <MemberTextCell key={id} className={TEXT_CELL_CLASS_BY_ID[id]}>

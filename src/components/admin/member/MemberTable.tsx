@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 
 import { Table, TableBody, TableHead, TableHeader, TableRow } from '@/components/ui';
 import { cn } from '@/lib/cn';
@@ -31,6 +31,11 @@ function MemberTable({
   const selectedIds = controlledSelectedIds ?? internalSelectedIds;
   const setSelectedIds = onSelectionChange ?? setInternalSelectedIds;
   const [page, setPage] = useState(1);
+  const memberListKey = useMemo(() => members.map((member) => member.id).join('|'), [members]);
+
+  useEffect(() => {
+    setPage(1);
+  }, [memberListKey]);
 
   const totalPages = Math.max(1, Math.ceil(members.length / MEMBERS_PER_PAGE));
   const currentPage = Math.min(page, totalPages);

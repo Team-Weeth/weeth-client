@@ -6,8 +6,7 @@ export const MEMBER_TABLE_COLUMNS = [
   { id: 'attendance', label: '출석', width: 'w-12', align: 'text-center' },
   { id: 'absence', label: '결석', width: 'w-12', align: 'text-center' },
   { id: 'penalty', label: '패널티', width: 'w-12', align: 'text-center' },
-  { id: 'warning', label: '경고', width: 'w-12', align: 'text-center' },
-  { id: 'position', label: '직급', width: 'w-[98px]' },
+  { id: 'warningSpacer', label: '', width: 'w-12', align: 'text-center' },
   { id: 'phone', label: '전화번호', width: 'w-[146px]' },
   { id: 'cardinal', label: '기수', width: 'w-[182px]' },
 ] as const;
