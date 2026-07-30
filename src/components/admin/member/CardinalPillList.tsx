@@ -14,6 +14,7 @@ import {
 import { CARDINAL_ERROR_CODE } from '@/constants/errorCode';
 import { useDragScroll } from '@/hooks';
 import { useCreateCardinal, useSetCurrentCardinal } from '@/hooks/mutations/admin';
+import { cn } from '@/lib/cn';
 import { toastError, toastSuccess } from '@/stores/useToastStore';
 import { getApiErrorCode } from '@/utils/shared';
 import type { Cardinal } from '@/types/admin/cardinal';
@@ -22,34 +23,44 @@ interface CardinalPillListProps {
   cardinals: Cardinal[];
   selectedCardinal: number | 'all';
   onSelectCardinal: (value: number | 'all') => void;
+  className?: string;
 }
 
 function CardinalPillList({
   cardinals,
   selectedCardinal,
   onSelectCardinal,
+  className,
 }: CardinalPillListProps) {
   const { ref: dragScrollRef, onMouseDown } = useDragScroll();
   const { mutate: createCardinal } = useCreateCardinal();
   const { mutate: setCurrentCardinal } = useSetCurrentCardinal();
+  const sortedCardinals = [...cardinals].sort((a, b) => b.cardinalNumber - a.cardinalNumber);
 
   return (
     <div
       ref={dragScrollRef}
-      className="scrollbar-none flex cursor-grab items-center gap-200 overflow-x-auto select-none active:cursor-grabbing"
+      role="group"
+      aria-label="기수 필터"
+      className={cn(
+        'border-line scrollbar-none flex w-max max-w-full cursor-grab items-center gap-700 overflow-x-auto border-b px-600 select-none active:cursor-grabbing',
+        className,
+      )}
       onMouseDown={onMouseDown}
     >
       <CardinalCard
+        aria-pressed={selectedCardinal === 'all'}
         variant={selectedCardinal === 'all' ? 'active' : 'normal'}
         title="전체"
         onClick={() => onSelectCardinal('all')}
       />
-      {cardinals.map((c) => {
+      {sortedCardinals.map((c) => {
         const isActive = selectedCardinal === c.cardinalNumber;
         if (!isActive) {
           return (
             <CardinalCard
               key={c.id}
+              aria-pressed={false}
               variant="normal"
               title={`${c.cardinalNumber}기`}
               onClick={() => onSelectCardinal(c.cardinalNumber)}
@@ -60,6 +71,7 @@ function CardinalPillList({
           <DropdownMenu key={c.id}>
             <DropdownMenuTrigger asChild>
               <CardinalCard
+                aria-pressed
                 variant="active"
                 title={`${c.cardinalNumber}기`}
                 endIcon={<Icon src={MoreVerticalIcon} size={12} />}

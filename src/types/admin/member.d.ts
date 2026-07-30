@@ -1,4 +1,4 @@
-export type MemberStatus = 'WAITING' | 'ACTIVE' | 'BANNED' | 'LEFT';
+export type MemberStatus = 'ACTIVE' | 'BANNED' | 'LEFT';
 
 export interface Member {
   id: string;
@@ -13,6 +13,7 @@ export interface Member {
   memberRole: ClubMemberRole;
   attendance: number;
   absence: number;
+  attendanceRate: number;
   penaltyCount: number;
   status: MemberStatus;
 }

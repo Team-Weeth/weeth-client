@@ -1,15 +1,20 @@
 'use client';
 
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, Button, Icon } from '@/components/ui';
-import { Dialog, DialogContent } from '@/components/ui/dialog';
-import { ChangeCardinalsModal } from '@/components/admin/member/modal/ChangeCardinalsModal';
-import { cn } from '@/lib/cn';
-import { AdminCloseIcon } from '@/assets/icons/admin';
 import {
-  getPersonalInfo,
-  getActivityStats,
-  getFooterActions,
-} from '@/constants/admin/memberDetailModal.constants';
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  Avatar,
+  AvatarFallback,
+  Button,
+  Icon,
+} from '@/components/ui';
+import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
+import { AttendanceProgressBar } from '@/components/attendance';
+import { MemberStatusBadge } from '@/components/admin/member/MemberStatusBadge';
+import { AdminCloseIcon } from '@/assets/icons/admin';
+import { getFooterActions } from '@/constants/admin/memberDetailModal.constants';
+import { cn } from '@/lib/cn';
 import { parseCardinals } from '@/utils/admin/parseCardinals';
 import type { Member } from '@/types/admin/member';
 
@@ -20,7 +25,7 @@ interface MemberDetailModalProps {
   onChangeRole?: () => void;
   onBan?: () => void;
   onRestore?: () => void;
-  onChangeCardinals?: (cardinalIds: number[]) => void;
+  onChangeCardinals?: () => void;
   onTransferLead?: () => void;
 }
 
@@ -38,10 +43,13 @@ function MemberDetailModal({
 
   const handleClose = () => onOpenChange(false);
 
-  const personalInfo = getPersonalInfo(member);
-  const activityStats = getActivityStats(member);
-  const cardinals = parseCardinals(member.cardinal);
-  const latestCardinal = cardinals.at(-1);
+  const personalInfo = getModalPersonalInfo(member);
+  const activityStats = getModalActivityStats(member);
+  const cardinals = parseCardinals(member.cardinal).sort(compareCardinalDesc);
+  const latestCardinal = cardinals[0];
+  const visibleCardinals = cardinals.slice(0, 4);
+  const hiddenCardinals = cardinals.slice(4);
+  const hiddenCardinalCount = hiddenCardinals.length;
   const footerActions = getFooterActions({
     memberRole: member.memberRole,
     status: member.status,
@@ -54,12 +62,11 @@ function MemberDetailModal({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
-        className="bg-background flex w-215 max-w-[calc(100%-2rem)] flex-col gap-0 rounded-sm p-0"
+        className="bg-background flex w-[770px] max-w-[calc(100%-2rem)] flex-col gap-0 overflow-hidden rounded-lg p-0"
         showCloseButton={false}
       >
-        {/* Header */}
-        <div className="flex items-center justify-between px-600 pt-700 pb-400">
-          <h2 className="typo-h3 text-text-normal">멤버 관리 상세</h2>
+        <div className="flex items-center justify-between px-700 pt-700 pb-500">
+          <DialogTitle className="typo-h3 text-text-strong">멤버 상세</DialogTitle>
           <button
             type="button"
             onClick={handleClose}
@@ -70,60 +77,82 @@ function MemberDetailModal({
           </button>
         </div>
 
-        {/* Body */}
-        <div className="tablet:flex-row tablet:px-700 flex flex-col gap-500 overflow-y-auto px-400 pb-500">
-          {/* 회원정보 */}
-          <div className="bg-container-neutral flex-1 rounded-md p-400">
-            <p className="typo-caption1 text-text-alternative mb-400">회원정보</p>
+        <div className="flex flex-col gap-500 overflow-y-auto px-700 pt-200 pb-600">
+          <section className="bg-container-neutral flex items-center gap-500 rounded-lg px-500 py-[18px]">
+            <Avatar size={64}>
+              <AvatarFallback />
+            </Avatar>
 
-            <div className="mb-200 flex items-baseline gap-200">
-              <span className="typo-h3 text-text-strong">{member.name}</span>
-              <span className="typo-h3 text-text-strong">{latestCardinal ?? '-'}기</span>
+            <div className="flex min-w-0 flex-col gap-100">
+              <div className="flex items-center gap-200">
+                <span className="typo-sub1 text-text-normal truncate">{member.name}</span>
+                {latestCardinal && (
+                  <ModalCardinalTag active>{formatCardinalLabel(latestCardinal)}</ModalCardinalTag>
+                )}
+              </div>
+              <MemberStatusBadge status={member.status} variant="dot" />
+              <p className="typo-body2 text-text-alternative truncate">-</p>
             </div>
+          </section>
 
-            <div className="flex flex-col gap-400">
-              {personalInfo.map(({ label, value }) => (
-                <div key={label} className="flex items-start">
-                  <span className="typo-body1 text-text-alternative w-24 shrink-0">{label}</span>
-                  <span className="typo-body1 text-text-strong">{value}</span>
-                </div>
-              ))}
-            </div>
-          </div>
+          <div className="tablet:grid-cols-2 grid grid-cols-1 gap-[14px]">
+            <section className="border-line bg-container-neutral rounded-md border px-500 py-450">
+              <p className="typo-body2 text-text-disabled mb-[14px]">회원 정보</p>
 
-          {/* 활동정보 */}
-          <div className="bg-container-neutral tablet:w-80 w-full shrink-0 rounded-md p-400">
-            <p className="typo-caption1 text-text-alternative mb-400">활동정보</p>
+              <div className="flex flex-col gap-300">
+                {personalInfo.map(({ label, value }) => (
+                  <InfoRow key={label} label={label} value={value} />
+                ))}
+              </div>
+            </section>
 
-            <div className="flex flex-col gap-400">
-              <div className="flex items-start">
-                <span className="typo-body1 text-text-alternative w-24 shrink-0">활동 기수</span>
-                <div className="flex flex-wrap gap-200">
-                  {cardinals.map((c) => (
-                    <span
-                      key={c}
-                      className="bg-container-primary-alternative text-brand-primary typo-body2 rounded-full px-300 py-100"
-                    >
-                      {c}기
-                    </span>
+            <section className="border-line bg-container-neutral rounded-md border px-500 py-450">
+              <p className="typo-body2 text-text-disabled mb-[14px]">활동 정보</p>
+
+              <div className="flex items-start gap-600">
+                <span className="typo-button2 text-text-alternative w-16 shrink-0">활동기수</span>
+                <div className="flex min-w-0 flex-wrap items-center gap-100">
+                  {visibleCardinals.map((cardinal) => (
+                    <ModalCardinalTag key={cardinal}>
+                      {formatCardinalLabel(cardinal)}
+                    </ModalCardinalTag>
                   ))}
+                  {hiddenCardinalCount > 0 && (
+                    <ModalCardinalTooltip
+                      content={hiddenCardinals.map(formatCardinalLabel).join(', ')}
+                    >
+                      +{hiddenCardinalCount}
+                    </ModalCardinalTooltip>
+                  )}
                 </div>
               </div>
-            </div>
 
-            <div className="mt-500 flex flex-col gap-200">
-              {activityStats.map(({ label, value, color }) => (
-                <div key={label} className="flex items-start">
-                  <span className="typo-body1 text-text-alternative w-24 shrink-0">{label}</span>
-                  <span className={cn('typo-body1', color)}>{value}</span>
+              <div className="bg-line my-300 h-px w-full" />
+
+              <div className="flex flex-col gap-300">
+                {activityStats.map(({ label, value }) => (
+                  <InfoRow key={label} label={label} value={value} alignValue="right" />
+                ))}
+                <div className="mt-100 flex flex-col gap-100">
+                  <InfoRow
+                    label="출석률"
+                    value={`${member.attendanceRate}%`}
+                    alignValue="right"
+                    labelClassName="typo-caption2 text-text-alternative"
+                    valueClassName="typo-caption2 text-text-normal"
+                  />
+                  <AttendanceProgressBar
+                    attendanceRate={member.attendanceRate}
+                    showAbsenceRate={false}
+                    className="bg-container-neutral-alternative h-[6px] rounded-lg"
+                  />
                 </div>
-              ))}
-            </div>
+              </div>
+            </section>
           </div>
         </div>
 
-        {/* Footer */}
-        <div className="bg-container-neutral flex flex-wrap items-center justify-between gap-200 rounded-b-sm px-400 pt-400 pb-500">
+        <div className="bg-container-neutral flex flex-wrap items-center justify-between gap-200 px-700 py-500">
           <div className="flex flex-wrap items-center gap-200">
             {footerActions.map(({ label, title, description, handler }) => (
               <AlertDialog
@@ -131,7 +160,7 @@ function MemberDetailModal({
                 title={title}
                 description={description}
                 trigger={
-                  <Button variant="secondary" size="lg">
+                  <Button variant="secondary" size="md" className="rounded-sm">
                     {label}
                   </Button>
                 }
@@ -141,20 +170,128 @@ function MemberDetailModal({
               </AlertDialog>
             ))}
             {onChangeCardinals && (
-              <ChangeCardinalsModal onSubmit={onChangeCardinals}>
-                <Button variant="secondary" size="lg">
-                  기수 변경
-                </Button>
-              </ChangeCardinalsModal>
+              <Button
+                variant="secondary"
+                size="md"
+                className="rounded-sm"
+                onClick={onChangeCardinals}
+              >
+                기수 변경
+              </Button>
             )}
           </div>
 
-          <Button variant="primary" size="lg" onClick={handleClose}>
-            완료
+          <Button variant="primary" size="md" className="rounded-sm" onClick={handleClose}>
+            확인
           </Button>
         </div>
       </DialogContent>
     </Dialog>
+  );
+}
+
+function getModalPersonalInfo(member: Member) {
+  return [
+    { label: '역할', value: member.position },
+    { label: '학과', value: member.department },
+    { label: '학번', value: member.studentId },
+    { label: '전화번호', value: member.phone },
+    { label: '이메일', value: member.email },
+    { label: '가입일', value: '-' },
+  ];
+}
+
+function getModalActivityStats(member: Member) {
+  return [
+    { label: '출석', value: member.attendance },
+    { label: '결석', value: member.absence },
+    { label: '패널티', value: member.penaltyCount },
+  ];
+}
+
+function compareCardinalDesc(a: string, b: string) {
+  return getCardinalNumber(b) - getCardinalNumber(a);
+}
+
+function getCardinalNumber(cardinal: string) {
+  return Number(cardinal.replace('기', '')) || 0;
+}
+
+function formatCardinalLabel(cardinal: string) {
+  return cardinal.endsWith('기') ? cardinal : `${cardinal}기`;
+}
+
+function ModalCardinalTag({
+  active = false,
+  children,
+}: {
+  active?: boolean;
+  children: React.ReactNode;
+}) {
+  return (
+    <span
+      className={cn(
+        'typo-caption1 inline-flex h-6 items-center rounded-[5px] px-200',
+        active ? 'bg-primary-500/10 text-brand-primary' : 'text-text-alternative bg-neutral-700/5',
+      )}
+    >
+      {children}
+    </span>
+  );
+}
+
+function ModalCardinalTooltip({
+  children,
+  content,
+}: {
+  children: React.ReactNode;
+  content: string;
+}) {
+  return (
+    <button
+      type="button"
+      className="group relative inline-flex cursor-default"
+      aria-label={`숨겨진 활동기수 ${content}`}
+    >
+      <ModalCardinalTag>{children}</ModalCardinalTag>
+      <span className="bg-container-primary-interaction text-text-inverse typo-body2 pointer-events-none absolute right-0 bottom-[calc(100%+8px)] z-50 w-max rounded-sm p-200 opacity-0 shadow-sm transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100">
+        {content}
+      </span>
+    </button>
+  );
+}
+
+function InfoRow({
+  label,
+  value,
+  alignValue,
+  labelClassName,
+  valueClassName,
+}: {
+  label: string;
+  value: React.ReactNode;
+  alignValue?: 'right';
+  labelClassName?: string;
+  valueClassName?: string;
+}) {
+  return (
+    <div className="flex items-start gap-600">
+      <span
+        className={[labelClassName ?? 'typo-button2 text-text-alternative', 'w-16 shrink-0'].join(
+          ' ',
+        )}
+      >
+        {label}
+      </span>
+      <span
+        className={[
+          valueClassName ?? 'typo-sub3 text-text-normal',
+          alignValue === 'right' ? 'ml-auto text-right' : 'min-w-0 flex-1 break-keep',
+        ].join(' ')}
+      >
+        {value ?? '-'}
+      </span>
+    </div>
   );
 }
 

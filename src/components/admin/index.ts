@@ -1,6 +1,8 @@
 // admin components index file
 export { AdminMobileBlockedContent } from './AdminMobileBlockedContent';
 export { CardinalDropdown, type CardinalDropdownProps } from './CardinalDropdown';
+export { FloatingSelectionBar, type FloatingSelectionBarProps } from './FloatingSelectionBar';
+export { SelectedCountLabel, type SelectedCountLabelProps } from './SelectedCountLabel';
 export { ModalIconButton, type ModalIconButtonProps } from './modal/ModalIconButton';
 export { AttendanceCard, type AttendanceCardProps } from './attendance/AttendanceCard';
 export { AttendancePageContent } from './attendance/AttendancePageContent';
@@ -21,7 +23,10 @@ export { CardinalCard, cardinalCardVariants, type CardinalCardProps } from './me
 export { CardinalPillList, type CardinalPillListProps } from './member/CardinalPillList';
 export { MemberDetailModal, type MemberDetailModalProps } from './member/modal/MemberDetailModal';
 export { MemberPageContent } from './member/MemberPageContent';
+export { MemberPageHeader, type MemberPageHeaderProps } from './member/MemberPageHeader';
+export { MemberPageModals, type ForceConfirmState } from './member/MemberPageModals';
 export { MemberSearchBar, type MemberSearchBarProps } from './member/MemberSearchBar';
+export { MemberStatusBadge, type MemberStatusBadgeProps } from './member/MemberStatusBadge';
 export { MemberTable } from './member/MemberTable';
 export { MemberTopBar, type MemberTopBarProps } from './member/MemberTopBar';
 export { SchedulePageContent } from './schedule/general/SchedulePageContent';

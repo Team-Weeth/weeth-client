@@ -3,13 +3,12 @@
 import { useState } from 'react';
 
 import {
-  CardinalPillList,
-  MemberDetailModal,
-  MemberSearchBar,
+  MemberPageHeader,
+  MemberPageModals,
   MemberTable,
   MemberTopBar,
+  type ForceConfirmState,
 } from '@/components/admin';
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, Card } from '@/components/ui';
 import { MEMBER_CARDINAL_ERROR_CODE, MEMBER_ROLE_ERROR_CODE } from '@/constants/errorCode';
 import type { ClubMemberRole, Member } from '@/types/admin/member';
 import { useAdminMembers } from '@/hooks/queries/admin';
@@ -24,20 +23,25 @@ import {
 } from '@/hooks/mutations/admin';
 import { toastError, toastSuccess } from '@/stores/useToastStore';
 import { getBulkBanAction, getBulkTargetRole } from '@/utils/admin/memberBulkActions';
-import { parseCardinals } from '@/utils/admin/parseCardinals';
+import {
+  createBulkCardinalChangeRequests,
+  filterMembers,
+  getMemberIds,
+  getSelectedMemberCardinals,
+  sortMembers,
+  type CardinalChangeRequest,
+  type MemberSortBy,
+} from '@/utils/admin/memberPageUtils';
 import { getApiErrorCode } from '@/utils/shared';
 import { runBulkMutation } from '@/utils/shared/runBulkMutation';
 
-interface ForceConfirmState {
-  clubMemberIds: number[];
-  cardinalIds: number[];
-}
-
 function MemberPageContent() {
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
-  const [searchValue, setSearchValue] = useState('');
   const [detailMemberId, setDetailMemberId] = useState<string | null>(null);
+  const [cardinalModalMemberId, setCardinalModalMemberId] = useState<string | null>(null);
   const [selectedCardinal, setSelectedCardinal] = useState<number | 'all'>('all');
+  const [sortBy, setSortBy] = useState<MemberSortBy>('cardinal');
+  const [searchQuery, setSearchQuery] = useState('');
   const { data: members = [] } = useAdminMembers();
   const { data: cardinals = [] } = useCardinals();
   const { mutateAsync: changeMemberRoleAsync } = useChangeMemberRole();
@@ -52,29 +56,23 @@ function MemberPageContent() {
   const detailMember = detailMemberId
     ? (members.find((m) => m.id === detailMemberId) ?? null)
     : null;
+  const cardinalModalMember = cardinalModalMemberId
+    ? (members.find((m) => m.id === cardinalModalMemberId) ?? null)
+    : null;
 
   const handleMemberAction = (m: Member) => {
     setDetailMemberId(m.id);
   };
 
-  const cardinalFilteredMembers =
-    selectedCardinal === 'all'
-      ? members
-      : members.filter((m) => parseCardinals(m.cardinal).includes(String(selectedCardinal)));
-
-  const query = searchValue.trim().toLowerCase();
-  const filteredMembers = query
-    ? cardinalFilteredMembers.filter(
-        (m) =>
-          m.name.toLowerCase().includes(query) ||
-          m.department.toLowerCase().includes(query) ||
-          m.studentId.includes(query) ||
-          m.cardinal.includes(query),
-      )
-    : cardinalFilteredMembers;
+  const filteredMembers = sortMembers(
+    filterMembers(members, selectedCardinal, searchQuery),
+    sortBy,
+  );
 
   const selectedMembers = filteredMembers.filter((m) => selectedIds.has(m.id));
   const selectedCount = selectedMembers.length;
+  const selectedClubMemberIds = getMemberIds(selectedMembers);
+  const selectedMemberCardinals = getSelectedMemberCardinals(selectedMembers);
 
   const targetRole = getBulkTargetRole(selectedMembers);
   const targetBanAction = getBulkBanAction(selectedMembers);
@@ -86,27 +84,32 @@ function MemberPageContent() {
     cardinalIds: number[],
     force = false,
   ) => {
+    const requests = clubMemberIds.map((clubMemberId) => ({ clubMemberId, cardinalIds }));
+    await submitCardinalChangeRequests(requests, force);
+  };
+
+  const submitCardinalChangeRequests = async (requests: CardinalChangeRequest[], force = false) => {
     const results = await Promise.allSettled(
-      clubMemberIds.map((clubMemberId) =>
+      requests.map(({ clubMemberId, cardinalIds }) =>
         changeMemberCardinalsAsync({ clubMemberId, cardinalIds, force }),
       ),
     );
 
-    const attendanceFailedIds: number[] = [];
+    const attendanceFailedRequests: CardinalChangeRequest[] = [];
     let otherErrorCount = 0;
 
     results.forEach((result, idx) => {
       if (result.status !== 'rejected') return;
       const code = getApiErrorCode(result.reason);
       if (code === MEMBER_CARDINAL_ERROR_CODE.REMOVAL_HAS_ATTENDANCE) {
-        attendanceFailedIds.push(clubMemberIds[idx]);
+        attendanceFailedRequests.push(requests[idx]);
       } else {
         otherErrorCount += 1;
       }
     });
 
-    if (attendanceFailedIds.length > 0) {
-      setForceConfirm({ clubMemberIds: attendanceFailedIds, cardinalIds });
+    if (attendanceFailedRequests.length > 0) {
+      setForceConfirm({ requests: attendanceFailedRequests });
       return;
     }
 
@@ -143,16 +146,15 @@ function MemberPageContent() {
       error: '복구에 실패했습니다.',
     });
 
-  const handleChangeCardinalsForDetail = (cardinalIds: number[]) => {
-    if (!detailMember) return;
-    submitCardinalsChange([detailMember.clubMemberId], cardinalIds);
-  };
+  const handleChangeCardinalsForBulk = (cardinalIds: number[], cardinalNumbers: number[]) => {
+    const requests = createBulkCardinalChangeRequests({
+      selectedMembers,
+      selectedMemberCardinals,
+      selectedCardinalNumbers: cardinalNumbers,
+      cardinals,
+    });
 
-  const handleChangeCardinalsForBulk = (cardinalIds: number[]) => {
-    submitCardinalsChange(
-      selectedMembers.map((m) => m.clubMemberId),
-      cardinalIds,
-    );
+    submitCardinalChangeRequests(requests);
   };
 
   const handleTransferLead = (clubMemberId: number) => {
@@ -170,108 +172,81 @@ function MemberPageContent() {
 
   const handleForceConfirm = () => {
     if (!forceConfirm) return;
-    const { clubMemberIds, cardinalIds } = forceConfirm;
+    const { requests } = forceConfirm;
     setForceConfirm(null);
-    submitCardinalsChange(clubMemberIds, cardinalIds, true);
+    submitCardinalChangeRequests(requests, true);
   };
 
   return (
-    <div className="flex min-w-0 flex-col">
-      {/* Selection top bar */}
-      <MemberTopBar
-        className="sticky top-0 z-10 -mt-15"
-        selectedCount={selectedCount}
-        targetRole={targetRole}
-        targetBanAction={targetBanAction}
-        onBack={handleClearSelection}
-        onChangeRole={
-          targetRole
-            ? () =>
-                submitChangeRole(
-                  selectedMembers.map((m) => m.clubMemberId),
-                  targetRole,
-                )
-            : undefined
-        }
-        onBan={
-          targetBanAction === 'ban'
-            ? () => submitBan(selectedMembers.map((m) => m.clubMemberId))
-            : undefined
-        }
-        onRestore={
-          targetBanAction === 'restore'
-            ? () => submitRestore(selectedMembers.map((m) => m.clubMemberId))
-            : undefined
-        }
-        onChangeCardinals={handleChangeCardinalsForBulk}
-        onTransferLead={
-          isLead && selectedCount === 1
-            ? () => handleTransferLead(selectedMembers[0].clubMemberId)
-            : undefined
-        }
-      />
-
-      {/* Main content */}
-      <div className="flex flex-col gap-400 p-700">
-        <CardinalPillList
-          cardinals={cardinals}
-          selectedCardinal={selectedCardinal}
-          onSelectCardinal={setSelectedCardinal}
-        />
-
-        {/* Search bar */}
-        <Card>
-          <MemberSearchBar isWrapped={false} value={searchValue} onValueChange={setSearchValue} />
-        </Card>
-
-        {/* Member table */}
-        <Card>
-          <MemberTable
-            members={filteredMembers}
-            selectedIds={selectedIds}
-            onSelectionChange={setSelectedIds}
-            onMemberAction={handleMemberAction}
+    <>
+      <div className="flex min-h-full min-w-0 pr-450">
+        <div className="bg-container-neutral flex min-w-0 flex-1 flex-col rounded-t-[20px]">
+          {/* Selection top bar */}
+          <MemberTopBar
+            selectedCount={selectedCount}
+            targetRole={targetRole}
+            targetBanAction={targetBanAction}
+            onBack={handleClearSelection}
+            onChangeRole={
+              targetRole ? () => submitChangeRole(selectedClubMemberIds, targetRole) : undefined
+            }
+            onBan={targetBanAction === 'ban' ? () => submitBan(selectedClubMemberIds) : undefined}
+            onRestore={
+              targetBanAction === 'restore' ? () => submitRestore(selectedClubMemberIds) : undefined
+            }
+            onChangeCardinals={handleChangeCardinalsForBulk}
+            selectedMemberName={selectedMembers[0]?.name}
+            selectedMemberCardinals={selectedMemberCardinals}
+            onTransferLead={
+              isLead && selectedCount === 1
+                ? () => handleTransferLead(selectedMembers[0].clubMemberId)
+                : undefined
+            }
           />
-        </Card>
+
+          <MemberPageHeader
+            cardinals={cardinals}
+            selectedCardinal={selectedCardinal}
+            onSelectCardinal={setSelectedCardinal}
+            sortBy={sortBy}
+            onToggleSort={() => setSortBy((prev) => (prev === 'cardinal' ? 'name' : 'cardinal'))}
+            searchQuery={searchQuery}
+            onSearchQueryChange={setSearchQuery}
+          />
+
+          {/* Main content */}
+          <div className="flex flex-col p-700">
+            {/* Member table */}
+            <MemberTable
+              members={filteredMembers}
+              selectedIds={selectedIds}
+              onSelectionChange={setSelectedIds}
+              onMemberAction={handleMemberAction}
+            />
+          </div>
+        </div>
       </div>
 
-      {/* Member detail modal */}
-      <MemberDetailModal
-        open={detailMember !== null}
-        onOpenChange={(open) => {
-          if (!open) setDetailMemberId(null);
+      <MemberPageModals
+        detailMember={detailMember}
+        cardinalModalMember={cardinalModalMember}
+        forceConfirm={forceConfirm}
+        isLead={isLead}
+        onCloseDetail={() => setDetailMemberId(null)}
+        onOpenCardinalModalFromDetail={(memberId) => {
+          setCardinalModalMemberId(memberId);
+          setDetailMemberId(null);
         }}
-        member={detailMember}
-        onBan={detailMember ? () => submitBan([detailMember.clubMemberId]) : undefined}
-        onRestore={detailMember ? () => submitRestore([detailMember.clubMemberId]) : undefined}
-        onChangeRole={
-          detailMember
-            ? () => {
-                const nextRole = detailMember.memberRole === 'ADMIN' ? 'USER' : 'ADMIN';
-                submitChangeRole([detailMember.clubMemberId], nextRole);
-              }
-            : undefined
-        }
-        onChangeCardinals={detailMember ? handleChangeCardinalsForDetail : undefined}
-        onTransferLead={
-          isLead && detailMember ? () => handleTransferLead(detailMember.clubMemberId) : undefined
-        }
+        onCloseCardinalModal={() => setCardinalModalMemberId(null)}
+        onCloseForceConfirm={() => setForceConfirm(null)}
+        onConfirmForceChange={handleForceConfirm}
+        onBan={submitBan}
+        onRestore={submitRestore}
+        onChangeRole={submitChangeRole}
+        onChangeCardinals={submitCardinalsChange}
+        onTransferLead={handleTransferLead}
       />
-
-      {/* 출석 기록이 있는 기수 삭제 확인 */}
-      <AlertDialog
-        open={forceConfirm !== null}
-        onOpenChange={(open) => {
-          if (!open) setForceConfirm(null);
-        }}
-        status="danger"
-        title={`출석 기록이 있는\n기수가 포함되어 있습니다.`}
-        description={'그래도 변경하시겠어요?\n출석/결석 기록도 함께 삭제됩니다.'}
-      >
-        <AlertDialogAction onClick={handleForceConfirm}>변경</AlertDialogAction>
-        <AlertDialogCancel>취소</AlertDialogCancel>
-      </AlertDialog>
-    </div>
+    </>
   );
 }
 

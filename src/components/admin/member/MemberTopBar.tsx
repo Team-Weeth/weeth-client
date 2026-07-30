@@ -2,9 +2,9 @@
 
 import React from 'react';
 
-import { ArrowLeftIcon } from '@/assets/icons';
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, Button, Icon } from '@/components/ui';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, Button } from '@/components/ui';
 import { ChangeCardinalsModal } from '@/components/admin/member/modal/ChangeCardinalsModal';
+import { FloatingSelectionBar } from '@/components/admin/FloatingSelectionBar';
 import { cn } from '@/lib/cn';
 import { getTopBarActions } from '@/constants/admin/memberTopBar.constants';
 
@@ -19,7 +19,9 @@ interface MemberTopBarProps extends React.HTMLAttributes<HTMLDivElement> {
   onChangeRole?: () => void;
   onBan?: () => void;
   onRestore?: () => void;
-  onChangeCardinals?: (cardinalIds: number[]) => void;
+  onChangeCardinals?: (cardinalIds: number[], cardinalNumbers: number[]) => void;
+  selectedMemberName?: string;
+  selectedMemberCardinals?: number[][];
   onTransferLead?: () => void;
   ref?: React.Ref<HTMLDivElement>;
 }
@@ -35,11 +37,17 @@ function MemberTopBar({
   onBan,
   onRestore,
   onChangeCardinals,
+  selectedMemberName,
+  selectedMemberCardinals = [],
   onTransferLead,
   ref,
   ...props
 }: MemberTopBarProps) {
-  if (selectedCount === 0) return null;
+  const isVisible = selectedCount > 0;
+  const changeCardinalsOverline =
+    selectedCount === 1 && selectedMemberName
+      ? `'${selectedMemberName}'의 기수를 선택하세요`
+      : `${selectedCount}명의 기수를 일괄 변경합니다.`;
 
   const topBarActions = getTopBarActions({
     selectedCount,
@@ -53,55 +61,55 @@ function MemberTopBar({
   });
 
   return (
-    <div
+    <FloatingSelectionBar
       ref={ref}
-      className={cn(
-        'bg-container-primary scrollbar-none flex h-15 items-center overflow-x-auto px-500',
-        className,
-      )}
+      selectedCount={selectedCount}
+      visible={isVisible}
+      onClear={onBack}
+      className={className}
       {...props}
     >
-      <button
-        type="button"
-        onClick={onBack}
-        className="flex shrink-0 cursor-pointer items-center justify-center rounded-sm p-200"
-      >
-        <Icon src={ArrowLeftIcon} alt="뒤로" size={16} className="text-text-inverse" />
-      </button>
-
-      <span className="typo-sub1 text-text-inverse ml-200 shrink-0">{selectedCount}명 선택됨</span>
-
-      <div className="ml-auto flex shrink-0 items-center gap-200 pl-200">
-        {topBarActions.map(({ label, title, description, handler, disabled }) => (
-          <AlertDialog
-            key={label}
-            title={title}
-            description={description}
-            trigger={
-              <Button
-                variant="secondary"
-                size="lg"
-                className="typo-button1 shrink-0 py-200 whitespace-nowrap"
-                disabled={disabled}
-              >
-                {label}
-              </Button>
-            }
-          >
-            <AlertDialogAction onClick={handler}>확인</AlertDialogAction>
-            <AlertDialogCancel>취소</AlertDialogCancel>
-          </AlertDialog>
-        ))}
-
-        {onChangeCardinals && (
-          <ChangeCardinalsModal onSubmit={onChangeCardinals}>
-            <Button variant="secondary" size="lg" className="shrink-0 py-200 whitespace-nowrap">
-              기수 변경
+      {topBarActions.map(({ label, title, description, handler, disabled }) => (
+        <AlertDialog
+          key={label}
+          title={title}
+          description={description}
+          trigger={
+            <Button
+              variant="secondary"
+              size="md"
+              className={cn(
+                'typo-button2 bg-container-neutral text-text-strong hover:bg-container-neutral-interaction shrink-0 rounded-sm px-300 py-200 whitespace-nowrap',
+                label.includes('추방') && 'text-state-error',
+              )}
+              disabled={disabled}
+            >
+              {label}
             </Button>
-          </ChangeCardinalsModal>
-        )}
-      </div>
-    </div>
+          }
+        >
+          <AlertDialogAction onClick={handler}>확인</AlertDialogAction>
+          <AlertDialogCancel>취소</AlertDialogCancel>
+        </AlertDialog>
+      ))}
+
+      {onChangeCardinals && (
+        <ChangeCardinalsModal
+          overline={changeCardinalsOverline}
+          memberCount={selectedCount}
+          memberCardinals={selectedMemberCardinals}
+          onSubmit={onChangeCardinals}
+        >
+          <Button
+            variant="secondary"
+            size="md"
+            className="typo-button2 bg-container-neutral text-text-strong hover:bg-container-neutral-interaction shrink-0 rounded-sm px-300 py-200 whitespace-nowrap"
+          >
+            기수 변경
+          </Button>
+        </ChangeCardinalsModal>
+      )}
+    </FloatingSelectionBar>
   );
 }
 

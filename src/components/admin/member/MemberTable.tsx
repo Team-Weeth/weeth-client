@@ -1,31 +1,16 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 
-import {
-  AdminChangeIcon,
-  AdminCheckboxIcon,
-  AdminMeatballIcon,
-  AdminUncheckboxIcon,
-} from '@/assets/icons/admin';
-import {
-  Icon,
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui';
+import { Table, TableBody, TableHead, TableHeader, TableRow } from '@/components/ui';
 import { cn } from '@/lib/cn';
 import type { Member } from '@/types/admin/member';
-import {
-  COLUMNS,
-  SORT_LABEL,
-  STATUS_BAR_COLOR,
-  sortMembers,
-  type SortBy,
-} from '@/constants/admin/memberTable.constants';
+import { MEMBER_TABLE_COLUMNS } from '@/constants/admin/memberTable.constants';
+import { MemberPagination } from './MemberPagination';
+import { MemberSelectionCheckbox } from './MemberSelectionCheckbox';
+import { MemberTableRow } from './MemberTableRow';
+
+const MEMBERS_PER_PAGE = 10;
 
 interface MemberTableProps extends React.HTMLAttributes<HTMLDivElement> {
   members: Member[];
@@ -43,18 +28,33 @@ function MemberTable({
   ...props
 }: MemberTableProps) {
   const [internalSelectedIds, setInternalSelectedIds] = useState<Set<string>>(new Set());
-  const [sortBy, setSortBy] = useState<SortBy>('cardinal');
-
   const selectedIds = controlledSelectedIds ?? internalSelectedIds;
   const setSelectedIds = onSelectionChange ?? setInternalSelectedIds;
+  const memberListKey = useMemo(() => members.map((member) => member.id).join('|'), [members]);
+  const [pagination, setPagination] = useState({ memberListKey, page: 1 });
+  const page = pagination.memberListKey === memberListKey ? pagination.page : 1;
 
-  const sortedMembers = sortMembers(members, sortBy);
+  const totalPages = Math.max(1, Math.ceil(members.length / MEMBERS_PER_PAGE));
+  const currentPage = Math.min(page, totalPages);
+  const currentPageMembers = members.slice(
+    (currentPage - 1) * MEMBERS_PER_PAGE,
+    currentPage * MEMBERS_PER_PAGE,
+  );
 
-  const isAllSelected = members.length > 0 && selectedIds.size === members.length;
-  const hasAnySelected = selectedIds.size > 0;
+  const isAllSelected =
+    currentPageMembers.length > 0 &&
+    currentPageMembers.every((member) => selectedIds.has(member.id));
+  const hasAnySelected = currentPageMembers.some((member) => selectedIds.has(member.id));
+  const isPartiallySelected = hasAnySelected && !isAllSelected;
 
   const toggleAll = () => {
-    setSelectedIds(isAllSelected ? new Set() : new Set(members.map((m) => m.id)));
+    const next = new Set(selectedIds);
+    if (isAllSelected) {
+      currentPageMembers.forEach((member) => next.delete(member.id));
+    } else {
+      currentPageMembers.forEach((member) => next.add(member.id));
+    }
+    setSelectedIds(next);
   };
 
   const toggleOne = (id: string) => {
@@ -67,98 +67,67 @@ function MemberTable({
     setSelectedIds(next);
   };
 
-  const toggleSort = () => {
-    setSortBy((prev) => (prev === 'cardinal' ? 'name' : 'cardinal'));
+  const handlePageChange = (nextPage: number) => {
+    setPagination({ memberListKey, page: nextPage });
   };
 
   return (
-    <div className={cn('flex flex-col gap-600', className)} {...props}>
-      <div className="flex items-center">
-        <button
-          type="button"
-          onClick={toggleSort}
-          className="bg-button-neutral typo-button2 text-text-strong flex cursor-pointer items-center gap-200 rounded px-200 py-100"
+    <div className={cn('min-w-0', className)} {...props}>
+      <div className="border-line overflow-hidden rounded-sm border">
+        <Table
+          className="w-max min-w-full border-separate border-spacing-0"
+          wrapperClassName="overflow-auto"
         >
-          {SORT_LABEL[sortBy]}
-          <Icon src={AdminChangeIcon} alt="정렬" size={20} />
-        </button>
+          <TableHeader className="bg-container-neutral-alternative sticky top-0 z-10">
+            <TableRow className="h-11 border-0 hover:bg-transparent">
+              <TableHead className="h-11 w-16 min-w-16 p-0 pl-300">
+                <MemberSelectionCheckbox
+                  checked={isAllSelected}
+                  partial={isPartiallySelected}
+                  ariaLabel="현재 페이지 멤버 전체 선택"
+                  checkedLabel="현재 페이지 전체 선택됨"
+                  uncheckedLabel="현재 페이지 전체 선택 안됨"
+                  uncheckedClassName="text-icon-strong"
+                  onClick={toggleAll}
+                />
+              </TableHead>
+              {MEMBER_TABLE_COLUMNS.map((column) => (
+                <TableHead
+                  key={column.id}
+                  className={cn(
+                    'typo-caption1 text-text-alternative h-11 px-400 py-300',
+                    column.width,
+                    'align' in column && column.align,
+                  )}
+                >
+                  {column.label}
+                </TableHead>
+              ))}
+              <TableHead className="h-11 w-[76px] p-0" />
+              <TableHead className="h-11 w-11 p-0 pr-700" />
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {currentPageMembers.map((member) => (
+              <MemberTableRow
+                key={member.id}
+                member={member}
+                selected={selectedIds.has(member.id)}
+                onToggle={toggleOne}
+                onMemberAction={onMemberAction}
+              />
+            ))}
+          </TableBody>
+        </Table>
       </div>
 
-      <Table className="w-max min-w-full" wrapperClassName="max-h-[600px] overflow-auto">
-        <TableHeader className="bg-container-neutral sticky top-0 z-10">
-          <TableRow className="border-0 hover:bg-transparent">
-            <TableHead className="w-1 min-w-1 p-0" />
-            <TableHead className="w-12">
-              <button
-                aria-pressed={isAllSelected}
-                aria-label="전체 멤버 선택"
-                type="button"
-                className="flex cursor-pointer items-center"
-                onClick={toggleAll}
-              >
-                <Icon
-                  src={hasAnySelected ? AdminCheckboxIcon : AdminUncheckboxIcon}
-                  alt={hasAnySelected ? '선택됨' : '선택 안됨'}
-                  size={20}
-                />
-              </button>
-            </TableHead>
-            {COLUMNS.map(({ label }) => (
-              <TableHead key={label} className="typo-body1 text-text-strong">
-                {label}
-              </TableHead>
-            ))}
-            <TableHead className="w-10" />
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {sortedMembers.map((member) => (
-            <TableRow
-              key={member.id}
-              className="hover:bg-container-neutral-interaction cursor-pointer border-0"
-              onClick={() => onMemberAction?.(member)}
-            >
-              <TableCell className={cn('w-1 min-w-1 p-0', STATUS_BAR_COLOR[member.status])} />
-              <TableCell className="w-12">
-                <button
-                  aria-pressed={selectedIds.has(member.id)}
-                  aria-label={`${member.name} ${member.studentId} 선택`}
-                  type="button"
-                  className="flex cursor-pointer items-center"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    toggleOne(member.id);
-                  }}
-                >
-                  <Icon
-                    src={selectedIds.has(member.id) ? AdminCheckboxIcon : AdminUncheckboxIcon}
-                    alt={selectedIds.has(member.id) ? '선택됨' : '선택 안됨'}
-                    size={20}
-                  />
-                </button>
-              </TableCell>
-              {COLUMNS.map(({ key, label }) => (
-                <TableCell key={label} className="typo-body1 text-text-strong">
-                  {String(member[key])}
-                </TableCell>
-              ))}
-              <TableCell className="w-10">
-                <button
-                  type="button"
-                  className="text-icon-normal flex cursor-pointer items-center justify-center"
-                  aria-label="더보기"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onMemberAction?.(member);
-                  }}
-                >
-                  <Icon src={AdminMeatballIcon} alt="더보기" size={20} />
-                </button>
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+      {totalPages > 1 && (
+        <MemberPagination
+          page={currentPage}
+          totalPages={totalPages}
+          onPageChange={handlePageChange}
+        />
+      )}
     </div>
   );
 }
