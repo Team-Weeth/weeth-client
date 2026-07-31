@@ -3,10 +3,13 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { adminMemberApi } from '@/lib/apis/adminMember';
 import { revalidateDashboard } from '@/lib/actions/club';
 import type { ClubMemberRole, Member } from '@/types/admin/member';
+import type { PageResponse } from '@/types/common';
 import { useClubId } from '@/stores';
 import { useUserStore } from '@/stores/useUserStore';
 import { ROLE_MAP } from '@/utils/admin/memberMapper';
 import { adminQueryKeys } from '@/hooks/queries/admin/adminQueryKeys';
+
+type MemberPageCache = PageResponse<Member>;
 
 // 멤버 권한 변경
 export function useChangeMemberRole() {
@@ -27,10 +30,10 @@ export function useChangeMemberRole() {
     },
     onMutate: async ({ clubMemberId, memberRole }) => {
       await queryClient.cancelQueries({ queryKey });
-      const previous = queryClient.getQueryData<Member[]>(queryKey);
+      const previous = queryClient.getQueriesData<MemberPageCache>({ queryKey });
 
-      queryClient.setQueryData<Member[]>(queryKey, (old = []) =>
-        old.map((m) =>
+      queryClient.setQueriesData<MemberPageCache>({ queryKey }, (old) =>
+        updateMemberPage(old, (m) =>
           m.clubMemberId === clubMemberId
             ? { ...m, memberRole, position: ROLE_MAP[memberRole] }
             : m,
@@ -41,7 +44,7 @@ export function useChangeMemberRole() {
     },
     onError: (_err, _vars, context) => {
       if (context?.previous) {
-        queryClient.setQueryData(queryKey, context.previous);
+        context.previous.forEach(([key, data]) => queryClient.setQueryData(key, data));
       }
     },
     onSettled: () => {
@@ -63,17 +66,19 @@ export function useBanMember() {
     },
     onMutate: async (clubMemberId) => {
       await queryClient.cancelQueries({ queryKey });
-      const previous = queryClient.getQueryData<Member[]>(queryKey);
+      const previous = queryClient.getQueriesData<MemberPageCache>({ queryKey });
 
-      queryClient.setQueryData<Member[]>(queryKey, (old = []) =>
-        old.map((m) => (m.clubMemberId === clubMemberId ? { ...m, status: 'BANNED' } : m)),
+      queryClient.setQueriesData<MemberPageCache>({ queryKey }, (old) =>
+        updateMemberPage(old, (m) =>
+          m.clubMemberId === clubMemberId ? { ...m, status: 'BANNED' } : m,
+        ),
       );
 
       return { previous };
     },
     onError: (_err, _vars, context) => {
       if (context?.previous) {
-        queryClient.setQueryData(queryKey, context.previous);
+        context.previous.forEach(([key, data]) => queryClient.setQueryData(key, data));
       }
     },
     onSettled: () => {
@@ -103,18 +108,20 @@ export function useChangeMemberCardinals() {
     },
     onMutate: async ({ clubMemberId, cardinalIds }) => {
       await queryClient.cancelQueries({ queryKey });
-      const previous = queryClient.getQueryData<Member[]>(queryKey);
+      const previous = queryClient.getQueriesData<MemberPageCache>({ queryKey });
       const nextCardinal = [...cardinalIds].sort((a, b) => a - b).join(', ');
 
-      queryClient.setQueryData<Member[]>(queryKey, (old = []) =>
-        old.map((m) => (m.clubMemberId === clubMemberId ? { ...m, cardinal: nextCardinal } : m)),
+      queryClient.setQueriesData<MemberPageCache>({ queryKey }, (old) =>
+        updateMemberPage(old, (m) =>
+          m.clubMemberId === clubMemberId ? { ...m, cardinal: nextCardinal } : m,
+        ),
       );
 
       return { previous };
     },
     onError: (_err, _vars, context) => {
       if (context?.previous) {
-        queryClient.setQueryData(queryKey, context.previous);
+        context.previous.forEach(([key, data]) => queryClient.setQueryData(key, data));
       }
     },
     onSettled: () => {
@@ -157,21 +164,35 @@ export function useRestoreMember() {
     },
     onMutate: async (clubMemberId) => {
       await queryClient.cancelQueries({ queryKey });
-      const previous = queryClient.getQueryData<Member[]>(queryKey);
+      const previous = queryClient.getQueriesData<MemberPageCache>({ queryKey });
 
-      queryClient.setQueryData<Member[]>(queryKey, (old = []) =>
-        old.map((m) => (m.clubMemberId === clubMemberId ? { ...m, status: 'ACTIVE' } : m)),
+      queryClient.setQueriesData<MemberPageCache>({ queryKey }, (old) =>
+        updateMemberPage(old, (m) =>
+          m.clubMemberId === clubMemberId ? { ...m, status: 'ACTIVE' } : m,
+        ),
       );
 
       return { previous };
     },
     onError: (_err, _vars, context) => {
       if (context?.previous) {
-        queryClient.setQueryData(queryKey, context.previous);
+        context.previous.forEach(([key, data]) => queryClient.setQueryData(key, data));
       }
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey });
     },
   });
+}
+
+function updateMemberPage(
+  page: MemberPageCache | undefined,
+  updateMember: (member: Member) => Member,
+) {
+  if (!page) return page;
+
+  return {
+    ...page,
+    content: page.content.map(updateMember),
+  };
 }

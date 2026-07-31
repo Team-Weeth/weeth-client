@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useMemo, useState } from 'react';
+import React, { useState } from 'react';
 
 import { Table, TableBody, TableHead, TableHeader, TableRow } from '@/components/ui';
 import { cn } from '@/lib/cn';
@@ -10,10 +10,11 @@ import { MemberPagination } from './MemberPagination';
 import { MemberSelectionCheckbox } from './MemberSelectionCheckbox';
 import { MemberTableRow } from './MemberTableRow';
 
-const MEMBERS_PER_PAGE = 10;
-
 interface MemberTableProps extends React.HTMLAttributes<HTMLDivElement> {
   members: Member[];
+  page: number;
+  totalPages: number;
+  onPageChange: (page: number) => void;
   selectedIds?: Set<string>;
   onSelectionChange?: (ids: Set<string>) => void;
   onMemberAction?: (member: Member) => void;
@@ -22,6 +23,9 @@ interface MemberTableProps extends React.HTMLAttributes<HTMLDivElement> {
 function MemberTable({
   className,
   members,
+  page,
+  totalPages,
+  onPageChange,
   selectedIds: controlledSelectedIds,
   onSelectionChange,
   onMemberAction,
@@ -30,29 +34,18 @@ function MemberTable({
   const [internalSelectedIds, setInternalSelectedIds] = useState<Set<string>>(new Set());
   const selectedIds = controlledSelectedIds ?? internalSelectedIds;
   const setSelectedIds = onSelectionChange ?? setInternalSelectedIds;
-  const memberListKey = useMemo(() => members.map((member) => member.id).join('|'), [members]);
-  const [pagination, setPagination] = useState({ memberListKey, page: 1 });
-  const page = pagination.memberListKey === memberListKey ? pagination.page : 1;
+  const currentPage = Math.min(page, Math.max(totalPages, 1));
 
-  const totalPages = Math.max(1, Math.ceil(members.length / MEMBERS_PER_PAGE));
-  const currentPage = Math.min(page, totalPages);
-  const currentPageMembers = members.slice(
-    (currentPage - 1) * MEMBERS_PER_PAGE,
-    currentPage * MEMBERS_PER_PAGE,
-  );
-
-  const isAllSelected =
-    currentPageMembers.length > 0 &&
-    currentPageMembers.every((member) => selectedIds.has(member.id));
-  const hasAnySelected = currentPageMembers.some((member) => selectedIds.has(member.id));
+  const isAllSelected = members.length > 0 && members.every((member) => selectedIds.has(member.id));
+  const hasAnySelected = members.some((member) => selectedIds.has(member.id));
   const isPartiallySelected = hasAnySelected && !isAllSelected;
 
   const toggleAll = () => {
     const next = new Set(selectedIds);
     if (isAllSelected) {
-      currentPageMembers.forEach((member) => next.delete(member.id));
+      members.forEach((member) => next.delete(member.id));
     } else {
-      currentPageMembers.forEach((member) => next.add(member.id));
+      members.forEach((member) => next.add(member.id));
     }
     setSelectedIds(next);
   };
@@ -65,10 +58,6 @@ function MemberTable({
       next.add(id);
     }
     setSelectedIds(next);
-  };
-
-  const handlePageChange = (nextPage: number) => {
-    setPagination({ memberListKey, page: nextPage });
   };
 
   return (
@@ -108,7 +97,7 @@ function MemberTable({
             </TableRow>
           </TableHeader>
           <TableBody>
-            {currentPageMembers.map((member) => (
+            {members.map((member) => (
               <MemberTableRow
                 key={member.id}
                 member={member}
@@ -122,11 +111,7 @@ function MemberTable({
       </div>
 
       {totalPages > 1 && (
-        <MemberPagination
-          page={currentPage}
-          totalPages={totalPages}
-          onPageChange={handlePageChange}
-        />
+        <MemberPagination page={currentPage} totalPages={totalPages} onPageChange={onPageChange} />
       )}
     </div>
   );

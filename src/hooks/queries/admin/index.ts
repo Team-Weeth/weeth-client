@@ -1,5 +1,5 @@
 export { adminQueryKeys } from './adminQueryKeys';
-export { useAdminMembers } from './useAdminMemberQueries';
+export { EMPTY_MEMBER_PAGE, useAdminMembers } from './useAdminMemberQueries';
 export {
   useAdminSessions,
   useAdminAttendance,

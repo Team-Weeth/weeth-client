@@ -6,6 +6,7 @@ import {
   AlertDialogCancel,
   Avatar,
   AvatarFallback,
+  AvatarImage,
   Button,
   Icon,
 } from '@/components/ui';
@@ -80,6 +81,9 @@ function MemberDetailModal({
         <div className="flex flex-col gap-500 overflow-y-auto px-700 pt-200 pb-600">
           <section className="bg-container-neutral flex items-center gap-500 rounded-lg px-500 py-[18px]">
             <Avatar size={64}>
+              {member.profileImageUrl && (
+                <AvatarImage src={member.profileImageUrl} alt={`${member.name} 프로필 이미지`} />
+              )}
               <AvatarFallback />
             </Avatar>
 
@@ -91,7 +95,14 @@ function MemberDetailModal({
                 )}
               </div>
               <MemberStatusBadge status={member.status} variant="dot" />
-              <p className="typo-body2 text-text-alternative truncate">-</p>
+              <p
+                className={cn(
+                  'typo-body2 truncate',
+                  member.bio ? 'text-text-alternative' : 'text-text-disabled',
+                )}
+              >
+                {member.bio ?? '-'}
+              </p>
             </div>
           </section>
 
@@ -197,7 +208,7 @@ function getModalPersonalInfo(member: Member) {
     { label: '학번', value: member.studentId },
     { label: '전화번호', value: member.phone },
     { label: '이메일', value: member.email },
-    { label: '가입일', value: '-' },
+    { label: '가입일', value: member.joinedAt },
   ];
 }
 

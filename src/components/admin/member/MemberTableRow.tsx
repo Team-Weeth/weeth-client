@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 
 import { AdminMeatballIcon } from '@/assets/icons/admin';
-import { Avatar, AvatarFallback, Icon, TableCell, TableRow } from '@/components/ui';
+import { Avatar, AvatarFallback, AvatarImage, Icon, TableCell, TableRow } from '@/components/ui';
 import { cn } from '@/lib/cn';
 import type { Member } from '@/types/admin/member';
 import { formatCardinalLabel, getVisibleMemberCardinals } from '@/utils/admin/memberTableUtils';
@@ -98,12 +98,21 @@ function MemberProfileCell({ member }: { member: Member }) {
     <TableCell className="h-16 w-[172px] p-0 pr-400">
       <div className="flex min-w-0 items-center gap-300">
         <Avatar size={40}>
+          {member.profileImageUrl && (
+            <AvatarImage src={member.profileImageUrl} alt={`${member.name} 프로필 이미지`} />
+          )}
           <AvatarFallback />
         </Avatar>
         <div className="flex min-w-0 flex-col justify-center gap-0.5">
           <span className="typo-button2 text-text-normal truncate">{member.name}</span>
-          {/* 자기소개가 없는 경우 '-' 표시. TODO : api 응답에 자기소개 추가되어야 함 */}
-          <span className="typo-caption2 text-text-alternative truncate">-</span>
+          <span
+            className={cn(
+              'typo-caption2 truncate',
+              member.bio ? 'text-text-alternative' : 'text-text-disabled',
+            )}
+          >
+            {member.bio ?? '-'}
+          </span>
         </div>
       </div>
     </TableCell>

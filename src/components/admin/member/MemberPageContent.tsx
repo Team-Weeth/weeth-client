@@ -11,7 +11,7 @@ import {
 } from '@/components/admin';
 import { MEMBER_CARDINAL_ERROR_CODE, MEMBER_ROLE_ERROR_CODE } from '@/constants/errorCode';
 import type { ClubMemberRole, Member } from '@/types/admin/member';
-import { useAdminMembers } from '@/hooks/queries/admin';
+import { EMPTY_MEMBER_PAGE, useAdminMembers } from '@/hooks/queries/admin';
 import { useCardinals } from '@/hooks/queries';
 import { useUserRole } from '@/stores';
 import {
@@ -35,14 +35,20 @@ import {
 import { getApiErrorCode } from '@/utils/shared';
 import { runBulkMutation } from '@/utils/shared/runBulkMutation';
 
+const MEMBER_PAGE_SIZE = 10;
+
 function MemberPageContent() {
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [selectedMemberById, setSelectedMemberById] = useState<Map<string, Member>>(new Map());
   const [detailMemberId, setDetailMemberId] = useState<string | null>(null);
   const [cardinalModalMemberId, setCardinalModalMemberId] = useState<string | null>(null);
   const [selectedCardinal, setSelectedCardinal] = useState<number | 'all'>('all');
   const [sortBy, setSortBy] = useState<MemberSortBy>('cardinal');
   const [searchQuery, setSearchQuery] = useState('');
-  const { data: members = [] } = useAdminMembers();
+  const [page, setPage] = useState(1);
+  const { data: memberPage = EMPTY_MEMBER_PAGE } = useAdminMembers(page - 1, MEMBER_PAGE_SIZE);
+  const members = memberPage.content;
+  const totalPages = Math.max(memberPage.totalPages ?? 1, 1);
   const { data: cardinals = [] } = useCardinals();
   const { mutateAsync: changeMemberRoleAsync } = useChangeMemberRole();
   const { mutateAsync: banMemberAsync } = useBanMember();
@@ -54,10 +60,14 @@ function MemberPageContent() {
   const [forceConfirm, setForceConfirm] = useState<ForceConfirmState | null>(null);
 
   const detailMember = detailMemberId
-    ? (members.find((m) => m.id === detailMemberId) ?? null)
+    ? (members.find((m) => m.id === detailMemberId) ??
+      selectedMemberById.get(detailMemberId) ??
+      null)
     : null;
   const cardinalModalMember = cardinalModalMemberId
-    ? (members.find((m) => m.id === cardinalModalMemberId) ?? null)
+    ? (members.find((m) => m.id === cardinalModalMemberId) ??
+      selectedMemberById.get(cardinalModalMemberId) ??
+      null)
     : null;
 
   const handleMemberAction = (m: Member) => {
@@ -69,7 +79,9 @@ function MemberPageContent() {
     sortBy,
   );
 
-  const selectedMembers = filteredMembers.filter((m) => selectedIds.has(m.id));
+  const selectedMembers = Array.from(selectedMemberById.values()).filter((m) =>
+    selectedIds.has(m.id),
+  );
   const selectedCount = selectedMembers.length;
   const selectedClubMemberIds = getMemberIds(selectedMembers);
   const selectedMemberCardinals = getSelectedMemberCardinals(selectedMembers);
@@ -77,7 +89,41 @@ function MemberPageContent() {
   const targetRole = getBulkTargetRole(selectedMembers);
   const targetBanAction = getBulkBanAction(selectedMembers);
 
-  const handleClearSelection = () => setSelectedIds(new Set());
+  const handleClearSelection = () => {
+    setSelectedIds(new Set());
+    setSelectedMemberById(new Map());
+  };
+
+  const handleSelectionChange = (nextIds: Set<string>) => {
+    setSelectedIds(nextIds);
+    setSelectedMemberById((prev) => {
+      const next = new Map(prev);
+
+      next.forEach((_, id) => {
+        if (!nextIds.has(id)) next.delete(id);
+      });
+
+      members.forEach((member) => {
+        if (nextIds.has(member.id)) {
+          next.set(member.id, member);
+        } else {
+          next.delete(member.id);
+        }
+      });
+
+      return next;
+    });
+  };
+
+  const handleSelectCardinal = (cardinal: number | 'all') => {
+    setSelectedCardinal(cardinal);
+    setPage(1);
+  };
+
+  const handleSearchQueryChange = (query: string) => {
+    setSearchQuery(query);
+    setPage(1);
+  };
 
   const submitCardinalsChange = async (
     clubMemberIds: number[],
@@ -207,11 +253,11 @@ function MemberPageContent() {
           <MemberPageHeader
             cardinals={cardinals}
             selectedCardinal={selectedCardinal}
-            onSelectCardinal={setSelectedCardinal}
+            onSelectCardinal={handleSelectCardinal}
             sortBy={sortBy}
             onToggleSort={() => setSortBy((prev) => (prev === 'cardinal' ? 'name' : 'cardinal'))}
             searchQuery={searchQuery}
-            onSearchQueryChange={setSearchQuery}
+            onSearchQueryChange={handleSearchQueryChange}
           />
 
           {/* Main content */}
@@ -219,8 +265,11 @@ function MemberPageContent() {
             {/* Member table */}
             <MemberTable
               members={filteredMembers}
+              page={page}
+              totalPages={totalPages}
+              onPageChange={setPage}
               selectedIds={selectedIds}
-              onSelectionChange={setSelectedIds}
+              onSelectionChange={handleSelectionChange}
               onMemberAction={handleMemberAction}
             />
           </div>
