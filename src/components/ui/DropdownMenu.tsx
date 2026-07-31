@@ -40,7 +40,7 @@ function DropdownMenuContent({
         data-slot="dropdown-menu-content"
         sideOffset={sideOffset}
         className={cn(
-          'bg-container-neutral z-90 flex min-w-[144px] flex-col items-center overflow-hidden rounded-md shadow-[0px_4px_14px_0px_rgba(0,0,0,0.25)]',
+          'scrollbar-custom bg-container-neutral z-90 flex max-h-[min(var(--radix-dropdown-menu-content-available-height),320px)] min-w-[144px] touch-pan-y flex-col items-center overflow-y-auto overscroll-contain rounded-md shadow-[0px_4px_14px_0px_rgba(0,0,0,0.25)] [-webkit-overflow-scrolling:touch]',
           'data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95',
           'data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95',
           className,
@@ -62,7 +62,7 @@ function DropdownMenuItem({
     <DropdownMenuPrimitive.Item
       data-slot="dropdown-menu-item"
       className={cn(
-        'typo-button1 flex h-12 w-full cursor-pointer items-center px-400 outline-none',
+        'typo-button1 flex h-12 w-full shrink-0 cursor-pointer items-center px-400 outline-none',
         'focus:bg-container-neutral-interaction',
         destructive ? 'text-state-error' : 'text-text-normal',
         className,

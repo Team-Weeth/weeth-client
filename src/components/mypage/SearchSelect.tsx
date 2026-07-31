@@ -58,7 +58,7 @@ function SearchSelect({
         )}
       </div>
       {open && filtered.length > 0 && (
-        <ul className="bg-container-neutral border-container-neutral-interaction absolute z-10 mt-100 max-h-[200px] w-full overflow-y-auto rounded-lg border shadow-md">
+        <ul className="scrollbar-custom bg-container-neutral border-container-neutral-interaction absolute z-10 mt-100 max-h-[min(200px,calc(100dvh-120px))] w-full touch-pan-y overflow-y-auto overscroll-contain rounded-lg border shadow-md [-webkit-overflow-scrolling:touch]">
           {filtered.map((option) => (
             <li
               key={option}
