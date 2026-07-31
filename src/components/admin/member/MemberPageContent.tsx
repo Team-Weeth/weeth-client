@@ -1,13 +1,18 @@
 'use client';
 
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useState } from 'react';
 
 import {
   MemberPageHeader,
   MemberPageModals,
+  MemberCardList,
+  MemberMobileSearchPage,
   MemberTable,
   MemberTopBar,
+  MobileMemberTopBar,
   type ForceConfirmState,
+  type MemberViewMode,
 } from '@/components/admin';
 import { MEMBER_CARDINAL_ERROR_CODE, MEMBER_ROLE_ERROR_CODE } from '@/constants/errorCode';
 import type { ClubMemberRole, Member } from '@/types/admin/member';
@@ -22,6 +27,7 @@ import {
   useTransferLead,
 } from '@/hooks/mutations/admin';
 import { toastError, toastSuccess } from '@/stores/useToastStore';
+import { cn } from '@/lib/cn';
 import { getBulkBanAction, getBulkTargetRole } from '@/utils/admin/memberBulkActions';
 import {
   createBulkCardinalChangeRequests,
@@ -36,8 +42,15 @@ import { getApiErrorCode } from '@/utils/shared';
 import { runBulkMutation } from '@/utils/shared/runBulkMutation';
 
 const MEMBER_PAGE_SIZE = 10;
+const MEMBER_VIEW_MODE_QUERY_KEY = 'view';
+
+const isMemberViewMode = (value: string | null): value is MemberViewMode =>
+  value === 'table' || value === 'card';
 
 function MemberPageContent() {
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [selectedMemberById, setSelectedMemberById] = useState<Map<string, Member>>(new Map());
   const [detailMemberId, setDetailMemberId] = useState<string | null>(null);
@@ -45,6 +58,9 @@ function MemberPageContent() {
   const [selectedCardinal, setSelectedCardinal] = useState<number | 'all'>('all');
   const [sortBy, setSortBy] = useState<MemberSortBy>('cardinal');
   const [searchQuery, setSearchQuery] = useState('');
+  const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
+  const viewModeParam = searchParams.get(MEMBER_VIEW_MODE_QUERY_KEY);
+  const mobileViewMode: MemberViewMode = isMemberViewMode(viewModeParam) ? viewModeParam : 'table';
   const [page, setPage] = useState(1);
   const { data: memberPage = EMPTY_MEMBER_PAGE } = useAdminMembers(page - 1, MEMBER_PAGE_SIZE);
   const members = memberPage.content;
@@ -123,6 +139,18 @@ function MemberPageContent() {
   const handleSearchQueryChange = (query: string) => {
     setSearchQuery(query);
     setPage(1);
+  };
+
+  const handleCloseMobileSearch = () => {
+    setIsMobileSearchOpen(false);
+    setSearchQuery('');
+    setPage(1);
+  };
+
+  const handleMobileViewModeChange = (mode: MemberViewMode) => {
+    const nextParams = new URLSearchParams(searchParams.toString());
+    nextParams.set(MEMBER_VIEW_MODE_QUERY_KEY, mode);
+    router.replace(`${pathname}?${nextParams.toString()}`, { scroll: false });
   };
 
   const submitCardinalsChange = async (
@@ -225,54 +253,156 @@ function MemberPageContent() {
 
   return (
     <>
-      <div className="flex min-h-full min-w-0 pr-450">
-        <div className="bg-container-neutral flex min-w-0 flex-1 flex-col rounded-t-[20px]">
-          {/* Selection top bar */}
-          <MemberTopBar
-            selectedCount={selectedCount}
-            targetRole={targetRole}
-            targetBanAction={targetBanAction}
-            onBack={handleClearSelection}
-            onChangeRole={
-              targetRole ? () => submitChangeRole(selectedClubMemberIds, targetRole) : undefined
-            }
-            onBan={targetBanAction === 'ban' ? () => submitBan(selectedClubMemberIds) : undefined}
-            onRestore={
-              targetBanAction === 'restore' ? () => submitRestore(selectedClubMemberIds) : undefined
-            }
-            onChangeCardinals={handleChangeCardinalsForBulk}
-            selectedMemberName={selectedMembers[0]?.name}
-            selectedMemberCardinals={selectedMemberCardinals}
-            onTransferLead={
-              isLead && selectedCount === 1
-                ? () => handleTransferLead(selectedMembers[0].clubMemberId)
-                : undefined
-            }
-          />
+      <div className="max-tablet:!w-full max-tablet:!max-w-full max-tablet:!overflow-x-hidden max-tablet:!pr-0 flex min-h-full min-w-0 pr-450">
+        <div className="bg-container-neutral max-tablet:!w-full max-tablet:!max-w-full max-tablet:!rounded-none flex min-h-0 min-w-0 flex-1 flex-col rounded-t-[20px]">
+          <div
+            className={cn(
+              'flex min-h-0 flex-1 flex-col',
+              isMobileSearchOpen && 'max-tablet:hidden',
+            )}
+          >
+            {/* Selection top bar */}
+            <MemberTopBar
+              selectedCount={selectedCount}
+              targetRole={targetRole}
+              targetBanAction={targetBanAction}
+              onBack={handleClearSelection}
+              onChangeRole={
+                targetRole ? () => submitChangeRole(selectedClubMemberIds, targetRole) : undefined
+              }
+              onBan={targetBanAction === 'ban' ? () => submitBan(selectedClubMemberIds) : undefined}
+              onRestore={
+                targetBanAction === 'restore'
+                  ? () => submitRestore(selectedClubMemberIds)
+                  : undefined
+              }
+              onChangeCardinals={handleChangeCardinalsForBulk}
+              selectedMemberName={selectedMembers[0]?.name}
+              selectedMemberCardinals={selectedMemberCardinals}
+              onTransferLead={
+                isLead && selectedCount === 1
+                  ? () => handleTransferLead(selectedMembers[0].clubMemberId)
+                  : undefined
+              }
+            />
 
-          <MemberPageHeader
-            cardinals={cardinals}
-            selectedCardinal={selectedCardinal}
-            onSelectCardinal={handleSelectCardinal}
-            sortBy={sortBy}
-            onToggleSort={() => setSortBy((prev) => (prev === 'cardinal' ? 'name' : 'cardinal'))}
-            searchQuery={searchQuery}
-            onSearchQueryChange={handleSearchQueryChange}
-          />
+            <MemberPageHeader
+              cardinals={cardinals}
+              selectedCardinal={selectedCardinal}
+              onSelectCardinal={handleSelectCardinal}
+              sortBy={sortBy}
+              onToggleSort={() => setSortBy((prev) => (prev === 'cardinal' ? 'name' : 'cardinal'))}
+              searchQuery={searchQuery}
+              onSearchQueryChange={handleSearchQueryChange}
+              mobileViewMode={mobileViewMode}
+              onMobileViewModeChange={handleMobileViewModeChange}
+              onOpenMobileSearch={() => setIsMobileSearchOpen(true)}
+            />
 
-          {/* Main content */}
-          <div className="flex flex-col p-700">
-            {/* Member table */}
-            <MemberTable
+            <MobileMemberTopBar
+              selectedCount={selectedCount}
+              targetRole={targetRole}
+              targetBanAction={targetBanAction}
+              onBack={handleClearSelection}
+              onChangeRole={
+                targetRole ? () => submitChangeRole(selectedClubMemberIds, targetRole) : undefined
+              }
+              onBan={targetBanAction === 'ban' ? () => submitBan(selectedClubMemberIds) : undefined}
+              onRestore={
+                targetBanAction === 'restore'
+                  ? () => submitRestore(selectedClubMemberIds)
+                  : undefined
+              }
+              onChangeCardinals={handleChangeCardinalsForBulk}
+              selectedMemberName={selectedMembers[0]?.name}
+              selectedMemberCardinals={selectedMemberCardinals}
+              onTransferLead={
+                isLead && selectedCount === 1
+                  ? () => handleTransferLead(selectedMembers[0].clubMemberId)
+                  : undefined
+              }
+            />
+
+            {/* Main content */}
+            <div className="max-tablet:p-450 flex min-h-0 flex-col p-700">
+              <div className={mobileViewMode === 'card' ? 'max-tablet:hidden' : undefined}>
+                {/* Member table */}
+                <MemberTable
+                  members={filteredMembers}
+                  page={page}
+                  totalPages={totalPages}
+                  onPageChange={setPage}
+                  selectedIds={selectedIds}
+                  onSelectionChange={handleSelectionChange}
+                  onMemberAction={handleMemberAction}
+                />
+              </div>
+
+              {mobileViewMode === 'card' && (
+                <MemberCardList
+                  className="tablet:hidden"
+                  members={filteredMembers}
+                  page={page}
+                  totalPages={totalPages}
+                  sortBy={sortBy}
+                  onToggleSort={() =>
+                    setSortBy((prev) => (prev === 'cardinal' ? 'name' : 'cardinal'))
+                  }
+                  onPageChange={setPage}
+                  selectedIds={selectedIds}
+                  onSelectionChange={handleSelectionChange}
+                  onMemberAction={handleMemberAction}
+                />
+              )}
+            </div>
+          </div>
+
+          {isMobileSearchOpen && (
+            <MemberMobileSearchPage
+              searchQuery={searchQuery}
+              onSearchQueryChange={handleSearchQueryChange}
+              onCancel={handleCloseMobileSearch}
+              viewMode={mobileViewMode}
               members={filteredMembers}
               page={page}
               totalPages={totalPages}
+              sortBy={sortBy}
+              onToggleSort={() => setSortBy((prev) => (prev === 'cardinal' ? 'name' : 'cardinal'))}
               onPageChange={setPage}
               selectedIds={selectedIds}
               onSelectionChange={handleSelectionChange}
               onMemberAction={handleMemberAction}
+              selectionBar={
+                <MobileMemberTopBar
+                  selectedCount={selectedCount}
+                  targetRole={targetRole}
+                  targetBanAction={targetBanAction}
+                  onBack={handleClearSelection}
+                  onChangeRole={
+                    targetRole
+                      ? () => submitChangeRole(selectedClubMemberIds, targetRole)
+                      : undefined
+                  }
+                  onBan={
+                    targetBanAction === 'ban' ? () => submitBan(selectedClubMemberIds) : undefined
+                  }
+                  onRestore={
+                    targetBanAction === 'restore'
+                      ? () => submitRestore(selectedClubMemberIds)
+                      : undefined
+                  }
+                  onChangeCardinals={handleChangeCardinalsForBulk}
+                  selectedMemberName={selectedMembers[0]?.name}
+                  selectedMemberCardinals={selectedMemberCardinals}
+                  onTransferLead={
+                    isLead && selectedCount === 1
+                      ? () => handleTransferLead(selectedMembers[0].clubMemberId)
+                      : undefined
+                  }
+                />
+              }
             />
-          </div>
+          )}
         </div>
       </div>
 

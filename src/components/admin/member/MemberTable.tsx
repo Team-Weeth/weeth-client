@@ -63,10 +63,7 @@ function MemberTable({
   return (
     <div className={cn('min-w-0', className)} {...props}>
       <div className="border-line overflow-hidden rounded-sm border">
-        <Table
-          className="w-max min-w-full border-separate border-spacing-0"
-          wrapperClassName="overflow-auto"
-        >
+        <Table className="w-max min-w-full border-separate border-spacing-0">
           <TableHeader className="bg-container-neutral-alternative sticky top-0 z-10">
             <TableRow className="h-11 border-0 hover:bg-transparent">
               <TableHead className="h-11 w-16 min-w-16 p-0 pl-300">

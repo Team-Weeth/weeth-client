@@ -2,13 +2,25 @@
 
 import React from 'react';
 
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, Button } from '@/components/ui';
+import { AdminCloseIcon } from '@/assets/icons/admin';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  Button,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  Icon,
+} from '@/components/ui';
 import { ChangeCardinalsModal } from '@/components/admin/member/modal/ChangeCardinalsModal';
 import { FloatingSelectionBar } from '@/components/admin/FloatingSelectionBar';
 import { cn } from '@/lib/cn';
 import { getTopBarActions } from '@/constants/admin/memberTopBar.constants';
 
 import type { ClubMemberRole } from '@/types/admin/member';
+import type { TopBarAction } from '@/constants/admin/memberTopBar.constants';
 
 interface MemberTopBarProps extends React.HTMLAttributes<HTMLDivElement> {
   selectedCount: number;
@@ -66,7 +78,7 @@ function MemberTopBar({
       selectedCount={selectedCount}
       visible={isVisible}
       onClear={onBack}
-      className={className}
+      className={cn('max-tablet:hidden', className)}
       {...props}
     >
       {topBarActions.map(({ label, title, description, handler, disabled }) => (
@@ -113,4 +125,138 @@ function MemberTopBar({
   );
 }
 
-export { MemberTopBar, type MemberTopBarProps };
+function MobileMemberTopBar({
+  className,
+  selectedCount,
+  targetRole,
+  targetBanAction,
+  onBack,
+  onApprove,
+  onChangeRole,
+  onBan,
+  onRestore,
+  onChangeCardinals,
+  selectedMemberName,
+  selectedMemberCardinals = [],
+  onTransferLead,
+  ...props
+}: MemberTopBarProps) {
+  const [pendingAction, setPendingAction] = React.useState<TopBarAction | null>(null);
+  const [isCardinalsOpen, setIsCardinalsOpen] = React.useState(false);
+  const isVisible = selectedCount > 0;
+  const changeCardinalsOverline =
+    selectedCount === 1 && selectedMemberName
+      ? `'${selectedMemberName}'의 기수를 선택하세요`
+      : `${selectedCount}명의 기수를 일괄 변경합니다.`;
+
+  const topBarActions = getTopBarActions({
+    selectedCount,
+    targetRole,
+    targetBanAction,
+    onApprove,
+    onChangeRole,
+    onBan,
+    onRestore,
+    onTransferLead,
+  });
+
+  const handleActionConfirm = () => {
+    pendingAction?.handler?.();
+    setPendingAction(null);
+  };
+
+  if (!isVisible) return null;
+
+  return (
+    <div
+      className={cn(
+        'bg-container-floating tablet:hidden flex items-center justify-between px-450 py-300',
+        className,
+      )}
+      {...props}
+    >
+      <div className="flex shrink-0 items-center gap-200 pr-300">
+        <span className="bg-button-primary text-text-inverse typo-caption1 flex h-[22px] min-w-[22px] items-center justify-center rounded-full px-[7px]">
+          {selectedCount}
+        </span>
+        <span className="typo-button2 text-text-alternative shrink-0">명 선택됨</span>
+      </div>
+
+      <div className="flex min-w-0 items-center gap-300">
+        <button
+          type="button"
+          onClick={onBack}
+          className="flex shrink-0 cursor-pointer items-center gap-100 p-200"
+          aria-label="선택 해제"
+        >
+          <Icon src={AdminCloseIcon} size={16} className="text-icon-disabled" alt="" />
+          <span className="typo-caption2 text-text-disabled">해제</span>
+        </button>
+
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <button
+              type="button"
+              className="bg-container-neutral text-text-strong typo-caption1 shrink-0 cursor-pointer rounded-sm px-300 py-200"
+            >
+              작업 선택
+            </button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-[160px] items-stretch">
+            {topBarActions.map((action) => (
+              <DropdownMenuItem
+                key={action.label}
+                disabled={action.disabled}
+                destructive={action.label.includes('추방')}
+                onSelect={(event) => {
+                  event.preventDefault();
+                  if (!action.disabled) setPendingAction(action);
+                }}
+              >
+                {action.label}
+              </DropdownMenuItem>
+            ))}
+
+            {onChangeCardinals && (
+              <DropdownMenuItem
+                onSelect={(event) => {
+                  event.preventDefault();
+                  setIsCardinalsOpen(true);
+                }}
+              >
+                기수 변경
+              </DropdownMenuItem>
+            )}
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
+
+      {onChangeCardinals && (
+        <ChangeCardinalsModal
+          open={isCardinalsOpen}
+          onOpenChange={setIsCardinalsOpen}
+          overline={changeCardinalsOverline}
+          memberCount={selectedCount}
+          memberCardinals={selectedMemberCardinals}
+          onSubmit={onChangeCardinals}
+        />
+      )}
+
+      {pendingAction && (
+        <AlertDialog
+          open
+          onOpenChange={(open) => {
+            if (!open) setPendingAction(null);
+          }}
+          title={pendingAction.title}
+          description={pendingAction.description}
+        >
+          <AlertDialogAction onClick={handleActionConfirm}>확인</AlertDialogAction>
+          <AlertDialogCancel>취소</AlertDialogCancel>
+        </AlertDialog>
+      )}
+    </div>
+  );
+}
+
+export { MemberTopBar, MobileMemberTopBar, type MemberTopBarProps };

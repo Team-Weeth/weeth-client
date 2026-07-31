@@ -57,7 +57,7 @@ export default async function AdminLayout({
             <Header />
             <div className="flex flex-1 overflow-hidden">
               <LNB />
-              <main className="bg-background min-w-0 flex-1 overflow-x-auto overflow-y-auto">
+              <main className="bg-background tablet:overflow-x-auto min-h-0 min-w-0 flex-1 touch-pan-y overflow-x-hidden overflow-y-auto overscroll-contain [-webkit-overflow-scrolling:touch]">
                 {children}
               </main>
             </div>
