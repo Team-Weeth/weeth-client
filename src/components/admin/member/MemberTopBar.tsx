@@ -79,7 +79,7 @@ function MemberTopBar({
               variant="secondary"
               size="md"
               className={cn(
-                'typo-button2 bg-container-neutral text-text-strong hover:bg-container-neutral-interaction shrink-0 rounded-sm px-300 py-200 whitespace-nowrap',
+                'typo-button2 bg-static-on-floating text-container-floating hover:bg-static-on-floating/90 shrink-0 rounded-sm px-300 py-200 whitespace-nowrap',
                 label.includes('추방') && 'text-state-error',
               )}
               disabled={disabled}
@@ -103,7 +103,7 @@ function MemberTopBar({
           <Button
             variant="secondary"
             size="md"
-            className="typo-button2 bg-container-neutral text-text-strong hover:bg-container-neutral-interaction shrink-0 rounded-sm px-300 py-200 whitespace-nowrap"
+            className="typo-button2 bg-static-on-floating text-container-floating hover:bg-static-on-floating/90 shrink-0 rounded-sm px-300 py-200 whitespace-nowrap"
           >
             기수 변경
           </Button>
