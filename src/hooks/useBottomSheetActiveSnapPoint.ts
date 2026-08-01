@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useState } from 'react';
 
 type BottomSheetSnapPoint = number | string | null;
 
@@ -25,37 +25,18 @@ function useBottomSheetActiveSnapPoint({
     defaultActiveSnapPoint ?? null,
   );
   const controlledActiveSnapPoint = activeSnapPoint !== undefined;
+  const defaultDrawerActiveSnapPoint = defaultActiveSnapPoint ?? resolvedSnapPoints?.[0] ?? null;
+  const isOpen = open ?? defaultOpen ?? false;
   const drawerActiveSnapPoint = controlledActiveSnapPoint
     ? activeSnapPoint
-    : internalActiveSnapPoint;
+    : (internalActiveSnapPoint ?? (isOpen ? defaultDrawerActiveSnapPoint : null));
   const setDrawerActiveSnapPoint = controlledActiveSnapPoint
     ? setActiveSnapPoint
     : setInternalActiveSnapPoint;
-  const defaultDrawerActiveSnapPoint = defaultActiveSnapPoint ?? resolvedSnapPoints?.[0] ?? null;
-  const previousOpenRef = useRef(open ?? defaultOpen ?? false);
-
-  useEffect(() => {
-    if (controlledActiveSnapPoint || defaultDrawerActiveSnapPoint === null) return;
-
-    const wasOpen = previousOpenRef.current;
-    const isOpen = open ?? defaultOpen ?? false;
-
-    if ((!wasOpen && isOpen) || (isOpen && internalActiveSnapPoint === null)) {
-      setInternalActiveSnapPoint(defaultDrawerActiveSnapPoint);
-    }
-
-    previousOpenRef.current = isOpen;
-  }, [
-    controlledActiveSnapPoint,
-    defaultDrawerActiveSnapPoint,
-    defaultOpen,
-    internalActiveSnapPoint,
-    open,
-  ]);
 
   const handleOpenChange = (nextOpen: boolean) => {
     if (!nextOpen && !controlledActiveSnapPoint) {
-      setInternalActiveSnapPoint(defaultDrawerActiveSnapPoint);
+      setInternalActiveSnapPoint(null);
     }
 
     onOpenChange?.(nextOpen);
