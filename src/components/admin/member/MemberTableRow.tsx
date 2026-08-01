@@ -16,10 +16,10 @@ interface MemberTableRowProps {
 }
 
 const TEXT_CELL_CLASS_BY_ID = {
-  role: 'w-[118px]',
-  department: 'w-[190px]',
-  studentId: 'w-[138px]',
-  phone: 'w-[146px]',
+  role: 'w-[118px] max-tablet:w-[88px]',
+  department: 'w-[190px] max-tablet:w-[180px]',
+  studentId: 'w-[138px] max-tablet:w-[120px]',
+  phone: 'w-[146px] max-tablet:w-[132px]',
 } as const;
 
 const NUMBER_CELL_VALUES = ['attendance', 'absence', 'penaltyCount'] as const;
@@ -35,12 +35,18 @@ function MemberTableRow({ member, selected, onToggle, onMemberAction }: MemberTa
   return (
     <TableRow
       className={cn(
-        'bg-container-neutral [&>td]:border-line h-16 cursor-pointer border-0 hover:bg-neutral-200 [&:last-child>td]:border-b-0 [&>td]:border-b [&>td]:bg-transparent',
-        selected && 'bg-container-primary-alternative hover:bg-container-primary-alternative',
+        'bg-container-neutral [&>td]:border-line max-tablet:h-12 max-tablet:[&>td]:border-b-0 [&>td]:bg-container-neutral h-16 cursor-pointer border-0 hover:bg-neutral-200 [&:last-child>td]:border-b-0 [&>td]:border-b',
+        selected &&
+          'bg-container-primary-alternative hover:bg-container-primary-alternative [&>td]:bg-container-primary-alternative',
       )}
       onClick={() => onMemberAction?.(member)}
     >
-      <TableCell className="h-16 w-16 min-w-16 p-0 pl-300">
+      <TableCell
+        className={cn(
+          'h-16 w-16 min-w-16 p-0 pl-300',
+          'max-tablet:sticky max-tablet:left-0 max-tablet:z-20 max-tablet:h-12 max-tablet:w-12 max-tablet:min-w-12 max-tablet:bg-inherit max-tablet:pl-200',
+        )}
+      >
         <MemberSelectionCheckbox
           checked={selected}
           ariaLabel={`${member.name} ${member.studentId} 선택`}
@@ -62,7 +68,10 @@ function MemberTableRow({ member, selected, onToggle, onMemberAction }: MemberTa
       {NUMBER_CELL_VALUES.map((key) => (
         <MemberNumberCell key={key}>{member[key]}</MemberNumberCell>
       ))}
-      <TableCell className="h-16 w-12 p-0 px-100 py-300" aria-hidden />
+      <TableCell
+        className="max-tablet:h-12 max-tablet:py-100 h-16 w-12 p-0 px-100 py-300"
+        aria-hidden
+      />
 
       {textCells.slice(3).map(({ id, value }) => (
         <MemberTextCell key={id} className={TEXT_CELL_CLASS_BY_ID[id]}>
@@ -72,11 +81,11 @@ function MemberTableRow({ member, selected, onToggle, onMemberAction }: MemberTa
 
       <MemberCardinalsCell cardinal={member.cardinal} />
 
-      <TableCell className="h-16 w-[76px] p-0 px-400 py-[7px]">
+      <TableCell className="max-tablet:h-12 max-tablet:px-300 max-tablet:py-100 h-16 w-[76px] p-0 px-400 py-[7px]">
         <MemberStatusBadge status={member.status} />
       </TableCell>
 
-      <TableCell className="h-16 w-11 p-0 pr-700">
+      <TableCell className="max-tablet:h-12 max-tablet:pr-300 h-16 w-11 p-0 pr-700">
         <button
           type="button"
           className="text-icon-normal flex cursor-pointer items-center justify-center rounded-sm p-[10px]"
@@ -95,9 +104,14 @@ function MemberTableRow({ member, selected, onToggle, onMemberAction }: MemberTa
 
 function MemberProfileCell({ member }: { member: Member }) {
   return (
-    <TableCell className="h-16 w-[172px] p-0 pr-400">
-      <div className="flex min-w-0 items-center gap-300">
-        <Avatar size={40}>
+    <TableCell
+      className={cn(
+        'h-16 w-[172px] p-0 pr-400',
+        'max-tablet:sticky max-tablet:left-12 max-tablet:z-20 max-tablet:h-12 max-tablet:w-[132px] max-tablet:min-w-[132px] max-tablet:bg-inherit max-tablet:pr-200 max-tablet:after:absolute max-tablet:after:top-0 max-tablet:after:right-[-24px] max-tablet:after:h-full max-tablet:after:w-6 max-tablet:after:bg-[image:var(--member-table-sticky-shadow)] max-tablet:after:content-[""]',
+      )}
+    >
+      <div className="max-tablet:gap-200 flex min-w-0 items-center gap-300">
+        <Avatar size={40} className="max-tablet:size-7">
           {member.profileImageUrl && (
             <AvatarImage src={member.profileImageUrl} alt={`${member.name} 프로필 이미지`} />
           )}
@@ -107,7 +121,7 @@ function MemberProfileCell({ member }: { member: Member }) {
           <span className="typo-button2 text-text-normal truncate">{member.name}</span>
           <span
             className={cn(
-              'typo-caption2 truncate',
+              'typo-caption2 max-tablet:hidden truncate',
               member.bio ? 'text-text-alternative' : 'text-text-disabled',
             )}
           >
@@ -123,7 +137,7 @@ function MemberCardinalsCell({ cardinal }: { cardinal: string }) {
   const { visibleCardinals, hiddenCardinalCount } = getVisibleMemberCardinals(cardinal);
 
   return (
-    <TableCell className="h-16 w-[182px] p-0 px-400 py-[7px]">
+    <TableCell className="max-tablet:h-12 max-tablet:px-300 max-tablet:py-100 h-16 w-[182px] p-0 px-400 py-[7px]">
       <div className="flex items-center gap-100 overflow-hidden">
         {visibleCardinals.map((item) => (
           <CardinalTag key={item}>{formatCardinalLabel(item)}</CardinalTag>
@@ -144,7 +158,12 @@ function CardinalTag({ children }: { children: ReactNode }) {
 
 function MemberTextCell({ className, children }: { className?: string; children: ReactNode }) {
   return (
-    <TableCell className={cn('h-16 p-0 px-400 py-300', className)}>
+    <TableCell
+      className={cn(
+        'max-tablet:h-12 max-tablet:px-300 max-tablet:py-100 h-16 p-0 px-400 py-300',
+        className,
+      )}
+    >
       <span className="typo-body2 text-text-strong block truncate">{children}</span>
     </TableCell>
   );
@@ -152,7 +171,7 @@ function MemberTextCell({ className, children }: { className?: string; children:
 
 function MemberNumberCell({ children }: { children: ReactNode }) {
   return (
-    <TableCell className="h-16 w-12 p-0 px-100 py-300 text-center">
+    <TableCell className="max-tablet:h-12 max-tablet:py-100 h-16 w-12 p-0 px-100 py-300 text-center">
       <span className="typo-body2 text-text-strong">{children}</span>
     </TableCell>
   );

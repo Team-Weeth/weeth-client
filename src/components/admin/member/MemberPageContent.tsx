@@ -1,7 +1,7 @@
 'use client';
 
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import {
   MemberPageHeader,
@@ -14,8 +14,9 @@ import {
   type MemberViewMode,
 } from '@/components/admin';
 import type { Member } from '@/types/admin/member';
-import { EMPTY_MEMBER_PAGE, useAdminMembers } from '@/hooks/queries/admin';
+import { EMPTY_MEMBER_PAGE, useAdminMembers, useAdminMembersInfinite } from '@/hooks/queries/admin';
 import { useCardinals } from '@/hooks/queries';
+import { useIntersectionObserver, useMediaQuery } from '@/hooks';
 import { useUserRole } from '@/stores';
 import { cn } from '@/lib/cn';
 import { useMemberBulkActions } from './hooks/useMemberBulkActions';
@@ -35,12 +36,25 @@ function MemberPageContent() {
   const [detailMemberId, setDetailMemberId] = useState<string | null>(null);
   const [cardinalModalMemberId, setCardinalModalMemberId] = useState<string | null>(null);
   const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
+  const isMobile = useMediaQuery('(max-width: 695.98px)');
   const viewModeParam = searchParams.get(MEMBER_VIEW_MODE_QUERY_KEY);
   const mobileViewMode: MemberViewMode = isMemberViewMode(viewModeParam) ? viewModeParam : 'table';
   const [page, setPage] = useState(1);
-  const { data: memberPage = EMPTY_MEMBER_PAGE } = useAdminMembers(page - 1, MEMBER_PAGE_SIZE);
-  const members = memberPage.content;
+  const { data: memberPage = EMPTY_MEMBER_PAGE } = useAdminMembers(
+    page - 1,
+    MEMBER_PAGE_SIZE,
+    !isMobile,
+  );
+  const {
+    data: infiniteMembers = [],
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useAdminMembersInfinite(MEMBER_PAGE_SIZE, isMobile);
+  const members = isMobile ? infiniteMembers : memberPage.content;
   const totalPages = Math.max(memberPage.totalPages ?? 1, 1);
+  const mobileTotalPages = 1;
+  const { ref: sentinelRef, isIntersecting } = useIntersectionObserver({ rootMargin: '160px' });
   const { data: cardinals = [] } = useCardinals();
   const myRole = useUserRole();
   const isLead = myRole === 'LEAD';
@@ -82,6 +96,11 @@ function MemberPageContent() {
     selectedMembers,
     selectedMemberCardinals,
   });
+
+  useEffect(() => {
+    if (!isMobile || !isIntersecting || !hasNextPage || isFetchingNextPage) return;
+    fetchNextPage();
+  }, [fetchNextPage, hasNextPage, isFetchingNextPage, isIntersecting, isMobile]);
 
   const detailMember = detailMemberId
     ? (members.find((m) => m.id === detailMemberId) ??
@@ -157,13 +176,18 @@ function MemberPageContent() {
             <MobileMemberTopBar {...memberSelectionBarProps} />
 
             {/* Main content */}
-            <div className="max-tablet:min-h-0 max-tablet:flex-1 max-tablet:overflow-y-auto max-tablet:p-450 flex min-h-0 flex-col p-700">
+            <div
+              className={cn(
+                'max-tablet:min-h-0 max-tablet:flex-1 max-tablet:overflow-y-auto flex min-h-0 flex-col p-700',
+                mobileViewMode === 'card' ? 'max-tablet:p-450' : 'max-tablet:p-0',
+              )}
+            >
               <div className={mobileViewMode === 'card' ? 'max-tablet:hidden' : undefined}>
                 {/* Member table */}
                 <MemberTable
                   members={filteredMembers}
                   page={page}
-                  totalPages={totalPages}
+                  totalPages={isMobile ? mobileTotalPages : totalPages}
                   onPageChange={setPage}
                   selectedIds={selectedIds}
                   onSelectionChange={handleSelectionChange}
@@ -176,7 +200,7 @@ function MemberPageContent() {
                   className="tablet:hidden"
                   members={filteredMembers}
                   page={page}
-                  totalPages={totalPages}
+                  totalPages={mobileTotalPages}
                   sortBy={sortBy}
                   onToggleSort={toggleSort}
                   onPageChange={setPage}
@@ -184,6 +208,10 @@ function MemberPageContent() {
                   onSelectionChange={handleSelectionChange}
                   onMemberAction={handleMemberAction}
                 />
+              )}
+
+              {isMobile && !isMobileSearchOpen && (
+                <div ref={sentinelRef} className="h-px w-full shrink-0" />
               )}
             </div>
           </div>
@@ -196,13 +224,14 @@ function MemberPageContent() {
               viewMode={mobileViewMode}
               members={filteredMembers}
               page={page}
-              totalPages={totalPages}
+              totalPages={mobileTotalPages}
               sortBy={sortBy}
               onToggleSort={toggleSort}
               onPageChange={setPage}
               selectedIds={selectedIds}
               onSelectionChange={handleSelectionChange}
               onMemberAction={handleMemberAction}
+              listFooter={<div ref={sentinelRef} className="h-px w-full shrink-0" />}
               selectionBar={<MobileMemberTopBar {...memberSelectionBarProps} />}
             />
           )}

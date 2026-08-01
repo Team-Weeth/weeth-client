@@ -28,6 +28,7 @@ interface MemberMobileSearchPageProps extends HTMLAttributes<HTMLDivElement> {
   onSelectionChange: (ids: Set<string>) => void;
   onMemberAction?: (member: Member) => void;
   selectionBar?: ReactNode;
+  listFooter?: ReactNode;
 }
 
 function MemberMobileSearchPage({
@@ -46,6 +47,7 @@ function MemberMobileSearchPage({
   onSelectionChange,
   onMemberAction,
   selectionBar,
+  listFooter,
   ...props
 }: MemberMobileSearchPageProps) {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -112,6 +114,8 @@ function MemberMobileSearchPage({
             onMemberAction={onMemberAction}
           />
         )}
+
+        {listFooter}
       </div>
     </section>
   );

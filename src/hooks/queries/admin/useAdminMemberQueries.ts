@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 
 import { adminMemberApi } from '@/lib/apis/adminMember';
 import type { Member } from '@/types/admin/member';
@@ -17,7 +17,7 @@ const EMPTY_MEMBER_PAGE: PageResponse<Member> = {
   totalPages: 0,
 };
 
-export function useAdminMembers(pageNumber = 0, pageSize = 10) {
+export function useAdminMembers(pageNumber = 0, pageSize = 10, enabled = true) {
   const clubId = useClubId();
 
   return useQuery({
@@ -32,7 +32,33 @@ export function useAdminMembers(pageNumber = 0, pageSize = 10) {
       };
     },
     placeholderData: (previousData) => previousData,
-    enabled: !!clubId,
+    enabled: !!clubId && enabled,
+    staleTime: 30 * 60 * 1000,
+    gcTime: 60 * 60 * 1000,
+  });
+}
+
+export function useAdminMembersInfinite(pageSize = 10, enabled = true) {
+  const clubId = useClubId();
+
+  return useInfiniteQuery({
+    queryKey: [...adminQueryKeys.members(clubId), 'infinite', pageSize],
+    queryFn: async ({ pageParam }) => {
+      const res = await adminMemberApi.getMembers(clubId!, {
+        pageNumber: pageParam,
+        pageSize,
+      });
+      const page = res.data.data;
+
+      return {
+        ...page,
+        content: page.content.map(toMember),
+      };
+    },
+    initialPageParam: 0,
+    getNextPageParam: (lastPage) => (lastPage.hasNext ? lastPage.pageNumber + 1 : undefined),
+    select: (data) => data.pages.flatMap((page) => page.content),
+    enabled: !!clubId && enabled,
     staleTime: 30 * 60 * 1000,
     gcTime: 60 * 60 * 1000,
   });
