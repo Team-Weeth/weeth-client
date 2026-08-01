@@ -36,7 +36,11 @@ export function NoticeBoardBox() {
               }
             }}
           >
-            <Icon src={ArrowRightIcon} size={16} className="cursor-pointer px-1 py-[1px]" />
+            <Icon
+              src={ArrowRightIcon}
+              size={16}
+              className="text-icon-normal cursor-pointer px-1 py-[1px]"
+            />
           </button>
         )}
       </div>

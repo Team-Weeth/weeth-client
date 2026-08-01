@@ -21,12 +21,16 @@ function ScheduleTextField({
   className,
   error,
 }: ScheduleTextFieldProps) {
+  const handleChange = (nextValue: string) => {
+    onChange(maxLength === undefined ? nextValue : nextValue.slice(0, maxLength));
+  };
+
   return (
     <ScheduleFormField label={label}>
       <input
         type="text"
         value={value}
-        onChange={(e) => onChange(e.target.value)}
+        onChange={(e) => handleChange(e.target.value)}
         placeholder={placeholder}
         maxLength={maxLength}
         className={cn(
@@ -40,7 +44,7 @@ function ScheduleTextField({
           {error ? <span className="typo-caption2 text-state-error">{error}</span> : <span />}
           {maxLength !== undefined && (
             <span className="typo-caption2 text-text-alternative">
-              {value.length}/{maxLength}
+              {Math.min(value.length, maxLength)}/{maxLength}
             </span>
           )}
         </div>
