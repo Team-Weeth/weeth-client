@@ -55,6 +55,10 @@ function compareFixedBoards(a: Board, b: Board) {
   return (ai === -1 ? FIXED_BOARD_ORDER.length : ai) - (bi === -1 ? FIXED_BOARD_ORDER.length : bi);
 }
 
+function getFixedBoardKey(board: Board) {
+  return `fixed-${board.kind}-${board.boardId}`;
+}
+
 function handleNameMutationError(setNameError: (msg: string) => void) {
   return (err: unknown) => {
     const code = getApiErrorCode(err);
@@ -271,7 +275,7 @@ function BoardPageContent() {
           {fixedBoards.length > 0 && (
             <div className="flex flex-col gap-400">
               {fixedBoards.map((board, index) => (
-                <Fragment key={board.boardId}>
+                <Fragment key={getFixedBoardKey(board)}>
                   {index > 0 && <div className="border-line w-full border-t" />}
                   <BoardCard board={board} draggable={false} {...getToggleProps(board)} />
                 </Fragment>
