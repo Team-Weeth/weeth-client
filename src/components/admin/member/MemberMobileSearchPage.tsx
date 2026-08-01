@@ -88,7 +88,7 @@ function MemberMobileSearchPage({
 
       {selectionBar}
 
-      <div className="flex min-h-0 flex-1 flex-col p-450">
+      <div className="flex min-h-0 flex-1 flex-col overflow-y-auto p-450">
         {viewMode === 'card' ? (
           <MemberCardList
             members={members}
