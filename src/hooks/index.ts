@@ -30,3 +30,4 @@ export { useSyncFormToStore } from './useSyncFormToStore';
 export { useScrollToTopOnNavigate } from './useScrollToTopOnNavigate';
 export { useScrollToTopOnBlur } from './useScrollToTopOnBlur';
 export { useBottomSheetSnapPoints } from './useBottomSheetSnapPoints';
+export { useBottomSheetActiveSnapPoint } from './useBottomSheetActiveSnapPoint';

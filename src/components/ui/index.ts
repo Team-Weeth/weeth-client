@@ -47,7 +47,7 @@ export {
   BottomSheetActionItem,
   type BottomSheetProps,
   type BottomSheetActionItemProps,
-} from './BottomSheet';
+} from './bottom-sheet/BottomSheet';
 
 export {
   Breadcrumb,
