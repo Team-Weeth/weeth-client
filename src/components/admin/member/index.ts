@@ -3,6 +3,10 @@ export { ChangeCardinalsModal, type ChangeCardinalsModalProps } from './modal/Ch
 export { CardinalCard, cardinalCardVariants, type CardinalCardProps } from './CardinalCard';
 export { MemberCard, type MemberCardProps } from './MemberCard';
 export { MemberCardList, type MemberCardListProps } from './MemberCardList';
+export {
+  MemberDetailBottomSheet,
+  type MemberDetailBottomSheetProps,
+} from './modal/MemberDetailBottomSheet';
 export { MemberPageContent } from './MemberPageContent';
 export { MemberPageHeader, type MemberPageHeaderProps } from './MemberPageHeader';
 export { MemberPageModals, type ForceConfirmState } from './MemberPageModals';

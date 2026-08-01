@@ -43,6 +43,13 @@ export {
 export type { AlertDialogProps } from './alert-dialog';
 
 export {
+  BottomSheet,
+  BottomSheetActionItem,
+  type BottomSheetProps,
+  type BottomSheetActionItemProps,
+} from './BottomSheet';
+
+export {
   Breadcrumb,
   BreadcrumbList,
   BreadcrumbItem,

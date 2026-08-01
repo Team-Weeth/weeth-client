@@ -7,11 +7,9 @@ import {
   AlertDialog,
   AlertDialogAction,
   AlertDialogCancel,
+  BottomSheet,
+  BottomSheetActionItem,
   Button,
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
   Icon,
 } from '@/components/ui';
 import { ChangeCardinalsModal } from '@/components/admin/member/modal/ChangeCardinalsModal';
@@ -143,6 +141,7 @@ function MobileMemberTopBar({
 }: MemberTopBarProps) {
   const [pendingAction, setPendingAction] = React.useState<TopBarAction | null>(null);
   const [isCardinalsOpen, setIsCardinalsOpen] = React.useState(false);
+  const [isActionSheetOpen, setIsActionSheetOpen] = React.useState(false);
   const isVisible = selectedCount > 0;
   const changeCardinalsOverline =
     selectedCount === 1 && selectedMemberName
@@ -159,10 +158,19 @@ function MobileMemberTopBar({
     onRestore,
     onTransferLead,
   });
+  const memberStateAction = topBarActions.find(
+    (action) => action.label.includes('추방') || action.label.includes('복구'),
+  );
+  const mainActions = topBarActions.filter((action) => action !== memberStateAction);
 
   const handleActionConfirm = () => {
     pendingAction?.handler?.();
     setPendingAction(null);
+  };
+
+  const handleClearSelection = () => {
+    setIsActionSheetOpen(false);
+    onBack();
   };
 
   if (!isVisible) return null;
@@ -185,7 +193,7 @@ function MobileMemberTopBar({
       <div className="flex min-w-0 items-center gap-300">
         <button
           type="button"
-          onClick={onBack}
+          onClick={handleClearSelection}
           className="flex shrink-0 cursor-pointer items-center gap-100 p-200"
           aria-label="선택 해제"
         >
@@ -193,43 +201,80 @@ function MobileMemberTopBar({
           <span className="typo-caption2 text-text-disabled">해제</span>
         </button>
 
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
+        <button
+          type="button"
+          className="bg-container-neutral text-text-strong typo-caption1 shrink-0 cursor-pointer rounded-sm px-300 py-200"
+          onClick={() => setIsActionSheetOpen(true)}
+        >
+          작업 선택
+        </button>
+      </div>
+
+      <BottomSheet
+        open={isActionSheetOpen}
+        onOpenChange={setIsActionSheetOpen}
+        title="멤버 작업 선택"
+        expandable={false}
+        header={
+          <div className="flex items-center justify-between">
+            <div className="flex shrink-0 items-center gap-200">
+              <span className="bg-button-primary text-text-inverse typo-caption1 flex h-[22px] min-w-[22px] items-center justify-center rounded-full px-[7px]">
+                {selectedCount}
+              </span>
+              <span className="typo-button2 text-text-alternative shrink-0">명 선택됨</span>
+            </div>
             <button
               type="button"
-              className="bg-container-neutral text-text-strong typo-caption1 shrink-0 cursor-pointer rounded-sm px-300 py-200"
+              className="typo-button2 text-text-alternative cursor-pointer rounded-sm p-100"
+              onClick={handleClearSelection}
             >
-              작업 선택
+              선택 해제
             </button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-[160px] items-stretch">
-            {topBarActions.map((action) => (
-              <DropdownMenuItem
-                key={action.label}
-                disabled={action.disabled}
-                destructive={action.label.includes('추방')}
-                onSelect={(event) => {
-                  event.preventDefault();
-                  if (!action.disabled) setPendingAction(action);
-                }}
-              >
-                {action.label}
-              </DropdownMenuItem>
-            ))}
+          </div>
+        }
+      >
+        <div className="flex flex-col gap-100">
+          {mainActions.map((action) => (
+            <BottomSheetActionItem
+              key={action.label}
+              disabled={action.disabled}
+              destructive={action.label.includes('추방')}
+              onClick={() => {
+                if (action.disabled) return;
+                setIsActionSheetOpen(false);
+                setPendingAction(action);
+              }}
+            >
+              {action.label}
+            </BottomSheetActionItem>
+          ))}
 
-            {onChangeCardinals && (
-              <DropdownMenuItem
-                onSelect={(event) => {
-                  event.preventDefault();
-                  setIsCardinalsOpen(true);
-                }}
-              >
-                기수 변경
-              </DropdownMenuItem>
-            )}
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </div>
+          {onChangeCardinals && (
+            <BottomSheetActionItem
+              onClick={() => {
+                setIsActionSheetOpen(false);
+                setIsCardinalsOpen(true);
+              }}
+            >
+              기수 변경
+            </BottomSheetActionItem>
+          )}
+
+          {memberStateAction && (
+            <BottomSheetActionItem
+              disabled={memberStateAction.disabled}
+              destructive={memberStateAction.label.includes('추방')}
+              onClick={() => {
+                if (memberStateAction.disabled) return;
+                setIsActionSheetOpen(false);
+                setPendingAction(memberStateAction);
+              }}
+            >
+              {memberStateAction.label}
+            </BottomSheetActionItem>
+          )}
+        </div>
+      </BottomSheet>
 
       {onChangeCardinals && (
         <ChangeCardinalsModal

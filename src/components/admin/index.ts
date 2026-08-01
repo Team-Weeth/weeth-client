@@ -23,6 +23,10 @@ export { CardinalCard, cardinalCardVariants, type CardinalCardProps } from './me
 export { CardinalPillList, type CardinalPillListProps } from './member/CardinalPillList';
 export { MemberCard, type MemberCardProps } from './member/MemberCard';
 export { MemberCardList, type MemberCardListProps } from './member/MemberCardList';
+export {
+  MemberDetailBottomSheet,
+  type MemberDetailBottomSheetProps,
+} from './member/modal/MemberDetailBottomSheet';
 export { MemberDetailModal, type MemberDetailModalProps } from './member/modal/MemberDetailModal';
 export {
   MemberMobileSearchPage,

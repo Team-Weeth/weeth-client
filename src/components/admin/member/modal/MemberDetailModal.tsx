@@ -1,23 +1,15 @@
 'use client';
 
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-  Button,
-  Icon,
-} from '@/components/ui';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, Button, Icon } from '@/components/ui';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
-import { AttendanceProgressBar } from '@/components/attendance';
-import { MemberStatusBadge } from '@/components/admin/member/MemberStatusBadge';
 import { AdminCloseIcon } from '@/assets/icons/admin';
 import { getFooterActions } from '@/constants/admin/memberDetailModal.constants';
-import { cn } from '@/lib/cn';
-import { parseCardinals } from '@/utils/admin/parseCardinals';
 import type { Member } from '@/types/admin/member';
+import {
+  MemberActivityInfoCard,
+  MemberDetailSummary,
+  MemberPersonalInfoCard,
+} from './MemberDetailSections';
 
 interface MemberDetailModalProps {
   open: boolean;
@@ -44,13 +36,6 @@ function MemberDetailModal({
 
   const handleClose = () => onOpenChange(false);
 
-  const personalInfo = getModalPersonalInfo(member);
-  const activityStats = getModalActivityStats(member);
-  const cardinals = parseCardinals(member.cardinal).sort(compareCardinalDesc);
-  const latestCardinal = cardinals[0];
-  const visibleCardinals = cardinals.slice(0, 4);
-  const hiddenCardinals = cardinals.slice(4);
-  const hiddenCardinalCount = hiddenCardinals.length;
   const footerActions = getFooterActions({
     memberRole: member.memberRole,
     status: member.status,
@@ -79,87 +64,11 @@ function MemberDetailModal({
         </div>
 
         <div className="flex flex-col gap-500 overflow-y-auto px-700 pt-200 pb-600">
-          <section className="bg-container-neutral flex items-center gap-500 rounded-lg px-500 py-[18px]">
-            <Avatar size={64}>
-              {member.profileImageUrl && (
-                <AvatarImage src={member.profileImageUrl} alt={`${member.name} 프로필 이미지`} />
-              )}
-              <AvatarFallback />
-            </Avatar>
-
-            <div className="flex min-w-0 flex-col gap-100">
-              <div className="flex items-center gap-200">
-                <span className="typo-sub1 text-text-normal truncate">{member.name}</span>
-                {latestCardinal && (
-                  <ModalCardinalTag active>{formatCardinalLabel(latestCardinal)}</ModalCardinalTag>
-                )}
-              </div>
-              <MemberStatusBadge status={member.status} variant="dot" />
-              <p
-                className={cn(
-                  'typo-body2 truncate',
-                  member.bio ? 'text-text-alternative' : 'text-text-disabled',
-                )}
-              >
-                {member.bio ?? '-'}
-              </p>
-            </div>
-          </section>
+          <MemberDetailSummary member={member} className="px-500 py-[18px]" />
 
           <div className="tablet:grid-cols-2 grid grid-cols-1 gap-[14px]">
-            <section className="border-line bg-container-neutral rounded-md border px-500 py-450">
-              <p className="typo-body2 text-text-disabled mb-[14px]">회원 정보</p>
-
-              <div className="flex flex-col gap-300">
-                {personalInfo.map(({ label, value }) => (
-                  <InfoRow key={label} label={label} value={value} />
-                ))}
-              </div>
-            </section>
-
-            <section className="border-line bg-container-neutral rounded-md border px-500 py-450">
-              <p className="typo-body2 text-text-disabled mb-[14px]">활동 정보</p>
-
-              <div className="flex items-start gap-600">
-                <span className="typo-button2 text-text-alternative w-16 shrink-0">활동기수</span>
-                <div className="flex min-w-0 flex-wrap items-center gap-100">
-                  {visibleCardinals.map((cardinal) => (
-                    <ModalCardinalTag key={cardinal}>
-                      {formatCardinalLabel(cardinal)}
-                    </ModalCardinalTag>
-                  ))}
-                  {hiddenCardinalCount > 0 && (
-                    <ModalCardinalTooltip
-                      content={hiddenCardinals.map(formatCardinalLabel).join(', ')}
-                    >
-                      +{hiddenCardinalCount}
-                    </ModalCardinalTooltip>
-                  )}
-                </div>
-              </div>
-
-              <div className="bg-line my-300 h-px w-full" />
-
-              <div className="flex flex-col gap-300">
-                {activityStats.map(({ label, value }) => (
-                  <InfoRow key={label} label={label} value={value} alignValue="right" />
-                ))}
-                <div className="mt-100 flex flex-col gap-100">
-                  <InfoRow
-                    label="출석률"
-                    value={`${member.attendanceRate}%`}
-                    alignValue="right"
-                    labelClassName="typo-caption2 text-text-alternative"
-                    valueClassName="typo-caption2 text-text-normal"
-                  />
-                  <AttendanceProgressBar
-                    attendanceRate={member.attendanceRate}
-                    showAbsenceRate={false}
-                    className="bg-container-neutral-alternative h-[6px] rounded-lg"
-                  />
-                </div>
-              </div>
-            </section>
+            <MemberPersonalInfoCard member={member} />
+            <MemberActivityInfoCard member={member} />
           </div>
         </div>
 
@@ -198,111 +107,6 @@ function MemberDetailModal({
         </div>
       </DialogContent>
     </Dialog>
-  );
-}
-
-function getModalPersonalInfo(member: Member) {
-  return [
-    { label: '역할', value: member.position },
-    { label: '학과', value: member.department },
-    { label: '학번', value: member.studentId },
-    { label: '전화번호', value: member.phone },
-    { label: '이메일', value: member.email },
-    { label: '가입일', value: member.joinedAt },
-  ];
-}
-
-function getModalActivityStats(member: Member) {
-  return [
-    { label: '출석', value: member.attendance },
-    { label: '결석', value: member.absence },
-    { label: '패널티', value: member.penaltyCount },
-  ];
-}
-
-function compareCardinalDesc(a: string, b: string) {
-  return getCardinalNumber(b) - getCardinalNumber(a);
-}
-
-function getCardinalNumber(cardinal: string) {
-  return Number(cardinal.replace('기', '')) || 0;
-}
-
-function formatCardinalLabel(cardinal: string) {
-  return cardinal.endsWith('기') ? cardinal : `${cardinal}기`;
-}
-
-function ModalCardinalTag({
-  active = false,
-  children,
-}: {
-  active?: boolean;
-  children: React.ReactNode;
-}) {
-  return (
-    <span
-      className={cn(
-        'typo-caption1 inline-flex h-6 items-center rounded-[5px] px-200',
-        active ? 'bg-primary-500/10 text-brand-primary' : 'text-text-alternative bg-neutral-700/5',
-      )}
-    >
-      {children}
-    </span>
-  );
-}
-
-function ModalCardinalTooltip({
-  children,
-  content,
-}: {
-  children: React.ReactNode;
-  content: string;
-}) {
-  return (
-    <button
-      type="button"
-      className="group relative inline-flex cursor-default"
-      aria-label={`숨겨진 활동기수 ${content}`}
-    >
-      <ModalCardinalTag>{children}</ModalCardinalTag>
-      <span className="bg-container-primary-interaction text-text-inverse typo-body2 pointer-events-none absolute right-0 bottom-[calc(100%+8px)] z-50 w-max rounded-sm p-200 opacity-0 shadow-sm transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100">
-        {content}
-      </span>
-    </button>
-  );
-}
-
-function InfoRow({
-  label,
-  value,
-  alignValue,
-  labelClassName,
-  valueClassName,
-}: {
-  label: string;
-  value: React.ReactNode;
-  alignValue?: 'right';
-  labelClassName?: string;
-  valueClassName?: string;
-}) {
-  return (
-    <div className="flex items-start gap-600">
-      <span
-        className={[labelClassName ?? 'typo-button2 text-text-alternative', 'w-16 shrink-0'].join(
-          ' ',
-        )}
-      >
-        {label}
-      </span>
-      <span
-        className={[
-          valueClassName ?? 'typo-sub3 text-text-normal',
-          alignValue === 'right' ? 'ml-auto text-right' : 'min-w-0 flex-1 break-keep',
-        ].join(' ')}
-      >
-        {value ?? '-'}
-      </span>
-    </div>
   );
 }
 
