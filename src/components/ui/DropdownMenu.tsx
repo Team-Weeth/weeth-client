@@ -32,6 +32,8 @@ function DropdownMenuPortal({
 function DropdownMenuContent({
   className,
   sideOffset = 4,
+  onTouchMove,
+  onWheel,
   ...props
 }: React.ComponentProps<typeof DropdownMenuPrimitive.Content>) {
   return (
@@ -39,6 +41,14 @@ function DropdownMenuContent({
       <DropdownMenuPrimitive.Content
         data-slot="dropdown-menu-content"
         sideOffset={sideOffset}
+        onTouchMove={(event) => {
+          event.stopPropagation();
+          onTouchMove?.(event);
+        }}
+        onWheel={(event) => {
+          event.stopPropagation();
+          onWheel?.(event);
+        }}
         className={cn(
           'scrollbar-custom bg-container-neutral z-90 flex max-h-[min(var(--radix-dropdown-menu-content-available-height),320px)] min-w-[144px] touch-pan-y flex-col items-center overflow-y-auto overscroll-contain rounded-md shadow-[0px_4px_14px_0px_rgba(0,0,0,0.25)] [-webkit-overflow-scrolling:touch]',
           'data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95',

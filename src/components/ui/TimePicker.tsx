@@ -94,11 +94,13 @@ function TimePicker({ value, onChange }: TimePickerProps) {
           ref={attachWheel}
           sideOffset={4}
           align="start"
+          onTouchMove={(event) => event.stopPropagation()}
           className="bg-container-neutral z-90 flex h-[min(240px,var(--radix-popover-content-available-height))] max-h-[calc(100dvh-16px)] touch-pan-y overflow-hidden overscroll-contain rounded-md shadow-[0px_4px_14px_0px_rgba(0,0,0,0.25)]"
         >
           {/* Hours */}
           <div
             ref={hourRef}
+            onTouchMove={(event) => event.stopPropagation()}
             className="scrollbar-custom flex h-full min-h-0 flex-col overflow-y-auto overscroll-contain py-100 [-webkit-overflow-scrolling:touch]"
           >
             {HOURS.map((hour) => {
@@ -130,6 +132,7 @@ function TimePicker({ value, onChange }: TimePickerProps) {
           {/* Minutes */}
           <div
             ref={minuteRef}
+            onTouchMove={(event) => event.stopPropagation()}
             className="scrollbar-custom flex h-full min-h-0 flex-col overflow-y-auto overscroll-contain py-100 [-webkit-overflow-scrolling:touch]"
           >
             {MINUTES.map((minute) => {
