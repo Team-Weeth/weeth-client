@@ -17,6 +17,7 @@ interface MemberCardListProps extends React.HTMLAttributes<HTMLDivElement> {
   onToggleSort: () => void;
   onSelectionChange: (ids: Set<string>) => void;
   onMemberAction?: (member: Member) => void;
+  showSortControl?: boolean;
 }
 
 function MemberCardList({
@@ -30,6 +31,7 @@ function MemberCardList({
   onToggleSort,
   onSelectionChange,
   onMemberAction,
+  showSortControl = true,
   ...props
 }: MemberCardListProps) {
   const currentPage = Math.min(page, Math.max(totalPages, 1));
@@ -75,15 +77,17 @@ function MemberCardList({
           전체 선택
         </div>
 
-        <button
-          type="button"
-          onClick={onToggleSort}
-          className="text-text-alternative typo-button2 flex cursor-pointer items-center justify-center gap-100 rounded-sm bg-neutral-200 px-300 py-200"
-          aria-label={`${sortBy === 'cardinal' ? '이름' : '기수'} 순으로 정렬`}
-        >
-          <Icon src={AdminFilterIcon} size={16} className="text-icon-alternative" />
-          {sortBy === 'cardinal' ? '기수 순' : '이름 순'}
-        </button>
+        {showSortControl && (
+          <button
+            type="button"
+            onClick={onToggleSort}
+            className="text-text-alternative typo-button2 flex cursor-pointer items-center justify-center gap-100 rounded-sm bg-neutral-200 px-300 py-200"
+            aria-label={`${sortBy === 'cardinal' ? '이름' : '기수'} 순으로 정렬`}
+          >
+            <Icon src={AdminFilterIcon} size={16} className="text-icon-alternative" />
+            {sortBy === 'cardinal' ? '기수 순' : '이름 순'}
+          </button>
+        )}
       </div>
 
       <div className="flex flex-col gap-400">

@@ -51,6 +51,7 @@ function MemberMobileSearchPage({
   ...props
 }: MemberMobileSearchPageProps) {
   const inputRef = useRef<HTMLInputElement>(null);
+  const hasSearchQuery = searchQuery.trim().length > 0;
 
   useEffect(() => {
     inputRef.current?.focus();
@@ -91,31 +92,33 @@ function MemberMobileSearchPage({
       {selectionBar}
 
       <div className="flex min-h-0 flex-1 flex-col overflow-y-auto p-450">
-        {viewMode === 'card' ? (
-          <MemberCardList
-            members={members}
-            page={page}
-            totalPages={totalPages}
-            sortBy={sortBy}
-            selectedIds={selectedIds}
-            onPageChange={onPageChange}
-            onToggleSort={onToggleSort}
-            onSelectionChange={onSelectionChange}
-            onMemberAction={onMemberAction}
-          />
-        ) : (
-          <MemberTable
-            members={members}
-            page={page}
-            totalPages={totalPages}
-            selectedIds={selectedIds}
-            onPageChange={onPageChange}
-            onSelectionChange={onSelectionChange}
-            onMemberAction={onMemberAction}
-          />
-        )}
+        {hasSearchQuery &&
+          (viewMode === 'card' ? (
+            <MemberCardList
+              members={members}
+              page={page}
+              totalPages={totalPages}
+              sortBy={sortBy}
+              selectedIds={selectedIds}
+              onPageChange={onPageChange}
+              onToggleSort={onToggleSort}
+              onSelectionChange={onSelectionChange}
+              onMemberAction={onMemberAction}
+              showSortControl={false}
+            />
+          ) : (
+            <MemberTable
+              members={members}
+              page={page}
+              totalPages={totalPages}
+              selectedIds={selectedIds}
+              onPageChange={onPageChange}
+              onSelectionChange={onSelectionChange}
+              onMemberAction={onMemberAction}
+            />
+          ))}
 
-        {listFooter}
+        {hasSearchQuery && listFooter}
       </div>
     </section>
   );
