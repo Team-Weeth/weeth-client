@@ -230,19 +230,19 @@ function MobileMemberTopBar({
           <div
             aria-hidden={!isAnimatedVisible}
             inert={!isAnimatedVisible}
-      className={cn(
+            className={cn(
               'bg-container-floating flex items-center justify-between px-450 py-300 will-change-[transform,opacity]',
-        isAnimatedVisible ? 'pointer-events-auto' : 'pointer-events-none',
-        className,
-      )}
-      style={{
-        transform: `translateY(${isAnimatedVisible ? '0' : '22px'})`,
-        opacity: isAnimatedVisible ? 1 : 0,
-        transition: `transform ${MOBILE_SELECTION_BAR_ANIMATION_MS}ms ${MOBILE_SELECTION_BAR_EASING} ${isVisible ? `${MOBILE_SELECTION_BAR_ENTER_CONTENT_DELAY_MS}ms` : '0ms'}, opacity ${isVisible ? MOBILE_SELECTION_BAR_ANIMATION_MS : MOBILE_SELECTION_BAR_EXIT_OPACITY_MS}ms ${MOBILE_SELECTION_BAR_EASING} ${isVisible ? `${MOBILE_SELECTION_BAR_ENTER_CONTENT_DELAY_MS}ms` : '0ms'}`,
-        ...style,
-      }}
-      {...props}
-    >
+              isAnimatedVisible ? 'pointer-events-auto' : 'pointer-events-none',
+              className,
+            )}
+            style={{
+              transform: `translateY(${isAnimatedVisible ? '0' : '22px'})`,
+              opacity: isAnimatedVisible ? 1 : 0,
+              transition: `transform ${MOBILE_SELECTION_BAR_ANIMATION_MS}ms ${MOBILE_SELECTION_BAR_EASING} ${isVisible ? `${MOBILE_SELECTION_BAR_ENTER_CONTENT_DELAY_MS}ms` : '0ms'}, opacity ${isVisible ? MOBILE_SELECTION_BAR_ANIMATION_MS : MOBILE_SELECTION_BAR_EXIT_OPACITY_MS}ms ${MOBILE_SELECTION_BAR_EASING} ${isVisible ? `${MOBILE_SELECTION_BAR_ENTER_CONTENT_DELAY_MS}ms` : '0ms'}`,
+              ...style,
+            }}
+            {...props}
+          >
             <div className="flex shrink-0 items-center gap-200 pr-300">
               <span className="bg-button-primary text-text-inverse typo-caption1 flex h-[22px] min-w-[22px] items-center justify-center rounded-full px-[7px]">
                 {effectiveSelectedCount}

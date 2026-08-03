@@ -52,7 +52,7 @@ function MemberTableRow({
   return (
     <TableRow
       className={cn(
-        'bg-container-neutral [&>td]:border-line max-tablet:h-12 max-tablet:[&>td]:border-b-0 [&>td]:bg-container-neutral h-16 cursor-pointer border-0 hover:[&>td]:bg-neutral-200 [&:last-child>td]:border-b-0 [&>td]:border-b',
+        'bg-container-neutral [&>td]:border-line max-tablet:h-12 max-tablet:[&>td]:border-b-0 [&>td]:bg-container-neutral h-16 cursor-pointer border-0 [&:last-child>td]:border-b-0 [&>td]:border-b hover:[&>td]:bg-neutral-200',
         selected &&
           'bg-container-primary-alternative [&>td]:bg-container-primary-alternative hover:[&>td]:bg-container-primary-alternative',
       )}
@@ -142,7 +142,7 @@ function MemberProfileCell({
           )}
           <AvatarFallback />
         </Avatar>
-        <div className="max-tablet:w-[88px] max-tablet:max-w-[88px] flex w-[152px] min-w-0 max-w-[152px] flex-col justify-center gap-0.5 overflow-hidden">
+        <div className="max-tablet:w-[88px] max-tablet:max-w-[88px] flex w-[152px] max-w-[152px] min-w-0 flex-col justify-center gap-0.5 overflow-hidden">
           <span className="typo-button2 text-text-normal truncate">{member.name}</span>
           <span
             className={cn(

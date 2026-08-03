@@ -94,7 +94,7 @@ function MemberTable({
                     column.width,
                     column.id === 'profile' &&
                       cn(
-                        'bg-container-neutral-alternative px-0 max-tablet:sticky max-tablet:left-12 max-tablet:z-30 max-tablet:w-[132px] max-tablet:min-w-[132px] max-tablet:px-0',
+                        'bg-container-neutral-alternative max-tablet:sticky max-tablet:left-12 max-tablet:z-30 max-tablet:w-[132px] max-tablet:min-w-[132px] max-tablet:px-0 px-0',
                         showStickyShadow &&
                           'max-tablet:after:absolute max-tablet:after:top-0 max-tablet:after:right-[-24px] max-tablet:after:h-full max-tablet:after:w-6 max-tablet:after:bg-[image:var(--member-table-sticky-shadow)] max-tablet:after:content-[""]',
                       ),
