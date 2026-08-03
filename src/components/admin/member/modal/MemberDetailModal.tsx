@@ -74,9 +74,9 @@ function MemberDetailModal({
 
         <div className="bg-container-neutral flex flex-wrap items-center justify-between gap-200 px-700 py-500">
           <div className="flex flex-wrap items-center gap-200">
-            {footerActions.map(({ label, title, description, handler }) => (
+            {footerActions.map(({ id, label, title, description, handler }) => (
               <AlertDialog
-                key={label}
+                key={id}
                 title={title}
                 description={description}
                 trigger={

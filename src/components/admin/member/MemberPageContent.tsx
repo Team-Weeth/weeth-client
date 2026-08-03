@@ -102,6 +102,18 @@ function MemberPageContent() {
     fetchNextPage();
   }, [fetchNextPage, hasNextPage, isFetchingNextPage, isIntersecting, isMobile]);
 
+  useEffect(() => {
+    if (page <= totalPages) return;
+    const timeout = window.setTimeout(() => setPage(totalPages), 0);
+    return () => window.clearTimeout(timeout);
+  }, [page, totalPages]);
+
+  useEffect(() => {
+    if (isMobile) return;
+    const timeout = window.setTimeout(() => setIsMobileSearchOpen(false), 0);
+    return () => window.clearTimeout(timeout);
+  }, [isMobile]);
+
   const detailMember = detailMemberId
     ? (members.find((m) => m.id === detailMemberId) ??
       selectedMemberById.get(detailMemberId) ??
@@ -216,7 +228,7 @@ function MemberPageContent() {
             </div>
           </div>
 
-          {isMobileSearchOpen && (
+          {isMobile && isMobileSearchOpen && (
             <MemberMobileSearchPage
               searchQuery={searchQuery}
               onSearchQueryChange={handleSearchQueryChange}

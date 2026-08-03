@@ -85,9 +85,9 @@ function MemberTopBar({
       className={cn('max-tablet:hidden', className)}
       {...props}
     >
-      {topBarActions.map(({ label, title, description, handler, disabled }) => (
+      {topBarActions.map(({ id, label, title, description, handler, disabled }) => (
         <AlertDialog
-          key={label}
+          key={id}
           title={title}
           description={description}
           trigger={
@@ -96,7 +96,7 @@ function MemberTopBar({
               size="md"
               className={cn(
                 'typo-button2 bg-static-on-floating text-container-floating hover:bg-static-on-floating/90 shrink-0 rounded-sm px-300 py-200 whitespace-nowrap',
-                label.includes('추방') && 'text-state-error',
+                id === 'ban' && 'text-state-error',
               )}
               disabled={disabled}
             >
@@ -170,7 +170,7 @@ function MobileMemberTopBar({
     onTransferLead,
   });
   const memberStateAction = topBarActions.find(
-    (action) => action.label.includes('추방') || action.label.includes('복구'),
+    (action) => action.id === 'ban' || action.id === 'restore',
   );
   const mainActions = topBarActions.filter((action) => action !== memberStateAction);
 
@@ -299,9 +299,9 @@ function MobileMemberTopBar({
         <div className="flex flex-col gap-100">
           {mainActions.map((action) => (
             <BottomSheetActionItem
-              key={action.label}
+              key={action.id}
               disabled={action.disabled}
-              destructive={action.label.includes('추방')}
+              destructive={action.id === 'ban'}
               onClick={() => {
                 if (action.disabled) return;
                 setIsActionSheetOpen(false);
@@ -326,7 +326,7 @@ function MobileMemberTopBar({
           {memberStateAction && (
             <BottomSheetActionItem
               disabled={memberStateAction.disabled}
-              destructive={memberStateAction.label.includes('추방')}
+              destructive={memberStateAction.id === 'ban'}
               onClick={() => {
                 if (memberStateAction.disabled) return;
                 setIsActionSheetOpen(false);

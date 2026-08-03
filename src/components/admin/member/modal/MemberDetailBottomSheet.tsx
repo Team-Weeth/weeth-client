@@ -74,7 +74,7 @@ function MemberDetailBottomSheet({
           <div className="flex flex-wrap gap-200">
             {actions.map((action) => (
               <MemberDetailActionButton
-                key={action.label}
+                key={action.id}
                 action={action}
                 onActionRequest={onActionRequest}
               />

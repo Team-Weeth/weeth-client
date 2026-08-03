@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { AlertDialog, AlertDialogAction, AlertDialogCancel } from '@/components/ui';
 import type { TopBarAction } from '@/constants/admin/memberTopBar.constants';
@@ -18,7 +18,7 @@ interface ForceConfirmState {
   requests: CardinalChangeRequest[];
 }
 
-const DETAIL_BOTTOM_SHEET_EXIT_DELAY_MS = 180;
+const DETAIL_BOTTOM_SHEET_EXIT_DELAY_MS = 500;
 
 interface MemberPageModalsProps {
   detailMember: Member | null;
@@ -54,8 +54,21 @@ function MemberPageModals({
   onTransferLead,
 }: MemberPageModalsProps) {
   const [pendingDetailAction, setPendingDetailAction] = useState<TopBarAction | null>(null);
+  const [displayedDetailMember, setDisplayedDetailMember] = useState<Member | null>(detailMember);
+  const detailCacheResetTimeoutRef = useRef<ReturnType<typeof setTimeout> | number | null>(null);
   const isMobile = useMediaQuery('(max-width: 695.98px)');
   const detailOpen = detailMember !== null;
+  const bottomSheetDetailMember = detailMember ?? displayedDetailMember;
+
+  useEffect(
+    () => () => {
+      if (detailCacheResetTimeoutRef.current) {
+        clearTimeout(detailCacheResetTimeoutRef.current);
+      }
+    },
+    [],
+  );
+
   const nextDetailRole =
     detailMember?.memberRole === 'ADMIN' ? 'USER' : ('ADMIN' as ClubMemberRole);
   const handleDetailRoleChange = detailMember
@@ -71,6 +84,7 @@ function MemberPageModals({
   const handleDetailTransferLead =
     isLead && detailMember ? () => onTransferLead(detailMember.clubMemberId) : undefined;
   const handleMobileDetailActionRequest = (action: TopBarAction) => {
+    setDisplayedDetailMember(detailMember);
     onCloseDetail();
     window.setTimeout(() => {
       setPendingDetailAction(action);
@@ -80,6 +94,7 @@ function MemberPageModals({
     ? () => {
         const memberId = detailMember.id;
 
+        setDisplayedDetailMember(detailMember);
         onCloseDetail();
         window.setTimeout(() => {
           onOpenCardinalModalFromDetail(memberId);
@@ -112,9 +127,16 @@ function MemberPageModals({
         <MemberDetailBottomSheet
           open={detailOpen}
           onOpenChange={(open) => {
-            if (!open) onCloseDetail();
+            if (!open) {
+              setDisplayedDetailMember(detailMember);
+              onCloseDetail();
+              detailCacheResetTimeoutRef.current = window.setTimeout(
+                () => setDisplayedDetailMember(null),
+                DETAIL_BOTTOM_SHEET_EXIT_DELAY_MS,
+              );
+            }
           }}
-          member={detailMember}
+          member={bottomSheetDetailMember}
           onBan={handleDetailBan}
           onRestore={handleDetailRestore}
           onChangeRole={handleDetailRoleChange}

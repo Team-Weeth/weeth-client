@@ -65,6 +65,11 @@ function MemberTable({
     setShowStickyShadow(event.currentTarget.scrollLeft > 0);
   };
 
+  React.useEffect(() => {
+    if (page <= currentPage) return;
+    onPageChange(currentPage);
+  }, [currentPage, onPageChange, page]);
+
   return (
     <div
       className={cn('max-tablet:flex max-tablet:min-h-0 max-tablet:flex-1 min-w-0', className)}
