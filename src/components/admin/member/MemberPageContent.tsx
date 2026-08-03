@@ -161,8 +161,22 @@ function MemberPageContent() {
 
   return (
     <>
-      <div className="max-tablet:!w-full max-tablet:!max-w-full max-tablet:!overflow-hidden max-tablet:!pr-0 max-tablet:h-full flex min-h-full min-w-0 pr-450">
-        <div className="bg-container-neutral max-tablet:!w-full max-tablet:!max-w-full max-tablet:!rounded-none max-tablet:h-full max-tablet:overflow-hidden flex min-h-0 min-w-0 flex-1 flex-col rounded-t-[20px]">
+      <div
+        className={cn(
+          'max-tablet:!w-full max-tablet:!max-w-full max-tablet:!pr-0 flex min-h-full min-w-0 pr-450',
+          mobileViewMode === 'card'
+            ? 'max-tablet:h-full max-tablet:!overflow-hidden'
+            : 'max-tablet:min-h-full',
+        )}
+      >
+        <div
+          className={cn(
+            'bg-container-neutral max-tablet:!w-full max-tablet:!max-w-full max-tablet:!rounded-none flex min-h-0 min-w-0 flex-1 flex-col rounded-t-[20px]',
+            mobileViewMode === 'card'
+              ? 'max-tablet:h-full max-tablet:overflow-hidden'
+              : 'max-tablet:min-h-full',
+          )}
+        >
           <div
             className={cn(
               'flex min-h-0 flex-1 flex-col',
@@ -193,7 +207,7 @@ function MemberPageContent() {
                 'max-tablet:min-h-0 max-tablet:flex-1 flex min-h-0 flex-col p-700',
                 mobileViewMode === 'card'
                   ? 'max-tablet:overflow-y-auto max-tablet:p-450'
-                  : 'max-tablet:overflow-auto max-tablet:p-0',
+                  : 'max-tablet:overflow-x-auto max-tablet:overflow-y-visible max-tablet:p-0',
               )}
             >
               <div
