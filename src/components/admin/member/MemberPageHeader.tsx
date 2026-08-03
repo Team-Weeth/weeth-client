@@ -70,13 +70,8 @@ function MemberPageHeader({
         <h1 className="typo-h2 text-text-strong">멤버관리</h1>
 
         <div className="flex items-center gap-400">
-          <MemberViewToggle
-            value={mobileViewMode}
-            onValueChange={onMobileViewModeChange}
-            className="tablet:hidden"
-          />
           <MemberSearchBar value={searchQuery} onValueChange={onSearchQueryChange} />
-          <div className="bg-line max-tablet:hidden h-3.5 w-px" aria-hidden />
+          <div className="bg-line h-3.5 w-px" aria-hidden />
           <button
             type="button"
             onClick={onToggleSort}

@@ -147,7 +147,7 @@ function ChangeCardinalsModal({
           </div>
         </div>
 
-        <div className="bg-background max-tablet:px-400 max-tablet:pb-[calc(var(--safe-area-inset-bottom)+16px)] flex shrink-0 flex-col gap-400 px-700 pt-300 pb-600">
+        <div className="bg-background max-tablet:px-400 max-tablet:pb-[calc(var(--safe-area-inset-bottom,0px)+16px)] flex shrink-0 flex-col gap-400 px-700 pt-300 pb-600">
           <div className="bg-line h-px" aria-hidden />
 
           <div className="flex min-h-8 items-center gap-400 px-300">

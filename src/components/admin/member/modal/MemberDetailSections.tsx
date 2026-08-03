@@ -13,6 +13,7 @@ import { MemberStatusBadge } from '@/components/admin/member/MemberStatusBadge';
 import { cn } from '@/lib/cn';
 import type { Member } from '@/types/admin/member';
 import { parseCardinals } from '@/utils/admin/parseCardinals';
+import { compareCardinalDesc, formatCardinalLabel } from '@/utils/admin/memberTableUtils';
 
 interface MemberDetailSummaryProps {
   member: Member;
@@ -230,18 +231,6 @@ function getMemberDetailCardinals(member: Member) {
     hiddenCardinals,
     hiddenCardinalCount: hiddenCardinals.length,
   };
-}
-
-function compareCardinalDesc(a: string, b: string) {
-  return getCardinalNumber(b) - getCardinalNumber(a);
-}
-
-function getCardinalNumber(cardinal: string) {
-  return Number(cardinal.replace('기', '')) || 0;
-}
-
-function formatCardinalLabel(cardinal: string) {
-  return cardinal.endsWith('기') ? cardinal : `${cardinal}기`;
 }
 
 export {
