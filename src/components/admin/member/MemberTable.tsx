@@ -71,19 +71,16 @@ function MemberTable({
   }, [currentPage, onPageChange, page]);
 
   return (
-    <div
-      className={cn('max-tablet:flex max-tablet:min-h-0 max-tablet:flex-1 min-w-0', className)}
-      {...props}
-    >
-      <div className="border-line max-tablet:flex max-tablet:min-h-0 max-tablet:flex-1 max-tablet:rounded-none max-tablet:border-x-0 max-tablet:border-b-0 overflow-hidden rounded-sm border">
+    <div className={cn('max-tablet:min-w-max min-w-0', className)} {...props}>
+      <div className="border-line max-tablet:overflow-visible max-tablet:rounded-none max-tablet:border-x-0 max-tablet:border-b-0 overflow-hidden rounded-sm border">
         <Table
-          wrapperClassName="max-tablet:scrollbar-none max-tablet:min-h-0 max-tablet:flex-1 max-tablet:overflow-auto"
+          wrapperClassName="max-tablet:scrollbar-none max-tablet:overflow-visible"
           wrapperProps={{ onScroll: handleTableScroll }}
           className="w-max min-w-full border-separate border-spacing-0"
         >
-          <TableHeader className="bg-container-neutral-alternative sticky top-0 z-10">
+          <TableHeader className="bg-container-neutral-alternative sticky top-0 z-30">
             <TableRow className="max-tablet:h-10 h-11 border-0 hover:bg-transparent">
-              <TableHead className="bg-container-neutral-alternative max-tablet:sticky max-tablet:top-0 max-tablet:left-0 max-tablet:z-40 max-tablet:first:rounded-none max-tablet:h-10 max-tablet:w-12 max-tablet:min-w-12 max-tablet:pl-200 h-11 w-16 min-w-16 p-0 pl-300">
+              <TableHead className="bg-container-neutral-alternative max-tablet:sticky max-tablet:top-0 max-tablet:left-0 max-tablet:z-50 max-tablet:first:rounded-none max-tablet:h-10 max-tablet:w-12 max-tablet:min-w-12 max-tablet:pl-200 h-11 w-16 min-w-16 p-0 pl-300">
                 <MemberSelectionCheckbox
                   checked={isAllSelected}
                   partial={isPartiallySelected}
@@ -102,7 +99,7 @@ function MemberTable({
                     column.width,
                     column.id === 'profile' &&
                       cn(
-                        'max-tablet:left-12 max-tablet:z-40 max-tablet:w-[132px] max-tablet:min-w-[132px] max-tablet:px-0 px-0',
+                        'max-tablet:left-12 max-tablet:z-50 max-tablet:w-[132px] max-tablet:min-w-[132px] max-tablet:px-0 px-0',
                         showStickyShadow &&
                           'max-tablet:after:absolute max-tablet:after:top-0 max-tablet:after:right-[-24px] max-tablet:after:h-full max-tablet:after:w-6 max-tablet:after:bg-[image:var(--member-table-sticky-shadow)] max-tablet:after:content-[""]',
                       ),

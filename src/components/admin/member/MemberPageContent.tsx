@@ -193,14 +193,14 @@ function MemberPageContent() {
                 'max-tablet:min-h-0 max-tablet:flex-1 flex min-h-0 flex-col p-700',
                 mobileViewMode === 'card'
                   ? 'max-tablet:overflow-y-auto max-tablet:p-450'
-                  : 'max-tablet:overflow-hidden max-tablet:p-0',
+                  : 'max-tablet:overflow-auto max-tablet:p-0',
               )}
             >
               <div
                 className={
                   mobileViewMode === 'card'
                     ? 'max-tablet:hidden'
-                    : 'max-tablet:flex max-tablet:min-h-0 max-tablet:flex-1'
+                    : 'max-tablet:block max-tablet:min-w-max'
                 }
               >
                 {/* Member table */}
