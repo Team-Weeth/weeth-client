@@ -64,6 +64,8 @@ function MemberDetailBottomSheet({
       expandable
       initialSnapHeight={620}
       topGap={40}
+      closeThreshold={0.12}
+      scrollLockTimeout={150}
       showCancelButton={false}
       bodyClassName="flex flex-col gap-400 px-400 py-400"
       footerClassName="border-line border-t bg-neutral-200 px-400 pt-300 pb-600"

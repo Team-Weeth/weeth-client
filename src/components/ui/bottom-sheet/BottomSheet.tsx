@@ -32,6 +32,8 @@ function BottomSheet({
   defaultActiveSnapPoint,
   activeSnapPoint,
   setActiveSnapPoint,
+  closeThreshold,
+  scrollLockTimeout,
 }: BottomSheetProps) {
   const { resolvedSnapPoints, hasSnapPoints } = useBottomSheetSnapPoints({
     expandable,
@@ -84,6 +86,8 @@ function BottomSheet({
         modal
         snapPoints={resolvedSnapPoints}
         fadeFromIndex={0}
+        closeThreshold={closeThreshold}
+        scrollLockTimeout={scrollLockTimeout}
         {...snapPointControlProps}
       >
         {sheetContent}
@@ -98,6 +102,8 @@ function BottomSheet({
       onOpenChange={handleOpenChange}
       direction="bottom"
       modal
+      closeThreshold={closeThreshold}
+      scrollLockTimeout={scrollLockTimeout}
       {...snapPointControlProps}
     >
       {sheetContent}

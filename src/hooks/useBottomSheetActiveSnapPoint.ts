@@ -1,6 +1,9 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 type BottomSheetSnapPoint = number | string | null;
+type TimeoutId = ReturnType<typeof setTimeout>;
+
+const BOTTOM_SHEET_CLOSE_ANIMATION_MS = 500;
 
 interface UseBottomSheetActiveSnapPointParams {
   open?: boolean;
@@ -24,6 +27,7 @@ function useBottomSheetActiveSnapPoint({
   const [internalActiveSnapPoint, setInternalActiveSnapPoint] = useState<BottomSheetSnapPoint>(
     defaultActiveSnapPoint ?? null,
   );
+  const closeResetTimeoutRef = useRef<TimeoutId | null>(null);
   const controlledActiveSnapPoint = activeSnapPoint !== undefined;
   const defaultDrawerActiveSnapPoint = defaultActiveSnapPoint ?? resolvedSnapPoints?.[0] ?? null;
   const isOpen = open ?? defaultOpen ?? false;
@@ -34,9 +38,25 @@ function useBottomSheetActiveSnapPoint({
     ? setActiveSnapPoint
     : setInternalActiveSnapPoint;
 
+  const clearCloseResetTimeout = () => {
+    if (!closeResetTimeoutRef.current) return;
+    clearTimeout(closeResetTimeoutRef.current);
+    closeResetTimeoutRef.current = null;
+  };
+
+  useEffect(() => clearCloseResetTimeout, []);
+
   const handleOpenChange = (nextOpen: boolean) => {
+    if (nextOpen) {
+      clearCloseResetTimeout();
+    }
+
     if (!nextOpen && !controlledActiveSnapPoint) {
-      setInternalActiveSnapPoint(null);
+      clearCloseResetTimeout();
+      closeResetTimeoutRef.current = setTimeout(() => {
+        setInternalActiveSnapPoint(null);
+        closeResetTimeoutRef.current = null;
+      }, BOTTOM_SHEET_CLOSE_ANIMATION_MS);
     }
 
     onOpenChange?.(nextOpen);

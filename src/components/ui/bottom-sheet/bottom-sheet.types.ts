@@ -12,6 +12,8 @@ interface BottomSheetProps {
   defaultActiveSnapPoint?: number | string | null;
   activeSnapPoint?: number | string | null;
   setActiveSnapPoint?: (snapPoint: number | string | null) => void;
+  closeThreshold?: number;
+  scrollLockTimeout?: number;
   title?: string;
   header?: ReactNode;
   footer?: ReactNode;
