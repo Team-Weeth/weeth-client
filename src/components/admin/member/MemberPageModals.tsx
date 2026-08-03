@@ -1,15 +1,24 @@
+'use client';
+
+import { useEffect, useRef, useState } from 'react';
+
 import { AlertDialog, AlertDialogAction, AlertDialogCancel } from '@/components/ui';
+import type { TopBarAction } from '@/constants/admin/memberTopBar.constants';
+import { useMediaQuery } from '@/hooks';
 import type { ClubMemberRole, Member } from '@/types/admin/member';
 import {
   getMemberCardinalNumbers,
   type CardinalChangeRequest,
 } from '@/utils/admin/memberPageUtils';
 import { ChangeCardinalsModal } from './modal/ChangeCardinalsModal';
+import { MemberDetailBottomSheet } from './modal/MemberDetailBottomSheet';
 import { MemberDetailModal } from './modal/MemberDetailModal';
 
 interface ForceConfirmState {
   requests: CardinalChangeRequest[];
 }
+
+const DETAIL_BOTTOM_SHEET_EXIT_DELAY_MS = 500;
 
 interface MemberPageModalsProps {
   detailMember: Member | null;
@@ -44,31 +53,98 @@ function MemberPageModals({
   onChangeCardinals,
   onTransferLead,
 }: MemberPageModalsProps) {
+  const [pendingDetailAction, setPendingDetailAction] = useState<TopBarAction | null>(null);
+  const [displayedDetailMember, setDisplayedDetailMember] = useState<Member | null>(detailMember);
+  const detailCacheResetTimeoutRef = useRef<ReturnType<typeof setTimeout> | number | null>(null);
+  const isMobile = useMediaQuery('(max-width: 695.98px)');
+  const detailOpen = detailMember !== null;
+  const bottomSheetDetailMember = detailMember ?? displayedDetailMember;
+
+  useEffect(
+    () => () => {
+      if (detailCacheResetTimeoutRef.current) {
+        clearTimeout(detailCacheResetTimeoutRef.current);
+      }
+    },
+    [],
+  );
+
+  const nextDetailRole =
+    detailMember?.memberRole === 'ADMIN' ? 'USER' : ('ADMIN' as ClubMemberRole);
+  const handleDetailRoleChange = detailMember
+    ? () => onChangeRole([detailMember.clubMemberId], nextDetailRole)
+    : undefined;
+  const handleDetailCardinalsChange = detailMember
+    ? () => onOpenCardinalModalFromDetail(detailMember.id)
+    : undefined;
+  const handleDetailBan = detailMember ? () => onBan([detailMember.clubMemberId]) : undefined;
+  const handleDetailRestore = detailMember
+    ? () => onRestore([detailMember.clubMemberId])
+    : undefined;
+  const handleDetailTransferLead =
+    isLead && detailMember ? () => onTransferLead(detailMember.clubMemberId) : undefined;
+  const handleMobileDetailActionRequest = (action: TopBarAction) => {
+    setDisplayedDetailMember(detailMember);
+    onCloseDetail();
+    window.setTimeout(() => {
+      setPendingDetailAction(action);
+    }, DETAIL_BOTTOM_SHEET_EXIT_DELAY_MS);
+  };
+  const handleMobileDetailCardinalsChange = detailMember
+    ? () => {
+        const memberId = detailMember.id;
+
+        setDisplayedDetailMember(detailMember);
+        onCloseDetail();
+        window.setTimeout(() => {
+          onOpenCardinalModalFromDetail(memberId);
+        }, DETAIL_BOTTOM_SHEET_EXIT_DELAY_MS);
+      }
+    : undefined;
+  const handlePendingDetailActionConfirm = () => {
+    pendingDetailAction?.handler?.();
+    setPendingDetailAction(null);
+  };
+
   return (
     <>
-      <MemberDetailModal
-        open={detailMember !== null}
-        onOpenChange={(open) => {
-          if (!open) onCloseDetail();
-        }}
-        member={detailMember}
-        onBan={detailMember ? () => onBan([detailMember.clubMemberId]) : undefined}
-        onRestore={detailMember ? () => onRestore([detailMember.clubMemberId]) : undefined}
-        onChangeRole={
-          detailMember
-            ? () => {
-                const nextRole = detailMember.memberRole === 'ADMIN' ? 'USER' : 'ADMIN';
-                onChangeRole([detailMember.clubMemberId], nextRole);
-              }
-            : undefined
-        }
-        onChangeCardinals={
-          detailMember ? () => onOpenCardinalModalFromDetail(detailMember.id) : undefined
-        }
-        onTransferLead={
-          isLead && detailMember ? () => onTransferLead(detailMember.clubMemberId) : undefined
-        }
-      />
+      {!isMobile && (
+        <MemberDetailModal
+          open={detailOpen}
+          onOpenChange={(open) => {
+            if (!open) onCloseDetail();
+          }}
+          member={detailMember}
+          onBan={handleDetailBan}
+          onRestore={handleDetailRestore}
+          onChangeRole={handleDetailRoleChange}
+          onChangeCardinals={handleDetailCardinalsChange}
+          onTransferLead={handleDetailTransferLead}
+        />
+      )}
+
+      {isMobile && (
+        <MemberDetailBottomSheet
+          open={detailOpen}
+          onOpenChange={(open) => {
+            if (!open) {
+              setDisplayedDetailMember(detailMember);
+              onCloseDetail();
+              detailCacheResetTimeoutRef.current = window.setTimeout(
+                () => setDisplayedDetailMember(null),
+                DETAIL_BOTTOM_SHEET_EXIT_DELAY_MS,
+              );
+            }
+          }}
+          member={bottomSheetDetailMember}
+          onBan={handleDetailBan}
+          onRestore={handleDetailRestore}
+          onChangeRole={handleDetailRoleChange}
+          onChangeCardinals={handleMobileDetailCardinalsChange}
+          onTransferLead={handleDetailTransferLead}
+          onActionRequest={handleMobileDetailActionRequest}
+        />
+      )}
 
       <ChangeCardinalsModal
         open={cardinalModalMember !== null}
@@ -101,6 +177,20 @@ function MemberPageModals({
         <AlertDialogAction onClick={onConfirmForceChange}>변경</AlertDialogAction>
         <AlertDialogCancel>취소</AlertDialogCancel>
       </AlertDialog>
+
+      {pendingDetailAction && (
+        <AlertDialog
+          open
+          onOpenChange={(open) => {
+            if (!open) setPendingDetailAction(null);
+          }}
+          title={pendingDetailAction.title}
+          description={pendingDetailAction.description}
+        >
+          <AlertDialogAction onClick={handlePendingDetailActionConfirm}>확인</AlertDialogAction>
+          <AlertDialogCancel>취소</AlertDialogCancel>
+        </AlertDialog>
+      )}
     </>
   );
 }

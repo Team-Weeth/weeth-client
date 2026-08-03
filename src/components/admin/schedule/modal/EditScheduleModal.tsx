@@ -208,7 +208,7 @@ function EditScheduleModalContent({
       </div>
 
       {/* Body */}
-      <div className="scrollbar-custom tablet:px-700 max-h-175 min-h-0 overflow-y-auto px-400">
+      <div className="scrollbar-custom tablet:px-700 min-h-0 flex-1 touch-pan-y overflow-y-auto overscroll-contain px-400 [-webkit-overflow-scrolling:touch]">
         <h2 className="typo-h3 text-text-normal py-400">일반 일정 수정</h2>
         <ScheduleFormBody
           form={form}

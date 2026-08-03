@@ -12,6 +12,7 @@ interface TopBarActionParams {
 }
 
 interface TopBarAction {
+  id: 'approve' | 'changeRole' | 'ban' | 'restore' | 'transferLead';
   label: string;
   title: string;
   description?: string;
@@ -37,12 +38,14 @@ export function getTopBarActions({
 
   const actions: TopBarAction[] = [
     {
+      id: 'approve',
       label: '가입 승인',
       title: `${selectedCount}명의 멤버 가입을 승인하시겠습니까?`,
       handler: onApprove,
       disabled: !onApprove,
     },
     {
+      id: 'changeRole',
       label: roleLabel,
       title: roleTitle,
       handler: onChangeRole,
@@ -50,12 +53,14 @@ export function getTopBarActions({
     },
     targetBanAction === 'restore'
       ? {
+          id: 'restore',
           label: '유저 복구',
           title: `${selectedCount}명의 멤버를 복구하시겠습니까?`,
           handler: onRestore,
           disabled: !onRestore,
         }
       : {
+          id: 'ban',
           label: '유저 추방',
           title: `${selectedCount}명의 멤버를 추방하시겠습니까?`,
           handler: onBan,
@@ -65,6 +70,7 @@ export function getTopBarActions({
 
   if (onTransferLead) {
     actions.push({
+      id: 'transferLead',
       label: '리더로 변경',
       title: '해당 멤버에게\n리더 권한을 이양하시겠습니까?',
       description: '리더는 동아리별로\n1명만 지정할 수 있습니다',

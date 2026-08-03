@@ -7,6 +7,7 @@ import { cn } from '@/lib/cn';
 interface MemberSelectionCheckboxProps {
   checked: boolean;
   partial?: boolean;
+  className?: string;
   ariaLabel: string;
   checkedLabel?: string;
   uncheckedLabel?: string;
@@ -18,6 +19,7 @@ interface MemberSelectionCheckboxProps {
 function MemberSelectionCheckbox({
   checked,
   partial = false,
+  className,
   ariaLabel,
   checkedLabel = '선택됨',
   uncheckedLabel = '선택 안됨',
@@ -30,7 +32,7 @@ function MemberSelectionCheckbox({
       aria-pressed={partial ? 'mixed' : checked}
       aria-label={ariaLabel}
       type="button"
-      className="flex cursor-pointer items-center justify-center p-300"
+      className={cn('flex cursor-pointer items-center justify-center p-300', className)}
       onClick={onClick}
     >
       <span className="flex size-5 items-center justify-center">

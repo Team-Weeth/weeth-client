@@ -16,6 +16,9 @@ export interface Member {
   attendanceRate: number;
   penaltyCount: number;
   status: MemberStatus;
+  profileImageUrl: string | null;
+  bio: string | null;
+  joinedAt: string | null;
 }
 
 // API response types
@@ -27,9 +30,9 @@ export interface ClubMember {
   name: string;
   email: string;
   tel: string;
-  school: string;
-  department: string;
-  studentId: string;
+  school: string | null;
+  department: string | null;
+  studentId: string | null;
   cardinals: number[];
   memberStatus: MemberStatus;
   memberRole: ClubMemberRole;
@@ -37,4 +40,7 @@ export interface ClubMember {
   absenceCount: number;
   attendanceRate: number;
   penaltyCount: number;
+  profileImageUrl: string | null;
+  bio: string | null;
+  joinedAt: string | null;
 }

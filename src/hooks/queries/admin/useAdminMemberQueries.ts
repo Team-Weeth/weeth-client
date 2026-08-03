@@ -1,21 +1,67 @@
-import { useQuery } from '@tanstack/react-query';
+import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 
 import { adminMemberApi } from '@/lib/apis/adminMember';
+import type { Member } from '@/types/admin/member';
+import type { PageResponse } from '@/types/common';
 import { toMember } from '@/utils/admin/memberMapper';
 import { useClubId } from '@/stores';
 import { adminQueryKeys } from './adminQueryKeys';
 
-export function useAdminMembers() {
+const EMPTY_MEMBER_PAGE: PageResponse<Member> = {
+  content: [],
+  pageNumber: 0,
+  pageSize: 10,
+  numberOfElements: 0,
+  hasNext: false,
+  totalElements: 0,
+  totalPages: 0,
+};
+
+export function useAdminMembers(pageNumber = 0, pageSize = 10, enabled = true) {
   const clubId = useClubId();
 
   return useQuery({
-    queryKey: adminQueryKeys.members(clubId),
+    queryKey: [...adminQueryKeys.members(clubId), pageNumber, pageSize],
     queryFn: async () => {
-      const res = await adminMemberApi.getMembers(clubId!);
-      return res.data.data.map(toMember);
+      const res = await adminMemberApi.getMembers(clubId!, { pageNumber, pageSize });
+      const page = res.data.data;
+
+      return {
+        ...page,
+        content: page.content.map(toMember),
+      };
     },
-    enabled: !!clubId,
+    placeholderData: (previousData) => previousData,
+    enabled: !!clubId && enabled,
     staleTime: 30 * 60 * 1000,
     gcTime: 60 * 60 * 1000,
   });
 }
+
+export function useAdminMembersInfinite(pageSize = 10, enabled = true) {
+  const clubId = useClubId();
+
+  return useInfiniteQuery({
+    queryKey: [...adminQueryKeys.members(clubId), 'infinite', pageSize],
+    queryFn: async ({ pageParam }) => {
+      const res = await adminMemberApi.getMembers(clubId!, {
+        pageNumber: pageParam,
+        pageSize,
+      });
+      const page = res.data.data;
+
+      return {
+        ...page,
+        content: page.content.map(toMember),
+      };
+    },
+    initialPageParam: 0,
+    getNextPageParam: (lastPage) => (lastPage.hasNext ? lastPage.pageNumber + 1 : undefined),
+    select: (data) => data.pages.flatMap((page) => page.content),
+    enabled: !!clubId && enabled,
+    staleTime: 30 * 60 * 1000,
+    gcTime: 60 * 60 * 1000,
+  });
+}
+
+export { EMPTY_MEMBER_PAGE };

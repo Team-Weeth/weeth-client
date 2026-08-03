@@ -1,10 +1,12 @@
 import { apiClient } from '@/lib/apis/client';
 import type { ClubMember, ClubMemberRole } from '@/types/admin/member';
-import type { ApiResponse } from '@/types/common';
+import type { ApiResponse, PageResponse } from '@/types/common';
 
 export const adminMemberApi = {
-  getMembers: (clubId: string) =>
-    apiClient.get<ApiResponse<ClubMember[]>>(`/admin/clubs/${clubId}/members`),
+  getMembers: (clubId: string, params?: { pageNumber?: number; pageSize?: number }) =>
+    apiClient.get<ApiResponse<PageResponse<ClubMember>>>(`/admin/clubs/${clubId}/members`, {
+      params,
+    }),
   updateMemberRole: (clubId: string, clubMemberId: number, memberRole: ClubMemberRole) =>
     apiClient.patch(`/admin/clubs/${clubId}/members/${clubMemberId}/role`, { memberRole }),
   banMember: (clubId: string, clubMemberId: number) =>

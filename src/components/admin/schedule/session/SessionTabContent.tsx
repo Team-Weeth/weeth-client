@@ -1,9 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import Image from 'next/image';
 
-import { Button } from '@/components/ui';
+import { Button, Icon } from '@/components/ui';
 import { AdminCalendarEditIcon } from '@/assets/icons/admin';
 import { SessionTable } from '@/components/admin/schedule/session/SessionTable';
 import { EditSessionModal } from '@/components/admin/schedule/modal/EditSessionModal';
@@ -68,7 +67,7 @@ function SessionTabContent({
         <div className="tablet:px-600 flex h-[72px] items-center justify-between px-400">
           <span className="typo-sub3 text-text-normal">세션</span>
           <Button variant="primary" size="lg" onClick={onCreateSession}>
-            <Image src={AdminCalendarEditIcon} alt="" width={20} height={20} className="mr-1" />
+            <Icon src={AdminCalendarEditIcon} size={20} className="mr-1" />
             세션 생성
           </Button>
         </div>

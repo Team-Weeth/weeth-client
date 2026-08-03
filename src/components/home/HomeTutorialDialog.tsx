@@ -87,7 +87,10 @@ function HomeTutorialDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent showCloseButton className="w-full max-w-[668px] gap-0 rounded-md p-500">
+      <DialogContent
+        showCloseButton
+        className="w-[calc(100%-36px)] max-w-[668px] gap-0 rounded-md p-500"
+      >
         <DialogHeader
           overline={currentSlide.overline ?? '사이트 완성하기'}
           title={currentSlide.title}

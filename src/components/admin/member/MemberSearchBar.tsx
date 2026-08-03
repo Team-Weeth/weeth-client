@@ -36,13 +36,14 @@ function MemberSearchBar({ className, value, onValueChange, ...props }: MemberSe
           : 'w-9 border-transparent bg-transparent px-0 py-0',
         className,
       )}
+      data-open={isOpen}
       {...props}
     >
       <button
         type="button"
         aria-label="멤버 검색"
         className={cn(
-          'text-icon-alternative hover:text-icon-strong flex size-8 shrink-0 cursor-pointer items-center justify-center rounded-sm transition-colors',
+          'text-icon-normal tablet:text-icon-alternative hover:text-icon-strong flex size-8 shrink-0 cursor-pointer items-center justify-center rounded-sm transition-colors',
           isOpen && 'size-4',
         )}
         onClick={handleOpen}

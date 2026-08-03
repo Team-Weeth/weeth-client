@@ -23,5 +23,19 @@ export function toMember(cm: ClubMember): Member {
     attendanceRate: cm.attendanceRate ?? 0,
     penaltyCount: cm.penaltyCount ?? 0,
     status: cm.memberStatus,
+    profileImageUrl: cm.profileImageUrl ?? null,
+    bio: cm.bio ?? null,
+    joinedAt: formatJoinedAt(cm.joinedAt),
   };
+}
+
+function formatJoinedAt(joinedAt: string | null | undefined) {
+  if (!joinedAt) return null;
+
+  const [date] = joinedAt.split('T');
+  const [year, month, day] = date.split('-');
+
+  if (!year || !month || !day) return joinedAt;
+
+  return `${year}.${month}.${day}`;
 }
