@@ -32,6 +32,7 @@ function MemberTable({
   ...props
 }: MemberTableProps) {
   const [internalSelectedIds, setInternalSelectedIds] = useState<Set<string>>(new Set());
+  const [showStickyShadow, setShowStickyShadow] = useState(false);
   const selectedIds = controlledSelectedIds ?? internalSelectedIds;
   const setSelectedIds = onSelectionChange ?? setInternalSelectedIds;
   const currentPage = Math.min(page, Math.max(totalPages, 1));
@@ -60,11 +61,16 @@ function MemberTable({
     setSelectedIds(next);
   };
 
+  const handleTableScroll = (event: React.UIEvent<HTMLDivElement>) => {
+    setShowStickyShadow(event.currentTarget.scrollLeft > 0);
+  };
+
   return (
     <div className={cn('min-w-0', className)} {...props}>
       <div className="border-line max-tablet:rounded-none max-tablet:border-x-0 max-tablet:border-b-0 overflow-hidden rounded-sm border">
         <Table
           wrapperClassName="max-tablet:scrollbar-none"
+          wrapperProps={{ onScroll: handleTableScroll }}
           className="w-max min-w-full border-separate border-spacing-0"
         >
           <TableHeader className="bg-container-neutral-alternative sticky top-0 z-10">
@@ -87,7 +93,11 @@ function MemberTable({
                     'typo-caption1 text-text-alternative max-tablet:first:rounded-none max-tablet:last:rounded-none max-tablet:h-10 h-11 px-400 py-300',
                     column.width,
                     column.id === 'profile' &&
-                      'bg-container-neutral-alternative max-tablet:sticky max-tablet:left-12 max-tablet:z-30 max-tablet:w-[132px] max-tablet:min-w-[132px] max-tablet:px-200 max-tablet:after:absolute max-tablet:after:top-0 max-tablet:after:right-[-24px] max-tablet:after:h-full max-tablet:after:w-6 max-tablet:after:bg-[image:var(--member-table-sticky-shadow)] max-tablet:after:content-[""]',
+                      cn(
+                        'bg-container-neutral-alternative px-0 max-tablet:sticky max-tablet:left-12 max-tablet:z-30 max-tablet:w-[132px] max-tablet:min-w-[132px] max-tablet:px-0',
+                        showStickyShadow &&
+                          'max-tablet:after:absolute max-tablet:after:top-0 max-tablet:after:right-[-24px] max-tablet:after:h-full max-tablet:after:w-6 max-tablet:after:bg-[image:var(--member-table-sticky-shadow)] max-tablet:after:content-[""]',
+                      ),
                     'align' in column && column.align,
                   )}
                 >
@@ -113,6 +123,7 @@ function MemberTable({
                 selected={selectedIds.has(member.id)}
                 onToggle={toggleOne}
                 onMemberAction={onMemberAction}
+                showStickyShadow={showStickyShadow}
               />
             ))}
           </TableBody>

@@ -20,6 +20,12 @@ import { getTopBarActions } from '@/constants/admin/memberTopBar.constants';
 import type { ClubMemberRole } from '@/types/admin/member';
 import type { TopBarAction } from '@/constants/admin/memberTopBar.constants';
 
+const MOBILE_SELECTION_BAR_ANIMATION_MS = 420;
+const MOBILE_SELECTION_BAR_EXIT_OPACITY_MS = 560;
+const MOBILE_SELECTION_BAR_ENTER_CONTENT_DELAY_MS = 60;
+const MOBILE_SELECTION_BAR_EXIT_LAYOUT_DELAY_MS = 80;
+const MOBILE_SELECTION_BAR_EASING = 'cubic-bezier(0.16, 1, 0.3, 1)';
+
 interface MemberTopBarProps extends React.HTMLAttributes<HTMLDivElement> {
   selectedCount: number;
   targetRole: ClubMemberRole | null;
@@ -125,6 +131,7 @@ function MemberTopBar({
 
 function MobileMemberTopBar({
   className,
+  style,
   selectedCount,
   targetRole,
   targetBanAction,
@@ -143,13 +150,17 @@ function MobileMemberTopBar({
   const [isCardinalsOpen, setIsCardinalsOpen] = React.useState(false);
   const [isActionSheetOpen, setIsActionSheetOpen] = React.useState(false);
   const isVisible = selectedCount > 0;
+  const [shouldRender, setShouldRender] = React.useState(isVisible);
+  const [isAnimatedVisible, setIsAnimatedVisible] = React.useState(false);
+  const [displayedSelectedCount, setDisplayedSelectedCount] = React.useState(selectedCount);
+  const effectiveSelectedCount = isVisible ? selectedCount : displayedSelectedCount;
   const changeCardinalsOverline =
-    selectedCount === 1 && selectedMemberName
+    effectiveSelectedCount === 1 && selectedMemberName
       ? `'${selectedMemberName}'의 기수를 선택하세요`
-      : `${selectedCount}명의 기수를 일괄 변경합니다.`;
+      : `${effectiveSelectedCount}명의 기수를 일괄 변경합니다.`;
 
   const topBarActions = getTopBarActions({
-    selectedCount,
+    selectedCount: effectiveSelectedCount,
     targetRole,
     targetBanAction,
     onApprove,
@@ -173,41 +184,93 @@ function MobileMemberTopBar({
     onBack();
   };
 
-  if (!isVisible) return null;
+  React.useEffect(() => {
+    if (isVisible) {
+      setShouldRender(true);
+      setDisplayedSelectedCount(selectedCount);
+      return;
+    }
+
+    setIsAnimatedVisible(false);
+    setIsActionSheetOpen(false);
+    const timeout = window.setTimeout(
+      () => setShouldRender(false),
+      MOBILE_SELECTION_BAR_EXIT_OPACITY_MS + MOBILE_SELECTION_BAR_EXIT_LAYOUT_DELAY_MS,
+    );
+
+    return () => window.clearTimeout(timeout);
+  }, [isVisible, selectedCount]);
+
+  React.useEffect(() => {
+    if (!shouldRender || !isVisible) return;
+
+    let secondFrame = 0;
+    const firstFrame = requestAnimationFrame(() => {
+      secondFrame = requestAnimationFrame(() => setIsAnimatedVisible(true));
+    });
+
+    return () => {
+      cancelAnimationFrame(firstFrame);
+      cancelAnimationFrame(secondFrame);
+    };
+  }, [isVisible, shouldRender]);
+
+  if (!shouldRender) return null;
 
   return (
-    <div
+    <>
+      <div
+        className="tablet:hidden grid overflow-hidden will-change-[grid-template-rows]"
+        style={{
+          gridTemplateRows: isAnimatedVisible ? '1fr' : '0fr',
+          transition: `grid-template-rows ${MOBILE_SELECTION_BAR_ANIMATION_MS}ms ${MOBILE_SELECTION_BAR_EASING} ${isVisible ? '0ms' : `${MOBILE_SELECTION_BAR_EXIT_LAYOUT_DELAY_MS}ms`}`,
+        }}
+      >
+        <div className="min-h-0 overflow-hidden">
+          <div
+            aria-hidden={!isAnimatedVisible}
+            inert={!isAnimatedVisible}
       className={cn(
-        'bg-container-floating tablet:hidden flex items-center justify-between px-450 py-300',
+              'bg-container-floating flex items-center justify-between px-450 py-300 will-change-[transform,opacity]',
+        isAnimatedVisible ? 'pointer-events-auto' : 'pointer-events-none',
         className,
       )}
+      style={{
+        transform: `translateY(${isAnimatedVisible ? '0' : '22px'})`,
+        opacity: isAnimatedVisible ? 1 : 0,
+        transition: `transform ${MOBILE_SELECTION_BAR_ANIMATION_MS}ms ${MOBILE_SELECTION_BAR_EASING} ${isVisible ? `${MOBILE_SELECTION_BAR_ENTER_CONTENT_DELAY_MS}ms` : '0ms'}, opacity ${isVisible ? MOBILE_SELECTION_BAR_ANIMATION_MS : MOBILE_SELECTION_BAR_EXIT_OPACITY_MS}ms ${MOBILE_SELECTION_BAR_EASING} ${isVisible ? `${MOBILE_SELECTION_BAR_ENTER_CONTENT_DELAY_MS}ms` : '0ms'}`,
+        ...style,
+      }}
       {...props}
     >
-      <div className="flex shrink-0 items-center gap-200 pr-300">
-        <span className="bg-button-primary text-text-inverse typo-caption1 flex h-[22px] min-w-[22px] items-center justify-center rounded-full px-[7px]">
-          {selectedCount}
-        </span>
-        <span className="typo-button2 text-text-alternative shrink-0">명 선택됨</span>
-      </div>
+            <div className="flex shrink-0 items-center gap-200 pr-300">
+              <span className="bg-button-primary text-text-inverse typo-caption1 flex h-[22px] min-w-[22px] items-center justify-center rounded-full px-[7px]">
+                {effectiveSelectedCount}
+              </span>
+              <span className="typo-button2 text-text-alternative shrink-0">명 선택됨</span>
+            </div>
 
-      <div className="flex min-w-0 items-center gap-300">
-        <button
-          type="button"
-          onClick={handleClearSelection}
-          className="flex shrink-0 cursor-pointer items-center gap-100 p-200"
-          aria-label="선택 해제"
-        >
-          <Icon src={AdminCloseIcon} size={16} className="text-icon-disabled" alt="" />
-          <span className="typo-caption2 text-text-disabled">해제</span>
-        </button>
+            <div className="flex min-w-0 items-center gap-300">
+              <button
+                type="button"
+                onClick={handleClearSelection}
+                className="flex shrink-0 cursor-pointer items-center gap-100 p-200"
+                aria-label="선택 해제"
+              >
+                <Icon src={AdminCloseIcon} size={16} className="text-icon-disabled" alt="" />
+                <span className="typo-caption2 text-text-disabled">해제</span>
+              </button>
 
-        <button
-          type="button"
-          className="bg-container-neutral text-text-strong typo-caption1 shrink-0 cursor-pointer rounded-sm px-300 py-200"
-          onClick={() => setIsActionSheetOpen(true)}
-        >
-          작업 선택
-        </button>
+              <button
+                type="button"
+                className="bg-container-neutral text-text-strong typo-caption1 shrink-0 cursor-pointer rounded-sm px-300 py-200"
+                onClick={() => setIsActionSheetOpen(true)}
+              >
+                작업 선택
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
 
       <BottomSheet
@@ -219,7 +282,7 @@ function MobileMemberTopBar({
           <div className="flex items-center justify-between">
             <div className="flex shrink-0 items-center gap-200">
               <span className="bg-button-primary text-text-inverse typo-caption1 flex h-[22px] min-w-[22px] items-center justify-center rounded-full px-[7px]">
-                {selectedCount}
+                {effectiveSelectedCount}
               </span>
               <span className="typo-button2 text-text-alternative shrink-0">명 선택됨</span>
             </div>
@@ -281,7 +344,7 @@ function MobileMemberTopBar({
           open={isCardinalsOpen}
           onOpenChange={setIsCardinalsOpen}
           overline={changeCardinalsOverline}
-          memberCount={selectedCount}
+          memberCount={effectiveSelectedCount}
           memberCardinals={selectedMemberCardinals}
           onSubmit={onChangeCardinals}
         />
@@ -300,7 +363,7 @@ function MobileMemberTopBar({
           <AlertDialogCancel>취소</AlertDialogCancel>
         </AlertDialog>
       )}
-    </div>
+    </>
   );
 }
 

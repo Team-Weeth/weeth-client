@@ -1,7 +1,17 @@
 import type { ReactNode } from 'react';
 
 import { AdminMeatballIcon } from '@/assets/icons/admin';
-import { Avatar, AvatarFallback, AvatarImage, Icon, TableCell, TableRow } from '@/components/ui';
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+  Icon,
+  TableCell,
+  TableRow,
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/ui';
 import { cn } from '@/lib/cn';
 import type { Member } from '@/types/admin/member';
 import { formatCardinalLabel, getVisibleMemberCardinals } from '@/utils/admin/memberTableUtils';
@@ -13,6 +23,7 @@ interface MemberTableRowProps {
   selected: boolean;
   onToggle: (id: string) => void;
   onMemberAction?: (member: Member) => void;
+  showStickyShadow?: boolean;
 }
 
 const TEXT_CELL_CLASS_BY_ID = {
@@ -24,7 +35,13 @@ const TEXT_CELL_CLASS_BY_ID = {
 
 const NUMBER_CELL_VALUES = ['attendance', 'absence', 'penaltyCount'] as const;
 
-function MemberTableRow({ member, selected, onToggle, onMemberAction }: MemberTableRowProps) {
+function MemberTableRow({
+  member,
+  selected,
+  onToggle,
+  onMemberAction,
+  showStickyShadow = false,
+}: MemberTableRowProps) {
   const textCells = [
     { id: 'role', value: member.position },
     { id: 'department', value: member.department },
@@ -35,9 +52,9 @@ function MemberTableRow({ member, selected, onToggle, onMemberAction }: MemberTa
   return (
     <TableRow
       className={cn(
-        'bg-container-neutral [&>td]:border-line max-tablet:h-12 max-tablet:[&>td]:border-b-0 [&>td]:bg-container-neutral h-16 cursor-pointer border-0 hover:bg-neutral-200 [&:last-child>td]:border-b-0 [&>td]:border-b',
+        'bg-container-neutral [&>td]:border-line max-tablet:h-12 max-tablet:[&>td]:border-b-0 [&>td]:bg-container-neutral h-16 cursor-pointer border-0 hover:[&>td]:bg-neutral-200 [&:last-child>td]:border-b-0 [&>td]:border-b',
         selected &&
-          'bg-container-primary-alternative hover:bg-container-primary-alternative [&>td]:bg-container-primary-alternative',
+          'bg-container-primary-alternative [&>td]:bg-container-primary-alternative hover:[&>td]:bg-container-primary-alternative',
       )}
       onClick={() => onMemberAction?.(member)}
     >
@@ -57,7 +74,7 @@ function MemberTableRow({ member, selected, onToggle, onMemberAction }: MemberTa
         />
       </TableCell>
 
-      <MemberProfileCell member={member} />
+      <MemberProfileCell member={member} showStickyShadow={showStickyShadow} />
 
       {textCells.slice(0, 3).map(({ id, value }) => (
         <MemberTextCell key={id} className={TEXT_CELL_CLASS_BY_ID[id]}>
@@ -102,22 +119,30 @@ function MemberTableRow({ member, selected, onToggle, onMemberAction }: MemberTa
   );
 }
 
-function MemberProfileCell({ member }: { member: Member }) {
+function MemberProfileCell({
+  member,
+  showStickyShadow,
+}: {
+  member: Member;
+  showStickyShadow: boolean;
+}) {
   return (
     <TableCell
       className={cn(
-        'h-16 w-[172px] p-0 pr-400',
-        'max-tablet:sticky max-tablet:left-12 max-tablet:z-20 max-tablet:h-12 max-tablet:w-[132px] max-tablet:min-w-[132px] max-tablet:bg-inherit max-tablet:pr-200 max-tablet:after:absolute max-tablet:after:top-0 max-tablet:after:right-[-24px] max-tablet:after:h-full max-tablet:after:w-6 max-tablet:after:bg-[image:var(--member-table-sticky-shadow)] max-tablet:after:content-[""]',
+        'h-16 w-[220px] min-w-[220px] p-0 pr-400',
+        'max-tablet:sticky max-tablet:left-12 max-tablet:z-20 max-tablet:h-12 max-tablet:w-[132px] max-tablet:min-w-[132px] max-tablet:bg-inherit max-tablet:pr-200',
+        showStickyShadow &&
+          'max-tablet:after:absolute max-tablet:after:top-0 max-tablet:after:right-[-24px] max-tablet:after:h-full max-tablet:after:w-6 max-tablet:after:bg-[image:var(--member-table-sticky-shadow)] max-tablet:after:content-[""]',
       )}
     >
-      <div className="max-tablet:gap-200 flex min-w-0 items-center gap-300">
+      <div className="max-tablet:gap-200 flex w-full min-w-0 items-center gap-300 overflow-hidden">
         <Avatar size={40} className="max-tablet:size-7">
           {member.profileImageUrl && (
             <AvatarImage src={member.profileImageUrl} alt={`${member.name} 프로필 이미지`} />
           )}
           <AvatarFallback />
         </Avatar>
-        <div className="flex min-w-0 flex-col justify-center gap-0.5">
+        <div className="max-tablet:w-[88px] max-tablet:max-w-[88px] flex w-[152px] min-w-0 max-w-[152px] flex-col justify-center gap-0.5 overflow-hidden">
           <span className="typo-button2 text-text-normal truncate">{member.name}</span>
           <span
             className={cn(
@@ -134,15 +159,33 @@ function MemberProfileCell({ member }: { member: Member }) {
 }
 
 function MemberCardinalsCell({ cardinal }: { cardinal: string }) {
-  const { visibleCardinals, hiddenCardinalCount } = getVisibleMemberCardinals(cardinal);
+  const { visibleCardinals, hiddenCardinals, hiddenCardinalCount } =
+    getVisibleMemberCardinals(cardinal);
+  const hiddenCardinalLabel = hiddenCardinals.map(formatCardinalLabel).join(', ');
 
   return (
     <TableCell className="max-tablet:h-12 max-tablet:px-300 max-tablet:py-100 h-16 w-[182px] p-0 px-400 py-[7px]">
-      <div className="flex items-center gap-100 overflow-hidden">
+      <div className="flex items-center gap-100 overflow-visible">
         {visibleCardinals.map((item) => (
           <CardinalTag key={item}>{formatCardinalLabel(item)}</CardinalTag>
         ))}
-        {hiddenCardinalCount > 0 && <CardinalTag>+{hiddenCardinalCount}</CardinalTag>}
+        {hiddenCardinalCount > 0 && (
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button
+                type="button"
+                className="cursor-default"
+                aria-label={`숨겨진 활동기수 ${hiddenCardinalLabel}`}
+                onClick={(event) => event.stopPropagation()}
+              >
+                <CardinalTag>+{hiddenCardinalCount}</CardinalTag>
+              </button>
+            </TooltipTrigger>
+            <TooltipContent variant="dark" side="top" align="center" sideOffset={6}>
+              {hiddenCardinalLabel}
+            </TooltipContent>
+          </Tooltip>
+        )}
       </div>
     </TableCell>
   );

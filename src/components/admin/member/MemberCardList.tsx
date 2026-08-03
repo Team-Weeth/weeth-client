@@ -61,11 +61,12 @@ function MemberCardList({
 
   return (
     <div className={cn('flex flex-col', className)} {...props}>
-      <div className="mb-300 flex items-center justify-between">
-        <div className="typo-body1 text-text-alternative flex cursor-pointer items-center gap-100">
+      <div className="mb-[12px] flex items-center justify-between">
+        <div className="typo-body1 text-text-alternative flex cursor-pointer items-center gap-200">
           <MemberSelectionCheckbox
             checked={isAllSelected}
             partial={isPartiallySelected}
+            className="p-0"
             ariaLabel="현재 페이지 멤버 전체 선택"
             checkedLabel="현재 페이지 전체 선택됨"
             uncheckedLabel="현재 페이지 전체 선택 안됨"

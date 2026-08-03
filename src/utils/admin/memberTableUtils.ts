@@ -4,10 +4,13 @@ const VISIBLE_CARDINAL_LIMIT = 2;
 
 function getVisibleMemberCardinals(cardinal: string) {
   const cardinals = parseCardinals(cardinal);
+  const visibleCardinals = cardinals.slice(0, VISIBLE_CARDINAL_LIMIT);
+  const hiddenCardinals = cardinals.slice(VISIBLE_CARDINAL_LIMIT);
 
   return {
-    visibleCardinals: cardinals.slice(0, VISIBLE_CARDINAL_LIMIT),
-    hiddenCardinalCount: Math.max(cardinals.length - VISIBLE_CARDINAL_LIMIT, 0),
+    visibleCardinals,
+    hiddenCardinals,
+    hiddenCardinalCount: hiddenCardinals.length,
   };
 }
 

@@ -1,7 +1,14 @@
 import type { ReactNode } from 'react';
 
 import { AttendanceProgressBar } from '@/components/attendance';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui';
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/ui';
 import { MemberStatusBadge } from '@/components/admin/member/MemberStatusBadge';
 import { cn } from '@/lib/cn';
 import type { Member } from '@/types/admin/member';
@@ -111,7 +118,7 @@ function MemberActivityInfoCard({ member, className }: MemberDetailInfoCardProps
         {getMemberActivityStats(member).map(({ label, value }) => (
           <InfoRow key={label} label={label} value={value} alignValue="right" />
         ))}
-        <div className="mt-100 flex flex-col gap-100">
+        <div className="mt-100 flex flex-col gap-[6px]">
           <InfoRow
             label="출석률"
             value={`${member.attendanceRate}%`}
@@ -175,16 +182,20 @@ function MemberDetailCardinalTooltip({
   content: string;
 }) {
   return (
-    <button
-      type="button"
-      className="group relative inline-flex cursor-default"
-      aria-label={`숨겨진 활동기수 ${content}`}
-    >
-      <MemberDetailCardinalTag>{children}</MemberDetailCardinalTag>
-      <span className="bg-container-primary-interaction text-text-inverse typo-body2 pointer-events-none absolute right-0 bottom-[calc(100%+8px)] z-50 w-max rounded-sm p-200 opacity-0 shadow-sm transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100">
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <button
+          type="button"
+          className="inline-flex cursor-default"
+          aria-label={`숨겨진 활동기수 ${content}`}
+        >
+          <MemberDetailCardinalTag>{children}</MemberDetailCardinalTag>
+        </button>
+      </TooltipTrigger>
+      <TooltipContent variant="dark" side="top" align="end">
         {content}
-      </span>
-    </button>
+      </TooltipContent>
+    </Tooltip>
   );
 }
 

@@ -27,7 +27,6 @@ interface MemberMobileSearchPageProps extends HTMLAttributes<HTMLDivElement> {
   onToggleSort: () => void;
   onSelectionChange: (ids: Set<string>) => void;
   onMemberAction?: (member: Member) => void;
-  selectionBar?: ReactNode;
   listFooter?: ReactNode;
 }
 
@@ -46,12 +45,12 @@ function MemberMobileSearchPage({
   onToggleSort,
   onSelectionChange,
   onMemberAction,
-  selectionBar,
   listFooter,
   ...props
 }: MemberMobileSearchPageProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const hasSearchQuery = searchQuery.trim().length > 0;
+  const hasSearchResults = members.length > 0;
 
   useEffect(() => {
     inputRef.current?.focus();
@@ -89,10 +88,15 @@ function MemberMobileSearchPage({
         </button>
       </div>
 
-      {selectionBar}
-
       <div className="flex min-h-0 flex-1 flex-col overflow-y-auto p-450">
+        {hasSearchQuery && !hasSearchResults && (
+          <div className="typo-body1 text-text-alternative flex shrink-0 justify-center pt-600">
+            검색 결과가 없습니다.
+          </div>
+        )}
+
         {hasSearchQuery &&
+          hasSearchResults &&
           (viewMode === 'card' ? (
             <MemberCardList
               members={members}
@@ -118,7 +122,7 @@ function MemberMobileSearchPage({
             />
           ))}
 
-        {hasSearchQuery && listFooter}
+        {hasSearchQuery && hasSearchResults && listFooter}
       </div>
     </section>
   );

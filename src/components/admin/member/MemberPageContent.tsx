@@ -232,7 +232,6 @@ function MemberPageContent() {
               onSelectionChange={handleSelectionChange}
               onMemberAction={handleMemberAction}
               listFooter={<div ref={sentinelRef} className="h-px w-full shrink-0" />}
-              selectionBar={<MobileMemberTopBar {...memberSelectionBarProps} />}
             />
           )}
         </div>
