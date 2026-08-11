@@ -1,7 +1,9 @@
 'use client';
 
 import { cn } from '@/lib/cn';
-import { LikeIcon, LikeFilledIcon, ChatIcon } from '@/assets/icons';
+import LikeIcon from '@/assets/icons/like.svg';
+import LikeFilledIcon from '@/assets/icons/like_filled.svg';
+import ChatIcon from '@/assets/icons/chat.svg';
 import { Icon } from '@/components/ui';
 import { useToggleLike } from '@/hooks/board/useToggleLike';
 

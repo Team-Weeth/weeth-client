@@ -13,7 +13,8 @@ import type { MemberViewMode } from '@/components/admin/member/MemberViewToggle'
 import type { Member } from '@/types/admin/member';
 import { EMPTY_MEMBER_PAGE, useAdminMembers, useAdminMembersInfinite } from '@/hooks/queries/admin';
 import { useCardinals } from '@/hooks/queries';
-import { useIntersectionObserver, useMediaQuery } from '@/hooks';
+import { useIntersectionObserver } from '@/hooks/board/useIntersectionObserver';
+import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { useUserRole } from '@/stores';
 import { cn } from '@/lib/cn';
 import { useMemberBulkActions } from './hooks/useMemberBulkActions';

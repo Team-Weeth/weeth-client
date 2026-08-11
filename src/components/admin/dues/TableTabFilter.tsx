@@ -1,6 +1,6 @@
 'use client';
 
-import { ConvertIcon } from '@/assets/icons';
+import ConvertIcon from '@/assets/icons/convert.svg';
 import { Icon } from '@/components/ui';
 import { cn } from '@/lib/cn';
 

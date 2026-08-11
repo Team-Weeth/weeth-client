@@ -1,7 +1,7 @@
 'use client';
 
-import { AdminSettingIcon } from '@/assets/icons/admin';
-import { QuestionCircleIcon } from '@/assets/icons';
+import AdminSettingIcon from '@/assets/icons/admin/ic_admin_setting.svg';
+import QuestionCircleIcon from '@/assets/icons/question_circle.svg';
 import {
   Icon,
   Switch,

@@ -1,5 +1,5 @@
 import { DialogTitle, Icon } from '@/components/ui';
-import { DeleteIcon } from '@/assets/icons';
+import DeleteIcon from '@/assets/icons/delete.svg';
 import { cn } from '@/lib/cn';
 
 function StepIndicator({ current, total }: { current: number; total: number }) {

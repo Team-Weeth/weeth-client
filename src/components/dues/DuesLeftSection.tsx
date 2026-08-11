@@ -1,6 +1,6 @@
 'use client';
 
-import { DotIcon } from '@/assets/icons';
+import DotIcon from '@/assets/icons/dot.svg';
 import { DuesAccountCard } from '@/components/dues/DuesAccountCard';
 import { DuesAmountCard } from '@/components/dues/DuesAmountCard';
 import { DuesBalanceCard } from '@/components/dues/DuesBalanceCard';

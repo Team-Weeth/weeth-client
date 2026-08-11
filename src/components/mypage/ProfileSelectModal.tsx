@@ -1,7 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { CheckIcon, DeleteIcon } from '@/assets/icons';
+import CheckIcon from '@/assets/icons/check.svg';
+import DeleteIcon from '@/assets/icons/delete.svg';
 import { useUpdateClubProfileAssignmentsMutation } from '@/hooks/mutations/mypage/useMultiProfileMutations';
 import { toastError, toastSuccess } from '@/stores/useToastStore';
 import { getApiErrorMessage } from '@/utils/shared';

@@ -11,7 +11,7 @@ import {
   AvatarFallback,
   AvatarImage,
 } from '@/components/ui';
-import { CameraIcon } from '@/assets/icons';
+import CameraIcon from '@/assets/icons/camera.svg';
 import { useImagePreview } from '@/hooks/mypage';
 import { cn } from '@/lib/cn';
 import type { AvatarProps } from '@/components/ui';

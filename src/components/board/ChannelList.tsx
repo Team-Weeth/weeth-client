@@ -2,7 +2,7 @@
 
 import { cn } from '@/lib/cn';
 import { Divider, Icon } from '@/components/ui';
-import { PinIcon } from '@/assets/icons';
+import PinIcon from '@/assets/icons/pin.svg';
 import { MegaphoneIcon } from '@/components/board/MegaphoneIcon';
 import type { BoardNavItem } from '@/types/board';
 

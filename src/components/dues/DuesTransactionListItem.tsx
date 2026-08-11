@@ -1,4 +1,4 @@
-import { PinIcon } from '@/assets/icons';
+import PinIcon from '@/assets/icons/pin.svg';
 import { Icon } from '@/components/ui';
 import { cn } from '@/lib/cn';
 import { formatAmount } from '@/lib/formatAmount';

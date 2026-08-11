@@ -1,7 +1,7 @@
 import Image from 'next/image';
 
 import { cn } from '@/lib/cn';
-import { LoginCoverIcon } from '@/assets/icons';
+import LoginCoverIcon from '@/assets/icons/login_cover.svg';
 import { Loading } from '@/components/ui';
 import { SocialLoginButtons } from '@/components/auth/SocialLoginButtons';
 

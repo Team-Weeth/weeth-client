@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { ReplyIcon } from '@/assets/icons';
+import ReplyIcon from '@/assets/icons/reply.svg';
 import { Avatar, AvatarFallback, AvatarImage, Icon } from '@/components/ui';
 import { cn } from '@/lib/cn';
 import { ActionMenu } from '@/components/board/ActionMenu';

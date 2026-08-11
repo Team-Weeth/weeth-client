@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 
-import { EditIcon } from '@/assets/icons';
+import EditIcon from '@/assets/icons/edit.svg';
 import {
   Avatar,
   AvatarFallback,

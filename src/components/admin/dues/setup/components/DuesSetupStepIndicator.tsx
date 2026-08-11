@@ -1,4 +1,4 @@
-import { CheckIcon } from '@/assets/icons';
+import CheckIcon from '@/assets/icons/check.svg';
 import { cn } from '@/lib/cn';
 import { Icon } from '@/components/ui';
 

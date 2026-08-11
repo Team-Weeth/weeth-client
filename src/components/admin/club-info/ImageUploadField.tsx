@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 
 import Image from 'next/image';
 
-import { AdminCloudUploadIcon } from '@/assets/icons/admin';
+import AdminCloudUploadIcon from '@/assets/icons/admin/ic_admin_cloud_upload.svg';
 import { Button, Icon, ProgressBar } from '@/components/ui';
 import { useImageDrop } from '@/hooks/useImageDrop';
 import { useProgressAnimation } from '@/hooks/useProgressAnimation';

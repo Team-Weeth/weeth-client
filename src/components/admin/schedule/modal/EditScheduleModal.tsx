@@ -11,7 +11,8 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui';
 import { CustomAlertDialog } from '@/components/alert';
-import { AdminCloseIcon, AdminMeatballIcon } from '@/assets/icons/admin';
+import AdminCloseIcon from '@/assets/icons/admin/ic_admin_close.svg';
+import AdminMeatballIcon from '@/assets/icons/admin/ic_admin_meatball.svg';
 import { ModalIconButton } from '@/components/admin/modal/ModalIconButton';
 import type { Schedule } from '@/types/admin/schedule';
 import {

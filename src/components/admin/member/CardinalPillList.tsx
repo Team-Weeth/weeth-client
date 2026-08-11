@@ -1,6 +1,6 @@
 'use client';
 
-import { MoreVerticalIcon } from '@/assets/icons';
+import MoreVerticalIcon from '@/assets/icons/more_vertical.svg';
 import { AddCardinalButton } from './AddCardinalButton';
 import { AddCardinalModal } from './modal/AddCardinalModal';
 import { CardinalCard } from './CardinalCard';
@@ -12,7 +12,7 @@ import {
   Icon,
 } from '@/components/ui';
 import { CARDINAL_ERROR_CODE } from '@/constants/errorCode';
-import { useDragScroll } from '@/hooks';
+import { useDragScroll } from '@/hooks/useDragScroll';
 import { useCreateCardinal, useSetCurrentCardinal } from '@/hooks/mutations/admin';
 import { cn } from '@/lib/cn';
 import { toastError, toastSuccess } from '@/stores/useToastStore';

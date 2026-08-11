@@ -1,4 +1,4 @@
-import { ArrowLeftIcon } from '@/assets/icons';
+import ArrowLeftIcon from '@/assets/icons/arrow_left.svg';
 import {
   Button,
   Dialog,

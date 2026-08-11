@@ -1,6 +1,6 @@
 'use client';
 
-import { AdminCloseIcon } from '@/assets/icons/admin';
+import AdminCloseIcon from '@/assets/icons/admin/ic_admin_close.svg';
 import { ModalIconButton } from '@/components/admin/modal/ModalIconButton';
 import {
   SCHEDULE_MODAL_CONTENT_CLASS,

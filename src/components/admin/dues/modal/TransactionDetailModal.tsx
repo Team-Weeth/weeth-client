@@ -2,7 +2,8 @@
 
 import { useState } from 'react';
 
-import { AdminCloseIcon, AdminMeatballIcon } from '@/assets/icons/admin';
+import AdminCloseIcon from '@/assets/icons/admin/ic_admin_close.svg';
+import AdminMeatballIcon from '@/assets/icons/admin/ic_admin_meatball.svg';
 import {
   AlertDialog,
   AlertDialogAction,

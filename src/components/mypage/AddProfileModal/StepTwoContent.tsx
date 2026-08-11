@@ -1,6 +1,7 @@
 'use client';
 
-import { CheckIcon, PeopleIcon } from '@/assets/icons';
+import CheckIcon from '@/assets/icons/check.svg';
+import PeopleIcon from '@/assets/icons/people.svg';
 import { Avatar, AvatarFallback, AvatarImage, Button, Icon } from '@/components/ui';
 import { cn } from '@/lib/cn';
 import type { MyPageAssignableClub } from '@/types/mypage';

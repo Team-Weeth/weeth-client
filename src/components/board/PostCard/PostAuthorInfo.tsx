@@ -1,4 +1,4 @@
-import { PaperclipIcon } from '@/assets/icons';
+import PaperclipIcon from '@/assets/icons/paperclip.svg';
 import { Avatar, AvatarImage, AvatarFallback, Divider, Icon } from '@/components/ui';
 import { cn } from '@/lib/cn';
 

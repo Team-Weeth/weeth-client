@@ -3,7 +3,7 @@
 import { useEffect } from 'react';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
-import { BackIcon } from '@/assets/icons';
+import BackIcon from '@/assets/icons/back.svg';
 import { BoardContentSkeleton } from '@/components/board/BoardContentSkeleton';
 import { PostCard } from '@/components/board/PostCard';
 import { Icon } from '@/components/ui';

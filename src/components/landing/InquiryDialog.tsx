@@ -12,7 +12,7 @@ import {
   Input,
   Textarea,
 } from '@/components/ui';
-import { LandingInfoIcon } from '@/assets/icons/landing';
+import LandingInfoIcon from '@/assets/icons/landing/landing_info.svg';
 import { inquiryApi } from '@/lib/apis/inquiry';
 import { toastSuccess, toastError } from '@/stores/useToastStore';
 import Image from 'next/image';

@@ -3,8 +3,8 @@
 import { useEffect, useRef } from 'react';
 import type { HTMLAttributes, ReactNode } from 'react';
 
-import { SearchIcon } from '@/assets/icons';
-import { AdminCloseIcon } from '@/assets/icons/admin';
+import SearchIcon from '@/assets/icons/search.svg';
+import AdminCloseIcon from '@/assets/icons/admin/ic_admin_close.svg';
 import { Icon } from '@/components/ui';
 import { cn } from '@/lib/cn';
 import type { Member } from '@/types/admin/member';

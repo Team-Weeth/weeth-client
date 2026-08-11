@@ -1,6 +1,7 @@
 'use client';
 
-import { PeopleIcon, CopyIcon } from '@/assets/icons';
+import PeopleIcon from '@/assets/icons/people.svg';
+import CopyIcon from '@/assets/icons/copy.svg';
 import { Button, Divider, Icon } from '@/components/ui';
 import dynamic from 'next/dynamic';
 import { copyTextToClipboard } from '@/utils/shared/clipboard';

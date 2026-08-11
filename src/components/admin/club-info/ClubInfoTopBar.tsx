@@ -4,8 +4,8 @@ import { type HTMLAttributes, useRef, useState } from 'react';
 
 import { AlertDialog as AlertDialogPrimitive } from 'radix-ui';
 
-import { ArrowLeftIcon } from '@/assets/icons';
-import { InfoCircleIcon } from '@/assets/icons';
+import ArrowLeftIcon from '@/assets/icons/arrow_left.svg';
+import InfoCircleIcon from '@/assets/icons/info_circle.svg';
 import { Button, Icon } from '@/components/ui';
 import { cn } from '@/lib/cn';
 

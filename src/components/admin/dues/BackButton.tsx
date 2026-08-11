@@ -1,6 +1,6 @@
 'use client';
 
-import { BackIcon } from '@/assets/icons';
+import BackIcon from '@/assets/icons/back.svg';
 import { Icon } from '@/components/ui';
 import { useDuesSetupNavigation } from '../../../hooks/admin/useDuesSetupNavigation';
 

@@ -1,10 +1,8 @@
-import {
-  AdviceImage,
-  BicycleImage,
-  YogaImage,
-  RunningImage,
-  StudyImage,
-} from '@/assets/icons/landing';
+import AdviceImage from '@/assets/icons/landing/advice.png';
+import BicycleImage from '@/assets/icons/landing/bicycle.png';
+import YogaImage from '@/assets/icons/landing/yoga.png';
+import RunningImage from '@/assets/icons/landing/running.png';
+import StudyImage from '@/assets/icons/landing/study.png';
 import type { Feature } from '@/components/landing/ServiceSection';
 
 export const USER_FEATURES: Feature[] = [

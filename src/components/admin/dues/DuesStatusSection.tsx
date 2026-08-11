@@ -1,6 +1,6 @@
 'use client';
 
-import { CopyIcon } from '@/assets/icons';
+import CopyIcon from '@/assets/icons/copy.svg';
 import {
   Card,
   Icon,

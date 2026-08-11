@@ -1,4 +1,5 @@
-import { ArrowRightIcon, CheckRoundIcon } from '@/assets/icons';
+import ArrowRightIcon from '@/assets/icons/arrow_right.svg';
+import CheckRoundIcon from '@/assets/icons/check_round.svg';
 import {
   Button,
   Dialog,

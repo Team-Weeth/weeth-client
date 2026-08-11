@@ -5,7 +5,7 @@ import { AlertDialog as AlertDialogPrimitive } from 'radix-ui';
 
 import { cn } from '@/lib/cn';
 import { Icon } from '@/components/ui';
-import { InfoCircleIcon } from '@/assets/icons';
+import InfoCircleIcon from '@/assets/icons/info_circle.svg';
 
 type Placement = 'above-right' | 'below-right' | 'above-left' | 'below-left' | 'center';
 type Tone = 'danger' | 'primary';

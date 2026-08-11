@@ -1,6 +1,8 @@
 'use client';
 
-import { DeleteIcon, DownloadIcon, FolderIcon } from '@/assets/icons';
+import DeleteIcon from '@/assets/icons/delete.svg';
+import DownloadIcon from '@/assets/icons/download.svg';
+import FolderIcon from '@/assets/icons/folder.svg';
 import { Icon } from '@/components/ui';
 import { stripUuidPrefix } from '@/lib/board';
 import { cn } from '@/lib/cn';

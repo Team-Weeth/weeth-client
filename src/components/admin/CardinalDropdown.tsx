@@ -1,4 +1,4 @@
-import { ArrowDownIcon } from '@/assets/icons';
+import ArrowDownIcon from '@/assets/icons/arrow_down.svg';
 import {
   Card,
   DropdownMenu,

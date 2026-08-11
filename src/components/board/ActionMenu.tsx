@@ -1,6 +1,6 @@
 'use client';
 
-import { MoreVerticalIcon } from '@/assets/icons';
+import MoreVerticalIcon from '@/assets/icons/more_vertical.svg';
 import {
   Button,
   DropdownMenu,

@@ -2,7 +2,9 @@
 
 import { useState, type ReactNode } from 'react';
 
-import { AdminCheckboxIcon, AdminCloseIcon, AdminUncheckboxIcon } from '@/assets/icons/admin';
+import AdminCheckboxIcon from '@/assets/icons/admin/ic_admin_checkbox.svg';
+import AdminCloseIcon from '@/assets/icons/admin/ic_admin_close.svg';
+import AdminUncheckboxIcon from '@/assets/icons/admin/ic_admin_uncheckbox.svg';
 import { Button, Icon, Input } from '@/components/ui';
 import { Dialog, DialogContent, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 

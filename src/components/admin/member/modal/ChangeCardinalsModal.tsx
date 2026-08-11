@@ -2,8 +2,8 @@
 
 import { useMemo, useState, type ReactNode } from 'react';
 
-import { InfoCircleIcon } from '@/assets/icons';
-import { AdminCloseIcon } from '@/assets/icons/admin';
+import InfoCircleIcon from '@/assets/icons/info_circle.svg';
+import AdminCloseIcon from '@/assets/icons/admin/ic_admin_close.svg';
 import { Button, DialogTitle, Icon } from '@/components/ui';
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
 import { useCardinals } from '@/hooks/queries';

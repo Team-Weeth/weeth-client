@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { Avatar, AvatarImage, AvatarFallback, Tag, Icon } from '@/components/ui';
 import { cn } from '@/lib/cn';
 import type { MyPageUsingProfile } from '@/types/mypage';
-import { SettingIcon } from '@/assets/icons';
+import SettingIcon from '@/assets/icons/setting.svg';
 
 interface ActiveClubListProps extends React.HTMLAttributes<HTMLDivElement> {
   profiles?: MyPageUsingProfile[];

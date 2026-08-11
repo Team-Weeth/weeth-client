@@ -1,4 +1,6 @@
-import { ArrowDecreaseIcon, ArrowIncreaseIcon, NoneIcon } from '@/assets/icons';
+import ArrowDecreaseIcon from '@/assets/icons/arrow_decrease.svg';
+import ArrowIncreaseIcon from '@/assets/icons/arrow_increase.svg';
+import NoneIcon from '@/assets/icons/none.svg';
 import { Icon } from '@/components/ui';
 import { cn } from '@/lib/cn';
 import type { DuesTransactionType } from '@/types/dues';

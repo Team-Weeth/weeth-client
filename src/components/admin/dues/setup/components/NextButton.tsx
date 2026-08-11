@@ -1,4 +1,4 @@
-import { ArrowRightIcon } from '@/assets/icons';
+import ArrowRightIcon from '@/assets/icons/arrow_right.svg';
 import { Icon } from '@/components/ui';
 import { cn } from '@/lib/cn';
 

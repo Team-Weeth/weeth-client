@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 
-import { AdminMeatballIcon } from '@/assets/icons/admin';
+import AdminMeatballIcon from '@/assets/icons/admin/ic_admin_meatball.svg';
 import {
   Avatar,
   AvatarFallback,

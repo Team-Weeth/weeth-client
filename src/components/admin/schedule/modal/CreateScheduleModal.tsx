@@ -2,7 +2,7 @@
 
 import { Icon, Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
-import { AdminCloseIcon } from '@/assets/icons/admin';
+import AdminCloseIcon from '@/assets/icons/admin/ic_admin_close.svg';
 import { CreateGeneralScheduleForm } from '@/components/admin/schedule/modal/CreateGeneralScheduleForm';
 import { CreateSessionScheduleForm } from '@/components/admin/schedule/modal/CreateSessionScheduleForm';
 import { SCHEDULE_MODAL_CONTENT_CLASS } from '@/components/admin/schedule/modal/constants';

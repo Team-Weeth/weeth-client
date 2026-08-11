@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { BackIcon } from '@/assets/icons';
+import BackIcon from '@/assets/icons/back.svg';
 import { useThemeStore } from '@/stores/theme-store';
 import { Button, Icon } from '@/components/ui';
 import { cn } from '@/lib/cn';

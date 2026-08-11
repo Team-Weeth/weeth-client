@@ -1,4 +1,4 @@
-import { InfoCircleIcon } from '@/assets/icons';
+import InfoCircleIcon from '@/assets/icons/info_circle.svg';
 import { Icon } from '@/components/ui';
 
 function SessionInfoBanner() {

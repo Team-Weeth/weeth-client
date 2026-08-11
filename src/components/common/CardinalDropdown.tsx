@@ -1,6 +1,6 @@
 'use client';
 
-import { ArrowFillDownIcon } from '@/assets/icons';
+import ArrowFillDownIcon from '@/assets/icons/arrow_fill_down.svg';
 import {
   DropdownMenu,
   DropdownMenuContent,

@@ -5,7 +5,8 @@ import { useSearchParams } from 'next/navigation';
 
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, Card, Skeleton } from '@/components/ui';
 import { CardinalDropdown } from '@/components/admin/CardinalDropdown';
-import { useNavigationGuard, useCardinalSelector } from '@/hooks';
+import { useNavigationGuard } from '@/hooks/useNavigationGuard';
+import { useCardinalSelector } from '@/hooks/useCardinalSelector';
 import { useFlattenedSessions } from '@/hooks/admin';
 import { formatKoreanDate } from '@/lib/formatTime';
 

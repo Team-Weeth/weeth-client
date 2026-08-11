@@ -1,4 +1,4 @@
-import { AdminFilterIcon } from '@/assets/icons/admin';
+import AdminFilterIcon from '@/assets/icons/admin/ic_admin_filter.svg';
 import { Icon } from '@/components/ui';
 import { cn } from '@/lib/cn';
 import type { Member } from '@/types/admin/member';

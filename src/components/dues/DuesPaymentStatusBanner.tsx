@@ -1,4 +1,6 @@
-import { DotIcon, InfoCircleIcon, Penalty2Icon } from '@/assets/icons';
+import DotIcon from '@/assets/icons/dot.svg';
+import InfoCircleIcon from '@/assets/icons/info_circle.svg';
+import Penalty2Icon from '@/assets/icons/penalty-2.svg';
 import { Icon } from '@/components/ui';
 import { cn } from '@/lib/cn';
 

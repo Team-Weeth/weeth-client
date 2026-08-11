@@ -3,7 +3,7 @@
 import { useState } from 'react';
 
 import { Button, Icon } from '@/components/ui';
-import { AdminCalendarEditIcon } from '@/assets/icons/admin';
+import AdminCalendarEditIcon from '@/assets/icons/admin/ic_admin_calendar_edit.svg';
 import { SessionTable } from '@/components/admin/schedule/session/SessionTable';
 import { EditSessionModal } from '@/components/admin/schedule/modal/EditSessionModal';
 import { useAdminSessionList } from '@/hooks/queries/admin';

@@ -4,9 +4,9 @@ import dynamic from 'next/dynamic';
 import { useParams, usePathname } from 'next/navigation';
 
 import { Icon } from '@/components/ui';
-import { EditIcon } from '@/assets/icons';
+import EditIcon from '@/assets/icons/edit.svg';
 import { useWritePost } from '@/hooks/home/useWritePost';
-import { useBoardList } from '@/hooks';
+import { useBoardList } from '@/hooks/board/useBoardQuery';
 import { useActiveBoardId } from '@/stores/useBoardNavStore';
 
 const CardinalMissingModal = dynamic(() =>

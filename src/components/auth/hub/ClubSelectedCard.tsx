@@ -1,4 +1,4 @@
-import { CloseCircleIcon } from '@/assets/icons';
+import CloseCircleIcon from '@/assets/icons/close_circle.svg';
 import { ClubAvatar, Icon } from '@/components/ui';
 import type { Club } from '@/types';
 

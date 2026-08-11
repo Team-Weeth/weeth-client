@@ -4,14 +4,14 @@ import { useState } from 'react';
 
 import { useParams } from 'next/navigation';
 
-import { CopyIcon } from '@/assets/icons';
+import CopyIcon from '@/assets/icons/copy.svg';
 import { Card, Icon } from '@/components/ui';
 import { cn } from '@/lib/cn';
 import { toastError, toastSuccess } from '@/stores/useToastStore';
 import { copyDuesAccountToClipboard } from '@/utils/dues/duesAccount';
 import { getApiErrorMessage } from '@/utils/shared';
 import { DUES_INSUFFICIENT_BALANCE_MESSAGE } from '@/constants/admin/dues.constants';
-import { useCardinalSelector } from '@/hooks';
+import { useCardinalSelector } from '@/hooks/useCardinalSelector';
 import { useDuesDashboardQuery, useDuesPaymentTargetsQuery } from '@/hooks/queries/admin';
 import {
   useExcludePaymentTargets,

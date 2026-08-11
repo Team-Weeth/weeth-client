@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import { ArrowDownIcon } from '@/assets/icons';
+import ArrowDownIcon from '@/assets/icons/arrow_down.svg';
 import { cn } from '@/lib/cn';
 import {
   Avatar,

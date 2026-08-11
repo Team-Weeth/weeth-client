@@ -1,6 +1,6 @@
 'use client';
 
-import { AdminPlusIcon } from '@/assets/icons/admin';
+import AdminPlusIcon from '@/assets/icons/admin/ic_admin_plus.svg';
 import { Icon } from '@/components/ui';
 import { cn } from '@/lib/cn';
 

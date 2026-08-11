@@ -2,7 +2,8 @@
 
 import { useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { BackIcon, CalendarIcon } from '@/assets/icons';
+import BackIcon from '@/assets/icons/back.svg';
+import CalendarIcon from '@/assets/icons/calendar.svg';
 import { Icon, Tag } from '@/components/ui';
 import { useIntersectionObserver } from '@/hooks/board/useIntersectionObserver';
 import { useMyPageSessionsQuery } from '@/hooks/queries/mypage/useMyPageSessionsQuery';

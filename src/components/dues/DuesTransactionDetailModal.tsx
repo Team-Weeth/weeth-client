@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 
-import { DeleteIcon } from '@/assets/icons';
+import DeleteIcon from '@/assets/icons/delete.svg';
 import { Icon } from '@/components/ui';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import type { DuesTransaction } from '@/types/dues';

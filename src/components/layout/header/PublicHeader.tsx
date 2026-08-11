@@ -4,7 +4,9 @@ import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { DeleteIcon, LogoIcon, MenuIcon } from '@/assets/icons';
+import DeleteIcon from '@/assets/icons/delete.svg';
+import LogoIcon from '@/assets/icons/logo/logo_full_Origin.svg';
+import MenuIcon from '@/assets/icons/menu.svg';
 import {
   buttonVariants,
   Icon,

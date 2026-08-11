@@ -2,7 +2,8 @@
 
 import { useState } from 'react';
 
-import { ArrowDownIcon, SearchIcon } from '@/assets/icons';
+import ArrowDownIcon from '@/assets/icons/arrow_down.svg';
+import SearchIcon from '@/assets/icons/search.svg';
 import {
   AlertDialog,
   AlertDialogAction,

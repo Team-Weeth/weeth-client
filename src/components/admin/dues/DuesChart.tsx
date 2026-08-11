@@ -4,7 +4,7 @@ import { Bar, BarChart, Cell, LabelList, Tooltip as RechartsTooltip, XAxis } fro
 import type { LabelProps } from 'recharts';
 import { cn } from '@/lib/cn';
 import { formatAmount } from '@/lib/formatAmount';
-import { QuestionCircleIcon } from '@/assets/icons';
+import QuestionCircleIcon from '@/assets/icons/question_circle.svg';
 import type { MonthlyData } from '@/types/admin/dues';
 import {
   Icon,

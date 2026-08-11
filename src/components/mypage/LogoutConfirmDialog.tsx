@@ -1,6 +1,6 @@
 'use client';
 
-import { useLogout } from '@/hooks';
+import { useLogout } from '@/hooks/useLogout';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel } from '@/components/ui';
 
 interface LogoutConfirmDialogProps {

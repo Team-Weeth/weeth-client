@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 
-import { CheckIcon } from '@/assets/icons';
+import CheckIcon from '@/assets/icons/check.svg';
 import {
   Avatar,
   AvatarFallback,

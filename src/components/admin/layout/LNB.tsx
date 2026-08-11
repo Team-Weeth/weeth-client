@@ -2,14 +2,13 @@
 
 import { useLayoutEffect, useState } from 'react';
 import { useParams, usePathname, useRouter } from 'next/navigation';
-import {
-  AdminForumIcon,
-  AdminCalendarIcon,
-  AdminSettingIcon,
-  AdminDuesIcon,
-  AdminScreenIcon,
-} from '@/assets/icons/admin';
-import { ExitIcon, PeopleIcon } from '@/assets/icons';
+import AdminForumIcon from '@/assets/icons/admin/ic_admin_forum.svg';
+import AdminCalendarIcon from '@/assets/icons/admin/ic_admin_calendar.svg';
+import AdminSettingIcon from '@/assets/icons/admin/ic_admin_setting.svg';
+import AdminDuesIcon from '@/assets/icons/admin/ic_admin_dues.svg';
+import AdminScreenIcon from '@/assets/icons/admin/ic_admin_screen.svg';
+import ExitIcon from '@/assets/icons/exit.svg';
+import PeopleIcon from '@/assets/icons/people.svg';
 
 import {
   AlertDialog,
@@ -17,7 +16,7 @@ import {
   AlertDialogCancel,
   TooltipProvider,
 } from '@/components/ui';
-import { useMediaQuery } from '@/hooks';
+import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { cn } from '@/lib/cn';
 import { CollapsedDivider } from '@/components/admin/layout/CollapsedDivider';
 import { LNBLogoutModal } from '@/components/admin/layout/LNBLogoutModal';

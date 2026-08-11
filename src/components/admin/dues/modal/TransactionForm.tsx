@@ -3,11 +3,11 @@
 import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 
-import { AdminCloudUploadIcon } from '@/assets/icons/admin';
+import AdminCloudUploadIcon from '@/assets/icons/admin/ic_admin_cloud_upload.svg';
 import { Button, CalendarPicker, Icon } from '@/components/ui';
 import { useImageDrop } from '@/hooks/useImageDrop';
 import { cn } from '@/lib/cn';
-import { CloseCircleIcon } from '@/assets/icons';
+import CloseCircleIcon from '@/assets/icons/close_circle.svg';
 import { formatAmount } from '@/lib/formatAmount';
 import { getApiErrorMessage } from '@/utils/shared';
 import { DuesTextInputField } from './DuesTextInputField';

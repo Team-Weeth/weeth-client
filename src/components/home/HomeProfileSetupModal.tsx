@@ -2,8 +2,8 @@
 
 import { useState } from 'react';
 import { useParams } from 'next/navigation';
-import { AddIcon } from '@/assets/icons';
-import { DeleteIcon } from '@/assets/icons';
+import AddIcon from '@/assets/icons/add.svg';
+import DeleteIcon from '@/assets/icons/delete.svg';
 import { useHomeQuery } from '@/hooks/home';
 import { useUpdateClubProfileAssignmentsMutation } from '@/hooks/mutations/mypage/useMultiProfileMutations';
 import { useMyPageQueries } from '@/hooks/queries/mypage/useMyPageQueries';

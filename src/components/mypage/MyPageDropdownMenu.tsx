@@ -13,8 +13,8 @@ import {
   DropdownMenuTrigger,
   Icon,
 } from '@/components/ui';
-import { AdminMeatballIcon } from '@/assets/icons/admin';
-import { useLogout } from '@/hooks';
+import AdminMeatballIcon from '@/assets/icons/admin/ic_admin_meatball.svg';
+import { useLogout } from '@/hooks/useLogout';
 
 function MyPageDropdownMenu() {
   const { clubId } = useParams<{ clubId: string }>();

@@ -9,7 +9,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui';
-import { MoreHorizIcon } from '@/assets/icons';
+import MoreHorizIcon from '@/assets/icons/more-horiz.svg';
 import { cn } from '@/lib/cn';
 import { DuesPagination } from '@/components/admin/dues/setup/components';
 import { TableTabFilter } from '@/components/admin/dues/TableTabFilter';

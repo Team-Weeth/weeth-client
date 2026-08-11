@@ -1,6 +1,6 @@
 'use client';
 
-import { DeleteIcon } from '@/assets/icons';
+import DeleteIcon from '@/assets/icons/delete.svg';
 import { DialogTitle, Icon } from '@/components/ui';
 import { cn } from '@/lib/cn';
 

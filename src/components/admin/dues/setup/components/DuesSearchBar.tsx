@@ -1,4 +1,4 @@
-import { SearchIcon } from '@/assets/icons';
+import SearchIcon from '@/assets/icons/search.svg';
 import { Icon } from '@/components/ui';
 
 interface SearchBarProps {

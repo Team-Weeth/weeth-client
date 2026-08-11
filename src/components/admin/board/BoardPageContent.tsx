@@ -17,7 +17,7 @@ import {
 import { useQueryClient } from '@tanstack/react-query';
 
 import { Icon } from '@/components/ui';
-import { InfoCircleIcon } from '@/assets/icons';
+import InfoCircleIcon from '@/assets/icons/info_circle.svg';
 import { BoardCard } from '@/components/admin/board/BoardCard';
 import { BoardToolbar } from '@/components/admin/board/BoardToolbar';
 import { CreateBoardModal } from '@/components/admin/board/modal/CreateBoardModal';

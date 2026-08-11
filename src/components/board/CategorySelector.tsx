@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { cn } from '@/lib/cn';
-import { ArrowDownIcon } from '@/assets/icons';
+import ArrowDownIcon from '@/assets/icons/arrow_down.svg';
 import {
   Breadcrumb,
   BreadcrumbList,

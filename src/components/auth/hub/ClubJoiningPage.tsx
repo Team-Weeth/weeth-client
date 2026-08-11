@@ -9,7 +9,7 @@ import { useRouter } from 'next/navigation';
 import { buttonVariants, ProgressBar } from '@/components/ui';
 import { getHomeTutorialPendingKey } from '@/constants/home/tutorial';
 import { CLUB_JOIN_ERROR_CODE } from '@/constants/errorCode';
-import { useProgressAnimation } from '@/hooks';
+import { useProgressAnimation } from '@/hooks/useProgressAnimation';
 import { setClubCookie } from '@/lib/actions/club';
 import { clubApi } from '@/lib/apis/club';
 import { cn } from '@/lib/cn';

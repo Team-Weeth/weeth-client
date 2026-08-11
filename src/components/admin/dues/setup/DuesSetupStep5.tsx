@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useParams } from 'next/navigation';
 
-import { QuestionCircleIcon } from '@/assets/icons';
+import QuestionCircleIcon from '@/assets/icons/question_circle.svg';
 import { PaymentTargetModal } from '@/components/admin/dues';
 import { Icon, Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui';
 import { DUES_REGISTRATION_ERROR_CODE } from '@/constants/errorCode';

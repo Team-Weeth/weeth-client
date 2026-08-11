@@ -17,7 +17,7 @@ import {
   formatSessionDateRange,
 } from '@/utils/admin/sessionUtils';
 import type { AdminSession, AdminSessionGroup } from '@/types/admin/session';
-import { AdminToggleOpenIcon } from '@/assets/icons/admin';
+import AdminToggleOpenIcon from '@/assets/icons/admin/ic_admin_toggle_open.svg';
 
 interface SessionGroupRowProps {
   group: AdminSessionGroup;

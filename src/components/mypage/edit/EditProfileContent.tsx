@@ -16,7 +16,7 @@ import { formatPhone } from '@/utils/shared';
 import { EditProfileSkeleton } from '@/components/mypage/skeleton';
 import { PersonalInfoFields } from './PersonalInfoFields';
 import { SchoolInfoFields } from './SchoolInfoFields';
-import { BackIcon } from '@/assets/icons';
+import BackIcon from '@/assets/icons/back.svg';
 
 const toFormString = (value: string | null | undefined) => value ?? '';
 

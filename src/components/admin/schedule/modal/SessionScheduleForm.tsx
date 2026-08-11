@@ -8,7 +8,7 @@ import {
   DropdownMenuTrigger,
   Icon,
 } from '@/components/ui';
-import { ArrowDownIcon } from '@/assets/icons';
+import ArrowDownIcon from '@/assets/icons/arrow_down.svg';
 import { ScheduleDateRangeFields } from '@/components/admin/schedule/general/ScheduleDateRangeFields';
 import { ScheduleFormField } from '@/components/admin/schedule/general/ScheduleFormField';
 import { ScheduleTextField } from '@/components/admin/schedule/general/ScheduleTextField';

@@ -1,7 +1,7 @@
 'use client';
 
 import { useRef, useState } from 'react';
-import { SendIcon } from '@/assets/icons';
+import SendIcon from '@/assets/icons/send.svg';
 import { Button, Icon, Textarea } from '@/components/ui';
 import { cn } from '@/lib/cn';
 

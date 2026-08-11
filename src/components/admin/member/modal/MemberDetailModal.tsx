@@ -2,7 +2,7 @@
 
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, Button, Icon } from '@/components/ui';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
-import { AdminCloseIcon } from '@/assets/icons/admin';
+import AdminCloseIcon from '@/assets/icons/admin/ic_admin_close.svg';
 import { getFooterActions } from '@/constants/admin/memberDetailModal.constants';
 import type { Member } from '@/types/admin/member';
 import {

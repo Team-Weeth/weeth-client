@@ -3,9 +3,9 @@
 import Image from 'next/image';
 
 import { Button, Icon } from '@/components/ui';
-import { AdminPlusIcon } from '@/assets/icons/admin';
+import AdminPlusIcon from '@/assets/icons/admin/ic_admin_plus.svg';
 // TODO: 휴지통 API 정상화되면 TrashcanIcon import 복원
-import { SearchIcon } from '@/assets/icons';
+import SearchIcon from '@/assets/icons/search.svg';
 import { cn } from '@/lib/cn';
 
 interface BoardToolbarProps extends React.HTMLAttributes<HTMLDivElement> {

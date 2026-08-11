@@ -3,7 +3,9 @@
 import { Fragment } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { Icon } from '@/components/ui';
-import { ArrowRightIcon, PhoneIcon, MailIcon } from '@/assets/icons';
+import ArrowRightIcon from '@/assets/icons/arrow_right.svg';
+import PhoneIcon from '@/assets/icons/phone.svg';
+import MailIcon from '@/assets/icons/mail.svg';
 import { useProfileSectionActions } from '@/hooks/mypage';
 import { cn } from '@/lib/cn';
 import type { ProfileData } from '@/types/mypage';

@@ -4,8 +4,8 @@ import { useState } from 'react';
 
 import { Button, Icon, Switch, Tag } from '@/components/ui';
 import { DeleteBoardDialog } from '@/components/admin/board/modal/DeleteBoardDialog';
-import { AdminBoardMoveIcon } from '@/assets/icons/admin';
-import { PinIcon } from '@/assets/icons';
+import AdminBoardMoveIcon from '@/assets/icons/admin/ic_admin_board_move.svg';
+import PinIcon from '@/assets/icons/pin.svg';
 import { cn } from '@/lib/cn';
 import type { Board } from '@/types/admin/board';
 import { MegaphoneIcon } from '@/components/board/MegaphoneIcon';

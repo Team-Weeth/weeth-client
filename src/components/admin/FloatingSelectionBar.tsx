@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 
-import { AdminCloseIcon } from '@/assets/icons/admin';
+import AdminCloseIcon from '@/assets/icons/admin/ic_admin_close.svg';
 import { SelectedCountLabel } from '@/components/admin/SelectedCountLabel';
 import { Icon } from '@/components/ui';
 import { cn } from '@/lib/cn';

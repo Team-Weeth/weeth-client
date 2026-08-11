@@ -2,11 +2,12 @@
 
 import { useState } from 'react';
 import { useParams } from 'next/navigation';
-import { useMediaQuery } from '@/hooks';
+import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { Button, Icon } from '@/components/ui';
 import { cn } from '@/lib/cn';
 import { useAssignableClubMap, useMyProfilesQuery } from '@/hooks/queries/mypage/useMyPageQueries';
-import { AddRoundIcon, BackIcon } from '@/assets/icons';
+import AddRoundIcon from '@/assets/icons/add_round.svg';
+import BackIcon from '@/assets/icons/back.svg';
 import { useRouter } from 'next/navigation';
 import { AddProfileModal } from './AddProfileModal';
 import { ProfileCard } from './ProfileCard';

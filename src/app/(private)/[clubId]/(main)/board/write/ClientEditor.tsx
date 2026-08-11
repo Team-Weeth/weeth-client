@@ -3,7 +3,7 @@
 import { useEffect, useLayoutEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { CategorySelector, PostEditorShell } from '@/components/board';
-import { useWritableBoards } from '@/hooks';
+import { useWritableBoards } from '@/hooks/board/useWritableBoards';
 import { usePostStore } from '@/stores/usePostStore';
 import { useActiveBoardId } from '@/stores/useBoardNavStore';
 import { useClubId } from '@/stores/useClubStore';

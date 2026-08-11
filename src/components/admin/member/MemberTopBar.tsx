@@ -2,7 +2,7 @@
 
 import React from 'react';
 
-import { AdminCloseIcon } from '@/assets/icons/admin';
+import AdminCloseIcon from '@/assets/icons/admin/ic_admin_close.svg';
 import {
   AlertDialog,
   AlertDialogAction,

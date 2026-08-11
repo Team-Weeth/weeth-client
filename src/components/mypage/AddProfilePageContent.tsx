@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { BackIcon } from '@/assets/icons';
+import BackIcon from '@/assets/icons/back.svg';
 import { useAddProfileFlow } from '@/hooks/mypage';
 import { useCreateMultiProfileMutation } from '@/hooks/mutations/mypage/useMultiProfileMutations';
 import { useAssignableClubsQuery } from '@/hooks/queries/mypage/useMyPageQueries';

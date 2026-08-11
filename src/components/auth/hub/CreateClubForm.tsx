@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Controller, useForm, useWatch } from 'react-hook-form';
-import { TooltipIcon } from '@/assets/icons';
+import TooltipIcon from '@/assets/icons/tooltip.svg';
 import { Button, Icon, Input, Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui';
 import { SearchSelect } from '@/components/mypage/SearchSelect';
 import { cn } from '@/lib/cn';

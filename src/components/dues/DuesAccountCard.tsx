@@ -1,6 +1,6 @@
 'use client';
 
-import { CopyIcon } from '@/assets/icons';
+import CopyIcon from '@/assets/icons/copy.svg';
 import { Icon } from '@/components/ui';
 import { cn } from '@/lib/cn';
 import type { DuesAccount } from '@/types/dues';

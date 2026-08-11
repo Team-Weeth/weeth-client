@@ -7,7 +7,7 @@ import { useParams } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
 
 import { Switch } from '@/components/ui';
-import { useCardinalSelector } from '@/hooks';
+import { useCardinalSelector } from '@/hooks/useCardinalSelector';
 import { useDuesVisibilityToggle } from '@/hooks/admin';
 import {
   duesRegistrationStatusQueryOptions,

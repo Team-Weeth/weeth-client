@@ -1,6 +1,6 @@
 'use client';
 
-import { QuestionMarkIcon } from '@/assets/icons';
+import QuestionMarkIcon from '@/assets/icons/question_mark.svg';
 import { Icon } from '@/components/ui';
 
 interface HomeTutorialButtonProps {

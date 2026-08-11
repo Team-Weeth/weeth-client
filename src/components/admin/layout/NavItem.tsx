@@ -4,7 +4,7 @@ import Link from 'next/link';
 
 import { Icon, Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui';
 import { cn } from '@/lib/cn';
-import { PeopleIcon } from '@/assets/icons';
+import PeopleIcon from '@/assets/icons/people.svg';
 
 interface NavItemProps {
   icon: typeof PeopleIcon;

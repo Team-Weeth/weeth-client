@@ -2,7 +2,8 @@
 
 import { useState } from 'react';
 
-import { AdminCloseIcon, AdminMenuIcon } from '@/assets/icons/admin';
+import AdminCloseIcon from '@/assets/icons/admin/ic_admin_close.svg';
+import AdminMenuIcon from '@/assets/icons/admin/ic_admin_menu.svg';
 import { AdminMobileNavSheet } from '@/components/admin/layout/AdminMobileNavSheet';
 import { ThemeModeToggle } from '@/components/admin/layout/ThemeModeToggle';
 import { ClubAvatar, Icon, Sheet, SheetClose, SheetTrigger } from '@/components/ui';

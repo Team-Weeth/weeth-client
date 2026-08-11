@@ -4,15 +4,16 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { useParams, usePathname, useRouter } from 'next/navigation';
 
-import {
-  AdminCalendarIcon,
-  AdminForumIcon,
-  AdminDuesIcon,
-  AdminSettingIcon,
-  AdminPaintIcon,
-  AdminScreenIcon,
-} from '@/assets/icons/admin';
-import { PeopleIcon, ExitIcon, ArrowRightIcon, LogoutIcon } from '@/assets/icons';
+import AdminCalendarIcon from '@/assets/icons/admin/ic_admin_calendar.svg';
+import AdminForumIcon from '@/assets/icons/admin/ic_admin_forum.svg';
+import AdminDuesIcon from '@/assets/icons/admin/ic_admin_dues.svg';
+import AdminSettingIcon from '@/assets/icons/admin/ic_admin_setting.svg';
+import AdminPaintIcon from '@/assets/icons/admin/ic_admin_paint.svg';
+import AdminScreenIcon from '@/assets/icons/admin/ic_admin_screen.svg';
+import PeopleIcon from '@/assets/icons/people.svg';
+import ExitIcon from '@/assets/icons/exit.svg';
+import ArrowRightIcon from '@/assets/icons/arrow_right.svg';
+import LogoutIcon from '@/assets/icons/logout.svg';
 import {
   AlertDialog,
   AlertDialogAction,

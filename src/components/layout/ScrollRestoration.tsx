@@ -1,6 +1,6 @@
 'use client';
 
-import { useScrollToTopOnNavigate } from '@/hooks';
+import { useScrollToTopOnNavigate } from '@/hooks/useScrollToTopOnNavigate';
 
 function ScrollRestoration() {
   useScrollToTopOnNavigate();

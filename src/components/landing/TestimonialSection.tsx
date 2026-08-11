@@ -1,4 +1,6 @@
-import { Ldquo, LdquoBack, LeetsAvatar } from '@/assets/icons/landing';
+import Ldquo from '@/assets/icons/landing/ldquo.svg';
+import LdquoBack from '@/assets/icons/landing/ldquo_back.svg';
+import LeetsAvatar from '@/assets/icons/landing/leets.svg';
 import { cn } from '@/lib/cn';
 import Image from 'next/image';
 

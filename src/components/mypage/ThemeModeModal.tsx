@@ -1,6 +1,6 @@
 'use client';
 
-import { DeleteIcon } from '@/assets/icons';
+import DeleteIcon from '@/assets/icons/delete.svg';
 import { Button, Dialog, DialogContent, DialogTitle, Icon } from '@/components/ui';
 import type { ThemeMode } from '@/types/theme';
 import { ThemeModeSelector } from './ThemeModeSelector';

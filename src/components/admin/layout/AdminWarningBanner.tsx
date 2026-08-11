@@ -1,4 +1,4 @@
-import { CautionIcon } from '@/assets/icons';
+import CautionIcon from '@/assets/icons/caution.svg';
 import { Icon } from '@/components/ui';
 
 function AdminWarningBanner() {

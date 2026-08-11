@@ -2,7 +2,8 @@
 
 import React from 'react';
 import Image from 'next/image';
-import { NewIcon, ArrowRightIcon } from '@/assets/icons';
+import NewIcon from '@/assets/icons/new.svg';
+import ArrowRightIcon from '@/assets/icons/arrow_right.svg';
 import { Divider, Icon } from '@/components/ui';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';

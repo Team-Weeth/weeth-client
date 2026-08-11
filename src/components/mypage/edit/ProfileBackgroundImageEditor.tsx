@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import { CameraIcon } from '@/assets/icons';
+import CameraIcon from '@/assets/icons/camera.svg';
 import {
   Divider,
   DropdownMenu,
