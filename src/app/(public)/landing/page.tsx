@@ -1,16 +1,14 @@
-import {
-  HeroSection,
-  TestimonialSection,
-  ClubTypesSection,
-  LandingFooter,
-} from '@/components/landing';
+import { ClubTypesSection } from '@/components/landing/ClubTypesSection';
 import {
   PhilosophySection,
   ServiceSection,
   SetupGuideSection,
   CTASection,
 } from '@/components/landing/DynamicSections';
-import { PublicHeader } from '@/components/layout';
+import { HeroSection } from '@/components/landing/HeroSection';
+import { LandingFooter } from '@/components/landing/LandingFooter';
+import { TestimonialSection } from '@/components/landing/TestimonialSection';
+import PublicHeader from '@/components/layout/header/PublicHeader';
 import { USER_FEATURES, ADMIN_FEATURES } from '@/constants/landing/landing';
 
 export default function LandingPage() {
