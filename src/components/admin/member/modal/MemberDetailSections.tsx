@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 
-import { AttendanceProgressBar } from '@/components/attendance';
+import { AttendanceProgressBar } from '@/components/attendance/AttendanceProgressBar';
 import {
   Avatar,
   AvatarFallback,

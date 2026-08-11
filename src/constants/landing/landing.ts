@@ -5,7 +5,7 @@ import {
   RunningImage,
   StudyImage,
 } from '@/assets/icons/landing';
-import type { Feature } from '@/components/landing';
+import type { Feature } from '@/components/landing/ServiceSection';
 
 export const USER_FEATURES: Feature[] = [
   {

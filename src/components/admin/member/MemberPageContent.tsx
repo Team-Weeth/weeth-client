@@ -3,16 +3,13 @@
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
-import {
-  MemberPageHeader,
-  MemberPageModals,
-  MemberCardList,
-  MemberMobileSearchPage,
-  MemberTable,
-  MemberTopBar,
-  MobileMemberTopBar,
-  type MemberViewMode,
-} from '@/components/admin';
+import { MemberCardList } from '@/components/admin/member/MemberCardList';
+import { MemberMobileSearchPage } from '@/components/admin/member/MemberMobileSearchPage';
+import { MemberPageHeader } from '@/components/admin/member/MemberPageHeader';
+import { MemberPageModals } from '@/components/admin/member/MemberPageModals';
+import { MemberTable } from '@/components/admin/member/MemberTable';
+import { MemberTopBar, MobileMemberTopBar } from '@/components/admin/member/MemberTopBar';
+import type { MemberViewMode } from '@/components/admin/member/MemberViewToggle';
 import type { Member } from '@/types/admin/member';
 import { EMPTY_MEMBER_PAGE, useAdminMembers, useAdminMembersInfinite } from '@/hooks/queries/admin';
 import { useCardinals } from '@/hooks/queries';

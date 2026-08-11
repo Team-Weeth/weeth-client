@@ -19,7 +19,8 @@ import { SCHEDULE_MODAL_CONTENT_CLASS } from '@/components/admin/schedule/modal/
 import { cn } from '@/lib/cn';
 import { TRANSACTION_TYPE_TAG } from '../DuesTransactionTable';
 import type { TransactionDirection, TransactionType } from '@/types/admin/dues';
-import { DuesReceiptCard, DuesReceiptViewerModal } from '@/components/dues';
+import { DuesReceiptCard } from '@/components/dues/DuesReceiptCard';
+import { DuesReceiptViewerModal } from '@/components/dues/DuesReceiptViewerModal';
 import { getReceiptFiles } from '@/utils/dues/duesTransaction';
 import type { DuesReceiptFile, DuesTransaction } from '@/types/dues';
 

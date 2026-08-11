@@ -6,7 +6,7 @@ import { useUnmount } from 'react-use';
 
 import { EmptyListIcon } from '@/assets/icons';
 import { Breadcrumb, BreadcrumbItem, BreadcrumbList, BreadcrumbPage } from '@/components/ui';
-import { CardinalDropdown } from '@/components/common';
+import { CardinalDropdown } from '@/components/common/CardinalDropdown';
 import { DuesLeftSection } from '@/components/dues/DuesLeftSection';
 import {
   DuesLeftSectionSkeleton,

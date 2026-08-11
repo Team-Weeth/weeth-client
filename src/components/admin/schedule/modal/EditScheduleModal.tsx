@@ -12,7 +12,7 @@ import {
 } from '@/components/ui';
 import { CustomAlertDialog } from '@/components/alert';
 import { AdminCloseIcon, AdminMeatballIcon } from '@/assets/icons/admin';
-import { ModalIconButton } from '@/components/admin';
+import { ModalIconButton } from '@/components/admin/modal/ModalIconButton';
 import type { Schedule } from '@/types/admin/schedule';
 import {
   useAdminScheduleDetail,

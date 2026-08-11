@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, Card, Skeleton } from '@/components/ui';
-import { CardinalDropdown } from '@/components/admin';
+import { CardinalDropdown } from '@/components/admin/CardinalDropdown';
 import { useNavigationGuard, useCardinalSelector } from '@/hooks';
 import { useFlattenedSessions } from '@/hooks/admin';
 import { formatKoreanDate } from '@/lib/formatTime';

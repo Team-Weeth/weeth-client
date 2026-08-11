@@ -5,7 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Controller, useForm, useWatch } from 'react-hook-form';
 import { TooltipIcon } from '@/assets/icons';
 import { Button, Icon, Input, Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui';
-import { SearchSelect } from '@/components/mypage';
+import { SearchSelect } from '@/components/mypage/SearchSelect';
 import { cn } from '@/lib/cn';
 import { createClubSchema, type CreateClubFormData } from '@/lib/schemas/createClub';
 import {

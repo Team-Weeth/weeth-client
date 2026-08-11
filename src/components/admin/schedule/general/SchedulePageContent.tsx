@@ -7,7 +7,7 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { Button, Card, Icon, Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui';
 import { AdminCalendarEditIcon } from '@/assets/icons/admin';
 import { SearchIcon } from '@/assets/icons';
-import { CardinalDropdown } from '@/components/admin';
+import { CardinalDropdown } from '@/components/admin/CardinalDropdown';
 import { MonthNavigator } from '@/components/admin/schedule/general/MonthNavigator';
 import { ScheduleList } from '@/components/admin/schedule/general/ScheduleList';
 import { SessionTabContent } from '@/components/admin/schedule/session/SessionTabContent';

@@ -8,7 +8,7 @@ import { AdminBoardMoveIcon } from '@/assets/icons/admin';
 import { PinIcon } from '@/assets/icons';
 import { cn } from '@/lib/cn';
 import type { Board } from '@/types/admin/board';
-import { MegaphoneIcon } from '@/components/board';
+import { MegaphoneIcon } from '@/components/board/MegaphoneIcon';
 
 interface BoardCardProps extends React.HTMLAttributes<HTMLDivElement> {
   board: Board;
