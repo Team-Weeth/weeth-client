@@ -6,7 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Controller, useForm } from 'react-hook-form';
 
 import { duesBankAccountSchema, type DuesBankAccountFormData } from '@/lib/schemas/duesSetup';
-import { Switch } from '@/components/ui';
+import { Switch } from '@/components/ui/Switch';
 import { useDuesSetupValues, useDuesSetupActions } from '@/stores/useDuesSetupStore';
 import { toastError } from '@/stores/useToastStore';
 import { useSyncFormToStore } from '@/hooks/useSyncFormToStore';

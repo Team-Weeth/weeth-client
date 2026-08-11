@@ -5,7 +5,9 @@ import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 
 import AdminCloudUploadIcon from '@/assets/icons/admin/ic_admin_cloud_upload.svg';
-import { Button, Icon, ProgressBar } from '@/components/ui';
+import { Button } from '@/components/ui/Button';
+import { Icon } from '@/components/ui/Icon';
+import { ProgressBar } from '@/components/ui/ProgressBar';
 import { useImageDrop } from '@/hooks/useImageDrop';
 import { useProgressAnimation } from '@/hooks/useProgressAnimation';
 import type { OwnerType } from '@/lib/apis/file';

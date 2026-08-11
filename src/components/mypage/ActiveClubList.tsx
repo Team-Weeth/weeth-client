@@ -1,5 +1,7 @@
 import Link from 'next/link';
-import { Avatar, AvatarImage, AvatarFallback, Tag, Icon } from '@/components/ui';
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
+import { Tag } from '@/components/ui/tag';
+import { Icon } from '@/components/ui/Icon';
 import { cn } from '@/lib/cn';
 import type { MyPageUsingProfile } from '@/types/mypage';
 import SettingIcon from '@/assets/icons/setting.svg';

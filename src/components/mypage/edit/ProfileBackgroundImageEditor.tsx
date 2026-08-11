@@ -2,14 +2,9 @@
 
 import Image from 'next/image';
 import CameraIcon from '@/assets/icons/camera.svg';
-import {
-  Divider,
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-  Icon,
-} from '@/components/ui';
+import { Divider } from '@/components/ui/Divider';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/DropdownMenu';
+import { Icon } from '@/components/ui/Icon';
 import { useImagePreview } from '@/hooks/mypage';
 import { cn } from '@/lib/cn';
 

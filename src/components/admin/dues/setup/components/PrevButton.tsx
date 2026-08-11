@@ -1,5 +1,5 @@
 import ArrowLeftIcon from '@/assets/icons/arrow_left.svg';
-import { Icon } from '@/components/ui';
+import { Icon } from '@/components/ui/Icon';
 import { cn } from '@/lib/cn';
 
 function PrevButton({

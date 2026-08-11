@@ -1,4 +1,6 @@
-import { Avatar, AvatarFallback, AvatarImage, Divider, Icon } from '@/components/ui';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Divider } from '@/components/ui/Divider';
+import { Icon } from '@/components/ui/Icon';
 import InfoIcon from '@/assets/icons/info.svg';
 import type { ClubDto } from '@/types/mypage';
 import { CardinalTags } from './Step2Select';

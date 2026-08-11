@@ -1,15 +1,6 @@
-import {
-  Avatar,
-  AvatarFallback,
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-  Checkbox,
-  AvatarImage,
-} from '@/components/ui';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Checkbox } from '@/components/ui/Checkbox';
 
 import type { PaymentTarget } from '@/types/admin/dues';
 

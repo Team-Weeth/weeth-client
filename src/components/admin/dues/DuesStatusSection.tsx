@@ -1,14 +1,9 @@
 'use client';
 
 import CopyIcon from '@/assets/icons/copy.svg';
-import {
-  Card,
-  Icon,
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/components/ui';
+import { Card } from '@/components/ui/card';
+import { Icon } from '@/components/ui/Icon';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/Tooltip';
 import { cn } from '@/lib/cn';
 import { toastSuccess } from '@/stores/useToastStore';
 

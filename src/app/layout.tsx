@@ -1,11 +1,11 @@
 import type { Metadata, Viewport } from 'next';
 import type { ReactNode } from 'react';
-import { Toaster } from '@/components/ui';
+import { Toaster } from '@/components/ui/Toaster';
 import { QueryProvider, MSWProvider } from '@/providers';
 import { Inter } from 'next/font/google';
 import { ThemeProvider } from '@/providers/theme-provider';
 import { cn } from '@/lib/cn';
-import { TooltipProvider } from '@/components/ui';
+import { TooltipProvider } from '@/components/ui/Tooltip';
 import { GoogleAnalytics } from '@next/third-parties/google';
 import './globals.css';
 

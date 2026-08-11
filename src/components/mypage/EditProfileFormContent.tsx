@@ -4,7 +4,7 @@ import type { Control, FieldErrors } from 'react-hook-form';
 import { Controller, useWatch } from 'react-hook-form';
 import { FormFieldWrapper } from '@/components/auth/hub';
 import { MYPAGE_PROFILE_TEXT_MAX_LENGTH } from '@/constants/mypage/profile';
-import { Input } from '@/components/ui';
+import { Input } from '@/components/ui/Input';
 import type { EditProfileFormData } from '@/lib/schemas/editProfile';
 import { CharacterCountRow } from './CharacterCountRow';
 import { ProfileBackgroundImageEditor } from './edit/ProfileBackgroundImageEditor';

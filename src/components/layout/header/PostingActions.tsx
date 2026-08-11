@@ -2,7 +2,8 @@
 
 import { usePathname } from 'next/navigation';
 
-import { Button, Icon } from '@/components/ui';
+import { Button } from '@/components/ui/Button';
+import { Icon } from '@/components/ui/Icon';
 import SendIcon from '@/assets/icons/send.svg';
 import { useCreatePost } from '@/hooks/board/useCreatePost';
 import { useUpdatePost } from '@/hooks/board/useUpdatePost';

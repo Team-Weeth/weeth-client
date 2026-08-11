@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 
 import SearchIcon from '@/assets/icons/search.svg';
 import AdminCloseIcon from '@/assets/icons/admin/ic_admin_close.svg';
-import { Icon } from '@/components/ui';
+import { Icon } from '@/components/ui/Icon';
 import { cn } from '@/lib/cn';
 
 interface MemberSearchBarProps extends React.HTMLAttributes<HTMLDivElement> {

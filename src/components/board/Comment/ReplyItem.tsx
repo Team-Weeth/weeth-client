@@ -2,7 +2,8 @@
 
 import { useState } from 'react';
 import ReplyIcon from '@/assets/icons/reply.svg';
-import { Avatar, AvatarFallback, AvatarImage, Icon } from '@/components/ui';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Icon } from '@/components/ui/Icon';
 import { cn } from '@/lib/cn';
 import { ActionMenu } from '@/components/board/ActionMenu';
 import { CommentDeleteDialog } from './CommentDeleteDialog';

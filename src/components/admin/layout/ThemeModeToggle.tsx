@@ -3,7 +3,7 @@
 import AdminContrastIcon from '@/assets/icons/admin/ic_admin_contrast.svg';
 import AdminDarkIcon from '@/assets/icons/admin/ic_admin_dark.svg';
 import AdminLightIcon from '@/assets/icons/admin/ic_admin_light.svg';
-import { Icon } from '@/components/ui';
+import { Icon } from '@/components/ui/Icon';
 import { cn } from '@/lib/cn';
 import { useThemeStore } from '@/stores';
 import type { ThemeMode } from '@/types/theme';

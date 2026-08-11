@@ -6,7 +6,8 @@ import { isAxiosError } from 'axios';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
-import { buttonVariants, ProgressBar } from '@/components/ui';
+import { buttonVariants } from '@/components/ui/Button';
+import { ProgressBar } from '@/components/ui/ProgressBar';
 import { getHomeTutorialPendingKey } from '@/constants/home/tutorial';
 import { CLUB_JOIN_ERROR_CODE } from '@/constants/errorCode';
 import { useProgressAnimation } from '@/hooks/useProgressAnimation';

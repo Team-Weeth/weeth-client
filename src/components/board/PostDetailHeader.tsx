@@ -2,7 +2,8 @@
 
 import { useParams, useRouter } from 'next/navigation';
 import BackIcon from '@/assets/icons/back.svg';
-import { Button, Icon } from '@/components/ui';
+import { Button } from '@/components/ui/Button';
+import { Icon } from '@/components/ui/Icon';
 import { cn } from '@/lib/cn';
 import { buildBoardPath } from '@/lib/board';
 

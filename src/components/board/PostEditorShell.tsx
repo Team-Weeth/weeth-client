@@ -3,7 +3,7 @@
 import dynamic from 'next/dynamic';
 import { useEffect, type ReactNode } from 'react';
 
-import { AlertDialog, AlertDialogAction, AlertDialogCancel } from '@/components/ui';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel } from '@/components/ui/alert-dialog';
 import { useNavigationGuard } from '@/hooks/useNavigationGuard';
 import { cn } from '@/lib/cn';
 import { usePostStore } from '@/stores/usePostStore';

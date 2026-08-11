@@ -3,7 +3,9 @@
 import Link from 'next/link';
 import { useParams, usePathname, useRouter } from 'next/navigation';
 import dynamic from 'next/dynamic';
-import { Avatar, AvatarFallback, AvatarImage, Button, Icon, buttonVariants } from '@/components/ui';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Button, buttonVariants } from '@/components/ui/Button';
+import { Icon } from '@/components/ui/Icon';
 import EditIcon from '@/assets/icons/edit.svg';
 import ExitToAppIcon from '@/assets/icons/exit_to_app.svg';
 import { useWritePost } from '@/hooks/home/useWritePost';

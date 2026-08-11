@@ -2,7 +2,8 @@
 
 import ArrowLeftIcon from '@/assets/icons/arrow_left.svg';
 import ArrowRightIcon from '@/assets/icons/arrow_right.svg';
-import { Button, Icon } from '@/components/ui';
+import { Button } from '@/components/ui/Button';
+import { Icon } from '@/components/ui/Icon';
 
 interface HomeTutorialPaginationProps {
   currentIndex: number;

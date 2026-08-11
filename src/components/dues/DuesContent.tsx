@@ -5,7 +5,7 @@ import Image from 'next/image';
 import { useUnmount } from 'react-use';
 
 import EmptyListIcon from '@/assets/icons/empty_list.svg';
-import { Breadcrumb, BreadcrumbItem, BreadcrumbList, BreadcrumbPage } from '@/components/ui';
+import { Breadcrumb, BreadcrumbItem, BreadcrumbList, BreadcrumbPage } from '@/components/ui/breadcrumb';
 import { CardinalDropdown } from '@/components/common/CardinalDropdown';
 import { DuesLeftSection } from '@/components/dues/DuesLeftSection';
 import {

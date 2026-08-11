@@ -3,7 +3,7 @@
 import { useAddProfileFlow } from '@/hooks/mypage';
 import { useCreateMultiProfileMutation } from '@/hooks/mutations/mypage/useMultiProfileMutations';
 import { useAssignableClubsQuery } from '@/hooks/queries/mypage/useMyPageQueries';
-import { Dialog, DialogContent } from '@/components/ui';
+import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { toastError, toastSuccess } from '@/stores/useToastStore';
 import { getApiErrorMessage } from '@/utils/shared';
 import { AddProfileModalHeader } from './AddProfileModal/Header';

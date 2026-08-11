@@ -1,7 +1,7 @@
 'use client';
 
 import CopyIcon from '@/assets/icons/copy.svg';
-import { Icon } from '@/components/ui';
+import { Icon } from '@/components/ui/Icon';
 import { cn } from '@/lib/cn';
 import type { DuesAccount } from '@/types/dues';
 import { copyDuesAccountToClipboard } from '@/utils/dues/duesAccount';

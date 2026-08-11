@@ -1,14 +1,8 @@
 import type { ReactNode } from 'react';
 
 import { AttendanceProgressBar } from '@/components/attendance/AttendanceProgressBar';
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from '@/components/ui';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/Tooltip';
 import { MemberStatusBadge } from '@/components/admin/member/MemberStatusBadge';
 import { cn } from '@/lib/cn';
 import type { Member } from '@/types/admin/member';

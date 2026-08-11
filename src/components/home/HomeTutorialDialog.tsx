@@ -6,18 +6,10 @@ import Image from 'next/image';
 import { useParams, useRouter } from 'next/navigation';
 
 import type { HomeTutorialSlide } from '@/constants/home/tutorial';
-import {
-  Button,
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  Dialog,
-  DialogBody,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  type CarouselApi,
-} from '@/components/ui';
+import { Button } from '@/components/ui/Button';
+import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carousel';
+import { Dialog, DialogBody, DialogContent, DialogFooter, DialogHeader } from '@/components/ui/dialog';
+import type { CarouselApi } from '@/components/ui/carousel';
 import { PaginationButton } from './PaginationButton';
 
 interface HomeTutorialDialogProps {

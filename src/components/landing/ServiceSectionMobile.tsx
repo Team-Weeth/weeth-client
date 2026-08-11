@@ -10,7 +10,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import type { Feature } from './ServiceSection';
 import LandingUserFaceIcon from '@/assets/icons/landing/landing_user_face.svg';
 import LandingAdminFaceIcon from '@/assets/icons/landing/landing_admin_face.svg';
-import { Skeleton } from '@/components/ui';
+import { Skeleton } from '@/components/ui/skeleton';
 
 gsap.registerPlugin(ScrollTrigger);
 

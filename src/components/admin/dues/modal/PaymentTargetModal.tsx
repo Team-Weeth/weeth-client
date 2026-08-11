@@ -12,7 +12,7 @@ import {
   DuesTabs,
 } from '@/components/admin/dues/setup/components';
 import { DuesSearchBar } from '@/components/admin/dues/DuesSearchBar';
-import { Button } from '@/components/ui';
+import { Button } from '@/components/ui/Button';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { cn } from '@/lib/cn';
 import { usePaymentTargetFilter } from '@/hooks/admin';

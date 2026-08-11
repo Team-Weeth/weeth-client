@@ -2,7 +2,7 @@ import type { MouseEvent } from 'react';
 
 import AdminCheckboxIcon from '@/assets/icons/admin/ic_admin_checkbox.svg';
 import AdminUncheckboxIcon from '@/assets/icons/admin/ic_admin_uncheckbox.svg';
-import { Icon } from '@/components/ui';
+import { Icon } from '@/components/ui/Icon';
 import { cn } from '@/lib/cn';
 
 interface MemberSelectionCheckboxProps {

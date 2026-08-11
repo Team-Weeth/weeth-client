@@ -16,7 +16,7 @@ import {
 } from '@dnd-kit/sortable';
 import { useQueryClient } from '@tanstack/react-query';
 
-import { Icon } from '@/components/ui';
+import { Icon } from '@/components/ui/Icon';
 import InfoCircleIcon from '@/assets/icons/info_circle.svg';
 import { BoardCard } from '@/components/admin/board/BoardCard';
 import { BoardToolbar } from '@/components/admin/board/BoardToolbar';

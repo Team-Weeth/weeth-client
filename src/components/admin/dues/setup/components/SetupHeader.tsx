@@ -1,4 +1,5 @@
-import { Icon, Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui';
+import { Icon } from '@/components/ui/Icon';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/Tooltip';
 import { BackButton } from '../../BackButton';
 import QuestionCircleIcon from '@/assets/icons/question_circle.svg';
 

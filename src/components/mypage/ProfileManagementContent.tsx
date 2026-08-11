@@ -3,7 +3,8 @@
 import { useState } from 'react';
 import { useParams } from 'next/navigation';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
-import { Button, Icon } from '@/components/ui';
+import { Button } from '@/components/ui/Button';
+import { Icon } from '@/components/ui/Icon';
 import { cn } from '@/lib/cn';
 import { useAssignableClubMap, useMyProfilesQuery } from '@/hooks/queries/mypage/useMyPageQueries';
 import AddRoundIcon from '@/assets/icons/add_round.svg';

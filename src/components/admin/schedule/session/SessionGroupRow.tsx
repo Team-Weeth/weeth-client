@@ -3,7 +3,7 @@
 import { useState } from 'react';
 
 import { cn } from '@/lib/cn';
-import { Icon } from '@/components/ui';
+import { Icon } from '@/components/ui/Icon';
 import { SessionStatusTag } from '@/components/admin/schedule/session/SessionStatusTag';
 import { SessionChildTable } from '@/components/admin/schedule/session/SessionChildTable';
 import {

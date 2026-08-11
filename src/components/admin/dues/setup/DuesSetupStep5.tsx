@@ -5,7 +5,8 @@ import { useParams } from 'next/navigation';
 
 import QuestionCircleIcon from '@/assets/icons/question_circle.svg';
 import { PaymentTargetModal } from '@/components/admin/dues';
-import { Icon, Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui';
+import { Icon } from '@/components/ui/Icon';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/Tooltip';
 import { DUES_REGISTRATION_ERROR_CODE } from '@/constants/errorCode';
 import { useDuesSetupValues, useDuesSetupActions } from '@/stores/useDuesSetupStore';
 import { toastError, toastSuccess } from '@/stores/useToastStore';

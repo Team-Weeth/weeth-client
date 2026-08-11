@@ -4,7 +4,7 @@ import { useEffect, useRef } from 'react';
 import { AlertDialog as AlertDialogPrimitive } from 'radix-ui';
 
 import { cn } from '@/lib/cn';
-import { Icon } from '@/components/ui';
+import { Icon } from '@/components/ui/Icon';
 import InfoCircleIcon from '@/assets/icons/info_circle.svg';
 
 type Placement = 'above-right' | 'below-right' | 'above-left' | 'below-left' | 'center';

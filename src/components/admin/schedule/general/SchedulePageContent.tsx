@@ -4,7 +4,10 @@ import { useState } from 'react';
 import Image from 'next/image';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
-import { Button, Card, Icon, Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui';
+import { Button } from '@/components/ui/Button';
+import { Card } from '@/components/ui/card';
+import { Icon } from '@/components/ui/Icon';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import AdminCalendarEditIcon from '@/assets/icons/admin/ic_admin_calendar_edit.svg';
 import SearchIcon from '@/assets/icons/search.svg';
 import { CardinalDropdown } from '@/components/admin/CardinalDropdown';

@@ -2,14 +2,9 @@
 
 import AdminSettingIcon from '@/assets/icons/admin/ic_admin_setting.svg';
 import QuestionCircleIcon from '@/assets/icons/question_circle.svg';
-import {
-  Icon,
-  Switch,
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/components/ui';
+import { Icon } from '@/components/ui/Icon';
+import { Switch } from '@/components/ui/Switch';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/Tooltip';
 import { cn } from '@/lib/cn';
 
 interface DuesTopBarProps extends React.HTMLAttributes<HTMLDivElement> {

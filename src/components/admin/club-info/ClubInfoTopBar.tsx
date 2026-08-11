@@ -6,7 +6,8 @@ import { AlertDialog as AlertDialogPrimitive } from 'radix-ui';
 
 import ArrowLeftIcon from '@/assets/icons/arrow_left.svg';
 import InfoCircleIcon from '@/assets/icons/info_circle.svg';
-import { Button, Icon } from '@/components/ui';
+import { Button } from '@/components/ui/Button';
+import { Icon } from '@/components/ui/Icon';
 import { cn } from '@/lib/cn';
 
 interface ClubInfoTopBarProps extends HTMLAttributes<HTMLDivElement> {

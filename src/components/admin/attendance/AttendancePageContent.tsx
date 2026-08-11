@@ -3,7 +3,9 @@
 import { useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, Card, Skeleton } from '@/components/ui';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel } from '@/components/ui/alert-dialog';
+import { Card } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
 import { CardinalDropdown } from '@/components/admin/CardinalDropdown';
 import { useNavigationGuard } from '@/hooks/useNavigationGuard';
 import { useCardinalSelector } from '@/hooks/useCardinalSelector';

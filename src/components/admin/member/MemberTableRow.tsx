@@ -1,17 +1,10 @@
 import type { ReactNode } from 'react';
 
 import AdminMeatballIcon from '@/assets/icons/admin/ic_admin_meatball.svg';
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-  Icon,
-  TableCell,
-  TableRow,
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from '@/components/ui';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Icon } from '@/components/ui/Icon';
+import { TableCell, TableRow } from '@/components/ui/table';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/Tooltip';
 import { cn } from '@/lib/cn';
 import type { Member } from '@/types/admin/member';
 import { formatCardinalLabel, getVisibleMemberCardinals } from '@/utils/admin/memberTableUtils';

@@ -2,7 +2,9 @@
 
 import PeopleIcon from '@/assets/icons/people.svg';
 import CopyIcon from '@/assets/icons/copy.svg';
-import { Button, Divider, Icon } from '@/components/ui';
+import { Button } from '@/components/ui/Button';
+import { Divider } from '@/components/ui/Divider';
+import { Icon } from '@/components/ui/Icon';
 import dynamic from 'next/dynamic';
 import { copyTextToClipboard } from '@/utils/shared/clipboard';
 import { getAppOrigin } from '@/utils/shared';

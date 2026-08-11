@@ -1,6 +1,8 @@
 'use client';
 
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, Button, Icon } from '@/components/ui';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel } from '@/components/ui/alert-dialog';
+import { Button } from '@/components/ui/Button';
+import { Icon } from '@/components/ui/Icon';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import AdminCloseIcon from '@/assets/icons/admin/ic_admin_close.svg';
 import { getFooterActions } from '@/constants/admin/memberDetailModal.constants';

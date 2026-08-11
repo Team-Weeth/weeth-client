@@ -1,6 +1,7 @@
 import Link from 'next/link';
 
-import { Avatar, AvatarFallback, AvatarImage, buttonVariants } from '@/components/ui';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { buttonVariants } from '@/components/ui/Button';
 import { cn } from '@/lib/cn';
 import type { Club } from '@/types';
 

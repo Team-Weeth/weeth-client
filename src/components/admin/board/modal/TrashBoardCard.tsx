@@ -1,4 +1,5 @@
-import { Button, Icon } from '@/components/ui';
+import { Button } from '@/components/ui/Button';
+import { Icon } from '@/components/ui/Icon';
 import type { TrashedBoard } from '@/types/admin/board';
 import PinIcon from '@/assets/icons/pin.svg';
 

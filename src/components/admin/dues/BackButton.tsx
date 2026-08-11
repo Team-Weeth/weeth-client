@@ -1,7 +1,7 @@
 'use client';
 
 import BackIcon from '@/assets/icons/back.svg';
-import { Icon } from '@/components/ui';
+import { Icon } from '@/components/ui/Icon';
 import { useDuesSetupNavigation } from '../../../hooks/admin/useDuesSetupNavigation';
 
 function BackButton() {

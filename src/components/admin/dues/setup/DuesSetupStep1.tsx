@@ -24,7 +24,8 @@ import {
 import { useDuesStepNavigator } from '@/hooks/admin/useDuesStepNavigator';
 import { useRestoreDuesDraft } from '@/hooks/admin/useRestoreDuesDraft';
 import { ScheduleTextField } from '@/components/admin/schedule/general/ScheduleTextField';
-import { AlertDialog, Button } from '@/components/ui';
+import { AlertDialog } from '@/components/ui/alert-dialog';
+import { Button } from '@/components/ui/Button';
 
 const NAME_MAX = 30;
 const DESCRIPTION_MAX = 30;

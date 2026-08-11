@@ -1,5 +1,5 @@
 import CautionIcon from '@/assets/icons/caution.svg';
-import { Icon } from '@/components/ui';
+import { Icon } from '@/components/ui/Icon';
 
 function AdminWarningBanner() {
   return (

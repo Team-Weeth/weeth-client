@@ -13,7 +13,8 @@ import { PostingActions } from './PostingActions';
 import { DefaultActions } from './DefaultActions';
 import { MobileNavSheet } from './MobileNavSheet';
 import { MobileWriteButton } from './MobileWriteButton';
-import { Avatar, AvatarFallback, AvatarImage, Icon } from '@/components/ui';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Icon } from '@/components/ui/Icon';
 import { useDuesVisibility } from '@/hooks/queries';
 import { useIsAdmin } from '@/hooks/shared';
 

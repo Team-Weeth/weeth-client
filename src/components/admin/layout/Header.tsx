@@ -6,7 +6,9 @@ import AdminCloseIcon from '@/assets/icons/admin/ic_admin_close.svg';
 import AdminMenuIcon from '@/assets/icons/admin/ic_admin_menu.svg';
 import { AdminMobileNavSheet } from '@/components/admin/layout/AdminMobileNavSheet';
 import { ThemeModeToggle } from '@/components/admin/layout/ThemeModeToggle';
-import { ClubAvatar, Icon, Sheet, SheetClose, SheetTrigger } from '@/components/ui';
+import { ClubAvatar } from '@/components/ui/ClubAvatar';
+import { Icon } from '@/components/ui/Icon';
+import { Sheet, SheetClose, SheetTrigger } from '@/components/ui/Sheet';
 import { useAdminClubQuery } from '@/hooks/queries/admin/useAdminClubQuery';
 import { useAdminLNBActions, useAdminLNBCollapsed } from '@/stores/useAdminLNBStore';
 

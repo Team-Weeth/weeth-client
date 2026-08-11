@@ -1,7 +1,9 @@
 'use client';
 
 import DeleteIcon from '@/assets/icons/delete.svg';
-import { Button, Dialog, DialogContent, DialogTitle, Icon } from '@/components/ui';
+import { Button } from '@/components/ui/Button';
+import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
+import { Icon } from '@/components/ui/Icon';
 import { useEditProfileActions, useEditProfileForm } from '@/hooks/mypage';
 import type { MyPageUsingProfile } from '@/types/mypage';
 import { DeleteProfileDialog } from './DeleteProfileDialog';

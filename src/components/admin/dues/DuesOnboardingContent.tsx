@@ -4,7 +4,7 @@ import Image from 'next/image';
 
 import DuesTutorialImage from '@/assets/image/dues_tutorial.png';
 import InfoCircleIcon from '@/assets/icons/info_circle.svg';
-import { Button } from '@/components/ui';
+import { Button } from '@/components/ui/Button';
 import { Icon } from '@/components/ui/Icon';
 
 interface DuesOnboardingContentProps {

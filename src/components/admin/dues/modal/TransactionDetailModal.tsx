@@ -4,16 +4,9 @@ import { useState } from 'react';
 
 import AdminCloseIcon from '@/assets/icons/admin/ic_admin_close.svg';
 import AdminMeatballIcon from '@/assets/icons/admin/ic_admin_meatball.svg';
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  Button,
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel } from '@/components/ui/alert-dialog';
+import { Button } from '@/components/ui/Button';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/DropdownMenu';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { ModalIconButton } from '@/components/admin/modal/ModalIconButton';
 import { SCHEDULE_MODAL_CONTENT_CLASS } from '@/components/admin/schedule/modal/constants';

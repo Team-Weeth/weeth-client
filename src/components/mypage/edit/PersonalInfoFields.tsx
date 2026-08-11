@@ -2,7 +2,7 @@
 
 import type { Control } from 'react-hook-form';
 import { Controller, useFormState } from 'react-hook-form';
-import { Input } from '@/components/ui';
+import { Input } from '@/components/ui/Input';
 import { FormField } from '@/components/mypage/FormField';
 import { formatPhone } from '@/utils/shared';
 import type { EditProfileFormData } from '@/lib/schemas/editProfile';

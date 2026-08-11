@@ -14,18 +14,11 @@ import PeopleIcon from '@/assets/icons/people.svg';
 import ExitIcon from '@/assets/icons/exit.svg';
 import ArrowRightIcon from '@/assets/icons/arrow_right.svg';
 import LogoutIcon from '@/assets/icons/logout.svg';
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-  ClubAvatar,
-  Icon,
-  SheetClose,
-  SheetContent,
-} from '@/components/ui';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel } from '@/components/ui/alert-dialog';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { ClubAvatar } from '@/components/ui/ClubAvatar';
+import { Icon } from '@/components/ui/Icon';
+import { SheetClose, SheetContent } from '@/components/ui/Sheet';
 import { cn } from '@/lib/cn';
 import { useAdminClubQuery } from '@/hooks/queries/admin/useAdminClubQuery';
 import { useUserName, useUserProfileImageUrl } from '@/stores';

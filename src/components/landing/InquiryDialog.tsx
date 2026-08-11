@@ -2,16 +2,9 @@
 
 import { useState } from 'react';
 import { type ReactNode } from 'react';
-import {
-  Dialog,
-  DialogBody,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTrigger,
-  Input,
-  Textarea,
-} from '@/components/ui';
+import { Dialog, DialogBody, DialogContent, DialogFooter, DialogHeader, DialogTrigger } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/Input';
+import { Textarea } from '@/components/ui/Textarea';
 import LandingInfoIcon from '@/assets/icons/landing/landing_info.svg';
 import { inquiryApi } from '@/lib/apis/inquiry';
 import { toastSuccess, toastError } from '@/stores/useToastStore';

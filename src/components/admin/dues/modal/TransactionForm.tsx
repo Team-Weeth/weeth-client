@@ -4,7 +4,9 @@ import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 
 import AdminCloudUploadIcon from '@/assets/icons/admin/ic_admin_cloud_upload.svg';
-import { Button, CalendarPicker, Icon } from '@/components/ui';
+import { Button } from '@/components/ui/Button';
+import { CalendarPicker } from '@/components/ui/CalendarPicker';
+import { Icon } from '@/components/ui/Icon';
 import { useImageDrop } from '@/hooks/useImageDrop';
 import { cn } from '@/lib/cn';
 import CloseCircleIcon from '@/assets/icons/close_circle.svg';

@@ -3,7 +3,7 @@
 import CheckRoundIcon from '@/assets/icons/check_round.svg';
 import AdminBackIcon from '@/assets/icons/admin/ic_admin_back.svg';
 import AdminRadioUnselectedIcon from '@/assets/icons/admin/ic_admin_radio_unselected.svg';
-import { Icon } from '@/components/ui';
+import { Icon } from '@/components/ui/Icon';
 import type { ThemeMode } from '@/types/theme';
 
 const THEME_OPTIONS: { value: ThemeMode; label: string }[] = [

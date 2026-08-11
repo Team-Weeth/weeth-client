@@ -1,7 +1,7 @@
 'use client';
 
 import ConvertIcon from '@/assets/icons/convert.svg';
-import { Icon } from '@/components/ui';
+import { Icon } from '@/components/ui/Icon';
 import { cn } from '@/lib/cn';
 
 interface TableTabItem<K extends string> {

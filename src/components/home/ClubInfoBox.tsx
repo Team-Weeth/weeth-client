@@ -1,6 +1,6 @@
 'use client';
 
-import { Tabs, TabsList, TabsContent, TabsTrigger } from '@/components/ui';
+import { Tabs, TabsList, TabsContent, TabsTrigger } from '@/components/ui/tabs';
 import { ClubActions } from './ClubActions';
 import { useHomeQuery } from '@/hooks/home/useHomeQuery';
 import { ClubProfileHeader } from './ClubProfileHeader';

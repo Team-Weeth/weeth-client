@@ -2,7 +2,10 @@
 
 import { useState } from 'react';
 
-import { Button, Icon, Switch, Tag } from '@/components/ui';
+import { Button } from '@/components/ui/Button';
+import { Icon } from '@/components/ui/Icon';
+import { Switch } from '@/components/ui/Switch';
+import { Tag } from '@/components/ui/tag';
 import { DeleteBoardDialog } from '@/components/admin/board/modal/DeleteBoardDialog';
 import AdminBoardMoveIcon from '@/assets/icons/admin/ic_admin_board_move.svg';
 import PinIcon from '@/assets/icons/pin.svg';

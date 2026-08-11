@@ -3,14 +3,7 @@
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 
-import {
-  Breadcrumb,
-  BreadcrumbList,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from '@/components/ui';
+import { Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbLink, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb';
 import { useAttendanceSSE, useAttendanceQR } from '@/hooks/attendance';
 import { useRemainingTime } from '@/hooks/useRemainingTime';
 import { useClubId } from '@/stores/useClubStore';

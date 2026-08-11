@@ -1,5 +1,5 @@
 import SearchIcon from '@/assets/icons/search.svg';
-import { Icon } from '@/components/ui';
+import { Icon } from '@/components/ui/Icon';
 
 interface DuesSearchBarProps {
   searchQuery: string;

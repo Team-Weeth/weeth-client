@@ -5,7 +5,9 @@ import { useRouter } from 'next/navigation';
 import EditIcon from '@/assets/icons/edit.svg';
 import InfoCircleIcon from '@/assets/icons/info_circle.svg';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
-import { Avatar, AvatarFallback, AvatarImage, Button, Icon } from '@/components/ui';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Button } from '@/components/ui/Button';
+import { Icon } from '@/components/ui/Icon';
 import type {
   MyPageAssignableClub,
   MyPageUsingProfile,

@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 
 import AdminCloseIcon from '@/assets/icons/admin/ic_admin_close.svg';
 import { SelectedCountLabel } from '@/components/admin/SelectedCountLabel';
-import { Icon } from '@/components/ui';
+import { Icon } from '@/components/ui/Icon';
 import { cn } from '@/lib/cn';
 
 interface FloatingSelectionBarProps extends React.HTMLAttributes<HTMLDivElement> {

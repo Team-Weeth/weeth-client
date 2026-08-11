@@ -2,7 +2,7 @@
 
 import type { Control } from 'react-hook-form';
 import { Controller } from 'react-hook-form';
-import { Input } from '@/components/ui';
+import { Input } from '@/components/ui/Input';
 import { FormField } from '@/components/mypage/FormField';
 import { SearchSelect } from '@/components/mypage/SearchSelect';
 import type { EditProfileFormData } from '@/lib/schemas/editProfile';

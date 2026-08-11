@@ -1,5 +1,5 @@
 import PinIcon from '@/assets/icons/pin.svg';
-import { Icon } from '@/components/ui';
+import { Icon } from '@/components/ui/Icon';
 import { cn } from '@/lib/cn';
 import { formatAmount } from '@/lib/formatAmount';
 import type { DuesTransaction } from '@/types/dues';

@@ -1,13 +1,8 @@
 'use client';
 
-import {
-  CalendarPicker,
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-  Icon,
-} from '@/components/ui';
+import { CalendarPicker } from '@/components/ui/CalendarPicker';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/DropdownMenu';
+import { Icon } from '@/components/ui/Icon';
 import ArrowDownIcon from '@/assets/icons/arrow_down.svg';
 import { ScheduleDateRangeFields } from '@/components/admin/schedule/general/ScheduleDateRangeFields';
 import { ScheduleFormField } from '@/components/admin/schedule/general/ScheduleFormField';

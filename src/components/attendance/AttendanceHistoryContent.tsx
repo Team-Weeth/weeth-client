@@ -4,16 +4,9 @@ import { useEffect } from 'react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 
-import {
-  Breadcrumb,
-  BreadcrumbList,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-  Divider,
-  Tag,
-} from '@/components/ui';
+import { Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbLink, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb';
+import { Divider } from '@/components/ui/Divider';
+import { Tag } from '@/components/ui/tag';
 import { cn } from '@/lib/cn';
 import { formatKoreanDate, formatTime } from '@/lib/formatTime';
 import { USER_ATTENDANCE_STATUS_CONFIG } from '@/constants/attendance';

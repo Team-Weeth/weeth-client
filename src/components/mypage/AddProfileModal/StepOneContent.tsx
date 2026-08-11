@@ -2,7 +2,9 @@
 
 import type { Control, FieldErrors } from 'react-hook-form';
 import { Controller, useWatch } from 'react-hook-form';
-import { Button, DialogClose, Input } from '@/components/ui';
+import { Button } from '@/components/ui/Button';
+import { DialogClose } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/Input';
 import { FormFieldWrapper } from '@/components/auth/hub';
 import { MYPAGE_PROFILE_TEXT_MAX_LENGTH } from '@/constants/mypage/profile';
 import { cn } from '@/lib/cn';

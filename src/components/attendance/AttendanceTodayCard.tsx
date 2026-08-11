@@ -6,7 +6,7 @@ import { useState } from 'react';
 
 import CompleteIcon from '@/assets/icons/complete.svg';
 import RushIcon from '@/assets/icons/rush.svg';
-import { Card } from '@/components/ui';
+import { Card } from '@/components/ui/card';
 import { AttendanceCodeModal } from '@/components/attendance/AttendanceCodeModal';
 import { useIsAdmin } from '@/hooks/shared';
 

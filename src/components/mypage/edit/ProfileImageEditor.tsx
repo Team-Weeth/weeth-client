@@ -1,20 +1,13 @@
 'use client';
 
-import {
-  Icon,
-  DropdownMenu,
-  DropdownMenuTrigger,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  Divider,
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from '@/components/ui';
+import { Icon } from '@/components/ui/Icon';
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from '@/components/ui/DropdownMenu';
+import { Divider } from '@/components/ui/Divider';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import CameraIcon from '@/assets/icons/camera.svg';
 import { useImagePreview } from '@/hooks/mypage';
 import { cn } from '@/lib/cn';
-import type { AvatarProps } from '@/components/ui';
+import type { AvatarProps } from '@/components/ui/avatar';
 
 interface ProfileImageEditorProps {
   name: string;

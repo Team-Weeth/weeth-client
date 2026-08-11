@@ -2,7 +2,9 @@
 
 import CheckIcon from '@/assets/icons/check.svg';
 import PeopleIcon from '@/assets/icons/people.svg';
-import { Avatar, AvatarFallback, AvatarImage, Button, Icon } from '@/components/ui';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Button } from '@/components/ui/Button';
+import { Icon } from '@/components/ui/Icon';
 import { cn } from '@/lib/cn';
 import type { MyPageAssignableClub } from '@/types/mypage';
 

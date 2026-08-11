@@ -3,7 +3,7 @@
 import dynamic from 'next/dynamic';
 import { useParams, usePathname } from 'next/navigation';
 
-import { Icon } from '@/components/ui';
+import { Icon } from '@/components/ui/Icon';
 import EditIcon from '@/assets/icons/edit.svg';
 import { useWritePost } from '@/hooks/home/useWritePost';
 import { useBoardList } from '@/hooks/board/useBoardQuery';

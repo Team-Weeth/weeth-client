@@ -1,4 +1,5 @@
-import { Button, Divider } from '@/components/ui';
+import { Button } from '@/components/ui/Button';
+import { Divider } from '@/components/ui/Divider';
 
 interface ModalFooterProps {
   children?: React.ReactNode;

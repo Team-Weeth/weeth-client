@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import BackIcon from '@/assets/icons/back.svg';
 import ConvertIcon from '@/assets/icons/convert.svg';
 import SearchIcon from '@/assets/icons/search.svg';
-import { Icon } from '@/components/ui';
+import { Icon } from '@/components/ui/Icon';
 import type { Cardinal } from '@/types/admin/cardinal';
 import type { MemberSortBy } from '@/utils/admin/memberPageUtils';
 import { CardinalPillList } from './CardinalPillList';

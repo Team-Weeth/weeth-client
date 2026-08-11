@@ -5,7 +5,8 @@ import { useState } from 'react';
 import { useParams } from 'next/navigation';
 
 import CopyIcon from '@/assets/icons/copy.svg';
-import { Card, Icon } from '@/components/ui';
+import { Card } from '@/components/ui/card';
+import { Icon } from '@/components/ui/Icon';
 import { cn } from '@/lib/cn';
 import { toastError, toastSuccess } from '@/stores/useToastStore';
 import { copyDuesAccountToClipboard } from '@/utils/dues/duesAccount';

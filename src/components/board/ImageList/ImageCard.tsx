@@ -1,7 +1,7 @@
 'use client';
 
 import CloseCircleIcon from '@/assets/icons/close_circle.svg';
-import { Icon } from '@/components/ui';
+import { Icon } from '@/components/ui/Icon';
 import { cn } from '@/lib/cn';
 import type { DisplayFile } from '@/types/board';
 

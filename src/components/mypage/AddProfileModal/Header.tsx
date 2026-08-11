@@ -1,7 +1,8 @@
 'use client';
 
 import DeleteIcon from '@/assets/icons/delete.svg';
-import { DialogTitle, Icon } from '@/components/ui';
+import { DialogTitle } from '@/components/ui/dialog';
+import { Icon } from '@/components/ui/Icon';
 import { cn } from '@/lib/cn';
 
 const TOTAL_STEPS = 2;

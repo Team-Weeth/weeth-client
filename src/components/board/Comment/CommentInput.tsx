@@ -2,7 +2,9 @@
 
 import { useRef, useState } from 'react';
 import SendIcon from '@/assets/icons/send.svg';
-import { Button, Icon, Textarea } from '@/components/ui';
+import { Button } from '@/components/ui/Button';
+import { Icon } from '@/components/ui/Icon';
+import { Textarea } from '@/components/ui/Textarea';
 import { cn } from '@/lib/cn';
 
 interface CommentInputProps {

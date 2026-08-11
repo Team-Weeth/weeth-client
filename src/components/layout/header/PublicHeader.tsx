@@ -7,14 +7,9 @@ import { motion } from 'framer-motion';
 import DeleteIcon from '@/assets/icons/delete.svg';
 import LogoIcon from '@/assets/icons/logo/logo_full_Origin.svg';
 import MenuIcon from '@/assets/icons/menu.svg';
-import {
-  buttonVariants,
-  Icon,
-  Sheet,
-  SheetClose,
-  SheetContent,
-  SheetTrigger,
-} from '@/components/ui';
+import { buttonVariants } from '@/components/ui/Button';
+import { Icon } from '@/components/ui/Icon';
+import { Sheet, SheetClose, SheetContent, SheetTrigger } from '@/components/ui/Sheet';
 import { cn } from '@/lib/cn';
 import { NAV_ITEMS } from '@/constants/landing/landing';
 import { InquiryDialog } from '@/components/landing/InquiryDialog';

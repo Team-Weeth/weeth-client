@@ -1,4 +1,5 @@
-import { DialogTitle, Icon } from '@/components/ui';
+import { DialogTitle } from '@/components/ui/dialog';
+import { Icon } from '@/components/ui/Icon';
 import DeleteIcon from '@/assets/icons/delete.svg';
 import { cn } from '@/lib/cn';
 

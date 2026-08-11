@@ -1,5 +1,5 @@
 import ArrowRightIcon from '@/assets/icons/arrow_right.svg';
-import { Icon } from '@/components/ui';
+import { Icon } from '@/components/ui/Icon';
 import { cn } from '@/lib/cn';
 import type { DuesReceiptFile, DuesTransaction } from '@/types/dues';
 import { isPdfReceipt } from '@/utils/dues/duesTransaction';

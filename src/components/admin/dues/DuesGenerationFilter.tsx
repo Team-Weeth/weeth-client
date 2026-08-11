@@ -3,20 +3,10 @@
 import Image from 'next/image';
 import ArrowDownIcon from '@/assets/icons/arrow_down.svg';
 import { cn } from '@/lib/cn';
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-  TooltipProvider,
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-  Icon,
-} from '@/components/ui';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/DropdownMenu';
+import { TooltipProvider, Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/Tooltip';
+import { Icon } from '@/components/ui/Icon';
 import { formatLastUpdated } from '@/utils/shared/date';
 import type { Cardinal } from '@/types/admin/cardinal';
 import type { LastModified } from '@/types/admin/dues';

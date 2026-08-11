@@ -3,7 +3,8 @@
 import { useRef } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import BackIcon from '@/assets/icons/back.svg';
-import { Button, Icon } from '@/components/ui';
+import { Button } from '@/components/ui/Button';
+import { Icon } from '@/components/ui/Icon';
 import { useScrollToTopOnBlur } from '@/hooks/useScrollToTopOnBlur';
 import { useEditProfileActions, useEditProfileForm } from '@/hooks/mypage';
 import { useMyProfileDetailQuery } from '@/hooks/queries/mypage/useMyPageQueries';

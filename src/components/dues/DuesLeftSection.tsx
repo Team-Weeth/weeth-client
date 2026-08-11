@@ -6,7 +6,7 @@ import { DuesAmountCard } from '@/components/dues/DuesAmountCard';
 import { DuesBalanceCard } from '@/components/dues/DuesBalanceCard';
 import { DuesPaymentButton } from '@/components/dues/DuesPaymentButton';
 import { DuesPaymentStatusBanner } from '@/components/dues/DuesPaymentStatusBanner';
-import { Icon } from '@/components/ui';
+import { Icon } from '@/components/ui/Icon';
 import { formatAmount } from '@/lib/formatAmount';
 import { cn } from '@/lib/cn';
 import type { DuesPaymentStatus, DuesSummary } from '@/types/dues';

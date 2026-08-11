@@ -10,12 +10,8 @@ import AdminScreenIcon from '@/assets/icons/admin/ic_admin_screen.svg';
 import ExitIcon from '@/assets/icons/exit.svg';
 import PeopleIcon from '@/assets/icons/people.svg';
 
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  TooltipProvider,
-} from '@/components/ui';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel } from '@/components/ui/alert-dialog';
+import { TooltipProvider } from '@/components/ui/Tooltip';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { cn } from '@/lib/cn';
 import { CollapsedDivider } from '@/components/admin/layout/CollapsedDivider';
