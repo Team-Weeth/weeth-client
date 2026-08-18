@@ -6,7 +6,7 @@ import {
   MOCK_PENALTY_CARDINAL_NUMBERS,
   MOCK_PENALTY_MEMBERS,
 } from '@/constants/admin/penaltyMock.constants';
-import { PENALTY_SCORE_MIN, PENALTY_SORT_ORDER } from '@/constants/admin/penaltyTable.constants';
+import { PENALTY_SCORE_MIN } from '@/constants/admin/penaltyTable.constants';
 import { toastSuccess } from '@/stores/useToastStore';
 import type { PenaltyRecordDraft, PenaltySortBy } from '@/types/admin/penalty';
 import {
@@ -17,8 +17,8 @@ import {
 } from '@/utils/admin/penaltyPageUtils';
 import { PenaltyAddSection } from './PenaltyAddSection';
 import { PenaltyPageHeader } from './PenaltyPageHeader';
-import { PenaltyTable } from './PenaltyTable';
 import { PenaltySortButton } from './PenaltySortButton';
+import { PenaltyTable } from './PenaltyTable';
 
 const INITIAL_DRAFT: PenaltyRecordDraft = {
   type: 'PENALTY',
@@ -33,7 +33,7 @@ function PenaltyPageContent() {
   const [memberQuery, setMemberQuery] = useState('');
   const [draft, setDraft] = useState<PenaltyRecordDraft>(INITIAL_DRAFT);
 
-  const nextSortBy = getNextPenaltySort(sortBy, PENALTY_SORT_ORDER);
+  const nextSortBy = getNextPenaltySort(sortBy);
 
   // TODO: 페널티 API 연동 시 목 데이터를 서버 데이터로 교체한다.
   const cardinalMembers = filterPenaltyMembers(MOCK_PENALTY_MEMBERS, selectedCardinal);

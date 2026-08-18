@@ -3,10 +3,11 @@
 import type { ReactNode } from 'react';
 
 import { Button, Input } from '@/components/ui';
+import { PENALTY_SCORE_EMPTY } from '@/constants/admin/penaltyTable.constants';
 import { cn } from '@/lib/cn';
 import type { PenaltyMember, PenaltyRecordDraft, PenaltyType } from '@/types/admin/penalty';
 import { PenaltyMemberSearchInput } from './PenaltyMemberSearchInput';
-import { EMPTY_SCORE, PenaltyScoreInput } from './PenaltyScoreInput';
+import { PenaltyScoreInput } from './PenaltyScoreInput';
 import { PenaltyTypeToggle } from './PenaltyTypeToggle';
 
 interface PenaltyAddSectionProps {
@@ -32,7 +33,7 @@ function PenaltyAddSection({
   const canSubmit =
     draft.memberIds.length > 0 &&
     draft.reason.trim().length > 0 &&
-    (isWarning || draft.score > EMPTY_SCORE);
+    (isWarning || draft.score > PENALTY_SCORE_EMPTY);
 
   return (
     <section className="bg-background flex w-full flex-col overflow-hidden rounded-lg">

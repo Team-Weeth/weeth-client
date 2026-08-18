@@ -26,7 +26,7 @@ function PenaltyCardinalTabs({
       role="group"
       aria-label="기수 필터"
       className={cn(
-        'border-line scrollbar-none flex w-max max-w-full cursor-grab items-center gap-700 overflow-x-auto border-none px-600 select-none active:cursor-grabbing',
+        'scrollbar-none flex w-max max-w-full cursor-grab items-center gap-700 overflow-x-auto px-600 select-none active:cursor-grabbing',
         className,
       )}
       onMouseDown={onMouseDown}

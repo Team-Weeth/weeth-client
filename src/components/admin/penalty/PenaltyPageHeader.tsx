@@ -8,6 +8,7 @@ interface PenaltyPageHeaderProps {
   cardinalNumbers: number[];
   selectedCardinal: number;
   onSelectCardinal: (cardinalNumber: number) => void;
+  /** 전달하지 않으면 설정 버튼이 비활성화된다. TODO: 페널티 설정 모달 연결 필요 */
   onOpenSetting?: () => void;
 }
 
@@ -25,8 +26,9 @@ function PenaltyPageHeader({
         <button
           type="button"
           onClick={onOpenSetting}
+          disabled={!onOpenSetting}
           aria-label="페널티 설정"
-          className="cursor-pointer transition-colors"
+          className="cursor-pointer transition-colors disabled:cursor-not-allowed disabled:opacity-40"
         >
           <Icon
             src={AdminSettingIcon}

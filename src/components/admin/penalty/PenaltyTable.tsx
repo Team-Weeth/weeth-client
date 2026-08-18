@@ -1,13 +1,12 @@
 'use client';
 
-import { useMemo, useState } from 'react';
-
-import { MemberPagination, MemberSelectionCheckbox } from '@/components/admin';
+import { AdminSelectionCheckbox, AdminTablePagination } from '@/components/admin/table';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui';
 import {
   PENALTY_MEMBERS_PER_PAGE,
   PENALTY_TABLE_COLUMNS,
 } from '@/constants/admin/penaltyTable.constants';
+import { useTableSelection } from '@/hooks/admin';
 import { cn } from '@/lib/cn';
 import type { PenaltyMember } from '@/types/admin/penalty';
 import { PenaltyTableRow } from './PenaltyTableRow';
@@ -25,42 +24,21 @@ function PenaltyTable({
   onSelectionChange,
   ...props
 }: PenaltyTableProps) {
-  const memberListKey = useMemo(() => members.map((member) => member.id).join('|'), [members]);
-  const [pagination, setPagination] = useState({ memberListKey, page: 1 });
-  const page = pagination.memberListKey === memberListKey ? pagination.page : 1;
-
-  const totalPages = Math.max(1, Math.ceil(members.length / PENALTY_MEMBERS_PER_PAGE));
-  const currentPage = Math.min(page, totalPages);
-  const currentPageMembers = members.slice(
-    (currentPage - 1) * PENALTY_MEMBERS_PER_PAGE,
-    currentPage * PENALTY_MEMBERS_PER_PAGE,
-  );
-
-  const isAllSelected =
-    currentPageMembers.length > 0 &&
-    currentPageMembers.every((member) => selectedIds.has(member.id));
-  const hasAnySelected = currentPageMembers.some((member) => selectedIds.has(member.id));
-  const isPartiallySelected = hasAnySelected && !isAllSelected;
-
-  const toggleAll = () => {
-    const next = new Set(selectedIds);
-    if (isAllSelected) {
-      currentPageMembers.forEach((member) => next.delete(member.id));
-    } else {
-      currentPageMembers.forEach((member) => next.add(member.id));
-    }
-    onSelectionChange(next);
-  };
-
-  const toggleOne = (id: string) => {
-    const next = new Set(selectedIds);
-    if (next.has(id)) {
-      next.delete(id);
-    } else {
-      next.add(id);
-    }
-    onSelectionChange(next);
-  };
+  const {
+    currentItems: currentPageMembers,
+    currentPage,
+    totalPages,
+    isAllSelected,
+    isPartiallySelected,
+    toggleAll,
+    toggleOne,
+    onPageChange,
+  } = useTableSelection({
+    items: members,
+    perPage: PENALTY_MEMBERS_PER_PAGE,
+    selectedIds,
+    onSelectionChange,
+  });
 
   return (
     <div className={cn('max-w-full min-w-0', className)} {...props}>
@@ -72,7 +50,7 @@ function PenaltyTable({
           <TableHeader className="bg-container-neutral-alternative sticky top-0 z-10">
             <TableRow className="h-11 border-0 hover:bg-transparent">
               <TableHead className="h-11 w-16 min-w-16 p-0 pl-300">
-                <MemberSelectionCheckbox
+                <AdminSelectionCheckbox
                   checked={isAllSelected}
                   partial={isPartiallySelected}
                   ariaLabel="현재 페이지 멤버 전체 선택"
@@ -121,10 +99,10 @@ function PenaltyTable({
       </div>
 
       {totalPages > 1 && (
-        <MemberPagination
+        <AdminTablePagination
           page={currentPage}
           totalPages={totalPages}
-          onPageChange={(nextPage) => setPagination({ memberListKey, page: nextPage })}
+          onPageChange={onPageChange}
         />
       )}
     </div>

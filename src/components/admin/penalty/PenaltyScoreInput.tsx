@@ -1,11 +1,12 @@
 'use client';
 
 import { SuffixInput } from '@/components/ui';
-import { PENALTY_SCORE_MAX, PENALTY_SCORE_MIN } from '@/constants/admin/penaltyTable.constants';
+import {
+  PENALTY_SCORE_EMPTY,
+  PENALTY_SCORE_MAX,
+  PENALTY_SCORE_MIN,
+} from '@/constants/admin/penaltyTable.constants';
 import { cn } from '@/lib/cn';
-
-/** 입력값이 비어 있는 상태를 나타내는 값 (제출 시 유효하지 않은 점수) */
-const EMPTY_SCORE = 0;
 
 interface PenaltyScoreInputProps {
   /** 0이면 미입력 상태 */
@@ -25,7 +26,7 @@ function PenaltyScoreInput({
     const digits = event.target.value.replace(/\D/g, '');
 
     if (digits === '') {
-      onValueChange(EMPTY_SCORE);
+      onValueChange(PENALTY_SCORE_EMPTY);
       return;
     }
 
@@ -40,7 +41,7 @@ function PenaltyScoreInput({
       variant="neutral"
       min={PENALTY_SCORE_MIN}
       max={PENALTY_SCORE_MAX}
-      value={value === EMPTY_SCORE ? '' : String(value)}
+      value={value === PENALTY_SCORE_EMPTY ? '' : String(value)}
       onChange={handleChange}
       onStepChange={onValueChange}
       disabled={disabled}
@@ -54,4 +55,4 @@ function PenaltyScoreInput({
   );
 }
 
-export { PenaltyScoreInput, EMPTY_SCORE, type PenaltyScoreInputProps };
+export { PenaltyScoreInput, type PenaltyScoreInputProps };

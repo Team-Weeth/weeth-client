@@ -1,13 +1,13 @@
 'use client';
 
-import React, { useMemo, useState } from 'react';
+import React from 'react';
 
+import { AdminSelectionCheckbox, AdminTablePagination } from '@/components/admin/table';
 import { Table, TableBody, TableHead, TableHeader, TableRow } from '@/components/ui';
+import { useTableSelection } from '@/hooks/admin';
 import { cn } from '@/lib/cn';
 import type { Member } from '@/types/admin/member';
 import { MEMBER_TABLE_COLUMNS } from '@/constants/admin/memberTable.constants';
-import { MemberPagination } from './MemberPagination';
-import { MemberSelectionCheckbox } from './MemberSelectionCheckbox';
 import { MemberTableRow } from './MemberTableRow';
 
 const MEMBERS_PER_PAGE = 10;
@@ -27,49 +27,22 @@ function MemberTable({
   onMemberAction,
   ...props
 }: MemberTableProps) {
-  const [internalSelectedIds, setInternalSelectedIds] = useState<Set<string>>(new Set());
-  const selectedIds = controlledSelectedIds ?? internalSelectedIds;
-  const setSelectedIds = onSelectionChange ?? setInternalSelectedIds;
-  const memberListKey = useMemo(() => members.map((member) => member.id).join('|'), [members]);
-  const [pagination, setPagination] = useState({ memberListKey, page: 1 });
-  const page = pagination.memberListKey === memberListKey ? pagination.page : 1;
-
-  const totalPages = Math.max(1, Math.ceil(members.length / MEMBERS_PER_PAGE));
-  const currentPage = Math.min(page, totalPages);
-  const currentPageMembers = members.slice(
-    (currentPage - 1) * MEMBERS_PER_PAGE,
-    currentPage * MEMBERS_PER_PAGE,
-  );
-
-  const isAllSelected =
-    currentPageMembers.length > 0 &&
-    currentPageMembers.every((member) => selectedIds.has(member.id));
-  const hasAnySelected = currentPageMembers.some((member) => selectedIds.has(member.id));
-  const isPartiallySelected = hasAnySelected && !isAllSelected;
-
-  const toggleAll = () => {
-    const next = new Set(selectedIds);
-    if (isAllSelected) {
-      currentPageMembers.forEach((member) => next.delete(member.id));
-    } else {
-      currentPageMembers.forEach((member) => next.add(member.id));
-    }
-    setSelectedIds(next);
-  };
-
-  const toggleOne = (id: string) => {
-    const next = new Set(selectedIds);
-    if (next.has(id)) {
-      next.delete(id);
-    } else {
-      next.add(id);
-    }
-    setSelectedIds(next);
-  };
-
-  const handlePageChange = (nextPage: number) => {
-    setPagination({ memberListKey, page: nextPage });
-  };
+  const {
+    currentItems: currentPageMembers,
+    currentPage,
+    totalPages,
+    selectedIds,
+    isAllSelected,
+    isPartiallySelected,
+    toggleAll,
+    toggleOne,
+    onPageChange,
+  } = useTableSelection({
+    items: members,
+    perPage: MEMBERS_PER_PAGE,
+    selectedIds: controlledSelectedIds,
+    onSelectionChange,
+  });
 
   return (
     <div className={cn('min-w-0', className)} {...props}>
@@ -81,7 +54,7 @@ function MemberTable({
           <TableHeader className="bg-container-neutral-alternative sticky top-0 z-10">
             <TableRow className="h-11 border-0 hover:bg-transparent">
               <TableHead className="h-11 w-16 min-w-16 p-0 pl-300">
-                <MemberSelectionCheckbox
+                <AdminSelectionCheckbox
                   checked={isAllSelected}
                   partial={isPartiallySelected}
                   ariaLabel="현재 페이지 멤버 전체 선택"
@@ -122,10 +95,10 @@ function MemberTable({
       </div>
 
       {totalPages > 1 && (
-        <MemberPagination
+        <AdminTablePagination
           page={currentPage}
           totalPages={totalPages}
-          onPageChange={handlePageChange}
+          onPageChange={onPageChange}
         />
       )}
     </div>

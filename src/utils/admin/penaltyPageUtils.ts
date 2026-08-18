@@ -1,4 +1,7 @@
-import { PENALTY_INTRODUCTION_MAX_LENGTH } from '@/constants/admin/penaltyTable.constants';
+import {
+  PENALTY_INTRODUCTION_MAX_LENGTH,
+  PENALTY_SORT_ORDER,
+} from '@/constants/admin/penaltyTable.constants';
 import type { PenaltyMember, PenaltySortBy } from '@/types/admin/penalty';
 import { parseCardinals } from './parseCardinals';
 
@@ -30,7 +33,7 @@ function sortPenaltyMembers(members: PenaltyMember[], sortBy: PenaltySortBy) {
   });
 }
 
-function getNextPenaltySort(sortBy: PenaltySortBy, order: PenaltySortBy[]) {
+function getNextPenaltySort(sortBy: PenaltySortBy, order: PenaltySortBy[] = PENALTY_SORT_ORDER) {
   const currentIndex = order.indexOf(sortBy);
   return order[(currentIndex + 1) % order.length];
 }

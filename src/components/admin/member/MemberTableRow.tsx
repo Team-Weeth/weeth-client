@@ -1,11 +1,14 @@
-import type { ReactNode } from 'react';
-
 import { AdminMeatballIcon } from '@/assets/icons/admin';
-import { Avatar, AvatarFallback, Icon, TableCell, TableRow } from '@/components/ui';
+import {
+  AdminCardinalsCell,
+  AdminNumberCell,
+  AdminProfileCell,
+  AdminSelectionCheckbox,
+  AdminTextCell,
+} from '@/components/admin/table';
+import { Icon, TableCell, TableRow } from '@/components/ui';
 import { cn } from '@/lib/cn';
 import type { Member } from '@/types/admin/member';
-import { formatCardinalLabel, getVisibleMemberCardinals } from '@/utils/admin/memberTableUtils';
-import { MemberSelectionCheckbox } from './MemberSelectionCheckbox';
 import { MemberStatusBadge } from './MemberStatusBadge';
 
 interface MemberTableRowProps {
@@ -41,7 +44,7 @@ function MemberTableRow({ member, selected, onToggle, onMemberAction }: MemberTa
       onClick={() => onMemberAction?.(member)}
     >
       <TableCell className="h-16 w-16 min-w-16 p-0 pl-300">
-        <MemberSelectionCheckbox
+        <AdminSelectionCheckbox
           checked={selected}
           ariaLabel={`${member.name} ${member.studentId} 선택`}
           onClick={(e) => {
@@ -51,26 +54,27 @@ function MemberTableRow({ member, selected, onToggle, onMemberAction }: MemberTa
         />
       </TableCell>
 
-      <MemberProfileCell member={member} />
+      {/* 자기소개가 없는 경우 '-' 표시. TODO : api 응답에 자기소개 추가되어야 함 */}
+      <AdminProfileCell className="w-[172px]" name={member.name} description="-" />
 
       {textCells.slice(0, 3).map(({ id, value }) => (
-        <MemberTextCell key={id} className={TEXT_CELL_CLASS_BY_ID[id]}>
+        <AdminTextCell key={id} className={TEXT_CELL_CLASS_BY_ID[id]}>
           {value}
-        </MemberTextCell>
+        </AdminTextCell>
       ))}
 
       {NUMBER_CELL_VALUES.map((key) => (
-        <MemberNumberCell key={key}>{member[key]}</MemberNumberCell>
+        <AdminNumberCell key={key}>{member[key]}</AdminNumberCell>
       ))}
       <TableCell className="h-16 w-12 p-0 px-100 py-300" aria-hidden />
 
       {textCells.slice(3).map(({ id, value }) => (
-        <MemberTextCell key={id} className={TEXT_CELL_CLASS_BY_ID[id]}>
+        <AdminTextCell key={id} className={TEXT_CELL_CLASS_BY_ID[id]}>
           {value}
-        </MemberTextCell>
+        </AdminTextCell>
       ))}
 
-      <MemberCardinalsCell cardinal={member.cardinal} />
+      <AdminCardinalsCell cardinal={member.cardinal} />
 
       <TableCell className="h-16 w-[76px] p-0 px-400 py-[7px]">
         <MemberStatusBadge status={member.status} />
@@ -90,62 +94,6 @@ function MemberTableRow({ member, selected, onToggle, onMemberAction }: MemberTa
         </button>
       </TableCell>
     </TableRow>
-  );
-}
-
-function MemberProfileCell({ member }: { member: Member }) {
-  return (
-    <TableCell className="h-16 w-[172px] p-0 pr-400">
-      <div className="flex min-w-0 items-center gap-300">
-        <Avatar size={40}>
-          <AvatarFallback />
-        </Avatar>
-        <div className="flex min-w-0 flex-col justify-center gap-0.5">
-          <span className="typo-button2 text-text-normal truncate">{member.name}</span>
-          {/* 자기소개가 없는 경우 '-' 표시. TODO : api 응답에 자기소개 추가되어야 함 */}
-          <span className="typo-caption2 text-text-alternative truncate">-</span>
-        </div>
-      </div>
-    </TableCell>
-  );
-}
-
-function MemberCardinalsCell({ cardinal }: { cardinal: string }) {
-  const { visibleCardinals, hiddenCardinalCount } = getVisibleMemberCardinals(cardinal);
-
-  return (
-    <TableCell className="h-16 w-[182px] p-0 px-400 py-[7px]">
-      <div className="flex items-center gap-100 overflow-hidden">
-        {visibleCardinals.map((item) => (
-          <CardinalTag key={item}>{formatCardinalLabel(item)}</CardinalTag>
-        ))}
-        {hiddenCardinalCount > 0 && <CardinalTag>+{hiddenCardinalCount}</CardinalTag>}
-      </div>
-    </TableCell>
-  );
-}
-
-function CardinalTag({ children }: { children: ReactNode }) {
-  return (
-    <span className="bg-container-neutral-alternative text-text-alternative rounded-[5px] px-2.5 py-[5px] text-[14px] leading-5 font-semibold tracking-[var(--letter-spacing)] whitespace-nowrap">
-      {children}
-    </span>
-  );
-}
-
-function MemberTextCell({ className, children }: { className?: string; children: ReactNode }) {
-  return (
-    <TableCell className={cn('h-16 p-0 px-400 py-300', className)}>
-      <span className="typo-body2 text-text-strong block truncate">{children}</span>
-    </TableCell>
-  );
-}
-
-function MemberNumberCell({ children }: { children: ReactNode }) {
-  return (
-    <TableCell className="h-16 w-12 p-0 px-100 py-300 text-center">
-      <span className="typo-body2 text-text-strong">{children}</span>
-    </TableCell>
   );
 }
 

@@ -17,7 +17,7 @@ function PenaltySortButton({ sortBy, nextSortBy, onToggleSort }: PenaltySortButt
       type="button"
       onClick={onToggleSort}
       aria-label={`${PENALTY_SORT_LABEL[nextSortBy]}으로 정렬`}
-      className="typo-sub1 text-text-alternative hover:text-text-strong flex h-9 cursor-pointer items-center justify-center gap-[6px] rounded-sm px-[2.5] transition-colors"
+      className="typo-sub1 text-text-alternative hover:text-text-strong flex h-9 cursor-pointer items-center justify-center gap-[6px] rounded-sm px-2.5 transition-colors"
     >
       <Icon src={ConvertIcon} size={20} />
       {PENALTY_SORT_LABEL[sortBy]}
