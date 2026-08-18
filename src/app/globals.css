@@ -60,10 +60,19 @@
   --opacity-100: #00c8aa1f;
   --opacity-200: #00c8aa4d;
 
+  --static-floating-surface: #2a2c2e;
+  --static-on-floating: #ffffff;
+  --static-floating-border: #ffffff1a;
+  --static-floating-divider: #ffffff33;
+  --static-overlay-dim: rgba(0, 0, 0, 0.6);
+
   --background: var(--neutral-200);
   --background-2: var(--neutral-300);
   --foreground: var(--text-normal);
   --line: var(--neutral-400);
+  --floating-border: var(--static-floating-border);
+  --floating-divider: var(--static-floating-divider);
+  --overlay-dim: var(--static-overlay-dim);
 
   --text-normal: var(--neutral-800);
   --text-strong: var(--neutral-900);
@@ -71,6 +80,7 @@
   --text-disabled: var(--neutral-500);
   --text-inverse: var(--neutral-0);
   --text-brand: var(--primary-500);
+  --text-on-floating: var(--static-on-floating);
 
   --container-code: var(--neutral-400);
   --code-keyword: #d73a49;
@@ -91,6 +101,7 @@
   --container-secondary-interaction: var(--secondary-700);
   --container-secondary-alternative: var(--secondary-100);
   --container-opacity: var(--opacity-60);
+  --container-floating: var(--static-floating-surface);
 
   --button-neutral: var(--neutral-400);
   --button-neutral-interaction: var(--neutral-500);
@@ -105,6 +116,7 @@
   --icon-alternative: var(--neutral-600);
   --icon-disabled: var(--neutral-500);
   --icon-inverse: var(--neutral-0);
+  --icon-on-floating: var(--static-on-floating);
 
   --brand-primary: var(--primary-500);
   --brand-secondary: var(--secondary-500);
@@ -179,6 +191,11 @@
   --shadow-sm: 0 1px 5px 0 rgba(17, 33, 49, 0.15);
   --shadow-lg: 0 10px 30px 0 rgba(17, 33, 49, 0.3);
   --shadow-weeth: 0 0 5px 0 var(--brand-primary);
+  --member-table-sticky-shadow: linear-gradient(
+    90deg,
+    rgba(0, 0, 0, 0.07) 0%,
+    rgba(0, 0, 0, 0) 100%
+  );
 
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.145 0 0);
@@ -292,10 +309,22 @@
   --opacity-100: #355d5a80;
   --opacity-200: #00c8aa66;
 
+  --static-floating-surface: #1e2021;
+  --static-on-floating: #ffffff;
+  --static-floating-border: #ffffff33;
+  --static-floating-divider: #ffffff4d;
+  --static-overlay-dim: rgba(0, 0, 0, 0.6);
+
   --button-primary-subtle: var(--opacity-100);
   --button-primary-subtle-interaction: var(--opacity-200);
 
   --container-opacity: var(--opacity-60);
+  --container-floating: var(--static-floating-surface);
+  --floating-border: var(--static-floating-border);
+  --floating-divider: var(--static-floating-divider);
+  --overlay-dim: var(--static-overlay-dim);
+  --text-on-floating: var(--static-on-floating);
+  --icon-on-floating: var(--static-on-floating);
 
   --card: oklch(0.205 0 0);
   --card-foreground: oklch(0.985 0 0);
@@ -335,12 +364,21 @@
   --color-background: var(--background);
   --color-background-2: var(--background-2);
   --color-line: var(--line);
+  --color-floating-border: var(--floating-border);
+  --color-floating-divider: var(--floating-divider);
+  --color-overlay-dim: var(--overlay-dim);
+  --color-static-floating-surface: var(--static-floating-surface);
+  --color-static-on-floating: var(--static-on-floating);
+  --color-static-floating-border: var(--static-floating-border);
+  --color-static-floating-divider: var(--static-floating-divider);
+  --color-static-overlay-dim: var(--static-overlay-dim);
 
   --color-text-normal: var(--text-normal);
   --color-text-strong: var(--text-strong);
   --color-text-alternative: var(--text-alternative);
   --color-text-disabled: var(--text-disabled);
   --color-text-inverse: var(--text-inverse);
+  --color-text-on-floating: var(--text-on-floating);
 
   --color-container-neutral: var(--container-neutral);
   --color-container-neutral-interaction: var(--container-neutral-interaction);
@@ -351,6 +389,7 @@
   --color-container-secondary: var(--container-secondary);
   --color-container-secondary-interaction: var(--container-secondary-interaction);
   --color-container-secondary-alternative: var(--container-secondary-alternative);
+  --color-container-floating: var(--container-floating);
 
   --color-button-neutral: var(--button-neutral);
   --color-button-neutral-interaction: var(--button-neutral-interaction);
@@ -367,6 +406,7 @@
   --color-icon-alternative: var(--icon-alternative);
   --color-icon-disabled: var(--icon-disabled);
   --color-icon-inverse: var(--icon-inverse);
+  --color-icon-on-floating: var(--icon-on-floating);
 
   --color-brand-primary: var(--brand-primary);
   --color-brand-secondary: var(--brand-secondary);
@@ -969,6 +1009,20 @@ select:focus {
 }
 
 @layer utilities {
+  [data-vaul-drawer] {
+    transition-duration: 480ms !important;
+    transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1) !important;
+    animation-duration: 480ms !important;
+    animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1) !important;
+  }
+
+  [data-vaul-overlay] {
+    transition-duration: 360ms !important;
+    transition-timing-function: ease-out !important;
+    animation-duration: 360ms !important;
+    animation-timing-function: ease-out !important;
+  }
+
   .scrollbar-none {
     /* IE and Edge */
     -ms-overflow-style: none;

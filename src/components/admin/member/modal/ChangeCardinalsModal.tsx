@@ -90,7 +90,7 @@ function ChangeCardinalsModal({
 
       <DialogContent
         showCloseButton={false}
-        className="bg-background border-line max-tablet:h-screen max-tablet:rounded-none max-tablet:border-0 flex h-[636px] w-full max-w-[672px] grid-rows-none flex-col gap-0 rounded-[20px] border p-0"
+        className="bg-background border-line max-tablet:h-dvh max-tablet:max-h-dvh max-tablet:rounded-none max-tablet:border-0 flex h-[636px] w-full max-w-[672px] grid-rows-none flex-col gap-0 rounded-[20px] border p-0"
       >
         <div className="max-tablet:px-400 max-tablet:pt-500 max-tablet:pb-400 flex items-start justify-between gap-400 px-700 pt-700 pb-600">
           <div className="flex flex-col gap-200">
@@ -107,7 +107,7 @@ function ChangeCardinalsModal({
           </button>
         </div>
 
-        <div className="max-tablet:px-400 flex flex-1 flex-col px-700">
+        <div className="max-tablet:min-h-0 max-tablet:overflow-y-auto max-tablet:px-400 flex flex-1 flex-col px-700">
           {showPartialCardinalsGuide && (
             <div className="bg-container-neutral-alternative flex items-center gap-300 rounded-md p-300">
               <Icon src={InfoCircleIcon} size={24} className="text-icon-alternative shrink-0" />
@@ -147,7 +147,7 @@ function ChangeCardinalsModal({
           </div>
         </div>
 
-        <div className="max-tablet:px-400 max-tablet:pb-400 flex flex-col gap-400 px-700 pt-300 pb-600">
+        <div className="bg-background max-tablet:px-400 max-tablet:pb-[calc(var(--safe-area-inset-bottom,0px)+16px)] flex shrink-0 flex-col gap-400 px-700 pt-300 pb-600">
           <div className="bg-line h-px" aria-hidden />
 
           <div className="flex min-h-8 items-center gap-400 px-300">

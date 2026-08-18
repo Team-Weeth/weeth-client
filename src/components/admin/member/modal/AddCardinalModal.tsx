@@ -43,7 +43,8 @@ function AddCardinalModal({ children, onSubmit }: AddCardinalModalProps) {
 
       <DialogContent
         showCloseButton={false}
-        className="bg-container-neutral flex w-[440px] max-w-[calc(100%-2rem)] flex-col gap-0 overflow-hidden rounded-lg p-0"
+        adminMobileFullscreen={false}
+        className="bg-container-neutral max-tablet:w-[320px] flex w-[440px] max-w-[calc(100%-2rem)] flex-col gap-0 overflow-hidden rounded-lg p-0"
       >
         <div className="flex items-center justify-between px-500 py-400">
           <DialogTitle className="typo-sub1 text-text-strong">새로운 기수 추가</DialogTitle>

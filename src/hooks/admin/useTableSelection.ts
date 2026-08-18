@@ -5,9 +5,8 @@ import { useState } from 'react';
 interface UseTableSelectionParams<T extends { id: string }> {
   items: T[];
   perPage: number;
-  /** 외부에서 선택 상태를 제어할 때 전달. 생략하면 내부 상태를 사용한다. */
-  selectedIds?: Set<string>;
-  onSelectionChange?: (ids: Set<string>) => void;
+  selectedIds: Set<string>;
+  onSelectionChange: (ids: Set<string>) => void;
 }
 
 /**
@@ -17,13 +16,9 @@ interface UseTableSelectionParams<T extends { id: string }> {
 function useTableSelection<T extends { id: string }>({
   items,
   perPage,
-  selectedIds: controlledSelectedIds,
+  selectedIds,
   onSelectionChange,
 }: UseTableSelectionParams<T>) {
-  const [internalSelectedIds, setInternalSelectedIds] = useState<Set<string>>(new Set());
-  const selectedIds = controlledSelectedIds ?? internalSelectedIds;
-  const setSelectedIds = onSelectionChange ?? setInternalSelectedIds;
-
   const itemListKey = items.map((item) => item.id).join('|');
   const [pagination, setPagination] = useState({ itemListKey, page: 1 });
   const page = pagination.itemListKey === itemListKey ? pagination.page : 1;
@@ -44,7 +39,7 @@ function useTableSelection<T extends { id: string }>({
     } else {
       currentItems.forEach((item) => next.add(item.id));
     }
-    setSelectedIds(next);
+    onSelectionChange(next);
   };
 
   const toggleOne = (id: string) => {
@@ -54,7 +49,7 @@ function useTableSelection<T extends { id: string }>({
     } else {
       next.add(id);
     }
-    setSelectedIds(next);
+    onSelectionChange(next);
   };
 
   const onPageChange = (nextPage: number) => {
@@ -65,7 +60,6 @@ function useTableSelection<T extends { id: string }>({
     currentItems,
     currentPage,
     totalPages,
-    selectedIds,
     isAllSelected,
     isPartiallySelected,
     toggleAll,

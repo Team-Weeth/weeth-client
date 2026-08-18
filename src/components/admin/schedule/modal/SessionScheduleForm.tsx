@@ -1,13 +1,12 @@
 'use client';
 
-import Image from 'next/image';
-
 import {
   CalendarPicker,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  Icon,
 } from '@/components/ui';
 import { ArrowDownIcon } from '@/assets/icons';
 import { ScheduleDateRangeFields } from '@/components/admin/schedule/general/ScheduleDateRangeFields';
@@ -74,7 +73,7 @@ function SessionScheduleForm({
               <span className="typo-button2 text-text-normal flex-1 text-left">
                 {selectedCardinal ? `${selectedCardinal.cardinalNumber}기` : '선택'}
               </span>
-              <Image src={ArrowDownIcon} alt="" width={20} height={20} />
+              <Icon src={ArrowDownIcon} size={20} className="text-icon-normal" />
             </button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="start" className="min-w-30">
@@ -108,7 +107,7 @@ function SessionScheduleForm({
               <span className="typo-button2 text-text-normal flex-1 text-left">
                 {SESSION_RECURRENCE_LABEL[session.recurrenceType]}
               </span>
-              <Image src={ArrowDownIcon} alt="" width={20} height={20} />
+              <Icon src={ArrowDownIcon} size={20} className="text-icon-normal" />
             </button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="start" className="min-w-30">

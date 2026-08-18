@@ -1,12 +1,71 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import {
+  useMutation,
+  useQueryClient,
+  type InfiniteData,
+  type QueryClient,
+} from '@tanstack/react-query';
 
 import { adminMemberApi } from '@/lib/apis/adminMember';
 import { revalidateDashboard } from '@/lib/actions/club';
 import type { ClubMemberRole, Member } from '@/types/admin/member';
+import type { PageResponse } from '@/types/common';
 import { useClubId } from '@/stores';
 import { useUserStore } from '@/stores/useUserStore';
 import { ROLE_MAP } from '@/utils/admin/memberMapper';
 import { adminQueryKeys } from '@/hooks/queries/admin/adminQueryKeys';
+
+type MemberPageCache = PageResponse<Member>;
+type MemberInfinitePageCache = InfiniteData<MemberPageCache>;
+
+function getMemberPageQueryFilters(queryKey: readonly unknown[]) {
+  return {
+    queryKey,
+    predicate: (query: { queryKey: readonly unknown[] }) => !query.queryKey.includes('infinite'),
+  };
+}
+
+function getMemberInfinitePageQueryFilters(queryKey: readonly unknown[]) {
+  return {
+    queryKey,
+    predicate: (query: { queryKey: readonly unknown[] }) => query.queryKey.includes('infinite'),
+  };
+}
+
+async function updateMemberCaches(
+  queryClient: QueryClient,
+  queryKey: readonly unknown[],
+  updateMember: (member: Member) => Member,
+) {
+  const memberPageQueryFilters = getMemberPageQueryFilters(queryKey);
+  const memberInfinitePageQueryFilters = getMemberInfinitePageQueryFilters(queryKey);
+
+  await Promise.all([
+    queryClient.cancelQueries(memberPageQueryFilters),
+    queryClient.cancelQueries(memberInfinitePageQueryFilters),
+  ]);
+
+  const previousPages = queryClient.getQueriesData<MemberPageCache>(memberPageQueryFilters);
+  const previousInfinitePages = queryClient.getQueriesData<MemberInfinitePageCache>(
+    memberInfinitePageQueryFilters,
+  );
+
+  queryClient.setQueriesData<MemberPageCache>(memberPageQueryFilters, (old) =>
+    updateMemberPage(old, updateMember),
+  );
+  queryClient.setQueriesData<MemberInfinitePageCache>(memberInfinitePageQueryFilters, (old) =>
+    updateMemberInfinitePage(old, updateMember),
+  );
+
+  return { previousPages, previousInfinitePages };
+}
+
+function restoreMemberCaches(
+  queryClient: QueryClient,
+  context: Awaited<ReturnType<typeof updateMemberCaches>> | undefined,
+) {
+  context?.previousPages.forEach(([key, data]) => queryClient.setQueryData(key, data));
+  context?.previousInfinitePages.forEach(([key, data]) => queryClient.setQueryData(key, data));
+}
 
 // 멤버 권한 변경
 export function useChangeMemberRole() {
@@ -26,23 +85,12 @@ export function useChangeMemberRole() {
       return adminMemberApi.updateMemberRole(clubId, clubMemberId, memberRole);
     },
     onMutate: async ({ clubMemberId, memberRole }) => {
-      await queryClient.cancelQueries({ queryKey });
-      const previous = queryClient.getQueryData<Member[]>(queryKey);
-
-      queryClient.setQueryData<Member[]>(queryKey, (old = []) =>
-        old.map((m) =>
-          m.clubMemberId === clubMemberId
-            ? { ...m, memberRole, position: ROLE_MAP[memberRole] }
-            : m,
-        ),
+      return updateMemberCaches(queryClient, queryKey, (m) =>
+        m.clubMemberId === clubMemberId ? { ...m, memberRole, position: ROLE_MAP[memberRole] } : m,
       );
-
-      return { previous };
     },
     onError: (_err, _vars, context) => {
-      if (context?.previous) {
-        queryClient.setQueryData(queryKey, context.previous);
-      }
+      restoreMemberCaches(queryClient, context);
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey });
@@ -62,19 +110,12 @@ export function useBanMember() {
       return adminMemberApi.banMember(clubId, clubMemberId);
     },
     onMutate: async (clubMemberId) => {
-      await queryClient.cancelQueries({ queryKey });
-      const previous = queryClient.getQueryData<Member[]>(queryKey);
-
-      queryClient.setQueryData<Member[]>(queryKey, (old = []) =>
-        old.map((m) => (m.clubMemberId === clubMemberId ? { ...m, status: 'BANNED' } : m)),
+      return updateMemberCaches(queryClient, queryKey, (m) =>
+        m.clubMemberId === clubMemberId ? { ...m, status: 'BANNED' } : m,
       );
-
-      return { previous };
     },
     onError: (_err, _vars, context) => {
-      if (context?.previous) {
-        queryClient.setQueryData(queryKey, context.previous);
-      }
+      restoreMemberCaches(queryClient, context);
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey });
@@ -102,20 +143,14 @@ export function useChangeMemberCardinals() {
       return adminMemberApi.updateMemberCardinals(clubId, clubMemberId, { cardinalIds, force });
     },
     onMutate: async ({ clubMemberId, cardinalIds }) => {
-      await queryClient.cancelQueries({ queryKey });
-      const previous = queryClient.getQueryData<Member[]>(queryKey);
       const nextCardinal = [...cardinalIds].sort((a, b) => a - b).join(', ');
 
-      queryClient.setQueryData<Member[]>(queryKey, (old = []) =>
-        old.map((m) => (m.clubMemberId === clubMemberId ? { ...m, cardinal: nextCardinal } : m)),
+      return updateMemberCaches(queryClient, queryKey, (m) =>
+        m.clubMemberId === clubMemberId ? { ...m, cardinal: nextCardinal } : m,
       );
-
-      return { previous };
     },
     onError: (_err, _vars, context) => {
-      if (context?.previous) {
-        queryClient.setQueryData(queryKey, context.previous);
-      }
+      restoreMemberCaches(queryClient, context);
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey });
@@ -156,22 +191,42 @@ export function useRestoreMember() {
       return adminMemberApi.restoreMember(clubId, clubMemberId);
     },
     onMutate: async (clubMemberId) => {
-      await queryClient.cancelQueries({ queryKey });
-      const previous = queryClient.getQueryData<Member[]>(queryKey);
-
-      queryClient.setQueryData<Member[]>(queryKey, (old = []) =>
-        old.map((m) => (m.clubMemberId === clubMemberId ? { ...m, status: 'ACTIVE' } : m)),
+      return updateMemberCaches(queryClient, queryKey, (m) =>
+        m.clubMemberId === clubMemberId ? { ...m, status: 'ACTIVE' } : m,
       );
-
-      return { previous };
     },
     onError: (_err, _vars, context) => {
-      if (context?.previous) {
-        queryClient.setQueryData(queryKey, context.previous);
-      }
+      restoreMemberCaches(queryClient, context);
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey });
     },
   });
+}
+
+function updateMemberPage(
+  page: MemberPageCache | undefined,
+  updateMember: (member: Member) => Member,
+) {
+  if (!page) return page;
+
+  return {
+    ...page,
+    content: page.content.map(updateMember),
+  };
+}
+
+function updateMemberInfinitePage(
+  data: MemberInfinitePageCache | undefined,
+  updateMember: (member: Member) => Member,
+) {
+  if (!data) return data;
+
+  return {
+    ...data,
+    pages: data.pages.map((page) => ({
+      ...page,
+      content: page.content.map(updateMember),
+    })),
+  };
 }

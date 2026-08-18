@@ -4,9 +4,10 @@ import { AdminCheckboxIcon, AdminUncheckboxIcon } from '@/assets/icons/admin';
 import { Icon } from '@/components/ui';
 import { cn } from '@/lib/cn';
 
-interface AdminSelectionCheckboxProps {
+interface MemberSelectionCheckboxProps {
   checked: boolean;
   partial?: boolean;
+  className?: string;
   ariaLabel: string;
   checkedLabel?: string;
   uncheckedLabel?: string;
@@ -15,22 +16,23 @@ interface AdminSelectionCheckboxProps {
   onClick: (event: MouseEvent<HTMLButtonElement>) => void;
 }
 
-function AdminSelectionCheckbox({
+function MemberSelectionCheckbox({
   checked,
   partial = false,
+  className,
   ariaLabel,
   checkedLabel = '선택됨',
   uncheckedLabel = '선택 안됨',
   checkedClassName = 'text-brand-primary',
   uncheckedClassName = 'text-icon-alternative',
   onClick,
-}: AdminSelectionCheckboxProps) {
+}: MemberSelectionCheckboxProps) {
   return (
     <button
       aria-pressed={partial ? 'mixed' : checked}
       aria-label={ariaLabel}
       type="button"
-      className="flex cursor-pointer items-center justify-center p-300"
+      className={cn('flex cursor-pointer items-center justify-center p-300', className)}
       onClick={onClick}
     >
       <span className="flex size-5 items-center justify-center">
@@ -54,4 +56,4 @@ function AdminSelectionCheckbox({
   );
 }
 
-export { AdminSelectionCheckbox, type AdminSelectionCheckboxProps };
+export { MemberSelectionCheckbox };

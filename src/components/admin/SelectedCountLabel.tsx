@@ -20,7 +20,7 @@ function SelectedCountLabel({
   return (
     <div
       className={cn(
-        'flex shrink-0 items-center gap-200 border-r border-neutral-700 pr-200',
+        'border-floating-divider flex shrink-0 items-center gap-200 border-r pr-200',
         className,
       )}
       {...props}
@@ -33,7 +33,9 @@ function SelectedCountLabel({
       >
         {count}
       </span>
-      <span className={cn('typo-button2 text-text-alternative shrink-0', labelClassName)}>
+      <span
+        className={cn('typo-button2 text-text-on-floating shrink-0 opacity-60', labelClassName)}
+      >
         {label}
       </span>
     </div>

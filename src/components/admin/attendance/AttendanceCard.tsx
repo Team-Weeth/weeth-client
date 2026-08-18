@@ -114,7 +114,7 @@ function AttendanceCard({
           )}
         </div>
         <span className="flex shrink-0 items-center justify-center">
-          <Icon src={ArrowDownIcon} size={24} className="rotate-180 text-white" />
+          <Icon src={ArrowDownIcon} size={24} className="text-icon-inverse rotate-180" />
         </span>
       </button>
 
