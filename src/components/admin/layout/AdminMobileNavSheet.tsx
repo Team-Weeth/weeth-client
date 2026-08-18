@@ -12,7 +12,7 @@ import {
   AdminPaintIcon,
   AdminScreenIcon,
 } from '@/assets/icons/admin';
-import { PeopleIcon, ExitIcon, ArrowRightIcon, LogoutIcon } from '@/assets/icons';
+import { PeopleIcon, ExitIcon, ArrowRightIcon, LogoutIcon, Penalty2Icon } from '@/assets/icons';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -107,6 +107,12 @@ function AdminMobileNavSheet() {
     },
     { id: 'board', icon: AdminForumIcon, label: '게시판 관리', path: `/${clubId}/admin/board` },
     { id: 'dues', icon: AdminDuesIcon, label: '회비 관리', path: `/${clubId}/admin/dues` },
+    {
+      id: 'penalty',
+      icon: Penalty2Icon,
+      label: '페널티 관리',
+      path: `/${clubId}/admin/penalty`,
+    },
   ];
 
   return (

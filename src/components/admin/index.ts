@@ -25,6 +25,8 @@ export { MemberDetailModal, type MemberDetailModalProps } from './member/modal/M
 export { MemberPageContent } from './member/MemberPageContent';
 export { MemberPageHeader, type MemberPageHeaderProps } from './member/MemberPageHeader';
 export { MemberPageModals, type ForceConfirmState } from './member/MemberPageModals';
+export { MemberPagination, type MemberPaginationProps } from './member/MemberPagination';
+export { MemberSelectionCheckbox } from './member/MemberSelectionCheckbox';
 export { MemberSearchBar, type MemberSearchBarProps } from './member/MemberSearchBar';
 export { MemberStatusBadge, type MemberStatusBadgeProps } from './member/MemberStatusBadge';
 export { MemberTable } from './member/MemberTable';

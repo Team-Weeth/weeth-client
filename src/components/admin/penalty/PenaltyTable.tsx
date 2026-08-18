@@ -1,0 +1,134 @@
+'use client';
+
+import { useMemo, useState } from 'react';
+
+import { MemberPagination, MemberSelectionCheckbox } from '@/components/admin';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui';
+import {
+  PENALTY_MEMBERS_PER_PAGE,
+  PENALTY_TABLE_COLUMNS,
+} from '@/constants/admin/penaltyTable.constants';
+import { cn } from '@/lib/cn';
+import type { PenaltyMember } from '@/types/admin/penalty';
+import { PenaltyTableRow } from './PenaltyTableRow';
+
+interface PenaltyTableProps extends React.HTMLAttributes<HTMLDivElement> {
+  members: PenaltyMember[];
+  selectedIds: Set<string>;
+  onSelectionChange: (ids: Set<string>) => void;
+}
+
+function PenaltyTable({
+  className,
+  members,
+  selectedIds,
+  onSelectionChange,
+  ...props
+}: PenaltyTableProps) {
+  const memberListKey = useMemo(() => members.map((member) => member.id).join('|'), [members]);
+  const [pagination, setPagination] = useState({ memberListKey, page: 1 });
+  const page = pagination.memberListKey === memberListKey ? pagination.page : 1;
+
+  const totalPages = Math.max(1, Math.ceil(members.length / PENALTY_MEMBERS_PER_PAGE));
+  const currentPage = Math.min(page, totalPages);
+  const currentPageMembers = members.slice(
+    (currentPage - 1) * PENALTY_MEMBERS_PER_PAGE,
+    currentPage * PENALTY_MEMBERS_PER_PAGE,
+  );
+
+  const isAllSelected =
+    currentPageMembers.length > 0 &&
+    currentPageMembers.every((member) => selectedIds.has(member.id));
+  const hasAnySelected = currentPageMembers.some((member) => selectedIds.has(member.id));
+  const isPartiallySelected = hasAnySelected && !isAllSelected;
+
+  const toggleAll = () => {
+    const next = new Set(selectedIds);
+    if (isAllSelected) {
+      currentPageMembers.forEach((member) => next.delete(member.id));
+    } else {
+      currentPageMembers.forEach((member) => next.add(member.id));
+    }
+    onSelectionChange(next);
+  };
+
+  const toggleOne = (id: string) => {
+    const next = new Set(selectedIds);
+    if (next.has(id)) {
+      next.delete(id);
+    } else {
+      next.add(id);
+    }
+    onSelectionChange(next);
+  };
+
+  return (
+    <div className={cn('max-w-full min-w-0', className)} {...props}>
+      <div className="border-line overflow-hidden rounded-sm border">
+        <Table
+          className="border-separate border-spacing-0"
+          wrapperClassName="scrollbar-none overflow-auto"
+        >
+          <TableHeader className="bg-container-neutral-alternative sticky top-0 z-10">
+            <TableRow className="h-11 border-0 hover:bg-transparent">
+              <TableHead className="h-11 w-16 min-w-16 p-0 pl-300">
+                <MemberSelectionCheckbox
+                  checked={isAllSelected}
+                  partial={isPartiallySelected}
+                  ariaLabel="현재 페이지 멤버 전체 선택"
+                  checkedLabel="현재 페이지 전체 선택됨"
+                  uncheckedLabel="현재 페이지 전체 선택 안됨"
+                  uncheckedClassName="text-icon-strong"
+                  onClick={toggleAll}
+                />
+              </TableHead>
+              {PENALTY_TABLE_COLUMNS.map((column) => (
+                <TableHead
+                  key={column.id}
+                  className={cn(
+                    'typo-caption1 text-text-alternative h-11 px-400 py-300',
+                    column.width,
+                    'align' in column && column.align,
+                  )}
+                >
+                  {column.label}
+                </TableHead>
+              ))}
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {currentPageMembers.length === 0 ? (
+              <TableRow className="bg-container-neutral h-16 border-0 hover:bg-transparent">
+                <TableCell
+                  colSpan={PENALTY_TABLE_COLUMNS.length + 1}
+                  className="typo-body2 text-text-alternative h-16 text-center"
+                >
+                  검색 결과가 없습니다.
+                </TableCell>
+              </TableRow>
+            ) : (
+              currentPageMembers.map((member) => (
+                <PenaltyTableRow
+                  key={member.id}
+                  member={member}
+                  selected={selectedIds.has(member.id)}
+                  onToggle={toggleOne}
+                />
+              ))
+            )}
+          </TableBody>
+        </Table>
+      </div>
+
+      {totalPages > 1 && (
+        <MemberPagination
+          page={currentPage}
+          totalPages={totalPages}
+          onPageChange={(nextPage) => setPagination({ memberListKey, page: nextPage })}
+        />
+      )}
+    </div>
+  );
+}
+
+export { PenaltyTable, type PenaltyTableProps };
