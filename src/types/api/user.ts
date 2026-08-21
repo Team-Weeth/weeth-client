@@ -34,12 +34,10 @@ export type ClubProfileAssignment =
 export type UserInfo = S<'com.weeth.domain.user.application.dto.response.UserInfo'>;
 
 /** 멀티프로필 단건 */
-export type UserProfile =
-  S<'com.weeth.domain.user.application.dto.response.UserProfileResponse'>;
+export type UserProfile = S<'com.weeth.domain.user.application.dto.response.UserProfileResponse'>;
 
 /** 멀티프로필 목록 */
-export type UserProfiles =
-  S<'com.weeth.domain.user.application.dto.response.UserProfilesResponse'>;
+export type UserProfiles = S<'com.weeth.domain.user.application.dto.response.UserProfilesResponse'>;
 
 /** 프로필이 사용 중인 동아리 */
 export type UserProfileClub =
@@ -54,8 +52,7 @@ export type UserProfileAssignableClubs =
   S<'com.weeth.domain.user.application.dto.response.UserProfileAssignableClubsResponse'>;
 
 /** 마이페이지 요약 전체 */
-export type UserMyPage =
-  S<'com.weeth.domain.user.application.dto.response.UserMyPageResponse'>;
+export type UserMyPage = S<'com.weeth.domain.user.application.dto.response.UserMyPageResponse'>;
 
 /** 마이페이지 개인정보 */
 export type UserMyPageInfo =
@@ -74,8 +71,7 @@ export type UserMyPageUsingProfile =
   S<'com.weeth.domain.user.application.dto.response.UserMyPageUsingProfileResponse'>;
 
 /** 내가 쓴 글 아이템 */
-export type UserMyPost =
-  S<'com.weeth.domain.user.application.dto.response.UserMyPostResponse'>;
+export type UserMyPost = S<'com.weeth.domain.user.application.dto.response.UserMyPostResponse'>;
 
 /** 내가 출석한 세션 아이템 */
 export type UserAttendedSession =

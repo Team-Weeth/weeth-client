@@ -4,7638 +4,7648 @@
  */
 
 export interface paths {
-    "/api/v4/users/terms": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** 약관 동의 */
-        post: operations["agreeTerms"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+  '/api/v4/users/terms': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v4/users/social/refresh": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * 토큰 재발급
-         * @description 쿠키를 사용해 토큰을 재발급합니다.
-         */
-        post: operations["refreshToken"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    /** 약관 동의 */
+    post: operations['agreeTerms'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v4/users/social/refresh': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v4/users/social/kakao": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** 카카오 소셜 로그인(auth code flow) */
-        post: operations["socialLoginByKakao"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    /**
+     * 토큰 재발급
+     * @description 쿠키를 사용해 토큰을 재발급합니다.
+     */
+    post: operations['refreshToken'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v4/users/social/kakao': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v4/users/social/apple": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** 애플 소셜 로그인(auth code flow) */
-        post: operations["socialLoginByApple"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    /** 카카오 소셜 로그인(auth code flow) */
+    post: operations['socialLoginByKakao'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v4/users/social/apple': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v4/users/me/profiles": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** 멀티프로필 목록 조회 */
-        get: operations["getUserProfiles"];
-        put?: never;
-        /** 멀티프로필 생성 */
-        post: operations["createUserProfile"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    /** 애플 소셜 로그인(auth code flow) */
+    post: operations['socialLoginByApple'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v4/users/me/profiles': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v4/users/inquiries": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** 문의하기 */
-        post: operations["createInquiry"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /** 멀티프로필 목록 조회 */
+    get: operations['getUserProfiles'];
+    put?: never;
+    /** 멀티프로필 생성 */
+    post: operations['createUserProfile'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v4/users/inquiries': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v4/clubs": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** 내가 가입한 동아리 목록 조회 */
-        get: operations["getMyClubs"];
-        put?: never;
-        /** 동아리 생성 */
-        post: operations["create"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    /** 문의하기 */
+    post: operations['createInquiry'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v4/clubs': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v4/clubs/{clubId}/members/me/cardinals": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** 활동 기수 최초 설정 (최초 1회만 가능) */
-        post: operations["setInitialCardinals"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /** 내가 가입한 동아리 목록 조회 */
+    get: operations['getMyClubs'];
+    put?: never;
+    /** 동아리 생성 */
+    post: operations['create'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v4/clubs/{clubId}/members/me/cardinals': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v4/clubs/{clubId}/join": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** 동아리 가입 */
-        post: operations["join"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    /** 활동 기수 최초 설정 (최초 1회만 가능) */
+    post: operations['setInitialCardinals'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v4/clubs/{clubId}/join': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v4/clubs/{clubId}/boards/{boardId}/posts": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** 게시글 목록 조회 */
-        get: operations["findPosts"];
-        put?: never;
-        /** 게시글 작성 */
-        post: operations["save"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    /** 동아리 가입 */
+    post: operations['join'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v4/clubs/{clubId}/boards/{boardId}/posts': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v4/clubs/{clubId}/boards/{boardId}/posts/{postId}/like": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** 게시글 좋아요 */
-        post: operations["like"];
-        /** 게시글 좋아요 취소 */
-        delete: operations["unlike"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /** 게시글 목록 조회 */
+    get: operations['findPosts'];
+    put?: never;
+    /** 게시글 작성 */
+    post: operations['save'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v4/clubs/{clubId}/boards/{boardId}/posts/{postId}/like': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v4/clubs/{clubId}/boards/{boardId}/notices/read-all": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * 공지 읽음 처리
-         * @description 공지 게시판 진입 시 마지막 읽음 시간을 현재 시각으로 갱신합니다.
-         */
-        post: operations["markAllNoticesRead"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    /** 게시글 좋아요 */
+    post: operations['like'];
+    /** 게시글 좋아요 취소 */
+    delete: operations['unlike'];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v4/clubs/{clubId}/boards/{boardId}/notices/read-all': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v4/clubs/{clubId}/attendances/sessions/{sessionId}/check-in": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** 출석체크 */
-        post: operations["checkIn"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    /**
+     * 공지 읽음 처리
+     * @description 공지 게시판 진입 시 마지막 읽음 시간을 현재 시각으로 갱신합니다.
+     */
+    post: operations['markAllNoticesRead'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v4/clubs/{clubId}/attendances/sessions/{sessionId}/check-in': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v1/posts/{postId}/comments": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** 게시글 댓글 작성 */
-        post: operations["savePostComment"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    /** 출석체크 */
+    post: operations['checkIn'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/posts/{postId}/comments': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v4/users": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        /** 내 정보 수정 */
-        patch: operations["update"];
-        trace?: never;
+    get?: never;
+    put?: never;
+    /** 게시글 댓글 작성 */
+    post: operations['savePostComment'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v4/users': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v4/users/me/profiles/{profileId}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** 멀티프로필 단건 조회 */
-        get: operations["getUserProfile"];
-        put?: never;
-        post?: never;
-        /** 멀티프로필 삭제 */
-        delete: operations["deleteUserProfile"];
-        options?: never;
-        head?: never;
-        /** 멀티프로필 수정 */
-        patch: operations["updateUserProfile"];
-        trace?: never;
+    get?: never;
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    /** 내 정보 수정 */
+    patch: operations['update'];
+    trace?: never;
+  };
+  '/api/v4/users/me/profiles/{profileId}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v4/users/me/club-profile-assignments": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        /** 동아리별 사용 프로필 변경 */
-        patch: operations["assignClubProfiles"];
-        trace?: never;
+    /** 멀티프로필 단건 조회 */
+    get: operations['getUserProfile'];
+    put?: never;
+    post?: never;
+    /** 멀티프로필 삭제 */
+    delete: operations['deleteUserProfile'];
+    options?: never;
+    head?: never;
+    /** 멀티프로필 수정 */
+    patch: operations['updateUserProfile'];
+    trace?: never;
+  };
+  '/api/v4/users/me/club-profile-assignments': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v4/clubs/{clubId}/boards/{boardId}/posts/{postId}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** 게시글 상세 조회 */
-        get: operations["findPost"];
-        put?: never;
-        post?: never;
-        /** 게시글 삭제 */
-        delete: operations["delete"];
-        options?: never;
-        head?: never;
-        /** 게시글 수정 */
-        patch: operations["update_1"];
-        trace?: never;
+    get?: never;
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    /** 동아리별 사용 프로필 변경 */
+    patch: operations['assignClubProfiles'];
+    trace?: never;
+  };
+  '/api/v4/clubs/{clubId}/boards/{boardId}/posts/{postId}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v1/posts/{postId}/comments/{commentId}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        /** 게시글 댓글 삭제 */
-        delete: operations["deletePostComment"];
-        options?: never;
-        head?: never;
-        /**
-         * 게시글 댓글 수정
-         * @description files 규약: null=기존 첨부 유지, []=기존 첨부 전체 삭제, 배열 전달=전달 목록으로 교체
-         */
-        patch: operations["updatePostComment"];
-        trace?: never;
+    /** 게시글 상세 조회 */
+    get: operations['findPost'];
+    put?: never;
+    post?: never;
+    /** 게시글 삭제 */
+    delete: operations['delete'];
+    options?: never;
+    head?: never;
+    /** 게시글 수정 */
+    patch: operations['update_1'];
+    trace?: never;
+  };
+  '/api/v1/posts/{postId}/comments/{commentId}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v4/users/me/profiles/assignable-clubs": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** 프로필을 사용할 수 있는 동아리 목록 조회 */
-        get: operations["getUserProfileAssignableClubs"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    post?: never;
+    /** 게시글 댓글 삭제 */
+    delete: operations['deletePostComment'];
+    options?: never;
+    head?: never;
+    /**
+     * 게시글 댓글 수정
+     * @description files 규약: null=기존 첨부 유지, []=기존 첨부 전체 삭제, 배열 전달=전달 목록으로 교체
+     */
+    patch: operations['updatePostComment'];
+    trace?: never;
+  };
+  '/api/v4/users/me/profiles/assignable-clubs': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v4/university/schools": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** 학교 목록 조회 */
-        get: operations["getSchools"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /** 프로필을 사용할 수 있는 동아리 목록 조회 */
+    get: operations['getUserProfileAssignableClubs'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v4/university/schools': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v4/university/majors": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** 학과 목록 조회 */
-        get: operations["getMajors"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /** 학교 목록 조회 */
+    get: operations['getSchools'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v4/university/majors': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v4/files": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** 파일 업로드를 위한 presigned url을 요청하는 API 입니다. */
-        get: operations["getUrl"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /** 학과 목록 조회 */
+    get: operations['getMajors'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v4/files': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v4/docs/exceptions/user": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** User 도메인 에러 코드 목록 */
-        get: operations["userErrorCodes"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /** 파일 업로드를 위한 presigned url을 요청하는 API 입니다. */
+    get: operations['getUrl'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v4/docs/exceptions/user': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v4/docs/exceptions/schedule": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Schedule 도메인 에러 코드 목록 */
-        get: operations["scheduleErrorCodes"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /** User 도메인 에러 코드 목록 */
+    get: operations['userErrorCodes'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v4/docs/exceptions/schedule': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v4/docs/exceptions/penalty": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Penalty 도메인 에러 코드 목록 */
-        get: operations["penaltyErrorCodes"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /** Schedule 도메인 에러 코드 목록 */
+    get: operations['scheduleErrorCodes'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v4/docs/exceptions/penalty': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v4/docs/exceptions/board": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Board 도메인 에러 코드 목록 */
-        get: operations["boardErrorCodes"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /** Penalty 도메인 에러 코드 목록 */
+    get: operations['penaltyErrorCodes'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v4/docs/exceptions/board': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v4/docs/exceptions/auth": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** 인증/인가 에러 코드 목록 */
-        get: operations["authErrorCodes"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /** Board 도메인 에러 코드 목록 */
+    get: operations['boardErrorCodes'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v4/docs/exceptions/auth': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v4/docs/exceptions/attendance": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Attendance 도메인 에러 코드 목록 */
-        get: operations["attendanceErrorCodes"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /** 인증/인가 에러 코드 목록 */
+    get: operations['authErrorCodes'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v4/docs/exceptions/attendance': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v4/docs/exceptions/account": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Account 도메인 에러 코드 목록 */
-        get: operations["accountErrorCodes"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /** Attendance 도메인 에러 코드 목록 */
+    get: operations['attendanceErrorCodes'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v4/docs/exceptions/account': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v4/clubs/{clubId}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** 동아리 공개 정보 조회 (이름, 소개, 프로필 사진) - 인증 불필요 */
-        get: operations["getClubPublicInfo"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /** Account 도메인 에러 코드 목록 */
+    get: operations['accountErrorCodes'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v4/clubs/{clubId}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v4/clubs/{clubId}/users/me/mypage": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** 현재 동아리 마이페이지 요약 조회 */
-        get: operations["getSummary"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /** 동아리 공개 정보 조회 (이름, 소개, 프로필 사진) - 인증 불필요 */
+    get: operations['getClubPublicInfo'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v4/clubs/{clubId}/users/me/mypage': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v4/clubs/{clubId}/users/me/mypage/posts": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** 현재 동아리에서 내가 쓴 글 조회 */
-        get: operations["getMyPosts"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /** 현재 동아리 마이페이지 요약 조회 */
+    get: operations['getSummary'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v4/clubs/{clubId}/users/me/mypage/posts': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v4/clubs/{clubId}/users/me/mypage/attended-sessions": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** 현재 동아리에서 출석한 세션 조회 */
-        get: operations["getAttendedSessions"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /** 현재 동아리에서 내가 쓴 글 조회 */
+    get: operations['getMyPosts'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v4/clubs/{clubId}/users/me/mypage/attended-sessions': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v4/clubs/{clubId}/sessions/{sessionId}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** 정기모임 상세 조회 */
-        get: operations["getSession"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /** 현재 동아리에서 출석한 세션 조회 */
+    get: operations['getAttendedSessions'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v4/clubs/{clubId}/sessions/{sessionId}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v4/clubs/{clubId}/schedules/yearly": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** 연도별 일정 조회 */
-        get: operations["findByYearly"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /** 정기모임 상세 조회 */
+    get: operations['getSession'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v4/clubs/{clubId}/schedules/yearly': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v4/clubs/{clubId}/schedules/monthly": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** 월별 일정 조회 */
-        get: operations["findByMonthly"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /** 연도별 일정 조회 */
+    get: operations['findByYearly'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v4/clubs/{clubId}/schedules/monthly': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v4/clubs/{clubId}/members/me": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** 내 멤버 정보 조회 */
-        get: operations["getMyMemberInfo"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /** 월별 일정 조회 */
+    get: operations['findByMonthly'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v4/clubs/{clubId}/members/me': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v4/clubs/{clubId}/members/me/summary": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** 내 동아리 활동 요약 정보 조회 */
-        get: operations["getMyMemberSummary"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /** 내 멤버 정보 조회 */
+    get: operations['getMyMemberInfo'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v4/clubs/{clubId}/members/me/summary': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v4/clubs/{clubId}/members/me/profile-status": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * 프로필 완성 상태 조회
-         * @description 로그인 후 혹은 홈 접속시 최초 1회만 호출하고 상태를 저장해서 처리해주세요.
-         */
-        get: operations["getProfileStatus"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /** 내 동아리 활동 요약 정보 조회 */
+    get: operations['getMyMemberSummary'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v4/clubs/{clubId}/members/me/profile-status': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v4/clubs/{clubId}/events/{eventId}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** 일정 상세 조회 */
-        get: operations["getEvent"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /**
+     * 프로필 완성 상태 조회
+     * @description 로그인 후 혹은 홈 접속시 최초 1회만 호출하고 상태를 저장해서 처리해주세요.
+     */
+    get: operations['getProfileStatus'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v4/clubs/{clubId}/events/{eventId}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v4/clubs/{clubId}/dashboard/unread-notice": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** 2주 이내 읽지 않은 공지 조회 */
-        get: operations["getUnreadNotice"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /** 일정 상세 조회 */
+    get: operations['getEvent'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v4/clubs/{clubId}/dashboard/unread-notice': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v4/clubs/{clubId}/dashboard/recent-posts": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** 최신 게시글 조회 */
-        get: operations["getRecentPosts"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /** 2주 이내 읽지 않은 공지 조회 */
+    get: operations['getUnreadNotice'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v4/clubs/{clubId}/dashboard/recent-posts': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v4/clubs/{clubId}/dashboard/recent-notices": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** 최신 공지 조회 */
-        get: operations["getRecentNotices"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /** 최신 게시글 조회 */
+    get: operations['getRecentPosts'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v4/clubs/{clubId}/dashboard/recent-notices': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v4/clubs/{clubId}/dashboard/monthly-schedules": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** 월간 일정 조회 */
-        get: operations["getMonthlySchedules"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /** 최신 공지 조회 */
+    get: operations['getRecentNotices'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v4/clubs/{clubId}/dashboard/monthly-schedules': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v4/clubs/{clubId}/dashboard/home": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** 홈 조회 */
-        get: operations["getHome"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /** 월간 일정 조회 */
+    get: operations['getMonthlySchedules'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v4/clubs/{clubId}/dashboard/home': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v4/clubs/{clubId}/cardinals": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** 현재 저장된 기수 목록 조회 API */
-        get: operations["findAllCardinals"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /** 홈 조회 */
+    get: operations['getHome'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v4/clubs/{clubId}/cardinals': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v4/clubs/{clubId}/boards": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** 게시판 목록 조회 */
-        get: operations["findBoards"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /** 현재 저장된 기수 목록 조회 API */
+    get: operations['findAllCardinals'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v4/clubs/{clubId}/boards': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v4/clubs/{clubId}/boards/{boardId}/posts/search": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** 게시글 검색 */
-        get: operations["searchPosts"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /** 게시판 목록 조회 */
+    get: operations['findBoards'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v4/clubs/{clubId}/boards/{boardId}/posts/search': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v4/clubs/{clubId}/boards/posts": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * 전체 게시글 조회
-         * @description 클럽 내 접근 가능한 모든 게시판의 게시글을 최신순으로 조회합니다.
-         */
-        get: operations["findAllPosts"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /** 게시글 검색 */
+    get: operations['searchPosts'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v4/clubs/{clubId}/boards/posts': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v4/clubs/{clubId}/attendances": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * 내 출석 요약 조회
-         * @description 출석을 진행하기 전 오늘의 출석 유무를 확인하기 위해서 사용됩니다.(대시보드, 출석 페이지).
-         *                 출석률은 상시 표시되며, 오늘의 출석이 없는 경우 status를 포함한 필드는 null로 반환됩니다.
-         */
-        get: operations["find"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /**
+     * 전체 게시글 조회
+     * @description 클럽 내 접근 가능한 모든 게시판의 게시글을 최신순으로 조회합니다.
+     */
+    get: operations['findAllPosts'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v4/clubs/{clubId}/attendances': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v4/clubs/{clubId}/attendances/stream": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** 출석 SSE 구독 */
-        get: operations["subscribe"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /**
+     * 내 출석 요약 조회
+     * @description 출석을 진행하기 전 오늘의 출석 유무를 확인하기 위해서 사용됩니다.(대시보드, 출석 페이지).
+     *                 출석률은 상시 표시되며, 오늘의 출석이 없는 경우 status를 포함한 필드는 null로 반환됩니다.
+     */
+    get: operations['find'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v4/clubs/{clubId}/attendances/stream': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v4/clubs/{clubId}/attendances/detail": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** 내 출석 상세 내역 조회 */
-        get: operations["findAll"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /** 출석 SSE 구독 */
+    get: operations['subscribe'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v4/clubs/{clubId}/attendances/detail': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v4/clubs/{clubId}/accounts/{cardinal}/transactions": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** 부원 회비 거래 내역 목록 조회 */
-        get: operations["findTransactions"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /** 내 출석 상세 내역 조회 */
+    get: operations['findAll'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v4/clubs/{clubId}/accounts/{cardinal}/transactions': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v4/clubs/{clubId}/accounts/{cardinal}/transactions/{transactionId}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** 부원 회비 거래 내역 상세 조회 */
-        get: operations["findTransaction"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /** 부원 회비 거래 내역 목록 조회 */
+    get: operations['findTransactions'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v4/clubs/{clubId}/accounts/{cardinal}/transactions/{transactionId}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v4/clubs/{clubId}/accounts/{cardinal}/me": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** 나의 회비 정보 조회 */
-        get: operations["findMyAccount"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /** 부원 회비 거래 내역 상세 조회 */
+    get: operations['findTransaction'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v4/clubs/{clubId}/accounts/{cardinal}/me': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v4/clubs/{clubId}/accounts/settings/visibility": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * 회비 기능 공개 여부 조회
-         * @description 프론트에서 회비 탭 노출 여부를 판단하는 데 사용합니다. 동아리 단위 공개 여부를 반환합니다.
-         */
-        get: operations["getVisibility"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /** 나의 회비 정보 조회 */
+    get: operations['findMyAccount'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v4/clubs/{clubId}/accounts/settings/visibility': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v4/clubs/{clubId}/accounts/cardinals": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** 부원 회비 기수 목록 조회 */
-        get: operations["findCardinals"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /**
+     * 회비 기능 공개 여부 조회
+     * @description 프론트에서 회비 탭 노출 여부를 판단하는 데 사용합니다. 동아리 단위 공개 여부를 반환합니다.
+     */
+    get: operations['getVisibility'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v4/clubs/{clubId}/accounts/cardinals': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v4/clubs/membership-status": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** 동아리 가입 여부 조회 */
-        get: operations["getMembershipStatus"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /** 부원 회비 기수 목록 조회 */
+    get: operations['findCardinals'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v4/clubs/membership-status': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v4/users/me": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        /** 위드 탈퇴 */
-        delete: operations["leave"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /** 동아리 가입 여부 조회 */
+    get: operations['getMembershipStatus'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v4/users/me': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v4/users/me/profiles/{profileId}/profile-image": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        /** 멀티프로필 프로필 사진 삭제 */
-        delete: operations["deleteUserProfileImage"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    post?: never;
+    /** 위드 탈퇴 */
+    delete: operations['leave'];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v4/users/me/profiles/{profileId}/profile-image': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v4/users/me/profiles/{profileId}/header-image": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        /** 멀티프로필 헤더 사진 삭제 */
-        delete: operations["deleteUserProfileHeaderImage"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    post?: never;
+    /** 멀티프로필 프로필 사진 삭제 */
+    delete: operations['deleteUserProfileImage'];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v4/users/me/profiles/{profileId}/header-image': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v4/clubs/{clubId}/leave": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        /** 동아리 탈퇴 */
-        delete: operations["leave_1"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    post?: never;
+    /** 멀티프로필 헤더 사진 삭제 */
+    delete: operations['deleteUserProfileHeaderImage'];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v4/clubs/{clubId}/leave': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
+    get?: never;
+    put?: never;
+    post?: never;
+    /** 동아리 탈퇴 */
+    delete: operations['leave_1'];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
 }
 export type webhooks = Record<string, never>;
 export interface components {
-    schemas: {
-        "com.weeth.domain.user.application.dto.request.AgreeTermsRequest": {
-            /**
-             * @description 서비스 이용약관 동의
-             * @example true
-             */
-            termsAgreed: boolean;
-            /**
-             * @description 개인정보 처리방침 동의
-             * @example true
-             */
-            privacyAgreed: boolean;
-        };
-        "com.weeth.global.auth.jwt.application.dto.JwtDto": {
-            accessToken: string;
-            refreshToken: string;
-        };
-        "com.weeth.global.common.response.CommonResponseCom.weeth.global.auth.jwt.application.dto.JwtDto": {
-            /** Format: int32 */
-            code: number;
-            message: string;
-            data?: components["schemas"]["com.weeth.global.auth.jwt.application.dto.JwtDto"];
-        };
-        "com.weeth.domain.user.application.dto.request.SocialLoginRequest": {
-            /**
-             * @description OAuth2 인가 코드(auth code)
-             * @example SplxlOBeZQQYbYS6WxSbIA
-             */
-            authCode: string;
-        };
-        "com.weeth.domain.user.application.dto.response.SocialLoginResponse": {
-            /** @description 사용자 이름 */
-            name: string;
-            /** @description 액세스 토큰 */
-            accessToken: string;
-            /** @description 리프레시 토큰 */
-            refreshToken: string;
-            /**
-             * @description 약관 동의 완료 여부 (true: 약관 동의 완료, false: 약관 동의 필요)
-             * @example true
-             */
-            registered: boolean;
-        };
-        "com.weeth.global.common.response.CommonResponseCom.weeth.domain.user.application.dto.response.SocialLoginResponse": {
-            /** Format: int32 */
-            code: number;
-            message: string;
-            data?: components["schemas"]["com.weeth.domain.user.application.dto.response.SocialLoginResponse"];
-        };
-        "com.weeth.domain.file.application.dto.request.FileSaveRequest": {
-            /**
-             * @description 원본 파일명
-             * @example profile-image.png
-             */
-            fileName: string;
-            /**
-             * @description 저장소 키. `Type/YY-MM/UUID_원본파일명` 형식
-             * @example POST/2026-02/2c0a4d45-ec94-4ec0-85e1-b489c2eaf9c3_profile-image.png
-             */
-            storageKey: string;
-            /**
-             * Format: int64
-             * @description 파일 크기(bytes)
-             * @example 102400
-             */
-            fileSize: number;
-            /**
-             * @description 파일 Content-Type. `image/png, image/jpeg, application/pdf` 지원
-             * @example image/png
-             */
-            contentType: string;
-        };
-        "com.weeth.domain.user.application.dto.request.CreateMultiProfileRequest": {
-            /**
-             * @description 프로필 이름
-             * @example 홍길동
-             */
-            name: string;
-            /** @description 프로필 사진 */
-            profileImage?: components["schemas"]["com.weeth.domain.file.application.dto.request.FileSaveRequest"];
-            /** @description 헤더 사진 */
-            headerImage?: components["schemas"]["com.weeth.domain.file.application.dto.request.FileSaveRequest"];
-            /**
-             * @description 자기소개
-             * @example 안녕하세요!
-             */
-            bio?: string;
-            /**
-             * @description 생성 직후 사용할 동아리 ID 목록
-             * @example [
-             *       "1A2b3C",
-             *       "4D5e6F"
-             *     ]
-             */
-            clubIds: string[];
-        };
-        "com.weeth.domain.user.application.dto.response.UserProfileClubResponse": {
-            /**
-             * @description 동아리 ID
-             * @example 1A2b3C
-             */
-            clubId: string;
-            /**
-             * @description 동아리 이름
-             * @example Leets
-             */
-            name: string;
-        };
-        "com.weeth.domain.user.application.dto.response.UserProfileResponse": {
-            /**
-             * Format: int64
-             * @description 프로필 ID
-             * @example 1
-             */
-            profileId: number;
-            /**
-             * @description 프로필 이름
-             * @example 길동
-             */
-            name: string;
-            /** @description 프로필 이미지 URL */
-            profileImageUrl?: string;
-            /** @description 헤더 이미지 URL */
-            headerImageUrl?: string;
-            /** @description 자기소개 */
-            bio?: string;
-            /** @description 사용 중인 동아리 목록 */
-            usingClubs: components["schemas"]["com.weeth.domain.user.application.dto.response.UserProfileClubResponse"][];
-        };
-        "com.weeth.global.common.response.CommonResponseCom.weeth.domain.user.application.dto.response.UserProfileResponse": {
-            /** Format: int32 */
-            code: number;
-            message: string;
-            data?: components["schemas"]["com.weeth.domain.user.application.dto.response.UserProfileResponse"];
-        };
-        "com.weeth.domain.user.application.dto.request.CreateInquiryRequest": {
-            /**
-             * Format: email
-             * @description 이메일
-             * @example user@example.com
-             */
-            email: string;
-            /**
-             * @description 문의 내용
-             * @example 서비스에 대해 문의드립니다.
-             */
-            message?: string;
-        };
-        "com.weeth.global.common.response.CommonResponseJava.lang.Void": {
-            /** Format: int32 */
-            code: number;
-            message: string;
-            data?: unknown;
-        };
-        "com.weeth.domain.club.application.dto.request.ClubCreateRequest": {
-            /**
-             * @description 동아리 이름
-             * @example Leets
-             */
-            name: string;
-            /**
-             * @description 학교 이름
-             * @example 가천대학교
-             */
-            schoolName: string;
-            /**
-             * @description 동아리 소개
-             * @example 함께 배우고 성장하는 개발자 커뮤니티
-             */
-            description?: string;
-            /**
-             * Format: email
-             * @description 연락 이메일
-             * @example club@example.com
-             */
-            contactEmail?: string;
-            /**
-             * @description 연락 전화번호
-             * @example 01012345678
-             */
-            contactPhoneNumber: string;
-            /**
-             * @description 주 연락처
-             * @example PHONE
-             * @enum {string}
-             */
-            primaryContact: "EMAIL" | "PHONE";
-            /**
-             * Format: int32
-             * @description 가장 최근 기수 번호
-             * @example 7
-             */
-            currentCardinal: number;
-            /** @description 프로필 사진 */
-            profileImage?: components["schemas"]["com.weeth.domain.file.application.dto.request.FileSaveRequest"];
-            /** @description 배경 사진 */
-            backgroundImage?: components["schemas"]["com.weeth.domain.file.application.dto.request.FileSaveRequest"];
-        };
-        "com.weeth.domain.club.application.dto.response.ClubCreateResponse": {
-            /**
-             * @description 동아리 ID (Base62 인코딩)
-             * @example YUNJcjFKMO
-             */
-            clubId: string;
-            /**
-             * @description 동아리 이름
-             * @example Leets
-             */
-            clubName: string;
-        };
-        "com.weeth.global.common.response.CommonResponseCom.weeth.domain.club.application.dto.response.ClubCreateResponse": {
-            /** Format: int32 */
-            code: number;
-            message: string;
-            data?: components["schemas"]["com.weeth.domain.club.application.dto.response.ClubCreateResponse"];
-        };
-        "com.weeth.domain.club.application.dto.request.ClubMemberCardinalSetRequest": {
-            /**
-             * @description 활동 기수 번호 목록
-             * @example [
-             *       1,
-             *       2,
-             *       3
-             *     ]
-             */
-            cardinals: number[];
-        };
-        "com.weeth.global.common.response.CommonResponseKotlin.Unit": {
-            /** Format: int32 */
-            code: number;
-            message: string;
-        };
-        "com.weeth.domain.club.application.dto.request.ClubJoinRequest": {
-            /**
-             * @description 초대 코드
-             * @example 550e8400-e29b-41d4-a716-446655440000
-             */
-            code: string;
-        };
-        "com.weeth.domain.board.application.dto.request.CreatePostRequest": {
-            /**
-             * @description 게시글 제목
-             * @example 스터디 로그
-             */
-            title: string;
-            /**
-             * @description 게시글 내용
-             * @example 내용입니다.
-             */
-            content: string;
-            /** @description 첨부 파일 목록 */
-            files?: components["schemas"]["com.weeth.domain.file.application.dto.request.FileSaveRequest"][];
-        };
-        "com.weeth.domain.board.application.dto.response.PostSaveResponse": {
-            /**
-             * Format: int64
-             * @description 게시글 ID
-             * @example 1
-             */
-            id: number;
-            /**
-             * Format: int64
-             * @description 게시판 ID
-             * @example 1
-             */
-            boardId: number;
-        };
-        "com.weeth.global.common.response.CommonResponseCom.weeth.domain.board.application.dto.response.PostSaveResponse": {
-            /** Format: int32 */
-            code: number;
-            message: string;
-            data?: components["schemas"]["com.weeth.domain.board.application.dto.response.PostSaveResponse"];
-        };
-        "com.weeth.domain.board.application.dto.response.PostLikeActionResponse": {
-            /**
-             * Format: int64
-             * @description 게시판 ID
-             * @example 1
-             */
-            boardId: number;
-            /**
-             * @description 좋아요 여부
-             * @example true
-             */
-            isLiked: boolean;
-            /**
-             * Format: int32
-             * @description 좋아요 수
-             * @example 5
-             */
-            likeCount: number;
-        };
-        "com.weeth.global.common.response.CommonResponseCom.weeth.domain.board.application.dto.response.PostLikeActionResponse": {
-            /** Format: int32 */
-            code: number;
-            message: string;
-            data?: components["schemas"]["com.weeth.domain.board.application.dto.response.PostLikeActionResponse"];
-        };
-        "com.weeth.domain.attendance.application.dto.request.CheckInRequest": {
-            /**
-             * Format: int32
-             * @description 출석 코드
-             * @example 123456
-             */
-            code: number;
-        };
-        "com.weeth.domain.comment.application.dto.request.CommentSaveRequest": {
-            /**
-             * Format: int64
-             * @description 부모 댓글 ID (대댓글인 경우)
-             * @example 1
-             */
-            parentCommentId?: number;
-            /**
-             * @description 댓글 내용
-             * @example 댓글입니다.
-             */
-            content: string;
-            /** @description 첨부 파일 목록 */
-            files?: components["schemas"]["com.weeth.domain.file.application.dto.request.FileSaveRequest"][];
-        };
-        "com.weeth.global.common.response.CommonResponseJava.lang.String": {
-            /** Format: int32 */
-            code: number;
-            message: string;
-            data?: string;
-        };
-        "com.weeth.domain.user.application.dto.request.UpdateUserProfileRequest": {
-            /**
-             * @description 이름
-             * @example 홍길동
-             */
-            name?: string;
-            /**
-             * Format: email
-             * @description 이메일
-             * @example hong@example.com
-             */
-            email?: string;
-            /**
-             * @description 학번
-             * @example 20201234
-             */
-            studentId?: string;
-            /**
-             * @description 전화번호
-             * @example 01012345678
-             */
-            tel?: string;
-            /**
-             * @description 학교
-             * @example 가천대학교
-             */
-            school?: string;
-            /**
-             * @description 학과
-             * @example 컴퓨터공학과
-             */
-            department?: string;
-        };
-        "com.weeth.domain.user.application.dto.request.UpdateMultiProfileRequest": {
-            /**
-             * @description 프로필 이름 (null=변경 안 함)
-             * @example 새 이름
-             */
-            name?: string;
-            /** @description 프로필 사진 (null=변경 안 함) */
-            profileImage?: components["schemas"]["com.weeth.domain.file.application.dto.request.FileSaveRequest"];
-            /** @description 헤더 사진 (null=변경 안 함) */
-            headerImage?: components["schemas"]["com.weeth.domain.file.application.dto.request.FileSaveRequest"];
-            /**
-             * @description 자기소개 (null=변경 안 함)
-             * @example 안녕하세요!
-             */
-            bio?: string;
-        };
-        "com.weeth.domain.user.application.dto.request.AssignClubProfileRequest": {
-            /** @description 동아리별 프로필 설정 목록 */
-            assignments: components["schemas"]["com.weeth.domain.user.application.dto.request.ClubProfileAssignmentRequest"][];
-        };
-        "com.weeth.domain.user.application.dto.request.ClubProfileAssignmentRequest": {
-            /**
-             * @description 동아리 ID
-             * @example 1A2b3C
-             */
-            clubId: string;
-            /**
-             * Format: int64
-             * @description 사용할 프로필 ID
-             * @example 1
-             */
-            profileId: number;
-        };
-        "com.weeth.domain.board.application.dto.request.UpdatePostRequest": {
-            /** @description 게시글 제목 (null=변경 안 함) */
-            title?: string;
-            /** @description 게시글 내용 (null=변경 안 함) */
-            content?: string;
-            /** @description 첨부 파일 변경 규약: null=변경 안 함, []=전체 삭제, 배열 전달=해당 목록으로 교체 */
-            files?: components["schemas"]["com.weeth.domain.file.application.dto.request.FileSaveRequest"][];
-        };
-        "com.weeth.domain.comment.application.dto.request.CommentUpdateRequest": {
-            /**
-             * @description 댓글 내용
-             * @example 댓글입니다.
-             */
-            content: string;
-            /** @description 첨부 파일 변경 규약: null=변경 안 함, []=전체 삭제, 배열 전달=해당 목록으로 교체 */
-            files?: components["schemas"]["com.weeth.domain.file.application.dto.request.FileSaveRequest"][];
-        };
-        "com.weeth.domain.user.application.dto.response.UserProfilesResponse": {
-            /** @description 멀티프로필 목록 */
-            profiles: components["schemas"]["com.weeth.domain.user.application.dto.response.UserProfileResponse"][];
-        };
-        "com.weeth.global.common.response.CommonResponseCom.weeth.domain.user.application.dto.response.UserProfilesResponse": {
-            /** Format: int32 */
-            code: number;
-            message: string;
-            data?: components["schemas"]["com.weeth.domain.user.application.dto.response.UserProfilesResponse"];
-        };
-        "com.weeth.domain.user.application.dto.response.UserProfileAssignableClubResponse": {
-            /**
-             * @description 동아리 ID
-             * @example 1A2b3C
-             */
-            clubId: string;
-            /**
-             * @description 동아리 이름
-             * @example Leets
-             */
-            name: string;
-            /** @description 동아리 사진 URL */
-            clubImage?: string;
-            /**
-             * Format: int64
-             * @description 동아리 멤버 수
-             * @example 100
-             */
-            clubMemberNumber: number;
-        };
-        "com.weeth.domain.user.application.dto.response.UserProfileAssignableClubsResponse": {
-            /** @description 프로필을 사용할 수 있는 동아리 목록 */
-            clubs: components["schemas"]["com.weeth.domain.user.application.dto.response.UserProfileAssignableClubResponse"][];
-        };
-        "com.weeth.global.common.response.CommonResponseCom.weeth.domain.user.application.dto.response.UserProfileAssignableClubsResponse": {
-            /** Format: int32 */
-            code: number;
-            message: string;
-            data?: components["schemas"]["com.weeth.domain.user.application.dto.response.UserProfileAssignableClubsResponse"];
-        };
-        "com.weeth.domain.university.application.dto.response.SchoolResponse": {
-            /**
-             * @description 학교명
-             * @example 가천대학교
-             */
-            schoolName: string;
-            /**
-             * @description 지역
-             * @example 경기도
-             */
-            region: string;
-        };
-        "com.weeth.global.common.response.CommonResponseJava.util.ListCom.weeth.domain.university.application.dto.response.SchoolResponse": {
-            /** Format: int32 */
-            code: number;
-            message: string;
-            data?: components["schemas"]["com.weeth.domain.university.application.dto.response.SchoolResponse"][];
-        };
-        "com.weeth.domain.university.application.dto.response.MajorResponse": {
-            /**
-             * @description 학과명
-             * @example 컴퓨터공학과
-             */
-            majorName: string;
-            /**
-             * @description 계열
-             * @example 공학계열
-             */
-            category: string;
-        };
-        "com.weeth.global.common.response.CommonResponseJava.util.ListCom.weeth.domain.university.application.dto.response.MajorResponse": {
-            /** Format: int32 */
-            code: number;
-            message: string;
-            data?: components["schemas"]["com.weeth.domain.university.application.dto.response.MajorResponse"][];
-        };
-        "com.weeth.domain.file.application.dto.response.UrlResponse": {
-            /**
-             * @description 원본 파일명
-             * @example profile-image.png
-             */
-            fileName: string;
-            /**
-             * @description Presigned PUT URL
-             * @example https://bucket.s3.amazonaws.com/TEMP/2026-02/uuid_profile-image.png
-             */
-            putUrl: string;
-            /**
-             * @description 저장소 키
-             * @example TEMP/2026-02/uuid_profile-image.png
-             */
-            storageKey: string;
-        };
-        "com.weeth.global.common.response.CommonResponseJava.util.ListCom.weeth.domain.file.application.dto.response.UrlResponse": {
-            /** Format: int32 */
-            code: number;
-            message: string;
-            data?: components["schemas"]["com.weeth.domain.file.application.dto.response.UrlResponse"][];
-        };
-        "com.weeth.domain.club.application.dto.response.ClubInfoResponse": {
-            /**
-             * @description 동아리 ID (Base62 인코딩)
-             * @example 1A2b3C
-             */
-            id: string;
-            /**
-             * @description 동아리 이름
-             * @example Leets
-             */
-            name: string;
-            /**
-             * @description 학교 이름
-             * @example 가천대학교
-             */
-            schoolName: string;
-            /**
-             * @description 동아리 설명
-             * @example 함께 배우고 성장하는 개발자 커뮤니티
-             */
-            description?: string;
-            /** @description 동아리 프로필 이미지 URL */
-            profileImageUrl?: string;
-            /**
-             * Format: int64
-             * @description 활동 부원 수
-             * @example 368
-             */
-            memberCount: number;
-            /**
-             * @description 활동 기수 목록
-             * @example [
-             *       31,
-             *       32
-             *     ]
-             */
-            cardinals: number[];
-            /**
-             * @description 나의 권한
-             * @example USER
-             * @enum {string}
-             */
-            memberRole: "USER" | "ADMIN" | "LEAD";
-            /**
-             * @description 나의 멤버 상태
-             * @example ACTIVE
-             * @enum {string}
-             */
-            memberStatus: "WAITING" | "ACTIVE" | "BANNED" | "LEFT";
-            /** @description 현재 사용 중인 멀티프로필 */
-            usingProfile?: components["schemas"]["com.weeth.domain.club.application.dto.response.ClubUsingProfileResponse"];
-        };
-        "com.weeth.domain.club.application.dto.response.ClubUsingProfileResponse": {
-            /**
-             * Format: int64
-             * @description 프로필 ID
-             * @example 1
-             */
-            profileId: number;
-            /**
-             * @description 프로필 이름
-             * @example 길동
-             */
-            name: string;
-            /** @description 프로필 이미지 URL */
-            profileImageUrl?: string;
-            /**
-             * @description 자기소개
-             * @example 안녕하세요
-             */
-            bio?: string;
-        };
-        "com.weeth.global.common.response.CommonResponseJava.util.ListCom.weeth.domain.club.application.dto.response.ClubInfoResponse": {
-            /** Format: int32 */
-            code: number;
-            message: string;
-            data?: components["schemas"]["com.weeth.domain.club.application.dto.response.ClubInfoResponse"][];
-        };
-        "com.weeth.domain.club.application.dto.response.ClubPublicResponse": {
-            /**
-             * @description 동아리 ID (Base62 인코딩)
-             * @example 1A2b3C
-             */
-            id: string;
-            /**
-             * @description 동아리 이름
-             * @example Leets
-             */
-            name: string;
-            /**
-             * @description 동아리 소개
-             * @example 함께 배우고 성장하는 개발자 커뮤니티
-             */
-            description?: string;
-            /** @description 프로필 사진 URL */
-            profileImageUrl?: string;
-        };
-        "com.weeth.global.common.response.CommonResponseCom.weeth.domain.club.application.dto.response.ClubPublicResponse": {
-            /** Format: int32 */
-            code: number;
-            message: string;
-            data?: components["schemas"]["com.weeth.domain.club.application.dto.response.ClubPublicResponse"];
-        };
-        "com.weeth.domain.user.application.dto.response.UserMyPageCurrentProfileResponse": {
-            /**
-             * Format: int64
-             * @description 멀티프로필 ID
-             * @example 1
-             */
-            profileId: number;
-            /**
-             * @description 멀티 프로필 이름
-             * @example 멀티 프로필 길동
-             */
-            name: string;
-            /** @description 멀티 프로필 이미지 URL */
-            profileImageUrl?: string;
-            /** @description 멀티 프로필 헤더 이미지 URL */
-            headerImageUrl?: string;
-            /** @description 멀티 프로필 자기소개 */
-            bio?: string;
-        };
-        "com.weeth.domain.user.application.dto.response.UserMyPageInfoResponse": {
-            /**
-             * @description 사용자 이름
-             * @example 홍길동
-             */
-            name: string;
-            /**
-             * @description 전화번호
-             * @example 01012345678
-             */
-            tel?: string;
-            /**
-             * @description 이메일
-             * @example hong@example.com
-             */
-            email: string;
-            /**
-             * @description 학교
-             * @example 가천대학교
-             */
-            school?: string;
-            /**
-             * @description 학과
-             * @example 컴퓨터공학과
-             */
-            department?: string;
-            /**
-             * @description 학번
-             * @example 20201234
-             */
-            studentId?: string;
-        };
-        "com.weeth.domain.user.application.dto.response.UserMyPageResponse": {
-            /** @description 사용자 기본 개인정보 */
-            user: components["schemas"]["com.weeth.domain.user.application.dto.response.UserMyPageInfoResponse"];
-            /** @description 마이페이지 요약 */
-            stats: components["schemas"]["com.weeth.domain.user.application.dto.response.UserMyPageStatsResponse"];
-            /** @description 현재 사용 중인 프로필 목록 */
-            usingProfiles: components["schemas"]["com.weeth.domain.user.application.dto.response.UserMyPageUsingProfileResponse"][];
-            /** @description 현재 동아리에서 사용 중인 멀티프로필 */
-            currentProfile?: components["schemas"]["com.weeth.domain.user.application.dto.response.UserMyPageCurrentProfileResponse"];
-        };
-        "com.weeth.domain.user.application.dto.response.UserMyPageStatsResponse": {
-            /**
-             * Format: int64
-             * @description 작성한 게시글 수
-             * @example 12
-             */
-            postCount: number;
-            /**
-             * Format: int64
-             * @description 출석한 세션 수
-             * @example 8
-             */
-            attendedSessionCount: number;
-        };
-        "com.weeth.domain.user.application.dto.response.UserMyPageUsingProfileResponse": {
-            /**
-             * Format: int64
-             * @description 프로필 ID
-             * @example 1
-             */
-            profileId: number;
-            /**
-             * @description 프로필 이름
-             * @example 길동
-             */
-            name: string;
-            /** @description 프로필 이미지 URL */
-            profileImageUrl?: string;
-            /** @description 헤더 이미지 URL */
-            headerImageUrl?: string;
-            /** @description 자기소개 */
-            bio?: string;
-            /** @description 이 프로필을 사용 중인 동아리 목록 */
-            clubs: components["schemas"]["com.weeth.domain.user.application.dto.response.UserProfileClubResponse"][];
-        };
-        "com.weeth.global.common.response.CommonResponseCom.weeth.domain.user.application.dto.response.UserMyPageResponse": {
-            /** Format: int32 */
-            code: number;
-            message: string;
-            data?: components["schemas"]["com.weeth.domain.user.application.dto.response.UserMyPageResponse"];
-        };
-        "com.weeth.domain.user.application.dto.response.UserMyPostResponse": {
-            /**
-             * Format: int64
-             * @description 게시글 ID
-             * @example 1
-             */
-            postId: number;
-            /**
-             * @description 동아리 ID
-             * @example 1A2b3C
-             */
-            clubId: string;
-            /**
-             * @description 동아리 이름
-             * @example Leets
-             */
-            clubName: string;
-            /**
-             * Format: int64
-             * @description 게시판 ID
-             * @example 10
-             */
-            boardId: number;
-            /**
-             * @description 게시판 이름
-             * @example 자유게시판
-             */
-            boardName: string;
-            /**
-             * @description 게시글 제목
-             * @example 제목
-             */
-            title: string;
-            /**
-             * @description 게시글 내용
-             * @example 내용
-             */
-            content: string;
-            /**
-             * Format: int32
-             * @description 댓글 수
-             * @example 3
-             */
-            commentCount: number;
-            /**
-             * Format: int32
-             * @description 좋아요 수
-             * @example 5
-             */
-            likeCount: number;
-            /**
-             * Format: date-time
-             * @description 작성 시각
-             */
-            createdAt: string;
-            /**
-             * @description 신규 게시글 여부 (24시간 이내)
-             * @example true
-             */
-            isNew: boolean;
-        };
-        "com.weeth.global.common.response.CommonResponseCom.weeth.global.common.response.SliceResponseCom.weeth.domain.user.application.dto.response.UserMyPostResponse": {
-            /** Format: int32 */
-            code: number;
-            message: string;
-            data?: components["schemas"]["com.weeth.global.common.response.SliceResponseCom.weeth.domain.user.application.dto.response.UserMyPostResponse"];
-        };
-        "com.weeth.global.common.response.SliceResponseCom.weeth.domain.user.application.dto.response.UserMyPostResponse": {
-            content: components["schemas"]["com.weeth.domain.user.application.dto.response.UserMyPostResponse"][];
-            /** Format: int32 */
-            pageNumber: number;
-            /** Format: int32 */
-            pageSize: number;
-            /** Format: int32 */
-            numberOfElements: number;
-            hasNext: boolean;
-        };
-        "com.weeth.domain.user.application.dto.response.UserAttendedSessionResponse": {
-            /**
-             * Format: int64
-             * @description 출석 ID
-             * @example 1
-             */
-            attendanceId: number;
-            /**
-             * @description 동아리 ID
-             * @example 1A2b3C
-             */
-            clubId: string;
-            /**
-             * @description 동아리 이름
-             * @example Leets
-             */
-            clubName: string;
-            /**
-             * Format: int64
-             * @description 세션 ID
-             * @example 10
-             */
-            sessionId: number;
-            /**
-             * @description 세션 제목
-             * @example 1차 정기모임
-             */
-            sessionTitle: string;
-            /**
-             * Format: int32
-             * @description 기수
-             * @example 6
-             */
-            cardinal: number;
-            /**
-             * Format: date-time
-             * @description 시작 시각
-             */
-            start: string;
-            /**
-             * Format: date-time
-             * @description 종료 시각
-             */
-            end: string;
-            /**
-             * @description 출석 상태
-             * @example ATTEND
-             * @enum {string}
-             */
-            status: "ATTEND" | "PENDING" | "ABSENT";
-        };
-        "com.weeth.global.common.response.CommonResponseCom.weeth.global.common.response.SliceResponseCom.weeth.domain.user.application.dto.response.UserAttendedSessionResponse": {
-            /** Format: int32 */
-            code: number;
-            message: string;
-            data?: components["schemas"]["com.weeth.global.common.response.SliceResponseCom.weeth.domain.user.application.dto.response.UserAttendedSessionResponse"];
-        };
-        "com.weeth.global.common.response.SliceResponseCom.weeth.domain.user.application.dto.response.UserAttendedSessionResponse": {
-            content: components["schemas"]["com.weeth.domain.user.application.dto.response.UserAttendedSessionResponse"][];
-            /** Format: int32 */
-            pageNumber: number;
-            /** Format: int32 */
-            pageSize: number;
-            /** Format: int32 */
-            numberOfElements: number;
-            hasNext: boolean;
-        };
-        "com.weeth.domain.session.application.dto.response.SessionResponse": {
-            /**
-             * Format: int64
-             * @description 정기모임 ID
-             * @example 1
-             */
-            id: number;
-            /**
-             * @description 제목
-             * @example 1차 정기모임
-             */
-            title: string;
-            /** @description 내용 */
-            content?: string;
-            /**
-             * @description 장소
-             * @example 공학관 401호
-             */
-            location?: string;
-            /**
-             * @description 작성자 이름
-             * @example 이지훈
-             */
-            name?: string;
-            /**
-             * Format: int32
-             * @description 기수
-             * @example 4
-             */
-            cardinal: number;
-            /**
-             * @description 일정 타입
-             * @example MEETING
-             * @enum {string}
-             */
-            type: "EVENT" | "SESSION";
-            /**
-             * Format: int32
-             * @description 출석 코드
-             * @example 1234
-             */
-            code?: number;
-            /**
-             * Format: date-time
-             * @description 시작 시간
-             */
-            start: string;
-            /**
-             * Format: date-time
-             * @description 종료 시간
-             */
-            end: string;
-            /**
-             * Format: date-time
-             * @description 생성 시간
-             */
-            createdAt?: string;
-            /**
-             * Format: date-time
-             * @description 수정 시간
-             */
-            modifiedAt?: string;
-        };
-        "com.weeth.global.common.response.CommonResponseCom.weeth.domain.session.application.dto.response.SessionResponse": {
-            /** Format: int32 */
-            code: number;
-            message: string;
-            data?: components["schemas"]["com.weeth.domain.session.application.dto.response.SessionResponse"];
-        };
-        "com.weeth.domain.schedule.application.dto.response.ScheduleResponse": {
-            /**
-             * Format: int64
-             * @description 일정 ID
-             * @example 1
-             */
-            id: number;
-            /**
-             * @description 제목
-             * @example 1차 정기모임
-             */
-            title: string;
-            /**
-             * Format: date-time
-             * @description 시작 시간
-             */
-            start: string;
-            /**
-             * Format: date-time
-             * @description 종료 시간
-             */
-            end: string;
-            /**
-             * @description 일정 유형
-             * @example SESSION
-             * @enum {string}
-             */
-            type: "EVENT" | "SESSION";
-            /**
-             * @description 장소
-             * @example 가천대 체육관
-             */
-            location?: string;
-            /**
-             * Format: int32
-             * @description 기수
-             * @example 7
-             */
-            cardinal: number;
-        };
-        "com.weeth.global.common.response.CommonResponseJava.util.MapJava.lang.IntegerJava.util.ListCom.weeth.domain.schedule.application.dto.response.ScheduleResponse": {
-            /** Format: int32 */
-            code: number;
-            message: string;
-            data?: {
-                [key: string]: components["schemas"]["com.weeth.domain.schedule.application.dto.response.ScheduleResponse"][];
-            };
-        };
-        "com.weeth.global.common.response.CommonResponseJava.util.ListCom.weeth.domain.schedule.application.dto.response.ScheduleResponse": {
-            /** Format: int32 */
-            code: number;
-            message: string;
-            data?: components["schemas"]["com.weeth.domain.schedule.application.dto.response.ScheduleResponse"][];
-        };
-        "com.weeth.domain.club.application.dto.response.ClubMemberProfileResponse": {
-            /**
-             * Format: int64
-             * @description 사용자 ID
-             * @example 1
-             */
-            userId: number;
-            /**
-             * Format: int64
-             * @description 멤버 ID
-             * @example 1
-             */
-            clubMemberId: number;
-            /**
-             * @description 사용자 이름
-             * @example 홍길동
-             */
-            name: string;
-            /**
-             * @description 이메일
-             * @example hong@example.com
-             */
-            email: string;
-            /**
-             * @description 전화번호
-             * @example 01012345678
-             */
-            tel?: string;
-            /**
-             * @description 학교
-             * @example 가천대학교
-             */
-            school?: string;
-            /**
-             * @description 학과
-             * @example 컴퓨터공학과
-             */
-            department?: string;
-            /**
-             * @description 학번
-             * @example 20201234
-             */
-            studentId?: string;
-            /**
-             * @description 소속 기수 목록
-             * @example [
-             *       6,
-             *       7
-             *     ]
-             */
-            cardinals: number[];
-            /**
-             * @description 멤버 권한
-             * @example USER
-             * @enum {string}
-             */
-            memberRole: "USER" | "ADMIN" | "LEAD";
-            /**
-             * @description 멤버 상태
-             * @example ACTIVE
-             * @enum {string}
-             */
-            memberStatus: "WAITING" | "ACTIVE" | "BANNED" | "LEFT";
-            /**
-             * @description 동아리 프로필 이미지 URL
-             * @example https://cdn.example.com/profile.jpg
-             */
-            profileImageUrl?: string;
-            /** @description 자기소개 */
-            bio?: string;
-        };
-        "com.weeth.global.common.response.CommonResponseCom.weeth.domain.club.application.dto.response.ClubMemberProfileResponse": {
-            /** Format: int32 */
-            code: number;
-            message: string;
-            data?: components["schemas"]["com.weeth.domain.club.application.dto.response.ClubMemberProfileResponse"];
-        };
-        "com.weeth.domain.club.application.dto.response.ClubMemberSummaryResponse": {
-            /**
-             * Format: int64
-             * @description 사용자 ID
-             * @example 1
-             */
-            userId: number;
-            /**
-             * @description 이름
-             * @example 홍길동
-             */
-            name: string;
-            /**
-             * @description 소속 기수 목록
-             * @example [
-             *       6,
-             *       7
-             *     ]
-             */
-            cardinals: number[];
-            /**
-             * @description 동아리 내 권한
-             * @example USER
-             * @enum {string}
-             */
-            role: "USER" | "ADMIN" | "LEAD";
-        };
-        "com.weeth.global.common.response.CommonResponseCom.weeth.domain.club.application.dto.response.ClubMemberSummaryResponse": {
-            /** Format: int32 */
-            code: number;
-            message: string;
-            data?: components["schemas"]["com.weeth.domain.club.application.dto.response.ClubMemberSummaryResponse"];
-        };
-        "com.weeth.domain.club.application.dto.response.ProfileStatusResponse": {
-            /** @description 기수 등록 여부 */
-            cardinalAssigned: boolean;
-            /** @description 프로필 완성 여부 (이름, 학번, 전화번호, 학교, 학과) */
-            profileCompleted: boolean;
-            /**
-             * @description 미완성 필드 목록
-             * @example [
-             *       "studentId",
-             *       "tel"
-             *     ]
-             */
-            missingFields: string[];
-        };
-        "com.weeth.global.common.response.CommonResponseCom.weeth.domain.club.application.dto.response.ProfileStatusResponse": {
-            /** Format: int32 */
-            code: number;
-            message: string;
-            data?: components["schemas"]["com.weeth.domain.club.application.dto.response.ProfileStatusResponse"];
-        };
-        "com.weeth.domain.schedule.application.dto.response.EventResponse": {
-            /**
-             * Format: int64
-             * @description 일정 ID
-             * @example 1
-             */
-            id: number;
-            /**
-             * @description 일정 제목
-             * @example MT
-             */
-            title: string;
-            /** @description 일정 내용 */
-            content?: string;
-            /**
-             * @description 장소
-             * @example 가평
-             */
-            location?: string;
-            /**
-             * @description 작성자 이름
-             * @example 이지훈
-             */
-            name?: string;
-            /**
-             * Format: int32
-             * @description 기수
-             * @example 4
-             */
-            cardinal: number;
-            /**
-             * @description 일정 타입
-             * @example EVENT
-             * @enum {string}
-             */
-            type: "EVENT" | "SESSION";
-            /**
-             * Format: date-time
-             * @description 시작 시간
-             */
-            start: string;
-            /**
-             * Format: date-time
-             * @description 종료 시간
-             */
-            end: string;
-            /**
-             * Format: date-time
-             * @description 생성 시간
-             */
-            createdAt?: string;
-            /**
-             * Format: date-time
-             * @description 수정 시간
-             */
-            modifiedAt?: string;
-        };
-        "com.weeth.global.common.response.CommonResponseCom.weeth.domain.schedule.application.dto.response.EventResponse": {
-            /** Format: int32 */
-            code: number;
-            message: string;
-            data?: components["schemas"]["com.weeth.domain.schedule.application.dto.response.EventResponse"];
-        };
-        "com.weeth.domain.dashboard.application.dto.response.DashboardUnreadNoticeResponse": {
-            /**
-             * Format: int64
-             * @description 게시글 ID
-             * @example 1
-             */
-            id: number;
-            /**
-             * Format: int64
-             * @description 게시판 ID
-             * @example 1
-             */
-            boardId: number;
-            /**
-             * @description 공지 제목
-             * @example 중간고사 기간 공지
-             */
-            title: string;
-            /**
-             * @description 공지 내용
-             * @example 이번 주 정기 모임은 중간고사 기간으로 인해 쉬어갑니다.
-             */
-            content: string;
-        };
-        "com.weeth.global.common.response.CommonResponseCom.weeth.domain.dashboard.application.dto.response.DashboardUnreadNoticeResponse": {
-            /** Format: int32 */
-            code: number;
-            message: string;
-            data?: components["schemas"]["com.weeth.domain.dashboard.application.dto.response.DashboardUnreadNoticeResponse"];
-        };
-        PageableObject: {
-            /** Format: int64 */
-            offset?: number;
-            sort?: components["schemas"]["SortObject"];
-            unpaged?: boolean;
-            paged?: boolean;
-            /** Format: int32 */
-            pageNumber?: number;
-            /** Format: int32 */
-            pageSize?: number;
-        };
-        SortObject: {
-            empty?: boolean;
-            unsorted?: boolean;
-            sorted?: boolean;
-        };
-        "com.weeth.domain.board.application.dto.response.BoardConfigResponse": {
-            /** @description 글 작성 가능 여부 */
-            canWrite: boolean;
-            /** @description 댓글 작성 가능 여부 */
-            canComment: boolean;
-        };
-        "com.weeth.domain.board.application.dto.response.PostLikeResponse": {
-            /**
-             * @description 좋아요 여부
-             * @example true
-             */
-            isLiked: boolean;
-            /**
-             * Format: int32
-             * @description 좋아요 수
-             * @example 5
-             */
-            likeCount: number;
-        };
-        "com.weeth.domain.dashboard.application.dto.response.DashboardPostResponse": {
-            /**
-             * Format: int64
-             * @description 게시글 ID
-             * @example 1
-             */
-            id: number;
-            /**
-             * Format: int64
-             * @description 게시판 ID
-             * @example 1
-             */
-            boardId: number;
-            /** @description 작성자 정보 */
-            author: components["schemas"]["com.weeth.domain.user.application.dto.response.UserInfo"];
-            /**
-             * @description 제목
-             * @example 안녕하세요
-             */
-            title: string;
-            /**
-             * @description 내용
-             * @example 오늘은 날씨가 좋네요
-             */
-            content: string;
-            /**
-             * Format: date-time
-             * @description 작성일
-             */
-            time: string;
-            /**
-             * Format: int32
-             * @description 댓글 수
-             * @example 5
-             */
-            commentCount: number;
-            /** @description 좋아요 정보 */
-            like: components["schemas"]["com.weeth.domain.board.application.dto.response.PostLikeResponse"];
-            /** @description 첨부 파일 목록 */
-            fileUrls: components["schemas"]["com.weeth.domain.file.application.dto.response.FileResponse"][];
-            /**
-             * @description 24시간 내 새 게시글 여부
-             * @example true
-             */
-            isNew: boolean;
-            /** @description 게시판 설정 */
-            boardConfig: components["schemas"]["com.weeth.domain.board.application.dto.response.BoardConfigResponse"];
-        };
-        "com.weeth.domain.file.application.dto.response.FileResponse": {
-            /**
-             * Format: int64
-             * @description 파일 ID
-             * @example 1
-             */
-            fileId: number;
-            /**
-             * @description 원본 파일명
-             * @example profile-image.png
-             */
-            fileName: string;
-            /**
-             * @description 조회용 파일 URL
-             * @example https://bucket.s3.ap-northeast-2.amazonaws.com/POST/2026-02/uuid_profile-image.png
-             */
-            fileUrl: string;
-            /**
-             * @description 저장소 키
-             * @example POST/2026-02/uuid_profile-image.png
-             */
-            storageKey: string;
-            /**
-             * Format: int64
-             * @description 파일 크기(bytes)
-             * @example 102400
-             */
-            fileSize: number;
-            /**
-             * @description 파일 Content-Type
-             * @example image/png
-             */
-            contentType: string;
-            /**
-             * @description 파일 상태
-             * @example UPLOADED
-             * @enum {string}
-             */
-            status: "UPLOADED" | "DELETED";
-        };
-        "com.weeth.domain.user.application.dto.response.UserInfo": {
-            /**
-             * Format: int64
-             * @description 사용자 ID
-             * @example 1
-             */
-            id: number;
-            /**
-             * @description 이름
-             * @example 홍길동
-             */
-            name: string;
-            /** @description 프로필 이미지 URL */
-            profileImageUrl?: string;
-            /**
-             * @description 동아리 내 권한
-             * @example USER
-             * @enum {string}
-             */
-            role: "USER" | "ADMIN" | "LEAD";
-        };
-        "com.weeth.global.common.response.CommonResponseOrg.springframework.data.domain.SliceCom.weeth.domain.dashboard.application.dto.response.DashboardPostResponse": {
-            /** Format: int32 */
-            code: number;
-            message: string;
-            data?: components["schemas"]["org.springframework.data.domain.SliceCom.weeth.domain.dashboard.application.dto.response.DashboardPostResponse"];
-        };
-        "org.springframework.data.domain.SliceCom.weeth.domain.dashboard.application.dto.response.DashboardPostResponse": {
-            /** Format: int32 */
-            size?: number;
-            content?: components["schemas"]["com.weeth.domain.dashboard.application.dto.response.DashboardPostResponse"][];
-            /** Format: int32 */
-            number?: number;
-            sort?: components["schemas"]["SortObject"];
-            pageable?: components["schemas"]["PageableObject"];
-            /** Format: int32 */
-            numberOfElements?: number;
-            first?: boolean;
-            last?: boolean;
-            empty?: boolean;
-        };
-        "com.weeth.domain.dashboard.application.dto.response.DashboardNoticeResponse": {
-            /**
-             * Format: int64
-             * @description 게시글 ID
-             * @example 1
-             */
-            id: number;
-            /**
-             * Format: int64
-             * @description 게시판 ID
-             * @example 1
-             */
-            boardId: number;
-            /**
-             * @description 공지 제목
-             * @example 중간고사 기간 공지
-             */
-            title: string;
-            /**
-             * @description 공지 내용
-             * @example 이번 주 정기 모임은 중간고사 기간으로 인해 쉬어갑니다.
-             */
-            content: string;
-            /**
-             * Format: date-time
-             * @description 최종 수정 일시
-             */
-            time: string;
-            /**
-             * @description 24시간 내 새 공지 여부
-             * @example true
-             */
-            isNew: boolean;
-        };
-        "com.weeth.global.common.response.CommonResponseJava.util.ListCom.weeth.domain.dashboard.application.dto.response.DashboardNoticeResponse": {
-            /** Format: int32 */
-            code: number;
-            message: string;
-            data?: components["schemas"]["com.weeth.domain.dashboard.application.dto.response.DashboardNoticeResponse"][];
-        };
-        "com.weeth.domain.dashboard.application.dto.response.DashboardScheduleResponse": {
-            /**
-             * Format: int64
-             * @description 일정 ID
-             * @example 1
-             */
-            id: number;
-            /**
-             * @description 일정 제목
-             * @example Spring 스터디
-             */
-            title: string;
-            /**
-             * Format: date-time
-             * @description 시작 일시
-             * @example 2026-03-09T14:00:00
-             */
-            start: string;
-            /**
-             * Format: date-time
-             * @description 종료 일시
-             * @example 2026-03-09T16:00:00
-             */
-            end: string;
-            /**
-             * @description 일정 유형
-             * @example EVENT
-             * @enum {string}
-             */
-            type: "SESSION" | "EVENT";
-        };
-        "com.weeth.global.common.response.CommonResponseJava.util.ListCom.weeth.domain.dashboard.application.dto.response.DashboardScheduleResponse": {
-            /** Format: int32 */
-            code: number;
-            message: string;
-            data?: components["schemas"]["com.weeth.domain.dashboard.application.dto.response.DashboardScheduleResponse"][];
-        };
-        "com.weeth.domain.dashboard.application.dto.response.DashboardClubInfoResponse": {
-            /**
-             * @description 동아리 ID (Base62)
-             * @example 1A2b3C
-             */
-            id: string;
-            /**
-             * @description 동아리 이름
-             * @example Leets
-             */
-            name: string;
-            /**
-             * @description 초대 코드
-             * @example 550e8400-e29b-41d4-a716-446655440000
-             */
-            code: string;
-            /**
-             * @description 학교 이름
-             * @example 가천대학교
-             */
-            schoolName: string;
-            /**
-             * @description 동아리 설명
-             * @example IT 동아리
-             */
-            description?: string;
-            /**
-             * Format: int64
-             * @description 활성 멤버 수
-             * @example 70
-             */
-            memberCount: number;
-            /** @description 프로필 이미지 URL */
-            profileImageUrl?: string;
-            /** @description 배경 이미지 URL */
-            backgroundImageUrl?: string;
-        };
-        "com.weeth.domain.dashboard.application.dto.response.DashboardHomeResponse": {
-            /** @description 현재 동아리 정보 */
-            club: components["schemas"]["com.weeth.domain.dashboard.application.dto.response.DashboardClubInfoResponse"];
-            /** @description 내 활동 정보 */
-            myInfo: components["schemas"]["com.weeth.domain.dashboard.application.dto.response.DashboardMyInfoResponse"];
-            /**
-             * @description 회비 기능 부원 공개 여부. false면 프론트에서 회비 탭을 숨긴다.
-             * @example true
-             */
-            accountVisible: boolean;
-        };
-        "com.weeth.domain.dashboard.application.dto.response.DashboardMyInfoResponse": {
-            /** @description 사용자 정보 */
-            userInfo: components["schemas"]["com.weeth.domain.user.application.dto.response.UserInfo"];
-            /** @description 자기소개 */
-            bio?: string;
-        };
-        "com.weeth.global.common.response.CommonResponseCom.weeth.domain.dashboard.application.dto.response.DashboardHomeResponse": {
-            /** Format: int32 */
-            code: number;
-            message: string;
-            data?: components["schemas"]["com.weeth.domain.dashboard.application.dto.response.DashboardHomeResponse"];
-        };
-        "com.weeth.domain.cardinal.application.dto.response.CardinalResponse": {
-            /**
-             * Format: int64
-             * @description 기수 ID
-             * @example 1
-             */
-            id: number;
-            /**
-             * Format: int32
-             * @description 기수 번호
-             * @example 7
-             */
-            cardinalNumber: number;
-            /**
-             * @description 기수 상태
-             * @example IN_PROGRESS
-             * @enum {string}
-             */
-            status: "IN_PROGRESS" | "DONE";
-            /**
-             * Format: date-time
-             * @description 생성 시각
-             */
-            createdAt?: string;
-            /**
-             * Format: date-time
-             * @description 수정 시각
-             */
-            modifiedAt?: string;
-        };
-        "com.weeth.global.common.response.CommonResponseJava.util.ListCom.weeth.domain.cardinal.application.dto.response.CardinalResponse": {
-            /** Format: int32 */
-            code: number;
-            message: string;
-            data?: components["schemas"]["com.weeth.domain.cardinal.application.dto.response.CardinalResponse"][];
-        };
-        "com.weeth.domain.board.application.dto.response.BoardListResponse": {
-            /**
-             * Format: int64
-             * @description 게시판 ID (전체 게시판은 null)
-             */
-            id?: number;
-            /** @description 게시판 이름 */
-            name: string;
-            /**
-             * @description 게시판 타입
-             * @enum {string}
-             */
-            type: "ALL" | "NOTICE" | "GALLERY" | "GENERAL" | "INFORMATION";
-            /** @description 게시판 설정 */
-            boardConfig: components["schemas"]["com.weeth.domain.board.application.dto.response.BoardConfigResponse"];
-        };
-        "com.weeth.global.common.response.CommonResponseJava.util.ListCom.weeth.domain.board.application.dto.response.BoardListResponse": {
-            /** Format: int32 */
-            code: number;
-            message: string;
-            data?: components["schemas"]["com.weeth.domain.board.application.dto.response.BoardListResponse"][];
-        };
-        "com.weeth.domain.board.application.dto.response.PostListResponse": {
-            /**
-             * Format: int64
-             * @description 게시글 ID
-             */
-            id: number;
-            /** @description 작성자 정보 */
-            author: components["schemas"]["com.weeth.domain.user.application.dto.response.UserInfo"];
-            /**
-             * Format: int64
-             * @description 게시판 ID
-             */
-            boardId: number;
-            /** @description 게시판 이름 */
-            boardName: string;
-            /** @description 제목 */
-            title: string;
-            /** @description 내용 */
-            content: string;
-            /**
-             * Format: date-time
-             * @description 생성 시각
-             */
-            time: string;
-            /**
-             * Format: int32
-             * @description 댓글 수
-             */
-            commentCount: number;
-            /** @description 좋아요 정보 */
-            like: components["schemas"]["com.weeth.domain.board.application.dto.response.PostLikeResponse"];
-            /** @description 첨부 파일 목록 */
-            fileUrls: components["schemas"]["com.weeth.domain.file.application.dto.response.FileResponse"][];
-            /** @description 신규 게시글 여부 (24시간 이내) */
-            isNew: boolean;
-            /** @description 게시판 설정 */
-            boardConfig: components["schemas"]["com.weeth.domain.board.application.dto.response.BoardConfigResponse"];
-        };
-        "com.weeth.global.common.response.CommonResponseOrg.springframework.data.domain.SliceCom.weeth.domain.board.application.dto.response.PostListResponse": {
-            /** Format: int32 */
-            code: number;
-            message: string;
-            data?: components["schemas"]["org.springframework.data.domain.SliceCom.weeth.domain.board.application.dto.response.PostListResponse"];
-        };
-        "org.springframework.data.domain.SliceCom.weeth.domain.board.application.dto.response.PostListResponse": {
-            /** Format: int32 */
-            size?: number;
-            content?: components["schemas"]["com.weeth.domain.board.application.dto.response.PostListResponse"][];
-            /** Format: int32 */
-            number?: number;
-            sort?: components["schemas"]["SortObject"];
-            pageable?: components["schemas"]["PageableObject"];
-            /** Format: int32 */
-            numberOfElements?: number;
-            first?: boolean;
-            last?: boolean;
-            empty?: boolean;
-        };
-        "com.weeth.domain.board.application.dto.response.PostDetailResponse": {
-            /**
-             * Format: int64
-             * @description 게시글 ID
-             */
-            id: number;
-            /**
-             * Format: int64
-             * @description 게시판 ID
-             */
-            boardId: number;
-            /** @description 게시판 이름 */
-            boardName: string;
-            /** @description 작성자 정보 */
-            author: components["schemas"]["com.weeth.domain.user.application.dto.response.UserInfo"];
-            /** @description 제목 */
-            title: string;
-            /** @description 내용 */
-            content: string;
-            /**
-             * Format: date-time
-             * @description 생성 시각
-             */
-            time: string;
-            /**
-             * Format: int32
-             * @description 댓글 수
-             */
-            commentCount: number;
-            /** @description 좋아요 정보 */
-            like: components["schemas"]["com.weeth.domain.board.application.dto.response.PostLikeResponse"];
-            /** @description 댓글 목록 */
-            comments: components["schemas"]["com.weeth.domain.comment.application.dto.response.CommentResponse"][];
-            /** @description 첨부 파일 목록 */
-            fileUrls: components["schemas"]["com.weeth.domain.file.application.dto.response.FileResponse"][];
-            /** @description 신규 게시글 여부 (24시간 이내) */
-            isNew: boolean;
-            /** @description 게시판 설정 */
-            boardConfig: components["schemas"]["com.weeth.domain.board.application.dto.response.BoardConfigResponse"];
-        };
-        "com.weeth.domain.comment.application.dto.response.CommentResponse": {
-            /**
-             * Format: int64
-             * @description 댓글 ID
-             * @example 1
-             */
-            id: number;
-            /** @description 작성자 정보 */
-            author: components["schemas"]["com.weeth.domain.user.application.dto.response.UserInfo"];
-            /**
-             * @description 댓글 내용
-             * @example 댓글입니다.
-             */
-            content: string;
-            /**
-             * Format: date-time
-             * @description 작성 시간
-             * @example 2026-02-18T12:00:00
-             */
-            time: string;
-            /** @description 첨부 파일 목록 */
-            fileUrls: components["schemas"]["com.weeth.domain.file.application.dto.response.FileResponse"][];
-            /** @description 대댓글 목록 */
-            children: components["schemas"]["com.weeth.domain.comment.application.dto.response.CommentResponse"][];
-        };
-        "com.weeth.global.common.response.CommonResponseCom.weeth.domain.board.application.dto.response.PostDetailResponse": {
-            /** Format: int32 */
-            code: number;
-            message: string;
-            data?: components["schemas"]["com.weeth.domain.board.application.dto.response.PostDetailResponse"];
-        };
-        "com.weeth.domain.attendance.application.dto.response.AttendanceSummaryResponse": {
-            /**
-             * Format: int32
-             * @description 출석률
-             * @example 80
-             */
-            attendanceRate?: number;
-            /**
-             * @description 정기모임 제목
-             * @example 1주차 정기모임
-             */
-            title?: string;
-            /**
-             * @description 출석 상태
-             * @example ATTEND
-             * @enum {string}
-             */
-            status?: "ATTEND" | "PENDING" | "ABSENT";
-            /**
-             * Format: int64
-             * @description 정기모임 id
-             * @example 1
-             */
-            sessionId?: number;
-            /**
-             * Format: date-time
-             * @description 정기모임 시작 시간
-             */
-            start?: string;
-            /**
-             * Format: date-time
-             * @description 정기모임 종료 시간
-             */
-            end?: string;
-            /**
-             * @description 정기모임 장소
-             * @example 공학관 401호
-             */
-            location?: string;
-        };
-        "com.weeth.global.common.response.CommonResponseCom.weeth.domain.attendance.application.dto.response.AttendanceSummaryResponse": {
-            /** Format: int32 */
-            code: number;
-            message: string;
-            data?: components["schemas"]["com.weeth.domain.attendance.application.dto.response.AttendanceSummaryResponse"];
-        };
-        "org.springframework.web.servlet.mvc.method.annotation.SseEmitter": {
-            /** Format: int64 */
-            timeout?: number;
-        };
-        "com.weeth.domain.attendance.application.dto.response.AttendanceDetailResponse": {
-            /**
-             * Format: int32
-             * @description 출석 횟수
-             * @example 8
-             */
-            attendanceCount: number;
-            /**
-             * Format: int32
-             * @description 전체 횟수
-             * @example 10
-             */
-            total: number;
-            /**
-             * Format: int32
-             * @description 결석 횟수
-             * @example 2
-             */
-            absenceCount: number;
-            /** @description 출석 내역 목록 */
-            attendances: components["schemas"]["com.weeth.domain.attendance.application.dto.response.AttendanceResponse"][];
-        };
-        "com.weeth.domain.attendance.application.dto.response.AttendanceResponse": {
-            /**
-             * Format: int64
-             * @description 출석 ID
-             * @example 1
-             */
-            id: number;
-            /**
-             * @description 출석 상태
-             * @example ATTEND
-             * @enum {string}
-             */
-            status?: "ATTEND" | "PENDING" | "ABSENT";
-            /**
-             * @description 정기모임 제목
-             * @example 1주차 정기모임
-             */
-            title?: string;
-            /**
-             * Format: date-time
-             * @description 정기모임 시작 시간
-             */
-            start?: string;
-            /**
-             * Format: date-time
-             * @description 정기모임 종료 시간
-             */
-            end?: string;
-            /**
-             * @description 정기모임 장소
-             * @example 공학관 401호
-             */
-            location?: string;
-        };
-        "com.weeth.global.common.response.CommonResponseCom.weeth.domain.attendance.application.dto.response.AttendanceDetailResponse": {
-            /** Format: int32 */
-            code: number;
-            message: string;
-            data?: components["schemas"]["com.weeth.domain.attendance.application.dto.response.AttendanceDetailResponse"];
-        };
-        "com.weeth.domain.account.application.dto.response.MemberAccountTransactionsResponse": {
-            /** @description 필터 탭별 부원 공개 거래 건수 요약. 첫 페이지(page=0)에서만 제공 */
-            counts?: components["schemas"]["com.weeth.domain.account.application.dto.response.MemberAccountTransactionsResponse.TransactionCountsResponse"];
-            /** @description 회비 집계 행. 첫 페이지(page=0)에서만 제공 */
-            duesSummary?: components["schemas"]["com.weeth.domain.account.application.dto.response.MemberAccountTransactionsResponse.DuesSummaryResponse"];
-            /** @description 부원 공개 거래 내역 (무한 스크롤) */
-            transactions: components["schemas"]["com.weeth.global.common.response.SliceResponseCom.weeth.domain.account.application.dto.response.MemberTransactionResponse"];
-        };
-        "com.weeth.domain.account.application.dto.response.MemberAccountTransactionsResponse.DuesSummaryResponse": {
-            /**
-             * @description 회비 집계 행 라벨
-             * @example 회비
-             */
-            label: string;
-            /**
-             * Format: int32
-             * @description 회비 납부 거래 합계
-             * @example 1100000
-             */
-            totalAmount: number;
-            /**
-             * @description 회비 집계 행 설명
-             * @example 납부될 때마다 합산돼요
-             */
-            description: string;
-        };
-        "com.weeth.domain.account.application.dto.response.MemberAccountTransactionsResponse.TransactionCountsResponse": {
-            /**
-             * Format: int32
-             * @description 전체 공개 거래 수
-             * @example 4
-             */
-            all: number;
-            /**
-             * Format: int32
-             * @description 지출 공개 거래 수
-             * @example 3
-             */
-            expense: number;
-            /**
-             * Format: int32
-             * @description 수입 공개 거래 수
-             * @example 1
-             */
-            income: number;
-            /**
-             * Format: int32
-             * @description 회비 집계 행 수. 집계 금액이 있으면 1
-             * @example 1
-             */
-            dues: number;
-        };
-        "com.weeth.domain.account.application.dto.response.MemberTransactionResponse": {
-            /**
-             * Format: int64
-             * @description 거래 ID
-             * @example 1
-             */
-            transactionId: number;
-            /**
-             * @description 거래 유형
-             * @example EXPENSE
-             * @enum {string}
-             */
-            type: "DUES" | "CARRY_OVER" | "INCOME" | "EXPENSE" | "REFUND";
-            /**
-             * @description 거래 방향
-             * @example EXPENSE
-             * @enum {string}
-             */
-            direction: "INCOME" | "EXPENSE";
-            /**
-             * @description 거래 내용
-             * @example 스터디 지원금
-             */
-            title: string;
-            /**
-             * @description 거래처. REFUND는 환불로 마스킹
-             * @example 인프런
-             */
-            source?: string;
-            /**
-             * Format: int32
-             * @description 거래 금액
-             * @example 50000
-             */
-            amount: number;
-            /**
-             * Format: date-time
-             * @description 거래 일시
-             * @example 2026-07-20T00:00:00
-             */
-            transactedAt: string;
-            /**
-             * @description 영수증 존재 여부
-             * @example true
-             */
-            hasReceipt: boolean;
-        };
-        "com.weeth.global.common.response.CommonResponseCom.weeth.domain.account.application.dto.response.MemberAccountTransactionsResponse": {
-            /** Format: int32 */
-            code: number;
-            message: string;
-            data?: components["schemas"]["com.weeth.domain.account.application.dto.response.MemberAccountTransactionsResponse"];
-        };
-        "com.weeth.global.common.response.SliceResponseCom.weeth.domain.account.application.dto.response.MemberTransactionResponse": {
-            content: components["schemas"]["com.weeth.domain.account.application.dto.response.MemberTransactionResponse"][];
-            /** Format: int32 */
-            pageNumber: number;
-            /** Format: int32 */
-            pageSize: number;
-            /** Format: int32 */
-            numberOfElements: number;
-            hasNext: boolean;
-        };
-        "com.weeth.domain.account.application.dto.response.MemberTransactionDetailResponse": {
-            /**
-             * Format: int64
-             * @description 거래 ID
-             * @example 1
-             */
-            transactionId: number;
-            /**
-             * @description 거래 유형
-             * @example EXPENSE
-             * @enum {string}
-             */
-            type: "DUES" | "CARRY_OVER" | "INCOME" | "EXPENSE" | "REFUND";
-            /**
-             * @description 거래 방향
-             * @example EXPENSE
-             * @enum {string}
-             */
-            direction: "INCOME" | "EXPENSE";
-            /**
-             * @description 거래 내용
-             * @example 스터디 지원금
-             */
-            title: string;
-            /**
-             * @description 거래처. REFUND는 환불로 마스킹
-             * @example 인프런
-             */
-            source?: string;
-            /**
-             * Format: int32
-             * @description 거래 금액
-             * @example 50000
-             */
-            amount: number;
-            /**
-             * Format: date-time
-             * @description 거래 일시
-             * @example 2026-07-20T00:00:00
-             */
-            transactedAt: string;
-            /**
-             * @description 거래 분류
-             * @example 운영비
-             */
-            category?: string;
-            /**
-             * @description 등록자 이름 스냅샷
-             * @example 운영진 김검도
-             */
-            registeredByName: string;
-            /** @description 메모 */
-            memo?: string;
-            /**
-             * @description 영수증 존재 여부
-             * @example true
-             */
-            hasReceipt: boolean;
-            /** @description 영수증 파일 목록. 최대 1개 */
-            receipts: components["schemas"]["com.weeth.domain.file.application.dto.response.FileResponse"][];
-        };
-        "com.weeth.global.common.response.CommonResponseCom.weeth.domain.account.application.dto.response.MemberTransactionDetailResponse": {
-            /** Format: int32 */
-            code: number;
-            message: string;
-            data?: components["schemas"]["com.weeth.domain.account.application.dto.response.MemberTransactionDetailResponse"];
-        };
-        "com.weeth.domain.account.application.dto.response.BankAccountResponse": {
-            /**
-             * @description 은행명
-             * @example 국민은행
-             */
-            bankName: string;
-            /**
-             * @description 계좌번호
-             * @example 123-456-789012
-             */
-            accountNumber: string;
-            /**
-             * @description 예금주
-             * @example 가천대 검도부
-             */
-            holder: string;
-            /**
-             * @description 입금 안내 메모
-             * @example 이름_회비 형식으로 입금해 주세요.
-             */
-            guide?: string;
-        };
-        "com.weeth.domain.account.application.dto.response.MyAccountResponse": {
-            /**
-             * Format: int64
-             * @description 회비 장부 ID
-             * @example 12
-             */
-            accountId: number;
-            /**
-             * Format: int32
-             * @description 회비 기수
-             * @example 7
-             */
-            cardinal: number;
-            /**
-             * @description 회비 장부 이름
-             * @example 7기 회비
-             */
-            accountName?: string;
-            /**
-             * Format: int32
-             * @description 1인 회비 금액
-             * @example 60000
-             */
-            duesAmount: number;
-            /** @description 나의 납부 상태 */
-            myPayment: components["schemas"]["com.weeth.domain.account.application.dto.response.MyAccountResponse.MyPaymentResponse"];
-            /**
-             * @description 부원에게 계좌 공개 여부
-             * @example true
-             */
-            bankAccountVisible: boolean;
-            /** @description 입금 계좌 정보. 비공개 또는 미등록이면 null */
-            bankAccount?: components["schemas"]["com.weeth.domain.account.application.dto.response.BankAccountResponse"];
-            /** @description 잔액/목표액 */
-            balance: components["schemas"]["com.weeth.domain.account.application.dto.response.MyAccountResponse.BalanceResponse"];
-        };
-        "com.weeth.domain.account.application.dto.response.MyAccountResponse.BalanceResponse": {
-            /**
-             * Format: int32
-             * @description 현재 남은 금액
-             * @example 152129
-             */
-            currentBalance: number;
-            /**
-             * Format: int32
-             * @description 목표 총액. 납부 대상 dueAmount 합계
-             * @example 1425000
-             */
-            goalAmount: number;
-        };
-        "com.weeth.domain.account.application.dto.response.MyAccountResponse.MyPaymentResponse": {
-            /**
-             * @description 내가 이 회비의 납부 대상인지 여부
-             * @example true
-             */
-            targeted: boolean;
-            /**
-             * @description 나의 납부 상태. 납부 대상이 아니면 null
-             * @example UNPAID
-             * @enum {string}
-             */
-            status?: "UNPAID" | "PAID" | "REFUNDED";
-            /**
-             * Format: int32
-             * @description 내 납부 대상 금액
-             * @example 60000
-             */
-            dueAmount: number;
-            /**
-             * Format: int32
-             * @description 실제 납부 완료 금액
-             * @example 0
-             */
-            paidAmount: number;
-            /**
-             * Format: date-time
-             * @description 납부 확인 시각. 미납 또는 대상 아님이면 null
-             */
-            paidAt?: string;
-        };
-        "com.weeth.global.common.response.CommonResponseCom.weeth.domain.account.application.dto.response.MyAccountResponse": {
-            /** Format: int32 */
-            code: number;
-            message: string;
-            data?: components["schemas"]["com.weeth.domain.account.application.dto.response.MyAccountResponse"];
-        };
-        "com.weeth.domain.account.application.dto.response.AccountVisibilityResponse": {
-            /**
-             * @description 회비 기능 부원 공개 여부. false면 프론트에서 회비 탭을 숨긴다.
-             * @example true
-             */
-            visible: boolean;
-        };
-        "com.weeth.global.common.response.CommonResponseCom.weeth.domain.account.application.dto.response.AccountVisibilityResponse": {
-            /** Format: int32 */
-            code: number;
-            message: string;
-            data?: components["schemas"]["com.weeth.domain.account.application.dto.response.AccountVisibilityResponse"];
-        };
-        "com.weeth.domain.account.application.dto.response.AccountCardinalResponse": {
-            /**
-             * Format: int32
-             * @description 회비 기수
-             * @example 7
-             */
-            cardinal: number;
-            /**
-             * @description 회비 장부 이름
-             * @example 7기 회비
-             */
-            name?: string;
-            /**
-             * @description 선택 가능한 최신 기수 여부
-             * @example true
-             */
-            isLatest: boolean;
-        };
-        "com.weeth.global.common.response.CommonResponseJava.util.ListCom.weeth.domain.account.application.dto.response.AccountCardinalResponse": {
-            /** Format: int32 */
-            code: number;
-            message: string;
-            data?: components["schemas"]["com.weeth.domain.account.application.dto.response.AccountCardinalResponse"][];
-        };
-        "com.weeth.domain.club.application.dto.response.ClubMembershipStatusResponse": {
-            /**
-             * @description ACTIVE 상태 동아리 존재 여부
-             * @example true
-             */
-            hasActiveClub: boolean;
-            /**
-             * @description WAITING 상태 동아리 존재 여부
-             * @example false
-             */
-            hasWaitingClub: boolean;
-            /** @description ACTIVE 동아리 정보 (없으면 null) */
-            activeClub?: components["schemas"]["com.weeth.domain.club.application.dto.response.ClubInfoResponse"];
-            /** @description WAITING 동아리 정보 (없으면 null) */
-            waitingClub?: components["schemas"]["com.weeth.domain.club.application.dto.response.ClubInfoResponse"];
-        };
-        "com.weeth.global.common.response.CommonResponseCom.weeth.domain.club.application.dto.response.ClubMembershipStatusResponse": {
-            /** Format: int32 */
-            code: number;
-            message: string;
-            data?: components["schemas"]["com.weeth.domain.club.application.dto.response.ClubMembershipStatusResponse"];
-        };
+  schemas: {
+    'com.weeth.domain.user.application.dto.request.AgreeTermsRequest': {
+      /**
+       * @description 서비스 이용약관 동의
+       * @example true
+       */
+      termsAgreed: boolean;
+      /**
+       * @description 개인정보 처리방침 동의
+       * @example true
+       */
+      privacyAgreed: boolean;
     };
-    responses: never;
-    parameters: never;
-    requestBodies: never;
-    headers: never;
-    pathItems: never;
+    'com.weeth.global.auth.jwt.application.dto.JwtDto': {
+      accessToken: string;
+      refreshToken: string;
+    };
+    'com.weeth.global.common.response.CommonResponseCom.weeth.global.auth.jwt.application.dto.JwtDto': {
+      /** Format: int32 */
+      code: number;
+      message: string;
+      data?: components['schemas']['com.weeth.global.auth.jwt.application.dto.JwtDto'];
+    };
+    'com.weeth.domain.user.application.dto.request.SocialLoginRequest': {
+      /**
+       * @description OAuth2 인가 코드(auth code)
+       * @example SplxlOBeZQQYbYS6WxSbIA
+       */
+      authCode: string;
+    };
+    'com.weeth.domain.user.application.dto.response.SocialLoginResponse': {
+      /** @description 사용자 이름 */
+      name: string;
+      /** @description 액세스 토큰 */
+      accessToken: string;
+      /** @description 리프레시 토큰 */
+      refreshToken: string;
+      /**
+       * @description 약관 동의 완료 여부 (true: 약관 동의 완료, false: 약관 동의 필요)
+       * @example true
+       */
+      registered: boolean;
+    };
+    'com.weeth.global.common.response.CommonResponseCom.weeth.domain.user.application.dto.response.SocialLoginResponse': {
+      /** Format: int32 */
+      code: number;
+      message: string;
+      data?: components['schemas']['com.weeth.domain.user.application.dto.response.SocialLoginResponse'];
+    };
+    'com.weeth.domain.file.application.dto.request.FileSaveRequest': {
+      /**
+       * @description 원본 파일명
+       * @example profile-image.png
+       */
+      fileName: string;
+      /**
+       * @description 저장소 키. `Type/YY-MM/UUID_원본파일명` 형식
+       * @example POST/2026-02/2c0a4d45-ec94-4ec0-85e1-b489c2eaf9c3_profile-image.png
+       */
+      storageKey: string;
+      /**
+       * Format: int64
+       * @description 파일 크기(bytes)
+       * @example 102400
+       */
+      fileSize: number;
+      /**
+       * @description 파일 Content-Type. `image/png, image/jpeg, application/pdf` 지원
+       * @example image/png
+       */
+      contentType: string;
+    };
+    'com.weeth.domain.user.application.dto.request.CreateMultiProfileRequest': {
+      /**
+       * @description 프로필 이름
+       * @example 홍길동
+       */
+      name: string;
+      /** @description 프로필 사진 */
+      profileImage?: components['schemas']['com.weeth.domain.file.application.dto.request.FileSaveRequest'];
+      /** @description 헤더 사진 */
+      headerImage?: components['schemas']['com.weeth.domain.file.application.dto.request.FileSaveRequest'];
+      /**
+       * @description 자기소개
+       * @example 안녕하세요!
+       */
+      bio?: string;
+      /**
+       * @description 생성 직후 사용할 동아리 ID 목록
+       * @example [
+       *       "1A2b3C",
+       *       "4D5e6F"
+       *     ]
+       */
+      clubIds: string[];
+    };
+    'com.weeth.domain.user.application.dto.response.UserProfileClubResponse': {
+      /**
+       * @description 동아리 ID
+       * @example 1A2b3C
+       */
+      clubId: string;
+      /**
+       * @description 동아리 이름
+       * @example Leets
+       */
+      name: string;
+    };
+    'com.weeth.domain.user.application.dto.response.UserProfileResponse': {
+      /**
+       * Format: int64
+       * @description 프로필 ID
+       * @example 1
+       */
+      profileId: number;
+      /**
+       * @description 프로필 이름
+       * @example 길동
+       */
+      name: string;
+      /** @description 프로필 이미지 URL */
+      profileImageUrl?: string;
+      /** @description 헤더 이미지 URL */
+      headerImageUrl?: string;
+      /** @description 자기소개 */
+      bio?: string;
+      /** @description 사용 중인 동아리 목록 */
+      usingClubs: components['schemas']['com.weeth.domain.user.application.dto.response.UserProfileClubResponse'][];
+    };
+    'com.weeth.global.common.response.CommonResponseCom.weeth.domain.user.application.dto.response.UserProfileResponse': {
+      /** Format: int32 */
+      code: number;
+      message: string;
+      data?: components['schemas']['com.weeth.domain.user.application.dto.response.UserProfileResponse'];
+    };
+    'com.weeth.domain.user.application.dto.request.CreateInquiryRequest': {
+      /**
+       * Format: email
+       * @description 이메일
+       * @example user@example.com
+       */
+      email: string;
+      /**
+       * @description 문의 내용
+       * @example 서비스에 대해 문의드립니다.
+       */
+      message?: string;
+    };
+    'com.weeth.global.common.response.CommonResponseJava.lang.Void': {
+      /** Format: int32 */
+      code: number;
+      message: string;
+      data?: unknown;
+    };
+    'com.weeth.domain.club.application.dto.request.ClubCreateRequest': {
+      /**
+       * @description 동아리 이름
+       * @example Leets
+       */
+      name: string;
+      /**
+       * @description 학교 이름
+       * @example 가천대학교
+       */
+      schoolName: string;
+      /**
+       * @description 동아리 소개
+       * @example 함께 배우고 성장하는 개발자 커뮤니티
+       */
+      description?: string;
+      /**
+       * Format: email
+       * @description 연락 이메일
+       * @example club@example.com
+       */
+      contactEmail?: string;
+      /**
+       * @description 연락 전화번호
+       * @example 01012345678
+       */
+      contactPhoneNumber: string;
+      /**
+       * @description 주 연락처
+       * @example PHONE
+       * @enum {string}
+       */
+      primaryContact: 'EMAIL' | 'PHONE';
+      /**
+       * Format: int32
+       * @description 가장 최근 기수 번호
+       * @example 7
+       */
+      currentCardinal: number;
+      /** @description 프로필 사진 */
+      profileImage?: components['schemas']['com.weeth.domain.file.application.dto.request.FileSaveRequest'];
+      /** @description 배경 사진 */
+      backgroundImage?: components['schemas']['com.weeth.domain.file.application.dto.request.FileSaveRequest'];
+    };
+    'com.weeth.domain.club.application.dto.response.ClubCreateResponse': {
+      /**
+       * @description 동아리 ID (Base62 인코딩)
+       * @example YUNJcjFKMO
+       */
+      clubId: string;
+      /**
+       * @description 동아리 이름
+       * @example Leets
+       */
+      clubName: string;
+    };
+    'com.weeth.global.common.response.CommonResponseCom.weeth.domain.club.application.dto.response.ClubCreateResponse': {
+      /** Format: int32 */
+      code: number;
+      message: string;
+      data?: components['schemas']['com.weeth.domain.club.application.dto.response.ClubCreateResponse'];
+    };
+    'com.weeth.domain.club.application.dto.request.ClubMemberCardinalSetRequest': {
+      /**
+       * @description 활동 기수 번호 목록
+       * @example [
+       *       1,
+       *       2,
+       *       3
+       *     ]
+       */
+      cardinals: number[];
+    };
+    'com.weeth.global.common.response.CommonResponseKotlin.Unit': {
+      /** Format: int32 */
+      code: number;
+      message: string;
+    };
+    'com.weeth.domain.club.application.dto.request.ClubJoinRequest': {
+      /**
+       * @description 초대 코드
+       * @example 550e8400-e29b-41d4-a716-446655440000
+       */
+      code: string;
+    };
+    'com.weeth.domain.board.application.dto.request.CreatePostRequest': {
+      /**
+       * @description 게시글 제목
+       * @example 스터디 로그
+       */
+      title: string;
+      /**
+       * @description 게시글 내용
+       * @example 내용입니다.
+       */
+      content: string;
+      /** @description 첨부 파일 목록 */
+      files?: components['schemas']['com.weeth.domain.file.application.dto.request.FileSaveRequest'][];
+    };
+    'com.weeth.domain.board.application.dto.response.PostSaveResponse': {
+      /**
+       * Format: int64
+       * @description 게시글 ID
+       * @example 1
+       */
+      id: number;
+      /**
+       * Format: int64
+       * @description 게시판 ID
+       * @example 1
+       */
+      boardId: number;
+    };
+    'com.weeth.global.common.response.CommonResponseCom.weeth.domain.board.application.dto.response.PostSaveResponse': {
+      /** Format: int32 */
+      code: number;
+      message: string;
+      data?: components['schemas']['com.weeth.domain.board.application.dto.response.PostSaveResponse'];
+    };
+    'com.weeth.domain.board.application.dto.response.PostLikeActionResponse': {
+      /**
+       * Format: int64
+       * @description 게시판 ID
+       * @example 1
+       */
+      boardId: number;
+      /**
+       * @description 좋아요 여부
+       * @example true
+       */
+      isLiked: boolean;
+      /**
+       * Format: int32
+       * @description 좋아요 수
+       * @example 5
+       */
+      likeCount: number;
+    };
+    'com.weeth.global.common.response.CommonResponseCom.weeth.domain.board.application.dto.response.PostLikeActionResponse': {
+      /** Format: int32 */
+      code: number;
+      message: string;
+      data?: components['schemas']['com.weeth.domain.board.application.dto.response.PostLikeActionResponse'];
+    };
+    'com.weeth.domain.attendance.application.dto.request.CheckInRequest': {
+      /**
+       * Format: int32
+       * @description 출석 코드
+       * @example 123456
+       */
+      code: number;
+    };
+    'com.weeth.domain.comment.application.dto.request.CommentSaveRequest': {
+      /**
+       * Format: int64
+       * @description 부모 댓글 ID (대댓글인 경우)
+       * @example 1
+       */
+      parentCommentId?: number;
+      /**
+       * @description 댓글 내용
+       * @example 댓글입니다.
+       */
+      content: string;
+      /** @description 첨부 파일 목록 */
+      files?: components['schemas']['com.weeth.domain.file.application.dto.request.FileSaveRequest'][];
+    };
+    'com.weeth.global.common.response.CommonResponseJava.lang.String': {
+      /** Format: int32 */
+      code: number;
+      message: string;
+      data?: string;
+    };
+    'com.weeth.domain.user.application.dto.request.UpdateUserProfileRequest': {
+      /**
+       * @description 이름
+       * @example 홍길동
+       */
+      name?: string;
+      /**
+       * Format: email
+       * @description 이메일
+       * @example hong@example.com
+       */
+      email?: string;
+      /**
+       * @description 학번
+       * @example 20201234
+       */
+      studentId?: string;
+      /**
+       * @description 전화번호
+       * @example 01012345678
+       */
+      tel?: string;
+      /**
+       * @description 학교
+       * @example 가천대학교
+       */
+      school?: string;
+      /**
+       * @description 학과
+       * @example 컴퓨터공학과
+       */
+      department?: string;
+    };
+    'com.weeth.domain.user.application.dto.request.UpdateMultiProfileRequest': {
+      /**
+       * @description 프로필 이름 (null=변경 안 함)
+       * @example 새 이름
+       */
+      name?: string;
+      /** @description 프로필 사진 (null=변경 안 함) */
+      profileImage?: components['schemas']['com.weeth.domain.file.application.dto.request.FileSaveRequest'];
+      /** @description 헤더 사진 (null=변경 안 함) */
+      headerImage?: components['schemas']['com.weeth.domain.file.application.dto.request.FileSaveRequest'];
+      /**
+       * @description 자기소개 (null=변경 안 함)
+       * @example 안녕하세요!
+       */
+      bio?: string;
+    };
+    'com.weeth.domain.user.application.dto.request.AssignClubProfileRequest': {
+      /** @description 동아리별 프로필 설정 목록 */
+      assignments: components['schemas']['com.weeth.domain.user.application.dto.request.ClubProfileAssignmentRequest'][];
+    };
+    'com.weeth.domain.user.application.dto.request.ClubProfileAssignmentRequest': {
+      /**
+       * @description 동아리 ID
+       * @example 1A2b3C
+       */
+      clubId: string;
+      /**
+       * Format: int64
+       * @description 사용할 프로필 ID
+       * @example 1
+       */
+      profileId: number;
+    };
+    'com.weeth.domain.board.application.dto.request.UpdatePostRequest': {
+      /** @description 게시글 제목 (null=변경 안 함) */
+      title?: string;
+      /** @description 게시글 내용 (null=변경 안 함) */
+      content?: string;
+      /** @description 첨부 파일 변경 규약: null=변경 안 함, []=전체 삭제, 배열 전달=해당 목록으로 교체 */
+      files?: components['schemas']['com.weeth.domain.file.application.dto.request.FileSaveRequest'][];
+    };
+    'com.weeth.domain.comment.application.dto.request.CommentUpdateRequest': {
+      /**
+       * @description 댓글 내용
+       * @example 댓글입니다.
+       */
+      content: string;
+      /** @description 첨부 파일 변경 규약: null=변경 안 함, []=전체 삭제, 배열 전달=해당 목록으로 교체 */
+      files?: components['schemas']['com.weeth.domain.file.application.dto.request.FileSaveRequest'][];
+    };
+    'com.weeth.domain.user.application.dto.response.UserProfilesResponse': {
+      /** @description 멀티프로필 목록 */
+      profiles: components['schemas']['com.weeth.domain.user.application.dto.response.UserProfileResponse'][];
+    };
+    'com.weeth.global.common.response.CommonResponseCom.weeth.domain.user.application.dto.response.UserProfilesResponse': {
+      /** Format: int32 */
+      code: number;
+      message: string;
+      data?: components['schemas']['com.weeth.domain.user.application.dto.response.UserProfilesResponse'];
+    };
+    'com.weeth.domain.user.application.dto.response.UserProfileAssignableClubResponse': {
+      /**
+       * @description 동아리 ID
+       * @example 1A2b3C
+       */
+      clubId: string;
+      /**
+       * @description 동아리 이름
+       * @example Leets
+       */
+      name: string;
+      /** @description 동아리 사진 URL */
+      clubImage?: string;
+      /**
+       * Format: int64
+       * @description 동아리 멤버 수
+       * @example 100
+       */
+      clubMemberNumber: number;
+    };
+    'com.weeth.domain.user.application.dto.response.UserProfileAssignableClubsResponse': {
+      /** @description 프로필을 사용할 수 있는 동아리 목록 */
+      clubs: components['schemas']['com.weeth.domain.user.application.dto.response.UserProfileAssignableClubResponse'][];
+    };
+    'com.weeth.global.common.response.CommonResponseCom.weeth.domain.user.application.dto.response.UserProfileAssignableClubsResponse': {
+      /** Format: int32 */
+      code: number;
+      message: string;
+      data?: components['schemas']['com.weeth.domain.user.application.dto.response.UserProfileAssignableClubsResponse'];
+    };
+    'com.weeth.domain.university.application.dto.response.SchoolResponse': {
+      /**
+       * @description 학교명
+       * @example 가천대학교
+       */
+      schoolName: string;
+      /**
+       * @description 지역
+       * @example 경기도
+       */
+      region: string;
+    };
+    'com.weeth.global.common.response.CommonResponseJava.util.ListCom.weeth.domain.university.application.dto.response.SchoolResponse': {
+      /** Format: int32 */
+      code: number;
+      message: string;
+      data?: components['schemas']['com.weeth.domain.university.application.dto.response.SchoolResponse'][];
+    };
+    'com.weeth.domain.university.application.dto.response.MajorResponse': {
+      /**
+       * @description 학과명
+       * @example 컴퓨터공학과
+       */
+      majorName: string;
+      /**
+       * @description 계열
+       * @example 공학계열
+       */
+      category: string;
+    };
+    'com.weeth.global.common.response.CommonResponseJava.util.ListCom.weeth.domain.university.application.dto.response.MajorResponse': {
+      /** Format: int32 */
+      code: number;
+      message: string;
+      data?: components['schemas']['com.weeth.domain.university.application.dto.response.MajorResponse'][];
+    };
+    'com.weeth.domain.file.application.dto.response.UrlResponse': {
+      /**
+       * @description 원본 파일명
+       * @example profile-image.png
+       */
+      fileName: string;
+      /**
+       * @description Presigned PUT URL
+       * @example https://bucket.s3.amazonaws.com/TEMP/2026-02/uuid_profile-image.png
+       */
+      putUrl: string;
+      /**
+       * @description 저장소 키
+       * @example TEMP/2026-02/uuid_profile-image.png
+       */
+      storageKey: string;
+    };
+    'com.weeth.global.common.response.CommonResponseJava.util.ListCom.weeth.domain.file.application.dto.response.UrlResponse': {
+      /** Format: int32 */
+      code: number;
+      message: string;
+      data?: components['schemas']['com.weeth.domain.file.application.dto.response.UrlResponse'][];
+    };
+    'com.weeth.domain.club.application.dto.response.ClubInfoResponse': {
+      /**
+       * @description 동아리 ID (Base62 인코딩)
+       * @example 1A2b3C
+       */
+      id: string;
+      /**
+       * @description 동아리 이름
+       * @example Leets
+       */
+      name: string;
+      /**
+       * @description 학교 이름
+       * @example 가천대학교
+       */
+      schoolName: string;
+      /**
+       * @description 동아리 설명
+       * @example 함께 배우고 성장하는 개발자 커뮤니티
+       */
+      description?: string;
+      /** @description 동아리 프로필 이미지 URL */
+      profileImageUrl?: string;
+      /**
+       * Format: int64
+       * @description 활동 부원 수
+       * @example 368
+       */
+      memberCount: number;
+      /**
+       * @description 활동 기수 목록
+       * @example [
+       *       31,
+       *       32
+       *     ]
+       */
+      cardinals: number[];
+      /**
+       * @description 나의 권한
+       * @example USER
+       * @enum {string}
+       */
+      memberRole: 'USER' | 'ADMIN' | 'LEAD';
+      /**
+       * @description 나의 멤버 상태
+       * @example ACTIVE
+       * @enum {string}
+       */
+      memberStatus: 'WAITING' | 'ACTIVE' | 'BANNED' | 'LEFT';
+      /** @description 현재 사용 중인 멀티프로필 */
+      usingProfile?: components['schemas']['com.weeth.domain.club.application.dto.response.ClubUsingProfileResponse'];
+    };
+    'com.weeth.domain.club.application.dto.response.ClubUsingProfileResponse': {
+      /**
+       * Format: int64
+       * @description 프로필 ID
+       * @example 1
+       */
+      profileId: number;
+      /**
+       * @description 프로필 이름
+       * @example 길동
+       */
+      name: string;
+      /** @description 프로필 이미지 URL */
+      profileImageUrl?: string;
+      /**
+       * @description 자기소개
+       * @example 안녕하세요
+       */
+      bio?: string;
+    };
+    'com.weeth.global.common.response.CommonResponseJava.util.ListCom.weeth.domain.club.application.dto.response.ClubInfoResponse': {
+      /** Format: int32 */
+      code: number;
+      message: string;
+      data?: components['schemas']['com.weeth.domain.club.application.dto.response.ClubInfoResponse'][];
+    };
+    'com.weeth.domain.club.application.dto.response.ClubPublicResponse': {
+      /**
+       * @description 동아리 ID (Base62 인코딩)
+       * @example 1A2b3C
+       */
+      id: string;
+      /**
+       * @description 동아리 이름
+       * @example Leets
+       */
+      name: string;
+      /**
+       * @description 동아리 소개
+       * @example 함께 배우고 성장하는 개발자 커뮤니티
+       */
+      description?: string;
+      /** @description 프로필 사진 URL */
+      profileImageUrl?: string;
+    };
+    'com.weeth.global.common.response.CommonResponseCom.weeth.domain.club.application.dto.response.ClubPublicResponse': {
+      /** Format: int32 */
+      code: number;
+      message: string;
+      data?: components['schemas']['com.weeth.domain.club.application.dto.response.ClubPublicResponse'];
+    };
+    'com.weeth.domain.user.application.dto.response.UserMyPageCurrentProfileResponse': {
+      /**
+       * Format: int64
+       * @description 멀티프로필 ID
+       * @example 1
+       */
+      profileId: number;
+      /**
+       * @description 멀티 프로필 이름
+       * @example 멀티 프로필 길동
+       */
+      name: string;
+      /** @description 멀티 프로필 이미지 URL */
+      profileImageUrl?: string;
+      /** @description 멀티 프로필 헤더 이미지 URL */
+      headerImageUrl?: string;
+      /** @description 멀티 프로필 자기소개 */
+      bio?: string;
+    };
+    'com.weeth.domain.user.application.dto.response.UserMyPageInfoResponse': {
+      /**
+       * @description 사용자 이름
+       * @example 홍길동
+       */
+      name: string;
+      /**
+       * @description 전화번호
+       * @example 01012345678
+       */
+      tel?: string;
+      /**
+       * @description 이메일
+       * @example hong@example.com
+       */
+      email: string;
+      /**
+       * @description 학교
+       * @example 가천대학교
+       */
+      school?: string;
+      /**
+       * @description 학과
+       * @example 컴퓨터공학과
+       */
+      department?: string;
+      /**
+       * @description 학번
+       * @example 20201234
+       */
+      studentId?: string;
+    };
+    'com.weeth.domain.user.application.dto.response.UserMyPageResponse': {
+      /** @description 사용자 기본 개인정보 */
+      user: components['schemas']['com.weeth.domain.user.application.dto.response.UserMyPageInfoResponse'];
+      /** @description 마이페이지 요약 */
+      stats: components['schemas']['com.weeth.domain.user.application.dto.response.UserMyPageStatsResponse'];
+      /** @description 현재 사용 중인 프로필 목록 */
+      usingProfiles: components['schemas']['com.weeth.domain.user.application.dto.response.UserMyPageUsingProfileResponse'][];
+      /** @description 현재 동아리에서 사용 중인 멀티프로필 */
+      currentProfile?: components['schemas']['com.weeth.domain.user.application.dto.response.UserMyPageCurrentProfileResponse'];
+    };
+    'com.weeth.domain.user.application.dto.response.UserMyPageStatsResponse': {
+      /**
+       * Format: int64
+       * @description 작성한 게시글 수
+       * @example 12
+       */
+      postCount: number;
+      /**
+       * Format: int64
+       * @description 출석한 세션 수
+       * @example 8
+       */
+      attendedSessionCount: number;
+    };
+    'com.weeth.domain.user.application.dto.response.UserMyPageUsingProfileResponse': {
+      /**
+       * Format: int64
+       * @description 프로필 ID
+       * @example 1
+       */
+      profileId: number;
+      /**
+       * @description 프로필 이름
+       * @example 길동
+       */
+      name: string;
+      /** @description 프로필 이미지 URL */
+      profileImageUrl?: string;
+      /** @description 헤더 이미지 URL */
+      headerImageUrl?: string;
+      /** @description 자기소개 */
+      bio?: string;
+      /** @description 이 프로필을 사용 중인 동아리 목록 */
+      clubs: components['schemas']['com.weeth.domain.user.application.dto.response.UserProfileClubResponse'][];
+    };
+    'com.weeth.global.common.response.CommonResponseCom.weeth.domain.user.application.dto.response.UserMyPageResponse': {
+      /** Format: int32 */
+      code: number;
+      message: string;
+      data?: components['schemas']['com.weeth.domain.user.application.dto.response.UserMyPageResponse'];
+    };
+    'com.weeth.domain.user.application.dto.response.UserMyPostResponse': {
+      /**
+       * Format: int64
+       * @description 게시글 ID
+       * @example 1
+       */
+      postId: number;
+      /**
+       * @description 동아리 ID
+       * @example 1A2b3C
+       */
+      clubId: string;
+      /**
+       * @description 동아리 이름
+       * @example Leets
+       */
+      clubName: string;
+      /**
+       * Format: int64
+       * @description 게시판 ID
+       * @example 10
+       */
+      boardId: number;
+      /**
+       * @description 게시판 이름
+       * @example 자유게시판
+       */
+      boardName: string;
+      /**
+       * @description 게시글 제목
+       * @example 제목
+       */
+      title: string;
+      /**
+       * @description 게시글 내용
+       * @example 내용
+       */
+      content: string;
+      /**
+       * Format: int32
+       * @description 댓글 수
+       * @example 3
+       */
+      commentCount: number;
+      /**
+       * Format: int32
+       * @description 좋아요 수
+       * @example 5
+       */
+      likeCount: number;
+      /**
+       * Format: date-time
+       * @description 작성 시각
+       */
+      createdAt: string;
+      /**
+       * @description 신규 게시글 여부 (24시간 이내)
+       * @example true
+       */
+      isNew: boolean;
+    };
+    'com.weeth.global.common.response.CommonResponseCom.weeth.global.common.response.SliceResponseCom.weeth.domain.user.application.dto.response.UserMyPostResponse': {
+      /** Format: int32 */
+      code: number;
+      message: string;
+      data?: components['schemas']['com.weeth.global.common.response.SliceResponseCom.weeth.domain.user.application.dto.response.UserMyPostResponse'];
+    };
+    'com.weeth.global.common.response.SliceResponseCom.weeth.domain.user.application.dto.response.UserMyPostResponse': {
+      content: components['schemas']['com.weeth.domain.user.application.dto.response.UserMyPostResponse'][];
+      /** Format: int32 */
+      pageNumber: number;
+      /** Format: int32 */
+      pageSize: number;
+      /** Format: int32 */
+      numberOfElements: number;
+      hasNext: boolean;
+    };
+    'com.weeth.domain.user.application.dto.response.UserAttendedSessionResponse': {
+      /**
+       * Format: int64
+       * @description 출석 ID
+       * @example 1
+       */
+      attendanceId: number;
+      /**
+       * @description 동아리 ID
+       * @example 1A2b3C
+       */
+      clubId: string;
+      /**
+       * @description 동아리 이름
+       * @example Leets
+       */
+      clubName: string;
+      /**
+       * Format: int64
+       * @description 세션 ID
+       * @example 10
+       */
+      sessionId: number;
+      /**
+       * @description 세션 제목
+       * @example 1차 정기모임
+       */
+      sessionTitle: string;
+      /**
+       * Format: int32
+       * @description 기수
+       * @example 6
+       */
+      cardinal: number;
+      /**
+       * Format: date-time
+       * @description 시작 시각
+       */
+      start: string;
+      /**
+       * Format: date-time
+       * @description 종료 시각
+       */
+      end: string;
+      /**
+       * @description 출석 상태
+       * @example ATTEND
+       * @enum {string}
+       */
+      status: 'ATTEND' | 'PENDING' | 'ABSENT';
+    };
+    'com.weeth.global.common.response.CommonResponseCom.weeth.global.common.response.SliceResponseCom.weeth.domain.user.application.dto.response.UserAttendedSessionResponse': {
+      /** Format: int32 */
+      code: number;
+      message: string;
+      data?: components['schemas']['com.weeth.global.common.response.SliceResponseCom.weeth.domain.user.application.dto.response.UserAttendedSessionResponse'];
+    };
+    'com.weeth.global.common.response.SliceResponseCom.weeth.domain.user.application.dto.response.UserAttendedSessionResponse': {
+      content: components['schemas']['com.weeth.domain.user.application.dto.response.UserAttendedSessionResponse'][];
+      /** Format: int32 */
+      pageNumber: number;
+      /** Format: int32 */
+      pageSize: number;
+      /** Format: int32 */
+      numberOfElements: number;
+      hasNext: boolean;
+    };
+    'com.weeth.domain.session.application.dto.response.SessionResponse': {
+      /**
+       * Format: int64
+       * @description 정기모임 ID
+       * @example 1
+       */
+      id: number;
+      /**
+       * @description 제목
+       * @example 1차 정기모임
+       */
+      title: string;
+      /** @description 내용 */
+      content?: string;
+      /**
+       * @description 장소
+       * @example 공학관 401호
+       */
+      location?: string;
+      /**
+       * @description 작성자 이름
+       * @example 이지훈
+       */
+      name?: string;
+      /**
+       * Format: int32
+       * @description 기수
+       * @example 4
+       */
+      cardinal: number;
+      /**
+       * @description 일정 타입
+       * @example MEETING
+       * @enum {string}
+       */
+      type: 'EVENT' | 'SESSION';
+      /**
+       * Format: int32
+       * @description 출석 코드
+       * @example 1234
+       */
+      code?: number;
+      /**
+       * Format: date-time
+       * @description 시작 시간
+       */
+      start: string;
+      /**
+       * Format: date-time
+       * @description 종료 시간
+       */
+      end: string;
+      /**
+       * Format: date-time
+       * @description 생성 시간
+       */
+      createdAt?: string;
+      /**
+       * Format: date-time
+       * @description 수정 시간
+       */
+      modifiedAt?: string;
+    };
+    'com.weeth.global.common.response.CommonResponseCom.weeth.domain.session.application.dto.response.SessionResponse': {
+      /** Format: int32 */
+      code: number;
+      message: string;
+      data?: components['schemas']['com.weeth.domain.session.application.dto.response.SessionResponse'];
+    };
+    'com.weeth.domain.schedule.application.dto.response.ScheduleResponse': {
+      /**
+       * Format: int64
+       * @description 일정 ID
+       * @example 1
+       */
+      id: number;
+      /**
+       * @description 제목
+       * @example 1차 정기모임
+       */
+      title: string;
+      /**
+       * Format: date-time
+       * @description 시작 시간
+       */
+      start: string;
+      /**
+       * Format: date-time
+       * @description 종료 시간
+       */
+      end: string;
+      /**
+       * @description 일정 유형
+       * @example SESSION
+       * @enum {string}
+       */
+      type: 'EVENT' | 'SESSION';
+      /**
+       * @description 장소
+       * @example 가천대 체육관
+       */
+      location?: string;
+      /**
+       * Format: int32
+       * @description 기수
+       * @example 7
+       */
+      cardinal: number;
+    };
+    'com.weeth.global.common.response.CommonResponseJava.util.MapJava.lang.IntegerJava.util.ListCom.weeth.domain.schedule.application.dto.response.ScheduleResponse': {
+      /** Format: int32 */
+      code: number;
+      message: string;
+      data?: {
+        [
+          key: string
+        ]: components['schemas']['com.weeth.domain.schedule.application.dto.response.ScheduleResponse'][];
+      };
+    };
+    'com.weeth.global.common.response.CommonResponseJava.util.ListCom.weeth.domain.schedule.application.dto.response.ScheduleResponse': {
+      /** Format: int32 */
+      code: number;
+      message: string;
+      data?: components['schemas']['com.weeth.domain.schedule.application.dto.response.ScheduleResponse'][];
+    };
+    'com.weeth.domain.club.application.dto.response.ClubMemberProfileResponse': {
+      /**
+       * Format: int64
+       * @description 사용자 ID
+       * @example 1
+       */
+      userId: number;
+      /**
+       * Format: int64
+       * @description 멤버 ID
+       * @example 1
+       */
+      clubMemberId: number;
+      /**
+       * @description 사용자 이름
+       * @example 홍길동
+       */
+      name: string;
+      /**
+       * @description 이메일
+       * @example hong@example.com
+       */
+      email: string;
+      /**
+       * @description 전화번호
+       * @example 01012345678
+       */
+      tel?: string;
+      /**
+       * @description 학교
+       * @example 가천대학교
+       */
+      school?: string;
+      /**
+       * @description 학과
+       * @example 컴퓨터공학과
+       */
+      department?: string;
+      /**
+       * @description 학번
+       * @example 20201234
+       */
+      studentId?: string;
+      /**
+       * @description 소속 기수 목록
+       * @example [
+       *       6,
+       *       7
+       *     ]
+       */
+      cardinals: number[];
+      /**
+       * @description 멤버 권한
+       * @example USER
+       * @enum {string}
+       */
+      memberRole: 'USER' | 'ADMIN' | 'LEAD';
+      /**
+       * @description 멤버 상태
+       * @example ACTIVE
+       * @enum {string}
+       */
+      memberStatus: 'WAITING' | 'ACTIVE' | 'BANNED' | 'LEFT';
+      /**
+       * @description 동아리 프로필 이미지 URL
+       * @example https://cdn.example.com/profile.jpg
+       */
+      profileImageUrl?: string;
+      /** @description 자기소개 */
+      bio?: string;
+    };
+    'com.weeth.global.common.response.CommonResponseCom.weeth.domain.club.application.dto.response.ClubMemberProfileResponse': {
+      /** Format: int32 */
+      code: number;
+      message: string;
+      data?: components['schemas']['com.weeth.domain.club.application.dto.response.ClubMemberProfileResponse'];
+    };
+    'com.weeth.domain.club.application.dto.response.ClubMemberSummaryResponse': {
+      /**
+       * Format: int64
+       * @description 사용자 ID
+       * @example 1
+       */
+      userId: number;
+      /**
+       * @description 이름
+       * @example 홍길동
+       */
+      name: string;
+      /**
+       * @description 소속 기수 목록
+       * @example [
+       *       6,
+       *       7
+       *     ]
+       */
+      cardinals: number[];
+      /**
+       * @description 동아리 내 권한
+       * @example USER
+       * @enum {string}
+       */
+      role: 'USER' | 'ADMIN' | 'LEAD';
+    };
+    'com.weeth.global.common.response.CommonResponseCom.weeth.domain.club.application.dto.response.ClubMemberSummaryResponse': {
+      /** Format: int32 */
+      code: number;
+      message: string;
+      data?: components['schemas']['com.weeth.domain.club.application.dto.response.ClubMemberSummaryResponse'];
+    };
+    'com.weeth.domain.club.application.dto.response.ProfileStatusResponse': {
+      /** @description 기수 등록 여부 */
+      cardinalAssigned: boolean;
+      /** @description 프로필 완성 여부 (이름, 학번, 전화번호, 학교, 학과) */
+      profileCompleted: boolean;
+      /**
+       * @description 미완성 필드 목록
+       * @example [
+       *       "studentId",
+       *       "tel"
+       *     ]
+       */
+      missingFields: string[];
+    };
+    'com.weeth.global.common.response.CommonResponseCom.weeth.domain.club.application.dto.response.ProfileStatusResponse': {
+      /** Format: int32 */
+      code: number;
+      message: string;
+      data?: components['schemas']['com.weeth.domain.club.application.dto.response.ProfileStatusResponse'];
+    };
+    'com.weeth.domain.schedule.application.dto.response.EventResponse': {
+      /**
+       * Format: int64
+       * @description 일정 ID
+       * @example 1
+       */
+      id: number;
+      /**
+       * @description 일정 제목
+       * @example MT
+       */
+      title: string;
+      /** @description 일정 내용 */
+      content?: string;
+      /**
+       * @description 장소
+       * @example 가평
+       */
+      location?: string;
+      /**
+       * @description 작성자 이름
+       * @example 이지훈
+       */
+      name?: string;
+      /**
+       * Format: int32
+       * @description 기수
+       * @example 4
+       */
+      cardinal: number;
+      /**
+       * @description 일정 타입
+       * @example EVENT
+       * @enum {string}
+       */
+      type: 'EVENT' | 'SESSION';
+      /**
+       * Format: date-time
+       * @description 시작 시간
+       */
+      start: string;
+      /**
+       * Format: date-time
+       * @description 종료 시간
+       */
+      end: string;
+      /**
+       * Format: date-time
+       * @description 생성 시간
+       */
+      createdAt?: string;
+      /**
+       * Format: date-time
+       * @description 수정 시간
+       */
+      modifiedAt?: string;
+    };
+    'com.weeth.global.common.response.CommonResponseCom.weeth.domain.schedule.application.dto.response.EventResponse': {
+      /** Format: int32 */
+      code: number;
+      message: string;
+      data?: components['schemas']['com.weeth.domain.schedule.application.dto.response.EventResponse'];
+    };
+    'com.weeth.domain.dashboard.application.dto.response.DashboardUnreadNoticeResponse': {
+      /**
+       * Format: int64
+       * @description 게시글 ID
+       * @example 1
+       */
+      id: number;
+      /**
+       * Format: int64
+       * @description 게시판 ID
+       * @example 1
+       */
+      boardId: number;
+      /**
+       * @description 공지 제목
+       * @example 중간고사 기간 공지
+       */
+      title: string;
+      /**
+       * @description 공지 내용
+       * @example 이번 주 정기 모임은 중간고사 기간으로 인해 쉬어갑니다.
+       */
+      content: string;
+    };
+    'com.weeth.global.common.response.CommonResponseCom.weeth.domain.dashboard.application.dto.response.DashboardUnreadNoticeResponse': {
+      /** Format: int32 */
+      code: number;
+      message: string;
+      data?: components['schemas']['com.weeth.domain.dashboard.application.dto.response.DashboardUnreadNoticeResponse'];
+    };
+    PageableObject: {
+      /** Format: int64 */
+      offset?: number;
+      sort?: components['schemas']['SortObject'];
+      unpaged?: boolean;
+      paged?: boolean;
+      /** Format: int32 */
+      pageNumber?: number;
+      /** Format: int32 */
+      pageSize?: number;
+    };
+    SortObject: {
+      empty?: boolean;
+      unsorted?: boolean;
+      sorted?: boolean;
+    };
+    'com.weeth.domain.board.application.dto.response.BoardConfigResponse': {
+      /** @description 글 작성 가능 여부 */
+      canWrite: boolean;
+      /** @description 댓글 작성 가능 여부 */
+      canComment: boolean;
+    };
+    'com.weeth.domain.board.application.dto.response.PostLikeResponse': {
+      /**
+       * @description 좋아요 여부
+       * @example true
+       */
+      isLiked: boolean;
+      /**
+       * Format: int32
+       * @description 좋아요 수
+       * @example 5
+       */
+      likeCount: number;
+    };
+    'com.weeth.domain.dashboard.application.dto.response.DashboardPostResponse': {
+      /**
+       * Format: int64
+       * @description 게시글 ID
+       * @example 1
+       */
+      id: number;
+      /**
+       * Format: int64
+       * @description 게시판 ID
+       * @example 1
+       */
+      boardId: number;
+      /** @description 작성자 정보 */
+      author: components['schemas']['com.weeth.domain.user.application.dto.response.UserInfo'];
+      /**
+       * @description 제목
+       * @example 안녕하세요
+       */
+      title: string;
+      /**
+       * @description 내용
+       * @example 오늘은 날씨가 좋네요
+       */
+      content: string;
+      /**
+       * Format: date-time
+       * @description 작성일
+       */
+      time: string;
+      /**
+       * Format: int32
+       * @description 댓글 수
+       * @example 5
+       */
+      commentCount: number;
+      /** @description 좋아요 정보 */
+      like: components['schemas']['com.weeth.domain.board.application.dto.response.PostLikeResponse'];
+      /** @description 첨부 파일 목록 */
+      fileUrls: components['schemas']['com.weeth.domain.file.application.dto.response.FileResponse'][];
+      /**
+       * @description 24시간 내 새 게시글 여부
+       * @example true
+       */
+      isNew: boolean;
+      /** @description 게시판 설정 */
+      boardConfig: components['schemas']['com.weeth.domain.board.application.dto.response.BoardConfigResponse'];
+    };
+    'com.weeth.domain.file.application.dto.response.FileResponse': {
+      /**
+       * Format: int64
+       * @description 파일 ID
+       * @example 1
+       */
+      fileId: number;
+      /**
+       * @description 원본 파일명
+       * @example profile-image.png
+       */
+      fileName: string;
+      /**
+       * @description 조회용 파일 URL
+       * @example https://bucket.s3.ap-northeast-2.amazonaws.com/POST/2026-02/uuid_profile-image.png
+       */
+      fileUrl: string;
+      /**
+       * @description 저장소 키
+       * @example POST/2026-02/uuid_profile-image.png
+       */
+      storageKey: string;
+      /**
+       * Format: int64
+       * @description 파일 크기(bytes)
+       * @example 102400
+       */
+      fileSize: number;
+      /**
+       * @description 파일 Content-Type
+       * @example image/png
+       */
+      contentType: string;
+      /**
+       * @description 파일 상태
+       * @example UPLOADED
+       * @enum {string}
+       */
+      status: 'UPLOADED' | 'DELETED';
+    };
+    'com.weeth.domain.user.application.dto.response.UserInfo': {
+      /**
+       * Format: int64
+       * @description 사용자 ID
+       * @example 1
+       */
+      id: number;
+      /**
+       * @description 이름
+       * @example 홍길동
+       */
+      name: string;
+      /** @description 프로필 이미지 URL */
+      profileImageUrl?: string;
+      /**
+       * @description 동아리 내 권한
+       * @example USER
+       * @enum {string}
+       */
+      role: 'USER' | 'ADMIN' | 'LEAD';
+    };
+    'com.weeth.global.common.response.CommonResponseOrg.springframework.data.domain.SliceCom.weeth.domain.dashboard.application.dto.response.DashboardPostResponse': {
+      /** Format: int32 */
+      code: number;
+      message: string;
+      data?: components['schemas']['org.springframework.data.domain.SliceCom.weeth.domain.dashboard.application.dto.response.DashboardPostResponse'];
+    };
+    'org.springframework.data.domain.SliceCom.weeth.domain.dashboard.application.dto.response.DashboardPostResponse': {
+      /** Format: int32 */
+      size?: number;
+      content?: components['schemas']['com.weeth.domain.dashboard.application.dto.response.DashboardPostResponse'][];
+      /** Format: int32 */
+      number?: number;
+      sort?: components['schemas']['SortObject'];
+      pageable?: components['schemas']['PageableObject'];
+      /** Format: int32 */
+      numberOfElements?: number;
+      first?: boolean;
+      last?: boolean;
+      empty?: boolean;
+    };
+    'com.weeth.domain.dashboard.application.dto.response.DashboardNoticeResponse': {
+      /**
+       * Format: int64
+       * @description 게시글 ID
+       * @example 1
+       */
+      id: number;
+      /**
+       * Format: int64
+       * @description 게시판 ID
+       * @example 1
+       */
+      boardId: number;
+      /**
+       * @description 공지 제목
+       * @example 중간고사 기간 공지
+       */
+      title: string;
+      /**
+       * @description 공지 내용
+       * @example 이번 주 정기 모임은 중간고사 기간으로 인해 쉬어갑니다.
+       */
+      content: string;
+      /**
+       * Format: date-time
+       * @description 최종 수정 일시
+       */
+      time: string;
+      /**
+       * @description 24시간 내 새 공지 여부
+       * @example true
+       */
+      isNew: boolean;
+    };
+    'com.weeth.global.common.response.CommonResponseJava.util.ListCom.weeth.domain.dashboard.application.dto.response.DashboardNoticeResponse': {
+      /** Format: int32 */
+      code: number;
+      message: string;
+      data?: components['schemas']['com.weeth.domain.dashboard.application.dto.response.DashboardNoticeResponse'][];
+    };
+    'com.weeth.domain.dashboard.application.dto.response.DashboardScheduleResponse': {
+      /**
+       * Format: int64
+       * @description 일정 ID
+       * @example 1
+       */
+      id: number;
+      /**
+       * @description 일정 제목
+       * @example Spring 스터디
+       */
+      title: string;
+      /**
+       * Format: date-time
+       * @description 시작 일시
+       * @example 2026-03-09T14:00:00
+       */
+      start: string;
+      /**
+       * Format: date-time
+       * @description 종료 일시
+       * @example 2026-03-09T16:00:00
+       */
+      end: string;
+      /**
+       * @description 일정 유형
+       * @example EVENT
+       * @enum {string}
+       */
+      type: 'SESSION' | 'EVENT';
+    };
+    'com.weeth.global.common.response.CommonResponseJava.util.ListCom.weeth.domain.dashboard.application.dto.response.DashboardScheduleResponse': {
+      /** Format: int32 */
+      code: number;
+      message: string;
+      data?: components['schemas']['com.weeth.domain.dashboard.application.dto.response.DashboardScheduleResponse'][];
+    };
+    'com.weeth.domain.dashboard.application.dto.response.DashboardClubInfoResponse': {
+      /**
+       * @description 동아리 ID (Base62)
+       * @example 1A2b3C
+       */
+      id: string;
+      /**
+       * @description 동아리 이름
+       * @example Leets
+       */
+      name: string;
+      /**
+       * @description 초대 코드
+       * @example 550e8400-e29b-41d4-a716-446655440000
+       */
+      code: string;
+      /**
+       * @description 학교 이름
+       * @example 가천대학교
+       */
+      schoolName: string;
+      /**
+       * @description 동아리 설명
+       * @example IT 동아리
+       */
+      description?: string;
+      /**
+       * Format: int64
+       * @description 활성 멤버 수
+       * @example 70
+       */
+      memberCount: number;
+      /** @description 프로필 이미지 URL */
+      profileImageUrl?: string;
+      /** @description 배경 이미지 URL */
+      backgroundImageUrl?: string;
+    };
+    'com.weeth.domain.dashboard.application.dto.response.DashboardHomeResponse': {
+      /** @description 현재 동아리 정보 */
+      club: components['schemas']['com.weeth.domain.dashboard.application.dto.response.DashboardClubInfoResponse'];
+      /** @description 내 활동 정보 */
+      myInfo: components['schemas']['com.weeth.domain.dashboard.application.dto.response.DashboardMyInfoResponse'];
+      /**
+       * @description 회비 기능 부원 공개 여부. false면 프론트에서 회비 탭을 숨긴다.
+       * @example true
+       */
+      accountVisible: boolean;
+    };
+    'com.weeth.domain.dashboard.application.dto.response.DashboardMyInfoResponse': {
+      /** @description 사용자 정보 */
+      userInfo: components['schemas']['com.weeth.domain.user.application.dto.response.UserInfo'];
+      /** @description 자기소개 */
+      bio?: string;
+    };
+    'com.weeth.global.common.response.CommonResponseCom.weeth.domain.dashboard.application.dto.response.DashboardHomeResponse': {
+      /** Format: int32 */
+      code: number;
+      message: string;
+      data?: components['schemas']['com.weeth.domain.dashboard.application.dto.response.DashboardHomeResponse'];
+    };
+    'com.weeth.domain.cardinal.application.dto.response.CardinalResponse': {
+      /**
+       * Format: int64
+       * @description 기수 ID
+       * @example 1
+       */
+      id: number;
+      /**
+       * Format: int32
+       * @description 기수 번호
+       * @example 7
+       */
+      cardinalNumber: number;
+      /**
+       * @description 기수 상태
+       * @example IN_PROGRESS
+       * @enum {string}
+       */
+      status: 'IN_PROGRESS' | 'DONE';
+      /**
+       * Format: date-time
+       * @description 생성 시각
+       */
+      createdAt?: string;
+      /**
+       * Format: date-time
+       * @description 수정 시각
+       */
+      modifiedAt?: string;
+    };
+    'com.weeth.global.common.response.CommonResponseJava.util.ListCom.weeth.domain.cardinal.application.dto.response.CardinalResponse': {
+      /** Format: int32 */
+      code: number;
+      message: string;
+      data?: components['schemas']['com.weeth.domain.cardinal.application.dto.response.CardinalResponse'][];
+    };
+    'com.weeth.domain.board.application.dto.response.BoardListResponse': {
+      /**
+       * Format: int64
+       * @description 게시판 ID (전체 게시판은 null)
+       */
+      id?: number;
+      /** @description 게시판 이름 */
+      name: string;
+      /**
+       * @description 게시판 타입
+       * @enum {string}
+       */
+      type: 'ALL' | 'NOTICE' | 'GALLERY' | 'GENERAL' | 'INFORMATION';
+      /** @description 게시판 설정 */
+      boardConfig: components['schemas']['com.weeth.domain.board.application.dto.response.BoardConfigResponse'];
+    };
+    'com.weeth.global.common.response.CommonResponseJava.util.ListCom.weeth.domain.board.application.dto.response.BoardListResponse': {
+      /** Format: int32 */
+      code: number;
+      message: string;
+      data?: components['schemas']['com.weeth.domain.board.application.dto.response.BoardListResponse'][];
+    };
+    'com.weeth.domain.board.application.dto.response.PostListResponse': {
+      /**
+       * Format: int64
+       * @description 게시글 ID
+       */
+      id: number;
+      /** @description 작성자 정보 */
+      author: components['schemas']['com.weeth.domain.user.application.dto.response.UserInfo'];
+      /**
+       * Format: int64
+       * @description 게시판 ID
+       */
+      boardId: number;
+      /** @description 게시판 이름 */
+      boardName: string;
+      /** @description 제목 */
+      title: string;
+      /** @description 내용 */
+      content: string;
+      /**
+       * Format: date-time
+       * @description 생성 시각
+       */
+      time: string;
+      /**
+       * Format: int32
+       * @description 댓글 수
+       */
+      commentCount: number;
+      /** @description 좋아요 정보 */
+      like: components['schemas']['com.weeth.domain.board.application.dto.response.PostLikeResponse'];
+      /** @description 첨부 파일 목록 */
+      fileUrls: components['schemas']['com.weeth.domain.file.application.dto.response.FileResponse'][];
+      /** @description 신규 게시글 여부 (24시간 이내) */
+      isNew: boolean;
+      /** @description 게시판 설정 */
+      boardConfig: components['schemas']['com.weeth.domain.board.application.dto.response.BoardConfigResponse'];
+    };
+    'com.weeth.global.common.response.CommonResponseOrg.springframework.data.domain.SliceCom.weeth.domain.board.application.dto.response.PostListResponse': {
+      /** Format: int32 */
+      code: number;
+      message: string;
+      data?: components['schemas']['org.springframework.data.domain.SliceCom.weeth.domain.board.application.dto.response.PostListResponse'];
+    };
+    'org.springframework.data.domain.SliceCom.weeth.domain.board.application.dto.response.PostListResponse': {
+      /** Format: int32 */
+      size?: number;
+      content?: components['schemas']['com.weeth.domain.board.application.dto.response.PostListResponse'][];
+      /** Format: int32 */
+      number?: number;
+      sort?: components['schemas']['SortObject'];
+      pageable?: components['schemas']['PageableObject'];
+      /** Format: int32 */
+      numberOfElements?: number;
+      first?: boolean;
+      last?: boolean;
+      empty?: boolean;
+    };
+    'com.weeth.domain.board.application.dto.response.PostDetailResponse': {
+      /**
+       * Format: int64
+       * @description 게시글 ID
+       */
+      id: number;
+      /**
+       * Format: int64
+       * @description 게시판 ID
+       */
+      boardId: number;
+      /** @description 게시판 이름 */
+      boardName: string;
+      /** @description 작성자 정보 */
+      author: components['schemas']['com.weeth.domain.user.application.dto.response.UserInfo'];
+      /** @description 제목 */
+      title: string;
+      /** @description 내용 */
+      content: string;
+      /**
+       * Format: date-time
+       * @description 생성 시각
+       */
+      time: string;
+      /**
+       * Format: int32
+       * @description 댓글 수
+       */
+      commentCount: number;
+      /** @description 좋아요 정보 */
+      like: components['schemas']['com.weeth.domain.board.application.dto.response.PostLikeResponse'];
+      /** @description 댓글 목록 */
+      comments: components['schemas']['com.weeth.domain.comment.application.dto.response.CommentResponse'][];
+      /** @description 첨부 파일 목록 */
+      fileUrls: components['schemas']['com.weeth.domain.file.application.dto.response.FileResponse'][];
+      /** @description 신규 게시글 여부 (24시간 이내) */
+      isNew: boolean;
+      /** @description 게시판 설정 */
+      boardConfig: components['schemas']['com.weeth.domain.board.application.dto.response.BoardConfigResponse'];
+    };
+    'com.weeth.domain.comment.application.dto.response.CommentResponse': {
+      /**
+       * Format: int64
+       * @description 댓글 ID
+       * @example 1
+       */
+      id: number;
+      /** @description 작성자 정보 */
+      author: components['schemas']['com.weeth.domain.user.application.dto.response.UserInfo'];
+      /**
+       * @description 댓글 내용
+       * @example 댓글입니다.
+       */
+      content: string;
+      /**
+       * Format: date-time
+       * @description 작성 시간
+       * @example 2026-02-18T12:00:00
+       */
+      time: string;
+      /** @description 첨부 파일 목록 */
+      fileUrls: components['schemas']['com.weeth.domain.file.application.dto.response.FileResponse'][];
+      /** @description 대댓글 목록 */
+      children: components['schemas']['com.weeth.domain.comment.application.dto.response.CommentResponse'][];
+    };
+    'com.weeth.global.common.response.CommonResponseCom.weeth.domain.board.application.dto.response.PostDetailResponse': {
+      /** Format: int32 */
+      code: number;
+      message: string;
+      data?: components['schemas']['com.weeth.domain.board.application.dto.response.PostDetailResponse'];
+    };
+    'com.weeth.domain.attendance.application.dto.response.AttendanceSummaryResponse': {
+      /**
+       * Format: int32
+       * @description 출석률
+       * @example 80
+       */
+      attendanceRate?: number;
+      /**
+       * @description 정기모임 제목
+       * @example 1주차 정기모임
+       */
+      title?: string;
+      /**
+       * @description 출석 상태
+       * @example ATTEND
+       * @enum {string}
+       */
+      status?: 'ATTEND' | 'PENDING' | 'ABSENT';
+      /**
+       * Format: int64
+       * @description 정기모임 id
+       * @example 1
+       */
+      sessionId?: number;
+      /**
+       * Format: date-time
+       * @description 정기모임 시작 시간
+       */
+      start?: string;
+      /**
+       * Format: date-time
+       * @description 정기모임 종료 시간
+       */
+      end?: string;
+      /**
+       * @description 정기모임 장소
+       * @example 공학관 401호
+       */
+      location?: string;
+    };
+    'com.weeth.global.common.response.CommonResponseCom.weeth.domain.attendance.application.dto.response.AttendanceSummaryResponse': {
+      /** Format: int32 */
+      code: number;
+      message: string;
+      data?: components['schemas']['com.weeth.domain.attendance.application.dto.response.AttendanceSummaryResponse'];
+    };
+    'org.springframework.web.servlet.mvc.method.annotation.SseEmitter': {
+      /** Format: int64 */
+      timeout?: number;
+    };
+    'com.weeth.domain.attendance.application.dto.response.AttendanceDetailResponse': {
+      /**
+       * Format: int32
+       * @description 출석 횟수
+       * @example 8
+       */
+      attendanceCount: number;
+      /**
+       * Format: int32
+       * @description 전체 횟수
+       * @example 10
+       */
+      total: number;
+      /**
+       * Format: int32
+       * @description 결석 횟수
+       * @example 2
+       */
+      absenceCount: number;
+      /** @description 출석 내역 목록 */
+      attendances: components['schemas']['com.weeth.domain.attendance.application.dto.response.AttendanceResponse'][];
+    };
+    'com.weeth.domain.attendance.application.dto.response.AttendanceResponse': {
+      /**
+       * Format: int64
+       * @description 출석 ID
+       * @example 1
+       */
+      id: number;
+      /**
+       * @description 출석 상태
+       * @example ATTEND
+       * @enum {string}
+       */
+      status?: 'ATTEND' | 'PENDING' | 'ABSENT';
+      /**
+       * @description 정기모임 제목
+       * @example 1주차 정기모임
+       */
+      title?: string;
+      /**
+       * Format: date-time
+       * @description 정기모임 시작 시간
+       */
+      start?: string;
+      /**
+       * Format: date-time
+       * @description 정기모임 종료 시간
+       */
+      end?: string;
+      /**
+       * @description 정기모임 장소
+       * @example 공학관 401호
+       */
+      location?: string;
+    };
+    'com.weeth.global.common.response.CommonResponseCom.weeth.domain.attendance.application.dto.response.AttendanceDetailResponse': {
+      /** Format: int32 */
+      code: number;
+      message: string;
+      data?: components['schemas']['com.weeth.domain.attendance.application.dto.response.AttendanceDetailResponse'];
+    };
+    'com.weeth.domain.account.application.dto.response.MemberAccountTransactionsResponse': {
+      /** @description 필터 탭별 부원 공개 거래 건수 요약. 첫 페이지(page=0)에서만 제공 */
+      counts?: components['schemas']['com.weeth.domain.account.application.dto.response.MemberAccountTransactionsResponse.TransactionCountsResponse'];
+      /** @description 회비 집계 행. 첫 페이지(page=0)에서만 제공 */
+      duesSummary?: components['schemas']['com.weeth.domain.account.application.dto.response.MemberAccountTransactionsResponse.DuesSummaryResponse'];
+      /** @description 부원 공개 거래 내역 (무한 스크롤) */
+      transactions: components['schemas']['com.weeth.global.common.response.SliceResponseCom.weeth.domain.account.application.dto.response.MemberTransactionResponse'];
+    };
+    'com.weeth.domain.account.application.dto.response.MemberAccountTransactionsResponse.DuesSummaryResponse': {
+      /**
+       * @description 회비 집계 행 라벨
+       * @example 회비
+       */
+      label: string;
+      /**
+       * Format: int32
+       * @description 회비 납부 거래 합계
+       * @example 1100000
+       */
+      totalAmount: number;
+      /**
+       * @description 회비 집계 행 설명
+       * @example 납부될 때마다 합산돼요
+       */
+      description: string;
+    };
+    'com.weeth.domain.account.application.dto.response.MemberAccountTransactionsResponse.TransactionCountsResponse': {
+      /**
+       * Format: int32
+       * @description 전체 공개 거래 수
+       * @example 4
+       */
+      all: number;
+      /**
+       * Format: int32
+       * @description 지출 공개 거래 수
+       * @example 3
+       */
+      expense: number;
+      /**
+       * Format: int32
+       * @description 수입 공개 거래 수
+       * @example 1
+       */
+      income: number;
+      /**
+       * Format: int32
+       * @description 회비 집계 행 수. 집계 금액이 있으면 1
+       * @example 1
+       */
+      dues: number;
+    };
+    'com.weeth.domain.account.application.dto.response.MemberTransactionResponse': {
+      /**
+       * Format: int64
+       * @description 거래 ID
+       * @example 1
+       */
+      transactionId: number;
+      /**
+       * @description 거래 유형
+       * @example EXPENSE
+       * @enum {string}
+       */
+      type: 'DUES' | 'CARRY_OVER' | 'INCOME' | 'EXPENSE' | 'REFUND';
+      /**
+       * @description 거래 방향
+       * @example EXPENSE
+       * @enum {string}
+       */
+      direction: 'INCOME' | 'EXPENSE';
+      /**
+       * @description 거래 내용
+       * @example 스터디 지원금
+       */
+      title: string;
+      /**
+       * @description 거래처. REFUND는 환불로 마스킹
+       * @example 인프런
+       */
+      source?: string;
+      /**
+       * Format: int32
+       * @description 거래 금액
+       * @example 50000
+       */
+      amount: number;
+      /**
+       * Format: date-time
+       * @description 거래 일시
+       * @example 2026-07-20T00:00:00
+       */
+      transactedAt: string;
+      /**
+       * @description 영수증 존재 여부
+       * @example true
+       */
+      hasReceipt: boolean;
+    };
+    'com.weeth.global.common.response.CommonResponseCom.weeth.domain.account.application.dto.response.MemberAccountTransactionsResponse': {
+      /** Format: int32 */
+      code: number;
+      message: string;
+      data?: components['schemas']['com.weeth.domain.account.application.dto.response.MemberAccountTransactionsResponse'];
+    };
+    'com.weeth.global.common.response.SliceResponseCom.weeth.domain.account.application.dto.response.MemberTransactionResponse': {
+      content: components['schemas']['com.weeth.domain.account.application.dto.response.MemberTransactionResponse'][];
+      /** Format: int32 */
+      pageNumber: number;
+      /** Format: int32 */
+      pageSize: number;
+      /** Format: int32 */
+      numberOfElements: number;
+      hasNext: boolean;
+    };
+    'com.weeth.domain.account.application.dto.response.MemberTransactionDetailResponse': {
+      /**
+       * Format: int64
+       * @description 거래 ID
+       * @example 1
+       */
+      transactionId: number;
+      /**
+       * @description 거래 유형
+       * @example EXPENSE
+       * @enum {string}
+       */
+      type: 'DUES' | 'CARRY_OVER' | 'INCOME' | 'EXPENSE' | 'REFUND';
+      /**
+       * @description 거래 방향
+       * @example EXPENSE
+       * @enum {string}
+       */
+      direction: 'INCOME' | 'EXPENSE';
+      /**
+       * @description 거래 내용
+       * @example 스터디 지원금
+       */
+      title: string;
+      /**
+       * @description 거래처. REFUND는 환불로 마스킹
+       * @example 인프런
+       */
+      source?: string;
+      /**
+       * Format: int32
+       * @description 거래 금액
+       * @example 50000
+       */
+      amount: number;
+      /**
+       * Format: date-time
+       * @description 거래 일시
+       * @example 2026-07-20T00:00:00
+       */
+      transactedAt: string;
+      /**
+       * @description 거래 분류
+       * @example 운영비
+       */
+      category?: string;
+      /**
+       * @description 등록자 이름 스냅샷
+       * @example 운영진 김검도
+       */
+      registeredByName: string;
+      /** @description 메모 */
+      memo?: string;
+      /**
+       * @description 영수증 존재 여부
+       * @example true
+       */
+      hasReceipt: boolean;
+      /** @description 영수증 파일 목록. 최대 1개 */
+      receipts: components['schemas']['com.weeth.domain.file.application.dto.response.FileResponse'][];
+    };
+    'com.weeth.global.common.response.CommonResponseCom.weeth.domain.account.application.dto.response.MemberTransactionDetailResponse': {
+      /** Format: int32 */
+      code: number;
+      message: string;
+      data?: components['schemas']['com.weeth.domain.account.application.dto.response.MemberTransactionDetailResponse'];
+    };
+    'com.weeth.domain.account.application.dto.response.BankAccountResponse': {
+      /**
+       * @description 은행명
+       * @example 국민은행
+       */
+      bankName: string;
+      /**
+       * @description 계좌번호
+       * @example 123-456-789012
+       */
+      accountNumber: string;
+      /**
+       * @description 예금주
+       * @example 가천대 검도부
+       */
+      holder: string;
+      /**
+       * @description 입금 안내 메모
+       * @example 이름_회비 형식으로 입금해 주세요.
+       */
+      guide?: string;
+    };
+    'com.weeth.domain.account.application.dto.response.MyAccountResponse': {
+      /**
+       * Format: int64
+       * @description 회비 장부 ID
+       * @example 12
+       */
+      accountId: number;
+      /**
+       * Format: int32
+       * @description 회비 기수
+       * @example 7
+       */
+      cardinal: number;
+      /**
+       * @description 회비 장부 이름
+       * @example 7기 회비
+       */
+      accountName?: string;
+      /**
+       * Format: int32
+       * @description 1인 회비 금액
+       * @example 60000
+       */
+      duesAmount: number;
+      /** @description 나의 납부 상태 */
+      myPayment: components['schemas']['com.weeth.domain.account.application.dto.response.MyAccountResponse.MyPaymentResponse'];
+      /**
+       * @description 부원에게 계좌 공개 여부
+       * @example true
+       */
+      bankAccountVisible: boolean;
+      /** @description 입금 계좌 정보. 비공개 또는 미등록이면 null */
+      bankAccount?: components['schemas']['com.weeth.domain.account.application.dto.response.BankAccountResponse'];
+      /** @description 잔액/목표액 */
+      balance: components['schemas']['com.weeth.domain.account.application.dto.response.MyAccountResponse.BalanceResponse'];
+    };
+    'com.weeth.domain.account.application.dto.response.MyAccountResponse.BalanceResponse': {
+      /**
+       * Format: int32
+       * @description 현재 남은 금액
+       * @example 152129
+       */
+      currentBalance: number;
+      /**
+       * Format: int32
+       * @description 목표 총액. 납부 대상 dueAmount 합계
+       * @example 1425000
+       */
+      goalAmount: number;
+    };
+    'com.weeth.domain.account.application.dto.response.MyAccountResponse.MyPaymentResponse': {
+      /**
+       * @description 내가 이 회비의 납부 대상인지 여부
+       * @example true
+       */
+      targeted: boolean;
+      /**
+       * @description 나의 납부 상태. 납부 대상이 아니면 null
+       * @example UNPAID
+       * @enum {string}
+       */
+      status?: 'UNPAID' | 'PAID' | 'REFUNDED';
+      /**
+       * Format: int32
+       * @description 내 납부 대상 금액
+       * @example 60000
+       */
+      dueAmount: number;
+      /**
+       * Format: int32
+       * @description 실제 납부 완료 금액
+       * @example 0
+       */
+      paidAmount: number;
+      /**
+       * Format: date-time
+       * @description 납부 확인 시각. 미납 또는 대상 아님이면 null
+       */
+      paidAt?: string;
+    };
+    'com.weeth.global.common.response.CommonResponseCom.weeth.domain.account.application.dto.response.MyAccountResponse': {
+      /** Format: int32 */
+      code: number;
+      message: string;
+      data?: components['schemas']['com.weeth.domain.account.application.dto.response.MyAccountResponse'];
+    };
+    'com.weeth.domain.account.application.dto.response.AccountVisibilityResponse': {
+      /**
+       * @description 회비 기능 부원 공개 여부. false면 프론트에서 회비 탭을 숨긴다.
+       * @example true
+       */
+      visible: boolean;
+    };
+    'com.weeth.global.common.response.CommonResponseCom.weeth.domain.account.application.dto.response.AccountVisibilityResponse': {
+      /** Format: int32 */
+      code: number;
+      message: string;
+      data?: components['schemas']['com.weeth.domain.account.application.dto.response.AccountVisibilityResponse'];
+    };
+    'com.weeth.domain.account.application.dto.response.AccountCardinalResponse': {
+      /**
+       * Format: int32
+       * @description 회비 기수
+       * @example 7
+       */
+      cardinal: number;
+      /**
+       * @description 회비 장부 이름
+       * @example 7기 회비
+       */
+      name?: string;
+      /**
+       * @description 선택 가능한 최신 기수 여부
+       * @example true
+       */
+      isLatest: boolean;
+    };
+    'com.weeth.global.common.response.CommonResponseJava.util.ListCom.weeth.domain.account.application.dto.response.AccountCardinalResponse': {
+      /** Format: int32 */
+      code: number;
+      message: string;
+      data?: components['schemas']['com.weeth.domain.account.application.dto.response.AccountCardinalResponse'][];
+    };
+    'com.weeth.domain.club.application.dto.response.ClubMembershipStatusResponse': {
+      /**
+       * @description ACTIVE 상태 동아리 존재 여부
+       * @example true
+       */
+      hasActiveClub: boolean;
+      /**
+       * @description WAITING 상태 동아리 존재 여부
+       * @example false
+       */
+      hasWaitingClub: boolean;
+      /** @description ACTIVE 동아리 정보 (없으면 null) */
+      activeClub?: components['schemas']['com.weeth.domain.club.application.dto.response.ClubInfoResponse'];
+      /** @description WAITING 동아리 정보 (없으면 null) */
+      waitingClub?: components['schemas']['com.weeth.domain.club.application.dto.response.ClubInfoResponse'];
+    };
+    'com.weeth.global.common.response.CommonResponseCom.weeth.domain.club.application.dto.response.ClubMembershipStatusResponse': {
+      /** Format: int32 */
+      code: number;
+      message: string;
+      data?: components['schemas']['com.weeth.domain.club.application.dto.response.ClubMembershipStatusResponse'];
+    };
+  };
+  responses: never;
+  parameters: never;
+  requestBodies: never;
+  headers: never;
+  pathItems: never;
 }
 export type $defs = Record<string, never>;
 export interface operations {
-    agreeTerms: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["com.weeth.domain.user.application.dto.request.AgreeTermsRequest"];
-            };
-        };
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["com.weeth.global.common.response.CommonResponseCom.weeth.global.auth.jwt.application.dto.JwtDto"];
-                };
-            };
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-        };
-    };
-    refreshToken: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["com.weeth.global.common.response.CommonResponseCom.weeth.global.auth.jwt.application.dto.JwtDto"];
-                };
-            };
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-        };
-    };
-    socialLoginByKakao: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["com.weeth.domain.user.application.dto.request.SocialLoginRequest"];
-            };
-        };
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["com.weeth.global.common.response.CommonResponseCom.weeth.domain.user.application.dto.response.SocialLoginResponse"];
-                };
-            };
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-        };
-    };
-    socialLoginByApple: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["com.weeth.domain.user.application.dto.request.SocialLoginRequest"];
-            };
-        };
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["com.weeth.global.common.response.CommonResponseCom.weeth.domain.user.application.dto.response.SocialLoginResponse"];
-                };
-            };
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-        };
-    };
-    getUserProfiles: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["com.weeth.global.common.response.CommonResponseCom.weeth.domain.user.application.dto.response.UserProfilesResponse"];
-                };
-            };
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-        };
-    };
-    createUserProfile: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["com.weeth.domain.user.application.dto.request.CreateMultiProfileRequest"];
-            };
-        };
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["com.weeth.global.common.response.CommonResponseCom.weeth.domain.user.application.dto.response.UserProfileResponse"];
-                };
-            };
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-        };
-    };
-    createInquiry: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["com.weeth.domain.user.application.dto.request.CreateInquiryRequest"];
-            };
-        };
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["com.weeth.global.common.response.CommonResponseJava.lang.Void"];
-                };
-            };
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-        };
-    };
-    getMyClubs: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["com.weeth.global.common.response.CommonResponseJava.util.ListCom.weeth.domain.club.application.dto.response.ClubInfoResponse"];
-                };
-            };
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-        };
-    };
-    create: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["com.weeth.domain.club.application.dto.request.ClubCreateRequest"];
-            };
-        };
-        responses: {
-            /** @description Created */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["com.weeth.global.common.response.CommonResponseCom.weeth.domain.club.application.dto.response.ClubCreateResponse"];
-                };
-            };
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-        };
-    };
-    setInitialCardinals: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /**
-                 * @description Base62 인코딩 TSID
-                 * @example 1zA9
-                 */
-                clubId: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["com.weeth.domain.club.application.dto.request.ClubMemberCardinalSetRequest"];
-            };
-        };
-        responses: {
-            /** @description Created */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["com.weeth.global.common.response.CommonResponseKotlin.Unit"];
-                };
-            };
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-        };
-    };
-    join: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /**
-                 * @description Base62 인코딩 TSID
-                 * @example 1zA9
-                 */
-                clubId: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["com.weeth.domain.club.application.dto.request.ClubJoinRequest"];
-            };
-        };
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["com.weeth.global.common.response.CommonResponseKotlin.Unit"];
-                };
-            };
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-        };
-    };
-    findPosts: {
-        parameters: {
-            query?: {
-                pageNumber?: number;
-                pageSize?: number;
-            };
-            header?: never;
-            path: {
-                /**
-                 * @description Base62 인코딩 TSID
-                 * @example 1zA9
-                 */
-                clubId: string;
-                boardId: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["com.weeth.global.common.response.CommonResponseOrg.springframework.data.domain.SliceCom.weeth.domain.board.application.dto.response.PostListResponse"];
-                };
-            };
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-        };
-    };
-    save: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /**
-                 * @description Base62 인코딩 TSID
-                 * @example 1zA9
-                 */
-                clubId: string;
-                boardId: number;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["com.weeth.domain.board.application.dto.request.CreatePostRequest"];
-            };
-        };
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["com.weeth.global.common.response.CommonResponseCom.weeth.domain.board.application.dto.response.PostSaveResponse"];
-                };
-            };
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-        };
-    };
-    like: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /**
-                 * @description Base62 인코딩 TSID
-                 * @example 1zA9
-                 */
-                clubId: string;
-                boardId: number;
-                postId: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["com.weeth.global.common.response.CommonResponseCom.weeth.domain.board.application.dto.response.PostLikeActionResponse"];
-                };
-            };
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-        };
-    };
-    unlike: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /**
-                 * @description Base62 인코딩 TSID
-                 * @example 1zA9
-                 */
-                clubId: string;
-                boardId: number;
-                postId: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["com.weeth.global.common.response.CommonResponseCom.weeth.domain.board.application.dto.response.PostLikeActionResponse"];
-                };
-            };
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-        };
-    };
-    markAllNoticesRead: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /**
-                 * @description Base62 인코딩 TSID
-                 * @example 1zA9
-                 */
-                clubId: string;
-                boardId: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["com.weeth.global.common.response.CommonResponseJava.lang.Void"];
-                };
-            };
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-        };
-    };
-    checkIn: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /**
-                 * @description Base62 인코딩 TSID
-                 * @example 1zA9
-                 */
-                clubId: string;
-                sessionId: number;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["com.weeth.domain.attendance.application.dto.request.CheckInRequest"];
-            };
-        };
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["com.weeth.global.common.response.CommonResponseJava.lang.Void"];
-                };
-            };
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-        };
-    };
-    savePostComment: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                postId: number;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["com.weeth.domain.comment.application.dto.request.CommentSaveRequest"];
-            };
-        };
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["com.weeth.global.common.response.CommonResponseJava.lang.String"];
-                };
-            };
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-        };
-    };
-    update: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["com.weeth.domain.user.application.dto.request.UpdateUserProfileRequest"];
-            };
-        };
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["com.weeth.global.common.response.CommonResponseJava.lang.Void"];
-                };
-            };
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-        };
-    };
-    getUserProfile: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                profileId: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["com.weeth.global.common.response.CommonResponseCom.weeth.domain.user.application.dto.response.UserProfileResponse"];
-                };
-            };
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-        };
-    };
-    deleteUserProfile: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                profileId: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["com.weeth.global.common.response.CommonResponseJava.lang.Void"];
-                };
-            };
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-        };
-    };
-    updateUserProfile: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                profileId: number;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["com.weeth.domain.user.application.dto.request.UpdateMultiProfileRequest"];
-            };
-        };
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["com.weeth.global.common.response.CommonResponseCom.weeth.domain.user.application.dto.response.UserProfileResponse"];
-                };
-            };
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-        };
-    };
-    assignClubProfiles: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["com.weeth.domain.user.application.dto.request.AssignClubProfileRequest"];
-            };
-        };
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["com.weeth.global.common.response.CommonResponseJava.lang.Void"];
-                };
-            };
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-        };
-    };
-    findPost: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /**
-                 * @description Base62 인코딩 TSID
-                 * @example 1zA9
-                 */
-                clubId: string;
-                boardId: number;
-                postId: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["com.weeth.global.common.response.CommonResponseCom.weeth.domain.board.application.dto.response.PostDetailResponse"];
-                };
-            };
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-        };
-    };
-    delete: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /**
-                 * @description Base62 인코딩 TSID
-                 * @example 1zA9
-                 */
-                clubId: string;
-                boardId: number;
-                postId: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["com.weeth.global.common.response.CommonResponseJava.lang.Void"];
-                };
-            };
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-        };
-    };
-    update_1: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /**
-                 * @description Base62 인코딩 TSID
-                 * @example 1zA9
-                 */
-                clubId: string;
-                boardId: number;
-                postId: number;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["com.weeth.domain.board.application.dto.request.UpdatePostRequest"];
-            };
-        };
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["com.weeth.global.common.response.CommonResponseCom.weeth.domain.board.application.dto.response.PostSaveResponse"];
-                };
-            };
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-        };
-    };
-    deletePostComment: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                postId: number;
-                commentId: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["com.weeth.global.common.response.CommonResponseJava.lang.String"];
-                };
-            };
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-        };
-    };
-    updatePostComment: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                postId: number;
-                commentId: number;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["com.weeth.domain.comment.application.dto.request.CommentUpdateRequest"];
-            };
-        };
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["com.weeth.global.common.response.CommonResponseJava.lang.String"];
-                };
-            };
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-        };
-    };
-    getUserProfileAssignableClubs: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["com.weeth.global.common.response.CommonResponseCom.weeth.domain.user.application.dto.response.UserProfileAssignableClubsResponse"];
-                };
-            };
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-        };
-    };
-    getSchools: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["com.weeth.global.common.response.CommonResponseJava.util.ListCom.weeth.domain.university.application.dto.response.SchoolResponse"];
-                };
-            };
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-        };
-    };
-    getMajors: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["com.weeth.global.common.response.CommonResponseJava.util.ListCom.weeth.domain.university.application.dto.response.MajorResponse"];
-                };
-            };
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-        };
-    };
-    getUrl: {
-        parameters: {
-            query: {
-                /**
-                 * @description 파일 소유 타입
-                 * @example POST
-                 */
-                ownerType: "POST" | "COMMENT" | "ACCOUNT_TRANSACTION" | "CLUB_MEMBER_PROFILE" | "USER_PROFILE_IMAGE" | "USER_PROFILE_HEADER" | "CLUB_PROFILE" | "CLUB_BACKGROUND";
-                fileNames: string[];
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["com.weeth.global.common.response.CommonResponseJava.util.ListCom.weeth.domain.file.application.dto.response.UrlResponse"];
-                };
-            };
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-        };
-    };
-    userErrorCodes: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-        };
-    };
-    scheduleErrorCodes: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-        };
-    };
-    penaltyErrorCodes: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-        };
-    };
-    boardErrorCodes: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-        };
-    };
-    authErrorCodes: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-        };
-    };
-    attendanceErrorCodes: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-        };
-    };
-    accountErrorCodes: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-        };
-    };
-    getClubPublicInfo: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /**
-                 * @description Base62 인코딩 TSID
-                 * @example 1zA9
-                 */
-                clubId: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["com.weeth.global.common.response.CommonResponseCom.weeth.domain.club.application.dto.response.ClubPublicResponse"];
-                };
-            };
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-        };
-    };
-    getSummary: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /**
-                 * @description Base62 인코딩 TSID
-                 * @example 1zA9
-                 */
-                clubId: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["com.weeth.global.common.response.CommonResponseCom.weeth.domain.user.application.dto.response.UserMyPageResponse"];
-                };
-            };
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-        };
-    };
-    getMyPosts: {
-        parameters: {
-            query?: {
-                pageNumber?: number;
-                pageSize?: number;
-            };
-            header?: never;
-            path: {
-                /**
-                 * @description Base62 인코딩 TSID
-                 * @example 1zA9
-                 */
-                clubId: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["com.weeth.global.common.response.CommonResponseCom.weeth.global.common.response.SliceResponseCom.weeth.domain.user.application.dto.response.UserMyPostResponse"];
-                };
-            };
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-        };
-    };
-    getAttendedSessions: {
-        parameters: {
-            query?: {
-                pageNumber?: number;
-                pageSize?: number;
-            };
-            header?: never;
-            path: {
-                /**
-                 * @description Base62 인코딩 TSID
-                 * @example 1zA9
-                 */
-                clubId: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["com.weeth.global.common.response.CommonResponseCom.weeth.global.common.response.SliceResponseCom.weeth.domain.user.application.dto.response.UserAttendedSessionResponse"];
-                };
-            };
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-        };
-    };
-    getSession: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /**
-                 * @description Base62 인코딩 TSID
-                 * @example 1zA9
-                 */
-                clubId: string;
-                sessionId: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["com.weeth.global.common.response.CommonResponseCom.weeth.domain.session.application.dto.response.SessionResponse"];
-                };
-            };
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-        };
-    };
-    findByYearly: {
-        parameters: {
-            query: {
-                year: number;
-            };
-            header?: never;
-            path: {
-                /**
-                 * @description Base62 인코딩 TSID
-                 * @example 1zA9
-                 */
-                clubId: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["com.weeth.global.common.response.CommonResponseJava.util.MapJava.lang.IntegerJava.util.ListCom.weeth.domain.schedule.application.dto.response.ScheduleResponse"];
-                };
-            };
-        };
-    };
-    findByMonthly: {
-        parameters: {
-            query: {
-                start: string;
-                end: string;
-            };
-            header?: never;
-            path: {
-                /**
-                 * @description Base62 인코딩 TSID
-                 * @example 1zA9
-                 */
-                clubId: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["com.weeth.global.common.response.CommonResponseJava.util.ListCom.weeth.domain.schedule.application.dto.response.ScheduleResponse"];
-                };
-            };
-        };
-    };
-    getMyMemberInfo: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /**
-                 * @description Base62 인코딩 TSID
-                 * @example 1zA9
-                 */
-                clubId: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["com.weeth.global.common.response.CommonResponseCom.weeth.domain.club.application.dto.response.ClubMemberProfileResponse"];
-                };
-            };
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-        };
-    };
-    getMyMemberSummary: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /**
-                 * @description Base62 인코딩 TSID
-                 * @example 1zA9
-                 */
-                clubId: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["com.weeth.global.common.response.CommonResponseCom.weeth.domain.club.application.dto.response.ClubMemberSummaryResponse"];
-                };
-            };
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-        };
-    };
-    getProfileStatus: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /**
-                 * @description Base62 인코딩 TSID
-                 * @example 1zA9
-                 */
-                clubId: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["com.weeth.global.common.response.CommonResponseCom.weeth.domain.club.application.dto.response.ProfileStatusResponse"];
-                };
-            };
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-        };
-    };
-    getEvent: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /**
-                 * @description Base62 인코딩 TSID
-                 * @example 1zA9
-                 */
-                clubId: string;
-                eventId: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["com.weeth.global.common.response.CommonResponseCom.weeth.domain.schedule.application.dto.response.EventResponse"];
-                };
-            };
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-        };
-    };
-    getUnreadNotice: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /**
-                 * @description Base62 인코딩 TSID
-                 * @example 1zA9
-                 */
-                clubId: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["com.weeth.global.common.response.CommonResponseCom.weeth.domain.dashboard.application.dto.response.DashboardUnreadNoticeResponse"];
-                };
-            };
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-        };
-    };
-    getRecentPosts: {
-        parameters: {
-            query?: {
-                pageNumber?: number;
-                pageSize?: number;
-            };
-            header?: never;
-            path: {
-                /**
-                 * @description Base62 인코딩 TSID
-                 * @example 1zA9
-                 */
-                clubId: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["com.weeth.global.common.response.CommonResponseOrg.springframework.data.domain.SliceCom.weeth.domain.dashboard.application.dto.response.DashboardPostResponse"];
-                };
-            };
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-        };
-    };
-    getRecentNotices: {
-        parameters: {
-            query?: {
-                size?: number;
-            };
-            header?: never;
-            path: {
-                /**
-                 * @description Base62 인코딩 TSID
-                 * @example 1zA9
-                 */
-                clubId: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["com.weeth.global.common.response.CommonResponseJava.util.ListCom.weeth.domain.dashboard.application.dto.response.DashboardNoticeResponse"];
-                };
-            };
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-        };
-    };
-    getMonthlySchedules: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /**
-                 * @description Base62 인코딩 TSID
-                 * @example 1zA9
-                 */
-                clubId: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["com.weeth.global.common.response.CommonResponseJava.util.ListCom.weeth.domain.dashboard.application.dto.response.DashboardScheduleResponse"];
-                };
-            };
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-        };
-    };
-    getHome: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /**
-                 * @description Base62 인코딩 TSID
-                 * @example 1zA9
-                 */
-                clubId: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["com.weeth.global.common.response.CommonResponseCom.weeth.domain.dashboard.application.dto.response.DashboardHomeResponse"];
-                };
-            };
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-        };
-    };
-    findAllCardinals: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /**
-                 * @description Base62 인코딩 TSID
-                 * @example 1zA9
-                 */
-                clubId: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["com.weeth.global.common.response.CommonResponseJava.util.ListCom.weeth.domain.cardinal.application.dto.response.CardinalResponse"];
-                };
-            };
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-        };
-    };
-    findBoards: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /**
-                 * @description Base62 인코딩 TSID
-                 * @example 1zA9
-                 */
-                clubId: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["com.weeth.global.common.response.CommonResponseJava.util.ListCom.weeth.domain.board.application.dto.response.BoardListResponse"];
-                };
-            };
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-        };
-    };
-    searchPosts: {
-        parameters: {
-            query: {
-                keyword: string;
-                pageNumber?: number;
-                pageSize?: number;
-            };
-            header?: never;
-            path: {
-                /**
-                 * @description Base62 인코딩 TSID
-                 * @example 1zA9
-                 */
-                clubId: string;
-                boardId: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["com.weeth.global.common.response.CommonResponseOrg.springframework.data.domain.SliceCom.weeth.domain.board.application.dto.response.PostListResponse"];
-                };
-            };
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-        };
-    };
-    findAllPosts: {
-        parameters: {
-            query?: {
-                pageNumber?: number;
-                pageSize?: number;
-            };
-            header?: never;
-            path: {
-                /**
-                 * @description Base62 인코딩 TSID
-                 * @example 1zA9
-                 */
-                clubId: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["com.weeth.global.common.response.CommonResponseOrg.springframework.data.domain.SliceCom.weeth.domain.board.application.dto.response.PostListResponse"];
-                };
-            };
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-        };
-    };
-    find: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /**
-                 * @description Base62 인코딩 TSID
-                 * @example 1zA9
-                 */
-                clubId: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["com.weeth.global.common.response.CommonResponseCom.weeth.domain.attendance.application.dto.response.AttendanceSummaryResponse"];
-                };
-            };
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-        };
-    };
-    subscribe: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /**
-                 * @description Base62 인코딩 TSID
-                 * @example 1zA9
-                 */
-                clubId: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "text/event-stream": components["schemas"]["org.springframework.web.servlet.mvc.method.annotation.SseEmitter"];
-                };
-            };
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-        };
-    };
-    findAll: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /**
-                 * @description Base62 인코딩 TSID
-                 * @example 1zA9
-                 */
-                clubId: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["com.weeth.global.common.response.CommonResponseCom.weeth.domain.attendance.application.dto.response.AttendanceDetailResponse"];
-                };
-            };
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-        };
-    };
-    findTransactions: {
-        parameters: {
-            query?: {
-                filter?: "ALL" | "INCOME" | "EXPENSE" | "DUES";
-                sort?: "LATEST" | "OLDEST" | "AMOUNT_DESC" | "AMOUNT_ASC";
-                page?: number;
-                size?: number;
-            };
-            header?: never;
-            path: {
-                /**
-                 * @description Base62 인코딩 TSID
-                 * @example 1zA9
-                 */
-                clubId: string;
-                cardinal: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["com.weeth.global.common.response.CommonResponseCom.weeth.domain.account.application.dto.response.MemberAccountTransactionsResponse"];
-                };
-            };
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-        };
-    };
-    findTransaction: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /**
-                 * @description Base62 인코딩 TSID
-                 * @example 1zA9
-                 */
-                clubId: string;
-                cardinal: number;
-                transactionId: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["com.weeth.global.common.response.CommonResponseCom.weeth.domain.account.application.dto.response.MemberTransactionDetailResponse"];
-                };
-            };
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-        };
-    };
-    findMyAccount: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /**
-                 * @description Base62 인코딩 TSID
-                 * @example 1zA9
-                 */
-                clubId: string;
-                cardinal: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["com.weeth.global.common.response.CommonResponseCom.weeth.domain.account.application.dto.response.MyAccountResponse"];
-                };
-            };
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-        };
-    };
-    getVisibility: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /**
-                 * @description Base62 인코딩 TSID
-                 * @example 1zA9
-                 */
-                clubId: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["com.weeth.global.common.response.CommonResponseCom.weeth.domain.account.application.dto.response.AccountVisibilityResponse"];
-                };
-            };
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-        };
-    };
-    findCardinals: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /**
-                 * @description Base62 인코딩 TSID
-                 * @example 1zA9
-                 */
-                clubId: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["com.weeth.global.common.response.CommonResponseJava.util.ListCom.weeth.domain.account.application.dto.response.AccountCardinalResponse"];
-                };
-            };
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-        };
-    };
-    getMembershipStatus: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["com.weeth.global.common.response.CommonResponseCom.weeth.domain.club.application.dto.response.ClubMembershipStatusResponse"];
-                };
-            };
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-        };
-    };
-    leave: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["com.weeth.global.common.response.CommonResponseJava.lang.Void"];
-                };
-            };
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-        };
-    };
-    deleteUserProfileImage: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                profileId: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["com.weeth.global.common.response.CommonResponseJava.lang.Void"];
-                };
-            };
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-        };
-    };
-    deleteUserProfileHeaderImage: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                profileId: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["com.weeth.global.common.response.CommonResponseJava.lang.Void"];
-                };
-            };
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-        };
-    };
-    leave_1: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /**
-                 * @description Base62 인코딩 TSID
-                 * @example 1zA9
-                 */
-                clubId: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["com.weeth.global.common.response.CommonResponseKotlin.Unit"];
-                };
-            };
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-        };
-    };
+  agreeTerms: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['com.weeth.domain.user.application.dto.request.AgreeTermsRequest'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['com.weeth.global.common.response.CommonResponseCom.weeth.global.auth.jwt.application.dto.JwtDto'];
+        };
+      };
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+    };
+  };
+  refreshToken: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['com.weeth.global.common.response.CommonResponseCom.weeth.global.auth.jwt.application.dto.JwtDto'];
+        };
+      };
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+    };
+  };
+  socialLoginByKakao: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['com.weeth.domain.user.application.dto.request.SocialLoginRequest'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['com.weeth.global.common.response.CommonResponseCom.weeth.domain.user.application.dto.response.SocialLoginResponse'];
+        };
+      };
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+    };
+  };
+  socialLoginByApple: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['com.weeth.domain.user.application.dto.request.SocialLoginRequest'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['com.weeth.global.common.response.CommonResponseCom.weeth.domain.user.application.dto.response.SocialLoginResponse'];
+        };
+      };
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+    };
+  };
+  getUserProfiles: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['com.weeth.global.common.response.CommonResponseCom.weeth.domain.user.application.dto.response.UserProfilesResponse'];
+        };
+      };
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+    };
+  };
+  createUserProfile: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['com.weeth.domain.user.application.dto.request.CreateMultiProfileRequest'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['com.weeth.global.common.response.CommonResponseCom.weeth.domain.user.application.dto.response.UserProfileResponse'];
+        };
+      };
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+    };
+  };
+  createInquiry: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['com.weeth.domain.user.application.dto.request.CreateInquiryRequest'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['com.weeth.global.common.response.CommonResponseJava.lang.Void'];
+        };
+      };
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+    };
+  };
+  getMyClubs: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['com.weeth.global.common.response.CommonResponseJava.util.ListCom.weeth.domain.club.application.dto.response.ClubInfoResponse'];
+        };
+      };
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+    };
+  };
+  create: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['com.weeth.domain.club.application.dto.request.ClubCreateRequest'];
+      };
+    };
+    responses: {
+      /** @description Created */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['com.weeth.global.common.response.CommonResponseCom.weeth.domain.club.application.dto.response.ClubCreateResponse'];
+        };
+      };
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+    };
+  };
+  setInitialCardinals: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /**
+         * @description Base62 인코딩 TSID
+         * @example 1zA9
+         */
+        clubId: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['com.weeth.domain.club.application.dto.request.ClubMemberCardinalSetRequest'];
+      };
+    };
+    responses: {
+      /** @description Created */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['com.weeth.global.common.response.CommonResponseKotlin.Unit'];
+        };
+      };
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+    };
+  };
+  join: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /**
+         * @description Base62 인코딩 TSID
+         * @example 1zA9
+         */
+        clubId: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['com.weeth.domain.club.application.dto.request.ClubJoinRequest'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['com.weeth.global.common.response.CommonResponseKotlin.Unit'];
+        };
+      };
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+    };
+  };
+  findPosts: {
+    parameters: {
+      query?: {
+        pageNumber?: number;
+        pageSize?: number;
+      };
+      header?: never;
+      path: {
+        /**
+         * @description Base62 인코딩 TSID
+         * @example 1zA9
+         */
+        clubId: string;
+        boardId: number;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['com.weeth.global.common.response.CommonResponseOrg.springframework.data.domain.SliceCom.weeth.domain.board.application.dto.response.PostListResponse'];
+        };
+      };
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      429: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+    };
+  };
+  save: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /**
+         * @description Base62 인코딩 TSID
+         * @example 1zA9
+         */
+        clubId: string;
+        boardId: number;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['com.weeth.domain.board.application.dto.request.CreatePostRequest'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['com.weeth.global.common.response.CommonResponseCom.weeth.domain.board.application.dto.response.PostSaveResponse'];
+        };
+      };
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      429: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+    };
+  };
+  like: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /**
+         * @description Base62 인코딩 TSID
+         * @example 1zA9
+         */
+        clubId: string;
+        boardId: number;
+        postId: number;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['com.weeth.global.common.response.CommonResponseCom.weeth.domain.board.application.dto.response.PostLikeActionResponse'];
+        };
+      };
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      429: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+    };
+  };
+  unlike: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /**
+         * @description Base62 인코딩 TSID
+         * @example 1zA9
+         */
+        clubId: string;
+        boardId: number;
+        postId: number;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['com.weeth.global.common.response.CommonResponseCom.weeth.domain.board.application.dto.response.PostLikeActionResponse'];
+        };
+      };
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      429: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+    };
+  };
+  markAllNoticesRead: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /**
+         * @description Base62 인코딩 TSID
+         * @example 1zA9
+         */
+        clubId: string;
+        boardId: number;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['com.weeth.global.common.response.CommonResponseJava.lang.Void'];
+        };
+      };
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      429: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+    };
+  };
+  checkIn: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /**
+         * @description Base62 인코딩 TSID
+         * @example 1zA9
+         */
+        clubId: string;
+        sessionId: number;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['com.weeth.domain.attendance.application.dto.request.CheckInRequest'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['com.weeth.global.common.response.CommonResponseJava.lang.Void'];
+        };
+      };
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+    };
+  };
+  savePostComment: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        postId: number;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['com.weeth.domain.comment.application.dto.request.CommentSaveRequest'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['com.weeth.global.common.response.CommonResponseJava.lang.String'];
+        };
+      };
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+    };
+  };
+  update: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['com.weeth.domain.user.application.dto.request.UpdateUserProfileRequest'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['com.weeth.global.common.response.CommonResponseJava.lang.Void'];
+        };
+      };
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+    };
+  };
+  getUserProfile: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        profileId: number;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['com.weeth.global.common.response.CommonResponseCom.weeth.domain.user.application.dto.response.UserProfileResponse'];
+        };
+      };
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+    };
+  };
+  deleteUserProfile: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        profileId: number;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['com.weeth.global.common.response.CommonResponseJava.lang.Void'];
+        };
+      };
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+    };
+  };
+  updateUserProfile: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        profileId: number;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['com.weeth.domain.user.application.dto.request.UpdateMultiProfileRequest'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['com.weeth.global.common.response.CommonResponseCom.weeth.domain.user.application.dto.response.UserProfileResponse'];
+        };
+      };
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+    };
+  };
+  assignClubProfiles: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['com.weeth.domain.user.application.dto.request.AssignClubProfileRequest'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['com.weeth.global.common.response.CommonResponseJava.lang.Void'];
+        };
+      };
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+    };
+  };
+  findPost: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /**
+         * @description Base62 인코딩 TSID
+         * @example 1zA9
+         */
+        clubId: string;
+        boardId: number;
+        postId: number;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['com.weeth.global.common.response.CommonResponseCom.weeth.domain.board.application.dto.response.PostDetailResponse'];
+        };
+      };
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      429: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+    };
+  };
+  delete: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /**
+         * @description Base62 인코딩 TSID
+         * @example 1zA9
+         */
+        clubId: string;
+        boardId: number;
+        postId: number;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['com.weeth.global.common.response.CommonResponseJava.lang.Void'];
+        };
+      };
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      429: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+    };
+  };
+  update_1: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /**
+         * @description Base62 인코딩 TSID
+         * @example 1zA9
+         */
+        clubId: string;
+        boardId: number;
+        postId: number;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['com.weeth.domain.board.application.dto.request.UpdatePostRequest'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['com.weeth.global.common.response.CommonResponseCom.weeth.domain.board.application.dto.response.PostSaveResponse'];
+        };
+      };
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      429: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+    };
+  };
+  deletePostComment: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        postId: number;
+        commentId: number;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['com.weeth.global.common.response.CommonResponseJava.lang.String'];
+        };
+      };
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+    };
+  };
+  updatePostComment: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        postId: number;
+        commentId: number;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['com.weeth.domain.comment.application.dto.request.CommentUpdateRequest'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['com.weeth.global.common.response.CommonResponseJava.lang.String'];
+        };
+      };
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+    };
+  };
+  getUserProfileAssignableClubs: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['com.weeth.global.common.response.CommonResponseCom.weeth.domain.user.application.dto.response.UserProfileAssignableClubsResponse'];
+        };
+      };
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+    };
+  };
+  getSchools: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['com.weeth.global.common.response.CommonResponseJava.util.ListCom.weeth.domain.university.application.dto.response.SchoolResponse'];
+        };
+      };
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+    };
+  };
+  getMajors: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['com.weeth.global.common.response.CommonResponseJava.util.ListCom.weeth.domain.university.application.dto.response.MajorResponse'];
+        };
+      };
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+    };
+  };
+  getUrl: {
+    parameters: {
+      query: {
+        /**
+         * @description 파일 소유 타입
+         * @example POST
+         */
+        ownerType:
+          | 'POST'
+          | 'COMMENT'
+          | 'ACCOUNT_TRANSACTION'
+          | 'CLUB_MEMBER_PROFILE'
+          | 'USER_PROFILE_IMAGE'
+          | 'USER_PROFILE_HEADER'
+          | 'CLUB_PROFILE'
+          | 'CLUB_BACKGROUND';
+        fileNames: string[];
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['com.weeth.global.common.response.CommonResponseJava.util.ListCom.weeth.domain.file.application.dto.response.UrlResponse'];
+        };
+      };
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+    };
+  };
+  userErrorCodes: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+    };
+  };
+  scheduleErrorCodes: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+    };
+  };
+  penaltyErrorCodes: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+    };
+  };
+  boardErrorCodes: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      429: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+    };
+  };
+  authErrorCodes: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+    };
+  };
+  attendanceErrorCodes: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+    };
+  };
+  accountErrorCodes: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+    };
+  };
+  getClubPublicInfo: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /**
+         * @description Base62 인코딩 TSID
+         * @example 1zA9
+         */
+        clubId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['com.weeth.global.common.response.CommonResponseCom.weeth.domain.club.application.dto.response.ClubPublicResponse'];
+        };
+      };
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+    };
+  };
+  getSummary: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /**
+         * @description Base62 인코딩 TSID
+         * @example 1zA9
+         */
+        clubId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['com.weeth.global.common.response.CommonResponseCom.weeth.domain.user.application.dto.response.UserMyPageResponse'];
+        };
+      };
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+    };
+  };
+  getMyPosts: {
+    parameters: {
+      query?: {
+        pageNumber?: number;
+        pageSize?: number;
+      };
+      header?: never;
+      path: {
+        /**
+         * @description Base62 인코딩 TSID
+         * @example 1zA9
+         */
+        clubId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['com.weeth.global.common.response.CommonResponseCom.weeth.global.common.response.SliceResponseCom.weeth.domain.user.application.dto.response.UserMyPostResponse'];
+        };
+      };
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+    };
+  };
+  getAttendedSessions: {
+    parameters: {
+      query?: {
+        pageNumber?: number;
+        pageSize?: number;
+      };
+      header?: never;
+      path: {
+        /**
+         * @description Base62 인코딩 TSID
+         * @example 1zA9
+         */
+        clubId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['com.weeth.global.common.response.CommonResponseCom.weeth.global.common.response.SliceResponseCom.weeth.domain.user.application.dto.response.UserAttendedSessionResponse'];
+        };
+      };
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+    };
+  };
+  getSession: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /**
+         * @description Base62 인코딩 TSID
+         * @example 1zA9
+         */
+        clubId: string;
+        sessionId: number;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['com.weeth.global.common.response.CommonResponseCom.weeth.domain.session.application.dto.response.SessionResponse'];
+        };
+      };
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+    };
+  };
+  findByYearly: {
+    parameters: {
+      query: {
+        year: number;
+      };
+      header?: never;
+      path: {
+        /**
+         * @description Base62 인코딩 TSID
+         * @example 1zA9
+         */
+        clubId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['com.weeth.global.common.response.CommonResponseJava.util.MapJava.lang.IntegerJava.util.ListCom.weeth.domain.schedule.application.dto.response.ScheduleResponse'];
+        };
+      };
+    };
+  };
+  findByMonthly: {
+    parameters: {
+      query: {
+        start: string;
+        end: string;
+      };
+      header?: never;
+      path: {
+        /**
+         * @description Base62 인코딩 TSID
+         * @example 1zA9
+         */
+        clubId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['com.weeth.global.common.response.CommonResponseJava.util.ListCom.weeth.domain.schedule.application.dto.response.ScheduleResponse'];
+        };
+      };
+    };
+  };
+  getMyMemberInfo: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /**
+         * @description Base62 인코딩 TSID
+         * @example 1zA9
+         */
+        clubId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['com.weeth.global.common.response.CommonResponseCom.weeth.domain.club.application.dto.response.ClubMemberProfileResponse'];
+        };
+      };
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+    };
+  };
+  getMyMemberSummary: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /**
+         * @description Base62 인코딩 TSID
+         * @example 1zA9
+         */
+        clubId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['com.weeth.global.common.response.CommonResponseCom.weeth.domain.club.application.dto.response.ClubMemberSummaryResponse'];
+        };
+      };
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+    };
+  };
+  getProfileStatus: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /**
+         * @description Base62 인코딩 TSID
+         * @example 1zA9
+         */
+        clubId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['com.weeth.global.common.response.CommonResponseCom.weeth.domain.club.application.dto.response.ProfileStatusResponse'];
+        };
+      };
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+    };
+  };
+  getEvent: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /**
+         * @description Base62 인코딩 TSID
+         * @example 1zA9
+         */
+        clubId: string;
+        eventId: number;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['com.weeth.global.common.response.CommonResponseCom.weeth.domain.schedule.application.dto.response.EventResponse'];
+        };
+      };
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+    };
+  };
+  getUnreadNotice: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /**
+         * @description Base62 인코딩 TSID
+         * @example 1zA9
+         */
+        clubId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['com.weeth.global.common.response.CommonResponseCom.weeth.domain.dashboard.application.dto.response.DashboardUnreadNoticeResponse'];
+        };
+      };
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+    };
+  };
+  getRecentPosts: {
+    parameters: {
+      query?: {
+        pageNumber?: number;
+        pageSize?: number;
+      };
+      header?: never;
+      path: {
+        /**
+         * @description Base62 인코딩 TSID
+         * @example 1zA9
+         */
+        clubId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['com.weeth.global.common.response.CommonResponseOrg.springframework.data.domain.SliceCom.weeth.domain.dashboard.application.dto.response.DashboardPostResponse'];
+        };
+      };
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+    };
+  };
+  getRecentNotices: {
+    parameters: {
+      query?: {
+        size?: number;
+      };
+      header?: never;
+      path: {
+        /**
+         * @description Base62 인코딩 TSID
+         * @example 1zA9
+         */
+        clubId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['com.weeth.global.common.response.CommonResponseJava.util.ListCom.weeth.domain.dashboard.application.dto.response.DashboardNoticeResponse'];
+        };
+      };
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+    };
+  };
+  getMonthlySchedules: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /**
+         * @description Base62 인코딩 TSID
+         * @example 1zA9
+         */
+        clubId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['com.weeth.global.common.response.CommonResponseJava.util.ListCom.weeth.domain.dashboard.application.dto.response.DashboardScheduleResponse'];
+        };
+      };
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+    };
+  };
+  getHome: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /**
+         * @description Base62 인코딩 TSID
+         * @example 1zA9
+         */
+        clubId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['com.weeth.global.common.response.CommonResponseCom.weeth.domain.dashboard.application.dto.response.DashboardHomeResponse'];
+        };
+      };
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+    };
+  };
+  findAllCardinals: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /**
+         * @description Base62 인코딩 TSID
+         * @example 1zA9
+         */
+        clubId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['com.weeth.global.common.response.CommonResponseJava.util.ListCom.weeth.domain.cardinal.application.dto.response.CardinalResponse'];
+        };
+      };
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+    };
+  };
+  findBoards: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /**
+         * @description Base62 인코딩 TSID
+         * @example 1zA9
+         */
+        clubId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['com.weeth.global.common.response.CommonResponseJava.util.ListCom.weeth.domain.board.application.dto.response.BoardListResponse'];
+        };
+      };
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      429: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+    };
+  };
+  searchPosts: {
+    parameters: {
+      query: {
+        keyword: string;
+        pageNumber?: number;
+        pageSize?: number;
+      };
+      header?: never;
+      path: {
+        /**
+         * @description Base62 인코딩 TSID
+         * @example 1zA9
+         */
+        clubId: string;
+        boardId: number;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['com.weeth.global.common.response.CommonResponseOrg.springframework.data.domain.SliceCom.weeth.domain.board.application.dto.response.PostListResponse'];
+        };
+      };
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      429: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+    };
+  };
+  findAllPosts: {
+    parameters: {
+      query?: {
+        pageNumber?: number;
+        pageSize?: number;
+      };
+      header?: never;
+      path: {
+        /**
+         * @description Base62 인코딩 TSID
+         * @example 1zA9
+         */
+        clubId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['com.weeth.global.common.response.CommonResponseOrg.springframework.data.domain.SliceCom.weeth.domain.board.application.dto.response.PostListResponse'];
+        };
+      };
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      429: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+    };
+  };
+  find: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /**
+         * @description Base62 인코딩 TSID
+         * @example 1zA9
+         */
+        clubId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['com.weeth.global.common.response.CommonResponseCom.weeth.domain.attendance.application.dto.response.AttendanceSummaryResponse'];
+        };
+      };
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+    };
+  };
+  subscribe: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /**
+         * @description Base62 인코딩 TSID
+         * @example 1zA9
+         */
+        clubId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'text/event-stream': components['schemas']['org.springframework.web.servlet.mvc.method.annotation.SseEmitter'];
+        };
+      };
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+    };
+  };
+  findAll: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /**
+         * @description Base62 인코딩 TSID
+         * @example 1zA9
+         */
+        clubId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['com.weeth.global.common.response.CommonResponseCom.weeth.domain.attendance.application.dto.response.AttendanceDetailResponse'];
+        };
+      };
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+    };
+  };
+  findTransactions: {
+    parameters: {
+      query?: {
+        filter?: 'ALL' | 'INCOME' | 'EXPENSE' | 'DUES';
+        sort?: 'LATEST' | 'OLDEST' | 'AMOUNT_DESC' | 'AMOUNT_ASC';
+        page?: number;
+        size?: number;
+      };
+      header?: never;
+      path: {
+        /**
+         * @description Base62 인코딩 TSID
+         * @example 1zA9
+         */
+        clubId: string;
+        cardinal: number;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['com.weeth.global.common.response.CommonResponseCom.weeth.domain.account.application.dto.response.MemberAccountTransactionsResponse'];
+        };
+      };
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+    };
+  };
+  findTransaction: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /**
+         * @description Base62 인코딩 TSID
+         * @example 1zA9
+         */
+        clubId: string;
+        cardinal: number;
+        transactionId: number;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['com.weeth.global.common.response.CommonResponseCom.weeth.domain.account.application.dto.response.MemberTransactionDetailResponse'];
+        };
+      };
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+    };
+  };
+  findMyAccount: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /**
+         * @description Base62 인코딩 TSID
+         * @example 1zA9
+         */
+        clubId: string;
+        cardinal: number;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['com.weeth.global.common.response.CommonResponseCom.weeth.domain.account.application.dto.response.MyAccountResponse'];
+        };
+      };
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+    };
+  };
+  getVisibility: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /**
+         * @description Base62 인코딩 TSID
+         * @example 1zA9
+         */
+        clubId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['com.weeth.global.common.response.CommonResponseCom.weeth.domain.account.application.dto.response.AccountVisibilityResponse'];
+        };
+      };
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+    };
+  };
+  findCardinals: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /**
+         * @description Base62 인코딩 TSID
+         * @example 1zA9
+         */
+        clubId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['com.weeth.global.common.response.CommonResponseJava.util.ListCom.weeth.domain.account.application.dto.response.AccountCardinalResponse'];
+        };
+      };
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+    };
+  };
+  getMembershipStatus: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['com.weeth.global.common.response.CommonResponseCom.weeth.domain.club.application.dto.response.ClubMembershipStatusResponse'];
+        };
+      };
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+    };
+  };
+  leave: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['com.weeth.global.common.response.CommonResponseJava.lang.Void'];
+        };
+      };
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+    };
+  };
+  deleteUserProfileImage: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        profileId: number;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['com.weeth.global.common.response.CommonResponseJava.lang.Void'];
+        };
+      };
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+    };
+  };
+  deleteUserProfileHeaderImage: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        profileId: number;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['com.weeth.global.common.response.CommonResponseJava.lang.Void'];
+        };
+      };
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+    };
+  };
+  leave_1: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /**
+         * @description Base62 인코딩 TSID
+         * @example 1zA9
+         */
+        clubId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['com.weeth.global.common.response.CommonResponseKotlin.Unit'];
+        };
+      };
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+    };
+  };
 }

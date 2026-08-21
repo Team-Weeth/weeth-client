@@ -25,8 +25,7 @@ export type MemberTransactionDetail =
   S<'com.weeth.domain.account.application.dto.response.MemberTransactionDetailResponse'>;
 
 /** 나의 회비 정보 */
-export type MyAccount =
-  S<'com.weeth.domain.account.application.dto.response.MyAccountResponse'>;
+export type MyAccount = S<'com.weeth.domain.account.application.dto.response.MyAccountResponse'>;
 
 /** 나의 납부 상태 */
 export type MyPayment =

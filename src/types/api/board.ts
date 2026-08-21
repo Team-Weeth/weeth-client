@@ -31,28 +31,22 @@ export type PostLikeAction =
   S<'com.weeth.domain.board.application.dto.response.PostLikeActionResponse'>;
 
 /** 좋아요 상태 */
-export type PostLike =
-  S<'com.weeth.domain.board.application.dto.response.PostLikeResponse'>;
+export type PostLike = S<'com.weeth.domain.board.application.dto.response.PostLikeResponse'>;
 
 /** 게시판 설정 (쓰기/댓글 권한) */
-export type BoardConfig =
-  S<'com.weeth.domain.board.application.dto.response.BoardConfigResponse'>;
+export type BoardConfig = S<'com.weeth.domain.board.application.dto.response.BoardConfigResponse'>;
 
 /** 게시판 목록 아이템 */
-export type BoardListItem =
-  S<'com.weeth.domain.board.application.dto.response.BoardListResponse'>;
+export type BoardListItem = S<'com.weeth.domain.board.application.dto.response.BoardListResponse'>;
 
 /** 게시글 목록 아이템 */
-export type PostListItem =
-  S<'com.weeth.domain.board.application.dto.response.PostListResponse'>;
+export type PostListItem = S<'com.weeth.domain.board.application.dto.response.PostListResponse'>;
 
 /** 게시글 상세 */
-export type PostDetail =
-  S<'com.weeth.domain.board.application.dto.response.PostDetailResponse'>;
+export type PostDetail = S<'com.weeth.domain.board.application.dto.response.PostDetailResponse'>;
 
 /** 댓글 (대댓글 포함) */
-export type Comment =
-  S<'com.weeth.domain.comment.application.dto.response.CommentResponse'>;
+export type Comment = S<'com.weeth.domain.comment.application.dto.response.CommentResponse'>;
 
 /** 게시글 목록 슬라이스 (Spring Slice 형태) */
 export type PostListSlice = NonNullable<

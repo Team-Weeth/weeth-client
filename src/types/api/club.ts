@@ -9,8 +9,7 @@ export type ClubCreateRequest =
   S<'com.weeth.domain.club.application.dto.request.ClubCreateRequest'>;
 
 /** 동아리 가입 요청 */
-export type ClubJoinRequest =
-  S<'com.weeth.domain.club.application.dto.request.ClubJoinRequest'>;
+export type ClubJoinRequest = S<'com.weeth.domain.club.application.dto.request.ClubJoinRequest'>;
 
 /** 초기 활동 기수 설정 요청 */
 export type ClubMemberCardinalSetRequest =
@@ -23,12 +22,10 @@ export type ClubCreateResponse =
   S<'com.weeth.domain.club.application.dto.response.ClubCreateResponse'>;
 
 /** 동아리 공개 정보 (이름·소개·프로필 사진) */
-export type ClubPublicInfo =
-  S<'com.weeth.domain.club.application.dto.response.ClubPublicResponse'>;
+export type ClubPublicInfo = S<'com.weeth.domain.club.application.dto.response.ClubPublicResponse'>;
 
 /** 내가 가입한 동아리 상세 정보 */
-export type ClubInfo =
-  S<'com.weeth.domain.club.application.dto.response.ClubInfoResponse'>;
+export type ClubInfo = S<'com.weeth.domain.club.application.dto.response.ClubInfoResponse'>;
 
 /** 동아리에서 사용 중인 멀티프로필 */
 export type ClubUsingProfile =
@@ -51,8 +48,7 @@ export type ClubMembershipStatus =
   S<'com.weeth.domain.club.application.dto.response.ClubMembershipStatusResponse'>;
 
 /** 기수 정보 */
-export type CardinalInfo =
-  S<'com.weeth.domain.cardinal.application.dto.response.CardinalResponse'>;
+export type CardinalInfo = S<'com.weeth.domain.cardinal.application.dto.response.CardinalResponse'>;
 
 // ── Derived types ─────────────────────────────────────────────────────────────
 
