@@ -1,0 +1,10 @@
+export type * from './auth';
+export type * from './user';
+export type * from './club';
+export type * from './board';
+export type * from './attendance';
+export type * from './account';
+export type * from './schedule';
+export type * from './file';
+export type * from './university';
+export type * from './dashboard';
