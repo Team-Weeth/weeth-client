@@ -11,6 +11,7 @@ import {
   LogoutIcon,
   HomeIcon,
   MenuIcon,
+  CalendarIcon,
 } from '@/assets/icons';
 import { AdminDuesIcon } from '@/assets/icons/admin';
 import { Divider, Icon, Sheet, SheetClose, SheetContent, SheetTrigger } from '@/components/ui';
@@ -43,6 +44,7 @@ function MobileNavSheet() {
     { id: 'home', label: 'HOME', href: `/${clubId}/home`, icon: HomeIcon },
     { id: 'board', label: '게시판', href: `/${clubId}/board`, icon: PinIcon },
     { id: 'attendance', label: '출석', href: `/${clubId}/attendance`, icon: CheckRoundIcon },
+    { id: 'calendar', label: '캘린더', href: `/${clubId}/calendar`, icon: CalendarIcon },
     ...(isDuesVisible
       ? [{ id: 'dues', label: '회비', href: `/${clubId}/dues`, icon: AdminDuesIcon }]
       : []),
