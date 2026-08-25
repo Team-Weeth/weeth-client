@@ -109,7 +109,7 @@ function CalendarGrid({
   return (
     <div className={cn('bg-container-neutral overflow-hidden rounded-md', className)}>
       {/* Weekday header row */}
-      <div className="border-line grid grid-cols-7 border-b">
+      <div className="border-line grid grid-cols-[repeat(7,minmax(92px,1fr))] border-b">
         {DAY_META.map((d, i) => (
           <div
             key={d.en}
@@ -124,7 +124,7 @@ function CalendarGrid({
       </div>
 
       {/* Date cells */}
-      <div className="grid grid-cols-7">
+      <div className="grid grid-cols-[repeat(7,minmax(92px,1fr))] grid-rows-[repeat(6,minmax(80px,auto))]">
         {cells.map((cell, i) => {
           const col = i % 7;
           const row = Math.floor(i / 7);
@@ -161,7 +161,7 @@ function CalendarGrid({
             <div
               key={`${cell.dateStr}-${i}`}
               className={cn(
-                'flex h-20 flex-col overflow-hidden p-[6px]',
+                'flex flex-col items-start self-stretch justify-self-stretch overflow-hidden p-[6px]',
                 !isLastRow && 'border-line border-b',
                 !isLastCol && 'border-line border-r',
               )}
@@ -185,7 +185,7 @@ function CalendarGrid({
                   disabled={!cell.isCurrentMonth}
                   onClick={() => cell.isCurrentMonth && onSelectDate?.(cell.dateStr)}
                   className={cn(
-                    'flex size-5 shrink-0 cursor-pointer items-center justify-center rounded-full transition-colors',
+                    'flex size-5 shrink-0 cursor-pointer items-center justify-center rounded-full text-center transition-colors',
                     cell.isToday || isSelected ? 'typo-caption1' : 'typo-caption2',
                     circleBg,
                     dateTextColor,
