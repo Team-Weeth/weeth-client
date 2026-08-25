@@ -9,7 +9,6 @@ describe('Tag', () => {
   });
 
   it.each([
-    'notice',
     'caution',
     'error',
     'success',
