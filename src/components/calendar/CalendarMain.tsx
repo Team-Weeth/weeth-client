@@ -1,50 +1,49 @@
 'use client';
 
-import { useState } from 'react';
 import { cn } from '@/lib/cn';
-import { useMonthNavigator } from '@/hooks/useMonthNavigator';
 import { useCardinalSelector } from '@/hooks/useCardinalSelector';
 import { useAdminMonthlySchedules } from '@/hooks/queries/admin/useAdminScheduleQueries';
-import { CalendarHeader } from '@/components/calendar/CalendarHeader';
+import { CalendarFilter } from '@/components/calendar/CalendarFilter';
 import { CalendarGrid } from '@/components/calendar/CalendarGrid';
-import { CalendarScheduleList } from '@/components/calendar/CalendarScheduleList';
+import { CalendarMini } from '@/components/calendar/CalendarMini';
 import { CardinalDropdown } from '@/components/common';
 import {
   Breadcrumb,
   BreadcrumbItem,
   BreadcrumbList,
   BreadcrumbPage,
-  Skeleton,
 } from '@/components/ui';
+import {
+  useCalendarYear,
+  useCalendarMonth,
+  useCalendarSelectedDate,
+  useCalendarFilters,
+  useCalendarActions,
+} from '@/stores/useCalendarStore';
 
 interface CalendarMainProps {
   className?: string;
 }
 
 function CalendarMain({ className }: CalendarMainProps) {
-  const { year, month, prev, next } = useMonthNavigator();
-  const [selectedDate, setSelectedDate] = useState<string | null>(null);
+  const year = useCalendarYear();
+  const month = useCalendarMonth();
+  const selectedDate = useCalendarSelectedDate();
+  const { sessionEnabled, eventEnabled } = useCalendarFilters();
+  const { toggleDate } = useCalendarActions();
 
   const { cardinals, activeCardinal, setSelectedCardinalId } = useCardinalSelector({
     autoSelectLatest: true,
     scope: 'calendar',
   });
 
-  const { data: schedules = [], isLoading } = useAdminMonthlySchedules(year, month);
+  const { data: schedules = [] } = useAdminMonthlySchedules(year, month);
 
-  const handlePrevMonth = () => {
-    setSelectedDate(null);
-    prev();
-  };
-
-  const handleNextMonth = () => {
-    setSelectedDate(null);
-    next();
-  };
-
-  const handleSelectDate = (date: string) => {
-    setSelectedDate((prev) => (prev === date ? null : date));
-  };
+  const filteredSchedules = schedules.filter((s) => {
+    if (s.type === 'SESSION' && !sessionEnabled) return false;
+    if (s.type === 'EVENT' && !eventEnabled) return false;
+    return true;
+  });
 
   return (
     <div
@@ -55,7 +54,9 @@ function CalendarMain({ className }: CalendarMainProps) {
         <Breadcrumb>
           <BreadcrumbList>
             <BreadcrumbItem>
-              <BreadcrumbPage className="typo-caption1 text-text-alternative">캘린더</BreadcrumbPage>
+              <BreadcrumbPage className="typo-caption1 text-text-alternative">
+                캘린더
+              </BreadcrumbPage>
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
@@ -69,47 +70,28 @@ function CalendarMain({ className }: CalendarMainProps) {
         </div>
       </div>
 
-      {/* Month navigator */}
-      <CalendarHeader
-        year={year}
-        month={month}
-        onPrevMonth={handlePrevMonth}
-        onNextMonth={handleNextMonth}
-      />
-
-      {/* Calendar grid */}
-      <CalendarGrid
-        year={year}
-        month={month}
-        schedules={schedules}
-        selectedDate={selectedDate}
-        onSelectDate={handleSelectDate}
-      />
-
-      {/* Divider */}
-      <div className="bg-line h-px w-full" />
-
-      {/* Schedule list */}
-      {isLoading ? (
-        <CalendarMainSkeleton />
-      ) : (
-        <CalendarScheduleList schedules={schedules} filterDate={selectedDate} />
-      )}
-    </div>
-  );
-}
-
-function CalendarMainSkeleton() {
-  return (
-    <div className="flex flex-col gap-500 px-500 pt-500">
-      {[0, 1, 2].map((i) => (
-        <div key={i} className="flex flex-col gap-200">
-          <Skeleton className="h-5 w-32 rounded-sm" />
-          <Skeleton className="h-14 w-full rounded-md" />
+      {/* Main content: left column (mini + filter) + right column (grid & schedule) */}
+      <div className="flex items-start gap-400">
+        {/* Left column */}
+        <div className="flex flex-col gap-300">
+          <CalendarMini />
+          <CalendarFilter />
         </div>
-      ))}
+
+        {/* Right column */}
+        <div className="flex flex-1 flex-col gap-[35px]">
+          <CalendarGrid
+            year={year}
+            month={month}
+            schedules={filteredSchedules}
+            selectedDate={selectedDate}
+            onSelectDate={toggleDate}
+          />
+
+        </div>
+      </div>
     </div>
   );
 }
 
-export { CalendarMain, CalendarMainSkeleton, type CalendarMainProps };
+export { CalendarMain, type CalendarMainProps };

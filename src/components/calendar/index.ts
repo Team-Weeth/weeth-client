@@ -1,5 +1,4 @@
-export { CalendarMain, CalendarMainSkeleton, type CalendarMainProps } from './CalendarMain';
-export { CalendarHeader, type CalendarHeaderProps } from './CalendarHeader';
+export { CalendarMain, type CalendarMainProps } from './CalendarMain';
+export { CalendarFilter, type CalendarFilterProps } from './CalendarFilter';
 export { CalendarGrid, type CalendarGridProps } from './CalendarGrid';
-export { CalendarScheduleList, type CalendarScheduleListProps } from './CalendarScheduleList';
-export { CalendarScheduleItem, type CalendarScheduleItemProps } from './CalendarScheduleItem';
+export { CalendarMini, type CalendarMiniProps } from './CalendarMini';
