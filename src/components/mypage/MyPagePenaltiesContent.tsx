@@ -13,13 +13,40 @@ import { parseApiError } from '@/lib/error';
 import { toastError } from '@/stores/useToastStore';
 import { MyPagePenaltiesSkeleton } from '@/components/mypage/skeleton';
 
+// TODO: 백엔드 api 머지되면 MOCK_PENALTIES 제거
+const MOCK_PENALTIES = [
+  {
+    penaltyId: 1,
+    score: 1,
+    penaltyDescription: '정기모임 무단 불참',
+    penaltyType: 'PENALTY',
+    createdAt: '2026-02-19T01:00:00',
+  },
+  {
+    penaltyId: 2,
+    score: 1,
+    penaltyDescription: '과제 미제출',
+    penaltyType: 'WARNING',
+    createdAt: '2026-03-05T01:00:00',
+  },
+  {
+    penaltyId: 3,
+    score: 1,
+    penaltyDescription: '과제 미완성',
+    penaltyType: 'WARNING',
+    createdAt: '2026-04-12T01:00:00',
+  },
+];
+
 type MyPagePenaltiesContentProps = React.HTMLAttributes<HTMLDivElement>;
 
 function MyPagePenaltiesContent({ className, ...props }: MyPagePenaltiesContentProps) {
   const router = useRouter();
   const { clubId } = useParams<{ clubId: string }>();
   const {
-    data: penalties = [],
+    // TODO: 백엔드 api 머지되면 아래 주석 제거 및 data: penalties = [], 로 수정
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    data: _penaltiesFromApi = [],
     isPending,
     isError,
     error,
@@ -28,6 +55,10 @@ function MyPagePenaltiesContent({ className, ...props }: MyPagePenaltiesContentP
     hasNextPage,
     isFetchingNextPage,
   } = useMyPagePenaltiesQuery(clubId);
+  // TODO: 백엔드 api 머지되면 아래 두 줄 제거
+  const isMock = true;
+  const penalties = MOCK_PENALTIES;
+
   const { ref: sentinelRef, isIntersecting } = useIntersectionObserver({ rootMargin: '200px' });
 
   useEffect(() => {
@@ -36,11 +67,12 @@ function MyPagePenaltiesContent({ className, ...props }: MyPagePenaltiesContentP
     }
   }, [fetchNextPage, hasNextPage, isFetchingNextPage, isIntersecting]);
 
+  // TODO: 백엔드 api 머지되면 아래 isMock 제거
   useEffect(() => {
-    if (!isError || !error) return;
+    if (!isError || !error || isMock) return;
     const parsed = parseApiError(error);
     toastError(parsed?.message ?? '페널티 기록을 불러오지 못했습니다.');
-  }, [error, isError]);
+  }, [error, isError, isMock]);
 
   return (
     <div className={cn('flex min-w-0 flex-1 flex-col gap-4', className)} {...props}>
@@ -58,9 +90,9 @@ function MyPagePenaltiesContent({ className, ...props }: MyPagePenaltiesContentP
         </div>
       </div>
 
-      {isPending ? (
+      {!isMock && isPending ? (
         <MyPagePenaltiesSkeleton />
-      ) : isError ? (
+      ) : !isMock && isError ? (
         <main className="flex min-w-0 flex-1 flex-col items-center justify-center gap-300 py-800">
           <p className="typo-body1 text-text-alternative">페널티 기록을 불러오지 못했습니다</p>
           <button
