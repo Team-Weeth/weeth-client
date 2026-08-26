@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { DeleteIcon, TooltipIcon } from '@/assets/icons';
 import {
   Button,
@@ -18,12 +19,13 @@ interface PenaltyRulesDialogProps {
 }
 
 function PenaltyRulesDialog({ clubId }: PenaltyRulesDialogProps) {
-  const { data: content } = useMyPagePenaltyRuleQuery(clubId);
+  const [open, setOpen] = useState(false);
+  const { data: content } = useMyPagePenaltyRuleQuery(clubId, { enabled: open });
   const { data: clubs } = useMyClubsQuery();
   const clubName = clubs?.find((club) => club.id === clubId)?.name ?? '';
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <button type="button" className="flex items-center justify-center">
           <Icon src={TooltipIcon} size={20} className="text-icon-alternative" />
