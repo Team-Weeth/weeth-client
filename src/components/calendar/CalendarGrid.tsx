@@ -3,15 +3,16 @@
 import { cn } from '@/lib/cn';
 import { DAY_META } from '@/constants/shared/date';
 import { getDaysInMonth, getFirstDayOfMonth } from '@/utils/shared/date';
-import type { MonthlySchedule } from '@/types/home';
+import { Tag } from '@/components/ui';
+import type { TagProps } from '@/components/ui';
+import type { CalendarSchedule } from '@/types/calendar';
 
 const MAX_VISIBLE_TAGS = 2;
 
-const SCHEDULE_TAG_STYLE: Record<string, { bg: string; text: string }> = {
-  SESSION: { bg: 'bg-brand-primary/10', text: 'text-brand-primary' },
-  EVENT: { bg: 'bg-brand-secondary/10', text: 'text-brand-secondary' },
+const SCHEDULE_TAG_VARIANT: Record<string, TagProps['variant']> = {
+  SESSION: 'primary',
+  EVENT: 'secondary',
 };
-const DEFAULT_TAG_STYLE = { bg: 'bg-brand-primary/10', text: 'text-brand-primary' };
 
 // 0=Sun, 1=Mon, ..., 6=Sat
 const DAY_HEADER_TEXT: string[] = [
@@ -27,7 +28,7 @@ const DAY_HEADER_TEXT: string[] = [
 interface CalendarGridProps {
   year: number;
   month: number;
-  schedules?: MonthlySchedule[];
+  schedules?: CalendarSchedule[];
   selectedDate?: string | null;
   onSelectDate?: (date: string) => void;
   className?: string;
@@ -50,8 +51,8 @@ function CalendarGrid({
   const todayMonth = today.getMonth() + 1;
   const todayDay = today.getDate();
 
-  // Build schedule map: dateStr → MonthlySchedule[]
-  const scheduleMap = new Map<string, MonthlySchedule[]>();
+  // Build schedule map: dateStr → CalendarSchedule[]
+  const scheduleMap = new Map<string, CalendarSchedule[]>();
   for (const s of schedules) {
     const key = s.start.split('T')[0];
     if (!scheduleMap.has(key)) scheduleMap.set(key, []);
@@ -124,7 +125,7 @@ function CalendarGrid({
       </div>
 
       {/* Date cells */}
-      <div className="grid grid-cols-[repeat(7,minmax(92px,1fr))] grid-rows-[repeat(6,minmax(80px,auto))]">
+      <div className="grid grid-cols-[repeat(7,minmax(92px,1fr))]">
         {cells.map((cell, i) => {
           const col = i % 7;
           const row = Math.floor(i / 7);
@@ -136,18 +137,19 @@ function CalendarGrid({
           const hiddenCount = daySchedules.length - visibleTags.length;
 
           const isSelected = selectedDate === cell.dateStr && cell.isCurrentMonth;
+          const isTodayHighlighted = cell.isToday && !selectedDate;
 
           // Date number circle style
           const circleBg = isSelected
             ? 'bg-brand-primary'
-            : cell.isToday
+            : isTodayHighlighted
               ? 'bg-container-primary'
               : '';
 
           let dateTextColor: string;
           if (!cell.isCurrentMonth) {
             dateTextColor = 'text-text-disabled';
-          } else if (isSelected || cell.isToday) {
+          } else if (isSelected || isTodayHighlighted) {
             dateTextColor = 'text-text-inverse';
           } else if (cell.dayOfWeek === 0) {
             dateTextColor = 'text-state-error';
@@ -161,7 +163,7 @@ function CalendarGrid({
             <div
               key={`${cell.dateStr}-${i}`}
               className={cn(
-                'flex flex-col items-start self-stretch justify-self-stretch overflow-hidden p-[6px]',
+                'flex h-[80px] flex-col items-start justify-self-stretch overflow-hidden p-[6px]',
                 !isLastRow && 'border-line border-b',
                 !isLastCol && 'border-line border-r',
               )}
@@ -169,7 +171,7 @@ function CalendarGrid({
               {/* Date header row: overflow badge (left) + date number (right) */}
               <div
                 className={cn(
-                  'flex h-6 shrink-0 items-start',
+                  'flex h-6 w-full shrink-0 items-start',
                   hiddenCount > 0 ? 'justify-between' : 'justify-end',
                 )}
               >
@@ -186,7 +188,7 @@ function CalendarGrid({
                   onClick={() => cell.isCurrentMonth && onSelectDate?.(cell.dateStr)}
                   className={cn(
                     'flex size-5 shrink-0 cursor-pointer items-center justify-center rounded-full text-center transition-colors',
-                    cell.isToday || isSelected ? 'typo-caption1' : 'typo-caption2',
+                    isTodayHighlighted || isSelected ? 'typo-caption1' : 'typo-caption2',
                     circleBg,
                     dateTextColor,
                     !circleBg && cell.isCurrentMonth && 'hover:bg-container-neutral-alternative',
@@ -199,22 +201,16 @@ function CalendarGrid({
 
               {/* Event tags */}
               {visibleTags.length > 0 && (
-                <div className="mt-100 flex flex-col gap-[2px]">
-                  {visibleTags.map((schedule) => {
-                    const style = SCHEDULE_TAG_STYLE[schedule.type] ?? DEFAULT_TAG_STYLE;
-                    return (
-                      <div
-                        key={schedule.id}
-                        className={cn(
-                          'typo-caption1 w-full truncate rounded-[5px] px-200 py-[2px]',
-                          style.bg,
-                          style.text,
-                        )}
-                      >
-                        {schedule.title}
-                      </div>
-                    );
-                  })}
+                <div className="flex w-full flex-col gap-[2px] pt-[4px]">
+                  {visibleTags.map((schedule) => (
+                    <Tag
+                      key={schedule.id}
+                      variant={SCHEDULE_TAG_VARIANT[schedule.type] ?? 'primary'}
+                      className="flex w-full rounded-[5px] py-[2px]"
+                    >
+                      <span className="min-w-0 flex-1 truncate">{schedule.title}</span>
+                    </Tag>
+                  ))}
                 </div>
               )}
             </div>
