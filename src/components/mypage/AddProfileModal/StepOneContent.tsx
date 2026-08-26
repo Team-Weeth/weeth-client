@@ -5,7 +5,7 @@ import { Controller, useWatch } from 'react-hook-form';
 import { Button } from '@/components/ui/Button';
 import { DialogClose } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/Input';
-import { FormFieldWrapper } from '@/components/auth/hub';
+import { FormFieldWrapper } from '@/components/auth/hub/FormFieldWrapper';
 import { MYPAGE_PROFILE_TEXT_MAX_LENGTH } from '@/constants/mypage/profile';
 import { cn } from '@/lib/cn';
 import type { EditProfileFormData } from '@/lib/schemas/editProfile';

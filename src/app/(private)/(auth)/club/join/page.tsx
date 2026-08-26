@@ -1,4 +1,5 @@
-import { HubProfile, InviteCodeForm } from '@/components/auth/hub';
+import { HubProfile } from '@/components/auth/hub/HubProfile';
+import { InviteCodeForm } from '@/components/auth/hub/InviteCodeForm';
 
 export default function JoinClubPage() {
   return (

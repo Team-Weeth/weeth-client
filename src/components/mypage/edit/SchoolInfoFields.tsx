@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/Input';
 import { FormField } from '@/components/mypage/FormField';
 import { SearchSelect } from '@/components/mypage/SearchSelect';
 import type { EditProfileFormData } from '@/lib/schemas/editProfile';
-import { FormFieldWrapper } from '@/components/auth/hub';
+import { FormFieldWrapper } from '@/components/auth/hub/FormFieldWrapper';
 import { CharacterCountRow } from '@/components/mypage/CharacterCountRow';
 
 const STUDENT_ID_MAX_LENGTH = 20;
