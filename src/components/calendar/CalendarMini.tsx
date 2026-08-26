@@ -155,17 +155,18 @@ function CalendarMini({ eventDates = [], className }: CalendarMiniProps) {
           {cells.map((cell, i) => {
             const selected = isSelected(cell);
             const showEvent = hasEvent(cell);
+            const isTodayHighlighted = cell.isToday && !selectedDate;
 
             const cellBg = selected
               ? 'bg-brand-primary'
-              : cell.isToday
+              : isTodayHighlighted
                 ? 'bg-container-primary'
                 : '';
 
             let textColor: string;
             if (!cell.isCurrentMonth) {
               textColor = 'text-text-disabled';
-            } else if (selected || cell.isToday) {
+            } else if (selected || isTodayHighlighted) {
               textColor = 'text-text-inverse';
             } else if (cell.dayOfWeek === 0) {
               textColor = 'text-state-error';
