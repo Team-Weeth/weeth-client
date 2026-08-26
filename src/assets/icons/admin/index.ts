@@ -44,3 +44,4 @@ export { default as AdminPaintIcon } from './ic_admin_paint.svg';
 export { default as AdminAlarmIcon } from './ic_admin_alarm.svg';
 export { default as AdminScreenIcon } from './ic_admin_screen.svg';
 export { default as AdminBackIcon } from './ic_admin_back.svg';
+export { default as AdminPenaltyIcon } from './ic_admin_penalty.svg';
