@@ -18,7 +18,7 @@ import {
 
 import { BackButton } from './BackButton';
 import { DuesSettingPageSkeleton } from './DuesSettingPageSkeleton';
-import { SettingResultCardGrid } from './setup/components';
+import { SettingResultCardGrid } from './setup/components/SettingResultCardGrid';
 
 const MAX_AVATAR_DISPLAY = 4;
 const PaymentTargetModal = dynamic(

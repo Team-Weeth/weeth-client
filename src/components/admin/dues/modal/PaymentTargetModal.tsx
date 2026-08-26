@@ -6,11 +6,9 @@ import {
   SCHEDULE_MODAL_CONTENT_CLASS,
   SCHEDULE_MODAL_FOOTER_CLASS,
 } from '@/components/admin/schedule/modal/constants';
-import {
-  DuesMemberTable,
-  DuesPagination,
-  DuesTabs,
-} from '@/components/admin/dues/setup/components';
+import { DuesMemberTable } from '@/components/admin/dues/setup/components/DuesMemberTable';
+import { DuesPagination } from '@/components/admin/dues/setup/components/DuesPagination';
+import { DuesTabs } from '@/components/admin/dues/setup/components/DuesTabs';
 import { DuesSearchBar } from '@/components/admin/dues/DuesSearchBar';
 import { Button } from '@/components/ui/Button';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
