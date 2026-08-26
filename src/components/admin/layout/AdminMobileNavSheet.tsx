@@ -5,15 +5,16 @@ import Link from 'next/link';
 import { useParams, usePathname, useRouter } from 'next/navigation';
 
 import AdminCalendarIcon from '@/assets/icons/admin/ic_admin_calendar.svg';
-import AdminForumIcon from '@/assets/icons/admin/ic_admin_forum.svg';
 import AdminDuesIcon from '@/assets/icons/admin/ic_admin_dues.svg';
-import AdminSettingIcon from '@/assets/icons/admin/ic_admin_setting.svg';
+import AdminForumIcon from '@/assets/icons/admin/ic_admin_forum.svg';
 import AdminPaintIcon from '@/assets/icons/admin/ic_admin_paint.svg';
+import AdminPenaltyIcon from '@/assets/icons/admin/ic_admin_penalty.svg';
 import AdminScreenIcon from '@/assets/icons/admin/ic_admin_screen.svg';
-import PeopleIcon from '@/assets/icons/people.svg';
-import ExitIcon from '@/assets/icons/exit.svg';
+import AdminSettingIcon from '@/assets/icons/admin/ic_admin_setting.svg';
 import ArrowRightIcon from '@/assets/icons/arrow_right.svg';
+import ExitIcon from '@/assets/icons/exit.svg';
 import LogoutIcon from '@/assets/icons/logout.svg';
+import PeopleIcon from '@/assets/icons/people.svg';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel } from '@/components/ui/alert-dialog';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { ClubAvatar } from '@/components/ui/ClubAvatar';
@@ -101,6 +102,12 @@ function AdminMobileNavSheet() {
     },
     { id: 'board', icon: AdminForumIcon, label: '게시판 관리', path: `/${clubId}/admin/board` },
     { id: 'dues', icon: AdminDuesIcon, label: '회비 관리', path: `/${clubId}/admin/dues` },
+    {
+      id: 'penalty',
+      icon: AdminPenaltyIcon,
+      label: '페널티 관리',
+      path: `/${clubId}/admin/penalty`,
+    },
   ];
 
   return (

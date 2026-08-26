@@ -7,6 +7,7 @@ import AdminCalendarIcon from '@/assets/icons/admin/ic_admin_calendar.svg';
 import AdminSettingIcon from '@/assets/icons/admin/ic_admin_setting.svg';
 import AdminDuesIcon from '@/assets/icons/admin/ic_admin_dues.svg';
 import AdminScreenIcon from '@/assets/icons/admin/ic_admin_screen.svg';
+import AdminPenaltyIcon from '@/assets/icons/admin/ic_admin_penalty.svg';
 import ExitIcon from '@/assets/icons/exit.svg';
 import PeopleIcon from '@/assets/icons/people.svg';
 
@@ -53,6 +54,12 @@ function LNB() {
     },
     { id: 'board', icon: AdminForumIcon, label: '게시판 관리', path: `/${clubId}/admin/board` },
     { id: 'dues', icon: AdminDuesIcon, label: '회비 관리', path: `/${clubId}/admin/dues` },
+    {
+      id: 'penalty',
+      icon: AdminPenaltyIcon,
+      label: '페널티 관리',
+      path: `/${clubId}/admin/penalty`,
+    },
   ];
 
   const infoNavItems = [

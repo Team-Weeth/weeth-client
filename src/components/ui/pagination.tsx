@@ -40,7 +40,7 @@ function PaginationLink({ className, isActive, ...props }: PaginationLinkProps) 
       data-slot="pagination-link"
       data-active={isActive}
       className={cn(
-        'typo-body2 flex size-8 cursor-pointer items-center justify-center rounded-sm transition-colors',
+        'typo-body2 flex size-10 cursor-pointer items-center justify-center rounded-sm transition-colors',
         isActive
           ? 'bg-container-primary text-text-inverse'
           : 'text-text-alternative hover:bg-container-neutral-interaction',

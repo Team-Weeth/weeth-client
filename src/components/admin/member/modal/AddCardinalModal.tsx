@@ -7,7 +7,7 @@ import AdminCloseIcon from '@/assets/icons/admin/ic_admin_close.svg';
 import AdminUncheckboxIcon from '@/assets/icons/admin/ic_admin_uncheckbox.svg';
 import { Button } from '@/components/ui/Button';
 import { Icon } from '@/components/ui/Icon';
-import { Input } from '@/components/ui/Input';
+import { SuffixInput } from '@/components/ui/SuffixInput';
 import { Dialog, DialogContent, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 
 interface AddCardinalModalProps {
@@ -64,23 +64,17 @@ function AddCardinalModal({ children, onSubmit }: AddCardinalModalProps) {
 
         <div className="flex flex-col gap-300 px-500 pb-600">
           <p className="typo-body1 text-text-normal">추가할 새로운 기수를 작성해주세요</p>
-          <div className="relative">
-            <Input
-              aria-label="기수"
-              type="number"
-              inputMode="numeric"
-              value={cardinal}
-              onChange={(e) => {
-                const v = (e.target as HTMLInputElement).value.replace(/\D/g, '');
-                if (v === '' || Number(v) > 0) setCardinal(v);
-              }}
-              className="bg-container-neutral-alternative focus:bg-container-neutral focus:border-container-primary h-[54px] rounded-md border px-400 py-300 pr-10 text-left"
-              placeholder=" "
-            />
-            <span className="typo-body1 text-text-disabled pointer-events-none absolute top-1/2 right-400 -translate-y-1/2">
-              기
-            </span>
-          </div>
+          <SuffixInput
+            suffix="기"
+            aria-label="기수"
+            type="number"
+            inputMode="numeric"
+            value={cardinal}
+            onChange={(e) => {
+              const v = e.target.value.replace(/\D/g, '');
+              if (v === '' || Number(v) > 0) setCardinal(v);
+            }}
+          />
 
           <div className="flex items-center justify-between pt-400">
             <button
