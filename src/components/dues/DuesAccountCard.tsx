@@ -1,10 +1,6 @@
-'use client';
-
-import CopyIcon from '@/assets/icons/copy.svg';
-import { Icon } from '@/components/ui/Icon';
+import { DuesAccountCopyButton } from '@/components/dues/DuesAccountCopyButton';
 import { cn } from '@/lib/cn';
 import type { DuesAccount } from '@/types/dues';
-import { copyDuesAccountToClipboard } from '@/utils/dues/duesAccount';
 
 interface DuesAccountCardProps {
   account: DuesAccount;
@@ -23,12 +19,6 @@ function DuesAccountCard({
 }: DuesAccountCardProps) {
   const accountText = `${account.bankName} ${account.accountNumber}`;
   const isHighlight = variant === 'highlight';
-
-  const handleCopy = async () => {
-    await copyDuesAccountToClipboard(account, {
-      successMessage: copyMessage,
-    });
-  };
 
   return (
     <div
@@ -58,14 +48,7 @@ function DuesAccountCard({
         </span>
       </div>
       {showCopyButton && (
-        <button
-          type="button"
-          onClick={handleCopy}
-          aria-label="계좌번호 복사"
-          className="text-icon-normal hover:text-icon-strong cursor-pointer p-100"
-        >
-          <Icon src={CopyIcon} size={24} />
-        </button>
+        <DuesAccountCopyButton account={account} successMessage={copyMessage} />
       )}
     </div>
   );
