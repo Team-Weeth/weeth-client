@@ -117,7 +117,7 @@ describe('CategorySelector', () => {
   describe('드롭다운 열기/닫기', () => {
     it('초기에는 드롭다운이 닫혀 있다', () => {
       render(<CategorySelector items={ITEMS} activeId={1} />);
-      expect(screen.queryByTestId('dropdown-content')).not.toBeInTheDocument();
+      expect(screen.queryByRole('menu')).not.toBeInTheDocument();
     });
 
     it('트리거를 클릭하면 드롭다운이 열린다', async () => {
@@ -126,7 +126,7 @@ describe('CategorySelector', () => {
 
       await user.click(screen.getByRole('button'));
 
-      expect(screen.getByTestId('dropdown-content')).toBeInTheDocument();
+      expect(screen.getByRole('menu')).toBeInTheDocument();
     });
 
     it('채널 선택 후 드롭다운이 닫힌다', async () => {
@@ -136,7 +136,7 @@ describe('CategorySelector', () => {
       await user.click(screen.getByRole('button'));
       await user.click(screen.getByRole('button', { name: '자유게시판' }));
 
-      expect(screen.queryByTestId('dropdown-content')).not.toBeInTheDocument();
+      expect(screen.queryByRole('menu')).not.toBeInTheDocument();
     });
   });
 

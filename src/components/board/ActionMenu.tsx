@@ -2,7 +2,13 @@
 
 import MoreVerticalIcon from '@/assets/icons/more_vertical.svg';
 import { Button } from '@/components/ui/Button';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/DropdownMenu';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/DropdownMenu';
 import { Icon } from '@/components/ui/Icon';
 import { cn } from '@/lib/cn';
 import type { ButtonProps } from '@/components/ui/Button';

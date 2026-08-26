@@ -47,9 +47,7 @@ function DuesAccountCard({
           {account.holderName}
         </span>
       </div>
-      {showCopyButton && (
-        <DuesAccountCopyButton account={account} successMessage={copyMessage} />
-      )}
+      {showCopyButton && <DuesAccountCopyButton account={account} successMessage={copyMessage} />}
     </div>
   );
 }

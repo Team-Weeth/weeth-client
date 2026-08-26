@@ -8,7 +8,13 @@ import { useParams, useRouter } from 'next/navigation';
 import type { HomeTutorialSlide } from '@/constants/home/tutorial';
 import { Button } from '@/components/ui/Button';
 import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carousel';
-import { Dialog, DialogBody, DialogContent, DialogFooter, DialogHeader } from '@/components/ui/dialog';
+import {
+  Dialog,
+  DialogBody,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+} from '@/components/ui/dialog';
 import type { CarouselApi } from '@/components/ui/carousel';
 import { PaginationButton } from './PaginationButton';
 

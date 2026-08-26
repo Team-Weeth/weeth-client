@@ -7,7 +7,13 @@ import Webcam from 'react-webcam';
 import CameraIcon from '@/assets/icons/camera.svg';
 import CheckRoundIcon from '@/assets/icons/check_round.svg';
 import { Button } from '@/components/ui/Button';
-import { Dialog, DialogContent, DialogHeader, DialogBody, DialogFooter } from '@/components/ui/dialog';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogBody,
+  DialogFooter,
+} from '@/components/ui/dialog';
 import { Icon } from '@/components/ui/Icon';
 import { InputOTP } from '@/components/attendance/InputOTP';
 import { useAttendanceSSE, useQRScanner } from '@/hooks/attendance';

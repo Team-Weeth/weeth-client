@@ -3,7 +3,7 @@ import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { CommentItem } from '@/components/board/Comment/CommentItem';
 
-jest.mock('@/hooks', () => ({
+jest.mock('@/hooks/useScrollIntoView', () => ({
   useScrollIntoView: jest.fn(() => ({ current: null })),
 }));
 

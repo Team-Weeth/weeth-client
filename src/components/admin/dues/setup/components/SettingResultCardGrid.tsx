@@ -1,7 +1,13 @@
 import type { ReactNode } from 'react';
 
 import EditIcon from '@/assets/icons/edit.svg';
-import { Avatar, AvatarFallback, AvatarImage, AvatarGroup, AvatarGroupCount } from '@/components/ui/avatar';
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+  AvatarGroup,
+  AvatarGroupCount,
+} from '@/components/ui/avatar';
 import { Card } from '@/components/ui/card';
 import { Icon } from '@/components/ui/Icon';
 import { cn } from '@/lib/cn';

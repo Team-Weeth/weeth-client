@@ -5,7 +5,12 @@ import { useRouter } from 'next/navigation';
 import { useLeaveClubMutation } from '@/hooks/mutations/mypage/useMultiProfileMutations';
 import { toastError, toastSuccess } from '@/stores/useToastStore';
 import { getApiErrorMessage } from '@/utils/shared';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/DropdownMenu';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/DropdownMenu';
 import { Icon } from '@/components/ui/Icon';
 import AdminMeatballIcon from '@/assets/icons/admin/ic_admin_meatball.svg';
 import { WithdrawConfirmDialog } from './WithdrawConfirmDialog';

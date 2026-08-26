@@ -5,7 +5,14 @@ import { useState } from 'react';
 import CheckIcon from '@/assets/icons/check.svg';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Icon } from '@/components/ui/Icon';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
 import { cn } from '@/lib/cn';
 import { formatPhone } from '@/utils/shared';
 import { DuesPagination } from '@/components/admin/dues/setup/components/DuesPagination';

@@ -1,7 +1,12 @@
 'use client';
 
 import { Icon } from '@/components/ui/Icon';
-import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from '@/components/ui/DropdownMenu';
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+} from '@/components/ui/DropdownMenu';
 import { Divider } from '@/components/ui/Divider';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import CameraIcon from '@/assets/icons/camera.svg';

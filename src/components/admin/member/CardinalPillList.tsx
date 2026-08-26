@@ -4,7 +4,12 @@ import MoreVerticalIcon from '@/assets/icons/more_vertical.svg';
 import { AddCardinalButton } from './AddCardinalButton';
 import { AddCardinalModal } from './modal/AddCardinalModal';
 import { CardinalCard } from './CardinalCard';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/DropdownMenu';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/DropdownMenu';
 import { Icon } from '@/components/ui/Icon';
 import { CARDINAL_ERROR_CODE } from '@/constants/errorCode';
 import { useDragScroll } from '@/hooks/useDragScroll';

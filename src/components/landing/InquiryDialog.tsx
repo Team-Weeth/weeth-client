@@ -2,7 +2,14 @@
 
 import { useState } from 'react';
 import { type ReactNode } from 'react';
-import { Dialog, DialogBody, DialogContent, DialogFooter, DialogHeader, DialogTrigger } from '@/components/ui/dialog';
+import {
+  Dialog,
+  DialogBody,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTrigger,
+} from '@/components/ui/dialog';
 import { Input } from '@/components/ui/Input';
 import { Textarea } from '@/components/ui/Textarea';
 import LandingInfoIcon from '@/assets/icons/landing/landing_info.svg';

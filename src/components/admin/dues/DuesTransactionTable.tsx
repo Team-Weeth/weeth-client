@@ -1,7 +1,14 @@
 'use client';
 
 import { Icon } from '@/components/ui/Icon';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
 import MoreHorizIcon from '@/assets/icons/more-horiz.svg';
 import { cn } from '@/lib/cn';
 import { DuesPagination } from '@/components/admin/dues/setup/components/DuesPagination';

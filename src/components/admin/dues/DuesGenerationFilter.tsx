@@ -4,7 +4,12 @@ import Image from 'next/image';
 import ArrowDownIcon from '@/assets/icons/arrow_down.svg';
 import { cn } from '@/lib/cn';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/DropdownMenu';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/DropdownMenu';
 import { TooltipProvider, Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/Tooltip';
 import { Icon } from '@/components/ui/Icon';
 import { formatLastUpdated } from '@/utils/shared/date';

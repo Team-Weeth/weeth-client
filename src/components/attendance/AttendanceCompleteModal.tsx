@@ -4,7 +4,13 @@ import Image from 'next/image';
 
 import TaskFinishedIcon from '@/assets/icons/task_finished.svg';
 import { Button } from '@/components/ui/Button';
-import { Dialog, DialogContent, DialogHeader, DialogBody, DialogFooter } from '@/components/ui/dialog';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogBody,
+  DialogFooter,
+} from '@/components/ui/dialog';
 
 interface AttendanceCompleteModalProps {
   open: boolean;

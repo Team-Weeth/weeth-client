@@ -1,7 +1,12 @@
 import type { ReactNode } from 'react';
 
 import { CardinalDropdown } from '@/components/common/CardinalDropdown';
-import { Breadcrumb, BreadcrumbItem, BreadcrumbList, BreadcrumbPage } from '@/components/ui/breadcrumb';
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbList,
+  BreadcrumbPage,
+} from '@/components/ui/breadcrumb';
 import type { Cardinal } from '@/types/admin/cardinal';
 
 interface DuesPageLayoutProps {

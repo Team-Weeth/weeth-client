@@ -4,7 +4,14 @@ import { useRouter } from 'next/navigation';
 
 import { Button } from '@/components/ui/Button';
 import { ClubAvatar } from '@/components/ui/ClubAvatar';
-import { Item, ItemActions, ItemContent, ItemDescription, ItemMedia, ItemTitle } from '@/components/ui/item';
+import {
+  Item,
+  ItemActions,
+  ItemContent,
+  ItemDescription,
+  ItemMedia,
+  ItemTitle,
+} from '@/components/ui/item';
 import { setClubCookie } from '@/lib/actions/club';
 import { cn } from '@/lib/cn';
 import { useClubActions } from '@/stores';

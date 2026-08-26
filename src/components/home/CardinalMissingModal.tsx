@@ -1,7 +1,16 @@
 'use client';
 
 import { useParams, useRouter } from 'next/navigation';
-import { AlertDialog, AlertDialogContent, AlertDialogTitle, AlertDialogDescription, AlertDialogFooter, AlertDialogAction, AlertDialogCancel, AlertDialogHeader } from '@/components/ui/alert-dialog';
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogHeader,
+} from '@/components/ui/alert-dialog';
 
 interface CardinalMissingModalProps {
   open: boolean;
