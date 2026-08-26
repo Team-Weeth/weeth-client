@@ -17,6 +17,7 @@ import { MyPageDropdownMenu } from './MyPageDropdownMenu';
 interface ProfileSectionProps extends React.HTMLAttributes<HTMLDivElement>, ProfileData {
   postCount?: number;
   sessionCount?: number;
+  penaltyCount?: number;
 }
 
 const ProfileSection = ({
@@ -31,6 +32,7 @@ const ProfileSection = ({
   department,
   postCount = 0,
   sessionCount = 0,
+  penaltyCount = 0,
   className,
   ...props
 }: ProfileSectionProps) => {
@@ -57,6 +59,11 @@ const ProfileSection = ({
       label: '출석한 세션',
       count: sessionCount,
       href: `/${clubId}/mypage/sessions`,
+    },
+    {
+      label: '페널티',
+      count: penaltyCount,
+      href: `/${clubId}/mypage/penalties`,
     },
   ] as const;
 
