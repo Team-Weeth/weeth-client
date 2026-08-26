@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useParams } from 'next/navigation';
 
 import QuestionCircleIcon from '@/assets/icons/question_circle.svg';
-import { PaymentTargetModal } from '@/components/admin/dues';
+import { PaymentTargetModal } from '@/components/admin/dues/modal/PaymentTargetModal';
 import { Icon } from '@/components/ui/Icon';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/Tooltip';
 import { DUES_REGISTRATION_ERROR_CODE } from '@/constants/errorCode';
@@ -14,15 +14,13 @@ import { getApiErrorCode } from '@/utils/shared/getApiErrorCode';
 import { useDuesPaymentTargetsQuery, useDuesRegistrationStatusQuery } from '@/hooks/queries/admin';
 import { useCompleteDuesRegistration } from '@/hooks/mutations/admin';
 
-import {
-  DuesSetupStepIndicator,
-  FormCard,
-  NextButton,
-  PrevButton,
-  SettingResultCardGrid,
-  SetupHeader,
-  DuesSetupStep5Skeleton,
-} from '@/components/admin/dues/setup/components';
+import { DuesSetupStep5Skeleton } from '@/components/admin/dues/setup/components/DuesSetupStepSkeleton';
+import { DuesSetupStepIndicator } from '@/components/admin/dues/setup/components/DuesSetupStepIndicator';
+import { FormCard } from '@/components/admin/dues/setup/components/FormCard';
+import { NextButton } from '@/components/admin/dues/setup/components/NextButton';
+import { PrevButton } from '@/components/admin/dues/setup/components/PrevButton';
+import { SettingResultCardGrid } from '@/components/admin/dues/setup/components/SettingResultCardGrid';
+import { SetupHeader } from '@/components/admin/dues/setup/components/SetupHeader';
 import { useDuesSetupNavigation } from '@/hooks/admin/useDuesSetupNavigation';
 import { useEnsureDuesAccountId } from '@/hooks/admin';
 import { formatAmount } from '@/lib/formatAmount';

@@ -12,15 +12,13 @@ import { toastError } from '@/stores/useToastStore';
 import { useSyncFormToStore } from '@/hooks/useSyncFormToStore';
 import { useSaveDuesBankAccount } from '@/hooks/mutations/admin';
 
-import {
-  BankSelectField,
-  DuesSetupStepIndicator,
-  FormCard,
-  NextButton,
-  PrevButton,
-  SetupHeader,
-  DuesSetupStep4Skeleton,
-} from '@/components/admin/dues/setup/components';
+import { BankSelectField } from '@/components/admin/dues/setup/components/BankSelectField';
+import { DuesSetupStep4Skeleton } from '@/components/admin/dues/setup/components/DuesSetupStepSkeleton';
+import { DuesSetupStepIndicator } from '@/components/admin/dues/setup/components/DuesSetupStepIndicator';
+import { FormCard } from '@/components/admin/dues/setup/components/FormCard';
+import { NextButton } from '@/components/admin/dues/setup/components/NextButton';
+import { PrevButton } from '@/components/admin/dues/setup/components/PrevButton';
+import { SetupHeader } from '@/components/admin/dues/setup/components/SetupHeader';
 import { useDuesSetupNavigation } from '@/hooks/admin/useDuesSetupNavigation';
 import { useDuesStepNavigator } from '@/hooks/admin/useDuesStepNavigator';
 import { useEnsureDuesAccountId } from '@/hooks/admin';
