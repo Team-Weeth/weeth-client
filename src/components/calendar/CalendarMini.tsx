@@ -3,8 +3,8 @@
 import { cn } from '@/lib/cn';
 import { Icon } from '@/components/ui';
 import { ArrowLeftIcon, ArrowRightIcon } from '@/assets/icons';
-import { DAY_META } from '@/constants/shared/date';
-import { getDaysInMonth, getFirstDayOfMonth } from '@/utils/shared/date';
+import { DAY_META, DAY_HEADER_COLOR } from '@/constants/shared/date';
+import { buildCalendarCells, getCalendarCellColors } from '@/utils/shared/date';
 import {
   useCalendarYear,
   useCalendarMonth,
@@ -12,30 +12,11 @@ import {
   useCalendarActions,
 } from '@/stores/useCalendarStore';
 
-const DAY_HEADER_COLOR: string[] = [
-  'text-state-error',
-  'text-text-alternative',
-  'text-text-alternative',
-  'text-text-alternative',
-  'text-text-alternative',
-  'text-text-alternative',
-  'text-state-success',
-];
-
 interface CalendarMiniProps {
   /** Dates with a schedule dot indicator */
   eventDates?: Date[];
   className?: string;
 }
-
-type Cell = {
-  day: number;
-  year: number;
-  month: number;
-  dayOfWeek: number;
-  isCurrentMonth: boolean;
-  isToday: boolean;
-};
 
 function CalendarMini({ eventDates = [], className }: CalendarMiniProps) {
   const year = useCalendarYear();
@@ -43,45 +24,9 @@ function CalendarMini({ eventDates = [], className }: CalendarMiniProps) {
   const selectedDate = useCalendarSelectedDate();
   const { prevMonth, nextMonth, toggleDate } = useCalendarActions();
 
-  const today = new Date();
-  const todayYear = today.getFullYear();
-  const todayMonth = today.getMonth() + 1;
-  const todayDay = today.getDate();
+  const cells = buildCalendarCells(year, month);
 
-  const daysInMonth = getDaysInMonth(year, month);
-  const firstDay = getFirstDayOfMonth(year, month);
-  const prevMonthDays = getDaysInMonth(year, month === 1 ? 12 : month - 1);
-  const totalRows = Math.ceil((firstDay + daysInMonth) / 7);
-  const cellCount = totalRows * 7;
-
-  const cells: Cell[] = Array.from({ length: cellCount }, (_, i) => {
-    const dayOfWeek = i % 7;
-    if (i < firstDay) {
-      const day = prevMonthDays - (firstDay - 1 - i);
-      const m = month === 1 ? 12 : month - 1;
-      const y = month === 1 ? year - 1 : year;
-      return { day, year: y, month: m, dayOfWeek, isCurrentMonth: false, isToday: false };
-    } else if (i < firstDay + daysInMonth) {
-      const day = i - firstDay + 1;
-      const isToday = year === todayYear && month === todayMonth && day === todayDay;
-      return { day, year, month, dayOfWeek, isCurrentMonth: true, isToday };
-    } else {
-      const day = i - firstDay - daysInMonth + 1;
-      const m = month === 12 ? 1 : month + 1;
-      const y = month === 12 ? year + 1 : year;
-      return { day, year: y, month: m, dayOfWeek, isCurrentMonth: false, isToday: false };
-    }
-  });
-
-  const isSelected = (cell: Cell) => {
-    if (!selectedDate || !cell.isCurrentMonth) return false;
-    return (
-      selectedDate ===
-      `${cell.year}-${String(cell.month).padStart(2, '0')}-${String(cell.day).padStart(2, '0')}`
-    );
-  };
-
-  const hasEvent = (cell: Cell) => {
+  const hasEvent = (cell: (typeof cells)[number]) => {
     if (!cell.isCurrentMonth) return false;
     return eventDates.some(
       (d) =>
@@ -89,12 +34,6 @@ function CalendarMini({ eventDates = [], className }: CalendarMiniProps) {
         d.getMonth() + 1 === cell.month &&
         d.getDate() === cell.day,
     );
-  };
-
-  const handleSelectDate = (cell: Cell) => {
-    if (!cell.isCurrentMonth) return;
-    const dateStr = `${cell.year}-${String(cell.month).padStart(2, '0')}-${String(cell.day).padStart(2, '0')}`;
-    toggleDate(dateStr);
   };
 
   return (
@@ -145,37 +84,24 @@ function CalendarMini({ eventDates = [], className }: CalendarMiniProps) {
         {/* Date grid */}
         <div className="grid grid-cols-7">
           {cells.map((cell, i) => {
-            const selected = isSelected(cell);
-            const showEvent = hasEvent(cell);
+            const isSelected = cell.isCurrentMonth && selectedDate === cell.dateStr;
             const isTodayHighlighted = cell.isToday && !selectedDate;
-
-            const cellBg = selected
-              ? 'bg-brand-primary'
-              : isTodayHighlighted
-                ? 'bg-container-primary'
-                : '';
-
-            let textColor: string;
-            if (!cell.isCurrentMonth) {
-              textColor = 'text-text-disabled';
-            } else if (selected || isTodayHighlighted) {
-              textColor = 'text-text-inverse';
-            } else if (cell.dayOfWeek === 0) {
-              textColor = 'text-state-error';
-            } else if (cell.dayOfWeek === 6) {
-              textColor = 'text-state-success';
-            } else {
-              textColor = 'text-text-normal';
-            }
+            const showEvent = hasEvent(cell);
+            const { bg: cellBg, text: textColor } = getCalendarCellColors(
+              cell.isCurrentMonth,
+              isSelected,
+              isTodayHighlighted,
+              cell.dayOfWeek,
+            );
 
             return (
               <button
-                key={`${cell.year}-${cell.month}-${cell.day}-${i}`}
+                key={`${cell.dateStr}-${i}`}
                 type="button"
-                aria-label={`${cell.year}-${String(cell.month).padStart(2, '0')}-${String(cell.day).padStart(2, '0')}${cell.isToday ? ' (오늘)' : ''}`}
-                aria-pressed={selected}
+                aria-label={`${cell.dateStr}${cell.isToday ? ' (오늘)' : ''}`}
+                aria-pressed={isSelected}
                 disabled={!cell.isCurrentMonth}
-                onClick={() => handleSelectDate(cell)}
+                onClick={() => cell.isCurrentMonth && toggleDate(cell.dateStr)}
                 className={cn(
                   'typo-caption2 relative flex h-[26px] w-6 cursor-pointer flex-col items-center justify-center justify-self-start rounded-[4px] text-center transition-colors',
                   cellBg,

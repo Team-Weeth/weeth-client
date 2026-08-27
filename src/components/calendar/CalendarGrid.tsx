@@ -1,8 +1,8 @@
 'use client';
 
 import { cn } from '@/lib/cn';
-import { DAY_META } from '@/constants/shared/date';
-import { getDaysInMonth, getFirstDayOfMonth } from '@/utils/shared/date';
+import { DAY_META, DAY_HEADER_COLOR } from '@/constants/shared/date';
+import { buildCalendarCells, getCalendarCellColors } from '@/utils/shared/date';
 import { Tag } from '@/components/ui';
 import type { TagProps } from '@/components/ui';
 import type { CalendarSchedule } from '@/types/calendar';
@@ -13,17 +13,6 @@ const SCHEDULE_TAG_VARIANT: Record<string, TagProps['variant']> = {
   SESSION: 'primary',
   EVENT: 'secondary',
 };
-
-// 0=Sun, 1=Mon, ..., 6=Sat
-const DAY_HEADER_TEXT: string[] = [
-  'text-state-error', // Sun
-  'text-text-alternative', // Mon
-  'text-text-alternative', // Tue
-  'text-text-alternative', // Wed
-  'text-text-alternative', // Thu
-  'text-text-alternative', // Fri
-  'text-state-success', // Sat
-];
 
 interface CalendarGridProps {
   year: number;
@@ -42,70 +31,15 @@ function CalendarGrid({
   onSelectDate,
   className,
 }: CalendarGridProps) {
-  const daysInMonth = getDaysInMonth(year, month);
-  const firstDay = getFirstDayOfMonth(year, month);
-  const prevMonthDays = getDaysInMonth(year, month === 1 ? 12 : month - 1);
+  const cells = buildCalendarCells(year, month);
+  const totalRows = cells.length / 7;
 
-  const today = new Date();
-  const todayYear = today.getFullYear();
-  const todayMonth = today.getMonth() + 1;
-  const todayDay = today.getDate();
-
-  // Build schedule map: dateStr → CalendarSchedule[]
   const scheduleMap = new Map<string, CalendarSchedule[]>();
   for (const s of schedules) {
     const key = s.start.split('T')[0];
     if (!scheduleMap.has(key)) scheduleMap.set(key, []);
     scheduleMap.get(key)!.push(s);
   }
-
-  type Cell = {
-    day: number;
-    dateStr: string;
-    dayOfWeek: number;
-    isCurrentMonth: boolean;
-    isToday: boolean;
-  };
-
-  const totalRows = Math.ceil((firstDay + daysInMonth) / 7);
-  const cellCount = totalRows * 7;
-
-  const cells: Cell[] = Array.from({ length: cellCount }, (_, i) => {
-    const dayOfWeek = i % 7;
-    if (i < firstDay) {
-      const day = prevMonthDays - (firstDay - 1 - i);
-      const m = month === 1 ? 12 : month - 1;
-      const y = month === 1 ? year - 1 : year;
-      return {
-        day,
-        dateStr: `${y}-${String(m).padStart(2, '0')}-${String(day).padStart(2, '0')}`,
-        dayOfWeek,
-        isCurrentMonth: false,
-        isToday: false,
-      };
-    } else if (i < firstDay + daysInMonth) {
-      const day = i - firstDay + 1;
-      const dateStr = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-      return {
-        day,
-        dateStr,
-        dayOfWeek,
-        isCurrentMonth: true,
-        isToday: year === todayYear && month === todayMonth && day === todayDay,
-      };
-    } else {
-      const day = i - firstDay - daysInMonth + 1;
-      const m = month === 12 ? 1 : month + 1;
-      const y = month === 12 ? year + 1 : year;
-      return {
-        day,
-        dateStr: `${y}-${String(m).padStart(2, '0')}-${String(day).padStart(2, '0')}`,
-        dayOfWeek,
-        isCurrentMonth: false,
-        isToday: false,
-      };
-    }
-  });
 
   return (
     <div className={cn('bg-container-neutral overflow-hidden rounded-md', className)}>
@@ -116,7 +50,7 @@ function CalendarGrid({
             key={d.en}
             className={cn(
               'typo-caption2 flex h-[33px] items-center justify-center',
-              DAY_HEADER_TEXT[i],
+              DAY_HEADER_COLOR[i],
             )}
           >
             {d.ko}
@@ -138,26 +72,12 @@ function CalendarGrid({
 
           const isSelected = selectedDate === cell.dateStr && cell.isCurrentMonth;
           const isTodayHighlighted = cell.isToday && !selectedDate;
-
-          // Date number circle style
-          const circleBg = isSelected
-            ? 'bg-brand-primary'
-            : isTodayHighlighted
-              ? 'bg-container-primary'
-              : '';
-
-          let dateTextColor: string;
-          if (!cell.isCurrentMonth) {
-            dateTextColor = 'text-text-disabled';
-          } else if (isSelected || isTodayHighlighted) {
-            dateTextColor = 'text-text-inverse';
-          } else if (cell.dayOfWeek === 0) {
-            dateTextColor = 'text-state-error';
-          } else if (cell.dayOfWeek === 6) {
-            dateTextColor = 'text-state-success';
-          } else {
-            dateTextColor = 'text-text-normal';
-          }
+          const { bg: circleBg, text: dateTextColor } = getCalendarCellColors(
+            cell.isCurrentMonth,
+            isSelected,
+            isTodayHighlighted,
+            cell.dayOfWeek,
+          );
 
           return (
             <div
