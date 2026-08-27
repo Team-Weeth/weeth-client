@@ -20,11 +20,12 @@ const tagVariants = cva(
 
 interface TagProps extends React.HTMLAttributes<HTMLSpanElement>, VariantProps<typeof tagVariants> {
   asChild?: boolean;
+  ref?: React.Ref<HTMLSpanElement>;
 }
 
-function Tag({ className, variant, asChild = false, ...props }: TagProps) {
+function Tag({ className, variant, asChild = false, ref, ...props }: TagProps) {
   const Comp = asChild ? Slot.Root : 'span';
-  return <Comp className={cn(tagVariants({ variant }), className)} {...props} />;
+  return <Comp ref={ref} className={cn(tagVariants({ variant }), className)} {...props} />;
 }
 
 export { Tag, tagVariants, type TagProps };

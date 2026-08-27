@@ -1,5 +1,15 @@
-import Image from 'next/image';
+'use client';
+
+import { useRef, useState } from 'react';
 import { cn } from '@/lib/cn';
+import {
+  Icon,
+  Tag,
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui';
 import { ArrowRightIcon } from '@/assets/icons';
 import { formatSessionDateParts, formatTimeDisplay } from '@/utils/shared/date';
 import type { CalendarSchedule } from '@/types/calendar';
@@ -18,7 +28,7 @@ function CalendarUpcomingPanel({ schedules, className }: CalendarUpcomingPanelPr
   return (
     <div
       className={cn(
-        'bg-container-neutral flex h-[346px] w-[271px] shrink-0 self-stretch flex-col items-start rounded-md px-[14px] pt-[14px] pb-200',
+        'bg-container-neutral flex h-[346px] shrink-0 flex-col items-start self-stretch rounded-md px-[14px] pt-[14px] pb-200',
         className,
       )}
     >
@@ -29,11 +39,13 @@ function CalendarUpcomingPanel({ schedules, className }: CalendarUpcomingPanelPr
       </div>
 
       {/* CalendarSchedule list */}
-      <div className="flex flex-col">
+      <div className="flex w-full flex-1 flex-col justify-between">
         {schedules.length === 0 ? (
           <p className="typo-caption2 text-text-alternative py-500 text-center">일정이 없습니다.</p>
         ) : (
-          schedules.map((schedule) => <UpcomingItem key={schedule.id} schedule={schedule} />)
+          schedules
+            .slice(0, 4)
+            .map((schedule) => <UpcomingItem key={schedule.id} schedule={schedule} />)
         )}
       </div>
     </div>
@@ -47,7 +59,7 @@ function UpcomingItem({ schedule }: { schedule: CalendarSchedule }) {
   const dotColor = DOT_COLOR[schedule.type] ?? 'bg-brand-primary';
 
   return (
-    <div className="flex items-center gap-[7px] rounded-md p-200">
+    <div className="flex w-full cursor-pointer items-center gap-[7px] rounded-[7px] p-200 transition-colors hover:bg-neutral-200">
       {/* Date column */}
       <div className="flex w-[32px] shrink-0 flex-col items-center justify-center gap-100 self-stretch">
         <span className="typo-sub3 text-text-alternative w-[28px] text-center">{day}</span>
@@ -59,33 +71,46 @@ function UpcomingItem({ schedule }: { schedule: CalendarSchedule }) {
         {/* Title row */}
         <div className="flex items-center gap-[6px] overflow-hidden">
           <span className={cn('size-[6px] shrink-0 rounded-full', dotColor)} />
-          <span className="typo-button2 text-text-normal truncate">{schedule.title}</span>
+          <span className="typo-caption1 text-text-normal truncate">{schedule.title}</span>
         </div>
 
         {/* Tags row */}
         <div className="flex items-center gap-100">
-          {schedule.location && (
-            <span className="typo-caption1 text-text-alternative bg-text-alternative/10 max-w-[92px] truncate rounded-sm px-200 py-100">
-              {schedule.location}
-            </span>
-          )}
-          <span className="typo-caption1 text-text-alternative bg-text-alternative/10 shrink-0 rounded-sm px-200 py-100">
-            {timeLabel}
-          </span>
+          {schedule.location && <TruncatedTag label={schedule.location} />}
+          <TruncatedTag label={timeLabel} />
         </div>
       </div>
 
       {/* Forward icon */}
-      <div className="shrink-0 p-100">
-        <Image
-          src={ArrowRightIcon}
-          alt=""
-          width={7}
-          height={12}
-          className="text-icon-alternative"
-        />
-      </div>
+      <Icon src={ArrowRightIcon} size={10} className="text-icon-alternative shrink-0" />
     </div>
+  );
+}
+
+function TruncatedTag({ label }: { label: string }) {
+  const ref = useRef<HTMLSpanElement>(null);
+  const [open, setOpen] = useState(false);
+
+  return (
+    <TooltipProvider>
+      <Tooltip open={open}>
+        <TooltipTrigger asChild>
+          <Tag
+            ref={ref as React.Ref<HTMLSpanElement>}
+            className="bg-text-alternative/10 text-text-alternative block max-w-[92px] truncate"
+            onMouseEnter={() => {
+              if (ref.current && ref.current.scrollWidth > ref.current.clientWidth) {
+                setOpen(true);
+              }
+            }}
+            onMouseLeave={() => setOpen(false)}
+          >
+            {label}
+          </Tag>
+        </TooltipTrigger>
+        <TooltipContent variant="sm">{label}</TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
   );
 }
 
