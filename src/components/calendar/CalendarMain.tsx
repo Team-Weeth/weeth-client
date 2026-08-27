@@ -117,7 +117,7 @@ function CalendarMain({ className }: CalendarMainProps) {
   const year = useCalendarYear();
   const month = useCalendarMonth();
   const selectedDate = useCalendarSelectedDate();
-  const { sessionEnabled, eventEnabled } = useCalendarFilters();
+  const { sessionEnabled, eventEnabled, attendanceOnly } = useCalendarFilters();
   const { toggleDate } = useCalendarActions();
 
   const { cardinals, activeCardinal, setSelectedCardinalId } = useCardinalSelector({
@@ -132,6 +132,7 @@ function CalendarMain({ className }: CalendarMainProps) {
   });
 
   const filteredSchedules = schedules.filter((s) => {
+    if (attendanceOnly) return s.type === 'SESSION';
     if (s.type === 'SESSION' && !sessionEnabled) return false;
     if (s.type === 'EVENT' && !eventEnabled) return false;
     return true;
