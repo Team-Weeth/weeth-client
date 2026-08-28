@@ -27,12 +27,14 @@ function CalendarAttendancePanel({
       {/* Header */}
       <div className="flex items-center justify-between">
         <span className="typo-caption1 text-text-normal">출석률</span>
-        <Link href={`/${clubId}/attendance`} className="flex items-center gap-[2px]">
-          <span className="typo-caption2 text-brand-primary">출석 페이지</span>
-          <div className="flex items-center p-100">
-            <Icon src={ArrowRightIcon} size={10} className="text-brand-primary" />
-          </div>
-        </Link>
+        {clubId && (
+          <Link href={`/${clubId}/attendance`} className="flex items-center gap-[2px]">
+            <span className="typo-caption2 text-brand-primary">출석 페이지</span>
+            <div className="flex items-center p-100">
+              <Icon src={ArrowRightIcon} size={10} className="text-brand-primary" />
+            </div>
+          </Link>
+        )}
       </div>
 
       {/* Percentage + total count */}

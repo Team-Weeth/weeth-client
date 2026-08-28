@@ -83,7 +83,7 @@ function CalendarMini({ eventDates = [], className }: CalendarMiniProps) {
 
         {/* Date grid */}
         <div className="grid grid-cols-7">
-          {cells.map((cell, i) => {
+          {cells.map((cell) => {
             const isSelected = cell.isCurrentMonth && selectedDate === cell.dateStr;
             const isTodayHighlighted = cell.isToday && !selectedDate;
             const showEvent = hasEvent(cell);

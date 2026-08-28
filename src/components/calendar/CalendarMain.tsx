@@ -140,6 +140,8 @@ function CalendarMain({ className }: CalendarMainProps) {
     return true;
   });
 
+  const eventDates = filteredSchedules.map((s) => new Date(s.start));
+
   return (
     <div
       className={cn('flex flex-col gap-[35px] self-stretch px-[64px] pt-450 pb-[80px]', className)}
@@ -169,7 +171,7 @@ function CalendarMain({ className }: CalendarMainProps) {
       <div className="flex items-start gap-400">
         {/* Left column */}
         <div className="flex flex-col gap-300">
-          <CalendarMini />
+          <CalendarMini eventDates={eventDates} />
           <CalendarFilter />
         </div>
 
