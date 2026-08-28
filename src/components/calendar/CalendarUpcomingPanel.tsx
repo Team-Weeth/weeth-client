@@ -41,7 +41,9 @@ function CalendarUpcomingPanel({ schedules, className }: CalendarUpcomingPanelPr
       {/* CalendarSchedule list */}
       <div className="flex w-full flex-1 flex-col justify-between">
         {schedules.length === 0 ? (
-          <p className="typo-caption2 text-text-alternative py-500 text-center">일정이 없습니다.</p>
+          <p className="typo-caption2 text-text-alternative w-[245px] py-500 text-center">
+            일정이 없습니다.
+          </p>
         ) : (
           schedules
             .slice(0, 4)
@@ -57,7 +59,7 @@ function UpcomingItem({ schedule }: { schedule: CalendarSchedule }) {
   const dotColor = DOT_COLOR[schedule.type] ?? 'bg-brand-primary';
 
   return (
-    <div className="flex w-full cursor-pointer items-center gap-[7px] rounded-[7px] p-200 transition-colors hover:bg-container-neutral-interaction">
+    <div className="hover:bg-container-neutral-interaction flex w-[245px] cursor-pointer items-center gap-[7px] rounded-[7px] p-200 transition-colors">
       {/* Date column */}
       <div className="flex w-[32px] shrink-0 flex-col items-center justify-center gap-100 self-stretch">
         <span className="typo-sub3 text-text-alternative w-[28px] text-center">{day}</span>
