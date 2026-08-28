@@ -46,7 +46,11 @@ function Tag({
 }: TagProps) {
   const Comp = asChild ? Slot.Root : 'span';
   if (asChild) {
-    return <Comp ref={ref} className={cn(tagVariants({ variant }), className)} {...props} />;
+    return (
+      <Comp ref={ref} className={cn(tagVariants({ variant }), className)} {...props}>
+        {children}
+      </Comp>
+    );
   }
 
   return (
