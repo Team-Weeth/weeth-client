@@ -16,6 +16,7 @@ import {
   useCalendarFilters,
   useCalendarActions,
 } from '@/stores/useCalendarStore';
+import { useClubId } from '@/stores';
 import type { CalendarSchedule } from '@/types/calendar';
 
 // TODO: 유저 사이드 일정 API 연결 시 제거
@@ -114,6 +115,7 @@ interface CalendarMainProps {
 }
 
 function CalendarMain({ className }: CalendarMainProps) {
+  const clubId = useClubId();
   const year = useCalendarYear();
   const month = useCalendarMonth();
   const selectedDate = useCalendarSelectedDate();
@@ -183,7 +185,7 @@ function CalendarMain({ className }: CalendarMainProps) {
           />
           <div className="desktop:flex hidden flex-col gap-300">
             <CalendarUpcomingPanel schedules={filteredSchedules} />
-            <CalendarAttendancePanel />
+            <CalendarAttendancePanel clubId={clubId} />
           </div>
         </div>
       </div>

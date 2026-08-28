@@ -5,12 +5,14 @@ import { Icon } from '@/components/ui';
 import { cn } from '@/lib/cn';
 
 interface CalendarAttendancePanelProps {
+  clubId: string | null;
   className?: string;
   attendanceRate?: number;
   totalCount?: number;
 }
 
 function CalendarAttendancePanel({
+  clubId,
   className,
   attendanceRate = 83,
   totalCount = 12,
@@ -25,7 +27,7 @@ function CalendarAttendancePanel({
       {/* Header */}
       <div className="flex items-center justify-between">
         <span className="typo-caption1 text-text-normal">출석률</span>
-        <Link href="/attendance" className="flex items-center gap-[2px]">
+        <Link href={`/${clubId}/attendance`} className="flex items-center gap-[2px]">
           <span className="typo-caption2 text-brand-primary">출석 페이지</span>
           <div className="flex items-center p-100">
             <Icon src={ArrowRightIcon} size={10} className="text-brand-primary" />
