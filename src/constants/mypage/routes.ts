@@ -2,6 +2,7 @@ const MYPAGE_PROFILE_SUB_PATHS = [
   '/mypage/profiles',
   '/mypage/posts',
   '/mypage/sessions',
+  '/mypage/penalties',
   '/mypage/edit',
 ] as const;
 
@@ -11,6 +12,7 @@ const MOBILE_HEADER_HIDDEN_MYPAGE_PATHS = [
   '/mypage/profiles',
   '/mypage/posts',
   '/mypage/sessions',
+  '/mypage/penalties',
   '/mypage/edit',
   '/mypage/settings/theme',
   '/mypage/profiles/add',

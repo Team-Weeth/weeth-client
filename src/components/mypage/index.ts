@@ -2,6 +2,8 @@ export { MyPageContent, type MyPageContentProps } from './MyPageContent';
 export { MyPageActivityContent, type MyPageActivityContentProps } from './MyPageActivityContent';
 export { MyPagePostsContent, type MyPagePostsContentProps } from './MyPagePostsContent';
 export { MyPageSessionsContent, type MyPageSessionsContentProps } from './MyPageSessionsContent';
+export { MyPagePenaltiesContent, type MyPagePenaltiesContentProps } from './MyPagePenaltiesContent';
+export { PenaltyRulesDialog, type PenaltyRulesDialogProps } from './PenaltyRulesDialog';
 export { MyPageSettingsContent, type MyPageSettingsContentProps } from './MyPageSettingsContent';
 export {
   ProfileManagementContent,

@@ -8,6 +8,7 @@ import {
   AdminSettingIcon,
   AdminDuesIcon,
   AdminScreenIcon,
+  AdminPenaltyIcon,
 } from '@/assets/icons/admin';
 import { ExitIcon, PeopleIcon } from '@/assets/icons';
 
@@ -58,6 +59,12 @@ function LNB() {
     },
     { id: 'board', icon: AdminForumIcon, label: '게시판 관리', path: `/${clubId}/admin/board` },
     { id: 'dues', icon: AdminDuesIcon, label: '회비 관리', path: `/${clubId}/admin/dues` },
+    {
+      id: 'penalty',
+      icon: AdminPenaltyIcon,
+      label: '페널티 관리',
+      path: `/${clubId}/admin/penalty`,
+    },
   ];
 
   const infoNavItems = [

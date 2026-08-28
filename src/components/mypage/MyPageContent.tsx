@@ -29,6 +29,7 @@ function MyPageContent({ className, ...props }: MyPageContentProps) {
       department={me.department ?? undefined}
       postCount={stats?.postCount ?? 0}
       sessionCount={stats?.attendedSessionCount ?? 0}
+      penaltyCount={stats?.penaltyCount ?? 0}
     />
   ) : (
     <ProfileSectionSkeleton />
