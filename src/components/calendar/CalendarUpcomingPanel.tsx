@@ -11,7 +11,7 @@ import {
   TooltipTrigger,
 } from '@/components/ui';
 import { ArrowRightIcon } from '@/assets/icons';
-import { formatSessionDateParts, formatTimeDisplay } from '@/utils/shared/date';
+import { formatSessionDateParts } from '@/utils/shared/date';
 import type { CalendarSchedule } from '@/types/calendar';
 
 const DOT_COLOR: Record<string, string> = {
@@ -53,13 +53,11 @@ function CalendarUpcomingPanel({ schedules, className }: CalendarUpcomingPanelPr
 }
 
 function UpcomingItem({ schedule }: { schedule: CalendarSchedule }) {
-  const { day, weekday } = formatSessionDateParts(schedule.start);
-  const timeStr = schedule.start.split('T')[1]?.slice(0, 5) ?? '';
-  const timeLabel = formatTimeDisplay(timeStr);
+  const { day, weekday, timeLabel } = formatSessionDateParts(schedule.start);
   const dotColor = DOT_COLOR[schedule.type] ?? 'bg-brand-primary';
 
   return (
-    <div className="flex w-full cursor-pointer items-center gap-[7px] rounded-[7px] p-200 transition-colors hover:bg-neutral-200">
+    <div className="flex w-full cursor-pointer items-center gap-[7px] rounded-[7px] p-200 transition-colors hover:bg-container-neutral-interaction">
       {/* Date column */}
       <div className="flex w-[32px] shrink-0 flex-col items-center justify-center gap-100 self-stretch">
         <span className="typo-sub3 text-text-alternative w-[28px] text-center">{day}</span>
