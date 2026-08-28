@@ -81,7 +81,7 @@ function CalendarGrid({
 
           return (
             <div
-              key={`${cell.dateStr}-${i}`}
+              key={cell.dateStr}
               className={cn(
                 'flex h-[80px] flex-col items-start justify-self-stretch overflow-hidden p-[6px]',
                 !isLastRow && 'border-line border-b',

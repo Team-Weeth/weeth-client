@@ -96,7 +96,7 @@ function CalendarMini({ eventDates = [], className }: CalendarMiniProps) {
 
             return (
               <button
-                key={`${cell.dateStr}-${i}`}
+                key={cell.dateStr}
                 type="button"
                 aria-label={`${cell.dateStr}${cell.isToday ? ' (오늘)' : ''}`}
                 aria-pressed={isSelected}
