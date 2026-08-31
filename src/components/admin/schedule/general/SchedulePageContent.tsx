@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-
 import { Button, Card, Icon, Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui';
 import { AdminCalendarEditIcon } from '@/assets/icons/admin';
 import { SearchIcon } from '@/assets/icons';
@@ -13,7 +12,6 @@ import { ScheduleList } from '@/components/admin/schedule/general/ScheduleList';
 import { SessionTabContent } from '@/components/admin/schedule/session/SessionTabContent';
 import { CreateScheduleModal } from '@/components/admin/schedule/modal/CreateScheduleModal';
 import { EditScheduleModal } from '@/components/admin/schedule/modal/EditScheduleModal';
-import { EditSessionModal } from '@/components/admin/schedule/modal/EditSessionModal';
 import { useClubId } from '@/stores';
 import { useCardinalSelector, useMonthNavigator } from '@/hooks';
 import { useSessionMutations } from '@/hooks/admin';
@@ -21,6 +19,7 @@ import {
   useAdminMonthlySchedules,
   useDeleteSchedule,
 } from '@/hooks/queries/admin/useAdminScheduleQueries';
+import { ScheduleListSkeleton } from '@/components/admin/schedule/general/SchedulePageSkeleton';
 import type { Schedule, ScheduleType } from '@/types/admin/schedule';
 
 type ScheduleTab = 'all' | 'session';
@@ -56,29 +55,21 @@ function SchedulePageContent() {
     setCreateModalOpen(true);
   };
 
-  const { data: schedules = [] } = useAdminMonthlySchedules(currentYear, currentMonth);
+  const { data: schedules = [], isLoading: isSchedulesLoading } = useAdminMonthlySchedules(
+    currentYear,
+    currentMonth,
+    selectedCardinalId !== null ? activeCardinal?.cardinalNumber : undefined,
+  );
   const { mutate: deleteSchedule } = useDeleteSchedule();
-  const { submitCreate, submitDeleteSession, forceConfirmDialog } = useSessionMutations();
-
-  // 기수 필터링
-  const cardinalFiltered =
-    selectedCardinalId === null
-      ? schedules
-      : schedules.filter((s) => s.cardinal === activeCardinal?.cardinalNumber);
-
-  // 탭 필터링
-  const tabFiltered =
-    activeTab === 'session'
-      ? cardinalFiltered.filter((s) => s.type === 'SESSION')
-      : cardinalFiltered;
+  const { submitCreate, forceConfirmDialog } = useSessionMutations();
 
   // 검색 필터링
   const query = searchValue.trim().toLowerCase();
   const filteredSchedules = query
-    ? tabFiltered.filter(
+    ? schedules.filter(
         (s) => s.title.toLowerCase().includes(query) || s.location.toLowerCase().includes(query),
       )
-    : tabFiltered;
+    : schedules;
 
   // 날짜순 정렬
   const sortedSchedules = [...filteredSchedules].sort(
@@ -86,15 +77,8 @@ function SchedulePageContent() {
   );
 
   const handleDelete = (schedule: Schedule) => {
-    if (schedule.type === 'SESSION') {
-      // 월간 일정 카드의 SESSION은 단일 세션 삭제 (THIS_ONLY)
-      submitDeleteSession(schedule.id, 'THIS_ONLY');
-      setEditTarget(null);
-      return;
-    }
     deleteSchedule(schedule.id, {
       onSuccess: () => setEditTarget(null),
-      // onError 처리도 토스트 유틸과 연결하는 것을 권장합니다.
     });
   };
 
@@ -106,8 +90,6 @@ function SchedulePageContent() {
         onSelect={setSelectedCardinalId}
         onSelectAll={() => setSelectedCardinalId(null)}
       />
-
-      {/* Tabs */}
       <Tabs value={activeTab} onValueChange={handleTabChange} className="gap-0">
         <TabsList variant="line" className="h-8">
           <TabsTrigger value="all">전체 일정</TabsTrigger>
@@ -116,15 +98,12 @@ function SchedulePageContent() {
 
         <TabsContent value="all" className="mt-400">
           <Card className="tablet:gap-700 tablet:px-600 tablet:pt-600 tablet:pb-800 min-w-78 gap-600 px-400 pt-400 pb-600">
-            {/* Month navigator */}
             <MonthNavigator
               year={currentYear}
               month={currentMonth}
               onPrev={handlePrevMonth}
               onNext={handleNextMonth}
             />
-
-            {/* Search bar + Create button */}
             <div className="tablet:flex-row tablet:flex-wrap tablet:items-center tablet:justify-between flex flex-col gap-300">
               <div className="tablet:w-123 relative w-full">
                 <Image
@@ -155,13 +134,16 @@ function SchedulePageContent() {
               </Button>
             </div>
 
-            {/* Schedule list */}
-            <ScheduleList
-              schedules={sortedSchedules}
-              onEdit={setEditTarget}
-              onDelete={handleDelete}
-              onCreateClick={() => openCreateModal('EVENT')}
-            />
+            {isSchedulesLoading ? (
+              <ScheduleListSkeleton />
+            ) : (
+              <ScheduleList
+                schedules={sortedSchedules}
+                onEdit={setEditTarget}
+                onDelete={handleDelete}
+                onCreateClick={() => openCreateModal('EVENT')}
+              />
+            )}
           </Card>
         </TabsContent>
 
@@ -178,7 +160,6 @@ function SchedulePageContent() {
         </TabsContent>
       </Tabs>
 
-      {/* Create schedule modal */}
       <CreateScheduleModal
         open={createModalOpen}
         onOpenChange={setCreateModalOpen}
@@ -188,7 +169,6 @@ function SchedulePageContent() {
         onCreateSession={(body) => submitCreate(body)}
       />
 
-      {/* Edit schedule modal */}
       {editTarget?.type === 'EVENT' && (
         <EditScheduleModal
           key={editTarget.id}
@@ -198,25 +178,6 @@ function SchedulePageContent() {
           }}
           schedule={editTarget}
           onDelete={handleDelete}
-        />
-      )}
-
-      {/* Edit session modal — mutation은 모달이 직접 소유 */}
-      {editTarget?.type === 'SESSION' && (
-        <EditSessionModal
-          key={editTarget.id}
-          open
-          onOpenChange={(open) => {
-            if (!open) setEditTarget(null);
-          }}
-          target={{
-            id: editTarget.id,
-            cardinal: editTarget.cardinal,
-            title: editTarget.title,
-            start: editTarget.start,
-            end: editTarget.end,
-            status: 'SCHEDULED',
-          }}
         />
       )}
 

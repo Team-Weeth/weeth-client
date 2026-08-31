@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-
 import { Button, Icon } from '@/components/ui';
 import { AdminCalendarEditIcon } from '@/assets/icons/admin';
 import { SessionTable } from '@/components/admin/schedule/session/SessionTable';
@@ -11,6 +10,7 @@ import { toastError } from '@/stores/useToastStore';
 import { isSessionGroup } from '@/utils/admin/scheduleFormUtils';
 import type { AdminSession, AdminSessionGroup } from '@/types/admin/session';
 import { SessionInfoBanner } from './SessionInfoBanner';
+import { SessionTableSkeleton } from './SessionTableSkeleton';
 
 interface SessionTabContentProps {
   onCreateSession?: () => void;
@@ -31,7 +31,7 @@ function SessionTabContent({
   onManageAttendance,
   cardinalNumber,
 }: SessionTabContentProps) {
-  const { data } = useAdminSessionList(cardinalNumber);
+  const { data, isLoading: isSessionsLoading } = useAdminSessionList(cardinalNumber);
   const sessions = data?.sessions ?? [];
 
   const [editTarget, setEditTarget] = useState<EditTargetState | null>(null);
@@ -58,12 +58,9 @@ function SessionTabContent({
 
   return (
     <div className="flex flex-col gap-400">
-      {/* 알림 배너 */}
       <SessionInfoBanner />
 
-      {/* 세션 카드 */}
       <div className="bg-container-neutral flex flex-col rounded-lg shadow-sm">
-        {/* 카드 헤더 */}
         <div className="tablet:px-600 flex h-[72px] items-center justify-between px-400">
           <span className="typo-sub3 text-text-normal">세션</span>
           <Button variant="primary" size="lg" onClick={onCreateSession}>
@@ -72,17 +69,19 @@ function SessionTabContent({
           </Button>
         </div>
 
-        {/* 카드 body */}
         <div className="tablet:p-600 tablet:pt-0 p-400 pt-0">
-          <SessionTable
-            groups={sessions}
-            onManageAttendance={onManageAttendance}
-            onMore={handleOpenEdit}
-          />
+          {isSessionsLoading ? (
+            <SessionTableSkeleton />
+          ) : (
+            <SessionTable
+              groups={sessions}
+              onManageAttendance={onManageAttendance}
+              onMore={handleOpenEdit}
+            />
+          )}
         </div>
       </div>
 
-      {/* 세션 수정 모달 — mutation은 모달이 직접 소유 */}
       {editTarget && (
         <EditSessionModal
           key={'groupId' in editTarget.target ? editTarget.target.groupId : editTarget.target.id}
