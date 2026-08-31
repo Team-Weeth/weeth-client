@@ -1,5 +1,6 @@
-import { AdminCardViewIcon, AdminChartViewIcon } from '@/assets/icons/admin';
-import { Icon } from '@/components/ui';
+import AdminCardViewIcon from '@/assets/icons/admin/ic_admin_card_view.svg';
+import AdminChartViewIcon from '@/assets/icons/admin/ic_admin_chart_view.svg';
+import { Icon } from '@/components/ui/Icon';
 import { cn } from '@/lib/cn';
 
 type MemberViewMode = 'table' | 'card';

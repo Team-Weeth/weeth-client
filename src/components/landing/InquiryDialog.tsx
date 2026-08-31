@@ -9,10 +9,10 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTrigger,
-  Input,
-  Textarea,
-} from '@/components/ui';
-import { LandingInfoIcon } from '@/assets/icons/landing';
+} from '@/components/ui/dialog';
+import { Input } from '@/components/ui/Input';
+import { Textarea } from '@/components/ui/Textarea';
+import LandingInfoIcon from '@/assets/icons/landing/landing_info.svg';
 import { inquiryApi } from '@/lib/apis/inquiry';
 import { toastSuccess, toastError } from '@/stores/useToastStore';
 import Image from 'next/image';

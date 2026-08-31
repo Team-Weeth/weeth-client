@@ -1,6 +1,7 @@
 'use client';
 
-import { ClubAvatar, Skeleton } from '@/components/ui';
+import { ClubAvatar } from '@/components/ui/ClubAvatar';
+import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/cn';
 import { useAdminClubQuery } from '@/hooks/queries/admin/useAdminClubQuery';
 

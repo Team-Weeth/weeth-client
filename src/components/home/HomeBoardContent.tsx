@@ -6,7 +6,8 @@ import { useRecentPostsQuery, useHomeQuery } from '@/hooks/home';
 import { useIntersectionObserver } from '@/hooks/board/useIntersectionObserver';
 import { formatMonthDay } from '@/lib/formatTime';
 import { PostActionMenu, PostCard } from '../board';
-import { Avatar, AvatarFallback, Button } from '@/components/ui';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Button } from '@/components/ui/Button';
 
 import { useParams, useRouter } from 'next/navigation';
 import { useIsAdmin } from '@/hooks/shared';

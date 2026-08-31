@@ -1,4 +1,4 @@
-import { ProfileManagementContent } from '@/components/mypage';
+import { ProfileManagementContent } from '@/components/mypage/ProfileManagementContent';
 
 export const dynamic = 'force-dynamic';
 

@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation';
 
-import { AttendanceQRContent } from '@/components/attendance';
+import { AttendanceQRContent } from '@/components/attendance/AttendanceQRContent';
 import { homeServerApi } from '@/lib/apis/home.server';
 
 interface AttendanceQRPageProps {

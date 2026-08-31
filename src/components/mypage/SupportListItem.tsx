@@ -1,7 +1,8 @@
 import Link from 'next/link';
 import { cn } from '@/lib/cn';
-import { Icon } from '@/components/ui';
-import { ArrowRightIcon, CopyIcon } from '@/assets/icons';
+import { Icon } from '@/components/ui/Icon';
+import ArrowRightIcon from '@/assets/icons/arrow_right.svg';
+import CopyIcon from '@/assets/icons/copy.svg';
 import { toastSuccess } from '@/stores/useToastStore';
 
 interface SupportListItemProps extends React.HTMLAttributes<HTMLButtonElement> {

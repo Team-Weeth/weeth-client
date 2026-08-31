@@ -2,8 +2,12 @@
 
 import { useState, type ReactNode } from 'react';
 
-import { AdminCheckboxIcon, AdminCloseIcon, AdminUncheckboxIcon } from '@/assets/icons/admin';
-import { Button, Icon, SuffixInput } from '@/components/ui';
+import AdminCheckboxIcon from '@/assets/icons/admin/ic_admin_checkbox.svg';
+import AdminCloseIcon from '@/assets/icons/admin/ic_admin_close.svg';
+import AdminUncheckboxIcon from '@/assets/icons/admin/ic_admin_uncheckbox.svg';
+import { Button } from '@/components/ui/Button';
+import { Icon } from '@/components/ui/Icon';
+import { SuffixInput } from '@/components/ui/SuffixInput';
 import { Dialog, DialogContent, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 
 interface AddCardinalModalProps {

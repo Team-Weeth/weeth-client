@@ -1,4 +1,4 @@
-import { Skeleton } from '@/components/ui';
+import { Skeleton } from '@/components/ui/skeleton';
 import { ClubInfoCardSkeleton } from './MyPageContentSkeletons';
 
 function MyPageActivitySkeleton() {

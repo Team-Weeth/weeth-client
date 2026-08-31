@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { Divider } from '@/components/ui';
+import { Divider } from '@/components/ui/Divider';
 import {
   PostCard,
   PostDetailHeader,

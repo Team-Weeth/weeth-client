@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
-import { Button, buttonVariants } from '@/components/ui';
+import { Button, buttonVariants } from '@/components/ui/Button';
 import { cn } from '@/lib/cn';
 
 interface ClubErrorPageProps {

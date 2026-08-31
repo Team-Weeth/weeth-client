@@ -8,7 +8,9 @@ import { useRouter } from 'next/navigation';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Controller, useForm } from 'react-hook-form';
 
-import { Button, FormCard, Input } from '@/components/ui';
+import { Button } from '@/components/ui/Button';
+import { FormCard } from '@/components/ui/FormCard';
+import { Input } from '@/components/ui/Input';
 import { getHomeTutorialPendingKey } from '@/constants/home/tutorial';
 import { setClubCookie } from '@/lib/actions/club';
 import { clubApi } from '@/lib/apis/club';

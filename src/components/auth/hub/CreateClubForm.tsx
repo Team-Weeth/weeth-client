@@ -3,9 +3,12 @@
 import { useEffect, useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Controller, useForm, useWatch } from 'react-hook-form';
-import { TooltipIcon } from '@/assets/icons';
-import { Button, Icon, Input, Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui';
-import { SearchSelect } from '@/components/mypage';
+import TooltipIcon from '@/assets/icons/tooltip.svg';
+import { Button } from '@/components/ui/Button';
+import { Icon } from '@/components/ui/Icon';
+import { Input } from '@/components/ui/Input';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/Tooltip';
+import { SearchSelect } from '@/components/mypage/SearchSelect';
 import { cn } from '@/lib/cn';
 import { createClubSchema, type CreateClubFormData } from '@/lib/schemas/createClub';
 import {

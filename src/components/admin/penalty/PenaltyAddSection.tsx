@@ -2,7 +2,8 @@
 
 import type { ReactNode } from 'react';
 
-import { Button, Input } from '@/components/ui';
+import { Button } from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input';
 import { PENALTY_SCORE_EMPTY } from '@/constants/admin/penaltyTable.constants';
 import { cn } from '@/lib/cn';
 import type { PenaltyMember, PenaltyRecordDraft, PenaltyType } from '@/types/admin/penalty';

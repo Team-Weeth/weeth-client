@@ -1,4 +1,4 @@
-import { Tag } from '@/components/ui';
+import { Tag } from '@/components/ui/tag';
 import { cn } from '@/lib/cn';
 
 interface Step2SelectProps {

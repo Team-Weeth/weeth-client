@@ -1,12 +1,12 @@
-import { ArrowDownIcon } from '@/assets/icons';
+import ArrowDownIcon from '@/assets/icons/arrow_down.svg';
+import { Card } from '@/components/ui/card';
 import {
-  Card,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-  Icon,
-} from '@/components/ui';
+} from '@/components/ui/DropdownMenu';
+import { Icon } from '@/components/ui/Icon';
 import type { Cardinal } from '@/types/admin/cardinal';
 
 interface CardinalDropdownProps {

@@ -3,20 +3,21 @@
 import { Fragment } from 'react';
 import Link from 'next/link';
 import { useParams, usePathname } from 'next/navigation';
-import {
-  ExitIcon,
-  PersonIcon,
-  CheckRoundIcon,
-  PinIcon,
-  LogoutIcon,
-  HomeIcon,
-  MenuIcon,
-  CalendarIcon,
-} from '@/assets/icons';
-import { AdminDuesIcon } from '@/assets/icons/admin';
-import { Divider, Icon, Sheet, SheetClose, SheetContent, SheetTrigger } from '@/components/ui';
+import ExitIcon from '@/assets/icons/exit.svg';
+import PersonIcon from '@/assets/icons/person.svg';
+import CheckRoundIcon from '@/assets/icons/check_round.svg';
+import PinIcon from '@/assets/icons/pin.svg';
+import LogoutIcon from '@/assets/icons/logout.svg';
+import HomeIcon from '@/assets/icons/home.svg';
+import MenuIcon from '@/assets/icons/menu.svg';
+import CalendarIcon from '@/assets/icons/calendar.svg';
+import AdminDuesIcon from '@/assets/icons/admin/ic_admin_dues.svg';
+import { Divider } from '@/components/ui/Divider';
+import { Icon } from '@/components/ui/Icon';
+import { Sheet, SheetClose, SheetContent, SheetTrigger } from '@/components/ui/Sheet';
 import { cn } from '@/lib/cn';
-import { useBoardList, useLogout } from '@/hooks';
+import { useBoardList } from '@/hooks/board/useBoardQuery';
+import { useLogout } from '@/hooks/useLogout';
 import { useDuesVisibility } from '@/hooks/queries';
 import { useIsAdmin } from '@/hooks/shared';
 import { useActiveBoardId } from '@/stores/useBoardNavStore';

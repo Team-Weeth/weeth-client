@@ -22,7 +22,7 @@ Weeth client is a club management/community service built on Next.js 16.
 ```text
 src/
   app/globals.css        # Design tokens (CSS variables, @utility)
-  components/ui/         # Reusable UI components, re-exported via index.ts
+  components/ui/         # Reusable UI components
   lib/cn.ts              # className merge utility
 ```
 
@@ -57,7 +57,7 @@ export { Component, variants, type Props };
 ```
 
 - Always expose `className`; support `asChild` when using Radix
-- Add new components to `src/components/ui/index.ts`
+- Prefer direct imports from the component file. Avoid adding or using barrel exports (`index.ts`) for `components`, `hooks`, and `assets/icons` because they can pull unused modules into the Next.js client graph.
 
 → Details: `.claude/rules/component-guide.md`
 

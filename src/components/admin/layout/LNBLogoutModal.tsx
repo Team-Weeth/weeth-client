@@ -5,8 +5,10 @@ import { useParams, useRouter } from 'next/navigation';
 import type { StaticImageData } from 'next/image';
 import { Dialog as DialogPrimitive } from 'radix-ui';
 
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, Icon } from '@/components/ui';
-import { AdminRoundLogoutIcon, AdminSymbolIcon } from '@/assets/icons/admin';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel } from '@/components/ui/alert-dialog';
+import { Icon } from '@/components/ui/Icon';
+import AdminRoundLogoutIcon from '@/assets/icons/admin/ic_admin_round_logout.svg';
+import AdminSymbolIcon from '@/assets/icons/admin/ic_admin_symbol.svg';
 import { AdminScopeBoundary } from '@/providers';
 import { cn } from '@/lib/cn';
 import { LNBClubInfo } from '@/components/admin/layout/LNBClubInfo';

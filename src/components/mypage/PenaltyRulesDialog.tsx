@@ -2,15 +2,15 @@
 
 import { useState } from 'react';
 import { DeleteIcon, TooltipIcon } from '@/assets/icons';
+import { Button } from '@/components/ui/Button';
 import {
-  Button,
   Dialog,
   DialogClose,
   DialogContent,
   DialogTitle,
   DialogTrigger,
-  Icon,
-} from '@/components/ui';
+} from '@/components/ui/dialog';
+import { Icon } from '@/components/ui/Icon';
 import { useMyClubsQuery } from '@/hooks/queries/mypage/useMyPageQueries';
 import { useMyPagePenaltyRuleQuery } from '@/hooks/queries/mypage/useMyPagePenaltyRuleQuery';
 

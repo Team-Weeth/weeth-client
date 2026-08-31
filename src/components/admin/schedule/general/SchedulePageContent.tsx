@@ -4,10 +4,13 @@ import { useState } from 'react';
 import Image from 'next/image';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
-import { Button, Card, Icon, Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui';
-import { AdminCalendarEditIcon } from '@/assets/icons/admin';
-import { SearchIcon } from '@/assets/icons';
-import { CardinalDropdown } from '@/components/admin';
+import { Button } from '@/components/ui/Button';
+import { Card } from '@/components/ui/card';
+import { Icon } from '@/components/ui/Icon';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import AdminCalendarEditIcon from '@/assets/icons/admin/ic_admin_calendar_edit.svg';
+import SearchIcon from '@/assets/icons/search.svg';
+import { CardinalDropdown } from '@/components/admin/CardinalDropdown';
 import { MonthNavigator } from '@/components/admin/schedule/general/MonthNavigator';
 import { ScheduleList } from '@/components/admin/schedule/general/ScheduleList';
 import { SessionTabContent } from '@/components/admin/schedule/session/SessionTabContent';
@@ -15,7 +18,8 @@ import { CreateScheduleModal } from '@/components/admin/schedule/modal/CreateSch
 import { EditScheduleModal } from '@/components/admin/schedule/modal/EditScheduleModal';
 import { EditSessionModal } from '@/components/admin/schedule/modal/EditSessionModal';
 import { useClubId } from '@/stores';
-import { useCardinalSelector, useMonthNavigator } from '@/hooks';
+import { useCardinalSelector } from '@/hooks/useCardinalSelector';
+import { useMonthNavigator } from '@/hooks/useMonthNavigator';
 import { useSessionMutations } from '@/hooks/admin';
 import {
   useAdminMonthlySchedules,

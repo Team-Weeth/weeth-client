@@ -4,28 +4,22 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { useParams, usePathname, useRouter } from 'next/navigation';
 
-import {
-  AdminCalendarIcon,
-  AdminForumIcon,
-  AdminDuesIcon,
-  AdminSettingIcon,
-  AdminPaintIcon,
-  AdminPenaltyIcon,
-  AdminScreenIcon,
-} from '@/assets/icons/admin';
-import { PeopleIcon, ExitIcon, ArrowRightIcon, LogoutIcon } from '@/assets/icons';
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-  ClubAvatar,
-  Icon,
-  SheetClose,
-  SheetContent,
-} from '@/components/ui';
+import AdminCalendarIcon from '@/assets/icons/admin/ic_admin_calendar.svg';
+import AdminDuesIcon from '@/assets/icons/admin/ic_admin_dues.svg';
+import AdminForumIcon from '@/assets/icons/admin/ic_admin_forum.svg';
+import AdminPaintIcon from '@/assets/icons/admin/ic_admin_paint.svg';
+import AdminPenaltyIcon from '@/assets/icons/admin/ic_admin_penalty.svg';
+import AdminScreenIcon from '@/assets/icons/admin/ic_admin_screen.svg';
+import AdminSettingIcon from '@/assets/icons/admin/ic_admin_setting.svg';
+import ArrowRightIcon from '@/assets/icons/arrow_right.svg';
+import ExitIcon from '@/assets/icons/exit.svg';
+import LogoutIcon from '@/assets/icons/logout.svg';
+import PeopleIcon from '@/assets/icons/people.svg';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel } from '@/components/ui/alert-dialog';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { ClubAvatar } from '@/components/ui/ClubAvatar';
+import { Icon } from '@/components/ui/Icon';
+import { SheetClose, SheetContent } from '@/components/ui/Sheet';
 import { cn } from '@/lib/cn';
 import { useAdminClubQuery } from '@/hooks/queries/admin/useAdminClubQuery';
 import { useUserName, useUserProfileImageUrl } from '@/stores';

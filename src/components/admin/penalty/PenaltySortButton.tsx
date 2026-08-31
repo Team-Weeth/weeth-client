@@ -1,7 +1,7 @@
 'use client';
 
 import { ConvertIcon } from '@/assets/icons';
-import { Icon } from '@/components/ui';
+import { Icon } from '@/components/ui/Icon';
 import { PENALTY_SORT_LABEL } from '@/constants/admin/penaltyTable.constants';
 import type { PenaltySortBy } from '@/types/admin/penalty';
 

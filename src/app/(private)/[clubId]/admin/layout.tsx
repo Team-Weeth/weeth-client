@@ -3,7 +3,7 @@ import type { ReactNode } from 'react';
 
 import { Header } from '@/components/admin/layout/Header';
 import { LNB } from '@/components/admin/layout/LNB';
-import { buttonVariants } from '@/components/ui';
+import { buttonVariants } from '@/components/ui/Button';
 import { cn } from '@/lib/cn';
 import { homeServerApi } from '@/lib/apis/home.server';
 import { ApiError } from '@/lib/apis/server';

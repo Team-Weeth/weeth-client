@@ -8,16 +8,14 @@ import { toastError } from '@/stores/useToastStore';
 import { useDuesCarryOverSourceQuery } from '@/hooks/queries/admin';
 import { useSaveDuesCarryOver } from '@/hooks/mutations/admin';
 
-import {
-  DuesSetupStepIndicator,
-  FormCard,
-  NextButton,
-  PrevButton,
-  CarryOverCard,
-  DuesAmountField,
-  SetupHeader,
-  DuesSetupStep3Skeleton,
-} from '@/components/admin/dues/setup/components';
+import { CarryOverCard } from '@/components/admin/dues/setup/components/CarryOverCard';
+import { DuesAmountField } from '@/components/admin/dues/setup/components/DuesAmountField';
+import { DuesSetupStep3Skeleton } from '@/components/admin/dues/setup/components/DuesSetupStepSkeleton';
+import { DuesSetupStepIndicator } from '@/components/admin/dues/setup/components/DuesSetupStepIndicator';
+import { FormCard } from '@/components/admin/dues/setup/components/FormCard';
+import { NextButton } from '@/components/admin/dues/setup/components/NextButton';
+import { PrevButton } from '@/components/admin/dues/setup/components/PrevButton';
+import { SetupHeader } from '@/components/admin/dues/setup/components/SetupHeader';
 import { useDuesSetupNavigation } from '@/hooks/admin/useDuesSetupNavigation';
 import { useDuesStepNavigator } from '@/hooks/admin/useDuesStepNavigator';
 import { useEnsureDuesAccountId } from '@/hooks/admin';
