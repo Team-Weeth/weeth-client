@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-
 import { cn } from '@/lib/cn';
 import { Icon } from '@/components/ui';
 import { SessionStatusTag } from '@/components/admin/schedule/session/SessionStatusTag';

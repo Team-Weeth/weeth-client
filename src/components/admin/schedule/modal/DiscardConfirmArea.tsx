@@ -1,7 +1,6 @@
 'use client';
 
 import type { ReactNode } from 'react';
-
 import { CustomAlertDialog } from '@/components/alert';
 
 const DISCARD_ALERT_TITLE = '변경사항이 있어요.\n변경사항을 폐기할까요?';

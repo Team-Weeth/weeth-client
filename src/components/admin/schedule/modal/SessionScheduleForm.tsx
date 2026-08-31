@@ -19,9 +19,7 @@ import {
 } from '@/constants/admin/session.constants';
 import { addYearsToDateInput } from '@/utils/shared/date';
 import type { Cardinal } from '@/types/admin/cardinal';
-
 import { SessionInfoBanner } from '@/components/admin/schedule/session/SessionInfoBanner';
-
 import type { ScheduleFormState, SessionFormState } from './types';
 
 interface SessionScheduleFormProps {

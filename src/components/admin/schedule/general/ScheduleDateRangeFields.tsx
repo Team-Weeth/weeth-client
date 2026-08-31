@@ -1,5 +1,4 @@
 import { DateTimeInput } from '@/components/ui';
-
 import { isDateRangeValid } from '@/components/admin/schedule/modal/types';
 import type { ScheduleFormState } from '@/components/admin/schedule/modal/types';
 

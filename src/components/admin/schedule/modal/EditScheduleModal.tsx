@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, useState } from 'react';
 import type { RefObject } from 'react';
-
 import {
   Button,
   DropdownMenu,
@@ -25,7 +24,6 @@ import {
   isScheduleTitleValid,
   toInitialScheduleForm,
 } from '@/utils/admin/scheduleFormUtils';
-
 import { SCHEDULE_MODAL_FOOTER_CLASS } from './constants';
 import { DiscardConfirmArea } from './DiscardConfirmArea';
 import { EditModalShell } from './EditModalShell';

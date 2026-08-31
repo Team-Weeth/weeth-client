@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-
 import { Button } from '@/components/ui';
 import { ScheduleFormBody } from '@/components/admin/schedule/modal/ScheduleFormBody';
 import { useCreateSchedule } from '@/hooks/queries/admin/useAdminScheduleQueries';
@@ -11,7 +10,6 @@ import {
   isScheduleLocationValid,
   isScheduleTitleValid,
 } from '@/utils/admin/scheduleFormUtils';
-
 import { SCHEDULE_MODAL_FOOTER_CLASS } from './constants';
 import { isDateRangeValid, type ScheduleFormState } from './types';
 

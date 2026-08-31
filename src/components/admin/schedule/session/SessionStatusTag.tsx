@@ -1,5 +1,4 @@
 import { cva } from 'class-variance-authority';
-
 import { cn } from '@/lib/cn';
 import { SESSION_STATUS_LABEL } from '@/constants/admin/session.constants';
 import type { SessionStatus } from '@/types/admin/session';

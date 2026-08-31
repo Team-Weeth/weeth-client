@@ -1,5 +1,4 @@
 import React from 'react';
-
 import { cn } from '@/lib/cn';
 
 interface SelectedCountLabelProps extends React.HTMLAttributes<HTMLDivElement> {
