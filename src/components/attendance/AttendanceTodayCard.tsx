@@ -49,7 +49,6 @@ function AttendanceTodayCard({
   start,
   location,
   sessionId,
-  isAdmin = false,
   isChecked = false,
   disabled = false,
   onAttendanceComplete,
