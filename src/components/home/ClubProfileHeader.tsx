@@ -1,4 +1,4 @@
-import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui';
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { useHomeQuery } from '@/hooks/home';
 
 export function ClubProfileHeader() {

@@ -1,13 +1,13 @@
 'use client';
 
-import { ArrowFillDownIcon } from '@/assets/icons';
+import ArrowFillDownIcon from '@/assets/icons/arrow_fill_down.svg';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-  Icon,
-} from '@/components/ui';
+} from '@/components/ui/DropdownMenu';
+import { Icon } from '@/components/ui/Icon';
 import { cn } from '@/lib/cn';
 import type { Cardinal } from '@/types/admin/cardinal';
 

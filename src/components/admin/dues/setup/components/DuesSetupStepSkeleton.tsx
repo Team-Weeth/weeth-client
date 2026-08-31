@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 
-import { Skeleton } from '@/components/ui';
+import { Skeleton } from '@/components/ui/skeleton';
 
 import { DuesSetupStepIndicator } from './DuesSetupStepIndicator';
 

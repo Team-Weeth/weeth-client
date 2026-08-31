@@ -4,7 +4,7 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
-} from '@/components/ui';
+} from '@/components/ui/breadcrumb';
 import { cn } from '@/lib/cn';
 
 interface PolicyContentProps {

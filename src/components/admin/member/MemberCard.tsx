@@ -1,13 +1,7 @@
 import type { ReactNode } from 'react';
 
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from '@/components/ui';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/Tooltip';
 import { cn } from '@/lib/cn';
 import type { Member } from '@/types/admin/member';
 import { formatCardinalLabel, getVisibleMemberCardinals } from '@/utils/admin/memberTableUtils';

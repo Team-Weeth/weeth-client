@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import { motion } from 'framer-motion';
-import { MobileHeroSectionCardImage } from '@/assets/icons/landing';
+import MobileHeroSectionCardImage from '@/assets/icons/landing/mobile_hero_section_card.svg';
 import { cn } from '@/lib/cn';
 import { HeroSectionCTA, type HeroSectionProps } from './heroSection.shared';
 

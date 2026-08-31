@@ -1,8 +1,8 @@
 'use client';
 
-import { Skeleton } from '@/components/ui';
-import { AdminCloseIcon } from '@/assets/icons/admin';
-import { ModalIconButton } from '@/components/admin';
+import AdminCloseIcon from '@/assets/icons/admin/ic_admin_close.svg';
+import { ModalIconButton } from '@/components/admin/modal/ModalIconButton';
+import { Skeleton } from '@/components/ui/skeleton';
 import { SCHEDULE_MODAL_FOOTER_CLASS } from './constants';
 
 interface EditSessionModalLoadingProps {

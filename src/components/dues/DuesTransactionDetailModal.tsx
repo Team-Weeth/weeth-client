@@ -2,8 +2,8 @@
 
 import { useState } from 'react';
 
-import { DeleteIcon } from '@/assets/icons';
-import { Icon } from '@/components/ui';
+import DeleteIcon from '@/assets/icons/delete.svg';
+import { Icon } from '@/components/ui/Icon';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import type { DuesTransaction } from '@/types/dues';
 import { getReceiptFiles, isPdfReceipt } from '@/utils/dues/duesTransaction';

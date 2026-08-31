@@ -4,19 +4,20 @@ import { useEffect, useRef, useState } from 'react';
 import type { QRCode } from 'jsqr';
 import Webcam from 'react-webcam';
 
-import { CameraIcon, CheckRoundIcon } from '@/assets/icons';
+import CameraIcon from '@/assets/icons/camera.svg';
+import CheckRoundIcon from '@/assets/icons/check_round.svg';
+import { Button } from '@/components/ui/Button';
 import {
-  Button,
   Dialog,
   DialogContent,
   DialogHeader,
   DialogBody,
   DialogFooter,
-  Icon,
-} from '@/components/ui';
+} from '@/components/ui/dialog';
+import { Icon } from '@/components/ui/Icon';
 import { InputOTP } from '@/components/attendance/InputOTP';
 import { useAttendanceSSE, useQRScanner } from '@/hooks/attendance';
-import { useRemainingTime } from '@/hooks';
+import { useRemainingTime } from '@/hooks/useRemainingTime';
 import { toastError } from '@/stores/useToastStore';
 import { formatModalDescription } from '@/lib/formatTime';
 import { parseAttendanceQRCode } from '@/utils/attendance/parseAttendanceQRCode';

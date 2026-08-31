@@ -1,6 +1,6 @@
 'use client';
 
-import { ClubAvatar } from '@/components/ui';
+import { ClubAvatar } from '@/components/ui/ClubAvatar';
 import { cn } from '@/lib/cn';
 import type { Club } from '@/types';
 

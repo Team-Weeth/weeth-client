@@ -14,7 +14,8 @@ import {
 } from '@/components/admin/modal/DiscardConfirmDialog';
 import { DeleteBoardDialog } from '@/components/admin/board/modal/DeleteBoardDialog';
 import { ModalIconButton } from '@/components/admin/modal/ModalIconButton';
-import { AdminCloseIcon, AdminMeatballIcon } from '@/assets/icons/admin';
+import AdminCloseIcon from '@/assets/icons/admin/ic_admin_close.svg';
+import AdminMeatballIcon from '@/assets/icons/admin/ic_admin_meatball.svg';
 import type { DiscardSource } from '@/hooks/useDiscardableForm';
 
 interface BoardFormHeaderProps {

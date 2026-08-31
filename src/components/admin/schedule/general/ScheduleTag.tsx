@@ -1,8 +1,8 @@
 import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@/lib/cn';
-import { Icon } from '@/components/ui';
-import { AdminCalendarIcon } from '@/assets/icons/admin';
-import { LocationIcon } from '@/assets/icons';
+import { Icon } from '@/components/ui/Icon';
+import AdminCalendarIcon from '@/assets/icons/admin/ic_admin_calendar.svg';
+import LocationIcon from '@/assets/icons/location.svg';
 
 const scheduleTagVariants = cva(
   'typo-caption1 inline-flex h-6 items-center gap-100 rounded-sm px-200 py-100 whitespace-nowrap',

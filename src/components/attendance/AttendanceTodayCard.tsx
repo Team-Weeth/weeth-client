@@ -4,8 +4,9 @@ import Image, { type StaticImageData } from 'next/image';
 import { useParams, useRouter } from 'next/navigation';
 import { useState } from 'react';
 
-import { CompleteIcon, RushIcon } from '@/assets/icons';
-import { Card } from '@/components/ui';
+import CompleteIcon from '@/assets/icons/complete.svg';
+import RushIcon from '@/assets/icons/rush.svg';
+import { Card } from '@/components/ui/card';
 import { AttendanceCodeModal } from '@/components/attendance/AttendanceCodeModal';
 import { useIsAdmin } from '@/hooks/shared';
 
@@ -48,7 +49,6 @@ function AttendanceTodayCard({
   start,
   location,
   sessionId,
-  isAdmin = false,
   isChecked = false,
   disabled = false,
   onAttendanceComplete,

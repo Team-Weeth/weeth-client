@@ -1,4 +1,4 @@
-import { CreateClubForm } from '@/components/auth/hub';
+import { CreateClubForm } from '@/components/auth/hub/CreateClubForm';
 import { universityServerApi } from '@/lib/apis/university.server';
 import { deduplicateSchoolNames } from '@/utils/shared/school';
 

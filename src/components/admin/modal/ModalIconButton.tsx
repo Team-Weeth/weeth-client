@@ -2,7 +2,7 @@
 
 import type { StaticImageData } from 'next/image';
 
-import { Icon } from '@/components/ui';
+import { Icon } from '@/components/ui/Icon';
 import { cn } from '@/lib/cn';
 
 interface ModalIconButtonProps extends Omit<

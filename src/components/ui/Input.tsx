@@ -2,7 +2,7 @@
 
 import { type ChangeEvent, type InputHTMLAttributes, useRef, useState } from 'react';
 
-import { CloseCircleIcon } from '@/assets/icons';
+import CloseCircleIcon from '@/assets/icons/close_circle.svg';
 import { cn } from '@/lib/cn';
 import { Icon } from '@/components/ui/Icon';
 

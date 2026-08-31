@@ -1,7 +1,7 @@
 'use client';
 
 import { CloseCircleIcon } from '@/assets/icons';
-import { Icon } from '@/components/ui';
+import { Icon } from '@/components/ui/Icon';
 import { cn } from '@/lib/cn';
 import type { PenaltyMember } from '@/types/admin/penalty';
 

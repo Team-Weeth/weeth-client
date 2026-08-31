@@ -1,10 +1,11 @@
 'use client';
 
 import { useState } from 'react';
-import { ArrowDownIcon } from '@/assets/icons';
+import ArrowDownIcon from '@/assets/icons/arrow_down.svg';
 import { cn } from '@/lib/cn';
-import { Icon, Input } from '@/components/ui';
-import { useClickOutside } from '@/hooks';
+import { Icon } from '@/components/ui/Icon';
+import { Input } from '@/components/ui/Input';
+import { useClickOutside } from '@/hooks/useClickOutside';
 
 interface SearchSelectProps {
   value: string;

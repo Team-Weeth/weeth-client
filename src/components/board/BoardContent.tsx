@@ -3,7 +3,7 @@
 import { useEffect } from 'react';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
-import { useBoardPosts } from '@/hooks';
+import { useBoardPosts } from '@/hooks/board/useBoardQuery';
 import { useIntersectionObserver } from '@/hooks/board/useIntersectionObserver';
 import { useUserId } from '@/stores/useUserStore';
 import { formatShortDateTime } from '@/lib/formatTime';

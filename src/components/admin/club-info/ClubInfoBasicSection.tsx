@@ -1,7 +1,7 @@
 import { AdminInfoCard } from '@/components/admin/club-info/AdminInfoCard';
 import { FieldBlock } from '@/components/admin/club-info/FieldBlock';
-import { SearchSelect } from '@/components/mypage';
-import { Input } from '@/components/ui';
+import { SearchSelect } from '@/components/mypage/SearchSelect';
+import { Input } from '@/components/ui/Input';
 
 interface ClubInfoBasicSectionProps {
   schoolNames: string[];

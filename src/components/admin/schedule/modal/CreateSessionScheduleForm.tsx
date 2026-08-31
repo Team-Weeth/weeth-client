@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Button } from '@/components/ui';
+import { Button } from '@/components/ui/Button';
 import { SessionScheduleForm } from '@/components/admin/schedule/modal/SessionScheduleForm';
 import { useCardinals } from '@/hooks/queries';
 import { addYearsToDateInput, toDateInputValue } from '@/utils/shared/date';

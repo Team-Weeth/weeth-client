@@ -1,15 +1,15 @@
 'use client';
 
 import Image from 'next/image';
-import { CameraIcon } from '@/assets/icons';
+import CameraIcon from '@/assets/icons/camera.svg';
+import { Divider } from '@/components/ui/Divider';
 import {
-  Divider,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-  Icon,
-} from '@/components/ui';
+} from '@/components/ui/DropdownMenu';
+import { Icon } from '@/components/ui/Icon';
 import { useImagePreview } from '@/hooks/mypage';
 import { cn } from '@/lib/cn';
 

@@ -1,5 +1,5 @@
 import { cn } from '@/lib/cn';
-import { Button } from '@/components/ui';
+import { Button } from '@/components/ui/Button';
 import { ScheduleItem } from '@/components/admin/schedule/general/ScheduleItem';
 import type { Schedule } from '@/types/admin/schedule';
 

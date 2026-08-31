@@ -6,8 +6,8 @@ import { Popover } from 'radix-ui';
 import { cn } from '@/lib/cn';
 import { BANK_LIST } from '@/constants/admin/bank.constants';
 import { AdminScopeBoundary } from '@/providers';
-import { Icon } from '@/components/ui';
-import { ArrowDownIcon } from '@/assets/icons';
+import { Icon } from '@/components/ui/Icon';
+import ArrowDownIcon from '@/assets/icons/arrow_down.svg';
 import { ScheduleFormField } from '@/components/admin/schedule/general/ScheduleFormField';
 
 interface BankSelectFieldProps {

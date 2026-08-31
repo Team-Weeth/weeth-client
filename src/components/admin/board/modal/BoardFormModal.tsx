@@ -2,7 +2,8 @@
 
 import { useState } from 'react';
 
-import { Button, Switch } from '@/components/ui';
+import { Button } from '@/components/ui/Button';
+import { Switch } from '@/components/ui/Switch';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { DiscardConfirmDialog } from '@/components/admin/modal/DiscardConfirmDialog';
 import { BoardFormField } from '@/components/admin/board/modal/BoardFormField';

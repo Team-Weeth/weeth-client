@@ -1,12 +1,8 @@
 'use client';
 
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  BottomSheet,
-  Button,
-} from '@/components/ui';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel } from '@/components/ui/alert-dialog';
+import { BottomSheet } from '@/components/ui/bottom-sheet/BottomSheet';
+import { Button } from '@/components/ui/Button';
 import { getTopBarActions } from '@/constants/admin/memberTopBar.constants';
 import type { TopBarAction } from '@/constants/admin/memberTopBar.constants';
 import type { Member } from '@/types/admin/member';

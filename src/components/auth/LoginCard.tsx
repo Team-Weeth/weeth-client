@@ -1,8 +1,8 @@
 import Image from 'next/image';
 
 import { cn } from '@/lib/cn';
-import { LoginCoverIcon } from '@/assets/icons';
-import { Loading } from '@/components/ui';
+import LoginCoverIcon from '@/assets/icons/login_cover.svg';
+import { Loading } from '@/components/ui/Loading';
 import { SocialLoginButtons } from '@/components/auth/SocialLoginButtons';
 
 interface LoginCardProps {

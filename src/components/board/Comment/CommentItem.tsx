@@ -1,9 +1,11 @@
 'use client';
 
 import { useState } from 'react';
-import { ChatIcon } from '@/assets/icons';
-import { Avatar, AvatarFallback, AvatarImage, Button, Icon } from '@/components/ui';
-import { useScrollIntoView } from '@/hooks';
+import ChatIcon from '@/assets/icons/chat.svg';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Button } from '@/components/ui/Button';
+import { Icon } from '@/components/ui/Icon';
+import { useScrollIntoView } from '@/hooks/useScrollIntoView';
 import { cn } from '@/lib/cn';
 import { ActionMenu } from '@/components/board/ActionMenu';
 import { CommentDeleteDialog } from './CommentDeleteDialog';
