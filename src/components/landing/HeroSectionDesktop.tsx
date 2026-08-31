@@ -3,7 +3,7 @@
 import Image from 'next/image';
 import { LayoutGroup, motion } from 'framer-motion';
 import { useEffect, useRef, useState } from 'react';
-import { HeroSectionCardImage } from '@/assets/icons/landing';
+import HeroSectionCardImage from '@/assets/icons/landing/hero_section_card.svg';
 import { cn } from '@/lib/cn';
 import {
   ctaVariants,

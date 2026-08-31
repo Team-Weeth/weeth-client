@@ -2,16 +2,11 @@
 
 import React from 'react';
 
-import { AdminCloseIcon } from '@/assets/icons/admin';
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  BottomSheet,
-  BottomSheetActionItem,
-  Button,
-  Icon,
-} from '@/components/ui';
+import AdminCloseIcon from '@/assets/icons/admin/ic_admin_close.svg';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel } from '@/components/ui/alert-dialog';
+import { BottomSheet, BottomSheetActionItem } from '@/components/ui/bottom-sheet/BottomSheet';
+import { Button } from '@/components/ui/Button';
+import { Icon } from '@/components/ui/Icon';
 import { ChangeCardinalsModal } from '@/components/admin/member/modal/ChangeCardinalsModal';
 import { FloatingSelectionBar } from '@/components/admin/FloatingSelectionBar';
 import { cn } from '@/lib/cn';

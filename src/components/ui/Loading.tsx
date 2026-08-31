@@ -1,9 +1,14 @@
 'use client';
 
-import Lottie from 'lottie-react';
+import dynamic from 'next/dynamic';
 
 import { cn } from '@/lib/cn';
 import loadingData from '@/assets/lotties/loading.json';
+
+const Lottie = dynamic(() => import('lottie-react'), {
+  ssr: false,
+  loading: () => <div className="size-20" aria-hidden />,
+});
 
 type LottieLayer = {
   shapes?: Array<{

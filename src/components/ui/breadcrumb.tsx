@@ -5,7 +5,9 @@ import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { Slot } from 'radix-ui';
 
-import { ArrowRightIcon, HomeIcon, MoreHorizIcon } from '@/assets/icons';
+import ArrowRightIcon from '@/assets/icons/arrow_right.svg';
+import HomeIcon from '@/assets/icons/home.svg';
+import MoreHorizIcon from '@/assets/icons/more-horiz.svg';
 import { cn } from '@/lib/cn';
 import { Icon } from '@/components/ui/Icon';
 

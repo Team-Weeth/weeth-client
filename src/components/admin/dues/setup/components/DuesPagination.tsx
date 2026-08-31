@@ -7,7 +7,7 @@ import {
   PaginationLink,
   PaginationNext,
   PaginationPrevious,
-} from '@/components/ui';
+} from '@/components/ui/pagination';
 import { cn } from '@/lib/cn';
 
 /** 페이지 번호를 몇 개씩 묶어서 보여줄지 (예: 5 → 1~5, 6~10) */

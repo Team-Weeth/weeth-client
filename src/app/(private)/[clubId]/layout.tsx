@@ -1,7 +1,8 @@
 import type { ReactNode } from 'react';
 import { cookies, headers } from 'next/headers';
 
-import { ClubAccessPage, ClubErrorPage } from '@/components/auth/invite';
+import { ClubAccessPage } from '@/components/auth/invite/ClubAccessPage';
+import { ClubErrorPage } from '@/components/auth/invite/ClubErrorPage';
 import { ApiError, apiServer } from '@/lib/apis/server';
 import { ACCESS_TOKEN_KEY, REFRESH_TOKEN_KEY } from '@/lib/apis/cookies';
 import type { Club } from '@/types';

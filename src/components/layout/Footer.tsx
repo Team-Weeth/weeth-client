@@ -3,7 +3,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
-import { FooterLogoIcon } from '@/assets/icons';
+import FooterLogoIcon from '@/assets/icons/logo/logo_full_Footer.svg';
 
 interface FooterProps {
   isSmall?: boolean;

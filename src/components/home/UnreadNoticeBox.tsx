@@ -3,7 +3,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
-import { NewIcon } from '@/assets/icons';
+import NewIcon from '@/assets/icons/new.svg';
 import { useRecentNoticesQuery } from '@/hooks/home/useRecentNoticesQuery';
 import { stripHtml } from '@/lib/stripHtml';
 import { buildPostPath } from '@/lib/board';

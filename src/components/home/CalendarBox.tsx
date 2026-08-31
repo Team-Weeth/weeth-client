@@ -2,7 +2,7 @@
 
 // import Image from 'next/image';
 import { useParams, useRouter } from 'next/navigation';
-// import { ArrowRightIcon } from '@/assets/icons';
+// import ArrowRightIcon from '@/assets/icons/arrow_right.svg';
 import { useMonthlySchedulesQuery } from '@/hooks/home';
 import { EmptyBox } from '@/components/home/EmptyBox';
 import { CalendarBoxSkeleton } from '@/components/home/skeleton';

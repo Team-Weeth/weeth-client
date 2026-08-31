@@ -1,7 +1,8 @@
 'use client';
 
-import { AdminRadioSelectedIcon, AdminRadioUnselectedIcon } from '@/assets/icons/admin';
-import { Icon } from '@/components/ui';
+import AdminRadioSelectedIcon from '@/assets/icons/admin/ic_admin_radio_selected.svg';
+import AdminRadioUnselectedIcon from '@/assets/icons/admin/ic_admin_radio_unselected.svg';
+import { Icon } from '@/components/ui/Icon';
 import type { AttendanceMember } from '@/types/admin/attendance';
 import { ADMIN_ATTENDANCE_STATUS_CONFIG } from '@/constants/admin/attendance.admin';
 import { AttendanceStatus } from '@/constants/attendance';

@@ -2,7 +2,14 @@
 
 import { MemberPagination } from '@/components/admin/member/MemberPagination';
 import { MemberSelectionCheckbox } from '@/components/admin/member/MemberSelectionCheckbox';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
 import {
   PENALTY_MEMBERS_PER_PAGE,
   PENALTY_TABLE_COLUMNS,

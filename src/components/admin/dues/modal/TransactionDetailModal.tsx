@@ -2,24 +2,24 @@
 
 import { useState } from 'react';
 
-import { AdminCloseIcon, AdminMeatballIcon } from '@/assets/icons/admin';
+import AdminCloseIcon from '@/assets/icons/admin/ic_admin_close.svg';
+import AdminMeatballIcon from '@/assets/icons/admin/ic_admin_meatball.svg';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel } from '@/components/ui/alert-dialog';
+import { Button } from '@/components/ui/Button';
 import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  Button,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@/components/ui';
+} from '@/components/ui/DropdownMenu';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { ModalIconButton } from '@/components/admin/modal/ModalIconButton';
 import { SCHEDULE_MODAL_CONTENT_CLASS } from '@/components/admin/schedule/modal/constants';
 import { cn } from '@/lib/cn';
 import { TRANSACTION_TYPE_TAG } from '../DuesTransactionTable';
 import type { TransactionDirection, TransactionType } from '@/types/admin/dues';
-import { DuesReceiptCard, DuesReceiptViewerModal } from '@/components/dues';
+import { DuesReceiptCard } from '@/components/dues/DuesReceiptCard';
+import { DuesReceiptViewerModal } from '@/components/dues/DuesReceiptViewerModal';
 import { getReceiptFiles } from '@/utils/dues/duesTransaction';
 import type { DuesReceiptFile, DuesTransaction } from '@/types/dues';
 

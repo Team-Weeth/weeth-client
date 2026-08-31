@@ -1,7 +1,7 @@
 'use client';
 
 import { useParams } from 'next/navigation';
-import { useResponsiveGridColumns } from '@/hooks';
+import { useResponsiveGridColumns } from '@/hooks/useResponsiveGridColumns';
 import { cn } from '@/lib/cn';
 import { useMyPageQueries } from '@/hooks/queries/mypage/useMyPageQueries';
 import { ClubInfoCard } from './ClubInfoCard';

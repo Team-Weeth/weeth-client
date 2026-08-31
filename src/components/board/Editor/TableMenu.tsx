@@ -5,7 +5,7 @@ import { BubbleMenu } from '@tiptap/react';
 import { Editor as TiptapEditor } from '@tiptap/core';
 import { CellSelection } from '@tiptap/pm/tables';
 import { cn } from '@/lib/cn';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/Tooltip';
 import { TABLE_MENU_GROUPS } from '@/constants/board/tableMenu';
 
 const ICON_SIZE = 15;

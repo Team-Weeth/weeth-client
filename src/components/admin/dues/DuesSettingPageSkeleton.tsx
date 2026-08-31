@@ -1,4 +1,5 @@
-import { Card, Skeleton } from '@/components/ui';
+import { Card } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
 
 // SettingSection(흰색 카드 + 헤더) 골격
 function SettingSectionSkeleton({ children }: { children: React.ReactNode }) {

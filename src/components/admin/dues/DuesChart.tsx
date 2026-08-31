@@ -4,18 +4,13 @@ import { Bar, BarChart, Cell, LabelList, Tooltip as RechartsTooltip, XAxis } fro
 import type { LabelProps } from 'recharts';
 import { cn } from '@/lib/cn';
 import { formatAmount } from '@/lib/formatAmount';
-import { QuestionCircleIcon } from '@/assets/icons';
+import QuestionCircleIcon from '@/assets/icons/question_circle.svg';
 import type { MonthlyData } from '@/types/admin/dues';
-import {
-  Icon,
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-  Card,
-  ChartContainer,
-  type ChartConfig,
-} from '@/components/ui';
+import { Icon } from '@/components/ui/Icon';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/Tooltip';
+import { Card } from '@/components/ui/card';
+import { ChartContainer } from '@/components/ui/chart';
+import type { ChartConfig } from '@/components/ui/chart';
 
 interface DuesChartProps {
   className?: string;

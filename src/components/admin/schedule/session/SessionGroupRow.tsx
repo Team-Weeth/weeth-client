@@ -3,7 +3,7 @@
 import { useState } from 'react';
 
 import { cn } from '@/lib/cn';
-import { Icon } from '@/components/ui';
+import { Icon } from '@/components/ui/Icon';
 import { SessionStatusTag } from '@/components/admin/schedule/session/SessionStatusTag';
 import { SessionChildTable } from '@/components/admin/schedule/session/SessionChildTable';
 import {
@@ -17,7 +17,7 @@ import {
   formatSessionDateRange,
 } from '@/utils/admin/sessionUtils';
 import type { AdminSession, AdminSessionGroup } from '@/types/admin/session';
-import { AdminToggleOpenIcon } from '@/assets/icons/admin';
+import AdminToggleOpenIcon from '@/assets/icons/admin/ic_admin_toggle_open.svg';
 
 interface SessionGroupRowProps {
   group: AdminSessionGroup;

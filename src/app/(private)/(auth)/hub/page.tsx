@@ -1,5 +1,6 @@
 import { unstable_rethrow } from 'next/navigation';
-import { HubActionCard, HubProfile } from '@/components/auth/hub';
+import { HubActionCard } from '@/components/auth/hub/HubActionCard';
+import { HubProfile } from '@/components/auth/hub/HubProfile';
 import { apiServer } from '@/lib/apis/server';
 import type { ApiResponse } from '@/types/common';
 import type { ClubDto } from '@/types/mypage';

@@ -2,8 +2,10 @@
 
 import React from 'react';
 import Image from 'next/image';
-import { NewIcon, ArrowRightIcon } from '@/assets/icons';
-import { Divider, Icon } from '@/components/ui';
+import NewIcon from '@/assets/icons/new.svg';
+import ArrowRightIcon from '@/assets/icons/arrow_right.svg';
+import { Divider } from '@/components/ui/Divider';
+import { Icon } from '@/components/ui/Icon';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import { useRecentNoticesQuery } from '@/hooks/home';

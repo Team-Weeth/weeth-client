@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 
-import { Button } from '@/components/ui';
+import { Button } from '@/components/ui/Button';
 import { ScheduleFormBody } from '@/components/admin/schedule/modal/ScheduleFormBody';
 import { useCreateSchedule } from '@/hooks/queries/admin/useAdminScheduleQueries';
 import { toDateInputValue } from '@/utils/shared/date';

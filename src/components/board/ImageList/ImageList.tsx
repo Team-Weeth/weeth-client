@@ -1,7 +1,8 @@
 'use client';
 
 import { cn } from '@/lib/cn';
-import { useDragScroll, useScrollOnGrow } from '@/hooks';
+import { useDragScroll } from '@/hooks/useDragScroll';
+import { useScrollOnGrow } from '@/hooks/useScrollOnGrow';
 import type { DisplayFile } from '@/types/board';
 import { ImageCard } from './ImageCard';
 

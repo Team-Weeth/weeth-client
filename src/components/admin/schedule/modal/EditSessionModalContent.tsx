@@ -3,16 +3,17 @@
 import { useEffect, useState } from 'react';
 import type { RefObject } from 'react';
 
+import { Button } from '@/components/ui/Button';
 import {
-  Button,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@/components/ui';
+} from '@/components/ui/DropdownMenu';
 import { CustomAlertDialog } from '@/components/alert';
-import { AdminCloseIcon, AdminMeatballIcon } from '@/assets/icons/admin';
-import { ModalIconButton } from '@/components/admin';
+import AdminCloseIcon from '@/assets/icons/admin/ic_admin_close.svg';
+import AdminMeatballIcon from '@/assets/icons/admin/ic_admin_meatball.svg';
+import { ModalIconButton } from '@/components/admin/modal/ModalIconButton';
 import { useSessionMutations } from '@/hooks/admin';
 import { useAdminSessionDetail } from '@/hooks/queries/admin/useAdminScheduleQueries';
 import type { SessionUpdateScope, UpdateSessionBody } from '@/types/admin/session';

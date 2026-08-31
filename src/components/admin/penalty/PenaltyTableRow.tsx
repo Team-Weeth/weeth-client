@@ -1,7 +1,8 @@
 import type { ReactNode } from 'react';
 
 import { MemberSelectionCheckbox } from '@/components/admin/member/MemberSelectionCheckbox';
-import { Avatar, AvatarFallback, TableCell, TableRow } from '@/components/ui';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { TableCell, TableRow } from '@/components/ui/table';
 import { PENALTY_COLUMN_WIDTH } from '@/constants/admin/penaltyTable.constants';
 import { cn } from '@/lib/cn';
 import type { PenaltyMember } from '@/types/admin/penalty';

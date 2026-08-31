@@ -1,6 +1,6 @@
 import { FieldBlock } from '@/components/admin/club-info/FieldBlock';
 import { AdminInfoCard } from '@/components/admin/club-info/AdminInfoCard';
-import { Input } from '@/components/ui';
+import { Input } from '@/components/ui/Input';
 import { PRIMARY_CONTACT_OPTIONS } from '@/constants/admin/clubInfo.constants';
 import { cn } from '@/lib/cn';
 import type { ClubInfoFormData } from '@/lib/schemas/clubInfo';

@@ -5,7 +5,9 @@ import { isAxiosError } from 'axios';
 import { useParams, useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, Button, Icon } from '@/components/ui';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel } from '@/components/ui/alert-dialog';
+import { Button } from '@/components/ui/Button';
+import { Icon } from '@/components/ui/Icon';
 import { useNavigationGuard } from '@/hooks/useNavigationGuard';
 import { useMyPageQueries } from '@/hooks/queries/mypage/useMyPageQueries';
 import { cn } from '@/lib/cn';
@@ -16,7 +18,7 @@ import { formatPhone } from '@/utils/shared';
 import { EditProfileSkeleton } from '@/components/mypage/skeleton';
 import { PersonalInfoFields } from './PersonalInfoFields';
 import { SchoolInfoFields } from './SchoolInfoFields';
-import { BackIcon } from '@/assets/icons';
+import BackIcon from '@/assets/icons/back.svg';
 
 const toFormString = (value: string | null | undefined) => value ?? '';
 
