@@ -13,6 +13,8 @@ interface PenaltyScoreInputProps {
   value: number;
   onValueChange: (value: number) => void;
   disabled?: boolean;
+  /** 빈 문자열이면 단위 표기를 숨긴다 */
+  suffix?: string;
   className?: string;
 }
 
@@ -20,6 +22,7 @@ function PenaltyScoreInput({
   value,
   onValueChange,
   disabled = false,
+  suffix = '점',
   className,
 }: PenaltyScoreInputProps) {
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -36,7 +39,7 @@ function PenaltyScoreInput({
 
   return (
     <SuffixInput
-      suffix="점"
+      suffix={suffix}
       stepper
       variant="neutral"
       min={PENALTY_SCORE_MIN}
