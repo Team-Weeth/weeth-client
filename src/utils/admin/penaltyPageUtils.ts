@@ -2,7 +2,7 @@ import {
   PENALTY_INTRODUCTION_MAX_LENGTH,
   PENALTY_SORT_ORDER,
 } from '@/constants/admin/penaltyTable.constants';
-import type { PenaltyMember, PenaltySortBy } from '@/types/admin/penalty';
+import type { PenaltyMember, PenaltyRecord, PenaltySortBy } from '@/types/admin/penalty';
 import { parseCardinals } from './parseCardinals';
 
 function filterPenaltyMembers(members: PenaltyMember[], selectedCardinal: number) {
@@ -38,6 +38,36 @@ function getNextPenaltySort(sortBy: PenaltySortBy, order: PenaltySortBy[] = PENA
   return order[(currentIndex + 1) % order.length];
 }
 
+/** 특정 멤버의 페널티 내역만 최신순으로 추린다. */
+function getMemberPenaltyRecords(records: PenaltyRecord[], memberId: string) {
+  return records
+    .filter((record) => record.memberId === memberId)
+    .sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+}
+
+/**
+ * 멤버별 페널티 요약(점수 합계, 최근 일자)을 한 번의 순회로 계산한다.
+ * 멤버 목록 표의 '페널티' / '최근 페널티' 열이 내역 수정·삭제를 그대로 반영하도록 한다.
+ */
+function summarizeMemberPenalties(records: PenaltyRecord[]) {
+  const summary = new Map<string, Pick<PenaltyMember, 'penaltyCount' | 'recentPenaltyAt'>>();
+
+  for (const record of records) {
+    const current = summary.get(record.memberId);
+    const recentPenaltyAt =
+      current?.recentPenaltyAt && current.recentPenaltyAt > record.createdAt
+        ? current.recentPenaltyAt
+        : record.createdAt;
+
+    summary.set(record.memberId, {
+      penaltyCount: (current?.penaltyCount ?? 0) + record.score,
+      recentPenaltyAt,
+    });
+  }
+
+  return summary;
+}
+
 /** '2026-07-18' → '2026. 07. 18.' */
 function formatPenaltyDate(date: string | null) {
   if (!date) return '-';
@@ -63,8 +93,10 @@ function getLatestCardinalNumber(cardinal: string) {
 export {
   filterPenaltyMembers,
   formatPenaltyDate,
+  getMemberPenaltyRecords,
   getNextPenaltySort,
   searchPenaltyMembers,
   sortPenaltyMembers,
+  summarizeMemberPenalties,
   truncateIntroduction,
 };
