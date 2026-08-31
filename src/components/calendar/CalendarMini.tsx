@@ -112,7 +112,7 @@ function CalendarMini({ eventDates = [], className }: CalendarMiniProps) {
               >
                 {cell.day}
                 {showEvent && (
-                  <span className="bg-brand-primary absolute bottom-[1.336px] left-[10.43px] size-[3px] rounded-full" />
+                  <span className="bg-brand-primary absolute bottom-[2px] left-1/2 size-[3px] -translate-x-1/2 rounded-full" />
                 )}
               </button>
             );

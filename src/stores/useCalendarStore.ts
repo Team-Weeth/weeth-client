@@ -2,14 +2,19 @@ import { create } from 'zustand';
 import { combine, devtools } from 'zustand/middleware';
 import { useShallow } from 'zustand/react/shallow';
 
-const initialState = {
-  year: new Date().getFullYear(),
-  month: new Date().getMonth() + 1,
-  selectedDate: null as string | null, // "YYYY-MM-DD"
-  sessionEnabled: true,
-  eventEnabled: true,
-  attendanceOnly: false,
-};
+function getInitialState() {
+  const now = new Date();
+  return {
+    year: now.getFullYear(),
+    month: now.getMonth() + 1,
+    selectedDate: null as string | null, // "YYYY-MM-DD"
+    sessionEnabled: true,
+    eventEnabled: true,
+    attendanceOnly: false,
+  };
+}
+
+const initialState = getInitialState();
 
 export const useCalendarStore = create(
   devtools(
@@ -33,7 +38,7 @@ export const useCalendarStore = create(
       toggleEvent: () => set((s) => ({ eventEnabled: !s.eventEnabled }), false, 'toggleEvent'),
       toggleAttendance: () =>
         set((s) => ({ attendanceOnly: !s.attendanceOnly }), false, 'toggleAttendance'),
-      reset: () => set(initialState, false, 'reset'),
+      reset: () => set(getInitialState(), false, 'reset'),
     })),
     { name: 'CalendarStore' },
   ),
