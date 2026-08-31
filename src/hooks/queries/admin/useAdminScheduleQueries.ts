@@ -35,14 +35,14 @@ function toMonthRange(year: number, month: number) {
   };
 }
 
-export function useAdminMonthlySchedules(year: number, month: number) {
+export function useAdminMonthlySchedules(year: number, month: number, cardinal?: number) {
   const clubId = useClubId();
   const { start, end } = toMonthRange(year, month);
 
   return useQuery({
     queryKey: adminQueryKeys.monthlySchedule(clubId, year, month),
     queryFn: async () => {
-      const res = await adminScheduleApi.getMonthly(clubId!, start, end);
+      const res = await adminScheduleApi.getEventList(clubId!, start, end, cardinal);
       return res.data.data;
     },
     enabled: !!clubId,
