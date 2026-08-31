@@ -1,7 +1,7 @@
 'use client';
 
 import { Icon, Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui';
-import { Dialog, DialogContent } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { AdminCloseIcon } from '@/assets/icons/admin';
 import { CreateGeneralScheduleForm } from '@/components/admin/schedule/modal/CreateGeneralScheduleForm';
 import { CreateSessionScheduleForm } from '@/components/admin/schedule/modal/CreateSessionScheduleForm';
@@ -36,7 +36,7 @@ function CreateScheduleModal({
         showCloseButton={false}
         adminMobileFullscreen={false}
       >
-        {/* Header with tabs */}
+        <DialogTitle className="sr-only">일정 생성</DialogTitle>
         <div className="tablet:px-700 tablet:pt-700 flex items-start justify-between px-400 pt-400">
           <Tabs
             value={activeTab}
@@ -59,7 +59,6 @@ function CreateScheduleModal({
           </button>
         </div>
 
-        {/* Tab content */}
         {activeTab === 'SESSION' ? (
           <CreateSessionScheduleForm onCreateSession={onCreateSession} onClose={handleClose} />
         ) : (

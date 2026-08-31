@@ -3,7 +3,7 @@
 import { Suspense } from 'react';
 import type { ReactNode, RefObject } from 'react';
 
-import { Dialog, DialogContent } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { SCHEDULE_MODAL_CONTENT_CLASS } from '@/components/admin/schedule/modal/constants';
 
 interface EditModalShellProps {
@@ -52,6 +52,7 @@ function EditModalShell({
           if (hasChangesRef.current) e.preventDefault();
         }}
       >
+        <DialogTitle className="sr-only">일정 수정</DialogTitle>
         <Suspense fallback={fallback}>{children}</Suspense>
       </DialogContent>
     </Dialog>
