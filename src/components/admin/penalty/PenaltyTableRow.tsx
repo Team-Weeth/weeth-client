@@ -7,14 +7,16 @@ import { cn } from '@/lib/cn';
 import type { PenaltyMember } from '@/types/admin/penalty';
 import { formatCardinalLabel, getVisibleMemberCardinals } from '@/utils/admin/memberTableUtils';
 import { formatPenaltyDate, truncateIntroduction } from '@/utils/admin/penaltyPageUtils';
+import { CardinalTag } from './PenaltyCardinalTag';
 
 interface PenaltyTableRowProps {
   member: PenaltyMember;
   selected: boolean;
   onToggle: (id: string) => void;
+  onOpenDetail: (member: PenaltyMember) => void;
 }
 
-function PenaltyTableRow({ member, selected, onToggle }: PenaltyTableRowProps) {
+function PenaltyTableRow({ member, selected, onToggle, onOpenDetail }: PenaltyTableRowProps) {
   const { visibleCardinals, hiddenCardinalCount } = getVisibleMemberCardinals(member.cardinal);
 
   return (
@@ -23,7 +25,7 @@ function PenaltyTableRow({ member, selected, onToggle }: PenaltyTableRowProps) {
         'bg-container-neutral [&>td]:border-line h-16 cursor-pointer border-0 hover:bg-neutral-200 [&:last-child>td]:border-b-0 [&>td]:border-b [&>td]:bg-transparent',
         selected && 'bg-container-primary-alternative hover:bg-container-primary-alternative',
       )}
-      onClick={() => onToggle(member.id)}
+      onClick={() => onOpenDetail(member)}
     >
       <TableCell
         className="h-16 w-16 min-w-16 p-0 pl-300"
@@ -72,14 +74,6 @@ function PenaltyTableRow({ member, selected, onToggle }: PenaltyTableRowProps) {
         </div>
       </TableCell>
     </TableRow>
-  );
-}
-
-function CardinalTag({ children }: { children: ReactNode }) {
-  return (
-    <span className="bg-container-neutral-alternative text-text-alternative rounded-[5px] px-2.5 py-[5px] text-[14px] leading-5 font-semibold tracking-[var(--letter-spacing)] whitespace-nowrap">
-      {children}
-    </span>
   );
 }
 

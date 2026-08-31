@@ -16,6 +16,7 @@ interface PenaltyTableProps extends React.HTMLAttributes<HTMLDivElement> {
   members: PenaltyMember[];
   selectedIds: Set<string>;
   onSelectionChange: (ids: Set<string>) => void;
+  onOpenDetail: (member: PenaltyMember) => void;
 }
 
 function PenaltyTable({
@@ -23,6 +24,7 @@ function PenaltyTable({
   members,
   selectedIds,
   onSelectionChange,
+  onOpenDetail,
   ...props
 }: PenaltyTableProps) {
   const {
@@ -92,6 +94,7 @@ function PenaltyTable({
                   member={member}
                   selected={selectedIds.has(member.id)}
                   onToggle={toggleOne}
+                  onOpenDetail={onOpenDetail}
                 />
               ))
             )}
