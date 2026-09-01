@@ -2,14 +2,14 @@
 
 import { useRef, useState } from 'react';
 import { cn } from '@/lib/cn';
+import { Icon } from '@/components/ui/Icon';
+import { Tag } from '@/components/ui/tag';
 import {
-  Icon,
-  Tag,
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from '@/components/ui';
+} from '@/components/ui/Tooltip';
 import { ArrowRightIcon } from '@/assets/icons';
 import { formatSessionDateParts } from '@/utils/shared/date';
 import type { CalendarSchedule } from '@/types/calendar';

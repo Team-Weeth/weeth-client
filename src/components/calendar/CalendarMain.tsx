@@ -8,7 +8,7 @@ import { CalendarMini } from '@/components/calendar/CalendarMini';
 import { CalendarUpcomingPanel } from '@/components/calendar/CalendarUpcomingPanel';
 import { CalendarAttendancePanel } from '@/components/calendar/CalendarAttendancePanel';
 import { CardinalDropdown } from '@/components/common';
-import { Breadcrumb, BreadcrumbItem, BreadcrumbList, BreadcrumbPage } from '@/components/ui';
+import { Breadcrumb, BreadcrumbItem, BreadcrumbList, BreadcrumbPage } from '@/components/ui/breadcrumb';
 import {
   useCalendarYear,
   useCalendarMonth,

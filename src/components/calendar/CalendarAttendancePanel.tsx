@@ -1,7 +1,7 @@
 import Link from 'next/link';
 
 import { ArrowRightIcon } from '@/assets/icons';
-import { Icon } from '@/components/ui';
+import { Icon } from '@/components/ui/Icon';
 import { cn } from '@/lib/cn';
 
 interface CalendarAttendancePanelProps {

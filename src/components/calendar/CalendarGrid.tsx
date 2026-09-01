@@ -3,8 +3,7 @@
 import { cn } from '@/lib/cn';
 import { DAY_META, DAY_HEADER_COLOR } from '@/constants/shared/date';
 import { buildCalendarCells, getCalendarCellColors } from '@/utils/shared/date';
-import { Tag } from '@/components/ui';
-import type { TagProps } from '@/components/ui';
+import { Tag, type TagProps } from '@/components/ui/tag';
 import type { CalendarSchedule } from '@/types/calendar';
 
 const MAX_VISIBLE_TAGS = 2;

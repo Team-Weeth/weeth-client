@@ -1,7 +1,7 @@
 'use client';
 
 import { cn } from '@/lib/cn';
-import { Checkbox } from '@/components/ui';
+import { Checkbox } from '@/components/ui/Checkbox';
 import { useCalendarFilters, useCalendarActions } from '@/stores/useCalendarStore';
 
 interface CalendarFilterProps {

@@ -54,7 +54,7 @@ function Tag({
   }
 
   return (
-    <span className={cn(tagVariants({ variant }), className)} {...props}>
+    <span ref={ref} className={cn(tagVariants({ variant }), className)} {...props}>
       {dot && <span className="size-[5px] shrink-0 rounded-full bg-current" />}
       {children}
       {onDelete && (
