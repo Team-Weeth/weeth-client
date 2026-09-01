@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react';
 import type { RefObject } from 'react';
-
 import { Button } from '@/components/ui/Button';
 import {
   DropdownMenu,
@@ -22,7 +21,6 @@ import {
   isScheduleTitleValid,
   toInitialScheduleForm,
 } from '@/utils/admin/scheduleFormUtils';
-
 import { SCHEDULE_MODAL_FOOTER_CLASS } from './constants';
 import { DiscardConfirmArea } from './DiscardConfirmArea';
 import { ScheduleFormBody } from './ScheduleFormBody';

@@ -1,15 +1,12 @@
 'use client';
 
 import { useState } from 'react';
-
 import { Button } from '@/components/ui/Button';
 import { SessionScheduleForm } from '@/components/admin/schedule/modal/SessionScheduleForm';
 import { useCardinals } from '@/hooks/queries';
 import { addYearsToDateInput, toDateInputValue } from '@/utils/shared/date';
 import type { CreateSessionBody } from '@/types/admin/session';
-
 import { isScheduleTitleValid } from '@/utils/admin/scheduleFormUtils';
-
 import { SCHEDULE_MODAL_FOOTER_CLASS } from './constants';
 import { isDateRangeValid, type ScheduleFormState, type SessionFormState } from './types';
 

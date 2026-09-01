@@ -1,7 +1,6 @@
 'use client';
 
 import Image from 'next/image';
-
 import { cn } from '@/lib/cn';
 import { formatYearMonth } from '@/utils/admin/scheduleUtils';
 import AdminSquareLeftIcon from '@/assets/icons/admin/ic_admin_square_left.svg';
