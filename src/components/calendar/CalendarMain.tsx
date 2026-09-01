@@ -1,6 +1,7 @@
 'use client';
 
 import { cn } from '@/lib/cn';
+import { Button } from '@/components/ui/Button';
 import { useCardinalSelector } from '@/hooks/useCardinalSelector';
 import { CalendarFilter } from '@/components/calendar/CalendarFilter';
 import { CalendarGrid } from '@/components/calendar/CalendarGrid';
@@ -173,7 +174,7 @@ function CalendarMain({ className }: CalendarMainProps) {
   const month = useCalendarMonth();
   const selectedDate = useCalendarSelectedDate();
   const { sessionEnabled, eventEnabled, attendanceOnly } = useCalendarFilters();
-  const { toggleDate } = useCalendarActions();
+  const { toggleDate, reset } = useCalendarActions();
 
   const { cardinals, activeCardinal, setSelectedCardinalId } = useCardinalSelector({
     autoSelectLatest: true,
@@ -211,7 +212,12 @@ function CalendarMain({ className }: CalendarMainProps) {
           </BreadcrumbList>
         </Breadcrumb>
         <div className="flex items-center">
-          <h2 className="typo-h2 text-text-normal flex-1">캘린더</h2>
+          <div className="flex flex-1 items-center gap-200">
+            <h2 className="typo-h2 text-text-normal">캘린더</h2>
+            <Button variant="outlined" size="sm" onClick={reset}>
+              오늘
+            </Button>
+          </div>
           <CardinalDropdown
             cardinals={cardinals}
             activeCardinal={activeCardinal}
