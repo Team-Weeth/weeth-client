@@ -31,19 +31,30 @@ interface TagProps extends React.HTMLAttributes<HTMLSpanElement>, VariantProps<t
   asChild?: boolean;
   dot?: boolean;
   onDelete?: () => void;
+  ref?: React.Ref<HTMLSpanElement>;
 }
 
-function Tag({ className, variant, asChild = false, dot, onDelete, children, ...props }: TagProps) {
+function Tag({
+  className,
+  variant,
+  asChild = false,
+  dot,
+  onDelete,
+  ref,
+  children,
+  ...props
+}: TagProps) {
+  const Comp = asChild ? Slot.Root : 'span';
   if (asChild) {
     return (
-      <Slot.Root className={cn(tagVariants({ variant }), className)} {...props}>
+      <Comp ref={ref} className={cn(tagVariants({ variant }), className)} {...props}>
         {children}
-      </Slot.Root>
+      </Comp>
     );
   }
 
   return (
-    <span className={cn(tagVariants({ variant }), className)} {...props}>
+    <span ref={ref} className={cn(tagVariants({ variant }), className)} {...props}>
       {dot && <span className="size-[5px] shrink-0 rounded-full bg-current" />}
       {children}
       {onDelete && (

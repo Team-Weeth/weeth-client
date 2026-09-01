@@ -43,6 +43,7 @@ export default function Header({ isMain = true }: HeaderProps) {
   const NAV_ITEMS = [
     { id: 'board', label: '게시판', href: `/${clubId}/board` },
     { id: 'attendance', label: '출석', href: `/${clubId}/attendance` },
+    { id: 'calendar', label: '캘린더', href: `/${clubId}/calendar` },
     ...(isDuesVisible ? [{ id: 'dues', label: '회비', href: `/${clubId}/dues` }] : []),
   ] as const;
   const [visible, setVisible] = useState(true);

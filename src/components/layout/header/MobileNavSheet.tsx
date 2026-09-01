@@ -10,6 +10,7 @@ import PinIcon from '@/assets/icons/pin.svg';
 import LogoutIcon from '@/assets/icons/logout.svg';
 import HomeIcon from '@/assets/icons/home.svg';
 import MenuIcon from '@/assets/icons/menu.svg';
+import CalendarIcon from '@/assets/icons/calendar.svg';
 import AdminDuesIcon from '@/assets/icons/admin/ic_admin_dues.svg';
 import { Divider } from '@/components/ui/Divider';
 import { Icon } from '@/components/ui/Icon';
@@ -44,6 +45,7 @@ function MobileNavSheet() {
     { id: 'home', label: 'HOME', href: `/${clubId}/home`, icon: HomeIcon },
     { id: 'board', label: '게시판', href: `/${clubId}/board`, icon: PinIcon },
     { id: 'attendance', label: '출석', href: `/${clubId}/attendance`, icon: CheckRoundIcon },
+    { id: 'calendar', label: '캘린더', href: `/${clubId}/calendar`, icon: CalendarIcon },
     ...(isDuesVisible
       ? [{ id: 'dues', label: '회비', href: `/${clubId}/dues`, icon: AdminDuesIcon }]
       : []),
