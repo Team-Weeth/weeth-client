@@ -13,7 +13,7 @@ const buttonVariants = cva(
         tertiary:
           'bg-transparent text-text-normal hover:bg-container-neutral-interaction active:bg-container-neutral-interaction disabled:text-text-disabled',
         outlined:
-          'bg-transparent text-text-strong border border-[var(--neutral-500)] hover:bg-container-neutral-interaction active:bg-container-neutral-interaction disabled:text-text-disabled disabled:border-[var(--neutral-400)]',
+          'bg-transparent text-text-strong border border-neutral-500 hover:bg-container-neutral-interaction active:bg-container-neutral-interaction disabled:text-text-disabled disabled:border-neutral-400',
         primarySoft:
           'bg-button-primary-subtle text-brand-primary hover:bg-button-primary-subtle-interaction active:bg-button-primary-subtle-interaction disabled:bg-button-disabled disabled:text-text-disabled',
         danger:
