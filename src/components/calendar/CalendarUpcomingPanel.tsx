@@ -23,7 +23,7 @@ function CalendarUpcomingPanel({ schedules, className }: CalendarUpcomingPanelPr
   return (
     <div
       className={cn(
-        'bg-container-neutral flex h-[346px] shrink-0 flex-col items-start self-stretch rounded-md px-[14px] pt-[14px] pb-200',
+        'bg-container-neutral flex max-h-[346px] shrink-0 flex-col items-start self-stretch rounded-md px-[14px] pt-[14px] pb-200',
         className,
       )}
     >
@@ -34,15 +34,13 @@ function CalendarUpcomingPanel({ schedules, className }: CalendarUpcomingPanelPr
       </div>
 
       {/* CalendarSchedule list */}
-      <div className="flex w-full flex-1 flex-col justify-between">
+      <div className="scrollbar-custom flex w-full flex-1 flex-col gap-200 overflow-y-auto">
         {schedules.length === 0 ? (
           <p className="typo-caption2 text-text-alternative w-[245px] py-500 text-center">
             일정이 없습니다.
           </p>
         ) : (
-          schedules
-            .slice(0, 4)
-            .map((schedule) => <UpcomingItem key={schedule.id} schedule={schedule} />)
+          schedules.map((schedule) => <UpcomingItem key={schedule.id} schedule={schedule} />)
         )}
       </div>
     </div>
