@@ -16,10 +16,15 @@ const DOT_COLOR: Record<string, string> = {
 
 interface CalendarUpcomingPanelProps {
   schedules: CalendarSchedule[];
+  onScheduleClick?: (schedule: CalendarSchedule) => void;
   className?: string;
 }
 
-function CalendarUpcomingPanel({ schedules, className }: CalendarUpcomingPanelProps) {
+function CalendarUpcomingPanel({
+  schedules,
+  onScheduleClick,
+  className,
+}: CalendarUpcomingPanelProps) {
   return (
     <div
       className={cn(
@@ -40,19 +45,31 @@ function CalendarUpcomingPanel({ schedules, className }: CalendarUpcomingPanelPr
             일정이 없습니다.
           </p>
         ) : (
-          schedules.map((schedule) => <UpcomingItem key={schedule.id} schedule={schedule} />)
+          schedules.map((schedule) => (
+            <UpcomingItem key={schedule.id} schedule={schedule} onScheduleClick={onScheduleClick} />
+          ))
         )}
       </div>
     </div>
   );
 }
 
-function UpcomingItem({ schedule }: { schedule: CalendarSchedule }) {
+function UpcomingItem({
+  schedule,
+  onScheduleClick,
+}: {
+  schedule: CalendarSchedule;
+  onScheduleClick?: (schedule: CalendarSchedule) => void;
+}) {
   const { day, weekday, timeLabel } = formatSessionDateParts(schedule.start);
   const dotColor = DOT_COLOR[schedule.type] ?? 'bg-brand-primary';
 
   return (
-    <div className="hover:bg-container-neutral-interaction flex w-[245px] cursor-pointer items-center gap-[7px] rounded-[7px] p-200 transition-colors">
+    <button
+      type="button"
+      onClick={() => onScheduleClick?.(schedule)}
+      className="hover:bg-container-neutral-interaction flex w-[245px] cursor-pointer items-center gap-[7px] rounded-[7px] p-200 transition-colors"
+    >
       {/* Date column */}
       <div className="flex w-[32px] shrink-0 flex-col items-center justify-center gap-100 self-stretch">
         <span className="typo-sub3 text-text-alternative w-[28px] text-center">{day}</span>
@@ -76,7 +93,7 @@ function UpcomingItem({ schedule }: { schedule: CalendarSchedule }) {
 
       {/* Forward icon */}
       <Icon src={ArrowRightIcon} size={10} className="text-icon-alternative shrink-0" />
-    </div>
+    </button>
   );
 }
 
