@@ -175,8 +175,8 @@ function CalendarScheduleModal({
                   </div>
                 )}
                 {schedule.description && (
-                  <div className="flex items-center gap-300">
-                    <span className="typo-caption2 text-text-alternative w-[56px] shrink-0">
+                  <div className="flex items-start gap-300">
+                    <span className="typo-caption2 text-text-alternative w-[56px] shrink-0 pt-[2px]">
                       설명
                     </span>
                     <span className="typo-body2 text-text-normal flex-1">
