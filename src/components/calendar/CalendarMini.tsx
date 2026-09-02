@@ -4,7 +4,7 @@ import { cn } from '@/lib/cn';
 import { Icon } from '@/components/ui/Icon';
 import { ArrowLeftIcon, ArrowRightIcon } from '@/assets/icons';
 import { DAY_META, DAY_HEADER_COLOR } from '@/constants/shared/date';
-import { buildCalendarCells, getCalendarCellColors } from '@/utils/shared/date';
+import { buildCalendarCells, getCalendarCellColors } from '@/utils/shared/calendar';
 import {
   useCalendarYear,
   useCalendarMonth,
