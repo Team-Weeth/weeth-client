@@ -145,6 +145,14 @@ const MOCK_SCHEDULES: CalendarSchedule[] = [
     type: 'SESSION',
     location: '위스',
   },
+  {
+    id: 18,
+    title: '코드 리뷰',
+    start: '2026-08-23T14:00:00',
+    end: '2026-08-23T16:00:00',
+    type: 'SESSION',
+    location: '온라인',
+  },
   // Sep
   {
     id: 10,
