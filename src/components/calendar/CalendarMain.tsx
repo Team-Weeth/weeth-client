@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { cn } from '@/lib/cn';
 import { Button } from '@/components/ui/Button';
 import { useCardinalSelector } from '@/hooks/useCardinalSelector';
@@ -24,9 +25,11 @@ import {
 } from '@/stores/useCalendarStore';
 import { useClubId } from '@/stores';
 import type { CalendarSchedule } from '@/types/calendar';
+import { CalendarScheduleModal } from '@/components/calendar/CalendarScheduleModal';
+import type { ScheduleDetail } from '@/types/calendar';
 
 // TODO: 유저 사이드 일정 API 연결 시 제거
-const MOCK_SCHEDULES: CalendarSchedule[] = [
+const MOCK_SCHEDULES: ScheduleDetail[] = [
   {
     id: 1,
     title: '8기 1차 세션',
@@ -34,6 +37,20 @@ const MOCK_SCHEDULES: CalendarSchedule[] = [
     end: '2026-08-05T22:00:00',
     type: 'SESSION',
     location: '서울대학교 302호',
+    host: { name: '김위스' },
+    attendees: [
+      { name: '홍길동' },
+      { name: '이영희' },
+      { name: '박민준' },
+      { name: '최지우' },
+      { name: '강동현' },
+    ],
+    attendeeCount: 15,
+    dDay: -28,
+    hasAttendanceCheck: true,
+    attendanceStatus: 'completed',
+    attendanceCompletedAt: '2026-08-05T19:12:00',
+    description: '위스 8기 첫 번째 세션입니다. React 기초와 컴포넌트 설계를 다룹니다.',
   },
   {
     id: 2,
@@ -42,6 +59,9 @@ const MOCK_SCHEDULES: CalendarSchedule[] = [
     end: '2026-08-12T22:00:00',
     type: 'SESSION',
     location: '홍익대학교 본관',
+    dDay: -22,
+    hasAttendanceCheck: true,
+    attendanceStatus: 'absent',
   },
   {
     id: 3,
@@ -161,6 +181,32 @@ const MOCK_SCHEDULES: CalendarSchedule[] = [
     end: '2026-09-02T22:00:00',
     type: 'SESSION',
     location: '고려대학교 정경관',
+    host: { name: '이위스' },
+    attendees: [
+      { name: '홍길동' },
+      { name: '이영희' },
+      { name: '박민준' },
+      { name: '최지우' },
+      { name: '강동현' },
+    ],
+    attendeeCount: 23,
+    dDay: 0,
+    hasAttendanceCheck: true,
+    attendanceStatus: 'available',
+    description: '위스 9기 첫 번째 세션입니다. Next.js 15와 App Router를 다룹니다.',
+  },
+  {
+    id: 20,
+    title: '9기 2차 세션',
+    start: '2026-09-09T19:00:00',
+    end: '2026-09-09T22:00:00',
+    type: 'SESSION',
+    location: '연세대학교 공학관',
+    host: { name: '이위스' },
+    dDay: 6,
+    hasAttendanceCheck: true,
+    attendanceStatus: 'pending',
+    description: '위스 9기 두 번째 세션입니다. TypeScript 심화와 상태 관리를 다룹니다.',
   },
   {
     id: 11,
@@ -169,6 +215,11 @@ const MOCK_SCHEDULES: CalendarSchedule[] = [
     end: '2026-09-05T19:00:00',
     type: 'EVENT',
     location: '홍대 라운지',
+    host: { name: '박위스' },
+    attendees: [{ name: '홍길동' }, { name: '이영희' }, { name: '박민준' }],
+    attendeeCount: 45,
+    dDay: 3,
+    description: '9기 개강총회입니다. 전체 일정 안내 및 팀 빌딩을 진행합니다.',
   },
 ];
 
@@ -189,6 +240,8 @@ function CalendarMain({ className }: CalendarMainProps) {
     scope: 'calendar',
   });
 
+  const [selectedSchedule, setSelectedSchedule] = useState<ScheduleDetail | null>(null);
+
   const schedules = MOCK_SCHEDULES.filter((s) => {
     const scheduleMonth = Number(s.start.split('-')[1]);
     const scheduleYear = Number(s.start.split('-')[0]);
@@ -203,6 +256,10 @@ function CalendarMain({ className }: CalendarMainProps) {
   });
 
   const eventDates = filteredSchedules.map((s) => new Date(s.start));
+
+  const handleScheduleClick = (schedule: CalendarSchedule) => {
+    setSelectedSchedule(schedule);
+  };
 
   return (
     <div
@@ -250,14 +307,24 @@ function CalendarMain({ className }: CalendarMainProps) {
             schedules={filteredSchedules}
             selectedDate={selectedDate}
             onSelectDate={toggleDate}
+            onScheduleClick={handleScheduleClick}
             className="min-w-0 flex-1"
           />
           <div className="desktop:flex hidden flex-col gap-300">
-            <CalendarUpcomingPanel schedules={filteredSchedules} />
+            <CalendarUpcomingPanel
+              schedules={filteredSchedules}
+              onScheduleClick={handleScheduleClick}
+            />
             <CalendarAttendancePanel clubId={clubId} />
           </div>
         </div>
       </div>
+      <CalendarScheduleModal
+        open={selectedSchedule !== null}
+        onOpenChange={(open) => !open && setSelectedSchedule(null)}
+        schedule={selectedSchedule}
+        clubId={clubId}
+      />
     </div>
   );
 }
