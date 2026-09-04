@@ -1,6 +1,6 @@
 import Link from 'next/link';
 
-import { ArrowRightIcon } from '@/assets/icons';
+import ArrowRightIcon from '@/assets/icons/arrow_right.svg';
 import { Icon } from '@/components/ui/Icon';
 import { cn } from '@/lib/cn';
 

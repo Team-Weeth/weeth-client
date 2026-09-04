@@ -3,7 +3,8 @@
 import { cn } from '@/lib/cn';
 import { useClickOutside } from '@/hooks/useClickOutside';
 import { Icon } from '@/components/ui/Icon';
-import { DeleteIcon, ArrowRightIcon } from '@/assets/icons';
+import DeleteIcon from '@/assets/icons/delete.svg';
+import ArrowRightIcon from '@/assets/icons/arrow_right.svg';
 import type { CalendarSchedule } from '@/types/calendar';
 
 const SCHEDULE_DOT_COLOR: Record<string, string> = {
