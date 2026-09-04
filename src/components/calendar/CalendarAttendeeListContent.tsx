@@ -65,14 +65,18 @@ function CalendarAttendeeListContent({ attendees, onBack }: CalendarAttendeeList
           <Table>
             <TableHeader>
               <TableRow className="bg-container-neutral-alternative hover:bg-container-neutral-alternative">
-                <TableHead className="h-[48px] w-[175px] min-w-[128px] text-text-alternative">이름</TableHead>
-                <TableHead className="h-[48px] w-[308px] min-w-[128px] text-text-alternative">학과</TableHead>
-                <TableHead className="h-[48px] w-[124px] text-text-alternative">직급</TableHead>
+                <TableHead className="text-text-alternative h-[48px] w-[175px] min-w-[128px]">
+                  이름
+                </TableHead>
+                <TableHead className="text-text-alternative h-[48px] w-[308px] min-w-[128px]">
+                  학과
+                </TableHead>
+                <TableHead className="text-text-alternative h-[48px] w-[124px]">직급</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {pagedAttendees.map((attendee, index) => (
-                <TableRow key={`${attendee.name}-${index}`} className="hover:bg-container-neutral">
+              {pagedAttendees.map((attendee) => (
+                <TableRow key={attendee.name} className="hover:bg-container-neutral">
                   <TableCell className="h-[48px] w-[175px] min-w-[128px] py-0 pl-400">
                     <div className="flex items-center gap-300">
                       <Avatar size={40} type="round">
@@ -84,10 +88,10 @@ function CalendarAttendeeListContent({ attendees, onBack }: CalendarAttendeeList
                       <span className="typo-body2 text-text-strong">{attendee.name}</span>
                     </div>
                   </TableCell>
-                  <TableCell className="h-[48px] w-[308px] min-w-[128px] typo-body2 text-text-strong">
+                  <TableCell className="typo-body2 text-text-strong h-[48px] w-[308px] min-w-[128px]">
                     {attendee.department ?? '-'}
                   </TableCell>
-                  <TableCell className="h-[48px] typo-body2 text-text-strong">
+                  <TableCell className="typo-body2 text-text-strong h-[48px]">
                     {attendee.position ?? '-'}
                   </TableCell>
                 </TableRow>
