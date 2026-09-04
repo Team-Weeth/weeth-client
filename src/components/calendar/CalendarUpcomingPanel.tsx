@@ -5,7 +5,7 @@ import { cn } from '@/lib/cn';
 import { Icon } from '@/components/ui/Icon';
 import { Tag } from '@/components/ui/tag';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/Tooltip';
-import { ArrowRightIcon } from '@/assets/icons';
+import ArrowRightIcon from '@/assets/icons/arrow_right.svg';
 import { formatSessionDateParts } from '@/utils/shared/date';
 import type { CalendarSchedule } from '@/types/calendar';
 
@@ -39,17 +39,23 @@ function CalendarUpcomingPanel({
       </div>
 
       {/* CalendarSchedule list */}
-      <div className="scrollbar-custom flex w-full flex-1 flex-col gap-200 overflow-y-auto">
-        {schedules.length === 0 ? (
-          <p className="typo-caption2 text-text-alternative w-[245px] py-500 text-center">
-            일정이 없습니다.
-          </p>
-        ) : (
-          schedules.map((schedule) => (
-            <UpcomingItem key={schedule.id} schedule={schedule} onScheduleClick={onScheduleClick} />
-          ))
-        )}
-      </div>
+      <TooltipProvider>
+        <div className="scrollbar-custom flex w-full flex-1 flex-col gap-200 overflow-y-auto">
+          {schedules.length === 0 ? (
+            <p className="typo-caption2 text-text-alternative w-[245px] py-500 text-center">
+              일정이 없습니다.
+            </p>
+          ) : (
+            schedules.map((schedule) => (
+              <UpcomingItem
+                key={schedule.id}
+                schedule={schedule}
+                onScheduleClick={onScheduleClick}
+              />
+            ))
+          )}
+        </div>
+      </TooltipProvider>
     </div>
   );
 }
@@ -102,25 +108,23 @@ function TruncatedTag({ label }: { label: string }) {
   const [open, setOpen] = useState(false);
 
   return (
-    <TooltipProvider>
-      <Tooltip open={open}>
-        <TooltipTrigger asChild>
-          <Tag
-            ref={ref as React.Ref<HTMLSpanElement>}
-            className="bg-text-alternative/10 text-text-alternative block max-w-[92px] truncate"
-            onMouseEnter={() => {
-              if (ref.current && ref.current.scrollWidth > ref.current.clientWidth) {
-                setOpen(true);
-              }
-            }}
-            onMouseLeave={() => setOpen(false)}
-          >
-            {label}
-          </Tag>
-        </TooltipTrigger>
-        <TooltipContent variant="sm">{label}</TooltipContent>
-      </Tooltip>
-    </TooltipProvider>
+    <Tooltip open={open}>
+      <TooltipTrigger asChild>
+        <Tag
+          ref={ref as React.Ref<HTMLSpanElement>}
+          className="bg-text-alternative/10 text-text-alternative block max-w-[92px] truncate"
+          onMouseEnter={() => {
+            if (ref.current && ref.current.scrollWidth > ref.current.clientWidth) {
+              setOpen(true);
+            }
+          }}
+          onMouseLeave={() => setOpen(false)}
+        >
+          {label}
+        </Tag>
+      </TooltipTrigger>
+      <TooltipContent variant="sm">{label}</TooltipContent>
+    </Tooltip>
   );
 }
 
