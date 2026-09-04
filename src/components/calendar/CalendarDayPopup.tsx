@@ -1,6 +1,7 @@
 'use client';
 
 import { cn } from '@/lib/cn';
+import { useClickOutside } from '@/hooks/useClickOutside';
 import { Icon } from '@/components/ui/Icon';
 import { DeleteIcon, ArrowRightIcon } from '@/assets/icons';
 import type { CalendarSchedule } from '@/types/calendar';
@@ -28,8 +29,11 @@ function CalendarDayPopup({
   onScheduleClick,
   className,
 }: CalendarDayPopupProps) {
+  const popupRef = useClickOutside<HTMLDivElement>(() => onClose?.());
+
   return (
     <div
+      ref={popupRef}
       className={cn(
         'bg-container-neutral flex w-[244px] flex-col items-start rounded-md [box-shadow:var(--shadow-md)] dark:[box-shadow:0_5px_20px_0_rgba(0,0,0,0.80)]',
         className,
