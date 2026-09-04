@@ -3,23 +3,19 @@
 import { cn } from '@/lib/cn';
 import { useClickOutside } from '@/hooks/useClickOutside';
 import { Icon } from '@/components/ui/Icon';
+import { SCHEDULE_DOT_COLOR } from '@/constants/calendar';
 import DeleteIcon from '@/assets/icons/delete.svg';
 import ArrowRightIcon from '@/assets/icons/arrow_right.svg';
-import type { CalendarSchedule } from '@/types/calendar';
-
-const SCHEDULE_DOT_COLOR: Record<string, string> = {
-  SESSION: 'bg-brand-primary',
-  EVENT: 'bg-brand-secondary',
-};
+import type { ScheduleDetail } from '@/types/calendar';
 
 const MAX_VISIBLE_ITEMS = 6;
 
 interface CalendarDayPopupProps {
   /** Formatted date label, e.g. "12월 17일" */
   date: string;
-  schedules: CalendarSchedule[];
+  schedules: ScheduleDetail[];
   onClose?: () => void;
-  onScheduleClick?: (schedule: CalendarSchedule) => void;
+  onScheduleClick?: (schedule: ScheduleDetail) => void;
   className?: string;
 }
 

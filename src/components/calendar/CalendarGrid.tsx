@@ -5,7 +5,7 @@ import { cn } from '@/lib/cn';
 import { DAY_META, DAY_HEADER_COLOR } from '@/constants/shared/date';
 import { buildCalendarCells, getCalendarCellColors } from '@/utils/shared/calendar';
 import { Tag, type TagProps } from '@/components/ui/tag';
-import type { CalendarSchedule } from '@/types/calendar';
+import type { ScheduleDetail } from '@/types/calendar';
 import { CalendarDayPopup } from '@/components/calendar/CalendarDayPopup';
 import { useCalendarDayPopup } from '@/components/calendar/useCalendarDayPopup';
 
@@ -19,10 +19,10 @@ const SCHEDULE_TAG_VARIANT: Record<string, TagProps['variant']> = {
 interface CalendarGridProps {
   year: number;
   month: number;
-  schedules?: CalendarSchedule[];
+  schedules?: ScheduleDetail[];
   selectedDate?: string | null;
   onSelectDate?: (date: string) => void;
-  onScheduleClick?: (schedule: CalendarSchedule) => void;
+  onScheduleClick?: (schedule: ScheduleDetail) => void;
   className?: string;
 }
 
@@ -38,11 +38,11 @@ function CalendarGrid({
   const cells = buildCalendarCells(year, month);
   const totalRows = cells.length / 7;
 
-  const scheduleMap = new Map<string, CalendarSchedule[]>();
+  const scheduleMap = new Map<string, ScheduleDetail[]>();
   for (const s of schedules) {
     const key = s.start.split('T')[0];
     if (!scheduleMap.has(key)) scheduleMap.set(key, []);
-    scheduleMap.get(key)!.push(s);
+    scheduleMap.get(key)?.push(s);
   }
 
   const wrapperRef = useRef<HTMLDivElement>(null);

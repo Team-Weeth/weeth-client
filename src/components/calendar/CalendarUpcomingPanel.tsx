@@ -5,18 +5,14 @@ import { cn } from '@/lib/cn';
 import { Icon } from '@/components/ui/Icon';
 import { Tag } from '@/components/ui/tag';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/Tooltip';
+import { SCHEDULE_DOT_COLOR } from '@/constants/calendar';
 import ArrowRightIcon from '@/assets/icons/arrow_right.svg';
 import { formatSessionDateParts } from '@/utils/shared/date';
-import type { CalendarSchedule } from '@/types/calendar';
-
-const DOT_COLOR: Record<string, string> = {
-  SESSION: 'bg-brand-primary',
-  EVENT: 'bg-state-success',
-};
+import type { ScheduleDetail } from '@/types/calendar';
 
 interface CalendarUpcomingPanelProps {
-  schedules: CalendarSchedule[];
-  onScheduleClick?: (schedule: CalendarSchedule) => void;
+  schedules: ScheduleDetail[];
+  onScheduleClick?: (schedule: ScheduleDetail) => void;
   className?: string;
 }
 
@@ -33,7 +29,7 @@ function CalendarUpcomingPanel({
       )}
     >
       {/* Header */}
-      <div className="flex h-[26px] w-[243px] shrink-0 items-center justify-between pb-200">
+      <div className="flex h-[26px] w-full shrink-0 items-center justify-between pb-200">
         <span className="typo-caption1 text-text-normal">다가오는 일정</span>
         <span className="typo-caption2 text-text-alternative">이번 주</span>
       </div>
@@ -42,7 +38,7 @@ function CalendarUpcomingPanel({
       <TooltipProvider>
         <div className="scrollbar-custom flex w-full flex-1 flex-col gap-200 overflow-y-auto">
           {schedules.length === 0 ? (
-            <p className="typo-caption2 text-text-alternative w-[245px] py-500 text-center">
+            <p className="typo-caption2 text-text-alternative w-full py-500 text-center">
               일정이 없습니다.
             </p>
           ) : (
@@ -64,17 +60,17 @@ function UpcomingItem({
   schedule,
   onScheduleClick,
 }: {
-  schedule: CalendarSchedule;
-  onScheduleClick?: (schedule: CalendarSchedule) => void;
+  schedule: ScheduleDetail;
+  onScheduleClick?: (schedule: ScheduleDetail) => void;
 }) {
   const { day, weekday, timeLabel } = formatSessionDateParts(schedule.start);
-  const dotColor = DOT_COLOR[schedule.type] ?? 'bg-brand-primary';
+  const dotColor = SCHEDULE_DOT_COLOR[schedule.type] ?? 'bg-brand-primary';
 
   return (
     <button
       type="button"
       onClick={() => onScheduleClick?.(schedule)}
-      className="hover:bg-container-neutral-interaction flex w-[245px] cursor-pointer items-center gap-[7px] rounded-[7px] p-200 transition-colors"
+      className="hover:bg-container-neutral-interaction flex w-full cursor-pointer items-center gap-[7px] rounded-[7px] p-200 transition-colors"
     >
       {/* Date column */}
       <div className="flex w-[32px] shrink-0 flex-col items-center justify-center gap-100 self-stretch">

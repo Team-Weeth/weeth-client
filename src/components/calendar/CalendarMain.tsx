@@ -24,7 +24,6 @@ import {
   useCalendarActions,
 } from '@/stores/useCalendarStore';
 import { useClubId } from '@/stores';
-import type { CalendarSchedule } from '@/types/calendar';
 import { CalendarScheduleModal } from '@/components/calendar/CalendarScheduleModal';
 import type { ScheduleDetail } from '@/types/calendar';
 
@@ -272,7 +271,7 @@ function CalendarMain({ className }: CalendarMainProps) {
 
   const eventDates = filteredSchedules.map((s) => new Date(s.start));
 
-  const handleScheduleClick = (schedule: CalendarSchedule) => {
+  const handleScheduleClick = (schedule: ScheduleDetail) => {
     setSelectedSchedule(schedule);
   };
 

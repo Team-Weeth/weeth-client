@@ -1,12 +1,12 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import type { CalendarSchedule } from '@/types/calendar';
+import type { ScheduleDetail } from '@/types/calendar';
 
 interface PopupState {
   dateStr: string;
   formattedDate: string;
-  schedules: CalendarSchedule[];
+  schedules: ScheduleDetail[];
   top?: number;
   bottom?: number;
   left?: number;
@@ -16,7 +16,7 @@ interface PopupState {
 interface OpenPopupParams {
   dateStr: string;
   formattedDate: string;
-  schedules: CalendarSchedule[];
+  schedules: ScheduleDetail[];
   row: number;
   col: number;
   totalRows: number;
