@@ -12,12 +12,15 @@ import {
   AvatarGroupCount,
 } from '@/components/ui/avatar';
 import { CalendarScheduleAttendanceCard } from '@/components/calendar/CalendarScheduleAttendanceCard';
+import { CalendarModalFooter } from '@/components/calendar/CalendarModalFooter';
 import { formatDDay, formatScheduleTimeRange } from '@/utils/shared/date';
 import TimeIcon from '@/assets/icons/time.svg';
 import LocationIcon from '@/assets/icons/location.svg';
 import DeleteIcon from '@/assets/icons/delete.svg';
 import ExitToAppIcon from '@/assets/icons/exit_to_app.svg';
 import type { ScheduleDetail } from '@/types/calendar';
+
+const LABEL_CLASS = 'typo-caption2 text-text-alternative w-[56px] shrink-0';
 
 const SCHEDULE_TYPE_LABEL: Record<string, string> = {
   SESSION: '세션',
@@ -100,7 +103,7 @@ function CalendarScheduleDetailContent({
           <div className="border-line flex flex-col gap-[14px] border-t pt-600">
             {schedule.location && (
               <div className="flex items-center gap-300">
-                <span className="typo-caption2 text-text-alternative w-[56px] shrink-0">장소</span>
+                <span className={LABEL_CLASS}>장소</span>
                 <div className="flex items-center gap-200">
                   <Icon src={LocationIcon} size={18} className="text-icon-alternative" />
                   <span className="typo-body2 text-text-normal">{schedule.location}</span>
@@ -109,7 +112,7 @@ function CalendarScheduleDetailContent({
             )}
             {schedule.host && (
               <div className="flex items-center gap-300">
-                <span className="typo-caption2 text-text-alternative w-[56px] shrink-0">주최</span>
+                <span className={LABEL_CLASS}>주최</span>
                 <div className="flex items-center gap-200">
                   <Avatar size={24} type="round">
                     {schedule.host.imageUrl ? (
@@ -123,17 +126,15 @@ function CalendarScheduleDetailContent({
             )}
             {(visibleAttendees.length > 0 || (schedule.attendeeCount ?? 0) > 0) && (
               <div className="flex items-center gap-300">
-                <span className="typo-caption2 text-text-alternative w-[56px] shrink-0">
-                  참석자
-                </span>
+                <span className={LABEL_CLASS}>참석자</span>
                 <button
                   type="button"
                   className="flex cursor-pointer items-center gap-200 rounded-sm transition-opacity hover:opacity-75"
                   onClick={onViewAttendees}
                 >
                   <AvatarGroup>
-                    {visibleAttendees.map((attendee) => (
-                      <Avatar key={attendee.name} size={24} type="round">
+                    {visibleAttendees.map((attendee, idx) => (
+                      <Avatar key={`${attendee.name}-${idx}`} size={24} type="round">
                         {attendee.imageUrl ? (
                           <AvatarImage src={attendee.imageUrl} alt={attendee.name} />
                         ) : null}
@@ -152,9 +153,7 @@ function CalendarScheduleDetailContent({
             )}
             {schedule.description && (
               <div className="flex items-start gap-300">
-                <span className="typo-caption2 text-text-alternative w-[56px] shrink-0 pt-[2px]">
-                  설명
-                </span>
+                <span className={`${LABEL_CLASS} pt-[2px]`}>설명</span>
                 <span className="typo-body2 text-text-normal flex-1">{schedule.description}</span>
               </div>
             )}
@@ -172,14 +171,12 @@ function CalendarScheduleDetailContent({
       </div>
 
       {/* Footer */}
-      <div className="px-400 pb-400">
-        <div className="border-line border-t pt-[10px]">
-          <Button variant="secondary" size="lg" className="w-full gap-200" onClick={onShare}>
-            <Icon src={ExitToAppIcon} size={20} className="text-icon-normal" />
-            공유하기
-          </Button>
-        </div>
-      </div>
+      <CalendarModalFooter>
+        <Button variant="secondary" size="lg" className="w-full gap-200" onClick={onShare}>
+          <Icon src={ExitToAppIcon} size={20} className="text-icon-normal" />
+          공유하기
+        </Button>
+      </CalendarModalFooter>
     </>
   );
 }

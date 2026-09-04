@@ -14,8 +14,8 @@ interface CalendarAttendancePanelProps {
 function CalendarAttendancePanel({
   clubId,
   className,
-  attendanceRate = 83,
-  totalCount = 12,
+  attendanceRate = 0,
+  totalCount = 0,
 }: CalendarAttendancePanelProps) {
   return (
     <div

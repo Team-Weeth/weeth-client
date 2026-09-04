@@ -1,5 +1,3 @@
-'use client';
-
 import Link from 'next/link';
 import { cn } from '@/lib/cn';
 import { Icon } from '@/components/ui/Icon';
@@ -12,6 +10,32 @@ import CheckIcon from '@/assets/icons/check.svg';
 import DeleteIcon from '@/assets/icons/delete.svg';
 import ScreenIcon from '@/assets/icons/admin/ic_admin_screen.svg';
 import type { AttendanceStatus } from '@/types/calendar';
+
+interface StatusRowProps {
+  icon: React.ReactNode;
+  bgColorClass: string;
+  title: React.ReactNode;
+  subtitle?: React.ReactNode;
+}
+
+function StatusRow({ icon, bgColorClass, title, subtitle }: StatusRowProps) {
+  return (
+    <div className="flex items-center gap-300 self-stretch py-[13px]">
+      <div
+        className={cn(
+          'flex size-[40px] shrink-0 items-center justify-center rounded-md',
+          bgColorClass,
+        )}
+      >
+        {icon}
+      </div>
+      <div className="flex flex-col gap-[3px]">
+        <div className="typo-sub3 text-text-strong flex items-center gap-100">{title}</div>
+        {subtitle && <span className="typo-caption2 text-text-alternative">{subtitle}</span>}
+      </div>
+    </div>
+  );
+}
 
 interface CalendarScheduleAttendanceCardProps {
   attendanceStatus: AttendanceStatus;
@@ -29,56 +53,38 @@ function CalendarScheduleAttendanceCard({
   return (
     <div className="bg-container-neutral flex flex-col gap-200 rounded-md px-400 pt-200 pb-400">
       {attendanceStatus === 'completed' ? (
-        <div className="flex items-center gap-300 self-stretch py-[13px]">
-          <div className="bg-state-success/10 flex size-[40px] shrink-0 items-center justify-center rounded-md">
-            <Icon src={CheckIcon} size={24} className="text-state-success" />
-          </div>
-          <div className="flex flex-col gap-[3px]">
-            <span className="typo-sub3 text-text-strong">출석 완료</span>
-            {attendanceCompletedAt && (
-              <span className="typo-caption2 text-text-alternative">
-                {formatAttendanceTime(attendanceCompletedAt)}
-              </span>
-            )}
-          </div>
-        </div>
+        <StatusRow
+          icon={<Icon src={CheckIcon} size={24} className="text-state-success" />}
+          bgColorClass="bg-state-success/10"
+          title="출석 완료"
+          subtitle={attendanceCompletedAt ? formatAttendanceTime(attendanceCompletedAt) : undefined}
+        />
       ) : attendanceStatus === 'absent' ? (
-        <div className="flex items-center gap-300 self-stretch py-[13px]">
-          <div className="bg-state-error/10 flex size-[40px] shrink-0 items-center justify-center rounded-md">
-            <Icon src={DeleteIcon} size={24} className="text-state-error" />
-          </div>
-          <div className="flex flex-col gap-[3px]">
-            <span className="typo-sub3 text-text-strong">결석</span>
-            <span className="typo-caption2 text-text-alternative">
-              해당 일정의 출석 기록을 확인할 수 있어요
-            </span>
-          </div>
-        </div>
+        <StatusRow
+          icon={<Icon src={DeleteIcon} size={24} className="text-state-error" />}
+          bgColorClass="bg-state-error/10"
+          title="결석"
+          subtitle="해당 일정의 출석 기록을 확인할 수 있어요"
+        />
       ) : attendanceStatus === 'available' ? (
-        <div className="flex items-center gap-300 self-stretch py-[13px]">
-          <div className="bg-state-caution/10 flex size-[40px] shrink-0 items-center justify-center rounded-md">
-            <Icon src={ScreenIcon} size={24} className="text-state-caution" />
-          </div>
-          <div className="flex flex-col gap-[3px]">
-            <span className="typo-sub3 text-text-strong">출석 체크 가능</span>
-            <span className="typo-caption2 text-text-alternative">지금 출석 체크가 가능해요</span>
-          </div>
-        </div>
+        <StatusRow
+          icon={<Icon src={ScreenIcon} size={24} className="text-state-caution" />}
+          bgColorClass="bg-state-caution/10"
+          title="출석 체크 가능"
+          subtitle="지금 출석 체크가 가능해요"
+        />
       ) : (
-        <div className="flex items-center gap-300 self-stretch py-[13px]">
-          <div className="bg-text-alternative/10 flex size-[40px] shrink-0 items-center justify-center rounded-md">
-            <Icon src={TimeIcon} size={24} className="text-icon-alternative" />
-          </div>
-          <div className="flex flex-col gap-[3px]">
-            <div className="flex items-center gap-100">
-              <span className="typo-sub3 text-text-strong">출석 체크 예정</span>
+        <StatusRow
+          icon={<Icon src={TimeIcon} size={24} className="text-icon-alternative" />}
+          bgColorClass="bg-text-alternative/10"
+          title={
+            <>
+              출석 체크 예정
               {dDayLabel && <Tag variant="end">{dDayLabel}</Tag>}
-            </div>
-            <span className="typo-caption2 text-text-alternative">
-              일정 시작 시 출석 코드를 입력해 주세요
-            </span>
-          </div>
-        </div>
+            </>
+          }
+          subtitle="일정 시작 시 출석 코드를 입력해 주세요"
+        />
       )}
 
       {clubId != null && (

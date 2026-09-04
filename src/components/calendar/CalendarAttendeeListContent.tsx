@@ -21,6 +21,8 @@ import {
   PaginationPrevious,
   PaginationNext,
 } from '@/components/ui/pagination';
+import { CalendarModalFooter } from '@/components/calendar/CalendarModalFooter';
+import { usePaginationWindow } from '@/hooks/usePaginationWindow';
 import DeleteIcon from '@/assets/icons/delete.svg';
 import type { AttendeeInfo } from '@/types/calendar';
 
@@ -37,12 +39,7 @@ function CalendarAttendeeListContent({ attendees, onBack }: CalendarAttendeeList
   const totalPages = Math.max(1, Math.ceil(attendees.length / ITEMS_PER_PAGE));
   const pageStart = (currentPage - 1) * ITEMS_PER_PAGE;
   const pagedAttendees = attendees.slice(pageStart, pageStart + ITEMS_PER_PAGE);
-  const pageWindowStart = Math.max(1, Math.min(currentPage - 2, totalPages - 4));
-  const pageWindowEnd = Math.min(totalPages, pageWindowStart + 4);
-  const pageNumbers = Array.from(
-    { length: pageWindowEnd - pageWindowStart + 1 },
-    (_, i) => pageWindowStart + i,
-  );
+  const pageNumbers = usePaginationWindow(currentPage, totalPages);
 
   return (
     <>
@@ -51,7 +48,7 @@ function CalendarAttendeeListContent({ attendees, onBack }: CalendarAttendeeList
         <h2 className="typo-sub1 text-text-strong">참석자 목록</h2>
         <button
           type="button"
-          aria-label="닫기"
+          aria-label="상세 보기로 돌아가기"
           className="hover:bg-container-neutral-interaction flex size-[40px] shrink-0 cursor-pointer items-center justify-center rounded-sm transition-colors"
           onClick={onBack}
         >
@@ -75,8 +72,8 @@ function CalendarAttendeeListContent({ attendees, onBack }: CalendarAttendeeList
               </TableRow>
             </TableHeader>
             <TableBody>
-              {pagedAttendees.map((attendee) => (
-                <TableRow key={attendee.name} className="hover:bg-container-neutral">
+              {pagedAttendees.map((attendee, idx) => (
+                <TableRow key={`${attendee.name}-${pageStart + idx}`} className="hover:bg-container-neutral">
                   <TableCell className="h-[48px] w-[175px] min-w-[128px] py-0 pl-400">
                     <div className="flex items-center gap-300">
                       <Avatar size={40} type="round">
@@ -135,13 +132,11 @@ function CalendarAttendeeListContent({ attendees, onBack }: CalendarAttendeeList
       </div>
 
       {/* Footer */}
-      <div className="px-400 pb-400">
-        <div className="border-line border-t pt-[10px]">
-          <Button variant="primary" size="lg" className="w-full" onClick={onBack}>
-            확인
-          </Button>
-        </div>
-      </div>
+      <CalendarModalFooter>
+        <Button variant="primary" size="lg" className="w-full" onClick={onBack}>
+          확인
+        </Button>
+      </CalendarModalFooter>
     </>
   );
 }
