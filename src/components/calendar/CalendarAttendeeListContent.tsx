@@ -73,7 +73,10 @@ function CalendarAttendeeListContent({ attendees, onBack }: CalendarAttendeeList
             </TableHeader>
             <TableBody>
               {pagedAttendees.map((attendee, idx) => (
-                <TableRow key={`${attendee.name}-${pageStart + idx}`} className="hover:bg-container-neutral">
+                <TableRow
+                  key={`${attendee.name}-${pageStart + idx}`}
+                  className="hover:bg-container-neutral"
+                >
                   <TableCell className="h-[48px] w-[175px] min-w-[128px] py-0 pl-400">
                     <div className="flex items-center gap-300">
                       <Avatar size={40} type="round">
