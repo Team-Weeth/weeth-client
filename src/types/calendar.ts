@@ -14,6 +14,8 @@ export type AttendanceStatus = 'pending' | 'available' | 'completed' | 'absent';
 export interface AttendeeInfo {
   name: string;
   imageUrl?: string;
+  department?: string;
+  position?: string;
 }
 
 export interface ScheduleDetail extends CalendarSchedule {
