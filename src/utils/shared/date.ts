@@ -129,89 +129,50 @@ export function formatSessionDateParts(start: string): {
   };
 }
 
-// ─── Calendar cell utilities ───────────────────────────────────────────────
-
-export type CalendarCell = {
-  day: number;
-  year: number;
-  month: number;
-  dateStr: string; // 'YYYY-MM-DD'
-  dayOfWeek: number; // 0=Sun, 6=Sat
-  isCurrentMonth: boolean;
-  isToday: boolean;
-};
-
-export function buildCalendarCells(year: number, month: number): CalendarCell[] {
-  const today = new Date();
-  const todayYear = today.getFullYear();
-  const todayMonth = today.getMonth() + 1;
-  const todayDay = today.getDate();
-
-  const daysInMonth = getDaysInMonth(year, month);
-  const firstDay = getFirstDayOfMonth(year, month);
-  const prevMonthDays = getDaysInMonth(year, month === 1 ? 12 : month - 1);
-  const totalCells = Math.ceil((firstDay + daysInMonth) / 7) * 7;
-
-  const toDateStr = (y: number, m: number, d: number) =>
-    `${y}-${String(m).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
-
-  return Array.from({ length: totalCells }, (_, i) => {
-    const dayOfWeek = i % 7;
-    if (i < firstDay) {
-      const day = prevMonthDays - (firstDay - 1 - i);
-      const m = month === 1 ? 12 : month - 1;
-      const y = month === 1 ? year - 1 : year;
-      return {
-        day,
-        year: y,
-        month: m,
-        dateStr: toDateStr(y, m, day),
-        dayOfWeek,
-        isCurrentMonth: false,
-        isToday: false,
-      };
-    } else if (i < firstDay + daysInMonth) {
-      const day = i - firstDay + 1;
-      return {
-        day,
-        year,
-        month,
-        dateStr: toDateStr(year, month, day),
-        dayOfWeek,
-        isCurrentMonth: true,
-        isToday: year === todayYear && month === todayMonth && day === todayDay,
-      };
-    } else {
-      const day = i - firstDay - daysInMonth + 1;
-      const m = month === 12 ? 1 : month + 1;
-      const y = month === 12 ? year + 1 : year;
-      return {
-        day,
-        year: y,
-        month: m,
-        dateStr: toDateStr(y, m, day),
-        dayOfWeek,
-        isCurrentMonth: false,
-        isToday: false,
-      };
-    }
-  });
+// 'D-3' | 'D-day' | 'D+1'
+export function formatDDay(dDay: number): string {
+  if (dDay === 0) return 'D-day';
+  if (dDay > 0) return `D-${dDay}`;
+  return `D+${Math.abs(dDay)}`;
 }
 
-export function getCalendarCellColors(
-  isCurrentMonth: boolean,
-  isSelected: boolean,
-  isTodayHighlighted: boolean,
-  dayOfWeek: number,
-): { bg: string; text: string } {
-  const bg = isSelected ? 'bg-brand-primary' : isTodayHighlighted ? 'bg-container-primary' : '';
-  let text: string;
-  if (!isCurrentMonth) text = 'text-text-disabled';
-  else if (isSelected || isTodayHighlighted) text = 'text-text-inverse';
-  else if (dayOfWeek === 0) text = 'text-state-error';
-  else if (dayOfWeek === 6) text = 'text-state-success';
-  else text = 'text-text-normal';
-  return { bg, text };
+// '3월 9일 (월) 14:00 ~ 16:00'  같은 날이면 종료 시간만, 다른 날이면 전체 표기
+export function formatScheduleTimeRange(start: string, end: string): string {
+  const startDate = new Date(start);
+  const endDate = new Date(end);
+  const isSameDay =
+    startDate.getFullYear() === endDate.getFullYear() &&
+    startDate.getMonth() === endDate.getMonth() &&
+    startDate.getDate() === endDate.getDate();
+
+  const toDateTime = (date: Date) => {
+    const month = date.getMonth() + 1;
+    const day = date.getDate();
+    const dayOfWeek = DAY_META[date.getDay()].ko;
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    return `${month}월 ${day}일 (${dayOfWeek}) ${hours}:${minutes}`;
+  };
+  const toTime = (date: Date) => {
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    return `${hours}:${minutes}`;
+  };
+
+  if (isSameDay) {
+    return `${toDateTime(startDate)} ~ ${toTime(endDate)}`;
+  }
+  return `${toDateTime(startDate)} ~ ${toDateTime(endDate)}`;
+}
+
+// '3월 9일 14:00 출석'
+export function formatAttendanceTime(isoString: string): string {
+  const date = new Date(isoString);
+  const month = date.getMonth() + 1;
+  const day = date.getDate();
+  const hours = String(date.getHours()).padStart(2, '0');
+  const minutes = String(date.getMinutes()).padStart(2, '0');
+  return `${month}월 ${day}일 ${hours}:${minutes} 출석`;
 }
 
 // 'YYYY-MM' → 'N월'

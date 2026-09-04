@@ -189,6 +189,7 @@
 
   --shadow-dialog: 0 10px 40px 0 rgba(0, 0, 0, 0.4);
   --shadow-sm: 0 1px 5px 0 rgba(17, 33, 49, 0.15);
+  --shadow-md: 0 5px 20px 0 rgba(17, 33, 49, 0.2);
   --shadow-lg: 0 10px 30px 0 rgba(17, 33, 49, 0.3);
   --shadow-weeth: 0 0 5px 0 var(--brand-primary);
   --member-table-sticky-shadow: linear-gradient(

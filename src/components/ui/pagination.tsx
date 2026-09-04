@@ -40,10 +40,10 @@ function PaginationLink({ className, isActive, ...props }: PaginationLinkProps) 
       data-slot="pagination-link"
       data-active={isActive}
       className={cn(
-        'typo-body2 flex size-10 cursor-pointer items-center justify-center rounded-sm transition-colors',
+        'typo-button2 flex size-6 cursor-pointer items-center justify-center rounded-sm transition-colors',
         isActive
-          ? 'bg-container-primary text-text-inverse'
-          : 'text-text-alternative hover:bg-container-neutral-interaction',
+          ? 'bg-button-neutral text-text-strong'
+          : 'text-text-normal hover:bg-container-neutral-interaction',
         className,
       )}
       {...props}
@@ -54,7 +54,7 @@ function PaginationLink({ className, isActive, ...props }: PaginationLinkProps) 
 function PaginationPrevious({ className, ...props }: React.ComponentProps<typeof PaginationLink>) {
   return (
     <PaginationLink aria-label="이전 페이지" className={cn('size-8', className)} {...props}>
-      <ChevronLeftIcon className="size-4" />
+      <ChevronLeftIcon className="size-5" />
     </PaginationLink>
   );
 }
@@ -62,7 +62,7 @@ function PaginationPrevious({ className, ...props }: React.ComponentProps<typeof
 function PaginationNext({ className, ...props }: React.ComponentProps<typeof PaginationLink>) {
   return (
     <PaginationLink aria-label="다음 페이지" className={cn('size-8', className)} {...props}>
-      <ChevronRightIcon className="size-4" />
+      <ChevronRightIcon className="size-5" />
     </PaginationLink>
   );
 }
