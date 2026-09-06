@@ -1,14 +1,14 @@
 'use client';
 
+import { CalendarPicker } from '@/components/ui/CalendarPicker';
 import {
-  CalendarPicker,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-  Icon,
-} from '@/components/ui';
-import { ArrowDownIcon } from '@/assets/icons';
+} from '@/components/ui/DropdownMenu';
+import { Icon } from '@/components/ui/Icon';
+import ArrowDownIcon from '@/assets/icons/arrow_down.svg';
 import { ScheduleDateRangeFields } from '@/components/admin/schedule/general/ScheduleDateRangeFields';
 import { ScheduleFormField } from '@/components/admin/schedule/general/ScheduleFormField';
 import { ScheduleTextField } from '@/components/admin/schedule/general/ScheduleTextField';
@@ -19,9 +19,7 @@ import {
 } from '@/constants/admin/session.constants';
 import { addYearsToDateInput } from '@/utils/shared/date';
 import type { Cardinal } from '@/types/admin/cardinal';
-
 import { SessionInfoBanner } from '@/components/admin/schedule/session/SessionInfoBanner';
-
 import type { ScheduleFormState, SessionFormState } from './types';
 
 interface SessionScheduleFormProps {

@@ -1,18 +1,16 @@
 'use client';
 
-import { AdminCloseIcon } from '@/assets/icons/admin';
+import AdminCloseIcon from '@/assets/icons/admin/ic_admin_close.svg';
 import { ModalIconButton } from '@/components/admin/modal/ModalIconButton';
 import {
   SCHEDULE_MODAL_CONTENT_CLASS,
   SCHEDULE_MODAL_FOOTER_CLASS,
 } from '@/components/admin/schedule/modal/constants';
-import {
-  DuesMemberTable,
-  DuesPagination,
-  DuesTabs,
-} from '@/components/admin/dues/setup/components';
+import { DuesMemberTable } from '@/components/admin/dues/setup/components/DuesMemberTable';
+import { DuesPagination } from '@/components/admin/dues/setup/components/DuesPagination';
+import { DuesTabs } from '@/components/admin/dues/setup/components/DuesTabs';
 import { DuesSearchBar } from '@/components/admin/dues/DuesSearchBar';
-import { Button } from '@/components/ui';
+import { Button } from '@/components/ui/Button';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { cn } from '@/lib/cn';
 import { usePaymentTargetFilter } from '@/hooks/admin';

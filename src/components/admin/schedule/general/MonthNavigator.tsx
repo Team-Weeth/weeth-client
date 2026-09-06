@@ -1,10 +1,10 @@
 'use client';
 
 import Image from 'next/image';
-
 import { cn } from '@/lib/cn';
 import { formatYearMonth } from '@/utils/admin/scheduleUtils';
-import { AdminSquareLeftIcon, AdminSquareRightIcon } from '@/assets/icons/admin';
+import AdminSquareLeftIcon from '@/assets/icons/admin/ic_admin_square_left.svg';
+import AdminSquareRightIcon from '@/assets/icons/admin/ic_admin_square_right.svg';
 
 interface MonthNavigatorProps extends React.HTMLAttributes<HTMLDivElement> {
   year: number;

@@ -59,6 +59,7 @@ export interface MyPageSummaryUser {
 export interface MyPageSummaryStats {
   postCount: number;
   attendedSessionCount: number;
+  penaltyCount: number;
 }
 
 export interface MyPageUsingProfileClub {
@@ -140,4 +141,12 @@ export interface MyPageAttendedSessionItem {
   start: string;
   end: string;
   status: string;
+}
+
+export interface MyPagePenaltyItem {
+  penaltyId: number;
+  score: number;
+  penaltyDescription: string;
+  penaltyType: string;
+  createdAt: string;
 }

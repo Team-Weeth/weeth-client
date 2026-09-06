@@ -3,16 +3,16 @@
 import { useState } from 'react';
 
 import { PenaltyScoreInput } from '@/components/admin/penalty/PenaltyScoreInput';
+import { Button } from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input';
 import {
-  Button,
-  Input,
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui';
+} from '@/components/ui/table';
 import {
   PENALTY_DETAIL_COLUMN_WIDTH,
   PENALTY_DETAIL_TABLE_COLUMNS,

@@ -1,5 +1,5 @@
 import { CardinalTag, type CardinalTagProps } from '@/components/admin/CardinalTag';
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/Tooltip';
 import { cn } from '@/lib/cn';
 import { formatCardinalLabel, getVisibleMemberCardinals } from '@/utils/admin/memberTableUtils';
 

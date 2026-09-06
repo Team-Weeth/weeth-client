@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { Button } from '../ui';
+import { Button } from '@/components/ui/Button';
 
 interface HeroSectionProps {
   className?: string;

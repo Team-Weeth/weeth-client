@@ -1,6 +1,6 @@
 import Image from 'next/image';
 
-import { NewIcon } from '@/assets/icons';
+import NewIcon from '@/assets/icons/new.svg';
 import { cn } from '@/lib/cn';
 
 const ICON_SIZE = {

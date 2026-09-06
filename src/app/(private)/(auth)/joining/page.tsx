@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation';
 
-import { ClubJoiningPage } from '@/components/auth/hub';
+import { ClubJoiningPage } from '@/components/auth/hub/ClubJoiningPage';
 
 export default async function JoiningPage({
   searchParams,

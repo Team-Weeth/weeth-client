@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { Editor as TiptapEditor, getMarkRange } from '@tiptap/core';
 import { Trash2 } from 'lucide-react';
 import { cn } from '@/lib/cn';
-import { Input } from '@/components/ui';
+import { Input } from '@/components/ui/Input';
 import { useClickOutside } from '@/hooks/useClickOutside';
 import { normalizeHref } from './normalizeHref';
 

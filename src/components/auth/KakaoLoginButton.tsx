@@ -1,7 +1,8 @@
 import Image from 'next/image';
 import { cn } from '@/lib/cn';
-import { Button, type ButtonProps } from '@/components/ui';
-import { KakaoLogoIcon } from '@/assets/icons';
+import { Button } from '@/components/ui/Button';
+import type { ButtonProps } from '@/components/ui/Button';
+import KakaoLogoIcon from '@/assets/icons/kakao_logo.svg';
 
 type KakaoLoginButtonProps = Omit<ButtonProps, 'variant' | 'size'>;
 

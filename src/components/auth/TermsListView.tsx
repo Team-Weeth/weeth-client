@@ -1,14 +1,15 @@
-import { ArrowRightIcon, CheckRoundIcon } from '@/assets/icons';
+import ArrowRightIcon from '@/assets/icons/arrow_right.svg';
+import CheckRoundIcon from '@/assets/icons/check_round.svg';
+import { Button } from '@/components/ui/Button';
 import {
-  Button,
   Dialog,
   DialogBody,
   DialogContent,
   DialogFooter,
   DialogHeader,
-  Divider,
-  Icon,
-} from '@/components/ui';
+} from '@/components/ui/dialog';
+import { Divider } from '@/components/ui/Divider';
+import { Icon } from '@/components/ui/Icon';
 import { TERMS_DESCRIPTION, TERMS_ITEMS, type TermsItem } from '@/constants/login';
 import { cn } from '@/lib/cn';
 

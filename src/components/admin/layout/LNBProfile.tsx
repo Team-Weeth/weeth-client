@@ -1,6 +1,7 @@
 'use client';
 
-import { Avatar, AvatarFallback, AvatarImage, Skeleton } from '@/components/ui';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/cn';
 import { useUserName, useUserProfileImageUrl } from '@/stores';
 // TODO: 알림 기능 구현 시 NotificationModal 주석 해제

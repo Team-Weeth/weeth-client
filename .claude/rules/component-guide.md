@@ -54,7 +54,7 @@ export { Component, componentVariants, type ComponentProps };
 - Always expose the `className` prop (to allow external override)
 - Shared UI components must expose `ref` via `React.Ref<T>` in the props interface (React 19 — no `forwardRef` needed)
 - When using `cn()`, always merge the external `className` last (to guarantee override priority)
-- When creating a new component, add its export to `components/ui/index.ts`
+- Prefer importing shared UI components directly from their file path. Do not add new runtime exports to `components/ui/index.ts` unless there is a strong compatibility reason.
 
 ### 'use client' Directive
 - Only add when using state (`useState`, `useReducer`), event handlers, or browser APIs
@@ -70,20 +70,15 @@ Pass the imported SVG object to the `src` prop of `next/image`.
 
 ```tsx
 import Image from 'next/image';
-import { ArrowRightIcon } from '@/assets/icons';
+import ArrowRightIcon from '@/assets/icons/arrow_right.svg';
 
 <Image src={ArrowRightIcon} alt="right arrow" width={20} height={20} />
 ```
 
 ### Icon Addition Rules
 1. Save the SVG file in the category folder: `src/assets/icons/{category}/ic_{category}_{name}.svg`
-2. Add a named export to `src/assets/icons/index.ts`
-3. Export name must be PascalCase + `Icon` suffix: `ArrowRightIcon`, `MenuIcon`
-
-```ts
-// src/assets/icons/index.ts
-export { default as AdminUserIcon } from './admin/ic_admin_user.svg';
-```
+2. Import the SVG directly from the file where it is used.
+3. Local import names should be PascalCase + `Icon` suffix: `ArrowRightIcon`, `MenuIcon`
 
 ## Type Naming Conventions
 
@@ -97,5 +92,5 @@ export { default as AdminUserIcon } from './admin/ic_admin_user.svg';
 
 Components under `components/{feature}/` may omit cva if not needed, but must follow these rules:
 - Expose `className` prop
-- Re-export via `index.ts`
+- Prefer direct imports from the owning component file instead of `index.ts` barrel imports
 - Support `asChild` when using Radix

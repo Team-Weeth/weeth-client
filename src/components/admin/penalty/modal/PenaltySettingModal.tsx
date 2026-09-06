@@ -5,7 +5,8 @@ import { useState } from 'react';
 import { AdminCloseIcon } from '@/assets/icons/admin';
 import { ModalIconButton } from '@/components/admin/modal/ModalIconButton';
 import { SCHEDULE_MODAL_FOOTER_CLASS } from '@/components/admin/schedule/modal/constants';
-import { Button, Textarea } from '@/components/ui';
+import { Button } from '@/components/ui/Button';
+import { Textarea } from '@/components/ui/Textarea';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { PENALTY_GUIDE_MAX_LENGTH } from '@/constants/admin/penaltyTable.constants';
 

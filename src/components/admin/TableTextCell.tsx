@@ -1,4 +1,4 @@
-import { TableCell } from '@/components/ui';
+import { TableCell } from '@/components/ui/table';
 import { cn } from '@/lib/cn';
 
 interface TableTextCellProps extends React.HTMLAttributes<HTMLTableCellElement> {

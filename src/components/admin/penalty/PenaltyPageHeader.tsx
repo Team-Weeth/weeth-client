@@ -1,7 +1,7 @@
 'use client';
 
 import { AdminSettingIcon } from '@/assets/icons/admin';
-import { Icon } from '@/components/ui';
+import { Icon } from '@/components/ui/Icon';
 import { PenaltyCardinalTabs } from './PenaltyCardinalTabs';
 
 interface PenaltyPageHeaderProps {

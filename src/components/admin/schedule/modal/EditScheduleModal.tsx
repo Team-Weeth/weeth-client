@@ -2,17 +2,17 @@
 
 import { useEffect, useRef, useState } from 'react';
 import type { RefObject } from 'react';
-
+import { Button } from '@/components/ui/Button';
 import {
-  Button,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@/components/ui';
+} from '@/components/ui/DropdownMenu';
 import { CustomAlertDialog } from '@/components/alert';
-import { AdminCloseIcon, AdminMeatballIcon } from '@/assets/icons/admin';
-import { ModalIconButton } from '@/components/admin';
+import AdminCloseIcon from '@/assets/icons/admin/ic_admin_close.svg';
+import AdminMeatballIcon from '@/assets/icons/admin/ic_admin_meatball.svg';
+import { ModalIconButton } from '@/components/admin/modal/ModalIconButton';
 import type { Schedule } from '@/types/admin/schedule';
 import {
   useAdminScheduleDetail,
@@ -25,13 +25,13 @@ import {
   isScheduleTitleValid,
   toInitialScheduleForm,
 } from '@/utils/admin/scheduleFormUtils';
-
 import { SCHEDULE_MODAL_FOOTER_CLASS } from './constants';
 import { DiscardConfirmArea } from './DiscardConfirmArea';
 import { EditModalShell } from './EditModalShell';
 import { ScheduleFormBody } from './ScheduleFormBody';
 import { isDateRangeValid } from './types';
 import type { ScheduleFormState } from './types';
+import { Skeleton } from '@/components/ui';
 
 interface EditScheduleModalProps {
   open: boolean;
@@ -76,13 +76,31 @@ function EditScheduleModalLoading({ onClose }: { onClose: () => void }) {
         </div>
         <ModalIconButton icon={AdminCloseIcon} label="닫기" onClick={onClose} />
       </div>
-      <div className="tablet:px-700 tablet:pb-700 flex min-h-150 flex-col px-400 pb-400">
-        <h2 className="typo-h3 text-text-normal py-400">일반 일정 수정</h2>
-        <div className="flex flex-1 items-center justify-center">
-          <p className="typo-body2 text-text-alternative">불러오는 중...</p>
+      <div className="scrollbar-custom tablet:px-700 min-h-0 flex-1 touch-pan-y overflow-y-auto px-400">
+        <Skeleton className="mt-400 mb-200 h-8 w-36" />
+        <div className="flex flex-col gap-400 py-400">
+          <ModalFieldSkeleton />
+          <ModalFieldSkeleton inputHeight="h-[88px]" />
+          <ModalFieldSkeleton />
+          <ModalFieldSkeleton inputHeight="h-28" />
         </div>
       </div>
+      <div className={SCHEDULE_MODAL_FOOTER_CLASS}>
+        <Skeleton className="max-tablet:flex-1 h-12 w-20 rounded-sm" />
+        <Skeleton className="max-tablet:flex-1 h-12 w-16 rounded-sm" />
+      </div>
     </>
+  );
+}
+
+function ModalFieldSkeleton({ inputHeight = 'h-12' }: { inputHeight?: string }) {
+  return (
+    <div className="flex flex-col">
+      <div className="flex h-12 items-center px-400">
+        <Skeleton className="h-4 w-20" />
+      </div>
+      <Skeleton className={`${inputHeight} w-full rounded-sm`} />
+    </div>
   );
 }
 
@@ -173,7 +191,6 @@ function EditScheduleModalContent({
 
   return (
     <>
-      {/* Header */}
       <div className="tablet:px-700 tablet:pt-700 flex items-start justify-between px-400 pt-400">
         <div className="flex h-8 items-end">
           <span className="typo-button2 text-text-strong border-brand-primary border-b-2 px-100 pb-200">
@@ -207,7 +224,6 @@ function EditScheduleModalContent({
         </div>
       </div>
 
-      {/* Body */}
       <div className="scrollbar-custom tablet:px-700 min-h-0 flex-1 touch-pan-y overflow-y-auto overscroll-contain px-400 [-webkit-overflow-scrolling:touch]">
         <h2 className="typo-h3 text-text-normal py-400">일반 일정 수정</h2>
         <ScheduleFormBody
@@ -218,7 +234,6 @@ function EditScheduleModalContent({
         />
       </div>
 
-      {/* Footer */}
       <div className={SCHEDULE_MODAL_FOOTER_CLASS}>
         <DiscardConfirmArea
           open={discardSource === 'cancel'}
@@ -240,7 +255,6 @@ function EditScheduleModalContent({
         </Button>
       </div>
 
-      {/* 삭제 확인 */}
       <CustomAlertDialog
         open={deleteConfirmOpen}
         onOpenChange={setDeleteConfirmOpen}

@@ -1,4 +1,4 @@
-import { Skeleton } from '@/components/ui';
+import { Skeleton } from '@/components/ui/skeleton';
 
 function ProfileSectionSkeleton() {
   return (
@@ -31,6 +31,11 @@ function ProfileSectionSkeleton() {
           <div className="bg-container-neutral my-400 w-px" />
           <div className="flex flex-1 flex-col items-center gap-100 py-400">
             <Skeleton className="h-4 w-24" />
+            <Skeleton className="h-7 w-12" />
+          </div>
+          <div className="bg-container-neutral my-400 w-px" />
+          <div className="flex flex-1 flex-col items-center gap-100 py-400">
+            <Skeleton className="h-4 w-16" />
             <Skeleton className="h-7 w-12" />
           </div>
         </div>

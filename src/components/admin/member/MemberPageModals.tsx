@@ -2,9 +2,9 @@
 
 import { useEffect, useRef, useState } from 'react';
 
-import { AlertDialog, AlertDialogAction, AlertDialogCancel } from '@/components/ui';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel } from '@/components/ui/alert-dialog';
 import type { TopBarAction } from '@/constants/admin/memberTopBar.constants';
-import { useMediaQuery } from '@/hooks';
+import { useMediaQuery } from '@/hooks/useMediaQuery';
 import type { ClubMemberRole, Member } from '@/types/admin/member';
 import {
   getMemberCardinalNumbers,

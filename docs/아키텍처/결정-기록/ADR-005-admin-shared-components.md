@@ -1,4 +1,4 @@
-# ADR-004: 어드민 공용 컴포넌트 승격 기준과 미해결 중복 2건
+# ADR-005: 어드민 공용 컴포넌트 승격 기준과 미해결 중복 2건
 
 - **status**: accepted
 - **date**: 2026-09-06
@@ -56,6 +56,8 @@ import { useDragScroll } from '@/hooks/useDragScroll';
 ```
 
 배럴은 **`components/admin/` 바깥에서 들어올 때만** 쓴다. `.claude/rules/data-fetching.md`의 `lib/apis` 배럴 주의사항과 같은 성격의 문제다.
+
+> **2026-09-06 갱신** — `develop`이 [[ADR-004-openapi-typescript]]와 별개로 진행한 빌드 최적화(WTH-469)에서 `@/components/ui` 배럴 import를 전면 제거했다(직접 경로 110파일 : 배럴 3파일). 이제 UI 컴포넌트도 `@/components/ui/table`, `@/components/ui/Button`처럼 **직접 경로**로 가져오고, 아이콘 역시 `@/assets/icons/admin/ic_admin_meatball.svg`처럼 직접 import한다. 이 규칙은 `components/admin/` 안팎을 가리지 않는다.
 
 ## 미해결 중복 2건 (의도적 보류)
 

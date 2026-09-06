@@ -1,6 +1,6 @@
 'use client';
 
-import { SuffixInput } from '@/components/ui';
+import { SuffixInput } from '@/components/ui/SuffixInput';
 import {
   PENALTY_SCORE_EMPTY,
   PENALTY_SCORE_MAX,

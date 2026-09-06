@@ -4,7 +4,8 @@ import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useParams, usePathname, useRouter } from 'next/navigation';
-import { LogoGrayIcon, ExitToAppIcon } from '@/assets/icons';
+import LogoGrayIcon from '@/assets/icons/logo/logo_gray_Origin.svg';
+import ExitToAppIcon from '@/assets/icons/exit_to_app.svg';
 import { shouldHideMobileHeaderOnMyPage } from '@/constants/mypage/routes';
 import { cn } from '@/lib/cn';
 import { useClubName, useUserProfileImageUrl } from '@/stores';
@@ -12,7 +13,8 @@ import { PostingActions } from './PostingActions';
 import { DefaultActions } from './DefaultActions';
 import { MobileNavSheet } from './MobileNavSheet';
 import { MobileWriteButton } from './MobileWriteButton';
-import { Avatar, AvatarFallback, AvatarImage, Icon } from '@/components/ui';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Icon } from '@/components/ui/Icon';
 import { useDuesVisibility } from '@/hooks/queries';
 import { useIsAdmin } from '@/hooks/shared';
 
@@ -41,6 +43,7 @@ export default function Header({ isMain = true }: HeaderProps) {
   const NAV_ITEMS = [
     { id: 'board', label: '게시판', href: `/${clubId}/board` },
     { id: 'attendance', label: '출석', href: `/${clubId}/attendance` },
+    { id: 'calendar', label: '캘린더', href: `/${clubId}/calendar` },
     ...(isDuesVisible ? [{ id: 'dues', label: '회비', href: `/${clubId}/dues` }] : []),
   ] as const;
   const [visible, setVisible] = useState(true);

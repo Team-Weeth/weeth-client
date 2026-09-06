@@ -1,13 +1,13 @@
-import { ArrowLeftIcon } from '@/assets/icons';
+import ArrowLeftIcon from '@/assets/icons/arrow_left.svg';
+import { Button } from '@/components/ui/Button';
 import {
-  Button,
   Dialog,
   DialogBody,
   DialogContent,
   DialogFooter,
   DialogHeader,
-  Icon,
-} from '@/components/ui';
+} from '@/components/ui/dialog';
+import { Icon } from '@/components/ui/Icon';
 import { PolicyBody } from '@/components/policy';
 import type { TermsItem } from '@/constants/login';
 

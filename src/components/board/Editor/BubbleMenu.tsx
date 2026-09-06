@@ -12,7 +12,7 @@ import {
   BubbleMenuItem,
   BubbleActiveKey,
 } from '@/constants/board/bubbleMenu';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/Tooltip';
 import { LinkInput } from '@/components/board/Editor/LinkInput';
 
 const ICON_SIZE = 15;

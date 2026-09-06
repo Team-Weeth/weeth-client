@@ -1,5 +1,6 @@
 import { cn } from '@/lib/cn';
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, Button } from '@/components/ui';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel } from '@/components/ui/alert-dialog';
+import { Button } from '@/components/ui/Button';
 import { ScheduleTag } from '@/components/admin/schedule/general/ScheduleTag';
 import { SCHEDULE_TYPE_LABEL } from '@/constants/admin/schedule.constants';
 import type { Schedule } from '@/types/admin/schedule';

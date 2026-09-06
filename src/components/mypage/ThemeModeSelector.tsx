@@ -1,11 +1,11 @@
 'use client';
 
 import Image, { type StaticImageData } from 'next/image';
-import { CheckIcon } from '@/assets/icons';
+import CheckIcon from '@/assets/icons/check.svg';
 import ThemeAutoImage from '@/assets/image/theme/theme_auto.png';
 import ThemeDarkImage from '@/assets/image/theme/theme_dark.png';
 import ThemeLightImage from '@/assets/image/theme/theme_light.png';
-import { Icon } from '@/components/ui';
+import { Icon } from '@/components/ui/Icon';
 import { cn } from '@/lib/cn';
 import type { ThemeMode } from '@/types/theme';
 

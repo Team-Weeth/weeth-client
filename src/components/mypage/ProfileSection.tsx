@@ -2,8 +2,10 @@
 
 import { Fragment } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { Icon } from '@/components/ui';
-import { ArrowRightIcon, PhoneIcon, MailIcon } from '@/assets/icons';
+import { Icon } from '@/components/ui/Icon';
+import ArrowRightIcon from '@/assets/icons/arrow_right.svg';
+import PhoneIcon from '@/assets/icons/phone.svg';
+import MailIcon from '@/assets/icons/mail.svg';
 import { useProfileSectionActions } from '@/hooks/mypage';
 import { cn } from '@/lib/cn';
 import type { ProfileData } from '@/types/mypage';
@@ -15,6 +17,7 @@ import { MyPageDropdownMenu } from './MyPageDropdownMenu';
 interface ProfileSectionProps extends React.HTMLAttributes<HTMLDivElement>, ProfileData {
   postCount?: number;
   sessionCount?: number;
+  penaltyCount?: number;
 }
 
 const ProfileSection = ({
@@ -29,6 +32,7 @@ const ProfileSection = ({
   department,
   postCount = 0,
   sessionCount = 0,
+  penaltyCount = 0,
   className,
   ...props
 }: ProfileSectionProps) => {
@@ -55,6 +59,11 @@ const ProfileSection = ({
       label: '출석한 세션',
       count: sessionCount,
       href: `/${clubId}/mypage/sessions`,
+    },
+    {
+      label: '페널티',
+      count: penaltyCount,
+      href: `/${clubId}/mypage/penalties`,
     },
   ] as const;
 

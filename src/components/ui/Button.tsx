@@ -12,6 +12,8 @@ const buttonVariants = cva(
           'bg-button-neutral text-text-normal hover:bg-button-neutral-interaction active:bg-button-neutral-interaction disabled:bg-button-disabled disabled:text-text-disabled',
         tertiary:
           'bg-transparent text-text-normal hover:bg-container-neutral-interaction active:bg-container-neutral-interaction disabled:text-text-disabled',
+        outlined:
+          'bg-transparent text-text-strong border border-neutral-500 hover:bg-container-neutral-interaction active:bg-container-neutral-interaction disabled:text-text-disabled disabled:border-neutral-400',
         primarySoft:
           'bg-button-primary-subtle text-brand-primary hover:bg-button-primary-subtle-interaction active:bg-button-primary-subtle-interaction disabled:bg-button-disabled disabled:text-text-disabled',
         danger:
@@ -30,6 +32,7 @@ const buttonVariants = cva(
         'icon-sm': 'rounded-sm p-100',
       },
     },
+    compoundVariants: [{ variant: 'outlined', className: 'rounded-full' }],
     defaultVariants: {
       variant: 'primary',
       size: 'md',

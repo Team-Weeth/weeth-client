@@ -15,11 +15,9 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-  Button,
-} from '@/components/ui';
+} from '@/components/ui/alert-dialog';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Button } from '@/components/ui/Button';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { cn } from '@/lib/cn';
 import type { PenaltyMember, PenaltyRecord } from '@/types/admin/penalty';

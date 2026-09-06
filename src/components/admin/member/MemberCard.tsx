@@ -1,6 +1,6 @@
 import { CardinalTagList } from '@/components/admin/CardinalTagList';
 import { SelectionCheckbox } from '@/components/admin/SelectionCheckbox';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { cn } from '@/lib/cn';
 import type { Member } from '@/types/admin/member';
 import { MemberStatusBadge } from './MemberStatusBadge';

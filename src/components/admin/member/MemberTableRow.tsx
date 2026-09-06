@@ -1,10 +1,12 @@
 import type { ReactNode } from 'react';
 
-import { AdminMeatballIcon } from '@/assets/icons/admin';
+import AdminMeatballIcon from '@/assets/icons/admin/ic_admin_meatball.svg';
 import { CardinalTagList } from '@/components/admin/CardinalTagList';
 import { SelectionCheckbox } from '@/components/admin/SelectionCheckbox';
 import { TableTextCell } from '@/components/admin/TableTextCell';
-import { Avatar, AvatarFallback, AvatarImage, Icon, TableCell, TableRow } from '@/components/ui';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Icon } from '@/components/ui/Icon';
+import { TableCell, TableRow } from '@/components/ui/table';
 import { cn } from '@/lib/cn';
 import type { Member } from '@/types/admin/member';
 import { MemberStatusBadge } from './MemberStatusBadge';

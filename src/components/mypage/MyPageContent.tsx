@@ -6,7 +6,12 @@ import { useMyPageQueries } from '@/hooks/queries/mypage/useMyPageQueries';
 import { ProfileSection } from './ProfileSection';
 import { ProfileSectionSkeleton } from './skeleton';
 import { ActiveClubList } from './ActiveClubList';
-import { Breadcrumb, BreadcrumbItem, BreadcrumbList, BreadcrumbPage } from '../ui';
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbList,
+  BreadcrumbPage,
+} from '@/components/ui/breadcrumb';
 import { MyPageActivityContent } from './MyPageActivityContent';
 import { MyPageSettingsContent } from './MyPageSettingsContent';
 
@@ -29,6 +34,7 @@ function MyPageContent({ className, ...props }: MyPageContentProps) {
       department={me.department ?? undefined}
       postCount={stats?.postCount ?? 0}
       sessionCount={stats?.attendedSessionCount ?? 0}
+      penaltyCount={stats?.penaltyCount ?? 0}
     />
   ) : (
     <ProfileSectionSkeleton />

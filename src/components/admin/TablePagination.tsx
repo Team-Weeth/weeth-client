@@ -1,6 +1,11 @@
 import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react';
 
-import { Pagination, PaginationContent, PaginationItem, PaginationLink } from '@/components/ui';
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+} from '@/components/ui/pagination';
 import { cn } from '@/lib/cn';
 
 const PAGE_WINDOW_SIZE = 5;
