@@ -28,7 +28,7 @@ interface SuffixInputProps
   extends
     Omit<InputProps, 'clearable' | 'wrapperClassName' | 'clearButtonClassName'>,
     VariantProps<typeof suffixInputVariants> {
-  /** 입력값 뒤에 붙는 단위 표기 (예: '기', '원', '점') */
+  /** 입력값 뒤에 붙는 단위 표기 (예: '기', '원', '점'). 빈 문자열이면 표기를 숨긴다. */
   suffix: string;
   /** 값을 `step`만큼 증감하는 스테퍼 버튼 노출 여부 */
   stepper?: boolean;
@@ -95,12 +95,14 @@ function SuffixInput({
         </div>
       )}
 
-      <span
-        aria-hidden
-        className={cn('typo-body1 text-text-disabled shrink-0 select-none', suffixClassName)}
-      >
-        {suffix}
-      </span>
+      {suffix && (
+        <span
+          aria-hidden
+          className={cn('typo-body1 text-text-disabled shrink-0 select-none', suffixClassName)}
+        >
+          {suffix}
+        </span>
+      )}
     </div>
   );
 }

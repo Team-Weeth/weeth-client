@@ -1,36 +1,34 @@
-import type { ReactNode } from 'react';
-
-import { MemberSelectionCheckbox } from '@/components/admin/member/MemberSelectionCheckbox';
+import { CardinalTagList } from '@/components/admin/CardinalTagList';
+import { SelectionCheckbox } from '@/components/admin/SelectionCheckbox';
+import { TableTextCell } from '@/components/admin/TableTextCell';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { TableCell, TableRow } from '@/components/ui/table';
 import { PENALTY_COLUMN_WIDTH } from '@/constants/admin/penaltyTable.constants';
 import { cn } from '@/lib/cn';
 import type { PenaltyMember } from '@/types/admin/penalty';
-import { formatCardinalLabel, getVisibleMemberCardinals } from '@/utils/admin/memberTableUtils';
 import { formatPenaltyDate, truncateIntroduction } from '@/utils/admin/penaltyPageUtils';
 
 interface PenaltyTableRowProps {
   member: PenaltyMember;
   selected: boolean;
   onToggle: (id: string) => void;
+  onOpenDetail: (member: PenaltyMember) => void;
 }
 
-function PenaltyTableRow({ member, selected, onToggle }: PenaltyTableRowProps) {
-  const { visibleCardinals, hiddenCardinalCount } = getVisibleMemberCardinals(member.cardinal);
-
+function PenaltyTableRow({ member, selected, onToggle, onOpenDetail }: PenaltyTableRowProps) {
   return (
     <TableRow
       className={cn(
         'bg-container-neutral [&>td]:border-line h-16 cursor-pointer border-0 hover:bg-neutral-200 [&:last-child>td]:border-b-0 [&>td]:border-b [&>td]:bg-transparent',
         selected && 'bg-container-primary-alternative hover:bg-container-primary-alternative',
       )}
-      onClick={() => onToggle(member.id)}
+      onClick={() => onOpenDetail(member)}
     >
       <TableCell
         className="h-16 w-16 min-w-16 p-0 pl-300"
         onClick={(event) => event.stopPropagation()}
       >
-        <MemberSelectionCheckbox
+        <SelectionCheckbox
           checked={selected}
           ariaLabel={`${member.name} 선택`}
           onClick={() => onToggle(member.id)}
@@ -51,44 +49,21 @@ function PenaltyTableRow({ member, selected, onToggle }: PenaltyTableRowProps) {
         </div>
       </TableCell>
 
-      <PenaltyTextCell className={PENALTY_COLUMN_WIDTH.role}>{member.position}</PenaltyTextCell>
-      <PenaltyTextCell className={PENALTY_COLUMN_WIDTH.department}>
-        {member.department}
-      </PenaltyTextCell>
+      <TableTextCell className={PENALTY_COLUMN_WIDTH.role}>{member.position}</TableTextCell>
+      <TableTextCell className={PENALTY_COLUMN_WIDTH.department}>{member.department}</TableTextCell>
 
       <TableCell className={cn('h-16 p-0 px-100 py-300 text-center', PENALTY_COLUMN_WIDTH.penalty)}>
         <span className="typo-body2 text-text-strong">{member.penaltyCount}</span>
       </TableCell>
 
-      <PenaltyTextCell className={PENALTY_COLUMN_WIDTH.recentPenalty}>
+      <TableTextCell className={PENALTY_COLUMN_WIDTH.recentPenalty}>
         {formatPenaltyDate(member.recentPenaltyAt)}
-      </PenaltyTextCell>
+      </TableTextCell>
 
       <TableCell className={cn('h-16 p-0 px-400 py-[7px]', PENALTY_COLUMN_WIDTH.cardinal)}>
-        <div className="flex items-center gap-100 overflow-hidden">
-          {visibleCardinals.map((item) => (
-            <CardinalTag key={item}>{formatCardinalLabel(item)}</CardinalTag>
-          ))}
-          {hiddenCardinalCount > 0 && <CardinalTag>+{hiddenCardinalCount}</CardinalTag>}
-        </div>
+        <CardinalTagList cardinal={member.cardinal} />
       </TableCell>
     </TableRow>
-  );
-}
-
-function CardinalTag({ children }: { children: ReactNode }) {
-  return (
-    <span className="bg-container-neutral-alternative text-text-alternative rounded-[5px] px-2.5 py-[5px] text-[14px] leading-5 font-semibold tracking-[var(--letter-spacing)] whitespace-nowrap">
-      {children}
-    </span>
-  );
-}
-
-function PenaltyTextCell({ className, children }: { className?: string; children: ReactNode }) {
-  return (
-    <TableCell className={cn('h-16 p-0 px-400 py-300', className)}>
-      <span className="typo-body2 text-text-strong block truncate">{children}</span>
-    </TableCell>
   );
 }
 

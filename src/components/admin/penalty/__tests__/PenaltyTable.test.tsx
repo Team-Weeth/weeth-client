@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
-import { PenaltyTable } from '@/components/admin/penalty/PenaltyTable';
+import { PenaltyTable } from '@/components/admin/penalty';
 import { PENALTY_MEMBERS_PER_PAGE } from '@/constants/admin/penaltyTable.constants';
 import type { PenaltyMember } from '@/types/admin/penalty';
 
@@ -15,6 +15,8 @@ function createMember(overrides: Partial<PenaltyMember> = {}): PenaltyMember {
     penaltyCount: 3,
     recentPenaltyAt: '2026-07-18',
     cardinal: '5',
+    status: 'ACTIVE',
+    profileImageUrl: null,
     ...overrides,
   };
 }
@@ -29,20 +31,23 @@ function renderTable({
   members,
   selectedIds = new Set<string>(),
   onSelectionChange = jest.fn<void, [Set<string>]>(),
+  onOpenDetail = jest.fn<void, [PenaltyMember]>(),
 }: {
   members: PenaltyMember[];
   selectedIds?: Set<string>;
   onSelectionChange?: jest.Mock<void, [Set<string>]>;
+  onOpenDetail?: jest.Mock<void, [PenaltyMember]>;
 }) {
   render(
     <PenaltyTable
       members={members}
       selectedIds={selectedIds}
       onSelectionChange={onSelectionChange}
+      onOpenDetail={onOpenDetail}
     />,
   );
 
-  return { onSelectionChange };
+  return { onSelectionChange, onOpenDetail };
 }
 
 describe('PenaltyTable', () => {
@@ -52,23 +57,35 @@ describe('PenaltyTable', () => {
     expect(screen.getByText('검색 결과가 없습니다.')).toBeInTheDocument();
   });
 
-  it('행을 클릭하면 해당 멤버 id를 선택 목록에 추가한다', async () => {
+  it('행을 클릭하면 상세 모달을 열도록 해당 멤버를 전달한다', async () => {
     const user = userEvent.setup();
-    const { onSelectionChange } = renderTable({ members: [createMember()] });
+    const member = createMember();
+    const { onOpenDetail, onSelectionChange } = renderTable({ members: [member] });
 
     await user.click(screen.getByText('김위드'));
 
-    expect(onSelectionChange).toHaveBeenCalledWith(new Set(['member-1']));
+    expect(onOpenDetail).toHaveBeenCalledWith(member);
+    expect(onSelectionChange).not.toHaveBeenCalled();
   });
 
-  it('이미 선택된 행을 클릭하면 선택을 해제한다', async () => {
+  it('행 체크박스를 클릭하면 해당 멤버 id를 선택 목록에 추가한다', async () => {
+    const user = userEvent.setup();
+    const { onOpenDetail, onSelectionChange } = renderTable({ members: [createMember()] });
+
+    await user.click(screen.getByRole('button', { name: '김위드 선택' }));
+
+    expect(onSelectionChange).toHaveBeenCalledWith(new Set(['member-1']));
+    expect(onOpenDetail).not.toHaveBeenCalled();
+  });
+
+  it('이미 선택된 행의 체크박스를 클릭하면 선택을 해제한다', async () => {
     const user = userEvent.setup();
     const { onSelectionChange } = renderTable({
       members: [createMember()],
       selectedIds: new Set(['member-1']),
     });
 
-    await user.click(screen.getByText('김위드'));
+    await user.click(screen.getByRole('button', { name: '김위드 선택' }));
 
     expect(onSelectionChange).toHaveBeenCalledWith(new Set());
   });
