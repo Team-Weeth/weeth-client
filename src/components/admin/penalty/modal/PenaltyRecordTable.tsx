@@ -24,7 +24,7 @@ import { formatPenaltyDate } from '@/utils/admin/penaltyPageUtils';
 
 /** 인라인 편집 중인 행의 임시 값 (편집 중이 아니면 null) */
 interface PenaltyRecordEdit {
-  id: string;
+  id: number;
   reason: string;
   score: number;
 }

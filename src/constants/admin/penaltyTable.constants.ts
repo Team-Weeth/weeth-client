@@ -19,6 +19,8 @@ export const PENALTY_TABLE_COLUMNS = [
   { id: 'cardinal', label: '기수', width: PENALTY_COLUMN_WIDTH.cardinal },
 ] as const;
 
+// 멤버 목록 API의 sort에는 페널티/최근 페널티 기준이 없다.
+// 선택한 기수의 멤버를 한 번에 받아오므로 세 기준 모두 클라이언트에서 정렬한다.
 export const PENALTY_SORT_ORDER: PenaltySortBy[] = ['cardinal', 'penalty', 'recent'];
 
 export const PENALTY_SORT_LABEL: Record<PenaltySortBy, string> = {
@@ -27,9 +29,10 @@ export const PENALTY_SORT_LABEL: Record<PenaltySortBy, string> = {
   recent: '최신 순',
 };
 
-export const PENALTY_TYPE_OPTIONS: { value: PenaltyType; label: string }[] = [
+export const PENALTY_TYPE_OPTIONS: { value: PenaltyType; label: string; disabled?: boolean }[] = [
   { value: 'PENALTY', label: '페널티' },
-  { value: 'WARNING', label: '경고' },
+  // TODO: 경고 부여 활성화 — 상세 조회 응답에 penaltyType이 없어 부여해도 페널티와 구분되지 않는다.
+  { value: 'WARNING', label: '경고', disabled: true },
 ];
 
 /** 점수 입력이 비어 있는 상태 (제출 시 유효하지 않은 값) */
@@ -38,6 +41,12 @@ export const PENALTY_SCORE_MIN = 1;
 export const PENALTY_SCORE_MAX = 99;
 
 export const PENALTY_MEMBERS_PER_PAGE = 8;
+
+/**
+ * 기수 하나의 멤버를 한 번에 받아오는 크기.
+ * 검색·정렬·페이지 이동을 클라이언트에서 처리하므로 선택한 기수 멤버를 모두 받아야 한다.
+ */
+export const PENALTY_MEMBER_FETCH_SIZE = 200;
 
 /** 페널티 규정 입력 모달의 최대 글자 수 */
 export const PENALTY_GUIDE_MAX_LENGTH = 500;

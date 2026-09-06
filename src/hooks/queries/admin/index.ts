@@ -23,6 +23,7 @@ export {
   useDeleteSchedule,
   isSessionForceRequiredError,
 } from './useAdminScheduleQueries';
+export { useAdminPenaltyMembers, useAdminMemberPenaltyDetail } from './useAdminPenaltyQueries';
 export { useAdminBoardsQuery } from './useAdminBoardsQuery';
 export { useAdminClubQuery } from './useAdminClubQuery';
 export {

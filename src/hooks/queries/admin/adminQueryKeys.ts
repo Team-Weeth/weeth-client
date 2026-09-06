@@ -9,6 +9,13 @@ export const adminQueryKeys = {
 
   boards: (clubId: string | null) => ['admin', 'boards', clubId] as const,
 
+  // 페널티 — 기수별 멤버 목록, 멤버 단건 상세
+  penalties: (clubId: string | null) => ['admin', 'penalties', clubId] as const,
+  penaltyMembers: (clubId: string | null, cardinalNumber: number | null) =>
+    ['admin', 'penalties', clubId, 'members', cardinalNumber] as const,
+  memberPenaltyDetail: (clubId: string | null, clubMemberId: number | null) =>
+    ['admin', 'penalties', clubId, 'detail', clubMemberId] as const,
+
   // 월간 일정 — 세션/이벤트 뮤테이션이 schedules prefix로 prefix invalidate
   schedules: (clubId: string | null) => ['admin', 'schedules', clubId] as const,
   monthlySchedule: (clubId: string | null, year: number, month: number) =>

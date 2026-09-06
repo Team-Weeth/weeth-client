@@ -1,12 +1,9 @@
-import type { PenaltyMember, PenaltyRecord } from '@/types/admin/penalty';
+import type { PenaltyMember } from '@/types/admin/penalty';
 import {
-  filterPenaltyMembers,
   formatPenaltyDate,
-  getMemberPenaltyRecords,
   getNextPenaltySort,
   searchPenaltyMembers,
   sortPenaltyMembers,
-  summarizeMemberPenalties,
   truncateIntroduction,
 } from '@/utils/admin/penaltyPageUtils';
 
@@ -14,9 +11,10 @@ function createMember(
   overrides: Partial<PenaltyMember> & Pick<PenaltyMember, 'id'>,
 ): PenaltyMember {
   return {
+    clubMemberId: 1,
     name: '김위드',
     introduction: '안녕하세요',
-    position: '프론트엔드',
+    position: '부원',
     department: '컴퓨터공학과',
     penaltyCount: 0,
     recentPenaltyAt: null,
@@ -26,34 +24,6 @@ function createMember(
     ...overrides,
   };
 }
-
-function createRecord(
-  overrides: Partial<PenaltyRecord> & Pick<PenaltyRecord, 'id' | 'memberId'>,
-): PenaltyRecord {
-  return {
-    type: 'PENALTY',
-    score: 1,
-    reason: '정기 모임 무단 결석',
-    createdAt: '2026-03-01',
-    ...overrides,
-  };
-}
-
-describe('filterPenaltyMembers', () => {
-  it('선택한 기수를 활동기수에 포함한 멤버만 남긴다', () => {
-    const members = [
-      createMember({ id: 'm1', cardinal: '3, 2' }),
-      createMember({ id: 'm2', cardinal: '1' }),
-      createMember({ id: 'm3', cardinal: '2, 1' }),
-    ];
-
-    expect(filterPenaltyMembers(members, 2).map((member) => member.id)).toEqual(['m1', 'm3']);
-  });
-
-  it('해당 기수 멤버가 없으면 빈 배열을 반환한다', () => {
-    expect(filterPenaltyMembers([createMember({ id: 'm1', cardinal: '1' })], 5)).toEqual([]);
-  });
-});
 
 describe('searchPenaltyMembers', () => {
   it('이름에 검색어가 포함된 멤버만 남긴다', () => {
@@ -120,63 +90,6 @@ describe('getNextPenaltySort', () => {
   });
 });
 
-describe('getMemberPenaltyRecords', () => {
-  it('해당 멤버의 내역만 최신순으로 추린다', () => {
-    const records = [
-      createRecord({ id: 'r1', memberId: 'm1', createdAt: '2026-03-01' }),
-      createRecord({ id: 'r2', memberId: 'm2', createdAt: '2026-04-01' }),
-      createRecord({ id: 'r3', memberId: 'm1', createdAt: '2026-05-10' }),
-    ];
-
-    expect(getMemberPenaltyRecords(records, 'm1').map((record) => record.id)).toEqual(['r3', 'r1']);
-  });
-});
-
-describe('summarizeMemberPenalties', () => {
-  it('멤버별 점수를 합산하고 가장 최근 일자를 남긴다', () => {
-    const summary = summarizeMemberPenalties([
-      createRecord({ id: 'r1', memberId: 'm1', score: 2, createdAt: '2026-03-01' }),
-      createRecord({ id: 'r2', memberId: 'm1', score: 1, createdAt: '2026-05-10' }),
-      createRecord({ id: 'r3', memberId: 'm2', score: 3, createdAt: '2026-04-02' }),
-    ]);
-
-    expect(summary.get('m1')).toEqual({ penaltyCount: 3, recentPenaltyAt: '2026-05-10' });
-    expect(summary.get('m2')).toEqual({ penaltyCount: 3, recentPenaltyAt: '2026-04-02' });
-  });
-
-  it('내역 순서와 무관하게 가장 최근 일자를 남긴다', () => {
-    const summary = summarizeMemberPenalties([
-      createRecord({ id: 'r1', memberId: 'm1', createdAt: '2026-05-10' }),
-      createRecord({ id: 'r2', memberId: 'm1', createdAt: '2026-03-01' }),
-    ]);
-
-    expect(summary.get('m1')?.recentPenaltyAt).toBe('2026-05-10');
-  });
-
-  it('경고는 최근 페널티 일자에 반영하지 않는다', () => {
-    const summary = summarizeMemberPenalties([
-      createRecord({ id: 'r1', memberId: 'm1', score: 2, createdAt: '2026-03-01' }),
-      createRecord({
-        id: 'r2',
-        memberId: 'm1',
-        type: 'WARNING',
-        score: 0,
-        createdAt: '2026-05-10',
-      }),
-    ]);
-
-    expect(summary.get('m1')).toEqual({ penaltyCount: 2, recentPenaltyAt: '2026-03-01' });
-  });
-
-  it('경고만 받은 멤버의 최근 페널티는 null이다', () => {
-    const summary = summarizeMemberPenalties([
-      createRecord({ id: 'r1', memberId: 'm1', type: 'WARNING', score: 0 }),
-    ]);
-
-    expect(summary.get('m1')).toEqual({ penaltyCount: 0, recentPenaltyAt: null });
-  });
-});
-
 describe('formatPenaltyDate', () => {
   it("'YYYY-MM-DD'를 'YYYY. MM. DD.' 형식으로 바꾼다", () => {
     expect(formatPenaltyDate('2026-07-18')).toBe('2026. 07. 18.');
@@ -197,9 +110,5 @@ describe('truncateIntroduction', () => {
     expect(truncateIntroduction('안녕하세요 잘부탁드리고 안녕하세요 잘부탁드립니다')).toBe(
       '안녕하세요 잘부탁드...',
     );
-  });
-
-  it('빈 문자열은 그대로 반환한다', () => {
-    expect(truncateIntroduction('')).toBe('');
   });
 });

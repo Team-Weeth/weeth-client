@@ -11,6 +11,12 @@ export {
   useDeleteClubProfileImage,
   useDeleteClubBackgroundImage,
 } from './useAdminClubMutations';
+export {
+  useAssignPenalty,
+  useUpdatePenalty,
+  useDeletePenalty,
+  useSavePenaltyRule,
+} from './useAdminPenaltyMutations';
 export { useCreateBoardMutation } from './useCreateBoardMutation';
 export { useUpdateBoardMutation } from './useUpdateBoardMutation';
 export { useDeleteBoardMutation } from './useDeleteBoardMutation';

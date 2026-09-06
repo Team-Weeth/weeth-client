@@ -8,6 +8,7 @@ import type { PenaltyMember } from '@/types/admin/penalty';
 function createMember(overrides: Partial<PenaltyMember> = {}): PenaltyMember {
   return {
     id: 'member-1',
+    clubMemberId: 1,
     name: '김위드',
     introduction: '안녕하세요 잘부탁드리고 안녕하세요 잘부탁드립니다',
     position: '백엔드',
@@ -23,7 +24,7 @@ function createMember(overrides: Partial<PenaltyMember> = {}): PenaltyMember {
 
 function createMembers(count: number) {
   return Array.from({ length: count }, (_, index) =>
-    createMember({ id: `member-${index + 1}`, name: `멤버${index + 1}` }),
+    createMember({ id: `member-${index + 1}`, clubMemberId: index + 1, name: `멤버${index + 1}` }),
   );
 }
 
