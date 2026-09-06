@@ -43,13 +43,16 @@ export const PENALTY_SCORE_MAX = 99;
 export const PENALTY_MEMBERS_PER_PAGE = 8;
 
 /**
- * 기수 하나의 멤버를 한 번에 받아오는 크기.
- * 검색·정렬·페이지 이동을 클라이언트에서 처리하므로 선택한 기수 멤버를 모두 받아야 한다.
+ * 기수 멤버를 받아올 때의 페이지 크기.
+ * 검색·정렬·페이지 이동을 클라이언트에서 처리하므로 마지막 페이지까지 이어서 받는다.
  */
-export const PENALTY_MEMBER_FETCH_SIZE = 200;
+export const PENALTY_MEMBER_PAGE_SIZE = 100;
 
-/** 페널티 규정 입력 모달의 최대 글자 수 */
+/** 페널티 규정 입력 모달의 최대 글자 수 (서버 SavePenaltyRuleRequest.content와 동일) */
 export const PENALTY_GUIDE_MAX_LENGTH = 500;
+
+/** 페널티 사유의 최대 글자 수 (서버 penaltyDescription과 동일) */
+export const PENALTY_REASON_MAX_LENGTH = 20;
 
 export const PENALTY_INTRODUCTION_MAX_LENGTH = 10;
 

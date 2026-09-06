@@ -3,7 +3,6 @@
 import { useState } from 'react';
 
 import { PENALTY_SCORE_MIN } from '@/constants/admin/penaltyTable.constants';
-import { useSavePenaltyRule } from '@/hooks/mutations/admin/useAdminPenaltyMutations';
 import {
   useAdminMemberPenaltyDetail,
   useAdminPenaltyMembers,
@@ -11,14 +10,12 @@ import {
 import { useMyPagePenaltyRuleQuery } from '@/hooks/queries/mypage/useMyPagePenaltyRuleQuery';
 import { useCardinals } from '@/hooks/queries/useCardinalsQuery';
 import { useClubId } from '@/stores';
-import { toastError, toastSuccess } from '@/stores/useToastStore';
 import type { PenaltyMember, PenaltyRecordDraft, PenaltySortBy } from '@/types/admin/penalty';
 import {
   getNextPenaltySort,
   searchPenaltyMembers,
   sortPenaltyMembers,
 } from '@/utils/admin/penaltyPageUtils';
-import { getApiErrorMessage } from '@/utils/shared/getApiErrorCode';
 import { usePenaltyRecordActions } from './hooks/usePenaltyRecordActions';
 import { PenaltyDetailModal } from './modal/PenaltyDetailModal';
 import { PenaltySettingModal } from './modal/PenaltySettingModal';
@@ -57,8 +54,7 @@ function PenaltyPageContent() {
     clubId ?? '',
   );
 
-  const savePenaltyRule = useSavePenaltyRule();
-  const { submitRecord, updateRecord, deleteRecord } = usePenaltyRecordActions();
+  const { submitRecord, updateRecord, deleteRecord, saveRule } = usePenaltyRecordActions();
 
   const nextSortBy = getNextPenaltySort(sortBy);
   const visibleMembers = sortPenaltyMembers(
@@ -90,13 +86,7 @@ function PenaltyPageContent() {
   };
 
   const handleSavePenaltySetting = (guide: string) => {
-    savePenaltyRule.mutate(guide, {
-      onSuccess: () => {
-        setIsSettingOpen(false);
-        toastSuccess('페널티 규정이 저장되었습니다.');
-      },
-      onError: (err) => toastError(getApiErrorMessage(err)),
-    });
+    saveRule(guide, () => setIsSettingOpen(false));
   };
 
   const handleSubmitRecord = () => {

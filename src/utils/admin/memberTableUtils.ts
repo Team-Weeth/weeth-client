@@ -46,7 +46,6 @@ export {
   compareLatestCardinalDesc,
   formatCardinalLabel,
   getCardinalNumber,
-  getLatestCardinalNumber,
   getVisibleMemberCardinals,
   hasCardinal,
 };

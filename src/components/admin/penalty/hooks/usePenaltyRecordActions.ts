@@ -3,17 +3,19 @@
 import {
   useAssignPenalty,
   useDeletePenalty,
+  useSavePenaltyRule,
   useUpdatePenalty,
 } from '@/hooks/mutations/admin/useAdminPenaltyMutations';
 import { toastError, toastSuccess } from '@/stores/useToastStore';
 import type { PenaltyRecord, PenaltyRecordDraft } from '@/types/admin/penalty';
 import { getApiErrorMessage } from '@/utils/shared/getApiErrorCode';
 
-/** 페널티 부여/수정/삭제 뮤테이션과 토스트 처리를 한데 모은다. */
+/** 페널티 부여/수정/삭제·규정 저장 뮤테이션과 토스트 처리를 한데 모은다. */
 export function usePenaltyRecordActions() {
   const assignPenalty = useAssignPenalty();
   const updatePenalty = useUpdatePenalty();
   const deletePenalty = useDeletePenalty();
+  const savePenaltyRule = useSavePenaltyRule();
 
   const handleError = (err: unknown) => toastError(getApiErrorMessage(err));
 
@@ -53,5 +55,15 @@ export function usePenaltyRecordActions() {
     });
   };
 
-  return { submitRecord, updateRecord, deleteRecord };
+  const saveRule = (guide: string, onSuccess: () => void) => {
+    savePenaltyRule.mutate(guide, {
+      onSuccess: () => {
+        onSuccess();
+        toastSuccess('페널티 규정이 저장되었습니다.');
+      },
+      onError: handleError,
+    });
+  };
+
+  return { submitRecord, updateRecord, deleteRecord, saveRule };
 }
