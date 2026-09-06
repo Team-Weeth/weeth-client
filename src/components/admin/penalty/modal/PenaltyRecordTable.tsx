@@ -16,6 +16,7 @@ import {
 import {
   PENALTY_DETAIL_COLUMN_WIDTH,
   PENALTY_DETAIL_TABLE_COLUMNS,
+  PENALTY_REASON_MAX_LENGTH,
   PENALTY_SCORE_EMPTY,
 } from '@/constants/admin/penaltyTable.constants';
 import { cn } from '@/lib/cn';
@@ -24,7 +25,7 @@ import { formatPenaltyDate } from '@/utils/admin/penaltyPageUtils';
 
 /** 인라인 편집 중인 행의 임시 값 (편집 중이 아니면 null) */
 interface PenaltyRecordEdit {
-  id: string;
+  id: number;
   reason: string;
   score: number;
 }
@@ -198,6 +199,7 @@ function PenaltyRecordEditRow({
           <Input
             value={edit.reason}
             onChange={(event) => onEditChange({ reason: event.target.value })}
+            maxLength={PENALTY_REASON_MAX_LENGTH}
             placeholder={`${isWarning ? '경고' : '페널티'} 사유를 작성해주세요`}
             aria-label="페널티 사유"
             className="typo-body1 h-12 min-w-0 flex-1 px-400"

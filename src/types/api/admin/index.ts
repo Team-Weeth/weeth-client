@@ -6,3 +6,4 @@ export type * from './attendance';
 export type * from './schedule';
 export type * from './account';
 export type * from './cardinal';
+export type * from './penalty';
