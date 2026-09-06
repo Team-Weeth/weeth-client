@@ -1,6 +1,7 @@
 import type { Cardinal } from '@/types/admin/cardinal';
 import type { Member } from '@/types/admin/member';
 import { getCommonCardinals } from './cardinalSelectionUtils';
+import { getCardinalNumber, getLatestCardinalNumber } from './memberTableUtils';
 import { parseCardinals } from './parseCardinals';
 
 type MemberSortBy = 'cardinal' | 'name';
@@ -35,9 +36,7 @@ function getMemberIds(members: Member[]) {
 }
 
 function getMemberCardinalNumbers(cardinal: string) {
-  return parseCardinals(cardinal)
-    .map((value) => Number(value.replace('기', '')) || 0)
-    .filter(Boolean);
+  return parseCardinals(cardinal).map(getCardinalNumber).filter(Boolean);
 }
 
 function getSelectedMemberCardinals(members: Member[]) {
@@ -80,13 +79,6 @@ function createBulkCardinalChangeRequests({
 
     return { clubMemberId: member.clubMemberId, cardinalIds: nextCardinalIds };
   });
-}
-
-function getLatestCardinalNumber(cardinal: string) {
-  return Math.max(
-    ...parseCardinals(cardinal).map((value) => Number(value.replace('기', '')) || 0),
-    0,
-  );
 }
 
 export {

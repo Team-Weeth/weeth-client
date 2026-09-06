@@ -1,7 +1,7 @@
 import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
-import { PenaltyDetailModal } from '@/components/admin/penalty/modal/PenaltyDetailModal';
+import { PenaltyDetailModal } from '@/components/admin/penalty';
 import type { PenaltyMember, PenaltyRecord } from '@/types/admin/penalty';
 
 function createMember(): PenaltyMember {

@@ -4,8 +4,8 @@ import { cn } from '@/lib/cn';
 import type { Member } from '@/types/admin/member';
 import type { MemberSortBy } from '@/utils/admin/memberPageUtils';
 import { MemberCard } from './MemberCard';
-import { MemberPagination } from './MemberPagination';
-import { MemberSelectionCheckbox } from './MemberSelectionCheckbox';
+import { SelectionCheckbox } from '@/components/admin/SelectionCheckbox';
+import { TablePagination } from '@/components/admin/TablePagination';
 
 interface MemberCardListProps extends React.HTMLAttributes<HTMLDivElement> {
   members: Member[];
@@ -63,7 +63,7 @@ function MemberCardList({
     <div className={cn('flex flex-col', className)} {...props}>
       <div className="mb-[12px] flex items-center justify-between">
         <div className="typo-body1 text-text-alternative flex cursor-pointer items-center gap-200">
-          <MemberSelectionCheckbox
+          <SelectionCheckbox
             checked={isAllSelected}
             partial={isPartiallySelected}
             className="p-0"
@@ -104,7 +104,7 @@ function MemberCardList({
       </div>
 
       {totalPages > 1 && (
-        <MemberPagination page={currentPage} totalPages={totalPages} onPageChange={onPageChange} />
+        <TablePagination page={currentPage} totalPages={totalPages} onPageChange={onPageChange} />
       )}
     </div>
   );

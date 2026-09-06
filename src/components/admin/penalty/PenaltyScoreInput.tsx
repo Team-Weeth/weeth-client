@@ -33,8 +33,9 @@ function PenaltyScoreInput({
       return;
     }
 
+    // 0은 미입력과 동일하게 취급한다 (제출 시 유효하지 않은 값)
     const next = Number(digits);
-    if (next > 0) onValueChange(Math.min(PENALTY_SCORE_MAX, next));
+    onValueChange(next === 0 ? PENALTY_SCORE_EMPTY : Math.min(PENALTY_SCORE_MAX, next));
   };
 
   return (

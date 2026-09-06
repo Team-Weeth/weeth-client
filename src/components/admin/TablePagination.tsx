@@ -5,13 +5,13 @@ import { cn } from '@/lib/cn';
 
 const PAGE_WINDOW_SIZE = 5;
 
-interface MemberPaginationProps {
+interface TablePaginationProps {
   page: number;
   totalPages: number;
   onPageChange: (page: number) => void;
 }
 
-function MemberPagination({ page, totalPages, onPageChange }: MemberPaginationProps) {
+function TablePagination({ page, totalPages, onPageChange }: TablePaginationProps) {
   const currentGroup = Math.floor((page - 1) / PAGE_WINDOW_SIZE);
   const startPage = currentGroup * PAGE_WINDOW_SIZE + 1;
   const endPage = Math.min(startPage + PAGE_WINDOW_SIZE - 1, totalPages);
@@ -83,4 +83,4 @@ function MemberPagination({ page, totalPages, onPageChange }: MemberPaginationPr
   );
 }
 
-export { MemberPagination, type MemberPaginationProps };
+export { TablePagination, type TablePaginationProps };

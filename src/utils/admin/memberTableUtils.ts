@@ -26,4 +26,15 @@ function getCardinalNumber(cardinal: string) {
   return Number(cardinal.replace('기', '')) || 0;
 }
 
-export { compareCardinalDesc, formatCardinalLabel, getVisibleMemberCardinals };
+/** "1, 2, 3" 중 가장 최근(가장 큰) 기수 번호. 유효한 기수가 없으면 0. */
+function getLatestCardinalNumber(cardinal: string) {
+  return Math.max(...parseCardinals(cardinal).map(getCardinalNumber), 0);
+}
+
+export {
+  compareCardinalDesc,
+  formatCardinalLabel,
+  getCardinalNumber,
+  getLatestCardinalNumber,
+  getVisibleMemberCardinals,
+};

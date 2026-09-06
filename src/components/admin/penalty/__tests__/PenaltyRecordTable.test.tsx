@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
-import { PenaltyRecordTable } from '@/components/admin/penalty/modal/PenaltyRecordTable';
+import { PenaltyRecordTable } from '@/components/admin/penalty';
 import type { PenaltyRecord } from '@/types/admin/penalty';
 
 function createRecord(overrides: Partial<PenaltyRecord> = {}): PenaltyRecord {

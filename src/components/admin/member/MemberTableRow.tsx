@@ -1,21 +1,11 @@
 import type { ReactNode } from 'react';
 
 import { AdminMeatballIcon } from '@/assets/icons/admin';
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-  Icon,
-  TableCell,
-  TableRow,
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from '@/components/ui';
+import { CardinalTagList } from '@/components/admin/CardinalTagList';
+import { SelectionCheckbox } from '@/components/admin/SelectionCheckbox';
+import { Avatar, AvatarFallback, AvatarImage, Icon, TableCell, TableRow } from '@/components/ui';
 import { cn } from '@/lib/cn';
 import type { Member } from '@/types/admin/member';
-import { formatCardinalLabel, getVisibleMemberCardinals } from '@/utils/admin/memberTableUtils';
-import { MemberSelectionCheckbox } from './MemberSelectionCheckbox';
 import { MemberStatusBadge } from './MemberStatusBadge';
 
 interface MemberTableRowProps {
@@ -64,7 +54,7 @@ function MemberTableRow({
           'max-tablet:sticky max-tablet:left-0 max-tablet:z-20 max-tablet:h-12 max-tablet:w-12 max-tablet:min-w-12 max-tablet:bg-inherit max-tablet:pl-200',
         )}
       >
-        <MemberSelectionCheckbox
+        <SelectionCheckbox
           checked={selected}
           ariaLabel={`${member.name} ${member.studentId} 선택`}
           onClick={(e) => {
@@ -159,43 +149,10 @@ function MemberProfileCell({
 }
 
 function MemberCardinalsCell({ cardinal }: { cardinal: string }) {
-  const { visibleCardinals, hiddenCardinals, hiddenCardinalCount } =
-    getVisibleMemberCardinals(cardinal);
-  const hiddenCardinalLabel = hiddenCardinals.map(formatCardinalLabel).join(', ');
-
   return (
     <TableCell className="max-tablet:h-12 max-tablet:px-300 max-tablet:py-100 h-16 w-[182px] p-0 px-400 py-[7px]">
-      <div className="flex items-center gap-100 overflow-visible">
-        {visibleCardinals.map((item) => (
-          <CardinalTag key={item}>{formatCardinalLabel(item)}</CardinalTag>
-        ))}
-        {hiddenCardinalCount > 0 && (
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <button
-                type="button"
-                className="cursor-default"
-                aria-label={`숨겨진 활동기수 ${hiddenCardinalLabel}`}
-                onClick={(event) => event.stopPropagation()}
-              >
-                <CardinalTag>+{hiddenCardinalCount}</CardinalTag>
-              </button>
-            </TooltipTrigger>
-            <TooltipContent variant="dark" side="top" align="center" sideOffset={6}>
-              {hiddenCardinalLabel}
-            </TooltipContent>
-          </Tooltip>
-        )}
-      </div>
+      <CardinalTagList cardinal={cardinal} className="overflow-visible" />
     </TableCell>
-  );
-}
-
-function CardinalTag({ children }: { children: ReactNode }) {
-  return (
-    <span className="bg-container-neutral-alternative text-text-alternative rounded-[5px] px-2.5 py-[5px] text-[14px] leading-5 font-semibold tracking-[var(--letter-spacing)] whitespace-nowrap">
-      {children}
-    </span>
   );
 }
 

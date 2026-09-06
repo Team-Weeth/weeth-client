@@ -109,9 +109,25 @@ function PenaltyPageContent() {
     toastSuccess('페널티 규정이 저장되었습니다.');
   };
 
-  // TODO: 페널티 기록 추가 API 연동 필요
+  // TODO: 페널티 기록 추가 API 연동 필요 (id/createdAt은 서버가 채운다)
   const handleSubmitRecord = () => {
-    toastSuccess(`${draft.type === 'WARNING' ? '경고' : '페널티'}가 기록되었습니다.`);
+    const isWarning = draft.type === 'WARNING';
+    const createdAt = new Date().toISOString().slice(0, 10);
+
+    setRecords((prev) => [
+      ...prev,
+      ...draft.memberIds.map((memberId, index) => ({
+        id: `draft-${createdAt}-${memberId}-${prev.length + index}`,
+        memberId,
+        type: draft.type,
+        // 경고는 점수를 쓰지 않으므로 0점으로 둔다 (목 데이터와 동일한 규칙)
+        score: isWarning ? 0 : draft.score,
+        reason: draft.reason.trim(),
+        createdAt,
+      })),
+    ]);
+
+    toastSuccess(`${isWarning ? '경고' : '페널티'}가 기록되었습니다.`);
     setDraft(INITIAL_DRAFT);
     setMemberQuery('');
   };

@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
-import { PenaltySettingModal } from '@/components/admin/penalty/modal/PenaltySettingModal';
+import { PenaltySettingModal } from '@/components/admin/penalty';
 
 const GUIDE = '페널티를 받는 기준은 아래와 같아요.';
 

@@ -1,13 +1,12 @@
 import type { ReactNode } from 'react';
 
-import { MemberSelectionCheckbox } from '@/components/admin/member/MemberSelectionCheckbox';
+import { CardinalTagList } from '@/components/admin/CardinalTagList';
+import { SelectionCheckbox } from '@/components/admin/SelectionCheckbox';
 import { Avatar, AvatarFallback, TableCell, TableRow } from '@/components/ui';
 import { PENALTY_COLUMN_WIDTH } from '@/constants/admin/penaltyTable.constants';
 import { cn } from '@/lib/cn';
 import type { PenaltyMember } from '@/types/admin/penalty';
-import { formatCardinalLabel, getVisibleMemberCardinals } from '@/utils/admin/memberTableUtils';
 import { formatPenaltyDate, truncateIntroduction } from '@/utils/admin/penaltyPageUtils';
-import { CardinalTag } from './PenaltyCardinalTag';
 
 interface PenaltyTableRowProps {
   member: PenaltyMember;
@@ -17,8 +16,6 @@ interface PenaltyTableRowProps {
 }
 
 function PenaltyTableRow({ member, selected, onToggle, onOpenDetail }: PenaltyTableRowProps) {
-  const { visibleCardinals, hiddenCardinalCount } = getVisibleMemberCardinals(member.cardinal);
-
   return (
     <TableRow
       className={cn(
@@ -31,7 +28,7 @@ function PenaltyTableRow({ member, selected, onToggle, onOpenDetail }: PenaltyTa
         className="h-16 w-16 min-w-16 p-0 pl-300"
         onClick={(event) => event.stopPropagation()}
       >
-        <MemberSelectionCheckbox
+        <SelectionCheckbox
           checked={selected}
           ariaLabel={`${member.name} 선택`}
           onClick={() => onToggle(member.id)}
@@ -66,12 +63,7 @@ function PenaltyTableRow({ member, selected, onToggle, onOpenDetail }: PenaltyTa
       </PenaltyTextCell>
 
       <TableCell className={cn('h-16 p-0 px-400 py-[7px]', PENALTY_COLUMN_WIDTH.cardinal)}>
-        <div className="flex items-center gap-100 overflow-hidden">
-          {visibleCardinals.map((item) => (
-            <CardinalTag key={item}>{formatCardinalLabel(item)}</CardinalTag>
-          ))}
-          {hiddenCardinalCount > 0 && <CardinalTag>+{hiddenCardinalCount}</CardinalTag>}
-        </div>
+        <CardinalTagList cardinal={member.cardinal} />
       </TableCell>
     </TableRow>
   );

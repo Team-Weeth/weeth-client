@@ -1,7 +1,7 @@
 'use client';
 
-import { MemberPagination } from '@/components/admin/member/MemberPagination';
-import { MemberSelectionCheckbox } from '@/components/admin/member/MemberSelectionCheckbox';
+import { SelectionCheckbox } from '@/components/admin/SelectionCheckbox';
+import { TablePagination } from '@/components/admin/TablePagination';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui';
 import {
   PENALTY_MEMBERS_PER_PAGE,
@@ -53,7 +53,7 @@ function PenaltyTable({
           <TableHeader className="bg-container-neutral-alternative sticky top-0 z-10">
             <TableRow className="h-11 border-0 hover:bg-transparent">
               <TableHead className="h-11 w-16 min-w-16 p-0 pl-300">
-                <MemberSelectionCheckbox
+                <SelectionCheckbox
                   checked={isAllSelected}
                   partial={isPartiallySelected}
                   ariaLabel="현재 페이지 멤버 전체 선택"
@@ -103,7 +103,7 @@ function PenaltyTable({
       </div>
 
       {totalPages > 1 && (
-        <MemberPagination page={currentPage} totalPages={totalPages} onPageChange={onPageChange} />
+        <TablePagination page={currentPage} totalPages={totalPages} onPageChange={onPageChange} />
       )}
     </div>
   );

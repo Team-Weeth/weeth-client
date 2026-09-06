@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
-import { PenaltyTable } from '@/components/admin/penalty/PenaltyTable';
+import { PenaltyTable } from '@/components/admin/penalty';
 import { PENALTY_MEMBERS_PER_PAGE } from '@/constants/admin/penaltyTable.constants';
 import type { PenaltyMember } from '@/types/admin/penalty';
 

@@ -4,7 +4,7 @@ import { AdminCheckboxIcon, AdminUncheckboxIcon } from '@/assets/icons/admin';
 import { Icon } from '@/components/ui';
 import { cn } from '@/lib/cn';
 
-interface MemberSelectionCheckboxProps {
+interface SelectionCheckboxProps {
   checked: boolean;
   partial?: boolean;
   className?: string;
@@ -16,7 +16,7 @@ interface MemberSelectionCheckboxProps {
   onClick: (event: MouseEvent<HTMLButtonElement>) => void;
 }
 
-function MemberSelectionCheckbox({
+function SelectionCheckbox({
   checked,
   partial = false,
   className,
@@ -26,7 +26,7 @@ function MemberSelectionCheckbox({
   checkedClassName = 'text-brand-primary',
   uncheckedClassName = 'text-icon-alternative',
   onClick,
-}: MemberSelectionCheckboxProps) {
+}: SelectionCheckboxProps) {
   return (
     <button
       aria-pressed={partial ? 'mixed' : checked}
@@ -56,4 +56,4 @@ function MemberSelectionCheckbox({
   );
 }
 
-export { MemberSelectionCheckbox };
+export { SelectionCheckbox, type SelectionCheckboxProps };

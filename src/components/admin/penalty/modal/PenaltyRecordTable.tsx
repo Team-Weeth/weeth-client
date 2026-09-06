@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 
+import { PenaltyScoreInput } from '@/components/admin/penalty/PenaltyScoreInput';
 import {
   Button,
   Input,
@@ -20,7 +21,6 @@ import {
 import { cn } from '@/lib/cn';
 import type { PenaltyRecord } from '@/types/admin/penalty';
 import { formatPenaltyDate } from '@/utils/admin/penaltyPageUtils';
-import { PenaltyScoreInput } from '../PenaltyScoreInput';
 
 /** 인라인 편집 중인 행의 임시 값 (편집 중이 아니면 null) */
 interface PenaltyRecordEdit {
@@ -68,12 +68,12 @@ function PenaltyRecordTable({
         className="table-fixed border-separate border-spacing-0"
         wrapperClassName="scrollbar-custom min-h-0 overflow-auto"
       >
-        <TableHeader className="bg-container-neutral-alternative sticky top-0 z-10">
+        <TableHeader className="typo-caption1 bg-container-neutral-alternative sticky top-0 z-10">
           <TableRow className="h-10 border-0 hover:bg-transparent">
             {PENALTY_DETAIL_TABLE_COLUMNS.map((column) => (
               <TableHead
                 key={column.id}
-                className={cn('typo-caption1 text-text-alternative h-10', column.className)}
+                className={cn('text-text-alternative h-10', column.className)}
               >
                 {column.label}
               </TableHead>

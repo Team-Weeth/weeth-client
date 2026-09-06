@@ -1,17 +1,8 @@
-import type { ReactNode } from 'react';
-
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from '@/components/ui';
+import { CardinalTagList } from '@/components/admin/CardinalTagList';
+import { SelectionCheckbox } from '@/components/admin/SelectionCheckbox';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui';
 import { cn } from '@/lib/cn';
 import type { Member } from '@/types/admin/member';
-import { formatCardinalLabel, getVisibleMemberCardinals } from '@/utils/admin/memberTableUtils';
-import { MemberSelectionCheckbox } from './MemberSelectionCheckbox';
 import { MemberStatusBadge } from './MemberStatusBadge';
 
 interface MemberCardProps extends Omit<React.HTMLAttributes<HTMLElement>, 'onToggle'> {
@@ -45,7 +36,7 @@ function MemberCard({
       {...props}
     >
       <div className="flex items-start gap-[10px] px-[14px] pt-[14px] pb-300">
-        <MemberSelectionCheckbox
+        <SelectionCheckbox
           checked={selected}
           className="p-0"
           ariaLabel={`${member.name} ${member.studentId} 선택`}
@@ -97,7 +88,11 @@ function MemberCard({
           <p className="truncate">{member.studentId}</p>
         </div>
 
-        <MemberCardinals cardinal={member.cardinal} />
+        <CardinalTagList
+          cardinal={member.cardinal}
+          size="sm"
+          className="max-w-[45%] shrink-0 justify-end"
+        />
       </div>
     </article>
   );
@@ -122,45 +117,6 @@ function MemberCardStat({
       <dt className="typo-caption2 text-text-disabled order-2">{label}</dt>
       <dd className="typo-sub1 text-text-strong order-1">{value}</dd>
     </div>
-  );
-}
-
-function MemberCardinals({ cardinal }: { cardinal: string }) {
-  const { visibleCardinals, hiddenCardinals, hiddenCardinalCount } =
-    getVisibleMemberCardinals(cardinal);
-  const hiddenCardinalLabel = hiddenCardinals.map(formatCardinalLabel).join(', ');
-
-  return (
-    <div className="flex max-w-[45%] shrink-0 items-center justify-end gap-100 overflow-hidden">
-      {visibleCardinals.map((item) => (
-        <CardinalTag key={item}>{formatCardinalLabel(item)}</CardinalTag>
-      ))}
-      {hiddenCardinalCount > 0 && (
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <button
-              type="button"
-              className="cursor-default"
-              aria-label={`숨겨진 활동기수 ${hiddenCardinalLabel}`}
-              onClick={(event) => event.stopPropagation()}
-            >
-              <CardinalTag>+{hiddenCardinalCount}</CardinalTag>
-            </button>
-          </TooltipTrigger>
-          <TooltipContent variant="dark" side="top" align="center" sideOffset={6}>
-            {hiddenCardinalLabel}
-          </TooltipContent>
-        </Tooltip>
-      )}
-    </div>
-  );
-}
-
-function CardinalTag({ children }: { children: ReactNode }) {
-  return (
-    <span className="bg-container-neutral-alternative text-text-alternative typo-caption2 flex h-5 min-w-[30px] items-center justify-center rounded px-[6px] py-[2px] whitespace-nowrap">
-      {children}
-    </span>
   );
 }
 

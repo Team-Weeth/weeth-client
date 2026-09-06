@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { AdminCloseIcon } from '@/assets/icons/admin';
 import { MemberStatusBadge } from '@/components/admin/member/MemberStatusBadge';
 import { ModalIconButton } from '@/components/admin/modal/ModalIconButton';
+import { ScheduleTag } from '@/components/admin/schedule/general/ScheduleTag';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -24,7 +25,6 @@ import { cn } from '@/lib/cn';
 import type { PenaltyMember, PenaltyRecord } from '@/types/admin/penalty';
 import { formatCardinalLabel, getVisibleMemberCardinals } from '@/utils/admin/memberTableUtils';
 import { PenaltyRecordTable } from './PenaltyRecordTable';
-import { ScheduleTag } from '../../schedule/general/ScheduleTag';
 
 interface PenaltyDetailModalProps {
   open: boolean;

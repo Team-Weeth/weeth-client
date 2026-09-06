@@ -3,6 +3,7 @@ import {
   PENALTY_SORT_ORDER,
 } from '@/constants/admin/penaltyTable.constants';
 import type { PenaltyMember, PenaltyRecord, PenaltySortBy } from '@/types/admin/penalty';
+import { getLatestCardinalNumber } from './memberTableUtils';
 import { parseCardinals } from './parseCardinals';
 
 function filterPenaltyMembers(members: PenaltyMember[], selectedCardinal: number) {
@@ -54,10 +55,12 @@ function summarizeMemberPenalties(records: PenaltyRecord[]) {
 
   for (const record of records) {
     const current = summary.get(record.memberId);
+    // 경고는 점수가 0점이고 '최근 페널티' 일자에도 반영하지 않는다.
+    const candidate = record.type === 'PENALTY' ? record.createdAt : null;
     const recentPenaltyAt =
-      current?.recentPenaltyAt && current.recentPenaltyAt > record.createdAt
+      current?.recentPenaltyAt && (!candidate || current.recentPenaltyAt > candidate)
         ? current.recentPenaltyAt
-        : record.createdAt;
+        : candidate;
 
     summary.set(record.memberId, {
       penaltyCount: (current?.penaltyCount ?? 0) + record.score,
@@ -81,13 +84,6 @@ function truncateIntroduction(introduction: string) {
   if (introduction.length <= PENALTY_INTRODUCTION_MAX_LENGTH) return introduction;
 
   return `${introduction.slice(0, PENALTY_INTRODUCTION_MAX_LENGTH)}...`;
-}
-
-function getLatestCardinalNumber(cardinal: string) {
-  return Math.max(
-    ...parseCardinals(cardinal).map((value) => Number(value.replace('기', '')) || 0),
-    0,
-  );
 }
 
 export {
