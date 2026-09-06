@@ -3,6 +3,7 @@ import type { ReactNode } from 'react';
 import { AdminMeatballIcon } from '@/assets/icons/admin';
 import { CardinalTagList } from '@/components/admin/CardinalTagList';
 import { SelectionCheckbox } from '@/components/admin/SelectionCheckbox';
+import { TableTextCell } from '@/components/admin/TableTextCell';
 import { Avatar, AvatarFallback, AvatarImage, Icon, TableCell, TableRow } from '@/components/ui';
 import { cn } from '@/lib/cn';
 import type { Member } from '@/types/admin/member';
@@ -67,9 +68,9 @@ function MemberTableRow({
       <MemberProfileCell member={member} showStickyShadow={showStickyShadow} />
 
       {textCells.slice(0, 3).map(({ id, value }) => (
-        <MemberTextCell key={id} className={TEXT_CELL_CLASS_BY_ID[id]}>
+        <TableTextCell key={id} responsive className={TEXT_CELL_CLASS_BY_ID[id]}>
           {value}
-        </MemberTextCell>
+        </TableTextCell>
       ))}
 
       {NUMBER_CELL_VALUES.map((key) => (
@@ -81,9 +82,9 @@ function MemberTableRow({
       />
 
       {textCells.slice(3).map(({ id, value }) => (
-        <MemberTextCell key={id} className={TEXT_CELL_CLASS_BY_ID[id]}>
+        <TableTextCell key={id} responsive className={TEXT_CELL_CLASS_BY_ID[id]}>
           {value}
-        </MemberTextCell>
+        </TableTextCell>
       ))}
 
       <MemberCardinalsCell cardinal={member.cardinal} />
@@ -152,19 +153,6 @@ function MemberCardinalsCell({ cardinal }: { cardinal: string }) {
   return (
     <TableCell className="max-tablet:h-12 max-tablet:px-300 max-tablet:py-100 h-16 w-[182px] p-0 px-400 py-[7px]">
       <CardinalTagList cardinal={cardinal} className="overflow-visible" />
-    </TableCell>
-  );
-}
-
-function MemberTextCell({ className, children }: { className?: string; children: ReactNode }) {
-  return (
-    <TableCell
-      className={cn(
-        'max-tablet:h-12 max-tablet:px-300 max-tablet:py-100 h-16 p-0 px-400 py-300',
-        className,
-      )}
-    >
-      <span className="typo-body2 text-text-strong block truncate">{children}</span>
     </TableCell>
   );
 }

@@ -3,13 +3,11 @@ import {
   PENALTY_SORT_ORDER,
 } from '@/constants/admin/penaltyTable.constants';
 import type { PenaltyMember, PenaltyRecord, PenaltySortBy } from '@/types/admin/penalty';
-import { getLatestCardinalNumber } from './memberTableUtils';
-import { parseCardinals } from './parseCardinals';
+import { formatDateDisplay } from '@/utils/shared/date';
+import { compareLatestCardinalDesc, hasCardinal } from './memberTableUtils';
 
 function filterPenaltyMembers(members: PenaltyMember[], selectedCardinal: number) {
-  return members.filter((member) =>
-    parseCardinals(member.cardinal).includes(String(selectedCardinal)),
-  );
+  return members.filter((member) => hasCardinal(member.cardinal, selectedCardinal));
 }
 
 /** 이름으로 멤버를 검색한다. 공백만 입력하거나 비어 있으면 전체를 반환한다. */
@@ -30,7 +28,7 @@ function sortPenaltyMembers(members: PenaltyMember[], sortBy: PenaltySortBy) {
       return (b.recentPenaltyAt ?? '').localeCompare(a.recentPenaltyAt ?? '');
     }
 
-    return getLatestCardinalNumber(b.cardinal) - getLatestCardinalNumber(a.cardinal);
+    return compareLatestCardinalDesc(a, b);
   });
 }
 
@@ -71,12 +69,11 @@ function summarizeMemberPenalties(records: PenaltyRecord[]) {
   return summary;
 }
 
-/** '2026-07-18' → '2026. 07. 18.' */
+/** '2026-07-18' → '2026. 07. 18.' (이력이 없으면 '-') */
 function formatPenaltyDate(date: string | null) {
   if (!date) return '-';
 
-  const [year, month, day] = date.split('-');
-  return `${year}. ${month}. ${day}.`;
+  return `${formatDateDisplay(date)}.`;
 }
 
 /** 10자를 넘는 자기소개는 '...'으로 말줄임한다. */

@@ -1,7 +1,6 @@
-import type { ReactNode } from 'react';
-
 import { CardinalTagList } from '@/components/admin/CardinalTagList';
 import { SelectionCheckbox } from '@/components/admin/SelectionCheckbox';
+import { TableTextCell } from '@/components/admin/TableTextCell';
 import { Avatar, AvatarFallback, TableCell, TableRow } from '@/components/ui';
 import { PENALTY_COLUMN_WIDTH } from '@/constants/admin/penaltyTable.constants';
 import { cn } from '@/lib/cn';
@@ -49,31 +48,21 @@ function PenaltyTableRow({ member, selected, onToggle, onOpenDetail }: PenaltyTa
         </div>
       </TableCell>
 
-      <PenaltyTextCell className={PENALTY_COLUMN_WIDTH.role}>{member.position}</PenaltyTextCell>
-      <PenaltyTextCell className={PENALTY_COLUMN_WIDTH.department}>
-        {member.department}
-      </PenaltyTextCell>
+      <TableTextCell className={PENALTY_COLUMN_WIDTH.role}>{member.position}</TableTextCell>
+      <TableTextCell className={PENALTY_COLUMN_WIDTH.department}>{member.department}</TableTextCell>
 
       <TableCell className={cn('h-16 p-0 px-100 py-300 text-center', PENALTY_COLUMN_WIDTH.penalty)}>
         <span className="typo-body2 text-text-strong">{member.penaltyCount}</span>
       </TableCell>
 
-      <PenaltyTextCell className={PENALTY_COLUMN_WIDTH.recentPenalty}>
+      <TableTextCell className={PENALTY_COLUMN_WIDTH.recentPenalty}>
         {formatPenaltyDate(member.recentPenaltyAt)}
-      </PenaltyTextCell>
+      </TableTextCell>
 
       <TableCell className={cn('h-16 p-0 px-400 py-[7px]', PENALTY_COLUMN_WIDTH.cardinal)}>
         <CardinalTagList cardinal={member.cardinal} />
       </TableCell>
     </TableRow>
-  );
-}
-
-function PenaltyTextCell({ className, children }: { className?: string; children: ReactNode }) {
-  return (
-    <TableCell className={cn('h-16 p-0 px-400 py-300', className)}>
-      <span className="typo-body2 text-text-strong block truncate">{children}</span>
-    </TableCell>
   );
 }
 
