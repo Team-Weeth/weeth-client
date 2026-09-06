@@ -4,6 +4,23 @@
  */
 
 export interface paths {
+  '/api/v4/admin/clubs/{clubId}/penalties/rule': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    /** 패널티 규정 저장 */
+    put: operations['saveRule'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/api/v4/admin/clubs/{clubId}/accounts/{accountId}/registration/payment-targets': {
     parameters: {
       query?: never;
@@ -46,7 +63,7 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
-  '/api/v4/admin/clubs/{clubId}/events': {
+  '/api/v4/admin/clubs/{clubId}/penalties': {
     parameters: {
       query?: never;
       header?: never;
@@ -54,6 +71,26 @@ export interface paths {
       cookie?: never;
     };
     get?: never;
+    put?: never;
+    /** 페널티 부여 */
+    post: operations['assignPenalty'];
+    /** 페널티 삭제 */
+    delete: operations['delete'];
+    options?: never;
+    head?: never;
+    /** 페널티 수정 */
+    patch: operations['update'];
+    trace?: never;
+  };
+  '/api/v4/admin/clubs/{clubId}/events': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** 일반 일정 목록 조회 */
+    get: operations['findAll'];
     put?: never;
     /** 일정 생성 */
     post: operations['create_1'];
@@ -214,7 +251,7 @@ export interface paths {
     options?: never;
     head?: never;
     /** 동아리 정보 수정 */
-    patch: operations['update'];
+    patch: operations['update_1'];
     trace?: never;
   };
   '/api/v4/admin/clubs/{clubId}/sessions/{sessionId}': {
@@ -231,14 +268,14 @@ export interface paths {
      * 정기모임 삭제
      * @description scope=THIS_AND_FUTURE 시 이후 전체 세션 삭제. CLOSED 세션 포함 시 force=true로 재요청 필요
      */
-    delete: operations['delete'];
+    delete: operations['delete_1'];
     options?: never;
     head?: never;
     /**
      * 정기모임 수정
      * @description scope=THIS_AND_FUTURE 시 이후 전체 세션 수정. CLOSED 세션 포함 시 force=true로 재요청 필요
      */
-    patch: operations['update_1'];
+    patch: operations['update_2'];
     trace?: never;
   };
   '/api/v4/admin/clubs/{clubId}/members/{targetClubMemberId}/lead': {
@@ -360,11 +397,11 @@ export interface paths {
     put?: never;
     post?: never;
     /** 일정 삭제 */
-    delete: operations['delete_1'];
+    delete: operations['delete_2'];
     options?: never;
     head?: never;
     /** 일정 수정 */
-    patch: operations['update_2'];
+    patch: operations['update_3'];
     trace?: never;
   };
   '/api/v4/admin/clubs/{clubId}/cardinals/{cardinalId}': {
@@ -619,6 +656,23 @@ export interface paths {
     patch: operations['updateMemberVisibility'];
     trace?: never;
   };
+  '/api/v4/admin/clubs/{clubId}/penalties/members/{clubMemberId}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** 멤버 페널티 상세 조회 */
+    get: operations['findMemberPenaltyDetail'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/api/v4/admin/clubs/{clubId}/members': {
     parameters: {
       query?: never;
@@ -651,6 +705,30 @@ export interface paths {
      * @description 가입 대기·추방·탈퇴 멤버도 조회할 수 있습니다.
      */
     get: operations['getClubMemberDetail'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v4/admin/clubs/{clubId}/members/search': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * 동아리 멤버 이름 검색
+     * @description 멤버 이름으로 검색합니다. 가입 대기·추방·탈퇴 멤버도 포함됩니다.
+     *
+     *                 사용 예시:
+     *                 - 전체 멤버 검색: GET /api/v4/admin/clubs/xxx/members/search?keyword=김
+     *                 - 5기만 검색: GET /api/v4/admin/clubs/xxx/members/search?keyword=김&cardinalNumber=5
+     */
+    get: operations['searchClubMembers'];
     put?: never;
     post?: never;
     delete?: never;
@@ -868,6 +946,19 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
   schemas: {
+    'com.weeth.domain.penalty.application.dto.request.SavePenaltyRuleRequest': {
+      /**
+       * @description 패널티 규정 내용 (null 또는 빈 값이면 삭제)
+       * @example 정기 모임에 출석을 하지 않았을때 (=결석)
+       */
+      content?: string;
+    };
+    'com.weeth.global.common.response.CommonResponseJava.lang.Void': {
+      /** Format: int32 */
+      code: number;
+      message: string;
+      data?: unknown;
+    };
     'com.weeth.domain.account.application.dto.request.SavePaymentTargetsRequest': {
       /**
        * @description 납부 대상으로 선택한 동아리 회원 ID 목록(스냅샷). 필수 필드입니다. 해당 기수 명부 중 이 목록에 없는 회원은 자동으로 제외 처리됩니다. 빈 목록([])은 전원 제외를 의미하며, 필드 누락은 허용되지 않습니다(전원 제외 오작동 방지).
@@ -878,12 +969,6 @@ export interface components {
        *     ]
        */
       targetedClubMemberIds: number[];
-    };
-    'com.weeth.global.common.response.CommonResponseJava.lang.Void': {
-      /** Format: int32 */
-      code: number;
-      message: string;
-      data?: unknown;
     };
     'com.weeth.domain.session.application.dto.request.SessionCreateRequest': {
       /**
@@ -930,6 +1015,34 @@ export interface components {
        * @example 2026-06-30
        */
       recurrenceEndDate?: string;
+    };
+    'com.weeth.domain.penalty.application.dto.request.SavePenaltyRequest': {
+      /**
+       * @description 페널티 대상 사용자 ID 목록
+       * @example [
+       *       1,
+       *       2,
+       *       3
+       *     ]
+       */
+      userIds: number[];
+      /**
+       * Format: int32
+       * @description 페널티 점수
+       * @example 1
+       */
+      score: number;
+      /**
+       * @description 페널티 사유
+       * @example 정기모임 무단 불참
+       */
+      penaltyDescription: string;
+      /**
+       * @description 페널티 타입 (기본값: PENALTY)
+       * @example PENALTY
+       * @enum {string}
+       */
+      penaltyType: 'PENALTY' | 'WARNING';
     };
     'com.weeth.domain.schedule.application.dto.request.ScheduleSaveRequest': {
       /**
@@ -1333,6 +1446,25 @@ export interface components {
        * @example 2026-03-27T22:00:00
        */
       end?: string;
+    };
+    'com.weeth.domain.penalty.application.dto.request.UpdatePenaltyRequest': {
+      /**
+       * Format: int64
+       * @description 수정할 페널티 ID
+       * @example 1
+       */
+      penaltyId: number;
+      /**
+       * @description 수정할 페널티 사유 (null=변경 안 함)
+       * @example 정기모임 무단 불참 (수정)
+       */
+      penaltyDescription?: string;
+      /**
+       * Format: int32
+       * @description 수정할 페널티 점수 (null=변경 안 함)
+       * @example 2
+       */
+      score?: number;
     };
     'com.weeth.domain.club.application.dto.request.ClubMemberRoleUpdateRequest': {
       /**
@@ -1757,6 +1889,70 @@ export interface components {
       message: string;
       data?: components['schemas']['com.weeth.domain.session.application.dto.response.SessionInfosResponse'];
     };
+    'com.weeth.domain.penalty.application.dto.response.MemberPenaltyDetailResponse': {
+      /** @description 프로필 이미지 URL */
+      profileImageUrl?: string;
+      /**
+       * @description 이름
+       * @example 홍길동
+       */
+      name: string;
+      /**
+       * @description 소속 기수 목록
+       * @example [
+       *       6,
+       *       7
+       *     ]
+       */
+      cardinals: number[];
+      /**
+       * @description 멤버 상태
+       * @example ACTIVE
+       * @enum {string}
+       */
+      memberStatus: 'WAITING' | 'ACTIVE' | 'BANNED' | 'LEFT';
+      /** @description 자기소개 */
+      bio?: string;
+      /** @description 페널티 목록 */
+      penalties: components['schemas']['com.weeth.domain.penalty.application.dto.response.PenaltyDetailResponse'][];
+    };
+    'com.weeth.domain.penalty.application.dto.response.PenaltyDetailResponse': {
+      /**
+       * Format: int64
+       * @description 페널티 ID
+       * @example 1
+       */
+      penaltyId: number;
+      /**
+       * Format: int32
+       * @description 기수 번호
+       * @example 4
+       */
+      cardinal?: number;
+      /**
+       * @description 페널티 사유
+       * @example 정기모임 무단 불참
+       */
+      penaltyDescription: string;
+      /**
+       * Format: int32
+       * @description 페널티 점수
+       * @example 1
+       */
+      score: number;
+      /**
+       * Format: date-time
+       * @description 페널티 부여 일시
+       * @example 2026-02-19T01:00:00
+       */
+      time: string;
+    };
+    'com.weeth.global.common.response.CommonResponseCom.weeth.domain.penalty.application.dto.response.MemberPenaltyDetailResponse': {
+      /** Format: int32 */
+      code: number;
+      message: string;
+      data?: components['schemas']['com.weeth.domain.penalty.application.dto.response.MemberPenaltyDetailResponse'];
+    };
     'com.weeth.domain.club.application.dto.response.ClubMemberResponse': {
       /**
        * Format: int64
@@ -1840,10 +2036,15 @@ export interface components {
       attendanceRate: number;
       /**
        * Format: int32
-       * @description 패널티 횟수
+       * @description 페널티 횟수
        * @example 1
        */
       penaltyCount: number;
+      /**
+       * Format: date-time
+       * @description 최근 페널티 일시 (없으면 null)
+       */
+      lastPenaltyAt?: string;
       /**
        * @description 프로필 이미지 URL
        * @example https://cdn.weeth.com/profile/1.png
@@ -1883,6 +2084,75 @@ export interface components {
       code: number;
       message: string;
       data?: components['schemas']['com.weeth.domain.club.application.dto.response.ClubMemberResponse'];
+    };
+    'com.weeth.global.common.response.CommonResponseJava.util.ListCom.weeth.domain.club.application.dto.response.ClubMemberResponse': {
+      /** Format: int32 */
+      code: number;
+      message: string;
+      data?: components['schemas']['com.weeth.domain.club.application.dto.response.ClubMemberResponse'][];
+    };
+    'com.weeth.domain.schedule.application.dto.response.EventResponse': {
+      /**
+       * Format: int64
+       * @description 일정 ID
+       * @example 1
+       */
+      id: number;
+      /**
+       * @description 일정 제목
+       * @example MT
+       */
+      title: string;
+      /** @description 일정 내용 */
+      content?: string;
+      /**
+       * @description 장소
+       * @example 가평
+       */
+      location?: string;
+      /**
+       * @description 작성자 이름
+       * @example 이지훈
+       */
+      name?: string;
+      /**
+       * Format: int32
+       * @description 기수
+       * @example 4
+       */
+      cardinal: number;
+      /**
+       * @description 일정 타입
+       * @example EVENT
+       * @enum {string}
+       */
+      type: 'EVENT' | 'SESSION';
+      /**
+       * Format: date-time
+       * @description 시작 시간
+       */
+      start: string;
+      /**
+       * Format: date-time
+       * @description 종료 시간
+       */
+      end: string;
+      /**
+       * Format: date-time
+       * @description 생성 시간
+       */
+      createdAt?: string;
+      /**
+       * Format: date-time
+       * @description 수정 시간
+       */
+      modifiedAt?: string;
+    };
+    'com.weeth.global.common.response.CommonResponseJava.util.ListCom.weeth.domain.schedule.application.dto.response.EventResponse': {
+      /** Format: int32 */
+      code: number;
+      message: string;
+      data?: components['schemas']['com.weeth.domain.schedule.application.dto.response.EventResponse'][];
     };
     'com.weeth.global.common.response.CommonResponseJava.util.ListCom.weeth.domain.board.application.dto.response.BoardDetailResponse': {
       /** Format: int32 */
@@ -2484,6 +2754,60 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
+  saveRule: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /**
+         * @description Base62 인코딩 TSID
+         * @example 1zA9
+         */
+        clubId: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['com.weeth.domain.penalty.application.dto.request.SavePenaltyRuleRequest'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['com.weeth.global.common.response.CommonResponseJava.lang.Void'];
+        };
+      };
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+    };
+  };
   findPaymentTargets: {
     parameters: {
       query?: {
@@ -2708,6 +3032,204 @@ export interface operations {
         };
       };
       409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+    };
+  };
+  assignPenalty: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /**
+         * @description Base62 인코딩 TSID
+         * @example 1zA9
+         */
+        clubId: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['com.weeth.domain.penalty.application.dto.request.SavePenaltyRequest'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['com.weeth.global.common.response.CommonResponseJava.lang.Void'];
+        };
+      };
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+    };
+  };
+  delete: {
+    parameters: {
+      query: {
+        penaltyId: number;
+      };
+      header?: never;
+      path: {
+        /**
+         * @description Base62 인코딩 TSID
+         * @example 1zA9
+         */
+        clubId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['com.weeth.global.common.response.CommonResponseJava.lang.Void'];
+        };
+      };
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+    };
+  };
+  update: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /**
+         * @description Base62 인코딩 TSID
+         * @example 1zA9
+         */
+        clubId: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['com.weeth.domain.penalty.application.dto.request.UpdatePenaltyRequest'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['com.weeth.global.common.response.CommonResponseJava.lang.Void'];
+        };
+      };
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+    };
+  };
+  findAll: {
+    parameters: {
+      query: {
+        cardinal?: number;
+        start: string;
+        end: string;
+      };
+      header?: never;
+      path: {
+        /**
+         * @description Base62 인코딩 TSID
+         * @example 1zA9
+         */
+        clubId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['com.weeth.global.common.response.CommonResponseJava.util.ListCom.weeth.domain.schedule.application.dto.response.EventResponse'];
+        };
+      };
+      404: {
         headers: {
           [name: string]: unknown;
         };
@@ -3382,7 +3904,7 @@ export interface operations {
       };
     };
   };
-  update: {
+  update_1: {
     parameters: {
       query?: never;
       header?: never;
@@ -3452,7 +3974,7 @@ export interface operations {
       };
     };
   };
-  delete: {
+  delete_1: {
     parameters: {
       query?: {
         scope?: 'THIS_ONLY' | 'THIS_AND_FUTURE';
@@ -3506,7 +4028,7 @@ export interface operations {
       };
     };
   };
-  update_1: {
+  update_2: {
     parameters: {
       query?: {
         scope?: 'THIS_ONLY' | 'THIS_AND_FUTURE';
@@ -3977,7 +4499,7 @@ export interface operations {
       };
     };
   };
-  delete_1: {
+  delete_2: {
     parameters: {
       query?: never;
       header?: never;
@@ -4012,7 +4534,7 @@ export interface operations {
       };
     };
   };
-  update_2: {
+  update_3: {
     parameters: {
       query?: never;
       header?: never;
@@ -5126,6 +5648,57 @@ export interface operations {
       };
     };
   };
+  findMemberPenaltyDetail: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /**
+         * @description Base62 인코딩 TSID
+         * @example 1zA9
+         */
+        clubId: string;
+        clubMemberId: number;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['com.weeth.global.common.response.CommonResponseCom.weeth.domain.penalty.application.dto.response.MemberPenaltyDetailResponse'];
+        };
+      };
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+    };
+  };
   getClubMembers: {
     parameters: {
       query?: {
@@ -5221,6 +5794,75 @@ export interface operations {
         };
         content: {
           '*/*': components['schemas']['com.weeth.global.common.response.CommonResponseCom.weeth.domain.club.application.dto.response.ClubMemberResponse'];
+        };
+      };
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+    };
+  };
+  searchClubMembers: {
+    parameters: {
+      query: {
+        keyword: string;
+        cardinalNumber?: number;
+      };
+      header?: never;
+      path: {
+        /**
+         * @description Base62 인코딩 TSID
+         * @example 1zA9
+         */
+        clubId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['com.weeth.global.common.response.CommonResponseJava.util.ListCom.weeth.domain.club.application.dto.response.ClubMemberResponse'];
         };
       };
       400: {
