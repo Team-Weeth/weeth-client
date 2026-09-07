@@ -26,7 +26,9 @@ function CalendarMiniSkeleton({ className }: { className?: string }) {
         {/* Date grid: 5 rows × 7 cols */}
         <div className="grid grid-cols-7">
           {Array.from({ length: 35 }).map((_, i) => (
-            <Skeleton key={i} className="h-[26px] w-6 rounded-[4px]" />
+            <div key={i} className="flex h-[26px] w-6 items-center justify-center">
+              <Skeleton className="h-[10px] w-[14px] rounded-[2px]" />
+            </div>
           ))}
         </div>
       </div>
