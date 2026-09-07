@@ -9,7 +9,7 @@ export interface CalendarSchedule {
   location?: string;
 }
 
-export type AttendanceStatus = 'pending' | 'available' | 'completed' | 'absent';
+export type AttendanceStatus = 'UPCOMING' | 'OPEN' | 'COMPLETED' | 'ABSENT';
 
 export interface AttendeeInfo {
   name: string;

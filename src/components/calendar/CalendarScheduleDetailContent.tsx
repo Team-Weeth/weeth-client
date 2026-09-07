@@ -64,7 +64,7 @@ function CalendarScheduleDetailContent({
     schedule.description
   );
   const showAttendanceCard = schedule.hasAttendanceCheck && schedule.type === 'SESSION';
-  const attendanceStatus = schedule.attendanceStatus ?? 'pending';
+  const attendanceStatus = schedule.attendanceStatus ?? 'UPCOMING';
 
   return (
     <>

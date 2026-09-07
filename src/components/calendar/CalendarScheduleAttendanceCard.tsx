@@ -52,21 +52,21 @@ function CalendarScheduleAttendanceCard({
 }: CalendarScheduleAttendanceCardProps) {
   return (
     <div className="bg-container-neutral flex flex-col gap-200 rounded-md px-400 pt-200 pb-400">
-      {attendanceStatus === 'completed' ? (
+      {attendanceStatus === 'COMPLETED' ? (
         <StatusRow
           icon={<Icon src={CheckIcon} size={24} className="text-state-success" />}
           bgColorClass="bg-state-success/10"
           title="출석 완료"
           subtitle={attendanceCompletedAt ? formatAttendanceTime(attendanceCompletedAt) : undefined}
         />
-      ) : attendanceStatus === 'absent' ? (
+      ) : attendanceStatus === 'ABSENT' ? (
         <StatusRow
           icon={<Icon src={DeleteIcon} size={24} className="text-state-error" />}
           bgColorClass="bg-state-error/10"
           title="결석"
           subtitle="해당 일정의 출석 기록을 확인할 수 있어요"
         />
-      ) : attendanceStatus === 'available' ? (
+      ) : attendanceStatus === 'OPEN' ? (
         <StatusRow
           icon={<Icon src={ScreenIcon} size={24} className="text-state-caution" />}
           bgColorClass="bg-state-caution/10"
@@ -96,7 +96,7 @@ function CalendarScheduleAttendanceCard({
               'gap-100 pr-300 pl-400',
             )}
           >
-            {attendanceStatus === 'completed' || attendanceStatus === 'absent'
+            {attendanceStatus === 'COMPLETED' || attendanceStatus === 'ABSENT'
               ? '출석 내역 보기'
               : '출석 페이지로 이동'}
             <Icon src={ArrowRightIcon} size={16} className="text-text-inverse" />
