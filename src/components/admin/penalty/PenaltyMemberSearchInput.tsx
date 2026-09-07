@@ -1,5 +1,7 @@
 'use client';
 
+import { useRef } from 'react';
+
 import { CloseCircleIcon } from '@/assets/icons';
 import { Icon } from '@/components/ui/Icon';
 import { cn } from '@/lib/cn';
@@ -20,6 +22,8 @@ function PenaltyMemberSearchInput({
   onRemoveMember,
   className,
 }: PenaltyMemberSearchInputProps) {
+  const inputRef = useRef<HTMLInputElement>(null);
+
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key !== 'Backspace' || query.length > 0 || selectedMembers.length === 0) return;
 
@@ -27,7 +31,8 @@ function PenaltyMemberSearchInput({
   };
 
   return (
-    <label
+    <div
+      onClick={() => inputRef.current?.focus()}
       className={cn(
         'bg-container-neutral border-line focus-within:border-brand-primary',
         'scrollbar-none flex h-12 w-full min-w-0 cursor-text items-center gap-200',
@@ -38,7 +43,7 @@ function PenaltyMemberSearchInput({
       {selectedMembers.map((member) => (
         <span
           key={member.id}
-          className="bg-container-neutral-alternative typo-body2 text-text-normal flex shrink-0 items-center gap-100 rounded-sm py-100 pr-100 pl-200"
+          className="bg-container-neutral-alternative typo-button2 text-text-normal flex shrink-0 items-center gap-100 rounded-sm py-100 pr-100 pl-200"
         >
           {member.name}
           <button
@@ -53,15 +58,16 @@ function PenaltyMemberSearchInput({
       ))}
 
       <input
+        ref={inputRef}
         type="text"
         value={query}
         onChange={(event) => onQueryChange(event.target.value)}
         onKeyDown={handleKeyDown}
-        placeholder={selectedMembers.length > 0 ? '' : '이름을 작성하거나 리스트에서 선택하세요'}
+        placeholder={selectedMembers.length > 0 ? '' : '이름을 작성하거나 멤버를 선택하세요'}
         aria-label="멤버 검색"
         className="typo-body1 text-text-normal placeholder:text-text-alternative min-w-24 flex-1 bg-transparent focus:outline-none"
       />
-    </label>
+    </div>
   );
 }
 

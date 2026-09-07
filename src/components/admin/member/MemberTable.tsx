@@ -6,8 +6,8 @@ import { Table, TableBody, TableHead, TableHeader, TableRow } from '@/components
 import { cn } from '@/lib/cn';
 import type { Member } from '@/types/admin/member';
 import { MEMBER_TABLE_COLUMNS } from '@/constants/admin/memberTable.constants';
-import { MemberPagination } from './MemberPagination';
-import { MemberSelectionCheckbox } from './MemberSelectionCheckbox';
+import { SelectionCheckbox } from '@/components/admin/SelectionCheckbox';
+import { TablePagination } from '@/components/admin/TablePagination';
 import { MemberTableRow } from './MemberTableRow';
 
 interface MemberTableProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -81,7 +81,7 @@ function MemberTable({
           <TableHeader className="bg-container-neutral-alternative">
             <TableRow className="max-tablet:h-10 h-11 border-0 hover:bg-transparent">
               <TableHead className="bg-container-neutral-alternative max-tablet:sticky max-tablet:left-0 max-tablet:z-40 max-tablet:first:rounded-none max-tablet:h-10 max-tablet:w-12 max-tablet:min-w-12 max-tablet:pl-200 h-11 w-16 min-w-16 p-0 pl-300">
-                <MemberSelectionCheckbox
+                <SelectionCheckbox
                   checked={isAllSelected}
                   partial={isPartiallySelected}
                   ariaLabel="현재 페이지 멤버 전체 선택"
@@ -136,7 +136,7 @@ function MemberTable({
       </div>
 
       {totalPages > 1 && (
-        <MemberPagination page={currentPage} totalPages={totalPages} onPageChange={onPageChange} />
+        <TablePagination page={currentPage} totalPages={totalPages} onPageChange={onPageChange} />
       )}
     </div>
   );

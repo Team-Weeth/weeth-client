@@ -1,7 +1,7 @@
 'use client';
 
-import { CardinalCard } from '@/components/admin';
-import { useDragScroll } from '@/hooks';
+import { CardinalCard } from '@/components/admin/member/CardinalCard';
+import { useDragScroll } from '@/hooks/useDragScroll';
 import { cn } from '@/lib/cn';
 
 interface PenaltyCardinalTabsProps {
