@@ -112,6 +112,7 @@ export function formatTimeDisplay(timeStr: string): string {
 export function formatSessionDateParts(start: string): {
   day: string;
   weekday: string;
+  time: string;
   timeLabel: string;
 } {
   const date = new Date(start);
@@ -125,8 +126,17 @@ export function formatSessionDateParts(start: string): {
   return {
     day: String(day),
     weekday: DAY_META[date.getDay()].en.toUpperCase(),
+    time: `${period} ${displayHour}:${minutes}`,
     timeLabel: `${month}월 ${day}일 ${period} ${displayHour}:${minutes}`,
   };
+}
+
+export function computeDDay(start: string): number {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const startDate = new Date(start);
+  startDate.setHours(0, 0, 0, 0);
+  return Math.round((startDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
 }
 
 // 'D-3' | 'D-day' | 'D+1'

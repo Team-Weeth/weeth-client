@@ -25,6 +25,7 @@ import {
 } from '@/stores/useCalendarStore';
 import { useClubId } from '@/stores';
 import { CalendarScheduleModal } from '@/components/calendar/CalendarScheduleModal';
+import { computeDDay } from '@/utils/shared/date';
 import type { ScheduleDetail } from '@/types/calendar';
 
 // TODO: 유저 사이드 일정 API 연결 시 제거
@@ -60,9 +61,8 @@ const MOCK_SCHEDULES: ScheduleDetail[] = [
       { name: '신보라', department: '디자인학과', position: '회원' },
     ],
     attendeeCount: 20,
-    dDay: -28,
     hasAttendanceCheck: true,
-    attendanceStatus: 'completed',
+    attendanceStatus: 'COMPLETED',
     attendanceCompletedAt: '2026-08-05T19:12:00',
     description: '위스 8기 첫 번째 세션입니다. React 기초와 컴포넌트 설계를 다룹니다.',
   },
@@ -73,9 +73,8 @@ const MOCK_SCHEDULES: ScheduleDetail[] = [
     end: '2026-08-12T22:00:00',
     type: 'SESSION',
     location: '홍익대학교 본관',
-    dDay: -22,
     hasAttendanceCheck: true,
-    attendanceStatus: 'absent',
+    attendanceStatus: 'ABSENT',
   },
   {
     id: 3,
@@ -204,9 +203,8 @@ const MOCK_SCHEDULES: ScheduleDetail[] = [
       { name: '강동현' },
     ],
     attendeeCount: 23,
-    dDay: 0,
     hasAttendanceCheck: true,
-    attendanceStatus: 'available',
+    attendanceStatus: 'OPEN',
     description: '위스 9기 첫 번째 세션입니다. Next.js 15와 App Router를 다룹니다.',
   },
   {
@@ -217,9 +215,8 @@ const MOCK_SCHEDULES: ScheduleDetail[] = [
     type: 'SESSION',
     location: '연세대학교 공학관',
     host: { name: '이위스' },
-    dDay: 6,
     hasAttendanceCheck: true,
-    attendanceStatus: 'pending',
+    attendanceStatus: 'UPCOMING',
     description: '위스 9기 두 번째 세션입니다. TypeScript 심화와 상태 관리를 다룹니다.',
   },
   {
@@ -232,13 +229,15 @@ const MOCK_SCHEDULES: ScheduleDetail[] = [
     host: { name: '박위스' },
     attendees: [{ name: '홍길동' }, { name: '이영희' }, { name: '박민준' }],
     attendeeCount: 45,
-    dDay: 3,
     description: '9기 개강총회입니다. 전체 일정 안내 및 팀 빌딩을 진행합니다.',
   },
 ];
 
 interface CalendarMainProps {
   className?: string;
+  // TODO: 캘린더 출석 요약 연결 — page.tsx에서 attendanceServerApi.getDetail 결과를 받아 전달
+  // attendanceRate?: number;  // Math.round((attendanceCount / total) * 100)
+  // totalCount?: number;       // AttendanceSummary.total
 }
 
 function CalendarMain({ className }: CalendarMainProps) {
@@ -260,7 +259,7 @@ function CalendarMain({ className }: CalendarMainProps) {
     const scheduleMonth = Number(s.start.split('-')[1]);
     const scheduleYear = Number(s.start.split('-')[0]);
     return scheduleYear === year && scheduleMonth === month;
-  });
+  }).map((s) => ({ ...s, dDay: computeDDay(s.start) }));
 
   const filteredSchedules = schedules.filter((s) => {
     if (attendanceOnly) return s.type === 'SESSION';
@@ -329,6 +328,7 @@ function CalendarMain({ className }: CalendarMainProps) {
               schedules={filteredSchedules}
               onScheduleClick={handleScheduleClick}
             />
+            {/* TODO: attendanceRate={attendanceRate} totalCount={totalCount} 추가 */}
             <CalendarAttendancePanel clubId={clubId} />
           </div>
         </div>
