@@ -24,7 +24,7 @@ function CalendarUpcomingPanel({
   return (
     <div
       className={cn(
-        'bg-container-neutral flex max-h-[346px] shrink-0 flex-col items-start self-stretch rounded-md px-[14px] pt-[14px] pb-200',
+        'bg-container-neutral flex max-h-[346px] w-[273px] shrink-0 flex-col items-start rounded-md px-[14px] pt-[14px] pb-200',
         className,
       )}
     >
@@ -63,7 +63,7 @@ function UpcomingItem({
   schedule: ScheduleDetail;
   onScheduleClick?: (schedule: ScheduleDetail) => void;
 }) {
-  const { day, weekday, timeLabel } = formatSessionDateParts(schedule.start);
+  const { day, weekday, time } = formatSessionDateParts(schedule.start);
   const dotColor = SCHEDULE_DOT_COLOR[schedule.type] ?? 'bg-brand-primary';
 
   return (
@@ -88,8 +88,8 @@ function UpcomingItem({
 
         {/* Tags row */}
         <div className="flex items-center gap-100">
-          {schedule.location && <TruncatedTag label={schedule.location} />}
-          <TruncatedTag label={timeLabel} />
+          {schedule.location && <TruncatedTag label={schedule.location} constrained />}
+          <TruncatedTag label={time} />
         </div>
       </div>
 
@@ -99,7 +99,7 @@ function UpcomingItem({
   );
 }
 
-function TruncatedTag({ label }: { label: string }) {
+function TruncatedTag({ label, constrained = false }: { label: string; constrained?: boolean }) {
   const ref = useRef<HTMLSpanElement>(null);
   const [open, setOpen] = useState(false);
 
@@ -108,7 +108,10 @@ function TruncatedTag({ label }: { label: string }) {
       <TooltipTrigger asChild>
         <Tag
           ref={ref as React.Ref<HTMLSpanElement>}
-          className="bg-text-alternative/10 text-text-alternative block max-w-[92px] truncate"
+          className={cn(
+            'bg-text-alternative/10 text-text-alternative',
+            constrained ? 'block max-w-[92px] truncate' : 'shrink-0',
+          )}
           onMouseEnter={() => {
             if (ref.current && ref.current.scrollWidth > ref.current.clientWidth) {
               setOpen(true);
