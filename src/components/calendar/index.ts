@@ -7,3 +7,4 @@ export {
   CalendarAttendancePanel,
   type CalendarAttendancePanelProps,
 } from './CalendarAttendancePanel';
+export { CalendarDayPopup, type CalendarDayPopupProps } from './CalendarDayPopup';
