@@ -7,7 +7,7 @@ import { buildCalendarCells, getCalendarCellColors } from '@/utils/shared/calend
 import { Tag, type TagProps } from '@/components/ui/tag';
 import type { ScheduleDetail } from '@/types/calendar';
 import { CalendarDayPopup } from '@/components/calendar/CalendarDayPopup';
-import { useCalendarDayPopup } from '@/components/calendar/useCalendarDayPopup';
+import { useCalendarDayPopup } from '@/hooks/useCalendarDayPopup';
 
 const MAX_VISIBLE_TAGS = 2;
 
@@ -90,7 +90,7 @@ function CalendarGrid({
               cell.dayOfWeek,
             );
 
-            const handleCellClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+            const handleCellClick = (e: React.MouseEvent<HTMLDivElement>) => {
               if (!cell.isCurrentMonth) return;
 
               const isDeselect = selectedDate === cell.dateStr;
@@ -102,16 +102,13 @@ function CalendarGrid({
               }
 
               const wrapper = wrapperRef.current;
-              const cellEl = (e.currentTarget as HTMLElement).closest(
-                '[data-calendar-cell]',
-              ) as HTMLElement | null;
+              const cellEl = e.currentTarget;
 
-              if (wrapper && cellEl) {
+              if (wrapper) {
                 const [, m, d] = cell.dateStr.split('-');
                 openPopup({
                   dateStr: cell.dateStr,
                   formattedDate: `${Number(m)}월 ${Number(d)}일`,
-                  schedules: daySchedules,
                   row,
                   col,
                   totalRows,
@@ -125,8 +122,10 @@ function CalendarGrid({
               <div
                 key={cell.dateStr}
                 data-calendar-cell={cell.dateStr}
+                onClick={handleCellClick}
                 className={cn(
                   'flex h-[80px] flex-col items-start justify-self-stretch overflow-hidden p-[6px]',
+                  cell.isCurrentMonth && 'cursor-pointer',
                   !isLastRow && 'border-line border-b',
                   !isLastCol && 'border-line border-r',
                 )}
@@ -148,7 +147,6 @@ function CalendarGrid({
                     aria-label={`${cell.dateStr}${cell.isToday ? ' (오늘)' : ''}`}
                     aria-pressed={isSelected}
                     disabled={!cell.isCurrentMonth}
-                    onClick={handleCellClick}
                     className={cn(
                       'flex size-5 shrink-0 cursor-pointer items-center justify-center rounded-full text-center transition-colors',
                       isTodayHighlighted || isSelected ? 'typo-caption1' : 'typo-caption2',
@@ -195,9 +193,12 @@ function CalendarGrid({
         >
           <CalendarDayPopup
             date={popupState.formattedDate}
-            schedules={popupState.schedules}
+            schedules={scheduleMap.get(popupState.dateStr) ?? []}
             onClose={closePopup}
-            onScheduleClick={onScheduleClick}
+            onScheduleClick={(schedule) => {
+              closePopup();
+              onScheduleClick?.(schedule);
+            }}
           />
         </div>
       )}
