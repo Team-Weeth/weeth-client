@@ -50,6 +50,10 @@ function CalendarAttendeeListContent({ attendees, onBack }: CalendarAttendeeList
 
   const mobileHasMore = mobileVisibleCount < attendees.length;
 
+  // Desktop pagination — must be declared before any early return
+  const totalPages = Math.max(1, Math.ceil(attendees.length / ITEMS_PER_PAGE));
+  const pageNumbers = usePaginationWindow(currentPage, totalPages);
+
   useEffect(() => {
     if (isTablet || !mobileHasMore) return;
     const sentinel = sentinelRef.current;
@@ -89,15 +93,12 @@ function CalendarAttendeeListContent({ attendees, onBack }: CalendarAttendeeList
                 <TableRow className="bg-container-neutral-alternative hover:bg-container-neutral-alternative">
                   <TableHead className="text-text-alternative h-[48px] w-[110px]">이름</TableHead>
                   <TableHead className="text-text-alternative h-[48px] w-[138px]">학과</TableHead>
-                  <TableHead className="text-text-alternative h-[48px] w-[74px]">직급</TableHead>
+                  <TableHead className="text-text-alternative h-[48px] w-[74px]">역할</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {displayedAttendees.map((attendee, idx) => (
-                  <TableRow
-                    key={`${attendee.name}-${idx}`}
-                    className="hover:bg-container-neutral"
-                  >
+                  <TableRow key={`${attendee.name}-${idx}`} className="hover:bg-container-neutral">
                     <TableCell className="h-[48px] w-[110px] py-0 pl-400">
                       <span className="typo-body2 text-text-strong truncate">{attendee.name}</span>
                     </TableCell>
@@ -121,8 +122,6 @@ function CalendarAttendeeListContent({ attendees, onBack }: CalendarAttendeeList
   // ── Desktop: paginated with header + footer ──────────────────────────────
   const pageStart = (currentPage - 1) * ITEMS_PER_PAGE;
   const pagedAttendees = attendees.slice(pageStart, pageStart + ITEMS_PER_PAGE);
-  const totalPages = Math.max(1, Math.ceil(attendees.length / ITEMS_PER_PAGE));
-  const pageNumbers = usePaginationWindow(currentPage, totalPages);
 
   return (
     <>
@@ -149,7 +148,7 @@ function CalendarAttendeeListContent({ attendees, onBack }: CalendarAttendeeList
                 <TableHead className="text-text-alternative h-[48px] w-[308px] min-w-[128px]">
                   학과
                 </TableHead>
-                <TableHead className="text-text-alternative h-[48px] w-[124px]">직급</TableHead>
+                <TableHead className="text-text-alternative h-[48px] w-[124px]">역할</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
