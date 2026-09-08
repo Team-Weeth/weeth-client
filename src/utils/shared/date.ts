@@ -185,6 +185,15 @@ export function formatAttendanceTime(isoString: string): string {
   return `${month}월 ${day}일 ${hours}:${minutes} 출석`;
 }
 
+// '3월 9일 (월)' — 모바일 일정 헤더 포맷
+export function formatMobileDateHeader(dateStr: string): string {
+  const date = new Date(dateStr);
+  const m = date.getMonth() + 1;
+  const d = date.getDate();
+  const weekday = DAY_META[date.getDay()].ko;
+  return `${m}월 ${d}일 (${weekday})`;
+}
+
 // 'YYYY-MM' → 'N월'
 export function toMonthLabel(yearMonth: string): string {
   return `${Number(yearMonth.split('-')[1])}월`;
