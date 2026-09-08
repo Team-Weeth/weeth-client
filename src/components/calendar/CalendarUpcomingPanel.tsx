@@ -63,7 +63,7 @@ interface UpcomingItemProps {
 }
 
 function UpcomingItem({ schedule, onScheduleClick, showDateColumn = true }: UpcomingItemProps) {
-  const { day, weekday, timeLabel } = formatSessionDateParts(schedule.start);
+  const { day, weekday, time } = formatSessionDateParts(schedule.start);
   const dotColor = SCHEDULE_DOT_COLOR[schedule.type] ?? 'bg-brand-primary';
 
   return (
@@ -102,7 +102,7 @@ function UpcomingItem({ schedule, onScheduleClick, showDateColumn = true }: Upco
           {showDateColumn ? (
             <>
               {schedule.location && <TruncatedTag label={schedule.location} constrained />}
-              <TruncatedTag label={timeLabel} />
+              <TruncatedTag label={time} />
             </>
           ) : (
             <>
@@ -111,7 +111,7 @@ function UpcomingItem({ schedule, onScheduleClick, showDateColumn = true }: Upco
                   {schedule.location}
                 </Tag>
               )}
-              <Tag className="bg-text-alternative/10 text-text-alternative">{timeLabel}</Tag>
+              <Tag className="bg-text-alternative/10 text-text-alternative">{time}</Tag>
             </>
           )}
         </div>
