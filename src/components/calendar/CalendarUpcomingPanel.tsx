@@ -56,40 +56,64 @@ function CalendarUpcomingPanel({
   );
 }
 
-function UpcomingItem({
-  schedule,
-  onScheduleClick,
-}: {
+interface UpcomingItemProps {
   schedule: ScheduleDetail;
   onScheduleClick?: (schedule: ScheduleDetail) => void;
-}) {
-  const { day, weekday, time } = formatSessionDateParts(schedule.start);
+  showDateColumn?: boolean;
+}
+
+function UpcomingItem({ schedule, onScheduleClick, showDateColumn = true }: UpcomingItemProps) {
+  const { day, weekday, timeLabel } = formatSessionDateParts(schedule.start);
   const dotColor = SCHEDULE_DOT_COLOR[schedule.type] ?? 'bg-brand-primary';
 
   return (
     <button
       type="button"
       onClick={() => onScheduleClick?.(schedule)}
-      className="hover:bg-container-neutral-interaction flex w-full cursor-pointer items-center gap-[7px] rounded-[7px] p-200 transition-colors"
+      className={cn(
+        'hover:bg-container-neutral-interaction flex cursor-pointer items-center rounded-[7px] transition-colors',
+        showDateColumn ? 'w-full gap-[7px] p-200' : 'justify-between self-stretch px-200 py-300',
+      )}
     >
-      {/* Date column */}
-      <div className="flex w-[32px] shrink-0 flex-col items-center justify-center gap-100 self-stretch">
-        <span className="typo-sub3 text-text-alternative w-[28px] text-center">{day}</span>
-        <span className="typo-caption2 text-text-alternative">{weekday}</span>
-      </div>
+      {showDateColumn && (
+        <div className="flex w-[32px] shrink-0 flex-col items-center justify-center gap-100 self-stretch">
+          <span className="typo-sub3 text-text-alternative w-[28px] text-center">{day}</span>
+          <span className="typo-caption2 text-text-alternative">{weekday}</span>
+        </div>
+      )}
 
       {/* Content */}
       <div className="flex min-w-0 flex-1 flex-col gap-200">
         {/* Title row */}
         <div className="flex items-center gap-[6px] overflow-hidden">
           <span className={cn('size-[6px] shrink-0 rounded-full', dotColor)} />
-          <span className="typo-caption1 text-text-normal truncate">{schedule.title}</span>
+          <span
+            className={cn(
+              'text-text-normal',
+              showDateColumn ? 'typo-caption1 truncate' : 'typo-button2 whitespace-nowrap',
+            )}
+          >
+            {schedule.title}
+          </span>
         </div>
 
         {/* Tags row */}
         <div className="flex items-center gap-100">
-          {schedule.location && <TruncatedTag label={schedule.location} constrained />}
-          <TruncatedTag label={time} />
+          {showDateColumn ? (
+            <>
+              {schedule.location && <TruncatedTag label={schedule.location} constrained />}
+              <TruncatedTag label={timeLabel} />
+            </>
+          ) : (
+            <>
+              {schedule.location && (
+                <Tag className="bg-text-alternative/10 text-text-alternative">
+                  {schedule.location}
+                </Tag>
+              )}
+              <Tag className="bg-text-alternative/10 text-text-alternative">{timeLabel}</Tag>
+            </>
+          )}
         </div>
       </div>
 
@@ -127,4 +151,4 @@ function TruncatedTag({ label, constrained = false }: { label: string; constrain
   );
 }
 
-export { CalendarUpcomingPanel, type CalendarUpcomingPanelProps };
+export { CalendarUpcomingPanel, UpcomingItem, type CalendarUpcomingPanelProps };
