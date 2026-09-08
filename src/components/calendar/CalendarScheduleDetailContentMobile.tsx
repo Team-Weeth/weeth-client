@@ -1,5 +1,6 @@
 'use client';
 
+import { cn } from '@/lib/cn';
 import { Icon } from '@/components/ui/Icon';
 import { Tag } from '@/components/ui/tag';
 import {
@@ -10,24 +11,16 @@ import {
   AvatarGroupCount,
 } from '@/components/ui/avatar';
 import { CalendarScheduleAttendanceCard } from '@/components/calendar/CalendarScheduleAttendanceCard';
+import {
+  LABEL_CLASS,
+  SCHEDULE_TYPE_LABEL,
+  SCHEDULE_TYPE_TAG_VARIANT,
+  MAX_VISIBLE_ATTENDEES,
+} from '@/components/calendar/calendarScheduleDetailConstants';
 import { formatDDay, formatScheduleTimeRange } from '@/utils/shared/date';
 import TimeIcon from '@/assets/icons/time.svg';
 import LocationIcon from '@/assets/icons/location.svg';
 import type { ScheduleDetail } from '@/types/calendar';
-
-const LABEL_CLASS = 'typo-caption2 text-text-alternative w-[56px] shrink-0';
-
-const SCHEDULE_TYPE_LABEL: Record<string, string> = {
-  SESSION: '세션',
-  EVENT: '일반 일정',
-};
-
-const SCHEDULE_TYPE_TAG_VARIANT: Record<string, 'primary' | 'secondary'> = {
-  SESSION: 'primary',
-  EVENT: 'secondary',
-};
-
-const MAX_VISIBLE_ATTENDEES = 5;
 
 interface CalendarScheduleDetailContentMobileProps {
   schedule: ScheduleDetail;
@@ -148,7 +141,7 @@ function CalendarScheduleDetailContentMobile({
           )}
           {schedule.description && (
             <div className="flex items-start gap-300">
-              <span className={`${LABEL_CLASS} pt-[2px]`}>설명</span>
+              <span className={cn(LABEL_CLASS, 'pt-[2px]')}>설명</span>
               <span className="typo-body2 text-text-normal flex-1">{schedule.description}</span>
             </div>
           )}

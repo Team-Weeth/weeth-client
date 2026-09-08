@@ -46,7 +46,6 @@ function CalendarAttendeeListContent({ attendees, onBack }: CalendarAttendeeList
 
   // Mobile: sticky header shadow
   const [tableScrolled, setTableScrolled] = useState(false);
-  const tableScrollRef = useRef<HTMLDivElement>(null);
 
   const mobileHasMore = mobileVisibleCount < attendees.length;
 
@@ -79,7 +78,6 @@ function CalendarAttendeeListContent({ attendees, onBack }: CalendarAttendeeList
       <div className="flex flex-1 flex-col overflow-hidden px-450 pb-800">
         <div className="border-line flex flex-1 flex-col overflow-hidden rounded-sm border">
           <div
-            ref={tableScrollRef}
             onScroll={(e) => setTableScrolled(e.currentTarget.scrollTop > 0)}
             className="flex-1 overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
           >
