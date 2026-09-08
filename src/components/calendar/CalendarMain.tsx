@@ -3,11 +3,16 @@
 import { useState } from 'react';
 import { cn } from '@/lib/cn';
 import { Button } from '@/components/ui/Button';
+import { Icon } from '@/components/ui/Icon';
+import { TooltipProvider } from '@/components/ui/Tooltip';
+import ArrowDownIcon from '@/assets/icons/arrow_down.svg';
 import { useCardinalSelector } from '@/hooks/useCardinalSelector';
+import { useScrollableList } from '@/hooks/useScrollableList';
 import { CalendarFilter } from '@/components/calendar/CalendarFilter';
 import { CalendarGrid } from '@/components/calendar/CalendarGrid';
 import { CalendarMini } from '@/components/calendar/CalendarMini';
-import { CalendarUpcomingPanel } from '@/components/calendar/CalendarUpcomingPanel';
+import { CalendarMobileGrid } from '@/components/calendar/CalendarMobileGrid';
+import { CalendarUpcomingPanel, UpcomingItem } from '@/components/calendar/CalendarUpcomingPanel';
 import { CalendarAttendancePanel } from '@/components/calendar/CalendarAttendancePanel';
 import { CardinalDropdown } from '@/components/common';
 import {
@@ -25,213 +30,9 @@ import {
 } from '@/stores/useCalendarStore';
 import { useClubId } from '@/stores';
 import { CalendarScheduleModal } from '@/components/calendar/CalendarScheduleModal';
-import { computeDDay } from '@/utils/shared/date';
+import { computeDDay, formatMobileDateHeader, toDateInputValue } from '@/utils/shared/date';
+import { MOCK_SCHEDULES } from '@/mocks/calendar';
 import type { ScheduleDetail } from '@/types/calendar';
-
-// TODO: 유저 사이드 일정 API 연결 시 제거
-const MOCK_SCHEDULES: ScheduleDetail[] = [
-  {
-    id: 1,
-    title: '8기 1차 세션',
-    start: '2026-08-05T19:00:00',
-    end: '2026-08-05T22:00:00',
-    type: 'SESSION',
-    location: '서울대학교 302호',
-    host: { name: '김위스' },
-    attendees: [
-      { name: '홍길동', department: '컴퓨터공학과', position: '부회장' },
-      { name: '이영희', department: '전기전자공학과', position: '회원' },
-      { name: '박민준', department: '소프트웨어학과', position: '회원' },
-      { name: '최지우', department: '산업공학과', position: '회원' },
-      { name: '강동현', department: '기계공학과', position: '회원' },
-      { name: '김서연', department: '컴퓨터공학과', position: '회원' },
-      { name: '이준호', department: '수학과', position: '회원' },
-      { name: '정다은', department: '경영학과', position: '회원' },
-      { name: '윤지훈', department: '물리학과', position: '회원' },
-      { name: '오소현', department: '화학공학과', position: '회원' },
-      { name: '한민재', department: '건축학과', position: '회원' },
-      { name: '서은지', department: '심리학과', position: '회원' },
-      { name: '임도윤', department: '통계학과', position: '회원' },
-      { name: '백지아', department: '생명과학과', position: '회원' },
-      { name: '노태양', department: '신소재공학과', position: '회원' },
-      { name: '문채원', department: '미디어학과', position: '회원' },
-      { name: '안재원', department: '전자공학과', position: '회원' },
-      { name: '류하은', department: '영어영문학과', position: '회원' },
-      { name: '곽준혁', department: '경제학과', position: '회원' },
-      { name: '신보라', department: '디자인학과', position: '회원' },
-    ],
-    attendeeCount: 20,
-    hasAttendanceCheck: true,
-    attendanceStatus: 'COMPLETED',
-    attendanceCompletedAt: '2026-08-05T19:12:00',
-    description: '위스 8기 첫 번째 세션입니다. React 기초와 컴포넌트 설계를 다룹니다.',
-  },
-  {
-    id: 2,
-    title: '8기 2차 세션',
-    start: '2026-08-12T19:00:00',
-    end: '2026-08-12T22:00:00',
-    type: 'SESSION',
-    location: '홍익대학교 본관',
-    hasAttendanceCheck: true,
-    attendanceStatus: 'ABSENT',
-  },
-  {
-    id: 3,
-    title: '8기 3차 세션',
-    start: '2026-08-19T19:00:00',
-    end: '2026-08-19T22:00:00',
-    type: 'SESSION',
-    location: '연세대학교 공학관',
-  },
-  {
-    id: 4,
-    title: '8기 4차 세션',
-    start: '2026-08-26T19:00:00',
-    end: '2026-08-26T22:00:00',
-    type: 'SESSION',
-    location: '서울시립대학교',
-  },
-  {
-    id: 5,
-    title: 'OT',
-    start: '2026-08-03T14:00:00',
-    end: '2026-08-03T17:00:00',
-    type: 'EVENT',
-    location: '강남 토즈',
-  },
-  {
-    id: 6,
-    title: '해커톤',
-    start: '2026-08-10T10:00:00',
-    end: '2026-08-11T18:00:00',
-    type: 'EVENT',
-    location: '서울시청',
-  },
-  {
-    id: 7,
-    title: '팀 미팅',
-    start: '2026-08-26T11:00:00',
-    end: '2026-08-26T12:00:00',
-    type: 'EVENT',
-  },
-  {
-    id: 8,
-    title: '전체 회의',
-    start: '2026-08-27T10:00:00',
-    end: '2026-08-27T12:00:00',
-    type: 'EVENT',
-  },
-  {
-    id: 9,
-    title: '수료식',
-    start: '2026-08-31T18:00:00',
-    end: '2026-08-31T21:00:00',
-    type: 'EVENT',
-    location: '강남구청',
-  },
-  // Aug 30
-  {
-    id: 12,
-    title: '8기 5차 세션',
-    start: '2026-08-30T19:00:00',
-    end: '2026-08-30T22:00:00',
-    type: 'SESSION',
-    location: '서울대학교 302호',
-  },
-  {
-    id: 13,
-    title: '스터디 모임',
-    start: '2026-08-30T14:00:00',
-    end: '2026-08-30T16:00:00',
-    type: 'SESSION',
-    location: '강남 토즈',
-  },
-  {
-    id: 14,
-    title: '종강 파티',
-    start: '2026-08-30T18:00:00',
-    end: '2026-08-30T21:00:00',
-    type: 'EVENT',
-    location: '홍대 클럽',
-  },
-  {
-    id: 15,
-    title: '팀 회고',
-    start: '2026-08-30T10:00:00',
-    end: '2026-08-30T12:00:00',
-    type: 'EVENT',
-  },
-  {
-    id: 16,
-    title: '디자인 리뷰',
-    start: '2026-08-30T13:00:00',
-    end: '2026-08-30T14:00:00',
-    type: 'EVENT',
-    location: '온라인',
-  },
-  {
-    id: 17,
-    title: '멘토링',
-    start: '2026-08-30T16:00:00',
-    end: '2026-08-30T17:00:00',
-    type: 'SESSION',
-    location: '위스',
-  },
-  {
-    id: 18,
-    title: '코드 리뷰',
-    start: '2026-08-23T14:00:00',
-    end: '2026-08-23T16:00:00',
-    type: 'SESSION',
-    location: '온라인',
-  },
-  // Sep
-  {
-    id: 10,
-    title: '9기 1차 세션',
-    start: '2026-09-02T19:00:00',
-    end: '2026-09-02T22:00:00',
-    type: 'SESSION',
-    location: '고려대학교 정경관',
-    host: { name: '이위스' },
-    attendees: [
-      { name: '홍길동' },
-      { name: '이영희' },
-      { name: '박민준' },
-      { name: '최지우' },
-      { name: '강동현' },
-    ],
-    attendeeCount: 23,
-    hasAttendanceCheck: true,
-    attendanceStatus: 'OPEN',
-    description: '위스 9기 첫 번째 세션입니다. Next.js 15와 App Router를 다룹니다.',
-  },
-  {
-    id: 20,
-    title: '9기 2차 세션',
-    start: '2026-09-09T19:00:00',
-    end: '2026-09-09T22:00:00',
-    type: 'SESSION',
-    location: '연세대학교 공학관',
-    host: { name: '이위스' },
-    hasAttendanceCheck: true,
-    attendanceStatus: 'UPCOMING',
-    description: '위스 9기 두 번째 세션입니다. TypeScript 심화와 상태 관리를 다룹니다.',
-  },
-  {
-    id: 11,
-    title: '개강총회',
-    start: '2026-09-05T16:00:00',
-    end: '2026-09-05T19:00:00',
-    type: 'EVENT',
-    location: '홍대 라운지',
-    host: { name: '박위스' },
-    attendees: [{ name: '홍길동' }, { name: '이영희' }, { name: '박민준' }],
-    attendeeCount: 45,
-    description: '9기 개강총회입니다. 전체 일정 안내 및 팀 빌딩을 진행합니다.',
-  },
-];
 
 interface CalendarMainProps {
   className?: string;
@@ -270,16 +71,26 @@ function CalendarMain({ className }: CalendarMainProps) {
 
   const eventDates = filteredSchedules.map((s) => new Date(s.start));
 
+  const activeDateStr = selectedDate ?? toDateInputValue(new Date());
+  const selectedDateSchedules = filteredSchedules.filter((s) => s.start.startsWith(activeDateStr));
+
+  const scrollKey = `${year}-${month}-${activeDateStr}`;
+  const { listRef, hasScrolled, onScroll } = useScrollableList(scrollKey);
+
   const handleScheduleClick = (schedule: ScheduleDetail) => {
     setSelectedSchedule(schedule);
   };
 
   return (
     <div
-      className={cn('flex flex-col gap-[35px] self-stretch px-[64px] pt-450 pb-[80px]', className)}
+      className={cn(
+        'flex flex-col gap-8.75 self-stretch px-450 pt-450',
+        'tablet:pb-20 tablet:px-16',
+        className,
+      )}
     >
       {/* Page header */}
-      <div className="flex flex-col gap-200 px-450">
+      <div className="tablet:px-450 flex flex-col gap-200">
         <Breadcrumb>
           <BreadcrumbList>
             <BreadcrumbItem>
@@ -290,12 +101,32 @@ function CalendarMain({ className }: CalendarMainProps) {
           </BreadcrumbList>
         </Breadcrumb>
         <div className="flex items-center">
-          <div className="flex flex-1 items-center gap-200">
+          {/* Mobile: YYYY.MM + 달 선택 버튼 */}
+          <div className="tablet:hidden flex flex-1 items-center">
+            <h2 className="typo-h2 text-text-normal">
+              {year}.{String(month).padStart(2, '0')}
+            </h2>
+            {/* TODO: 달 선택 피커 연결 */}
+            <button
+              type="button"
+              aria-label="달 선택"
+              className="text-icon-alternative flex cursor-pointer items-center justify-center rounded-sm p-200"
+            >
+              <Icon src={ArrowDownIcon} size={24} className="text-icon-normal" />
+            </button>
+            <Button variant="outlined" size="sm" className="typo-caption1" onClick={reset}>
+              오늘
+            </Button>
+          </div>
+
+          {/* Desktop: 캘린더 title + 오늘 button */}
+          <div className="tablet:flex hidden flex-1 items-center gap-200">
             <h2 className="typo-h2 text-text-normal">캘린더</h2>
             <Button variant="outlined" size="sm" onClick={reset}>
               오늘
             </Button>
           </div>
+
           <CardinalDropdown
             cardinals={cardinals}
             activeCardinal={activeCardinal}
@@ -304,8 +135,57 @@ function CalendarMain({ className }: CalendarMainProps) {
         </div>
       </div>
 
-      {/* Main content: left column (mini + filter) + right column (grid & schedule) */}
-      <div className="flex items-start gap-400">
+      {/* Mobile layout: hidden on tablet+ */}
+      <div className="tablet:hidden flex flex-col gap-500">
+        <CalendarMobileGrid schedules={filteredSchedules} />
+
+        {/* Divider */}
+        <div className="bg-button-neutral h-px w-full shrink-0" />
+
+        {/* Selected date header — full-width shadow only at the bottom, shown when list is scrollable */}
+        <div
+          className={cn(
+            'relative z-10 -mx-450 flex shrink-0 items-center gap-200 px-450 py-300',
+            hasScrolled && 'shadow-[0_4px_8px_rgba(0,0,0,0.06)] [clip-path:inset(0_0_-12px_0)]',
+          )}
+        >
+          <span className="typo-sub1 text-text-normal">
+            {formatMobileDateHeader(activeDateStr)}
+          </span>
+          <span className="typo-caption2 text-text-alternative">
+            일정 {selectedDateSchedules.length}개
+          </span>
+        </div>
+
+        {/* Scrollable schedule list — fills remaining height, no visible scrollbar */}
+        <TooltipProvider>
+          <div
+            ref={listRef}
+            onScroll={onScroll}
+            className="flex flex-col gap-300 overflow-y-auto pb-700 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          >
+            {selectedDateSchedules.length === 0 ? (
+              <div className="flex w-full flex-col items-center justify-center gap-300 px-450 pt-800 pb-700">
+                <p className="typo-caption2 text-text-alternative text-center">
+                  등록된 일정이 없어요
+                </p>
+              </div>
+            ) : (
+              selectedDateSchedules.map((schedule) => (
+                <UpcomingItem
+                  key={schedule.id}
+                  schedule={schedule}
+                  showDateColumn={false}
+                  onScheduleClick={handleScheduleClick}
+                />
+              ))
+            )}
+          </div>
+        </TooltipProvider>
+      </div>
+
+      {/* Desktop layout: hidden on mobile */}
+      <div className="tablet:flex hidden items-start gap-400">
         {/* Left column */}
         <div className="flex flex-col gap-300">
           <CalendarMini eventDates={eventDates} />
@@ -333,6 +213,7 @@ function CalendarMain({ className }: CalendarMainProps) {
           </div>
         </div>
       </div>
+
       <CalendarScheduleModal
         open={selectedSchedule !== null}
         onOpenChange={(open) => !open && setSelectedSchedule(null)}
