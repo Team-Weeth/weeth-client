@@ -108,9 +108,7 @@ function UpcomingItem({ schedule, onScheduleClick, showDateColumn = true }: Upco
             </>
           ) : (
             <>
-              {schedule.location && (
-                <Tag className={SOFT_TAG_CLASS}>{schedule.location}</Tag>
-              )}
+              {schedule.location && <Tag className={SOFT_TAG_CLASS}>{schedule.location}</Tag>}
               <Tag className={SOFT_TAG_CLASS}>{time}</Tag>
             </>
           )}
@@ -132,10 +130,7 @@ function TruncatedTag({ label, constrained = false }: { label: string; constrain
       <TooltipTrigger asChild>
         <Tag
           ref={ref as React.Ref<HTMLSpanElement>}
-          className={cn(
-            SOFT_TAG_CLASS,
-            constrained ? 'block max-w-[92px] truncate' : 'shrink-0',
-          )}
+          className={cn(SOFT_TAG_CLASS, constrained ? 'block max-w-[92px] truncate' : 'shrink-0')}
           onMouseEnter={() => {
             if (ref.current && ref.current.scrollWidth > ref.current.clientWidth) {
               setOpen(true);

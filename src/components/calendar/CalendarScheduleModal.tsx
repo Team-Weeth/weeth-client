@@ -5,10 +5,7 @@ import { cn } from '@/lib/cn';
 import { AlertDialogPortal, AlertDialogOverlay } from '@/components/ui/alert-dialog';
 import { CalendarScheduleDetailContent } from '@/components/calendar/CalendarScheduleDetailContent';
 import { CalendarAttendeeListContent } from '@/components/calendar/CalendarAttendeeListContent';
-import {
-  useCalendarAttendeeListOpen,
-  useCalendarActions,
-} from '@/stores/useCalendarStore';
+import { useCalendarAttendeeListOpen, useCalendarActions } from '@/stores/useCalendarStore';
 import type { ScheduleDetail } from '@/types/calendar';
 
 interface CalendarScheduleModalProps {

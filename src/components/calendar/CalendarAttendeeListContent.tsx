@@ -43,10 +43,7 @@ function AttendeeTableRow({ attendee, showAvatar }: AttendeeTableRowProps) {
   return (
     <TableRow className="hover:bg-container-neutral">
       <TableCell
-        className={cn(
-          'h-[48px] py-0 pl-400',
-          showAvatar ? 'w-[175px] min-w-[128px]' : 'w-[110px]',
-        )}
+        className={cn('h-[48px] py-0 pl-400', showAvatar ? 'w-[175px] min-w-[128px]' : 'w-[110px]')}
       >
         {showAvatar ? (
           <div className="flex items-center gap-300">
@@ -71,10 +68,7 @@ function AttendeeTableRow({ attendee, showAvatar }: AttendeeTableRowProps) {
         {attendee.department ?? '-'}
       </TableCell>
       <TableCell
-        className={cn(
-          'typo-body2 text-text-strong h-[48px]',
-          !showAvatar && 'w-[74px] truncate',
-        )}
+        className={cn('typo-body2 text-text-strong h-[48px]', !showAvatar && 'w-[74px] truncate')}
       >
         {attendee.position ?? '-'}
       </TableCell>

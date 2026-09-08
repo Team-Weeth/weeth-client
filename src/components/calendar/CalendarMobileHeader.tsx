@@ -41,7 +41,8 @@ function CalendarMobileHeader({ children }: CalendarMobileHeaderProps) {
   const { closeMonthPicker, closeScheduleDetail, closeAttendeeList } = useCalendarActions();
 
   if (attendeeListOpen) return <MobileBackHeader onBack={closeAttendeeList} title="참석자 목록" />;
-  if (scheduleDetailOpen) return <MobileBackHeader onBack={closeScheduleDetail} title="일정 상세" />;
+  if (scheduleDetailOpen)
+    return <MobileBackHeader onBack={closeScheduleDetail} title="일정 상세" />;
   if (monthPickerOpen) return <MobileBackHeader onBack={closeMonthPicker} title="월 이동" />;
 
   return <>{children}</>;

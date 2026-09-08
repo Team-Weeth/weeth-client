@@ -52,11 +52,7 @@ export const useCalendarStore = create(
       openMonthPicker: () => set({ monthPickerOpen: true }, false, 'openMonthPicker'),
       closeMonthPicker: () => set({ monthPickerOpen: false }, false, 'closeMonthPicker'),
       openScheduleDetail: (schedule: ScheduleDetail) =>
-        set(
-          { scheduleDetailOpen: true, selectedSchedule: schedule },
-          false,
-          'openScheduleDetail',
-        ),
+        set({ scheduleDetailOpen: true, selectedSchedule: schedule }, false, 'openScheduleDetail'),
       closeScheduleDetail: () =>
         set(
           { scheduleDetailOpen: false, attendeeListOpen: false, selectedSchedule: null },
