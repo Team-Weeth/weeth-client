@@ -93,6 +93,7 @@ function MemberPageContent() {
     isLead,
     selectedMembers,
     selectedMemberCardinals,
+    onActionSuccess: clearSelection,
   });
 
   useEffect(() => {

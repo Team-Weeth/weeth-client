@@ -17,7 +17,7 @@ const toastVariants = cva(
       variant: {
         success: 'bg-state-success text-white',
         info: 'bg-state-caution text-text-inverse',
-        error: 'bg-state-error text-text-inverse',
+        error: 'bg-state-error text-white',
       },
     },
     defaultVariants: {

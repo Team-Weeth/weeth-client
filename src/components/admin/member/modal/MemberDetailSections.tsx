@@ -209,7 +209,7 @@ function getMemberActivityStats(member: Member) {
   return [
     { label: '출석', value: member.attendance },
     { label: '결석', value: member.absence },
-    { label: '패널티', value: member.penaltyCount },
+    { label: '페널티', value: member.penaltyCount },
   ];
 }
 

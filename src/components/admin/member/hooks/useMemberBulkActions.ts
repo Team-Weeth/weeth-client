@@ -25,6 +25,7 @@ interface UseMemberBulkActionsParams {
   isLead: boolean;
   selectedMembers: Member[];
   selectedMemberCardinals: number[][];
+  onActionSuccess?: () => void;
 }
 
 function useMemberBulkActions({
@@ -32,6 +33,7 @@ function useMemberBulkActions({
   isLead,
   selectedMembers,
   selectedMemberCardinals,
+  onActionSuccess,
 }: UseMemberBulkActionsParams) {
   const { mutateAsync: changeMemberRoleAsync } = useChangeMemberRole();
   const { mutateAsync: banMemberAsync } = useBanMember();
@@ -74,6 +76,7 @@ function useMemberBulkActions({
     }
 
     toastSuccess('기수가 변경되었습니다.');
+    onActionSuccess?.();
   };
 
   const submitCardinalsChange = async (
@@ -96,18 +99,24 @@ function useMemberBulkActions({
         );
         return isLeadTransferOnly ? '리더는 이양을 통해서만 변경할 수 있습니다.' : undefined;
       },
-    );
+    ).then((success) => {
+      if (success) onActionSuccess?.();
+    });
 
   const submitBan = (clubMemberIds: number[]) =>
     runBulkMutation(clubMemberIds, banMemberAsync, {
       success: '추방되었습니다.',
       error: '추방에 실패했습니다.',
+    }).then((success) => {
+      if (success) onActionSuccess?.();
     });
 
   const submitRestore = (clubMemberIds: number[]) =>
     runBulkMutation(clubMemberIds, restoreMemberAsync, {
       success: '복구되었습니다.',
       error: '복구에 실패했습니다.',
+    }).then((success) => {
+      if (success) onActionSuccess?.();
     });
 
   const handleChangeCardinalsForBulk = (cardinalIds: number[], cardinalNumbers: number[]) => {
@@ -125,7 +134,10 @@ function useMemberBulkActions({
     if (!isLead) return;
 
     transferLead(clubMemberId, {
-      onSuccess: () => toastSuccess('리더로 변경되었습니다.'),
+      onSuccess: () => {
+        toastSuccess('리더로 변경되었습니다.');
+        onActionSuccess?.();
+      },
       onError: (err) => {
         if (getApiErrorCode(err) === MEMBER_ROLE_ERROR_CODE.ONLY_LEAD_CAN_TRANSFER) {
           toastError('리더만 권한을 이양할 수 있습니다.');

@@ -18,7 +18,7 @@ interface MemberCardProps extends Omit<React.HTMLAttributes<HTMLElement>, 'onTog
 const MEMBER_CARD_STATS = [
   { id: 'attendance', label: '출석', getValue: (member: Member) => member.attendance },
   { id: 'absence', label: '결석', getValue: (member: Member) => member.absence },
-  { id: 'penaltyCount', label: '패널티', getValue: (member: Member) => member.penaltyCount },
+  { id: 'penaltyCount', label: '페널티', getValue: (member: Member) => member.penaltyCount },
 ] as const;
 
 function MemberCard({
