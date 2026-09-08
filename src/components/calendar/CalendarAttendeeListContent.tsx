@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { cn } from '@/lib/cn';
 import { Icon } from '@/components/ui/Icon';
 import { Button } from '@/components/ui/Button';
@@ -23,6 +23,7 @@ import {
 } from '@/components/ui/pagination';
 import { CalendarModalFooter } from '@/components/calendar/CalendarModalFooter';
 import { usePaginationWindow } from '@/hooks/usePaginationWindow';
+import { useIsTablet } from '@/hooks/useIsTablet';
 import DeleteIcon from '@/assets/icons/delete.svg';
 import type { AttendeeInfo } from '@/types/calendar';
 
@@ -34,16 +35,97 @@ interface CalendarAttendeeListContentProps {
 }
 
 function CalendarAttendeeListContent({ attendees, onBack }: CalendarAttendeeListContentProps) {
+  const isTablet = useIsTablet();
+
+  // Desktop: page-based
   const [currentPage, setCurrentPage] = useState(1);
 
-  const totalPages = Math.max(1, Math.ceil(attendees.length / ITEMS_PER_PAGE));
+  // Mobile: infinite scroll
+  const [mobileVisibleCount, setMobileVisibleCount] = useState(ITEMS_PER_PAGE);
+  const sentinelRef = useRef<HTMLDivElement>(null);
+
+  // Mobile: sticky header shadow
+  const [tableScrolled, setTableScrolled] = useState(false);
+  const tableScrollRef = useRef<HTMLDivElement>(null);
+
+  const mobileHasMore = mobileVisibleCount < attendees.length;
+
+  useEffect(() => {
+    if (isTablet || !mobileHasMore) return;
+    const sentinel = sentinelRef.current;
+    if (!sentinel) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          setMobileVisibleCount((prev) => Math.min(prev + ITEMS_PER_PAGE, attendees.length));
+        }
+      },
+      { threshold: 0.1 },
+    );
+    observer.observe(sentinel);
+    return () => observer.disconnect();
+  }, [isTablet, mobileHasMore, attendees.length]);
+
+  // ── Mobile: table fills screen, scrolls internally ──────────────────────
+  if (!isTablet) {
+    const displayedAttendees = attendees.slice(0, mobileVisibleCount);
+
+    return (
+      <div className="flex flex-1 flex-col overflow-hidden px-450 pb-800">
+        <div className="border-line flex flex-1 flex-col overflow-hidden rounded-sm border">
+          <div
+            ref={tableScrollRef}
+            onScroll={(e) => setTableScrolled(e.currentTarget.scrollTop > 0)}
+            className="flex-1 overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          >
+            <Table wrapperClassName="overflow-x-visible">
+              <TableHeader
+                className={cn(
+                  'sticky top-0 z-10',
+                  tableScrolled && 'shadow-[0_1px_5px_0_rgba(17,33,49,0.15)]',
+                )}
+              >
+                <TableRow className="bg-container-neutral-alternative hover:bg-container-neutral-alternative">
+                  <TableHead className="text-text-alternative h-[48px] w-[110px]">이름</TableHead>
+                  <TableHead className="text-text-alternative h-[48px] w-[138px]">학과</TableHead>
+                  <TableHead className="text-text-alternative h-[48px] w-[74px]">직급</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {displayedAttendees.map((attendee, idx) => (
+                  <TableRow
+                    key={`${attendee.name}-${idx}`}
+                    className="hover:bg-container-neutral"
+                  >
+                    <TableCell className="h-[48px] w-[110px] py-0 pl-400">
+                      <span className="typo-body2 text-text-strong truncate">{attendee.name}</span>
+                    </TableCell>
+                    <TableCell className="typo-body2 text-text-strong h-[48px] w-[138px] truncate">
+                      {attendee.department ?? '-'}
+                    </TableCell>
+                    <TableCell className="typo-body2 text-text-strong h-[48px] w-[74px] truncate">
+                      {attendee.position ?? '-'}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+            {mobileHasMore && <div ref={sentinelRef} className="h-1 w-full" />}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // ── Desktop: paginated with header + footer ──────────────────────────────
   const pageStart = (currentPage - 1) * ITEMS_PER_PAGE;
   const pagedAttendees = attendees.slice(pageStart, pageStart + ITEMS_PER_PAGE);
+  const totalPages = Math.max(1, Math.ceil(attendees.length / ITEMS_PER_PAGE));
   const pageNumbers = usePaginationWindow(currentPage, totalPages);
 
   return (
     <>
-      {/* Header */}
       <div className="flex items-center justify-between p-400">
         <h2 className="typo-sub1 text-text-strong">참석자 목록</h2>
         <button
@@ -56,7 +138,6 @@ function CalendarAttendeeListContent({ attendees, onBack }: CalendarAttendeeList
         </button>
       </div>
 
-      {/* Body */}
       <div className="flex flex-col gap-400 overflow-y-auto px-700 pb-500">
         <div className="border-line overflow-hidden rounded-sm border">
           <Table>
@@ -134,7 +215,6 @@ function CalendarAttendeeListContent({ attendees, onBack }: CalendarAttendeeList
         )}
       </div>
 
-      {/* Footer */}
       <CalendarModalFooter>
         <Button variant="primary" size="lg" className="w-full" onClick={onBack}>
           확인
