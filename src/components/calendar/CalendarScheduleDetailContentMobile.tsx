@@ -11,13 +11,9 @@ import {
   AvatarGroupCount,
 } from '@/components/ui/avatar';
 import { CalendarScheduleAttendanceCard } from '@/components/calendar/CalendarScheduleAttendanceCard';
-import {
-  LABEL_CLASS,
-  SCHEDULE_TYPE_LABEL,
-  SCHEDULE_TYPE_TAG_VARIANT,
-  MAX_VISIBLE_ATTENDEES,
-} from '@/components/calendar/calendarScheduleDetailConstants';
-import { formatDDay, formatScheduleTimeRange } from '@/utils/shared/date';
+import { LABEL_CLASS } from '@/components/calendar/calendarScheduleDetailConstants';
+import { useScheduleDetailDerived } from '@/hooks/useScheduleDetailDerived';
+import { formatScheduleTimeRange } from '@/utils/shared/date';
 import TimeIcon from '@/assets/icons/time.svg';
 import LocationIcon from '@/assets/icons/location.svg';
 import type { ScheduleDetail } from '@/types/calendar';
@@ -33,24 +29,17 @@ function CalendarScheduleDetailContentMobile({
   clubId,
   onViewAttendees,
 }: CalendarScheduleDetailContentMobileProps) {
-  const resolvedClubId = schedule.clubId ?? clubId ?? null;
-  const typeLabel = SCHEDULE_TYPE_LABEL[schedule.type] ?? schedule.type;
-  const tagVariant = SCHEDULE_TYPE_TAG_VARIANT[schedule.type] ?? 'primary';
-  const visibleAttendees = schedule.attendees?.slice(0, MAX_VISIBLE_ATTENDEES) ?? [];
-  const remainingCount =
-    schedule.attendeeCount != null
-      ? schedule.attendeeCount - visibleAttendees.length
-      : (schedule.attendees?.length ?? 0) - visibleAttendees.length;
-  const dDayLabel = schedule.dDay != null ? formatDDay(schedule.dDay) : null;
-  const hasDetails = !!(
-    schedule.location ||
-    schedule.host ||
-    visibleAttendees.length > 0 ||
-    (schedule.attendeeCount ?? 0) > 0 ||
-    schedule.description
-  );
-  const showAttendanceCard = schedule.hasAttendanceCheck && schedule.type === 'SESSION';
-  const attendanceStatus = schedule.attendanceStatus ?? 'UPCOMING';
+  const {
+    resolvedClubId,
+    typeLabel,
+    tagVariant,
+    visibleAttendees,
+    remainingCount,
+    dDayLabel,
+    hasDetails,
+    showAttendanceCard,
+    attendanceStatus,
+  } = useScheduleDetailDerived(schedule, clubId);
 
   return (
     <div className="flex flex-col px-450 pb-700">

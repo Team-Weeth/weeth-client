@@ -3,6 +3,10 @@ import { combine, devtools } from 'zustand/middleware';
 import { useShallow } from 'zustand/react/shallow';
 import type { ScheduleDetail } from '@/types/calendar';
 
+/**
+ * reset() 호출 시 실행 시점의 현재 날짜로 초기화됩니다.
+ * 스토어 생성 시점(페이지 로드)이 아닌 리셋 시점 기준입니다.
+ */
 function getInitialState() {
   const now = new Date();
   return {

@@ -2,6 +2,7 @@
 
 import { cn } from '@/lib/cn';
 import { DAY_META, DAY_HEADER_COLOR } from '@/constants/shared/date';
+import { SCHEDULE_DOT_COLOR } from '@/constants/calendar';
 import { buildCalendarCells, getCalendarCellColors } from '@/utils/shared/calendar';
 import {
   useCalendarYear,
@@ -32,8 +33,8 @@ function MonthGrid({ year, month, selectedDate, schedules, onDateClick }: MonthG
     if (!cell.isCurrentMonth || !schedules) return [];
     const daySchedules = schedules.filter((s) => s.start.startsWith(cell.dateStr));
     const dots: string[] = [];
-    if (daySchedules.some((s) => s.type === 'SESSION')) dots.push('bg-brand-primary');
-    if (daySchedules.some((s) => s.type === 'EVENT')) dots.push('bg-state-success');
+    if (daySchedules.some((s) => s.type === 'SESSION')) dots.push(SCHEDULE_DOT_COLOR.SESSION);
+    if (daySchedules.some((s) => s.type === 'EVENT')) dots.push(SCHEDULE_DOT_COLOR.EVENT);
     return dots;
   };
 
@@ -75,8 +76,8 @@ function MonthGrid({ year, month, selectedDate, schedules, onDateClick }: MonthG
             </span>
             {dots.length > 0 && (
               <div className="flex items-center gap-[2px]">
-                {dots.map((dotColor, idx) => (
-                  <span key={idx} className={cn('size-[4px] rounded-full', dotColor)} />
+                {dots.map((dotColor) => (
+                  <span key={dotColor} className={cn('size-[4px] rounded-full', dotColor)} />
                 ))}
               </div>
             )}

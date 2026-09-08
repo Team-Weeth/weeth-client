@@ -62,6 +62,8 @@ interface UpcomingItemProps {
   showDateColumn?: boolean;
 }
 
+const SOFT_TAG_CLASS = 'bg-text-alternative/10 text-text-alternative';
+
 function UpcomingItem({ schedule, onScheduleClick, showDateColumn = true }: UpcomingItemProps) {
   const { day, weekday, time } = formatSessionDateParts(schedule.start);
   const dotColor = SCHEDULE_DOT_COLOR[schedule.type] ?? 'bg-brand-primary';
@@ -107,11 +109,9 @@ function UpcomingItem({ schedule, onScheduleClick, showDateColumn = true }: Upco
           ) : (
             <>
               {schedule.location && (
-                <Tag className="bg-text-alternative/10 text-text-alternative">
-                  {schedule.location}
-                </Tag>
+                <Tag className={SOFT_TAG_CLASS}>{schedule.location}</Tag>
               )}
-              <Tag className="bg-text-alternative/10 text-text-alternative">{time}</Tag>
+              <Tag className={SOFT_TAG_CLASS}>{time}</Tag>
             </>
           )}
         </div>
@@ -133,7 +133,7 @@ function TruncatedTag({ label, constrained = false }: { label: string; constrain
         <Tag
           ref={ref as React.Ref<HTMLSpanElement>}
           className={cn(
-            'bg-text-alternative/10 text-text-alternative',
+            SOFT_TAG_CLASS,
             constrained ? 'block max-w-[92px] truncate' : 'shrink-0',
           )}
           onMouseEnter={() => {

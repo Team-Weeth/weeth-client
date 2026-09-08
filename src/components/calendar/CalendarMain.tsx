@@ -18,7 +18,7 @@ import { CalendarUpcomingPanel, UpcomingItem } from '@/components/calendar/Calen
 import { CalendarAttendancePanel } from '@/components/calendar/CalendarAttendancePanel';
 import { CalendarScheduleDetailContentMobile } from '@/components/calendar/CalendarScheduleDetailContentMobile';
 import { CalendarAttendeeListContent } from '@/components/calendar/CalendarAttendeeListContent';
-import { CardinalDropdown } from '@/components/common';
+import { CardinalDropdown } from '@/components/common/CardinalDropdown';
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -38,6 +38,7 @@ import {
 import { useClubId } from '@/stores';
 import { CalendarScheduleModal } from '@/components/calendar/CalendarScheduleModal';
 import { computeDDay, formatMobileDateHeader, toDateInputValue } from '@/utils/shared/date';
+// TODO: API 연동 후 삭제 — lib/apis/calendar.ts의 getSchedules()로 교체
 import { MOCK_SCHEDULES } from '@/mocks/calendar';
 import type { ScheduleDetail } from '@/types/calendar';
 

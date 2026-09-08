@@ -34,6 +34,54 @@ interface CalendarAttendeeListContentProps {
   onBack: () => void;
 }
 
+interface AttendeeTableRowProps {
+  attendee: AttendeeInfo;
+  showAvatar: boolean;
+}
+
+function AttendeeTableRow({ attendee, showAvatar }: AttendeeTableRowProps) {
+  return (
+    <TableRow className="hover:bg-container-neutral">
+      <TableCell
+        className={cn(
+          'h-[48px] py-0 pl-400',
+          showAvatar ? 'w-[175px] min-w-[128px]' : 'w-[110px]',
+        )}
+      >
+        {showAvatar ? (
+          <div className="flex items-center gap-300">
+            <Avatar size={40} type="round">
+              {attendee.imageUrl ? (
+                <AvatarImage src={attendee.imageUrl} alt={attendee.name} />
+              ) : null}
+              <AvatarFallback variant="person" />
+            </Avatar>
+            <span className="typo-body2 text-text-strong">{attendee.name}</span>
+          </div>
+        ) : (
+          <span className="typo-body2 text-text-strong truncate">{attendee.name}</span>
+        )}
+      </TableCell>
+      <TableCell
+        className={cn(
+          'typo-body2 text-text-strong h-[48px]',
+          showAvatar ? 'w-[308px] min-w-[128px]' : 'w-[138px] truncate',
+        )}
+      >
+        {attendee.department ?? '-'}
+      </TableCell>
+      <TableCell
+        className={cn(
+          'typo-body2 text-text-strong h-[48px]',
+          !showAvatar && 'w-[74px] truncate',
+        )}
+      >
+        {attendee.position ?? '-'}
+      </TableCell>
+    </TableRow>
+  );
+}
+
 function CalendarAttendeeListContent({ attendees, onBack }: CalendarAttendeeListContentProps) {
   const isTablet = useIsTablet();
 
@@ -49,7 +97,7 @@ function CalendarAttendeeListContent({ attendees, onBack }: CalendarAttendeeList
 
   const mobileHasMore = mobileVisibleCount < attendees.length;
 
-  // Desktop pagination — must be declared before any early return
+  // usePaginationWindow는 훅이므로 early return 앞에 선언
   const totalPages = Math.max(1, Math.ceil(attendees.length / ITEMS_PER_PAGE));
   const pageNumbers = usePaginationWindow(currentPage, totalPages);
 
@@ -96,17 +144,11 @@ function CalendarAttendeeListContent({ attendees, onBack }: CalendarAttendeeList
               </TableHeader>
               <TableBody>
                 {displayedAttendees.map((attendee, idx) => (
-                  <TableRow key={`${attendee.name}-${idx}`} className="hover:bg-container-neutral">
-                    <TableCell className="h-[48px] w-[110px] py-0 pl-400">
-                      <span className="typo-body2 text-text-strong truncate">{attendee.name}</span>
-                    </TableCell>
-                    <TableCell className="typo-body2 text-text-strong h-[48px] w-[138px] truncate">
-                      {attendee.department ?? '-'}
-                    </TableCell>
-                    <TableCell className="typo-body2 text-text-strong h-[48px] w-[74px] truncate">
-                      {attendee.position ?? '-'}
-                    </TableCell>
-                  </TableRow>
+                  <AttendeeTableRow
+                    key={`${attendee.name}-${idx}`}
+                    attendee={attendee}
+                    showAvatar={false}
+                  />
                 ))}
               </TableBody>
             </Table>
@@ -151,28 +193,11 @@ function CalendarAttendeeListContent({ attendees, onBack }: CalendarAttendeeList
             </TableHeader>
             <TableBody>
               {pagedAttendees.map((attendee, idx) => (
-                <TableRow
+                <AttendeeTableRow
                   key={`${attendee.name}-${pageStart + idx}`}
-                  className="hover:bg-container-neutral"
-                >
-                  <TableCell className="h-[48px] w-[175px] min-w-[128px] py-0 pl-400">
-                    <div className="flex items-center gap-300">
-                      <Avatar size={40} type="round">
-                        {attendee.imageUrl ? (
-                          <AvatarImage src={attendee.imageUrl} alt={attendee.name} />
-                        ) : null}
-                        <AvatarFallback variant="person" />
-                      </Avatar>
-                      <span className="typo-body2 text-text-strong">{attendee.name}</span>
-                    </div>
-                  </TableCell>
-                  <TableCell className="typo-body2 text-text-strong h-[48px] w-[308px] min-w-[128px]">
-                    {attendee.department ?? '-'}
-                  </TableCell>
-                  <TableCell className="typo-body2 text-text-strong h-[48px]">
-                    {attendee.position ?? '-'}
-                  </TableCell>
-                </TableRow>
+                  attendee={attendee}
+                  showAvatar={true}
+                />
               ))}
             </TableBody>
           </Table>
