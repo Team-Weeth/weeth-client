@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { combine, devtools } from 'zustand/middleware';
 import { useShallow } from 'zustand/react/shallow';
+import type { ScheduleDetail } from '@/types/calendar';
 
 function getInitialState() {
   const now = new Date();
@@ -11,6 +12,10 @@ function getInitialState() {
     sessionEnabled: true,
     eventEnabled: true,
     attendanceOnly: false,
+    monthPickerOpen: false,
+    scheduleDetailOpen: false,
+    attendeeListOpen: false,
+    selectedSchedule: null as ScheduleDetail | null,
   };
 }
 
@@ -38,6 +43,24 @@ export const useCalendarStore = create(
       toggleEvent: () => set((s) => ({ eventEnabled: !s.eventEnabled }), false, 'toggleEvent'),
       toggleAttendance: () =>
         set((s) => ({ attendanceOnly: !s.attendanceOnly }), false, 'toggleAttendance'),
+      goToYearMonth: (year: number, month: number) =>
+        set({ year, month, selectedDate: null }, false, 'goToYearMonth'),
+      openMonthPicker: () => set({ monthPickerOpen: true }, false, 'openMonthPicker'),
+      closeMonthPicker: () => set({ monthPickerOpen: false }, false, 'closeMonthPicker'),
+      openScheduleDetail: (schedule: ScheduleDetail) =>
+        set(
+          { scheduleDetailOpen: true, selectedSchedule: schedule },
+          false,
+          'openScheduleDetail',
+        ),
+      closeScheduleDetail: () =>
+        set(
+          { scheduleDetailOpen: false, attendeeListOpen: false, selectedSchedule: null },
+          false,
+          'closeScheduleDetail',
+        ),
+      openAttendeeList: () => set({ attendeeListOpen: true }, false, 'openAttendeeList'),
+      closeAttendeeList: () => set({ attendeeListOpen: false }, false, 'closeAttendeeList'),
       reset: () => set(getInitialState(), false, 'reset'),
     })),
     { name: 'CalendarStore' },
@@ -56,6 +79,10 @@ export const useCalendarFilters = () =>
       attendanceOnly: s.attendanceOnly,
     })),
   );
+export const useCalendarMonthPickerOpen = () => useCalendarStore((s) => s.monthPickerOpen);
+export const useCalendarScheduleDetailOpen = () => useCalendarStore((s) => s.scheduleDetailOpen);
+export const useCalendarAttendeeListOpen = () => useCalendarStore((s) => s.attendeeListOpen);
+export const useCalendarSelectedSchedule = () => useCalendarStore((s) => s.selectedSchedule);
 export const useCalendarActions = () =>
   useCalendarStore(
     useShallow((s) => ({
@@ -65,6 +92,13 @@ export const useCalendarActions = () =>
       toggleSession: s.toggleSession,
       toggleEvent: s.toggleEvent,
       toggleAttendance: s.toggleAttendance,
+      goToYearMonth: s.goToYearMonth,
+      openMonthPicker: s.openMonthPicker,
+      closeMonthPicker: s.closeMonthPicker,
+      openScheduleDetail: s.openScheduleDetail,
+      closeScheduleDetail: s.closeScheduleDetail,
+      openAttendeeList: s.openAttendeeList,
+      closeAttendeeList: s.closeAttendeeList,
       reset: s.reset,
     })),
   );
