@@ -166,18 +166,18 @@ const ProfileSection = ({
                 className="flex flex-1 cursor-pointer flex-col items-center justify-center gap-2 py-200"
                 onClick={() => router.push(item.href)}
               >
-                <span className="tablet:typo-sub3 typo-button2 text-text-alternative flex items-center gap-2">
+                <span className="desktop:typo-sub3 tablet:typo-button2 typo-caption1 text-text-alternative tablet:gap-2 flex items-center gap-1">
                   {item.label}
-                  <div className="bg-icon-alternative flex size-[18px] items-center justify-center rounded-full">
+                  <div className="bg-icon-alternative tablet:size-[14px] desktop:size-[18px] flex size-3 shrink-0 items-center justify-center rounded-full">
                     <Icon
                       src={ArrowRightIcon}
                       alt=""
-                      size={8}
-                      className="text-icon-inverse pl-[1px]"
+                      size={7}
+                      className="text-icon-inverse tablet:size-[6px]! desktop:size-[7px]! size-[5px]! pl-[1px]"
                     />
                   </div>
                 </span>
-                <span className="tablet:typo-h3 typo-sub1 text-text-strong">{item.count}개</span>
+                <span className="desktop:typo-h3 typo-sub1 text-text-strong">{item.count}개</span>
               </button>
             </Fragment>
           ))}

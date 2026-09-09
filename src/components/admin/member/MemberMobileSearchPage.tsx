@@ -14,6 +14,7 @@ import { MemberTable } from './MemberTable';
 import type { MemberViewMode } from './MemberViewToggle';
 
 interface MemberMobileSearchPageProps extends HTMLAttributes<HTMLDivElement> {
+  warningEnabled?: boolean;
   searchQuery: string;
   onSearchQueryChange: (query: string) => void;
   onCancel: () => void;
@@ -31,6 +32,7 @@ interface MemberMobileSearchPageProps extends HTMLAttributes<HTMLDivElement> {
 }
 
 function MemberMobileSearchPage({
+  warningEnabled = false,
   className,
   searchQuery,
   onSearchQueryChange,
@@ -99,6 +101,7 @@ function MemberMobileSearchPage({
           hasSearchResults &&
           (viewMode === 'card' ? (
             <MemberCardList
+              warningEnabled={warningEnabled}
               members={members}
               page={page}
               totalPages={totalPages}
@@ -112,6 +115,7 @@ function MemberMobileSearchPage({
             />
           ) : (
             <MemberTable
+              warningEnabled={warningEnabled}
               members={members}
               page={page}
               totalPages={totalPages}

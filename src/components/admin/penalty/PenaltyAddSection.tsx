@@ -12,6 +12,7 @@ import { PenaltyScoreInput } from './PenaltyScoreInput';
 import { PenaltyTypeToggle } from './PenaltyTypeToggle';
 
 interface PenaltyAddSectionProps {
+  warningEnabled?: boolean;
   draft: PenaltyRecordDraft;
   onDraftChange: (draft: Partial<PenaltyRecordDraft>) => void;
   onSubmit: () => void;
@@ -22,6 +23,7 @@ interface PenaltyAddSectionProps {
 }
 
 function PenaltyAddSection({
+  warningEnabled = false,
   draft,
   onDraftChange,
   onSubmit,
@@ -30,7 +32,7 @@ function PenaltyAddSection({
   onMemberQueryChange,
   onRemoveMember,
 }: PenaltyAddSectionProps) {
-  const isWarning = draft.type === 'WARNING';
+  const isWarning = warningEnabled && draft.type === 'WARNING';
   const canSubmit =
     draft.memberIds.length > 0 &&
     draft.reason.trim().length > 0 &&
@@ -38,7 +40,9 @@ function PenaltyAddSection({
 
   return (
     <section className="bg-background flex w-full flex-col overflow-hidden rounded-lg">
-      <h2 className="typo-sub1 text-text-strong p-450">페널티/경고 추가</h2>
+      <h2 className="typo-sub1 text-text-strong p-450">
+        {warningEnabled ? '페널티/경고 추가' : '페널티 추가'}
+      </h2>
 
       <form
         className="flex w-full flex-wrap items-end gap-[14px] p-450"
@@ -47,12 +51,14 @@ function PenaltyAddSection({
           onSubmit();
         }}
       >
-        <PenaltyFormField label="구분" className="w-40">
-          <PenaltyTypeToggle
-            value={draft.type}
-            onValueChange={(type: PenaltyType) => onDraftChange({ type })}
-          />
-        </PenaltyFormField>
+        {warningEnabled && (
+          <PenaltyFormField label="구분" className="w-40">
+            <PenaltyTypeToggle
+              value={draft.type}
+              onValueChange={(type: PenaltyType) => onDraftChange({ type })}
+            />
+          </PenaltyFormField>
+        )}
 
         <PenaltyFormField label="페널티 점수" className="w-40">
           <PenaltyScoreInput

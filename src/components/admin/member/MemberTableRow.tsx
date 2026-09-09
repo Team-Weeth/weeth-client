@@ -12,6 +12,7 @@ import { MemberSelectionCheckbox } from './MemberSelectionCheckbox';
 import { MemberStatusBadge } from './MemberStatusBadge';
 
 interface MemberTableRowProps {
+  warningEnabled?: boolean;
   member: Member;
   selected: boolean;
   onToggle: (id: string) => void;
@@ -29,6 +30,7 @@ const TEXT_CELL_CLASS_BY_ID = {
 const NUMBER_CELL_VALUES = ['attendance', 'absence', 'penaltyCount'] as const;
 
 function MemberTableRow({
+  warningEnabled = false,
   member,
   selected,
   onToggle,
@@ -75,13 +77,13 @@ function MemberTableRow({
         </MemberTextCell>
       ))}
 
+      <TableCell className="w-6 min-w-6 p-0" aria-hidden />
+
       {NUMBER_CELL_VALUES.map((key) => (
         <MemberNumberCell key={key}>{member[key]}</MemberNumberCell>
       ))}
-      <TableCell
-        className="max-tablet:h-12 max-tablet:py-100 h-16 w-12 p-0 px-100 py-300"
-        aria-hidden
-      />
+      {warningEnabled && <MemberNumberCell>{member.warningCount ?? '—'}</MemberNumberCell>}
+      <TableCell className="w-6 min-w-6 p-0" aria-hidden />
 
       {textCells.slice(3).map(({ id, value }) => (
         <MemberTextCell key={id} className={TEXT_CELL_CLASS_BY_ID[id]}>
@@ -207,7 +209,7 @@ function MemberTextCell({ className, children }: { className?: string; children:
 
 function MemberNumberCell({ children }: { children: ReactNode }) {
   return (
-    <TableCell className="max-tablet:h-12 max-tablet:py-100 h-16 w-12 p-0 px-100 py-300 text-center">
+    <TableCell className="max-tablet:h-12 max-tablet:py-100 h-16 w-16 min-w-16 p-0 px-100 py-300 text-center">
       <span className="typo-body2 text-text-strong">{children}</span>
     </TableCell>
   );

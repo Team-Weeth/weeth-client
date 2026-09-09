@@ -15,6 +15,7 @@ export interface Member {
   absence: number;
   attendanceRate: number;
   penaltyCount: number;
+  warningCount?: number | null;
   status: MemberStatus;
   profileImageUrl: string | null;
   bio: string | null;
@@ -40,6 +41,7 @@ export interface ClubMember {
   absenceCount: number;
   attendanceRate: number;
   penaltyCount: number;
+  warningCount?: number | null;
   profileImageUrl: string | null;
   bio: string | null;
   joinedAt: string | null;

@@ -27,7 +27,7 @@ const MEMBER_VIEW_MODE_QUERY_KEY = 'view';
 const isMemberViewMode = (value: string | null): value is MemberViewMode =>
   value === 'table' || value === 'card';
 
-function MemberPageContent() {
+function MemberPageContent({ warningEnabled = false }: { warningEnabled?: boolean }) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -196,6 +196,7 @@ function MemberPageContent() {
               <div className={mobileViewMode === 'card' ? 'max-tablet:hidden' : undefined}>
                 {/* Member table */}
                 <MemberTable
+                  warningEnabled={warningEnabled}
                   members={filteredMembers}
                   page={page}
                   totalPages={isMobile ? mobileTotalPages : totalPages}
@@ -208,6 +209,7 @@ function MemberPageContent() {
 
               {mobileViewMode === 'card' && (
                 <MemberCardList
+                  warningEnabled={warningEnabled}
                   className="tablet:hidden"
                   members={filteredMembers}
                   page={page}
@@ -229,6 +231,7 @@ function MemberPageContent() {
 
           {isMobile && isMobileSearchOpen && (
             <MemberMobileSearchPage
+              warningEnabled={warningEnabled}
               searchQuery={searchQuery}
               onSearchQueryChange={handleSearchQueryChange}
               onCancel={handleCloseMobileSearch}

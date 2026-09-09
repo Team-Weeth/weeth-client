@@ -11,6 +11,7 @@ import { MemberSelectionCheckbox } from './MemberSelectionCheckbox';
 import { MemberTableRow } from './MemberTableRow';
 
 interface MemberTableProps extends React.HTMLAttributes<HTMLDivElement> {
+  warningEnabled?: boolean;
   members: Member[];
   page: number;
   totalPages: number;
@@ -21,6 +22,7 @@ interface MemberTableProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 function MemberTable({
+  warningEnabled = false,
   className,
   members,
   page,
@@ -91,7 +93,9 @@ function MemberTable({
                   onClick={toggleAll}
                 />
               </TableHead>
-              {MEMBER_TABLE_COLUMNS.map((column) => (
+              {MEMBER_TABLE_COLUMNS.filter(
+                (column) => column.id !== 'warning' || warningEnabled,
+              ).map((column) => (
                 <TableHead
                   key={column.id}
                   className={cn(
@@ -123,6 +127,7 @@ function MemberTable({
           <TableBody>
             {members.map((member) => (
               <MemberTableRow
+                warningEnabled={warningEnabled}
                 key={member.id}
                 member={member}
                 selected={selectedIds.has(member.id)}
