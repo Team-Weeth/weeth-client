@@ -109,7 +109,11 @@ function CalendarMain({ className }: CalendarMainProps) {
 
   const eventDates = filteredSchedules.map((s) => new Date(s.start));
 
-  const activeDateStr = selectedDate ?? toDateInputValue(new Date());
+  const now = new Date();
+  const isCurrentMonth = year === now.getFullYear() && month === now.getMonth() + 1;
+  const activeDateStr =
+    selectedDate ??
+    (isCurrentMonth ? toDateInputValue(now) : `${year}-${String(month).padStart(2, '0')}-01`);
   const selectedDateSchedules = filteredSchedules.filter((s) => s.start.startsWith(activeDateStr));
 
   const scrollKey = `${year}-${month}-${activeDateStr}`;
