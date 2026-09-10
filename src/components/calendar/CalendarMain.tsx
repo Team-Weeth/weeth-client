@@ -208,8 +208,7 @@ function CalendarMain({ className }: CalendarMainProps) {
               <div
                 className={cn(
                   'relative z-10 -mx-450 flex shrink-0 items-center gap-200 px-450 py-300',
-                  hasScrolled &&
-                    'shadow-[0_16px_12px_0_rgba(0,0,0,0.06)] [clip-path:inset(0_0_-28px_0)]',
+                  hasScrolled && 'shadow-date-header [clip-path:inset(0_0_-28px_0)]',
                 )}
               >
                 <span className="typo-sub1 text-text-normal">

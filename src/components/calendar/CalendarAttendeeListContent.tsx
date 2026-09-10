@@ -124,12 +124,7 @@ function CalendarAttendeeListContent({ attendees, onBack }: CalendarAttendeeList
             className="flex-1 overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
           >
             <Table wrapperClassName="overflow-x-visible">
-              <TableHeader
-                className={cn(
-                  'sticky top-0 z-10',
-                  tableScrolled && 'shadow-[0_1px_5px_0_rgba(17,33,49,0.15)]',
-                )}
-              >
+              <TableHeader className={cn('sticky top-0 z-10', tableScrolled && 'shadow-sm')}>
                 <TableRow className="bg-container-neutral-alternative hover:bg-container-neutral-alternative">
                   <TableHead className="text-text-alternative h-[48px] w-[110px]">이름</TableHead>
                   <TableHead className="text-text-alternative h-[48px] w-[138px]">학과</TableHead>
