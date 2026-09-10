@@ -89,6 +89,14 @@ function CalendarMain({ className }: CalendarMainProps) {
     return () => mql.removeEventListener('change', handler);
   }, [monthPickerOpen, closeMonthPicker]);
 
+  // 페이지 이탈 시 헤더 오버레이 상태 초기화
+  useEffect(() => {
+    return () => {
+      closeScheduleDetail();
+      closeMonthPicker();
+    };
+  }, [closeScheduleDetail, closeMonthPicker]);
+
   const handleOpenMonthPicker = () => {
     setPickerYear(year);
     openMonthPicker();
