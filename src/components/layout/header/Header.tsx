@@ -17,6 +17,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Icon } from '@/components/ui/Icon';
 import { useDuesVisibility } from '@/hooks/queries';
 import { useIsAdmin } from '@/hooks/shared';
+import { CalendarMobileHeader } from '@/components/calendar/CalendarMobileHeader';
 
 interface HeaderProps {
   isMain?: boolean;
@@ -75,55 +76,57 @@ export default function Header({ isMain = true }: HeaderProps) {
     >
       {!shouldHideMobileHeader && (
         <header className="tablet:hidden bg-background flex items-center justify-between gap-100 py-3 pr-450 pl-200">
-          {isMain && (
-            <div className="flex items-center justify-center gap-100">
-              <MobileNavSheet />
-              <span className="typo-sub1 text-text-normal px-1">{clubName}</span>
-            </div>
-          )}
-          {isMain && clubId && (
-            <div className="flex items-center justify-center gap-200">
-              {isPostingPage ? (
-                <PostingActions />
-              ) : (
-                <>
-                  <MobileWriteButton />
-                  {isAdmin && (
-                    <Link
-                      href={`/${clubId}/admin`}
-                      aria-label="운영진 페이지로 이동"
-                      className="flex cursor-pointer items-center justify-center rounded-full"
-                    >
-                      <Icon
-                        src={ExitToAppIcon}
-                        alt="avatar"
-                        size={40}
-                        className="text-icon-normal p-2"
-                      />
-                    </Link>
-                  )}
-                  <button
-                    type="button"
-                    aria-label="마이페이지로 이동"
-                    onClick={() => router.push(`/${clubId}/mypage`)}
-                    className="cursor-pointer rounded-full"
-                  >
-                    <Avatar size={40} type="round">
-                      {profileImageUrl && (
-                        <AvatarImage
-                          key={profileImageUrl}
-                          src={profileImageUrl}
+          <CalendarMobileHeader>
+            {isMain && (
+              <div className="flex items-center justify-center gap-100">
+                <MobileNavSheet />
+                <span className="typo-sub1 text-text-normal px-1">{clubName}</span>
+              </div>
+            )}
+            {isMain && clubId && (
+              <div className="flex items-center justify-center gap-200">
+                {isPostingPage ? (
+                  <PostingActions />
+                ) : (
+                  <>
+                    <MobileWriteButton />
+                    {isAdmin && (
+                      <Link
+                        href={`/${clubId}/admin`}
+                        aria-label="운영진 페이지로 이동"
+                        className="flex cursor-pointer items-center justify-center rounded-full"
+                      >
+                        <Icon
+                          src={ExitToAppIcon}
                           alt="avatar"
-                          className="object-cover"
+                          size={40}
+                          className="text-icon-normal p-2"
                         />
-                      )}
-                      <AvatarFallback />
-                    </Avatar>
-                  </button>
-                </>
-              )}
-            </div>
-          )}
+                      </Link>
+                    )}
+                    <button
+                      type="button"
+                      aria-label="마이페이지로 이동"
+                      onClick={() => router.push(`/${clubId}/mypage`)}
+                      className="cursor-pointer rounded-full"
+                    >
+                      <Avatar size={40} type="round">
+                        {profileImageUrl && (
+                          <AvatarImage
+                            key={profileImageUrl}
+                            src={profileImageUrl}
+                            alt="avatar"
+                            className="object-cover"
+                          />
+                        )}
+                        <AvatarFallback />
+                      </Avatar>
+                    </button>
+                  </>
+                )}
+              </div>
+            )}
+          </CalendarMobileHeader>
         </header>
       )}
       <header className="tablet:flex bg-background hidden w-full items-center justify-between px-5 py-3">
