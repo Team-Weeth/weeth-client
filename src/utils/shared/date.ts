@@ -187,9 +187,8 @@ export function formatAttendanceTime(isoString: string): string {
 
 // '3월 9일 (월)' — 모바일 일정 헤더 포맷
 export function formatMobileDateHeader(dateStr: string): string {
-  const date = new Date(dateStr);
-  const m = date.getMonth() + 1;
-  const d = date.getDate();
+  const [y, m, d] = dateStr.split('-').map(Number);
+  const date = new Date(y, m - 1, d);
   const weekday = DAY_META[date.getDay()].ko;
   return `${m}월 ${d}일 (${weekday})`;
 }
