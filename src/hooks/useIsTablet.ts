@@ -1,18 +1,23 @@
-import { useState, useEffect } from 'react';
+import { useSyncExternalStore } from 'react';
+
+const TABLET_QUERY = '(min-width: 696px)';
+
+function subscribe(callback: () => void) {
+  const mql = window.matchMedia(TABLET_QUERY);
+  mql.addEventListener('change', callback);
+  return () => mql.removeEventListener('change', callback);
+}
+
+function getSnapshot() {
+  return window.matchMedia(TABLET_QUERY).matches;
+}
+
+function getServerSnapshot() {
+  return false;
+}
 
 function useIsTablet() {
-  const [isTablet, setIsTablet] = useState(
-    () => typeof window !== 'undefined' && window.matchMedia('(min-width: 696px)').matches,
-  );
-
-  useEffect(() => {
-    const mql = window.matchMedia('(min-width: 696px)');
-    const handler = (e: MediaQueryListEvent) => setIsTablet(e.matches);
-    mql.addEventListener('change', handler);
-    return () => mql.removeEventListener('change', handler);
-  }, []);
-
-  return isTablet;
+  return useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
 }
 
 export { useIsTablet };
