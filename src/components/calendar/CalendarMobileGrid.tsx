@@ -29,12 +29,20 @@ interface MonthGridProps {
 function MonthGrid({ year, month, selectedDate, schedules, onDateClick }: MonthGridProps) {
   const cells = buildCalendarCells(year, month);
 
+  const scheduleTypesByDate = new Map<string, Set<ScheduleDetail['type']>>();
+  for (const schedule of schedules ?? []) {
+    const date = schedule.start.slice(0, 10);
+    const types = scheduleTypesByDate.get(date) ?? new Set<ScheduleDetail['type']>();
+    types.add(schedule.type);
+    scheduleTypesByDate.set(date, types);
+  }
+
   const getScheduleDots = (cell: (typeof cells)[number]): string[] => {
-    if (!cell.isCurrentMonth || !schedules) return [];
-    const daySchedules = schedules.filter((s) => s.start.startsWith(cell.dateStr));
+    if (!cell.isCurrentMonth) return [];
+    const types = scheduleTypesByDate.get(cell.dateStr);
     const dots: string[] = [];
-    if (daySchedules.some((s) => s.type === 'SESSION')) dots.push(SCHEDULE_DOT_COLOR.SESSION);
-    if (daySchedules.some((s) => s.type === 'EVENT')) dots.push(SCHEDULE_DOT_COLOR.EVENT);
+    if (types?.has('SESSION')) dots.push(SCHEDULE_DOT_COLOR.SESSION);
+    if (types?.has('EVENT')) dots.push(SCHEDULE_DOT_COLOR.EVENT);
     return dots;
   };
 
@@ -97,6 +105,12 @@ function CalendarMobileGrid({ schedules, className }: CalendarMobileGridProps) {
   const prevMonthData = month === 1 ? { year: year - 1, month: 12 } : { year, month: month - 1 };
   const nextMonthData = month === 12 ? { year: year + 1, month: 1 } : { year, month: month + 1 };
 
+  const panels = [
+    { ...prevMonthData, schedules: undefined },
+    { year, month, schedules },
+    { ...nextMonthData, schedules: undefined },
+  ];
+
   const {
     containerRef,
     dragX,
@@ -141,36 +155,17 @@ function CalendarMobileGrid({ schedules, className }: CalendarMobileGridProps) {
         }}
         onTransitionEnd={handleTransitionEnd}
       >
-        {/* Previous month */}
-        <div className="w-1/3 shrink-0">
-          <MonthGrid
-            year={prevMonthData.year}
-            month={prevMonthData.month}
-            selectedDate={selectedDate}
-            onDateClick={toggleDate}
-          />
-        </div>
-
-        {/* Current month */}
-        <div className="w-1/3 shrink-0">
-          <MonthGrid
-            year={year}
-            month={month}
-            selectedDate={selectedDate}
-            schedules={schedules}
-            onDateClick={toggleDate}
-          />
-        </div>
-
-        {/* Next month */}
-        <div className="w-1/3 shrink-0">
-          <MonthGrid
-            year={nextMonthData.year}
-            month={nextMonthData.month}
-            selectedDate={selectedDate}
-            onDateClick={toggleDate}
-          />
-        </div>
+        {panels.map((panel) => (
+          <div key={`${panel.year}-${panel.month}`} className="w-1/3 shrink-0">
+            <MonthGrid
+              year={panel.year}
+              month={panel.month}
+              selectedDate={selectedDate}
+              schedules={panel.schedules}
+              onDateClick={toggleDate}
+            />
+          </div>
+        ))}
       </div>
     </div>
   );
