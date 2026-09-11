@@ -7,7 +7,6 @@ import PhoneIcon from '@/assets/icons/phone.svg';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Icon } from '@/components/ui/Icon';
 import { Tag } from '@/components/ui/tag';
-import { MOCK_MEMBER_POSTS } from '@/constants/mock';
 import type { MemberProfile } from '@/types/member';
 import { formatPhone } from '@/utils/shared/formatPhone';
 import { MemberHiddenCardinalsBadge } from './MemberHiddenCardinalsBadge';
@@ -21,7 +20,7 @@ function MemberDetailBody({ member }: MemberDetailBodyProps) {
   const { clubId } = useParams<{ clubId: string }>();
   const sortedCardinals = [...member.cardinals].sort((a, b) => b - a);
   const [latestCardinal, ...hiddenCardinals] = sortedCardinals;
-  const postCount = MOCK_MEMBER_POSTS.filter((post) => post.memberId === member.id).length;
+  const postCount = member.postCount ?? 0;
 
   return (
     <div>
@@ -48,9 +47,11 @@ function MemberDetailBody({ member }: MemberDetailBodyProps) {
         <p className="typo-body2 text-text-alternative mt-1">{member.description}</p>
 
         <div className="mt-[10px] flex flex-wrap items-center gap-2">
-          <Tag variant="secondary" className="rounded-[5px]">
-            {member.position}
-          </Tag>
+          {member.position && (
+            <Tag variant="secondary" className="rounded-[5px]">
+              {member.position}
+            </Tag>
+          )}
           {latestCardinal !== undefined && (
             <Tag variant="end" className="rounded-[5px]">
               {latestCardinal}기
@@ -62,17 +63,19 @@ function MemberDetailBody({ member }: MemberDetailBodyProps) {
         <div className="typo-body2 text-text-strong mt-3 flex gap-[9px]">
           <div className="flex items-center gap-1">
             <Icon src={PhoneIcon} size={18} alt="연락처" className="text-icon-alternative" />
-            <span>{formatPhone(member.phone)}</span>
+            <span>{member.phone ? formatPhone(member.phone) : '비공개'}</span>
           </div>
           <div className="flex items-center gap-1">
             <Icon src={MailIcon} size={18} alt="이메일" className="text-icon-alternative" />
-            <span>{member.email}</span>
+            <span>{member.email ? member.email : '비공개'}</span>
           </div>
         </div>
 
-        <p className="typo-caption2 text-text-alternative mt-3">
-          {member.department} · {member.studentId}
-        </p>
+        {(member.department || member.studentId) && (
+          <p className="typo-caption2 text-text-alternative mt-3">
+            {[member.department, member.studentId].filter(Boolean).join(' · ')}
+          </p>
+        )}
 
         <Link
           href={`/${clubId}/member/${member.id}/posts`}
