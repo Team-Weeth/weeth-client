@@ -1,10 +1,8 @@
+import { useState } from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Divider } from '@/components/ui/Divider';
 import { Dialog, DialogTrigger } from '@/components/ui/dialog';
 import { Icon } from '@/components/ui/Icon';
 import { Tag } from '@/components/ui/tag';
-import MailIcon from '@/assets/icons/mail.svg';
-import PhoneIcon from '@/assets/icons/phone.svg';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { cn } from '@/lib/cn';
 import type { MemberProfile } from '@/types/member';
@@ -22,6 +20,7 @@ function MemberProfileCard({ className, member, ...props }: MemberProfileCardPro
   const router = useRouter();
   const { clubId } = useParams<{ clubId: string }>();
   const isMobile = useMediaQuery('(max-width: 695.98px)');
+  const [isDetailOpen, setIsDetailOpen] = useState(false);
   const sortedCardinals = [...member.cardinals].sort((a, b) => b - a);
   const [latestCardinal, ...hiddenCardinals] = sortedCardinals;
   const handleViewPostsClick = () => {
@@ -47,12 +46,16 @@ function MemberProfileCard({ className, member, ...props }: MemberProfileCardPro
         <AvatarFallback />
       </Avatar>
 
-      <p className="typo-sub1 text-text-normal mt-[10px] truncate">{member.name}</p>
+      <p className="typo-sub1 text-text-normal mt-[10px] w-full truncate text-center">
+        {member.name}
+      </p>
 
       <div className="mt-2 flex items-center gap-2">
-        <Tag variant="pink" className="rounded-[5px]">
-          {member.position}
-        </Tag>
+        {member.position && (
+          <Tag variant="pink" className="rounded-[5px]">
+            {member.position}
+          </Tag>
+        )}
         {latestCardinal !== undefined && (
           <Tag variant="end" className="rounded-[5px]">
             {latestCardinal}기
@@ -76,9 +79,9 @@ function MemberProfileCard({ className, member, ...props }: MemberProfileCardPro
       {isMobile ? (
         cardContent
       ) : (
-        <Dialog>
+        <Dialog open={isDetailOpen} onOpenChange={setIsDetailOpen}>
           <DialogTrigger asChild>{cardContent}</DialogTrigger>
-          <MemberDetailModal member={member} />
+          <MemberDetailModal clubMemberId={member.id} open={isDetailOpen} />
         </Dialog>
       )}
       <button
