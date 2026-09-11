@@ -24,6 +24,9 @@ export interface UpdateUserBody {
   tel: string;
   school: string;
   department: string;
+  telPublic: boolean;
+  emailPublic: boolean;
+  studentInfoPublic: boolean;
 }
 
 export interface UpdateClubProfileBody {

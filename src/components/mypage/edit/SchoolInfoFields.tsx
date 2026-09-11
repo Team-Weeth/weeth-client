@@ -3,6 +3,7 @@
 import type { Control } from 'react-hook-form';
 import { Controller } from 'react-hook-form';
 import { Input } from '@/components/ui/Input';
+import { Checkbox } from '@/components/ui/Checkbox';
 import { FormField } from '@/components/mypage/FormField';
 import { SearchSelect } from '@/components/mypage/SearchSelect';
 import type { EditProfileFormData } from '@/lib/schemas/editProfile';
@@ -75,6 +76,20 @@ function SchoolInfoFields({ control, schools, majors }: SchoolInfoFieldsProps) {
               />
             </div>
           </FormFieldWrapper>
+        )}
+      />
+
+      <Controller
+        name="studentInfoPublic"
+        control={control}
+        render={({ field }) => (
+          <label className="flex w-fit cursor-pointer items-center gap-[6px]">
+            <Checkbox
+              checked={field.value}
+              onCheckedChange={(checked) => field.onChange(checked === true)}
+            />
+            <span className="typo-caption1 text-text-alternative">부원에게 공개 (학과·학번)</span>
+          </label>
         )}
       />
     </div>
