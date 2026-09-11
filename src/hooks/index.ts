@@ -34,5 +34,3 @@ export { useBottomSheetActiveSnapPoint } from './useBottomSheetActiveSnapPoint';
 export { useMembersQuery } from './member/useMembersQuery';
 export { useMemberDetailQuery } from './member/useMemberDetailQuery';
 export { useMemberPostsQuery } from './member/useMemberPostsQuery';
-export { useMemberDetailQuery } from './member/useMemberDetailQuery';
-export { useMemberPostsQuery } from './member/useMemberPostsQuery';
