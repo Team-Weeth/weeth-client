@@ -1,4 +1,5 @@
 import type { ClubDto } from '@/types/mypage';
+import type { MemberPosition, MemberPost, MemberProfile } from '@/types/member';
 import mockBanner from '@/assets/image/mock-banner.png';
 
 export const MOCK_USER = {
@@ -142,6 +143,179 @@ export const MOCK_PREVIOUS_BALANCE: { balance: number; generationNumber: number 
   balance: 240000,
   generationNumber: 3,
 };
+
+// ─── 멤버 목록 Mock ───────────────────────────────────────────────────────────
+
+export const MOCK_MEMBER_PROFILES: MemberProfile[] = [
+  {
+    id: 1,
+    name: '김지수',
+    profileImageUrl: mockBanner.src,
+    coverImageUrl: mockBanner.src,
+    cardinals: [8],
+    role: 'LEAD',
+    position: '기획',
+    description: '안녕하세요! 이번 기수 회장을 맡은 김지수입니다. 잘 부탁드려요.',
+    phone: '01012340001',
+    email: 'jisoo.kim@weeth.com',
+    department: '경영학과',
+    studentId: '202610001',
+  },
+  {
+    id: 2,
+    name: '이도윤',
+    profileImageUrl: null,
+    coverImageUrl: null,
+    cardinals: [7, 8],
+    role: 'ADMIN',
+    position: '백엔드',
+    description: '백엔드 개발을 맡고 있는 이도윤입니다. 편하게 말씀해주세요.',
+    phone: '01012340002',
+    email: 'doyoon.lee@weeth.com',
+    department: '컴퓨터공학과',
+    studentId: '202610002',
+  },
+  {
+    id: 3,
+    name: '박서연',
+    profileImageUrl: null,
+    coverImageUrl: null,
+    cardinals: [8],
+    role: 'USER',
+    position: '프론트엔드',
+    description: '프론트엔드에 관심 많은 박서연입니다. 열심히 하겠습니다!',
+    phone: '01012340003',
+    email: 'seoyeon.park@weeth.com',
+    department: '소프트웨어학과',
+    studentId: '202610003',
+  },
+  {
+    id: 4,
+    name: '최민준',
+    profileImageUrl: null,
+    coverImageUrl: null,
+    cardinals: [6, 7, 8],
+    role: 'USER',
+    position: '프론트엔드',
+    description: '반갑습니다, 최민준입니다. 함께 성장해요.',
+    phone: '01012340004',
+    email: 'minjun.choi@weeth.com',
+    department: 'AI·소프트웨어학부',
+    studentId: '202610004',
+  },
+  {
+    id: 5,
+    name: '정하은',
+    profileImageUrl: null,
+    coverImageUrl: null,
+    cardinals: [8],
+    role: 'USER',
+    position: '디자인',
+    description: '디자인을 맡고 있는 정하은입니다. 잘 부탁드립니다.',
+    phone: '01012340005',
+    email: 'haeun.jung@weeth.com',
+    department: '시각디자인학과',
+    studentId: '202610005',
+  },
+  {
+    id: 6,
+    name: '윤지호',
+    profileImageUrl: null,
+    coverImageUrl: null,
+    cardinals: [7],
+    role: 'ADMIN',
+    position: '백엔드',
+    description: '운영진 윤지호입니다. 궁금한 점 있으면 언제든 편하게 물어봐주세요.',
+    phone: '01012340006',
+    email: 'jiho.yoon@weeth.com',
+    department: '컴퓨터공학과',
+    studentId: '202610006',
+  },
+  {
+    id: 7,
+    name: '강나연',
+    profileImageUrl: null,
+    coverImageUrl: null,
+    cardinals: [8],
+    role: 'USER',
+    position: '디자인',
+    description: '안녕하세요, 강나연입니다. 잘 부탁드려요!',
+    phone: '01012340007',
+    email: 'nayeon.kang@weeth.com',
+    department: '시각디자인학과',
+    studentId: '202610007',
+  },
+  {
+    id: 8,
+    name: '조현우',
+    profileImageUrl: null,
+    coverImageUrl: null,
+    cardinals: [5, 6, 7, 8],
+    role: 'USER',
+    position: '프론트엔드',
+    description: '오래 활동하고 있는 조현우입니다. 반갑습니다.',
+    phone: '01012340008',
+    email: 'hyunwoo.jo@weeth.com',
+    department: '소프트웨어학과',
+    studentId: '202610008',
+  },
+  // 스크롤/무한목록 확인용으로 대량 생성한 목업 (아래 MOCK_MEMBERS 이름 목록 재사용)
+  ...MOCK_MEMBERS.map(({ name, department, memberRole }, idx) => {
+    const id = 9 + idx;
+    const positions: MemberPosition[] = ['프론트엔드', '백엔드', '디자인', '기획'];
+    const position = positions[idx % positions.length];
+    const latestCardinal = 8 - (idx % 4);
+    const cardinals = idx % 3 === 0 ? [latestCardinal, latestCardinal - 1] : [latestCardinal];
+    return {
+      id,
+      name,
+      profileImageUrl: null,
+      coverImageUrl: null,
+      cardinals,
+      role: memberRole,
+      position,
+      description: `안녕하세요, ${name}입니다. 잘 부탁드려요.`,
+      phone: `0101234${String(id).padStart(4, '0')}`,
+      email: `member${id}@weeth.com`,
+      department,
+      studentId: `20261${String(id).padStart(4, '0')}`,
+    };
+  }),
+];
+
+export const MOCK_MEMBER_POSTS: MemberPost[] = [
+  {
+    postId: 1001,
+    boardId: 1,
+    memberId: 1,
+    title: '이번주는 중간고사로 쉬어갑니다',
+    content:
+      '오늘은 이상하게 초반에 몸이 잘 안 풀려서 걱정했는데\n후반 스파링에서 한 번 제대로 들어간 머리 타격이 있어서 기분 좋았습니다.\n\n아직 발이 먼저 나가고 상체가 늦게 따라오는 게 문제인 것 같아요.\n영상 찍어보니까 생각보다 자세가 많이 무너지더라고요.\n\n그래도 오늘은 "도망가지 말자"는 목표는 지킨 것 같아서 만족합니다.',
+    isNew: true,
+    likeCount: 2,
+    commentCount: 2,
+    createdAt: '2026-09-01T09:00:00',
+    files: [],
+  },
+  {
+    postId: 1000,
+    boardId: 1,
+    memberId: 1,
+    title: '이번주는 중간고사로 쉬어갑니다',
+    content:
+      '오늘은 이상하게 초반에 몸이 잘 안 풀려서 걱정했는데\n후반 스파링에서 한 번 제대로 들어간 머리 타격이 있어서 기분 좋았습니다.\n\n아직 발이 먼저 나가고 상체가 늦게 따라오는 게 문제인 것 같아요.\n영상 찍어보니까 생각보다 자세가 많이 무너지더라고요.\n\n그래도 오늘은 "도망가지 말자"는 목표는 지킨 것 같아서 만족합니다.',
+    isNew: false,
+    likeCount: 2,
+    commentCount: 2,
+    createdAt: '2026-08-25T09:00:00',
+    files: [
+      { id: 1, fileName: 'kendo-1.png', fileUrl: mockBanner.src },
+      { id: 2, fileName: 'kendo-2.png', fileUrl: mockBanner.src },
+      { id: 3, fileName: 'kendo-3.png', fileUrl: mockBanner.src },
+      { id: 4, fileName: 'kendo-4.png', fileUrl: mockBanner.src },
+    ],
+  },
+];
 
 export const MOCK_DEPARTMENTS = [
   '컴퓨터공학과',
