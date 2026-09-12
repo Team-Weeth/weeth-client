@@ -75,6 +75,9 @@ export function useUpdateProfileMutation() {
               department: user.department,
               studentId: user.studentId,
               tel: user.tel,
+              telPublic: user.telPublic,
+              emailPublic: user.emailPublic,
+              studentInfoPublic: user.studentInfoPublic,
             },
             usingProfiles: old.usingProfiles.map((profile) =>
               profile.clubs.some((club) => club.clubId === targetClubId)

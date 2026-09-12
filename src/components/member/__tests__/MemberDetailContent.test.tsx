@@ -2,6 +2,15 @@ import { act, render } from '@testing-library/react';
 import { useParams, useRouter } from 'next/navigation';
 import { MemberDetailContent } from '@/components/member/MemberDetailContent';
 
+jest.mock('@/hooks/member/useMemberDetailQuery', () => ({
+  useMemberDetailQuery: () => ({
+    data: undefined,
+    isPending: true,
+    isError: false,
+    refetch: jest.fn(),
+  }),
+}));
+
 function mockMatchMedia(initialMatches: boolean) {
   let matches = initialMatches;
   let changeListener: (() => void) | null = null;

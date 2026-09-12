@@ -54,6 +54,9 @@ export interface MyPageSummaryUser {
   school: string | null;
   department: string | null;
   studentId: string | null;
+  telPublic: boolean;
+  emailPublic: boolean;
+  studentInfoPublic: boolean;
 }
 
 export interface MyPageSummaryStats {

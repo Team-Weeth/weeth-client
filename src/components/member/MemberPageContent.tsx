@@ -10,21 +10,17 @@ import {
 } from '@/components/ui/breadcrumb';
 import { Dialog } from '@/components/ui/dialog';
 import type { MemberRoleFilterValue } from '@/constants/member';
-import { MOCK_MEMBER_PROFILES } from '@/constants/mock';
 import { useCardinalSelector } from '@/hooks/useCardinalSelector';
+import { useIntersectionObserver } from '@/hooks/board/useIntersectionObserver';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
+import { useMembersQuery } from '@/hooks/member/useMembersQuery';
 import { cn } from '@/lib/cn';
 import type { MemberPosition } from '@/types/member';
 import { CardinalDropdown } from '@/components/common/CardinalDropdown';
 import { MemberDetailModal } from './MemberDetailModal';
 import { MemberFilterContainer } from './MemberFilterContainer';
+import { MemberPageContentSkeleton } from './MemberCardSkeleton';
 import { MemberProfileCard } from './MemberProfileCard';
-
-function toRoleFilterValue(
-  role: (typeof MOCK_MEMBER_PROFILES)[number]['role'],
-): MemberRoleFilterValue {
-  return role === 'USER' ? 'USER' : 'ADMIN';
-}
 
 function MemberPageContent() {
   const router = useRouter();
@@ -35,16 +31,17 @@ function MemberPageContent() {
     autoSelectLatest: true,
     scope: 'calendar',
   });
+  // TODO: 백엔드에 포지션 필드/필터가 추가되면 API 파라미터로 연결
   const [selectedPositions, setSelectedPositions] = useState<MemberPosition[]>([]);
   const [selectedRoles, setSelectedRoles] = useState<MemberRoleFilterValue[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
+  const [debouncedKeyword, setDebouncedKeyword] = useState('');
   const [isHeaderVisible, setIsHeaderVisible] = useState(true);
   const [selectedMemberId, setSelectedMemberId] = useState<number | null>(() => {
     const memberId = searchParams.get('memberId');
     return memberId ? Number(memberId) : null;
   });
   const lastScrollY = useRef(0);
-  const selectedMember = MOCK_MEMBER_PROFILES.find((member) => member.id === selectedMemberId);
 
   const handleDialogOpenChange = (open: boolean) => {
     if (open) return;
@@ -60,6 +57,36 @@ function MemberPageContent() {
     if (!isMobile || selectedMemberId === null) return;
     router.push(`/${clubId}/member/${selectedMemberId}`);
   }, [isMobile, selectedMemberId, clubId, router]);
+
+  // '운영진' 필터는 ADMIN뿐 아니라 LEAD도 포함해야 하는데, memberRole 쿼리 파라미터는 값을 하나만 받을 수 있어 서버 필터링 대신 클라이언트에서 함께 걸러낸다.
+  const isAdminOnlyFilter = selectedRoles.length === 1 && selectedRoles[0] === 'ADMIN';
+  const isUserOnlyFilter = selectedRoles.length === 1 && selectedRoles[0] === 'USER';
+
+  const {
+    data: members = [],
+    isPending,
+    isError,
+    refetch,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useMembersQuery(clubId, {
+    cardinalNumber: activeCardinal?.cardinalNumber,
+    memberRole: isUserOnlyFilter ? 'USER' : undefined,
+    keyword: debouncedKeyword || undefined,
+  });
+  const { ref: sentinelRef, isIntersecting } = useIntersectionObserver({ rootMargin: '200px' });
+
+  useEffect(() => {
+    if (isIntersecting && hasNextPage && !isFetchingNextPage) {
+      fetchNextPage();
+    }
+  }, [fetchNextPage, hasNextPage, isFetchingNextPage, isIntersecting]);
+
+  useEffect(() => {
+    const timeoutId = setTimeout(() => setDebouncedKeyword(searchQuery.trim()), 300);
+    return () => clearTimeout(timeoutId);
+  }, [searchQuery]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -78,16 +105,9 @@ function MemberPageContent() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const normalizedQuery = searchQuery.trim().toLowerCase();
-  const filteredMembers = MOCK_MEMBER_PROFILES.filter((member) => {
-    const matchesPosition =
-      selectedPositions.length === 0 || selectedPositions.includes(member.position);
-    const matchesRole =
-      selectedRoles.length === 0 || selectedRoles.includes(toRoleFilterValue(member.role));
-    const matchesQuery =
-      normalizedQuery === '' || member.name.toLowerCase().includes(normalizedQuery);
-    return matchesPosition && matchesRole && matchesQuery;
-  });
+  const filteredMembers = isAdminOnlyFilter
+    ? members.filter((member) => member.role === 'ADMIN' || member.role === 'LEAD')
+    : members;
 
   return (
     <div className="tablet:px-[64px] flex flex-col self-stretch px-450 pb-[80px]">
@@ -121,13 +141,41 @@ function MemberPageContent() {
           onSearchQueryChange={setSearchQuery}
         />
       </div>
-      <div className="tablet:grid-cols-3 desktop:grid-cols-4 grid grid-cols-1 gap-300">
-        {filteredMembers.map((member) => (
-          <MemberProfileCard key={member.id} member={member} onSelectMember={setSelectedMemberId} />
-        ))}
-      </div>
-      <Dialog open={selectedMember !== undefined} onOpenChange={handleDialogOpenChange}>
-        {selectedMember && <MemberDetailModal member={selectedMember} />}
+      {isPending ? (
+        <MemberPageContentSkeleton />
+      ) : isError ? (
+        <div className="flex flex-col items-center justify-center gap-300 py-800">
+          <p className="typo-body1 text-text-alternative">멤버 목록을 불러오지 못했습니다</p>
+          <button
+            type="button"
+            className="typo-button2 text-brand-primary"
+            onClick={() => refetch()}
+          >
+            다시 시도
+          </button>
+        </div>
+      ) : filteredMembers.length === 0 ? (
+        <p className="typo-body1 text-text-alternative py-800 text-center">
+          조건에 맞는 멤버가 없습니다.
+        </p>
+      ) : (
+        <>
+          <div className="tablet:grid-cols-3 desktop:grid-cols-4 grid grid-cols-1 gap-300">
+            {filteredMembers.map((member) => (
+              <MemberProfileCard
+                key={member.id}
+                member={member}
+                onSelectMember={setSelectedMemberId}
+              />
+            ))}
+          </div>
+          <div ref={sentinelRef} />
+        </>
+      )}
+      <Dialog open={selectedMemberId !== null} onOpenChange={handleDialogOpenChange}>
+        {selectedMemberId !== null && (
+          <MemberDetailModal clubMemberId={selectedMemberId} open={selectedMemberId !== null} />
+        )}
       </Dialog>
     </div>
   );

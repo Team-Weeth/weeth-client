@@ -1,9 +1,6 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Divider } from '@/components/ui/Divider';
 import { Icon } from '@/components/ui/Icon';
 import { Tag } from '@/components/ui/tag';
-import MailIcon from '@/assets/icons/mail.svg';
-import PhoneIcon from '@/assets/icons/phone.svg';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { cn } from '@/lib/cn';
 import type { MemberProfile } from '@/types/member';
@@ -60,12 +57,16 @@ function MemberProfileCard({
           <AvatarFallback />
         </Avatar>
 
-        <p className="typo-sub1 text-text-normal mt-[10px] truncate">{member.name}</p>
+        <p className="typo-sub1 text-text-normal mt-[10px] w-full truncate text-center">
+          {member.name}
+        </p>
 
         <div className="mt-2 flex items-center gap-2">
-          <Tag variant="pink" className="rounded-[5px]">
-            {member.position}
-          </Tag>
+          {member.position && (
+            <Tag variant="pink" className="rounded-[5px]">
+              {member.position}
+            </Tag>
+          )}
           {latestCardinal !== undefined && (
             <Tag variant="end" className="rounded-[5px]">
               {latestCardinal}기

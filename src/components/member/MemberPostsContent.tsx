@@ -1,19 +1,38 @@
 'use client';
 
+import { useEffect } from 'react';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import BackIcon from '@/assets/icons/back.svg';
+import { BoardContentSkeleton } from '@/components/board/BoardContentSkeleton';
 import { PostCard } from '@/components/board/PostCard';
 import { Icon } from '@/components/ui/Icon';
-import { MOCK_MEMBER_POSTS, MOCK_MEMBER_PROFILES } from '@/constants/mock';
+import { useIntersectionObserver } from '@/hooks/board/useIntersectionObserver';
+import { useMemberDetailQuery } from '@/hooks/member/useMemberDetailQuery';
+import { useMemberPostsQuery } from '@/hooks/member/useMemberPostsQuery';
 import { buildPostPath } from '@/lib/board';
 import { formatShortDateTime } from '@/lib/formatTime';
 
 function MemberPostsContent() {
   const router = useRouter();
   const { clubId, memberId } = useParams<{ clubId: string; memberId: string }>();
-  const member = MOCK_MEMBER_PROFILES.find((item) => item.id === Number(memberId));
-  const posts = MOCK_MEMBER_POSTS.filter((post) => post.memberId === Number(memberId));
+  const { data: member } = useMemberDetailQuery(clubId, Number(memberId));
+  const {
+    data: posts = [],
+    isPending,
+    isError,
+    refetch,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useMemberPostsQuery(clubId, Number(memberId));
+  const { ref: sentinelRef, isIntersecting } = useIntersectionObserver({ rootMargin: '200px' });
+
+  useEffect(() => {
+    if (isIntersecting && hasNextPage && !isFetchingNextPage) {
+      fetchNextPage();
+    }
+  }, [fetchNextPage, hasNextPage, isFetchingNextPage, isIntersecting]);
 
   return (
     <div className="tablet:px-[64px] flex min-w-0 flex-1 flex-col gap-4 px-450 pt-450 pb-[80px]">
@@ -28,7 +47,20 @@ function MemberPostsContent() {
         <h1 className="typo-sub3 text-text-normal">작성한 글</h1>
       </div>
 
-      {posts.length === 0 ? (
+      {isPending ? (
+        <BoardContentSkeleton />
+      ) : isError ? (
+        <main className="flex min-w-0 flex-1 flex-col items-center justify-center gap-300 py-800">
+          <p className="typo-body1 text-text-alternative">게시글을 불러오지 못했습니다</p>
+          <button
+            type="button"
+            className="typo-button2 text-brand-primary"
+            onClick={() => refetch()}
+          >
+            다시 시도
+          </button>
+        </main>
+      ) : posts.length === 0 ? (
         <main className="flex min-w-0 flex-1 flex-col items-center justify-center py-800">
           <p className="typo-body1 text-text-alternative">아직 작성한 글이 없습니다.</p>
         </main>
@@ -58,8 +90,6 @@ function MemberPostsContent() {
                 />
               </Link>
 
-              <PostCard.Images files={post.files} className="relative z-10" />
-
               <div className="relative z-10">
                 <PostCard.Actions
                   postId={post.postId}
@@ -74,6 +104,8 @@ function MemberPostsContent() {
               </div>
             </PostCard.Root>
           ))}
+          {isFetchingNextPage && <BoardContentSkeleton />}
+          <div ref={sentinelRef} />
         </main>
       )}
     </div>
