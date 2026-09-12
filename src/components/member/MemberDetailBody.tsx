@@ -59,19 +59,21 @@ function MemberDetailBody({ member }: MemberDetailBodyProps) {
           {hiddenCardinals.length > 0 && <MemberHiddenCardinalsBadge cardinals={hiddenCardinals} />}
         </div>
 
-        <div className="typo-body2 text-text-strong mt-3 flex gap-[9px]">
-          <div className="flex items-center gap-1">
+        <div className="typo-body2 text-text-strong tablet:flex-row mt-3 flex flex-col gap-[9px]">
+          <div className="flex shrink-0 items-center gap-1">
             <Icon src={PhoneIcon} size={18} alt="연락처" className="text-icon-alternative" />
-            <span>{formatPhone(member.phone)}</span>
+            <span className="whitespace-nowrap">{formatPhone(member.phone)}</span>
           </div>
-          <div className="flex items-center gap-1">
+          <div className="flex w-full min-w-0 items-center gap-1">
             <Icon src={MailIcon} size={18} alt="이메일" className="text-icon-alternative" />
-            <span>{member.email}</span>
+            <span className="truncate">{member.email}</span>
           </div>
         </div>
 
-        <p className="typo-caption2 text-text-alternative mt-3">
-          {member.department} · {member.studentId}
+        <p className="typo-caption2 text-text-alternative mt-3 flex items-center gap-[6px]">
+          <span>{member.department}</span>
+          <span>·</span>
+          <span>{member.studentId}</span>
         </p>
 
         <Link
