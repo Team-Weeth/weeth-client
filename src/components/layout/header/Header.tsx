@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { useParams, usePathname, useRouter } from 'next/navigation';
 import LogoGrayIcon from '@/assets/icons/logo/logo_gray_Origin.svg';
 import ExitToAppIcon from '@/assets/icons/exit_to_app.svg';
+import { isMemberDetailPath } from '@/constants/member';
 import { shouldHideMobileHeaderOnMyPage } from '@/constants/mypage/routes';
 import { cn } from '@/lib/cn';
 import { useClubName, useUserProfileImageUrl } from '@/stores';
@@ -38,12 +39,14 @@ export default function Header({ isMain = true }: HeaderProps) {
   const { data: duesVisibility } = useDuesVisibility();
   const isDuesVisible = duesVisibility?.visible === true;
   const isPostingPage = pathname.includes('/write') || /\/board\/edit\/\d+$/.test(pathname);
-  const shouldHideMobileHeader = shouldHideMobileHeaderOnMyPage(pathname, clubId);
+  const shouldHideMobileHeader =
+    shouldHideMobileHeaderOnMyPage(pathname, clubId) || isMemberDetailPath(pathname, clubId);
 
   const NAV_ITEMS = [
     { id: 'board', label: '게시판', href: `/${clubId}/board` },
     { id: 'attendance', label: '출석', href: `/${clubId}/attendance` },
     { id: 'calendar', label: '캘린더', href: `/${clubId}/calendar` },
+    { id: 'member', label: '멤버', href: `/${clubId}/member` },
     ...(isDuesVisible ? [{ id: 'dues', label: '회비', href: `/${clubId}/dues` }] : []),
   ] as const;
   const [visible, setVisible] = useState(true);
