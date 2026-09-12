@@ -57,6 +57,9 @@ function MemberFilterDropdown<T extends string>({
     setOpen(false);
   };
 
+  const isDraftUnchanged =
+    draft.length === selected.length && draft.every((value) => selected.includes(value));
+
   const firstSelectedLabel = options.find((option) => option.value === selected[0])?.label;
   const triggerLabel =
     selected.length === 0
@@ -116,7 +119,7 @@ function MemberFilterDropdown<T extends string>({
                 variant="primary"
                 size="lg"
                 className="flex-1"
-                disabled={draft.length === 0}
+                disabled={isDraftUnchanged}
                 onClick={handleApply}
               >
                 확인
@@ -140,7 +143,13 @@ function MemberFilterDropdown<T extends string>({
           <Button variant="secondary" size="lg" className="w-[86px]" onClick={handleReset}>
             초기화
           </Button>
-          <Button variant="primary" size="lg" className="flex-1" onClick={handleApply}>
+          <Button
+            variant="primary"
+            size="lg"
+            className="flex-1"
+            disabled={isDraftUnchanged}
+            onClick={handleApply}
+          >
             적용
           </Button>
         </div>

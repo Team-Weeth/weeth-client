@@ -9,7 +9,7 @@ function MemberFilterChip({ selected = false, className, ...props }: MemberFilte
   return (
     <button
       className={cn(
-        'typo-button2 rounded-[10px] border-none px-400 py-200 transition-colors',
+        'typo-button2 text-text-inverse hover:bg-button-neutral-interaction cursor-pointer rounded-[10px] border-none px-400 py-200 transition-colors',
         selected
           ? 'bg-brand-primary text-text-inverse'
           : 'bg-container-neutral-alternative text-text-normal',
