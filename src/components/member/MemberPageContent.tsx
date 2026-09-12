@@ -1,26 +1,32 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import {
   Breadcrumb,
   BreadcrumbItem,
   BreadcrumbList,
   BreadcrumbPage,
 } from '@/components/ui/breadcrumb';
+import { Dialog } from '@/components/ui/dialog';
 import type { MemberRoleFilterValue } from '@/constants/member';
 import { useCardinalSelector } from '@/hooks/useCardinalSelector';
 import { useIntersectionObserver } from '@/hooks/board/useIntersectionObserver';
+import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { useMembersQuery } from '@/hooks/member/useMembersQuery';
 import { cn } from '@/lib/cn';
 import type { MemberPosition } from '@/types/member';
 import { CardinalDropdown } from '@/components/common/CardinalDropdown';
+import { MemberDetailModal } from './MemberDetailModal';
 import { MemberFilterContainer } from './MemberFilterContainer';
 import { MemberPageContentSkeleton } from './MemberCardSkeleton';
 import { MemberProfileCard } from './MemberProfileCard';
 
 function MemberPageContent() {
+  const router = useRouter();
   const { clubId } = useParams<{ clubId: string }>();
+  const searchParams = useSearchParams();
+  const isMobile = useMediaQuery('(max-width: 695.98px)');
   const { cardinals, activeCardinal, setSelectedCardinalId } = useCardinalSelector({
     autoSelectLatest: true,
     scope: 'calendar',
@@ -31,7 +37,26 @@ function MemberPageContent() {
   const [searchQuery, setSearchQuery] = useState('');
   const [debouncedKeyword, setDebouncedKeyword] = useState('');
   const [isHeaderVisible, setIsHeaderVisible] = useState(true);
+  const [selectedMemberId, setSelectedMemberId] = useState<number | null>(() => {
+    const memberId = searchParams.get('memberId');
+    return memberId ? Number(memberId) : null;
+  });
   const lastScrollY = useRef(0);
+
+  const handleDialogOpenChange = (open: boolean) => {
+    if (open) return;
+    setSelectedMemberId(null);
+    if (searchParams.get('memberId')) {
+      router.replace(`/${clubId}/member`);
+    }
+  };
+
+  // 데스크톱 모달이 열린 상태에서 모바일 폭으로 리사이즈되면 모바일 상세 페이지로 전환한다.
+  // 라우트 자체가 바뀌므로 이 컴포넌트가 언마운트되며 모달도 함께 닫힌다.
+  useEffect(() => {
+    if (!isMobile || selectedMemberId === null) return;
+    router.push(`/${clubId}/member/${selectedMemberId}`);
+  }, [isMobile, selectedMemberId, clubId, router]);
 
   // '운영진' 필터는 ADMIN뿐 아니라 LEAD도 포함해야 하는데, memberRole 쿼리 파라미터는 값을 하나만 받을 수 있어 서버 필터링 대신 클라이언트에서 함께 걸러낸다.
   const isAdminOnlyFilter = selectedRoles.length === 1 && selectedRoles[0] === 'ADMIN';
@@ -137,12 +162,21 @@ function MemberPageContent() {
         <>
           <div className="tablet:grid-cols-3 desktop:grid-cols-4 grid grid-cols-1 gap-300">
             {filteredMembers.map((member) => (
-              <MemberProfileCard key={member.id} member={member} />
+              <MemberProfileCard
+                key={member.id}
+                member={member}
+                onSelectMember={setSelectedMemberId}
+              />
             ))}
           </div>
           <div ref={sentinelRef} />
         </>
       )}
+      <Dialog open={selectedMemberId !== null} onOpenChange={handleDialogOpenChange}>
+        {selectedMemberId !== null && (
+          <MemberDetailModal clubMemberId={selectedMemberId} open={selectedMemberId !== null} />
+        )}
+      </Dialog>
     </div>
   );
 }

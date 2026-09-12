@@ -1,22 +1,30 @@
 'use client';
 
+import { useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import BackIcon from '@/assets/icons/back.svg';
 import { Button } from '@/components/ui/Button';
 import { Icon } from '@/components/ui/Icon';
 import { useMemberDetailQuery } from '@/hooks/member/useMemberDetailQuery';
+import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { MemberDetailBody } from './MemberDetailBody';
 import { MemberDetailSkeleton } from './MemberDetailSkeleton';
 
 function MemberDetailContent() {
   const router = useRouter();
   const { clubId, memberId } = useParams<{ clubId: string; memberId: string }>();
+  const isMobile = useMediaQuery('(max-width: 695.98px)');
   const {
     data: member,
     isPending,
     isError,
     refetch,
   } = useMemberDetailQuery(clubId, Number(memberId));
+
+  useEffect(() => {
+    if (isMobile) return;
+    router.replace(`/${clubId}/member?memberId=${memberId}`);
+  }, [isMobile, clubId, memberId, router]);
 
   return (
     <div className="flex min-w-0 flex-1 flex-col gap-4 px-450 pt-450 pb-[100px]">
