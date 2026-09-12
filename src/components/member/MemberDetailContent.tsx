@@ -1,16 +1,24 @@
 'use client';
 
+import { useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import BackIcon from '@/assets/icons/back.svg';
 import { Button } from '@/components/ui/Button';
 import { Icon } from '@/components/ui/Icon';
 import { MOCK_MEMBER_PROFILES } from '@/constants/mock';
+import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { MemberDetailBody } from './MemberDetailBody';
 
 function MemberDetailContent() {
   const router = useRouter();
-  const { memberId } = useParams<{ memberId: string }>();
+  const { clubId, memberId } = useParams<{ clubId: string; memberId: string }>();
+  const isMobile = useMediaQuery('(max-width: 695.98px)');
   const member = MOCK_MEMBER_PROFILES.find((item) => item.id === Number(memberId));
+
+  useEffect(() => {
+    if (isMobile) return;
+    router.replace(`/${clubId}/member?memberId=${memberId}`);
+  }, [isMobile, clubId, memberId, router]);
 
   if (!member) return null;
 
