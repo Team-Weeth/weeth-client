@@ -74,7 +74,8 @@ function MemberFilterDropdown<T extends string>({
       onClick={isMobile ? () => handleOpenChange(true) : undefined}
       className={cn(
         'bg-container-neutral typo-button2 text-text-strong group flex cursor-pointer items-center justify-center gap-100 rounded-sm border px-300 py-200 hover:border-neutral-800',
-        selected.length > 0 || open ? 'text-brand-primary' : 'border-line',
+        selected.length > 0 && 'text-brand-primary',
+        open ? 'border-neutral-800' : 'border-line',
         className,
       )}
     >
