@@ -1,6 +1,7 @@
 import type { Cardinal } from '@/types/admin/cardinal';
 import type { Member } from '@/types/admin/member';
 import { getCommonCardinals } from './cardinalSelectionUtils';
+import { compareLatestCardinalDesc, getCardinalNumber, hasCardinal } from './memberTableUtils';
 import { parseCardinals } from './parseCardinals';
 
 type MemberSortBy = 'cardinal' | 'name';
@@ -13,8 +14,7 @@ interface CardinalChangeRequest {
 function filterMembers(members: Member[], selectedCardinal: number | 'all', searchQuery: string) {
   return members.filter((member) => {
     const matchesCardinal =
-      selectedCardinal === 'all' ||
-      parseCardinals(member.cardinal).includes(String(selectedCardinal));
+      selectedCardinal === 'all' || hasCardinal(member.cardinal, selectedCardinal);
 
     return matchesCardinal && matchesMemberSearch(member, searchQuery);
   });
@@ -26,7 +26,7 @@ function sortMembers(members: Member[], sortBy: MemberSortBy) {
       return a.name.localeCompare(b.name, 'ko');
     }
 
-    return getLatestCardinalNumber(b.cardinal) - getLatestCardinalNumber(a.cardinal);
+    return compareLatestCardinalDesc(a, b);
   });
 }
 
@@ -35,9 +35,7 @@ function getMemberIds(members: Member[]) {
 }
 
 function getMemberCardinalNumbers(cardinal: string) {
-  return parseCardinals(cardinal)
-    .map((value) => Number(value.replace('기', '')) || 0)
-    .filter(Boolean);
+  return parseCardinals(cardinal).map(getCardinalNumber).filter(Boolean);
 }
 
 function getSelectedMemberCardinals(members: Member[]) {
@@ -80,13 +78,6 @@ function createBulkCardinalChangeRequests({
 
     return { clubMemberId: member.clubMemberId, cardinalIds: nextCardinalIds };
   });
-}
-
-function getLatestCardinalNumber(cardinal: string) {
-  return Math.max(
-    ...parseCardinals(cardinal).map((value) => Number(value.replace('기', '')) || 0),
-    0,
-  );
 }
 
 export {

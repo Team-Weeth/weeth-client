@@ -1,4 +1,5 @@
 import type { ClubMember, ClubMemberRole, Member } from '@/types/admin/member';
+import { formatCompactDateDisplay } from '@/utils/shared/date';
 
 export const ROLE_MAP: Record<ClubMemberRole, string> = {
   USER: '부원',
@@ -29,13 +30,9 @@ export function toMember(cm: ClubMember): Member {
   };
 }
 
+/** ISO 문자열('2026-07-18T…')에서 날짜만 떼어 '2026.07.18'로 만든다. */
 function formatJoinedAt(joinedAt: string | null | undefined) {
   if (!joinedAt) return null;
 
-  const [date] = joinedAt.split('T');
-  const [year, month, day] = date.split('-');
-
-  if (!year || !month || !day) return joinedAt;
-
-  return `${year}.${month}.${day}`;
+  return formatCompactDateDisplay(joinedAt.split('T')[0]);
 }
