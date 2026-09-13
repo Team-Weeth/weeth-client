@@ -29,7 +29,7 @@ function MemberPageContent() {
   const isMobile = useMediaQuery('(max-width: 695.98px)');
   const { cardinals, activeCardinal, setSelectedCardinalId } = useCardinalSelector({
     autoSelectLatest: true,
-    scope: 'calendar',
+    scope: 'member',
   });
   // TODO: 백엔드에 포지션 필드/필터가 추가되면 API 파라미터로 연결
   const [selectedPositions, setSelectedPositions] = useState<MemberPosition[]>([]);
@@ -154,21 +154,23 @@ function MemberPageContent() {
             다시 시도
           </button>
         </div>
-      ) : filteredMembers.length === 0 ? (
-        <p className="typo-body1 text-text-alternative py-800 text-center">
-          조건에 맞는 멤버가 없습니다.
-        </p>
       ) : (
         <>
-          <div className="tablet:grid-cols-3 desktop:grid-cols-4 grid grid-cols-1 gap-300">
-            {filteredMembers.map((member) => (
-              <MemberProfileCard
-                key={member.id}
-                member={member}
-                onSelectMember={setSelectedMemberId}
-              />
-            ))}
-          </div>
+          {filteredMembers.length === 0 ? (
+            <p className="typo-body1 text-text-alternative py-800 text-center">
+              조건에 맞는 멤버가 없습니다.
+            </p>
+          ) : (
+            <div className="tablet:grid-cols-3 desktop:grid-cols-4 grid grid-cols-1 gap-300">
+              {filteredMembers.map((member) => (
+                <MemberProfileCard
+                  key={member.id}
+                  member={member}
+                  onSelectMember={setSelectedMemberId}
+                />
+              ))}
+            </div>
+          )}
           <div ref={sentinelRef} />
         </>
       )}
