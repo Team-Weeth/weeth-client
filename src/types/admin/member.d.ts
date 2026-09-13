@@ -42,6 +42,8 @@ export interface ClubMember {
   attendanceRate: number;
   penaltyCount: number;
   warningCount?: number | null;
+  /** 마지막 페널티 부여 일시(ISO). 이력이 없으면 null */
+  lastPenaltyAt: string | null;
   profileImageUrl: string | null;
   bio: string | null;
   joinedAt: string | null;
