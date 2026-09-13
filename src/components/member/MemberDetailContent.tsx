@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import BackIcon from '@/assets/icons/back.svg';
 import { Button } from '@/components/ui/Button';
@@ -14,6 +14,7 @@ function MemberDetailContent() {
   const router = useRouter();
   const { clubId, memberId } = useParams<{ clubId: string; memberId: string }>();
   const isMobile = useMediaQuery('(max-width: 695.98px)');
+  const hasMountedRef = useRef(false);
   const {
     data: member,
     isPending,
@@ -22,6 +23,10 @@ function MemberDetailContent() {
   } = useMemberDetailQuery(clubId, Number(memberId));
 
   useEffect(() => {
+    if (!hasMountedRef.current) {
+      hasMountedRef.current = true;
+      return;
+    }
     if (isMobile) return;
     router.replace(`/${clubId}/member?memberId=${memberId}`);
   }, [isMobile, clubId, memberId, router]);
