@@ -14,7 +14,7 @@ import { CalendarScheduleAttendanceCard } from '@/components/calendar/CalendarSc
 import { LABEL_CLASS } from '@/components/calendar/calendarScheduleDetailConstants';
 import { useScheduleDetailDerived } from '@/hooks/useScheduleDetailDerived';
 import { formatScheduleTimeRange } from '@/utils/shared/date';
-import TimeIcon from '@/assets/icons/time.svg';
+import CalendarIcon from '@/assets/icons/calendar.svg';
 import LocationIcon from '@/assets/icons/location.svg';
 import type { ScheduleDetail } from '@/types/calendar';
 
@@ -51,7 +51,7 @@ function CalendarScheduleDetailContentMobile({
         </div>
         <div className="flex flex-wrap gap-200">
           <Tag variant="end">
-            <Icon src={TimeIcon} size={16} className="text-icon-alternative" />
+            <Icon src={CalendarIcon} size={16} className="text-icon-alternative" />
             {formatScheduleTimeRange(schedule.start, schedule.end)}
           </Tag>
           {schedule.location && (
