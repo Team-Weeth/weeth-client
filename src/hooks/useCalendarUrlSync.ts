@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 import { copyTextToClipboard } from '@/utils/shared/clipboard';
+import { useCalendarSelectedSchedule } from '@/stores/useCalendarStore';
 import type { ScheduleDetail } from '@/types/calendar';
 
 function useCalendarUrlSync(
@@ -11,16 +12,19 @@ function useCalendarUrlSync(
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const selectedSchedule = useCalendarSelectedSchedule();
 
-  // 딥링크: 마운트 시 URL 파라미터로 일정 상세 자동 오픈
+  // 딥링크: searchParams 변경 시 URL 파라미터로 일정 상세 동기화
   useEffect(() => {
     const idParam = searchParams.get('id');
     const typeParam = searchParams.get('type');
     if (idParam && (typeParam === 'SESSION' || typeParam === 'EVENT')) {
-      openScheduleDetail({ id: Number(idParam), type: typeParam, title: '', start: '', end: '' });
+      const id = Number(idParam);
+      if (!Number.isSafeInteger(id) || id <= 0) return;
+      if (selectedSchedule?.id === id) return;
+      openScheduleDetail({ id, type: typeParam, title: '', start: '', end: '' });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [searchParams, openScheduleDetail, selectedSchedule]);
 
   const buildUrlWithoutSchedule = () => {
     const params = new URLSearchParams(searchParams.toString());
