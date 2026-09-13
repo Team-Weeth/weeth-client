@@ -82,13 +82,11 @@ function MonthGrid({ year, month, selectedDate, schedules, onDateClick }: MonthG
             >
               {cell.day}
             </span>
-            {dots.length > 0 && (
-              <div className="flex items-center gap-[2px]">
-                {dots.map((dotColor) => (
-                  <span key={dotColor} className={cn('size-[4px] rounded-full', dotColor)} />
-                ))}
-              </div>
-            )}
+            <div className="flex h-[4px] items-center gap-[2px]">
+              {dots.map((dotColor) => (
+                <span key={dotColor} className={cn('size-[4px] rounded-full', dotColor)} />
+              ))}
+            </div>
           </button>
         );
       })}
