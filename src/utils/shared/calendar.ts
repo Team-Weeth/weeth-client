@@ -19,7 +19,7 @@ export function buildCalendarCells(year: number, month: number): CalendarCell[] 
   const daysInMonth = getDaysInMonth(year, month);
   const firstDay = getFirstDayOfMonth(year, month);
   const prevMonthDays = getDaysInMonth(year, month === 1 ? 12 : month - 1);
-  const totalCells = Math.ceil((firstDay + daysInMonth) / 7) * 7;
+  const totalCells = 6 * 7;
 
   const toDateStr = (y: number, m: number, d: number) =>
     `${y}-${String(m).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
