@@ -41,7 +41,7 @@ function MemberHiddenCardinalsBadge({
           side="top"
           align="center"
           sideOffset={8}
-          className="bg-container-floating text-text-on-floating typo-sub1 w-fit rounded-sm px-[14px] py-[10px] shadow-md"
+          className="bg-container-floating text-text-on-floating typo-caption1 w-fit rounded-sm px-[14px] py-[10px] shadow-md"
         >
           {label}
         </PopoverContent>

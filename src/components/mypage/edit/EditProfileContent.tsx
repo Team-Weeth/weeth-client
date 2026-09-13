@@ -54,6 +54,9 @@ function EditProfileContent({ className, schools, majors, ...props }: EditProfil
       school: '',
       department: '',
       studentId: '',
+      telPublic: true,
+      emailPublic: true,
+      studentInfoPublic: true,
     },
   });
 
@@ -68,6 +71,9 @@ function EditProfileContent({ className, schools, majors, ...props }: EditProfil
       school: toFormString(me.school),
       department: toFormString(me.department),
       studentId: toFormString(me.studentId),
+      telPublic: me.telPublic,
+      emailPublic: me.emailPublic,
+      studentInfoPublic: me.studentInfoPublic,
     };
 
     reset(nextValues);
@@ -91,6 +97,9 @@ function EditProfileContent({ className, schools, majors, ...props }: EditProfil
           tel: data.phone?.replace(/-/g, '') ?? '',
           school: data.school,
           department: data.department,
+          telPublic: data.telPublic,
+          emailPublic: data.emailPublic,
+          studentInfoPublic: data.studentInfoPublic,
         },
       },
       {
