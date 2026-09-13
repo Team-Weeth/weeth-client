@@ -53,7 +53,7 @@ export function useAdminPenaltyMembers({
     },
     placeholderData: (previousData) => previousData,
     enabled: !!clubId && cardinalNumber !== null,
-    staleTime: 0,
+    staleTime: 60 * 1000,
     gcTime: 5 * 60 * 1000,
   });
 }
