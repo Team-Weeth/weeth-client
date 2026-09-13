@@ -1,6 +1,11 @@
 // admin components index file
 export { AdminMobileBlockedContent } from './AdminMobileBlockedContent';
 export { CardinalDropdown, type CardinalDropdownProps } from './CardinalDropdown';
+export { CardinalTag, cardinalTagVariants, type CardinalTagProps } from './CardinalTag';
+export { CardinalTagList, type CardinalTagListProps } from './CardinalTagList';
+export { SelectionCheckbox, type SelectionCheckboxProps } from './SelectionCheckbox';
+export { TablePagination, type TablePaginationProps } from './TablePagination';
+export { TableTextCell, type TableTextCellProps } from './TableTextCell';
 export { FloatingSelectionBar, type FloatingSelectionBarProps } from './FloatingSelectionBar';
 export { SelectedCountLabel, type SelectedCountLabelProps } from './SelectedCountLabel';
 export { ModalIconButton, type ModalIconButtonProps } from './modal/ModalIconButton';

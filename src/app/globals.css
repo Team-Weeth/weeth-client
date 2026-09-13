@@ -192,6 +192,7 @@
   --shadow-md: 0 5px 20px 0 rgba(17, 33, 49, 0.2);
   --shadow-lg: 0 10px 30px 0 rgba(17, 33, 49, 0.3);
   --shadow-weeth: 0 0 5px 0 var(--brand-primary);
+  --shadow-date-header: 0 16px 12px 0 rgba(0, 0, 0, 0.06);
   --member-table-sticky-shadow: linear-gradient(
     90deg,
     rgba(0, 0, 0, 0.07) 0%,
@@ -486,7 +487,9 @@
   --radius-lg: 16px;
 
   --shadow-dialog: 0 10px 40px 0 rgba(0, 0, 0, 0.4);
+  --shadow-sm: var(--shadow-sm);
   --shadow-weeth: 0 0 5px 0 var(--brand-primary);
+  --shadow-date-header: var(--shadow-date-header);
 
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);

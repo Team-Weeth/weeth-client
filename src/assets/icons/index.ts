@@ -71,3 +71,7 @@ export { default as SettingIcon } from './setting.svg';
 export { default as AddRoundIcon } from './add_round.svg';
 export { default as CalendarIcon } from './calendar.svg';
 export { default as AddIcon } from './add.svg';
+export { default as ResetIcon } from './reset.svg';
+export { default as FlagPrimaryIcon } from './flag_primary.svg';
+export { default as FlagCautionIcon } from './flag_caution.svg';
+export { default as FlagSecondaryIcon } from './flag_secondary.svg';
