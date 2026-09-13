@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
 import { cn } from '@/lib/cn';
 import { Button } from '@/components/ui/Button';
@@ -72,6 +73,9 @@ function CalendarMain({ className }: CalendarMainProps) {
   } = useCalendarActions();
 
   const isTablet = useIsTablet();
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
 
   const { cardinals, activeCardinal, setSelectedCardinalId } = useCardinalSelector({
     autoSelectLatest: true,
@@ -124,6 +128,46 @@ function CalendarMain({ className }: CalendarMainProps) {
     };
   }, [closeScheduleDetail, closeMonthPicker]);
 
+  // 딥링크: 마운트 시 URL 파라미터로 일정 상세 자동 오픈
+  useEffect(() => {
+    const idParam = searchParams.get('id');
+    const typeParam = searchParams.get('type');
+    if (idParam && (typeParam === 'SESSION' || typeParam === 'EVENT')) {
+      openScheduleDetail({ id: Number(idParam), type: typeParam, title: '', start: '', end: '' });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const buildUrlWithoutSchedule = () => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.delete('id');
+    params.delete('type');
+    const query = params.toString();
+    return query ? `${pathname}?${query}` : pathname;
+  };
+
+  const handleOpenScheduleDetail = (schedule: ScheduleDetail) => {
+    openScheduleDetail(schedule);
+    const params = new URLSearchParams(searchParams.toString());
+    params.set('id', String(schedule.id));
+    params.set('type', schedule.type);
+    router.replace(`${pathname}?${params.toString()}`);
+  };
+
+  const handleCloseScheduleDetail = () => {
+    closeScheduleDetail();
+    router.replace(buildUrlWithoutSchedule());
+  };
+
+  const handleReset = () => {
+    reset();
+    router.replace(buildUrlWithoutSchedule());
+  };
+
+  const handleShare = () => {
+    navigator.clipboard.writeText(window.location.href);
+  };
+
   const handleOpenMonthPicker = () => {
     setPickerYear(year);
     openMonthPicker();
@@ -151,7 +195,7 @@ function CalendarMain({ className }: CalendarMainProps) {
   const { listRef, hasScrolled, onScroll } = useScrollableList(scrollKey);
 
   const handleScheduleClick = (schedule: ScheduleDetail) => {
-    openScheduleDetail(schedule);
+    handleOpenScheduleDetail(schedule);
   };
 
   return (
@@ -174,7 +218,7 @@ function CalendarMain({ className }: CalendarMainProps) {
           }}
           onYearChange={setPickerYear}
           onGoToToday={() => {
-            reset();
+            handleReset();
             closeMonthPicker();
           }}
         />
@@ -205,7 +249,12 @@ function CalendarMain({ className }: CalendarMainProps) {
                 >
                   <Icon src={ArrowDownIcon} size={24} className="text-icon-normal" />
                 </button>
-                <Button variant="outlined" size="sm" className="typo-caption1" onClick={reset}>
+                <Button
+                  variant="outlined"
+                  size="sm"
+                  className="typo-caption1"
+                  onClick={handleReset}
+                >
                   오늘
                 </Button>
               </div>
@@ -213,7 +262,7 @@ function CalendarMain({ className }: CalendarMainProps) {
               {/* Desktop: 캘린더 title + 오늘 button */}
               <div className="tablet:flex hidden flex-1 items-center gap-200">
                 <h2 className="typo-h2 text-text-normal">캘린더</h2>
-                <Button variant="outlined" size="sm" onClick={reset}>
+                <Button variant="outlined" size="sm" onClick={handleReset}>
                   오늘
                 </Button>
               </div>
@@ -335,11 +384,12 @@ function CalendarMain({ className }: CalendarMainProps) {
       <CalendarScheduleModal
         open={isTablet && selectedSchedule !== null}
         onOpenChange={(open) => {
-          if (!open) closeScheduleDetail();
+          if (!open) handleCloseScheduleDetail();
         }}
         schedule={fullDetail ?? selectedSchedule}
         clubId={clubId}
         isLoading={isDetailLoading}
+        onShare={handleShare}
       />
     </div>
   );
