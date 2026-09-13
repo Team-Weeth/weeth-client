@@ -35,7 +35,8 @@ export default async function ClubLayout({ children, params }: ClubLayoutProps) 
     const headerStore = await headers();
     const pathname = headerStore.get('x-pathname') ?? `/${clubId}/home`;
     const search = headerStore.get('x-search') ?? '';
-    return <ClubAccessPage club={club} loginHref={`/login?redirect=${pathname}${search}`} />;
+    const redirect = encodeURIComponent(`${pathname}${search}`);
+    return <ClubAccessPage club={club} loginHref={`/login?redirect=${redirect}`} />;
   }
 
   try {
