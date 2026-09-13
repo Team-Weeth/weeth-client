@@ -7,6 +7,7 @@ import type { MemberProfile } from '@/types/member';
 import { MemberHiddenCardinalsBadge } from './MemberHiddenCardinalsBadge';
 import { MemberRoleFlag } from './MemberRoleFlag';
 import ArrowRightIcon from '@/assets/icons/arrow_right.svg';
+import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 
 interface MemberProfileCardProps extends React.HTMLAttributes<HTMLElement> {
@@ -25,9 +26,6 @@ function MemberProfileCard({
   const isMobile = useMediaQuery('(max-width: 695.98px)');
   const sortedCardinals = [...member.cardinals].sort((a, b) => b - a);
   const [latestCardinal, ...hiddenCardinals] = sortedCardinals;
-  const handleViewPostsClick = () => {
-    router.push(`/${clubId}/member/${member.id}/posts`);
-  };
 
   const handleCardClick = () => {
     if (isMobile) {
@@ -83,15 +81,15 @@ function MemberProfileCard({
           {member.description}
         </p>
       </button>
-      <button
-        onClick={handleViewPostsClick}
+      <Link
+        href={`/${clubId}/member/${member.id}/posts`}
         className="bg-container-neutral-alternative flex items-center justify-between rounded-b-lg px-[18px] py-[13px]"
       >
         <p className="typo-caption2 text-text-normal">작성한 글 보기</p>
         <span className="flex size-[22px] items-center justify-center rounded-[4px] bg-white">
           <Icon src={ArrowRightIcon} size={9} className="text-icon-normal" />
         </span>
-      </button>
+      </Link>
     </div>
   );
 }
