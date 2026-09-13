@@ -1,11 +1,14 @@
 import { computeDDay } from '@/utils/shared/date';
-import type { ScheduleItem as ApiScheduleItem, ScheduleDetail as ApiScheduleDetail } from '@/types/api/schedule';
+import type {
+  ScheduleItem as ApiScheduleItem,
+  ScheduleDetail as ApiScheduleDetail,
+} from '@/types/api/schedule';
 import type { ScheduleDetail } from '@/types/calendar';
 
 const ROLE_LABEL: Record<string, string> = {
-  LEAD: '회장',
+  LEAD: '리더',
   ADMIN: '운영진',
-  USER: '회원',
+  USER: '부원',
 };
 
 /** ScheduleItem (월별 목록) → UI ScheduleDetail (기본 필드만) */
