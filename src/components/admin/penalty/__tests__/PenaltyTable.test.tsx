@@ -2,7 +2,6 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 import { PenaltyTable } from '@/components/admin/penalty';
-import { PENALTY_MEMBERS_PER_PAGE } from '@/constants/admin/penaltyTable.constants';
 import type { PenaltyMember } from '@/types/admin/penalty';
 
 function createMember(overrides: Partial<PenaltyMember> = {}): PenaltyMember {
@@ -31,24 +30,33 @@ function createMembers(count: number) {
 function renderTable({
   members,
   selectedIds = new Set<string>(),
+  page = 1,
+  totalPages = 1,
   onSelectionChange = jest.fn<void, [Set<string>]>(),
   onOpenDetail = jest.fn<void, [PenaltyMember]>(),
+  onPageChange = jest.fn<void, [number]>(),
 }: {
   members: PenaltyMember[];
   selectedIds?: Set<string>;
+  page?: number;
+  totalPages?: number;
   onSelectionChange?: jest.Mock<void, [Set<string>]>;
   onOpenDetail?: jest.Mock<void, [PenaltyMember]>;
+  onPageChange?: jest.Mock<void, [number]>;
 }) {
   render(
     <PenaltyTable
       members={members}
       selectedIds={selectedIds}
+      page={page}
+      totalPages={totalPages}
       onSelectionChange={onSelectionChange}
       onOpenDetail={onOpenDetail}
+      onPageChange={onPageChange}
     />,
   );
 
-  return { onSelectionChange, onOpenDetail };
+  return { onSelectionChange, onOpenDetail, onPageChange };
 }
 
 describe('PenaltyTable', () => {
@@ -91,24 +99,35 @@ describe('PenaltyTable', () => {
     expect(onSelectionChange).toHaveBeenCalledWith(new Set());
   });
 
-  it('전체 선택 버튼은 현재 페이지의 멤버만 선택한다', async () => {
+  it('전체 선택 버튼은 현재 페이지에 보이는 멤버를 모두 선택한다', async () => {
     const user = userEvent.setup();
-    const members = createMembers(PENALTY_MEMBERS_PER_PAGE + 3);
+    const members = createMembers(5);
     const { onSelectionChange } = renderTable({ members });
 
     await user.click(screen.getByRole('button', { name: '현재 페이지 멤버 전체 선택' }));
 
     const selected = onSelectionChange.mock.calls[0][0];
-    expect(selected.size).toBe(PENALTY_MEMBERS_PER_PAGE);
+    expect(selected.size).toBe(5);
     expect(selected.has('member-1')).toBe(true);
-    expect(selected.has(`member-${PENALTY_MEMBERS_PER_PAGE + 1}`)).toBe(false);
+    expect(selected.has('member-5')).toBe(true);
   });
 
-  it('페이지 크기를 넘는 멤버는 다음 페이지로 넘긴다', () => {
-    renderTable({ members: createMembers(PENALTY_MEMBERS_PER_PAGE + 1) });
+  it('페이지가 여러 개면 페이지 링크를 누를 때 onPageChange를 호출한다', async () => {
+    const user = userEvent.setup();
+    const { onPageChange } = renderTable({
+      members: createMembers(3),
+      page: 1,
+      totalPages: 3,
+    });
 
-    expect(screen.getByText('멤버1')).toBeInTheDocument();
-    expect(screen.queryByText(`멤버${PENALTY_MEMBERS_PER_PAGE + 1}`)).not.toBeInTheDocument();
-    expect(screen.getByRole('link', { name: '2' })).toBeInTheDocument();
+    await user.click(screen.getByRole('link', { name: '2' }));
+
+    expect(onPageChange).toHaveBeenCalledWith(2);
+  });
+
+  it('페이지가 하나뿐이면 페이지네이션을 렌더하지 않는다', () => {
+    renderTable({ members: createMembers(3), totalPages: 1 });
+
+    expect(screen.queryByRole('link', { name: '1' })).not.toBeInTheDocument();
   });
 });

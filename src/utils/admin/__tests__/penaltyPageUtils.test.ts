@@ -1,92 +1,13 @@
-import type { PenaltyMember } from '@/types/admin/penalty';
 import {
   formatPenaltyDate,
   getNextPenaltySort,
-  searchPenaltyMembers,
-  sortPenaltyMembers,
   truncateIntroduction,
 } from '@/utils/admin/penaltyPageUtils';
 
-function createMember(
-  overrides: Partial<PenaltyMember> & Pick<PenaltyMember, 'id'>,
-): PenaltyMember {
-  return {
-    clubMemberId: 1,
-    name: '김위드',
-    introduction: '안녕하세요',
-    position: '부원',
-    department: '컴퓨터공학과',
-    penaltyCount: 0,
-    recentPenaltyAt: null,
-    cardinal: '1',
-    status: 'ACTIVE',
-    profileImageUrl: null,
-    ...overrides,
-  };
-}
-
-describe('searchPenaltyMembers', () => {
-  it('이름에 검색어가 포함된 멤버만 남긴다', () => {
-    const members = [
-      createMember({ id: 'm1', name: '김위드' }),
-      createMember({ id: 'm2', name: '이위드' }),
-    ];
-
-    expect(searchPenaltyMembers(members, '김').map((member) => member.id)).toEqual(['m1']);
-  });
-
-  it('공백만 입력하거나 비어 있으면 전체를 반환한다', () => {
-    const members = [createMember({ id: 'm1' }), createMember({ id: 'm2' })];
-
-    expect(searchPenaltyMembers(members, '   ')).toHaveLength(2);
-    expect(searchPenaltyMembers(members, '')).toHaveLength(2);
-  });
-});
-
-describe('sortPenaltyMembers', () => {
-  const members = [
-    createMember({ id: 'm1', cardinal: '2', penaltyCount: 1, recentPenaltyAt: '2026-05-10' }),
-    createMember({ id: 'm2', cardinal: '5, 4', penaltyCount: 3, recentPenaltyAt: '2026-01-02' }),
-    createMember({ id: 'm3', cardinal: '3', penaltyCount: 2, recentPenaltyAt: null }),
-  ];
-
-  it('cardinal은 가장 최근 기수 내림차순으로 정렬한다', () => {
-    expect(sortPenaltyMembers(members, 'cardinal').map((member) => member.id)).toEqual([
-      'm2',
-      'm3',
-      'm1',
-    ]);
-  });
-
-  it('penalty는 페널티 점수 내림차순으로 정렬한다', () => {
-    expect(sortPenaltyMembers(members, 'penalty').map((member) => member.id)).toEqual([
-      'm2',
-      'm3',
-      'm1',
-    ]);
-  });
-
-  it('recent는 최근 페널티 내림차순으로 정렬하고 이력 없는 멤버를 뒤로 보낸다', () => {
-    expect(sortPenaltyMembers(members, 'recent').map((member) => member.id)).toEqual([
-      'm1',
-      'm2',
-      'm3',
-    ]);
-  });
-
-  it('원본 배열을 변경하지 않는다', () => {
-    const original = [...members];
-    sortPenaltyMembers(members, 'penalty');
-
-    expect(members).toEqual(original);
-  });
-});
-
 describe('getNextPenaltySort', () => {
-  it('cardinal → penalty → recent → cardinal 순으로 순환한다', () => {
-    expect(getNextPenaltySort('cardinal')).toBe('penalty');
-    expect(getNextPenaltySort('penalty')).toBe('recent');
-    expect(getNextPenaltySort('recent')).toBe('cardinal');
+  it('CARDINAL_DESC와 CARDINAL_ASC를 번갈아 반환한다', () => {
+    expect(getNextPenaltySort('CARDINAL_DESC')).toBe('CARDINAL_ASC');
+    expect(getNextPenaltySort('CARDINAL_ASC')).toBe('CARDINAL_DESC');
   });
 });
 

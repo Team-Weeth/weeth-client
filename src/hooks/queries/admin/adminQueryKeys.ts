@@ -11,8 +11,11 @@ export const adminQueryKeys = {
 
   // 페널티 — 기수별 멤버 목록, 멤버 단건 상세
   penalties: (clubId: string | null) => ['admin', 'penalties', clubId] as const,
-  penaltyMembers: (clubId: string | null, cardinalNumber: number | null) =>
-    ['admin', 'penalties', clubId, 'members', cardinalNumber] as const,
+  penaltyMembers: (
+    clubId: string | null,
+    cardinalNumber: number | null,
+    params?: { keyword: string; sort: string; page: number },
+  ) => ['admin', 'penalties', clubId, 'members', cardinalNumber, params] as const,
   memberPenaltyDetail: (clubId: string | null, clubMemberId: number | null) =>
     ['admin', 'penalties', clubId, 'detail', clubMemberId] as const,
 
