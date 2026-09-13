@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { cn } from '@/lib/cn';
 import { Button } from '@/components/ui/Button';
 import { Icon } from '@/components/ui/Icon';
@@ -38,15 +39,14 @@ import {
 import { useClubId } from '@/stores';
 import { CalendarScheduleModal } from '@/components/calendar/CalendarScheduleModal';
 import { computeDDay, formatMobileDateHeader, toDateInputValue } from '@/utils/shared/date';
-// TODO: API 연동 후 삭제 — lib/apis/calendar.ts의 getSchedules()로 교체
-import { MOCK_SCHEDULES } from '@/mocks/calendar';
+import { scheduleApi } from '@/lib/apis/schedule';
+import { scheduleQueryKeys } from '@/hooks/queries/schedule/scheduleQueryKeys';
+import { useMonthlySchedulesQuery } from '@/hooks/queries/schedule/useScheduleQueries';
+import { toBaseUiSchedule, toUiScheduleDetail } from '@/components/calendar/calendarScheduleMapper';
 import type { ScheduleDetail } from '@/types/calendar';
 
 interface CalendarMainProps {
   className?: string;
-  // TODO: 캘린더 출석 요약 연결 — page.tsx에서 attendanceServerApi.getDetail 결과를 받아 전달
-  // attendanceRate?: number;  // Math.round((attendanceCount / total) * 100)
-  // totalCount?: number;       // AttendanceSummary.total
 }
 
 function CalendarMain({ className }: CalendarMainProps) {
@@ -61,6 +61,7 @@ function CalendarMain({ className }: CalendarMainProps) {
   const {
     toggleDate,
     goToYearMonth,
+    goToYearMonthDate,
     openMonthPicker,
     closeMonthPicker,
     openScheduleDetail,
@@ -78,6 +79,32 @@ function CalendarMain({ className }: CalendarMainProps) {
   });
 
   const [pickerYear, setPickerYear] = useState(year);
+
+  // 월별 일정 목록
+  const { data: rawSchedules = [] } = useMonthlySchedulesQuery(
+    year,
+    month,
+    activeCardinal?.cardinalNumber,
+  );
+
+  // 선택된 일정의 상세 정보 — selectedSchedule이 있을 때만 fetch
+  const { data: apiDetail, isLoading: isDetailLoading } = useQuery({
+    queryKey: scheduleQueryKeys.detail(
+      clubId,
+      selectedSchedule?.id ?? null,
+      selectedSchedule?.type ?? null,
+    ),
+    queryFn: () =>
+      scheduleApi
+        .getDetail(clubId!, selectedSchedule!.id, selectedSchedule!.type)
+        .then((res) => res.data.data),
+    enabled: !!clubId && selectedSchedule !== null,
+    staleTime: 5 * 60 * 1000,
+    gcTime: 10 * 60 * 1000,
+  });
+
+  // 상세 데이터가 오면 풍부한 UI 타입으로 변환, 로딩 중에는 기본 목록 데이터 사용
+  const fullDetail = apiDetail ? toUiScheduleDetail(apiDetail, clubId) : selectedSchedule;
 
   useEffect(() => {
     if (!monthPickerOpen) return;
@@ -102,11 +129,7 @@ function CalendarMain({ className }: CalendarMainProps) {
     openMonthPicker();
   };
 
-  const schedules = MOCK_SCHEDULES.filter((s) => {
-    const scheduleMonth = Number(s.start.split('-')[1]);
-    const scheduleYear = Number(s.start.split('-')[0]);
-    return scheduleYear === year && scheduleMonth === month;
-  }).map((s) => ({ ...s, dDay: computeDDay(s.start) }));
+  const schedules = rawSchedules.map(toBaseUiSchedule);
 
   const filteredSchedules = schedules.filter((s) => {
     if (attendanceOnly) return s.type === 'SESSION';
@@ -272,6 +295,7 @@ function CalendarMain({ className }: CalendarMainProps) {
                 selectedDate={selectedDate}
                 onSelectDate={toggleDate}
                 onScheduleClick={handleScheduleClick}
+                onCrossMonthDateClick={(dateStr, y, m) => goToYearMonthDate(y, m, dateStr)}
                 className="min-w-0 flex-1"
               />
               <div className="desktop:flex hidden flex-col gap-300">
@@ -292,13 +316,13 @@ function CalendarMain({ className }: CalendarMainProps) {
         <div className="bg-background fixed inset-0 z-[65] flex flex-col overflow-hidden pt-16">
           {attendeeListOpen ? (
             <CalendarAttendeeListContent
-              attendees={selectedSchedule.attendees ?? []}
+              attendees={fullDetail?.attendees ?? []}
               onBack={closeAttendeeList}
             />
           ) : (
             <div className="flex-1 overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
               <CalendarScheduleDetailContentMobile
-                schedule={selectedSchedule}
+                schedule={fullDetail ?? selectedSchedule}
                 clubId={clubId}
                 onViewAttendees={openAttendeeList}
               />
@@ -313,8 +337,9 @@ function CalendarMain({ className }: CalendarMainProps) {
         onOpenChange={(open) => {
           if (!open) closeScheduleDetail();
         }}
-        schedule={selectedSchedule}
+        schedule={fullDetail ?? selectedSchedule}
         clubId={clubId}
+        isLoading={isDetailLoading}
       />
     </div>
   );

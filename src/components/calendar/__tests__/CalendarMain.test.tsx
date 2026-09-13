@@ -87,12 +87,6 @@ jest.mock('@/stores/useCalendarStore', () => ({
   useCalendarActions: jest.fn(),
 }));
 
-// ── test data ──────────────────────────────────────────────────────────────
-
-// Override MOCK_SCHEDULES with an empty list so schedule filtering does not
-// interfere with date-header assertions.
-jest.mock('@/mocks/calendar', () => ({ MOCK_SCHEDULES: [] }));
-
 // ── helpers ────────────────────────────────────────────────────────────────
 
 function mockStore(overrides: { year: number; month: number; selectedDate?: string | null }) {
