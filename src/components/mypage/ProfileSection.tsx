@@ -166,7 +166,7 @@ const ProfileSection = ({
                 className="flex flex-1 cursor-pointer flex-col items-center justify-center gap-2 py-200"
                 onClick={() => router.push(item.href)}
               >
-                <span className="desktop:typo-sub3 tablet:typo-button2 typo-caption1 text-text-alternative tablet:gap-2 flex items-center gap-1">
+                <span className="tablet:typo-button2 desktop:typo-sub3 typo-caption1 text-text-alternative tablet:gap-2 flex items-center gap-100">
                   {item.label}
                   <div className="bg-icon-alternative tablet:size-[14px] desktop:size-[18px] flex size-3 shrink-0 items-center justify-center rounded-full">
                     <Icon

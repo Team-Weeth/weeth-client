@@ -3,6 +3,19 @@ import userEvent from '@testing-library/user-event';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { MemberPageContent } from '@/components/member/MemberPageContent';
 import { TooltipProvider } from '@/components/ui/Tooltip';
+import type { MemberProfile } from '@/types/member';
+
+const MOCK_MEMBERS: MemberProfile[] = [
+  {
+    id: 1,
+    name: '김지수',
+    profileImageUrl: null,
+    cardinals: [8],
+    role: 'LEAD',
+    position: '기획',
+    description: '설명',
+  },
+];
 
 jest.mock('@/hooks/useCardinalSelector', () => ({
   useCardinalSelector: () => ({
@@ -11,6 +24,34 @@ jest.mock('@/hooks/useCardinalSelector', () => ({
     setSelectedCardinalId: jest.fn(),
   }),
 }));
+
+jest.mock('@/hooks/member/useMembersQuery', () => ({
+  useMembersQuery: () => ({
+    data: MOCK_MEMBERS,
+    isPending: false,
+    isError: false,
+    refetch: jest.fn(),
+    fetchNextPage: jest.fn(),
+    hasNextPage: false,
+    isFetchingNextPage: false,
+  }),
+}));
+
+jest.mock('@/hooks/member/useMemberDetailQuery', () => ({
+  useMemberDetailQuery: () => ({
+    data: undefined,
+    isPending: true,
+    isError: false,
+    refetch: jest.fn(),
+  }),
+}));
+
+class MockIntersectionObserver {
+  observe = jest.fn();
+  disconnect = jest.fn();
+  unobserve = jest.fn();
+}
+window.IntersectionObserver = MockIntersectionObserver as unknown as typeof IntersectionObserver;
 
 function mockMatchMedia(initialMatches: boolean) {
   let matches = initialMatches;
