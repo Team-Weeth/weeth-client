@@ -3,7 +3,12 @@ import type { ClubMember, ClubMemberRole } from '@/types/admin/member';
 import type { ApiResponse, PageResponse } from '@/types/common';
 
 /** 멤버 목록 정렬 (백엔드가 지원하는 값) */
-export type ClubMemberSort = 'CARDINAL_DESC' | 'CARDINAL_ASC' | 'NAME_ASC' | 'JOINED_DESC';
+export type ClubMemberSort =
+  | 'CARDINAL_DESC'
+  | 'CARDINAL_ASC'
+  | 'NAME_ASC'
+  | 'JOINED_DESC'
+  | 'PENALTY_DESC';
 
 export interface ClubMemberListParams {
   page?: number;

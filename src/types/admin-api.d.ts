@@ -1946,6 +1946,12 @@ export interface components {
        * @example 2026-02-19T01:00:00
        */
       time: string;
+      /**
+       * @description 페널티 유형 (PENALTY: 패널티, WARNING: 경고)
+       * @example PENALTY
+       * @enum {string}
+       */
+      penaltyType: 'PENALTY' | 'WARNING';
     };
     'com.weeth.global.common.response.CommonResponseCom.weeth.domain.penalty.application.dto.response.MemberPenaltyDetailResponse': {
       /** Format: int32 */
@@ -5706,7 +5712,7 @@ export interface operations {
         size?: number;
         keyword?: string;
         cardinalNumber?: number;
-        sort?: 'CARDINAL_DESC' | 'CARDINAL_ASC' | 'NAME_ASC' | 'JOINED_DESC';
+        sort?: 'CARDINAL_DESC' | 'CARDINAL_ASC' | 'NAME_ASC' | 'JOINED_DESC' | 'PENALTY_DESC';
       };
       header?: never;
       path: {

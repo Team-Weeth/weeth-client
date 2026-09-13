@@ -5,9 +5,10 @@ import {
 } from '@/utils/admin/penaltyPageUtils';
 
 describe('getNextPenaltySort', () => {
-  it('CARDINAL_DESC와 CARDINAL_ASC를 번갈아 반환한다', () => {
+  it('CARDINAL_DESC → CARDINAL_ASC → PENALTY_DESC → CARDINAL_DESC 순으로 순환한다', () => {
     expect(getNextPenaltySort('CARDINAL_DESC')).toBe('CARDINAL_ASC');
-    expect(getNextPenaltySort('CARDINAL_ASC')).toBe('CARDINAL_DESC');
+    expect(getNextPenaltySort('CARDINAL_ASC')).toBe('PENALTY_DESC');
+    expect(getNextPenaltySort('PENALTY_DESC')).toBe('CARDINAL_DESC');
   });
 });
 

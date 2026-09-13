@@ -28,6 +28,8 @@
 
 > 페널티 횟수순은 "누가 제일 많이 쌓였나"라 관리 화면에서 유용하다. 순수 기술 편의로 지운 게 아니라, 백엔드 지원 없이는 전체 fetch를 강제하기 때문에 **잠정 제거**한 것이다.
 
+> **2026-09-13 갱신** — `pnpm generate:types:admin` 으로 dev 스펙을 다시 받아보니 `/members` 의 `sort` 에 `PENALTY_DESC`(페널티 많은 순)가 추가되어 있었다. 되살리는 조건 중 절반이 채워진 것 — `PenaltySortBy` 에 `PENALTY_DESC` 를 추가하고 `PENALTY_SORT_ORDER`/`PENALTY_SORT_LABEL` 에 반영했다. `PENALTY_ASC` 와 `LAST_PENALTY_AT_*`(최근 페널티일 정렬)는 아직 없어 TODO로 남겨둔다.
+
 ### 2. 멤버 리스트는 `/members` 하나로 서버 검색·정렬·페이지네이션한다
 
 - `useAdminPenaltyMembers({ cardinalNumber, keyword, sort, page })` — 서버가 필터·정렬한 한 페이지(`size=8`)만 조회. fetch 루프 삭제
@@ -70,11 +72,11 @@
 - `useAdminPenaltyMembers` 시그니처 변경(위치 인자 → 객체), 반환 `{ members, totalPages }` 로 변경
 - `adminQueryKeys.penaltyMembers` 에 `{ keyword, sort, page }` 파라미터 추가 → 캐시가 파라미터별로 분리됨
 - `PENALTY_MEMBER_PAGE_SIZE`(100) 상수 삭제, `PENALTY_MEMBERS_PER_PAGE`(8)가 서버 `size` 로 겸용
-- `penaltyPageUtils` 에서 `searchPenaltyMembers` / `sortPenaltyMembers` 삭제 (`getNextPenaltySort` 는 2개 토글로 유지)
+- `penaltyPageUtils` 에서 `searchPenaltyMembers` / `sortPenaltyMembers` 삭제 (`getNextPenaltySort` 는 3개 순환으로 유지: 기수 내림·오름·페널티 많은 순 — 2026-09-13 갱신)
 - `useTableSelection` API 축소 — 현재 `PenaltyTable` 만 사용하므로 외부 영향 없음. ADR-005 "미해결 중복 A"의 멤버 표 이관은 여전히 남아 있음
 - 테스트: `penaltyPageUtils.test.ts`(검색·정렬 블록 제거), `PenaltyTable.test.tsx`(props에 `page`/`totalPages`/`onPageChange` 추가, 클라 페이지네이션 케이스 → 서버 페이지네이션 케이스로 교체)
 
 ## 백엔드에 남은 요청
 
-1. `/members` 의 `sort` 에 페널티 정렬 값 추가 (`PENALTY_COUNT_*`, `LAST_PENALTY_AT_*`)
+1. ~~`/members` 의 `sort` 에 페널티 정렬 값 추가~~ — `PENALTY_DESC` 는 2026-09-13 추가 확인, 적용 완료. `LAST_PENALTY_AT_*`(최근 페널티일 정렬)는 아직 없음
 2. `/members?keyword=` 가 정상 동작하는지 확인 → 맞으면 `/members/search` 는 프론트에서 미사용 (제거하거나 최소한 `PageResponse` + `sort`/`page` 지원으로 통일)

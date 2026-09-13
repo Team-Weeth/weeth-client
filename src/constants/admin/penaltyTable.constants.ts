@@ -19,13 +19,18 @@ export const PENALTY_TABLE_COLUMNS = [
   { id: 'cardinal', label: '기수', width: PENALTY_COLUMN_WIDTH.cardinal },
 ] as const;
 
-// TODO(페널티 정렬): 페널티 횟수·최근 페널티일 정렬은 멤버 목록 API가 지원하지 않아 제거됨.
-// 백엔드에 해당 sort 값이 생기면 order/label에 다시 추가한다.
-export const PENALTY_SORT_ORDER: PenaltySortBy[] = ['CARDINAL_DESC', 'CARDINAL_ASC'];
+// TODO(페널티 정렬): 최근 페널티일 정렬은 LAST_PENALTY_AT_* sort 값이 아직 없어 제외됨.
+// 백엔드에 추가되면 order/label에 마저 넣는다.
+export const PENALTY_SORT_ORDER: PenaltySortBy[] = [
+  'CARDINAL_DESC',
+  'CARDINAL_ASC',
+  'PENALTY_DESC',
+];
 
 export const PENALTY_SORT_LABEL: Record<PenaltySortBy, string> = {
   CARDINAL_DESC: '기수 높은 순',
   CARDINAL_ASC: '기수 낮은 순',
+  PENALTY_DESC: '페널티 많은 순',
 };
 
 export const PENALTY_TYPE_OPTIONS: { value: PenaltyType; label: string; disabled?: boolean }[] = [
