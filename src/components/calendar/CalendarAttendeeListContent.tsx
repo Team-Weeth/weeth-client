@@ -112,16 +112,15 @@ function CalendarAttendeeListContent({ attendees, onBack }: CalendarAttendeeList
     return () => observer.disconnect();
   }, [isTablet, mobileHasMore, attendees.length]);
 
-  // ── Mobile: table fills screen, scrolls internally ──────────────────────
   if (!isTablet) {
     const displayedAttendees = attendees.slice(0, mobileVisibleCount);
 
     return (
-      <div className="flex flex-1 flex-col overflow-hidden px-450 pb-800">
-        <div className="border-line flex flex-1 flex-col overflow-hidden rounded-sm border">
+      <div className="px-450 pb-800">
+        <div className="border-line overflow-hidden rounded-sm border">
           <div
             onScroll={(e) => setTableScrolled(e.currentTarget.scrollTop > 0)}
-            className="flex-1 overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+            className="max-h-[calc(100dvh-106px)] overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
           >
             <Table wrapperClassName="overflow-x-visible">
               <TableHeader className={cn('sticky top-0 z-10', tableScrolled && 'shadow-sm')}>
