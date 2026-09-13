@@ -1,6 +1,7 @@
 'use client';
 
 import { useRef } from 'react';
+import { flushSync } from 'react-dom';
 import { cn } from '@/lib/cn';
 import { DAY_META, DAY_HEADER_COLOR } from '@/constants/shared/date';
 import { buildCalendarCells, getCalendarCellColors } from '@/utils/shared/calendar';
@@ -23,6 +24,7 @@ interface CalendarGridProps {
   selectedDate?: string | null;
   onSelectDate?: (date: string) => void;
   onScheduleClick?: (schedule: ScheduleDetail) => void;
+  onCrossMonthDateClick?: (dateStr: string, year: number, month: number) => void;
   className?: string;
 }
 
@@ -33,6 +35,7 @@ function CalendarGrid({
   selectedDate,
   onSelectDate,
   onScheduleClick,
+  onCrossMonthDateClick,
   className,
 }: CalendarGridProps) {
   const cells = buildCalendarCells(year, month);
@@ -91,7 +94,37 @@ function CalendarGrid({
             );
 
             const handleCellClick = (e: React.MouseEvent<HTMLDivElement>) => {
-              if (!cell.isCurrentMonth) return;
+              if (!cell.isCurrentMonth) {
+                if (!onCrossMonthDateClick) return;
+                flushSync(() => {
+                  onCrossMonthDateClick(cell.dateStr, cell.year, cell.month);
+                });
+                // flushSync 이후 DOM은 새 달로 재렌더링됨.
+                // 새 달의 셀 element를 직접 쿼리해 위치를 계산한다.
+                const wrapper = wrapperRef.current;
+                if (!wrapper) return;
+                const newCellEl = wrapper.querySelector(
+                  `[data-calendar-cell="${cell.dateStr}"]`,
+                ) as HTMLElement | null;
+                if (!newCellEl) return;
+                const newCells = buildCalendarCells(cell.year, cell.month);
+                const newIndex = newCells.findIndex((c) => c.dateStr === cell.dateStr);
+                if (newIndex === -1) return;
+                const newCol = newIndex % 7;
+                const newRow = Math.floor(newIndex / 7);
+                const newTotalRows = newCells.length / 7;
+                const [, m, d] = cell.dateStr.split('-');
+                openPopup({
+                  dateStr: cell.dateStr,
+                  formattedDate: `${Number(m)}월 ${Number(d)}일`,
+                  row: newRow,
+                  col: newCol,
+                  totalRows: newTotalRows,
+                  wRect: wrapper.getBoundingClientRect(),
+                  cRect: newCellEl.getBoundingClientRect(),
+                });
+                return;
+              }
 
               const isDeselect = selectedDate === cell.dateStr;
               onSelectDate?.(cell.dateStr);
@@ -125,7 +158,7 @@ function CalendarGrid({
                 onClick={handleCellClick}
                 className={cn(
                   'flex h-[80px] flex-col items-start justify-self-stretch overflow-hidden p-[6px]',
-                  cell.isCurrentMonth && 'cursor-pointer',
+                  (cell.isCurrentMonth || onCrossMonthDateClick) && 'cursor-pointer',
                   !isLastRow && 'border-line border-b',
                   !isLastCol && 'border-line border-r',
                 )}
@@ -153,7 +186,7 @@ function CalendarGrid({
                       circleBg,
                       dateTextColor,
                       !circleBg && cell.isCurrentMonth && 'hover:bg-container-neutral-alternative',
-                      !cell.isCurrentMonth && 'cursor-default',
+                      !cell.isCurrentMonth && !onCrossMonthDateClick && 'cursor-default',
                     )}
                   >
                     {cell.day}

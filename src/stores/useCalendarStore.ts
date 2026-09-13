@@ -49,6 +49,8 @@ export const useCalendarStore = create(
         set((s) => ({ attendanceOnly: !s.attendanceOnly }), false, 'toggleAttendance'),
       goToYearMonth: (year: number, month: number) =>
         set({ year, month, selectedDate: null }, false, 'goToYearMonth'),
+      goToYearMonthDate: (year: number, month: number, date: string) =>
+        set({ year, month, selectedDate: date }, false, 'goToYearMonthDate'),
       openMonthPicker: () => set({ monthPickerOpen: true }, false, 'openMonthPicker'),
       closeMonthPicker: () => set({ monthPickerOpen: false }, false, 'closeMonthPicker'),
       openScheduleDetail: (schedule: ScheduleDetail) =>
@@ -93,6 +95,7 @@ export const useCalendarActions = () =>
       toggleEvent: s.toggleEvent,
       toggleAttendance: s.toggleAttendance,
       goToYearMonth: s.goToYearMonth,
+      goToYearMonthDate: s.goToYearMonthDate,
       openMonthPicker: s.openMonthPicker,
       closeMonthPicker: s.closeMonthPicker,
       openScheduleDetail: s.openScheduleDetail,
