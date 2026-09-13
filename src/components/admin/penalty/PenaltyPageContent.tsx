@@ -1,29 +1,20 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
-import {
-  MOCK_PENALTY_CARDINAL_NUMBERS,
-  MOCK_PENALTY_GUIDE,
-  MOCK_PENALTY_MEMBERS,
-  MOCK_PENALTY_RECORDS,
-} from '@/constants/admin/penaltyMock.constants';
 import { PENALTY_SCORE_MIN } from '@/constants/admin/penaltyTable.constants';
-import { toastSuccess } from '@/stores/useToastStore';
-import type {
-  PenaltyMember,
-  PenaltyRecord,
-  PenaltyRecordDraft,
-  PenaltySortBy,
-} from '@/types/admin/penalty';
 import {
-  filterPenaltyMembers,
-  getMemberPenaltyRecords,
-  getNextPenaltySort,
-  searchPenaltyMembers,
-  sortPenaltyMembers,
-  summarizeMemberPenalties,
-} from '@/utils/admin/penaltyPageUtils';
+  useAdminMemberPenaltyDetail,
+  useAdminPenaltyMembers,
+} from '@/hooks/queries/admin/useAdminPenaltyQueries';
+import { useMyPagePenaltyRuleQuery } from '@/hooks/queries/mypage/useMyPagePenaltyRuleQuery';
+import { useCardinals } from '@/hooks/queries/useCardinalsQuery';
+import { useDebouncedValue } from '@/hooks/useDebouncedValue';
+import { useClubId } from '@/stores';
+import { cn } from '@/lib/cn';
+import type { PenaltyMember, PenaltyRecordDraft, PenaltySortBy } from '@/types/admin/penalty';
+import { getNextPenaltySort } from '@/utils/admin/penaltyPageUtils';
+import { usePenaltyRecordActions } from './hooks/usePenaltyRecordActions';
 import { PenaltyDetailModal } from './modal/PenaltyDetailModal';
 import { PenaltySettingModal } from './modal/PenaltySettingModal';
 import { PenaltyAddSection } from './PenaltyAddSection';
@@ -39,107 +30,110 @@ const INITIAL_DRAFT: PenaltyRecordDraft = {
 };
 
 function PenaltyPageContent() {
-  const [selectedCardinal, setSelectedCardinal] = useState(MOCK_PENALTY_CARDINAL_NUMBERS[0]);
-  const [sortBy, setSortBy] = useState<PenaltySortBy>('cardinal');
+  const clubId = useClubId();
+  const [selectedCardinal, setSelectedCardinal] = useState<number | null>(null);
+  const [sortBy, setSortBy] = useState<PenaltySortBy>('CARDINAL_DESC');
   const [memberQuery, setMemberQuery] = useState('');
+  const [page, setPage] = useState(1);
   const [draft, setDraft] = useState<PenaltyRecordDraft>(INITIAL_DRAFT);
+  // 선택한 멤버는 페이지를 넘겨도 칩·제출에 필요하므로 id → 멤버로 따로 들고 있는다.
+  const [selectedMemberMap, setSelectedMemberMap] = useState<Map<string, PenaltyMember>>(new Map());
   const [detailMember, setDetailMember] = useState<PenaltyMember | null>(null);
-  const [records, setRecords] = useState<PenaltyRecord[]>(MOCK_PENALTY_RECORDS);
   const [isSettingOpen, setIsSettingOpen] = useState(false);
-  const [penaltyGuide, setPenaltyGuide] = useState(MOCK_PENALTY_GUIDE);
+
+  const debouncedQuery = useDebouncedValue(memberQuery, 300);
+
+  const { data: cardinals = [] } = useCardinals();
+  const cardinalNumbers = cardinals.map((cardinal) => cardinal.cardinalNumber);
+  // 기수 목록이 늦게 도착하므로, 아직 고르지 않았으면 가장 최근 기수를 기본값으로 쓴다.
+  const activeCardinal = selectedCardinal ?? (Math.max(...cardinalNumbers, 0) || null);
+
+  const { data: memberPage, isFetching: isMembersFetching } = useAdminPenaltyMembers({
+    cardinalNumber: activeCardinal,
+    keyword: debouncedQuery,
+    sort: sortBy,
+    page,
+  });
+  const visibleMembers = memberPage?.members ?? [];
+  const totalPages = memberPage?.totalPages ?? 1;
+
+  const { data: detailRecords = [] } = useAdminMemberPenaltyDetail(
+    detailMember?.clubMemberId ?? null,
+  );
+  // 규정 입력 폼은 마운트 시점의 값으로 초안을 잡으므로, 규정을 받은 뒤에 모달을 연다.
+  const { data: penaltyGuide = '', isPending: isPenaltyGuidePending } = useMyPagePenaltyRuleQuery(
+    clubId ?? '',
+  );
+
+  const { submitRecord, updateRecord, deleteRecord, saveRule } = usePenaltyRecordActions();
+
+  // 기수·정렬·검색어가 바뀌면 첫 페이지부터 다시 본다.
+  useEffect(() => {
+    const timeout = window.setTimeout(() => setPage(1), 0);
+    return () => window.clearTimeout(timeout);
+  }, [activeCardinal, sortBy, debouncedQuery]);
 
   const nextSortBy = getNextPenaltySort(sortBy);
 
-  // TODO: 페널티 API 연동 시 목 데이터를 서버 데이터로 교체한다.
-  // 페널티/최근 페널티 열은 내역에서 파생시켜 수정·삭제가 목록에 바로 반영되게 한다.
-  const penaltySummary = summarizeMemberPenalties(records);
-  const members = MOCK_PENALTY_MEMBERS.map((member) => ({
-    ...member,
-    penaltyCount: penaltySummary.get(member.id)?.penaltyCount ?? 0,
-    recentPenaltyAt: penaltySummary.get(member.id)?.recentPenaltyAt ?? null,
-  }));
-
-  const cardinalMembers = filterPenaltyMembers(members, selectedCardinal);
-  const visibleMembers = sortPenaltyMembers(
-    searchPenaltyMembers(cardinalMembers, memberQuery),
-    sortBy,
-  );
-
   // 인풋의 칩과 테이블 체크박스는 draft.memberIds 하나의 상태를 공유한다.
   const selectedIds = new Set(draft.memberIds);
-  const selectedMembers = cardinalMembers.filter((member) => selectedIds.has(member.id));
+  const selectedMembers = draft.memberIds
+    .map((id) => selectedMemberMap.get(id))
+    .filter((member): member is PenaltyMember => member !== undefined);
 
   const handleDraftChange = (next: Partial<PenaltyRecordDraft>) => {
     setDraft((prev) => ({ ...prev, ...next }));
   };
 
   const handleSelectionChange = (ids: Set<string>) => {
+    setSelectedMemberMap((prev) => {
+      const next = new Map<string, PenaltyMember>();
+      ids.forEach((id) => {
+        const member = visibleMembers.find((m) => m.id === id) ?? prev.get(id);
+        if (member) next.set(id, member);
+      });
+      return next;
+    });
     handleDraftChange({ memberIds: [...ids] });
     setMemberQuery('');
   };
 
   const handleRemoveMember = (id: string) => {
     handleDraftChange({ memberIds: draft.memberIds.filter((memberId) => memberId !== id) });
+    setSelectedMemberMap((prev) => {
+      const next = new Map(prev);
+      next.delete(id);
+      return next;
+    });
   };
-
-  const handlePenaltySetting = () => setIsSettingOpen(true);
 
   const handleSelectCardinal = (cardinalNumber: number) => {
     setSelectedCardinal(cardinalNumber);
     setMemberQuery('');
     handleDraftChange({ memberIds: [] });
+    setSelectedMemberMap(new Map());
   };
 
-  // TODO: 페널티 기록 수정 API 연동 필요
-  const handleUpdateRecord = (record: PenaltyRecord, next: { reason: string; score: number }) => {
-    setRecords((prev) => prev.map((item) => (item.id === record.id ? { ...item, ...next } : item)));
-    toastSuccess('페널티 내역이 수정되었습니다.');
-  };
-
-  // TODO: 페널티 기록 삭제 API 연동 필요
-  const handleDeleteRecord = (record: PenaltyRecord) => {
-    setRecords((prev) => prev.filter((item) => item.id !== record.id));
-    toastSuccess('페널티 내역이 삭제되었습니다.');
-  };
-
-  // TODO: 페널티 규정 저장 API 연동 필요
   const handleSavePenaltySetting = (guide: string) => {
-    setPenaltyGuide(guide);
-    setIsSettingOpen(false);
-    toastSuccess('페널티 규정이 저장되었습니다.');
+    saveRule(guide, () => setIsSettingOpen(false));
   };
 
-  // TODO: 페널티 기록 추가 API 연동 필요 (id/createdAt은 서버가 채운다)
   const handleSubmitRecord = () => {
-    const isWarning = draft.type === 'WARNING';
-    const createdAt = new Date().toISOString().slice(0, 10);
-
-    setRecords((prev) => [
-      ...prev,
-      ...draft.memberIds.map((memberId, index) => ({
-        id: `draft-${createdAt}-${memberId}-${prev.length + index}`,
-        memberId,
-        type: draft.type,
-        // 경고는 점수를 쓰지 않으므로 0점으로 둔다 (목 데이터와 동일한 규칙)
-        score: isWarning ? 0 : draft.score,
-        reason: draft.reason.trim(),
-        createdAt,
-      })),
-    ]);
-
-    toastSuccess(`${isWarning ? '경고' : '페널티'}가 기록되었습니다.`);
-    setDraft(INITIAL_DRAFT);
-    setMemberQuery('');
+    submitRecord(draft, () => {
+      setDraft(INITIAL_DRAFT);
+      setMemberQuery('');
+      setSelectedMemberMap(new Map());
+    });
   };
 
   return (
     <div className="flex min-h-full min-w-0 pr-450">
       <div className="bg-container-neutral flex min-w-0 flex-1 flex-col rounded-t-[20px]">
         <PenaltyPageHeader
-          cardinalNumbers={MOCK_PENALTY_CARDINAL_NUMBERS}
-          selectedCardinal={selectedCardinal}
+          cardinalNumbers={cardinalNumbers}
+          selectedCardinal={activeCardinal ?? 0}
           onSelectCardinal={handleSelectCardinal}
-          onOpenSetting={handlePenaltySetting}
+          onOpenSetting={() => setIsSettingOpen(true)}
         />
 
         <div className="flex flex-col gap-400 px-700 pt-400 pb-700">
@@ -166,12 +160,16 @@ function PenaltyPageContent() {
             selectedIds={selectedIds}
             onSelectionChange={handleSelectionChange}
             onOpenDetail={setDetailMember}
+            page={page}
+            totalPages={totalPages}
+            onPageChange={setPage}
+            className={cn(isMembersFetching && 'pointer-events-none opacity-60 transition-opacity')}
           />
         </div>
       </div>
 
       <PenaltySettingModal
-        open={isSettingOpen}
+        open={isSettingOpen && !isPenaltyGuidePending}
         onOpenChange={setIsSettingOpen}
         guide={penaltyGuide}
         onSave={handleSavePenaltySetting}
@@ -183,9 +181,9 @@ function PenaltyPageContent() {
           if (!open) setDetailMember(null);
         }}
         member={detailMember}
-        records={detailMember ? getMemberPenaltyRecords(records, detailMember.id) : []}
-        onUpdateRecord={handleUpdateRecord}
-        onDeleteRecord={handleDeleteRecord}
+        records={detailRecords}
+        onUpdateRecord={updateRecord}
+        onDeleteRecord={deleteRecord}
       />
     </div>
   );

@@ -23,7 +23,7 @@ export function useAdminMembers(pageNumber = 0, pageSize = 10, enabled = true) {
   return useQuery({
     queryKey: [...adminQueryKeys.members(clubId), pageNumber, pageSize],
     queryFn: async () => {
-      const res = await adminMemberApi.getMembers(clubId!, { pageNumber, pageSize });
+      const res = await adminMemberApi.getMembers(clubId!, { page: pageNumber, size: pageSize });
       const page = res.data.data;
 
       return {
@@ -45,8 +45,8 @@ export function useAdminMembersInfinite(pageSize = 10, enabled = true) {
     queryKey: [...adminQueryKeys.members(clubId), 'infinite', pageSize],
     queryFn: async ({ pageParam }) => {
       const res = await adminMemberApi.getMembers(clubId!, {
-        pageNumber: pageParam,
-        pageSize,
+        page: pageParam,
+        size: pageSize,
       });
       const page = res.data.data;
 

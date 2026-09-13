@@ -19,17 +19,24 @@ export const PENALTY_TABLE_COLUMNS = [
   { id: 'cardinal', label: '기수', width: PENALTY_COLUMN_WIDTH.cardinal },
 ] as const;
 
-export const PENALTY_SORT_ORDER: PenaltySortBy[] = ['cardinal', 'penalty', 'recent'];
+// TODO(페널티 정렬): 최근 페널티일 정렬은 LAST_PENALTY_AT_* sort 값이 아직 없어 제외됨.
+// 백엔드에 추가되면 order/label에 마저 넣는다.
+export const PENALTY_SORT_ORDER: PenaltySortBy[] = [
+  'CARDINAL_DESC',
+  'CARDINAL_ASC',
+  'PENALTY_DESC',
+];
 
 export const PENALTY_SORT_LABEL: Record<PenaltySortBy, string> = {
-  cardinal: '기수 순',
-  penalty: '페널티 순',
-  recent: '최신 순',
+  CARDINAL_DESC: '기수 높은 순',
+  CARDINAL_ASC: '기수 낮은 순',
+  PENALTY_DESC: '페널티 많은 순',
 };
 
-export const PENALTY_TYPE_OPTIONS: { value: PenaltyType; label: string }[] = [
+export const PENALTY_TYPE_OPTIONS: { value: PenaltyType; label: string; disabled?: boolean }[] = [
   { value: 'PENALTY', label: '페널티' },
-  { value: 'WARNING', label: '경고' },
+  // TODO: 경고 부여 활성화 — 상세 조회 응답에 penaltyType이 없어 부여해도 페널티와 구분되지 않는다.
+  { value: 'WARNING', label: '경고', disabled: true },
 ];
 
 /** 점수 입력이 비어 있는 상태 (제출 시 유효하지 않은 값) */
@@ -37,10 +44,14 @@ export const PENALTY_SCORE_EMPTY = 0;
 export const PENALTY_SCORE_MIN = 1;
 export const PENALTY_SCORE_MAX = 99;
 
+/** 멤버 리스트 표의 페이지 크기. 서버에 그대로 size로 넘긴다. */
 export const PENALTY_MEMBERS_PER_PAGE = 8;
 
-/** 페널티 규정 입력 모달의 최대 글자 수 */
+/** 페널티 규정 입력 모달의 최대 글자 수 (서버 SavePenaltyRuleRequest.content와 동일) */
 export const PENALTY_GUIDE_MAX_LENGTH = 500;
+
+/** 페널티 사유의 최대 글자 수 (서버 penaltyDescription과 동일) */
+export const PENALTY_REASON_MAX_LENGTH = 20;
 
 export const PENALTY_INTRODUCTION_MAX_LENGTH = 10;
 

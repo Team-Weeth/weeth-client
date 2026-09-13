@@ -75,6 +75,8 @@ import { useDragScroll } from '@/hooks/useDragScroll';
 
 **다음에 할 때** — `useTableSelection`에 `items`를 "이미 페이지네이션된 목록"으로도 받을 수 있는 옵션을 추가한 뒤 `MemberTable` → `MemberCardList` 순으로 이관. 멤버 벌크 액션 E2E 확인 필수.
 
+> **2026-09-09 갱신** ([[ADR-006-penalty-member-list-server-driven]]) — 페널티 리스트를 서버 주도로 바꾸면서 `useTableSelection`의 내부 `slice` 페이지네이션을 제거했다. 이제 `items`는 항상 "이미 페이지네이션된 현재 페이지"이고 훅은 선택 계산만 한다. `PenaltyTable`이 유일 사용처라 외부 영향은 없었다. 멤버 표(`MemberTable`/`MemberCardList`)의 3중 복제는 아직 그대로 — 이관 시 이 단순화된 API를 그대로 쓰면 된다.
+
 ### B. 기수 태그 루프 2곳 잔존
 
 `visibleCardinals.map(...)` + `+N` 렌더 패턴이 `CardinalTagList`로 3곳은 통합됐으나 두 곳이 남았다.

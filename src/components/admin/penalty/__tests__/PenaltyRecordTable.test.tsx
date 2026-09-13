@@ -6,8 +6,7 @@ import type { PenaltyRecord } from '@/types/admin/penalty';
 
 function createRecord(overrides: Partial<PenaltyRecord> = {}): PenaltyRecord {
   return {
-    id: 'record-1',
-    memberId: 'member-1',
+    id: 1,
     type: 'PENALTY',
     score: 1,
     reason: '정기 모임 무단 결석',
@@ -96,7 +95,7 @@ describe('PenaltyRecordTable', () => {
   it('한 행을 편집하는 동안 다른 행의 수정/삭제는 비활성화된다', async () => {
     const user = userEvent.setup();
     renderTable({
-      records: [createRecord(), createRecord({ id: 'record-2', reason: '회비 납부 지연' })],
+      records: [createRecord(), createRecord({ id: 2, reason: '회비 납부 지연' })],
     });
 
     await user.click(screen.getAllByRole('button', { name: '수정' })[0]);

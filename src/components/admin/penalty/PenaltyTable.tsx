@@ -10,20 +10,21 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import {
-  PENALTY_MEMBERS_PER_PAGE,
-  PENALTY_TABLE_COLUMNS,
-} from '@/constants/admin/penaltyTable.constants';
-import { useTableSelection } from '@/hooks/admin';
+import { PENALTY_TABLE_COLUMNS } from '@/constants/admin/penaltyTable.constants';
+import { useTableSelection } from '@/hooks/admin/useTableSelection';
 import { cn } from '@/lib/cn';
 import type { PenaltyMember } from '@/types/admin/penalty';
 import { PenaltyTableRow } from './PenaltyTableRow';
 
 interface PenaltyTableProps extends React.HTMLAttributes<HTMLDivElement> {
+  /** 현재 페이지에 보이는 멤버 (서버에서 검색·정렬·페이지네이션된 결과) */
   members: PenaltyMember[];
   selectedIds: Set<string>;
   onSelectionChange: (ids: Set<string>) => void;
   onOpenDetail: (member: PenaltyMember) => void;
+  page: number;
+  totalPages: number;
+  onPageChange: (page: number) => void;
 }
 
 function PenaltyTable({
@@ -32,20 +33,13 @@ function PenaltyTable({
   selectedIds,
   onSelectionChange,
   onOpenDetail,
+  page,
+  totalPages,
+  onPageChange,
   ...props
 }: PenaltyTableProps) {
-  const {
-    currentItems: currentPageMembers,
-    currentPage,
-    totalPages,
-    isAllSelected,
-    isPartiallySelected,
-    toggleAll,
-    toggleOne,
-    onPageChange,
-  } = useTableSelection({
+  const { isAllSelected, isPartiallySelected, toggleAll, toggleOne } = useTableSelection({
     items: members,
-    perPage: PENALTY_MEMBERS_PER_PAGE,
     selectedIds,
     onSelectionChange,
   });
@@ -85,7 +79,7 @@ function PenaltyTable({
             </TableRow>
           </TableHeader>
           <TableBody>
-            {currentPageMembers.length === 0 ? (
+            {members.length === 0 ? (
               <TableRow className="bg-container-neutral h-16 border-0 hover:bg-transparent">
                 <TableCell
                   colSpan={PENALTY_TABLE_COLUMNS.length + 1}
@@ -95,7 +89,7 @@ function PenaltyTable({
                 </TableCell>
               </TableRow>
             ) : (
-              currentPageMembers.map((member) => (
+              members.map((member) => (
                 <PenaltyTableRow
                   key={member.id}
                   member={member}
@@ -110,7 +104,7 @@ function PenaltyTable({
       </div>
 
       {totalPages > 1 && (
-        <TablePagination page={currentPage} totalPages={totalPages} onPageChange={onPageChange} />
+        <TablePagination page={page} totalPages={totalPages} onPageChange={onPageChange} />
       )}
     </div>
   );

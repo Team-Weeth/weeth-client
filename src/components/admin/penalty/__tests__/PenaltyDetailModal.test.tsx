@@ -7,6 +7,7 @@ import type { PenaltyMember, PenaltyRecord } from '@/types/admin/penalty';
 function createMember(): PenaltyMember {
   return {
     id: 'member-1',
+    clubMemberId: 1,
     name: '김위드',
     introduction: '열심히 활동하겠습니다',
     position: '백엔드',
@@ -21,8 +22,7 @@ function createMember(): PenaltyMember {
 
 function createRecord(): PenaltyRecord {
   return {
-    id: 'record-1',
-    memberId: 'member-1',
+    id: 1,
     type: 'PENALTY',
     score: 1,
     reason: '정기 모임 무단 결석',
