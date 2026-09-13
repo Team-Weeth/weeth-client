@@ -1,6 +1,7 @@
 'use client';
 
 import { AlertDialog as AlertDialogPrimitive } from 'radix-ui';
+import { cn } from '@/lib/cn';
 import { Icon } from '@/components/ui/Icon';
 import { Tag } from '@/components/ui/tag';
 import { Button } from '@/components/ui/Button';
@@ -13,26 +14,14 @@ import {
 } from '@/components/ui/avatar';
 import { CalendarScheduleAttendanceCard } from '@/components/calendar/CalendarScheduleAttendanceCard';
 import { CalendarModalFooter } from '@/components/calendar/CalendarModalFooter';
-import { formatDDay, formatScheduleTimeRange } from '@/utils/shared/date';
+import { LABEL_CLASS } from '@/components/calendar/calendarScheduleDetailConstants';
+import { useScheduleDetailDerived } from '@/hooks/useScheduleDetailDerived';
+import { formatScheduleTimeRange } from '@/utils/shared/date';
 import TimeIcon from '@/assets/icons/time.svg';
 import LocationIcon from '@/assets/icons/location.svg';
 import DeleteIcon from '@/assets/icons/delete.svg';
 import ExitToAppIcon from '@/assets/icons/exit_to_app.svg';
 import type { ScheduleDetail } from '@/types/calendar';
-
-const LABEL_CLASS = 'typo-caption2 text-text-alternative w-[56px] shrink-0';
-
-const SCHEDULE_TYPE_LABEL: Record<string, string> = {
-  SESSION: '세션',
-  EVENT: '일반 일정',
-};
-
-const SCHEDULE_TYPE_TAG_VARIANT: Record<string, 'primary' | 'secondary'> = {
-  SESSION: 'primary',
-  EVENT: 'secondary',
-};
-
-const MAX_VISIBLE_ATTENDEES = 5;
 
 interface CalendarScheduleDetailContentProps {
   schedule: ScheduleDetail;
@@ -47,24 +36,17 @@ function CalendarScheduleDetailContent({
   onViewAttendees,
   onShare,
 }: CalendarScheduleDetailContentProps) {
-  const resolvedClubId = schedule.clubId ?? clubId ?? null;
-  const typeLabel = SCHEDULE_TYPE_LABEL[schedule.type] ?? schedule.type;
-  const tagVariant = SCHEDULE_TYPE_TAG_VARIANT[schedule.type] ?? 'primary';
-  const visibleAttendees = schedule.attendees?.slice(0, MAX_VISIBLE_ATTENDEES) ?? [];
-  const remainingCount =
-    schedule.attendeeCount != null
-      ? schedule.attendeeCount - visibleAttendees.length
-      : (schedule.attendees?.length ?? 0) - visibleAttendees.length;
-  const dDayLabel = schedule.dDay != null ? formatDDay(schedule.dDay) : null;
-  const hasDetails = !!(
-    schedule.location ||
-    schedule.host ||
-    visibleAttendees.length > 0 ||
-    (schedule.attendeeCount ?? 0) > 0 ||
-    schedule.description
-  );
-  const showAttendanceCard = schedule.hasAttendanceCheck && schedule.type === 'SESSION';
-  const attendanceStatus = schedule.attendanceStatus ?? 'UPCOMING';
+  const {
+    resolvedClubId,
+    typeLabel,
+    tagVariant,
+    visibleAttendees,
+    remainingCount,
+    dDayLabel,
+    hasDetails,
+    showAttendanceCard,
+    attendanceStatus,
+  } = useScheduleDetailDerived(schedule, clubId);
 
   return (
     <>
@@ -153,7 +135,7 @@ function CalendarScheduleDetailContent({
             )}
             {schedule.description && (
               <div className="flex items-start gap-300">
-                <span className={`${LABEL_CLASS} pt-[2px]`}>설명</span>
+                <span className={cn(LABEL_CLASS, 'pt-[2px]')}>설명</span>
                 <span className="typo-body2 text-text-normal flex-1">{schedule.description}</span>
               </div>
             )}
