@@ -583,6 +583,40 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/v4/clubs/{clubId}/users/me/mypage/penalty-rule': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** 현재 동아리 패널티 규정 조회 */
+    get: operations['getPenaltyRule'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v4/clubs/{clubId}/users/me/mypage/penalties': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** 현재 동아리에서 나의 페널티 목록 조회 */
+    get: operations['getMyPenalties'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/api/v4/clubs/{clubId}/users/me/mypage/attended-sessions': {
     parameters: {
       query?: never;
@@ -617,6 +651,23 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/v4/clubs/{clubId}/schedules/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** 일정 상세 조회 */
+    get: operations['findDetail'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/api/v4/clubs/{clubId}/schedules/yearly': {
     parameters: {
       query?: never;
@@ -624,7 +675,10 @@ export interface paths {
       path?: never;
       cookie?: never;
     };
-    /** 연도별 일정 조회 */
+    /**
+     * 연도별 일정 조회
+     * @deprecated
+     */
     get: operations['findByYearly'];
     put?: never;
     post?: never;
@@ -643,6 +697,60 @@ export interface paths {
     };
     /** 월별 일정 조회 */
     get: operations['findByMonthly'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v4/clubs/{clubId}/members': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * 동아리 멤버 목록 조회
+     * @description 기수·역할 필터와 무한스크롤 페이지네이션을 지원합니다. 활성 멤버만 조회됩니다.
+     */
+    get: operations['getMembers'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v4/clubs/{clubId}/members/{clubMemberId}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** 동아리 멤버 상세 조회 */
+    get: operations['getMemberDetail'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v4/clubs/{clubId}/members/{clubMemberId}/posts': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** 동아리 멤버가 작성한 글 목록 조회 */
+    get: operations['getMemberPosts'];
     put?: never;
     post?: never;
     delete?: never;
@@ -1468,6 +1576,12 @@ export interface components {
        * @example 컴퓨터공학과
        */
       department?: string;
+      /** @description 전화번호 공개 여부 (null=변경 안 함) */
+      telPublic?: boolean;
+      /** @description 이메일 공개 여부 (null=변경 안 함) */
+      emailPublic?: boolean;
+      /** @description 학과·학번 공개 여부 (null=변경 안 함) */
+      studentInfoPublic?: boolean;
     };
     'com.weeth.domain.user.application.dto.request.UpdateMultiProfileRequest': {
       /**
@@ -1771,6 +1885,21 @@ export interface components {
        * @example 20201234
        */
       studentId?: string;
+      /**
+       * @description 전화번호 공개 여부
+       * @example true
+       */
+      telPublic: boolean;
+      /**
+       * @description 이메일 공개 여부
+       * @example true
+       */
+      emailPublic: boolean;
+      /**
+       * @description 학과·학번 공개 여부
+       * @example true
+       */
+      studentInfoPublic: boolean;
     };
     'com.weeth.domain.user.application.dto.response.UserMyPageResponse': {
       /** @description 사용자 기본 개인정보 */
@@ -1795,6 +1924,18 @@ export interface components {
        * @example 8
        */
       attendedSessionCount: number;
+      /**
+       * Format: int32
+       * @description 패널티 횟수
+       * @example 2
+       */
+      penaltyCount: number;
+      /**
+       * Format: int32
+       * @description 경고 횟수. 경고 기능을 사용하지 않는 동아리는 null
+       * @example 1
+       */
+      warningCount?: number;
     };
     'com.weeth.domain.user.application.dto.response.UserMyPageUsingProfileResponse': {
       /**
@@ -1892,6 +2033,63 @@ export interface components {
     };
     'com.weeth.global.common.response.SliceResponseCom.weeth.domain.user.application.dto.response.UserMyPostResponse': {
       content: components['schemas']['com.weeth.domain.user.application.dto.response.UserMyPostResponse'][];
+      /** Format: int32 */
+      pageNumber: number;
+      /** Format: int32 */
+      pageSize: number;
+      /** Format: int32 */
+      numberOfElements: number;
+      hasNext: boolean;
+    };
+    'com.weeth.domain.penalty.application.dto.response.PenaltyRuleResponse': {
+      /** @description 패널티 규정 내용 (미설정 시 null) */
+      content?: string;
+    };
+    'com.weeth.global.common.response.CommonResponseCom.weeth.domain.penalty.application.dto.response.PenaltyRuleResponse': {
+      /** Format: int32 */
+      code: number;
+      message: string;
+      data?: components['schemas']['com.weeth.domain.penalty.application.dto.response.PenaltyRuleResponse'];
+    };
+    'com.weeth.domain.user.application.dto.response.UserMyPenaltyResponse': {
+      /**
+       * Format: int64
+       * @description 페널티 ID
+       * @example 1
+       */
+      penaltyId: number;
+      /**
+       * Format: int32
+       * @description 페널티 점수
+       * @example 2
+       */
+      score: number;
+      /**
+       * @description 페널티 사유
+       * @example 정기모임 무단 불참
+       */
+      penaltyDescription: string;
+      /**
+       * @description 페널티 타입
+       * @example PENALTY
+       * @enum {string}
+       */
+      penaltyType: 'PENALTY' | 'WARNING';
+      /**
+       * Format: date-time
+       * @description 페널티 부여 일시
+       * @example 2026-02-19T01:00:00
+       */
+      createdAt: string;
+    };
+    'com.weeth.global.common.response.CommonResponseCom.weeth.global.common.response.SliceResponseCom.weeth.domain.user.application.dto.response.UserMyPenaltyResponse': {
+      /** Format: int32 */
+      code: number;
+      message: string;
+      data?: components['schemas']['com.weeth.global.common.response.SliceResponseCom.weeth.domain.user.application.dto.response.UserMyPenaltyResponse'];
+    };
+    'com.weeth.global.common.response.SliceResponseCom.weeth.domain.user.application.dto.response.UserMyPenaltyResponse': {
+      content: components['schemas']['com.weeth.domain.user.application.dto.response.UserMyPenaltyResponse'][];
       /** Format: int32 */
       pageNumber: number;
       /** Format: int32 */
@@ -2036,6 +2234,90 @@ export interface components {
       message: string;
       data?: components['schemas']['com.weeth.domain.session.application.dto.response.SessionResponse'];
     };
+    'com.weeth.domain.schedule.application.dto.response.AttendeeResponse': {
+      /**
+       * @description 이름
+       * @example 홍길동
+       */
+      name: string;
+      /**
+       * @description 학과
+       * @example 컴퓨터공학과
+       */
+      department?: string;
+      /**
+       * @description 권한
+       * @example USER
+       * @enum {string}
+       */
+      role: 'USER' | 'ADMIN' | 'LEAD';
+      /** @description 프로필 이미지 URL */
+      profileImageUrl?: string;
+    };
+    'com.weeth.domain.schedule.application.dto.response.ScheduleDetailResponse': {
+      /**
+       * Format: int64
+       * @description 일정 ID
+       * @example 1
+       */
+      id: number;
+      /**
+       * @description 일정 유형
+       * @example SESSION
+       * @enum {string}
+       */
+      type: 'EVENT' | 'SESSION';
+      /**
+       * @description 제목
+       * @example 1주차 정기모임
+       */
+      title: string;
+      /** @description 설명 */
+      description?: string;
+      /**
+       * @description 장소
+       * @example 가천대 체육관
+       */
+      location?: string;
+      /**
+       * Format: date-time
+       * @description 시작 시간
+       */
+      start: string;
+      /**
+       * Format: date-time
+       * @description 종료 시간
+       */
+      end: string;
+      /**
+       * @description 생성자 이름
+       * @example 홍길동
+       */
+      creatorName?: string;
+      /**
+       * @description 내 출석 상태 (SESSION만, EVENT는 null)
+       * @enum {string}
+       */
+      myAttendanceStatus?: 'UPCOMING' | 'OPEN' | 'COMPLETED' | 'ABSENT';
+      /**
+       * Format: date-time
+       * @description 출석 완료 시간 (COMPLETED일 때만, 나머지는 null)
+       */
+      attendedAt?: string;
+      /**
+       * Format: int32
+       * @description 총 참석자 수 (SESSION만, EVENT는 null)
+       */
+      totalAttendees?: number;
+      /** @description 참석자 목록 (SESSION만, EVENT는 null) */
+      attendees?: components['schemas']['com.weeth.domain.schedule.application.dto.response.AttendeeResponse'][];
+    };
+    'com.weeth.global.common.response.CommonResponseCom.weeth.domain.schedule.application.dto.response.ScheduleDetailResponse': {
+      /** Format: int32 */
+      code: number;
+      message: string;
+      data?: components['schemas']['com.weeth.domain.schedule.application.dto.response.ScheduleDetailResponse'];
+    };
     'com.weeth.domain.schedule.application.dto.response.ScheduleResponse': {
       /**
        * Format: int64
@@ -2091,6 +2373,124 @@ export interface components {
       code: number;
       message: string;
       data?: components['schemas']['com.weeth.domain.schedule.application.dto.response.ScheduleResponse'][];
+    };
+    'com.weeth.domain.club.application.dto.response.ClubMemberPublicResponse': {
+      /**
+       * Format: int64
+       * @description 멤버 ID
+       * @example 1
+       */
+      clubMemberId: number;
+      /**
+       * @description 사용자 이름
+       * @example 홍길동
+       */
+      name: string;
+      /**
+       * @description 프로필 이미지 URL
+       * @example https://cdn.weeth.com/profile/1.png
+       */
+      profileImageUrl?: string;
+      /**
+       * @description 멤버 권한
+       * @example USER
+       * @enum {string}
+       */
+      memberRole: 'USER' | 'ADMIN' | 'LEAD';
+      /**
+       * @description 소속 기수 목록
+       * @example [
+       *       6,
+       *       7
+       *     ]
+       */
+      cardinals: number[];
+      /**
+       * @description 자기소개
+       * @example 안녕하세요
+       */
+      bio?: string;
+    };
+    'com.weeth.global.common.response.CommonResponseCom.weeth.global.common.response.SliceResponseCom.weeth.domain.club.application.dto.response.ClubMemberPublicResponse': {
+      /** Format: int32 */
+      code: number;
+      message: string;
+      data?: components['schemas']['com.weeth.global.common.response.SliceResponseCom.weeth.domain.club.application.dto.response.ClubMemberPublicResponse'];
+    };
+    'com.weeth.global.common.response.SliceResponseCom.weeth.domain.club.application.dto.response.ClubMemberPublicResponse': {
+      content: components['schemas']['com.weeth.domain.club.application.dto.response.ClubMemberPublicResponse'][];
+      /** Format: int32 */
+      pageNumber: number;
+      /** Format: int32 */
+      pageSize: number;
+      /** Format: int32 */
+      numberOfElements: number;
+      hasNext: boolean;
+    };
+    'com.weeth.domain.club.application.dto.response.ClubMemberDetailResponse': {
+      /**
+       * Format: int64
+       * @description 멤버 ID
+       * @example 1
+       */
+      clubMemberId: number;
+      /**
+       * @description 사용자 이름
+       * @example 홍길동
+       */
+      name: string;
+      /** @description 프로필 이미지 URL */
+      profileImageUrl?: string;
+      /** @description 배경 이미지 URL */
+      headerImageUrl?: string;
+      /**
+       * @description 멤버 권한
+       * @example USER
+       * @enum {string}
+       */
+      memberRole: 'USER' | 'ADMIN' | 'LEAD';
+      /**
+       * @description 소속 기수 목록
+       * @example [
+       *       6,
+       *       7
+       *     ]
+       */
+      cardinals: number[];
+      /** @description 한줄소개 */
+      bio?: string;
+      /**
+       * @description 전화번호
+       * @example 01012345678
+       */
+      tel?: string;
+      /**
+       * @description 이메일
+       * @example hong@example.com
+       */
+      email?: string;
+      /**
+       * @description 학번
+       * @example 20201234
+       */
+      studentId?: string;
+      /**
+       * @description 학과
+       * @example 컴퓨터공학과
+       */
+      department?: string;
+      /**
+       * Format: int64
+       * @description 작성한 글 총 개수
+       * @example 12
+       */
+      postCount: number;
+    };
+    'com.weeth.global.common.response.CommonResponseCom.weeth.domain.club.application.dto.response.ClubMemberDetailResponse': {
+      /** Format: int32 */
+      code: number;
+      message: string;
+      data?: components['schemas']['com.weeth.domain.club.application.dto.response.ClubMemberDetailResponse'];
     };
     'com.weeth.domain.club.application.dto.response.ClubMemberProfileResponse': {
       /**
@@ -2319,10 +2719,10 @@ export interface components {
       /** Format: int64 */
       offset?: number;
       sort?: components['schemas']['SortObject'];
-      unpaged?: boolean;
-      paged?: boolean;
       /** Format: int32 */
       pageNumber?: number;
+      paged?: boolean;
+      unpaged?: boolean;
       /** Format: int32 */
       pageSize?: number;
     };
@@ -5389,6 +5789,14 @@ export interface operations {
           'application/json': unknown;
         };
       };
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
       404: {
         headers: {
           [name: string]: unknown;
@@ -5816,6 +6224,157 @@ export interface operations {
       };
     };
   };
+  getPenaltyRule: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /**
+         * @description Base62 인코딩 TSID
+         * @example 1zA9
+         */
+        clubId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['com.weeth.global.common.response.CommonResponseCom.weeth.domain.penalty.application.dto.response.PenaltyRuleResponse'];
+        };
+      };
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+    };
+  };
+  getMyPenalties: {
+    parameters: {
+      query?: {
+        pageNumber?: number;
+        pageSize?: number;
+      };
+      header?: never;
+      path: {
+        /**
+         * @description Base62 인코딩 TSID
+         * @example 1zA9
+         */
+        clubId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['com.weeth.global.common.response.CommonResponseCom.weeth.global.common.response.SliceResponseCom.weeth.domain.user.application.dto.response.UserMyPenaltyResponse'];
+        };
+      };
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+    };
+  };
   getAttendedSessions: {
     parameters: {
       query?: {
@@ -5944,6 +6503,35 @@ export interface operations {
       };
     };
   };
+  findDetail: {
+    parameters: {
+      query: {
+        type: 'EVENT' | 'SESSION';
+      };
+      header?: never;
+      path: {
+        /**
+         * @description Base62 인코딩 TSID
+         * @example 1zA9
+         */
+        clubId: string;
+        id: number;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['com.weeth.global.common.response.CommonResponseCom.weeth.domain.schedule.application.dto.response.ScheduleDetailResponse'];
+        };
+      };
+    };
+  };
   findByYearly: {
     parameters: {
       query: {
@@ -5975,6 +6563,7 @@ export interface operations {
   findByMonthly: {
     parameters: {
       query: {
+        cardinal: number;
         start: string;
         end: string;
       };
@@ -5997,6 +6586,215 @@ export interface operations {
         };
         content: {
           '*/*': components['schemas']['com.weeth.global.common.response.CommonResponseJava.util.ListCom.weeth.domain.schedule.application.dto.response.ScheduleResponse'];
+        };
+      };
+    };
+  };
+  getMembers: {
+    parameters: {
+      query?: {
+        cardinalNumber?: number;
+        memberRole?: 'USER' | 'ADMIN' | 'LEAD';
+        keyword?: string;
+        pageNumber?: number;
+        pageSize?: number;
+      };
+      header?: never;
+      path: {
+        /**
+         * @description Base62 인코딩 TSID
+         * @example 1zA9
+         */
+        clubId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['com.weeth.global.common.response.CommonResponseCom.weeth.global.common.response.SliceResponseCom.weeth.domain.club.application.dto.response.ClubMemberPublicResponse'];
+        };
+      };
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+    };
+  };
+  getMemberDetail: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /**
+         * @description Base62 인코딩 TSID
+         * @example 1zA9
+         */
+        clubId: string;
+        clubMemberId: number;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['com.weeth.global.common.response.CommonResponseCom.weeth.domain.club.application.dto.response.ClubMemberDetailResponse'];
+        };
+      };
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+    };
+  };
+  getMemberPosts: {
+    parameters: {
+      query?: {
+        pageNumber?: number;
+        pageSize?: number;
+      };
+      header?: never;
+      path: {
+        /**
+         * @description Base62 인코딩 TSID
+         * @example 1zA9
+         */
+        clubId: string;
+        clubMemberId: number;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['com.weeth.global.common.response.CommonResponseCom.weeth.global.common.response.SliceResponseCom.weeth.domain.user.application.dto.response.UserMyPostResponse'];
+        };
+      };
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
+        };
+      };
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': unknown;
         };
       };
     };
