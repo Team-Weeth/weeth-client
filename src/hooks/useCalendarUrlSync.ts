@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { useRouter, usePathname, useSearchParams } from 'next/navigation';
+import { copyTextToClipboard } from '@/utils/shared/clipboard';
 import type { ScheduleDetail } from '@/types/calendar';
 
 function useCalendarUrlSync(
@@ -48,7 +49,7 @@ function useCalendarUrlSync(
   };
 
   const handleShare = () => {
-    navigator.clipboard.writeText(window.location.href);
+    copyTextToClipboard(window.location.href, { successMessage: '일정 링크가 복사되었습니다.' });
   };
 
   return {
