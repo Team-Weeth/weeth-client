@@ -5,6 +5,7 @@ import { cn } from '@/lib/cn';
 import { AlertDialogPortal, AlertDialogOverlay } from '@/components/ui/alert-dialog';
 import { CalendarScheduleDetailContent } from '@/components/calendar/CalendarScheduleDetailContent';
 import { CalendarAttendeeListContent } from '@/components/calendar/CalendarAttendeeListContent';
+import { CalendarScheduleDetailContentSkeleton } from '@/components/calendar/skeleton/CalendarScheduleDetailContentSkeleton';
 import { useCalendarAttendeeListOpen, useCalendarActions } from '@/stores/useCalendarStore';
 import type { ScheduleDetail } from '@/types/calendar';
 
@@ -14,6 +15,7 @@ interface CalendarScheduleModalProps {
   schedule: ScheduleDetail | null;
   clubId?: string | null;
   onShare?: () => void;
+  isLoading?: boolean;
 }
 
 function CalendarScheduleModal({
@@ -22,6 +24,7 @@ function CalendarScheduleModal({
   schedule,
   clubId,
   onShare,
+  isLoading,
 }: CalendarScheduleModalProps) {
   const attendeeListOpen = useCalendarAttendeeListOpen();
   const { openAttendeeList, closeAttendeeList } = useCalendarActions();
@@ -50,6 +53,8 @@ function CalendarScheduleModal({
               attendees={schedule.attendees ?? []}
               onBack={closeAttendeeList}
             />
+          ) : isLoading ? (
+            <CalendarScheduleDetailContentSkeleton />
           ) : (
             <CalendarScheduleDetailContent
               schedule={schedule}
