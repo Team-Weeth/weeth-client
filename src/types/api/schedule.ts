@@ -23,5 +23,5 @@ export type SessionDetail = S<'com.weeth.domain.session.application.dto.response
 /** 일정 유형 */
 export type ScheduleType = ScheduleItem['type'];
 
-/** 내 출석 상태 */
-export type AttendanceStatus = NonNullable<ScheduleDetail['myAttendanceStatus']>;
+/** 일정 내 출석 상태 */
+export type MyScheduleAttendanceStatus = NonNullable<ScheduleDetail['myAttendanceStatus']>;

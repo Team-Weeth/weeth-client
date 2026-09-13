@@ -14,7 +14,11 @@ function toMonthRange(year: number, month: number) {
   };
 }
 
-export function useMonthlySchedulesQuery(year: number, month: number, cardinal: number | undefined) {
+export function useMonthlySchedulesQuery(
+  year: number,
+  month: number,
+  cardinal: number | undefined,
+) {
   const clubId = useClubId();
   const { start, end } = toMonthRange(year, month);
 
