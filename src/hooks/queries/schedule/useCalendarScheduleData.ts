@@ -9,7 +9,7 @@ import {
   useCalendarSelectedSchedule,
 } from '@/stores/useCalendarStore';
 import { useMonthlySchedulesQuery } from '@/hooks/queries/schedule/useScheduleQueries';
-import { toBaseUiSchedule, toUiScheduleDetail } from '@/components/calendar/calendarScheduleMapper';
+import { toBaseUiSchedule, toUiScheduleDetail } from '@/utils/calendar/calendarScheduleMapper';
 import { toDateInputValue } from '@/utils/shared/date';
 import { scheduleQueryKeys } from './scheduleQueryKeys';
 

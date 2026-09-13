@@ -42,7 +42,7 @@ function CalendarDesktopView({
           selectedDate={selectedDate}
           onSelectDate={onSelectDate}
           onScheduleClick={onScheduleClick}
-          onCrossMonthDateClick={(dateStr, y, m) => onCrossMonthDateClick(dateStr, y, m)}
+          onCrossMonthDateClick={onCrossMonthDateClick}
           className="min-w-0 flex-1"
         />
         <div className="desktop:flex hidden flex-col gap-300">
