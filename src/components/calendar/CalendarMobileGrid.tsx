@@ -114,7 +114,6 @@ function CalendarMobileGrid({ schedules, className }: CalendarMobileGridProps) {
     dragX,
     isTransitioning,
     handleTouchStart,
-    handleTouchMove,
     handleTouchEnd,
     handleTransitionEnd,
   } = useSwipeNavigation({ onPrev: prevMonth, onNext: nextMonth });
@@ -124,7 +123,6 @@ function CalendarMobileGrid({ schedules, className }: CalendarMobileGridProps) {
       ref={containerRef}
       className={cn('w-full overflow-hidden', className)}
       onTouchStart={handleTouchStart}
-      onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
     >
       {/* Weekday header row — static, not part of the sliding strip */}
