@@ -1,7 +1,5 @@
 import type { MemberStatus } from '@/types/admin/member';
 
-// TODO: 경고(WARNING) 지원 — 상세 조회 응답(PenaltyDetailResponse)에 penaltyType이 없어
-// 부여한 경고를 목록에서 페널티와 구분할 수 없다. 백엔드에 필드가 추가되면 활성화한다.
 export type PenaltyType = 'PENALTY' | 'WARNING';
 
 // TODO(페널티 정렬): 2026-09-13, 멤버 목록 API sort에 PENALTY_DESC(페널티 많은 순)가 추가돼

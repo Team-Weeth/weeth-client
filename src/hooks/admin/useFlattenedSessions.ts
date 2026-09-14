@@ -18,6 +18,9 @@ function useFlattenedSessions(cardinalNumber: number | null) {
       })),
     ) ?? [];
 
+  // 이번 주 세션을 먼저 표시하고, 같은 우선순위 내에서는 응답 순서를 유지한다.
+  sessions.sort((a, b) => Number(b.isCurrentWeek) - Number(a.isCurrentWeek));
+
   return { sessions, ...rest };
 }
 

@@ -79,7 +79,11 @@ function MemberPersonalInfoCard({ member, className }: MemberDetailInfoCardProps
   );
 }
 
-function MemberActivityInfoCard({ member, className }: MemberDetailInfoCardProps) {
+function MemberActivityInfoCard({
+  member,
+  className,
+  warningEnabled = false,
+}: MemberDetailInfoCardProps & { warningEnabled?: boolean }) {
   const { visibleCardinals, hiddenCardinals, hiddenCardinalCount } =
     getMemberDetailCardinals(member);
 
@@ -110,7 +114,7 @@ function MemberActivityInfoCard({ member, className }: MemberDetailInfoCardProps
       <div className="bg-line my-300 h-px w-full" />
 
       <div className="flex flex-col gap-300">
-        {getMemberActivityStats(member).map(({ label, value }) => (
+        {getMemberActivityStats(member, warningEnabled).map(({ label, value }) => (
           <InfoRow key={label} label={label} value={value} alignValue="right" />
         ))}
         <div className="mt-100 flex flex-col gap-[6px]">
@@ -205,11 +209,12 @@ function getMemberPersonalInfo(member: Member) {
   ];
 }
 
-function getMemberActivityStats(member: Member) {
+function getMemberActivityStats(member: Member, warningEnabled: boolean) {
   return [
     { label: '출석', value: member.attendance },
     { label: '결석', value: member.absence },
-    { label: '패널티', value: member.penaltyCount },
+    { label: '페널티', value: member.penaltyCount },
+    ...(warningEnabled ? [{ label: '경고', value: member.warningCount ?? '-' }] : []),
   ];
 }
 

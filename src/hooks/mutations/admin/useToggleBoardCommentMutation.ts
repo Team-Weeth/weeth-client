@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { adminBoardApi, type UpdateBoardCommentBody } from '@/lib/apis/adminBoard';
+import { revalidateBoards } from '@/lib/actions/board';
 import { useClubId } from '@/stores';
 import type { MutationCallbacks } from '@/types/common';
 import { adminQueryKeys } from '@/hooks/queries/admin/adminQueryKeys';
@@ -17,6 +18,7 @@ export function useToggleBoardCommentMutation(callbacks?: MutationCallbacks<unkn
     },
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: adminQueryKeys.boards(clubId) });
+      if (clubId) await revalidateBoards(clubId);
       callbacks?.onSuccess?.();
     },
     onError: callbacks?.onError,

@@ -2,7 +2,14 @@
 
 import React, { useState } from 'react';
 
-import { Table, TableBody, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
 import { cn } from '@/lib/cn';
 import type { Member } from '@/types/admin/member';
 import { MEMBER_TABLE_COLUMNS } from '@/constants/admin/memberTable.constants';
@@ -11,6 +18,8 @@ import { TablePagination } from '@/components/admin/TablePagination';
 import { MemberTableRow } from './MemberTableRow';
 
 interface MemberTableProps extends React.HTMLAttributes<HTMLDivElement> {
+  warningEnabled?: boolean;
+  showEmptySearchResult?: boolean;
   members: Member[];
   page: number;
   totalPages: number;
@@ -21,6 +30,8 @@ interface MemberTableProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 function MemberTable({
+  warningEnabled = false,
+  showEmptySearchResult = false,
   className,
   members,
   page,
@@ -91,7 +102,9 @@ function MemberTable({
                   onClick={toggleAll}
                 />
               </TableHead>
-              {MEMBER_TABLE_COLUMNS.map((column) => (
+              {MEMBER_TABLE_COLUMNS.filter(
+                (column) => column.id !== 'warning' || warningEnabled,
+              ).map((column) => (
                 <TableHead
                   key={column.id}
                   className={cn(
@@ -121,8 +134,23 @@ function MemberTable({
             </TableRow>
           </TableHeader>
           <TableBody>
+            {showEmptySearchResult && members.length === 0 && (
+              <TableRow className="bg-container-neutral h-16 border-0 hover:bg-transparent">
+                <TableCell
+                  colSpan={
+                    MEMBER_TABLE_COLUMNS.filter(
+                      (column) => column.id !== 'warning' || warningEnabled,
+                    ).length + 3
+                  }
+                  className="typo-body2 text-text-alternative h-16 text-center"
+                >
+                  검색 결과가 없습니다.
+                </TableCell>
+              </TableRow>
+            )}
             {members.map((member) => (
               <MemberTableRow
+                warningEnabled={warningEnabled}
                 key={member.id}
                 member={member}
                 selected={selectedIds.has(member.id)}

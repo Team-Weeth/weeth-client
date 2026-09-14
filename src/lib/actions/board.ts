@@ -1,6 +1,6 @@
 'use server';
 
-import { revalidatePath } from 'next/cache';
+import { revalidatePath, updateTag } from 'next/cache';
 import { boardServerApi } from '@/lib/apis/board.server';
 import { ApiError } from '@/lib/apis/server';
 import type { CreatePostBody, UpdatePostBody } from '@/types/board';
@@ -20,6 +20,11 @@ export async function readAllNotices(clubId: string, boardId: number) {
   } catch (error) {
     rethrowWithCode(error);
   }
+}
+
+export async function revalidateBoards(clubId: string) {
+  updateTag('boards');
+  revalidatePath(`/${clubId}/board`, 'layout');
 }
 
 export async function createPost(clubId: string, boardId: number, body: CreatePostBody) {

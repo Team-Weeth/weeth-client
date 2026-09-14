@@ -33,10 +33,9 @@ export const PENALTY_SORT_LABEL: Record<PenaltySortBy, string> = {
   PENALTY_DESC: '페널티 많은 순',
 };
 
-export const PENALTY_TYPE_OPTIONS: { value: PenaltyType; label: string; disabled?: boolean }[] = [
+export const PENALTY_TYPE_OPTIONS: { value: PenaltyType; label: string }[] = [
   { value: 'PENALTY', label: '페널티' },
-  // TODO: 경고 부여 활성화 — 상세 조회 응답에 penaltyType이 없어 부여해도 페널티와 구분되지 않는다.
-  { value: 'WARNING', label: '경고', disabled: true },
+  { value: 'WARNING', label: '경고' },
 ];
 
 /** 점수 입력이 비어 있는 상태 (제출 시 유효하지 않은 값) */

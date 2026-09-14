@@ -11,6 +11,8 @@ import { Icon } from '@/components/ui/Icon';
 import { cn } from '@/lib/cn';
 import type { Cardinal } from '@/types/admin/cardinal';
 
+const CARDINAL_DROPDOWN_MAX_HEIGHT_CLASS = 'max-h-[270px]';
+
 interface CardinalDropdownProps {
   cardinals: Cardinal[];
   activeCardinal?: Cardinal;
@@ -27,6 +29,7 @@ function CardinalDropdown({
   className,
 }: CardinalDropdownProps) {
   const sortedCardinals = [...cardinals].sort((a, b) => b.cardinalNumber - a.cardinalNumber);
+  const optionCount = sortedCardinals.length + (onSelectAll ? 1 : 0);
   const label = activeCardinal
     ? `${activeCardinal.cardinalNumber}기`
     : onSelectAll
@@ -53,7 +56,10 @@ function CardinalDropdown({
           />
         </button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
+      <DropdownMenuContent
+        align="end"
+        className={optionCount > 5 ? CARDINAL_DROPDOWN_MAX_HEIGHT_CLASS : undefined}
+      >
         {onSelectAll && <DropdownMenuItem onSelect={onSelectAll}>전체</DropdownMenuItem>}
         {sortedCardinals.map((cardinal) => (
           <DropdownMenuItem

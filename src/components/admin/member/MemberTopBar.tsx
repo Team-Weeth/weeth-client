@@ -273,6 +273,7 @@ function MobileMemberTopBar({
         onOpenChange={setIsActionSheetOpen}
         title="멤버 작업 선택"
         expandable={false}
+        headerClassName="px-500 pt-[3px] pb-100"
         header={
           <div className="flex items-center justify-between">
             <div className="flex shrink-0 items-center gap-200">
@@ -281,13 +282,15 @@ function MobileMemberTopBar({
               </span>
               <span className="typo-button2 text-text-alternative shrink-0">명 선택됨</span>
             </div>
-            <button
+            <Button
               type="button"
-              className="typo-button2 text-text-alternative cursor-pointer rounded-sm p-100"
+              variant="tertiary"
+              size="sm"
+              className="text-text-alternative px-0"
               onClick={handleClearSelection}
             >
               선택 해제
-            </button>
+            </Button>
           </div>
         }
       >

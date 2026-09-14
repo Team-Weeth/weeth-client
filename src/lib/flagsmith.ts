@@ -1,75 +1,45 @@
-const FLAGSMITH_API_URL = 'https://edge.api.flagsmith.com/api/v1/flags/';
-const FLAGSMITH_IDENTITIES_API_URL = 'https://edge.api.flagsmith.com/api/v1/identities/';
-
-type FlagsmithFeatureState = {
-  enabled?: boolean;
-  feature?: {
-    name?: string;
-  };
-};
-
-type FlagsmithIdentityResponse = {
-  flags?: FlagsmithFeatureState[];
-};
+import { createFlagsmithInstance } from '@flagsmith/flagsmith/isomorphic';
 
 type FeatureFlagOptions = {
   identifier?: string;
+  traits?: Record<string, string | number | boolean>;
 };
 
-const getFlagsmithEnvironmentId = () =>
-  process.env.NEXT_PUBLIC_FLAGSMITH_ENVIRONMENT_ID ??
-  process.env.NEXT_PUBLIC_FLAGSMITH_ENVIRONMENT_KEY ??
-  '';
+const getFlagsmithEnvironmentId = () => process.env.NEXT_PUBLIC_FLAGSMITH_ENVIRONMENT_ID ?? '';
 
-async function fetchFlagsmithJson(url: string): Promise<unknown> {
-  const environmentId = getFlagsmithEnvironmentId();
-
-  if (!environmentId) {
-    return null;
-  }
-
-  try {
-    const response = await fetch(url, {
-      headers: {
-        'X-Environment-Key': environmentId,
-      },
-      cache: 'no-store',
-    });
-
-    if (!response.ok) {
-      return null;
-    }
-
-    return response.json();
-  } catch {
-    return null;
-  }
-}
-
-async function getFlagsmithFeatureStates(
-  options: FeatureFlagOptions = {},
-): Promise<FlagsmithFeatureState[]> {
-  if (options.identifier) {
-    const params = new URLSearchParams({ identifier: options.identifier });
-    const data = await fetchFlagsmithJson(`${FLAGSMITH_IDENTITIES_API_URL}?${params.toString()}`);
-    const identity = data as FlagsmithIdentityResponse | null;
-
-    return Array.isArray(identity?.flags) ? identity.flags : [];
-  }
-
-  const data = await fetchFlagsmithJson(FLAGSMITH_API_URL);
-
-  return Array.isArray(data) ? data : [];
-}
+const fetchFlagsmith: typeof fetch = (input, init) =>
+  fetch(input, {
+    ...init,
+    cache: 'no-store',
+    signal: AbortSignal.timeout(5000),
+  });
 
 async function isFeatureEnabled(
   featureName: string,
   options: FeatureFlagOptions = {},
 ): Promise<boolean> {
-  const featureStates = await getFlagsmithFeatureStates(options);
-  const featureState = featureStates.find((state) => state.feature?.name === featureName);
+  const environmentID = getFlagsmithEnvironmentId();
+  if (!environmentID) return false;
 
-  return featureState?.enabled === true;
+  // 서버의 동시 요청 간에 동아리 identity와 플래그 상태가 섞이지 않도록 분리한다.
+  const flagsmith = createFlagsmithInstance();
+
+  try {
+    await flagsmith.init({
+      environmentID,
+      ...(options.identifier && {
+        identity: options.identifier,
+        traits: options.traits,
+      }),
+      fetch: fetchFlagsmith,
+      cacheFlags: false,
+      enableAnalytics: false,
+    });
+
+    return flagsmith.hasFeature(featureName);
+  } catch {
+    return false;
+  }
 }
 
 export { isFeatureEnabled };

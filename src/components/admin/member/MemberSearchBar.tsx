@@ -56,7 +56,7 @@ function MemberSearchBar({ className, value, onValueChange, ...props }: MemberSe
         type="text"
         value={value}
         onChange={(e) => onValueChange(e.target.value)}
-        placeholder="이름, 역할, 학과..."
+        placeholder="이름으로 검색"
         className={cn(
           'typo-body2 text-text-normal placeholder:text-text-disabled min-w-0 flex-1 bg-transparent py-[2px] pl-200 focus:outline-none',
           !isOpen && 'pointer-events-none w-0 flex-none p-0 opacity-0',

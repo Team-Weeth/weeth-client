@@ -8,6 +8,7 @@ import { SelectionCheckbox } from '@/components/admin/SelectionCheckbox';
 import { TablePagination } from '@/components/admin/TablePagination';
 
 interface MemberCardListProps extends React.HTMLAttributes<HTMLDivElement> {
+  warningEnabled?: boolean;
   members: Member[];
   page: number;
   totalPages: number;
@@ -21,6 +22,7 @@ interface MemberCardListProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 function MemberCardList({
+  warningEnabled = false,
   className,
   members,
   page,
@@ -94,6 +96,7 @@ function MemberCardList({
       <div className="flex flex-col gap-400">
         {members.map((member) => (
           <MemberCard
+            warningEnabled={warningEnabled}
             key={member.id}
             member={member}
             selected={selectedIds.has(member.id)}

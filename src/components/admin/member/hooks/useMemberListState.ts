@@ -1,22 +1,15 @@
 import { useState } from 'react';
 
-import type { Member } from '@/types/admin/member';
-import { filterMembers, sortMembers, type MemberSortBy } from '@/utils/admin/memberPageUtils';
+import type { MemberSortBy } from '@/utils/admin/memberPageUtils';
 
 interface UseMemberListStateParams {
-  members: Member[];
   resetPage: () => void;
 }
 
-function useMemberListState({ members, resetPage }: UseMemberListStateParams) {
+function useMemberListState({ resetPage }: UseMemberListStateParams) {
   const [selectedCardinal, setSelectedCardinal] = useState<number | 'all'>('all');
   const [sortBy, setSortBy] = useState<MemberSortBy>('cardinal');
   const [searchQuery, setSearchQuery] = useState('');
-
-  const filteredMembers = sortMembers(
-    filterMembers(members, selectedCardinal, searchQuery),
-    sortBy,
-  );
 
   const handleSelectCardinal = (cardinal: number | 'all') => {
     setSelectedCardinal(cardinal);
@@ -41,7 +34,6 @@ function useMemberListState({ members, resetPage }: UseMemberListStateParams) {
     selectedCardinal,
     sortBy,
     searchQuery,
-    filteredMembers,
     handleSelectCardinal,
     handleSearchQueryChange,
     toggleSort,
