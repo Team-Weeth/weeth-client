@@ -1,4 +1,5 @@
 import { setupServer } from 'msw/node';
-import { handlers } from './handlers';
+import { authHandlers } from './handlers/auth';
+import { scheduleHandlers } from './handlers/schedule';
 
-export const server = setupServer(...handlers);
+export const server = setupServer(...authHandlers, ...scheduleHandlers);
