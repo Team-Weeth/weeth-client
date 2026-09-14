@@ -19,6 +19,11 @@ export interface ClubMemberListParams {
 }
 
 export const adminMemberApi = {
+  searchMembers: (clubId: string, keyword: string, cardinalNumber?: number, signal?: AbortSignal) =>
+    apiClient.get<ApiResponse<ClubMember[]>>(`/admin/clubs/${clubId}/members/search`, {
+      params: { keyword, cardinalNumber },
+      signal,
+    }),
   getMembers: (clubId: string, params?: ClubMemberListParams) =>
     apiClient.get<ApiResponse<PageResponse<ClubMember>>>(`/admin/clubs/${clubId}/members`, {
       params,

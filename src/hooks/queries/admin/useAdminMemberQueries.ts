@@ -65,3 +65,16 @@ export function useAdminMembersInfinite(pageSize = 10, enabled = true) {
 }
 
 export { EMPTY_MEMBER_PAGE };
+
+export function useAdminMemberSearch(keyword: string, cardinalNumber?: number, enabled = true) {
+  const clubId = useClubId();
+
+  return useQuery({
+    queryKey: [...adminQueryKeys.members(clubId), 'search', keyword, cardinalNumber],
+    queryFn: async ({ signal }) => {
+      const res = await adminMemberApi.searchMembers(clubId!, keyword, cardinalNumber, signal);
+      return res.data.data.map(toMember);
+    },
+    enabled: !!clubId && !!keyword && enabled,
+  });
+}
