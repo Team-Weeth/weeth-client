@@ -216,7 +216,7 @@ function MemberPageContent({ warningEnabled = false }: { warningEnabled?: boolea
               onOpenMobileSearch={() => setIsMobileSearchOpen(true)}
             />
 
-            <MobileMemberTopBar {...memberSelectionBarProps} />
+            {isMobile && <MobileMemberTopBar {...memberSelectionBarProps} />}
 
             {isSearching && !isSearchLoading && isSearchError && (
               <p role="status" className="text-text-alternative px-700 py-400">
