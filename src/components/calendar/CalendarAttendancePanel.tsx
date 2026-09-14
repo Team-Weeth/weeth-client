@@ -1,22 +1,21 @@
+'use client';
+
 import Link from 'next/link';
 
 import ArrowRightIcon from '@/assets/icons/arrow_right.svg';
 import { Icon } from '@/components/ui/Icon';
 import { cn } from '@/lib/cn';
+import { useAttendanceQuery } from '@/hooks/attendance/useAttendanceQuery';
 
 interface CalendarAttendancePanelProps {
   clubId: string | null;
   className?: string;
-  attendanceRate?: number;
-  totalCount?: number;
 }
 
-function CalendarAttendancePanel({
-  clubId,
-  className,
-  attendanceRate = 0,
-  totalCount = 0,
-}: CalendarAttendancePanelProps) {
+function CalendarAttendancePanel({ clubId, className }: CalendarAttendancePanelProps) {
+  const { data } = useAttendanceQuery();
+  const attendanceRate = data?.attendanceRate ?? 0;
+
   return (
     <div
       className={cn(
@@ -37,10 +36,9 @@ function CalendarAttendancePanel({
         )}
       </div>
 
-      {/* Percentage + total count */}
+      {/* Percentage */}
       <div className="flex items-end justify-between pt-600">
         <span className="typo-h3 text-text-strong">{attendanceRate}%</span>
-        <span className="typo-caption2 text-text-alternative">총 {totalCount}회</span>
       </div>
 
       {/* Progress bar */}

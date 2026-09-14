@@ -47,7 +47,6 @@ function CalendarDesktopView({
         />
         <div className="desktop:flex hidden flex-col gap-300">
           <CalendarUpcomingPanel schedules={filteredSchedules} onScheduleClick={onScheduleClick} />
-          {/* TODO: attendanceRate={attendanceRate} totalCount={totalCount} 추가 */}
           <CalendarAttendancePanel clubId={clubId} />
         </div>
       </div>
