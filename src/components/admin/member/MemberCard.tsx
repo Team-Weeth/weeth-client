@@ -83,7 +83,7 @@ function MemberCard({
           />
         ))}
         {warningEnabled && (
-          <MemberCardStat label="경고" value={member.warningCount ?? '—'} showDivider />
+          <MemberCardStat label="경고" value={member.warningCount ?? '-'} showDivider />
         )}
       </dl>
 

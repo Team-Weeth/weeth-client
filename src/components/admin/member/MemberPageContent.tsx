@@ -296,6 +296,7 @@ function MemberPageContent({ warningEnabled = false }: { warningEnabled?: boolea
       </div>
 
       <MemberPageModals
+        warningEnabled={warningEnabled}
         detailMember={detailMember}
         cardinalModalMember={cardinalModalMember}
         forceConfirm={forceConfirm}

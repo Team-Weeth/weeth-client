@@ -13,6 +13,7 @@ import {
 } from './MemberDetailSections';
 
 interface MemberDetailBottomSheetProps {
+  warningEnabled?: boolean;
   open: boolean;
   onOpenChange: (open: boolean) => void;
   member: Member | null;
@@ -26,6 +27,7 @@ interface MemberDetailBottomSheetProps {
 }
 
 function MemberDetailBottomSheet({
+  warningEnabled = false,
   open,
   onOpenChange,
   member,
@@ -108,7 +110,7 @@ function MemberDetailBottomSheet({
         className="bg-neutral-200 px-400 py-300"
       />
       <MemberPersonalInfoCard member={member} />
-      <MemberActivityInfoCard member={member} />
+      <MemberActivityInfoCard member={member} warningEnabled={warningEnabled} />
     </BottomSheet>
   );
 }

@@ -21,6 +21,7 @@ interface ForceConfirmState {
 const DETAIL_BOTTOM_SHEET_EXIT_DELAY_MS = 500;
 
 interface MemberPageModalsProps {
+  warningEnabled?: boolean;
   detailMember: Member | null;
   cardinalModalMember: Member | null;
   forceConfirm: ForceConfirmState | null;
@@ -38,6 +39,7 @@ interface MemberPageModalsProps {
 }
 
 function MemberPageModals({
+  warningEnabled = false,
   detailMember,
   cardinalModalMember,
   forceConfirm,
@@ -110,6 +112,7 @@ function MemberPageModals({
     <>
       {!isMobile && (
         <MemberDetailModal
+          warningEnabled={warningEnabled}
           open={detailOpen}
           onOpenChange={(open) => {
             if (!open) onCloseDetail();
@@ -125,6 +128,7 @@ function MemberPageModals({
 
       {isMobile && (
         <MemberDetailBottomSheet
+          warningEnabled={warningEnabled}
           open={detailOpen}
           onOpenChange={(open) => {
             if (!open) {

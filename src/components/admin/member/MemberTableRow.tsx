@@ -82,7 +82,7 @@ function MemberTableRow({
       {NUMBER_CELL_VALUES.map((key) => (
         <MemberNumberCell key={key}>{member[key]}</MemberNumberCell>
       ))}
-      {warningEnabled && <MemberNumberCell>{member.warningCount ?? '—'}</MemberNumberCell>}
+      {warningEnabled && <MemberNumberCell>{member.warningCount ?? '-'}</MemberNumberCell>}
       <TableCell className="w-6 min-w-6 p-0" aria-hidden />
 
       {textCells.slice(3).map(({ id, value }) => (
