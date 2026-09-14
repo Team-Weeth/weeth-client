@@ -6,6 +6,7 @@ import ArrowRightIcon from '@/assets/icons/arrow_right.svg';
 import { Icon } from '@/components/ui/Icon';
 import { cn } from '@/lib/cn';
 import { useAttendanceQuery } from '@/hooks/attendance/useAttendanceQuery';
+import { CalendarAttendancePanelSkeleton } from '@/components/calendar/skeleton/CalendarAttendancePanelSkeleton';
 
 interface CalendarAttendancePanelProps {
   clubId: string | null;
@@ -13,7 +14,12 @@ interface CalendarAttendancePanelProps {
 }
 
 function CalendarAttendancePanel({ clubId, className }: CalendarAttendancePanelProps) {
-  const { data } = useAttendanceQuery();
+  const { data, isPending } = useAttendanceQuery();
+
+  if (isPending) {
+    return <CalendarAttendancePanelSkeleton className={className} />;
+  }
+
   const attendanceRate = data?.attendanceRate ?? 0;
 
   return (
