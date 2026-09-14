@@ -1,5 +1,6 @@
 'use client';
 
+import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 import { Icon } from '@/components/ui/Icon';
 import BackIcon from '@/assets/icons/back.svg';
 import {
@@ -35,14 +36,27 @@ function MobileBackHeader({ onBack, title }: MobileBackHeaderProps) {
 }
 
 function CalendarMobileHeader({ children }: CalendarMobileHeaderProps) {
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
   const monthPickerOpen = useCalendarMonthPickerOpen();
   const scheduleDetailOpen = useCalendarScheduleDetailOpen();
   const attendeeListOpen = useCalendarAttendeeListOpen();
   const { closeMonthPicker, closeScheduleDetail, closeAttendeeList } = useCalendarActions();
 
+  const handleCloseScheduleDetail = () => {
+    closeScheduleDetail();
+    const params = new URLSearchParams(searchParams.toString());
+    params.delete('id');
+    params.delete('type');
+    const query = params.toString();
+    router.replace(query ? `${pathname}?${query}` : pathname);
+  };
+
   if (attendeeListOpen) return <MobileBackHeader onBack={closeAttendeeList} title="참석자 목록" />;
   if (scheduleDetailOpen)
-    return <MobileBackHeader onBack={closeScheduleDetail} title="일정 상세" />;
+    return <MobileBackHeader onBack={handleCloseScheduleDetail} title="일정 상세" />;
   if (monthPickerOpen) return <MobileBackHeader onBack={closeMonthPicker} title="월 이동" />;
 
   return <>{children}</>;

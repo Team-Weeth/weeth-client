@@ -1,3 +1,4 @@
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import { CalendarMain } from '@/components/calendar/CalendarMain';
 
@@ -54,6 +55,10 @@ jest.mock('@/stores', () => ({
   useClubId: jest.fn(() => 1),
 }));
 
+jest.mock('@/hooks/queries/schedule/useScheduleQueries', () => ({
+  useMonthlySchedulesQuery: jest.fn(() => ({ data: undefined })),
+}));
+
 jest.mock('@/hooks/useIsTablet', () => ({
   useIsTablet: jest.fn(() => false),
 }));
@@ -87,13 +92,14 @@ jest.mock('@/stores/useCalendarStore', () => ({
   useCalendarActions: jest.fn(),
 }));
 
-// ── test data ──────────────────────────────────────────────────────────────
-
-// Override MOCK_SCHEDULES with an empty list so schedule filtering does not
-// interfere with date-header assertions.
-jest.mock('@/mocks/calendar', () => ({ MOCK_SCHEDULES: [] }));
-
 // ── helpers ────────────────────────────────────────────────────────────────
+
+function createWrapper() {
+  const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+  return function Wrapper({ children }: { children: React.ReactNode }) {
+    return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>;
+  };
+}
 
 function mockStore(overrides: { year: number; month: number; selectedDate?: string | null }) {
   const {
@@ -148,7 +154,7 @@ describe('CalendarMain — 모바일 날짜 헤더 (activeDateStr)', () => {
   it('selectedDate가 null이고 현재 월(2026-09)이면 오늘 날짜(9월 10일)가 헤더에 표시된다', () => {
     mockStore({ year: 2026, month: 9, selectedDate: null });
 
-    render(<CalendarMain />);
+    render(<CalendarMain />, { wrapper: createWrapper() });
 
     expect(screen.getByText(/9월 10일/)).toBeInTheDocument();
   });
@@ -156,7 +162,7 @@ describe('CalendarMain — 모바일 날짜 헤더 (activeDateStr)', () => {
   it('selectedDate가 null이고 다른 월(2026-08)이면 해당 월의 1일(8월 1일)이 헤더에 표시된다', () => {
     mockStore({ year: 2026, month: 8, selectedDate: null });
 
-    render(<CalendarMain />);
+    render(<CalendarMain />, { wrapper: createWrapper() });
 
     expect(screen.getByText(/8월 1일/)).toBeInTheDocument();
   });
@@ -164,7 +170,7 @@ describe('CalendarMain — 모바일 날짜 헤더 (activeDateStr)', () => {
   it('selectedDate가 명시적으로 설정되어 있으면 그 날짜가 헤더에 표시된다', () => {
     mockStore({ year: 2026, month: 8, selectedDate: '2026-08-12' });
 
-    render(<CalendarMain />);
+    render(<CalendarMain />, { wrapper: createWrapper() });
 
     expect(screen.getByText(/8월 12일/)).toBeInTheDocument();
   });

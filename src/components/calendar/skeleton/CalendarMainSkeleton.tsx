@@ -1,6 +1,7 @@
 import { cn } from '@/lib/cn';
 import { Skeleton } from '@/components/ui/skeleton';
 import { CalendarMiniSkeleton } from '@/components/calendar/skeleton/CalendarMiniSkeleton';
+import { CalendarMobileGridSkeleton } from '@/components/calendar/skeleton/CalendarMobileGridSkeleton';
 import { CalendarFilterSkeleton } from '@/components/calendar/skeleton/CalendarFilterSkeleton';
 import { CalendarGridSkeleton } from '@/components/calendar/skeleton/CalendarGridSkeleton';
 import { CalendarUpcomingPanelSkeleton } from '@/components/calendar/skeleton/CalendarUpcomingPanelSkeleton';
@@ -41,25 +42,7 @@ function CalendarMainSkeleton({ className }: { className?: string }) {
 
       {/* Mobile layout: hidden on tablet+ */}
       <div className="tablet:hidden flex flex-col gap-500">
-        {/* Mobile calendar grid */}
-        <div>
-          {/* Weekday header row */}
-          <div className="grid grid-cols-7 pb-100">
-            {Array.from({ length: 7 }).map((_, i) => (
-              <div key={i} className="flex h-7 items-center justify-center">
-                <Skeleton className="size-[10px]" />
-              </div>
-            ))}
-          </div>
-          {/* Date cells: 5 rows × 7 */}
-          <div className="grid grid-cols-7">
-            {Array.from({ length: 35 }).map((_, i) => (
-              <div key={i} className="flex h-11 items-center justify-center">
-                <Skeleton className="size-7 rounded-full" />
-              </div>
-            ))}
-          </div>
-        </div>
+        <CalendarMobileGridSkeleton />
 
         {/* Divider */}
         <div className="bg-button-neutral h-px w-full shrink-0" />
