@@ -5,8 +5,7 @@ type FeatureFlagOptions = {
   traits?: Record<string, string | number | boolean>;
 };
 
-const getFlagsmithEnvironmentId = () =>
-  process.env.NEXT_PUBLIC_FLAGSMITH_ENVIRONMENT_ID ?? '';
+const getFlagsmithEnvironmentId = () => process.env.NEXT_PUBLIC_FLAGSMITH_ENVIRONMENT_ID ?? '';
 
 const fetchFlagsmith: typeof fetch = (input, init) =>
   fetch(input, {

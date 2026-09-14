@@ -60,9 +60,7 @@ function DuesGenerationFilter({
         </DropdownMenuTrigger>
         <DropdownMenuContent
           align="start"
-          className={
-            sortedCardinals.length > 5 ? CARDINAL_DROPDOWN_MAX_HEIGHT_CLASS : undefined
-          }
+          className={sortedCardinals.length > 5 ? CARDINAL_DROPDOWN_MAX_HEIGHT_CLASS : undefined}
         >
           {sortedCardinals.map((c) => (
             <DropdownMenuItem key={c.id} onSelect={() => onSelect(c.id)}>
