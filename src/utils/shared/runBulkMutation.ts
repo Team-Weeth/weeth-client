@@ -1,4 +1,5 @@
 import { toastError, toastSuccess } from '@/stores/useToastStore';
+import { getApiErrorMessage } from './getApiErrorCode';
 
 interface BulkMutationMessages {
   success: string;
@@ -17,7 +18,8 @@ export async function runBulkMutation<TArg, TResult>(
     .filter((r): r is PromiseRejectedResult => r.status === 'rejected')
     .map((r) => r.reason);
   if (errors.length > 0) {
-    toastError(resolveErrorMessage?.(errors) ?? messages.error);
+    const serverMessage = errors.map(getApiErrorMessage).find((message) => message?.trim());
+    toastError(serverMessage ?? resolveErrorMessage?.(errors) ?? messages.error);
     return false;
   }
   toastSuccess(messages.success);

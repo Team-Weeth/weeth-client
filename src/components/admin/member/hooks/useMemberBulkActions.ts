@@ -16,7 +16,7 @@ import {
   createBulkCardinalChangeRequests,
   type CardinalChangeRequest,
 } from '@/utils/admin/memberPageUtils';
-import { getApiErrorCode } from '@/utils/shared';
+import { getApiErrorCode, getApiErrorMessage } from '@/utils/shared';
 import { runBulkMutation } from '@/utils/shared/runBulkMutation';
 import type { ForceConfirmState } from '../MemberPageModals';
 
@@ -53,7 +53,7 @@ function useMemberBulkActions({
     );
 
     const attendanceFailedRequests: CardinalChangeRequest[] = [];
-    let otherErrorCount = 0;
+    const otherErrors: unknown[] = [];
 
     results.forEach((result, idx) => {
       if (result.status !== 'rejected') return;
@@ -61,19 +61,21 @@ function useMemberBulkActions({
       if (code === MEMBER_CARDINAL_ERROR_CODE.REMOVAL_HAS_ATTENDANCE) {
         attendanceFailedRequests.push(requests[idx]);
       } else {
-        otherErrorCount += 1;
+        otherErrors.push(result.reason);
       }
     });
+
+    if (otherErrors.length > 0) {
+      const serverMessage = otherErrors.map(getApiErrorMessage).find((message) => message?.trim());
+      toastError(serverMessage ?? '기수 변경에 실패했습니다.');
+    }
 
     if (attendanceFailedRequests.length > 0) {
       setForceConfirm({ requests: attendanceFailedRequests });
       return;
     }
 
-    if (otherErrorCount > 0) {
-      toastError('기수 변경에 실패했습니다.');
-      return;
-    }
+    if (otherErrors.length > 0) return;
 
     toastSuccess('기수가 변경되었습니다.');
     onActionSuccess?.();
@@ -139,7 +141,10 @@ function useMemberBulkActions({
         onActionSuccess?.();
       },
       onError: (err) => {
-        if (getApiErrorCode(err) === MEMBER_ROLE_ERROR_CODE.ONLY_LEAD_CAN_TRANSFER) {
+        const serverMessage = getApiErrorMessage(err);
+        if (serverMessage?.trim()) {
+          toastError(serverMessage);
+        } else if (getApiErrorCode(err) === MEMBER_ROLE_ERROR_CODE.ONLY_LEAD_CAN_TRANSFER) {
           toastError('리더만 권한을 이양할 수 있습니다.');
         } else {
           toastError('리더 변경에 실패했습니다.');
