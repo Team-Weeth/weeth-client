@@ -89,7 +89,12 @@ describe('toUiScheduleDetail', () => {
   it('ROLE_LABEL에 없는 role은 원래 문자열을 그대로 사용한다', () => {
     const result = toUiScheduleDetail(
       mockScheduleDetail({
-        attendees: [{ name: '테스트', role: 'UNKNOWN' as unknown as NonNullable<ScheduleDetail['attendees']>[number]['role'] }],
+        attendees: [
+          {
+            name: '테스트',
+            role: 'UNKNOWN' as unknown as NonNullable<ScheduleDetail['attendees']>[number]['role'],
+          },
+        ],
       }),
       null,
     );
@@ -135,10 +140,7 @@ describe('toUiScheduleDetail', () => {
   });
 
   it('myAttendanceStatus가 없으면 attendanceStatus는 undefined다', () => {
-    const result = toUiScheduleDetail(
-      mockScheduleDetail({ myAttendanceStatus: undefined }),
-      null,
-    );
+    const result = toUiScheduleDetail(mockScheduleDetail({ myAttendanceStatus: undefined }), null);
 
     expect(result.attendanceStatus).toBeUndefined();
   });
