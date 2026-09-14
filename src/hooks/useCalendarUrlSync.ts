@@ -20,11 +20,16 @@ function useCalendarUrlSync(
     const typeParam = searchParams.get('type');
     if (idParam && (typeParam === 'SESSION' || typeParam === 'EVENT')) {
       const id = Number(idParam);
-      if (!Number.isSafeInteger(id) || id <= 0) return;
+      if (!Number.isSafeInteger(id) || id <= 0) {
+        closeScheduleDetail();
+        return;
+      }
       if (selectedSchedule?.id === id) return;
       openScheduleDetail({ id, type: typeParam, title: '', start: '', end: '' });
+    } else {
+      closeScheduleDetail();
     }
-  }, [searchParams, openScheduleDetail, selectedSchedule]);
+  }, [searchParams, openScheduleDetail, closeScheduleDetail, selectedSchedule]);
 
   const buildUrlWithoutSchedule = () => {
     const params = new URLSearchParams(searchParams.toString());
