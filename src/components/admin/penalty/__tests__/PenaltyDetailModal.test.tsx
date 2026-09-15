@@ -23,6 +23,7 @@ function createMember(): PenaltyMember {
 function createRecord(): PenaltyRecord {
   return {
     id: 1,
+    cardinal: 4,
     type: 'PENALTY',
     score: 1,
     reason: '정기 모임 무단 결석',
@@ -37,6 +38,7 @@ function renderModal({ onDeleteRecord = jest.fn() }: { onDeleteRecord?: jest.Moc
       onOpenChange={jest.fn()}
       member={createMember()}
       records={[createRecord()]}
+      cardinalNumber={4}
       onDeleteRecord={onDeleteRecord}
     />,
   );
@@ -52,6 +54,34 @@ describe('PenaltyDetailModal', () => {
     expect(screen.getByText('4기')).toBeInTheDocument();
     expect(screen.getByText('3기')).toBeInTheDocument();
     expect(screen.getByText('열심히 활동하겠습니다')).toBeInTheDocument();
+  });
+
+  it('선택한 기수의 내역만 표시하고 유형별 건수를 집계한다', () => {
+    render(
+      <PenaltyDetailModal
+        open
+        onOpenChange={jest.fn()}
+        member={createMember()}
+        cardinalNumber={4}
+        warningEnabled
+        records={[
+          { ...createRecord(), score: 5 },
+          { ...createRecord(), id: 2, type: 'WARNING', reason: '지각' },
+          { ...createRecord(), id: 3, cardinal: 3, reason: '이전 기수 기록' },
+        ]}
+      />,
+    );
+    expect(screen.getByRole('heading', { name: '4기 페널티 상세' })).toBeInTheDocument();
+    expect(screen.getAllByText('1회')).toHaveLength(2);
+    expect(screen.queryByText('이전 기수 기록')).not.toBeInTheDocument();
+    expect(screen.getByRole('columnheader', { name: '분류' })).toBeInTheDocument();
+    expect(screen.getAllByText('경고')).toHaveLength(2);
+  });
+
+  it('경고 기능이 꺼져 있으면 경고 요약을 표시하지 않는다', () => {
+    renderModal();
+    expect(screen.queryByText('경고')).not.toBeInTheDocument();
+    expect(screen.getByText('1회')).toBeInTheDocument();
   });
 
   it('삭제를 누르면 바로 삭제하지 않고 확인 알럿을 띄운다', async () => {

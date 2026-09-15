@@ -2,9 +2,8 @@ import type { MemberStatus } from '@/types/admin/member';
 
 export type PenaltyType = 'PENALTY' | 'WARNING';
 
-// TODO(페널티 정렬): 2026-09-13, 멤버 목록 API sort에 PENALTY_DESC(페널티 많은 순)가 추가돼
-// 되살렸다. 최근 페널티일 정렬은 아직 LAST_PENALTY_AT_* 값이 없어 여전히 못 쓴다.
-export type PenaltySortBy = 'CARDINAL_DESC' | 'CARDINAL_ASC' | 'PENALTY_DESC';
+// 두 정렬 모두 서버의 내림차순 값을 사용한다.
+export type PenaltySortBy = 'CARDINAL_DESC' | 'PENALTY_DESC';
 
 export interface PenaltyMember {
   /** userId (페널티 부여 요청의 userIds에 그대로 쓴다) */
@@ -36,6 +35,7 @@ export interface PenaltyRecordDraft {
 export interface PenaltyRecord {
   /** penaltyId — 수정/삭제 요청에 그대로 쓴다 */
   id: number;
+  cardinal?: number;
   type: PenaltyType;
   score: number;
   reason: string;

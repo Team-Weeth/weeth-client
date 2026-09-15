@@ -25,6 +25,7 @@ export function toPenaltyMember(cm: ClubMember): PenaltyMember {
 export function toPenaltyRecord(detail: AdminPenaltyDetail): PenaltyRecord {
   return {
     id: detail.penaltyId,
+    cardinal: detail.cardinal,
     type: detail.penaltyType,
     score: detail.score,
     reason: detail.penaltyDescription,

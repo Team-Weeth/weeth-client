@@ -183,6 +183,8 @@ function PenaltyPageContent({ warningEnabled = false }: { warningEnabled?: boole
         }}
         member={detailMember}
         records={detailRecords}
+        cardinalNumber={activeCardinal}
+        warningEnabled={warningEnabled}
         onUpdateRecord={updateRecord}
         onDeleteRecord={deleteRecord}
       />

@@ -5,6 +5,7 @@ describe('toPenaltyRecord', () => {
     expect(
       toPenaltyRecord({
         penaltyId: 1,
+        cardinal: 4,
         penaltyType,
         score: penaltyType === 'WARNING' ? 0 : 1,
         penaltyDescription: '지각',
@@ -12,6 +13,7 @@ describe('toPenaltyRecord', () => {
       }),
     ).toEqual({
       id: 1,
+      cardinal: 4,
       type: penaltyType,
       score: penaltyType === 'WARNING' ? 0 : 1,
       reason: '지각',
