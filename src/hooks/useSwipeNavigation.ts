@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 const SWIPE_THRESHOLD = 50;
 
@@ -10,6 +10,8 @@ interface UseSwipeNavigationProps {
 function useSwipeNavigation({ onPrev, onNext }: UseSwipeNavigationProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const touchStartX = useRef<number | null>(null);
+  const touchStartY = useRef<number | null>(null);
+  const isHorizontal = useRef<boolean | null>(null);
   const pendingNav = useRef<'prev' | 'next' | null>(null);
   const [dragX, setDragX] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
@@ -17,17 +19,47 @@ function useSwipeNavigation({ onPrev, onNext }: UseSwipeNavigationProps) {
   const handleTouchStart = (e: React.TouchEvent) => {
     if (isTransitioning) return;
     touchStartX.current = e.touches[0].clientX;
+    touchStartY.current = e.touches[0].clientY;
+    isHorizontal.current = null;
   };
 
-  const handleTouchMove = (e: React.TouchEvent) => {
-    if (touchStartX.current === null) return;
-    setDragX(e.touches[0].clientX - touchStartX.current);
-  };
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    const onTouchMove = (e: TouchEvent) => {
+      if (touchStartX.current === null || touchStartY.current === null) return;
+
+      const deltaX = e.touches[0].clientX - touchStartX.current;
+      const deltaY = e.touches[0].clientY - touchStartY.current;
+
+      // Determine swipe direction on first movement
+      if (isHorizontal.current === null) {
+        isHorizontal.current = Math.abs(deltaX) > Math.abs(deltaY);
+      }
+
+      if (isHorizontal.current) {
+        e.preventDefault(); // block vertical scroll during horizontal swipe
+        setDragX(deltaX);
+      }
+    };
+
+    container.addEventListener('touchmove', onTouchMove, { passive: false });
+    return () => container.removeEventListener('touchmove', onTouchMove);
+  }, []);
 
   const handleTouchEnd = (e: React.TouchEvent) => {
-    if (touchStartX.current === null) return;
+    if (touchStartX.current === null || !isHorizontal.current) {
+      touchStartX.current = null;
+      touchStartY.current = null;
+      isHorizontal.current = null;
+      return;
+    }
+
     const deltaX = e.changedTouches[0].clientX - touchStartX.current;
     touchStartX.current = null;
+    touchStartY.current = null;
+    isHorizontal.current = null;
 
     const containerWidth = containerRef.current?.offsetWidth ?? 375;
 
@@ -61,7 +93,6 @@ function useSwipeNavigation({ onPrev, onNext }: UseSwipeNavigationProps) {
     dragX,
     isTransitioning,
     handleTouchStart,
-    handleTouchMove,
     handleTouchEnd,
     handleTransitionEnd,
   };
