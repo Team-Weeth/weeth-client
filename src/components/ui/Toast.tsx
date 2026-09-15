@@ -1,36 +1,29 @@
 'use client';
 
 import * as React from 'react';
-import Image from 'next/image';
 import { Toast as ToastPrimitive } from 'radix-ui';
-import { cva, type VariantProps } from 'class-variance-authority';
+import { cva } from 'class-variance-authority';
 
 import { cn } from '@/lib/cn';
+import { Icon } from '@/components/ui/Icon';
 import CheckRoundIcon from '@/assets/icons/check_round.svg';
-import InfoCircleIcon from '@/assets/icons/info_circle.svg';
+import DeleteRoundIcon from '@/assets/icons/delete_round.svg';
 import CautionIcon from '@/assets/icons/caution.svg';
 
 const toastVariants = cva(
-  'pointer-events-auto flex h-[40px] max-w-[90%] items-center justify-center gap-200 rounded-full px-400 shadow-lg data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=open]:fade-in-0 data-[state=closed]:fade-out-0 data-[state=open]:slide-in-from-bottom-full data-[state=closed]:slide-out-to-bottom-full',
-  {
-    variants: {
-      variant: {
-        success: 'bg-state-success text-white',
-        info: 'bg-state-caution text-text-inverse',
-        error: 'bg-state-error text-text-inverse',
-      },
-    },
-    defaultVariants: {
-      variant: 'success',
-    },
-  },
+  'pointer-events-auto flex min-w-[324px] items-center gap-200 rounded-lg bg-container-floating p-400 shadow-md data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=open]:fade-in-0 data-[state=closed]:fade-out-0 data-[state=open]:slide-in-from-bottom-full data-[state=closed]:slide-out-to-bottom-full',
 );
 
-const iconMap = {
-  success: { src: CheckRoundIcon, className: 'invert brightness-0' },
-  info: { src: InfoCircleIcon, className: 'invert brightness-0' },
-  error: { src: CautionIcon, className: 'invert brightness-0' },
-} as const;
+type ToastVariant = 'success' | 'warning' | 'error';
+
+const iconMap: Record<
+  ToastVariant,
+  { src: React.ComponentProps<typeof Icon>['src']; className: string }
+> = {
+  success: { src: CheckRoundIcon, className: 'text-brand-primary' },
+  warning: { src: CautionIcon, className: 'text-state-caution' },
+  error: { src: DeleteRoundIcon, className: 'text-state-error' },
+};
 
 function ToastProvider({ ...props }: React.ComponentProps<typeof ToastPrimitive.Provider>) {
   return <ToastPrimitive.Provider swipeDirection="down" {...props} />;
@@ -53,27 +46,19 @@ function ToastViewport({
   );
 }
 
-interface ToastProps
-  extends React.ComponentProps<typeof ToastPrimitive.Root>, VariantProps<typeof toastVariants> {}
+interface ToastProps extends React.ComponentProps<typeof ToastPrimitive.Root> {
+  variant?: ToastVariant;
+}
 
 function Toast({ className, variant = 'success', children, ...props }: ToastProps) {
-  const icon = iconMap[variant!];
+  const icon = iconMap[variant];
 
   return (
-    <ToastPrimitive.Root
-      data-slot="toast"
-      className={cn(toastVariants({ variant }), className)}
-      {...props}
-    >
-      <Image
-        src={icon.src}
-        alt=""
-        width={20}
-        height={20}
-        aria-hidden="true"
-        className={icon.className}
-      />
-      <ToastPrimitive.Title className="typo-caption1 text-center">{children}</ToastPrimitive.Title>
+    <ToastPrimitive.Root data-slot="toast" className={cn(toastVariants(), className)} {...props}>
+      <Icon src={icon.src} size={20} className={icon.className} />
+      <ToastPrimitive.Title className="typo-sub3 text-text-on-floating text-center">
+        {children}
+      </ToastPrimitive.Title>
     </ToastPrimitive.Root>
   );
 }
