@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
-import { toastInfo } from '@/stores/useToastStore';
+import { toastWarning } from '@/stores/useToastStore';
 
 function BlockedToast() {
   const searchParams = useSearchParams();
@@ -11,7 +11,7 @@ function BlockedToast() {
 
   useEffect(() => {
     if (blocked === 'true') {
-      toastInfo('아직 서비스 런칭 전이에요!');
+      toastWarning('아직 서비스 런칭 전이에요!');
       router.replace('/landing');
     }
   }, [blocked, router]);
