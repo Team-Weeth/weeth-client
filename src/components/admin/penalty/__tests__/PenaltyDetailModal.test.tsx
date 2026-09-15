@@ -90,7 +90,7 @@ describe('PenaltyDetailModal', () => {
 
     await user.click(screen.getByRole('button', { name: '삭제' }));
 
-    expect(screen.getByText('페널티 기록을 삭제하시겠어요?')).toBeInTheDocument();
+    expect(screen.getByText('기록을 삭제하시겠어요?')).toBeInTheDocument();
     expect(onDeleteRecord).not.toHaveBeenCalled();
   });
 
@@ -112,6 +112,6 @@ describe('PenaltyDetailModal', () => {
     await user.click(within(screen.getByRole('alertdialog')).getByRole('button', { name: '취소' }));
 
     expect(onDeleteRecord).not.toHaveBeenCalled();
-    expect(screen.queryByText('페널티 기록을 삭제하시겠어요?')).not.toBeInTheDocument();
+    expect(screen.queryByText('기록을 삭제하시겠어요?')).not.toBeInTheDocument();
   });
 });
