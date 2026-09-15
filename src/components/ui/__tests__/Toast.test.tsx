@@ -1,8 +1,9 @@
 import { render, screen } from '@testing-library/react';
 
 import { Toast, ToastProvider, ToastViewport } from '@/components/ui/Toast';
+import type { ToastVariant } from '@/stores/useToastStore';
 
-function renderToast(variant?: 'success' | 'warning' | 'error', message = '저장되었습니다') {
+function renderToast(variant?: ToastVariant, message = '저장되었습니다') {
   render(
     <ToastProvider>
       <Toast variant={variant}>{message}</Toast>

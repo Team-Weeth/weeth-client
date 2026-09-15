@@ -6,6 +6,7 @@ import { cva } from 'class-variance-authority';
 
 import { cn } from '@/lib/cn';
 import { Icon } from '@/components/ui/Icon';
+import type { ToastVariant } from '@/stores/useToastStore';
 import CheckRoundIcon from '@/assets/icons/check_round.svg';
 import DeleteRoundIcon from '@/assets/icons/delete_round.svg';
 import CautionIcon from '@/assets/icons/caution.svg';
@@ -13,8 +14,6 @@ import CautionIcon from '@/assets/icons/caution.svg';
 const toastVariants = cva(
   'pointer-events-auto flex min-w-[324px] items-center gap-200 rounded-lg bg-container-floating p-400 shadow-md data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=open]:fade-in-0 data-[state=closed]:fade-out-0 data-[state=open]:slide-in-from-bottom-full data-[state=closed]:slide-out-to-bottom-full',
 );
-
-type ToastVariant = 'success' | 'warning' | 'error';
 
 const iconMap: Record<
   ToastVariant,
