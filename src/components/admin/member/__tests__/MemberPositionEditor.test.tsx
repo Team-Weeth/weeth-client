@@ -1,0 +1,127 @@
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { MemberPositionEditor } from '../MemberPositionEditor';
+import { MemberInformationFields } from '../MemberInformationFields';
+
+it('10자까지 허용하고 초과 시 카운터와 오류 상태를 표시하며 저장을 막는다', async () => {
+  const user = userEvent.setup();
+  const onSave = jest.fn();
+  render(
+    <MemberPositionEditor
+      initialOptions={[{ id: '1', name: '', color: 'primary' }]}
+      onSave={onSave}
+    />,
+  );
+  const input = screen.getByRole('textbox');
+  const save = screen.getByRole('button', { name: '저장하기' });
+  expect(screen.queryByText('0/10')).not.toBeInTheDocument();
+  await user.click(input);
+  fireEvent.change(input, { target: { value: '가나다라마바사아자차' } });
+  expect(screen.getByText('10/10')).toBeInTheDocument();
+  expect(input).not.toHaveAttribute('aria-invalid', 'true');
+  expect(save).toBeEnabled();
+  fireEvent.change(input, { target: { value: '가나다라마바사아자차카' } });
+  expect(screen.getByText('11/10')).toHaveClass('text-state-error');
+  expect(input).toHaveAttribute('aria-invalid', 'true');
+  expect(input).toHaveClass('border-state-error');
+  expect(save).toBeDisabled();
+  fireEvent.submit(input.closest('form')!);
+  expect(onSave).not.toHaveBeenCalled();
+  fireEvent.change(input, { target: { value: '개발팀' } });
+  expect(screen.getByText('3/10')).toBeInTheDocument();
+  expect(input).not.toHaveAttribute('aria-invalid', 'true');
+  await user.tab();
+  expect(screen.queryByText('3/10')).not.toBeInTheDocument();
+  await user.click(input);
+  expect(screen.getByText('3/10')).toBeInTheDocument();
+  await user.click(save);
+  expect(onSave).toHaveBeenCalledWith([{ id: '1', name: '개발팀', color: 'primary' }]);
+});
+
+it('기본정보 필드 5개 중 포지션에만 커스텀 필드 태그를 표시한다', () => {
+  render(<MemberInformationFields />);
+  expect(screen.getAllByRole('listitem')).toHaveLength(5);
+  expect(screen.getAllByText('커스텀 필드')).toHaveLength(1);
+  expect(screen.getByText('커스텀 필드').closest('li')).toHaveTextContent('포지션');
+});
+
+it('빈 옵션 4개로 시작하고 최대 6개까지 추가한 뒤 삭제할 수 있다', async () => {
+  const user = userEvent.setup();
+  render(<MemberPositionEditor onSave={jest.fn()} />);
+  expect(screen.getAllByRole('textbox')).toHaveLength(4);
+  expect(screen.getByRole('button', { name: '저장하기' })).toBeDisabled();
+  await user.click(screen.getByRole('button', { name: '옵션 추가하기 (4/6)' }));
+  await user.click(screen.getByRole('button', { name: '옵션 추가하기 (5/6)' }));
+  expect(screen.getAllByRole('textbox')).toHaveLength(6);
+  expect(screen.getByRole('button', { name: '옵션 추가하기 (6/6)' })).toBeDisabled();
+  await user.click(screen.getByRole('button', { name: '옵션 2 삭제' }));
+  expect(screen.getAllByRole('textbox')).toHaveLength(5);
+  expect(screen.getByRole('button', { name: '옵션 추가하기 (5/6)' })).toBeEnabled();
+});
+
+it('공백과 중복 이름은 저장하지 않고 변경된 유효한 이름은 다듬어 저장한다', async () => {
+  const user = userEvent.setup();
+  const onSave = jest.fn();
+  render(
+    <MemberPositionEditor
+      initialOptions={[
+        { id: '1', name: '개발', color: 'primary' },
+        { id: '2', name: '디자인', color: 'pink' },
+      ]}
+      onSave={onSave}
+    />,
+  );
+  const save = screen.getByRole('button', { name: '저장하기' });
+  const input = screen.getByRole('textbox', { name: '옵션 2 이름' });
+  expect(save).toBeDisabled();
+  fireEvent.change(input, { target: { value: '   ' } });
+  expect(save).toBeDisabled();
+  fireEvent.change(input, { target: { value: ' 개발 ' } });
+  expect(save).toBeDisabled();
+  expect(screen.getByRole('alert')).toHaveTextContent('서로 다르게');
+  fireEvent.change(input, { target: { value: ' 기획 ' } });
+  await user.click(save);
+  await waitFor(() =>
+    expect(onSave).toHaveBeenCalledWith([
+      { id: '1', name: '개발', color: 'primary' },
+      { id: '2', name: '기획', color: 'pink' },
+    ]),
+  );
+  expect(save).toBeDisabled();
+});
+
+it('저장 실패 시 입력값과 재시도 기능을 유지하고 서버 오류를 표시한다', async () => {
+  const user = userEvent.setup();
+  const onSave = jest.fn().mockRejectedValue({
+    isAxiosError: true,
+    response: { data: { message: '저장할 수 없습니다.' } },
+  });
+  render(
+    <MemberPositionEditor
+      initialOptions={[{ id: '1', name: '개발', color: 'primary' }]}
+      onSave={onSave}
+    />,
+  );
+  fireEvent.change(screen.getByRole('textbox'), { target: { value: '기획' } });
+  await user.click(screen.getByRole('button', { name: '저장하기' }));
+  expect(await screen.findByRole('alert')).toHaveTextContent('저장할 수 없습니다.');
+  expect(screen.getByRole('textbox')).toHaveValue('기획');
+  expect(screen.getByRole('button', { name: '저장하기' })).toBeEnabled();
+});
+
+it('색상 선택을 변경하면 선택기를 닫고 선택한 색상을 저장한다', async () => {
+  const user = userEvent.setup();
+  const onSave = jest.fn();
+  render(
+    <MemberPositionEditor
+      initialOptions={[{ id: '1', name: '개발', color: 'primary' }]}
+      onSave={onSave}
+    />,
+  );
+  await user.click(screen.getByRole('button', { name: '옵션 1 색상: 민트' }));
+  await user.click(screen.getByRole('menuitem', { name: '보라' }));
+  expect(screen.getByRole('button', { name: '옵션 1 색상: 보라' })).toBeInTheDocument();
+  expect(screen.queryByRole('menuitem', { name: '보라' })).not.toBeInTheDocument();
+  await user.click(screen.getByRole('button', { name: '저장하기' }));
+  expect(onSave).toHaveBeenCalledWith([{ id: '1', name: '개발', color: 'purple' }]);
+});

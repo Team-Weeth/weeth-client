@@ -8,6 +8,21 @@ export {
   type MemberDetailBottomSheetProps,
 } from './modal/MemberDetailBottomSheet';
 export { MemberPageContent } from './MemberPageContent';
+export { MemberPositionTag, type MemberPositionTagProps } from './MemberPositionTag';
+export {
+  MemberInformationContent,
+  type MemberInformationContentProps,
+} from './MemberInformationContent';
+export {
+  MemberInformationFields,
+  type MemberInformationFieldsProps,
+} from './MemberInformationFields';
+export {
+  MemberPositionEditor,
+  type MemberPositionEditorProps,
+  type MemberPositionOption,
+  type MemberPositionColor,
+} from './MemberPositionEditor';
 export { MemberPageHeader, type MemberPageHeaderProps } from './MemberPageHeader';
 export { MemberPageModals, type ForceConfirmState } from './MemberPageModals';
 export { MemberSearchBar, type MemberSearchBarProps } from './MemberSearchBar';
