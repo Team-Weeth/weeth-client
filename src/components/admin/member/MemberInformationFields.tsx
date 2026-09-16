@@ -7,6 +7,7 @@ import TelIcon from '@/assets/icons/admin/ic_admin_tel.svg';
 import CardinalIcon from '@/assets/icons/admin/ic_admin_cardinal.svg';
 import { Tag } from '@/components/ui/tag';
 import { cn } from '@/lib/cn';
+import { PositionFieldIcon } from './PositionFieldIcon';
 
 const fields = [
   { label: '포지션', icon: PositionIcon, custom: true },
@@ -27,12 +28,12 @@ function MemberInformationFields({ className }: MemberInformationFieldsProps) {
         <li
           key={label}
           className={cn(
-            'bg-container-neutral flex items-center gap-4 rounded-sm px-500 py-400 shadow-sm',
+            'bg-container-neutral flex items-center gap-4 rounded-sm px-500 py-400 shadow-sm dark:shadow-[0_1px_10px_0_rgba(0,0,0,0.40)]',
             !custom && 'opacity-50',
           )}
         >
           <span className="bg-container-neutral-alternative flex size-10 shrink-0 items-center justify-center rounded-sm">
-            <Image src={icon} width={24} height={24} alt="" />
+            {custom ? <PositionFieldIcon /> : <Image src={icon} width={24} height={24} alt="" />}
           </span>
           <span className={cn('typo-sub1', custom ? 'text-text-strong' : 'text-text-alternative')}>
             {label}

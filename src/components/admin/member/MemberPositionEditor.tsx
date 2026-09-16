@@ -4,6 +4,7 @@ import { useId, useRef, useState } from 'react';
 
 import AddRoundIcon from '@/assets/icons/add_round.svg';
 import ArrowDownIcon from '@/assets/icons/arrow_down.svg';
+import CheckIcon from '@/assets/icons/check.svg';
 import { Button } from '@/components/ui/Button';
 import { Icon } from '@/components/ui/Icon';
 import { Input } from '@/components/ui/Input';
@@ -46,11 +47,13 @@ function PositionColorPicker({
   onChange,
   label,
   disabled,
+  usedColors,
 }: {
   value: MemberPositionColor;
   onChange: (value: MemberPositionColor) => void;
   label: string;
   disabled: boolean;
+  usedColors: MemberPositionColor[];
 }) {
   const selected = POSITION_COLORS.find((color) => color.value === value)!;
   return (
@@ -60,16 +63,40 @@ function PositionColorPicker({
         <Icon src={ArrowDownIcon} size={20} />
       </DropdownMenuTrigger>
       <DropdownMenuContent aria-label={label} align="start">
-        {POSITION_COLORS.map((color) => (
-          <DropdownMenuItem
-            key={color.value}
-            aria-label={color.label}
-            onSelect={() => onChange(color.value)}
-          >
-            <span className={cn('size-5 rounded-full', color.className)} />
-            <span className="sr-only">{color.value === value ? '선택됨' : color.label}</span>
-          </DropdownMenuItem>
-        ))}
+        {POSITION_COLORS.map((color) => {
+          const isSelected = color.value === value;
+          const unavailable = !isSelected && usedColors.includes(color.value);
+          return (
+            <DropdownMenuItem
+              key={color.value}
+              aria-label={color.label}
+              aria-current={isSelected ? 'true' : undefined}
+              disabled={unavailable}
+              className="data-[disabled]:cursor-not-allowed"
+              onSelect={() => onChange(color.value)}
+            >
+              <span
+                aria-hidden
+                className={cn(
+                  'relative flex shrink-0 items-center justify-center overflow-hidden rounded-full',
+                  color.className,
+                  isSelected ? 'size-7 p-[2px]' : 'size-6',
+                  unavailable && 'opacity-50',
+                )}
+              >
+                {isSelected && (
+                  <span className="flex size-full items-center justify-center rounded-full border-2 border-white">
+                    <Icon src={CheckIcon} size={16} className="text-white" />
+                  </span>
+                )}
+                {unavailable && <span className="absolute h-[2px] w-[140%] rotate-45 bg-white" />}
+              </span>
+              <span className="sr-only">
+                {isSelected ? '선택됨' : unavailable ? '다른 옵션에서 사용 중' : color.label}
+              </span>
+            </DropdownMenuItem>
+          );
+        })}
       </DropdownMenuContent>
     </DropdownMenu>
   );
@@ -195,13 +222,21 @@ function MemberPositionEditor({ initialOptions, onSave, className }: MemberPosit
             선택 옵션
           </div>
           <div className="divide-line divide-y">
+            {options.length === 0 && (
+              <p className="bg-container-neutral typo-sub1 text-text-disabled flex items-center justify-center gap-4 px-500 py-700 text-center">
+                옵션을 추가해 보세요.
+              </p>
+            )}
             {options.map((option, index) => (
               <div
                 key={option.id}
-                className="bg-container-neutral flex items-center gap-300 px-400 py-400"
+                className="bg-container-neutral flex items-center gap-4 px-500 py-400"
               >
                 <PositionColorPicker
                   value={option.color}
+                  usedColors={options
+                    .filter((item) => item.id !== option.id && item.name.trim().length > 0)
+                    .map((item) => item.color)}
                   label={`옵션 ${index + 1} 색상`}
                   disabled={saving}
                   onChange={(color) =>

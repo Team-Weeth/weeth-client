@@ -3,6 +3,55 @@ import userEvent from '@testing-library/user-event';
 import { MemberPositionEditor } from '../MemberPositionEditor';
 import { MemberInformationFields } from '../MemberInformationFields';
 
+it('빈 옵션의 색상은 허용하고 이름을 입력할 때만 차단하며 비우면 다시 허용한다', async () => {
+  const user = userEvent.setup();
+  render(<MemberPositionEditor onSave={jest.fn()} />);
+  const trigger = screen.getByRole('button', { name: '옵션 1 색상: 민트' });
+  const secondInput = screen.getByRole('textbox', { name: '옵션 2 이름' });
+  for (const name of ['', '기획', '   ']) {
+    fireEvent.change(secondInput, { target: { value: name } });
+    await user.click(trigger);
+    const blue = screen.getByRole('menuitem', { name: '파랑' });
+    if (name.trim()) {
+      expect(blue).toHaveAttribute('aria-disabled', 'true');
+    } else {
+      expect(blue).not.toHaveAttribute('aria-disabled', 'true');
+    }
+    expect(screen.getByRole('menuitem', { name: '보라' })).not.toHaveAttribute(
+      'aria-disabled',
+      'true',
+    );
+    await user.keyboard('{Escape}');
+  }
+});
+
+it('현재 색상은 선택 표시하고 다른 옵션의 색상은 막으며 옵션 삭제 시 다시 허용한다', async () => {
+  const user = userEvent.setup();
+  render(
+    <MemberPositionEditor
+      initialOptions={[
+        { id: '1', name: '개발', color: 'primary' },
+        { id: '2', name: '기획', color: 'caution' },
+      ]}
+      onSave={jest.fn()}
+    />,
+  );
+  await user.click(screen.getByRole('button', { name: '옵션 1 색상: 민트' }));
+  expect(screen.getByRole('menuitem', { name: '민트' })).toHaveAttribute('aria-current', 'true');
+  expect(screen.getByRole('menuitem', { name: '노랑' })).toHaveAttribute('aria-disabled', 'true');
+  await user.click(screen.getByRole('menuitem', { name: '노랑' }));
+  expect(screen.getByRole('button', { name: '옵션 1 색상: 민트' })).toBeInTheDocument();
+  await user.keyboard('{Escape}');
+  await user.click(screen.getByRole('button', { name: '옵션 2 삭제' }));
+  await user.click(screen.getByRole('button', { name: '옵션 1 색상: 민트' }));
+  expect(screen.getByRole('menuitem', { name: '노랑' })).not.toHaveAttribute(
+    'aria-disabled',
+    'true',
+  );
+  await user.click(screen.getByRole('menuitem', { name: '노랑' }));
+  expect(screen.getByRole('button', { name: '옵션 1 색상: 노랑' })).toBeInTheDocument();
+});
+
 it('10자까지 허용하고 초과 시 카운터와 오류 상태를 표시하며 저장을 막는다', async () => {
   const user = userEvent.setup();
   const onSave = jest.fn();

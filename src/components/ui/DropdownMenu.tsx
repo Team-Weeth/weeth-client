@@ -30,7 +30,7 @@ function DropdownMenuTrigger({
       data-slot="dropdown-menu-trigger"
       className={cn(
         type === 'position' &&
-          'border-line bg-container-neutral text-icon-normal focus-visible:outline-brand-primary flex h-12 w-[78px] shrink-0 items-center justify-center gap-200 rounded-sm border py-300 pr-300 pl-400 disabled:cursor-not-allowed',
+          'border-line bg-container-neutral text-icon-normal focus-visible:outline-brand-primary flex h-12 w-[78px] shrink-0 cursor-pointer items-center justify-center gap-200 rounded-sm border py-300 pr-300 pl-400 disabled:cursor-not-allowed',
         className,
       )}
       {...props}
@@ -74,7 +74,8 @@ function DropdownMenuContent({
           'scrollbar-custom bg-container-neutral z-90 flex max-h-[min(var(--radix-dropdown-menu-content-available-height),320px)] min-w-[144px] touch-pan-y flex-col items-center overflow-y-auto overscroll-contain rounded-md shadow-[0px_4px_14px_0px_rgba(0,0,0,0.25)] [-webkit-overflow-scrolling:touch]',
           'data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95',
           'data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95',
-          type === 'position' && 'w-[var(--radix-dropdown-menu-trigger-width)] min-w-0',
+          type === 'position' &&
+            'divide-line w-[var(--radix-dropdown-menu-trigger-width)] min-w-0 divide-y',
           className,
         )}
         {...props}

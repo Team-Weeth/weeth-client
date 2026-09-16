@@ -9,7 +9,7 @@ function MemberInformationContent({ className, ...editorProps }: MemberInformati
   return (
     <div
       className={cn(
-        'bg-container-neutral flex min-w-0 flex-col gap-800 rounded-t-lg p-700',
+        'bg-container-neutral flex min-h-full min-w-0 flex-col gap-800 rounded-t-lg p-700',
         className,
       )}
     >

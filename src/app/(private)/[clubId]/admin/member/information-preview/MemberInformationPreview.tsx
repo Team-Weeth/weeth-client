@@ -9,8 +9,9 @@ import { toastInfo } from '@/stores/useToastStore';
 export function MemberInformationPreview() {
   const [savedOptions, setSavedOptions] = useState<MemberPositionOption[]>([]);
   return (
-    <>
+    <div className="bg-container-neutral flex min-h-full min-w-0 flex-col rounded-t-lg">
       <MemberInformationContent
+        className="min-h-0 flex-1"
         onSave={(options) => {
           setSavedOptions(options);
           toastInfo('미리보기입니다. 변경 사항은 서버에 저장되지 않습니다.');
@@ -29,6 +30,6 @@ export function MemberInformationPreview() {
           ))}
         </section>
       )}
-    </>
+    </div>
   );
 }
