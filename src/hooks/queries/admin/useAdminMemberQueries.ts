@@ -56,7 +56,12 @@ export function useAdminMembersInfinite(pageSize = 10, enabled = true) {
       };
     },
     initialPageParam: 0,
-    getNextPageParam: (lastPage) => (lastPage.hasNext ? lastPage.pageNumber + 1 : undefined),
+    getNextPageParam: (lastPage) => {
+      const nextPage = lastPage.pageNumber + 1;
+      const hasNext =
+        lastPage.totalPages != null ? nextPage < lastPage.totalPages : lastPage.hasNext;
+      return hasNext ? nextPage : undefined;
+    },
     select: (data) => data.pages.flatMap((page) => page.content),
     enabled: !!clubId && enabled,
     staleTime: 30 * 60 * 1000,
