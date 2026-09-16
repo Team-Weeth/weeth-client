@@ -1,5 +1,8 @@
 import type { TagProps } from '@/components/ui/tag';
 
+export const MAX_POSITION_OPTIONS = 6;
+export const MAX_POSITION_NAME_LENGTH = 10;
+
 export const POSITION_COLORS = [
   { value: 'primary', label: '민트', className: 'bg-brand-primary', tagVariant: 'primary' },
   { value: 'secondary', label: '파랑', className: 'bg-brand-secondary', tagVariant: 'secondary' },
