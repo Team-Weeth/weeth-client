@@ -52,7 +52,7 @@ it('현재 색상은 선택 표시하고 다른 옵션의 색상은 막으며 �
   expect(screen.getByRole('button', { name: '옵션 1 색상: 노랑' })).toBeInTheDocument();
 });
 
-it('10자까지 허용하고 초과 시 카운터와 오류 상태를 표시하며 저장을 막는다', async () => {
+it('11자부터 입력을 막고 10/10과 오류 테두리를 유지하며 수정하면 오류를 해제한다', async () => {
   const user = userEvent.setup();
   const onSave = jest.fn();
   render(
@@ -69,13 +69,18 @@ it('10자까지 허용하고 초과 시 카운터와 오류 상태를 표시하�
   expect(screen.getByText('10/10')).toBeInTheDocument();
   expect(input).not.toHaveAttribute('aria-invalid', 'true');
   expect(save).toBeEnabled();
-  fireEvent.change(input, { target: { value: '가나다라마바사아자차카' } });
-  expect(screen.getByText('11/10')).toHaveClass('text-state-error');
+  await user.type(input, '카');
+  expect(input).toHaveValue('가나다라마바사아자차');
+  expect(screen.getByText('10/10')).toHaveClass('text-state-error');
+  expect(screen.queryByText('11/10')).not.toBeInTheDocument();
   expect(input).toHaveAttribute('aria-invalid', 'true');
   expect(input).toHaveClass('border-state-error');
-  expect(save).toBeDisabled();
-  fireEvent.submit(input.closest('form')!);
-  expect(onSave).not.toHaveBeenCalled();
+  expect(save).toBeEnabled();
+  await user.clear(input);
+  await user.paste('가나다라마바사아자차카타파하');
+  expect(input).toHaveValue('가나다라마바사아자차');
+  expect(screen.getByText('10/10')).toHaveClass('text-state-error');
+  expect(input).toHaveClass('border-state-error');
   fireEvent.change(input, { target: { value: '개발팀' } });
   expect(screen.getByText('3/10')).toBeInTheDocument();
   expect(input).not.toHaveAttribute('aria-invalid', 'true');

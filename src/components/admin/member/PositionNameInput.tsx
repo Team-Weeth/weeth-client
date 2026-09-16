@@ -18,8 +18,9 @@ function PositionNameInput({
 }) {
   const counterId = useId();
   const [focused, setFocused] = useState(false);
+  const [limitExceeded, setLimitExceeded] = useState(false);
   const length = Array.from(value).length;
-  const exceeded = length > MAX_POSITION_NAME_LENGTH;
+  const exceeded = limitExceeded || length > MAX_POSITION_NAME_LENGTH;
   const showCounter = focused && length > 0;
 
   return (
@@ -36,7 +37,11 @@ function PositionNameInput({
           showCounter && 'pr-20',
           exceeded && 'bg-container-neutral',
         )}
-        onChange={(event) => onChange(event.target.value)}
+        onChange={(event) => {
+          const characters = Array.from(event.target.value);
+          setLimitExceeded(characters.length > MAX_POSITION_NAME_LENGTH);
+          onChange(characters.slice(0, MAX_POSITION_NAME_LENGTH).join(''));
+        }}
         onFocus={() => setFocused(true)}
         onBlur={() => setFocused(false)}
       />
