@@ -1,6 +1,7 @@
 export const MEMBER_TABLE_COLUMNS = [
   { id: 'profile', label: '이름/자기소개', width: 'w-[220px] min-w-[220px]' },
   { id: 'role', label: '역할', width: 'w-[118px]' },
+  { id: 'position', label: '포지션', width: 'w-[172px]' },
   { id: 'department', label: '학과', width: 'w-[190px]' },
   { id: 'studentId', label: '학번', width: 'w-[138px]' },
   { id: 'attendance', label: '출석', width: 'w-12', align: 'text-center' },

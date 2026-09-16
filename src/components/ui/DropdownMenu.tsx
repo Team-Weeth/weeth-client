@@ -51,14 +51,17 @@ function DropdownMenuPortal({
 
 function DropdownMenuContent({
   className,
+  portalContainer,
   sideOffset = 4,
   onTouchMove,
   onWheel,
   ...props
-}: React.ComponentProps<typeof DropdownMenuPrimitive.Content>) {
+}: React.ComponentProps<typeof DropdownMenuPrimitive.Content> & {
+  portalContainer?: React.ComponentProps<typeof DropdownMenuPrimitive.Portal>['container'];
+}) {
   const type = React.useContext(DropdownMenuTypeContext);
   return (
-    <DropdownMenuPortal>
+    <DropdownMenuPortal container={portalContainer}>
       <DropdownMenuPrimitive.Content
         data-slot="dropdown-menu-content"
         sideOffset={sideOffset}

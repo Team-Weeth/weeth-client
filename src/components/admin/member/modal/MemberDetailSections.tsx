@@ -1,3 +1,7 @@
+'use client';
+
+import { useMockMemberPositions } from '../MockMemberPositionsProvider';
+import { MOCK_MEMBER_POSITIONS } from '@/mocks/memberPositions';
 import type { ReactNode } from 'react';
 
 import { AttendanceProgressBar } from '@/components/attendance/AttendanceProgressBar';
@@ -64,6 +68,10 @@ function MemberDetailSummary({ member, className, avatarSize = 64 }: MemberDetai
 }
 
 function MemberPersonalInfoCard({ member, className }: MemberDetailInfoCardProps) {
+  const { getPositionId } = useMockMemberPositions();
+  const positionName =
+    MOCK_MEMBER_POSITIONS.find((option) => option.id === getPositionId(member.id))?.name ??
+    '미지정';
   return (
     <section
       className={cn('border-line bg-container-neutral rounded-md border px-500 py-450', className)}
@@ -71,7 +79,7 @@ function MemberPersonalInfoCard({ member, className }: MemberDetailInfoCardProps
       <p className="typo-body2 text-text-disabled mb-[14px]">회원 정보</p>
 
       <div className="flex flex-col gap-300">
-        {getMemberPersonalInfo(member).map(({ label, value }) => (
+        {getMemberPersonalInfo(member, positionName).map(({ label, value }) => (
           <InfoRow key={label} label={label} value={value} />
         ))}
       </div>
@@ -194,9 +202,10 @@ function MemberDetailCardinalTooltip({
   );
 }
 
-function getMemberPersonalInfo(member: Member) {
+function getMemberPersonalInfo(member: Member, positionName: string) {
   return [
     { label: '역할', value: member.position },
+    { label: '포지션', value: positionName },
     { label: '학과', value: member.department },
     { label: '학번', value: member.studentId },
     { label: '전화번호', value: member.phone },

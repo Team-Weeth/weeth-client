@@ -9,6 +9,7 @@ import { MEMBER_TABLE_COLUMNS } from '@/constants/admin/memberTable.constants';
 import { SelectionCheckbox } from '@/components/admin/SelectionCheckbox';
 import { TablePagination } from '@/components/admin/TablePagination';
 import { MemberTableRow } from './MemberTableRow';
+import { useMockMemberPositions } from './MockMemberPositionsProvider';
 
 interface MemberTableProps extends React.HTMLAttributes<HTMLDivElement> {
   members: Member[];
@@ -33,6 +34,7 @@ function MemberTable({
 }: MemberTableProps) {
   const [internalSelectedIds, setInternalSelectedIds] = useState<Set<string>>(new Set());
   const [showStickyShadow, setShowStickyShadow] = useState(false);
+  const { getPositionId, setPosition } = useMockMemberPositions();
   const selectedIds = controlledSelectedIds ?? internalSelectedIds;
   const setSelectedIds = onSelectionChange ?? setInternalSelectedIds;
   const currentPage = Math.min(page, Math.max(totalPages, 1));
@@ -125,6 +127,8 @@ function MemberTable({
               <MemberTableRow
                 key={member.id}
                 member={member}
+                positionId={getPositionId(member.id)}
+                onPositionChange={(positionId) => setPosition(member.id, positionId)}
                 selected={selectedIds.has(member.id)}
                 onToggle={toggleOne}
                 onMemberAction={onMemberAction}

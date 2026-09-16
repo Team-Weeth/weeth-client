@@ -10,9 +10,13 @@ import { TableCell, TableRow } from '@/components/ui/table';
 import { cn } from '@/lib/cn';
 import type { Member } from '@/types/admin/member';
 import { MemberStatusBadge } from './MemberStatusBadge';
+import { MemberPositionDropdown } from './MemberPositionDropdown';
+import { MOCK_MEMBER_POSITIONS } from '@/mocks/memberPositions';
 
 interface MemberTableRowProps {
   member: Member;
+  positionId: string | null;
+  onPositionChange: (positionId: string | null) => void;
   selected: boolean;
   onToggle: (id: string) => void;
   onMemberAction?: (member: Member) => void;
@@ -30,6 +34,8 @@ const NUMBER_CELL_VALUES = ['attendance', 'absence', 'penaltyCount'] as const;
 
 function MemberTableRow({
   member,
+  positionId,
+  onPositionChange,
   selected,
   onToggle,
   onMemberAction,
@@ -69,7 +75,19 @@ function MemberTableRow({
 
       <MemberProfileCell member={member} showStickyShadow={showStickyShadow} />
 
-      {textCells.slice(0, 3).map(({ id, value }) => (
+      <TableTextCell responsive className={TEXT_CELL_CLASS_BY_ID.role}>
+        {member.position}
+      </TableTextCell>
+      <TableCell className="max-tablet:py-100 w-[172px] p-0 px-400 py-200">
+        <MemberPositionDropdown
+          memberName={member.name}
+          value={positionId}
+          options={MOCK_MEMBER_POSITIONS}
+          onChange={onPositionChange}
+        />
+      </TableCell>
+
+      {textCells.slice(1, 3).map(({ id, value }) => (
         <TableTextCell key={id} responsive className={TEXT_CELL_CLASS_BY_ID[id]}>
           {value}
         </TableTextCell>
