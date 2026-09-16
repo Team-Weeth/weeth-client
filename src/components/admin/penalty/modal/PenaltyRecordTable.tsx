@@ -197,12 +197,13 @@ function PenaltyRecordEditRow({
       </TableCell>
       <TableCell className="max-tablet:col-span-2 max-tablet:row-start-2 h-16 bg-neutral-200 px-200 py-200">
         <Input
+          autoFocus
           value={edit.reason}
           onChange={(event) => onEditChange({ reason: event.target.value })}
           maxLength={PENALTY_REASON_MAX_LENGTH}
           placeholder={`${isWarning ? '경고' : '페널티'} 사유를 작성해주세요`}
           aria-label="페널티 사유"
-          className="typo-body1 h-12 w-full min-w-0 px-400"
+          className="typo-body1 border-brand-primary h-12 w-full min-w-0 px-400"
         />
       </TableCell>
       <TableCell

@@ -53,6 +53,7 @@ describe('PenaltyRecordTable', () => {
     await user.click(screen.getByRole('button', { name: '수정' }));
 
     expect(screen.getByLabelText('페널티 사유')).toHaveValue('정기 모임 무단 결석');
+    expect(screen.getByLabelText('페널티 사유')).toHaveFocus();
     expect(screen.queryByLabelText('페널티 점수')).not.toBeInTheDocument();
     expect(screen.queryByRole('button', { name: '삭제' })).not.toBeInTheDocument();
   });
