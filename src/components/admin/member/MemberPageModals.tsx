@@ -184,10 +184,13 @@ function MemberPageModals({
           onOpenChange={(open) => {
             if (!open) setPendingDetailAction(null);
           }}
+          status={pendingDetailAction.id === 'ban' ? 'danger' : 'default'}
           title={pendingDetailAction.title}
           description={pendingDetailAction.description}
         >
-          <AlertDialogAction onClick={handlePendingDetailActionConfirm}>확인</AlertDialogAction>
+          <AlertDialogAction onClick={handlePendingDetailActionConfirm}>
+            {pendingDetailAction.id === 'ban' ? '추방' : '확인'}
+          </AlertDialogAction>
           <AlertDialogCancel>취소</AlertDialogCancel>
         </AlertDialog>
       )}

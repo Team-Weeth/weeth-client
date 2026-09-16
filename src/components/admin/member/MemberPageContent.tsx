@@ -21,7 +21,8 @@ import { useMemberBulkActions } from './hooks/useMemberBulkActions';
 import { useMemberListState } from './hooks/useMemberListState';
 import { useMemberSelection } from './hooks/useMemberSelection';
 
-import { MockMemberPositionsProvider } from './MockMemberPositionsProvider';
+import { ChangePositionModal } from './modal/ChangePositionModal';
+import { MockMemberPositionsProvider, useMockMemberPositions } from './MockMemberPositionsProvider';
 
 const MEMBER_PAGE_SIZE = 10;
 const MEMBER_VIEW_MODE_QUERY_KEY = 'view';
@@ -30,6 +31,16 @@ const isMemberViewMode = (value: string | null): value is MemberViewMode =>
   value === 'table' || value === 'card';
 
 function MemberPageContent() {
+  return (
+    <MockMemberPositionsProvider>
+      <MemberPageBody />
+    </MockMemberPositionsProvider>
+  );
+}
+
+function MemberPageBody() {
+  const { setPosition } = useMockMemberPositions();
+  const [isPositionOpen, setIsPositionOpen] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -141,6 +152,7 @@ function MemberPageContent() {
   };
   const memberSelectionBarProps = {
     selectedCount,
+    onChangePosition: () => setIsPositionOpen(true),
     targetRole,
     targetBanAction,
     onBack: clearSelection,
@@ -160,7 +172,7 @@ function MemberPageContent() {
   };
 
   return (
-    <MockMemberPositionsProvider>
+    <>
       <div className="max-tablet:!w-full max-tablet:!max-w-full max-tablet:!overflow-hidden max-tablet:!pr-0 max-tablet:h-full flex min-h-full min-w-0 pr-450">
         <div className="bg-container-neutral max-tablet:!w-full max-tablet:!max-w-full max-tablet:!rounded-none max-tablet:h-full max-tablet:overflow-hidden flex min-h-0 min-w-0 flex-1 flex-col rounded-t-[20px]">
           <div
@@ -249,6 +261,15 @@ function MemberPageContent() {
         </div>
       </div>
 
+      <ChangePositionModal
+        open={isPositionOpen}
+        onOpenChange={setIsPositionOpen}
+        memberCount={selectedCount}
+        memberName={selectedMembers[0]?.name}
+        onSubmit={(positionId) => {
+          selectedIds.forEach((memberId) => setPosition(memberId, positionId));
+        }}
+      />
       <MemberPageModals
         detailMember={detailMember}
         cardinalModalMember={cardinalModalMember}
@@ -268,7 +289,7 @@ function MemberPageContent() {
         onChangeCardinals={submitCardinalsChange}
         onTransferLead={handleTransferLead}
       />
-    </MockMemberPositionsProvider>
+    </>
   );
 }
 

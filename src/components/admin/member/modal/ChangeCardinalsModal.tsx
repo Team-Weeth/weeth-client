@@ -92,7 +92,7 @@ function ChangeCardinalsModal({
 
       <DialogContent
         showCloseButton={false}
-        className="bg-background border-line max-tablet:h-dvh max-tablet:max-h-dvh max-tablet:rounded-none max-tablet:border-0 flex h-[636px] w-full max-w-[672px] grid-rows-none flex-col gap-0 rounded-[20px] border p-0"
+        className="bg-background border-line max-tablet:h-dvh max-tablet:max-h-dvh max-tablet:rounded-none max-tablet:border-0 flex h-[636px] w-full max-w-[672px] grid-rows-none flex-col gap-0 overflow-hidden rounded-[20px] border p-0"
       >
         <div className="max-tablet:px-400 max-tablet:pt-500 max-tablet:pb-400 flex items-start justify-between gap-400 px-700 pt-700 pb-600">
           <div className="flex flex-col gap-200">

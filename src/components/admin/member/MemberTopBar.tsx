@@ -28,6 +28,7 @@ interface MemberTopBarProps extends React.HTMLAttributes<HTMLDivElement> {
   onBack: () => void;
   onApprove?: () => void;
   onChangeRole?: () => void;
+  onChangePosition?: () => void;
   onBan?: () => void;
   onRestore?: () => void;
   onChangeCardinals?: (cardinalIds: number[], cardinalNumbers: number[]) => void;
@@ -45,6 +46,7 @@ function MemberTopBar({
   onBack,
   onApprove,
   onChangeRole,
+  onChangePosition,
   onBan,
   onRestore,
   onChangeCardinals,
@@ -81,28 +83,38 @@ function MemberTopBar({
       {...props}
     >
       {topBarActions.map(({ id, label, title, description, handler, disabled }) => (
-        <AlertDialog
-          key={id}
-          title={title}
-          description={description}
-          trigger={
-            <Button
-              variant="secondary"
-              size="md"
-              className={cn(
-                'typo-button2 bg-static-on-floating text-container-floating hover:bg-static-on-floating/90 shrink-0 rounded-sm px-300 py-200 whitespace-nowrap',
-                id === 'ban' && 'text-state-error',
-              )}
-              disabled={disabled}
-            >
-              {label}
-            </Button>
-          }
-        >
-          <AlertDialogAction onClick={handler}>확인</AlertDialogAction>
-          <AlertDialogCancel>취소</AlertDialogCancel>
-        </AlertDialog>
+        <React.Fragment key={id}>
+          {(id === 'ban' || id === 'restore') && onChangePosition && (
+            <PositionChangeButton onClick={onChangePosition} />
+          )}
+          <AlertDialog
+            key={id}
+            status={id === 'ban' ? 'danger' : 'default'}
+            title={title}
+            description={description}
+            trigger={
+              <Button
+                variant="secondary"
+                size="md"
+                className={cn(
+                  'typo-button2 bg-static-on-floating text-container-floating hover:bg-static-on-floating/90 shrink-0 rounded-sm px-300 py-200 whitespace-nowrap',
+                  id === 'ban' && 'text-state-error',
+                )}
+                disabled={disabled}
+              >
+                {label}
+              </Button>
+            }
+          >
+            <AlertDialogAction onClick={handler}>
+              {id === 'ban' ? '추방' : '확인'}
+            </AlertDialogAction>
+            <AlertDialogCancel>취소</AlertDialogCancel>
+          </AlertDialog>
+        </React.Fragment>
       ))}
+      {!topBarActions.some((action) => action.id === 'ban' || action.id === 'restore') &&
+        onChangePosition && <PositionChangeButton onClick={onChangePosition} />}
 
       {onChangeCardinals && (
         <ChangeCardinalsModal
@@ -133,6 +145,7 @@ function MobileMemberTopBar({
   onBack,
   onApprove,
   onChangeRole,
+  onChangePosition,
   onBan,
   onRestore,
   onChangeCardinals,
@@ -307,6 +320,17 @@ function MobileMemberTopBar({
             </BottomSheetActionItem>
           ))}
 
+          {onChangePosition && (
+            <BottomSheetActionItem
+              onClick={() => {
+                setIsActionSheetOpen(false);
+                onChangePosition();
+              }}
+            >
+              포지션 변경
+            </BottomSheetActionItem>
+          )}
+
           {onChangeCardinals && (
             <BottomSheetActionItem
               onClick={() => {
@@ -351,14 +375,30 @@ function MobileMemberTopBar({
           onOpenChange={(open) => {
             if (!open) setPendingAction(null);
           }}
+          status={pendingAction.id === 'ban' ? 'danger' : 'default'}
           title={pendingAction.title}
           description={pendingAction.description}
         >
-          <AlertDialogAction onClick={handleActionConfirm}>확인</AlertDialogAction>
+          <AlertDialogAction onClick={handleActionConfirm}>
+            {pendingAction.id === 'ban' ? '추방' : '확인'}
+          </AlertDialogAction>
           <AlertDialogCancel>취소</AlertDialogCancel>
         </AlertDialog>
       )}
     </>
+  );
+}
+
+function PositionChangeButton({ onClick }: { onClick: () => void }) {
+  return (
+    <Button
+      variant="secondary"
+      size="md"
+      onClick={onClick}
+      className="typo-button2 bg-static-on-floating text-container-floating hover:bg-static-on-floating/90 shrink-0 rounded-sm px-300 py-200 whitespace-nowrap"
+    >
+      포지션 변경
+    </Button>
   );
 }
 

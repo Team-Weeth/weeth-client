@@ -68,7 +68,8 @@ export function getFooterActions({
       : {
           id: 'ban',
           label: '유저 추방',
-          title: '1명의 멤버를 추방하시겠습니까?',
+          title: '선택한 유저를 추방하시겠어요?',
+          description: '신중히 확인 후 진행해 주세요.',
           handler: onBan,
         },
   ];

@@ -79,6 +79,7 @@ function MemberDetailModal({
             {footerActions.map(({ id, label, title, description, handler }) => (
               <AlertDialog
                 key={id}
+                status={id === 'ban' ? 'danger' : 'default'}
                 title={title}
                 description={description}
                 trigger={
@@ -87,7 +88,9 @@ function MemberDetailModal({
                   </Button>
                 }
               >
-                <AlertDialogAction onClick={handler}>확인</AlertDialogAction>
+                <AlertDialogAction onClick={handler}>
+                  {id === 'ban' ? '추방' : '확인'}
+                </AlertDialogAction>
                 <AlertDialogCancel>취소</AlertDialogCancel>
               </AlertDialog>
             ))}

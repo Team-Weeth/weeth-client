@@ -134,8 +134,15 @@ function MemberDetailActionButton({ action, onActionRequest }: MemberDetailActio
   if (onActionRequest) return button;
 
   return (
-    <AlertDialog title={action.title} description={action.description} trigger={button}>
-      <AlertDialogAction onClick={action.handler}>확인</AlertDialogAction>
+    <AlertDialog
+      status={action.id === 'ban' ? 'danger' : 'default'}
+      title={action.title}
+      description={action.description}
+      trigger={button}
+    >
+      <AlertDialogAction onClick={action.handler}>
+        {action.id === 'ban' ? '추방' : '확인'}
+      </AlertDialogAction>
       <AlertDialogCancel>취소</AlertDialogCancel>
     </AlertDialog>
   );
