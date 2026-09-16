@@ -13,6 +13,8 @@ import {
 import { ChangeCardinalsModal } from './modal/ChangeCardinalsModal';
 import { MemberDetailBottomSheet } from './modal/MemberDetailBottomSheet';
 import { MemberDetailModal } from './modal/MemberDetailModal';
+import { ChangePositionModal } from './modal/ChangePositionModal';
+import { useMockMemberPositions } from './MockMemberPositionsProvider';
 
 interface ForceConfirmState {
   requests: CardinalChangeRequest[];
@@ -53,6 +55,9 @@ function MemberPageModals({
   onChangeCardinals,
   onTransferLead,
 }: MemberPageModalsProps) {
+  const { setPosition } = useMockMemberPositions();
+  const [positionMember, setPositionMember] = useState<Member | null>(null);
+  const positionOpenTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [pendingDetailAction, setPendingDetailAction] = useState<TopBarAction | null>(null);
   const [displayedDetailMember, setDisplayedDetailMember] = useState<Member | null>(detailMember);
   const detailCacheResetTimeoutRef = useRef<ReturnType<typeof setTimeout> | number | null>(null);
@@ -62,6 +67,7 @@ function MemberPageModals({
 
   useEffect(
     () => () => {
+      if (positionOpenTimeoutRef.current) clearTimeout(positionOpenTimeoutRef.current);
       if (detailCacheResetTimeoutRef.current) {
         clearTimeout(detailCacheResetTimeoutRef.current);
       }
@@ -141,10 +147,36 @@ function MemberPageModals({
           onRestore={handleDetailRestore}
           onChangeRole={handleDetailRoleChange}
           onChangeCardinals={handleMobileDetailCardinalsChange}
+          onChangePosition={
+            detailMember
+              ? () => {
+                  const targetMember = detailMember;
+                  setDisplayedDetailMember(targetMember);
+                  onCloseDetail();
+                  if (positionOpenTimeoutRef.current) clearTimeout(positionOpenTimeoutRef.current);
+                  positionOpenTimeoutRef.current = setTimeout(() => {
+                    setPositionMember(targetMember);
+                    positionOpenTimeoutRef.current = null;
+                  }, DETAIL_BOTTOM_SHEET_EXIT_DELAY_MS);
+                }
+              : undefined
+          }
           onTransferLead={handleDetailTransferLead}
           onActionRequest={handleMobileDetailActionRequest}
         />
       )}
+
+      <ChangePositionModal
+        open={positionMember !== null}
+        onOpenChange={(open) => {
+          if (!open) setPositionMember(null);
+        }}
+        memberCount={1}
+        memberName={positionMember?.name}
+        onSubmit={(positionId) => {
+          if (positionMember) setPosition(positionMember.id, positionId);
+        }}
+      />
 
       <ChangeCardinalsModal
         open={cardinalModalMember !== null}
