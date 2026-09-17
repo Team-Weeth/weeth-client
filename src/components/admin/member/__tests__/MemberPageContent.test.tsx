@@ -93,9 +93,7 @@ it.each([20, 50])('%i명씩 마지막 페이지까지 중복 없이 조회한다
       params: { page: page - 1, size },
     });
   }
-  expect(
-    screen.queryByRole('link', { name: String(100 / size + 1) }),
-  ).not.toBeInTheDocument();
+  expect(screen.queryByRole('link', { name: String(100 / size + 1) })).not.toBeInTheDocument();
 });
 
 it('20명씩 3페이지를 보다가 50명으로 바꾸면 첫 페이지로 돌아오고 스크롤을 초기화한다', async () => {
@@ -110,10 +108,7 @@ it('20명씩 3페이지를 보다가 50명으로 바꾸면 첫 페이지로 돌�
   scrollContainer.scrollTop = 400;
   fireEvent.click(screen.getByRole('button', { name: '50개' }));
   await expectMembers(50, 1, 50);
-  expect(screen.getByRole('link', { name: '1' })).toHaveAttribute(
-    'aria-current',
-    'page',
-  );
+  expect(screen.getByRole('link', { name: '1' })).toHaveAttribute('aria-current', 'page');
   expect(scrollContainer.scrollTop).toBe(0);
   expect(getMock).toHaveBeenLastCalledWith('/admin/clubs/club-1/members', {
     params: { page: 0, size: 50 },
