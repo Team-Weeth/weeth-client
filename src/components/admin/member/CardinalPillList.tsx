@@ -42,17 +42,19 @@ function CardinalPillList({
 
   return (
     <div
-      ref={dragScrollRef}
       role="group"
       aria-label="기수 필터"
       className={cn(
-        'border-line max-tablet:justify-between max-tablet:pb-px flex w-full items-center border-b',
-        'tablet:scrollbar-none tablet:max-w-full tablet:cursor-grab tablet:gap-700 tablet:overflow-x-auto tablet:px-600 tablet:select-none tablet:active:cursor-grabbing',
+        'border-line max-tablet:pb-px flex w-full min-w-0 items-center overflow-hidden border-b',
+        'tablet:gap-700 tablet:px-600',
         className,
       )}
-      onMouseDown={onMouseDown}
     >
-      <div className="scrollbar-none tablet:contents tablet:h-auto tablet:w-auto tablet:max-w-none tablet:px-0 flex h-12 w-auto max-w-[calc(100%-44px)] min-w-0 flex-1 shrink cursor-grab items-end gap-200 overflow-x-auto px-200 select-none active:cursor-grabbing">
+      <div
+        ref={dragScrollRef}
+        onMouseDown={onMouseDown}
+        className="scrollbar-none tablet:h-14 tablet:gap-700 tablet:px-0 flex h-12 min-w-0 flex-1 cursor-grab items-end gap-200 overflow-x-auto px-200 select-none active:cursor-grabbing"
+      >
         <CardinalCard
           aria-pressed={selectedCardinal === 'all'}
           variant={selectedCardinal === 'all' ? 'active' : 'normal'}

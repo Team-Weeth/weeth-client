@@ -14,6 +14,8 @@ import { MemberTable } from './MemberTable';
 import type { MemberViewMode } from './MemberViewToggle';
 
 interface MemberMobileSearchPageProps extends HTMLAttributes<HTMLDivElement> {
+  isLoading?: boolean;
+  isError?: boolean;
   searchQuery: string;
   onSearchQueryChange: (query: string) => void;
   onCancel: () => void;
@@ -31,6 +33,8 @@ interface MemberMobileSearchPageProps extends HTMLAttributes<HTMLDivElement> {
 }
 
 function MemberMobileSearchPage({
+  isLoading = false,
+  isError = false,
   className,
   searchQuery,
   onSearchQueryChange,
@@ -66,7 +70,7 @@ function MemberMobileSearchPage({
             type="text"
             value={searchQuery}
             onChange={(event) => onSearchQueryChange(event.target.value)}
-            placeholder="이름, 역할, 학과..."
+            placeholder="이름으로 검색"
             className="typo-body2 text-text-normal placeholder:text-text-disabled min-w-0 flex-1 bg-transparent py-[2px] pl-200 focus:outline-none"
           />
           <button
@@ -89,9 +93,9 @@ function MemberMobileSearchPage({
       </div>
 
       <div className="flex min-h-0 flex-1 flex-col overflow-y-auto p-450">
-        {hasSearchQuery && !hasSearchResults && (
+        {hasSearchQuery && !isLoading && !hasSearchResults && (
           <div className="typo-body1 text-text-alternative flex shrink-0 justify-center pt-600">
-            검색 결과가 없습니다.
+            {isError ? '검색에 실패했습니다. 잠시 후 다시 시도해주세요.' : '검색 결과가 없습니다.'}
           </div>
         )}
 

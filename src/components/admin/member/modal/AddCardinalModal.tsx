@@ -66,10 +66,13 @@ function AddCardinalModal({ children, onSubmit }: AddCardinalModalProps) {
           <p className="typo-body1 text-text-normal">추가할 새로운 기수를 작성해주세요</p>
           <SuffixInput
             suffix="기"
+            stepper
+            min={1}
             aria-label="기수"
-            type="number"
+            type="text"
             inputMode="numeric"
             value={cardinal}
+            onStepChange={(next) => setCardinal(String(next))}
             onChange={(e) => {
               const v = e.target.value.replace(/\D/g, '');
               if (v === '' || Number(v) > 0) setCardinal(v);

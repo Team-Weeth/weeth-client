@@ -7,7 +7,7 @@ function MemberDetailSkeleton() {
         <Skeleton className="absolute bottom-[-30px] left-[20px] size-[100px] rounded-full" />
       </div>
 
-      <div className="bg-container-neutral flex flex-col px-5 pt-10 pb-5">
+      <div className="bg-container-neutral max-tablet:rounded-b-lg flex flex-col px-5 pt-10 pb-5">
         <Skeleton className="h-6 w-24" />
         <Skeleton className="mt-2 h-4 w-40" />
 

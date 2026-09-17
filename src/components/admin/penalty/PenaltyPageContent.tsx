@@ -182,6 +182,7 @@ function PenaltyPageContent() {
         }}
         member={detailMember}
         records={detailRecords}
+        cardinalNumber={activeCardinal}
         onUpdateRecord={updateRecord}
         onDeleteRecord={deleteRecord}
       />

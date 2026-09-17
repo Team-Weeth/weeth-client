@@ -19,24 +19,17 @@ export const PENALTY_TABLE_COLUMNS = [
   { id: 'cardinal', label: '기수', width: PENALTY_COLUMN_WIDTH.cardinal },
 ] as const;
 
-// TODO(페널티 정렬): 최근 페널티일 정렬은 LAST_PENALTY_AT_* sort 값이 아직 없어 제외됨.
-// 백엔드에 추가되면 order/label에 마저 넣는다.
-export const PENALTY_SORT_ORDER: PenaltySortBy[] = [
-  'CARDINAL_DESC',
-  'CARDINAL_ASC',
-  'PENALTY_DESC',
-];
+// 기수 최신순과 페널티 많은순만 제공한다.
+export const PENALTY_SORT_ORDER: PenaltySortBy[] = ['CARDINAL_DESC', 'PENALTY_DESC'];
 
 export const PENALTY_SORT_LABEL: Record<PenaltySortBy, string> = {
-  CARDINAL_DESC: '기수 높은 순',
-  CARDINAL_ASC: '기수 낮은 순',
-  PENALTY_DESC: '페널티 많은 순',
+  CARDINAL_DESC: '기수 순',
+  PENALTY_DESC: '페널티 순',
 };
 
-export const PENALTY_TYPE_OPTIONS: { value: PenaltyType; label: string; disabled?: boolean }[] = [
+export const PENALTY_TYPE_OPTIONS: { value: PenaltyType; label: string }[] = [
   { value: 'PENALTY', label: '페널티' },
-  // TODO: 경고 부여 활성화 — 상세 조회 응답에 penaltyType이 없어 부여해도 페널티와 구분되지 않는다.
-  { value: 'WARNING', label: '경고', disabled: true },
+  { value: 'WARNING', label: '경고' },
 ];
 
 /** 점수 입력이 비어 있는 상태 (제출 시 유효하지 않은 값) */
@@ -57,7 +50,7 @@ export const PENALTY_INTRODUCTION_MAX_LENGTH = 10;
 
 /** 페널티 상세 모달 표의 헤더/바디가 같은 너비를 공유하기 위한 단일 출처 */
 export const PENALTY_DETAIL_COLUMN_WIDTH = {
-  score: 'w-[52px]',
+  type: 'w-[80px]',
   date: 'w-[126px]',
   /** 수정/삭제 버튼 영역 */
   actionsInner: 'w-[106px]',
@@ -68,12 +61,12 @@ export const PENALTY_DETAIL_COLUMN_WIDTH = {
 } as const;
 
 export const PENALTY_DETAIL_TABLE_COLUMNS = [
-  { id: 'reason', label: '페널티 사유', className: 'w-auto py-300 pr-400 pl-600' },
   {
-    id: 'score',
-    label: '페널티',
-    className: `${PENALTY_DETAIL_COLUMN_WIDTH.score} px-100 py-300 text-center`,
+    id: 'type',
+    label: '분류',
+    className: `${PENALTY_DETAIL_COLUMN_WIDTH.type} py-300 pl-600 pr-200`,
   },
+  { id: 'reason', label: '페널티 사유', className: 'w-auto py-300 px-200' },
   {
     id: 'date',
     label: '페널티 일자',

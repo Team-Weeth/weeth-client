@@ -18,10 +18,13 @@ import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { useUserRole } from '@/stores';
 import { cn } from '@/lib/cn';
 import { useMemberBulkActions } from './hooks/useMemberBulkActions';
+import { useDebouncedValue } from '@/hooks/useDebouncedValue';
+import { useAdminMemberSearch } from '@/hooks/queries/admin/useAdminMemberQueries';
+import { filterMembers, sortMembers } from '@/utils/admin/memberPageUtils';
 import { useMemberListState } from './hooks/useMemberListState';
 import { useMemberSelection } from './hooks/useMemberSelection';
 
-const MEMBER_PAGE_SIZE = 10;
+const MOBILE_MEMBER_PAGE_SIZE = 10;
 const MEMBER_VIEW_MODE_QUERY_KEY = 'view';
 
 const isMemberViewMode = (value: string | null): value is MemberViewMode =>
@@ -38,19 +41,59 @@ function MemberPageContent() {
   const viewModeParam = searchParams.get(MEMBER_VIEW_MODE_QUERY_KEY);
   const mobileViewMode: MemberViewMode = isMemberViewMode(viewModeParam) ? viewModeParam : 'table';
   const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState<10 | 20 | 50>(10);
+  const {
+    selectedCardinal,
+    sortBy,
+    searchQuery,
+    handleSelectCardinal,
+    handleSearchQueryChange,
+    toggleSort,
+    resetSearch,
+  } = useMemberListState({ resetPage: () => setPage(1) });
+  const keyword = searchQuery.trim();
+  const debouncedKeyword = useDebouncedValue(keyword);
+  const isSearching = keyword.length > 0;
+  const isDebouncing = keyword !== debouncedKeyword;
+  const {
+    data: searchMembers = [],
+    isPending: isSearchPending,
+    isError: isSearchError,
+  } = useAdminMemberSearch(
+    debouncedKeyword,
+    selectedCardinal === 'all' ? undefined : selectedCardinal,
+    isSearching && !isDebouncing,
+  );
+  const isSearchLoading = isSearching && (isDebouncing || isSearchPending);
   const { data: memberPage = EMPTY_MEMBER_PAGE } = useAdminMembers(
     page - 1,
-    MEMBER_PAGE_SIZE,
-    !isMobile,
+    pageSize,
+    !isMobile && !isSearching,
   );
   const {
     data: infiniteMembers = [],
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
-  } = useAdminMembersInfinite(MEMBER_PAGE_SIZE, isMobile);
-  const members = isMobile ? infiniteMembers : memberPage.content;
-  const totalPages = Math.max(memberPage.totalPages ?? 1, 1);
+  } = useAdminMembersInfinite(MOBILE_MEMBER_PAGE_SIZE, isMobile && !isSearching);
+  const members = isSearching
+    ? isSearchLoading || isSearchError
+      ? []
+      : searchMembers
+    : isMobile
+      ? infiniteMembers
+      : memberPage.content;
+  const sortedMembers = sortMembers(
+    isSearching ? members : filterMembers(members, selectedCardinal, ''),
+    sortBy,
+  );
+  const totalPages = isSearching
+    ? Math.max(Math.ceil(sortedMembers.length / pageSize), 1)
+    : Math.max(memberPage.totalPages ?? 1, 1);
+  const filteredMembers =
+    isSearching && !isMobile
+      ? sortedMembers.slice((page - 1) * pageSize, page * pageSize)
+      : sortedMembers;
   const mobileTotalPages = 1;
   const { ref: sentinelRef, isIntersecting } = useIntersectionObserver({ rootMargin: '160px' });
   const { data: cardinals = [] } = useCardinals();
@@ -66,16 +109,6 @@ function MemberPageContent() {
     clearSelection,
     handleSelectionChange,
   } = useMemberSelection(members);
-  const {
-    selectedCardinal,
-    sortBy,
-    searchQuery,
-    filteredMembers,
-    handleSelectCardinal,
-    handleSearchQueryChange,
-    toggleSort,
-    resetSearch,
-  } = useMemberListState({ members, resetPage: () => setPage(1) });
   const {
     forceConfirm,
     targetRole,
@@ -93,12 +126,13 @@ function MemberPageContent() {
     isLead,
     selectedMembers,
     selectedMemberCardinals,
+    onActionSuccess: clearSelection,
   });
 
   useEffect(() => {
-    if (!isMobile || !isIntersecting || !hasNextPage || isFetchingNextPage) return;
+    if (isSearching || !isMobile || !isIntersecting || !hasNextPage || isFetchingNextPage) return;
     fetchNextPage();
-  }, [fetchNextPage, hasNextPage, isFetchingNextPage, isIntersecting, isMobile]);
+  }, [fetchNextPage, hasNextPage, isFetchingNextPage, isIntersecting, isMobile, isSearching]);
 
   useEffect(() => {
     if (page <= totalPages) return;
@@ -171,6 +205,11 @@ function MemberPageContent() {
             <MemberTopBar {...memberSelectionBarProps} />
 
             <MemberPageHeader
+              pageSize={pageSize}
+              onPageSizeChange={(size) => {
+                setPageSize(size);
+                setPage(1);
+              }}
               cardinals={cardinals}
               selectedCardinal={selectedCardinal}
               onSelectCardinal={handleSelectCardinal}
@@ -183,8 +222,13 @@ function MemberPageContent() {
               onOpenMobileSearch={() => setIsMobileSearchOpen(true)}
             />
 
-            <MobileMemberTopBar {...memberSelectionBarProps} />
+            {isMobile && <MobileMemberTopBar {...memberSelectionBarProps} />}
 
+            {isSearching && !isSearchLoading && isSearchError && (
+              <p role="status" className="text-text-alternative px-700 py-400">
+                검색에 실패했습니다. 잠시 후 다시 시도해주세요.
+              </p>
+            )}
             {/* Main content */}
             <div
               className={cn(
@@ -195,6 +239,11 @@ function MemberPageContent() {
               <div className={mobileViewMode === 'card' ? 'max-tablet:hidden' : undefined}>
                 {/* Member table */}
                 <MemberTable
+                  scrollResetKey={`${page}:${pageSize}:${selectedCardinal}:${debouncedKeyword}:${sortBy}`}
+                  fixedHeight
+                  showEmptySearchResult={
+                    isSearching && !isSearchLoading && !isSearchError && searchMembers.length === 0
+                  }
                   members={filteredMembers}
                   page={page}
                   totalPages={isMobile ? mobileTotalPages : totalPages}
@@ -229,6 +278,8 @@ function MemberPageContent() {
           {isMobile && isMobileSearchOpen && (
             <MemberMobileSearchPage
               searchQuery={searchQuery}
+              isLoading={isSearchLoading}
+              isError={isSearching && isSearchError}
               onSearchQueryChange={handleSearchQueryChange}
               onCancel={handleCloseMobileSearch}
               viewMode={mobileViewMode}
@@ -241,7 +292,9 @@ function MemberPageContent() {
               selectedIds={selectedIds}
               onSelectionChange={handleSelectionChange}
               onMemberAction={handleMemberAction}
-              listFooter={<div ref={sentinelRef} className="h-px w-full shrink-0" />}
+              listFooter={
+                !isSearching && <div ref={sentinelRef} className="h-px w-full shrink-0" />
+              }
             />
           )}
         </div>

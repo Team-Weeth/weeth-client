@@ -56,7 +56,12 @@ export function useAdminMembersInfinite(pageSize = 10, enabled = true) {
       };
     },
     initialPageParam: 0,
-    getNextPageParam: (lastPage) => (lastPage.hasNext ? lastPage.pageNumber + 1 : undefined),
+    getNextPageParam: (lastPage) => {
+      const nextPage = lastPage.pageNumber + 1;
+      const hasNext =
+        lastPage.totalPages != null ? nextPage < lastPage.totalPages : lastPage.hasNext;
+      return hasNext ? nextPage : undefined;
+    },
     select: (data) => data.pages.flatMap((page) => page.content),
     enabled: !!clubId && enabled,
     staleTime: 30 * 60 * 1000,
@@ -65,3 +70,16 @@ export function useAdminMembersInfinite(pageSize = 10, enabled = true) {
 }
 
 export { EMPTY_MEMBER_PAGE };
+
+export function useAdminMemberSearch(keyword: string, cardinalNumber?: number, enabled = true) {
+  const clubId = useClubId();
+
+  return useQuery({
+    queryKey: [...adminQueryKeys.members(clubId), 'search', keyword, cardinalNumber],
+    queryFn: async ({ signal }) => {
+      const res = await adminMemberApi.searchMembers(clubId!, keyword, cardinalNumber, signal);
+      return res.data.data.map(toMember);
+    },
+    enabled: !!clubId && !!keyword && enabled,
+  });
+}

@@ -5,6 +5,7 @@ import { ATTENDANCE_ERROR_MESSAGE } from '@/constants/attendance';
 import { attendanceApi } from '@/lib/apis/attendance';
 import { useClubId } from '@/stores/useClubStore';
 import { toastError } from '@/stores/useToastStore';
+import { getApiErrorCode, getApiErrorMessage } from '@/utils/shared/getApiErrorCode';
 
 interface UseQRCheckInParams {
   qrSessionId?: string;
@@ -32,9 +33,11 @@ function useQRCheckIn({ qrSessionId, qrCode, onSuccess }: UseQRCheckInParams) {
         setIsChecked(true);
         onSuccess?.();
       } catch (error) {
-        const errorCode = (error as { response?: { data?: { code?: number } } }).response?.data
-          ?.code;
-        toastError(errorCode ? ATTENDANCE_ERROR_MESSAGE[errorCode] : undefined);
+        const errorCode = getApiErrorCode(error);
+        const message =
+          getApiErrorMessage(error)?.trim() ||
+          (errorCode ? ATTENDANCE_ERROR_MESSAGE[errorCode] : undefined);
+        toastError(message);
         router.replace(`/${clubIdParam}/attendance`);
       }
     };

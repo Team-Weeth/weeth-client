@@ -1,27 +1,16 @@
 'use client';
 
-import { useState } from 'react';
-
 import { AdminCloseIcon } from '@/assets/icons/admin';
 import { MemberStatusBadge } from '@/components/admin/member/MemberStatusBadge';
 import { ModalIconButton } from '@/components/admin/modal/ModalIconButton';
 import { ScheduleTag } from '@/components/admin/schedule/general/ScheduleTag';
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from '@/components/ui/alert-dialog';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/Button';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { cn } from '@/lib/cn';
 import type { PenaltyMember, PenaltyRecord } from '@/types/admin/penalty';
 import { formatCardinalLabel, getVisibleMemberCardinals } from '@/utils/admin/memberTableUtils';
+import { PenaltyCountSummary } from './PenaltyCountSummary';
 import { PenaltyRecordTable } from './PenaltyRecordTable';
 
 interface PenaltyDetailModalProps {
@@ -29,6 +18,7 @@ interface PenaltyDetailModalProps {
   onOpenChange: (open: boolean) => void;
   member: PenaltyMember | null;
   records: PenaltyRecord[];
+  cardinalNumber: number | null;
   onUpdateRecord?: (record: PenaltyRecord, next: { reason: string; score: number }) => void;
   onDeleteRecord?: (record: PenaltyRecord) => void;
 }
@@ -38,41 +28,43 @@ function PenaltyDetailModal({
   onOpenChange,
   member,
   records,
+  cardinalNumber,
   onUpdateRecord,
   onDeleteRecord,
 }: PenaltyDetailModalProps) {
-  const [pendingDelete, setPendingDelete] = useState<PenaltyRecord | null>(null);
-
   if (!member) return null;
 
-  const handleClose = () => onOpenChange(false);
+  const cardinalRecords = records.filter((record) => record.cardinal === cardinalNumber);
 
-  const handleConfirmDelete = () => {
-    if (pendingDelete) onDeleteRecord?.(pendingDelete);
-    setPendingDelete(null);
-  };
+  const handleClose = () => onOpenChange(false);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
-        className="bg-background flex w-[720px] max-w-[calc(100%-2rem)] flex-col gap-0 overflow-hidden rounded-lg p-0"
+        className="bg-background max-tablet:h-dvh flex w-[720px] max-w-[calc(100%-2rem)] flex-col gap-0 overflow-hidden rounded-lg p-0"
         showCloseButton={false}
       >
-        <div className="flex items-center justify-between px-700 pt-600 pb-450">
-          <DialogTitle className="typo-h3 text-text-strong">페널티 상세</DialogTitle>
+        <div className="max-tablet:px-400 max-tablet:py-400 flex shrink-0 items-center justify-between gap-300 px-700 pt-600 pb-450">
+          <DialogTitle className="typo-h3 text-text-strong">
+            {cardinalNumber !== null ? `${cardinalNumber}기 페널티 상세` : '페널티 상세'}
+          </DialogTitle>
           <ModalIconButton size={18} icon={AdminCloseIcon} label="닫기" onClick={handleClose} />
         </div>
 
-        <div className="max-tablet:h-auto max-tablet:flex-1 flex h-[560px] flex-col gap-500 overflow-hidden px-700 pt-200 pb-600">
+        <div className="max-tablet:h-auto max-tablet:min-h-0 max-tablet:flex-1 max-tablet:overflow-y-auto max-tablet:px-400 max-tablet:gap-400 flex h-[560px] flex-col gap-500 overflow-hidden px-700 pt-200 pb-600">
           <PenaltyMemberSummary member={member} />
+          <PenaltyCountSummary
+            penaltyCount={cardinalRecords.filter((record) => record.type === 'PENALTY').length}
+            warningCount={cardinalRecords.filter((record) => record.type === 'WARNING').length}
+          />
           <PenaltyRecordTable
-            records={records}
+            records={cardinalRecords}
             onUpdate={onUpdateRecord}
-            onDelete={setPendingDelete}
+            onDelete={onDeleteRecord}
           />
         </div>
 
-        <div className="bg-container-neutral flex items-center justify-end gap-200 px-400 pt-400 pb-500">
+        <div className="bg-container-neutral max-tablet:pb-[max(16px,env(safe-area-inset-bottom))] max-tablet:[&>button]:flex-1 flex shrink-0 items-center justify-end gap-200 px-400 pt-400 pb-500">
           <Button variant="secondary" size="lg" onClick={handleClose}>
             취소
           </Button>
@@ -81,28 +73,6 @@ function PenaltyDetailModal({
           </Button>
         </div>
       </DialogContent>
-
-      <AlertDialog
-        status="danger"
-        open={pendingDelete !== null}
-        onOpenChange={(next) => {
-          if (!next) setPendingDelete(null);
-        }}
-      >
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>페널티 기록을 삭제하시겠어요?</AlertDialogTitle>
-            {/* 디자인에는 보조 설명이 없지만 alertdialog는 설명이 필수라 스크린리더에만 제공한다 */}
-            <AlertDialogDescription className="sr-only">
-              삭제한 페널티 기록은 복구할 수 없습니다.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogAction onClick={handleConfirmDelete}>삭제</AlertDialogAction>
-            <AlertDialogCancel>취소</AlertDialogCancel>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
     </Dialog>
   );
 }
@@ -111,7 +81,7 @@ function PenaltyMemberSummary({ member }: { member: PenaltyMember }) {
   const { visibleCardinals, hiddenCardinalCount } = getVisibleMemberCardinals(member.cardinal);
 
   return (
-    <section className="bg-container-neutral flex shrink-0 items-center gap-500 rounded-lg px-500 py-450">
+    <section className="bg-container-neutral max-tablet:gap-300 max-tablet:p-400 flex shrink-0 items-center gap-500 rounded-lg px-500 py-450">
       <Avatar size={64}>
         {member.profileImageUrl && (
           <AvatarImage src={member.profileImageUrl} alt={`${member.name} 프로필 이미지`} />
@@ -120,7 +90,7 @@ function PenaltyMemberSummary({ member }: { member: PenaltyMember }) {
       </Avatar>
 
       <div className="flex min-w-0 flex-col gap-100">
-        <div className="flex min-w-0 items-center gap-200">
+        <div className="max-tablet:flex-wrap flex min-w-0 items-center gap-200">
           <span className="typo-sub1 text-text-normal truncate">{member.name}</span>
           {visibleCardinals.map((cardinal) => (
             <ScheduleTag variant="type" key={cardinal}>

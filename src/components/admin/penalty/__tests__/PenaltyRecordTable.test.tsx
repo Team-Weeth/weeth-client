@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 import { PenaltyRecordTable } from '@/components/admin/penalty';
@@ -30,6 +30,16 @@ function renderTable({
 }
 
 describe('PenaltyRecordTable', () => {
+  it.each(['PENALTY', 'WARNING'] as const)('수정 중에도 %s 분류 태그를 유지한다', async (type) => {
+    const user = userEvent.setup();
+    renderTable({ records: [createRecord({ type })] });
+
+    await user.click(screen.getByRole('button', { name: '수정' }));
+
+    expect(screen.getByText(type === 'WARNING' ? '경고' : '페널티')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: '저장' })).toBeInTheDocument();
+  });
+
   it('내역이 없으면 안내 문구를 보여준다', () => {
     renderTable({ records: [] });
 
@@ -43,7 +53,8 @@ describe('PenaltyRecordTable', () => {
     await user.click(screen.getByRole('button', { name: '수정' }));
 
     expect(screen.getByLabelText('페널티 사유')).toHaveValue('정기 모임 무단 결석');
-    expect(screen.getByLabelText('페널티 점수')).toHaveValue('1');
+    expect(screen.getByLabelText('페널티 사유')).toHaveFocus();
+    expect(screen.queryByLabelText('페널티 점수')).not.toBeInTheDocument();
     expect(screen.queryByRole('button', { name: '삭제' })).not.toBeInTheDocument();
   });
 
@@ -55,10 +66,9 @@ describe('PenaltyRecordTable', () => {
     await user.click(screen.getByRole('button', { name: '수정' }));
     await user.clear(screen.getByLabelText('페널티 사유'));
     await user.type(screen.getByLabelText('페널티 사유'), '스터디 과제 미제출');
-    await user.click(screen.getByRole('button', { name: '값 올리기' }));
     await user.click(screen.getByRole('button', { name: '저장' }));
 
-    expect(onUpdate).toHaveBeenCalledWith(record, { reason: '스터디 과제 미제출', score: 2 });
+    expect(onUpdate).toHaveBeenCalledWith(record, { reason: '스터디 과제 미제출', score: 1 });
   });
 
   it('취소하면 편집을 종료하고 아무것도 저장하지 않는다', async () => {
@@ -89,7 +99,7 @@ describe('PenaltyRecordTable', () => {
 
     await user.click(screen.getByRole('button', { name: '수정' }));
 
-    expect(screen.getByLabelText('페널티 점수')).toBeDisabled();
+    expect(screen.queryByLabelText('페널티 점수')).not.toBeInTheDocument();
   });
 
   it('한 행을 편집하는 동안 다른 행의 수정/삭제는 비활성화된다', async () => {
@@ -111,6 +121,8 @@ describe('PenaltyRecordTable', () => {
 
     await user.click(screen.getByRole('button', { name: '삭제' }));
 
+    expect(onDelete).not.toHaveBeenCalled();
+    await user.click(within(screen.getByRole('alertdialog')).getByRole('button', { name: '삭제' }));
     expect(onDelete).toHaveBeenCalledWith(record);
   });
 });

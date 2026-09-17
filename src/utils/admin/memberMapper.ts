@@ -23,6 +23,7 @@ export function toMember(cm: ClubMember): Member {
     absence: cm.absenceCount ?? 0,
     attendanceRate: cm.attendanceRate ?? 0,
     penaltyCount: cm.penaltyCount ?? 0,
+    warningCount: cm.warningCount ?? null,
     status: cm.memberStatus,
     profileImageUrl: cm.profileImageUrl ?? null,
     bio: cm.bio ?? null,

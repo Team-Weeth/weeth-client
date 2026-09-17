@@ -124,7 +124,7 @@ function StepperButton({
       aria-label={label}
       disabled={disabled}
       onClick={onClick}
-      className="text-icon-alternative flex cursor-pointer items-center justify-center disabled:cursor-not-allowed disabled:opacity-40"
+      className="text-icon-alternative disabled:text-icon-disabled flex cursor-pointer items-center justify-center disabled:cursor-not-allowed disabled:opacity-100"
     >
       <svg viewBox="0 0 10 6" fill="currentColor" aria-hidden className="h-[6px] w-[10px]">
         {children}

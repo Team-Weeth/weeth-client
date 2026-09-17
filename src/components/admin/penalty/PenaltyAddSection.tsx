@@ -1,5 +1,7 @@
 'use client';
 
+import { useClubFeatures } from '@/providers/club-feature-provider';
+
 import type { ReactNode } from 'react';
 
 import { Button } from '@/components/ui/Button';
@@ -11,7 +13,6 @@ import {
 import { cn } from '@/lib/cn';
 import type { PenaltyMember, PenaltyRecordDraft, PenaltyType } from '@/types/admin/penalty';
 import { PenaltyMemberSearchInput } from './PenaltyMemberSearchInput';
-import { PenaltyScoreInput } from './PenaltyScoreInput';
 import { PenaltyTypeToggle } from './PenaltyTypeToggle';
 
 interface PenaltyAddSectionProps {
@@ -33,7 +34,8 @@ function PenaltyAddSection({
   onMemberQueryChange,
   onRemoveMember,
 }: PenaltyAddSectionProps) {
-  const isWarning = draft.type === 'WARNING';
+  const { warningEnabled } = useClubFeatures();
+  const isWarning = warningEnabled && draft.type === 'WARNING';
   const canSubmit =
     draft.memberIds.length > 0 &&
     draft.reason.trim().length > 0 &&
@@ -41,7 +43,9 @@ function PenaltyAddSection({
 
   return (
     <section className="bg-background flex w-full flex-col overflow-hidden rounded-lg">
-      <h2 className="typo-sub1 text-text-strong p-450">페널티/경고 추가</h2>
+      <h2 className="typo-sub1 text-text-strong p-450">
+        {warningEnabled ? '페널티/경고 추가' : '페널티 추가'}
+      </h2>
 
       <form
         className="flex w-full flex-wrap items-end gap-[14px] p-450"
@@ -50,20 +54,14 @@ function PenaltyAddSection({
           onSubmit();
         }}
       >
-        <PenaltyFormField label="구분" className="w-40">
-          <PenaltyTypeToggle
-            value={draft.type}
-            onValueChange={(type: PenaltyType) => onDraftChange({ type })}
-          />
-        </PenaltyFormField>
-
-        <PenaltyFormField label="페널티 점수" className="w-40">
-          <PenaltyScoreInput
-            value={draft.score}
-            disabled={isWarning}
-            onValueChange={(score) => onDraftChange({ score })}
-          />
-        </PenaltyFormField>
+        {warningEnabled && (
+          <PenaltyFormField label="구분" className="w-40">
+            <PenaltyTypeToggle
+              value={draft.type}
+              onValueChange={(type: PenaltyType) => onDraftChange({ type })}
+            />
+          </PenaltyFormField>
+        )}
 
         <div className="flex w-full min-w-0 items-end gap-[14px] min-[850px]:w-auto min-[850px]:flex-1">
           <PenaltyFormField label="멤버" className="min-w-0 flex-1">

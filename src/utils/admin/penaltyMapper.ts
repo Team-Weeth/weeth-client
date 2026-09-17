@@ -25,8 +25,8 @@ export function toPenaltyMember(cm: ClubMember): PenaltyMember {
 export function toPenaltyRecord(detail: AdminPenaltyDetail): PenaltyRecord {
   return {
     id: detail.penaltyId,
-    // TODO: 응답에 penaltyType이 없어 전부 페널티로 취급한다. 경고 지원 시 서버 값을 쓴다.
-    type: 'PENALTY',
+    cardinal: detail.cardinal,
+    type: detail.penaltyType,
     score: detail.score,
     reason: detail.penaltyDescription,
     createdAt: toPenaltyDate(detail.time) ?? '',

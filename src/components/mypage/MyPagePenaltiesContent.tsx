@@ -96,13 +96,13 @@ function MyPagePenaltiesContent({ className, ...props }: MyPagePenaltiesContentP
             {penalties.map((penalty) => {
               const date = new Date(penalty.createdAt);
               const dateLabel = `${String(date.getMonth() + 1).padStart(2, '0')}/${String(date.getDate()).padStart(2, '0')}`;
-              const isPenalty = penalty.penaltyType === 'PENALTY';
+              const isWarning = penalty.penaltyType === 'WARNING';
 
               return (
                 <div key={penalty.penaltyId} className="flex items-center gap-400 px-500 py-400">
                   <div className="w-[60px] self-start">
-                    <Tag variant={isPenalty ? 'error' : 'caution'}>
-                      {isPenalty ? '페널티' : '경고'}
+                    <Tag variant={isWarning ? 'caution' : 'error'}>
+                      {isWarning ? '경고' : '페널티'}
                     </Tag>
                   </div>
                   <div className="flex min-w-0 flex-1 flex-col gap-100">
