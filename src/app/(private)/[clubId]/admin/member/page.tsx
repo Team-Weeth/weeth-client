@@ -1,11 +1,13 @@
-import { isFeatureEnabled } from '@/lib/flagsmith';
 import { MemberPageContent } from '@/components/admin/member/MemberPageContent';
+import { ClubFeatureProvider } from '@/providers/club-feature-provider';
+import { getClubFeatures } from '@/flags/club-features/server';
 
-export default async function MemberPage({ params }: { params: Promise<{ clubId: string }> }) {
+export default async function Page({ params }: { params: Promise<{ clubId: string }> }) {
   const { clubId } = await params;
-  const warningEnabled = await isFeatureEnabled('club_warning_enabled', {
-    identifier: `club:${clubId}`,
-    traits: { club_id: clubId },
-  });
-  return <MemberPageContent key={clubId} warningEnabled={warningEnabled} />;
+  const features = await getClubFeatures(clubId);
+  return (
+    <ClubFeatureProvider key={`${clubId}:${features.warningEnabled}`} features={features}>
+      <MemberPageContent />
+    </ClubFeatureProvider>
+  );
 }

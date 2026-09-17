@@ -14,12 +14,13 @@ const fetchFlagsmith: typeof fetch = (input, init) =>
     signal: AbortSignal.timeout(5000),
   });
 
-async function isFeatureEnabled(
-  featureName: string,
+async function getFeatureFlags(
+  featureNames: readonly string[],
   options: FeatureFlagOptions = {},
-): Promise<boolean> {
+): Promise<Record<string, boolean>> {
   const environmentID = getFlagsmithEnvironmentId();
-  if (!environmentID) return false;
+  const defaults = Object.fromEntries(featureNames.map((name) => [name, false]));
+  if (!environmentID) return defaults;
 
   // 서버의 동시 요청 간에 동아리 identity와 플래그 상태가 섞이지 않도록 분리한다.
   const flagsmith = createFlagsmithInstance();
@@ -36,10 +37,18 @@ async function isFeatureEnabled(
       enableAnalytics: false,
     });
 
-    return flagsmith.hasFeature(featureName);
+    return Object.fromEntries(featureNames.map((name) => [name, flagsmith.hasFeature(name)]));
   } catch {
-    return false;
+    return defaults;
   }
 }
 
-export { isFeatureEnabled };
+async function isFeatureEnabled(
+  featureName: string,
+  options: FeatureFlagOptions = {},
+): Promise<boolean> {
+  const flags = await getFeatureFlags([featureName], options);
+  return flags[featureName] === true;
+}
+
+export { getFeatureFlags, isFeatureEnabled };

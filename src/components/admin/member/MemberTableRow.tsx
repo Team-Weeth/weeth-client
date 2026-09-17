@@ -1,3 +1,7 @@
+'use client';
+
+import { useClubFeatures } from '@/providers/club-feature-provider';
+
 import type { ReactNode } from 'react';
 
 import AdminMeatballIcon from '@/assets/icons/admin/ic_admin_meatball.svg';
@@ -12,7 +16,6 @@ import type { Member } from '@/types/admin/member';
 import { MemberStatusBadge } from './MemberStatusBadge';
 
 interface MemberTableRowProps {
-  warningEnabled?: boolean;
   member: Member;
   selected: boolean;
   onToggle: (id: string) => void;
@@ -30,13 +33,13 @@ const TEXT_CELL_CLASS_BY_ID = {
 const NUMBER_CELL_VALUES = ['attendance', 'absence', 'penaltyCount'] as const;
 
 function MemberTableRow({
-  warningEnabled = false,
   member,
   selected,
   onToggle,
   onMemberAction,
   showStickyShadow = false,
 }: MemberTableRowProps) {
+  const { warningEnabled } = useClubFeatures();
   const textCells = [
     { id: 'role', value: member.position },
     { id: 'department', value: member.department },

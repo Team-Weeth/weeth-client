@@ -1,3 +1,4 @@
+import { ClubFeatureProvider } from '@/providers/club-feature-provider';
 import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
@@ -58,18 +59,19 @@ describe('PenaltyDetailModal', () => {
 
   it('선택한 기수의 내역만 표시하고 유형별 건수를 집계한다', () => {
     render(
-      <PenaltyDetailModal
-        open
-        onOpenChange={jest.fn()}
-        member={createMember()}
-        cardinalNumber={4}
-        warningEnabled
-        records={[
-          { ...createRecord(), score: 5 },
-          { ...createRecord(), id: 2, type: 'WARNING', reason: '지각' },
-          { ...createRecord(), id: 3, cardinal: 3, reason: '이전 기수 기록' },
-        ]}
-      />,
+      <ClubFeatureProvider features={{ warningEnabled: true }}>
+        <PenaltyDetailModal
+          open
+          onOpenChange={jest.fn()}
+          member={createMember()}
+          cardinalNumber={4}
+          records={[
+            { ...createRecord(), score: 5 },
+            { ...createRecord(), id: 2, type: 'WARNING', reason: '지각' },
+            { ...createRecord(), id: 3, cardinal: 3, reason: '이전 기수 기록' },
+          ]}
+        />
+      </ClubFeatureProvider>,
     );
     expect(screen.getByRole('heading', { name: '4기 페널티 상세' })).toBeInTheDocument();
     expect(screen.getAllByText('1회')).toHaveLength(2);

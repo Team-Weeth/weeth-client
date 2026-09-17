@@ -19,7 +19,6 @@ interface PenaltyDetailModalProps {
   member: PenaltyMember | null;
   records: PenaltyRecord[];
   cardinalNumber: number | null;
-  warningEnabled?: boolean;
   onUpdateRecord?: (record: PenaltyRecord, next: { reason: string; score: number }) => void;
   onDeleteRecord?: (record: PenaltyRecord) => void;
 }
@@ -30,7 +29,6 @@ function PenaltyDetailModal({
   member,
   records,
   cardinalNumber,
-  warningEnabled = false,
   onUpdateRecord,
   onDeleteRecord,
 }: PenaltyDetailModalProps) {
@@ -58,7 +56,6 @@ function PenaltyDetailModal({
           <PenaltyCountSummary
             penaltyCount={cardinalRecords.filter((record) => record.type === 'PENALTY').length}
             warningCount={cardinalRecords.filter((record) => record.type === 'WARNING').length}
-            warningEnabled={warningEnabled}
           />
           <PenaltyRecordTable
             records={cardinalRecords}

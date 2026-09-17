@@ -30,7 +30,7 @@ const MEMBER_VIEW_MODE_QUERY_KEY = 'view';
 const isMemberViewMode = (value: string | null): value is MemberViewMode =>
   value === 'table' || value === 'card';
 
-function MemberPageContent({ warningEnabled = false }: { warningEnabled?: boolean }) {
+function MemberPageContent() {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -236,7 +236,6 @@ function MemberPageContent({ warningEnabled = false }: { warningEnabled?: boolea
                   showEmptySearchResult={
                     isSearching && !isSearchLoading && !isSearchError && searchMembers.length === 0
                   }
-                  warningEnabled={warningEnabled}
                   members={filteredMembers}
                   page={page}
                   totalPages={isMobile ? mobileTotalPages : totalPages}
@@ -249,7 +248,6 @@ function MemberPageContent({ warningEnabled = false }: { warningEnabled?: boolea
 
               {mobileViewMode === 'card' && (
                 <MemberCardList
-                  warningEnabled={warningEnabled}
                   className="tablet:hidden"
                   members={filteredMembers}
                   page={page}
@@ -271,7 +269,6 @@ function MemberPageContent({ warningEnabled = false }: { warningEnabled?: boolea
 
           {isMobile && isMobileSearchOpen && (
             <MemberMobileSearchPage
-              warningEnabled={warningEnabled}
               searchQuery={searchQuery}
               isLoading={isSearchLoading}
               isError={isSearching && isSearchError}
@@ -296,7 +293,6 @@ function MemberPageContent({ warningEnabled = false }: { warningEnabled?: boolea
       </div>
 
       <MemberPageModals
-        warningEnabled={warningEnabled}
         detailMember={detailMember}
         cardinalModalMember={cardinalModalMember}
         forceConfirm={forceConfirm}

@@ -1,14 +1,14 @@
+'use client';
+
+import { useClubFeatures } from '@/providers/club-feature-provider';
+
 interface PenaltyCountSummaryProps {
   penaltyCount: number;
   warningCount: number;
-  warningEnabled: boolean;
 }
 
-export function PenaltyCountSummary({
-  penaltyCount,
-  warningCount,
-  warningEnabled,
-}: PenaltyCountSummaryProps) {
+export function PenaltyCountSummary({ penaltyCount, warningCount }: PenaltyCountSummaryProps) {
+  const { warningEnabled } = useClubFeatures();
   return (
     <dl className="bg-container-neutral flex shrink-0 items-center rounded-[10px]">
       <div className="flex min-w-0 flex-1 items-center gap-[20px] p-[15px]">

@@ -1,12 +1,13 @@
-import { PenaltyPageContent } from '@/components/admin/penalty';
-import { isFeatureEnabled } from '@/lib/flagsmith';
+import { PenaltyPageContent } from '@/components/admin/penalty/PenaltyPageContent';
+import { ClubFeatureProvider } from '@/providers/club-feature-provider';
+import { getClubFeatures } from '@/flags/club-features/server';
 
-export default async function PenaltyPage({ params }: { params: Promise<{ clubId: string }> }) {
+export default async function Page({ params }: { params: Promise<{ clubId: string }> }) {
   const { clubId } = await params;
-  const warningEnabled = await isFeatureEnabled('club_warning_enabled', {
-    identifier: `club:${clubId}`,
-    traits: { club_id: clubId },
-  });
-
-  return <PenaltyPageContent key={`${clubId}:${warningEnabled}`} warningEnabled={warningEnabled} />;
+  const features = await getClubFeatures(clubId);
+  return (
+    <ClubFeatureProvider key={`${clubId}:${features.warningEnabled}`} features={features}>
+      <PenaltyPageContent />
+    </ClubFeatureProvider>
+  );
 }

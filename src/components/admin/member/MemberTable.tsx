@@ -1,5 +1,7 @@
 'use client';
 
+import { useClubFeatures } from '@/providers/club-feature-provider';
+
 import React, { useState } from 'react';
 
 import {
@@ -18,7 +20,6 @@ import { TablePagination } from '@/components/admin/TablePagination';
 import { MemberTableRow } from './MemberTableRow';
 
 interface MemberTableProps extends React.HTMLAttributes<HTMLDivElement> {
-  warningEnabled?: boolean;
   showEmptySearchResult?: boolean;
   members: Member[];
   page: number;
@@ -30,7 +31,6 @@ interface MemberTableProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 function MemberTable({
-  warningEnabled = false,
   showEmptySearchResult = false,
   className,
   members,
@@ -42,6 +42,7 @@ function MemberTable({
   onMemberAction,
   ...props
 }: MemberTableProps) {
+  const { warningEnabled } = useClubFeatures();
   const [internalSelectedIds, setInternalSelectedIds] = useState<Set<string>>(new Set());
   const [showStickyShadow, setShowStickyShadow] = useState(false);
   const selectedIds = controlledSelectedIds ?? internalSelectedIds;
@@ -150,7 +151,6 @@ function MemberTable({
             )}
             {members.map((member) => (
               <MemberTableRow
-                warningEnabled={warningEnabled}
                 key={member.id}
                 member={member}
                 selected={selectedIds.has(member.id)}

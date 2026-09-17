@@ -1,3 +1,7 @@
+'use client';
+
+import { useClubFeatures } from '@/providers/club-feature-provider';
+
 import type { ReactNode } from 'react';
 
 import { AttendanceProgressBar } from '@/components/attendance/AttendanceProgressBar';
@@ -79,11 +83,8 @@ function MemberPersonalInfoCard({ member, className }: MemberDetailInfoCardProps
   );
 }
 
-function MemberActivityInfoCard({
-  member,
-  className,
-  warningEnabled = false,
-}: MemberDetailInfoCardProps & { warningEnabled?: boolean }) {
+function MemberActivityInfoCard({ member, className }: MemberDetailInfoCardProps) {
+  const { warningEnabled } = useClubFeatures();
   const { visibleCardinals, hiddenCardinals, hiddenCardinalCount } =
     getMemberDetailCardinals(member);
 

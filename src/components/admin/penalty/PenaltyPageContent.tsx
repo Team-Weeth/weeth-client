@@ -29,7 +29,7 @@ const INITIAL_DRAFT: PenaltyRecordDraft = {
   reason: '',
 };
 
-function PenaltyPageContent({ warningEnabled = false }: { warningEnabled?: boolean }) {
+function PenaltyPageContent() {
   const clubId = useClubId();
   const [selectedCardinal, setSelectedCardinal] = useState<number | null>(null);
   const [sortBy, setSortBy] = useState<PenaltySortBy>('CARDINAL_DESC');
@@ -138,7 +138,6 @@ function PenaltyPageContent({ warningEnabled = false }: { warningEnabled?: boole
 
         <div className="flex flex-col gap-400 px-700 pt-400 pb-700">
           <PenaltyAddSection
-            warningEnabled={warningEnabled}
             draft={draft}
             onDraftChange={handleDraftChange}
             onSubmit={handleSubmitRecord}
@@ -184,7 +183,6 @@ function PenaltyPageContent({ warningEnabled = false }: { warningEnabled?: boole
         member={detailMember}
         records={detailRecords}
         cardinalNumber={activeCardinal}
-        warningEnabled={warningEnabled}
         onUpdateRecord={updateRecord}
         onDeleteRecord={deleteRecord}
       />

@@ -1,3 +1,7 @@
+'use client';
+
+import { useClubFeatures } from '@/providers/club-feature-provider';
+
 import { CardinalTagList } from '@/components/admin/CardinalTagList';
 import { SelectionCheckbox } from '@/components/admin/SelectionCheckbox';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -6,7 +10,6 @@ import type { Member } from '@/types/admin/member';
 import { MemberStatusBadge } from './MemberStatusBadge';
 
 interface MemberCardProps extends Omit<React.HTMLAttributes<HTMLElement>, 'onToggle'> {
-  warningEnabled?: boolean;
   member: Member;
   selected: boolean;
   onToggleSelection: (id: string) => void;
@@ -20,7 +23,6 @@ const MEMBER_CARD_STATS = [
 ] as const;
 
 function MemberCard({
-  warningEnabled = false,
   className,
   member,
   selected,
@@ -28,6 +30,7 @@ function MemberCard({
   onMemberAction,
   ...props
 }: MemberCardProps) {
+  const { warningEnabled } = useClubFeatures();
   return (
     <article
       className={cn(

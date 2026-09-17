@@ -1,5 +1,7 @@
 'use client';
 
+import { useClubFeatures } from '@/providers/club-feature-provider';
+
 import type { ReactNode } from 'react';
 
 import { Button } from '@/components/ui/Button';
@@ -14,7 +16,6 @@ import { PenaltyMemberSearchInput } from './PenaltyMemberSearchInput';
 import { PenaltyTypeToggle } from './PenaltyTypeToggle';
 
 interface PenaltyAddSectionProps {
-  warningEnabled?: boolean;
   draft: PenaltyRecordDraft;
   onDraftChange: (draft: Partial<PenaltyRecordDraft>) => void;
   onSubmit: () => void;
@@ -25,7 +26,6 @@ interface PenaltyAddSectionProps {
 }
 
 function PenaltyAddSection({
-  warningEnabled = false,
   draft,
   onDraftChange,
   onSubmit,
@@ -34,6 +34,7 @@ function PenaltyAddSection({
   onMemberQueryChange,
   onRemoveMember,
 }: PenaltyAddSectionProps) {
+  const { warningEnabled } = useClubFeatures();
   const isWarning = warningEnabled && draft.type === 'WARNING';
   const canSubmit =
     draft.memberIds.length > 0 &&

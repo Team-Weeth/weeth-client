@@ -14,7 +14,6 @@ import {
 } from './MemberDetailSections';
 
 interface MemberDetailModalProps {
-  warningEnabled?: boolean;
   open: boolean;
   onOpenChange: (open: boolean) => void;
   member: Member | null;
@@ -26,7 +25,6 @@ interface MemberDetailModalProps {
 }
 
 function MemberDetailModal({
-  warningEnabled = false,
   open,
   onOpenChange,
   member,
@@ -72,7 +70,7 @@ function MemberDetailModal({
 
           <div className="tablet:grid-cols-2 grid grid-cols-1 gap-[14px]">
             <MemberPersonalInfoCard member={member} />
-            <MemberActivityInfoCard member={member} warningEnabled={warningEnabled} />
+            <MemberActivityInfoCard member={member} />
           </div>
         </div>
 

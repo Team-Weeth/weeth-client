@@ -1,6 +1,6 @@
 /** @jest-environment node */
 
-import { isFeatureEnabled } from '../flagsmith';
+import { getFeatureFlags, isFeatureEnabled } from '../flagsmith';
 
 describe('Flagsmith club targeting', () => {
   const originalFetch = global.fetch;
@@ -77,4 +77,31 @@ describe('Flagsmith club targeting', () => {
     fetchMock.mockResolvedValueOnce(new Response('Unavailable', { status: 503 }));
     await expect(isFeatureEnabled('club_warning_enabled')).resolves.toBe(false);
   });
+});
+
+it('retrieves multiple feature values in one request', async () => {
+  const originalFetch = global.fetch;
+  const originalEnvironment = process.env.NEXT_PUBLIC_FLAGSMITH_ENVIRONMENT_ID;
+  const fetchMock = jest.fn().mockResolvedValue(
+    Response.json([
+      { feature: { name: 'club_warning_enabled' }, enabled: true },
+      { feature: { name: 'another_feature' }, enabled: false },
+    ]),
+  );
+  global.fetch = fetchMock;
+  process.env.NEXT_PUBLIC_FLAGSMITH_ENVIRONMENT_ID = 'test-environment';
+  try {
+    await expect(
+      getFeatureFlags(['club_warning_enabled', 'another_feature', 'missing']),
+    ).resolves.toEqual({
+      club_warning_enabled: true,
+      another_feature: false,
+      missing: false,
+    });
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+  } finally {
+    global.fetch = originalFetch;
+    if (originalEnvironment === undefined) delete process.env.NEXT_PUBLIC_FLAGSMITH_ENVIRONMENT_ID;
+    else process.env.NEXT_PUBLIC_FLAGSMITH_ENVIRONMENT_ID = originalEnvironment;
+  }
 });
