@@ -24,7 +24,7 @@ import { filterMembers, sortMembers } from '@/utils/admin/memberPageUtils';
 import { useMemberListState } from './hooks/useMemberListState';
 import { useMemberSelection } from './hooks/useMemberSelection';
 
-const MEMBER_PAGE_SIZE = 10;
+const MOBILE_MEMBER_PAGE_SIZE = 10;
 const MEMBER_VIEW_MODE_QUERY_KEY = 'view';
 
 const isMemberViewMode = (value: string | null): value is MemberViewMode =>
@@ -41,6 +41,7 @@ function MemberPageContent() {
   const viewModeParam = searchParams.get(MEMBER_VIEW_MODE_QUERY_KEY);
   const mobileViewMode: MemberViewMode = isMemberViewMode(viewModeParam) ? viewModeParam : 'table';
   const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState<10 | 20 | 50>(10);
   const {
     selectedCardinal,
     sortBy,
@@ -66,7 +67,7 @@ function MemberPageContent() {
   const isSearchLoading = isSearching && (isDebouncing || isSearchPending);
   const { data: memberPage = EMPTY_MEMBER_PAGE } = useAdminMembers(
     page - 1,
-    MEMBER_PAGE_SIZE,
+    pageSize,
     !isMobile && !isSearching,
   );
   const {
@@ -74,7 +75,7 @@ function MemberPageContent() {
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
-  } = useAdminMembersInfinite(MEMBER_PAGE_SIZE, isMobile && !isSearching);
+  } = useAdminMembersInfinite(MOBILE_MEMBER_PAGE_SIZE, isMobile && !isSearching);
   const members = isSearching
     ? isSearchLoading || isSearchError
       ? []
@@ -87,11 +88,11 @@ function MemberPageContent() {
     sortBy,
   );
   const totalPages = isSearching
-    ? Math.max(Math.ceil(sortedMembers.length / MEMBER_PAGE_SIZE), 1)
+    ? Math.max(Math.ceil(sortedMembers.length / pageSize), 1)
     : Math.max(memberPage.totalPages ?? 1, 1);
   const filteredMembers =
     isSearching && !isMobile
-      ? sortedMembers.slice((page - 1) * MEMBER_PAGE_SIZE, page * MEMBER_PAGE_SIZE)
+      ? sortedMembers.slice((page - 1) * pageSize, page * pageSize)
       : sortedMembers;
   const mobileTotalPages = 1;
   const { ref: sentinelRef, isIntersecting } = useIntersectionObserver({ rootMargin: '160px' });
@@ -204,6 +205,11 @@ function MemberPageContent() {
             <MemberTopBar {...memberSelectionBarProps} />
 
             <MemberPageHeader
+              pageSize={pageSize}
+              onPageSizeChange={(size) => {
+                setPageSize(size);
+                setPage(1);
+              }}
               cardinals={cardinals}
               selectedCardinal={selectedCardinal}
               onSelectCardinal={handleSelectCardinal}
@@ -233,6 +239,8 @@ function MemberPageContent() {
               <div className={mobileViewMode === 'card' ? 'max-tablet:hidden' : undefined}>
                 {/* Member table */}
                 <MemberTable
+                  scrollResetKey={`${page}:${pageSize}:${selectedCardinal}:${debouncedKeyword}:${sortBy}`}
+                  fixedHeight
                   showEmptySearchResult={
                     isSearching && !isSearchLoading && !isSearchError && searchMembers.length === 0
                   }

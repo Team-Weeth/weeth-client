@@ -93,3 +93,38 @@ it('PC 조회가 비활성화되어 있으면 요청하지 않는다', () => {
   });
   expect(getMock).not.toHaveBeenCalled();
 });
+
+it('조회 개수를 바꾸면 해당 size로 다시 요청하고 이전 크기의 캐시와 구분한다', async () => {
+  getMock.mockImplementation(async (_url, config) => {
+    const size = config?.params.size as number;
+    return {
+      data: {
+        data: {
+          content: Array.from({ length: size }, (_, index) => ({
+            userId: index + 1,
+            clubMemberId: index + 1,
+            memberRole: 'USER',
+          })),
+          pageNumber: 0,
+          pageSize: size,
+          totalPages: Math.ceil(100 / size),
+          totalElements: 100,
+        },
+      },
+    };
+  });
+  const { result, rerender } = renderHook(({ size }) => useAdminMembers(0, size), {
+    initialProps: { size: 10 },
+    wrapper: createWrapper(createQueryClient()),
+  });
+  for (const size of [10, 20, 50]) {
+    rerender({ size });
+    await waitFor(() => expect(result.current.data?.content).toHaveLength(size));
+    expect(getMock).toHaveBeenLastCalledWith('/admin/clubs/club-1/members', {
+      params: { page: 0, size },
+    });
+  }
+  rerender({ size: 10 });
+  await waitFor(() => expect(result.current.data?.content).toHaveLength(10));
+  expect(getMock).toHaveBeenCalledTimes(3);
+});
