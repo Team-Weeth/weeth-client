@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { useParams, useRouter } from 'next/navigation';
 import { BackIcon, EmptyListIcon } from '@/assets/icons';
@@ -13,12 +13,31 @@ import { cn } from '@/lib/cn';
 import { parseApiError } from '@/lib/error';
 import { toastError } from '@/stores/useToastStore';
 import { MyPagePenaltiesSkeleton } from '@/components/mypage/skeleton';
+import { PenaltyCountSummary } from '@/components/admin/penalty/modal/PenaltyCountSummary';
+import { CardinalDropdown } from '@/components/common/CardinalDropdown';
+import { useMyPagePenaltyCountsQuery } from '@/hooks/queries/mypage/useMyPagePenaltyCountsQuery';
+import { useCardinals } from '@/hooks/queries/useCardinalsQuery';
 
 type MyPagePenaltiesContentProps = React.HTMLAttributes<HTMLDivElement>;
 
 function MyPagePenaltiesContent({ className, ...props }: MyPagePenaltiesContentProps) {
   const router = useRouter();
   const { clubId } = useParams<{ clubId: string }>();
+  const {
+    data: cardinals = [],
+    isError: isCardinalsError,
+    refetch: refetchCardinals,
+  } = useCardinals();
+  const [selectedCardinalId, setSelectedCardinalId] = useState<number | null>(null);
+  const activeCardinal =
+    cardinals.find((cardinal) => cardinal.id === selectedCardinalId) ??
+    cardinals.find((cardinal) => cardinal.status === 'IN_PROGRESS') ??
+    [...cardinals].sort((a, b) => b.cardinalNumber - a.cardinalNumber)[0];
+  const {
+    data: counts,
+    isError: isCountsError,
+    refetch: refetchCounts,
+  } = useMyPagePenaltyCountsQuery(clubId);
   const {
     data: penalties = [],
     isPending,
@@ -50,15 +69,53 @@ function MyPagePenaltiesContent({ className, ...props }: MyPagePenaltiesContentP
         <button
           type="button"
           onClick={() => router.back()}
-          className="flex items-center justify-center p-1"
+          aria-label="뒤로가기"
+          className="flex cursor-pointer items-center justify-center p-1"
         >
           <Icon src={BackIcon} size={21} className="text-icon-normal p-1" />
         </button>
         <div className="flex w-full items-center justify-between gap-1">
           <h1 className="tablet:typo-h3 typo-sub1 text-text-normal">페널티</h1>
-          <PenaltyRulesDialog clubId={clubId} />
+          <div className="flex items-center gap-3">
+            <PenaltyRulesDialog clubId={clubId} />
+            {/* 기수별 조회 API 지원 전까지 전체 목록만 제공한다. */}
+            <CardinalDropdown
+              cardinals={cardinals}
+              activeCardinal={activeCardinal}
+              onSelect={setSelectedCardinalId}
+            />
+          </div>
         </div>
       </div>
+
+      {isCardinalsError && (
+        <button
+          type="button"
+          className="typo-caption1 text-text-alternative cursor-pointer self-start"
+          onClick={() => refetchCardinals()}
+        >
+          기수 목록을 불러오지 못했습니다. 다시 시도
+        </button>
+      )}
+      {activeCardinal && (
+        <p role="status" className="typo-caption1 text-text-alternative">
+          기수별 조회는 준비 중입니다. 현재 목록과 총횟수는 전체 기수 기준입니다.
+        </p>
+      )}
+
+      <PenaltyCountSummary
+        penaltyCount={counts?.penaltyCount ?? null}
+        warningCount={counts?.warningCount ?? null}
+      />
+      {isCountsError && (
+        <button
+          type="button"
+          className="typo-caption1 text-text-alternative cursor-pointer self-start"
+          onClick={() => refetchCounts()}
+        >
+          총횟수를 불러오지 못했습니다. 다시 시도
+        </button>
+      )}
 
       {isPending ? (
         <MyPagePenaltiesSkeleton />

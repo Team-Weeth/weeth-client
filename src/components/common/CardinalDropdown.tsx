@@ -19,6 +19,7 @@ interface CardinalDropdownProps {
   onSelect: (id: number) => void;
   onSelectAll?: () => void;
   className?: string;
+  disabled?: boolean;
 }
 
 function CardinalDropdown({
@@ -27,6 +28,7 @@ function CardinalDropdown({
   onSelect,
   onSelectAll,
   className,
+  disabled = false,
 }: CardinalDropdownProps) {
   const sortedCardinals = [...cardinals].sort((a, b) => b.cardinalNumber - a.cardinalNumber);
   const optionCount = sortedCardinals.length + (onSelectAll ? 1 : 0);
@@ -43,8 +45,10 @@ function CardinalDropdown({
       <DropdownMenuTrigger asChild>
         <button
           type="button"
+          disabled={disabled}
+          aria-label="기수 선택"
           className={cn(
-            'bg-button-neutral typo-button1 text-text-strong hover:bg-button-neutral-interaction group flex cursor-pointer items-center justify-center gap-100 rounded-md px-400 py-200',
+            'bg-button-neutral typo-button1 text-text-strong hover:bg-button-neutral-interaction group flex cursor-pointer items-center justify-center gap-100 rounded-md px-400 py-200 disabled:cursor-not-allowed disabled:opacity-50',
             className,
           )}
         >

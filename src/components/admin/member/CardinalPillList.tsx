@@ -45,7 +45,7 @@ function CardinalPillList({
       role="group"
       aria-label="기수 필터"
       className={cn(
-        'border-line max-tablet:pb-px flex w-full min-w-0 items-center overflow-hidden border-b',
+        'max-tablet:pb-px flex w-full min-w-0 items-center overflow-hidden',
         'tablet:gap-700 tablet:px-600',
         className,
       )}
