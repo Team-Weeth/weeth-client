@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { isImageFileName } from '@/lib/board/fileUtils';
 import { useFileUploadCore, type CoreFileItem } from '@/hooks/useFileUploadCore';
 import type { CreatePostFile } from '@/types/file';
@@ -39,10 +39,18 @@ export function useCommentFileUpload() {
     getCurrentFiles: () => filesRef.current,
   });
 
-  const clearFiles = () => {
+  const revokeAll = () => {
     filesRef.current.forEach((f) => {
       if (f.fileUrl.startsWith('blob:')) URL.revokeObjectURL(f.fileUrl);
     });
+  };
+
+  useEffect(() => {
+    return () => revokeAll();
+  }, []);
+
+  const clearFiles = () => {
+    revokeAll();
     filesRef.current = [];
     setFiles([]);
   };
