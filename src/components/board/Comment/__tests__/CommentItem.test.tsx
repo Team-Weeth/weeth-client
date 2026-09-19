@@ -2,6 +2,7 @@ import React from 'react';
 import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { CommentItem } from '@/components/board/Comment/CommentItem';
+import { useCommentEditStore } from '@/stores/useCommentEditStore';
 
 jest.mock('@/hooks/useScrollIntoView', () => ({
   useScrollIntoView: jest.fn(() => ({ current: null })),
@@ -36,6 +37,10 @@ function makeProps(overrides: Partial<React.ComponentProps<typeof CommentItem>> 
     ...overrides,
   };
 }
+
+beforeEach(() => {
+  useCommentEditStore.setState({ activeEditId: null });
+});
 
 describe('CommentItem', () => {
   describe('기본 렌더링', () => {
@@ -118,7 +123,7 @@ describe('CommentItem', () => {
       await user.click(screen.getByRole('button', { name: '수정' }));
       await user.click(screen.getByRole('button', { name: '저장' }));
 
-      expect(onEdit).toHaveBeenCalledWith('기존 내용');
+      expect(onEdit).toHaveBeenCalledWith('기존 내용', null);
     });
   });
 
