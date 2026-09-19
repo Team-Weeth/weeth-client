@@ -51,8 +51,13 @@ function ReplyItem({
 
   const [deleteOpen, setDeleteOpen] = useState(false);
 
-  const { editingImageFiles, editingNonImageFiles, handleRemoveExistingFile, resetRemovedIds, buildFilesToSend } =
-    useCommentEditForm(imageFileUrls, nonImageFileUrls);
+  const {
+    editingImageFiles,
+    editingNonImageFiles,
+    handleRemoveExistingFile,
+    resetRemovedIds,
+    buildFilesToSend,
+  } = useCommentEditForm(imageFileUrls, nonImageFileUrls);
 
   const startEditing = () => {
     if (!canEdit || activeEditId !== null) return;

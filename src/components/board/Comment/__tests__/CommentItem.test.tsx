@@ -31,6 +31,7 @@ jest.mock('@/components/board/ActionMenu', () => ({
 
 function makeProps(overrides: Partial<React.ComponentProps<typeof CommentItem>> = {}) {
   return {
+    id: 1,
     name: '홍길동',
     content: '댓글 내용',
     date: '03/20 14:30',

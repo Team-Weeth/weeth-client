@@ -121,9 +121,9 @@ export function useFileUploadCore({
     const oversized = extValid.filter((f) => f.size > MAX_FILE_SIZE);
     if (oversized.length > 0) {
       toast({
-      title: `${oversized.length}개 파일이 ${MAX_FILE_SIZE / 1024 / 1024}MB를 초과합니다.`,
-      variant: 'error',
-    });
+        title: `${oversized.length}개 파일이 ${MAX_FILE_SIZE / 1024 / 1024}MB를 초과합니다.`,
+        variant: 'error',
+      });
     }
     const valid = extValid.filter((f) => f.size <= MAX_FILE_SIZE);
 
