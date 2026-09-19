@@ -47,6 +47,9 @@ describe('toDisplayFile', () => {
       id: 42,
       fileName: 'photo.jpg',
       fileUrl: 'https://example.com/photo.jpg',
+      storageKey: 'key-1',
+      fileSize: 1024,
+      contentType: 'image/jpeg',
     });
   });
 });

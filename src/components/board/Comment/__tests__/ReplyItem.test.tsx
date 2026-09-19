@@ -2,6 +2,7 @@ import React from 'react';
 import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { ReplyItem } from '@/components/board/Comment/ReplyItem';
+import { useCommentEditStore } from '@/stores/useCommentEditStore';
 
 jest.mock('@/components/ui', () => jest.requireActual('@/test-utils/uiMocks'));
 
@@ -33,6 +34,10 @@ function makeProps(overrides: Partial<React.ComponentProps<typeof ReplyItem>> = 
     ...overrides,
   };
 }
+
+beforeEach(() => {
+  useCommentEditStore.setState({ activeEditId: null });
+});
 
 describe('ReplyItem', () => {
   describe('기본 렌더링', () => {
@@ -86,13 +91,13 @@ describe('ReplyItem', () => {
 
     it('수정 모드에서 저장 시 onEdit이 trim된 값으로 호출된다', async () => {
       const user = userEvent.setup();
-      const onEdit = jest.fn().mockResolvedValue(undefined);
+      const onEdit = jest.fn().mockResolvedValue(true);
       render(<ReplyItem {...makeProps({ isAuthor: true, onEdit, content: '기존 내용' })} />);
 
       await user.click(screen.getByRole('button', { name: '수정' }));
       await user.click(screen.getByRole('button', { name: '저장' }));
 
-      expect(onEdit).toHaveBeenCalledWith('기존 내용');
+      expect(onEdit).toHaveBeenCalledWith('기존 내용', null);
     });
   });
 

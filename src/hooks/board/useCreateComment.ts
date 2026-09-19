@@ -1,21 +1,33 @@
 import { commentApi } from '@/lib/apis/comment';
+import type { CreatePostFile } from '@/types/file';
 import { useCommentMutation } from './useCommentMutation';
 
 export function useCreateComment(boardId: number, postId: number) {
   const mutation = useCommentMutation({
     boardId,
     postId,
-    mutationFn: ({ content, parentCommentId }: { content: string; parentCommentId?: number }) =>
-      commentApi.create(postId, { content, files: [], parentCommentId }),
+    mutationFn: ({
+      content,
+      parentCommentId,
+      files,
+    }: {
+      content: string;
+      parentCommentId?: number;
+      files: CreatePostFile[];
+    }) => commentApi.create(postId, { content, files, parentCommentId }),
     successMessage: '댓글이 작성되었습니다.',
     errorMessage: '댓글 작성에 실패했습니다.',
     invalidatePostList: true,
   });
 
-  const createComment = async (content: string, parentCommentId?: number): Promise<boolean> => {
+  const createComment = async (
+    content: string,
+    parentCommentId?: number,
+    files: CreatePostFile[] = [],
+  ): Promise<boolean> => {
     if (mutation.isPending) return false;
     try {
-      await mutation.mutateAsync({ content, parentCommentId });
+      await mutation.mutateAsync({ content, parentCommentId, files });
       return true;
     } catch {
       return false;
