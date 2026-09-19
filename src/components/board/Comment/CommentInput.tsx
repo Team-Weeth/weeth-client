@@ -1,20 +1,28 @@
 'use client';
 
 import { useRef, useState } from 'react';
+import FolderPlusIcon from '@/assets/icons/folder_plus.svg';
 import SendIcon from '@/assets/icons/send.svg';
 import { Button } from '@/components/ui/Button';
 import { Icon } from '@/components/ui/Icon';
 import { Textarea } from '@/components/ui/Textarea';
+import { FileList } from '@/components/board/FileList';
+import { ImageList } from '@/components/board/ImageList/ImageList';
+import { useCommentFileUpload } from '@/hooks/useCommentFileUpload';
 import { cn } from '@/lib/cn';
+import type { CreatePostFile, DisplayFile } from '@/types/file';
 
 interface CommentInputProps {
   className?: string;
   placeholder?: string;
   defaultValue?: string;
-  onSubmit?: (value: string) => Promise<boolean> | boolean;
+  onSubmit?: (value: string, files: CreatePostFile[]) => Promise<boolean> | boolean;
   onCancel?: () => void;
   onValueChange?: (value: string) => void;
   disabled?: boolean;
+  existingImageFiles?: DisplayFile[];
+  existingNonImageFiles?: DisplayFile[];
+  onRemoveExistingFile?: (id: string | number) => void;
 }
 
 function CommentInput({
@@ -25,9 +33,21 @@ function CommentInput({
   onCancel,
   onValueChange,
   disabled = false,
+  existingImageFiles,
+  existingNonImageFiles,
+  onRemoveExistingFile,
 }: CommentInputProps) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [value, setValue] = useState(defaultValue);
+
+  const {
+    fileInputRef,
+    files: { imageFiles, nonImageFiles, handleRemoveFile },
+    handlers: { handleInputChange },
+    picker: { openFilePicker },
+    clearFiles,
+    getUploadedFiles,
+  } = useCommentFileUpload();
 
   const handleChange = (newValue: string) => {
     setValue(newValue);
@@ -37,10 +57,12 @@ function CommentInput({
   const handleSubmit = async () => {
     const trimmed = value.trim();
     if (!trimmed || !onSubmit) return;
+    const files = getUploadedFiles();
     try {
-      const ok = await onSubmit(trimmed);
+      const ok = await onSubmit(trimmed, files);
       if (ok !== false) {
         handleChange('');
+        clearFiles();
       }
     } catch {
       // 실패 시 초안 유지
@@ -49,7 +71,46 @@ function CommentInput({
 
   return (
     <div className={cn('flex flex-col gap-200', className)}>
-      <div className="bg-container-neutral-alternative flex items-start gap-300 rounded-lg p-300">
+      {existingImageFiles && existingImageFiles.length > 0 && (
+        <ImageList
+          files={existingImageFiles}
+          size="compact"
+          removable
+          onRemove={(id) => onRemoveExistingFile?.(id)}
+        />
+      )}
+      {existingNonImageFiles && existingNonImageFiles.length > 0 && (
+        <FileList
+          files={existingNonImageFiles}
+          editable
+          onRemove={(id) => onRemoveExistingFile?.(id)}
+        />
+      )}
+      {imageFiles.length > 0 && (
+        <ImageList files={imageFiles} size="compact" removable onRemove={handleRemoveFile} />
+      )}
+      {nonImageFiles.length > 0 && (
+        <FileList files={nonImageFiles} editable onRemove={handleRemoveFile} />
+      )}
+
+      <div className="bg-container-neutral-alternative flex items-start gap-[10px] rounded-lg p-[10px]">
+        <input
+          ref={fileInputRef}
+          type="file"
+          className="hidden"
+          onChange={handleInputChange}
+          aria-hidden="true"
+        />
+        <Button
+          type="button"
+          variant="secondary"
+          size="icon-md"
+          className="shrink-0"
+          onClick={openFilePicker}
+          aria-label="파일 첨부"
+        >
+          <Icon src={FolderPlusIcon} size={20} className="text-icon-normal" />
+        </Button>
         <div className="min-w-0 flex-1">
           <Textarea
             ref={textareaRef}
@@ -61,7 +122,7 @@ function CommentInput({
             onChange={(e) => handleChange(e.target.value)}
             placeholder={placeholder}
             disabled={disabled}
-            wrapperClassName="min-h-800 rounded-lg px-400 py-200"
+            wrapperClassName="bg-container-neutral min-h-800 rounded-lg px-300 py-200"
           />
           <p className="typo-caption2 text-text-alternative mt-100 text-right">
             {value.length}/300
