@@ -4,12 +4,12 @@ import { useState } from 'react';
 import ReplyIcon from '@/assets/icons/reply.svg';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Icon } from '@/components/ui/Icon';
+import { useCommentEditForm } from '@/hooks/board/useCommentEditForm';
 import { cn } from '@/lib/cn';
 import { ActionMenu } from '@/components/board/ActionMenu';
 import { FileList } from '@/components/board/FileList';
 import { ImageList } from '@/components/board/ImageList/ImageList';
 import { useActiveEditId, useCommentEditActions } from '@/stores/useCommentEditStore';
-import { toCreatePostFile } from '@/lib/board';
 import type { DisplayFile } from '@/types/board';
 import type { CreatePostFile } from '@/types/file';
 import { CommentDeleteDialog } from './CommentDeleteDialog';
@@ -50,42 +50,26 @@ function ReplyItem({
   const isEditing = activeEditId === id;
 
   const [deleteOpen, setDeleteOpen] = useState(false);
-  const [removedExistingIds, setRemovedExistingIds] = useState<Set<string | number>>(new Set());
+
+  const { editingImageFiles, editingNonImageFiles, handleRemoveExistingFile, resetRemovedIds, buildFilesToSend } =
+    useCommentEditForm(imageFileUrls, nonImageFileUrls);
 
   const startEditing = () => {
     if (!canEdit || activeEditId !== null) return;
-    setRemovedExistingIds(new Set());
+    resetRemovedIds();
     startEdit(id);
   };
 
   const cancelEditing = () => {
-    setRemovedExistingIds(new Set());
+    resetRemovedIds();
     cancelEdit();
   };
 
-  const handleRemoveExistingFile = (fileId: string | number) => {
-    setRemovedExistingIds((prev) => new Set([...prev, fileId]));
-  };
-
-  const editingImageFiles = (imageFileUrls ?? []).filter((f) => !removedExistingIds.has(f.id));
-  const editingNonImageFiles = (nonImageFileUrls ?? []).filter(
-    (f) => !removedExistingIds.has(f.id),
-  );
-
   const handleEditSubmit = async (value: string, newFiles: CreatePostFile[]) => {
-    const hasChanges = removedExistingIds.size > 0 || newFiles.length > 0;
-
-    let filesToSend: CreatePostFile[] | null = null;
-    if (hasChanges) {
-      const remainingExisting = [...editingImageFiles, ...editingNonImageFiles]
-        .map(toCreatePostFile)
-        .filter((f): f is CreatePostFile => f !== null);
-      filesToSend = [...remainingExisting, ...newFiles];
-    }
-
+    const filesToSend = buildFilesToSend(newFiles);
     const ok = await onEdit?.(value, filesToSend);
     if (ok !== false) {
-      setRemovedExistingIds(new Set());
+      resetRemovedIds();
       cancelEdit();
     }
     return ok ?? true;
