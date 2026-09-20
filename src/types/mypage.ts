@@ -148,7 +148,7 @@ export interface MyPageAttendedSessionItem {
 
 export interface MyPagePenaltyItem {
   penaltyId: number;
-  score: number;
+
   penaltyDescription: string;
   penaltyType: string;
   createdAt: string;

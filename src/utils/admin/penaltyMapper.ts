@@ -27,7 +27,7 @@ export function toPenaltyRecord(detail: AdminPenaltyDetail): PenaltyRecord {
     id: detail.penaltyId,
     cardinal: detail.cardinal,
     type: detail.penaltyType,
-    score: detail.score,
+
     reason: detail.penaltyDescription,
     createdAt: toPenaltyDate(detail.time) ?? '',
   };

@@ -14,7 +14,7 @@ export function PenaltyCountSummary({ penaltyCount, warningCount }: PenaltyCount
       <div className="flex min-w-0 flex-1 items-center gap-[20px] p-[15px]">
         <dt className="typo-sub3 text-text-alternative">페널티</dt>
         <dd className="typo-sub1 text-text-normal">
-          {penaltyCount === null ? '—' : `${penaltyCount}회`}
+          {penaltyCount === null ? '-' : `${penaltyCount}회`}
         </dd>
       </div>
       {warningEnabled && (
@@ -23,7 +23,7 @@ export function PenaltyCountSummary({ penaltyCount, warningCount }: PenaltyCount
           <div className="flex min-w-0 flex-1 items-center gap-[20px] p-[15px]">
             <dt className="typo-sub3 text-text-alternative">경고</dt>
             <dd className="typo-sub1 text-text-normal">
-              {warningCount === null ? '—' : `${warningCount}회`}
+              {warningCount === null ? '-' : `${warningCount}회`}
             </dd>
           </div>
         </>

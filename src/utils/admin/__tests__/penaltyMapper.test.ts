@@ -7,7 +7,7 @@ describe('toPenaltyRecord', () => {
         penaltyId: 1,
         cardinal: 4,
         penaltyType,
-        score: penaltyType === 'WARNING' ? 0 : 1,
+
         penaltyDescription: '지각',
         time: '2026-09-13T09:00:00',
       }),
@@ -15,7 +15,7 @@ describe('toPenaltyRecord', () => {
       id: 1,
       cardinal: 4,
       type: penaltyType,
-      score: penaltyType === 'WARNING' ? 0 : 1,
+
       reason: '지각',
       createdAt: '2026-09-13',
     });

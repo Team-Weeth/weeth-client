@@ -11,7 +11,8 @@ import { Icon } from '@/components/ui/Icon';
 import { cn } from '@/lib/cn';
 import type { Cardinal } from '@/types/admin/cardinal';
 
-const CARDINAL_DROPDOWN_MAX_HEIGHT_CLASS = 'max-h-[270px]';
+const CARDINAL_DROPDOWN_MAX_HEIGHT_CLASS =
+  'max-h-[min(var(--radix-dropdown-menu-content-available-height),270px)]';
 
 interface CardinalDropdownProps {
   cardinals: Cardinal[];

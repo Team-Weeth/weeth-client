@@ -8,14 +8,14 @@ const getMock = jest.mocked(apiClient.get);
 
 beforeEach(() => getMock.mockReset());
 
-it('전체 페이지를 조회하고 점수 합계가 아닌 유형별 기록 건수를 집계한다', async () => {
+it('전체 페이지를 조회하고 유형별 기록 건수를 집계한다', async () => {
   getMock
     .mockResolvedValueOnce({
       data: {
         data: {
           content: [
-            { penaltyId: 1, penaltyType: 'PENALTY', score: 3 },
-            { penaltyId: 2, penaltyType: 'WARNING', score: 1 },
+            { penaltyId: 1, penaltyType: 'PENALTY' },
+            { penaltyId: 2, penaltyType: 'WARNING' },
           ],
           hasNext: true,
         },
@@ -25,8 +25,8 @@ it('전체 페이지를 조회하고 점수 합계가 아닌 유형별 기록 �
       data: {
         data: {
           content: [
-            { penaltyId: 2, penaltyType: 'WARNING', score: 1 },
-            { penaltyId: 3, penaltyType: 'WARNING', score: 1 },
+            { penaltyId: 2, penaltyType: 'WARNING' },
+            { penaltyId: 3, penaltyType: 'WARNING' },
           ],
           hasNext: false,
         },

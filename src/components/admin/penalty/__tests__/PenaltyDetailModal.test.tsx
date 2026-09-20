@@ -26,7 +26,7 @@ function createRecord(): PenaltyRecord {
     id: 1,
     cardinal: 4,
     type: 'PENALTY',
-    score: 1,
+
     reason: '정기 모임 무단 결석',
     createdAt: '2026-07-18',
   };
@@ -66,7 +66,7 @@ describe('PenaltyDetailModal', () => {
           member={createMember()}
           cardinalNumber={4}
           records={[
-            { ...createRecord(), score: 5 },
+            createRecord(),
             { ...createRecord(), id: 2, type: 'WARNING', reason: '지각' },
             { ...createRecord(), id: 3, cardinal: 3, reason: '이전 기수 기록' },
           ]}

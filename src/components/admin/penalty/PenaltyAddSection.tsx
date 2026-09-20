@@ -6,10 +6,7 @@ import type { ReactNode } from 'react';
 
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
-import {
-  PENALTY_REASON_MAX_LENGTH,
-  PENALTY_SCORE_EMPTY,
-} from '@/constants/admin/penaltyTable.constants';
+import { PENALTY_REASON_MAX_LENGTH } from '@/constants/admin/penaltyTable.constants';
 import { cn } from '@/lib/cn';
 import type { PenaltyMember, PenaltyRecordDraft, PenaltyType } from '@/types/admin/penalty';
 import { PenaltyMemberSearchInput } from './PenaltyMemberSearchInput';
@@ -36,10 +33,7 @@ function PenaltyAddSection({
 }: PenaltyAddSectionProps) {
   const { warningEnabled } = useClubFeatures();
   const isWarning = warningEnabled && draft.type === 'WARNING';
-  const canSubmit =
-    draft.memberIds.length > 0 &&
-    draft.reason.trim().length > 0 &&
-    (isWarning || draft.score > PENALTY_SCORE_EMPTY);
+  const canSubmit = draft.memberIds.length > 0 && draft.reason.trim().length > 0;
 
   return (
     <section className="bg-background flex w-full flex-col overflow-hidden rounded-lg">

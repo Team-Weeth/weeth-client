@@ -25,7 +25,7 @@ export interface PenaltyMember {
 
 export interface PenaltyRecordDraft {
   type: PenaltyType;
-  score: number;
+
   /** 선택된 멤버 id 목록 (멤버 리스트 체크박스 선택과 동일한 상태) */
   memberIds: string[];
   reason: string;
@@ -37,7 +37,7 @@ export interface PenaltyRecord {
   id: number;
   cardinal?: number;
   type: PenaltyType;
-  score: number;
+
   reason: string;
   /** 'YYYY-MM-DD' */
   createdAt: string;

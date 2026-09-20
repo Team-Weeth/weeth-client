@@ -56,8 +56,6 @@ export const PENALTY_DETAIL_COLUMN_WIDTH = {
   actionsInner: 'w-[106px]',
   /** 버튼 영역 106px + 행 우측 여백 24px */
   actions: 'w-[130px]',
-  /** 인라인 편집 모드의 점수 입력 너비 */
-  scoreInput: 'w-[88px]',
 } as const;
 
 export const PENALTY_DETAIL_TABLE_COLUMNS = [

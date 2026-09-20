@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react';
 
-import { PENALTY_SCORE_MIN } from '@/constants/admin/penaltyTable.constants';
 import {
   useAdminMemberPenaltyDetail,
   useAdminPenaltyMembers,
@@ -24,7 +23,7 @@ import { PenaltyTable } from './PenaltyTable';
 
 const INITIAL_DRAFT: PenaltyRecordDraft = {
   type: 'PENALTY',
-  score: PENALTY_SCORE_MIN,
+
   memberIds: [],
   reason: '',
 };

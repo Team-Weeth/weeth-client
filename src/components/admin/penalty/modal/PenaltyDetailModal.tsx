@@ -19,7 +19,7 @@ interface PenaltyDetailModalProps {
   member: PenaltyMember | null;
   records: PenaltyRecord[];
   cardinalNumber: number | null;
-  onUpdateRecord?: (record: PenaltyRecord, next: { reason: string; score: number }) => void;
+  onUpdateRecord?: (record: PenaltyRecord, next: { reason: string }) => void;
   onDeleteRecord?: (record: PenaltyRecord) => void;
 }
 

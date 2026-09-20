@@ -8,7 +8,7 @@ function createRecord(overrides: Partial<PenaltyRecord> = {}): PenaltyRecord {
   return {
     id: 1,
     type: 'PENALTY',
-    score: 1,
+
     reason: '정기 모임 무단 결석',
     createdAt: '2026-07-18',
     ...overrides,
@@ -68,7 +68,7 @@ describe('PenaltyRecordTable', () => {
     await user.type(screen.getByLabelText('페널티 사유'), '스터디 과제 미제출');
     await user.click(screen.getByRole('button', { name: '저장' }));
 
-    expect(onUpdate).toHaveBeenCalledWith(record, { reason: '스터디 과제 미제출', score: 1 });
+    expect(onUpdate).toHaveBeenCalledWith(record, { reason: '스터디 과제 미제출' });
   });
 
   it('취소하면 편집을 종료하고 아무것도 저장하지 않는다', async () => {

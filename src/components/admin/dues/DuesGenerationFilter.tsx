@@ -15,7 +15,8 @@ import { formatLastUpdated } from '@/utils/shared/date';
 import type { Cardinal } from '@/types/admin/cardinal';
 import type { LastModified } from '@/types/admin/dues';
 
-const CARDINAL_DROPDOWN_MAX_HEIGHT_CLASS = 'max-h-[270px]';
+const CARDINAL_DROPDOWN_MAX_HEIGHT_CLASS =
+  'max-h-[min(var(--radix-dropdown-menu-content-available-height),270px)]';
 
 interface DuesGenerationFilterProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onSelect'> {
   cardinals: Cardinal[];

@@ -31,7 +31,7 @@ interface PenaltyRecordEdit {
 
 interface PenaltyRecordTableProps extends React.HTMLAttributes<HTMLDivElement> {
   records: PenaltyRecord[];
-  onUpdate?: (record: PenaltyRecord, next: { reason: string; score: number }) => void;
+  onUpdate?: (record: PenaltyRecord, next: { reason: string }) => void;
   onDelete?: (record: PenaltyRecord) => void;
 }
 
@@ -51,7 +51,7 @@ function PenaltyRecordTable({
   const handleSave = (record: PenaltyRecord) => {
     if (!edit) return;
 
-    onUpdate?.(record, { reason: edit.reason.trim(), score: record.score });
+    onUpdate?.(record, { reason: edit.reason.trim() });
     setEdit(null);
   };
 

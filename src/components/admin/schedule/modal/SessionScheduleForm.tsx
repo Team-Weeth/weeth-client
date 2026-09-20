@@ -78,7 +78,11 @@ function SessionScheduleForm({
           </DropdownMenuTrigger>
           <DropdownMenuContent
             align="start"
-            className={cn('min-w-30', sortedCardinals.length > 5 && 'max-h-[270px]')}
+            className={cn(
+              'min-w-30',
+              sortedCardinals.length > 5 &&
+                'max-h-[min(var(--radix-dropdown-menu-content-available-height),270px)]',
+            )}
           >
             {cardinals.length === 0 ? (
               <DropdownMenuItem disabled>기수 없음</DropdownMenuItem>
