@@ -64,7 +64,30 @@ function useMemberPositionEditor({ initialOptions, onSave }: MemberPositionEdito
   }
 
   function updateOption(id: string, patch: Partial<Pick<MemberPositionOption, 'name' | 'color'>>) {
-    updateOptions(options.map((option) => (option.id === id ? { ...option, ...patch } : option)));
+    if (
+      patch.color &&
+      options.some(
+        (option) => option.id !== id && option.name.trim() && option.color === patch.color,
+      )
+    ) {
+      return;
+    }
+
+    const next = options.map((option) => (option.id === id ? { ...option, ...patch } : option));
+    if (patch.color) {
+      const usedColors = new Set(next.map((option) => option.color));
+      for (const option of next) {
+        if (option.id === id || option.name.trim() || option.color !== patch.color) continue;
+        const availableColor = POSITION_COLORS.find((color) => !usedColors.has(color.value));
+        if (availableColor) {
+          // 빈 옵션만 재배정하며 기존 state의 객체는 변경하지 않는다.
+          const index = next.indexOf(option);
+          next[index] = { ...option, color: availableColor.value };
+          usedColors.add(availableColor.value);
+        }
+      }
+    }
+    updateOptions(next);
   }
 
   function removeOption(id: string) {

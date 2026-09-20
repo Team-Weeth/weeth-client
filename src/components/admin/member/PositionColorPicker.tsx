@@ -2,6 +2,7 @@
 
 import ArrowDownIcon from '@/assets/icons/arrow_down.svg';
 import CheckIcon from '@/assets/icons/check.svg';
+import DisabledIcon from '@/assets/icons/admin/ic_admin_disabled.svg';
 import { Icon } from '@/components/ui/Icon';
 import {
   DropdownMenu,
@@ -51,24 +52,32 @@ function PositionColorPicker({
               aria-label={color.label}
               aria-current={isSelected ? 'true' : undefined}
               disabled={unavailable}
-              className="data-[disabled]:cursor-not-allowed"
+              className="hover:bg-container-primary-alternative focus:bg-container-primary-alternative active:bg-container-primary-alternative data-[highlighted]:bg-container-primary-alternative data-[disabled]:bg-container-neutral data-[disabled]:cursor-default data-[disabled]:opacity-100"
               onSelect={() => onChange(color.value)}
             >
               <span
                 aria-hidden
                 className={cn(
                   'relative flex shrink-0 items-center justify-center overflow-hidden rounded-full',
-                  color.className,
-                  isSelected ? 'size-7 p-[2px]' : 'size-6',
-                  unavailable && 'opacity-50',
+                  isSelected ? 'size-8' : 'size-6',
+                  unavailable && 'cursor-not-allowed',
                 )}
               >
+                <span
+                  className={cn(
+                    'absolute inset-0 rounded-full',
+                    color.className,
+                    unavailable && 'opacity-30',
+                  )}
+                />
                 {isSelected && (
-                  <span className="flex size-full items-center justify-center rounded-full border-2 border-white">
+                  <span className="absolute inset-[2px] flex items-center justify-center rounded-full border border-white">
                     <Icon src={CheckIcon} size={16} className="text-white" />
                   </span>
                 )}
-                {unavailable && <span className="absolute h-[2px] w-[140%] rotate-45 bg-white" />}
+                {unavailable && (
+                  <Icon src={DisabledIcon} size={18} className="relative text-white" />
+                )}
               </span>
               <span className="sr-only">
                 {isSelected ? '선택됨' : unavailable ? '다른 옵션에서 사용 중' : color.label}
