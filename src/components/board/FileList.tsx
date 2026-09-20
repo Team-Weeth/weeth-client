@@ -64,6 +64,8 @@ function FileList({ files, editable, onRemove }: FileListProps) {
             key={item.id}
             href={item.fileUrl}
             download={stripUuidPrefix(item.fileName)}
+            target="_blank"
+            rel="noopener noreferrer"
             className={cn(
               rowStyles,
               'cursor-pointer',
