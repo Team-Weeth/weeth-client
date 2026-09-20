@@ -21,7 +21,7 @@ function LinkifiedText({ text, className }: LinkifiedTextProps) {
             href={normalizeHref(part)}
             target="_blank"
             rel="noopener noreferrer"
-            className={cn('break-all text-brand-secondary underline')}
+            className={cn('text-brand-secondary break-all underline')}
           >
             {part}
           </a>

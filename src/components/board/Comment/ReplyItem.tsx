@@ -105,7 +105,10 @@ function ReplyItem({
             />
           ) : (
             <>
-              <LinkifiedText text={content} className="typo-body1 text-text-normal whitespace-pre-wrap" />
+              <LinkifiedText
+                text={content}
+                className="typo-body1 text-text-normal whitespace-pre-wrap"
+              />
               {imageFileUrls && imageFileUrls.length > 0 && <ImageList files={imageFileUrls} />}
               {nonImageFileUrls && nonImageFileUrls.length > 0 && (
                 <FileList files={nonImageFileUrls} />
