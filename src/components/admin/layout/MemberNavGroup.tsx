@@ -26,8 +26,8 @@ function MemberNavGroup({ clubId, pathname, collapsed }: MemberNavGroupProps) {
     {
       label: '부원 정보',
       icon: PersonIcon,
-      path: `${memberPath}/information-preview`,
-      active: pathname.startsWith(`${memberPath}/information-preview`),
+      path: `${memberPath}/position-settings`,
+      active: pathname.startsWith(`${memberPath}/position-settings`),
     },
   ];
 

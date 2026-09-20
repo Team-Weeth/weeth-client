@@ -16,7 +16,7 @@ function MobileMemberNavGroup({ clubId, pathname }: { clubId: string; pathname: 
   const menuId = useId();
   const items = [
     { label: '멤버 목록', icon: ListIcon, path: memberPath },
-    { label: '부원 정보', icon: PersonIcon, path: `${memberPath}/information-preview` },
+    { label: '부원 정보', icon: PersonIcon, path: `${memberPath}/position-settings` },
   ];
 
   return (

@@ -21,7 +21,7 @@ it('멤버 관리 클릭은 시트를 유지하며 하위 메뉴를 토글하고
   expect(screen.getByRole('link', { name: '멤버 목록' })).toHaveAttribute('aria-current', 'page');
   expect(screen.getByRole('link', { name: '부원 정보' })).toHaveAttribute(
     'href',
-    '/club-1/admin/member/information-preview',
+    '/club-1/admin/member/position-settings',
   );
   await user.click(trigger);
   expect(screen.queryByRole('link', { name: '부원 정보' })).not.toBeInTheDocument();

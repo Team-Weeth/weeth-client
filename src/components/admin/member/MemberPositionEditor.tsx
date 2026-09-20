@@ -55,7 +55,7 @@ function MemberPositionEditor({
           <h2 id={headingId} className={cn('typo-h3 text-text-strong', mobile && 'typo-sub1')}>
             포지션
           </h2>
-          <p className="typo-body1 text-text-alternative">
+          <p className={cn('typo-body1 text-text-alternative', mobile && 'typo-body2')}>
             해당 필드에 옵션을 설정해 두면 멤버 관리 표에서 볼 수 있습니다.
           </p>
         </div>

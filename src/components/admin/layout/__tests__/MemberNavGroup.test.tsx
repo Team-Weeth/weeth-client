@@ -18,7 +18,7 @@ it('멤버 관리를 누르면 하위 링크를 펼치고 다시 누르면 닫�
   );
   expect(screen.getByRole('link', { name: '부원 정보' })).toHaveAttribute(
     'href',
-    '/club-1/admin/member/information-preview',
+    '/club-1/admin/member/position-settings',
   );
   await user.click(trigger);
   expect(screen.queryByRole('link', { name: '부원 정보' })).not.toBeInTheDocument();
@@ -28,7 +28,7 @@ it('부원 정보에서는 해당 하위 메뉴만 활성화한다', () => {
   render(
     <MemberNavGroup
       clubId="club-1"
-      pathname="/club-1/admin/member/information-preview"
+      pathname="/club-1/admin/member/position-settings"
       collapsed={false}
     />,
   );
