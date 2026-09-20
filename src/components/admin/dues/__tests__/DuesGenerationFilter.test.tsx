@@ -18,7 +18,7 @@ it('마지막 수정자가 null이면 기본 프로필과 정보없음 툴팁을
   expect(await screen.findByRole('tooltip')).toHaveTextContent('정보없음');
 });
 
-it('수정자가 있으면 호버 시 이름을 표시한다', async () => {
+it('마지막 수정자가 있으면 이름을 표시한다', async () => {
   const user = userEvent.setup();
   render(
     <DuesGenerationFilter
