@@ -40,7 +40,7 @@ export function useAdminMonthlySchedules(year: number, month: number, cardinal?:
   const { start, end } = toMonthRange(year, month);
 
   return useQuery({
-    queryKey: adminQueryKeys.monthlySchedule(clubId, year, month),
+    queryKey: adminQueryKeys.monthlySchedule(clubId, year, month, cardinal),
     queryFn: async () => {
       const res = await adminScheduleApi.getEventList(clubId!, start, end, cardinal);
       return res.data.data;
