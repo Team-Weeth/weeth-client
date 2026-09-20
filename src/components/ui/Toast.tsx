@@ -1,51 +1,64 @@
 'use client';
 
 import * as React from 'react';
-import Image from 'next/image';
 import { Toast as ToastPrimitive } from 'radix-ui';
-import { cva, type VariantProps } from 'class-variance-authority';
+import { cva } from 'class-variance-authority';
 
 import { cn } from '@/lib/cn';
+import { Icon } from '@/components/ui/Icon';
+import type { ToastVariant } from '@/stores/useToastStore';
 import CheckRoundIcon from '@/assets/icons/check_round.svg';
-import InfoCircleIcon from '@/assets/icons/info_circle.svg';
+import DeleteRoundIcon from '@/assets/icons/delete_round.svg';
 import CautionIcon from '@/assets/icons/caution.svg';
 
+type ToastPosition = 'top' | 'bottom';
+
 const toastVariants = cva(
-  'pointer-events-auto flex h-[40px] max-w-[90%] items-center justify-center gap-200 rounded-full px-400 shadow-lg data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=open]:fade-in-0 data-[state=closed]:fade-out-0 data-[state=open]:slide-in-from-bottom-full data-[state=closed]:slide-out-to-bottom-full',
+  'pointer-events-auto flex min-w-[324px] items-center gap-200 rounded-lg bg-container-floating p-400 shadow-md data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=open]:fade-in-0 data-[state=closed]:fade-out-0',
   {
     variants: {
-      variant: {
-        success: 'bg-state-success text-white',
-        info: 'bg-state-caution text-text-inverse',
-        error: 'bg-state-error text-text-inverse',
+      position: {
+        top: 'data-[state=open]:slide-in-from-top-full data-[state=closed]:slide-out-to-top-full',
+        bottom:
+          'data-[state=open]:slide-in-from-bottom-full data-[state=closed]:slide-out-to-bottom-full',
       },
     },
     defaultVariants: {
-      variant: 'success',
+      position: 'top',
     },
   },
 );
 
-const iconMap = {
-  success: { src: CheckRoundIcon, className: 'invert brightness-0' },
-  info: { src: InfoCircleIcon, className: 'invert brightness-0' },
-  error: { src: CautionIcon, className: 'invert brightness-0' },
-} as const;
+const iconMap: Record<
+  ToastVariant,
+  { src: React.ComponentProps<typeof Icon>['src']; className: string }
+> = {
+  success: { src: CheckRoundIcon, className: 'text-brand-primary' },
+  warning: { src: CautionIcon, className: 'text-state-caution' },
+  error: { src: DeleteRoundIcon, className: 'text-state-error' },
+};
 
-function ToastProvider({ ...props }: React.ComponentProps<typeof ToastPrimitive.Provider>) {
-  return <ToastPrimitive.Provider swipeDirection="down" {...props} />;
+interface ToastProviderProps extends React.ComponentProps<typeof ToastPrimitive.Provider> {
+  position?: ToastPosition;
 }
 
-function ToastViewport({
-  className,
-  ...props
-}: React.ComponentProps<typeof ToastPrimitive.Viewport>) {
+function ToastProvider({ position = 'top', ...props }: ToastProviderProps) {
+  return <ToastPrimitive.Provider swipeDirection={position === 'top' ? 'up' : 'down'} {...props} />;
+}
+
+interface ToastViewportProps extends React.ComponentProps<typeof ToastPrimitive.Viewport> {
+  position?: ToastPosition;
+}
+
+function ToastViewport({ className, position = 'top', ...props }: ToastViewportProps) {
   return (
     <ToastPrimitive.Viewport
       data-slot="toast-viewport"
       aria-live="polite"
       className={cn(
-        'fixed bottom-0 left-0 z-[9999] flex w-full flex-col items-center gap-200 pb-[40px]',
+        position === 'top'
+          ? 'fixed top-[52px] left-0 z-[9999] flex w-full flex-col items-center gap-200'
+          : 'fixed bottom-0 left-0 z-[9999] flex w-full flex-col items-center gap-200 pb-[40px]',
         className,
       )}
       {...props}
@@ -53,29 +66,40 @@ function ToastViewport({
   );
 }
 
-interface ToastProps
-  extends React.ComponentProps<typeof ToastPrimitive.Root>, VariantProps<typeof toastVariants> {}
+interface ToastProps extends React.ComponentProps<typeof ToastPrimitive.Root> {
+  variant?: ToastVariant;
+  position?: ToastPosition;
+}
 
-function Toast({ className, variant = 'success', children, ...props }: ToastProps) {
-  const icon = iconMap[variant!];
+function Toast({
+  className,
+  variant = 'success',
+  position = 'top',
+  children,
+  ...props
+}: ToastProps) {
+  const icon = iconMap[variant];
 
   return (
     <ToastPrimitive.Root
       data-slot="toast"
-      className={cn(toastVariants({ variant }), className)}
+      className={cn(toastVariants({ position }), className)}
       {...props}
     >
-      <Image
-        src={icon.src}
-        alt=""
-        width={20}
-        height={20}
-        aria-hidden="true"
-        className={icon.className}
-      />
-      <ToastPrimitive.Title className="typo-caption1 text-center">{children}</ToastPrimitive.Title>
+      <Icon src={icon.src} size={20} className={icon.className} />
+      <ToastPrimitive.Title className="typo-sub3 text-text-on-floating text-center">
+        {children}
+      </ToastPrimitive.Title>
     </ToastPrimitive.Root>
   );
 }
 
-export { ToastProvider, ToastViewport, Toast, toastVariants, type ToastProps };
+export {
+  ToastProvider,
+  ToastViewport,
+  Toast,
+  toastVariants,
+  type ToastProps,
+  type ToastViewportProps,
+  type ToastPosition,
+};
