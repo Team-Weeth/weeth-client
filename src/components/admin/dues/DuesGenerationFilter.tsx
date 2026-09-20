@@ -79,16 +79,16 @@ function DuesGenerationFilter({
           </span>
           <TooltipProvider>
             <Tooltip>
-              <TooltipTrigger>
+              <TooltipTrigger aria-label="마지막 수정자">
                 <Avatar size={24}>
                   <AvatarImage
-                    src={updaterProfile?.modifiedBy.profileImageUrl ?? undefined}
+                    src={updaterProfile?.modifiedBy?.profileImageUrl ?? undefined}
                     alt="마지막 수정자 프로필"
                   />
                   <AvatarFallback />
                 </Avatar>
               </TooltipTrigger>
-              <TooltipContent>{updaterProfile?.modifiedBy.name}</TooltipContent>
+              <TooltipContent>{updaterProfile?.modifiedBy?.name ?? '정보없음'}</TooltipContent>
             </Tooltip>
           </TooltipProvider>
         </div>
