@@ -28,7 +28,7 @@ function MemberInformationFields({ className }: MemberInformationFieldsProps) {
         <li
           key={label}
           className={cn(
-            'bg-container-neutral flex items-center gap-4 rounded-sm px-500 py-400 shadow-sm dark:shadow-[0_1px_10px_0_rgba(0,0,0,0.40)]',
+            'bg-container-neutral dark:shadow-dark flex items-center gap-4 rounded-sm px-500 py-400 shadow-sm',
             !custom && 'opacity-50',
           )}
         >

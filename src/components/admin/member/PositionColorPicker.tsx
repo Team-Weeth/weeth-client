@@ -52,7 +52,7 @@ function PositionColorPicker({
               aria-label={color.label}
               aria-current={isSelected ? 'true' : undefined}
               disabled={unavailable}
-              className="hover:bg-container-primary-alternative focus:bg-container-primary-alternative active:bg-container-primary-alternative data-[highlighted]:bg-container-primary-alternative data-[disabled]:bg-container-neutral data-[disabled]:cursor-default data-[disabled]:opacity-100"
+              className="hover:bg-container-neutral-alternative focus:bg-container-neutral-alternative active:bg-container-neutral-alternative data-[highlighted]:bg-container-neutral-alternative data-[disabled]:bg-container-neutral data-[disabled]:cursor-default data-[disabled]:opacity-100"
               onSelect={() => onChange(color.value)}
             >
               <span

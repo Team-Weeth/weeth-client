@@ -20,6 +20,7 @@ import { LNBLogoutModal } from '@/components/admin/layout/LNBLogoutModal';
 import { LNBProfile } from '@/components/admin/layout/LNBProfile';
 import { NavSection } from '@/components/admin/layout/NavSection';
 import { NavItem } from '@/components/admin/layout/NavItem';
+import { MemberNavGroup } from '@/components/admin/layout/MemberNavGroup';
 import { useAdminLNBActions, useAdminLNBCollapsed } from '@/stores/useAdminLNBStore';
 
 function LNB() {
@@ -71,16 +72,20 @@ function LNB() {
     },
   ];
 
-  const managementNavNodes = managementNavItems.map(({ id, icon, label, path }) => (
-    <NavItem
-      key={id}
-      icon={icon}
-      label={label}
-      path={path}
-      isActive={pathname.startsWith(path)}
-      collapsed={collapsed}
-    />
-  ));
+  const managementNavNodes = managementNavItems.map(({ id, icon, label, path }) =>
+    id === 'member' ? (
+      <MemberNavGroup key={id} clubId={clubId} pathname={pathname} collapsed={collapsed} />
+    ) : (
+      <NavItem
+        key={id}
+        icon={icon}
+        label={label}
+        path={path}
+        isActive={pathname.startsWith(path)}
+        collapsed={collapsed}
+      />
+    ),
+  );
 
   const infoNavNodes = infoNavItems.map(({ id, icon, label, path }) => (
     <NavItem

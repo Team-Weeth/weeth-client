@@ -40,7 +40,7 @@ function MemberInformationMobile({ className, ...editorProps }: MemberPositionEd
       </div>
       <DropdownMenu>
         <DropdownMenuTrigger
-          className="group bg-container-neutral flex w-full cursor-pointer items-center gap-400 rounded-sm px-500 py-400 shadow-sm dark:shadow-[0_1px_10px_0_rgba(0,0,0,0.40)]"
+          className="group bg-container-neutral dark:shadow-dark flex w-full cursor-pointer items-center gap-400 rounded-sm px-500 py-400 shadow-sm"
           aria-label="부원 정보 필드 선택"
         >
           <span className="bg-container-neutral-alternative flex size-10 shrink-0 items-center justify-center rounded-sm">
@@ -58,7 +58,7 @@ function MemberInformationMobile({ className, ...editorProps }: MemberPositionEd
           align="start"
           side="bottom"
           sideOffset={10}
-          className="divide-line max-h-[var(--radix-dropdown-menu-content-available-height)] w-[var(--radix-dropdown-menu-trigger-width)] divide-y shadow-lg"
+          className="divide-line dark:shadow-dark max-h-[var(--radix-dropdown-menu-content-available-height)] w-[var(--radix-dropdown-menu-trigger-width)] divide-y shadow-lg"
         >
           {MEMBER_INFORMATION_FIELDS.map(({ label, icon, custom }) => (
             <DropdownMenuItem
