@@ -21,6 +21,7 @@ interface MemberPositionDropdownProps {
   options: readonly MemberPositionOption[];
   onChange: (value: string | null) => void;
   onAddPosition?: () => void;
+  className?: string;
 }
 
 export function MemberPositionDropdown({
@@ -29,6 +30,7 @@ export function MemberPositionDropdown({
   options,
   onChange,
   onAddPosition,
+  className,
 }: MemberPositionDropdownProps) {
   const selected = options.find((option) => option.id === value);
   const isMobile = useMediaQuery('(max-width: 695.98px)');
@@ -44,7 +46,10 @@ export function MemberPositionDropdown({
         ref={setTriggerRef}
         aria-label={`${memberName} 포지션: ${selected?.name ?? '미지정'}`}
         onClick={(event) => event.stopPropagation()}
-        className="group typo-body2 text-text-normal border-line bg-container-neutral focus-visible:outline-brand-primary data-[state=open]:border-text-normal max-tablet:h-[30px] max-tablet:w-[102px] max-tablet:gap-[6px] max-tablet:py-[6px] max-tablet:pr-[6px] max-tablet:pl-[10px] flex w-[140px] cursor-pointer items-center gap-200 rounded-sm border px-300 py-[11px]"
+        className={cn(
+          'group typo-body2 text-text-normal border-line bg-container-neutral focus-visible:outline-brand-primary data-[state=open]:border-text-normal max-tablet:h-[30px] max-tablet:w-[102px] max-tablet:gap-[6px] max-tablet:py-[6px] max-tablet:pr-[6px] max-tablet:pl-[10px] flex w-[140px] cursor-pointer items-center gap-200 rounded-sm border px-300 py-[11px]',
+          className,
+        )}
       >
         <PositionDot option={selected} />
         <span className="min-w-0 flex-1 truncate text-left">{selected?.name ?? '미지정'}</span>
