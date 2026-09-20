@@ -11,6 +11,7 @@ import { cn } from '@/lib/cn';
 import { ActionMenu } from '@/components/board/ActionMenu';
 import { FileList } from '@/components/board/FileList';
 import { ImageList } from '@/components/board/ImageList/ImageList';
+import { LinkifiedText } from '@/components/board/LinkifiedText';
 import { useActiveEditId, useCommentEditActions } from '@/stores/useCommentEditStore';
 import type { DisplayFile } from '@/types/board';
 import type { CreatePostFile } from '@/types/file';
@@ -131,14 +132,13 @@ function CommentItem({
             />
           ) : (
             <>
-              <p
+              <LinkifiedText
+                text={content}
                 className={cn(
                   'typo-body1 whitespace-pre-wrap',
                   isDeleted ? 'text-text-disabled' : 'text-text-normal',
                 )}
-              >
-                {content}
-              </p>
+              />
               {imageFileUrls && imageFileUrls.length > 0 && <ImageList files={imageFileUrls} />}
               {nonImageFileUrls && nonImageFileUrls.length > 0 && (
                 <FileList files={nonImageFileUrls} />

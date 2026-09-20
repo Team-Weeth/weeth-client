@@ -9,6 +9,7 @@ import { cn } from '@/lib/cn';
 import { ActionMenu } from '@/components/board/ActionMenu';
 import { FileList } from '@/components/board/FileList';
 import { ImageList } from '@/components/board/ImageList/ImageList';
+import { LinkifiedText } from '@/components/board/LinkifiedText';
 import { useActiveEditId, useCommentEditActions } from '@/stores/useCommentEditStore';
 import type { DisplayFile } from '@/types/board';
 import type { CreatePostFile } from '@/types/file';
@@ -104,7 +105,7 @@ function ReplyItem({
             />
           ) : (
             <>
-              <p className="typo-body1 text-text-normal whitespace-pre-wrap">{content}</p>
+              <LinkifiedText text={content} className="typo-body1 text-text-normal whitespace-pre-wrap" />
               {imageFileUrls && imageFileUrls.length > 0 && <ImageList files={imageFileUrls} />}
               {nonImageFileUrls && nonImageFileUrls.length > 0 && (
                 <FileList files={nonImageFileUrls} />
