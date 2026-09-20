@@ -28,12 +28,16 @@ export function useCommentEditForm(
   const resetRemovedIds = () => setRemovedExistingIds(new Set());
 
   // 변경 사항이 없으면 null(기존 유지), 있으면 서버에 보낼 전체 파일 목록 반환
+  // 새 파일이 있으면 기존 잔여 파일을 대체한다 (합산 최대 1개 제약 보장)
   const buildFilesToSend = (newFiles: CreatePostFile[]): CreatePostFile[] | null => {
-    if (removedExistingIds.size === 0 && newFiles.length === 0) return null;
+    if (newFiles.length > 0) {
+      return newFiles.slice(0, 1);
+    }
+    if (removedExistingIds.size === 0) return null;
     const remainingExisting = [...editingImageFiles, ...editingNonImageFiles]
       .map(toCreatePostFile)
       .filter((f): f is CreatePostFile => f !== null);
-    return [...remainingExisting, ...newFiles];
+    return remainingExisting;
   };
 
   return {

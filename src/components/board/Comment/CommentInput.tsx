@@ -97,6 +97,7 @@ function CommentInput({
         <input
           ref={fileInputRef}
           type="file"
+          disabled={disabled}
           className="hidden"
           onChange={handleInputChange}
           aria-hidden="true"
@@ -105,6 +106,7 @@ function CommentInput({
           type="button"
           variant="secondary"
           size="icon-md"
+          disabled={disabled}
           className="shrink-0"
           onClick={openFilePicker}
           aria-label="파일 첨부"

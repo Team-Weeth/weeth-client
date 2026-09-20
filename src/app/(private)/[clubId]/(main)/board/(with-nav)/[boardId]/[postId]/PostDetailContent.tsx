@@ -169,10 +169,7 @@ function PostDetailContent({ initialData }: PostDetailContentProps) {
       <div id="comments" className="self-stretch px-450 pt-200 pb-400">
         <CommentInput
           placeholder={canComment ? '댓글을 입력하세요.' : '댓글을 작성할 수 없는 게시판입니다.'}
-          onSubmit={async (v, files) => {
-            await createComment(v, undefined, files);
-            return true;
-          }}
+          onSubmit={async (v, files) => createComment(v, undefined, files)}
           onValueChange={(v) => setIsCommentDirty(v.trim().length > 0)}
           disabled={!canComment || isPending}
         />
@@ -207,13 +204,9 @@ function PostDetailContent({ initialData }: PostDetailContentProps) {
                   }))}
                   onReply={async (content, files) => {
                     if (!canComment) return false;
-                    await createComment(content, comment.id, files);
-                    return true;
+                    return createComment(content, comment.id, files);
                   }}
-                  onEdit={async (content, files) => {
-                    await updateComment(comment.id, content, files);
-                    return true;
-                  }}
+                  onEdit={async (content, files) => updateComment(comment.id, content, files)}
                   onDelete={() => deleteComment(comment.id)}
                 />
               );

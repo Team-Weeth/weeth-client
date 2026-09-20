@@ -25,6 +25,8 @@ export function useCommentFileUpload() {
       setFiles((prev) => prev.filter((f) => f.id !== id));
     },
     markUploaded: (id, storageKey, fileUrl) => {
+      const existing = filesRef.current.find((f) => f.id === id);
+      if (existing?.fileUrl.startsWith('blob:')) URL.revokeObjectURL(existing.fileUrl);
       filesRef.current = filesRef.current.map((f) =>
         f.id === id ? { ...f, storageKey, fileUrl, uploaded: true } : f,
       );
