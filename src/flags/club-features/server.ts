@@ -10,5 +10,7 @@ export const getClubFeatures = cache(async (clubId: string): Promise<ClubFeature
     identifier: `club:${clubId}`,
     traits: { club_id: clubId },
   });
-  return { warningEnabled: flags[CLUB_FEATURE_FLAGS.warningEnabled] === true };
+  return Object.fromEntries(
+    Object.entries(CLUB_FEATURE_FLAGS).map(([key, flagKey]) => [key, flags[flagKey] === true]),
+  ) as ClubFeatures;
 });

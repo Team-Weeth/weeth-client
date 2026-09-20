@@ -54,14 +54,9 @@ Intermediate components do not need flag props. React portals, including modals,
 1. Create a flag in Flagsmith and configure segment overrides for the target clubs in the appropriate environment. Keep its default disabled when only selected clubs should receive it.
 2. Add its key to `CLUB_FEATURE_FLAGS` in `src/flags/club-features/definitions.ts`. `ClubFeatures` automatically derives its property names from this object.
 3. Add a default value to `DEFAULT_CLUB_FEATURES`.
-4. Map the fetched flag to a boolean in the return value of `getClubFeatures` in `src/flags/club-features/server.ts`.
-5. Read the new property through `useClubFeatures()` where needed. No provider changes are required.
+4. Read the new property through `useClubFeatures()` where needed. No server or provider changes are required: `getClubFeatures` maps every registered key to a boolean automatically, enabling it only when the fetched value is exactly `true`.
 
-For example, add `equipmentEnabled: 'club_equipment_enabled'` to the key map, `equipmentEnabled: false` to the defaults, and the following property to the server result:
-
-```ts
-equipmentEnabled: flags[CLUB_FEATURE_FLAGS.equipmentEnabled] === true,
-```
+For example, add `equipmentEnabled: 'club_equipment_enabled'` to the key map and `equipmentEnabled: false` to the defaults in `definitions.ts`.
 
 Club targeting belongs in Flagsmith segments, not hardcoded club ID lists. For an entirely new management page, gate both its navigation entry and direct route access. Backend authorization must independently enforce access to its APIs.
 
