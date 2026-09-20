@@ -41,7 +41,7 @@ function MemberProfileCard({
         type="button"
         onClick={handleCardClick}
         className={cn(
-          'bg-container-neutral relative flex h-[242px] w-full flex-col items-center rounded-t-lg px-[35px] pt-[22px] pb-6',
+          'bg-container-neutral relative flex h-[242px] w-full cursor-pointer flex-col items-center rounded-t-lg px-[35px] pt-[22px] pb-6',
           className,
         )}
         {...props}
