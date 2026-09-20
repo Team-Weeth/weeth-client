@@ -12,9 +12,15 @@ import { useMemberPositionEditor } from './hooks/useMemberPositionEditor';
 
 interface MemberPositionEditorProps extends MemberPositionEditorOptions {
   className?: string;
+  mobile?: boolean;
 }
 
-function MemberPositionEditor({ initialOptions, onSave, className }: MemberPositionEditorProps) {
+function MemberPositionEditor({
+  initialOptions,
+  onSave,
+  className,
+  mobile = false,
+}: MemberPositionEditorProps) {
   const headingId = useId();
   const {
     options,
@@ -32,7 +38,7 @@ function MemberPositionEditor({ initialOptions, onSave, className }: MemberPosit
 
   return (
     <form
-      className={cn('flex min-w-0 flex-col gap-400', className)}
+      className={cn('flex min-w-0 flex-col gap-400', mobile && 'flex-1', className)}
       onSubmit={(event) => {
         event.preventDefault();
         void handleSave();
@@ -40,10 +46,13 @@ function MemberPositionEditor({ initialOptions, onSave, className }: MemberPosit
     >
       <section
         aria-labelledby={headingId}
-        className="bg-background flex flex-col gap-400 rounded-lg p-600"
+        className={cn(
+          'bg-background flex flex-col gap-400 rounded-lg p-600',
+          mobile && 'bg-container-neutral rounded-none p-0',
+        )}
       >
         <div className="mb-200 flex flex-col gap-100">
-          <h2 id={headingId} className="typo-h3 text-text-strong">
+          <h2 id={headingId} className={cn('typo-h3 text-text-strong', mobile && 'typo-sub1')}>
             포지션
           </h2>
           <p className="typo-body1 text-text-alternative">
@@ -63,6 +72,7 @@ function MemberPositionEditor({ initialOptions, onSave, className }: MemberPosit
             {options.map((option, index) => (
               <MemberPositionOptionRow
                 key={option.id}
+                mobile={mobile}
                 option={option}
                 index={index}
                 usedColors={getUsedColors(option.id)}
@@ -96,7 +106,13 @@ function MemberPositionEditor({ initialOptions, onSave, className }: MemberPosit
           {error}
         </p>
       )}
-      <Button type="submit" variant="primary" size="lg" className="self-end" disabled={!canSave}>
+      <Button
+        type="submit"
+        variant="primary"
+        size="lg"
+        className={cn('self-end', mobile && 'mt-auto min-h-12 w-full')}
+        disabled={!canSave}
+      >
         {saving ? '저장 중...' : '저장하기'}
       </Button>
     </form>

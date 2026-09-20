@@ -1,5 +1,6 @@
 'use client';
 
+import { cn } from '@/lib/cn';
 import { Button } from '@/components/ui/Button';
 import type { MemberPositionColor } from '@/constants/admin/memberPosition';
 import type { MemberPositionOption } from '@/types/admin/memberPosition';
@@ -7,6 +8,7 @@ import { PositionColorPicker } from './PositionColorPicker';
 import { PositionNameInput } from './PositionNameInput';
 
 interface MemberPositionOptionRowProps {
+  mobile?: boolean;
   option: MemberPositionOption;
   index: number;
   usedColors: MemberPositionColor[];
@@ -16,6 +18,7 @@ interface MemberPositionOptionRowProps {
 }
 
 function MemberPositionOptionRow({
+  mobile = false,
   option,
   index,
   usedColors,
@@ -24,8 +27,14 @@ function MemberPositionOptionRow({
   onDelete,
 }: MemberPositionOptionRowProps) {
   return (
-    <div className="bg-container-neutral flex items-center gap-4 px-500 py-400">
+    <div
+      className={cn(
+        'bg-container-neutral flex items-center gap-4 px-500 py-400',
+        mobile && 'gap-[10px] px-300 py-300',
+      )}
+    >
       <PositionColorPicker
+        mobile={mobile}
         value={option.color}
         usedColors={usedColors}
         label={`옵션 ${index + 1} 색상`}
@@ -33,6 +42,7 @@ function MemberPositionOptionRow({
         onChange={(color) => onChange({ color })}
       />
       <PositionNameInput
+        mobile={mobile}
         label={`옵션 ${index + 1} 이름`}
         value={option.name}
         disabled={disabled}
@@ -41,7 +51,7 @@ function MemberPositionOptionRow({
       <Button
         variant="secondary"
         size="lg"
-        className="shrink-0"
+        className={cn('shrink-0', mobile && 'h-10 px-400 py-0')}
         disabled={disabled}
         aria-label={`옵션 ${index + 1} 삭제`}
         onClick={onDelete}

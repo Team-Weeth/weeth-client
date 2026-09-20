@@ -9,7 +9,7 @@ import { Tag } from '@/components/ui/tag';
 import { cn } from '@/lib/cn';
 import { PositionFieldIcon } from './PositionFieldIcon';
 
-const fields = [
+export const MEMBER_INFORMATION_FIELDS = [
   { label: '포지션', icon: PositionIcon, custom: true },
   { label: '학과', icon: DepartmentIcon, custom: false },
   { label: '학번', icon: StudentNumberIcon, custom: false },
@@ -24,7 +24,7 @@ interface MemberInformationFieldsProps {
 function MemberInformationFields({ className }: MemberInformationFieldsProps) {
   return (
     <ul aria-label="부원 기본 정보 필드" className={cn('flex flex-col gap-300', className)}>
-      {fields.map(({ label, icon, custom }) => (
+      {MEMBER_INFORMATION_FIELDS.map(({ label, icon, custom }) => (
         <li
           key={label}
           className={cn(

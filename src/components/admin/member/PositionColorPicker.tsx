@@ -13,12 +13,14 @@ import { POSITION_COLORS, type MemberPositionColor } from '@/constants/admin/mem
 import { cn } from '@/lib/cn';
 
 function PositionColorPicker({
+  mobile = false,
   value,
   onChange,
   label,
   disabled,
   usedColors,
 }: {
+  mobile?: boolean;
   value: MemberPositionColor;
   onChange: (value: MemberPositionColor) => void;
   label: string;
@@ -28,11 +30,18 @@ function PositionColorPicker({
   const selected = POSITION_COLORS.find((color) => color.value === value)!;
   return (
     <DropdownMenu type="position">
-      <DropdownMenuTrigger disabled={disabled} aria-label={`${label}: ${selected.label}`}>
-        <span className={cn('size-5 shrink-0 rounded-full', selected.className)} />
+      <DropdownMenuTrigger
+        className={cn(
+          'data-[state=open]:border-icon-normal',
+          mobile && 'h-10 w-[58px] gap-100 px-200 py-0',
+        )}
+        disabled={disabled}
+        aria-label={`${label}: ${selected.label}`}
+      >
+        <span className={cn('size-[18px] shrink-0 rounded-full', selected.className)} />
         <Icon src={ArrowDownIcon} size={20} />
       </DropdownMenuTrigger>
-      <DropdownMenuContent aria-label={label} align="start">
+      <DropdownMenuContent aria-label={label} align="start" sideOffset={4} className="shadow-md">
         {POSITION_COLORS.map((color) => {
           const isSelected = color.value === value;
           const unavailable = !isSelected && usedColors.includes(color.value);

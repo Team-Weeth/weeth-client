@@ -1,3 +1,7 @@
+'use client';
+
+import { useMediaQuery } from '@/hooks/useMediaQuery';
+import { MemberInformationMobile } from './MemberInformationMobile';
 import { cn } from '@/lib/cn';
 import { MemberInformationFields } from './MemberInformationFields';
 import { MemberPositionEditor, type MemberPositionEditorProps } from './MemberPositionEditor';
@@ -6,6 +10,9 @@ type MemberInformationContentProps = MemberPositionEditorProps;
 
 /** 진입 경로와 API가 확정되면 페이지에서 onSave를 연결한다. */
 function MemberInformationContent({ className, ...editorProps }: MemberInformationContentProps) {
+  const isMobile = useMediaQuery('(max-width: 695.98px)');
+  if (isMobile) return <MemberInformationMobile className={className} {...editorProps} />;
+
   return (
     <div
       className={cn(
