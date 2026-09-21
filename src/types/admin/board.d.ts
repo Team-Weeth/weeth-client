@@ -23,4 +23,7 @@ export interface TrashedBoard extends Board {
 export interface BoardListCache {
   boards: Board[];
   trashedBoards: TrashedBoard[];
+  activeBoardCount: number;
+  maxBoardCount: number;
+  canCreateBoard: boolean;
 }

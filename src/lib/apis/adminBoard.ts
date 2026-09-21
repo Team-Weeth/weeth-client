@@ -36,6 +36,13 @@ export interface AdminBoardDto {
   isDeleted: boolean;
 }
 
+export interface AdminBoardListDto {
+  boards: AdminBoardDto[];
+  activeBoardCount: number;
+  maxBoardCount: number;
+  canCreateBoard: boolean;
+}
+
 export interface CreateBoardBody {
   name: string;
   description: string;
@@ -63,7 +70,9 @@ export interface UpdateBoardCommentBody {
 
 export const adminBoardApi = {
   getBoards: (clubId: string) =>
-    apiClient.get<ApiResponse<AdminBoardDto[]>>(`/admin/clubs/${clubId}/boards`),
+    apiClient.get<ApiResponse<AdminBoardListDto | AdminBoardDto[]>>(
+      `/admin/clubs/${clubId}/boards`,
+    ),
 
   createBoard: (clubId: string, body: CreateBoardBody) =>
     apiClient.post<ApiResponse<AdminBoardDto>>(`/admin/clubs/${clubId}/boards`, body),
