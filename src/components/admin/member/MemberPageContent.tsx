@@ -8,7 +8,8 @@ import { MemberMobileSearchPage } from '@/components/admin/member/MemberMobileSe
 import { MemberPageHeader } from '@/components/admin/member/MemberPageHeader';
 import { MemberPageModals } from '@/components/admin/member/MemberPageModals';
 import { MemberTable } from '@/components/admin/member/MemberTable';
-import { MemberTopBar, MobileMemberTopBar } from '@/components/admin/member/MemberTopBar';
+import { MemberTopBar } from '@/components/admin/member/MemberTopBar';
+import { MobileMemberTopBar } from '@/components/admin/member/MobileMemberTopBar';
 import type { MemberViewMode } from '@/components/admin/member/MemberViewToggle';
 import type { Member } from '@/types/admin/member';
 import { EMPTY_MEMBER_PAGE, useAdminMembers, useAdminMembersInfinite } from '@/hooks/queries/admin';
