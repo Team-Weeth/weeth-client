@@ -12,15 +12,9 @@ import { useMemberPositionEditor } from './hooks/useMemberPositionEditor';
 
 interface MemberPositionEditorProps extends MemberPositionEditorOptions {
   className?: string;
-  mobile?: boolean;
 }
 
-function MemberPositionEditor({
-  initialOptions,
-  onSave,
-  className,
-  mobile = false,
-}: MemberPositionEditorProps) {
+function MemberPositionEditor({ initialOptions, onSave, className }: MemberPositionEditorProps) {
   const headingId = useId();
   const {
     options,
@@ -38,7 +32,7 @@ function MemberPositionEditor({
 
   return (
     <form
-      className={cn('flex min-w-0 flex-col gap-400', mobile && 'flex-1', className)}
+      className={cn('max-tablet:flex-1 flex min-w-0 flex-col gap-400', className)}
       onSubmit={(event) => {
         event.preventDefault();
         void handleSave();
@@ -46,16 +40,13 @@ function MemberPositionEditor({
     >
       <section
         aria-labelledby={headingId}
-        className={cn(
-          'bg-background flex flex-col gap-400 rounded-lg p-600',
-          mobile && 'bg-container-neutral rounded-none p-0',
-        )}
+        className="bg-background max-tablet:bg-container-neutral max-tablet:rounded-none max-tablet:p-0 flex flex-col gap-400 rounded-lg p-600"
       >
         <div className="mb-200 flex flex-col gap-100">
-          <h2 id={headingId} className={cn('typo-h3 text-text-strong', mobile && 'typo-sub1')}>
+          <h2 id={headingId} className="typo-h3 max-tablet:typo-sub1 text-text-strong">
             포지션
           </h2>
-          <p className={cn('typo-body1 text-text-alternative', mobile && 'typo-body2')}>
+          <p className="typo-body1 max-tablet:typo-body2 text-text-alternative">
             해당 필드에 옵션을 설정해 두면 멤버 관리 표에서 볼 수 있습니다.
           </p>
         </div>
@@ -72,7 +63,6 @@ function MemberPositionEditor({
             {options.map((option, index) => (
               <MemberPositionOptionRow
                 key={option.id}
-                mobile={mobile}
                 option={option}
                 index={index}
                 usedColors={getUsedColors(option.id)}
@@ -110,7 +100,7 @@ function MemberPositionEditor({
         type="submit"
         variant="primary"
         size="lg"
-        className={cn('self-end', mobile && 'mt-auto min-h-12 w-full')}
+        className="max-tablet:mt-auto max-tablet:min-h-12 max-tablet:w-full self-end"
         disabled={!canSave}
       >
         {saving ? '저장 중...' : '저장하기'}

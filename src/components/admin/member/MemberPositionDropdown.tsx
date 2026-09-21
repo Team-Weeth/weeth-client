@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useState } from 'react';
+import { useState } from 'react';
 import ArrowDown from '@/assets/icons/arrow_down.svg';
 import {
   DropdownMenu,
@@ -35,10 +35,12 @@ export function MemberPositionDropdown({
   const selected = options.find((option) => option.id === value);
   const isMobile = useMediaQuery('(max-width: 695.98px)');
   const [portalContainer, setPortalContainer] = useState<HTMLElement | null>(null);
-  const setTriggerRef = useCallback((node: HTMLButtonElement | null) => {
+  const setTriggerRef = (node: HTMLButtonElement | null) => {
+    // 언마운트(node=null) 때는 컨테이너를 비우지 않는다. 같은 값을 다시 세팅하면 리렌더가 멈춘다.
+    if (!node) return;
     // 고정된 관리자 레이아웃과 같은 stacking context에서 sticky 이름 열 뒤에 표시합니다.
-    setPortalContainer(node?.closest<HTMLElement>('[data-admin]') ?? null);
-  }, []);
+    setPortalContainer(node.closest<HTMLElement>('[data-admin]') ?? null);
+  };
 
   return (
     <DropdownMenu>

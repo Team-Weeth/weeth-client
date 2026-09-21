@@ -6,6 +6,8 @@ import { Icon } from '@/components/ui/Icon';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import AdminCloseIcon from '@/assets/icons/admin/ic_admin_close.svg';
 import { getFooterActions } from '@/constants/admin/memberDetailModal.constants';
+import { isMemberStateAction } from '@/constants/admin/memberTopBar.constants';
+import type { FooterAction } from '@/constants/admin/memberDetailModal.constants';
 import type { Member } from '@/types/admin/member';
 import {
   MemberActivityInfoCard,
@@ -18,6 +20,7 @@ interface MemberDetailModalProps {
   onOpenChange: (open: boolean) => void;
   member: Member | null;
   onChangeRole?: () => void;
+  onChangePosition?: () => void;
   onBan?: () => void;
   onRestore?: () => void;
   onChangeCardinals?: () => void;
@@ -29,6 +32,7 @@ function MemberDetailModal({
   onOpenChange,
   member,
   onChangeRole,
+  onChangePosition,
   onBan,
   onRestore,
   onChangeCardinals,
@@ -46,6 +50,28 @@ function MemberDetailModal({
     onRestore,
     onTransferLead,
   });
+
+  const actionNodes = footerActions.map((action) => (
+    <FooterActionDialog key={action.id} action={action} />
+  ));
+
+  if (onChangePosition) {
+    // 상단 선택 바와 동일하게 포지션 변경은 유저 추방/복구 앞에 배치한다.
+    const memberStateIndex = footerActions.findIndex(isMemberStateAction);
+    actionNodes.splice(
+      memberStateIndex === -1 ? actionNodes.length : memberStateIndex,
+      0,
+      <Button
+        key="changePosition"
+        variant="secondary"
+        size="md"
+        className="rounded-sm"
+        onClick={onChangePosition}
+      >
+        포지션 변경
+      </Button>,
+    );
+  }
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -76,24 +102,7 @@ function MemberDetailModal({
 
         <div className="bg-container-neutral flex flex-wrap items-center justify-between gap-200 px-700 py-500">
           <div className="flex flex-wrap items-center gap-200">
-            {footerActions.map(({ id, label, title, description, handler }) => (
-              <AlertDialog
-                key={id}
-                status={id === 'ban' ? 'danger' : 'default'}
-                title={title}
-                description={description}
-                trigger={
-                  <Button variant="secondary" size="md" className="rounded-sm">
-                    {label}
-                  </Button>
-                }
-              >
-                <AlertDialogAction onClick={handler}>
-                  {id === 'ban' ? '추방' : '확인'}
-                </AlertDialogAction>
-                <AlertDialogCancel>취소</AlertDialogCancel>
-              </AlertDialog>
-            ))}
+            {actionNodes}
             {onChangeCardinals && (
               <Button
                 variant="secondary"
@@ -112,6 +121,26 @@ function MemberDetailModal({
         </div>
       </DialogContent>
     </Dialog>
+  );
+}
+
+function FooterActionDialog({ action }: { action: FooterAction }) {
+  const { id, label, title, description, handler } = action;
+
+  return (
+    <AlertDialog
+      status={id === 'ban' ? 'danger' : 'default'}
+      title={title}
+      description={description}
+      trigger={
+        <Button variant="secondary" size="md" className="rounded-sm">
+          {label}
+        </Button>
+      }
+    >
+      <AlertDialogAction onClick={handler}>{id === 'ban' ? '추방' : '확인'}</AlertDialogAction>
+      <AlertDialogCancel>취소</AlertDialogCancel>
+    </AlertDialog>
   );
 }
 

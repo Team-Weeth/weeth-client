@@ -32,7 +32,7 @@ function MemberNavGroup({ clubId, pathname, collapsed }: MemberNavGroupProps) {
   ];
 
   return (
-    <div>
+    <div className="shrink-0">
       <MemberNavTooltip label="멤버 관리" enabled={collapsed && !expanded}>
         <button
           type="button"
@@ -41,7 +41,7 @@ function MemberNavGroup({ clubId, pathname, collapsed }: MemberNavGroupProps) {
           aria-controls={menuId}
           onClick={() => setOpen((previous) => !previous)}
           className={cn(
-            'text-text-normal hover:bg-container-neutral-interaction flex w-full cursor-pointer items-center rounded-md',
+            'text-text-normal hover:bg-container-neutral-interaction flex w-full shrink-0 cursor-pointer items-center rounded-md',
             collapsed ? 'justify-center p-400' : 'gap-300 px-400 py-[14px]',
           )}
         >
@@ -79,7 +79,7 @@ function MemberNavGroup({ clubId, pathname, collapsed }: MemberNavGroupProps) {
                   aria-label={label}
                   aria-current={active ? 'page' : undefined}
                   className={cn(
-                    'typo-sub3 text-text-normal hover:bg-container-neutral-interaction flex items-center rounded-md',
+                    'typo-sub3 text-text-normal hover:bg-container-neutral-interaction flex shrink-0 items-center rounded-md',
                     collapsed ? 'justify-center p-400' : 'gap-200 py-[11px] pr-400 pl-10',
                     active && 'bg-container-neutral-interaction font-bold',
                   )}

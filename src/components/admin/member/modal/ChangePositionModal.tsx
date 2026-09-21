@@ -80,7 +80,8 @@ function PositionSelectionDialog({
             ))}
           </div>
         </div>
-        <div className="bg-background max-tablet:px-400 max-tablet:pb-[calc(var(--safe-area-inset-bottom,0px)+16px)] flex shrink-0 flex-col gap-400 px-700 pt-300 pb-600">
+        {/* 다이얼로그와 같은 배경이라 따로 칠하지 않는다. 칠하면 하단 모서리 radius를 덮는다. */}
+        <div className="max-tablet:px-400 max-tablet:pb-[calc(var(--safe-area-inset-bottom,0px)+16px)] flex shrink-0 flex-col gap-400 px-700 pt-300 pb-600">
           <div className="bg-line h-px" aria-hidden />
           <div className="flex min-h-8 items-center gap-400 px-300">
             <span className="typo-sub3 text-text-alternative shrink-0">선택됨</span>

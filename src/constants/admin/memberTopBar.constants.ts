@@ -84,7 +84,7 @@ export function getTopBarActions({
 }
 
 /** 유저 추방/복구처럼 멤버 상태를 바꾸는 액션. 다른 액션과 분리해 배치한다. */
-export const isMemberStateAction = (action: TopBarAction) =>
+export const isMemberStateAction = (action: { id: string }) =>
   action.id === 'ban' || action.id === 'restore';
 
 /** 기수 변경 모달 상단 문구. 1명만 선택했으면 이름을 노출한다. */

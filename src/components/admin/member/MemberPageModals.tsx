@@ -89,6 +89,15 @@ function MemberPageModals({
     : undefined;
   const handleDetailTransferLead =
     isLead && detailMember ? () => onTransferLead(detailMember.clubMemberId) : undefined;
+  // 데스크톱은 모달끼리 바로 교체되므로 바텀시트처럼 퇴장 애니메이션을 기다리지 않는다.
+  const handleDetailPositionChange = detailMember
+    ? () => {
+        const targetMember = detailMember;
+
+        onCloseDetail();
+        setPositionMember(targetMember);
+      }
+    : undefined;
   const handleMobileDetailActionRequest = (action: TopBarAction) => {
     setDisplayedDetailMember(detailMember);
     onCloseDetail();
@@ -124,6 +133,7 @@ function MemberPageModals({
           onBan={handleDetailBan}
           onRestore={handleDetailRestore}
           onChangeRole={handleDetailRoleChange}
+          onChangePosition={handleDetailPositionChange}
           onChangeCardinals={handleDetailCardinalsChange}
           onTransferLead={handleDetailTransferLead}
         />

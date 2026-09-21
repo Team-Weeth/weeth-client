@@ -68,13 +68,13 @@ function MemberPageHeader({
         </div>
 
         <div className="my-300 flex items-center justify-between px-450">
-          <h1 className="typo-h3 text-text-strong">멤버관리</h1>
+          <h1 className="typo-h3 text-text-strong">멤버 목록</h1>
           <MemberViewToggle value={mobileViewMode} onValueChange={onMobileViewModeChange} />
         </div>
       </div>
 
       <div className="max-tablet:hidden flex h-[100px] items-center justify-between px-700 py-700">
-        <h1 className="typo-h2 text-text-strong">멤버관리</h1>
+        <h1 className="typo-h2 text-text-strong">멤버 목록</h1>
 
         <div className="flex items-center gap-400">
           <MemberSearchBar value={searchQuery} onValueChange={onSearchQueryChange} />

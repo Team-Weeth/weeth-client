@@ -15,18 +15,17 @@ import {
 } from '@/components/ui/DropdownMenu';
 import { cn } from '@/lib/cn';
 import { MEMBER_POSITION_FIELDS } from './MemberPositionFields';
-import { MemberPositionEditor, type MemberPositionEditorProps } from './MemberPositionEditor';
 
-function MemberPositionMobile({ className, ...editorProps }: MemberPositionEditorProps) {
+interface MemberPositionMobileHeaderProps {
+  className?: string;
+}
+
+/** 모바일에서만 노출되는 뒤로가기 헤더와 필드 선택 드롭다운. */
+function MemberPositionMobileHeader({ className }: MemberPositionMobileHeaderProps) {
   const router = useRouter();
 
   return (
-    <div
-      className={cn(
-        'bg-container-neutral flex min-h-full min-w-0 flex-col gap-700 px-400 pt-400 pb-700',
-        className,
-      )}
-    >
+    <div className={cn('flex flex-col gap-700', className)}>
       <div className="flex items-center gap-100">
         <button
           type="button"
@@ -87,9 +86,8 @@ function MemberPositionMobile({ className, ...editorProps }: MemberPositionEdito
           ))}
         </DropdownMenuContent>
       </DropdownMenu>
-      <MemberPositionEditor {...editorProps} mobile className="min-h-[540px]" />
     </div>
   );
 }
 
-export { MemberPositionMobile };
+export { MemberPositionMobileHeader, type MemberPositionMobileHeaderProps };

@@ -112,16 +112,22 @@ function LNB() {
     <TooltipProvider>
       <nav
         className={cn(
-          'bg-background tablet:flex hidden h-full shrink-0 flex-col overflow-x-hidden transition-[width] duration-200',
+          // 창이 낮아 메뉴가 넘치면 눌리는 대신 세로 스크롤로 처리한다.
+          'bg-background tablet:flex hidden h-full shrink-0 flex-col overflow-x-hidden overflow-y-auto transition-[width] duration-200',
           collapsed ? 'w-22' : 'w-60',
         )}
       >
-        <div className={cn('flex items-start self-stretch pt-300 pb-100', !collapsed && 'px-400')}>
+        <div
+          className={cn(
+            'flex shrink-0 items-start self-stretch pt-300 pb-100',
+            !collapsed && 'px-400',
+          )}
+        >
           <LNBLogoutModal collapsed={collapsed} />
         </div>
 
         {collapsed ? (
-          <div className="border-line flex flex-col border-t border-b">
+          <div className="border-line flex shrink-0 flex-col border-t border-b">
             <NavSection collapsed={collapsed}>{managementNavNodes}</NavSection>
           </div>
         ) : (
@@ -132,7 +138,7 @@ function LNB() {
         )}
 
         {collapsed ? (
-          <div className="border-line flex flex-col items-center justify-center gap-100 self-stretch border-b p-400">
+          <div className="border-line flex shrink-0 flex-col items-center justify-center gap-100 self-stretch border-b p-400">
             {infoNavNodes}
           </div>
         ) : (
@@ -143,7 +149,7 @@ function LNB() {
         )}
 
         {collapsed ? (
-          <div className="border-line flex flex-col items-center justify-center gap-100 self-stretch border-b p-400">
+          <div className="border-line flex shrink-0 flex-col items-center justify-center gap-100 self-stretch border-b p-400">
             {exitNavNode}
           </div>
         ) : (

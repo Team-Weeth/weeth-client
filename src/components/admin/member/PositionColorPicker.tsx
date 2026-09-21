@@ -14,14 +14,12 @@ import { POSITION_COLORS, type MemberPositionColor } from '@/constants/admin/mem
 import { cn } from '@/lib/cn';
 
 function PositionColorPicker({
-  mobile = false,
   value,
   onChange,
   label,
   disabled,
   usedColors,
 }: {
-  mobile?: boolean;
   value: MemberPositionColor;
   onChange: (value: MemberPositionColor) => void;
   label: string;
@@ -32,10 +30,7 @@ function PositionColorPicker({
   return (
     <DropdownMenu type="position">
       <DropdownMenuTrigger
-        className={cn(
-          'data-[state=open]:border-icon-normal',
-          mobile && 'h-10 w-[58px] gap-100 px-200 py-0',
-        )}
+        className="data-[state=open]:border-icon-normal max-tablet:h-10 max-tablet:w-[58px] max-tablet:gap-100 max-tablet:px-200 max-tablet:py-0"
         disabled={disabled}
         aria-label={`${label}: ${selected.label}`}
       >
