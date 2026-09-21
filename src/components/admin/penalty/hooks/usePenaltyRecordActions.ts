@@ -24,7 +24,7 @@ export function usePenaltyRecordActions() {
       {
         // 멤버 id는 멤버 목록의 userId를 그대로 쓴다.
         userIds: draft.memberIds.map(Number),
-        score: draft.score,
+
         penaltyDescription: draft.reason.trim(),
         penaltyType: draft.type,
       },
@@ -38,9 +38,9 @@ export function usePenaltyRecordActions() {
     );
   };
 
-  const updateRecord = (record: PenaltyRecord, next: { reason: string; score: number }) => {
+  const updateRecord = (record: PenaltyRecord, next: { reason: string }) => {
     updatePenalty.mutate(
-      { penaltyId: record.id, penaltyDescription: next.reason, score: next.score },
+      { penaltyId: record.id, penaltyDescription: next.reason },
       {
         onSuccess: () => toastSuccess('페널티 내역이 수정되었습니다.'),
         onError: handleError,

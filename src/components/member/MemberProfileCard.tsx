@@ -41,7 +41,7 @@ function MemberProfileCard({
         type="button"
         onClick={handleCardClick}
         className={cn(
-          'bg-container-neutral relative flex h-[242px] w-full flex-col items-center rounded-t-lg px-[35px] pt-[22px] pb-6',
+          'bg-container-neutral relative flex h-[242px] w-full cursor-pointer flex-col items-center rounded-t-lg px-[35px] pt-[22px] pb-6',
           className,
         )}
         {...props}
@@ -86,7 +86,7 @@ function MemberProfileCard({
         className="bg-container-neutral-alternative flex items-center justify-between rounded-b-lg px-[18px] py-[13px]"
       >
         <p className="typo-caption2 text-text-normal">작성한 글 보기</p>
-        <span className="flex size-[22px] items-center justify-center rounded-[4px] bg-white">
+        <span className="bg-container-neutral flex size-[22px] items-center justify-center rounded-[4px]">
           <Icon src={ArrowRightIcon} size={9} className="text-icon-normal" />
         </span>
       </Link>

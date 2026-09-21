@@ -1,3 +1,7 @@
+'use client';
+
+import { useClubFeatures } from '@/providers/club-feature-provider';
+
 import { CardinalTagList } from '@/components/admin/CardinalTagList';
 import { SelectionCheckbox } from '@/components/admin/SelectionCheckbox';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -15,7 +19,7 @@ interface MemberCardProps extends Omit<React.HTMLAttributes<HTMLElement>, 'onTog
 const MEMBER_CARD_STATS = [
   { id: 'attendance', label: '출석', getValue: (member: Member) => member.attendance },
   { id: 'absence', label: '결석', getValue: (member: Member) => member.absence },
-  { id: 'penaltyCount', label: '패널티', getValue: (member: Member) => member.penaltyCount },
+  { id: 'penaltyCount', label: '페널티', getValue: (member: Member) => member.penaltyCount },
 ] as const;
 
 function MemberCard({
@@ -26,6 +30,7 @@ function MemberCard({
   onMemberAction,
   ...props
 }: MemberCardProps) {
+  const { warningEnabled } = useClubFeatures();
   return (
     <article
       className={cn(
@@ -71,7 +76,7 @@ function MemberCard({
         </button>
       </div>
 
-      <dl className="grid grid-cols-3 px-[14px] py-400">
+      <dl className={cn('grid px-[14px] py-400', warningEnabled ? 'grid-cols-4' : 'grid-cols-3')}>
         {MEMBER_CARD_STATS.map((stat, index) => (
           <MemberCardStat
             key={stat.id}
@@ -80,6 +85,9 @@ function MemberCard({
             showDivider={index > 0}
           />
         ))}
+        {warningEnabled && (
+          <MemberCardStat label="경고" value={member.warningCount ?? '-'} showDivider />
+        )}
       </dl>
 
       <div className="flex min-w-0 items-end justify-between gap-300 px-[14px] pt-[14px] pb-300">
@@ -104,7 +112,7 @@ function MemberCardStat({
   showDivider,
 }: {
   label: string;
-  value: number;
+  value: number | string;
   showDivider: boolean;
 }) {
   return (

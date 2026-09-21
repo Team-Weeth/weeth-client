@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { adminBoardApi, type UpdateBoardBody } from '@/lib/apis/adminBoard';
+import { revalidateBoards } from '@/lib/actions/board';
 import { useClubId } from '@/stores';
 import type { MutationCallbacks } from '@/types/common';
 import { adminQueryKeys } from '@/hooks/queries/admin/adminQueryKeys';
@@ -15,8 +16,9 @@ export function useUpdateBoardMutation(callbacks?: MutationCallbacks<unknown>) {
       if (!clubId) throw new Error('clubId is required');
       return adminBoardApi.updateBoard(clubId, boardId, body);
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: adminQueryKeys.boards(clubId) });
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: adminQueryKeys.boards(clubId) });
+      if (clubId) await revalidateBoards(clubId);
       callbacks?.onSuccess?.();
     },
     onError: callbacks?.onError,

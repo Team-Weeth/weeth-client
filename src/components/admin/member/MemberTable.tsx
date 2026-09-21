@@ -1,8 +1,17 @@
 'use client';
 
+import { useClubFeatures } from '@/providers/club-feature-provider';
+
 import React, { useState } from 'react';
 
-import { Table, TableBody, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
 import { cn } from '@/lib/cn';
 import type { Member } from '@/types/admin/member';
 import { MEMBER_TABLE_COLUMNS } from '@/constants/admin/memberTable.constants';
@@ -12,6 +21,9 @@ import { MemberTableRow } from './MemberTableRow';
 import { useMockMemberPositions } from './MockMemberPositionsProvider';
 
 interface MemberTableProps extends React.HTMLAttributes<HTMLDivElement> {
+  fixedHeight?: boolean;
+  scrollResetKey?: string;
+  showEmptySearchResult?: boolean;
   members: Member[];
   page: number;
   totalPages: number;
@@ -22,6 +34,9 @@ interface MemberTableProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 function MemberTable({
+  fixedHeight = false,
+  scrollResetKey,
+  showEmptySearchResult = false,
   className,
   members,
   page,
@@ -32,6 +47,11 @@ function MemberTable({
   onMemberAction,
   ...props
 }: MemberTableProps) {
+  const { warningEnabled } = useClubFeatures();
+  const scrollRef = React.useRef<HTMLDivElement>(null);
+  React.useEffect(() => {
+    if (scrollRef.current) scrollRef.current.scrollTop = 0;
+  }, [scrollResetKey]);
   const [internalSelectedIds, setInternalSelectedIds] = useState<Set<string>>(new Set());
   const [showStickyShadow, setShowStickyShadow] = useState(false);
   const { getPositionId, setPosition } = useMockMemberPositions();
@@ -76,11 +96,20 @@ function MemberTable({
     <div className={cn('min-w-0', className)} {...props}>
       <div className="border-line max-tablet:rounded-none max-tablet:border-x-0 max-tablet:border-b-0 overflow-hidden rounded-sm border">
         <Table
-          wrapperClassName="max-tablet:scrollbar-none"
-          wrapperProps={{ onScroll: handleTableScroll }}
+          wrapperClassName={cn(
+            'max-tablet:scrollbar-none',
+            // 헤더 44px + 멤버 10행 × 64px. 10명 이하는 내용 높이를 그대로 사용한다.
+            fixedHeight && members.length > 10 && 'tablet:max-h-[684px] tablet:overflow-y-auto',
+          )}
+          wrapperProps={{ ref: scrollRef, onScroll: handleTableScroll }}
           className="w-max min-w-full border-separate border-spacing-0"
         >
-          <TableHeader className="bg-container-neutral-alternative">
+          <TableHeader
+            className={cn(
+              'bg-container-neutral-alternative',
+              fixedHeight && 'tablet:sticky tablet:top-0 tablet:z-30',
+            )}
+          >
             <TableRow className="max-tablet:h-10 h-11 border-0 hover:bg-transparent">
               <TableHead className="bg-container-neutral-alternative max-tablet:sticky max-tablet:left-0 max-tablet:z-40 max-tablet:first:rounded-none max-tablet:h-10 max-tablet:w-12 max-tablet:min-w-12 max-tablet:pl-200 h-11 w-16 min-w-16 p-0 pl-300">
                 <SelectionCheckbox
@@ -93,7 +122,9 @@ function MemberTable({
                   onClick={toggleAll}
                 />
               </TableHead>
-              {MEMBER_TABLE_COLUMNS.map((column) => (
+              {MEMBER_TABLE_COLUMNS.filter(
+                (column) => column.id !== 'warning' || warningEnabled,
+              ).map((column) => (
                 <TableHead
                   key={column.id}
                   className={cn(
@@ -123,6 +154,20 @@ function MemberTable({
             </TableRow>
           </TableHeader>
           <TableBody>
+            {showEmptySearchResult && members.length === 0 && (
+              <TableRow className="bg-container-neutral h-16 border-0 hover:bg-transparent">
+                <TableCell
+                  colSpan={
+                    MEMBER_TABLE_COLUMNS.filter(
+                      (column) => column.id !== 'warning' || warningEnabled,
+                    ).length + 3
+                  }
+                  className="typo-body2 text-text-alternative h-16 text-center"
+                >
+                  검색 결과가 없습니다.
+                </TableCell>
+              </TableRow>
+            )}
             {members.map((member) => (
               <MemberTableRow
                 key={member.id}

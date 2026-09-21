@@ -21,8 +21,8 @@ export const adminQueryKeys = {
 
   // 월간 일정 — 세션/이벤트 뮤테이션이 schedules prefix로 prefix invalidate
   schedules: (clubId: string | null) => ['admin', 'schedules', clubId] as const,
-  monthlySchedule: (clubId: string | null, year: number, month: number) =>
-    ['admin', 'schedules', clubId, year, month] as const,
+  monthlySchedule: (clubId: string | null, year: number, month: number, cardinal?: number) =>
+    ['admin', 'schedules', clubId, year, month, cardinal ?? null] as const,
   scheduleDetail: (clubId: string | null, eventId: number | null) =>
     ['admin', 'schedule', clubId, eventId] as const,
 

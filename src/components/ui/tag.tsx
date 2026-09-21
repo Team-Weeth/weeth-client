@@ -3,7 +3,7 @@ import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@/lib/cn';
 
 const tagVariants = cva(
-  'typo-caption1 inline-flex w-fit items-center gap-[5px] rounded-sm px-200 py-100 whitespace-nowrap',
+  'typo-caption1 inline-flex w-fit items-center gap-[5px] rounded-[5px] px-200 py-100 whitespace-nowrap',
   {
     variants: {
       variant: {

@@ -42,7 +42,7 @@ function MemberDetailBody({ member }: MemberDetailBodyProps) {
         </Avatar>
       </div>
 
-      <div className="bg-container-neutral flex flex-col px-5 pt-10 pb-5">
+      <div className="bg-container-neutral max-tablet:rounded-b-lg flex flex-col px-5 pt-10 pb-5">
         <p className="typo-h3 text-text-strong">{member.name}</p>
         <p className="typo-body2 text-text-alternative mt-1">{member.description}</p>
 

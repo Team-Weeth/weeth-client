@@ -148,7 +148,7 @@ export interface LastModified {
     userId: number;
     name: string;
     profileImageUrl: string | null;
-  };
+  } | null;
 }
 
 export interface DuesDashboard {

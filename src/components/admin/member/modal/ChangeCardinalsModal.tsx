@@ -111,14 +111,15 @@ function ChangeCardinalsModal({
 
         <div className="max-tablet:min-h-0 max-tablet:overflow-y-auto max-tablet:px-400 flex flex-1 flex-col px-700">
           {showPartialCardinalsGuide && (
-            <div className="bg-container-neutral-alternative flex items-center gap-300 rounded-md p-300">
+            <div className="bg-container-neutral-alternative flex items-start gap-300 rounded-md p-300">
               <Icon src={InfoCircleIcon} size={24} className="text-icon-alternative shrink-0" />
               <p className="flex-1 leading-4">
-                <span className="typo-caption1 text-text-normal">연한 항목</span>
-                <span className="typo-caption2 text-text-alternative">
-                  은 일부 멤버만 가진 기수예요. 선택하면 모두에게 추가되고,
-                  <br />
-                  그대로 두면 기존 상태가 유지됩니다.
+                <span className="typo-caption1 text-text-normal block">
+                  선택한 기수는 해당 멤버에게 일괄 추가돼요.
+                </span>
+                <span className="typo-caption2 text-text-alternative block">
+                  연하게 표시된 기수는 일부 멤버에게만 등록된 기수이며, 기수 제외는 개별 멤버
+                  관리에서 할 수 있어요.
                 </span>
               </p>
             </div>

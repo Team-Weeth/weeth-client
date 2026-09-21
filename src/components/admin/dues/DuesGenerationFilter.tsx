@@ -15,6 +15,9 @@ import { formatLastUpdated } from '@/utils/shared/date';
 import type { Cardinal } from '@/types/admin/cardinal';
 import type { LastModified } from '@/types/admin/dues';
 
+const CARDINAL_DROPDOWN_MAX_HEIGHT_CLASS =
+  'max-h-[min(var(--radix-dropdown-menu-content-available-height),270px)]';
+
 interface DuesGenerationFilterProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onSelect'> {
   cardinals: Cardinal[];
   activeCardinal?: Cardinal;
@@ -32,10 +35,11 @@ function DuesGenerationFilter({
   onSelect,
   ...props
 }: DuesGenerationFilterProps) {
+  const sortedCardinals = [...cardinals].sort((a, b) => b.cardinalNumber - a.cardinalNumber);
   const displayLabel = activeCardinal
     ? `${activeCardinal.cardinalNumber}기`
-    : cardinals[0]
-      ? `${cardinals[0].cardinalNumber}기`
+    : sortedCardinals[0]
+      ? `${sortedCardinals[0].cardinalNumber}기`
       : '기수 선택';
 
   return (
@@ -55,8 +59,11 @@ function DuesGenerationFilter({
             />
           </button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="start">
-          {cardinals.map((c) => (
+        <DropdownMenuContent
+          align="start"
+          className={sortedCardinals.length > 5 ? CARDINAL_DROPDOWN_MAX_HEIGHT_CLASS : undefined}
+        >
+          {sortedCardinals.map((c) => (
             <DropdownMenuItem key={c.id} onSelect={() => onSelect(c.id)}>
               {c.cardinalNumber}기
             </DropdownMenuItem>
@@ -73,16 +80,16 @@ function DuesGenerationFilter({
           </span>
           <TooltipProvider>
             <Tooltip>
-              <TooltipTrigger>
+              <TooltipTrigger aria-label="마지막 수정자">
                 <Avatar size={24}>
                   <AvatarImage
-                    src={updaterProfile?.modifiedBy.profileImageUrl ?? undefined}
+                    src={updaterProfile?.modifiedBy?.profileImageUrl ?? undefined}
                     alt="마지막 수정자 프로필"
                   />
                   <AvatarFallback />
                 </Avatar>
               </TooltipTrigger>
-              <TooltipContent>{updaterProfile?.modifiedBy.name}</TooltipContent>
+              <TooltipContent>{updaterProfile?.modifiedBy?.name ?? '정보없음'}</TooltipContent>
             </Tooltip>
           </TooltipProvider>
         </div>

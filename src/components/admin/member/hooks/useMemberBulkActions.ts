@@ -16,7 +16,7 @@ import {
   createBulkCardinalChangeRequests,
   type CardinalChangeRequest,
 } from '@/utils/admin/memberPageUtils';
-import { getApiErrorCode } from '@/utils/shared';
+import { getApiErrorCode, getApiErrorMessage } from '@/utils/shared';
 import { runBulkMutation } from '@/utils/shared/runBulkMutation';
 import type { ForceConfirmState } from '../MemberPageModals';
 
@@ -25,6 +25,7 @@ interface UseMemberBulkActionsParams {
   isLead: boolean;
   selectedMembers: Member[];
   selectedMemberCardinals: number[][];
+  onActionSuccess?: () => void;
 }
 
 function useMemberBulkActions({
@@ -32,6 +33,7 @@ function useMemberBulkActions({
   isLead,
   selectedMembers,
   selectedMemberCardinals,
+  onActionSuccess,
 }: UseMemberBulkActionsParams) {
   const { mutateAsync: changeMemberRoleAsync } = useChangeMemberRole();
   const { mutateAsync: banMemberAsync } = useBanMember();
@@ -51,7 +53,7 @@ function useMemberBulkActions({
     );
 
     const attendanceFailedRequests: CardinalChangeRequest[] = [];
-    let otherErrorCount = 0;
+    const otherErrors: unknown[] = [];
 
     results.forEach((result, idx) => {
       if (result.status !== 'rejected') return;
@@ -59,21 +61,24 @@ function useMemberBulkActions({
       if (code === MEMBER_CARDINAL_ERROR_CODE.REMOVAL_HAS_ATTENDANCE) {
         attendanceFailedRequests.push(requests[idx]);
       } else {
-        otherErrorCount += 1;
+        otherErrors.push(result.reason);
       }
     });
+
+    if (otherErrors.length > 0) {
+      const serverMessage = otherErrors.map(getApiErrorMessage).find((message) => message?.trim());
+      toastError(serverMessage ?? '기수 변경에 실패했습니다.');
+    }
 
     if (attendanceFailedRequests.length > 0) {
       setForceConfirm({ requests: attendanceFailedRequests });
       return;
     }
 
-    if (otherErrorCount > 0) {
-      toastError('기수 변경에 실패했습니다.');
-      return;
-    }
+    if (otherErrors.length > 0) return;
 
     toastSuccess('기수가 변경되었습니다.');
+    onActionSuccess?.();
   };
 
   const submitCardinalsChange = async (
@@ -96,18 +101,24 @@ function useMemberBulkActions({
         );
         return isLeadTransferOnly ? '리더는 이양을 통해서만 변경할 수 있습니다.' : undefined;
       },
-    );
+    ).then((success) => {
+      if (success) onActionSuccess?.();
+    });
 
   const submitBan = (clubMemberIds: number[]) =>
     runBulkMutation(clubMemberIds, banMemberAsync, {
       success: '추방되었습니다.',
       error: '추방에 실패했습니다.',
+    }).then((success) => {
+      if (success) onActionSuccess?.();
     });
 
   const submitRestore = (clubMemberIds: number[]) =>
     runBulkMutation(clubMemberIds, restoreMemberAsync, {
       success: '복구되었습니다.',
       error: '복구에 실패했습니다.',
+    }).then((success) => {
+      if (success) onActionSuccess?.();
     });
 
   const handleChangeCardinalsForBulk = (cardinalIds: number[], cardinalNumbers: number[]) => {
@@ -125,9 +136,15 @@ function useMemberBulkActions({
     if (!isLead) return;
 
     transferLead(clubMemberId, {
-      onSuccess: () => toastSuccess('리더로 변경되었습니다.'),
+      onSuccess: () => {
+        toastSuccess('리더로 변경되었습니다.');
+        onActionSuccess?.();
+      },
       onError: (err) => {
-        if (getApiErrorCode(err) === MEMBER_ROLE_ERROR_CODE.ONLY_LEAD_CAN_TRANSFER) {
+        const serverMessage = getApiErrorMessage(err);
+        if (serverMessage?.trim()) {
+          toastError(serverMessage);
+        } else if (getApiErrorCode(err) === MEMBER_ROLE_ERROR_CODE.ONLY_LEAD_CAN_TRANSFER) {
           toastError('리더만 권한을 이양할 수 있습니다.');
         } else {
           toastError('리더 변경에 실패했습니다.');

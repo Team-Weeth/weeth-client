@@ -1,9 +1,9 @@
 'use client';
 
+import { useClubFeatures } from '@/providers/club-feature-provider';
 import { useMockMemberPositions } from '../MockMemberPositionsProvider';
 import { MOCK_MEMBER_POSITIONS } from '@/mocks/memberPositions';
 import type { ReactNode } from 'react';
-
 import { AttendanceProgressBar } from '@/components/attendance/AttendanceProgressBar';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/Tooltip';
@@ -88,6 +88,7 @@ function MemberPersonalInfoCard({ member, className }: MemberDetailInfoCardProps
 }
 
 function MemberActivityInfoCard({ member, className }: MemberDetailInfoCardProps) {
+  const { warningEnabled } = useClubFeatures();
   const { visibleCardinals, hiddenCardinals, hiddenCardinalCount } =
     getMemberDetailCardinals(member);
 
@@ -118,7 +119,7 @@ function MemberActivityInfoCard({ member, className }: MemberDetailInfoCardProps
       <div className="bg-line my-300 h-px w-full" />
 
       <div className="flex flex-col gap-300">
-        {getMemberActivityStats(member).map(({ label, value }) => (
+        {getMemberActivityStats(member, warningEnabled).map(({ label, value }) => (
           <InfoRow key={label} label={label} value={value} alignValue="right" />
         ))}
         <div className="mt-100 flex flex-col gap-[6px]">
@@ -214,11 +215,12 @@ function getMemberPersonalInfo(member: Member, positionName: string) {
   ];
 }
 
-function getMemberActivityStats(member: Member) {
+function getMemberActivityStats(member: Member, warningEnabled: boolean) {
   return [
     { label: '출석', value: member.attendance },
     { label: '결석', value: member.absence },
-    { label: '패널티', value: member.penaltyCount },
+    { label: '페널티', value: member.penaltyCount },
+    ...(warningEnabled ? [{ label: '경고', value: member.warningCount ?? '-' }] : []),
   ];
 }
 

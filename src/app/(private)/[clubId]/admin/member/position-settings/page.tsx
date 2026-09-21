@@ -1,8 +1,8 @@
-import { notFound } from 'next/navigation';
-import { MemberInformationPreview } from './MemberInformationPreview';
+'use client';
 
+import { MemberInformationContent } from '@/components/admin/member/MemberInformationContent';
+
+/** 포지션 저장 API가 확정되면 onSave를 실제 저장 로직으로 교체한다. */
 export default function PositionSettingsPage() {
-  if (process.env.NODE_ENV !== 'development') notFound();
-
-  return <MemberInformationPreview />;
+  return <MemberInformationContent onSave={() => {}} />;
 }

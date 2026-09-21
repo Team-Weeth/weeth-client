@@ -27,7 +27,11 @@ function PenaltyRulesDialog({ clubId }: PenaltyRulesDialogProps) {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <button type="button" className="flex items-center justify-center">
+        <button
+          type="button"
+          aria-label="페널티 규정 보기"
+          className="flex cursor-pointer items-center justify-center"
+        >
           <Icon src={TooltipIcon} size={20} className="text-icon-alternative" />
         </button>
       </DialogTrigger>
