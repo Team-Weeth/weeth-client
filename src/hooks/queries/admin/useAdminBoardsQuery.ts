@@ -7,6 +7,8 @@ import { toBoard } from '@/utils/admin/boardMapper';
 import type { TrashedBoard } from '@/types/admin/board';
 import { adminQueryKeys } from './adminQueryKeys';
 
+const LEGACY_MAX_BOARD_COUNT = 4;
+
 export function useAdminBoardsQuery() {
   const clubId = useClubId();
 
@@ -14,7 +16,16 @@ export function useAdminBoardsQuery() {
     queryKey: adminQueryKeys.boards(clubId),
     queryFn: async () => {
       const res = await adminBoardApi.getBoards(clubId!);
-      const all = res.data.data;
+      const response = res.data.data;
+      const isLegacyResponse = Array.isArray(response);
+      const all = isLegacyResponse ? response : response.boards;
+      const activeBoardCount = isLegacyResponse
+        ? all.filter((board) => !board.isDeleted && board.type !== 'ALL').length
+        : response.activeBoardCount;
+      const maxBoardCount = isLegacyResponse ? LEGACY_MAX_BOARD_COUNT : response.maxBoardCount;
+      const canCreateBoard = isLegacyResponse
+        ? activeBoardCount < maxBoardCount
+        : response.canCreateBoard;
 
       const boards = all
         .filter((d) => !d.isDeleted)
@@ -27,7 +38,7 @@ export function useAdminBoardsQuery() {
       //   .map((d) => ({ ...toBoard(d), daysLeft: TRASH_RETENTION_DAYS }));
       const trashedBoards: TrashedBoard[] = [];
 
-      return { boards, trashedBoards };
+      return { boards, trashedBoards, activeBoardCount, maxBoardCount, canCreateBoard };
     },
     enabled: !!clubId,
     retry: false,

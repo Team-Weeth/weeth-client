@@ -38,19 +38,25 @@ const createAuthInterceptor = (client: typeof apiClient) => {
     async (error) => {
       const originalRequest = error.config;
 
-      if (error.response?.status === 401 && !originalRequest._retry) {
+      // 갱신 요청의 401은 호출자에게 전달해야 한다. 재갱신하면 자신의 Promise를 기다리게 된다.
+      if (
+        error.response?.status === 401 &&
+        originalRequest &&
+        originalRequest.url !== '/auth/refresh' &&
+        !originalRequest._retry
+      ) {
         originalRequest._retry = true;
 
         if (!refreshPromise) {
-          refreshPromise = refreshTokens();
+          refreshPromise = refreshTokens().finally(() => {
+            refreshPromise = null;
+          });
         }
 
         try {
           await refreshPromise;
-          refreshPromise = null;
           return client(originalRequest);
         } catch {
-          refreshPromise = null;
           if (typeof window !== 'undefined') {
             window.location.href = '/login';
           }

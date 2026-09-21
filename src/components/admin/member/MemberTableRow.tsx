@@ -1,3 +1,7 @@
+'use client';
+
+import { useClubFeatures } from '@/providers/club-feature-provider';
+
 import type { ReactNode } from 'react';
 
 import AdminMeatballIcon from '@/assets/icons/admin/ic_admin_meatball.svg';
@@ -35,6 +39,7 @@ function MemberTableRow({
   onMemberAction,
   showStickyShadow = false,
 }: MemberTableRowProps) {
+  const { warningEnabled } = useClubFeatures();
   const textCells = [
     { id: 'role', value: member.position },
     { id: 'department', value: member.department },
@@ -75,13 +80,13 @@ function MemberTableRow({
         </TableTextCell>
       ))}
 
+      <TableCell className="w-6 min-w-6 p-0" aria-hidden />
+
       {NUMBER_CELL_VALUES.map((key) => (
         <MemberNumberCell key={key}>{member[key]}</MemberNumberCell>
       ))}
-      <TableCell
-        className="max-tablet:h-12 max-tablet:py-100 h-16 w-12 p-0 px-100 py-300"
-        aria-hidden
-      />
+      {warningEnabled && <MemberNumberCell>{member.warningCount ?? '-'}</MemberNumberCell>}
+      <TableCell className="w-6 min-w-6 p-0" aria-hidden />
 
       {textCells.slice(3).map(({ id, value }) => (
         <TableTextCell key={id} responsive className={TEXT_CELL_CLASS_BY_ID[id]}>
@@ -161,7 +166,7 @@ function MemberCardinalsCell({ cardinal }: { cardinal: string }) {
 
 function MemberNumberCell({ children }: { children: ReactNode }) {
   return (
-    <TableCell className="max-tablet:h-12 max-tablet:py-100 h-16 w-12 p-0 px-100 py-300 text-center">
+    <TableCell className="max-tablet:h-12 max-tablet:py-100 h-16 w-16 min-w-16 p-0 px-100 py-300 text-center">
       <span className="typo-body2 text-text-strong">{children}</span>
     </TableCell>
   );

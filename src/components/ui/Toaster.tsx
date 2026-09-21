@@ -3,17 +3,23 @@
 import { useToasts, useToastActions } from '@/stores/useToastStore';
 
 import { Toast, ToastProvider, ToastViewport } from '@/components/ui/Toast';
+import type { ToastPosition } from '@/components/ui/Toast';
 
-function Toaster() {
+interface ToasterProps {
+  position?: ToastPosition;
+}
+
+function Toaster({ position = 'top' }: ToasterProps) {
   const toasts = useToasts();
   const { dismissToast } = useToastActions();
 
   return (
-    <ToastProvider>
+    <ToastProvider position={position}>
       {toasts.map(({ id, title, variant, duration }) => (
         <Toast
           key={id}
           variant={variant}
+          position={position}
           duration={duration ?? 2000}
           onOpenChange={(open) => {
             if (!open) dismissToast(id);
@@ -22,7 +28,7 @@ function Toaster() {
           {title}
         </Toast>
       ))}
-      <ToastViewport />
+      <ToastViewport position={position} />
     </ToastProvider>
   );
 }

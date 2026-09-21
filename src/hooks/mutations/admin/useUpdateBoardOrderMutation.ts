@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { adminBoardApi, getApiErrorMessage } from '@/lib/apis/adminBoard';
+import { revalidateBoards } from '@/lib/actions/board';
 import { useClubId } from '@/stores';
 import { toastError, toastSuccess } from '@/stores/useToastStore';
 import type { MutationCallbacks } from '@/types/common';
@@ -16,7 +17,8 @@ export function useUpdateBoardOrderMutation(callbacks?: MutationCallbacks<unknow
       if (!clubId) throw new Error('clubId is required');
       return adminBoardApi.updateBoardOrder(clubId, boardIds);
     },
-    onSuccess: () => {
+    onSuccess: async () => {
+      if (clubId) await revalidateBoards(clubId);
       toastSuccess('게시판 순서가 저장됐어요.');
       callbacks?.onSuccess?.();
     },

@@ -18,6 +18,7 @@ import {
   SESSION_RECURRENCE_OPTIONS,
 } from '@/constants/admin/session.constants';
 import { addYearsToDateInput } from '@/utils/shared/date';
+import { cn } from '@/lib/cn';
 import type { Cardinal } from '@/types/admin/cardinal';
 import { SessionInfoBanner } from '@/components/admin/schedule/session/SessionInfoBanner';
 import type { ScheduleFormState, SessionFormState } from './types';
@@ -41,6 +42,7 @@ function SessionScheduleForm({
   cardinals,
   selectedCardinal,
 }: SessionScheduleFormProps) {
+  const sortedCardinals = [...cardinals].sort((a, b) => b.cardinalNumber - a.cardinalNumber);
   const hasRecurrence = session.recurrenceType !== 'NONE';
   // 반복 종료는 일정 종료 일자 이후, 시작 일자 기준 1년 이내에서 선택 가능
   const recurrenceMinDate = form.endDate;
@@ -74,11 +76,18 @@ function SessionScheduleForm({
               <Icon src={ArrowDownIcon} size={20} className="text-icon-normal" />
             </button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="start" className="min-w-30">
+          <DropdownMenuContent
+            align="start"
+            className={cn(
+              'min-w-30',
+              sortedCardinals.length > 5 &&
+                'max-h-[min(var(--radix-dropdown-menu-content-available-height),270px)]',
+            )}
+          >
             {cardinals.length === 0 ? (
               <DropdownMenuItem disabled>기수 없음</DropdownMenuItem>
             ) : (
-              cardinals.map((c) => (
+              sortedCardinals.map((c) => (
                 <DropdownMenuItem
                   key={c.id}
                   onSelect={() => onSessionChange({ selectedCardinalId: c.id })}

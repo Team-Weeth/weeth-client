@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import { combine, devtools } from 'zustand/middleware';
 import { useShallow } from 'zustand/react/shallow';
 
-type ToastVariant = 'success' | 'info' | 'error';
+type ToastVariant = 'success' | 'warning' | 'error';
 
 interface ToastItem {
   id: string;
@@ -62,7 +62,7 @@ export function toast(input: ToastInput) {
 
 /** Convenience helpers */
 export const toastSuccess = (message: string) => toast({ title: message, variant: 'success' });
-export const toastInfo = (message: string) => toast({ title: message, variant: 'info' });
+export const toastWarning = (message: string) => toast({ title: message, variant: 'warning' });
 export const toastError = (message?: string) =>
   toast({ title: message || '오류가 발생했습니다!', variant: 'error' });
 

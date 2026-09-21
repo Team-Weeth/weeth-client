@@ -6,6 +6,7 @@ import { ATTENDANCE_ERROR_MESSAGE } from '@/constants/attendance';
 import { useClubId } from '@/stores/useClubStore';
 import { toastError } from '@/stores/useToastStore';
 import { useAttendanceQuery } from '@/hooks/attendance/useAttendanceQuery';
+import { getApiErrorCode, getApiErrorMessage } from '@/utils/shared/getApiErrorCode';
 // TODO: SSE 연결 안정화 후 복원
 // import { useAttendanceSSE } from '@/hooks/attendance/useAttendanceSSE';
 
@@ -54,9 +55,12 @@ export function useCheckIn(options?: UseCheckInOptions) {
       setCheckInError(false);
       await attendanceApi.checkIn(clubId, sessionId, Number(code));
     } catch (error) {
-      const errorCode = (error as { response?: { data?: { code?: number } } }).response?.data?.code;
-      if (errorCode && ATTENDANCE_ERROR_MESSAGE[errorCode]) {
-        toastError(ATTENDANCE_ERROR_MESSAGE[errorCode]);
+      const errorCode = getApiErrorCode(error);
+      const message =
+        getApiErrorMessage(error)?.trim() ||
+        (errorCode ? ATTENDANCE_ERROR_MESSAGE[errorCode] : undefined);
+      if (message) {
+        toastError(message);
       } else {
         toastError();
         setCheckInError(true);
