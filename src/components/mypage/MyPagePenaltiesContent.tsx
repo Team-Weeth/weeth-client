@@ -9,37 +9,28 @@ import { Tag } from '@/components/ui/tag';
 import { PenaltyRulesDialog } from '@/components/mypage/PenaltyRulesDialog';
 import { useIntersectionObserver } from '@/hooks/board/useIntersectionObserver';
 import { useMyPagePenaltiesQuery } from '@/hooks/queries/mypage/useMyPagePenaltiesQuery';
+import { useMyClubMemberSummaryQuery } from '@/hooks/queries/mypage/useMyPageQueries';
 import { cn } from '@/lib/cn';
 import { parseApiError } from '@/lib/error';
 import { toastError } from '@/stores/useToastStore';
 import { MyPagePenaltiesSkeleton } from '@/components/mypage/skeleton';
 import { PenaltyCountSummary } from '@/components/admin/penalty/modal/PenaltyCountSummary';
 import { CardinalDropdown } from '@/components/common/CardinalDropdown';
-import { useMyPagePenaltyCountsQuery } from '@/hooks/queries/mypage/useMyPagePenaltyCountsQuery';
-import { useCardinals } from '@/hooks/queries/useCardinalsQuery';
 
 type MyPagePenaltiesContentProps = React.HTMLAttributes<HTMLDivElement>;
 
 function MyPagePenaltiesContent({ className, ...props }: MyPagePenaltiesContentProps) {
   const router = useRouter();
   const { clubId } = useParams<{ clubId: string }>();
+  const { data: memberSummary } = useMyClubMemberSummaryQuery(clubId);
+  const myCardinals = memberSummary?.cardinals ?? [];
+  // 선택 전에는 소속 기수 중 최신 기수를 조회한다.
+  const [selectedCardinalNumber, setSelectedCardinalNumber] = useState<number | null>(null);
+  const activeCardinalNumber =
+    selectedCardinalNumber ?? (myCardinals.length > 0 ? Math.max(...myCardinals) : null);
+  const hasNoCardinal = memberSummary != null && myCardinals.length === 0;
   const {
-    data: cardinals = [],
-    isError: isCardinalsError,
-    refetch: refetchCardinals,
-  } = useCardinals();
-  const [selectedCardinalId, setSelectedCardinalId] = useState<number | null>(null);
-  const activeCardinal =
-    cardinals.find((cardinal) => cardinal.id === selectedCardinalId) ??
-    cardinals.find((cardinal) => cardinal.status === 'IN_PROGRESS') ??
-    [...cardinals].sort((a, b) => b.cardinalNumber - a.cardinalNumber)[0];
-  const {
-    data: counts,
-    isError: isCountsError,
-    refetch: refetchCounts,
-  } = useMyPagePenaltyCountsQuery(clubId);
-  const {
-    data: penalties = [],
+    data,
     isPending,
     isError,
     error,
@@ -47,7 +38,16 @@ function MyPagePenaltiesContent({ className, ...props }: MyPagePenaltiesContentP
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
-  } = useMyPagePenaltiesQuery(clubId);
+  } = useMyPagePenaltiesQuery(clubId, activeCardinalNumber);
+  const penalties = data?.penalties ?? [];
+  // 소속 기수는 번호만 내려오므로 드롭다운이 쓰는 형태로 맞춘다.
+  const cardinalOptions = myCardinals.map((cardinalNumber) => ({
+    id: cardinalNumber,
+    cardinalNumber,
+  }));
+  const activeCardinal = cardinalOptions.find(
+    (cardinal) => cardinal.cardinalNumber === activeCardinalNumber,
+  );
 
   const { ref: sentinelRef, isIntersecting } = useIntersectionObserver({ rootMargin: '200px' });
 
@@ -78,46 +78,23 @@ function MyPagePenaltiesContent({ className, ...props }: MyPagePenaltiesContentP
           <h1 className="tablet:typo-h3 typo-sub1 text-text-normal">페널티</h1>
           <div className="flex items-center gap-3">
             <PenaltyRulesDialog clubId={clubId} />
-            {/* 기수별 조회 API 지원 전까지 전체 목록만 제공한다. */}
             <CardinalDropdown
-              cardinals={cardinals}
+              cardinals={cardinalOptions}
               activeCardinal={activeCardinal}
-              onSelect={setSelectedCardinalId}
+              onSelect={setSelectedCardinalNumber}
+              disabled={cardinalOptions.length === 0}
             />
           </div>
         </div>
       </div>
 
-      {isCardinalsError && (
-        <button
-          type="button"
-          className="typo-caption1 text-text-alternative cursor-pointer self-start"
-          onClick={() => refetchCardinals()}
-        >
-          기수 목록을 불러오지 못했습니다. 다시 시도
-        </button>
-      )}
-      {activeCardinal && (
-        <p role="status" className="typo-caption1 text-text-alternative">
-          기수별 조회는 준비 중입니다. 현재 목록과 총횟수는 전체 기수 기준입니다.
-        </p>
-      )}
-
       <PenaltyCountSummary
-        penaltyCount={counts?.penaltyCount ?? null}
-        warningCount={counts?.warningCount ?? null}
+        penaltyCount={data?.penaltyCount ?? null}
+        warningCount={data?.warningCount ?? null}
       />
-      {isCountsError && (
-        <button
-          type="button"
-          className="typo-caption1 text-text-alternative cursor-pointer self-start"
-          onClick={() => refetchCounts()}
-        >
-          총횟수를 불러오지 못했습니다. 다시 시도
-        </button>
-      )}
 
-      {isPending ? (
+      {/* 소속 기수가 없으면 조회할 기수가 없으므로 빈 상태로 둔다. */}
+      {isPending && !hasNoCardinal ? (
         <MyPagePenaltiesSkeleton />
       ) : isError ? (
         <main className="flex min-w-0 flex-1 flex-col items-center justify-center gap-300 py-800">

@@ -33,6 +33,17 @@ export function useMyPageSummaryQuery(clubId: string) {
   });
 }
 
+/** useMyPageQueries의 클럽 요약과 같은 캐시를 공유한다. */
+export function useMyClubMemberSummaryQuery(clubId: string) {
+  return useQuery({
+    queryKey: ['mypage', 'club-summary', clubId],
+    queryFn: () => mypageApi.getMyClubMemberSummary(clubId).then((res) => res.data.data),
+    enabled: Boolean(clubId),
+    staleTime: MYPAGE_SUMMARY_STALE_TIME,
+    gcTime: MYPAGE_SUMMARY_GC_TIME,
+  });
+}
+
 export function useMyClubsQuery() {
   return useQuery({
     queryKey: ['mypage', 'clubs'],

@@ -9,14 +9,19 @@ import {
 } from '@/components/ui/DropdownMenu';
 import { Icon } from '@/components/ui/Icon';
 import { cn } from '@/lib/cn';
-import type { Cardinal } from '@/types/admin/cardinal';
+
+/** Cardinal 전체가 아니라 드롭다운이 실제로 쓰는 필드만 요구한다. */
+interface CardinalOption {
+  id: number;
+  cardinalNumber: number;
+}
 
 const CARDINAL_DROPDOWN_MAX_HEIGHT_CLASS =
   'max-h-[min(var(--radix-dropdown-menu-content-available-height),270px)]';
 
 interface CardinalDropdownProps {
-  cardinals: Cardinal[];
-  activeCardinal?: Cardinal;
+  cardinals: CardinalOption[];
+  activeCardinal?: CardinalOption;
   onSelect: (id: number) => void;
   onSelectAll?: () => void;
   className?: string;
@@ -83,4 +88,4 @@ function CardinalDropdown({
   );
 }
 
-export { CardinalDropdown, type CardinalDropdownProps };
+export { CardinalDropdown, type CardinalDropdownProps, type CardinalOption };

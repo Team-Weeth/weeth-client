@@ -4,7 +4,7 @@ import type {
   MyPageAssignableClub,
   MyClubMemberSummary,
   MyPageAttendedSessionItem,
-  MyPagePenaltyItem,
+  MyPagePenaltiesResponse,
   MyPagePostItem,
   MyPageSummary,
 } from '@/types/mypage';
@@ -87,8 +87,11 @@ export const mypageApi = {
       `/clubs/${clubId}/users/me/mypage/attended-sessions`,
       { params },
     ),
-  getMyPenalties: (clubId: string, params?: { pageNumber?: number; pageSize?: number }) =>
-    apiClient.get<ApiResponse<PageResponse<MyPagePenaltyItem>>>(
+  getMyPenalties: (
+    clubId: string,
+    params?: { pageNumber?: number; pageSize?: number; cardinalNumber?: number },
+  ) =>
+    apiClient.get<ApiResponse<MyPagePenaltiesResponse>>(
       `/clubs/${clubId}/users/me/mypage/penalties`,
       { params },
     ),
