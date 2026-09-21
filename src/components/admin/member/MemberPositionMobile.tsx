@@ -4,6 +4,7 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import BackIcon from '@/assets/icons/back.svg';
 import ArrowDownIcon from '@/assets/icons/arrow_down.svg';
+import PositionIcon from '@/assets/icons/admin/ic_admin_position.svg';
 import { Icon } from '@/components/ui/Icon';
 import { Tag } from '@/components/ui/tag';
 import {
@@ -15,7 +16,6 @@ import {
 import { cn } from '@/lib/cn';
 import { MEMBER_POSITION_FIELDS } from './MemberPositionFields';
 import { MemberPositionEditor, type MemberPositionEditorProps } from './MemberPositionEditor';
-import { PositionFieldIcon } from './PositionFieldIcon';
 
 function MemberPositionMobile({ className, ...editorProps }: MemberPositionEditorProps) {
   const router = useRouter();
@@ -44,7 +44,7 @@ function MemberPositionMobile({ className, ...editorProps }: MemberPositionEdito
           aria-label="부원 정보 필드 선택"
         >
           <span className="bg-container-neutral-alternative flex size-10 shrink-0 items-center justify-center rounded-sm">
-            <PositionFieldIcon />
+            <Icon src={PositionIcon} size={24} className="text-icon-normal" />
           </span>
           <span className="typo-sub1 text-text-strong">포지션</span>
           <Tag variant="caution">커스텀 필드</Tag>
@@ -68,7 +68,7 @@ function MemberPositionMobile({ className, ...editorProps }: MemberPositionEdito
             >
               <span className="bg-container-neutral-alternative flex size-10 shrink-0 items-center justify-center rounded-sm">
                 {custom ? (
-                  <PositionFieldIcon />
+                  <Icon src={icon} size={24} className="text-icon-normal" />
                 ) : (
                   <Image src={icon} width={24} height={24} alt="" />
                 )}
