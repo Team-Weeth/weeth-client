@@ -37,7 +37,6 @@ import { ADMIN_BOARD_ERROR, getApiErrorCode, getApiErrorMessage } from '@/lib/ap
 import { useClubId } from '@/stores';
 import { toastError, toastSuccess } from '@/stores/useToastStore';
 import { toApiPermission } from '@/utils/admin/boardMapper';
-import { MAX_CUSTOM_BOARDS } from '@/constants/admin/board.constants';
 import type { Board, BoardKind, BoardListCache } from '@/types/admin/board';
 import type { BoardFormData } from '@/components/admin/board/modal/constants';
 import { SortableBoardCard } from './SortableBoardCard';
@@ -153,7 +152,7 @@ function BoardPageContent() {
 
   if (isLoading || !data) return <BoardAdminSkeleton />;
 
-  const { boards } = data;
+  const { boards, maxBoardCount, canCreateBoard } = data;
 
   const handleCreateBoard = (formData: BoardFormData) => {
     setCreateNameError(null);
@@ -239,8 +238,7 @@ function BoardPageContent() {
 
   const fixedBoards = filteredBoards.filter((b) => !b.editable).sort(compareFixedBoards);
   const customBoards = filteredBoards.filter((b) => b.editable);
-  const totalCustomCount = boards.filter((b) => b.editable).length;
-  const reachedLimit = totalCustomCount >= MAX_CUSTOM_BOARDS;
+  const reachedLimit = !canCreateBoard;
 
   const editingBoard =
     editingBoardId !== null ? (boards.find((b) => b.boardId === editingBoardId) ?? null) : null;
@@ -263,11 +261,8 @@ function BoardPageContent() {
         // TODO: 휴지통 API 정상화되면 복원
         // trashCount={trashedBoards.length}
         // onTrashClick={() => setTrashModalOpen(true)}
-        onCreateClick={
-          reachedLimit
-            ? () => toastError(`게시판은 최대 ${MAX_CUSTOM_BOARDS}개까지 만들 수 있어요.`)
-            : () => setCreateModalOpen(true)
-        }
+        onCreateClick={() => setCreateModalOpen(true)}
+        createDisabled={reachedLimit}
       />
 
       <div className="flex flex-col gap-400">
@@ -329,7 +324,7 @@ function BoardPageContent() {
         <div className="bg-container-neutral-alternative flex h-12 items-center gap-200 rounded-md p-300">
           <Icon src={InfoCircleIcon} size={20} className="text-icon-alternative" />
           <p className="typo-body2 text-text-alternative min-w-0 flex-1 truncate">
-            게시판 추가는 최대 {MAX_CUSTOM_BOARDS}개까지 가능 합니다.
+            게시판 추가는 최대 {maxBoardCount}개까지 가능 합니다.
           </p>
         </div>
       </div>
