@@ -61,7 +61,7 @@ describe('useFileUpload', () => {
       expect(usePostStore.getState().files).toHaveLength(0);
     });
 
-    it('10MB 초과 파일 → 에러 토스트, 파일이 스토어에 추가되지 않는다', () => {
+    it('30MB 초과 파일 → 에러 토스트, 파일이 스토어에 추가되지 않는다', () => {
       const { result } = renderHook(() => useFileUpload());
       const oversized = makeFile('big.png', 'image/png', MAX_FILE_SIZE + 1);
 
