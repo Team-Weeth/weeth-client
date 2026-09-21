@@ -18,8 +18,18 @@ interface MemberNavGroupProps {
 
 function MemberNavGroup({ clubId, pathname, collapsed }: MemberNavGroupProps) {
   const memberPath = `/${clubId}/admin/member`;
-  const [open, setOpen] = useState(pathname.startsWith(memberPath));
+  const isMemberRoute = pathname.startsWith(memberPath);
+  const [open, setOpen] = useState(isMemberRoute);
+  const [wasMemberRoute, setWasMemberRoute] = useState(isMemberRoute);
   const menuId = useId();
+
+  // LNB는 라우팅 중에도 유지되므로, 멤버 경로를 드나들 때 펼침 상태를 새로고침했을 때와 맞춘다.
+  // 그 외 이동에서는 사용자가 직접 토글한 상태를 그대로 둔다.
+  if (wasMemberRoute !== isMemberRoute) {
+    setWasMemberRoute(isMemberRoute);
+    setOpen(isMemberRoute);
+  }
+
   const expanded = open;
   const items = [
     { label: '멤버 목록', icon: ListIcon, path: memberPath, active: pathname === memberPath },

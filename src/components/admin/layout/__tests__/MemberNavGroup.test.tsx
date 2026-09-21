@@ -24,6 +24,28 @@ it('멤버 관리를 누르면 하위 링크를 펼치고 다시 누르면 닫�
   expect(screen.queryByRole('link', { name: '부원 정보' })).not.toBeInTheDocument();
 });
 
+it('멤버 경로로 이동하면 펼치고 벗어나면 다시 접는다', () => {
+  const { rerender } = render(
+    <MemberNavGroup clubId="club-1" pathname="/club-1/admin/schedule" collapsed={false} />,
+  );
+  const trigger = screen.getByRole('button', { name: '멤버 관리' });
+  expect(trigger).toHaveAttribute('aria-expanded', 'false');
+
+  rerender(
+    <TooltipProvider disableHoverableContent>
+      <MemberNavGroup clubId="club-1" pathname="/club-1/admin/member" collapsed={false} />
+    </TooltipProvider>,
+  );
+  expect(trigger).toHaveAttribute('aria-expanded', 'true');
+
+  rerender(
+    <TooltipProvider disableHoverableContent>
+      <MemberNavGroup clubId="club-1" pathname="/club-1/admin/penalty" collapsed={false} />
+    </TooltipProvider>,
+  );
+  expect(trigger).toHaveAttribute('aria-expanded', 'false');
+});
+
 it('부원 정보에서는 해당 하위 메뉴만 활성화한다', () => {
   render(
     <MemberNavGroup
