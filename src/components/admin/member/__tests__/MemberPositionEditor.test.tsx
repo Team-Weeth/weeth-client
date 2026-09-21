@@ -52,6 +52,24 @@ it('현재 색상은 선택 표시하고 다른 옵션의 색상은 막으며 �
   expect(screen.getByRole('button', { name: '옵션 1 색상: 노랑' })).toBeInTheDocument();
 });
 
+it('포커스가 빠져 카운터가 사라져도 글자 수 오류 설명을 입력에 연결해 둔다', async () => {
+  const user = userEvent.setup();
+  render(
+    <MemberPositionEditor
+      initialOptions={[{ id: '1', name: '', color: 'primary' }]}
+      onSave={jest.fn()}
+    />,
+  );
+  const input = screen.getByRole('textbox');
+  await user.click(input);
+  fireEvent.change(input, { target: { value: '가나다라마바사아자차' } });
+  await user.type(input, '카');
+  await user.tab();
+  expect(screen.queryByText('10/10')).not.toBeInTheDocument();
+  expect(input).toHaveAttribute('aria-invalid', 'true');
+  expect(input).toHaveAccessibleDescription('옵션 이름은 최대 10자까지 입력할 수 있습니다.');
+});
+
 it('11자부터 입력을 막고 10/10과 오류 테두리를 유지하며 수정하면 오류를 해제한다', async () => {
   const user = userEvent.setup();
   const onSave = jest.fn();

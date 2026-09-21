@@ -49,7 +49,8 @@ export function MemberPositionDropdown({
         aria-label={`${memberName} 포지션: ${selected?.name ?? '미지정'}`}
         onClick={(event) => event.stopPropagation()}
         className={cn(
-          'group typo-body2 text-text-normal border-line bg-container-neutral focus-visible:outline-brand-primary data-[state=open]:border-text-normal max-tablet:h-[30px] max-tablet:w-[102px] max-tablet:gap-[6px] max-tablet:py-[6px] max-tablet:pr-[6px] max-tablet:pl-[10px] flex w-[140px] cursor-pointer items-center gap-200 rounded-sm border px-300 py-[11px]',
+          // 배경은 칠하지 않고 행 색(기본/호버/선택)이 그대로 비치게 둔다.
+          'group typo-body2 text-text-normal border-line focus-visible:outline-brand-primary data-[state=open]:border-text-normal max-tablet:h-[30px] max-tablet:w-[102px] max-tablet:gap-[6px] max-tablet:py-[6px] max-tablet:pr-[6px] max-tablet:pl-[10px] flex w-[140px] cursor-pointer items-center gap-200 rounded-sm border bg-transparent px-300 py-[11px]',
           className,
         )}
       >

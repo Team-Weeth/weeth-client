@@ -12,7 +12,8 @@ import { cn } from '@/lib/cn';
 
 function MobileMemberNavGroup({ clubId, pathname }: { clubId: string; pathname: string }) {
   const memberPath = `/${clubId}/admin/member`;
-  const [open, setOpen] = useState(false);
+  // 현재 보고 있는 페이지가 하위 메뉴면 펼친 채로 연다. (데스크톱 LNB와 동일)
+  const [open, setOpen] = useState(pathname.startsWith(memberPath));
   const menuId = useId();
   const items = [
     { label: '멤버 목록', icon: ListIcon, path: memberPath },

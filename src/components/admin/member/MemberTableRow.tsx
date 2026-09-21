@@ -85,7 +85,6 @@ function MemberTableRow({
       </TableTextCell>
       <TableCell className="max-tablet:py-100 w-[172px] p-0 px-400 py-200">
         <MemberPositionDropdown
-          className={selected ? 'bg-container-primary-alternative' : undefined}
           memberName={member.name}
           value={positionId}
           options={MOCK_MEMBER_POSITIONS}

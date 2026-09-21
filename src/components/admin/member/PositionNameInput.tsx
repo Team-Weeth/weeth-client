@@ -17,17 +17,21 @@ function PositionNameInput({
   disabled: boolean;
 }) {
   const counterId = useId();
+  const errorId = useId();
   const [focused, setFocused] = useState(false);
   const [limitExceeded, setLimitExceeded] = useState(false);
   const length = Array.from(value).length;
   const exceeded = limitExceeded || length > MAX_POSITION_NAME_LENGTH;
   const showCounter = focused && length > 0;
+  // 포커스가 빠져 카운터가 사라져도 오류 사유는 계속 연결해 둔다.
+  const describedBy =
+    [showCounter && counterId, exceeded && errorId].filter(Boolean).join(' ') || undefined;
 
   return (
     <div className="relative min-w-0 flex-1">
       <Input
         aria-label={label}
-        aria-describedby={showCounter ? counterId : undefined}
+        aria-describedby={describedBy}
         value={value}
         disabled={disabled}
         error={exceeded}
@@ -56,6 +60,11 @@ function PositionNameInput({
           )}
         >
           {length}/{MAX_POSITION_NAME_LENGTH}
+        </span>
+      )}
+      {exceeded && (
+        <span id={errorId} className="sr-only">
+          옵션 이름은 최대 {MAX_POSITION_NAME_LENGTH}자까지 입력할 수 있습니다.
         </span>
       )}
     </div>
