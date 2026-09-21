@@ -15,6 +15,7 @@ import BulletList from '@tiptap/extension-bullet-list';
 import OrderedList from '@tiptap/extension-ordered-list';
 import ListItem from '@tiptap/extension-list-item';
 import HorizontalRule from '@tiptap/extension-horizontal-rule';
+import Image from '@tiptap/extension-image';
 import HardBreak from '@tiptap/extension-hard-break';
 import History from '@tiptap/extension-history';
 import Dropcursor from '@tiptap/extension-dropcursor';
@@ -63,6 +64,11 @@ export const editorExtensions = [
   OrderedList.configure({ keepMarks: true, keepAttributes: false }),
   ListItem,
   HorizontalRule,
+  Image.configure({
+    HTMLAttributes: {
+      class: 'max-w-full h-auto rounded-md',
+    },
+  }),
   HardBreak,
   History,
   Dropcursor,
