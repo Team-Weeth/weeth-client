@@ -12,6 +12,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Icon } from '@/components/ui/Icon';
 import { TableCell, TableRow } from '@/components/ui/table';
 import { cn } from '@/lib/cn';
+import { formatEmptyValue } from '@/utils/shared/formatEmptyValue';
 import type { Member } from '@/types/admin/member';
 import { MemberStatusBadge } from './MemberStatusBadge';
 import { MemberPositionDropdown } from './MemberPositionDropdown';
@@ -146,7 +147,7 @@ function MemberProfileCell({
     <TableCell
       className={cn(
         'h-16 w-[220px] min-w-[220px] p-0 pr-400',
-        'max-tablet:sticky max-tablet:left-12 max-tablet:z-20 max-tablet:h-12 max-tablet:w-[132px] max-tablet:min-w-[132px] max-tablet:bg-inherit max-tablet:pr-200',
+        'max-tablet:sticky max-tablet:left-12 max-tablet:z-20 max-tablet:h-12 max-tablet:w-28 max-tablet:min-w-28 max-tablet:bg-inherit max-tablet:pr-200',
         showStickyShadow &&
           'max-tablet:after:absolute max-tablet:after:top-0 max-tablet:after:right-[-24px] max-tablet:after:h-full max-tablet:after:w-6 max-tablet:after:bg-[image:var(--member-table-sticky-shadow)] max-tablet:after:content-[""]',
       )}
@@ -158,15 +159,15 @@ function MemberProfileCell({
           )}
           <AvatarFallback />
         </Avatar>
-        <div className="max-tablet:w-[88px] max-tablet:max-w-[88px] flex w-[152px] max-w-[152px] min-w-0 flex-col justify-center gap-0.5 overflow-hidden">
+        <div className="max-tablet:w-17 max-tablet:max-w-17 flex w-[152px] max-w-[152px] min-w-0 flex-col justify-center gap-0.5 overflow-hidden">
           <span className="typo-button2 text-text-normal truncate">{member.name}</span>
           <span
             className={cn(
               'typo-caption2 max-tablet:hidden truncate',
-              member.bio ? 'text-text-alternative' : 'text-text-disabled',
+              member.bio?.trim() ? 'text-text-alternative' : 'text-text-disabled',
             )}
           >
-            {member.bio ?? '-'}
+            {formatEmptyValue(member.bio)}
           </span>
         </div>
       </div>

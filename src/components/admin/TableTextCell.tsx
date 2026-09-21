@@ -1,12 +1,13 @@
 import { TableCell } from '@/components/ui/table';
 import { cn } from '@/lib/cn';
+import { formatEmptyValue } from '@/utils/shared/formatEmptyValue';
 
 interface TableTextCellProps extends React.HTMLAttributes<HTMLTableCellElement> {
   /** 태블릿 이하에서 행 높이를 줄인다 (멤버 표는 모바일 레이아웃을 지원한다) */
   responsive?: boolean;
 }
 
-/** 어드민 표의 한 줄 텍스트 셀. 넘치는 값은 말줄임 처리한다. */
+/** 어드민 표의 한 줄 텍스트 셀. 넘치는 값은 말줄임, 빈 값은 '-'로 처리한다. */
 function TableTextCell({ className, responsive = false, children, ...props }: TableTextCellProps) {
   return (
     <TableCell
@@ -17,7 +18,9 @@ function TableTextCell({ className, responsive = false, children, ...props }: Ta
       )}
       {...props}
     >
-      <span className="typo-body2 text-text-strong block truncate">{children}</span>
+      <span className="typo-body2 text-text-strong block truncate">
+        {formatEmptyValue(children)}
+      </span>
     </TableCell>
   );
 }

@@ -1,6 +1,7 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemberDetailModal } from '@/components/admin/member/modal/MemberDetailModal';
+import { TooltipProvider } from '@/components/ui/Tooltip';
 import type { Member } from '@/types/admin/member';
 
 function createMember(overrides: Partial<Member> = {}): Member {
@@ -29,7 +30,9 @@ function createMember(overrides: Partial<Member> = {}): Member {
 
 function renderModal(props: Partial<React.ComponentProps<typeof MemberDetailModal>> = {}) {
   return render(
-    <MemberDetailModal open onOpenChange={jest.fn()} member={createMember()} {...props} />,
+    <TooltipProvider disableHoverableContent>
+      <MemberDetailModal open onOpenChange={jest.fn()} member={createMember()} {...props} />
+    </TooltipProvider>,
   );
 }
 
@@ -47,6 +50,28 @@ it('포지션 변경 버튼을 누르면 onChangePosition을 호출한다', asyn
   await user.click(screen.getByRole('button', { name: '포지션 변경' }));
 
   expect(onChangePosition).toHaveBeenCalledTimes(1);
+});
+
+it('빈 문자열로 내려온 항목과 0은 구분해서 표시한다', () => {
+  renderModal({
+    member: createMember({ department: '', studentId: '   ', phone: '', absence: 0 }),
+  });
+
+  for (const label of ['학과', '학번', '전화번호']) {
+    expect(screen.getByText(label).nextElementSibling).toHaveTextContent('-');
+  }
+  expect(screen.getByText('결석').nextElementSibling).toHaveTextContent('0');
+});
+
+it('활동기수 +N을 누르면 숨은 기수 툴팁을 열고 다시 누르면 닫는다', async () => {
+  const user = userEvent.setup();
+  renderModal({ member: createMember({ cardinal: '9, 10, 11, 12, 13' }) });
+
+  const more = screen.getByRole('button', { name: '숨겨진 활동기수 9기' });
+  await user.click(more);
+  expect(await screen.findByRole('tooltip')).toHaveTextContent('9기');
+  await user.click(more);
+  await waitFor(() => expect(screen.queryByRole('tooltip')).not.toBeInTheDocument());
 });
 
 it('포지션 변경 버튼을 유저 추방 앞에 배치한다', () => {

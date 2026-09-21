@@ -3,6 +3,7 @@
 import { useClubFeatures } from '@/providers/club-feature-provider';
 import { useMockMemberPositions } from '../MockMemberPositionsProvider';
 import { MOCK_MEMBER_POSITIONS } from '@/mocks/memberPositions';
+import { useRef, useState } from 'react';
 import type { ReactNode } from 'react';
 import { AttendanceProgressBar } from '@/components/attendance/AttendanceProgressBar';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -10,6 +11,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/Tooltip
 import { MemberStatusBadge } from '@/components/admin/member/MemberStatusBadge';
 import { cn } from '@/lib/cn';
 import type { Member } from '@/types/admin/member';
+import { formatEmptyValue } from '@/utils/shared/formatEmptyValue';
 import { parseCardinals } from '@/utils/admin/parseCardinals';
 import { compareCardinalDesc, formatCardinalLabel } from '@/utils/admin/memberTableUtils';
 
@@ -34,6 +36,7 @@ interface InfoRowProps {
 
 function MemberDetailSummary({ member, className, avatarSize = 64 }: MemberDetailSummaryProps) {
   const { latestCardinal } = getMemberDetailCardinals(member);
+  const hasBio = Boolean(member.bio?.trim());
 
   return (
     <section className={cn('bg-container-neutral flex items-center gap-500 rounded-lg', className)}>
@@ -57,10 +60,10 @@ function MemberDetailSummary({ member, className, avatarSize = 64 }: MemberDetai
         <p
           className={cn(
             'typo-body2 truncate',
-            member.bio ? 'text-text-alternative' : 'text-text-disabled',
+            hasBio ? 'text-text-alternative' : 'text-text-disabled',
           )}
         >
-          {member.bio ?? '-'}
+          {formatEmptyValue(member.bio)}
         </p>
       </div>
     </section>
@@ -153,7 +156,7 @@ function InfoRow({ label, value, alignValue, labelClassName, valueClassName }: I
           alignValue === 'right' ? 'ml-auto text-right' : 'min-w-0 flex-1 break-keep',
         )}
       >
-        {value ?? '-'}
+        {formatEmptyValue(value)}
       </span>
     </div>
   );
@@ -185,13 +188,22 @@ function MemberDetailCardinalTooltip({
   children: ReactNode;
   content: string;
 }) {
+  const [open, setOpen] = useState(false);
+  // 터치에는 호버가 없어 탭으로 여닫는다. Radix가 포인터를 누르는 순간 닫아버리므로
+  // 누르기 직전 상태를 따로 기억해 두고 그 값을 뒤집는다.
+  const openBeforePressRef = useRef(false);
+
   return (
-    <Tooltip>
+    <Tooltip open={open} onOpenChange={setOpen}>
       <TooltipTrigger asChild>
         <button
           type="button"
-          className="inline-flex cursor-default"
+          className="inline-flex cursor-pointer"
           aria-label={`숨겨진 활동기수 ${content}`}
+          onPointerDown={() => {
+            openBeforePressRef.current = open;
+          }}
+          onClick={() => setOpen(!openBeforePressRef.current)}
         >
           <MemberDetailCardinalTag>{children}</MemberDetailCardinalTag>
         </button>

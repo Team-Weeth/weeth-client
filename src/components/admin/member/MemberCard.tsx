@@ -6,6 +6,7 @@ import { CardinalTagList } from '@/components/admin/CardinalTagList';
 import { SelectionCheckbox } from '@/components/admin/SelectionCheckbox';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { cn } from '@/lib/cn';
+import { formatEmptyValue } from '@/utils/shared/formatEmptyValue';
 import type { Member } from '@/types/admin/member';
 import { MemberStatusBadge } from './MemberStatusBadge';
 
@@ -65,7 +66,9 @@ function MemberCard({
 
           <div className="min-w-0 flex-1 pt-[6px]">
             <p className="typo-sub3 text-text-strong truncate">{member.name}</p>
-            <p className="typo-caption2 text-text-alternative truncate">{member.position}</p>
+            <p className="typo-caption2 text-text-alternative truncate">
+              {formatEmptyValue(member.position)}
+            </p>
           </div>
 
           <MemberStatusBadge
@@ -92,8 +95,8 @@ function MemberCard({
 
       <div className="flex min-w-0 items-end justify-between gap-300 px-[14px] pt-[14px] pb-300">
         <div className="typo-caption2 text-text-alternative min-w-0">
-          <p className="truncate">{member.department}</p>
-          <p className="truncate">{member.studentId}</p>
+          <p className="truncate">{formatEmptyValue(member.department)}</p>
+          <p className="truncate">{formatEmptyValue(member.studentId)}</p>
         </div>
 
         <CardinalTagList

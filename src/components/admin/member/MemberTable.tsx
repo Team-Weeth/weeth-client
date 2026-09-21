@@ -20,6 +20,15 @@ import { TablePagination } from '@/components/admin/TablePagination';
 import { MemberTableRow } from './MemberTableRow';
 import { useMockMemberPositions } from './MockMemberPositionsProvider';
 
+/** 표를 감싼 가장 가까운 스크롤 컨테이너. 없으면 표 래퍼 자신을 돌려준다. */
+function findScrollContainer(node: HTMLElement | null) {
+  for (let element = node; element; element = element.parentElement) {
+    const { overflowX, overflowY } = getComputedStyle(element);
+    if (/auto|scroll/.test(`${overflowX} ${overflowY}`)) return element;
+  }
+  return node;
+}
+
 interface MemberTableProps extends React.HTMLAttributes<HTMLDivElement> {
   fixedHeight?: boolean;
   scrollResetKey?: string;
@@ -48,10 +57,7 @@ function MemberTable({
   ...props
 }: MemberTableProps) {
   const { warningEnabled } = useClubFeatures();
-  const scrollRef = React.useRef<HTMLDivElement>(null);
-  React.useEffect(() => {
-    if (scrollRef.current) scrollRef.current.scrollTop = 0;
-  }, [scrollResetKey]);
+  const wrapperRef = React.useRef<HTMLDivElement>(null);
   const [internalSelectedIds, setInternalSelectedIds] = useState<Set<string>>(new Set());
   const [showStickyShadow, setShowStickyShadow] = useState(false);
   const { getPositionId, setPosition } = useMockMemberPositions();
@@ -83,9 +89,29 @@ function MemberTable({
     setSelectedIds(next);
   };
 
-  const handleTableScroll = (event: React.UIEvent<HTMLDivElement>) => {
-    setShowStickyShadow(event.currentTarget.scrollLeft > 0);
-  };
+  // 스크롤 주체가 뷰포트 폭에 따라 달라진다. 모바일은 바깥 컨테이너, 데스크톱은 표 래퍼 자신.
+  React.useEffect(() => {
+    let container: HTMLElement | null = null;
+    const handleScroll = () => setShowStickyShadow((container?.scrollLeft ?? 0) > 0);
+    const attach = () => {
+      const next = findScrollContainer(wrapperRef.current);
+      if (next === container) return;
+      container?.removeEventListener('scroll', handleScroll);
+      container = next;
+      container?.addEventListener('scroll', handleScroll, { passive: true });
+    };
+    attach();
+    window.addEventListener('resize', attach);
+    return () => {
+      window.removeEventListener('resize', attach);
+      container?.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
+
+  React.useEffect(() => {
+    const container = findScrollContainer(wrapperRef.current);
+    if (container) container.scrollTop = 0;
+  }, [scrollResetKey]);
 
   React.useEffect(() => {
     if (page <= currentPage) return;
@@ -94,19 +120,20 @@ function MemberTable({
 
   return (
     <div className={cn('min-w-0', className)} {...props}>
-      <div className="border-line max-tablet:rounded-none max-tablet:border-x-0 max-tablet:border-b-0 overflow-hidden rounded-sm border">
+      {/* 모바일에서는 바깥 컨테이너가 스크롤을 맡아야 헤더가 고정되므로 잘라내지 않는다. */}
+      <div className="border-line max-tablet:rounded-none max-tablet:border-x-0 max-tablet:border-b-0 max-tablet:overflow-visible overflow-hidden rounded-sm border">
         <Table
           wrapperClassName={cn(
-            'max-tablet:scrollbar-none',
+            'max-tablet:scrollbar-none max-tablet:overflow-visible',
             // 헤더 44px + 멤버 10행 × 64px. 10명 이하는 내용 높이를 그대로 사용한다.
             fixedHeight && members.length > 10 && 'tablet:max-h-[684px] tablet:overflow-y-auto',
           )}
-          wrapperProps={{ ref: scrollRef, onScroll: handleTableScroll }}
+          wrapperProps={{ ref: wrapperRef }}
           className="w-max min-w-full border-separate border-spacing-0"
         >
           <TableHeader
             className={cn(
-              'bg-container-neutral-alternative',
+              'bg-container-neutral-alternative max-tablet:sticky max-tablet:top-0 max-tablet:z-30',
               fixedHeight && 'tablet:sticky tablet:top-0 tablet:z-30',
             )}
           >
@@ -132,7 +159,7 @@ function MemberTable({
                     column.width,
                     column.id === 'profile' &&
                       cn(
-                        'max-tablet:sticky max-tablet:left-12 max-tablet:z-40 max-tablet:w-[132px] max-tablet:min-w-[132px] max-tablet:px-0 px-0',
+                        'max-tablet:sticky max-tablet:left-12 max-tablet:z-40 max-tablet:w-28 max-tablet:min-w-28 max-tablet:px-0 px-0',
                         showStickyShadow &&
                           'max-tablet:after:absolute max-tablet:after:top-0 max-tablet:after:right-[-24px] max-tablet:after:h-full max-tablet:after:w-6 max-tablet:after:bg-[image:var(--member-table-sticky-shadow)] max-tablet:after:content-[""]',
                       ),
