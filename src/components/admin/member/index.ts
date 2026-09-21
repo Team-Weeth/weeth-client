@@ -9,14 +9,8 @@ export {
 } from './modal/MemberDetailBottomSheet';
 export { MemberPageContent } from './MemberPageContent';
 export { MemberPositionTag, type MemberPositionTagProps } from './MemberPositionTag';
-export {
-  MemberInformationContent,
-  type MemberInformationContentProps,
-} from './MemberInformationContent';
-export {
-  MemberInformationFields,
-  type MemberInformationFieldsProps,
-} from './MemberInformationFields';
+export { MemberPositionContent, type MemberPositionContentProps } from './MemberPositionContent';
+export { MemberPositionFields, type MemberPositionFieldsProps } from './MemberPositionFields';
 export {
   MemberPositionEditor,
   type MemberPositionEditorProps,

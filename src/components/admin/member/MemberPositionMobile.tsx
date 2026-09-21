@@ -13,11 +13,11 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/DropdownMenu';
 import { cn } from '@/lib/cn';
-import { MEMBER_INFORMATION_FIELDS } from './MemberInformationFields';
+import { MEMBER_POSITION_FIELDS } from './MemberPositionFields';
 import { MemberPositionEditor, type MemberPositionEditorProps } from './MemberPositionEditor';
 import { PositionFieldIcon } from './PositionFieldIcon';
 
-function MemberInformationMobile({ className, ...editorProps }: MemberPositionEditorProps) {
+function MemberPositionMobile({ className, ...editorProps }: MemberPositionEditorProps) {
   const router = useRouter();
 
   return (
@@ -60,7 +60,7 @@ function MemberInformationMobile({ className, ...editorProps }: MemberPositionEd
           sideOffset={10}
           className="divide-line dark:shadow-dark max-h-[var(--radix-dropdown-menu-content-available-height)] w-[var(--radix-dropdown-menu-trigger-width)] divide-y shadow-lg"
         >
-          {MEMBER_INFORMATION_FIELDS.map(({ label, icon, custom }) => (
+          {MEMBER_POSITION_FIELDS.map(({ label, icon, custom }) => (
             <DropdownMenuItem
               key={label}
               disabled={!custom}
@@ -92,4 +92,4 @@ function MemberInformationMobile({ className, ...editorProps }: MemberPositionEd
   );
 }
 
-export { MemberInformationMobile };
+export { MemberPositionMobile };

@@ -1,7 +1,7 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemberPositionEditor } from '../MemberPositionEditor';
-import { MemberInformationFields } from '../MemberInformationFields';
+import { MemberPositionFields } from '../MemberPositionFields';
 
 it('빈 옵션의 색상은 허용하고 이름을 입력할 때만 차단하며 비우면 다시 허용한다', async () => {
   const user = userEvent.setup();
@@ -93,7 +93,7 @@ it('11자부터 입력을 막고 10/10과 오류 테두리를 유지하며 수�
 });
 
 it('기본정보 필드 5개 중 포지션에만 커스텀 필드 태그를 표시한다', () => {
-  render(<MemberInformationFields />);
+  render(<MemberPositionFields />);
   expect(screen.getAllByRole('listitem')).toHaveLength(5);
   expect(screen.getAllByText('커스텀 필드')).toHaveLength(1);
   expect(screen.getByText('커스텀 필드').closest('li')).toHaveTextContent('포지션');

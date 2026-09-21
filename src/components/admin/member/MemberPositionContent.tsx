@@ -1,17 +1,17 @@
 'use client';
 
 import { useMediaQuery } from '@/hooks/useMediaQuery';
-import { MemberInformationMobile } from './MemberInformationMobile';
+import { MemberPositionMobile } from './MemberPositionMobile';
 import { cn } from '@/lib/cn';
-import { MemberInformationFields } from './MemberInformationFields';
+import { MemberPositionFields } from './MemberPositionFields';
 import { MemberPositionEditor, type MemberPositionEditorProps } from './MemberPositionEditor';
 
-type MemberInformationContentProps = MemberPositionEditorProps;
+type MemberPositionContentProps = MemberPositionEditorProps;
 
 /** 진입 경로와 API가 확정되면 페이지에서 onSave를 연결한다. */
-function MemberInformationContent({ className, ...editorProps }: MemberInformationContentProps) {
+function MemberPositionContent({ className, ...editorProps }: MemberPositionContentProps) {
   const isMobile = useMediaQuery('(max-width: 695.98px)');
-  if (isMobile) return <MemberInformationMobile className={className} {...editorProps} />;
+  if (isMobile) return <MemberPositionMobile className={className} {...editorProps} />;
 
   return (
     <div
@@ -22,11 +22,11 @@ function MemberInformationContent({ className, ...editorProps }: MemberInformati
     >
       <h1 className="typo-h2 text-text-strong">부원 정보</h1>
       <div className="desktop:grid-cols-[300px_minmax(0,1fr)] grid min-w-0 grid-cols-1 items-start gap-700">
-        <MemberInformationFields />
+        <MemberPositionFields />
         <MemberPositionEditor {...editorProps} />
       </div>
     </div>
   );
 }
 
-export { MemberInformationContent, type MemberInformationContentProps };
+export { MemberPositionContent, type MemberPositionContentProps };
