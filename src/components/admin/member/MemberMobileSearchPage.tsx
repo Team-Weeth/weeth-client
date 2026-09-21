@@ -70,7 +70,7 @@ function MemberMobileSearchPage({
             type="text"
             value={searchQuery}
             onChange={(event) => onSearchQueryChange(event.target.value)}
-            placeholder="이름으로 검색"
+            placeholder="이름, 역할, 학과..."
             className="typo-body2 text-text-normal placeholder:text-text-disabled min-w-0 flex-1 bg-transparent py-[2px] pl-200 focus:outline-none"
           />
           <button
