@@ -46,10 +46,10 @@ export default function DevMarkdownPreviewPage() {
           <details className="text-text-alternative typo-caption1">
             <summary className="cursor-pointer py-2">원본 / 변환 결과 문자열 보기</summary>
             <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-              <pre className="bg-gray-100 overflow-x-auto rounded p-3 whitespace-pre-wrap">
+              <pre className="overflow-x-auto rounded bg-gray-100 p-3 whitespace-pre-wrap">
                 {sample.raw}
               </pre>
-              <pre className="bg-gray-100 overflow-x-auto rounded p-3 whitespace-pre-wrap">
+              <pre className="overflow-x-auto rounded bg-gray-100 p-3 whitespace-pre-wrap">
                 {sample.converted}
               </pre>
             </div>

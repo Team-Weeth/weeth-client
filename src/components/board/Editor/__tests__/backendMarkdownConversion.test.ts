@@ -40,10 +40,7 @@ describe('백엔드 마크다운 변환 결과의 Tiptap 파싱', () => {
         '<p><strong>굵게</strong> <em>기울임</em> <s>취소선</s> <code>코드</code></p>',
       ],
       ['불릿 리스트', '<ul>\n<li><p>항목 1</p></li>\n<li><p>항목 2</p></li>\n</ul>'],
-      [
-        '중첩 리스트',
-        '<ul>\n<li><p>항목</p><ul>\n<li><p>중첩</p></li>\n</ul></li>\n</ul>',
-      ],
+      ['중첩 리스트', '<ul>\n<li><p>항목</p><ul>\n<li><p>중첩</p></li>\n</ul></li>\n</ul>'],
       ['번호 리스트', '<ol>\n<li><p>첫째</p></li>\n<li><p>둘째</p></li>\n</ol>'],
       ['인용', '<blockquote><p>인용문<br>둘째 줄</p></blockquote>'],
       ['구분선', '<p>위</p>\n<hr>\n<p>아래</p>'],
