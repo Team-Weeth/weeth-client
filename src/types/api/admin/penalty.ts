@@ -5,12 +5,16 @@ type S<K extends keyof components['schemas']> = components['schemas'][K];
 // ── Requests ──────────────────────────────────────────────────────────────────
 
 /** 페널티 부여 요청 */
-export type AdminSavePenaltyRequest =
-  S<'com.weeth.domain.penalty.application.dto.request.SavePenaltyRequest'>;
+export type AdminSavePenaltyRequest = Omit<
+  S<'com.weeth.domain.penalty.application.dto.request.SavePenaltyRequest'>,
+  'score'
+>;
 
 /** 페널티 수정 요청 (penaltyId 외 필드는 생략 시 변경 안 함) */
-export type AdminUpdatePenaltyRequest =
-  S<'com.weeth.domain.penalty.application.dto.request.UpdatePenaltyRequest'>;
+export type AdminUpdatePenaltyRequest = Omit<
+  S<'com.weeth.domain.penalty.application.dto.request.UpdatePenaltyRequest'>,
+  'score'
+>;
 
 /** 페널티 규정 저장 요청 (content가 비면 규정 삭제) */
 export type AdminSavePenaltyRuleRequest =
@@ -23,8 +27,10 @@ export type AdminMemberPenaltyDetail =
   S<'com.weeth.domain.penalty.application.dto.response.MemberPenaltyDetailResponse'>;
 
 /** 페널티 이력 한 건 */
-export type AdminPenaltyDetail =
-  S<'com.weeth.domain.penalty.application.dto.response.PenaltyDetailResponse'>;
+export type AdminPenaltyDetail = Omit<
+  S<'com.weeth.domain.penalty.application.dto.response.PenaltyDetailResponse'>,
+  'score'
+>;
 
 // ── Derived types ─────────────────────────────────────────────────────────────
 

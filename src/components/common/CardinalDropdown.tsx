@@ -9,14 +9,23 @@ import {
 } from '@/components/ui/DropdownMenu';
 import { Icon } from '@/components/ui/Icon';
 import { cn } from '@/lib/cn';
-import type { Cardinal } from '@/types/admin/cardinal';
+
+/** Cardinal 전체가 아니라 드롭다운이 실제로 쓰는 필드만 요구한다. */
+interface CardinalOption {
+  id: number;
+  cardinalNumber: number;
+}
+
+const CARDINAL_DROPDOWN_MAX_HEIGHT_CLASS =
+  'max-h-[min(var(--radix-dropdown-menu-content-available-height),270px)]';
 
 interface CardinalDropdownProps {
-  cardinals: Cardinal[];
-  activeCardinal?: Cardinal;
+  cardinals: CardinalOption[];
+  activeCardinal?: CardinalOption;
   onSelect: (id: number) => void;
   onSelectAll?: () => void;
   className?: string;
+  disabled?: boolean;
 }
 
 function CardinalDropdown({
@@ -25,8 +34,10 @@ function CardinalDropdown({
   onSelect,
   onSelectAll,
   className,
+  disabled = false,
 }: CardinalDropdownProps) {
   const sortedCardinals = [...cardinals].sort((a, b) => b.cardinalNumber - a.cardinalNumber);
+  const optionCount = sortedCardinals.length + (onSelectAll ? 1 : 0);
   const label = activeCardinal
     ? `${activeCardinal.cardinalNumber}기`
     : onSelectAll
@@ -40,8 +51,10 @@ function CardinalDropdown({
       <DropdownMenuTrigger asChild>
         <button
           type="button"
+          disabled={disabled}
+          aria-label="기수 선택"
           className={cn(
-            'bg-button-neutral typo-button1 text-text-strong hover:bg-button-neutral-interaction group flex cursor-pointer items-center justify-center gap-100 rounded-md px-400 py-200',
+            'bg-button-neutral typo-button1 text-text-strong hover:bg-button-neutral-interaction group flex cursor-pointer items-center justify-center gap-100 rounded-md px-400 py-200 disabled:cursor-not-allowed disabled:opacity-50',
             className,
           )}
         >
@@ -53,7 +66,10 @@ function CardinalDropdown({
           />
         </button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
+      <DropdownMenuContent
+        align="end"
+        className={optionCount > 5 ? CARDINAL_DROPDOWN_MAX_HEIGHT_CLASS : undefined}
+      >
         {onSelectAll && <DropdownMenuItem onSelect={onSelectAll}>전체</DropdownMenuItem>}
         {sortedCardinals.map((cardinal) => (
           <DropdownMenuItem
@@ -72,4 +88,4 @@ function CardinalDropdown({
   );
 }
 
-export { CardinalDropdown, type CardinalDropdownProps };
+export { CardinalDropdown, type CardinalDropdownProps, type CardinalOption };

@@ -5,9 +5,8 @@ import {
 } from '@/utils/admin/penaltyPageUtils';
 
 describe('getNextPenaltySort', () => {
-  it('CARDINAL_DESC → CARDINAL_ASC → PENALTY_DESC → CARDINAL_DESC 순으로 순환한다', () => {
-    expect(getNextPenaltySort('CARDINAL_DESC')).toBe('CARDINAL_ASC');
-    expect(getNextPenaltySort('CARDINAL_ASC')).toBe('PENALTY_DESC');
+  it('기수 내림차순과 페널티 내림차순만 번갈아 선택한다', () => {
+    expect(getNextPenaltySort('CARDINAL_DESC')).toBe('PENALTY_DESC');
     expect(getNextPenaltySort('PENALTY_DESC')).toBe('CARDINAL_DESC');
   });
 });

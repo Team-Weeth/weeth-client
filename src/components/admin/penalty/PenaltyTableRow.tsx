@@ -1,7 +1,7 @@
 import { CardinalTagList } from '@/components/admin/CardinalTagList';
 import { SelectionCheckbox } from '@/components/admin/SelectionCheckbox';
 import { TableTextCell } from '@/components/admin/TableTextCell';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { TableCell, TableRow } from '@/components/ui/table';
 import { PENALTY_COLUMN_WIDTH } from '@/constants/admin/penaltyTable.constants';
 import { cn } from '@/lib/cn';
@@ -38,6 +38,9 @@ function PenaltyTableRow({ member, selected, onToggle, onOpenDetail }: PenaltyTa
       <TableCell className={cn('h-16 p-0 pr-400', PENALTY_COLUMN_WIDTH.profile)}>
         <div className="flex min-w-0 items-center gap-300">
           <Avatar size={40}>
+            {member.profileImageUrl && (
+              <AvatarImage src={member.profileImageUrl} alt={`${member.name} 프로필 이미지`} />
+            )}
             <AvatarFallback />
           </Avatar>
           <div className="flex min-w-0 flex-col justify-center gap-0.5">

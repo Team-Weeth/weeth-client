@@ -1,3 +1,5 @@
+import type { PageResponse } from '@/types/common';
+
 export type MemberRole = 'USER' | 'ADMIN';
 export type MemberStatus = 'ACTIVE' | 'INACTIVE' | 'BANNED';
 
@@ -148,8 +150,17 @@ export interface MyPageAttendedSessionItem {
 
 export interface MyPagePenaltyItem {
   penaltyId: number;
-  score: number;
+
   penaltyDescription: string;
   penaltyType: string;
   createdAt: string;
+}
+
+export interface MyPagePenaltiesResponse {
+  penaltyCount: number;
+  /** 동아리 경고 기능 비활성화 시 null */
+  warningCount: number | null;
+  /** 소속 기수 목록 */
+  cardinals: number[];
+  penalties: PageResponse<MyPagePenaltyItem>;
 }

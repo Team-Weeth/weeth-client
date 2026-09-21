@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import BackIcon from '@/assets/icons/back.svg';
 import ConvertIcon from '@/assets/icons/convert.svg';
 import SearchIcon from '@/assets/icons/search.svg';
+import { MemberPageSizeSelector, type MemberPageSize } from './MemberPageSizeSelector';
 import { Icon } from '@/components/ui/Icon';
 import type { Cardinal } from '@/types/admin/cardinal';
 import type { MemberSortBy } from '@/utils/admin/memberPageUtils';
@@ -13,6 +14,8 @@ import { MemberSearchBar } from './MemberSearchBar';
 import { MemberViewToggle, type MemberViewMode } from './MemberViewToggle';
 
 interface MemberPageHeaderProps {
+  pageSize: MemberPageSize;
+  onPageSizeChange: (size: MemberPageSize) => void;
   cardinals: Cardinal[];
   selectedCardinal: number | 'all';
   onSelectCardinal: (cardinal: number | 'all') => void;
@@ -26,6 +29,8 @@ interface MemberPageHeaderProps {
 }
 
 function MemberPageHeader({
+  pageSize,
+  onPageSizeChange,
   cardinals,
   selectedCardinal,
   onSelectCardinal,
@@ -86,11 +91,17 @@ function MemberPageHeader({
         </div>
       </div>
 
-      <div className="max-tablet:px-0 flex h-14 items-end overflow-hidden px-700">
+      <div className="max-tablet:px-0 flex h-14 items-end justify-between gap-10 overflow-hidden pr-500 pl-700">
         <CardinalPillList
+          className="min-w-0 flex-1"
           cardinals={cardinals}
           selectedCardinal={selectedCardinal}
           onSelectCardinal={onSelectCardinal}
+        />
+        <MemberPageSizeSelector
+          className="max-tablet:hidden shrink-0 self-center"
+          value={pageSize}
+          onValueChange={onPageSizeChange}
         />
       </div>
     </section>
