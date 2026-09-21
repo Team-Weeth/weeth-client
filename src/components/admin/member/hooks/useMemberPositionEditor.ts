@@ -64,30 +64,12 @@ function useMemberPositionEditor({ initialOptions, onSave }: MemberPositionEdito
   }
 
   function updateOption(id: string, patch: Partial<Pick<MemberPositionOption, 'name' | 'color'>>) {
-    if (
-      patch.color &&
-      options.some(
-        (option) => option.id !== id && option.name.trim() && option.color === patch.color,
-      )
-    ) {
+    // 이름을 입력했는지와 무관하게 다른 옵션이 쥐고 있는 색은 가져올 수 없다.
+    if (patch.color && options.some((option) => option.id !== id && option.color === patch.color)) {
       return;
     }
 
-    const next = options.map((option) => (option.id === id ? { ...option, ...patch } : option));
-    if (patch.color) {
-      const usedColors = new Set(next.map((option) => option.color));
-      for (const option of next) {
-        if (option.id === id || option.name.trim() || option.color !== patch.color) continue;
-        const availableColor = POSITION_COLORS.find((color) => !usedColors.has(color.value));
-        if (availableColor) {
-          // 빈 옵션만 재배정하며 기존 state의 객체는 변경하지 않는다.
-          const index = next.indexOf(option);
-          next[index] = { ...option, color: availableColor.value };
-          usedColors.add(availableColor.value);
-        }
-      }
-    }
-    updateOptions(next);
+    updateOptions(options.map((option) => (option.id === id ? { ...option, ...patch } : option)));
   }
 
   function removeOption(id: string) {
@@ -109,9 +91,7 @@ function useMemberPositionEditor({ initialOptions, onSave }: MemberPositionEdito
   }
 
   function getUsedColors(id: string) {
-    return options
-      .filter((option) => option.id !== id && option.name.trim().length > 0)
-      .map((option) => option.color);
+    return options.filter((option) => option.id !== id).map((option) => option.color);
   }
 
   return {

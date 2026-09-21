@@ -2,6 +2,7 @@
 
 import { useId, useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import PeopleIcon from '@/assets/icons/people.svg';
 import ArrowFillDownIcon from '@/assets/icons/arrow_fill_down.svg';
 import ListIcon from '@/assets/icons/admin/ic_admin_list.svg';
@@ -17,6 +18,7 @@ interface MemberNavGroupProps {
 }
 
 function MemberNavGroup({ clubId, pathname, collapsed }: MemberNavGroupProps) {
+  const router = useRouter();
   const memberPath = `/${clubId}/admin/member`;
   const isMemberRoute = pathname.startsWith(memberPath);
   const [open, setOpen] = useState(isMemberRoute);
@@ -29,6 +31,17 @@ function MemberNavGroup({ clubId, pathname, collapsed }: MemberNavGroupProps) {
     setWasMemberRoute(isMemberRoute);
     setOpen(isMemberRoute);
   }
+
+  // 다른 페이지에서 눌렀을 때는 펼치기만 하지 않고 멤버 목록까지 바로 이동한다.
+  // 이미 멤버 경로 안이라면 평소처럼 펼침/접힘만 토글한다.
+  const handleTriggerClick = () => {
+    if (!isMemberRoute) {
+      setOpen(true);
+      router.push(memberPath);
+      return;
+    }
+    setOpen((previous) => !previous);
+  };
 
   const expanded = open;
   const items = [
@@ -49,7 +62,7 @@ function MemberNavGroup({ clubId, pathname, collapsed }: MemberNavGroupProps) {
           aria-label="멤버 관리"
           aria-expanded={expanded}
           aria-controls={menuId}
-          onClick={() => setOpen((previous) => !previous)}
+          onClick={handleTriggerClick}
           className={cn(
             'text-text-normal hover:bg-container-neutral-interaction flex w-full shrink-0 cursor-pointer items-center rounded-md',
             collapsed ? 'justify-center p-400' : 'gap-300 px-400 py-[14px]',
