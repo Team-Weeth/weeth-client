@@ -41,7 +41,8 @@ function NavItem({
   );
 
   const cls = cn(
-    'flex w-full items-center rounded-md transition-colors text-text-normal hover:bg-container-neutral-interaction',
+    // 세로 공간이 부족해도 눌리지 않도록 shrink-0을 유지한다.
+    'flex w-full shrink-0 items-center rounded-md transition-colors text-text-normal hover:bg-container-neutral-interaction',
     collapsed ? 'justify-center p-400' : 'gap-300 px-400 py-[14px]',
     isActive && 'bg-container-neutral-interaction',
   );

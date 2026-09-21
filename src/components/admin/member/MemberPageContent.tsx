@@ -8,7 +8,8 @@ import { MemberMobileSearchPage } from '@/components/admin/member/MemberMobileSe
 import { MemberPageHeader } from '@/components/admin/member/MemberPageHeader';
 import { MemberPageModals } from '@/components/admin/member/MemberPageModals';
 import { MemberTable } from '@/components/admin/member/MemberTable';
-import { MemberTopBar, MobileMemberTopBar } from '@/components/admin/member/MemberTopBar';
+import { MemberTopBar } from '@/components/admin/member/MemberTopBar';
+import { MobileMemberTopBar } from '@/components/admin/member/MobileMemberTopBar';
 import type { MemberViewMode } from '@/components/admin/member/MemberViewToggle';
 import type { Member } from '@/types/admin/member';
 import { EMPTY_MEMBER_PAGE, useAdminMembers, useAdminMembersInfinite } from '@/hooks/queries/admin';
@@ -24,6 +25,9 @@ import { filterMembers, sortMembers } from '@/utils/admin/memberPageUtils';
 import { useMemberListState } from './hooks/useMemberListState';
 import { useMemberSelection } from './hooks/useMemberSelection';
 
+import { ChangePositionModal } from './modal/ChangePositionModal';
+import { MockMemberPositionsProvider, useMockMemberPositions } from './MockMemberPositionsProvider';
+
 const MOBILE_MEMBER_PAGE_SIZE = 10;
 const MEMBER_VIEW_MODE_QUERY_KEY = 'view';
 
@@ -31,6 +35,16 @@ const isMemberViewMode = (value: string | null): value is MemberViewMode =>
   value === 'table' || value === 'card';
 
 function MemberPageContent() {
+  return (
+    <MockMemberPositionsProvider>
+      <MemberPageBody />
+    </MockMemberPositionsProvider>
+  );
+}
+
+function MemberPageBody() {
+  const { setPosition } = useMockMemberPositions();
+  const [isPositionOpen, setIsPositionOpen] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -173,6 +187,7 @@ function MemberPageContent() {
   };
   const memberSelectionBarProps = {
     selectedCount,
+    onChangePosition: () => setIsPositionOpen(true),
     targetRole,
     targetBanAction,
     onBack: clearSelection,
@@ -300,6 +315,15 @@ function MemberPageContent() {
         </div>
       </div>
 
+      <ChangePositionModal
+        open={isPositionOpen}
+        onOpenChange={setIsPositionOpen}
+        memberCount={selectedCount}
+        memberName={selectedMembers[0]?.name}
+        onSubmit={(positionId) => {
+          selectedIds.forEach((memberId) => setPosition(memberId, positionId));
+        }}
+      />
       <MemberPageModals
         detailMember={detailMember}
         cardinalModalMember={cardinalModalMember}

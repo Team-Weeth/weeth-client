@@ -15,10 +15,8 @@ jest.mock('@/hooks/board/useIntersectionObserver', () => ({
 }));
 jest.mock('../hooks/useMemberBulkActions', () => ({ useMemberBulkActions: () => ({}) }));
 jest.mock('../MemberPageModals', () => ({ MemberPageModals: () => null }));
-jest.mock('../MemberTopBar', () => ({
-  MemberTopBar: () => null,
-  MobileMemberTopBar: () => null,
-}));
+jest.mock('../MemberTopBar', () => ({ MemberTopBar: () => null }));
+jest.mock('../MobileMemberTopBar', () => ({ MobileMemberTopBar: () => null }));
 jest.mock('../MemberCardList', () => ({ MemberCardList: () => null }));
 jest.mock('../MemberMobileSearchPage', () => ({ MemberMobileSearchPage: () => null }));
 jest.mock('../CardinalPillList', () => ({ CardinalPillList: () => null }));

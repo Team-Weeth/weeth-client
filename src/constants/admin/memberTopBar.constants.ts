@@ -62,7 +62,8 @@ export function getTopBarActions({
       : {
           id: 'ban',
           label: '유저 추방',
-          title: `${selectedCount}명의 멤버를 추방하시겠습니까?`,
+          title: '선택한 유저를 추방하시겠어요?',
+          description: '신중히 확인 후 진행해 주세요.',
           handler: onBan,
           disabled: !onBan || targetBanAction === null,
         },
@@ -80,6 +81,17 @@ export function getTopBarActions({
   }
 
   return actions;
+}
+
+/** 유저 추방/복구처럼 멤버 상태를 바꾸는 액션. 다른 액션과 분리해 배치한다. */
+export const isMemberStateAction = (action: { id: string }) =>
+  action.id === 'ban' || action.id === 'restore';
+
+/** 기수 변경 모달 상단 문구. 1명만 선택했으면 이름을 노출한다. */
+export function getChangeCardinalsOverline(selectedCount: number, selectedMemberName?: string) {
+  return selectedCount === 1 && selectedMemberName
+    ? `'${selectedMemberName}'의 기수를 선택하세요`
+    : `${selectedCount}명의 기수를 일괄 변경합니다.`;
 }
 
 export type { TopBarAction };

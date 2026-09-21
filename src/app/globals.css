@@ -489,6 +489,7 @@
   --shadow-dialog: 0 10px 40px 0 rgba(0, 0, 0, 0.4);
   --shadow-sm: var(--shadow-sm);
   --shadow-md: var(--shadow-md);
+  --shadow-dark: 0 1px 10px 0 rgba(0, 0, 0, 0.4);
   --shadow-weeth: 0 0 5px 0 var(--brand-primary);
   --shadow-date-header: var(--shadow-date-header);
 

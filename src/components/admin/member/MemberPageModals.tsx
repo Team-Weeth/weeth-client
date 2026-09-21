@@ -13,6 +13,8 @@ import {
 import { ChangeCardinalsModal } from './modal/ChangeCardinalsModal';
 import { MemberDetailBottomSheet } from './modal/MemberDetailBottomSheet';
 import { MemberDetailModal } from './modal/MemberDetailModal';
+import { ChangePositionModal } from './modal/ChangePositionModal';
+import { useMockMemberPositions } from './MockMemberPositionsProvider';
 
 interface ForceConfirmState {
   requests: CardinalChangeRequest[];
@@ -53,6 +55,9 @@ function MemberPageModals({
   onChangeCardinals,
   onTransferLead,
 }: MemberPageModalsProps) {
+  const { setPosition } = useMockMemberPositions();
+  const [positionMember, setPositionMember] = useState<Member | null>(null);
+  const positionOpenTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [pendingDetailAction, setPendingDetailAction] = useState<TopBarAction | null>(null);
   const [displayedDetailMember, setDisplayedDetailMember] = useState<Member | null>(detailMember);
   const detailCacheResetTimeoutRef = useRef<ReturnType<typeof setTimeout> | number | null>(null);
@@ -62,6 +67,7 @@ function MemberPageModals({
 
   useEffect(
     () => () => {
+      if (positionOpenTimeoutRef.current) clearTimeout(positionOpenTimeoutRef.current);
       if (detailCacheResetTimeoutRef.current) {
         clearTimeout(detailCacheResetTimeoutRef.current);
       }
@@ -83,6 +89,15 @@ function MemberPageModals({
     : undefined;
   const handleDetailTransferLead =
     isLead && detailMember ? () => onTransferLead(detailMember.clubMemberId) : undefined;
+  // 데스크톱은 모달끼리 바로 교체되므로 바텀시트처럼 퇴장 애니메이션을 기다리지 않는다.
+  const handleDetailPositionChange = detailMember
+    ? () => {
+        const targetMember = detailMember;
+
+        onCloseDetail();
+        setPositionMember(targetMember);
+      }
+    : undefined;
   const handleMobileDetailActionRequest = (action: TopBarAction) => {
     setDisplayedDetailMember(detailMember);
     onCloseDetail();
@@ -118,6 +133,7 @@ function MemberPageModals({
           onBan={handleDetailBan}
           onRestore={handleDetailRestore}
           onChangeRole={handleDetailRoleChange}
+          onChangePosition={handleDetailPositionChange}
           onChangeCardinals={handleDetailCardinalsChange}
           onTransferLead={handleDetailTransferLead}
         />
@@ -141,10 +157,36 @@ function MemberPageModals({
           onRestore={handleDetailRestore}
           onChangeRole={handleDetailRoleChange}
           onChangeCardinals={handleMobileDetailCardinalsChange}
+          onChangePosition={
+            detailMember
+              ? () => {
+                  const targetMember = detailMember;
+                  setDisplayedDetailMember(targetMember);
+                  onCloseDetail();
+                  if (positionOpenTimeoutRef.current) clearTimeout(positionOpenTimeoutRef.current);
+                  positionOpenTimeoutRef.current = setTimeout(() => {
+                    setPositionMember(targetMember);
+                    positionOpenTimeoutRef.current = null;
+                  }, DETAIL_BOTTOM_SHEET_EXIT_DELAY_MS);
+                }
+              : undefined
+          }
           onTransferLead={handleDetailTransferLead}
           onActionRequest={handleMobileDetailActionRequest}
         />
       )}
+
+      <ChangePositionModal
+        open={positionMember !== null}
+        onOpenChange={(open) => {
+          if (!open) setPositionMember(null);
+        }}
+        memberCount={1}
+        memberName={positionMember?.name}
+        onSubmit={(positionId) => {
+          if (positionMember) setPosition(positionMember.id, positionId);
+        }}
+      />
 
       <ChangeCardinalsModal
         open={cardinalModalMember !== null}
@@ -184,10 +226,13 @@ function MemberPageModals({
           onOpenChange={(open) => {
             if (!open) setPendingDetailAction(null);
           }}
+          status={pendingDetailAction.id === 'ban' ? 'danger' : 'default'}
           title={pendingDetailAction.title}
           description={pendingDetailAction.description}
         >
-          <AlertDialogAction onClick={handlePendingDetailActionConfirm}>확인</AlertDialogAction>
+          <AlertDialogAction onClick={handlePendingDetailActionConfirm}>
+            {pendingDetailAction.id === 'ban' ? '추방' : '확인'}
+          </AlertDialogAction>
           <AlertDialogCancel>취소</AlertDialogCancel>
         </AlertDialog>
       )}

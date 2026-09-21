@@ -1,5 +1,6 @@
 'use client';
 
+import { Fragment } from 'react';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel } from '@/components/ui/alert-dialog';
 import { BottomSheet } from '@/components/ui/bottom-sheet/BottomSheet';
 import { Button } from '@/components/ui/Button';
@@ -21,6 +22,7 @@ interface MemberDetailBottomSheetProps {
   onBan?: () => void;
   onRestore?: () => void;
   onChangeCardinals?: () => void;
+  onChangePosition?: () => void;
   onTransferLead?: () => void;
   onActionRequest?: (action: TopBarAction) => void;
 }
@@ -34,6 +36,7 @@ function MemberDetailBottomSheet({
   onBan,
   onRestore,
   onChangeCardinals,
+  onChangePosition,
   onTransferLead,
   onActionRequest,
 }: MemberDetailBottomSheetProps) {
@@ -69,11 +72,23 @@ function MemberDetailBottomSheet({
         <div className="flex flex-col gap-400">
           <div className="flex flex-wrap gap-200">
             {actions.map((action) => (
-              <MemberDetailActionButton
-                key={action.id}
-                action={action}
-                onActionRequest={onActionRequest}
-              />
+              <Fragment key={action.id}>
+                <MemberDetailActionButton
+                  key={action.id}
+                  action={action}
+                  onActionRequest={onActionRequest}
+                />
+                {action.id === 'changeRole' && onChangePosition && (
+                  <Button
+                    variant="secondary"
+                    size="md"
+                    className="bg-neutral-0 rounded-sm hover:bg-neutral-100 active:bg-neutral-100"
+                    onClick={onChangePosition}
+                  >
+                    포지션 변경
+                  </Button>
+                )}
+              </Fragment>
             ))}
 
             {onChangeCardinals && (
@@ -134,8 +149,15 @@ function MemberDetailActionButton({ action, onActionRequest }: MemberDetailActio
   if (onActionRequest) return button;
 
   return (
-    <AlertDialog title={action.title} description={action.description} trigger={button}>
-      <AlertDialogAction onClick={action.handler}>확인</AlertDialogAction>
+    <AlertDialog
+      status={action.id === 'ban' ? 'danger' : 'default'}
+      title={action.title}
+      description={action.description}
+      trigger={button}
+    >
+      <AlertDialogAction onClick={action.handler}>
+        {action.id === 'ban' ? '추방' : '확인'}
+      </AlertDialogAction>
       <AlertDialogCancel>취소</AlertDialogCancel>
     </AlertDialog>
   );

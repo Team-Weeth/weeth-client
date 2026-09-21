@@ -43,7 +43,8 @@ export { MemberPageModals, type ForceConfirmState } from './member/MemberPageMod
 export { MemberSearchBar, type MemberSearchBarProps } from './member/MemberSearchBar';
 export { MemberStatusBadge, type MemberStatusBadgeProps } from './member/MemberStatusBadge';
 export { MemberTable } from './member/MemberTable';
-export { MemberTopBar, MobileMemberTopBar, type MemberTopBarProps } from './member/MemberTopBar';
+export { MemberTopBar, type MemberTopBarProps } from './member/MemberTopBar';
+export { MobileMemberTopBar } from './member/MobileMemberTopBar';
 export {
   MemberViewToggle,
   type MemberViewMode,

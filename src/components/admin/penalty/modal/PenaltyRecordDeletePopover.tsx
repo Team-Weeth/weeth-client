@@ -7,6 +7,9 @@ import DeleteIcon from '@/assets/icons/delete_forever.svg';
 import { Button } from '@/components/ui/Button';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 
+/** 팝오버 하단이 트리거(삭제 버튼) 하단에서 이만큼 위에 오도록 겹쳐 띄운다. */
+const POPOVER_BOTTOM_GAP = 24;
+
 interface PenaltyRecordDeletePopoverProps {
   disabled: boolean;
   onConfirm: () => void;
@@ -18,6 +21,7 @@ export function PenaltyRecordDeletePopover({
 }: PenaltyRecordDeletePopoverProps) {
   const [open, setOpen] = useState(false);
   const [boundary, setBoundary] = useState<HTMLElement | null>(null);
+  const [triggerHeight, setTriggerHeight] = useState(0);
   const triggerRef = useRef<HTMLButtonElement>(null);
   const titleId = useId();
   const descriptionId = useId();
@@ -31,6 +35,7 @@ export function PenaltyRecordDeletePopover({
           setBoundary(
             triggerRef.current?.closest<HTMLElement>('[data-slot="dialog-content"]') ?? null,
           );
+          setTriggerHeight(triggerRef.current?.offsetHeight ?? 0);
         }
         setOpen(next);
       }}
@@ -47,7 +52,7 @@ export function PenaltyRecordDeletePopover({
         aria-describedby={descriptionId}
         side="top"
         align="end"
-        sideOffset={8}
+        sideOffset={POPOVER_BOTTOM_GAP - triggerHeight}
         collisionPadding={16}
         collisionBoundary={boundary ?? undefined}
         className="bg-background border-line w-[339px] max-w-[calc(100vw-32px)] gap-500 rounded-lg border p-400 whitespace-normal"

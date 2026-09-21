@@ -11,7 +11,7 @@ import AdminPaintIcon from '@/assets/icons/admin/ic_admin_paint.svg';
 import AdminPenaltyIcon from '@/assets/icons/admin/ic_admin_penalty.svg';
 import AdminScreenIcon from '@/assets/icons/admin/ic_admin_screen.svg';
 import AdminSettingIcon from '@/assets/icons/admin/ic_admin_setting.svg';
-import ArrowRightIcon from '@/assets/icons/arrow_right.svg';
+import { MobileMemberNavGroup } from './MobileMemberNavGroup';
 import ExitIcon from '@/assets/icons/exit.svg';
 import LogoutIcon from '@/assets/icons/logout.svg';
 import PeopleIcon from '@/assets/icons/people.svg';
@@ -56,7 +56,6 @@ function SheetNavItem({
         <Icon src={icon} size={24} className="text-icon-normal" aria-hidden />
         {label}
       </div>
-      <Icon src={ArrowRightIcon} size={12} className="text-icon-normal" aria-hidden />
     </>
   );
 
@@ -159,22 +158,26 @@ function AdminMobileNavSheet() {
 
             {/* 관리 메뉴 */}
             <nav
-              className="border-line flex flex-col gap-200 border-y px-400 py-400"
+              className="border-line flex flex-col gap-200 border-y px-200 py-400"
               aria-label="관리 메뉴"
             >
-              {managementNavItems.map(({ id, icon, label, path }) => (
-                <SheetNavItem
-                  key={id}
-                  icon={icon}
-                  label={label}
-                  href={path}
-                  isActive={pathname.startsWith(path)}
-                />
-              ))}
+              {managementNavItems.map(({ id, icon, label, path }) =>
+                id === 'member' ? (
+                  <MobileMemberNavGroup key={id} clubId={clubId} pathname={pathname} />
+                ) : (
+                  <SheetNavItem
+                    key={id}
+                    icon={icon}
+                    label={label}
+                    href={path}
+                    isActive={pathname.startsWith(path)}
+                  />
+                ),
+              )}
             </nav>
 
             {/* 동아리 정보 */}
-            <div className="border-line border-b px-400 py-300">
+            <div className="border-line border-b px-200 py-300">
               <SheetNavItem
                 icon={AdminSettingIcon}
                 label="동아리 정보"
@@ -184,7 +187,7 @@ function AdminMobileNavSheet() {
             </div>
 
             {/* Weeth로 이동 */}
-            <div className="border-line border-b px-400 py-300">
+            <div className="border-line border-b px-200 py-300">
               <SheetNavItem
                 icon={ExitIcon}
                 label="Weeth로 이동"
@@ -193,7 +196,7 @@ function AdminMobileNavSheet() {
             </div>
 
             {/* 화면 모드 */}
-            <div className="border-line border-b px-400 py-300">
+            <div className="border-line border-b px-200 py-300">
               <SheetNavItem
                 icon={AdminPaintIcon}
                 label="화면 모드"
@@ -203,7 +206,7 @@ function AdminMobileNavSheet() {
             </div>
 
             {/* 로그아웃 */}
-            <div className="px-400 py-300">
+            <div className="px-200 py-300">
               <SheetClose asChild>
                 <button
                   type="button"
