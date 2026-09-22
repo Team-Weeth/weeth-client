@@ -12,15 +12,18 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Icon } from '@/components/ui/Icon';
 import { TableCell, TableRow } from '@/components/ui/table';
 import { cn } from '@/lib/cn';
+import { formatEmptyValue } from '@/utils/shared/formatEmptyValue';
 import type { Member } from '@/types/admin/member';
+import type { MemberPositionOption } from '@/types/admin/memberPosition';
 import { MemberStatusBadge } from './MemberStatusBadge';
 import { MemberPositionDropdown } from './MemberPositionDropdown';
-import { MOCK_MEMBER_POSITIONS } from '@/mocks/memberPositions';
 
 interface MemberTableRowProps {
   member: Member;
-  positionId: string | null;
-  onPositionChange: (positionId: string | null) => void;
+  positionOptions: readonly MemberPositionOption[];
+  positionOptionsStatus?: 'success' | 'pending' | 'error';
+  onPositionChange: (option: MemberPositionOption | null) => void;
+  onAddPosition?: () => void;
   selected: boolean;
   onToggle: (id: string) => void;
   onMemberAction?: (member: Member) => void;
@@ -38,8 +41,10 @@ const NUMBER_CELL_VALUES = ['attendance', 'absence', 'penaltyCount'] as const;
 
 function MemberTableRow({
   member,
-  positionId,
+  positionOptions,
+  positionOptionsStatus,
   onPositionChange,
+  onAddPosition,
   selected,
   onToggle,
   onMemberAction,
@@ -86,9 +91,11 @@ function MemberTableRow({
       <TableCell className="max-tablet:py-100 w-[172px] p-0 px-400 py-200">
         <MemberPositionDropdown
           memberName={member.name}
-          value={positionId}
-          options={MOCK_MEMBER_POSITIONS}
+          value={member.positionOption}
+          options={positionOptions}
+          optionsStatus={positionOptionsStatus}
           onChange={onPositionChange}
+          onAddPosition={onAddPosition}
         />
       </TableCell>
 
@@ -146,7 +153,7 @@ function MemberProfileCell({
     <TableCell
       className={cn(
         'h-16 w-[220px] min-w-[220px] p-0 pr-400',
-        'max-tablet:sticky max-tablet:left-12 max-tablet:z-20 max-tablet:h-12 max-tablet:w-[132px] max-tablet:min-w-[132px] max-tablet:bg-inherit max-tablet:pr-200',
+        'max-tablet:sticky max-tablet:left-12 max-tablet:z-20 max-tablet:h-12 max-tablet:w-28 max-tablet:min-w-28 max-tablet:bg-inherit max-tablet:pr-200',
         showStickyShadow &&
           'max-tablet:after:absolute max-tablet:after:top-0 max-tablet:after:right-[-24px] max-tablet:after:h-full max-tablet:after:w-6 max-tablet:after:bg-[image:var(--member-table-sticky-shadow)] max-tablet:after:content-[""]',
       )}
@@ -158,15 +165,15 @@ function MemberProfileCell({
           )}
           <AvatarFallback />
         </Avatar>
-        <div className="max-tablet:w-[88px] max-tablet:max-w-[88px] flex w-[152px] max-w-[152px] min-w-0 flex-col justify-center gap-0.5 overflow-hidden">
+        <div className="max-tablet:w-17 max-tablet:max-w-17 flex w-[152px] max-w-[152px] min-w-0 flex-col justify-center gap-0.5 overflow-hidden">
           <span className="typo-button2 text-text-normal truncate">{member.name}</span>
           <span
             className={cn(
               'typo-caption2 max-tablet:hidden truncate',
-              member.bio ? 'text-text-alternative' : 'text-text-disabled',
+              member.bio?.trim() ? 'text-text-alternative' : 'text-text-disabled',
             )}
           >
-            {member.bio ?? '-'}
+            {formatEmptyValue(member.bio)}
           </span>
         </div>
       </div>

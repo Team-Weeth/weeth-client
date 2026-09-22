@@ -26,7 +26,9 @@ import { useMemberListState } from './hooks/useMemberListState';
 import { useMemberSelection } from './hooks/useMemberSelection';
 
 import { ChangePositionModal } from './modal/ChangePositionModal';
-import { MockMemberPositionsProvider, useMockMemberPositions } from './MockMemberPositionsProvider';
+import { PositionOptionsEmptyDialog } from './modal/PositionOptionsEmptyDialog';
+import { useUpdateMemberPositions } from '@/hooks/mutations/admin/useAdminPositionMutations';
+import { usePositionChangeGuard } from './hooks/usePositionChangeGuard';
 
 const MOBILE_MEMBER_PAGE_SIZE = 10;
 const MEMBER_VIEW_MODE_QUERY_KEY = 'view';
@@ -35,15 +37,12 @@ const isMemberViewMode = (value: string | null): value is MemberViewMode =>
   value === 'table' || value === 'card';
 
 function MemberPageContent() {
-  return (
-    <MockMemberPositionsProvider>
-      <MemberPageBody />
-    </MockMemberPositionsProvider>
-  );
-}
-
-function MemberPageBody() {
-  const { setPosition } = useMockMemberPositions();
+  const {
+    options: positionOptions,
+    ensureOptions: ensurePositionOptions,
+    emptyDialogProps: positionEmptyDialogProps,
+  } = usePositionChangeGuard();
+  const { mutate: updatePositions } = useUpdateMemberPositions();
   const [isPositionOpen, setIsPositionOpen] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
@@ -175,6 +174,12 @@ function MemberPageBody() {
     setDetailMemberId(m.id);
   };
 
+  // 센티널은 스크롤 주체 안에 있어야 한다. 표 뷰는 표 래퍼, 카드 뷰는 바깥 컨테이너가 스크롤한다.
+  const mobileSentinel =
+    isMobile && !isMobileSearchOpen ? (
+      <div ref={sentinelRef} className="h-px w-full shrink-0" />
+    ) : null;
+
   const handleCloseMobileSearch = () => {
     setIsMobileSearchOpen(false);
     resetSearch();
@@ -187,7 +192,9 @@ function MemberPageBody() {
   };
   const memberSelectionBarProps = {
     selectedCount,
-    onChangePosition: () => setIsPositionOpen(true),
+    onChangePosition: () => {
+      if (ensurePositionOptions()) setIsPositionOpen(true);
+    },
     targetRole,
     targetBanAction,
     onBack: clearSelection,
@@ -247,11 +254,19 @@ function MemberPageBody() {
             {/* Main content */}
             <div
               className={cn(
-                'max-tablet:min-h-0 max-tablet:flex-1 max-tablet:overflow-y-auto flex min-h-0 flex-col p-700',
-                mobileViewMode === 'card' ? 'max-tablet:p-450' : 'max-tablet:p-0',
+                'max-tablet:min-h-0 max-tablet:flex-1 flex min-h-0 flex-col p-700',
+                // 카드 뷰는 바깥이 세로 스크롤을 맡고, 표 뷰는 표 래퍼가 직접 스크롤한다.
+                mobileViewMode === 'card'
+                  ? 'max-tablet:overflow-y-auto max-tablet:p-450'
+                  : 'max-tablet:overflow-hidden max-tablet:p-0',
               )}
             >
-              <div className={mobileViewMode === 'card' ? 'max-tablet:hidden' : undefined}>
+              <div
+                className={cn(
+                  'max-tablet:flex max-tablet:min-h-0 max-tablet:flex-1 max-tablet:flex-col',
+                  mobileViewMode === 'card' && 'max-tablet:hidden',
+                )}
+              >
                 {/* Member table */}
                 <MemberTable
                   scrollResetKey={`${page}:${pageSize}:${selectedCardinal}:${debouncedKeyword}:${sortBy}`}
@@ -266,26 +281,26 @@ function MemberPageBody() {
                   selectedIds={selectedIds}
                   onSelectionChange={handleSelectionChange}
                   onMemberAction={handleMemberAction}
+                  listFooter={mobileViewMode === 'table' ? mobileSentinel : null}
                 />
               </div>
 
               {mobileViewMode === 'card' && (
-                <MemberCardList
-                  className="tablet:hidden"
-                  members={filteredMembers}
-                  page={page}
-                  totalPages={mobileTotalPages}
-                  sortBy={sortBy}
-                  onToggleSort={toggleSort}
-                  onPageChange={setPage}
-                  selectedIds={selectedIds}
-                  onSelectionChange={handleSelectionChange}
-                  onMemberAction={handleMemberAction}
-                />
-              )}
-
-              {isMobile && !isMobileSearchOpen && (
-                <div ref={sentinelRef} className="h-px w-full shrink-0" />
+                <>
+                  <MemberCardList
+                    className="tablet:hidden"
+                    members={filteredMembers}
+                    page={page}
+                    totalPages={mobileTotalPages}
+                    sortBy={sortBy}
+                    onToggleSort={toggleSort}
+                    onPageChange={setPage}
+                    selectedIds={selectedIds}
+                    onSelectionChange={handleSelectionChange}
+                    onMemberAction={handleMemberAction}
+                  />
+                  {mobileSentinel}
+                </>
               )}
             </div>
           </div>
@@ -320,10 +335,18 @@ function MemberPageBody() {
         onOpenChange={setIsPositionOpen}
         memberCount={selectedCount}
         memberName={selectedMembers[0]?.name}
-        onSubmit={(positionId) => {
-          selectedIds.forEach((memberId) => setPosition(memberId, positionId));
+        options={positionOptions}
+        onSubmit={(option) => {
+          // 실패하면 낙관적 갱신이 되돌아가므로, 선택도 성공했을 때만 푼다.
+          updatePositions(
+            { clubMemberIds: selectedClubMemberIds, option },
+            { onSuccess: clearSelection },
+          );
         }}
       />
+
+      <PositionOptionsEmptyDialog {...positionEmptyDialogProps} />
+
       <MemberPageModals
         detailMember={detailMember}
         cardinalModalMember={cardinalModalMember}

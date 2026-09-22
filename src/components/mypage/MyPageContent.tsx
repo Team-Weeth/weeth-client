@@ -19,7 +19,7 @@ type MyPageContentProps = React.HTMLAttributes<HTMLDivElement>;
 
 function MyPageContent({ className, ...props }: MyPageContentProps) {
   const { clubId } = useParams<{ clubId: string }>();
-  const { me, stats, currentProfile, usingProfiles } = useMyPageQueries(clubId);
+  const { me, stats, position, currentProfile, usingProfiles } = useMyPageQueries(clubId);
 
   const profileSection = me ? (
     <ProfileSection
@@ -35,6 +35,7 @@ function MyPageContent({ className, ...props }: MyPageContentProps) {
       postCount={stats?.postCount ?? 0}
       sessionCount={stats?.attendedSessionCount ?? 0}
       penaltyCount={stats?.penaltyCount ?? 0}
+      position={position}
     />
   ) : (
     <ProfileSectionSkeleton />

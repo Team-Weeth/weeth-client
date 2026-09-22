@@ -1,7 +1,7 @@
 'use client';
 
-import { useLayoutEffect, useState } from 'react';
-import { useParams, usePathname, useRouter } from 'next/navigation';
+import { useLayoutEffect } from 'react';
+import { useParams, usePathname } from 'next/navigation';
 import AdminForumIcon from '@/assets/icons/admin/ic_admin_forum.svg';
 import AdminCalendarIcon from '@/assets/icons/admin/ic_admin_calendar.svg';
 import AdminSettingIcon from '@/assets/icons/admin/ic_admin_setting.svg';
@@ -11,7 +11,6 @@ import AdminPenaltyIcon from '@/assets/icons/admin/ic_admin_penalty.svg';
 import ExitIcon from '@/assets/icons/exit.svg';
 import PeopleIcon from '@/assets/icons/people.svg';
 
-import { AlertDialog, AlertDialogAction, AlertDialogCancel } from '@/components/ui/alert-dialog';
 import { TooltipProvider } from '@/components/ui/Tooltip';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { cn } from '@/lib/cn';
@@ -25,12 +24,10 @@ import { useAdminLNBActions, useAdminLNBCollapsed } from '@/stores/useAdminLNBSt
 
 function LNB() {
   const pathname = usePathname();
-  const router = useRouter();
   const { clubId } = useParams<{ clubId: string }>();
   const isBelowDesktop = useMediaQuery('(max-width: 1023.98px)');
   const collapsed = useAdminLNBCollapsed();
   const { setCollapsed } = useAdminLNBActions();
-  const [serviceDialogOpen, setServiceDialogOpen] = useState(false);
 
   // 브레이크포인트를 넘나들 때 기본 접힘 상태를 동기화
   useLayoutEffect(() => {
@@ -104,7 +101,7 @@ function LNB() {
       label="Weeth로 이동"
       path={servicePath}
       collapsed={collapsed}
-      onClick={() => setServiceDialogOpen(true)}
+      external
     />
   );
 
@@ -158,18 +155,6 @@ function LNB() {
             <NavSection collapsed={collapsed}>{exitNavNode}</NavSection>
           </>
         )}
-
-        <AlertDialog
-          open={serviceDialogOpen}
-          onOpenChange={setServiceDialogOpen}
-          title="서비스로 이동하시겠습니까?"
-          description={'관리자 페이지에서 나가\n서비스 화면으로 이동합니다.'}
-        >
-          <AlertDialogAction onClick={() => router.push(servicePath)} className="text-text-inverse">
-            이동
-          </AlertDialogAction>
-          <AlertDialogCancel>취소</AlertDialogCancel>
-        </AlertDialog>
 
         <div
           className={cn(

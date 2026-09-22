@@ -3,26 +3,22 @@ import userEvent from '@testing-library/user-event';
 import { MemberPositionEditor } from '../MemberPositionEditor';
 import { MemberPositionFields } from '../MemberPositionFields';
 
-it('빈 옵션의 색상은 허용하고 이름을 입력할 때만 차단하며 비우면 다시 허용한다', async () => {
+it('이름을 입력하지 않아도 다른 옵션이 쓰는 색상은 모두 비활성화한다', async () => {
   const user = userEvent.setup();
   render(<MemberPositionEditor onSave={jest.fn()} />);
-  const trigger = screen.getByRole('button', { name: '옵션 1 색상: 민트' });
-  const secondInput = screen.getByRole('textbox', { name: '옵션 2 이름' });
-  for (const name of ['', '기획', '   ']) {
-    fireEvent.change(secondInput, { target: { value: name } });
-    await user.click(trigger);
-    const blue = screen.getByRole('menuitem', { name: '파랑' });
-    if (name.trim()) {
-      expect(blue).toHaveAttribute('aria-disabled', 'true');
-    } else {
-      expect(blue).not.toHaveAttribute('aria-disabled', 'true');
-    }
-    expect(screen.getByRole('menuitem', { name: '보라' })).not.toHaveAttribute(
+  await user.click(screen.getByRole('button', { name: '옵션 1 색상: 민트' }));
+  for (const label of ['파랑', '보라', '분홍']) {
+    expect(screen.getByRole('menuitem', { name: label })).toHaveAttribute('aria-disabled', 'true');
+  }
+  for (const label of ['노랑', '빨강']) {
+    expect(screen.getByRole('menuitem', { name: label })).not.toHaveAttribute(
       'aria-disabled',
       'true',
     );
-    await user.keyboard('{Escape}');
   }
+  expect(screen.getByRole('menuitem', { name: '민트' })).toHaveAttribute('aria-current', 'true');
+  await user.click(screen.getByRole('menuitem', { name: '노랑' }));
+  expect(screen.getByRole('button', { name: '옵션 1 색상: 노랑' })).toBeInTheDocument();
 });
 
 it('현재 색상은 선택 표시하고 다른 옵션의 색상은 막으며 옵션 삭제 시 다시 허용한다', async () => {
@@ -107,7 +103,10 @@ it('11자부터 입력을 막고 10/10과 오류 테두리를 유지하며 수�
   await user.click(input);
   expect(screen.getByText('3/10')).toBeInTheDocument();
   await user.click(save);
-  expect(onSave).toHaveBeenCalledWith([{ id: '1', name: '개발팀', color: 'primary' }]);
+  expect(onSave).toHaveBeenCalledWith({
+    options: [{ id: 1, name: '개발팀', color: 'primary' }],
+    deletedIds: [],
+  });
 });
 
 it('기본정보 필드 5개 중 포지션에만 커스텀 필드 태그를 표시한다', () => {
@@ -154,10 +153,13 @@ it('공백과 중복 이름은 저장하지 않고 변경된 유효한 이름은
   fireEvent.change(input, { target: { value: ' 기획 ' } });
   await user.click(save);
   await waitFor(() =>
-    expect(onSave).toHaveBeenCalledWith([
-      { id: '1', name: '개발', color: 'primary' },
-      { id: '2', name: '기획', color: 'pink' },
-    ]),
+    expect(onSave).toHaveBeenCalledWith({
+      options: [
+        { id: 1, name: '개발', color: 'primary' },
+        { id: 2, name: '기획', color: 'pink' },
+      ],
+      deletedIds: [],
+    }),
   );
   expect(save).toBeDisabled();
 });
@@ -195,5 +197,8 @@ it('색상 선택을 변경하면 선택기를 닫고 선택한 색상을 저장
   expect(screen.getByRole('button', { name: '옵션 1 색상: 보라' })).toBeInTheDocument();
   expect(screen.queryByRole('menuitem', { name: '보라' })).not.toBeInTheDocument();
   await user.click(screen.getByRole('button', { name: '저장하기' }));
-  expect(onSave).toHaveBeenCalledWith([{ id: '1', name: '개발', color: 'purple' }]);
+  expect(onSave).toHaveBeenCalledWith({
+    options: [{ id: 1, name: '개발', color: 'purple' }],
+    deletedIds: [],
+  });
 });

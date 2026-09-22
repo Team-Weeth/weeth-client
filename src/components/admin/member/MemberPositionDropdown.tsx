@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import ArrowDown from '@/assets/icons/arrow_down.svg';
 import {
   DropdownMenu,
@@ -12,38 +12,60 @@ import {
 import { Icon } from '@/components/ui/Icon';
 import { POSITION_COLORS } from '@/constants/admin/memberPosition';
 import { cn } from '@/lib/cn';
-import { useMediaQuery } from '@/hooks/useMediaQuery';
+import { findScrollContainer } from '@/utils/shared/findScrollContainer';
 import type { MemberPositionOption } from '@/types/admin/memberPosition';
 
 interface MemberPositionDropdownProps {
   memberName: string;
-  value: string | null;
+  /** 현재 지정된 포지션. 옵션 목록 조회와 무관하게 멤버가 들고 있는 값을 그대로 보여준다. */
+  value: MemberPositionOption | null;
   options: readonly MemberPositionOption[];
-  onChange: (value: string | null) => void;
+  /** 옵션 목록 조회 상태. 빈 목록이 '설정된 옵션 없음'인지 '아직 못 받아온 것'인지 구분한다. */
+  optionsStatus?: 'success' | 'pending' | 'error';
+  /** null이면 지정 해제 */
+  onChange: (option: MemberPositionOption | null) => void;
   onAddPosition?: () => void;
   className?: string;
 }
+
+const EMPTY_OPTION_LABEL = {
+  success: '옵션 없음',
+  pending: '불러오는 중',
+  error: '불러오지 못했어요',
+} as const;
 
 export function MemberPositionDropdown({
   memberName,
   value,
   options,
+  optionsStatus = 'success',
   onChange,
   onAddPosition,
   className,
 }: MemberPositionDropdownProps) {
-  const selected = options.find((option) => option.id === value);
-  const isMobile = useMediaQuery('(max-width: 695.98px)');
-  const [portalContainer, setPortalContainer] = useState<HTMLElement | null>(null);
+  const selected = value;
+  const [open, setOpen] = useState(false);
+  // 메뉴는 기본 포털(body)에 띄운다. 표를 스크롤하는 컨테이너 안에 띄우면 그 경계에서 잘린다.
+  // 여기서는 스크롤을 감지할 대상만 찾아 둔다.
+  const [scrollContainer, setScrollContainer] = useState<HTMLElement | null>(null);
   const setTriggerRef = (node: HTMLButtonElement | null) => {
     // 언마운트(node=null) 때는 컨테이너를 비우지 않는다. 같은 값을 다시 세팅하면 리렌더가 멈춘다.
     if (!node) return;
-    // 고정된 관리자 레이아웃과 같은 stacking context에서 sticky 이름 열 뒤에 표시합니다.
-    setPortalContainer(node.closest<HTMLElement>('[data-admin]') ?? null);
+    setScrollContainer(findScrollContainer(node));
   };
 
+  // 메뉴는 표 위에 떠 있으므로, 표를 스크롤하면 트리거와 어긋나기 전에 닫는다.
+  // (메뉴 자체 스크롤은 overscroll-contain으로 표에 전달되지 않는다.)
+  useEffect(() => {
+    if (!open || !scrollContainer) return;
+
+    const close = () => setOpen(false);
+    scrollContainer.addEventListener('scroll', close, { passive: true });
+    return () => scrollContainer.removeEventListener('scroll', close);
+  }, [open, scrollContainer]);
+
   return (
-    <DropdownMenu>
+    <DropdownMenu open={open} onOpenChange={setOpen}>
       <DropdownMenuTrigger
         ref={setTriggerRef}
         aria-label={`${memberName} 포지션: ${selected?.name ?? '미지정'}`}
@@ -63,37 +85,51 @@ export function MemberPositionDropdown({
         />
       </DropdownMenuTrigger>
       <DropdownMenuContent
-        portalContainer={isMobile ? portalContainer : undefined}
         align="start"
-        className="max-tablet:z-10 w-[var(--radix-dropdown-menu-trigger-width)] min-w-0"
+        className="w-[var(--radix-dropdown-menu-trigger-width)] min-w-0"
         onClick={(event) => event.stopPropagation()}
       >
-        {options.map((option) => (
-          <DropdownMenuItem
-            key={option.id}
-            aria-current={option.id === value ? 'true' : undefined}
-            className="max-tablet:h-auto max-tablet:gap-[10px] max-tablet:px-400 max-tablet:py-400 gap-200"
-            onSelect={() => onChange(option.id)}
-          >
-            <PositionDot option={option} />
-            <span className="truncate">{option.name}</span>
-          </DropdownMenuItem>
-        ))}
-        {options.length > 0 && <DropdownMenuSeparator className="w-full shrink-0" />}
-        <DropdownMenuItem
-          className="text-text-alternative max-tablet:h-auto max-tablet:px-400 max-tablet:py-400"
-          onSelect={() => onChange(null)}
-        >
-          지정 해제
-        </DropdownMenuItem>
-        {options.length === 0 && (
+        {/* 설정된 옵션이 없으면 해제할 대상도 없으므로 옵션 추가로만 안내한다.
+            아직 못 받아온 상태에서는 추가하기 대신 조회 상태를 보여준다. */}
+        {options.length === 0 ? (
           <>
+            <DropdownMenuItem
+              disabled
+              className="text-text-alternative max-tablet:h-auto max-tablet:px-400 max-tablet:py-400 data-[disabled]:cursor-default"
+            >
+              {EMPTY_OPTION_LABEL[optionsStatus]}
+            </DropdownMenuItem>
+            {optionsStatus === 'success' && (
+              <>
+                <DropdownMenuSeparator className="w-full shrink-0" />
+                <DropdownMenuItem
+                  className="max-tablet:h-auto max-tablet:px-400 max-tablet:py-400"
+                  onSelect={onAddPosition}
+                >
+                  추가하기
+                </DropdownMenuItem>
+              </>
+            )}
+          </>
+        ) : (
+          <>
+            {options.map((option) => (
+              <DropdownMenuItem
+                key={option.id}
+                aria-current={option.id === value?.id ? 'true' : undefined}
+                className="max-tablet:h-auto max-tablet:gap-[10px] max-tablet:px-400 max-tablet:py-400 gap-200"
+                onSelect={() => onChange(option)}
+              >
+                <PositionDot option={option} />
+                <span className="truncate">{option.name}</span>
+              </DropdownMenuItem>
+            ))}
             <DropdownMenuSeparator className="w-full shrink-0" />
             <DropdownMenuItem
-              className="max-tablet:h-auto max-tablet:px-400 max-tablet:py-400"
-              onSelect={onAddPosition}
+              className="text-text-alternative max-tablet:h-auto max-tablet:px-400 max-tablet:py-400"
+              onSelect={() => onChange(null)}
             >
-              추가하기
+              지정 해제
             </DropdownMenuItem>
           </>
         )}
@@ -102,7 +138,7 @@ export function MemberPositionDropdown({
   );
 }
 
-function PositionDot({ option }: { option?: MemberPositionOption }) {
+function PositionDot({ option }: { option?: MemberPositionOption | null }) {
   return (
     <span
       aria-hidden

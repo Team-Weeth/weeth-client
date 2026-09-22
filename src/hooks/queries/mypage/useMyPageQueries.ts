@@ -1,6 +1,8 @@
 import { useMemo } from 'react';
 import { useQueries, useQuery } from '@tanstack/react-query';
 import { mypageApi, type MultiProfileResponse } from '@/lib/apis/mypage';
+import { toMemberPositionOption } from '@/utils/admin/memberPositionMapper';
+import { mypageQueryKeys } from './mypageQueryKeys';
 import type {
   ClubDto,
   MyPageActivityClub,
@@ -25,7 +27,7 @@ function toMyPageUsingProfile(profile: MultiProfileResponse): MyPageUsingProfile
 
 export function useMyPageSummaryQuery(clubId: string) {
   return useQuery({
-    queryKey: ['mypage', 'summary', clubId],
+    queryKey: mypageQueryKeys.summary(clubId),
     queryFn: () => mypageApi.getMyPageSummary(clubId).then((res) => res.data.data),
     enabled: Boolean(clubId),
     staleTime: MYPAGE_SUMMARY_STALE_TIME,
@@ -120,6 +122,8 @@ export function useMyPageQueries(clubId: string) {
 
   const me = summaryQuery.data?.user;
   const stats = summaryQuery.data?.stats;
+  const summaryPosition = summaryQuery.data?.position;
+  const position = summaryPosition ? toMemberPositionOption(summaryPosition) : null;
   const usingProfiles = summaryQuery.data?.usingProfiles ?? [];
   const currentProfile = summaryQuery.data?.currentProfile ?? null;
   const baseClubs = myClubsQuery.data ?? [];
@@ -156,6 +160,7 @@ export function useMyPageQueries(clubId: string) {
     myClubsQuery,
     me,
     stats,
+    position,
     currentProfile,
     usingProfiles,
     clubs,

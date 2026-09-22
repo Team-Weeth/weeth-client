@@ -8,7 +8,6 @@ export {
   type MemberDetailBottomSheetProps,
 } from './modal/MemberDetailBottomSheet';
 export { MemberPageContent } from './MemberPageContent';
-export { MemberPositionTag, type MemberPositionTagProps } from './MemberPositionTag';
 export { MemberPositionContent, type MemberPositionContentProps } from './MemberPositionContent';
 export { MemberPositionFields, type MemberPositionFieldsProps } from './MemberPositionFields';
 export {

@@ -1,3 +1,4 @@
+import type { ClubPositionOption } from '@/types/admin/memberPosition';
 import type { PageResponse } from '@/types/common';
 
 export type MemberRole = 'USER' | 'ADMIN';
@@ -105,6 +106,8 @@ export interface MyPageSummary {
   stats: MyPageSummaryStats;
   usingProfiles: MyPageUsingProfile[];
   currentProfile: MyPageCurrentProfile | null;
+  /** 동아리가 지정해 준 포지션. 미지정이면 null */
+  position: ClubPositionOption | null;
 }
 
 export interface MyClubMemberSummary {

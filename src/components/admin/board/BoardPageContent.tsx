@@ -35,7 +35,7 @@ import {
 import { adminQueryKeys } from '@/hooks/queries/admin/adminQueryKeys';
 import { ADMIN_BOARD_ERROR, getApiErrorCode, getApiErrorMessage } from '@/lib/apis/adminBoard';
 import { useClubId } from '@/stores';
-import { toastError, toastSuccess } from '@/stores/useToastStore';
+import { toastError, toastSuccess, toastWarning } from '@/stores/useToastStore';
 import { toApiPermission } from '@/utils/admin/boardMapper';
 import type { Board, BoardKind, BoardListCache } from '@/types/admin/board';
 import type { BoardFormData } from '@/components/admin/board/modal/constants';
@@ -114,7 +114,17 @@ function BoardPageContent() {
       setCreateModalOpen(false);
       toastSuccess('게시판이 생성되었어요.');
     },
-    onError: handleNameMutationError(setCreateNameError),
+    onError: (err) => {
+      // 목록 캐시가 오래됐거나 다른 관리자가 먼저 만든 경우 제출 단계에서 한도에 걸릴 수 있다.
+      if (getApiErrorCode(err) === ADMIN_BOARD_ERROR.BOARD_LIMIT_EXCEEDED) {
+        setCreateModalOpen(false);
+        toastWarning('게시판 개수가 한도에 도달했어요.');
+        // 한도에 걸렸다는 건 캐시가 서버와 어긋났다는 뜻이라, 개수와 생성 가능 여부를 다시 받아온다.
+        queryClient.invalidateQueries({ queryKey: cacheKey });
+        return;
+      }
+      handleNameMutationError(setCreateNameError)(err);
+    },
   });
 
   const { mutate: updateBoard } = useUpdateBoardMutation({
@@ -153,6 +163,11 @@ function BoardPageContent() {
   if (isLoading || !data) return <BoardAdminSkeleton />;
 
   const { boards, maxBoardCount, canCreateBoard } = data;
+
+  // 서버 한도에는 공지 같은 고정 게시판이 들어간다.
+  // 화면에는 사용자가 실제로 추가할 수 있는 몫만 보여줘야 숫자가 맞는다.
+  const countedFixedBoards = boards.filter((b) => !b.editable && b.kind !== 'ALL').length;
+  const maxCustomBoardCount = maxBoardCount - countedFixedBoards;
 
   const handleCreateBoard = (formData: BoardFormData) => {
     setCreateNameError(null);
@@ -238,7 +253,14 @@ function BoardPageContent() {
 
   const fixedBoards = filteredBoards.filter((b) => !b.editable).sort(compareFixedBoards);
   const customBoards = filteredBoards.filter((b) => b.editable);
-  const reachedLimit = !canCreateBoard;
+
+  const handleCreateClick = () => {
+    if (!canCreateBoard) {
+      toastWarning(`게시판은 최대 ${maxCustomBoardCount}개까지 만들 수 있어요.`);
+      return;
+    }
+    setCreateModalOpen(true);
+  };
 
   const editingBoard =
     editingBoardId !== null ? (boards.find((b) => b.boardId === editingBoardId) ?? null) : null;
@@ -261,8 +283,7 @@ function BoardPageContent() {
         // TODO: 휴지통 API 정상화되면 복원
         // trashCount={trashedBoards.length}
         // onTrashClick={() => setTrashModalOpen(true)}
-        onCreateClick={() => setCreateModalOpen(true)}
-        createDisabled={reachedLimit}
+        onCreateClick={handleCreateClick}
       />
 
       <div className="flex flex-col gap-400">
@@ -324,7 +345,7 @@ function BoardPageContent() {
         <div className="bg-container-neutral-alternative flex h-12 items-center gap-200 rounded-md p-300">
           <Icon src={InfoCircleIcon} size={20} className="text-icon-alternative" />
           <p className="typo-body2 text-text-alternative min-w-0 flex-1 truncate">
-            게시판 추가는 최대 {maxBoardCount}개까지 가능 합니다.
+            게시판 추가는 최대 {maxCustomBoardCount}개까지 가능합니다.
           </p>
         </div>
       </div>

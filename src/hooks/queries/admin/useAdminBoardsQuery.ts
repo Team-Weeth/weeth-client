@@ -7,8 +7,6 @@ import { toBoard } from '@/utils/admin/boardMapper';
 import type { TrashedBoard } from '@/types/admin/board';
 import { adminQueryKeys } from './adminQueryKeys';
 
-const LEGACY_MAX_BOARD_COUNT = 4;
-
 export function useAdminBoardsQuery() {
   const clubId = useClubId();
 
@@ -16,16 +14,8 @@ export function useAdminBoardsQuery() {
     queryKey: adminQueryKeys.boards(clubId),
     queryFn: async () => {
       const res = await adminBoardApi.getBoards(clubId!);
-      const response = res.data.data;
-      const isLegacyResponse = Array.isArray(response);
-      const all = isLegacyResponse ? response : response.boards;
-      const activeBoardCount = isLegacyResponse
-        ? all.filter((board) => !board.isDeleted && board.type !== 'ALL').length
-        : response.activeBoardCount;
-      const maxBoardCount = isLegacyResponse ? LEGACY_MAX_BOARD_COUNT : response.maxBoardCount;
-      const canCreateBoard = isLegacyResponse
-        ? activeBoardCount < maxBoardCount
-        : response.canCreateBoard;
+      // 개수 제한은 서버가 계산해 내려준다. 프론트에서 다시 세지 않는다.
+      const { boards: all, activeBoardCount, maxBoardCount, canCreateBoard } = res.data.data;
 
       const boards = all
         .filter((d) => !d.isDeleted)

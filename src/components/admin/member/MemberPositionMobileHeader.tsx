@@ -1,10 +1,10 @@
 'use client';
 
-import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import BackIcon from '@/assets/icons/back.svg';
 import ArrowDownIcon from '@/assets/icons/arrow_down.svg';
 import PositionIcon from '@/assets/icons/admin/ic_admin_position.svg';
+import PositionDarkIcon from '@/assets/icons/admin/ic_admin_position_dark.svg';
 import { Icon } from '@/components/ui/Icon';
 import { Tag } from '@/components/ui/tag';
 import {
@@ -14,7 +14,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/DropdownMenu';
 import { cn } from '@/lib/cn';
-import { MEMBER_POSITION_FIELDS } from './MemberPositionFields';
+import { MEMBER_POSITION_FIELDS, MemberPositionFieldIcon } from './MemberPositionFields';
 
 interface MemberPositionMobileHeaderProps {
   className?: string;
@@ -42,9 +42,7 @@ function MemberPositionMobileHeader({ className }: MemberPositionMobileHeaderPro
           className="group bg-container-neutral dark:shadow-dark flex w-full cursor-pointer items-center gap-400 rounded-sm px-500 py-400 shadow-sm"
           aria-label="부원 정보 필드 선택"
         >
-          <span className="bg-container-neutral-alternative flex size-10 shrink-0 items-center justify-center rounded-sm">
-            <Icon src={PositionIcon} size={24} className="text-icon-normal" />
-          </span>
+          <MemberPositionFieldIcon icon={PositionIcon} darkIcon={PositionDarkIcon} />
           <span className="typo-sub1 text-text-strong">포지션</span>
           <Tag variant="caution">커스텀 필드</Tag>
           <Icon
@@ -59,19 +57,13 @@ function MemberPositionMobileHeader({ className }: MemberPositionMobileHeaderPro
           sideOffset={10}
           className="divide-line dark:shadow-dark max-h-[var(--radix-dropdown-menu-content-available-height)] w-[var(--radix-dropdown-menu-trigger-width)] divide-y shadow-lg"
         >
-          {MEMBER_POSITION_FIELDS.map(({ label, icon, custom }) => (
+          {MEMBER_POSITION_FIELDS.map(({ label, icon, darkIcon, custom }) => (
             <DropdownMenuItem
               key={label}
               disabled={!custom}
               className="h-auto gap-400 px-500 py-400 data-[disabled]:cursor-not-allowed data-[disabled]:opacity-50"
             >
-              <span className="bg-container-neutral-alternative flex size-10 shrink-0 items-center justify-center rounded-sm">
-                {custom ? (
-                  <Icon src={icon} size={24} className="text-icon-normal" />
-                ) : (
-                  <Image src={icon} width={24} height={24} alt="" />
-                )}
-              </span>
+              <MemberPositionFieldIcon icon={icon} darkIcon={darkIcon} />
               <span
                 className={cn('typo-sub1', custom ? 'text-text-strong' : 'text-text-alternative')}
               >

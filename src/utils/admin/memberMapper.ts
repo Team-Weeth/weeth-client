@@ -1,5 +1,6 @@
 import type { ClubMember, ClubMemberRole, Member } from '@/types/admin/member';
 import { formatCompactDateDisplay } from '@/utils/shared/date';
+import { toMemberPositionOption } from '@/utils/admin/memberPositionMapper';
 
 export const ROLE_MAP: Record<ClubMemberRole, string> = {
   USER: '부원',
@@ -17,6 +18,7 @@ export function toMember(cm: ClubMember): Member {
     studentId: cm.studentId ?? '',
     phone: cm.tel ?? '',
     position: ROLE_MAP[cm.memberRole],
+    positionOption: cm.position ? toMemberPositionOption(cm.position) : null,
     memberRole: cm.memberRole,
     cardinal: cm.cardinals?.join(', ') ?? '',
     attendance: cm.attendanceCount ?? 0,

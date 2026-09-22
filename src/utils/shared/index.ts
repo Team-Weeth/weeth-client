@@ -1,4 +1,5 @@
 // src/utils/shared/index.ts
+export { formatEmptyValue } from './formatEmptyValue';
 export { formatPhone } from './formatPhone';
 export { deduplicateSchoolNames } from './school';
 export { getApiErrorCode, getApiErrorMessage } from './getApiErrorCode';

@@ -16,7 +16,6 @@ interface BoardToolbarProps extends React.HTMLAttributes<HTMLDivElement> {
   // trashCount: number;
   // onTrashClick?: () => void;
   onCreateClick?: () => void;
-  createDisabled?: boolean;
 }
 
 function BoardToolbar({
@@ -26,7 +25,6 @@ function BoardToolbar({
   // trashCount,
   // onTrashClick,
   onCreateClick,
-  createDisabled = false,
   ...props
 }: BoardToolbarProps) {
   return (
@@ -64,7 +62,8 @@ function BoardToolbar({
           <span>휴지통 ({trashCount})</span>
         </Button>
         */}
-        <Button variant="primary" size="lg" onClick={onCreateClick} disabled={createDisabled}>
+        {/* 개수 제한에 걸려도 비활성화하지 않는다. 누르면 이유를 토스트로 알려준다. */}
+        <Button variant="primary" size="lg" onClick={onCreateClick}>
           <Icon src={AdminPlusIcon} size={20} className="text-text-inverse mr-1" />
           <span>게시판 생성</span>
         </Button>
