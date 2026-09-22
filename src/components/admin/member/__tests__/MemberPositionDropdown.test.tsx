@@ -2,10 +2,7 @@ import { useState } from 'react';
 import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemberPositionDropdown } from '../MemberPositionDropdown';
-import { useMediaQuery } from '@/hooks/useMediaQuery';
 import type { MemberPositionOption } from '@/types/admin/memberPosition';
-
-jest.mock('@/hooks/useMediaQuery', () => ({ useMediaQuery: jest.fn(() => false) }));
 
 const POSITION_OPTIONS: MemberPositionOption[] = [
   { id: '1', name: '기획', color: 'purple' },
@@ -14,36 +11,33 @@ const POSITION_OPTIONS: MemberPositionOption[] = [
   { id: '4', name: '백엔드', color: 'primary' },
 ];
 
-it.each([true, false])(
-  '옵션이 없으면 옵션 없음과 추가하기를 표시한다 (모바일: %s)',
-  async (isMobile) => {
-    jest.mocked(useMediaQuery).mockReturnValue(isMobile);
-    const user = userEvent.setup();
-    const onChange = jest.fn();
-    const onAddPosition = jest.fn();
-    render(
-      <MemberPositionDropdown
-        memberName="김위드"
-        value={null}
-        options={[]}
-        onChange={onChange}
-        onAddPosition={onAddPosition}
-      />,
-    );
-    const trigger = screen.getByRole('button', { name: '김위드 포지션: 미지정' });
-    await user.click(trigger);
-    expect(screen.getAllByRole('menuitem').map((item) => item.textContent)).toEqual([
-      '옵션 없음',
-      '추가하기',
-    ]);
-    expect(screen.getByRole('separator').previousElementSibling).toHaveTextContent('옵션 없음');
-    expect(screen.getByRole('separator').nextElementSibling).toHaveTextContent('추가하기');
-    await user.click(screen.getByRole('menuitem', { name: '옵션 없음' }));
-    expect(onChange).not.toHaveBeenCalled();
-    await user.click(screen.getByRole('menuitem', { name: '추가하기' }));
-    expect(onAddPosition).toHaveBeenCalledTimes(1);
-  },
-);
+it('옵션이 없으면 옵션 없음과 추가하기를 표시한다', async () => {
+  const user = userEvent.setup();
+  const onChange = jest.fn();
+  const onAddPosition = jest.fn();
+  render(
+    <MemberPositionDropdown
+      memberName="김위드"
+      value={null}
+      options={[]}
+      onChange={onChange}
+      onAddPosition={onAddPosition}
+    />,
+  );
+  const trigger = screen.getByRole('button', { name: '김위드 포지션: 미지정' });
+
+  await user.click(trigger);
+  expect(screen.getAllByRole('menuitem').map((item) => item.textContent)).toEqual([
+    '옵션 없음',
+    '추가하기',
+  ]);
+  expect(screen.getByRole('separator').previousElementSibling).toHaveTextContent('옵션 없음');
+  expect(screen.getByRole('separator').nextElementSibling).toHaveTextContent('추가하기');
+  await user.click(screen.getByRole('menuitem', { name: '옵션 없음' }));
+  expect(onChange).not.toHaveBeenCalled();
+  await user.click(screen.getByRole('menuitem', { name: '추가하기' }));
+  expect(onAddPosition).toHaveBeenCalledTimes(1);
+});
 
 it.each([
   ['pending', '불러오는 중'],
@@ -73,7 +67,6 @@ it.each([
 function renderInScrollContainer() {
   render(
     <div data-admin>
-      {/* 모바일에서는 표를 스크롤하는 컨테이너 안에 띄워 고정 헤더와 z-index를 비교한다. */}
       {/* jsdom은 overflow 단축 속성을 계산값으로 펼치지 않아 축별로 지정한다. */}
       <div data-testid="scroll-container" style={{ overflowX: 'auto', overflowY: 'auto' }}>
         <MemberPositionDropdown
@@ -88,17 +81,16 @@ function renderInScrollContainer() {
   return screen.getByTestId('scroll-container');
 }
 
-it.each([true, false])('모바일 여부(%s)에 맞는 레이어에 목록을 렌더링한다', async (isMobile) => {
-  jest.mocked(useMediaQuery).mockReturnValue(isMobile);
+it('표를 스크롤하는 컨테이너 밖에 목록을 띄운다', async () => {
   const user = userEvent.setup();
+  // 스크롤 컨테이너 안에 띄우면 위로 뒤집혔을 때 컨테이너 경계에서 잘린다.
   const scrollContainer = renderInScrollContainer();
 
   await user.click(screen.getByRole('button'));
-  expect(scrollContainer.contains(screen.getByRole('menu'))).toBe(isMobile);
+  expect(scrollContainer.contains(screen.getByRole('menu'))).toBe(false);
 });
 
 it('표를 스크롤하면 열려 있던 목록을 닫는다', async () => {
-  jest.mocked(useMediaQuery).mockReturnValue(true);
   const user = userEvent.setup();
   const scrollContainer = renderInScrollContainer();
 
