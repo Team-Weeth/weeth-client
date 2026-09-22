@@ -46,6 +46,10 @@ const config: Config = {
   coverageProvider: 'v8',
   coverageReporters: ['text', 'lcov', 'json-summary', 'html'],
 
+  // CI 러너는 로컬보다 10배 가까이 느려서, 목록·페이지네이션처럼 대기가 많은 테스트가
+  // 기본값 5초를 넘긴다. 실제 실패와 러너 속도를 구분하려고 여유를 둔다.
+  testTimeout: 15000,
+
   // 테스트가 충분히 쌓이면 수치를 높여가며 관리
   // coverageThreshold: {
   //   global: { branches: 50, functions: 50, lines: 50, statements: 50 },

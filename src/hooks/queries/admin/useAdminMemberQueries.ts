@@ -1,6 +1,6 @@
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 
-import { adminMemberApi } from '@/lib/apis/adminMember';
+import { adminMemberApi, type ClubMemberSort } from '@/lib/apis/adminMember';
 import type { Member } from '@/types/admin/member';
 import type { PageResponse } from '@/types/common';
 import { toMember } from '@/utils/admin/memberMapper';
@@ -17,13 +17,34 @@ const EMPTY_MEMBER_PAGE: PageResponse<Member> = {
   totalPages: 0,
 };
 
-export function useAdminMembers(pageNumber = 0, pageSize = 10, enabled = true) {
+/**
+ * 기수 필터와 정렬은 서버에 넘겨야 한다. 받아온 페이지에서 걸러내거나 정렬하면
+ * 한 페이지에 보이는 인원이 들쭉날쭉해지고, 정렬도 그 페이지 안에서만 적용된다.
+ */
+export function useAdminMembers(
+  pageNumber = 0,
+  pageSize = 10,
+  enabled = true,
+  cardinalNumber?: number,
+  sort?: ClubMemberSort,
+) {
   const clubId = useClubId();
 
   return useQuery({
-    queryKey: [...adminQueryKeys.members(clubId), pageNumber, pageSize],
+    queryKey: [
+      ...adminQueryKeys.members(clubId),
+      pageNumber,
+      pageSize,
+      cardinalNumber ?? null,
+      sort ?? null,
+    ],
     queryFn: async () => {
-      const res = await adminMemberApi.getMembers(clubId!, { page: pageNumber, size: pageSize });
+      const res = await adminMemberApi.getMembers(clubId!, {
+        page: pageNumber,
+        size: pageSize,
+        cardinalNumber,
+        sort,
+      });
       const page = res.data.data;
 
       return {
@@ -38,15 +59,28 @@ export function useAdminMembers(pageNumber = 0, pageSize = 10, enabled = true) {
   });
 }
 
-export function useAdminMembersInfinite(pageSize = 10, enabled = true) {
+export function useAdminMembersInfinite(
+  pageSize = 10,
+  enabled = true,
+  cardinalNumber?: number,
+  sort?: ClubMemberSort,
+) {
   const clubId = useClubId();
 
   return useInfiniteQuery({
-    queryKey: [...adminQueryKeys.members(clubId), 'infinite', pageSize],
+    queryKey: [
+      ...adminQueryKeys.members(clubId),
+      'infinite',
+      pageSize,
+      cardinalNumber ?? null,
+      sort ?? null,
+    ],
     queryFn: async ({ pageParam }) => {
       const res = await adminMemberApi.getMembers(clubId!, {
         page: pageParam,
         size: pageSize,
+        cardinalNumber,
+        sort,
       });
       const page = res.data.data;
 
