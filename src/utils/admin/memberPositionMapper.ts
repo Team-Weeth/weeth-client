@@ -3,6 +3,7 @@ import type {
   ClubPositionColor,
   ClubPositionOption,
   MemberPositionOption,
+  MemberPositionSavePayload,
   SaveClubPositionOptionsBody,
 } from '@/types/admin/memberPosition';
 
@@ -27,11 +28,17 @@ export function toMemberPositionOptions(options: ClubPositionOption[]): MemberPo
   return [...options].sort((a, b) => a.displayOrder - b.displayOrder).map(toMemberPositionOption);
 }
 
-/** 전체 교체 API라 편집기에 남아 있는 옵션 전부를 배치 순서대로 보낸다. */
-export function toSavePositionOptionsBody(
-  options: MemberPositionOption[],
-): SaveClubPositionOptionsBody {
+/** 남아 있는 옵션은 배치 순서대로, 지운 옵션은 id로 따로 보낸다. */
+export function toSavePositionOptionsBody({
+  options,
+  deletedIds,
+}: MemberPositionSavePayload): SaveClubPositionOptionsBody {
   return {
-    options: options.map(({ name, color }) => ({ name, color: toPositionColorPreset(color) })),
+    options: options.map(({ id, name, color }) => ({
+      id,
+      name,
+      color: toPositionColorPreset(color),
+    })),
+    deletedPositionIds: deletedIds,
   };
 }

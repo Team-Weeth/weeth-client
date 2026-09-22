@@ -10,19 +10,19 @@ import { adminPositionApi } from '@/lib/apis/adminPosition';
 import { useClubId } from '@/stores';
 import { toastError, toastSuccess } from '@/stores/useToastStore';
 import type { Member } from '@/types/admin/member';
-import type { MemberPositionOption } from '@/types/admin/memberPosition';
+import type { MemberPositionOption, MemberPositionSavePayload } from '@/types/admin/memberPosition';
 import type { PageResponse } from '@/types/common';
 import { toSavePositionOptionsBody } from '@/utils/admin/memberPositionMapper';
 
-/** 포지션 옵션 전체 저장(PUT). 저장 후 서버가 새 id를 발급하므로 목록을 다시 받아온다. */
+/** 포지션 옵션 저장(PUT). 저장 후 새 옵션에 서버 id가 붙으므로 목록을 다시 받아온다. */
 export function useSavePositionOptions() {
   const queryClient = useQueryClient();
   const clubId = useClubId();
 
   return useMutation({
-    mutationFn: (options: MemberPositionOption[]) => {
+    mutationFn: (payload: MemberPositionSavePayload) => {
       if (!clubId) throw new Error('clubId가 없습니다');
-      return adminPositionApi.saveOptions(clubId, toSavePositionOptionsBody(options));
+      return adminPositionApi.saveOptions(clubId, toSavePositionOptionsBody(payload));
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: adminQueryKeys.positions(clubId) });

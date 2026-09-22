@@ -34,8 +34,8 @@ export default function PositionSettingsPage() {
     <MemberPositionContent
       // 옵션이 없는 동아리는 편집기 기본값(빈 옵션 4개)으로 시작한다.
       initialOptions={options.length > 0 ? options : undefined}
-      onSave={async (next) => {
-        await savePositions(next);
+      onSave={async (payload) => {
+        await savePositions(payload);
         toastSuccess('포지션이 저장되었습니다.');
       }}
     />

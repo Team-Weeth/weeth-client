@@ -21,6 +21,7 @@ import { MemberPositionDropdown } from './MemberPositionDropdown';
 interface MemberTableRowProps {
   member: Member;
   positionOptions: readonly MemberPositionOption[];
+  positionOptionsStatus?: 'success' | 'pending' | 'error';
   onPositionChange: (option: MemberPositionOption | null) => void;
   onAddPosition?: () => void;
   selected: boolean;
@@ -41,6 +42,7 @@ const NUMBER_CELL_VALUES = ['attendance', 'absence', 'penaltyCount'] as const;
 function MemberTableRow({
   member,
   positionOptions,
+  positionOptionsStatus,
   onPositionChange,
   onAddPosition,
   selected,
@@ -89,8 +91,9 @@ function MemberTableRow({
       <TableCell className="max-tablet:py-100 w-[172px] p-0 px-400 py-200">
         <MemberPositionDropdown
           memberName={member.name}
-          value={member.positionOption?.id ?? null}
+          value={member.positionOption}
           options={positionOptions}
+          optionsStatus={positionOptionsStatus}
           onChange={onPositionChange}
           onAddPosition={onAddPosition}
         />

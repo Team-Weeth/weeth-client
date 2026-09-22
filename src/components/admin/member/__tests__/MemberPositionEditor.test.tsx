@@ -103,7 +103,10 @@ it('11자부터 입력을 막고 10/10과 오류 테두리를 유지하며 수�
   await user.click(input);
   expect(screen.getByText('3/10')).toBeInTheDocument();
   await user.click(save);
-  expect(onSave).toHaveBeenCalledWith([{ id: '1', name: '개발팀', color: 'primary' }]);
+  expect(onSave).toHaveBeenCalledWith({
+    options: [{ id: 1, name: '개발팀', color: 'primary' }],
+    deletedIds: [],
+  });
 });
 
 it('기본정보 필드 5개 중 포지션에만 커스텀 필드 태그를 표시한다', () => {
@@ -150,10 +153,13 @@ it('공백과 중복 이름은 저장하지 않고 변경된 유효한 이름은
   fireEvent.change(input, { target: { value: ' 기획 ' } });
   await user.click(save);
   await waitFor(() =>
-    expect(onSave).toHaveBeenCalledWith([
-      { id: '1', name: '개발', color: 'primary' },
-      { id: '2', name: '기획', color: 'pink' },
-    ]),
+    expect(onSave).toHaveBeenCalledWith({
+      options: [
+        { id: 1, name: '개발', color: 'primary' },
+        { id: 2, name: '기획', color: 'pink' },
+      ],
+      deletedIds: [],
+    }),
   );
   expect(save).toBeDisabled();
 });
@@ -191,5 +197,8 @@ it('색상 선택을 변경하면 선택기를 닫고 선택한 색상을 저장
   expect(screen.getByRole('button', { name: '옵션 1 색상: 보라' })).toBeInTheDocument();
   expect(screen.queryByRole('menuitem', { name: '보라' })).not.toBeInTheDocument();
   await user.click(screen.getByRole('button', { name: '저장하기' }));
-  expect(onSave).toHaveBeenCalledWith([{ id: '1', name: '개발', color: 'purple' }]);
+  expect(onSave).toHaveBeenCalledWith({
+    options: [{ id: 1, name: '개발', color: 'purple' }],
+    deletedIds: [],
+  });
 });

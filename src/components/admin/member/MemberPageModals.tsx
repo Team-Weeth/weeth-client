@@ -14,8 +14,9 @@ import { ChangeCardinalsModal } from './modal/ChangeCardinalsModal';
 import { MemberDetailBottomSheet } from './modal/MemberDetailBottomSheet';
 import { MemberDetailModal } from './modal/MemberDetailModal';
 import { ChangePositionModal } from './modal/ChangePositionModal';
-import { useAdminPositionOptions } from '@/hooks/queries/admin/useAdminPositionQueries';
+import { PositionOptionsEmptyDialog } from './modal/PositionOptionsEmptyDialog';
 import { useUpdateMemberPosition } from '@/hooks/mutations/admin/useAdminPositionMutations';
+import { usePositionChangeGuard } from './hooks/usePositionChangeGuard';
 
 interface ForceConfirmState {
   requests: CardinalChangeRequest[];
@@ -56,7 +57,11 @@ function MemberPageModals({
   onChangeCardinals,
   onTransferLead,
 }: MemberPageModalsProps) {
-  const { data: positionOptions = [] } = useAdminPositionOptions();
+  const {
+    options: positionOptions,
+    ensureOptions: ensurePositionOptions,
+    emptyDialogProps: positionEmptyDialogProps,
+  } = usePositionChangeGuard();
   const { mutate: updatePosition } = useUpdateMemberPosition();
   const [positionMember, setPositionMember] = useState<Member | null>(null);
   const positionOpenTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -92,12 +97,13 @@ function MemberPageModals({
   const handleDetailTransferLead =
     isLead && detailMember ? () => onTransferLead(detailMember.clubMemberId) : undefined;
   // 데스크톱은 모달끼리 바로 교체되므로 바텀시트처럼 퇴장 애니메이션을 기다리지 않는다.
+  // 옵션이 없으면 빈 선택 모달 대신 안내가 뜬다.
   const handleDetailPositionChange = detailMember
     ? () => {
         const targetMember = detailMember;
 
         onCloseDetail();
-        setPositionMember(targetMember);
+        if (ensurePositionOptions()) setPositionMember(targetMember);
       }
     : undefined;
   const handleMobileDetailActionRequest = (action: TopBarAction) => {
@@ -166,8 +172,9 @@ function MemberPageModals({
                   setDisplayedDetailMember(targetMember);
                   onCloseDetail();
                   if (positionOpenTimeoutRef.current) clearTimeout(positionOpenTimeoutRef.current);
+                  // 시트가 닫힌 뒤에 판단해야 안내가 시트 위에 겹쳐 뜨지 않는다.
                   positionOpenTimeoutRef.current = setTimeout(() => {
-                    setPositionMember(targetMember);
+                    if (ensurePositionOptions()) setPositionMember(targetMember);
                     positionOpenTimeoutRef.current = null;
                   }, DETAIL_BOTTOM_SHEET_EXIT_DELAY_MS);
                 }
@@ -192,6 +199,8 @@ function MemberPageModals({
           }
         }}
       />
+
+      <PositionOptionsEmptyDialog {...positionEmptyDialogProps} />
 
       <ChangeCardinalsModal
         open={cardinalModalMember !== null}

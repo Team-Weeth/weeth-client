@@ -18,23 +18,33 @@ import type { MemberPositionOption } from '@/types/admin/memberPosition';
 
 interface MemberPositionDropdownProps {
   memberName: string;
-  value: string | null;
+  /** 현재 지정된 포지션. 옵션 목록 조회와 무관하게 멤버가 들고 있는 값을 그대로 보여준다. */
+  value: MemberPositionOption | null;
   options: readonly MemberPositionOption[];
+  /** 옵션 목록 조회 상태. 빈 목록이 '설정된 옵션 없음'인지 '아직 못 받아온 것'인지 구분한다. */
+  optionsStatus?: 'success' | 'pending' | 'error';
   /** null이면 지정 해제 */
   onChange: (option: MemberPositionOption | null) => void;
   onAddPosition?: () => void;
   className?: string;
 }
 
+const EMPTY_OPTION_LABEL = {
+  success: '옵션 없음',
+  pending: '불러오는 중',
+  error: '불러오지 못했어요',
+} as const;
+
 export function MemberPositionDropdown({
   memberName,
   value,
   options,
+  optionsStatus = 'success',
   onChange,
   onAddPosition,
   className,
 }: MemberPositionDropdownProps) {
-  const selected = options.find((option) => option.id === value);
+  const selected = value;
   const isMobile = useMediaQuery('(max-width: 695.98px)');
   const [open, setOpen] = useState(false);
   const [portalContainer, setPortalContainer] = useState<HTMLElement | null>(null);
@@ -83,29 +93,34 @@ export function MemberPositionDropdown({
         className="w-[var(--radix-dropdown-menu-trigger-width)] min-w-0"
         onClick={(event) => event.stopPropagation()}
       >
-        {/* 설정된 옵션이 없으면 해제할 대상도 없으므로 옵션 추가로만 안내한다. */}
+        {/* 설정된 옵션이 없으면 해제할 대상도 없으므로 옵션 추가로만 안내한다.
+            아직 못 받아온 상태에서는 추가하기 대신 조회 상태를 보여준다. */}
         {options.length === 0 ? (
           <>
             <DropdownMenuItem
               disabled
               className="text-text-alternative max-tablet:h-auto max-tablet:px-400 max-tablet:py-400 data-[disabled]:cursor-default"
             >
-              옵션 없음
+              {EMPTY_OPTION_LABEL[optionsStatus]}
             </DropdownMenuItem>
-            <DropdownMenuSeparator className="w-full shrink-0" />
-            <DropdownMenuItem
-              className="max-tablet:h-auto max-tablet:px-400 max-tablet:py-400"
-              onSelect={onAddPosition}
-            >
-              추가하기
-            </DropdownMenuItem>
+            {optionsStatus === 'success' && (
+              <>
+                <DropdownMenuSeparator className="w-full shrink-0" />
+                <DropdownMenuItem
+                  className="max-tablet:h-auto max-tablet:px-400 max-tablet:py-400"
+                  onSelect={onAddPosition}
+                >
+                  추가하기
+                </DropdownMenuItem>
+              </>
+            )}
           </>
         ) : (
           <>
             {options.map((option) => (
               <DropdownMenuItem
                 key={option.id}
-                aria-current={option.id === value ? 'true' : undefined}
+                aria-current={option.id === value?.id ? 'true' : undefined}
                 className="max-tablet:h-auto max-tablet:gap-[10px] max-tablet:px-400 max-tablet:py-400 gap-200"
                 onSelect={() => onChange(option)}
               >
@@ -127,7 +142,7 @@ export function MemberPositionDropdown({
   );
 }
 
-function PositionDot({ option }: { option?: MemberPositionOption }) {
+function PositionDot({ option }: { option?: MemberPositionOption | null }) {
   return (
     <span
       aria-hidden

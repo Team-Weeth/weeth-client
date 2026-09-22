@@ -9,6 +9,7 @@ import {
 import type {
   MemberPositionEditorOptions,
   MemberPositionOption,
+  MemberPositionSavePayload,
 } from '@/types/admin/memberPosition';
 import { getApiErrorMessage } from '@/utils/shared';
 
@@ -26,12 +27,23 @@ function useMemberPositionEditor({ initialOptions, onSave }: MemberPositionEdito
   const [savedOptions, setSavedOptions] = useState(() =>
     JSON.stringify(initialOptions ?? createInitialOptions()),
   );
+  // 서버에 저장돼 있는 목록. 여기 없는 항목은 신규(id=null), 여기서 사라진 항목은 삭제 대상이다.
+  const [serverOptions, setServerOptions] = useState(initialOptions);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const idPrefix = useId();
   const nextId = useRef(0);
   const savingRef = useRef(false);
   const normalized = options.map((option) => ({ ...option, name: option.name.trim() }));
+  const dirty = JSON.stringify(normalized) !== savedOptions;
+
+  // 저장 직후 목록을 다시 받아오면 새 옵션에 서버 id가 붙는다. 편집 중이 아닐 때만 그 값을 받아들인다.
+  if (initialOptions !== serverOptions && !dirty && !saving) {
+    const next = initialOptions ?? createInitialOptions();
+    setServerOptions(initialOptions);
+    setOptions(next);
+    setSavedOptions(JSON.stringify(next));
+  }
   const duplicateNames =
     new Set(normalized.map((option) => option.name)).size !== normalized.length;
   const valid =
@@ -39,11 +51,28 @@ function useMemberPositionEditor({ initialOptions, onSave }: MemberPositionEdito
     normalized.every((option) => option.name) &&
     options.every((option) => Array.from(option.name).length <= MAX_POSITION_NAME_LENGTH) &&
     !duplicateNames;
-  const canSave = valid && JSON.stringify(normalized) !== savedOptions && !saving;
+  const canSave = valid && dirty && !saving;
 
   function updateOptions(next: MemberPositionOption[]) {
     setOptions(next);
     setError(null);
+  }
+
+  /** 서버 목록과 대조해 신규(id=null)·수정(id=서버 id)·삭제(deletedIds)를 나눈다. */
+  function toSavePayload(current: MemberPositionOption[]): MemberPositionSavePayload {
+    const savedIds = new Set((serverOptions ?? []).map((option) => option.id));
+    const remainingIds = new Set(current.map((option) => option.id));
+
+    return {
+      options: current.map(({ id, name, color }) => ({
+        id: savedIds.has(id) ? Number(id) : null,
+        name,
+        color,
+      })),
+      deletedIds: (serverOptions ?? [])
+        .filter((option) => !remainingIds.has(option.id))
+        .map((option) => Number(option.id)),
+    };
   }
 
   async function handleSave() {
@@ -52,7 +81,7 @@ function useMemberPositionEditor({ initialOptions, onSave }: MemberPositionEdito
     setSaving(true);
     setError(null);
     try {
-      await onSave(normalized);
+      await onSave(toSavePayload(normalized));
       setOptions(normalized);
       setSavedOptions(JSON.stringify(normalized));
     } catch (error) {

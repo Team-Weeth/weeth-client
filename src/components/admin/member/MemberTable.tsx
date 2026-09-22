@@ -62,7 +62,7 @@ function MemberTable({
   const wrapperRef = React.useRef<HTMLDivElement>(null);
   const [internalSelectedIds, setInternalSelectedIds] = useState<Set<string>>(new Set());
   const [showStickyShadow, setShowStickyShadow] = useState(false);
-  const { data: positionOptions = [] } = useAdminPositionOptions();
+  const { data: positionOptions = [], status: positionOptionsStatus } = useAdminPositionOptions();
   const { mutate: updatePosition } = useUpdateMemberPosition();
   const goToPositionSettings = useMemberPositionSettingsLink();
   const selectedIds = controlledSelectedIds ?? internalSelectedIds;
@@ -220,6 +220,7 @@ function MemberTable({
                 key={member.id}
                 member={member}
                 positionOptions={positionOptions}
+                positionOptionsStatus={positionOptionsStatus}
                 onPositionChange={(option) =>
                   updatePosition({ clubMemberId: member.clubMemberId, option })
                 }

@@ -26,10 +26,9 @@ import { useMemberListState } from './hooks/useMemberListState';
 import { useMemberSelection } from './hooks/useMemberSelection';
 
 import { ChangePositionModal } from './modal/ChangePositionModal';
-import { AlertDialog, AlertDialogAction, AlertDialogCancel } from '@/components/ui/alert-dialog';
-import { useAdminPositionOptions } from '@/hooks/queries/admin/useAdminPositionQueries';
+import { PositionOptionsEmptyDialog } from './modal/PositionOptionsEmptyDialog';
 import { useUpdateMemberPositions } from '@/hooks/mutations/admin/useAdminPositionMutations';
-import { useMemberPositionSettingsLink } from './hooks/useMemberPositionSettingsLink';
+import { usePositionChangeGuard } from './hooks/usePositionChangeGuard';
 
 const MOBILE_MEMBER_PAGE_SIZE = 10;
 const MEMBER_VIEW_MODE_QUERY_KEY = 'view';
@@ -38,11 +37,13 @@ const isMemberViewMode = (value: string | null): value is MemberViewMode =>
   value === 'table' || value === 'card';
 
 function MemberPageContent() {
-  const { data: positionOptions = [] } = useAdminPositionOptions();
+  const {
+    options: positionOptions,
+    ensureOptions: ensurePositionOptions,
+    emptyDialogProps: positionEmptyDialogProps,
+  } = usePositionChangeGuard();
   const { mutate: updatePositions } = useUpdateMemberPositions();
-  const goToPositionSettings = useMemberPositionSettingsLink();
   const [isPositionOpen, setIsPositionOpen] = useState(false);
-  const [isPositionEmptyOpen, setIsPositionEmptyOpen] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -191,9 +192,9 @@ function MemberPageContent() {
   };
   const memberSelectionBarProps = {
     selectedCount,
-    // 옵션이 하나도 없으면 고를 게 없으므로 설정 페이지로 안내한다.
-    onChangePosition: () =>
-      positionOptions.length > 0 ? setIsPositionOpen(true) : setIsPositionEmptyOpen(true),
+    onChangePosition: () => {
+      if (ensurePositionOptions()) setIsPositionOpen(true);
+    },
     targetRole,
     targetBanAction,
     onBack: clearSelection,
@@ -336,20 +337,16 @@ function MemberPageContent() {
         memberName={selectedMembers[0]?.name}
         options={positionOptions}
         onSubmit={(option) => {
-          updatePositions({ clubMemberIds: selectedClubMemberIds, option });
-          clearSelection();
+          // 실패하면 낙관적 갱신이 되돌아가므로, 선택도 성공했을 때만 푼다.
+          updatePositions(
+            { clubMemberIds: selectedClubMemberIds, option },
+            { onSuccess: clearSelection },
+          );
         }}
       />
 
-      <AlertDialog
-        open={isPositionEmptyOpen}
-        onOpenChange={setIsPositionEmptyOpen}
-        title="변경 할 옵션이 없어요"
-        description="'부원 정보' 페이지에서 옵션을 추가해주세요."
-      >
-        <AlertDialogAction onClick={goToPositionSettings}>옵션 설정하러 가기</AlertDialogAction>
-        <AlertDialogCancel>취소</AlertDialogCancel>
-      </AlertDialog>
+      <PositionOptionsEmptyDialog {...positionEmptyDialogProps} />
+
       <MemberPageModals
         detailMember={detailMember}
         cardinalModalMember={cardinalModalMember}

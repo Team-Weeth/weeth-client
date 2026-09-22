@@ -45,6 +45,31 @@ it.each([true, false])(
   },
 );
 
+it.each([
+  ['pending', '불러오는 중'],
+  ['error', '불러오지 못했어요'],
+] as const)(
+  '옵션을 아직 못 받아온 상태(%s)에서는 추가하기 대신 조회 상태를 보여준다',
+  async (optionsStatus, label) => {
+    const user = userEvent.setup();
+    render(
+      <MemberPositionDropdown
+        memberName="김위드"
+        value={POSITION_OPTIONS[0]}
+        options={[]}
+        optionsStatus={optionsStatus}
+        onChange={jest.fn()}
+        onAddPosition={jest.fn()}
+      />,
+    );
+    // 옵션 목록과 무관하게 멤버가 들고 있는 포지션은 그대로 보여준다.
+    const trigger = screen.getByRole('button', { name: '김위드 포지션: 기획' });
+
+    await user.click(trigger);
+    expect(screen.getAllByRole('menuitem').map((item) => item.textContent)).toEqual([label]);
+  },
+);
+
 function renderInScrollContainer() {
   render(
     <div data-admin>
@@ -96,7 +121,7 @@ it('포지션 선택과 지정 해제를 처리하며 부모의 멤버 클릭 �
       <div onClick={onMemberClick}>
         <MemberPositionDropdown
           memberName="김위드"
-          value={selected?.id ?? null}
+          value={selected}
           options={POSITION_OPTIONS}
           onChange={setSelected}
         />
