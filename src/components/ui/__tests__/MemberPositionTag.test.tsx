@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import { MemberPositionTag } from '../MemberPositionTag';
+import { MemberPositionTag } from '@/components/ui/MemberPositionTag';
 
 it.each([
   ['primary', 'text-brand-primary', 'bg-brand-primary/10'],

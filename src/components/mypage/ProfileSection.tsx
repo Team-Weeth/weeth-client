@@ -3,11 +3,13 @@
 import { Fragment } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { Icon } from '@/components/ui/Icon';
+import { MemberPositionTag } from '@/components/ui/MemberPositionTag';
 import ArrowRightIcon from '@/assets/icons/arrow_right.svg';
 import PhoneIcon from '@/assets/icons/phone.svg';
 import MailIcon from '@/assets/icons/mail.svg';
 import { useProfileSectionActions } from '@/hooks/mypage';
 import { cn } from '@/lib/cn';
+import type { MemberPositionOption } from '@/types/admin/memberPosition';
 import type { ProfileData } from '@/types/mypage';
 import { formatPhone } from '@/utils/shared';
 import { ProfileBackgroundImageEditor } from './edit/ProfileBackgroundImageEditor';
@@ -18,6 +20,8 @@ interface ProfileSectionProps extends React.HTMLAttributes<HTMLDivElement>, Prof
   postCount?: number;
   sessionCount?: number;
   penaltyCount?: number;
+  /** 동아리가 지정해 준 포지션. 미지정이면 태그를 그리지 않는다. */
+  position?: MemberPositionOption | null;
 }
 
 const ProfileSection = ({
@@ -33,6 +37,7 @@ const ProfileSection = ({
   postCount = 0,
   sessionCount = 0,
   penaltyCount = 0,
+  position,
   className,
   ...props
 }: ProfileSectionProps) => {
@@ -112,7 +117,14 @@ const ProfileSection = ({
         <div className="mt-[10px] flex flex-col">
           <div className="flex items-center justify-between gap-400">
             <div className="flex w-full items-center justify-between">
-              <h1 className="typo-h3 text-text-strong">{name}</h1>
+              <div className="flex min-w-0 items-center gap-200">
+                <h1 className="typo-h3 text-text-strong truncate">{name}</h1>
+                {position && (
+                  <MemberPositionTag color={position.color} className="shrink-0">
+                    {position.name}
+                  </MemberPositionTag>
+                )}
+              </div>
               {schoolLabel && (
                 <span className="desktop:flex typo-caption2 text-text-alternative bg-container-neutral-alternative hidden shrink-0 rounded-md px-2 py-1">
                   {schoolLabel}
