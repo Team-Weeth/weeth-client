@@ -63,11 +63,7 @@ function ImageCard({
   return (
     <div
       onClick={onClick}
-      className={cn(
-        'relative overflow-hidden rounded-sm',
-        (removable || onClick) && 'cursor-pointer',
-        className,
-      )}
+      className={cn('relative overflow-hidden rounded-sm', onClick && 'cursor-pointer', className)}
     >
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img

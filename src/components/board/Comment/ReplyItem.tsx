@@ -7,9 +7,8 @@ import { Icon } from '@/components/ui/Icon';
 import { useCommentEditForm } from '@/hooks/board/useCommentEditForm';
 import { cn } from '@/lib/cn';
 import { ActionMenu } from '@/components/board/ActionMenu';
-import { FileList } from '@/components/board/FileList';
-import { ImageList } from '@/components/board/ImageList/ImageList';
 import { LinkifiedText } from '@/components/board/LinkifiedText';
+import { CommentAttachments } from './CommentAttachments';
 import { useActiveEditId, useCommentEditActions } from '@/stores/useCommentEditStore';
 import type { DisplayFile } from '@/types/board';
 import type { CreatePostFile } from '@/types/file';
@@ -109,12 +108,10 @@ function ReplyItem({
                 text={content}
                 className="typo-body1 text-text-normal whitespace-pre-wrap"
               />
-              {imageFileUrls && imageFileUrls.length > 0 && (
-                <ImageList files={imageFileUrls} viewable />
-              )}
-              {nonImageFileUrls && nonImageFileUrls.length > 0 && (
-                <FileList files={nonImageFileUrls} />
-              )}
+              <CommentAttachments
+                imageFileUrls={imageFileUrls}
+                nonImageFileUrls={nonImageFileUrls}
+              />
               <p className="typo-caption2 text-text-alternative">{date}</p>
             </>
           )}

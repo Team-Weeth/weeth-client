@@ -1,6 +1,8 @@
 import { useEffect, useRef } from 'react';
 import { ZOOM_STEP, ZOOM_MIN, ZOOM_MAX } from '@/hooks/useImageViewer';
 
+const SWIPE_THRESHOLD = 50;
+
 // 마우스 휠 줌
 function useWheelZoom(
   imageAreaRef: React.RefObject<HTMLDivElement | null>,
@@ -148,8 +150,6 @@ function useTouchGestures(
       if (touchStart.current && e.changedTouches.length === 1 && zoomRef.current <= 1) {
         const dx = e.changedTouches[0].clientX - touchStart.current.x;
         const dy = e.changedTouches[0].clientY - touchStart.current.y;
-        const SWIPE_THRESHOLD = 50;
-
         if (Math.abs(dx) > SWIPE_THRESHOLD && Math.abs(dx) > Math.abs(dy)) {
           if (dx > 0) onPrevRef.current();
           else onNextRef.current();
