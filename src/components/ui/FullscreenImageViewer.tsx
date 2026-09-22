@@ -11,6 +11,7 @@ import FitScreenIcon from '@/assets/icons/fit_screen.svg';
 import ZoomInIcon from '@/assets/icons/zoom_in.svg';
 import ZoomOutIcon from '@/assets/icons/zoom_out.svg';
 import { Icon } from '@/components/ui/Icon';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/Tooltip';
 import { useImageViewer, ZOOM_MIN, ZOOM_MAX } from '@/hooks/useImageViewer';
 import {
   useWheelZoom,
@@ -112,9 +113,11 @@ function FullscreenImageViewer({
             className="relative z-10 flex h-14 shrink-0 items-center px-400"
             onClick={(e) => e.stopPropagation()}
           >
-            <DialogPrimitive.Title className="typo-sub3 text-white">
-              {viewer.activeIndex + 1}/{imageCount}
-            </DialogPrimitive.Title>
+            {viewer.hasMultipleImages && (
+              <DialogPrimitive.Title className="typo-sub3 text-white">
+                {viewer.activeIndex + 1}/{imageCount}
+              </DialogPrimitive.Title>
+            )}
 
             {/* Right: download + close */}
             <div className="ml-auto flex items-center gap-100">
@@ -175,34 +178,57 @@ function FullscreenImageViewer({
               onPointerDown={(e) => e.stopPropagation()}
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="flex items-center gap-200 rounded-full bg-black/60 px-400 pt-200 pb-100">
-                <button
-                  type="button"
-                  onClick={viewer.handleZoomOut}
-                  disabled={viewer.zoom <= ZOOM_MIN}
-                  className="cursor-pointer p-100 text-white transition-opacity hover:opacity-70 disabled:cursor-default disabled:opacity-30"
-                  aria-label="축소"
-                >
-                  <Icon src={ZoomOutIcon} size={20} />
-                </button>
-                <button
-                  type="button"
-                  onClick={viewer.handleZoomIn}
-                  disabled={viewer.zoom >= ZOOM_MAX}
-                  className="cursor-pointer p-100 text-white transition-opacity hover:opacity-70 disabled:cursor-default disabled:opacity-30"
-                  aria-label="확대"
-                >
-                  <Icon src={ZoomInIcon} size={20} />
-                </button>
-                <button
-                  type="button"
-                  onClick={viewer.handleFitScreen}
-                  className="cursor-pointer p-100 text-white transition-opacity hover:opacity-70"
-                  aria-label="화면에 맞추기"
-                >
-                  <Icon src={FitScreenIcon} size={20} />
-                </button>
-              </div>
+              <TooltipProvider>
+                <div className="flex items-center gap-200 rounded-full bg-black/60 px-400 pt-200 pb-100">
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <button
+                        type="button"
+                        onClick={viewer.handleZoomOut}
+                        disabled={viewer.zoom <= ZOOM_MIN}
+                        className="cursor-pointer p-100 text-white transition-opacity hover:opacity-70 disabled:cursor-default disabled:opacity-30"
+                        aria-label="축소"
+                      >
+                        <Icon src={ZoomOutIcon} size={20} />
+                      </button>
+                    </TooltipTrigger>
+                    <TooltipContent variant="dark" side="top">
+                      축소
+                    </TooltipContent>
+                  </Tooltip>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <button
+                        type="button"
+                        onClick={viewer.handleZoomIn}
+                        disabled={viewer.zoom >= ZOOM_MAX}
+                        className="cursor-pointer p-100 text-white transition-opacity hover:opacity-70 disabled:cursor-default disabled:opacity-30"
+                        aria-label="확대"
+                      >
+                        <Icon src={ZoomInIcon} size={20} />
+                      </button>
+                    </TooltipTrigger>
+                    <TooltipContent variant="dark" side="top">
+                      확대
+                    </TooltipContent>
+                  </Tooltip>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <button
+                        type="button"
+                        onClick={viewer.handleFitScreen}
+                        className="cursor-pointer p-100 text-white transition-opacity hover:opacity-70"
+                        aria-label="화면에 맞추기"
+                      >
+                        <Icon src={FitScreenIcon} size={20} />
+                      </button>
+                    </TooltipTrigger>
+                    <TooltipContent variant="dark" side="top">
+                      화면에 맞추기
+                    </TooltipContent>
+                  </Tooltip>
+                </div>
+              </TooltipProvider>
             </div>
 
             {viewer.hasMultipleImages && (
