@@ -1,9 +1,17 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import {
+  useMutation,
+  useQueryClient,
+  type InfiniteData,
+  type QueryClient,
+} from '@tanstack/react-query';
 
 import { adminQueryKeys } from '@/hooks/queries/admin/adminQueryKeys';
 import { adminPositionApi } from '@/lib/apis/adminPosition';
 import { useClubId } from '@/stores';
+import { toastError, toastSuccess } from '@/stores/useToastStore';
+import type { Member } from '@/types/admin/member';
 import type { MemberPositionOption } from '@/types/admin/memberPosition';
+import type { PageResponse } from '@/types/common';
 import { toSavePositionOptionsBody } from '@/utils/admin/memberPositionMapper';
 
 /** 포지션 옵션 전체 저장(PUT). 저장 후 서버가 새 id를 발급하므로 목록을 다시 받아온다. */
@@ -22,4 +30,117 @@ export function useSavePositionOptions() {
       queryClient.invalidateQueries({ queryKey: adminQueryKeys.members(clubId) });
     },
   });
+}
+
+/** 드롭다운에서 고르면 즉시 저장하는 단건 지정/해제. option이 null이면 해제한다. */
+export function useUpdateMemberPosition() {
+  const queryClient = useQueryClient();
+  const clubId = useClubId();
+
+  return useMutation({
+    mutationFn: ({
+      clubMemberId,
+      option,
+    }: {
+      clubMemberId: number;
+      option: MemberPositionOption | null;
+    }) => {
+      if (!clubId) throw new Error('clubId가 없습니다');
+      return adminPositionApi.updateMemberPosition(clubId, clubMemberId, toOptionId(option));
+    },
+    onMutate: ({ clubMemberId, option }) =>
+      applyOptimisticPosition(queryClient, clubId, [clubMemberId], option),
+    onSuccess: (_data, { option }) => {
+      toastSuccess(option ? '포지션이 변경되었습니다.' : '포지션이 해제되었습니다.');
+    },
+    onError: (_error, _variables, context) => {
+      restoreMemberCaches(queryClient, context);
+      toastError('포지션 변경에 실패했습니다.');
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: adminQueryKeys.members(clubId) });
+    },
+  });
+}
+
+/** 선택한 멤버 전원을 같은 포지션으로 일괄 지정/해제. option이 null이면 해제한다. */
+export function useUpdateMemberPositions() {
+  const queryClient = useQueryClient();
+  const clubId = useClubId();
+
+  return useMutation({
+    mutationFn: ({
+      clubMemberIds,
+      option,
+    }: {
+      clubMemberIds: number[];
+      option: MemberPositionOption | null;
+    }) => {
+      if (!clubId) throw new Error('clubId가 없습니다');
+      return adminPositionApi.updateMemberPositions(clubId, clubMemberIds, toOptionId(option));
+    },
+    onMutate: ({ clubMemberIds, option }) =>
+      applyOptimisticPosition(queryClient, clubId, clubMemberIds, option),
+    onSuccess: (_data, { clubMemberIds, option }) => {
+      const target = `${clubMemberIds.length}명의 포지션이`;
+      toastSuccess(option ? `${target} 변경되었습니다.` : `${target} 해제되었습니다.`);
+    },
+    onError: (_error, _variables, context) => {
+      restoreMemberCaches(queryClient, context);
+      toastError('포지션 일괄 변경에 실패했습니다.');
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: adminQueryKeys.members(clubId) });
+    },
+  });
+}
+
+function toOptionId(option: MemberPositionOption | null) {
+  return option ? Number(option.id) : null;
+}
+
+/** 멤버 쿼리 키 하나로 목록(페이지), 무한 스크롤, 검색 결과 캐시가 모두 걸린다. */
+type MemberCache = Member[] | PageResponse<Member> | InfiniteData<PageResponse<Member>>;
+
+function mapMemberCache(
+  cache: MemberCache | undefined,
+  updateMember: (member: Member) => Member,
+): MemberCache | undefined {
+  if (!cache) return cache;
+  if (Array.isArray(cache)) return cache.map(updateMember);
+  if ('pages' in cache) {
+    return {
+      ...cache,
+      pages: cache.pages.map((page) => ({ ...page, content: page.content.map(updateMember) })),
+    };
+  }
+  return { ...cache, content: cache.content.map(updateMember) };
+}
+
+async function applyOptimisticPosition(
+  queryClient: QueryClient,
+  clubId: string | null,
+  clubMemberIds: number[],
+  option: MemberPositionOption | null,
+) {
+  const filters = { queryKey: adminQueryKeys.members(clubId) };
+  const targets = new Set(clubMemberIds);
+
+  await queryClient.cancelQueries(filters);
+  const previous = queryClient.getQueriesData<MemberCache>(filters);
+
+  queryClient.setQueriesData<MemberCache>(filters, (cache) =>
+    mapMemberCache(cache, (member) =>
+      targets.has(member.clubMemberId) ? { ...member, positionOption: option } : member,
+    ),
+  );
+
+  return previous;
+}
+
+function restoreMemberCaches(
+  queryClient: QueryClient,
+  previous: [readonly unknown[], MemberCache | undefined][] | undefined,
+) {
+  previous?.forEach(([key, cache]) => queryClient.setQueryData(key, cache));
 }

@@ -26,7 +26,8 @@ import { useMemberListState } from './hooks/useMemberListState';
 import { useMemberSelection } from './hooks/useMemberSelection';
 
 import { ChangePositionModal } from './modal/ChangePositionModal';
-import { MockMemberPositionsProvider, useMockMemberPositions } from './MockMemberPositionsProvider';
+import { useAdminPositionOptions } from '@/hooks/queries/admin/useAdminPositionQueries';
+import { useUpdateMemberPositions } from '@/hooks/mutations/admin/useAdminPositionMutations';
 
 const MOBILE_MEMBER_PAGE_SIZE = 10;
 const MEMBER_VIEW_MODE_QUERY_KEY = 'view';
@@ -35,15 +36,8 @@ const isMemberViewMode = (value: string | null): value is MemberViewMode =>
   value === 'table' || value === 'card';
 
 function MemberPageContent() {
-  return (
-    <MockMemberPositionsProvider>
-      <MemberPageBody />
-    </MockMemberPositionsProvider>
-  );
-}
-
-function MemberPageBody() {
-  const { setPosition } = useMockMemberPositions();
+  const { data: positionOptions = [] } = useAdminPositionOptions();
+  const { mutate: updatePositions } = useUpdateMemberPositions();
   const [isPositionOpen, setIsPositionOpen] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
@@ -320,8 +314,10 @@ function MemberPageBody() {
         onOpenChange={setIsPositionOpen}
         memberCount={selectedCount}
         memberName={selectedMembers[0]?.name}
-        onSubmit={(positionId) => {
-          selectedIds.forEach((memberId) => setPosition(memberId, positionId));
+        options={positionOptions}
+        onSubmit={(option) => {
+          updatePositions({ clubMemberIds: selectedClubMemberIds, option });
+          clearSelection();
         }}
       />
       <MemberPageModals

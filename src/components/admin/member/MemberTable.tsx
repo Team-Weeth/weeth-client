@@ -18,7 +18,9 @@ import { MEMBER_TABLE_COLUMNS } from '@/constants/admin/memberTable.constants';
 import { SelectionCheckbox } from '@/components/admin/SelectionCheckbox';
 import { TablePagination } from '@/components/admin/TablePagination';
 import { MemberTableRow } from './MemberTableRow';
-import { useMockMemberPositions } from './MockMemberPositionsProvider';
+import { useAdminPositionOptions } from '@/hooks/queries/admin/useAdminPositionQueries';
+import { useUpdateMemberPosition } from '@/hooks/mutations/admin/useAdminPositionMutations';
+import { useMemberPositionSettingsLink } from './hooks/useMemberPositionSettingsLink';
 
 /** 표를 감싼 가장 가까운 스크롤 컨테이너. 없으면 표 래퍼 자신을 돌려준다. */
 function findScrollContainer(node: HTMLElement | null) {
@@ -60,7 +62,9 @@ function MemberTable({
   const wrapperRef = React.useRef<HTMLDivElement>(null);
   const [internalSelectedIds, setInternalSelectedIds] = useState<Set<string>>(new Set());
   const [showStickyShadow, setShowStickyShadow] = useState(false);
-  const { getPositionId, setPosition } = useMockMemberPositions();
+  const { data: positionOptions = [] } = useAdminPositionOptions();
+  const { mutate: updatePosition } = useUpdateMemberPosition();
+  const goToPositionSettings = useMemberPositionSettingsLink();
   const selectedIds = controlledSelectedIds ?? internalSelectedIds;
   const setSelectedIds = onSelectionChange ?? setInternalSelectedIds;
   const currentPage = Math.min(page, Math.max(totalPages, 1));
@@ -199,8 +203,11 @@ function MemberTable({
               <MemberTableRow
                 key={member.id}
                 member={member}
-                positionId={getPositionId(member.id)}
-                onPositionChange={(positionId) => setPosition(member.id, positionId)}
+                positionOptions={positionOptions}
+                onPositionChange={(option) =>
+                  updatePosition({ clubMemberId: member.clubMemberId, option })
+                }
+                onAddPosition={goToPositionSettings}
                 selected={selectedIds.has(member.id)}
                 onToggle={toggleOne}
                 onMemberAction={onMemberAction}

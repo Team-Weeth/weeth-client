@@ -5,15 +5,16 @@ import AdminCloseIcon from '@/assets/icons/admin/ic_admin_close.svg';
 import { Button } from '@/components/ui/Button';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { Icon } from '@/components/ui/Icon';
-import { MOCK_MEMBER_POSITIONS } from '@/mocks/memberPositions';
 import { cn } from '@/lib/cn';
+import type { MemberPositionOption } from '@/types/admin/memberPosition';
 
 interface ChangePositionModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   memberCount: number;
   memberName?: string;
-  onSubmit: (positionId: string) => void;
+  options: readonly MemberPositionOption[];
+  onSubmit: (option: MemberPositionOption) => void;
 }
 
 export function ChangePositionModal(props: ChangePositionModalProps) {
@@ -26,10 +27,11 @@ function PositionSelectionDialog({
   onOpenChange,
   memberCount,
   memberName,
+  options,
   onSubmit,
 }: ChangePositionModalProps) {
   const [selectedId, setSelectedId] = useState<string | null>(null);
-  const selected = MOCK_MEMBER_POSITIONS.find((option) => option.id === selectedId);
+  const selected = options.find((option) => option.id === selectedId);
   const close = () => onOpenChange(false);
 
   return (
@@ -62,7 +64,7 @@ function PositionSelectionDialog({
             role="group"
             aria-label="포지션 선택"
           >
-            {MOCK_MEMBER_POSITIONS.map((option) => (
+            {options.map((option) => (
               <button
                 key={option.id}
                 type="button"
@@ -100,7 +102,7 @@ function PositionSelectionDialog({
               disabled={!selected || memberCount === 0}
               onClick={() => {
                 if (!selected || memberCount === 0) return;
-                onSubmit(selected.id);
+                onSubmit(selected);
                 close();
               }}
             >

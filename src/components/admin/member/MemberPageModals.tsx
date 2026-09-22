@@ -14,7 +14,8 @@ import { ChangeCardinalsModal } from './modal/ChangeCardinalsModal';
 import { MemberDetailBottomSheet } from './modal/MemberDetailBottomSheet';
 import { MemberDetailModal } from './modal/MemberDetailModal';
 import { ChangePositionModal } from './modal/ChangePositionModal';
-import { useMockMemberPositions } from './MockMemberPositionsProvider';
+import { useAdminPositionOptions } from '@/hooks/queries/admin/useAdminPositionQueries';
+import { useUpdateMemberPosition } from '@/hooks/mutations/admin/useAdminPositionMutations';
 
 interface ForceConfirmState {
   requests: CardinalChangeRequest[];
@@ -55,7 +56,8 @@ function MemberPageModals({
   onChangeCardinals,
   onTransferLead,
 }: MemberPageModalsProps) {
-  const { setPosition } = useMockMemberPositions();
+  const { data: positionOptions = [] } = useAdminPositionOptions();
+  const { mutate: updatePosition } = useUpdateMemberPosition();
   const [positionMember, setPositionMember] = useState<Member | null>(null);
   const positionOpenTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [pendingDetailAction, setPendingDetailAction] = useState<TopBarAction | null>(null);
@@ -183,8 +185,11 @@ function MemberPageModals({
         }}
         memberCount={1}
         memberName={positionMember?.name}
-        onSubmit={(positionId) => {
-          if (positionMember) setPosition(positionMember.id, positionId);
+        options={positionOptions}
+        onSubmit={(option) => {
+          if (positionMember) {
+            updatePosition({ clubMemberId: positionMember.clubMemberId, option });
+          }
         }}
       />
 

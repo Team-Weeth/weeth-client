@@ -7,4 +7,18 @@ export const adminPositionApi = {
     apiClient.get<ApiResponse<ClubPositionOption[]>>(`/admin/clubs/${clubId}/positions`),
   saveOptions: (clubId: string, body: SaveClubPositionOptionsBody) =>
     apiClient.put<ApiResponse<void>>(`/admin/clubs/${clubId}/positions`, body),
+  /** positionOptionId가 null이면 지정 해제 */
+  updateMemberPosition: (clubId: string, clubMemberId: number, positionOptionId: number | null) =>
+    apiClient.patch<ApiResponse<void>>(`/admin/clubs/${clubId}/members/${clubMemberId}/position`, {
+      positionOptionId,
+    }),
+  updateMemberPositions: (
+    clubId: string,
+    clubMemberIds: number[],
+    positionOptionId: number | null,
+  ) =>
+    apiClient.patch<ApiResponse<void>>(`/admin/clubs/${clubId}/members/positions`, {
+      clubMemberIds,
+      positionOptionId,
+    }),
 };

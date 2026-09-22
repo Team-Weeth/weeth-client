@@ -19,7 +19,8 @@ interface MemberPositionDropdownProps {
   memberName: string;
   value: string | null;
   options: readonly MemberPositionOption[];
-  onChange: (value: string | null) => void;
+  /** null이면 지정 해제 */
+  onChange: (option: MemberPositionOption | null) => void;
   onAddPosition?: () => void;
   className?: string;
 }
@@ -68,32 +69,42 @@ export function MemberPositionDropdown({
         className="max-tablet:z-10 w-[var(--radix-dropdown-menu-trigger-width)] min-w-0"
         onClick={(event) => event.stopPropagation()}
       >
-        {options.map((option) => (
-          <DropdownMenuItem
-            key={option.id}
-            aria-current={option.id === value ? 'true' : undefined}
-            className="max-tablet:h-auto max-tablet:gap-[10px] max-tablet:px-400 max-tablet:py-400 gap-200"
-            onSelect={() => onChange(option.id)}
-          >
-            <PositionDot option={option} />
-            <span className="truncate">{option.name}</span>
-          </DropdownMenuItem>
-        ))}
-        {options.length > 0 && <DropdownMenuSeparator className="w-full shrink-0" />}
-        <DropdownMenuItem
-          className="text-text-alternative max-tablet:h-auto max-tablet:px-400 max-tablet:py-400"
-          onSelect={() => onChange(null)}
-        >
-          지정 해제
-        </DropdownMenuItem>
-        {options.length === 0 && (
+        {/* 설정된 옵션이 없으면 해제할 대상도 없으므로 옵션 추가로만 안내한다. */}
+        {options.length === 0 ? (
           <>
+            <DropdownMenuItem
+              disabled
+              className="text-text-alternative max-tablet:h-auto max-tablet:px-400 max-tablet:py-400 data-[disabled]:cursor-default"
+            >
+              옵션 없음
+            </DropdownMenuItem>
             <DropdownMenuSeparator className="w-full shrink-0" />
             <DropdownMenuItem
               className="max-tablet:h-auto max-tablet:px-400 max-tablet:py-400"
               onSelect={onAddPosition}
             >
               추가하기
+            </DropdownMenuItem>
+          </>
+        ) : (
+          <>
+            {options.map((option) => (
+              <DropdownMenuItem
+                key={option.id}
+                aria-current={option.id === value ? 'true' : undefined}
+                className="max-tablet:h-auto max-tablet:gap-[10px] max-tablet:px-400 max-tablet:py-400 gap-200"
+                onSelect={() => onChange(option)}
+              >
+                <PositionDot option={option} />
+                <span className="truncate">{option.name}</span>
+              </DropdownMenuItem>
+            ))}
+            <DropdownMenuSeparator className="w-full shrink-0" />
+            <DropdownMenuItem
+              className="text-text-alternative max-tablet:h-auto max-tablet:px-400 max-tablet:py-400"
+              onSelect={() => onChange(null)}
+            >
+              지정 해제
             </DropdownMenuItem>
           </>
         )}

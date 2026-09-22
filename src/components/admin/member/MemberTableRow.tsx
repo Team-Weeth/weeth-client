@@ -14,14 +14,15 @@ import { TableCell, TableRow } from '@/components/ui/table';
 import { cn } from '@/lib/cn';
 import { formatEmptyValue } from '@/utils/shared/formatEmptyValue';
 import type { Member } from '@/types/admin/member';
+import type { MemberPositionOption } from '@/types/admin/memberPosition';
 import { MemberStatusBadge } from './MemberStatusBadge';
 import { MemberPositionDropdown } from './MemberPositionDropdown';
-import { MOCK_MEMBER_POSITIONS } from '@/mocks/memberPositions';
 
 interface MemberTableRowProps {
   member: Member;
-  positionId: string | null;
-  onPositionChange: (positionId: string | null) => void;
+  positionOptions: readonly MemberPositionOption[];
+  onPositionChange: (option: MemberPositionOption | null) => void;
+  onAddPosition?: () => void;
   selected: boolean;
   onToggle: (id: string) => void;
   onMemberAction?: (member: Member) => void;
@@ -39,8 +40,9 @@ const NUMBER_CELL_VALUES = ['attendance', 'absence', 'penaltyCount'] as const;
 
 function MemberTableRow({
   member,
-  positionId,
+  positionOptions,
   onPositionChange,
+  onAddPosition,
   selected,
   onToggle,
   onMemberAction,
@@ -87,9 +89,10 @@ function MemberTableRow({
       <TableCell className="max-tablet:py-100 w-[172px] p-0 px-400 py-200">
         <MemberPositionDropdown
           memberName={member.name}
-          value={positionId}
-          options={MOCK_MEMBER_POSITIONS}
+          value={member.positionOption?.id ?? null}
+          options={positionOptions}
           onChange={onPositionChange}
+          onAddPosition={onAddPosition}
         />
       </TableCell>
 

@@ -15,6 +15,7 @@ function createMember(overrides: Partial<Member> = {}): Member {
     phone: '010-0000-0000',
     studentId: '20240001',
     position: '멤버',
+    positionOption: null,
     memberRole: 'USER',
     attendance: 3,
     absence: 1,

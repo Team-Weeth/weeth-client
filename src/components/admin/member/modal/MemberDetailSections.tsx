@@ -1,8 +1,6 @@
 'use client';
 
 import { useClubFeatures } from '@/providers/club-feature-provider';
-import { useMockMemberPositions } from '../MockMemberPositionsProvider';
-import { MOCK_MEMBER_POSITIONS } from '@/mocks/memberPositions';
 import { useRef, useState } from 'react';
 import type { ReactNode } from 'react';
 import { AttendanceProgressBar } from '@/components/attendance/AttendanceProgressBar';
@@ -71,10 +69,7 @@ function MemberDetailSummary({ member, className, avatarSize = 64 }: MemberDetai
 }
 
 function MemberPersonalInfoCard({ member, className }: MemberDetailInfoCardProps) {
-  const { getPositionId } = useMockMemberPositions();
-  const positionName =
-    MOCK_MEMBER_POSITIONS.find((option) => option.id === getPositionId(member.id))?.name ??
-    '미지정';
+  const positionName = member.positionOption?.name ?? '미지정';
   return (
     <section
       className={cn('border-line bg-container-neutral rounded-md border px-500 py-450', className)}

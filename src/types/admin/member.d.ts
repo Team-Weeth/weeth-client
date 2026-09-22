@@ -1,3 +1,5 @@
+import type { ClubPositionOption, MemberPositionOption } from '@/types/admin/memberPosition';
+
 export type MemberStatus = 'ACTIVE' | 'BANNED' | 'LEFT';
 
 export interface Member {
@@ -9,7 +11,10 @@ export interface Member {
   cardinal: string; // 활동기수 전체, e.g. "1, 2"
   phone: string;
   studentId: string;
+  /** 역할 라벨('부원', '운영진'). 동아리가 설정한 포지션은 positionOption이다. */
   position: string;
+  /** 지정된 포지션 옵션. 미지정이면 null */
+  positionOption: MemberPositionOption | null;
   memberRole: ClubMemberRole;
   attendance: number;
   absence: number;
@@ -47,4 +52,6 @@ export interface ClubMember {
   profileImageUrl: string | null;
   bio: string | null;
   joinedAt: string | null;
+  /** 지정된 포지션 옵션. 미지정이면 null */
+  position: ClubPositionOption | null;
 }
