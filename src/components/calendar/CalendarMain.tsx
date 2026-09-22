@@ -8,7 +8,7 @@ import { useIsTablet } from '@/hooks/useIsTablet';
 import { useCalendarUrlSync } from '@/hooks/useCalendarUrlSync';
 import { useCalendarScheduleData } from '@/hooks/queries/schedule/useCalendarScheduleData';
 import { CalendarMonthPicker } from '@/components/calendar/CalendarMonthPicker';
-import { CalendarScheduleDetailContentMobile } from '@/components/calendar/CalendarScheduleDetailContentMobile';
+import { CalendarMobileScheduleDetailContent } from '@/components/calendar/CalendarMobileScheduleDetailContent';
 import { CalendarAttendeeListContent } from '@/components/calendar/CalendarAttendeeListContent';
 import { CalendarPageHeader } from '@/components/calendar/CalendarPageHeader';
 import { CalendarMobileView } from '@/components/calendar/CalendarMobileView';
@@ -24,7 +24,7 @@ import {
 } from '@/stores/useCalendarStore';
 import { useClubId } from '@/stores';
 import { CalendarScheduleModal } from '@/components/calendar/CalendarScheduleModal';
-import { CalendarScheduleDetailContentMobileSkeleton } from '@/components/calendar/skeleton/CalendarScheduleDetailContentMobileSkeleton';
+import { CalendarMobileScheduleDetailContentSkeleton } from '@/components/calendar/skeleton/CalendarMobileScheduleDetailContentSkeleton';
 
 interface CalendarMainProps {
   className?: string;
@@ -159,10 +159,10 @@ function CalendarMain({ className }: CalendarMainProps) {
               onBack={closeAttendeeList}
             />
           ) : isDetailLoading ? (
-            <CalendarScheduleDetailContentMobileSkeleton />
+            <CalendarMobileScheduleDetailContentSkeleton />
           ) : (
             <div className="flex-1 overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-              <CalendarScheduleDetailContentMobile
+              <CalendarMobileScheduleDetailContent
                 schedule={fullDetail ?? selectedSchedule}
                 clubId={clubId}
                 onViewAttendees={openAttendeeList}

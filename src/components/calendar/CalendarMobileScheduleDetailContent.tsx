@@ -18,17 +18,17 @@ import CalendarIcon from '@/assets/icons/calendar.svg';
 import LocationIcon from '@/assets/icons/location.svg';
 import type { ScheduleDetail } from '@/types/calendar';
 
-interface CalendarScheduleDetailContentMobileProps {
+interface CalendarMobileScheduleDetailContentProps {
   schedule: ScheduleDetail;
   clubId?: string | null;
   onViewAttendees: () => void;
 }
 
-function CalendarScheduleDetailContentMobile({
+function CalendarMobileScheduleDetailContent({
   schedule,
   clubId,
   onViewAttendees,
-}: CalendarScheduleDetailContentMobileProps) {
+}: CalendarMobileScheduleDetailContentProps) {
   const {
     resolvedClubId,
     typeLabel,
@@ -135,4 +135,4 @@ function CalendarScheduleDetailContentMobile({
   );
 }
 
-export { CalendarScheduleDetailContentMobile, type CalendarScheduleDetailContentMobileProps };
+export { CalendarMobileScheduleDetailContent, type CalendarMobileScheduleDetailContentProps };
