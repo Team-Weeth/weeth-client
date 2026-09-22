@@ -2,6 +2,7 @@ import { renderHook, waitFor } from '@testing-library/react';
 import { apiClient } from '@/lib/apis/client';
 import { createQueryClient, createWrapper } from '@/test-utils/query';
 import { useAdminMembers } from '../useAdminMemberQueries';
+import type { ClubMemberSort } from '@/lib/apis/adminMember';
 
 jest.mock('@/lib/apis/client', () => ({ apiClient: { get: jest.fn() } }));
 jest.mock('@/stores', () => ({ useClubId: () => 'club-1' }));
@@ -60,6 +61,45 @@ it('PC 페이지 이동 시 0부터 시작하는 페이지를 요청하고 목�
   await waitFor(() => expect(result.current.data?.pageNumber).toBe(0));
   expect(result.current.data?.content[0].id).toBe('1');
   expect(getMock).toHaveBeenCalledTimes(3);
+});
+
+it('기수를 고르면 서버에 기수를 넘겨 다시 조회한다', async () => {
+  const { result, rerender } = renderHook(
+    ({ cardinalNumber }: { cardinalNumber?: number }) =>
+      useAdminMembers(0, 10, true, cardinalNumber),
+    {
+      initialProps: {} as { cardinalNumber?: number },
+      wrapper: createWrapper(createQueryClient()),
+    },
+  );
+  await waitFor(() => expect(result.current.isSuccess).toBe(true));
+
+  rerender({ cardinalNumber: 3 });
+  await waitFor(() => expect(getMock).toHaveBeenCalledTimes(2));
+
+  expect(getMock.mock.calls.map(([, config]) => config?.params)).toEqual([
+    { page: 0, size: 10, cardinalNumber: undefined, sort: undefined },
+    { page: 0, size: 10, cardinalNumber: 3, sort: undefined },
+  ]);
+});
+
+it('정렬을 바꾸면 서버에 정렬 값을 넘겨 다시 조회한다', async () => {
+  const { result, rerender } = renderHook(
+    ({ sort }: { sort?: ClubMemberSort }) => useAdminMembers(0, 10, true, undefined, sort),
+    {
+      initialProps: { sort: 'CARDINAL_DESC' } as { sort?: ClubMemberSort },
+      wrapper: createWrapper(createQueryClient()),
+    },
+  );
+  await waitFor(() => expect(result.current.isSuccess).toBe(true));
+
+  rerender({ sort: 'NAME_ASC' });
+  await waitFor(() => expect(getMock).toHaveBeenCalledTimes(2));
+
+  expect(getMock.mock.calls.map(([, config]) => config?.params.sort)).toEqual([
+    'CARDINAL_DESC',
+    'NAME_ASC',
+  ]);
 });
 
 it('빈 페이지 응답의 전체 개수와 페이지 수를 유지한다', async () => {

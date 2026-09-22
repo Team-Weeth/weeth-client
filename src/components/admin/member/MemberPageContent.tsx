@@ -21,7 +21,7 @@ import { cn } from '@/lib/cn';
 import { useMemberBulkActions } from './hooks/useMemberBulkActions';
 import { useDebouncedValue } from '@/hooks/useDebouncedValue';
 import { useAdminMemberSearch } from '@/hooks/queries/admin/useAdminMemberQueries';
-import { filterMembers, sortMembers } from '@/utils/admin/memberPageUtils';
+import { MEMBER_SORT_PARAM, sortMembers } from '@/utils/admin/memberPageUtils';
 import { useMemberListState } from './hooks/useMemberListState';
 import { useMemberSelection } from './hooks/useMemberSelection';
 
@@ -78,17 +78,26 @@ function MemberPageContent() {
     isSearching && !isDebouncing,
   );
   const isSearchLoading = isSearching && (isDebouncing || isSearchPending);
+  const cardinalFilter = selectedCardinal === 'all' ? undefined : selectedCardinal;
+  const sortParam = MEMBER_SORT_PARAM[sortBy];
   const { data: memberPage = EMPTY_MEMBER_PAGE } = useAdminMembers(
     page - 1,
     pageSize,
     !isMobile && !isSearching,
+    cardinalFilter,
+    sortParam,
   );
   const {
     data: infiniteMembers = [],
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
-  } = useAdminMembersInfinite(MOBILE_MEMBER_PAGE_SIZE, isMobile && !isSearching);
+  } = useAdminMembersInfinite(
+    MOBILE_MEMBER_PAGE_SIZE,
+    isMobile && !isSearching,
+    cardinalFilter,
+    sortParam,
+  );
   const members = isSearching
     ? isSearchLoading || isSearchError
       ? []
@@ -96,10 +105,9 @@ function MemberPageContent() {
     : isMobile
       ? infiniteMembers
       : memberPage.content;
-  const sortedMembers = sortMembers(
-    isSearching ? members : filterMembers(members, selectedCardinal, ''),
-    sortBy,
-  );
+  // 목록 조회는 기수 필터와 정렬을 서버가 적용해 페이지 단위로 내려주므로 그대로 쓴다.
+  // 검색 결과만 전체가 한 번에 오기 때문에 여기서 정렬해야 의도한 순서가 나온다.
+  const sortedMembers = isSearching ? sortMembers(members, sortBy) : members;
   const totalPages = isSearching
     ? Math.max(Math.ceil(sortedMembers.length / pageSize), 1)
     : Math.max(memberPage.totalPages ?? 1, 1);
