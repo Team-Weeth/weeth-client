@@ -7,6 +7,9 @@ export const adminQueryKeys = {
 
   members: (clubId: string | null) => ['admin', 'members', clubId] as const,
 
+  // 포지션 옵션 — 동아리 단위 전체 목록
+  positions: (clubId: string | null) => ['admin', 'positions', clubId] as const,
+
   boards: (clubId: string | null) => ['admin', 'boards', clubId] as const,
 
   // 페널티 — 기수별 멤버 목록, 멤버 단건 상세
