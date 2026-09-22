@@ -1,23 +1,21 @@
+import type { ClubMemberSort } from '@/lib/apis/adminMember';
 import type { Cardinal } from '@/types/admin/cardinal';
 import type { Member } from '@/types/admin/member';
 import { getCommonCardinals } from './cardinalSelectionUtils';
-import { compareLatestCardinalDesc, getCardinalNumber, hasCardinal } from './memberTableUtils';
+import { compareLatestCardinalDesc, getCardinalNumber } from './memberTableUtils';
 import { parseCardinals } from './parseCardinals';
 
 type MemberSortBy = 'cardinal' | 'name';
 
+/** 화면의 정렬 토글을 서버가 아는 값으로 옮긴다. 정렬도 페이지 단위라 서버가 해야 한다. */
+const MEMBER_SORT_PARAM: Record<MemberSortBy, ClubMemberSort> = {
+  cardinal: 'CARDINAL_DESC',
+  name: 'NAME_ASC',
+};
+
 interface CardinalChangeRequest {
   clubMemberId: number;
   cardinalIds: number[];
-}
-
-function filterMembers(members: Member[], selectedCardinal: number | 'all', searchQuery: string) {
-  return members.filter((member) => {
-    const matchesCardinal =
-      selectedCardinal === 'all' || hasCardinal(member.cardinal, selectedCardinal);
-
-    return matchesCardinal && matchesMemberSearch(member, searchQuery);
-  });
 }
 
 function sortMembers(members: Member[], sortBy: MemberSortBy) {
@@ -40,15 +38,6 @@ function getMemberCardinalNumbers(cardinal: string) {
 
 function getSelectedMemberCardinals(members: Member[]) {
   return members.map((member) => getMemberCardinalNumbers(member.cardinal));
-}
-
-function matchesMemberSearch(member: Member, query: string) {
-  const normalizedQuery = query.trim().toLowerCase();
-  if (!normalizedQuery) return true;
-
-  return [member.name, member.position, member.department, member.studentId, member.phone].some(
-    (value) => value.toLowerCase().includes(normalizedQuery),
-  );
 }
 
 function createBulkCardinalChangeRequests({
@@ -81,12 +70,11 @@ function createBulkCardinalChangeRequests({
 }
 
 export {
+  MEMBER_SORT_PARAM,
   createBulkCardinalChangeRequests,
-  filterMembers,
   getMemberCardinalNumbers,
   getMemberIds,
   getSelectedMemberCardinals,
-  matchesMemberSearch,
   sortMembers,
   type CardinalChangeRequest,
   type MemberSortBy,

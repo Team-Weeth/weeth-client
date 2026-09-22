@@ -70,7 +70,7 @@ it('100명 중 기본 10명 → 20명 → 50명을 표시하고 선택 상태와
       'true',
     );
     expect(getMock).toHaveBeenLastCalledWith('/admin/clubs/club-1/members', {
-      params: { page: 0, size },
+      params: { page: 0, size, cardinalNumber: undefined, sort: 'CARDINAL_DESC' },
     });
   }
 });
@@ -88,7 +88,7 @@ it.each([20, 50])('%i명씩 마지막 페이지까지 중복 없이 조회한다
       screen.queryByText(`테스트멤버${String((page - 1) * size).padStart(3, '0')}`),
     ).not.toBeInTheDocument();
     expect(getMock).toHaveBeenLastCalledWith('/admin/clubs/club-1/members', {
-      params: { page: page - 1, size },
+      params: { page: page - 1, size, cardinalNumber: undefined, sort: 'CARDINAL_DESC' },
     });
   }
   expect(screen.queryByRole('link', { name: String(100 / size + 1) })).not.toBeInTheDocument();
@@ -109,6 +109,6 @@ it('20명씩 3페이지를 보다가 50명으로 바꾸면 첫 페이지로 돌�
   expect(screen.getByRole('link', { name: '1' })).toHaveAttribute('aria-current', 'page');
   expect(scrollContainer.scrollTop).toBe(0);
   expect(getMock).toHaveBeenLastCalledWith('/admin/clubs/club-1/members', {
-    params: { page: 0, size: 50 },
+    params: { page: 0, size: 50, cardinalNumber: undefined, sort: 'CARDINAL_DESC' },
   });
 });
