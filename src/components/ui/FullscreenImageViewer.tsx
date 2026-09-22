@@ -113,11 +113,11 @@ function FullscreenImageViewer({
             className="relative z-10 flex h-14 shrink-0 items-center px-400"
             onClick={(e) => e.stopPropagation()}
           >
-            {viewer.hasMultipleImages && (
-              <DialogPrimitive.Title className="typo-sub3 text-white">
-                {viewer.activeIndex + 1}/{imageCount}
-              </DialogPrimitive.Title>
-            )}
+            <DialogPrimitive.Title
+              className={cn('typo-sub3 text-white', !viewer.hasMultipleImages && 'sr-only')}
+            >
+              {viewer.hasMultipleImages ? `${viewer.activeIndex + 1}/${imageCount}` : '이미지'}
+            </DialogPrimitive.Title>
 
             {/* Right: download + close */}
             <div className="ml-auto flex items-center gap-100">
@@ -172,7 +172,6 @@ function FullscreenImageViewer({
             />
 
             {/* Zoom controls — visible on hover */}
-            {/* onPointerDown 전파 차단으로 드래그 패닝과 충돌 방지 */}
             <div
               className="absolute inset-x-0 bottom-800 z-10 flex justify-center opacity-0 transition-opacity duration-200 group-hover:opacity-100"
               onPointerDown={(e) => e.stopPropagation()}
