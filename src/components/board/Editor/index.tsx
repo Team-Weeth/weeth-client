@@ -120,7 +120,7 @@ export default function Editor({ initialContent }: EditorProps = {}) {
 
       {/* 게시글 하단 첨부 영역 */}
       <div className="mt-auto flex flex-col gap-400 pt-400">
-        <ImageList files={files.imageFiles} removable onRemove={files.handleRemoveFile} />
+        <ImageList files={files.imageFiles} removable viewable onRemove={files.handleRemoveFile} />
         <FileList files={files.nonImageFiles} onRemove={files.handleRemoveFile} editable />
       </div>
     </div>

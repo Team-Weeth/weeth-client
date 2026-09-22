@@ -139,7 +139,9 @@ function CommentItem({
                   isDeleted ? 'text-text-disabled' : 'text-text-normal',
                 )}
               />
-              {imageFileUrls && imageFileUrls.length > 0 && <ImageList files={imageFileUrls} />}
+              {imageFileUrls && imageFileUrls.length > 0 && (
+                <ImageList files={imageFileUrls} viewable />
+              )}
               {nonImageFileUrls && nonImageFileUrls.length > 0 && (
                 <FileList files={nonImageFileUrls} />
               )}

@@ -149,7 +149,7 @@ function PostDetailContent({ initialData }: PostDetailContentProps) {
 
         <PostCard.Body content={currentPost.content} />
 
-        <PostCard.Images files={imageFiles} />
+        <PostCard.Images files={imageFiles} viewable showThumbnails />
 
         <FileList files={nonImageFiles} />
 

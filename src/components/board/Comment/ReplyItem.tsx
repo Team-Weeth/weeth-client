@@ -109,7 +109,9 @@ function ReplyItem({
                 text={content}
                 className="typo-body1 text-text-normal whitespace-pre-wrap"
               />
-              {imageFileUrls && imageFileUrls.length > 0 && <ImageList files={imageFileUrls} />}
+              {imageFileUrls && imageFileUrls.length > 0 && (
+                <ImageList files={imageFileUrls} viewable />
+              )}
               {nonImageFileUrls && nonImageFileUrls.length > 0 && (
                 <FileList files={nonImageFileUrls} />
               )}
