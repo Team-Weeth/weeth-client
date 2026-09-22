@@ -39,6 +39,8 @@ interface MemberTableProps extends React.HTMLAttributes<HTMLDivElement> {
   selectedIds?: Set<string>;
   onSelectionChange?: (ids: Set<string>) => void;
   onMemberAction?: (member: Member) => void;
+  /** 표 안 마지막 행에 붙는 노드. 모바일은 표가 스크롤을 맡으므로 무한 스크롤 센티널이 여기 들어간다. */
+  listFooter?: React.ReactNode;
 }
 
 function MemberTable({
@@ -53,6 +55,7 @@ function MemberTable({
   selectedIds: controlledSelectedIds,
   onSelectionChange,
   onMemberAction,
+  listFooter,
   ...props
 }: MemberTableProps) {
   const { warningEnabled } = useClubFeatures();
@@ -72,6 +75,12 @@ function MemberTable({
     'bg-container-neutral-alternative max-tablet:sticky max-tablet:top-0 max-tablet:z-30',
     fixedHeight && 'tablet:sticky tablet:top-0 tablet:z-30',
   );
+
+  const visibleColumns = MEMBER_TABLE_COLUMNS.filter(
+    (column) => column.id !== 'warning' || warningEnabled,
+  );
+  // 체크박스 열 + 뒤쪽 여백 열 2개까지 더한 값이라 전체 너비로 펼칠 때 쓴다.
+  const columnCount = visibleColumns.length + 3;
 
   const isAllSelected = members.length > 0 && members.every((member) => selectedIds.has(member.id));
   const hasAnySelected = members.some((member) => selectedIds.has(member.id));
@@ -127,12 +136,20 @@ function MemberTable({
   }, [currentPage, onPageChange, page]);
 
   return (
-    <div className={cn('min-w-0', className)} {...props}>
-      {/* 모바일에서는 바깥 컨테이너가 스크롤을 맡아야 헤더가 고정되므로 잘라내지 않는다. */}
-      <div className="border-line max-tablet:rounded-none max-tablet:border-x-0 max-tablet:border-b-0 max-tablet:overflow-visible overflow-hidden rounded-sm border">
+    <div
+      className={cn(
+        'min-w-0',
+        // 모바일은 표 래퍼가 직접 가로·세로 스크롤을 맡는다. 스크롤 주체가 표 바깥에 있으면
+        // iOS 사파리가 헤더·고정 열의 sticky 위치를 따라가지 못해 표 전체가 같이 움직인다.
+        'max-tablet:flex max-tablet:min-h-0 max-tablet:flex-1 max-tablet:flex-col',
+        className,
+      )}
+      {...props}
+    >
+      <div className="border-line max-tablet:rounded-none max-tablet:border-x-0 max-tablet:border-b-0 max-tablet:min-h-0 max-tablet:flex-1 overflow-hidden rounded-sm border">
         <Table
           wrapperClassName={cn(
-            'max-tablet:scrollbar-none max-tablet:overflow-visible',
+            'max-tablet:scrollbar-none max-tablet:h-full max-tablet:overflow-y-auto',
             // 헤더 44px + 멤버 10행 × 64px. 10명 이하는 내용 높이를 그대로 사용한다.
             fixedHeight && members.length > 10 && 'tablet:max-h-[684px] tablet:overflow-y-auto',
           )}
@@ -157,9 +174,7 @@ function MemberTable({
                   onClick={toggleAll}
                 />
               </TableHead>
-              {MEMBER_TABLE_COLUMNS.filter(
-                (column) => column.id !== 'warning' || warningEnabled,
-              ).map((column) => (
+              {visibleColumns.map((column) => (
                 <TableHead
                   key={column.id}
                   className={cn(
@@ -193,11 +208,7 @@ function MemberTable({
             {showEmptySearchResult && members.length === 0 && (
               <TableRow className="bg-container-neutral h-16 border-0 hover:bg-transparent">
                 <TableCell
-                  colSpan={
-                    MEMBER_TABLE_COLUMNS.filter(
-                      (column) => column.id !== 'warning' || warningEnabled,
-                    ).length + 3
-                  }
+                  colSpan={columnCount}
                   className="typo-body2 text-text-alternative h-16 text-center"
                 >
                   검색 결과가 없습니다.
@@ -219,6 +230,13 @@ function MemberTable({
                 showStickyShadow={showStickyShadow}
               />
             ))}
+            {listFooter && (
+              <TableRow className="border-0 hover:bg-transparent">
+                <TableCell colSpan={columnCount} className="h-px p-0">
+                  {listFooter}
+                </TableCell>
+              </TableRow>
+            )}
           </TableBody>
         </Table>
       </div>

@@ -173,6 +173,12 @@ function MemberPageContent() {
     setDetailMemberId(m.id);
   };
 
+  // 센티널은 스크롤 주체 안에 있어야 한다. 표 뷰는 표 래퍼, 카드 뷰는 바깥 컨테이너가 스크롤한다.
+  const mobileSentinel =
+    isMobile && !isMobileSearchOpen ? (
+      <div ref={sentinelRef} className="h-px w-full shrink-0" />
+    ) : null;
+
   const handleCloseMobileSearch = () => {
     setIsMobileSearchOpen(false);
     resetSearch();
@@ -247,11 +253,19 @@ function MemberPageContent() {
             {/* Main content */}
             <div
               className={cn(
-                'max-tablet:min-h-0 max-tablet:flex-1 max-tablet:overflow-y-auto flex min-h-0 flex-col p-700',
-                mobileViewMode === 'card' ? 'max-tablet:p-450' : 'max-tablet:p-0',
+                'max-tablet:min-h-0 max-tablet:flex-1 flex min-h-0 flex-col p-700',
+                // 카드 뷰는 바깥이 세로 스크롤을 맡고, 표 뷰는 표 래퍼가 직접 스크롤한다.
+                mobileViewMode === 'card'
+                  ? 'max-tablet:overflow-y-auto max-tablet:p-450'
+                  : 'max-tablet:overflow-hidden max-tablet:p-0',
               )}
             >
-              <div className={mobileViewMode === 'card' ? 'max-tablet:hidden' : undefined}>
+              <div
+                className={cn(
+                  'max-tablet:flex max-tablet:min-h-0 max-tablet:flex-1 max-tablet:flex-col',
+                  mobileViewMode === 'card' && 'max-tablet:hidden',
+                )}
+              >
                 {/* Member table */}
                 <MemberTable
                   scrollResetKey={`${page}:${pageSize}:${selectedCardinal}:${debouncedKeyword}:${sortBy}`}
@@ -266,26 +280,26 @@ function MemberPageContent() {
                   selectedIds={selectedIds}
                   onSelectionChange={handleSelectionChange}
                   onMemberAction={handleMemberAction}
+                  listFooter={mobileViewMode === 'table' ? mobileSentinel : null}
                 />
               </div>
 
               {mobileViewMode === 'card' && (
-                <MemberCardList
-                  className="tablet:hidden"
-                  members={filteredMembers}
-                  page={page}
-                  totalPages={mobileTotalPages}
-                  sortBy={sortBy}
-                  onToggleSort={toggleSort}
-                  onPageChange={setPage}
-                  selectedIds={selectedIds}
-                  onSelectionChange={handleSelectionChange}
-                  onMemberAction={handleMemberAction}
-                />
-              )}
-
-              {isMobile && !isMobileSearchOpen && (
-                <div ref={sentinelRef} className="h-px w-full shrink-0" />
+                <>
+                  <MemberCardList
+                    className="tablet:hidden"
+                    members={filteredMembers}
+                    page={page}
+                    totalPages={mobileTotalPages}
+                    sortBy={sortBy}
+                    onToggleSort={toggleSort}
+                    onPageChange={setPage}
+                    selectedIds={selectedIds}
+                    onSelectionChange={handleSelectionChange}
+                    onMemberAction={handleMemberAction}
+                  />
+                  {mobileSentinel}
+                </>
               )}
             </div>
           </div>
