@@ -49,17 +49,21 @@ it.each([true, false])('모바일 여부(%s)에 맞는 레이어에 목록을 �
   jest.mocked(useMediaQuery).mockReturnValue(isMobile);
   const user = userEvent.setup();
   render(
-    <div data-admin data-testid="admin-layout">
-      <MemberPositionDropdown
-        memberName="김위드"
-        value={null}
-        options={POSITION_OPTIONS}
-        onChange={jest.fn()}
-      />
+    <div data-admin>
+      {/* 모바일에서는 표를 스크롤하는 컨테이너 안에 띄워야 sticky 이름 열 뒤에 깔린다. */}
+      {/* jsdom은 overflow 단축 속성을 계산값으로 펼치지 않아 축별로 지정한다. */}
+      <div data-testid="scroll-container" style={{ overflowX: 'auto', overflowY: 'auto' }}>
+        <MemberPositionDropdown
+          memberName="김위드"
+          value={null}
+          options={POSITION_OPTIONS}
+          onChange={jest.fn()}
+        />
+      </div>
     </div>,
   );
   await user.click(screen.getByRole('button'));
-  expect(screen.getByTestId('admin-layout').contains(screen.getByRole('menu'))).toBe(isMobile);
+  expect(screen.getByTestId('scroll-container').contains(screen.getByRole('menu'))).toBe(isMobile);
 });
 
 it('포지션 선택과 지정 해제를 처리하며 부모의 멤버 클릭 동작을 실행하지 않는다', async () => {

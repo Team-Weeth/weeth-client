@@ -21,14 +21,11 @@ import { MemberTableRow } from './MemberTableRow';
 import { useAdminPositionOptions } from '@/hooks/queries/admin/useAdminPositionQueries';
 import { useUpdateMemberPosition } from '@/hooks/mutations/admin/useAdminPositionMutations';
 import { useMemberPositionSettingsLink } from './hooks/useMemberPositionSettingsLink';
+import { findScrollContainer } from '@/utils/shared/findScrollContainer';
 
 /** 표를 감싼 가장 가까운 스크롤 컨테이너. 없으면 표 래퍼 자신을 돌려준다. */
-function findScrollContainer(node: HTMLElement | null) {
-  for (let element = node; element; element = element.parentElement) {
-    const { overflowX, overflowY } = getComputedStyle(element);
-    if (/auto|scroll/.test(`${overflowX} ${overflowY}`)) return element;
-  }
-  return node;
+function getScrollContainer(node: HTMLElement | null) {
+  return findScrollContainer(node) ?? node;
 }
 
 interface MemberTableProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -69,6 +66,13 @@ function MemberTable({
   const setSelectedIds = onSelectionChange ?? setInternalSelectedIds;
   const currentPage = Math.min(page, Math.max(totalPages, 1));
 
+  // 헤더는 thead가 아니라 th마다 고정한다. 고정 헤더(thead) 안에 고정 열(th)이 들어가는 중첩 sticky는
+  // iOS 사파리가 스크롤 중에 위치를 따라가지 못해 표가 흔들린다. 배경도 셀마다 직접 칠해야 한다.
+  const stickyHeadCellClass = cn(
+    'bg-container-neutral-alternative max-tablet:sticky max-tablet:top-0 max-tablet:z-30',
+    fixedHeight && 'tablet:sticky tablet:top-0 tablet:z-30',
+  );
+
   const isAllSelected = members.length > 0 && members.every((member) => selectedIds.has(member.id));
   const hasAnySelected = members.some((member) => selectedIds.has(member.id));
   const isPartiallySelected = hasAnySelected && !isAllSelected;
@@ -98,7 +102,7 @@ function MemberTable({
     let container: HTMLElement | null = null;
     const handleScroll = () => setShowStickyShadow((container?.scrollLeft ?? 0) > 0);
     const attach = () => {
-      const next = findScrollContainer(wrapperRef.current);
+      const next = getScrollContainer(wrapperRef.current);
       if (next === container) return;
       container?.removeEventListener('scroll', handleScroll);
       container = next;
@@ -113,7 +117,7 @@ function MemberTable({
   }, []);
 
   React.useEffect(() => {
-    const container = findScrollContainer(wrapperRef.current);
+    const container = getScrollContainer(wrapperRef.current);
     if (container) container.scrollTop = 0;
   }, [scrollResetKey]);
 
@@ -135,14 +139,14 @@ function MemberTable({
           wrapperProps={{ ref: wrapperRef }}
           className="w-max min-w-full border-separate border-spacing-0"
         >
-          <TableHeader
-            className={cn(
-              'bg-container-neutral-alternative max-tablet:sticky max-tablet:top-0 max-tablet:z-30',
-              fixedHeight && 'tablet:sticky tablet:top-0 tablet:z-30',
-            )}
-          >
+          <TableHeader className="bg-container-neutral-alternative">
             <TableRow className="max-tablet:h-10 h-11 border-0 hover:bg-transparent">
-              <TableHead className="bg-container-neutral-alternative max-tablet:sticky max-tablet:left-0 max-tablet:z-40 max-tablet:first:rounded-none max-tablet:h-10 max-tablet:w-12 max-tablet:min-w-12 max-tablet:pl-200 h-11 w-16 min-w-16 p-0 pl-300">
+              <TableHead
+                className={cn(
+                  stickyHeadCellClass,
+                  'max-tablet:left-0 max-tablet:z-40 max-tablet:first:rounded-none max-tablet:h-10 max-tablet:w-12 max-tablet:min-w-12 max-tablet:pl-200 h-11 w-16 min-w-16 p-0 pl-300',
+                )}
+              >
                 <SelectionCheckbox
                   checked={isAllSelected}
                   partial={isPartiallySelected}
@@ -159,11 +163,12 @@ function MemberTable({
                 <TableHead
                   key={column.id}
                   className={cn(
-                    'typo-caption1 text-text-alternative bg-container-neutral-alternative max-tablet:first:rounded-none max-tablet:last:rounded-none max-tablet:h-10 h-11 px-400 py-300',
+                    stickyHeadCellClass,
+                    'typo-caption1 text-text-alternative max-tablet:first:rounded-none max-tablet:last:rounded-none max-tablet:h-10 h-11 px-400 py-300',
                     column.width,
                     column.id === 'profile' &&
                       cn(
-                        'max-tablet:sticky max-tablet:left-12 max-tablet:z-40 max-tablet:w-28 max-tablet:min-w-28 max-tablet:px-0 px-0',
+                        'max-tablet:left-12 max-tablet:z-40 max-tablet:w-28 max-tablet:min-w-28 max-tablet:px-0 px-0',
                         showStickyShadow &&
                           'max-tablet:after:absolute max-tablet:after:top-0 max-tablet:after:right-[-24px] max-tablet:after:h-full max-tablet:after:w-6 max-tablet:after:bg-[image:var(--member-table-sticky-shadow)] max-tablet:after:content-[""]',
                       ),
@@ -180,8 +185,8 @@ function MemberTable({
                   )}
                 </TableHead>
               ))}
-              <TableHead className="h-11 w-[76px] p-0" />
-              <TableHead className="h-11 w-11 p-0 pr-700" />
+              <TableHead className={cn(stickyHeadCellClass, 'h-11 w-[76px] p-0')} />
+              <TableHead className={cn(stickyHeadCellClass, 'h-11 w-11 p-0 pr-700')} />
             </TableRow>
           </TableHeader>
           <TableBody>

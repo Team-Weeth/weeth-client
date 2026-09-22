@@ -13,6 +13,7 @@ import { Icon } from '@/components/ui/Icon';
 import { POSITION_COLORS } from '@/constants/admin/memberPosition';
 import { cn } from '@/lib/cn';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
+import { findScrollContainer } from '@/utils/shared/findScrollContainer';
 import type { MemberPositionOption } from '@/types/admin/memberPosition';
 
 interface MemberPositionDropdownProps {
@@ -39,8 +40,10 @@ export function MemberPositionDropdown({
   const setTriggerRef = (node: HTMLButtonElement | null) => {
     // 언마운트(node=null) 때는 컨테이너를 비우지 않는다. 같은 값을 다시 세팅하면 리렌더가 멈춘다.
     if (!node) return;
-    // 고정된 관리자 레이아웃과 같은 stacking context에서 sticky 이름 열 뒤에 표시합니다.
-    setPortalContainer(node.closest<HTMLElement>('[data-admin]') ?? null);
+    // 표를 스크롤하는 컨테이너 안에 띄워야 sticky 이름 열과 같은 stacking context에 들어가 그 뒤에 깔린다.
+    // 바깥(data-admin)에 띄우면 iOS 사파리처럼 스크롤 컨테이너가 합성 레이어를 만드는 환경에서
+    // 열 z-index와 비교가 되지 않아 이름 열 위로 올라온다.
+    setPortalContainer(findScrollContainer(node) ?? node.closest<HTMLElement>('[data-admin]'));
   };
 
   return (
