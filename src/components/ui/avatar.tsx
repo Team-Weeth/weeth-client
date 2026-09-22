@@ -17,6 +17,7 @@ const avatarVariants = cva('group/avatar relative flex shrink-0 overflow-hidden 
       64: 'size-16',
       40: 'size-10',
       36: 'size-9',
+      28: 'size-7',
       24: 'size-6',
     },
     colorScheme: {
@@ -24,6 +25,7 @@ const avatarVariants = cva('group/avatar relative flex shrink-0 overflow-hidden 
       primary: '',
       secondary: '',
       line: 'border border-line',
+      white: 'ring-2 ring-background',
     },
   },
   compoundVariants: [
@@ -32,6 +34,7 @@ const avatarVariants = cva('group/avatar relative flex shrink-0 overflow-hidden 
     { type: 'square', size: 64, className: 'rounded-lg' },
     { type: 'square', size: 40, className: 'rounded-md' },
     { type: 'square', size: 36, className: 'rounded-md' },
+    { type: 'square', size: 28, className: 'rounded-[7px]' },
     { type: 'square', size: 24, className: 'rounded-[6px]' },
   ],
   defaultVariants: {
@@ -144,6 +147,7 @@ function AvatarFallback({
         'group-data-[type=round]/avatar:rounded-full',
         'group-data-[type=square]/avatar:rounded-md',
         'group-data-[size="24"]/avatar:text-xs',
+        'group-data-[size="28"]/avatar:text-xs',
         'group-data-[size="40"]/avatar:text-sm',
         'group-data-[size="64"]/avatar:text-sm',
         'group-data-[size="128"]/avatar:text-base',
@@ -163,6 +167,7 @@ function AvatarBadge({ className, ...props }: React.ComponentProps<'span'>) {
       className={cn(
         'bg-primary text-primary-foreground ring-background absolute right-0 bottom-0 z-10 inline-flex items-center justify-center rounded-full ring-2 select-none',
         'group-data-[size="24"]/avatar:size-2 group-data-[size="24"]/avatar:[&>svg]:hidden',
+        'group-data-[size="28"]/avatar:size-2 group-data-[size="28"]/avatar:[&>svg]:hidden',
         'group-data-[size="64"]/avatar:size-2.5 group-data-[size="64"]/avatar:[&>svg]:size-2',
         'group-data-[size="128"]/avatar:size-3 group-data-[size="128"]/avatar:[&>svg]:size-2',
         className,
@@ -192,6 +197,7 @@ function AvatarGroupCount({ className, ...props }: React.ComponentProps<'div'>) 
       className={cn(
         'ring-background bg-container-neutral text-text-alternative relative flex shrink-0 items-center justify-center rounded-full ring-2',
         'group-has-data-[size="24"]/avatar-group:size-6 group-has-data-[size="24"]/avatar-group:text-xs',
+        'group-has-data-[size="28"]/avatar-group:size-7 group-has-data-[size="28"]/avatar-group:text-xs',
         'group-has-data-[size="64"]/avatar-group:size-16 group-has-data-[size="64"]/avatar-group:text-sm',
         'group-has-data-[size="128"]/avatar-group:size-32 group-has-data-[size="128"]/avatar-group:text-base',
         className,
