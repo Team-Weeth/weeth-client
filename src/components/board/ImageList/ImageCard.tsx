@@ -31,7 +31,10 @@ function RemoveButton({
   return (
     <button
       type="button"
-      onClick={() => onRemove(id, fileUrl)}
+      onClick={(e) => {
+        e.stopPropagation();
+        onRemove(id, fileUrl);
+      }}
       aria-label={`${fileName} 삭제`}
       className="absolute top-0 right-0 flex h-5 w-5 cursor-pointer items-center justify-center"
     >
@@ -46,17 +49,19 @@ interface ImageCardProps {
   imgClassName?: string;
   removable?: boolean;
   onRemove?: (id: string | number, fileUrl: string) => void;
+  onClick?: () => void;
 }
 
-function ImageCard({ item, className, imgClassName, removable, onRemove }: ImageCardProps) {
-  return (
-    <div
-      className={cn(
-        'relative overflow-hidden rounded-sm',
-        removable && 'cursor-pointer',
-        className,
-      )}
-    >
+function ImageCard({
+  item,
+  className,
+  imgClassName,
+  removable,
+  onRemove,
+  onClick,
+}: ImageCardProps) {
+  const inner = (
+    <>
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         src={item.fileUrl}
@@ -76,8 +81,25 @@ function ImageCard({ item, className, imgClassName, removable, onRemove }: Image
           onRemove={onRemove}
         />
       )}
-    </div>
+    </>
   );
+
+  if (onClick) {
+    return (
+      <button
+        type="button"
+        onClick={onClick}
+        className={cn(
+          'relative cursor-pointer overflow-hidden rounded-sm border-0 bg-transparent p-0',
+          className,
+        )}
+      >
+        {inner}
+      </button>
+    );
+  }
+
+  return <div className={cn('relative overflow-hidden rounded-sm', className)}>{inner}</div>;
 }
 
 export { ImageCard, type ImageCardProps };

@@ -36,40 +36,43 @@ async function handler(request: NextRequest, { params }: { params: Promise<{ pat
 
   const hasBody = request.method !== 'GET' && request.method !== 'HEAD';
 
-  const timeout = AbortSignal.timeout(10_000);
-  const signal = AbortSignal.any([timeout, request.signal]);
-
+  let response: Response;
   try {
-    const response = await fetch(url.toString(), {
+    response = await fetch(url.toString(), {
       method: request.method,
       headers,
       body: hasBody ? request.body : undefined,
-      signal,
+      signal: request.signal,
       duplex: 'half',
     } as RequestInit);
-
-    const body = await response.arrayBuffer();
-
-    const responseHeaders = new Headers(response.headers);
-    responseHeaders.delete('transfer-encoding');
-    responseHeaders.delete('content-encoding');
-    responseHeaders.delete('content-length');
-    responseHeaders.delete('set-cookie');
-
-    return new NextResponse(body, {
-      status: response.status,
-      statusText: response.statusText,
-      headers: responseHeaders,
-    });
-  } catch (error) {
-    if (error instanceof DOMException && error.name === 'TimeoutError') {
-      return NextResponse.json({ error: 'Upstream timeout' }, { status: 504 });
+  } catch (e) {
+    if (request.signal.aborted) {
+      return new NextResponse(null, { status: 499 });
     }
-    if (error instanceof DOMException && error.name === 'AbortError') {
-      return NextResponse.json({ error: 'Request aborted' }, { status: 499 });
-    }
-    return NextResponse.json({ error: 'Upstream unreachable' }, { status: 502 });
+    throw e;
   }
+
+  let body: ArrayBuffer;
+  try {
+    body = await response.arrayBuffer();
+  } catch (e) {
+    if (request.signal.aborted) {
+      return new NextResponse(null, { status: 499 });
+    }
+    throw e;
+  }
+
+  const responseHeaders = new Headers(response.headers);
+  responseHeaders.delete('transfer-encoding');
+  responseHeaders.delete('content-encoding');
+  responseHeaders.delete('content-length');
+  responseHeaders.delete('set-cookie');
+
+  return new NextResponse(body, {
+    status: response.status,
+    statusText: response.statusText,
+    headers: responseHeaders,
+  });
 }
 
 export const GET = handler;

@@ -14,10 +14,11 @@ function LinkifiedText({ text, className }: LinkifiedTextProps) {
 
   return (
     <p className={className}>
-      {parts.map((part, i) =>
-        i % 2 === 1 ? (
+      {parts.map((part, i) => {
+        const isLink = i % 2 === 1;
+        return isLink ? (
           <a
-            key={i}
+            key={`link-${i}`}
             href={normalizeHref(part)}
             target="_blank"
             rel="noopener noreferrer"
@@ -26,9 +27,9 @@ function LinkifiedText({ text, className }: LinkifiedTextProps) {
             {part}
           </a>
         ) : (
-          part
-        ),
-      )}
+          <span key={`text-${i}`}>{part}</span>
+        );
+      })}
     </p>
   );
 }
