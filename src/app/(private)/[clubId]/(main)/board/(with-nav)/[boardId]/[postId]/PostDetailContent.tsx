@@ -34,7 +34,7 @@ interface PostDetailContentProps {
 
 function PostDetailContent({ initialData }: PostDetailContentProps) {
   const router = useRouter();
-  const { clubId: clubIdParam, boardId: boardIdParam } = useParams<{
+  const { clubId: clubIdParam } = useParams<{
     clubId: string;
     boardId: string;
   }>();
@@ -60,7 +60,7 @@ function PostDetailContent({ initialData }: PostDetailContentProps) {
   // 페이지 언마운트 시 편집 상태 초기화
   useEffect(() => {
     return () => cancelEdit();
-  }, []);
+  }, [cancelEdit]);
 
   const {
     activeReplyId,
