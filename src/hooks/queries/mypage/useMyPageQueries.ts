@@ -117,12 +117,16 @@ export function useCurrentClubProfile(clubId: string): {
 export function useMyPageQueries(clubId: string) {
   const summaryQuery = useMyPageSummaryQuery(clubId);
   const myClubsQuery = useMyClubsQuery();
+  const profilesQuery = useMyProfilesQuery();
 
   const me = summaryQuery.data?.user;
   const stats = summaryQuery.data?.stats;
   const usingProfiles = summaryQuery.data?.usingProfiles ?? [];
   const currentProfile = summaryQuery.data?.currentProfile ?? null;
   const baseClubs = myClubsQuery.data ?? [];
+  // usingProfiles는 URL의 clubId에 스코프된 응답이라 다른 동아리와 매칭할 수 없다.
+  // 동아리 전체에 걸친 배정을 보려면 전역 프로필 목록을 써야 한다.
+  const allProfiles = profilesQuery.data ?? [];
 
   const clubSummaryQueries = useQueries({
     queries: baseClubs.map((club) => ({
@@ -147,8 +151,7 @@ export function useMyPageQueries(clubId: string) {
   const activityClubs: MyPageActivityClub[] = clubs.map((club) => ({
     ...club,
     currentProfile:
-      usingProfiles.find((profile) => profile.clubs.some((item) => item.clubId === club.id)) ??
-      null,
+      allProfiles.find((profile) => profile.clubs.some((item) => item.clubId === club.id)) ?? null,
   }));
 
   return {
