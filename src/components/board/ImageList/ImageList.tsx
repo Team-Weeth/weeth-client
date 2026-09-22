@@ -8,17 +8,42 @@ import { ImageCard } from './ImageCard';
 
 type ImageListProps = {
   files: DisplayFile[];
+  size?: 'default' | 'compact';
 } & (
   | { removable: true; onRemove: (id: string | number, fileUrl: string) => void }
   | { removable?: false; onRemove?: never }
 );
 
-function ImageList({ files, removable, onRemove }: ImageListProps) {
+function ImageList({ files, size = 'default', removable, onRemove }: ImageListProps) {
   const { ref, scrollToEnd, ...scrollHandlers } = useDragScroll();
 
   useScrollOnGrow(files.length, scrollToEnd);
 
   if (files.length === 0) return null;
+
+  // 입력창 내 미리보기: 작은 썸네일, 드래그 스크롤
+  if (size === 'compact') {
+    return (
+      <div
+        ref={ref}
+        role="region"
+        aria-label="첨부된 이미지 목록"
+        className="flex gap-200 overflow-x-auto [-ms-overflow-style:none] [scrollbar-width:none] active:cursor-grabbing [&::-webkit-scrollbar]:hidden"
+        {...scrollHandlers}
+      >
+        {files.map((item) => (
+          <ImageCard
+            key={item.id}
+            item={item}
+            className="h-[72px] w-[72px] shrink-0"
+            imgClassName="h-full w-full object-cover"
+            removable={removable}
+            onRemove={onRemove}
+          />
+        ))}
+      </div>
+    );
+  }
 
   // 1개: 원본 비율 유지, max-height 제한
   if (files.length === 1) {
@@ -26,8 +51,8 @@ function ImageList({ files, removable, onRemove }: ImageListProps) {
       <div className="self-stretch">
         <ImageCard
           item={files[0]}
-          className="inline-block min-h-[182px] max-w-full"
-          imgClassName="max-h-[320px] max-w-full object-contain"
+          className="inline-block max-w-full"
+          imgClassName="max-h-[182px] max-w-full object-contain"
           removable={removable}
           onRemove={onRemove}
         />

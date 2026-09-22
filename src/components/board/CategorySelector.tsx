@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { cn } from '@/lib/cn';
 import ArrowDownIcon from '@/assets/icons/arrow_down.svg';
 import { Breadcrumb, BreadcrumbList, BreadcrumbItem } from '@/components/ui/breadcrumb';
@@ -34,6 +34,16 @@ function CategorySelector({
   filterAll = true,
 }: CategorySelectorProps) {
   const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    const mq = window.matchMedia('(min-width: 696px)');
+    const handleChange = (e: MediaQueryListEvent) => {
+      if (e.matches) setOpen(false);
+    };
+    mq.addEventListener('change', handleChange);
+    return () => mq.removeEventListener('change', handleChange);
+  }, []);
+
   const activeItem = items.find((item) => item.id === activeId);
   const channelName = activeItem?.label ?? '';
 
@@ -47,7 +57,7 @@ function CategorySelector({
     <DropdownMenu open={open} onOpenChange={setOpen}>
       <DropdownMenuTrigger
         className={cn(
-          'bg-container-neutral flex h-[40px] w-full items-center rounded-lg py-200 pr-200 pl-300',
+          'bg-container-neutral flex h-[40px] w-full cursor-pointer items-center rounded-lg py-200 pr-200 pl-300',
           className,
         )}
       >

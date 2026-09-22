@@ -6,13 +6,21 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/Button';
 import { Icon } from '@/components/ui/Icon';
 import { useScrollIntoView } from '@/hooks/useScrollIntoView';
+import { useCommentEditForm } from '@/hooks/board/useCommentEditForm';
 import { cn } from '@/lib/cn';
 import { ActionMenu } from '@/components/board/ActionMenu';
+import { FileList } from '@/components/board/FileList';
+import { ImageList } from '@/components/board/ImageList/ImageList';
+import { LinkifiedText } from '@/components/board/LinkifiedText';
+import { useActiveEditId, useCommentEditActions } from '@/stores/useCommentEditStore';
+import type { DisplayFile } from '@/types/board';
+import type { CreatePostFile } from '@/types/file';
 import { CommentDeleteDialog } from './CommentDeleteDialog';
 import { CommentInput } from './CommentInput';
 import { ReplyItem, type ReplyItemProps } from './ReplyItem';
 
 interface CommentItemProps {
+  id: number | string;
   className?: string;
   profileImage?: string;
   name: string;
@@ -20,17 +28,22 @@ interface CommentItemProps {
   date: string;
   isAuthor?: boolean;
   isDeleted?: boolean;
+  imageFileUrls?: DisplayFile[];
+  nonImageFileUrls?: DisplayFile[];
   replies?: ReplyItemProps[];
   replyOpen?: boolean;
+  /** 답글 입력창이 열려있지 않을 때 true — 수정 시작 가능 여부 */
+  canEdit?: boolean;
   onReplyToggle?: () => void;
   onReplySuccess?: () => void;
   onReplyDirtyChange?: (dirty: boolean) => void;
-  onReply?: (value: string) => Promise<boolean> | boolean;
-  onEdit?: (content: string) => Promise<boolean> | boolean;
+  onReply?: (value: string, files: CreatePostFile[]) => Promise<boolean> | boolean;
+  onEdit?: (content: string, files: CreatePostFile[] | null) => Promise<boolean> | boolean;
   onDelete?: () => void;
 }
 
 function CommentItem({
+  id,
   className,
   profileImage,
   name,
@@ -38,8 +51,11 @@ function CommentItem({
   date,
   isAuthor,
   isDeleted,
+  imageFileUrls,
+  nonImageFileUrls,
   replies,
   replyOpen = false,
+  canEdit = true,
   onReplyToggle,
   onReplySuccess,
   onReplyDirtyChange,
@@ -47,12 +63,34 @@ function CommentItem({
   onEdit,
   onDelete,
 }: CommentItemProps) {
-  const [editing, setEditing] = useState(false);
+  const activeEditId = useActiveEditId();
+  const { startEdit, cancelEdit } = useCommentEditActions();
+  const isEditing = activeEditId === id;
+
   const [deleteOpen, setDeleteOpen] = useState(false);
   const replyInputRef = useScrollIntoView<HTMLDivElement>(replyOpen);
 
-  const handleReplySubmit = async (value: string) => {
-    const ok = await onReply?.(value);
+  const {
+    editingImageFiles,
+    editingNonImageFiles,
+    handleRemoveExistingFile,
+    resetRemovedIds,
+    buildFilesToSend,
+  } = useCommentEditForm(imageFileUrls, nonImageFileUrls);
+
+  const startEditing = () => {
+    if (!canEdit || activeEditId !== null) return;
+    resetRemovedIds();
+    startEdit(id);
+  };
+
+  const cancelEditing = () => {
+    resetRemovedIds();
+    cancelEdit();
+  };
+
+  const handleReplySubmit = async (value: string, files: CreatePostFile[]) => {
+    const ok = await onReply?.(value, files);
     if (ok !== false) {
       onReplyDirtyChange?.(false);
       onReplySuccess?.();
@@ -60,9 +98,13 @@ function CommentItem({
     return ok ?? true;
   };
 
-  const handleEditSubmit = async (value: string) => {
-    const ok = await onEdit?.(value);
-    if (ok !== false) setEditing(false);
+  const handleEditSubmit = async (value: string, newFiles: CreatePostFile[]) => {
+    const filesToSend = buildFilesToSend(newFiles);
+    const ok = await onEdit?.(value, filesToSend);
+    if (ok !== false) {
+      resetRemovedIds();
+      cancelEdit();
+    }
     return ok ?? true;
   };
 
@@ -77,29 +119,35 @@ function CommentItem({
             </Avatar>
             <span className="typo-sub3 text-text-strong">{name}</span>
           </div>
-          {editing ? (
+          {isEditing ? (
             <CommentInput
               className="mt-100"
               defaultValue={content}
               placeholder="댓글을 수정하세요"
               onSubmit={handleEditSubmit}
-              onCancel={() => setEditing(false)}
+              onCancel={cancelEditing}
+              existingImageFiles={editingImageFiles}
+              existingNonImageFiles={editingNonImageFiles}
+              onRemoveExistingFile={handleRemoveExistingFile}
             />
           ) : (
             <>
-              <p
+              <LinkifiedText
+                text={content}
                 className={cn(
                   'typo-body1 whitespace-pre-wrap',
                   isDeleted ? 'text-text-disabled' : 'text-text-normal',
                 )}
-              >
-                {content}
-              </p>
+              />
+              {imageFileUrls && imageFileUrls.length > 0 && <ImageList files={imageFileUrls} />}
+              {nonImageFileUrls && nonImageFileUrls.length > 0 && (
+                <FileList files={nonImageFileUrls} />
+              )}
               <p className="typo-caption2 text-text-alternative">{date}</p>
             </>
           )}
         </div>
-        {!editing && (
+        {!isEditing && (
           <div className="flex gap-100">
             <Button
               type="button"
@@ -115,7 +163,7 @@ function CommentItem({
               <ActionMenu
                 triggerVariant="secondary"
                 triggerClassName="size-6"
-                onEdit={() => setEditing(true)}
+                onEdit={startEditing}
                 onDeleteSelect={() => setDeleteOpen(true)}
               />
             )}
@@ -141,9 +189,8 @@ function CommentItem({
       />
 
       {replyOpen && (
-        <div ref={replyInputRef}>
+        <div ref={replyInputRef} className="mt-200 mr-450 ml-[38px]">
           <CommentInput
-            className="mt-200 mr-450 ml-[38px]"
             placeholder="답글을 입력하세요"
             onSubmit={handleReplySubmit}
             onValueChange={(v) => onReplyDirtyChange?.(v.trim().length > 0)}

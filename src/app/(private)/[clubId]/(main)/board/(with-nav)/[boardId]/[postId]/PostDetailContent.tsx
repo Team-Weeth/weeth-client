@@ -1,17 +1,16 @@
 'use client';
 
 import { useEffect } from 'react';
+import { useCommentEditActions, useActiveEditId } from '@/stores/useCommentEditStore';
 import { useParams, useRouter } from 'next/navigation';
 import { Divider } from '@/components/ui/Divider';
-import {
-  PostCard,
-  PostDetailHeader,
-  PostActionMenu,
-  CommentInput,
-  CommentItem,
-  CommentDirtyGuardDialog,
-  FileList,
-} from '@/components/board';
+import { PostCard } from '@/components/board/PostCard';
+import { PostDetailHeader } from '@/components/board/PostDetailHeader';
+import { PostActionMenu } from '@/components/board/PostActionMenu';
+import { CommentInput } from '@/components/board/Comment/CommentInput';
+import { CommentItem } from '@/components/board/Comment/CommentItem';
+import { CommentDirtyGuardDialog } from '@/components/board/CommentDirtyGuardDialog';
+import { FileList } from '@/components/board/FileList';
 import { formatShortDateTime } from '@/lib/formatTime';
 import { toDisplayFile, isImageFileByType, mapComment } from '@/lib/board';
 import { usePostDetailQuery } from '@/hooks/board/usePostDetailQuery';
@@ -35,7 +34,7 @@ interface PostDetailContentProps {
 
 function PostDetailContent({ initialData }: PostDetailContentProps) {
   const router = useRouter();
-  const { clubId: clubIdParam, boardId: boardIdParam } = useParams<{
+  const { clubId: clubIdParam } = useParams<{
     clubId: string;
     boardId: string;
   }>();
@@ -54,6 +53,14 @@ function PostDetailContent({ initialData }: PostDetailContentProps) {
   const { createComment, isPending } = useCreateComment(currentPost.boardId, currentPost.id);
   const { updateComment } = useUpdateComment(currentPost.boardId, currentPost.id);
   const { deleteComment } = useDeleteComment(currentPost.boardId, currentPost.id);
+
+  const activeEditId = useActiveEditId();
+  const { cancelEdit } = useCommentEditActions();
+
+  // 페이지 언마운트 시 편집 상태 초기화
+  useEffect(() => {
+    return () => cancelEdit();
+  }, [cancelEdit]);
 
   const {
     activeReplyId,
@@ -162,10 +169,7 @@ function PostDetailContent({ initialData }: PostDetailContentProps) {
       <div id="comments" className="self-stretch px-450 pt-200 pb-400">
         <CommentInput
           placeholder={canComment ? '댓글을 입력하세요.' : '댓글을 작성할 수 없는 게시판입니다.'}
-          onSubmit={async (v) => {
-            await createComment(v);
-            return true;
-          }}
+          onSubmit={async (v, files) => createComment(v, undefined, files)}
           onValueChange={(v) => setIsCommentDirty(v.trim().length > 0)}
           disabled={!canComment || isPending}
         />
@@ -186,28 +190,23 @@ function PostDetailContent({ initialData }: PostDetailContentProps) {
                   {...mapped}
                   replyOpen={activeReplyId === comment.id}
                   onReplyToggle={() => {
-                    if (!canComment) return;
+                    if (!canComment || activeEditId !== null) return;
                     handleReplyToggle(comment.id);
                   }}
+                  canEdit={activeReplyId === null}
                   onReplySuccess={forceCloseReply}
                   onReplyDirtyChange={setIsReplyDirty}
                   replies={mapped.replies.map((reply) => ({
                     ...reply,
-                    onEdit: async (content: string) => {
-                      await updateComment(reply.id, content);
-                      return true;
-                    },
+                    canEdit: activeReplyId === null,
+                    onEdit: async (content, files) => updateComment(reply.id, content, files),
                     onDelete: () => deleteComment(reply.id),
                   }))}
-                  onReply={async (content) => {
+                  onReply={async (content, files) => {
                     if (!canComment) return false;
-                    await createComment(content, comment.id);
-                    return true;
+                    return createComment(content, comment.id, files);
                   }}
-                  onEdit={async (content) => {
-                    await updateComment(comment.id, content);
-                    return true;
-                  }}
+                  onEdit={async (content, files) => updateComment(comment.id, content, files)}
                   onDelete={() => deleteComment(comment.id)}
                 />
               );

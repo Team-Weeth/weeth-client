@@ -17,6 +17,10 @@ export interface DisplayFile {
   fileName: string;
   fileUrl: string;
   uploaded?: boolean;
+  /** 서버 원본 필드 — 댓글/게시글 수정 시 파일 교체 요청에 사용 */
+  storageKey?: string;
+  fileSize?: number;
+  contentType?: string;
 }
 
 /** 게시글 작성 요청 파일 */

@@ -6,12 +6,27 @@ import type {
   MappedComment,
   BoardNavItem,
 } from '@/types/board';
+import type { CreatePostFile } from '@/types/file';
+
+function toCreatePostFile(f: DisplayFile): CreatePostFile | null {
+  return f.storageKey !== undefined && f.fileSize !== undefined && f.contentType !== undefined
+    ? {
+        fileName: f.fileName,
+        storageKey: f.storageKey,
+        fileSize: f.fileSize,
+        contentType: f.contentType,
+      }
+    : null;
+}
 
 function toDisplayFile(file: FileItem): DisplayFile {
   return {
     id: file.fileId,
     fileName: file.fileName,
     fileUrl: file.fileUrl,
+    storageKey: file.storageKey,
+    fileSize: file.fileSize,
+    contentType: file.contentType,
   };
 }
 
@@ -37,6 +52,12 @@ function mapComment(comment: PostComment, currentUserId: number | null): MappedC
     date: formatShortDateTime(comment.time),
     isAuthor: !isDeleted && currentUserId !== null && comment.author.id === currentUserId,
     isDeleted,
+    imageFileUrls: comment.fileUrls
+      .filter((f) => isImageFileByType(f.contentType))
+      .map(toDisplayFile),
+    nonImageFileUrls: comment.fileUrls
+      .filter((f) => !isImageFileByType(f.contentType))
+      .map(toDisplayFile),
     replies: comment.children.map((child) => mapComment(child, currentUserId)),
   };
 }
@@ -64,6 +85,7 @@ function buildBoardPath(clubId: string, boardId: number): string {
 }
 
 export {
+  toCreatePostFile,
   toDisplayFile,
   isImageFileByType,
   stripUuidPrefix,
