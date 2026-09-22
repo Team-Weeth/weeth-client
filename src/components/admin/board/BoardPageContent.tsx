@@ -162,6 +162,11 @@ function BoardPageContent() {
 
   const { boards, maxBoardCount, canCreateBoard } = data;
 
+  // 서버 한도에는 공지 같은 고정 게시판이 들어간다.
+  // 화면에는 사용자가 실제로 추가할 수 있는 몫만 보여줘야 숫자가 맞는다.
+  const countedFixedBoards = boards.filter((b) => !b.editable && b.kind !== 'ALL').length;
+  const maxCustomBoardCount = maxBoardCount - countedFixedBoards;
+
   const handleCreateBoard = (formData: BoardFormData) => {
     setCreateNameError(null);
     createBoard({
@@ -249,7 +254,7 @@ function BoardPageContent() {
 
   const handleCreateClick = () => {
     if (!canCreateBoard) {
-      toastWarning(`게시판은 최대 ${maxBoardCount}개까지 만들 수 있어요.`);
+      toastWarning(`게시판은 최대 ${maxCustomBoardCount}개까지 만들 수 있어요.`);
       return;
     }
     setCreateModalOpen(true);
@@ -338,7 +343,7 @@ function BoardPageContent() {
         <div className="bg-container-neutral-alternative flex h-12 items-center gap-200 rounded-md p-300">
           <Icon src={InfoCircleIcon} size={20} className="text-icon-alternative" />
           <p className="typo-body2 text-text-alternative min-w-0 flex-1 truncate">
-            게시판 추가는 최대 {maxBoardCount}개까지 가능합니다.
+            게시판 추가는 최대 {maxCustomBoardCount}개까지 가능합니다.
           </p>
         </div>
       </div>
