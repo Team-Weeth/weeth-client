@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { render, screen } from '@testing-library/react';
+import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemberPositionDropdown } from '../MemberPositionDropdown';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
@@ -45,12 +45,10 @@ it.each([true, false])(
   },
 );
 
-it.each([true, false])('모바일 여부(%s)에 맞는 레이어에 목록을 렌더링한다', async (isMobile) => {
-  jest.mocked(useMediaQuery).mockReturnValue(isMobile);
-  const user = userEvent.setup();
+function renderInScrollContainer() {
   render(
     <div data-admin>
-      {/* 모바일에서는 표를 스크롤하는 컨테이너 안에 띄워야 sticky 이름 열 뒤에 깔린다. */}
+      {/* 모바일에서는 표를 스크롤하는 컨테이너 안에 띄워 고정 헤더와 z-index를 비교한다. */}
       {/* jsdom은 overflow 단축 속성을 계산값으로 펼치지 않아 축별로 지정한다. */}
       <div data-testid="scroll-container" style={{ overflowX: 'auto', overflowY: 'auto' }}>
         <MemberPositionDropdown
@@ -62,8 +60,31 @@ it.each([true, false])('모바일 여부(%s)에 맞는 레이어에 목록을 �
       </div>
     </div>,
   );
+  return screen.getByTestId('scroll-container');
+}
+
+it.each([true, false])('모바일 여부(%s)에 맞는 레이어에 목록을 렌더링한다', async (isMobile) => {
+  jest.mocked(useMediaQuery).mockReturnValue(isMobile);
+  const user = userEvent.setup();
+  const scrollContainer = renderInScrollContainer();
+
   await user.click(screen.getByRole('button'));
-  expect(screen.getByTestId('scroll-container').contains(screen.getByRole('menu'))).toBe(isMobile);
+  expect(scrollContainer.contains(screen.getByRole('menu'))).toBe(isMobile);
+});
+
+it('표를 스크롤하면 열려 있던 목록을 닫는다', async () => {
+  jest.mocked(useMediaQuery).mockReturnValue(true);
+  const user = userEvent.setup();
+  const scrollContainer = renderInScrollContainer();
+
+  await user.click(screen.getByRole('button'));
+  expect(screen.getByRole('menu')).toBeInTheDocument();
+
+  await act(async () => {
+    scrollContainer.dispatchEvent(new Event('scroll'));
+  });
+
+  await waitFor(() => expect(screen.queryByRole('menu')).not.toBeInTheDocument());
 });
 
 it('포지션 선택과 지정 해제를 처리하며 부모의 멤버 클릭 동작을 실행하지 않는다', async () => {

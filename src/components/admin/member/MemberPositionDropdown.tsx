@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import ArrowDown from '@/assets/icons/arrow_down.svg';
 import {
   DropdownMenu,
@@ -36,18 +36,29 @@ export function MemberPositionDropdown({
 }: MemberPositionDropdownProps) {
   const selected = options.find((option) => option.id === value);
   const isMobile = useMediaQuery('(max-width: 695.98px)');
+  const [open, setOpen] = useState(false);
   const [portalContainer, setPortalContainer] = useState<HTMLElement | null>(null);
   const setTriggerRef = (node: HTMLButtonElement | null) => {
     // 언마운트(node=null) 때는 컨테이너를 비우지 않는다. 같은 값을 다시 세팅하면 리렌더가 멈춘다.
     if (!node) return;
-    // 표를 스크롤하는 컨테이너 안에 띄워야 sticky 이름 열과 같은 stacking context에 들어가 그 뒤에 깔린다.
-    // 바깥(data-admin)에 띄우면 iOS 사파리처럼 스크롤 컨테이너가 합성 레이어를 만드는 환경에서
-    // 열 z-index와 비교가 되지 않아 이름 열 위로 올라온다.
+    // 표를 스크롤하는 컨테이너 안에 띄워야 고정 헤더·고정 열과 같은 stacking context에 들어가
+    // z-index 비교가 된다. 바깥(data-admin)에 띄우면 iOS 사파리처럼 스크롤 컨테이너가
+    // 합성 레이어를 만드는 환경에서 비교가 되지 않는다.
     setPortalContainer(findScrollContainer(node) ?? node.closest<HTMLElement>('[data-admin]'));
   };
 
+  // 메뉴는 표 위에 떠 있으므로, 표를 스크롤하면 트리거와 어긋나기 전에 닫는다.
+  // (메뉴 자체 스크롤은 overscroll-contain으로 표에 전달되지 않는다.)
+  useEffect(() => {
+    if (!open || !portalContainer) return;
+
+    const close = () => setOpen(false);
+    portalContainer.addEventListener('scroll', close, { passive: true });
+    return () => portalContainer.removeEventListener('scroll', close);
+  }, [open, portalContainer]);
+
   return (
-    <DropdownMenu>
+    <DropdownMenu open={open} onOpenChange={setOpen}>
       <DropdownMenuTrigger
         ref={setTriggerRef}
         aria-label={`${memberName} 포지션: ${selected?.name ?? '미지정'}`}
@@ -69,7 +80,7 @@ export function MemberPositionDropdown({
       <DropdownMenuContent
         portalContainer={isMobile ? portalContainer : undefined}
         align="start"
-        className="max-tablet:z-10 w-[var(--radix-dropdown-menu-trigger-width)] min-w-0"
+        className="w-[var(--radix-dropdown-menu-trigger-width)] min-w-0"
         onClick={(event) => event.stopPropagation()}
       >
         {/* 설정된 옵션이 없으면 해제할 대상도 없으므로 옵션 추가로만 안내한다. */}
