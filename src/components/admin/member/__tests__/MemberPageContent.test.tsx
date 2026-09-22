@@ -34,7 +34,12 @@ const getMock = jest.mocked(apiClient.get);
 
 beforeEach(() => {
   getMock.mockReset();
-  getMock.mockImplementation(async (_url, config) => {
+  getMock.mockImplementation(async (url, config) => {
+    // 표가 포지션 옵션도 조회한다. 멤버 목록 파라미터를 읽기 전에 걸러내야 한다.
+    if (url.includes('/positions')) {
+      return { data: { data: [] } };
+    }
+
     const { page, size } = config!.params as { page: number; size: number };
     return {
       data: {
