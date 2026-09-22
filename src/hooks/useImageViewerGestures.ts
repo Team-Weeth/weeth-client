@@ -127,6 +127,7 @@ function useTouchGestures(
         touchStart.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
       } else if (e.touches.length === 2) {
         e.preventDefault();
+        touchStart.current = null;
         initialPinchDistance.current = getDistance(e.touches[0], e.touches[1]);
         initialPinchZoom.current = zoomRef.current;
       }

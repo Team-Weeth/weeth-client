@@ -1,8 +1,11 @@
 import { useRef, useCallback, useEffect } from 'react';
 
+const DRAG_THRESHOLD = 5;
+
 export function useDragScroll() {
   const ref = useRef<HTMLDivElement>(null);
   const cleanupRef = useRef<(() => void) | null>(null);
+  const wasDraggingRef = useRef(false);
 
   useEffect(() => {
     return () => {
@@ -15,10 +18,14 @@ export function useDragScroll() {
     if (!el) return;
 
     const startX = e.pageX - el.offsetLeft;
+    const startPageX = e.pageX;
     const scrollLeft = el.scrollLeft;
 
     const handleMouseMove = (ev: MouseEvent) => {
       ev.preventDefault();
+      if (Math.abs(ev.pageX - startPageX) > DRAG_THRESHOLD) {
+        wasDraggingRef.current = true;
+      }
       el.scrollLeft = scrollLeft - (ev.pageX - el.offsetLeft - startX);
     };
 
@@ -31,6 +38,13 @@ export function useDragScroll() {
     window.addEventListener('mousemove', handleMouseMove);
     window.addEventListener('mouseup', cleanup);
     cleanupRef.current = cleanup;
+  }, []);
+
+  const onClickCapture = useCallback((e: React.MouseEvent) => {
+    if (wasDraggingRef.current) {
+      wasDraggingRef.current = false;
+      e.stopPropagation();
+    }
   }, []);
 
   const SCROLL_STEP = 200;
@@ -68,6 +82,7 @@ export function useDragScroll() {
     ref,
     onMouseDown,
     onKeyDown,
+    onClickCapture,
     scrollToEnd,
   };
 }
