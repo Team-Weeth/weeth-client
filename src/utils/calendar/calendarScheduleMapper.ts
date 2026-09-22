@@ -44,7 +44,6 @@ function toUiScheduleDetail(api: ApiScheduleDetail, clubId: string | null): Sche
       position: ROLE_LABEL[a.role] ?? a.role,
     })),
     attendeeCount: api.totalAttendees,
-    showAttendeeCount: api.totalAttendees != null,
     hasAttendanceCheck: api.type === 'SESSION' && api.myAttendanceStatus != null,
     attendanceStatus: api.myAttendanceStatus ?? undefined,
     attendanceCompletedAt: api.attendedAt,

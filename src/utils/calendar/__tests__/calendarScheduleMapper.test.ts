@@ -126,17 +126,10 @@ describe('toUiScheduleDetail', () => {
     expect(result.hasAttendanceCheck).toBe(false);
   });
 
-  it('totalAttendees가 있으면 showAttendeeCount=true이고 attendeeCount에 매핑된다', () => {
+  it('totalAttendees가 있으면 attendeeCount에 매핑된다', () => {
     const result = toUiScheduleDetail(mockScheduleDetail({ totalAttendees: 10 }), null);
 
-    expect(result.showAttendeeCount).toBe(true);
     expect(result.attendeeCount).toBe(10);
-  });
-
-  it('totalAttendees가 없으면 showAttendeeCount=false다', () => {
-    const result = toUiScheduleDetail(mockScheduleDetail({ totalAttendees: undefined }), null);
-
-    expect(result.showAttendeeCount).toBe(false);
   });
 
   it('myAttendanceStatus가 없으면 attendanceStatus는 undefined다', () => {

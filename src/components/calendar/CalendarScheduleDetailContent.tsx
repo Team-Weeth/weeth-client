@@ -74,7 +74,7 @@ function CalendarScheduleDetailContent({
             aria-label="닫기"
             className="hover:bg-container-neutral-interaction flex size-[40px] shrink-0 cursor-pointer items-center justify-center rounded-sm transition-colors"
           >
-            <Icon src={DeleteIcon} size={24} className="text-icon-normal" />
+            <Icon src={DeleteIcon} size={28} className="text-icon-normal" />
           </button>
         </AlertDialogPrimitive.Cancel>
       </div>
@@ -96,7 +96,7 @@ function CalendarScheduleDetailContent({
               <div className="flex items-center gap-300">
                 <span className={LABEL_CLASS}>주최</span>
                 <div className="flex items-center gap-200">
-                  <Avatar size={24} type="round">
+                  <Avatar size={28} type="round" colorScheme="white">
                     {schedule.host.imageUrl ? (
                       <AvatarImage src={schedule.host.imageUrl} alt={schedule.host.name} />
                     ) : null}
@@ -116,7 +116,7 @@ function CalendarScheduleDetailContent({
                 >
                   <AvatarGroup>
                     {visibleAttendees.map((attendee, idx) => (
-                      <Avatar key={`${attendee.name}-${idx}`} size={24} type="round">
+                      <Avatar key={`${attendee.name}-${idx}`} size={28} type="round">
                         {attendee.imageUrl ? (
                           <AvatarImage src={attendee.imageUrl} alt={attendee.name} />
                         ) : null}
@@ -125,18 +125,15 @@ function CalendarScheduleDetailContent({
                     ))}
                     {remainingCount > 0 && <AvatarGroupCount>+{remainingCount}</AvatarGroupCount>}
                   </AvatarGroup>
-                  {schedule.showAttendeeCount === true && schedule.attendeeCount != null && (
-                    <span className="typo-caption2 text-text-alternative">
-                      총 {schedule.attendeeCount}명
-                    </span>
-                  )}
                 </button>
               </div>
             )}
             {schedule.description && (
               <div className="flex items-start gap-300">
                 <span className={cn(LABEL_CLASS, 'pt-[2px]')}>설명</span>
-                <span className="typo-body2 text-text-normal flex-1">{schedule.description}</span>
+                <span className="typo-body2 text-text-normal flex-1 whitespace-pre-wrap">
+                  {schedule.description}
+                </span>
               </div>
             )}
           </div>

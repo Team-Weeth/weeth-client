@@ -1,4 +1,4 @@
-export const LABEL_CLASS = 'typo-caption2 text-text-alternative w-[56px] shrink-0';
+export const LABEL_CLASS = 'typo-button2 text-text-alternative w-[56px] shrink-0';
 
 export const SCHEDULE_TYPE_LABEL: Record<string, string> = {
   SESSION: '세션',

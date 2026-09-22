@@ -22,7 +22,6 @@ export interface ScheduleDetail extends CalendarSchedule {
   host?: AttendeeInfo;
   attendees?: AttendeeInfo[];
   attendeeCount?: number;
-  showAttendeeCount?: boolean;
   dDay?: number;
   hasAttendanceCheck?: boolean;
   attendanceStatus?: AttendanceStatus;

@@ -1,6 +1,6 @@
 import { Skeleton } from '@/components/ui/skeleton';
 
-function CalendarScheduleDetailContentMobileSkeleton() {
+function CalendarMobileScheduleDetailContentSkeleton() {
   return (
     <div className="flex flex-col px-450 pb-700">
       {/* Header */}
@@ -69,4 +69,4 @@ function CalendarScheduleDetailContentMobileSkeleton() {
   );
 }
 
-export { CalendarScheduleDetailContentMobileSkeleton };
+export { CalendarMobileScheduleDetailContentSkeleton };

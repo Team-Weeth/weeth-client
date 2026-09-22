@@ -33,8 +33,8 @@ jest.mock('@/components/calendar/CalendarAttendancePanel', () => ({
   CalendarAttendancePanel: () => null,
 }));
 
-jest.mock('@/components/calendar/CalendarScheduleDetailContentMobile', () => ({
-  CalendarScheduleDetailContentMobile: () => null,
+jest.mock('@/components/calendar/CalendarMobileScheduleDetailContent', () => ({
+  CalendarMobileScheduleDetailContent: () => null,
 }));
 
 jest.mock('@/components/calendar/CalendarAttendeeListContent', () => ({

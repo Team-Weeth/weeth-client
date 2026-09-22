@@ -52,9 +52,7 @@ function CalendarMobileView({
           >
             {selectedDateSchedules.length === 0 ? (
               <div className="flex w-full flex-col items-center justify-center gap-300 px-450 pt-800 pb-700">
-                <p className="typo-caption2 text-text-alternative text-center">
-                  등록된 일정이 없어요
-                </p>
+                <p className="typo-body2 text-text-alternative text-center">등록된 일정이 없어요</p>
               </div>
             ) : (
               selectedDateSchedules.map((schedule) => (
