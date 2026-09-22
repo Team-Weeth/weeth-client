@@ -46,10 +46,11 @@ function useMemberPositionEditor({ initialOptions, onSave }: MemberPositionEdito
   }
   const duplicateNames =
     new Set(normalized.map((option) => option.name)).size !== normalized.length;
+  // 길이도 실제로 보낼 값(다듬은 이름) 기준으로 센다. 앞뒤 공백까지 세면 서버가 받는 값과 어긋난다.
   const valid =
     options.length <= MAX_POSITION_OPTIONS &&
     normalized.every((option) => option.name) &&
-    options.every((option) => Array.from(option.name).length <= MAX_POSITION_NAME_LENGTH) &&
+    normalized.every((option) => Array.from(option.name).length <= MAX_POSITION_NAME_LENGTH) &&
     !duplicateNames;
   const canSave = valid && dirty && !saving;
 
