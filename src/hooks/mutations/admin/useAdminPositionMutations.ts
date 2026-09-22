@@ -25,9 +25,11 @@ export function useSavePositionOptions() {
       return adminPositionApi.saveOptions(clubId, toSavePositionOptionsBody(payload));
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: adminQueryKeys.positions(clubId) });
       // 멤버 표의 포지션 태그도 삭제/이름 변경을 반영해야 한다.
       queryClient.invalidateQueries({ queryKey: adminQueryKeys.members(clubId) });
+      // 편집기가 새 옵션의 서버 id를 받아야 다음 저장에서 중복 생성되지 않는다.
+      // Promise를 돌려줘 재조회가 끝난 뒤에 저장이 완료되게 한다.
+      return queryClient.invalidateQueries({ queryKey: adminQueryKeys.positions(clubId) });
     },
   });
 }

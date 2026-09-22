@@ -3,7 +3,7 @@
 import { useState } from 'react';
 
 import { useAdminPositionOptions } from '@/hooks/queries/admin/useAdminPositionQueries';
-import { toastError } from '@/stores/useToastStore';
+import { toastError, toastWarning } from '@/stores/useToastStore';
 import { useMemberPositionSettingsLink } from './useMemberPositionSettingsLink';
 
 /**
@@ -23,7 +23,13 @@ export function usePositionChangeGuard() {
       return false;
     }
 
-    if (status === 'success' && options.length === 0) {
+    // 조회 중에 열면 목록이 비어 '지정 해제'만 있는 모달이 뜬다. 그대로 저장하면 포지션이 풀린다.
+    if (status === 'pending') {
+      toastWarning('포지션 옵션을 불러오는 중입니다. 잠시 후 다시 시도해주세요.');
+      return false;
+    }
+
+    if (options.length === 0) {
       setIsEmptyDialogOpen(true);
       return false;
     }
