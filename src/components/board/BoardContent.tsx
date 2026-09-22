@@ -55,7 +55,25 @@ function BoardContent({
       ? posts?.filter((post) => post.author.id === currentUserId)
       : posts;
 
-  useScrollRestoration(boardId !== null ? `board:${boardId}` : null, !isPending && !isError);
+  const { pendingTarget, clearPendingTarget } = useScrollRestoration(
+    boardId !== null ? `board:${boardId}` : null,
+    !isPending && !isError,
+  );
+
+  useEffect(() => {
+    if (pendingTarget === null || isFetchingNextPage) return;
+
+    const reachable = document.body.scrollHeight >= pendingTarget + window.innerHeight;
+
+    if (reachable || !hasNextPage) {
+      requestAnimationFrame(() => {
+        window.scrollTo({ top: pendingTarget, behavior: 'instant' });
+      });
+      clearPendingTarget();
+    } else {
+      fetchNextPage();
+    }
+  }, [pendingTarget, isFetchingNextPage, hasNextPage, fetchNextPage, clearPendingTarget]);
 
   useEffect(() => {
     if (!isError || !error) return;
