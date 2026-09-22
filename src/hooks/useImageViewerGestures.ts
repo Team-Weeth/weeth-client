@@ -51,6 +51,7 @@ function useDragPan(
 
     function handlePointerDown(e: PointerEvent) {
       if (e.button !== 0 || zoomRef.current <= 1) return;
+      if ((e.target as HTMLElement).closest('button, a, [role="button"]')) return;
       isDragging.current = true;
       dragStart.current = { x: e.clientX, y: e.clientY };
       panStart.current = { ...panRef.current };
