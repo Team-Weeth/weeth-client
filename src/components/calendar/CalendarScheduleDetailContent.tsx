@@ -131,7 +131,7 @@ function CalendarScheduleDetailContent({
             {schedule.description && (
               <div className="flex items-start gap-300">
                 <span className={cn(LABEL_CLASS, 'pt-[2px]')}>설명</span>
-                <span className="typo-body2 text-text-normal flex-1">{schedule.description}</span>
+                <span className="typo-body2 text-text-normal flex-1 whitespace-pre-wrap">{schedule.description}</span>
               </div>
             )}
           </div>
