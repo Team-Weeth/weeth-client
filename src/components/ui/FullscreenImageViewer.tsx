@@ -37,6 +37,44 @@ interface FullscreenImageViewerProps {
   showThumbnails?: boolean;
 }
 
+function downloadImage(url: string, fileName: string) {
+  const params = new URLSearchParams({ url, fileName });
+  const link = document.createElement('a');
+  link.href = `/api/download?${params.toString()}`;
+  link.download = fileName;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}
+
+interface TooltipIconButtonProps {
+  src: React.ComponentProps<typeof Icon>['src'];
+  label: string;
+  onClick: () => void;
+  disabled?: boolean;
+}
+
+function TooltipIconButton({ src, label, onClick, disabled }: TooltipIconButtonProps) {
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <button
+          type="button"
+          onClick={onClick}
+          disabled={disabled}
+          className="cursor-pointer p-100 text-white transition-opacity hover:opacity-70 disabled:cursor-default disabled:opacity-30"
+          aria-label={label}
+        >
+          <Icon src={src} size={20} />
+        </button>
+      </TooltipTrigger>
+      <TooltipContent variant="dark" side="top">
+        {label}
+      </TooltipContent>
+    </Tooltip>
+  );
+}
+
 function FullscreenImageViewer({
   open,
   onOpenChange,
@@ -77,21 +115,30 @@ function FullscreenImageViewer({
 
   if (!activeImage) return null;
 
-  const handleDownload = () => {
-    const fileName = activeImage.fileName ?? `image-${viewer.activeIndex + 1}`;
-    const params = new URLSearchParams({ url: activeImage.url, fileName });
-    const link = document.createElement('a');
-    link.href = `/api/download?${params.toString()}`;
-    link.download = fileName;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  };
-
   const imageTransform =
     viewer.zoom === 1 && viewer.pan.x === 0 && viewer.pan.y === 0
       ? undefined
       : `scale(${viewer.zoom}) translate(${viewer.pan.x / viewer.zoom}px, ${viewer.pan.y / viewer.zoom}px)`;
+
+  const zoomControls: TooltipIconButtonProps[] = [
+    {
+      src: ZoomOutIcon,
+      label: '축소',
+      onClick: viewer.handleZoomOut,
+      disabled: viewer.zoom <= ZOOM_MIN,
+    },
+    {
+      src: ZoomInIcon,
+      label: '확대',
+      onClick: viewer.handleZoomIn,
+      disabled: viewer.zoom >= ZOOM_MAX,
+    },
+    {
+      src: FitScreenIcon,
+      label: '화면에 맞추기',
+      onClick: viewer.handleFitScreen,
+    },
+  ];
 
   return (
     <DialogPrimitive.Root
@@ -100,19 +147,18 @@ function FullscreenImageViewer({
     >
       <DialogPrimitive.Portal>
         <DialogPrimitive.Overlay className="data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 z-[90] bg-black/80" />
+        {/* target === currentTarget: 배경 클릭 시에만 닫힘 — 자식마다 stopPropagation 불필요 */}
         <DialogPrimitive.Content
           aria-describedby={undefined}
           className="fixed inset-0 z-[90] flex flex-col outline-none"
-          onClick={() => {
+          onClick={(e) => {
+            if (e.target !== e.currentTarget) return;
             if (viewer.zoom > 1) return;
             viewer.handleOpenChange(false, onOpenChange);
           }}
         >
           {/* Header */}
-          <div
-            className="relative z-10 flex h-14 shrink-0 items-center px-400"
-            onClick={(e) => e.stopPropagation()}
-          >
+          <div className="relative z-10 flex h-14 shrink-0 items-center px-400">
             <DialogPrimitive.Title
               className={cn('typo-sub3 text-white', !viewer.hasMultipleImages && 'sr-only')}
             >
@@ -123,7 +169,12 @@ function FullscreenImageViewer({
             <div className="ml-auto flex items-center gap-100">
               <button
                 type="button"
-                onClick={handleDownload}
+                onClick={() =>
+                  downloadImage(
+                    activeImage.url,
+                    activeImage.fileName ?? `image-${viewer.activeIndex + 1}`,
+                  )
+                }
                 className="cursor-pointer p-200 text-white transition-opacity hover:opacity-70"
                 aria-label="이미지 다운로드"
               >
@@ -149,10 +200,7 @@ function FullscreenImageViewer({
             {viewer.hasMultipleImages && (
               <button
                 type="button"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  viewer.handlePrev();
-                }}
+                onClick={viewer.handlePrev}
                 onPointerDown={(e) => e.stopPropagation()}
                 className="absolute left-400 z-10 flex size-9 cursor-pointer items-center justify-center rounded-full bg-black/40 text-white transition-opacity hover:bg-black/60"
                 aria-label="이전 이미지 보기"
@@ -167,7 +215,6 @@ function FullscreenImageViewer({
               alt={activeImage.alt ?? `이미지 ${viewer.activeIndex + 1}`}
               className="max-h-full max-w-full object-contain px-800 transition-transform duration-200 select-none"
               style={imageTransform ? { transform: imageTransform } : undefined}
-              onClick={(e) => e.stopPropagation()}
               draggable={false}
             />
 
@@ -175,57 +222,12 @@ function FullscreenImageViewer({
             <div
               className="absolute inset-x-0 bottom-800 z-10 flex justify-center opacity-0 transition-opacity duration-200 group-hover:opacity-100"
               onPointerDown={(e) => e.stopPropagation()}
-              onClick={(e) => e.stopPropagation()}
             >
               <TooltipProvider>
                 <div className="flex items-center gap-200 rounded-full bg-black/60 px-400 pt-200 pb-100">
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <button
-                        type="button"
-                        onClick={viewer.handleZoomOut}
-                        disabled={viewer.zoom <= ZOOM_MIN}
-                        className="cursor-pointer p-100 text-white transition-opacity hover:opacity-70 disabled:cursor-default disabled:opacity-30"
-                        aria-label="축소"
-                      >
-                        <Icon src={ZoomOutIcon} size={20} />
-                      </button>
-                    </TooltipTrigger>
-                    <TooltipContent variant="dark" side="top">
-                      축소
-                    </TooltipContent>
-                  </Tooltip>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <button
-                        type="button"
-                        onClick={viewer.handleZoomIn}
-                        disabled={viewer.zoom >= ZOOM_MAX}
-                        className="cursor-pointer p-100 text-white transition-opacity hover:opacity-70 disabled:cursor-default disabled:opacity-30"
-                        aria-label="확대"
-                      >
-                        <Icon src={ZoomInIcon} size={20} />
-                      </button>
-                    </TooltipTrigger>
-                    <TooltipContent variant="dark" side="top">
-                      확대
-                    </TooltipContent>
-                  </Tooltip>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <button
-                        type="button"
-                        onClick={viewer.handleFitScreen}
-                        className="cursor-pointer p-100 text-white transition-opacity hover:opacity-70"
-                        aria-label="화면에 맞추기"
-                      >
-                        <Icon src={FitScreenIcon} size={20} />
-                      </button>
-                    </TooltipTrigger>
-                    <TooltipContent variant="dark" side="top">
-                      화면에 맞추기
-                    </TooltipContent>
-                  </Tooltip>
+                  {zoomControls.map((control) => (
+                    <TooltipIconButton key={control.label} {...control} />
+                  ))}
                 </div>
               </TooltipProvider>
             </div>
@@ -233,10 +235,7 @@ function FullscreenImageViewer({
             {viewer.hasMultipleImages && (
               <button
                 type="button"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  viewer.handleNext();
-                }}
+                onClick={viewer.handleNext}
                 onPointerDown={(e) => e.stopPropagation()}
                 className="absolute right-400 z-10 flex size-9 cursor-pointer items-center justify-center rounded-full bg-black/40 text-white transition-opacity hover:bg-black/60"
                 aria-label="다음 이미지 보기"
@@ -248,7 +247,7 @@ function FullscreenImageViewer({
 
           {/* Thumbnail strip */}
           {showThumbnailStrip && (
-            <div className="shrink-0 px-400 pt-200 pb-400" onClick={(e) => e.stopPropagation()}>
+            <div className="shrink-0 px-400 pt-200 pb-400">
               <div
                 ref={thumbnailRef}
                 role="list"
@@ -257,7 +256,7 @@ function FullscreenImageViewer({
               >
                 {images.map((image, index) => (
                   <button
-                    key={image.url}
+                    key={`thumb-${index}`}
                     type="button"
                     role="listitem"
                     onClick={() => viewer.handleThumbnailSelect(index)}

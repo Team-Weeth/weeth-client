@@ -12,8 +12,10 @@ interface UseImageViewerOptions {
 
 function useImageViewer({ imageCount, initialIndex, open }: UseImageViewerOptions) {
   const [activeIndex, setActiveIndex] = useState(initialIndex);
-  const [zoom, setZoom] = useState(1);
-  const [pan, setPan] = useState({ x: 0, y: 0 });
+  // zoom과 pan을 하나의 state로 관리해 항상 원자적으로 업데이트
+  const [view, setView] = useState({ zoom: 1, pan: { x: 0, y: 0 } });
+
+  const { zoom, pan } = view;
 
   // ref로 최신 값을 동기화하여 이벤트 핸들러에서 stale closure 방지
   const zoomRef = useRef(zoom);
@@ -28,8 +30,26 @@ function useImageViewer({ imageCount, initialIndex, open }: UseImageViewerOption
   const hasMultipleImages = imageCount > 1;
 
   const resetView = () => {
-    setZoom(1);
-    setPan({ x: 0, y: 0 });
+    setView({ zoom: 1, pan: { x: 0, y: 0 } });
+  };
+
+  // zoom이 1 이하가 되면 pan을 함께 초기화 — 순수 업데이터이므로 재실행에 안전
+  const setZoom = (updater: number | ((prev: number) => number)) => {
+    setView((prev) => {
+      const next = typeof updater === 'function' ? updater(prev.zoom) : updater;
+      return { zoom: next, pan: next <= 1 ? { x: 0, y: 0 } : prev.pan };
+    });
+  };
+
+  const setPan = (
+    updater:
+      | { x: number; y: number }
+      | ((prev: { x: number; y: number }) => { x: number; y: number }),
+  ) => {
+    setView((prev) => {
+      const next = typeof updater === 'function' ? updater(prev.pan) : updater;
+      return { ...prev, pan: next };
+    });
   };
 
   const handleZoomIn = () => {
@@ -37,11 +57,7 @@ function useImageViewer({ imageCount, initialIndex, open }: UseImageViewerOption
   };
 
   const handleZoomOut = () => {
-    setZoom((prev) => {
-      const next = Math.max(prev - ZOOM_STEP, ZOOM_MIN);
-      if (next <= 1) setPan({ x: 0, y: 0 });
-      return next;
-    });
+    setZoom((prev) => Math.max(prev - ZOOM_STEP, ZOOM_MIN));
   };
 
   const handleFitScreen = () => {
