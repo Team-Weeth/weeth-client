@@ -38,6 +38,27 @@ it('하나의 포지션만 선택해서 저장하고 모달을 닫는다', async
   expect(onOpenChange).toHaveBeenCalledWith(false);
 });
 
+it('목록 끝의 지정 해제를 선택하면 null로 저장한다', async () => {
+  const user = userEvent.setup();
+  const onSubmit = jest.fn();
+  render(
+    <ChangePositionModal
+      open
+      memberCount={2}
+      options={POSITION_OPTIONS}
+      onSubmit={onSubmit}
+      onOpenChange={jest.fn()}
+    />,
+  );
+  const chips = screen.getAllByRole('button', { pressed: false });
+  expect(chips.at(-1)).toHaveTextContent('지정 해제');
+  await user.click(screen.getByRole('button', { name: '백엔드' }));
+  await user.click(screen.getByRole('button', { name: '지정 해제' }));
+  expect(screen.getByRole('button', { name: '백엔드' })).toHaveAttribute('aria-pressed', 'false');
+  await user.click(screen.getByRole('button', { name: '저장' }));
+  expect(onSubmit).toHaveBeenCalledWith(null);
+});
+
 it('취소하면 저장하지 않고 재진입 시 선택 초안을 초기화한다', async () => {
   const user = userEvent.setup();
   const props = {

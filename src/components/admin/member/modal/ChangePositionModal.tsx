@@ -14,8 +14,12 @@ interface ChangePositionModalProps {
   memberCount: number;
   memberName?: string;
   options: readonly MemberPositionOption[];
-  onSubmit: (option: MemberPositionOption) => void;
+  /** null이면 지정 해제 */
+  onSubmit: (option: MemberPositionOption | null) => void;
 }
+
+/** 아직 아무것도 고르지 않은 상태(undefined)와 '지정 해제'(null)를 구분한다. */
+type PositionSelection = MemberPositionOption | null | undefined;
 
 export function ChangePositionModal(props: ChangePositionModalProps) {
   // 닫으면 선택 초안을 버리고 다음 진입 시 새로 선택합니다.
@@ -30,8 +34,8 @@ function PositionSelectionDialog({
   options,
   onSubmit,
 }: ChangePositionModalProps) {
-  const [selectedId, setSelectedId] = useState<string | null>(null);
-  const selected = options.find((option) => option.id === selectedId);
+  const [selected, setSelected] = useState<PositionSelection>(undefined);
+  const hasSelection = selected !== undefined;
   const close = () => onOpenChange(false);
 
   return (
@@ -65,21 +69,19 @@ function PositionSelectionDialog({
             aria-label="포지션 선택"
           >
             {options.map((option) => (
-              <button
+              <PositionChip
                 key={option.id}
-                type="button"
-                aria-pressed={selectedId === option.id}
-                onClick={() => setSelectedId(option.id)}
-                className={cn(
-                  'typo-button2 flex min-w-0 cursor-pointer items-center justify-center rounded-[10px] px-200 py-200 transition-colors',
-                  selectedId === option.id
-                    ? 'bg-button-primary text-text-inverse'
-                    : 'bg-button-neutral text-text-normal hover:bg-button-neutral-interaction',
-                )}
-              >
-                {option.name}
-              </button>
+                label={option.name}
+                pressed={selected?.id === option.id}
+                onClick={() => setSelected(option)}
+              />
             ))}
+            {/* 목록 끝에서 포지션을 비우는 선택지. 고르면 positionOptionId를 null로 보낸다. */}
+            <PositionChip
+              label="지정 해제"
+              pressed={selected === null}
+              onClick={() => setSelected(null)}
+            />
           </div>
         </div>
         {/* 다이얼로그와 같은 배경이라 따로 칠하지 않는다. 칠하면 하단 모서리 radius를 덮는다. */}
@@ -87,9 +89,9 @@ function PositionSelectionDialog({
           <div className="bg-line h-px" aria-hidden />
           <div className="flex min-h-8 items-center gap-400 px-300">
             <span className="typo-sub3 text-text-alternative shrink-0">선택됨</span>
-            {selected && (
+            {hasSelection && (
               <span className="bg-button-primary-subtle text-brand-primary typo-button2 inline-flex h-8 items-center rounded-sm px-300">
-                {selected.name}
+                {selected?.name ?? '지정 해제'}
               </span>
             )}
           </div>
@@ -99,10 +101,10 @@ function PositionSelectionDialog({
             </Button>
             <Button
               size="lg"
-              disabled={!selected || memberCount === 0}
+              disabled={!hasSelection || memberCount === 0}
               onClick={() => {
-                if (!selected || memberCount === 0) return;
-                onSubmit(selected);
+                if (!hasSelection || memberCount === 0) return;
+                onSubmit(selected ?? null);
                 close();
               }}
             >
@@ -112,5 +114,31 @@ function PositionSelectionDialog({
         </div>
       </DialogContent>
     </Dialog>
+  );
+}
+
+function PositionChip({
+  label,
+  pressed,
+  onClick,
+}: {
+  label: string;
+  pressed: boolean;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      aria-pressed={pressed}
+      onClick={onClick}
+      className={cn(
+        'typo-button2 flex min-w-0 cursor-pointer items-center justify-center rounded-[10px] px-200 py-200 transition-colors',
+        pressed
+          ? 'bg-button-primary text-text-inverse'
+          : 'bg-button-neutral text-text-normal hover:bg-button-neutral-interaction',
+      )}
+    >
+      {label}
+    </button>
   );
 }
