@@ -156,7 +156,7 @@ function EditProfileContent({ className, schools, majors, ...props }: EditProfil
               type="submit"
               size="lg"
               disabled={isPending || !isValid || !hasChanges}
-              className="tablet:flex hidden w-full"
+              className="tablet:flex mt-[30px] hidden w-full"
             >
               {isPending ? '수정 중...' : '수정 완료'}
             </Button>

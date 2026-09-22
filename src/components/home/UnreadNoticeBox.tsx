@@ -20,7 +20,7 @@ export function UnreadNoticeBox() {
       href={buildPostPath(clubId, latestNotice.id, latestNotice.boardId)}
       className="flex min-w-0 flex-col rounded-lg shadow-[0_5px_20px_0_rgba(17,33,49,0.2)]"
     >
-      <div className="bg-icon-normal text-icon-inverse flex items-center rounded-t-lg px-450 pt-450 pb-300">
+      <div className="bg-icon-normal text-icon-inverse flex items-center rounded-t-lg px-450 pt-400 pb-300">
         <p className="typo-sub1 text-icon-inverse">최신 공지를 확인해보세요</p>
       </div>
       <div className="bg-container-neutral flex min-w-0 flex-col gap-[5px] rounded-b-lg px-450 py-400">
