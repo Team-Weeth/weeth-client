@@ -52,7 +52,15 @@ async function handler(request: NextRequest, { params }: { params: Promise<{ pat
     throw e;
   }
 
-  const body = await response.arrayBuffer();
+  let body: ArrayBuffer;
+  try {
+    body = await response.arrayBuffer();
+  } catch (e) {
+    if (request.signal.aborted) {
+      return new NextResponse(null, { status: 499 });
+    }
+    throw e;
+  }
 
   const responseHeaders = new Headers(response.headers);
   responseHeaders.delete('transfer-encoding');

@@ -20,6 +20,10 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: 'invalid url' }, { status: 400 });
   }
 
+  if (parsed.protocol !== 'https:') {
+    return NextResponse.json({ error: 'https required' }, { status: 400 });
+  }
+
   if (!ALLOWED_HOSTS.includes(parsed.hostname)) {
     return NextResponse.json({ error: 'forbidden host' }, { status: 403 });
   }
