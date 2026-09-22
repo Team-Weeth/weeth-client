@@ -4,6 +4,7 @@ import { Tag } from '@/components/ui/tag';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { cn } from '@/lib/cn';
 import type { MemberProfile } from '@/types/member';
+import { toPositionTagVariant } from '@/utils/member/memberMapper';
 import { MemberHiddenCardinalsBadge } from './MemberHiddenCardinalsBadge';
 import { MemberRoleFlag } from './MemberRoleFlag';
 import ArrowRightIcon from '@/assets/icons/arrow_right.svg';
@@ -61,8 +62,8 @@ function MemberProfileCard({
 
         <div className="mt-2 flex items-center gap-2">
           {member.position && (
-            <Tag variant="pink" className="rounded-[5px]">
-              {member.position}
+            <Tag variant={toPositionTagVariant(member.position.color)} className="rounded-[5px]">
+              {member.position.name}
             </Tag>
           )}
           {latestCardinal !== undefined && (

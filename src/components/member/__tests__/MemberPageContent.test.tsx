@@ -12,7 +12,7 @@ const MOCK_MEMBERS: MemberProfile[] = [
     profileImageUrl: null,
     cardinals: [8],
     role: 'LEAD',
-    position: '기획',
+    position: { id: 1, name: '기획', color: 'PURPLE', displayOrder: 0 },
     description: '설명',
   },
 ];
@@ -44,6 +44,10 @@ jest.mock('@/hooks/member/useMemberDetailQuery', () => ({
     isError: false,
     refetch: jest.fn(),
   }),
+}));
+
+jest.mock('@/hooks/member/usePositionOptionsQuery', () => ({
+  usePositionOptionsQuery: () => ({ data: [] }),
 }));
 
 class MockIntersectionObserver {

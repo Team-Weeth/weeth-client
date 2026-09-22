@@ -1,45 +1,52 @@
 'use client';
 
-import { MEMBER_POSITION_OPTIONS, MEMBER_ROLE_FILTER_OPTIONS } from '@/constants/member';
+import { MEMBER_ROLE_FILTER_OPTIONS } from '@/constants/member';
 import type { MemberRoleFilterValue } from '@/constants/member';
-import type { MemberPosition } from '@/types/member';
+import type { ClubMemberPosition } from '@/types/member';
 import { MemberFilterDropdown } from './MemberFilterDropdown';
 import ResetIcon from '@/assets/icons/reset.svg';
 import { Icon } from '@/components/ui/Icon';
 import { MemberSearchBar } from './MemberSearchBar';
 
 interface MemberFilterContainerProps {
-  selectedPositions: MemberPosition[];
+  positionOptions: ClubMemberPosition[];
+  selectedPositionIds: string[];
   selectedRoles: MemberRoleFilterValue[];
-  onApplyPositions: (values: MemberPosition[]) => void;
+  onApplyPositionIds: (values: string[]) => void;
   onApplyRoles: (values: MemberRoleFilterValue[]) => void;
   searchQuery: string;
   onSearchQueryChange: (value: string) => void;
 }
 
 function MemberFilterContainer({
-  selectedPositions,
+  positionOptions,
+  selectedPositionIds,
   selectedRoles,
-  onApplyPositions,
+  onApplyPositionIds,
   onApplyRoles,
   searchQuery,
   onSearchQueryChange,
 }: MemberFilterContainerProps) {
-  const hasActiveFilters = selectedPositions.length > 0 || selectedRoles.length > 0;
+  const hasActiveFilters = selectedPositionIds.length > 0 || selectedRoles.length > 0;
 
   const handleResetAll = () => {
-    onApplyPositions([]);
+    onApplyPositionIds([]);
     onApplyRoles([]);
   };
+
+  const positionFilterOptions = positionOptions
+    .slice()
+    .sort((a, b) => a.displayOrder - b.displayOrder)
+    .map((option) => ({ value: String(option.id), label: option.name }));
 
   return (
     <div className="tablet:flex-row tablet:items-center tablet:justify-between tablet:gap-0 flex flex-col-reverse gap-300 pt-500 pb-400">
       <div className="flex items-center gap-2">
         <MemberFilterDropdown
           label="포지션"
-          options={MEMBER_POSITION_OPTIONS}
-          selected={selectedPositions}
-          onApply={onApplyPositions}
+          options={positionFilterOptions}
+          selected={selectedPositionIds}
+          onApply={onApplyPositionIds}
         />
         <MemberFilterDropdown
           label="역할"

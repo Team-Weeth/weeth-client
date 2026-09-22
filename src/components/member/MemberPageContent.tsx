@@ -14,8 +14,8 @@ import { useCardinalSelector } from '@/hooks/useCardinalSelector';
 import { useIntersectionObserver } from '@/hooks/board/useIntersectionObserver';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { useMembersQuery } from '@/hooks/member/useMembersQuery';
+import { usePositionOptionsQuery } from '@/hooks/member/usePositionOptionsQuery';
 import { cn } from '@/lib/cn';
-import type { MemberPosition } from '@/types/member';
 import { CardinalDropdown } from '@/components/common/CardinalDropdown';
 import { MemberDetailModal } from './MemberDetailModal';
 import { MemberFilterContainer } from './MemberFilterContainer';
@@ -31,8 +31,8 @@ function MemberPageContent() {
     autoSelectLatest: true,
     scope: 'member',
   });
-  // TODO: 백엔드에 포지션 필드/필터가 추가되면 API 파라미터로 연결
-  const [selectedPositions, setSelectedPositions] = useState<MemberPosition[]>([]);
+  const positionOptions = usePositionOptionsQuery(clubId).data ?? [];
+  const [selectedPositionIds, setSelectedPositionIds] = useState<string[]>([]);
   const [selectedRoles, setSelectedRoles] = useState<MemberRoleFilterValue[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [debouncedKeyword, setDebouncedKeyword] = useState('');
@@ -105,9 +105,17 @@ function MemberPageContent() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const filteredMembers = isAdminOnlyFilter
-    ? members.filter((member) => member.role === 'ADMIN' || member.role === 'LEAD')
-    : members;
+  // 포지션 필터도 다중 선택을 지원해야 하는데 positionOptionId 쿼리 파라미터는 값을 하나만 받을 수 있어
+  // 역할 필터와 마찬가지로 서버 필터링 대신 클라이언트에서 함께 걸러낸다.
+  const filteredMembers = members.filter((member) => {
+    if (isAdminOnlyFilter && member.role !== 'ADMIN' && member.role !== 'LEAD') return false;
+    if (selectedPositionIds.length > 0) {
+      if (!member.position || !selectedPositionIds.includes(String(member.position.id))) {
+        return false;
+      }
+    }
+    return true;
+  });
 
   return (
     <div className="tablet:px-[64px] flex flex-col self-stretch px-450 pb-[80px]">
@@ -133,9 +141,10 @@ function MemberPageContent() {
           />
         </div>
         <MemberFilterContainer
-          selectedPositions={selectedPositions}
+          positionOptions={positionOptions}
+          selectedPositionIds={selectedPositionIds}
           selectedRoles={selectedRoles}
-          onApplyPositions={setSelectedPositions}
+          onApplyPositionIds={setSelectedPositionIds}
           onApplyRoles={setSelectedRoles}
           searchQuery={searchQuery}
           onSearchQueryChange={setSearchQuery}

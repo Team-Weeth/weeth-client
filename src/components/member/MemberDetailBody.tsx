@@ -8,6 +8,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Icon } from '@/components/ui/Icon';
 import { Tag } from '@/components/ui/tag';
 import type { MemberProfile } from '@/types/member';
+import { toPositionTagVariant } from '@/utils/member/memberMapper';
 import { formatPhone } from '@/utils/shared/formatPhone';
 import { MemberHiddenCardinalsBadge } from './MemberHiddenCardinalsBadge';
 import { MemberRoleFlag } from './MemberRoleFlag';
@@ -48,8 +49,8 @@ function MemberDetailBody({ member }: MemberDetailBodyProps) {
 
         <div className="mt-[10px] flex flex-wrap items-center gap-2">
           {member.position && (
-            <Tag variant="secondary" className="rounded-[5px]">
-              {member.position}
+            <Tag variant={toPositionTagVariant(member.position.color)} className="rounded-[5px]">
+              {member.position.name}
             </Tag>
           )}
           {latestCardinal !== undefined && (
