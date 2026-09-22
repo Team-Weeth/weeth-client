@@ -30,13 +30,22 @@ async function handler(request: NextRequest, { params }: { params: Promise<{ pat
   const hasBody = request.method !== 'GET' && request.method !== 'HEAD';
   const isSSERequest = request.headers.get('accept')?.includes('text/event-stream');
 
-  const response = await fetch(url.toString(), {
-    method: request.method,
-    headers,
-    body: hasBody ? request.body : undefined,
-    signal: request.signal,
-    duplex: 'half',
-  } as RequestInit);
+  let response: Response;
+  try {
+    response = await fetch(url.toString(), {
+      method: request.method,
+      headers,
+      body: hasBody ? request.body : undefined,
+      signal: request.signal,
+      duplex: 'half',
+    } as RequestInit);
+  } catch (e) {
+    // 클라이언트가 연결을 끊은 경우(abort/timeout) — 리소스 누수 없이 조용히 종료
+    if (request.signal.aborted) {
+      return new NextResponse(null, { status: 499 });
+    }
+    throw e;
+  }
 
   const responseHeaders = new Headers(response.headers);
   responseHeaders.delete('content-encoding');
