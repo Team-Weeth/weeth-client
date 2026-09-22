@@ -4,10 +4,10 @@ import { useEffect, useRef, useState } from 'react';
 
 import { useRouter } from 'next/navigation';
 
-import { ProgressBar } from '@/components/ui';
+import { ProgressBar } from '@/components/ui/ProgressBar';
 import { getHomeTutorialPendingKey } from '@/constants/home/tutorial';
 import { createClubAction } from '@/lib/actions/club';
-import { useProgressAnimation } from '@/hooks';
+import { useProgressAnimation } from '@/hooks/useProgressAnimation';
 import { useClubActions, useCreateClubDraftStore } from '@/stores';
 import { toastError } from '@/stores/useToastStore';
 import type { CreateClubDraftState } from '@/stores/useCreateClubDraftStore';

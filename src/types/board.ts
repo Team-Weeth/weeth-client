@@ -1,4 +1,4 @@
-import { CreatePostFile, FileItem } from './file';
+import { CreatePostFile, DisplayFile, FileItem } from './file';
 
 // 페이지네이션 타입은 common.ts에서 관리, 하위 호환을 위해 re-export
 export type { Slice, SliceSort, SlicePageable } from '@/types/common';
@@ -130,5 +130,7 @@ export interface MappedComment {
   date: string;
   isAuthor: boolean;
   isDeleted: boolean;
+  imageFileUrls: DisplayFile[];
+  nonImageFileUrls: DisplayFile[];
   replies: MappedComment[];
 }

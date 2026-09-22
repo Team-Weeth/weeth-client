@@ -2,7 +2,6 @@ import { ScheduleDateRangeFields } from '@/components/admin/schedule/general/Sch
 import { ScheduleTextField } from '@/components/admin/schedule/general/ScheduleTextField';
 import { ScheduleTextareaField } from '@/components/admin/schedule/general/ScheduleTextareaField';
 import { SCHEDULE_FIELD_LIMITS } from '@/utils/admin/scheduleFormUtils';
-
 import type { ScheduleFormState } from './types';
 
 interface ScheduleFormBodyProps {

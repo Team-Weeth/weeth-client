@@ -11,9 +11,9 @@ import {
   BreadcrumbLink,
   BreadcrumbPage,
   BreadcrumbSeparator,
-  Divider,
-  Tag,
-} from '@/components/ui';
+} from '@/components/ui/breadcrumb';
+import { Divider } from '@/components/ui/Divider';
+import { Tag } from '@/components/ui/tag';
 import { cn } from '@/lib/cn';
 import { formatKoreanDate, formatTime } from '@/lib/formatTime';
 import { USER_ATTENDANCE_STATUS_CONFIG } from '@/constants/attendance';

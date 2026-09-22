@@ -1,5 +1,7 @@
-import { PaperclipIcon } from '@/assets/icons';
-import { Avatar, AvatarImage, AvatarFallback, Divider, Icon } from '@/components/ui';
+import PaperclipIcon from '@/assets/icons/paperclip.svg';
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
+import { Divider } from '@/components/ui/Divider';
+import { Icon } from '@/components/ui/Icon';
 import { cn } from '@/lib/cn';
 
 interface PostAuthorInfoProps {

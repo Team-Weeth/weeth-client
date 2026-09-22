@@ -4,7 +4,7 @@ import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { usePathname } from 'next/navigation';
 
-import { CloseCircleIcon } from '@/assets/icons';
+import CloseCircleIcon from '@/assets/icons/close_circle.svg';
 import { cn } from '@/lib/cn';
 import { getActivePopup, type PopupDocument } from '@/lib/apis/popup';
 import DefaultPopupImg from '@/assets/image/popup_default_img_1.png';

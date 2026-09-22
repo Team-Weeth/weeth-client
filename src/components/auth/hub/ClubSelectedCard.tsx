@@ -1,5 +1,6 @@
-import { CloseCircleIcon } from '@/assets/icons';
-import { ClubAvatar, Icon } from '@/components/ui';
+import CloseCircleIcon from '@/assets/icons/close_circle.svg';
+import { ClubAvatar } from '@/components/ui/ClubAvatar';
+import { Icon } from '@/components/ui/Icon';
 import type { Club } from '@/types';
 
 interface ClubSelectedCardProps {

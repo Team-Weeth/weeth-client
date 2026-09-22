@@ -5,7 +5,8 @@ import { useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 
-import { Button, ClubAvatar } from '@/components/ui';
+import { Button } from '@/components/ui/Button';
+import { ClubAvatar } from '@/components/ui/ClubAvatar';
 import { clubApi } from '@/lib/apis/club';
 import { useAuthName, useClubName } from '@/stores';
 import { useClubId } from '@/stores/useClubStore';

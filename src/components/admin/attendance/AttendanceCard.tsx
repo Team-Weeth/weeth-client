@@ -2,16 +2,13 @@
 
 import { useState } from 'react';
 
-import { ArrowDownIcon, SearchIcon } from '@/assets/icons';
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  Button,
-  Icon,
-  Badge,
-  Skeleton,
-} from '@/components/ui';
+import ArrowDownIcon from '@/assets/icons/arrow_down.svg';
+import SearchIcon from '@/assets/icons/search.svg';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel } from '@/components/ui/alert-dialog';
+import { Button } from '@/components/ui/Button';
+import { Icon } from '@/components/ui/Icon';
+import { Badge } from '@/components/ui/Badge';
+import { Skeleton } from '@/components/ui/skeleton';
 import type { AttendanceMember } from '@/types/admin/attendance';
 import { cn } from '@/lib/cn';
 
@@ -114,7 +111,7 @@ function AttendanceCard({
           )}
         </div>
         <span className="flex shrink-0 items-center justify-center">
-          <Icon src={ArrowDownIcon} size={24} className="rotate-180 text-white" />
+          <Icon src={ArrowDownIcon} size={24} className="text-icon-inverse rotate-180" />
         </span>
       </button>
 

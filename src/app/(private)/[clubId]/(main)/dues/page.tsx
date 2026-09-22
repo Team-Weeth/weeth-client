@@ -1,4 +1,4 @@
-import { DuesContent } from '@/components/dues';
+import { DuesContent } from '@/components/dues/DuesContent';
 import { ApiError, apiServer } from '@/lib/apis/server';
 import type { ApiResponse } from '@/types/common';
 import type { DuesVisibilityResponse } from '@/types/dues';

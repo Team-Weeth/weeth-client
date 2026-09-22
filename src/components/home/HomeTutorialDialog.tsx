@@ -6,18 +6,16 @@ import Image from 'next/image';
 import { useParams, useRouter } from 'next/navigation';
 
 import type { HomeTutorialSlide } from '@/constants/home/tutorial';
+import { Button } from '@/components/ui/Button';
+import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carousel';
 import {
-  Button,
-  Carousel,
-  CarouselContent,
-  CarouselItem,
   Dialog,
   DialogBody,
   DialogContent,
   DialogFooter,
   DialogHeader,
-  type CarouselApi,
-} from '@/components/ui';
+} from '@/components/ui/dialog';
+import type { CarouselApi } from '@/components/ui/carousel';
 import { PaginationButton } from './PaginationButton';
 
 interface HomeTutorialDialogProps {
@@ -87,7 +85,10 @@ function HomeTutorialDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent showCloseButton className="w-full max-w-[668px] gap-0 rounded-md p-500">
+      <DialogContent
+        showCloseButton
+        className="w-[calc(100%-36px)] max-w-[668px] gap-0 rounded-md p-500"
+      >
         <DialogHeader
           overline={currentSlide.overline ?? '사이트 완성하기'}
           title={currentSlide.title}

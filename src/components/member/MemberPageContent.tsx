@@ -1,0 +1,195 @@
+'use client';
+
+import { useEffect, useRef, useState } from 'react';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbList,
+  BreadcrumbPage,
+} from '@/components/ui/breadcrumb';
+import { Dialog } from '@/components/ui/dialog';
+import type { MemberRoleFilterValue } from '@/constants/member';
+import { useCardinalSelector } from '@/hooks/useCardinalSelector';
+import { useIntersectionObserver } from '@/hooks/board/useIntersectionObserver';
+import { useMediaQuery } from '@/hooks/useMediaQuery';
+import { useMembersQuery } from '@/hooks/member/useMembersQuery';
+import { usePositionOptionsQuery } from '@/hooks/member/usePositionOptionsQuery';
+import { cn } from '@/lib/cn';
+import { CardinalDropdown } from '@/components/common/CardinalDropdown';
+import { MemberDetailModal } from './MemberDetailModal';
+import { MemberFilterContainer } from './MemberFilterContainer';
+import { MemberPageContentSkeleton } from './MemberCardSkeleton';
+import { MemberProfileCard } from './MemberProfileCard';
+
+function MemberPageContent() {
+  const router = useRouter();
+  const { clubId } = useParams<{ clubId: string }>();
+  const searchParams = useSearchParams();
+  const isMobile = useMediaQuery('(max-width: 695.98px)');
+  const { cardinals, activeCardinal, setSelectedCardinalId } = useCardinalSelector({
+    autoSelectLatest: true,
+    scope: 'member',
+  });
+  const positionOptions = usePositionOptionsQuery(clubId).data ?? [];
+  const [selectedPositionIds, setSelectedPositionIds] = useState<string[]>([]);
+  const [selectedRoles, setSelectedRoles] = useState<MemberRoleFilterValue[]>([]);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [debouncedKeyword, setDebouncedKeyword] = useState('');
+  const [isHeaderVisible, setIsHeaderVisible] = useState(true);
+  const [selectedMemberId, setSelectedMemberId] = useState<number | null>(() => {
+    const memberId = searchParams.get('memberId');
+    return memberId ? Number(memberId) : null;
+  });
+  const lastScrollY = useRef(0);
+
+  const handleDialogOpenChange = (open: boolean) => {
+    if (open) return;
+    setSelectedMemberId(null);
+    if (searchParams.get('memberId')) {
+      router.replace(`/${clubId}/member`);
+    }
+  };
+
+  // 데스크톱 모달이 열린 상태에서 모바일 폭으로 리사이즈되면 모바일 상세 페이지로 전환한다.
+  // 라우트 자체가 바뀌므로 이 컴포넌트가 언마운트되며 모달도 함께 닫힌다.
+  useEffect(() => {
+    if (!isMobile || selectedMemberId === null) return;
+    router.push(`/${clubId}/member/${selectedMemberId}`);
+  }, [isMobile, selectedMemberId, clubId, router]);
+
+  // '운영진' 필터는 ADMIN뿐 아니라 LEAD도 포함해야 하는데, memberRole 쿼리 파라미터는 값을 하나만 받을 수 있어 서버 필터링 대신 클라이언트에서 함께 걸러낸다.
+  const isAdminOnlyFilter = selectedRoles.length === 1 && selectedRoles[0] === 'ADMIN';
+  const isUserOnlyFilter = selectedRoles.length === 1 && selectedRoles[0] === 'USER';
+
+  const {
+    data: members = [],
+    isPending,
+    isError,
+    refetch,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useMembersQuery(clubId, {
+    cardinalNumber: activeCardinal?.cardinalNumber,
+    memberRole: isUserOnlyFilter ? 'USER' : undefined,
+    keyword: debouncedKeyword || undefined,
+  });
+  const { ref: sentinelRef, isIntersecting } = useIntersectionObserver({ rootMargin: '200px' });
+
+  useEffect(() => {
+    if (isIntersecting && hasNextPage && !isFetchingNextPage) {
+      fetchNextPage();
+    }
+  }, [fetchNextPage, hasNextPage, isFetchingNextPage, isIntersecting]);
+
+  useEffect(() => {
+    const timeoutId = setTimeout(() => setDebouncedKeyword(searchQuery.trim()), 300);
+    return () => clearTimeout(timeoutId);
+  }, [searchQuery]);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentY = window.scrollY;
+      const shouldShow = currentY < 10 || currentY < lastScrollY.current;
+
+      lastScrollY.current = currentY;
+
+      setIsHeaderVisible((prev) => {
+        if (prev === shouldShow) return prev;
+        return shouldShow;
+      });
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // 포지션 필터도 다중 선택을 지원해야 하는데 positionOptionId 쿼리 파라미터는 값을 하나만 받을 수 있어
+  // 역할 필터와 마찬가지로 서버 필터링 대신 클라이언트에서 함께 걸러낸다.
+  const filteredMembers = members.filter((member) => {
+    if (isAdminOnlyFilter && member.role !== 'ADMIN' && member.role !== 'LEAD') return false;
+    if (selectedPositionIds.length > 0) {
+      if (!member.position || !selectedPositionIds.includes(String(member.position.id))) {
+        return false;
+      }
+    }
+    return true;
+  });
+
+  return (
+    <div className="tablet:px-[64px] flex flex-col self-stretch px-450 pb-[80px]">
+      <div
+        className={cn(
+          'bg-background sticky z-40 flex flex-col pt-450 transition-[top] duration-300 ease-in-out',
+          isHeaderVisible ? 'top-16' : 'top-0',
+        )}
+      >
+        <Breadcrumb className="tablet:px-450">
+          <BreadcrumbList>
+            <BreadcrumbItem>
+              <BreadcrumbPage className="typo-caption1 text-text-alternative">멤버</BreadcrumbPage>
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
+        <div className="tablet:px-450 flex items-center justify-between">
+          <h2 className="typo-h2 text-text-normal">멤버</h2>
+          <CardinalDropdown
+            cardinals={cardinals}
+            activeCardinal={activeCardinal}
+            onSelect={setSelectedCardinalId}
+          />
+        </div>
+        <MemberFilterContainer
+          positionOptions={positionOptions}
+          selectedPositionIds={selectedPositionIds}
+          selectedRoles={selectedRoles}
+          onApplyPositionIds={setSelectedPositionIds}
+          onApplyRoles={setSelectedRoles}
+          searchQuery={searchQuery}
+          onSearchQueryChange={setSearchQuery}
+        />
+      </div>
+      {isPending ? (
+        <MemberPageContentSkeleton />
+      ) : isError ? (
+        <div className="flex flex-col items-center justify-center gap-300 py-800">
+          <p className="typo-body1 text-text-alternative">멤버 목록을 불러오지 못했습니다</p>
+          <button
+            type="button"
+            className="typo-button2 text-brand-primary"
+            onClick={() => refetch()}
+          >
+            다시 시도
+          </button>
+        </div>
+      ) : (
+        <>
+          {filteredMembers.length === 0 ? (
+            <p className="typo-body1 text-text-alternative py-800 text-center">
+              조건에 맞는 멤버가 없습니다.
+            </p>
+          ) : (
+            <div className="tablet:grid-cols-3 desktop:grid-cols-4 grid grid-cols-1 gap-300">
+              {filteredMembers.map((member) => (
+                <MemberProfileCard
+                  key={member.id}
+                  member={member}
+                  onSelectMember={setSelectedMemberId}
+                />
+              ))}
+            </div>
+          )}
+          <div ref={sentinelRef} />
+        </>
+      )}
+      <Dialog open={selectedMemberId !== null} onOpenChange={handleDialogOpenChange}>
+        {selectedMemberId !== null && (
+          <MemberDetailModal clubMemberId={selectedMemberId} open={selectedMemberId !== null} />
+        )}
+      </Dialog>
+    </div>
+  );
+}
+
+export { MemberPageContent };

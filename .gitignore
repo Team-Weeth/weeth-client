@@ -54,3 +54,7 @@ next-env.d.ts
 
 # Obsidian
 docs/.obsidian/
+
+# Figma MCP (contains API token)
+.mcp.json
+figma_meta.json

@@ -3,11 +3,12 @@
 import { useState, type ReactNode } from 'react';
 
 import { useParams } from 'next/navigation';
+import dynamic from 'next/dynamic';
 
 import { useQuery } from '@tanstack/react-query';
 
-import { Switch } from '@/components/ui';
-import { useCardinalSelector } from '@/hooks';
+import { Switch } from '@/components/ui/Switch';
+import { useCardinalSelector } from '@/hooks/useCardinalSelector';
 import { useDuesVisibilityToggle } from '@/hooks/admin';
 import {
   duesRegistrationStatusQueryOptions,
@@ -17,10 +18,13 @@ import {
 
 import { BackButton } from './BackButton';
 import { DuesSettingPageSkeleton } from './DuesSettingPageSkeleton';
-import { PaymentTargetModal } from './modal/PaymentTargetModal';
-import { SettingResultCardGrid } from './setup/components';
+import { SettingResultCardGrid } from './setup/components/SettingResultCardGrid';
 
 const MAX_AVATAR_DISPLAY = 4;
+const PaymentTargetModal = dynamic(
+  () => import('./modal/PaymentTargetModal').then((mod) => mod.PaymentTargetModal),
+  { ssr: false },
+);
 
 interface SettingSectionProps {
   title: string;

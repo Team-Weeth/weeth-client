@@ -1,6 +1,8 @@
 import { cookies } from 'next/headers';
 import { API_BASE_PATH } from '@/constants/api';
-import { ClubAccessPage, ClubConfirmCard, ClubErrorPage } from '@/components/auth/invite';
+import { ClubAccessPage } from '@/components/auth/invite/ClubAccessPage';
+import { ClubConfirmCard } from '@/components/auth/invite/ClubConfirmCard';
+import { ClubErrorPage } from '@/components/auth/invite/ClubErrorPage';
 import { ACCESS_TOKEN_KEY } from '@/lib/apis/cookies';
 import type { Club } from '@/types';
 

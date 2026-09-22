@@ -44,4 +44,6 @@ export interface PageResponse<T> {
   pageSize: number;
   numberOfElements: number;
   hasNext: boolean;
+  totalElements?: number;
+  totalPages?: number;
 }

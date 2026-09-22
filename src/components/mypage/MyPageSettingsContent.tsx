@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { useMediaQuery } from '@/hooks';
+import { useMediaQuery } from '@/hooks/useMediaQuery';
 // import { useLeaveClubMutation } from '@/hooks/mutations/mypage/useMultiProfileMutations';
 import { cn } from '@/lib/cn';
 // import { toastError, toastSuccess } from '@/stores/useToastStore';

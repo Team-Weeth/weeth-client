@@ -10,7 +10,7 @@ import type {
   TransactionFilter,
   TransactionItem,
 } from '@/types/admin/dues';
-import { useCardinalSelector } from '@/hooks';
+import { useCardinalSelector } from '@/hooks/useCardinalSelector';
 import { useDuesVisibilityToggle } from '@/hooks/admin';
 import { isDuesNotRegisteredError, useDuesDashboardQuery } from '@/hooks/queries/admin';
 import { useDuesSetupActions } from '@/stores/useDuesSetupStore';

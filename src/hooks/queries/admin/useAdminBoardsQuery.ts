@@ -14,7 +14,8 @@ export function useAdminBoardsQuery() {
     queryKey: adminQueryKeys.boards(clubId),
     queryFn: async () => {
       const res = await adminBoardApi.getBoards(clubId!);
-      const all = res.data.data;
+      // 개수 제한은 서버가 계산해 내려준다. 프론트에서 다시 세지 않는다.
+      const { boards: all, activeBoardCount, maxBoardCount, canCreateBoard } = res.data.data;
 
       const boards = all
         .filter((d) => !d.isDeleted)
@@ -27,7 +28,7 @@ export function useAdminBoardsQuery() {
       //   .map((d) => ({ ...toBoard(d), daysLeft: TRASH_RETENTION_DAYS }));
       const trashedBoards: TrashedBoard[] = [];
 
-      return { boards, trashedBoards };
+      return { boards, trashedBoards, activeBoardCount, maxBoardCount, canCreateBoard };
     },
     enabled: !!clubId,
     retry: false,

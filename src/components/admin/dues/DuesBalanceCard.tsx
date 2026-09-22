@@ -1,4 +1,4 @@
-import { Card } from '@/components/ui';
+import { Card } from '@/components/ui/card';
 import { cn } from '@/lib/cn';
 import { formatAmount } from '@/lib/formatAmount';
 import { DuesStatusSection } from './DuesStatusSection';

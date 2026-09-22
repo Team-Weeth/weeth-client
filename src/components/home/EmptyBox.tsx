@@ -1,5 +1,5 @@
 import { cn } from '@/lib/cn';
-import { Button } from '../ui';
+import { Button } from '@/components/ui/Button';
 
 interface EmptyBoxProps {
   description: string;

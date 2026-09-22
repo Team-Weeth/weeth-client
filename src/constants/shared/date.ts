@@ -1,3 +1,14 @@
+// 0=Sun, 6=Sat
+export const DAY_HEADER_COLOR: readonly string[] = [
+  'text-state-error', // Sun
+  'text-text-alternative', // Mon
+  'text-text-alternative', // Tue
+  'text-text-alternative', // Wed
+  'text-text-alternative', // Thu
+  'text-text-alternative', // Fri
+  'text-state-success', // Sat
+];
+
 export const DAY_META = [
   { ko: '일', en: 'SUN' },
   { ko: '월', en: 'MON' },

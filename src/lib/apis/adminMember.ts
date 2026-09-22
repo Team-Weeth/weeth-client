@@ -1,10 +1,33 @@
 import { apiClient } from '@/lib/apis/client';
 import type { ClubMember, ClubMemberRole } from '@/types/admin/member';
-import type { ApiResponse } from '@/types/common';
+import type { ApiResponse, PageResponse } from '@/types/common';
+
+/** 멤버 목록 정렬 (백엔드가 지원하는 값) */
+export type ClubMemberSort =
+  | 'CARDINAL_DESC'
+  | 'CARDINAL_ASC'
+  | 'NAME_ASC'
+  | 'JOINED_DESC'
+  | 'PENALTY_DESC';
+
+export interface ClubMemberListParams {
+  page?: number;
+  size?: number;
+  keyword?: string;
+  cardinalNumber?: number;
+  sort?: ClubMemberSort;
+}
 
 export const adminMemberApi = {
-  getMembers: (clubId: string) =>
-    apiClient.get<ApiResponse<ClubMember[]>>(`/admin/clubs/${clubId}/members`),
+  searchMembers: (clubId: string, keyword: string, cardinalNumber?: number, signal?: AbortSignal) =>
+    apiClient.get<ApiResponse<ClubMember[]>>(`/admin/clubs/${clubId}/members/search`, {
+      params: { keyword, cardinalNumber },
+      signal,
+    }),
+  getMembers: (clubId: string, params?: ClubMemberListParams) =>
+    apiClient.get<ApiResponse<PageResponse<ClubMember>>>(`/admin/clubs/${clubId}/members`, {
+      params,
+    }),
   updateMemberRole: (clubId: string, clubMemberId: number, memberRole: ClubMemberRole) =>
     apiClient.patch(`/admin/clubs/${clubId}/members/${clubMemberId}/role`, { memberRole }),
   banMember: (clubId: string, clubMemberId: number) =>

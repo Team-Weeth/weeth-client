@@ -2,11 +2,12 @@
 
 import { Trash2 } from 'lucide-react';
 
-import { Button, Icon } from '@/components/ui';
+import { Button } from '@/components/ui/Button';
+import { Icon } from '@/components/ui/Icon';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { ModalIconButton } from '@/components/admin/modal/ModalIconButton';
-import { AdminCloseIcon } from '@/assets/icons/admin';
-import { InfoCircleIcon } from '@/assets/icons';
+import AdminCloseIcon from '@/assets/icons/admin/ic_admin_close.svg';
+import InfoCircleIcon from '@/assets/icons/info_circle.svg';
 import type { TrashedBoard } from '@/types/admin/board';
 import { TrashedBoardCard } from './TrashBoardCard';
 

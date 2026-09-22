@@ -5,7 +5,9 @@ import { isAxiosError } from 'axios';
 import { useParams, useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, Button, Icon } from '@/components/ui';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel } from '@/components/ui/alert-dialog';
+import { Button } from '@/components/ui/Button';
+import { Icon } from '@/components/ui/Icon';
 import { useNavigationGuard } from '@/hooks/useNavigationGuard';
 import { useMyPageQueries } from '@/hooks/queries/mypage/useMyPageQueries';
 import { cn } from '@/lib/cn';
@@ -16,7 +18,7 @@ import { formatPhone } from '@/utils/shared';
 import { EditProfileSkeleton } from '@/components/mypage/skeleton';
 import { PersonalInfoFields } from './PersonalInfoFields';
 import { SchoolInfoFields } from './SchoolInfoFields';
-import { BackIcon } from '@/assets/icons';
+import BackIcon from '@/assets/icons/back.svg';
 
 const toFormString = (value: string | null | undefined) => value ?? '';
 
@@ -52,6 +54,9 @@ function EditProfileContent({ className, schools, majors, ...props }: EditProfil
       school: '',
       department: '',
       studentId: '',
+      telPublic: true,
+      emailPublic: true,
+      studentInfoPublic: true,
     },
   });
 
@@ -66,6 +71,9 @@ function EditProfileContent({ className, schools, majors, ...props }: EditProfil
       school: toFormString(me.school),
       department: toFormString(me.department),
       studentId: toFormString(me.studentId),
+      telPublic: me.telPublic,
+      emailPublic: me.emailPublic,
+      studentInfoPublic: me.studentInfoPublic,
     };
 
     reset(nextValues);
@@ -89,6 +97,9 @@ function EditProfileContent({ className, schools, majors, ...props }: EditProfil
           tel: data.phone?.replace(/-/g, '') ?? '',
           school: data.school,
           department: data.department,
+          telPublic: data.telPublic,
+          emailPublic: data.emailPublic,
+          studentInfoPublic: data.studentInfoPublic,
         },
       },
       {
@@ -145,7 +156,7 @@ function EditProfileContent({ className, schools, majors, ...props }: EditProfil
               type="submit"
               size="lg"
               disabled={isPending || !isValid || !hasChanges}
-              className="tablet:flex hidden w-full"
+              className="tablet:flex mt-[30px] hidden w-full"
             >
               {isPending ? '수정 중...' : '수정 완료'}
             </Button>

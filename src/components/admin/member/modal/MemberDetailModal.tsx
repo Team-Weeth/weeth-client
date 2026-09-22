@@ -1,26 +1,29 @@
 'use client';
 
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, Button, Icon } from '@/components/ui';
-import { Dialog, DialogContent } from '@/components/ui/dialog';
-import { ChangeCardinalsModal } from '@/components/admin/member/modal/ChangeCardinalsModal';
-import { cn } from '@/lib/cn';
-import { AdminCloseIcon } from '@/assets/icons/admin';
-import {
-  getPersonalInfo,
-  getActivityStats,
-  getFooterActions,
-} from '@/constants/admin/memberDetailModal.constants';
-import { parseCardinals } from '@/utils/admin/parseCardinals';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel } from '@/components/ui/alert-dialog';
+import { Button } from '@/components/ui/Button';
+import { Icon } from '@/components/ui/Icon';
+import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
+import AdminCloseIcon from '@/assets/icons/admin/ic_admin_close.svg';
+import { getFooterActions } from '@/constants/admin/memberDetailModal.constants';
+import { isMemberStateAction } from '@/constants/admin/memberTopBar.constants';
+import type { FooterAction } from '@/constants/admin/memberDetailModal.constants';
 import type { Member } from '@/types/admin/member';
+import {
+  MemberActivityInfoCard,
+  MemberDetailSummary,
+  MemberPersonalInfoCard,
+} from './MemberDetailSections';
 
 interface MemberDetailModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   member: Member | null;
   onChangeRole?: () => void;
+  onChangePosition?: () => void;
   onBan?: () => void;
   onRestore?: () => void;
-  onChangeCardinals?: (cardinalIds: number[]) => void;
+  onChangeCardinals?: () => void;
   onTransferLead?: () => void;
 }
 
@@ -29,6 +32,7 @@ function MemberDetailModal({
   onOpenChange,
   member,
   onChangeRole,
+  onChangePosition,
   onBan,
   onRestore,
   onChangeCardinals,
@@ -38,10 +42,6 @@ function MemberDetailModal({
 
   const handleClose = () => onOpenChange(false);
 
-  const personalInfo = getPersonalInfo(member);
-  const activityStats = getActivityStats(member);
-  const cardinals = parseCardinals(member.cardinal);
-  const latestCardinal = cardinals.at(-1);
   const footerActions = getFooterActions({
     memberRole: member.memberRole,
     status: member.status,
@@ -51,15 +51,36 @@ function MemberDetailModal({
     onTransferLead,
   });
 
+  const actionNodes = footerActions.map((action) => (
+    <FooterActionDialog key={action.id} action={action} />
+  ));
+
+  if (onChangePosition) {
+    // 상단 선택 바와 동일하게 포지션 변경은 유저 추방/복구 앞에 배치한다.
+    const memberStateIndex = footerActions.findIndex(isMemberStateAction);
+    actionNodes.splice(
+      memberStateIndex === -1 ? actionNodes.length : memberStateIndex,
+      0,
+      <Button
+        key="changePosition"
+        variant="secondary"
+        size="md"
+        className="rounded-sm"
+        onClick={onChangePosition}
+      >
+        포지션 변경
+      </Button>,
+    );
+  }
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
-        className="bg-background flex w-215 max-w-[calc(100%-2rem)] flex-col gap-0 rounded-sm p-0"
+        className="bg-background flex w-[770px] max-w-[calc(100%-2rem)] flex-col gap-0 overflow-hidden rounded-lg p-0"
         showCloseButton={false}
       >
-        {/* Header */}
-        <div className="flex items-center justify-between px-600 pt-700 pb-400">
-          <h2 className="typo-h3 text-text-normal">멤버 관리 상세</h2>
+        <div className="flex items-center justify-between px-700 pt-700 pb-500">
+          <DialogTitle className="typo-h3 text-text-strong">멤버 상세</DialogTitle>
           <button
             type="button"
             onClick={handleClose}
@@ -70,91 +91,56 @@ function MemberDetailModal({
           </button>
         </div>
 
-        {/* Body */}
-        <div className="tablet:flex-row tablet:px-700 flex flex-col gap-500 overflow-y-auto px-400 pb-500">
-          {/* 회원정보 */}
-          <div className="bg-container-neutral flex-1 rounded-md p-400">
-            <p className="typo-caption1 text-text-alternative mb-400">회원정보</p>
+        <div className="flex flex-col gap-500 overflow-y-auto px-700 pt-200 pb-600">
+          <MemberDetailSummary member={member} className="px-500 py-[18px]" />
 
-            <div className="mb-200 flex items-baseline gap-200">
-              <span className="typo-h3 text-text-strong">{member.name}</span>
-              <span className="typo-h3 text-text-strong">{latestCardinal ?? '-'}기</span>
-            </div>
-
-            <div className="flex flex-col gap-400">
-              {personalInfo.map(({ label, value }) => (
-                <div key={label} className="flex items-start">
-                  <span className="typo-body1 text-text-alternative w-24 shrink-0">{label}</span>
-                  <span className="typo-body1 text-text-strong">{value}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* 활동정보 */}
-          <div className="bg-container-neutral tablet:w-80 w-full shrink-0 rounded-md p-400">
-            <p className="typo-caption1 text-text-alternative mb-400">활동정보</p>
-
-            <div className="flex flex-col gap-400">
-              <div className="flex items-start">
-                <span className="typo-body1 text-text-alternative w-24 shrink-0">활동 기수</span>
-                <div className="flex flex-wrap gap-200">
-                  {cardinals.map((c) => (
-                    <span
-                      key={c}
-                      className="bg-container-primary-alternative text-brand-primary typo-body2 rounded-full px-300 py-100"
-                    >
-                      {c}기
-                    </span>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            <div className="mt-500 flex flex-col gap-200">
-              {activityStats.map(({ label, value, color }) => (
-                <div key={label} className="flex items-start">
-                  <span className="typo-body1 text-text-alternative w-24 shrink-0">{label}</span>
-                  <span className={cn('typo-body1', color)}>{value}</span>
-                </div>
-              ))}
-            </div>
+          <div className="tablet:grid-cols-2 grid grid-cols-1 gap-[14px]">
+            <MemberPersonalInfoCard member={member} />
+            <MemberActivityInfoCard member={member} />
           </div>
         </div>
 
-        {/* Footer */}
-        <div className="bg-container-neutral flex flex-wrap items-center justify-between gap-200 rounded-b-sm px-400 pt-400 pb-500">
+        <div className="bg-container-neutral flex flex-wrap items-center justify-between gap-200 px-700 py-500">
           <div className="flex flex-wrap items-center gap-200">
-            {footerActions.map(({ label, title, description, handler }) => (
-              <AlertDialog
-                key={label}
-                title={title}
-                description={description}
-                trigger={
-                  <Button variant="secondary" size="lg">
-                    {label}
-                  </Button>
-                }
-              >
-                <AlertDialogAction onClick={handler}>확인</AlertDialogAction>
-                <AlertDialogCancel>취소</AlertDialogCancel>
-              </AlertDialog>
-            ))}
+            {actionNodes}
             {onChangeCardinals && (
-              <ChangeCardinalsModal onSubmit={onChangeCardinals}>
-                <Button variant="secondary" size="lg">
-                  기수 변경
-                </Button>
-              </ChangeCardinalsModal>
+              <Button
+                variant="secondary"
+                size="md"
+                className="rounded-sm"
+                onClick={onChangeCardinals}
+              >
+                기수 변경
+              </Button>
             )}
           </div>
 
-          <Button variant="primary" size="lg" onClick={handleClose}>
-            완료
+          <Button variant="primary" size="md" className="rounded-sm" onClick={handleClose}>
+            확인
           </Button>
         </div>
       </DialogContent>
     </Dialog>
+  );
+}
+
+function FooterActionDialog({ action }: { action: FooterAction }) {
+  const { id, label, title, description, handler } = action;
+
+  return (
+    <AlertDialog
+      status={id === 'ban' ? 'danger' : 'default'}
+      title={title}
+      description={description}
+      trigger={
+        <Button variant="secondary" size="md" className="rounded-sm">
+          {label}
+        </Button>
+      }
+    >
+      <AlertDialogAction onClick={handler}>{id === 'ban' ? '추방' : '확인'}</AlertDialogAction>
+      <AlertDialogCancel>취소</AlertDialogCancel>
+    </AlertDialog>
   );
 }
 

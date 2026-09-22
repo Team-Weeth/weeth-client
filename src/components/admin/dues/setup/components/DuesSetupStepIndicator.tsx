@@ -1,6 +1,6 @@
-import { CheckIcon } from '@/assets/icons';
+import CheckIcon from '@/assets/icons/check.svg';
 import { cn } from '@/lib/cn';
-import { Icon } from '@/components/ui';
+import { Icon } from '@/components/ui/Icon';
 
 const STEPS = [
   { step: 1, label: '기본 정보' },

@@ -1,39 +1,33 @@
 'use client';
 
-import { useLayoutEffect, useState } from 'react';
-import { useParams, usePathname, useRouter } from 'next/navigation';
-import {
-  AdminForumIcon,
-  AdminCalendarIcon,
-  AdminSettingIcon,
-  AdminDuesIcon,
-  AdminScreenIcon,
-} from '@/assets/icons/admin';
-import { ExitIcon, PeopleIcon } from '@/assets/icons';
+import { useLayoutEffect } from 'react';
+import { useParams, usePathname } from 'next/navigation';
+import AdminForumIcon from '@/assets/icons/admin/ic_admin_forum.svg';
+import AdminCalendarIcon from '@/assets/icons/admin/ic_admin_calendar.svg';
+import AdminSettingIcon from '@/assets/icons/admin/ic_admin_setting.svg';
+import AdminDuesIcon from '@/assets/icons/admin/ic_admin_dues.svg';
+import AdminScreenIcon from '@/assets/icons/admin/ic_admin_screen.svg';
+import AdminPenaltyIcon from '@/assets/icons/admin/ic_admin_penalty.svg';
+import ExitIcon from '@/assets/icons/exit.svg';
+import PeopleIcon from '@/assets/icons/people.svg';
 
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  TooltipProvider,
-} from '@/components/ui';
-import { useMediaQuery } from '@/hooks';
+import { TooltipProvider } from '@/components/ui/Tooltip';
+import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { cn } from '@/lib/cn';
 import { CollapsedDivider } from '@/components/admin/layout/CollapsedDivider';
 import { LNBLogoutModal } from '@/components/admin/layout/LNBLogoutModal';
 import { LNBProfile } from '@/components/admin/layout/LNBProfile';
 import { NavSection } from '@/components/admin/layout/NavSection';
 import { NavItem } from '@/components/admin/layout/NavItem';
+import { MemberNavGroup } from '@/components/admin/layout/MemberNavGroup';
 import { useAdminLNBActions, useAdminLNBCollapsed } from '@/stores/useAdminLNBStore';
 
 function LNB() {
   const pathname = usePathname();
-  const router = useRouter();
   const { clubId } = useParams<{ clubId: string }>();
   const isBelowDesktop = useMediaQuery('(max-width: 1023.98px)');
   const collapsed = useAdminLNBCollapsed();
   const { setCollapsed } = useAdminLNBActions();
-  const [serviceDialogOpen, setServiceDialogOpen] = useState(false);
 
   // 브레이크포인트를 넘나들 때 기본 접힘 상태를 동기화
   useLayoutEffect(() => {
@@ -58,6 +52,12 @@ function LNB() {
     },
     { id: 'board', icon: AdminForumIcon, label: '게시판 관리', path: `/${clubId}/admin/board` },
     { id: 'dues', icon: AdminDuesIcon, label: '회비 관리', path: `/${clubId}/admin/dues` },
+    {
+      id: 'penalty',
+      icon: AdminPenaltyIcon,
+      label: '페널티 관리',
+      path: `/${clubId}/admin/penalty`,
+    },
   ];
 
   const infoNavItems = [
@@ -69,16 +69,20 @@ function LNB() {
     },
   ];
 
-  const managementNavNodes = managementNavItems.map(({ id, icon, label, path }) => (
-    <NavItem
-      key={id}
-      icon={icon}
-      label={label}
-      path={path}
-      isActive={pathname.startsWith(path)}
-      collapsed={collapsed}
-    />
-  ));
+  const managementNavNodes = managementNavItems.map(({ id, icon, label, path }) =>
+    id === 'member' ? (
+      <MemberNavGroup key={id} clubId={clubId} pathname={pathname} collapsed={collapsed} />
+    ) : (
+      <NavItem
+        key={id}
+        icon={icon}
+        label={label}
+        path={path}
+        isActive={pathname.startsWith(path)}
+        collapsed={collapsed}
+      />
+    ),
+  );
 
   const infoNavNodes = infoNavItems.map(({ id, icon, label, path }) => (
     <NavItem
@@ -97,7 +101,7 @@ function LNB() {
       label="Weeth로 이동"
       path={servicePath}
       collapsed={collapsed}
-      onClick={() => setServiceDialogOpen(true)}
+      external
     />
   );
 
@@ -105,16 +109,22 @@ function LNB() {
     <TooltipProvider>
       <nav
         className={cn(
-          'bg-background tablet:flex hidden h-full shrink-0 flex-col overflow-x-hidden transition-[width] duration-200',
+          // 창이 낮아 메뉴가 넘치면 눌리는 대신 세로 스크롤로 처리한다.
+          'bg-background tablet:flex hidden h-full shrink-0 flex-col overflow-x-hidden overflow-y-auto transition-[width] duration-200',
           collapsed ? 'w-22' : 'w-60',
         )}
       >
-        <div className={cn('flex items-start self-stretch pt-300 pb-100', !collapsed && 'px-400')}>
+        <div
+          className={cn(
+            'flex shrink-0 items-start self-stretch pt-300 pb-100',
+            !collapsed && 'px-400',
+          )}
+        >
           <LNBLogoutModal collapsed={collapsed} />
         </div>
 
         {collapsed ? (
-          <div className="border-line flex flex-col border-t border-b">
+          <div className="border-line flex shrink-0 flex-col border-t border-b">
             <NavSection collapsed={collapsed}>{managementNavNodes}</NavSection>
           </div>
         ) : (
@@ -125,7 +135,7 @@ function LNB() {
         )}
 
         {collapsed ? (
-          <div className="border-line flex flex-col items-center justify-center gap-100 self-stretch border-b p-400">
+          <div className="border-line flex shrink-0 flex-col items-center justify-center gap-100 self-stretch border-b p-400">
             {infoNavNodes}
           </div>
         ) : (
@@ -136,7 +146,7 @@ function LNB() {
         )}
 
         {collapsed ? (
-          <div className="border-line flex flex-col items-center justify-center gap-100 self-stretch border-b p-400">
+          <div className="border-line flex shrink-0 flex-col items-center justify-center gap-100 self-stretch border-b p-400">
             {exitNavNode}
           </div>
         ) : (
@@ -145,18 +155,6 @@ function LNB() {
             <NavSection collapsed={collapsed}>{exitNavNode}</NavSection>
           </>
         )}
-
-        <AlertDialog
-          open={serviceDialogOpen}
-          onOpenChange={setServiceDialogOpen}
-          title="서비스로 이동하시겠습니까?"
-          description={'관리자 페이지에서 나가\n서비스 화면으로 이동합니다.'}
-        >
-          <AlertDialogAction onClick={() => router.push(servicePath)} className="text-text-inverse">
-            이동
-          </AlertDialogAction>
-          <AlertDialogCancel>취소</AlertDialogCancel>
-        </AlertDialog>
 
         <div
           className={cn(

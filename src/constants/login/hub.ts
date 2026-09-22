@@ -1,4 +1,6 @@
-import { HubCreateIcon, HubGoIcon, HubJoinIcon } from '@/assets/icons';
+import HubCreateIcon from '@/assets/icons/hub_create.svg';
+import HubGoIcon from '@/assets/icons/hub_go.svg';
+import HubJoinIcon from '@/assets/icons/hub_join.svg';
 import type { ButtonProps } from '@/components/ui/Button';
 
 export const HUB_ACTION_CONFIG = {

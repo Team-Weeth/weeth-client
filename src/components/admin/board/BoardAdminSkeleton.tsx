@@ -1,4 +1,4 @@
-import { Skeleton } from '@/components/ui';
+import { Skeleton } from '@/components/ui/skeleton';
 import { BoardCardSkeleton } from './BoardCardSkeleton';
 
 export function BoardAdminSkeleton() {

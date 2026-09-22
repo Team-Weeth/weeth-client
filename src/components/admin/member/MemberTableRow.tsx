@@ -1,0 +1,200 @@
+'use client';
+
+import { useClubFeatures } from '@/providers/club-feature-provider';
+
+import type { ReactNode } from 'react';
+
+import AdminMeatballIcon from '@/assets/icons/admin/ic_admin_meatball.svg';
+import { CardinalTagList } from '@/components/admin/CardinalTagList';
+import { SelectionCheckbox } from '@/components/admin/SelectionCheckbox';
+import { TableTextCell } from '@/components/admin/TableTextCell';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Icon } from '@/components/ui/Icon';
+import { TableCell, TableRow } from '@/components/ui/table';
+import { cn } from '@/lib/cn';
+import { formatEmptyValue } from '@/utils/shared/formatEmptyValue';
+import type { Member } from '@/types/admin/member';
+import type { MemberPositionOption } from '@/types/admin/memberPosition';
+import { MemberStatusBadge } from './MemberStatusBadge';
+import { MemberPositionDropdown } from './MemberPositionDropdown';
+
+interface MemberTableRowProps {
+  member: Member;
+  positionOptions: readonly MemberPositionOption[];
+  positionOptionsStatus?: 'success' | 'pending' | 'error';
+  onPositionChange: (option: MemberPositionOption | null) => void;
+  onAddPosition?: () => void;
+  selected: boolean;
+  onToggle: (id: string) => void;
+  onMemberAction?: (member: Member) => void;
+  showStickyShadow?: boolean;
+}
+
+const TEXT_CELL_CLASS_BY_ID = {
+  role: 'w-[118px] max-tablet:w-[88px]',
+  department: 'w-[190px] max-tablet:w-[180px]',
+  studentId: 'w-[138px] max-tablet:w-[120px]',
+  phone: 'w-[146px] max-tablet:w-[132px]',
+} as const;
+
+const NUMBER_CELL_VALUES = ['attendance', 'absence', 'penaltyCount'] as const;
+
+function MemberTableRow({
+  member,
+  positionOptions,
+  positionOptionsStatus,
+  onPositionChange,
+  onAddPosition,
+  selected,
+  onToggle,
+  onMemberAction,
+  showStickyShadow = false,
+}: MemberTableRowProps) {
+  const { warningEnabled } = useClubFeatures();
+  const textCells = [
+    { id: 'role', value: member.position },
+    { id: 'department', value: member.department },
+    { id: 'studentId', value: member.studentId },
+    { id: 'phone', value: member.phone },
+  ] as const;
+
+  return (
+    <TableRow
+      className={cn(
+        'bg-container-neutral [&>td]:border-line max-tablet:h-12 max-tablet:[&>td]:border-b-0 [&>td]:bg-container-neutral h-16 cursor-pointer border-0 [&:last-child>td]:border-b-0 [&>td]:border-b hover:[&>td]:bg-neutral-200',
+        selected &&
+          'bg-container-primary-alternative [&>td]:bg-container-primary-alternative hover:[&>td]:bg-container-primary-alternative',
+      )}
+      onClick={() => onMemberAction?.(member)}
+    >
+      <TableCell
+        className={cn(
+          'h-16 w-16 min-w-16 p-0 pl-300',
+          'max-tablet:sticky max-tablet:left-0 max-tablet:z-20 max-tablet:h-12 max-tablet:w-12 max-tablet:min-w-12 max-tablet:bg-inherit max-tablet:pl-200',
+        )}
+      >
+        <SelectionCheckbox
+          checked={selected}
+          ariaLabel={`${member.name} ${member.studentId} 선택`}
+          onClick={(e) => {
+            e.stopPropagation();
+            onToggle(member.id);
+          }}
+        />
+      </TableCell>
+
+      <MemberProfileCell member={member} showStickyShadow={showStickyShadow} />
+
+      <TableTextCell responsive className={TEXT_CELL_CLASS_BY_ID.role}>
+        {member.position}
+      </TableTextCell>
+      <TableCell className="max-tablet:py-100 w-[172px] p-0 px-400 py-200">
+        <MemberPositionDropdown
+          memberName={member.name}
+          value={member.positionOption}
+          options={positionOptions}
+          optionsStatus={positionOptionsStatus}
+          onChange={onPositionChange}
+          onAddPosition={onAddPosition}
+        />
+      </TableCell>
+
+      {textCells.slice(1, 3).map(({ id, value }) => (
+        <TableTextCell key={id} responsive className={TEXT_CELL_CLASS_BY_ID[id]}>
+          {value}
+        </TableTextCell>
+      ))}
+
+      <TableCell className="w-6 min-w-6 p-0" aria-hidden />
+
+      {NUMBER_CELL_VALUES.map((key) => (
+        <MemberNumberCell key={key}>{member[key]}</MemberNumberCell>
+      ))}
+      {warningEnabled && <MemberNumberCell>{member.warningCount ?? '-'}</MemberNumberCell>}
+      <TableCell className="w-6 min-w-6 p-0" aria-hidden />
+
+      {textCells.slice(3).map(({ id, value }) => (
+        <TableTextCell key={id} responsive className={TEXT_CELL_CLASS_BY_ID[id]}>
+          {value}
+        </TableTextCell>
+      ))}
+
+      <MemberCardinalsCell cardinal={member.cardinal} />
+
+      <TableCell className="max-tablet:h-12 max-tablet:px-300 max-tablet:py-100 h-16 w-[76px] p-0 px-400 py-[7px]">
+        <MemberStatusBadge status={member.status} />
+      </TableCell>
+
+      <TableCell className="max-tablet:h-12 max-tablet:pr-300 h-16 w-11 p-0 pr-700">
+        <button
+          type="button"
+          className="text-icon-normal flex cursor-pointer items-center justify-center rounded-sm p-[10px]"
+          aria-label="더보기"
+          onClick={(e) => {
+            e.stopPropagation();
+            onMemberAction?.(member);
+          }}
+        >
+          <Icon src={AdminMeatballIcon} alt="더보기" size={20} />
+        </button>
+      </TableCell>
+    </TableRow>
+  );
+}
+
+function MemberProfileCell({
+  member,
+  showStickyShadow,
+}: {
+  member: Member;
+  showStickyShadow: boolean;
+}) {
+  return (
+    <TableCell
+      className={cn(
+        'h-16 w-[220px] min-w-[220px] p-0 pr-400',
+        'max-tablet:sticky max-tablet:left-12 max-tablet:z-20 max-tablet:h-12 max-tablet:w-28 max-tablet:min-w-28 max-tablet:bg-inherit max-tablet:pr-200',
+        showStickyShadow &&
+          'max-tablet:after:absolute max-tablet:after:top-0 max-tablet:after:right-[-24px] max-tablet:after:h-full max-tablet:after:w-6 max-tablet:after:bg-[image:var(--member-table-sticky-shadow)] max-tablet:after:content-[""]',
+      )}
+    >
+      <div className="max-tablet:gap-200 flex w-full min-w-0 items-center gap-300 overflow-hidden">
+        <Avatar size={40} className="max-tablet:size-7">
+          {member.profileImageUrl && (
+            <AvatarImage src={member.profileImageUrl} alt={`${member.name} 프로필 이미지`} />
+          )}
+          <AvatarFallback />
+        </Avatar>
+        <div className="max-tablet:w-17 max-tablet:max-w-17 flex w-[152px] max-w-[152px] min-w-0 flex-col justify-center gap-0.5 overflow-hidden">
+          <span className="typo-button2 text-text-normal truncate">{member.name}</span>
+          <span
+            className={cn(
+              'typo-caption2 max-tablet:hidden truncate',
+              member.bio?.trim() ? 'text-text-alternative' : 'text-text-disabled',
+            )}
+          >
+            {formatEmptyValue(member.bio)}
+          </span>
+        </div>
+      </div>
+    </TableCell>
+  );
+}
+
+function MemberCardinalsCell({ cardinal }: { cardinal: string }) {
+  return (
+    <TableCell className="max-tablet:h-12 max-tablet:px-300 max-tablet:py-100 h-16 w-[182px] p-0 px-400 py-[7px]">
+      <CardinalTagList cardinal={cardinal} className="overflow-visible" />
+    </TableCell>
+  );
+}
+
+function MemberNumberCell({ children }: { children: ReactNode }) {
+  return (
+    <TableCell className="max-tablet:h-12 max-tablet:py-100 h-16 w-16 min-w-16 p-0 px-100 py-300 text-center">
+      <span className="typo-body2 text-text-strong">{children}</span>
+    </TableCell>
+  );
+}
+
+export { MemberTableRow };

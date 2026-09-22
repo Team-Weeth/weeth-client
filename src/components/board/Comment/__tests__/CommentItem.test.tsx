@@ -2,8 +2,9 @@ import React from 'react';
 import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { CommentItem } from '@/components/board/Comment/CommentItem';
+import { useCommentEditStore } from '@/stores/useCommentEditStore';
 
-jest.mock('@/hooks', () => ({
+jest.mock('@/hooks/useScrollIntoView', () => ({
   useScrollIntoView: jest.fn(() => ({ current: null })),
 }));
 
@@ -30,12 +31,17 @@ jest.mock('@/components/board/ActionMenu', () => ({
 
 function makeProps(overrides: Partial<React.ComponentProps<typeof CommentItem>> = {}) {
   return {
+    id: 1,
     name: '홍길동',
     content: '댓글 내용',
     date: '03/20 14:30',
     ...overrides,
   };
 }
+
+beforeEach(() => {
+  useCommentEditStore.setState({ activeEditId: null });
+});
 
 describe('CommentItem', () => {
   describe('기본 렌더링', () => {
@@ -118,7 +124,7 @@ describe('CommentItem', () => {
       await user.click(screen.getByRole('button', { name: '수정' }));
       await user.click(screen.getByRole('button', { name: '저장' }));
 
-      expect(onEdit).toHaveBeenCalledWith('기존 내용');
+      expect(onEdit).toHaveBeenCalledWith('기존 내용', null);
     });
   });
 

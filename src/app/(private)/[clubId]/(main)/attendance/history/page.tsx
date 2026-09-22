@@ -1,4 +1,4 @@
-import { AttendanceHistoryContent } from '@/components/attendance';
+import { AttendanceHistoryContent } from '@/components/attendance/AttendanceHistoryContent';
 import { attendanceServerApi } from '@/lib/apis/attendance.server';
 import type { AttendanceSummary } from '@/types/attendance';
 

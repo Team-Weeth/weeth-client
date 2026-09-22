@@ -1,7 +1,7 @@
 'use client';
 
-import { AlertDialog, AlertDialogAction, AlertDialogCancel } from '@/components/ui';
-import { useDeletePost } from '@/hooks';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel } from '@/components/ui/alert-dialog';
+import { useDeletePost } from '@/hooks/board/useDeletePost';
 
 interface PostDeleteDialogProps {
   postId: number;

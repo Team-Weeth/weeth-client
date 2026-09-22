@@ -5,7 +5,8 @@ import { Popover as PopoverPrimitive } from 'radix-ui';
 import Image from 'next/image';
 
 import { cn } from '@/lib/cn';
-import { AdminSquareLeftIcon, AdminSquareRightIcon } from '@/assets/icons/admin';
+import AdminSquareLeftIcon from '@/assets/icons/admin/ic_admin_square_left.svg';
+import AdminSquareRightIcon from '@/assets/icons/admin/ic_admin_square_right.svg';
 import { DAY_META } from '@/constants/shared/date';
 import { formatDateDisplay, getDaysInMonth, getFirstDayOfMonth } from '@/utils/shared/date';
 import { AdminScopeBoundary } from '@/providers';

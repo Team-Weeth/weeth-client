@@ -3,7 +3,7 @@
 import { useEffect, useRef } from 'react';
 
 import { CategorySelector, PostEditorShell } from '@/components/board';
-import { useWritableBoards } from '@/hooks';
+import { useWritableBoards } from '@/hooks/board/useWritableBoards';
 import { usePostStore } from '@/stores/usePostStore';
 import type { PostDetail } from '@/types/board';
 

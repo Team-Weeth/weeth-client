@@ -1,6 +1,6 @@
 'use client';
 
-import { Button } from '@/components/ui';
+import { Button } from '@/components/ui/Button';
 
 export default function MyPageError({ reset }: { error: Error; reset: () => void }) {
   return (

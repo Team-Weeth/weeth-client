@@ -1,7 +1,9 @@
 'use client';
 
-import { DeleteIcon, DownloadIcon, FolderIcon } from '@/assets/icons';
-import { Icon } from '@/components/ui';
+import DeleteIcon from '@/assets/icons/delete.svg';
+import DownloadIcon from '@/assets/icons/download.svg';
+import FolderIcon from '@/assets/icons/folder.svg';
+import { Icon } from '@/components/ui/Icon';
 import { stripUuidPrefix } from '@/lib/board';
 import { cn } from '@/lib/cn';
 import type { DisplayFile } from '@/types/board';
@@ -42,14 +44,17 @@ function FileList({ files, editable, onRemove }: FileListProps) {
     <div className="flex flex-col items-start gap-200">
       {files.map((item) =>
         editable ? (
-          <div key={item.id} className={cn(rowStyles, item.uploaded === false && 'opacity-60')}>
+          <div
+            key={item.id}
+            className={cn(rowStyles, 'cursor-pointer', item.uploaded === false && 'opacity-60')}
+          >
             <Icon src={FolderIcon} size={20} className="text-icon-alternative shrink-0" />
             <span className="text-text-normal typo-button2 min-w-0 truncate">{item.fileName}</span>
             <button
               type="button"
               onClick={() => onRemove(item.id, item.fileUrl)}
               aria-label={`${item.fileName} 삭제`}
-              className="text-state-error hover:text-state-error/80 flex shrink-0 items-center"
+              className="text-state-error hover:text-state-error/80 flex shrink-0 cursor-pointer items-center"
             >
               <Icon src={DeleteIcon} size={16} />
             </button>
@@ -59,6 +64,8 @@ function FileList({ files, editable, onRemove }: FileListProps) {
             key={item.id}
             href={item.fileUrl}
             download={stripUuidPrefix(item.fileName)}
+            target="_blank"
+            rel="noopener noreferrer"
             className={cn(
               rowStyles,
               'cursor-pointer',

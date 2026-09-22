@@ -1,8 +1,9 @@
 'use client';
 
 import { cn } from '@/lib/cn';
-import { Divider, Icon } from '@/components/ui';
-import { PinIcon } from '@/assets/icons';
+import { Divider } from '@/components/ui/Divider';
+import { Icon } from '@/components/ui/Icon';
+import PinIcon from '@/assets/icons/pin.svg';
 import { MegaphoneIcon } from '@/components/board/MegaphoneIcon';
 import type { BoardNavItem } from '@/types/board';
 

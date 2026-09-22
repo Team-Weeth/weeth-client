@@ -3,7 +3,6 @@
 import type { ReactNode } from 'react';
 import { usePathname } from 'next/navigation';
 import { Dialog as DialogPrimitive } from 'radix-ui';
-
 import { Button } from '@/components/ui/Button';
 import { MobileBlocker } from '@/components/ui/MobileBlocker';
 import { ADMIN_PAGE_LABELS } from '@/constants/admin/adminPage.constants';

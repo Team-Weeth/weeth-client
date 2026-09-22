@@ -1,0 +1,133 @@
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+
+import { PenaltyTable } from '@/components/admin/penalty';
+import type { PenaltyMember } from '@/types/admin/penalty';
+
+function createMember(overrides: Partial<PenaltyMember> = {}): PenaltyMember {
+  return {
+    id: 'member-1',
+    clubMemberId: 1,
+    name: '김위드',
+    introduction: '안녕하세요 잘부탁드리고 안녕하세요 잘부탁드립니다',
+    position: '백엔드',
+    department: '컴퓨터공학과',
+    penaltyCount: 3,
+    recentPenaltyAt: '2026-07-18',
+    cardinal: '5',
+    status: 'ACTIVE',
+    profileImageUrl: null,
+    ...overrides,
+  };
+}
+
+function createMembers(count: number) {
+  return Array.from({ length: count }, (_, index) =>
+    createMember({ id: `member-${index + 1}`, clubMemberId: index + 1, name: `멤버${index + 1}` }),
+  );
+}
+
+function renderTable({
+  members,
+  selectedIds = new Set<string>(),
+  page = 1,
+  totalPages = 1,
+  onSelectionChange = jest.fn<void, [Set<string>]>(),
+  onOpenDetail = jest.fn<void, [PenaltyMember]>(),
+  onPageChange = jest.fn<void, [number]>(),
+}: {
+  members: PenaltyMember[];
+  selectedIds?: Set<string>;
+  page?: number;
+  totalPages?: number;
+  onSelectionChange?: jest.Mock<void, [Set<string>]>;
+  onOpenDetail?: jest.Mock<void, [PenaltyMember]>;
+  onPageChange?: jest.Mock<void, [number]>;
+}) {
+  render(
+    <PenaltyTable
+      members={members}
+      selectedIds={selectedIds}
+      page={page}
+      totalPages={totalPages}
+      onSelectionChange={onSelectionChange}
+      onOpenDetail={onOpenDetail}
+      onPageChange={onPageChange}
+    />,
+  );
+
+  return { onSelectionChange, onOpenDetail, onPageChange };
+}
+
+describe('PenaltyTable', () => {
+  it('멤버가 없으면 검색 결과 없음 메시지를 보여준다', () => {
+    renderTable({ members: [] });
+
+    expect(screen.getByText('검색 결과가 없습니다.')).toBeInTheDocument();
+  });
+
+  it('행을 클릭하면 상세 모달을 열도록 해당 멤버를 전달한다', async () => {
+    const user = userEvent.setup();
+    const member = createMember();
+    const { onOpenDetail, onSelectionChange } = renderTable({ members: [member] });
+
+    await user.click(screen.getByText('김위드'));
+
+    expect(onOpenDetail).toHaveBeenCalledWith(member);
+    expect(onSelectionChange).not.toHaveBeenCalled();
+  });
+
+  it('행 체크박스를 클릭하면 해당 멤버 id를 선택 목록에 추가한다', async () => {
+    const user = userEvent.setup();
+    const { onOpenDetail, onSelectionChange } = renderTable({ members: [createMember()] });
+
+    await user.click(screen.getByRole('button', { name: '김위드 선택' }));
+
+    expect(onSelectionChange).toHaveBeenCalledWith(new Set(['member-1']));
+    expect(onOpenDetail).not.toHaveBeenCalled();
+  });
+
+  it('이미 선택된 행의 체크박스를 클릭하면 선택을 해제한다', async () => {
+    const user = userEvent.setup();
+    const { onSelectionChange } = renderTable({
+      members: [createMember()],
+      selectedIds: new Set(['member-1']),
+    });
+
+    await user.click(screen.getByRole('button', { name: '김위드 선택' }));
+
+    expect(onSelectionChange).toHaveBeenCalledWith(new Set());
+  });
+
+  it('전체 선택 버튼은 현재 페이지에 보이는 멤버를 모두 선택한다', async () => {
+    const user = userEvent.setup();
+    const members = createMembers(5);
+    const { onSelectionChange } = renderTable({ members });
+
+    await user.click(screen.getByRole('button', { name: '현재 페이지 멤버 전체 선택' }));
+
+    const selected = onSelectionChange.mock.calls[0][0];
+    expect(selected.size).toBe(5);
+    expect(selected.has('member-1')).toBe(true);
+    expect(selected.has('member-5')).toBe(true);
+  });
+
+  it('페이지가 여러 개면 페이지 링크를 누를 때 onPageChange를 호출한다', async () => {
+    const user = userEvent.setup();
+    const { onPageChange } = renderTable({
+      members: createMembers(3),
+      page: 1,
+      totalPages: 3,
+    });
+
+    await user.click(screen.getByRole('link', { name: '2' }));
+
+    expect(onPageChange).toHaveBeenCalledWith(2);
+  });
+
+  it('페이지가 하나뿐이면 페이지네이션을 렌더하지 않는다', () => {
+    renderTable({ members: createMembers(3), totalPages: 1 });
+
+    expect(screen.queryByRole('link', { name: '1' })).not.toBeInTheDocument();
+  });
+});

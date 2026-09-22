@@ -1,14 +1,22 @@
 'use client';
 
-import React from 'react';
-
-import { ArrowLeftIcon } from '@/assets/icons';
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, Button, Icon } from '@/components/ui';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel } from '@/components/ui/alert-dialog';
+import { Button } from '@/components/ui/Button';
 import { ChangeCardinalsModal } from '@/components/admin/member/modal/ChangeCardinalsModal';
+import { FloatingSelectionBar } from '@/components/admin/FloatingSelectionBar';
 import { cn } from '@/lib/cn';
-import { getTopBarActions } from '@/constants/admin/memberTopBar.constants';
+import {
+  getChangeCardinalsOverline,
+  getTopBarActions,
+  isMemberStateAction,
+} from '@/constants/admin/memberTopBar.constants';
 
 import type { ClubMemberRole } from '@/types/admin/member';
+import type { TopBarAction } from '@/constants/admin/memberTopBar.constants';
+
+/** 플로팅 바 위에 올라가는 액션 버튼 공통 스타일 */
+const TOP_BAR_BUTTON_CLASS =
+  'typo-button2 bg-static-on-floating text-container-floating hover:bg-static-on-floating/90 shrink-0 rounded-sm px-300 py-200 whitespace-nowrap';
 
 interface MemberTopBarProps extends React.HTMLAttributes<HTMLDivElement> {
   selectedCount: number;
@@ -17,9 +25,12 @@ interface MemberTopBarProps extends React.HTMLAttributes<HTMLDivElement> {
   onBack: () => void;
   onApprove?: () => void;
   onChangeRole?: () => void;
+  onChangePosition?: () => void;
   onBan?: () => void;
   onRestore?: () => void;
-  onChangeCardinals?: (cardinalIds: number[]) => void;
+  onChangeCardinals?: (cardinalIds: number[], cardinalNumbers: number[]) => void;
+  selectedMemberName?: string;
+  selectedMemberCardinals?: number[][];
   onTransferLead?: () => void;
   ref?: React.Ref<HTMLDivElement>;
 }
@@ -32,15 +43,16 @@ function MemberTopBar({
   onBack,
   onApprove,
   onChangeRole,
+  onChangePosition,
   onBan,
   onRestore,
   onChangeCardinals,
+  selectedMemberName,
+  selectedMemberCardinals = [],
   onTransferLead,
   ref,
   ...props
 }: MemberTopBarProps) {
-  if (selectedCount === 0) return null;
-
   const topBarActions = getTopBarActions({
     selectedCount,
     targetRole,
@@ -52,56 +64,78 @@ function MemberTopBar({
     onTransferLead,
   });
 
+  const actionNodes = topBarActions.map((action) => (
+    <TopBarActionDialog key={action.id} action={action} />
+  ));
+
+  if (onChangePosition) {
+    // 포지션 변경은 유저 추방/복구 앞에 두고, 해당 액션이 없으면 맨 뒤에 붙인다.
+    const memberStateIndex = topBarActions.findIndex(isMemberStateAction);
+    const insertIndex = memberStateIndex === -1 ? actionNodes.length : memberStateIndex;
+    actionNodes.splice(
+      insertIndex,
+      0,
+      <Button
+        key="changePosition"
+        variant="secondary"
+        size="md"
+        onClick={onChangePosition}
+        className={TOP_BAR_BUTTON_CLASS}
+      >
+        포지션 변경
+      </Button>,
+    );
+  }
+
   return (
-    <div
+    <FloatingSelectionBar
       ref={ref}
-      className={cn(
-        'bg-container-primary scrollbar-none flex h-15 items-center overflow-x-auto px-500',
-        className,
-      )}
+      selectedCount={selectedCount}
+      visible={selectedCount > 0}
+      onClear={onBack}
+      className={cn('max-tablet:hidden', className)}
       {...props}
     >
-      <button
-        type="button"
-        onClick={onBack}
-        className="flex shrink-0 cursor-pointer items-center justify-center rounded-sm p-200"
-      >
-        <Icon src={ArrowLeftIcon} alt="뒤로" size={16} className="text-text-inverse" />
-      </button>
+      {actionNodes}
 
-      <span className="typo-sub1 text-text-inverse ml-200 shrink-0">{selectedCount}명 선택됨</span>
+      {onChangeCardinals && (
+        <ChangeCardinalsModal
+          overline={getChangeCardinalsOverline(selectedCount, selectedMemberName)}
+          memberCount={selectedCount}
+          memberCardinals={selectedMemberCardinals}
+          onSubmit={onChangeCardinals}
+        >
+          <Button variant="secondary" size="md" className={TOP_BAR_BUTTON_CLASS}>
+            기수 변경
+          </Button>
+        </ChangeCardinalsModal>
+      )}
+    </FloatingSelectionBar>
+  );
+}
 
-      <div className="ml-auto flex shrink-0 items-center gap-200 pl-200">
-        {topBarActions.map(({ label, title, description, handler, disabled }) => (
-          <AlertDialog
-            key={label}
-            title={title}
-            description={description}
-            trigger={
-              <Button
-                variant="secondary"
-                size="lg"
-                className="typo-button1 shrink-0 py-200 whitespace-nowrap"
-                disabled={disabled}
-              >
-                {label}
-              </Button>
-            }
-          >
-            <AlertDialogAction onClick={handler}>확인</AlertDialogAction>
-            <AlertDialogCancel>취소</AlertDialogCancel>
-          </AlertDialog>
-        ))}
+function TopBarActionDialog({ action }: { action: TopBarAction }) {
+  const { id, label, title, description, handler, disabled } = action;
 
-        {onChangeCardinals && (
-          <ChangeCardinalsModal onSubmit={onChangeCardinals}>
-            <Button variant="secondary" size="lg" className="shrink-0 py-200 whitespace-nowrap">
-              기수 변경
-            </Button>
-          </ChangeCardinalsModal>
-        )}
-      </div>
-    </div>
+  return (
+    <AlertDialog
+      status={id === 'ban' ? 'danger' : 'default'}
+      title={title}
+      description={description}
+      trigger={
+        <Button
+          variant="secondary"
+          size="md"
+          className={cn(TOP_BAR_BUTTON_CLASS, id === 'ban' && 'text-state-error')}
+          disabled={disabled}
+        >
+          {label}
+        </Button>
+      }
+    >
+      <AlertDialogAction onClick={handler}>{id === 'ban' ? '추방' : '확인'}</AlertDialogAction>
+      <AlertDialogCancel>취소</AlertDialogCancel>
+    </AlertDialog>
   );
 }
 

@@ -1,277 +1,372 @@
 'use client';
 
-import { useState } from 'react';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
-import {
-  CardinalPillList,
-  MemberDetailModal,
-  MemberSearchBar,
-  MemberTable,
-  MemberTopBar,
-} from '@/components/admin';
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, Card } from '@/components/ui';
-import { MEMBER_CARDINAL_ERROR_CODE, MEMBER_ROLE_ERROR_CODE } from '@/constants/errorCode';
-import type { ClubMemberRole, Member } from '@/types/admin/member';
-import { useAdminMembers } from '@/hooks/queries/admin';
+import { MemberCardList } from '@/components/admin/member/MemberCardList';
+import { MemberMobileSearchPage } from '@/components/admin/member/MemberMobileSearchPage';
+import { MemberPageHeader } from '@/components/admin/member/MemberPageHeader';
+import { MemberPageModals } from '@/components/admin/member/MemberPageModals';
+import { MemberTable } from '@/components/admin/member/MemberTable';
+import { MemberTopBar } from '@/components/admin/member/MemberTopBar';
+import { MobileMemberTopBar } from '@/components/admin/member/MobileMemberTopBar';
+import type { MemberViewMode } from '@/components/admin/member/MemberViewToggle';
+import type { Member } from '@/types/admin/member';
+import { EMPTY_MEMBER_PAGE, useAdminMembers, useAdminMembersInfinite } from '@/hooks/queries/admin';
 import { useCardinals } from '@/hooks/queries';
+import { useIntersectionObserver } from '@/hooks/board/useIntersectionObserver';
+import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { useUserRole } from '@/stores';
-import {
-  useBanMember,
-  useChangeMemberCardinals,
-  useChangeMemberRole,
-  useRestoreMember,
-  useTransferLead,
-} from '@/hooks/mutations/admin';
-import { toastError, toastSuccess } from '@/stores/useToastStore';
-import { getBulkBanAction, getBulkTargetRole } from '@/utils/admin/memberBulkActions';
-import { parseCardinals } from '@/utils/admin/parseCardinals';
-import { getApiErrorCode } from '@/utils/shared';
-import { runBulkMutation } from '@/utils/shared/runBulkMutation';
+import { cn } from '@/lib/cn';
+import { useMemberBulkActions } from './hooks/useMemberBulkActions';
+import { useDebouncedValue } from '@/hooks/useDebouncedValue';
+import { useAdminMemberSearch } from '@/hooks/queries/admin/useAdminMemberQueries';
+import { filterMembers, sortMembers } from '@/utils/admin/memberPageUtils';
+import { useMemberListState } from './hooks/useMemberListState';
+import { useMemberSelection } from './hooks/useMemberSelection';
 
-interface ForceConfirmState {
-  clubMemberIds: number[];
-  cardinalIds: number[];
-}
+import { ChangePositionModal } from './modal/ChangePositionModal';
+import { PositionOptionsEmptyDialog } from './modal/PositionOptionsEmptyDialog';
+import { useUpdateMemberPositions } from '@/hooks/mutations/admin/useAdminPositionMutations';
+import { usePositionChangeGuard } from './hooks/usePositionChangeGuard';
+
+const MOBILE_MEMBER_PAGE_SIZE = 10;
+const MEMBER_VIEW_MODE_QUERY_KEY = 'view';
+
+const isMemberViewMode = (value: string | null): value is MemberViewMode =>
+  value === 'table' || value === 'card';
 
 function MemberPageContent() {
-  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
-  const [searchValue, setSearchValue] = useState('');
+  const {
+    options: positionOptions,
+    ensureOptions: ensurePositionOptions,
+    emptyDialogProps: positionEmptyDialogProps,
+  } = usePositionChangeGuard();
+  const { mutate: updatePositions } = useUpdateMemberPositions();
+  const [isPositionOpen, setIsPositionOpen] = useState(false);
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
   const [detailMemberId, setDetailMemberId] = useState<string | null>(null);
-  const [selectedCardinal, setSelectedCardinal] = useState<number | 'all'>('all');
-  const { data: members = [] } = useAdminMembers();
+  const [cardinalModalMemberId, setCardinalModalMemberId] = useState<string | null>(null);
+  const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
+  const isMobile = useMediaQuery('(max-width: 695.98px)');
+  const viewModeParam = searchParams.get(MEMBER_VIEW_MODE_QUERY_KEY);
+  const mobileViewMode: MemberViewMode = isMemberViewMode(viewModeParam) ? viewModeParam : 'table';
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState<10 | 20 | 50>(10);
+  const {
+    selectedCardinal,
+    sortBy,
+    searchQuery,
+    handleSelectCardinal,
+    handleSearchQueryChange,
+    toggleSort,
+    resetSearch,
+  } = useMemberListState({ resetPage: () => setPage(1) });
+  const keyword = searchQuery.trim();
+  const debouncedKeyword = useDebouncedValue(keyword);
+  const isSearching = keyword.length > 0;
+  const isDebouncing = keyword !== debouncedKeyword;
+  const {
+    data: searchMembers = [],
+    isPending: isSearchPending,
+    isError: isSearchError,
+  } = useAdminMemberSearch(
+    debouncedKeyword,
+    selectedCardinal === 'all' ? undefined : selectedCardinal,
+    isSearching && !isDebouncing,
+  );
+  const isSearchLoading = isSearching && (isDebouncing || isSearchPending);
+  const { data: memberPage = EMPTY_MEMBER_PAGE } = useAdminMembers(
+    page - 1,
+    pageSize,
+    !isMobile && !isSearching,
+  );
+  const {
+    data: infiniteMembers = [],
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useAdminMembersInfinite(MOBILE_MEMBER_PAGE_SIZE, isMobile && !isSearching);
+  const members = isSearching
+    ? isSearchLoading || isSearchError
+      ? []
+      : searchMembers
+    : isMobile
+      ? infiniteMembers
+      : memberPage.content;
+  const sortedMembers = sortMembers(
+    isSearching ? members : filterMembers(members, selectedCardinal, ''),
+    sortBy,
+  );
+  const totalPages = isSearching
+    ? Math.max(Math.ceil(sortedMembers.length / pageSize), 1)
+    : Math.max(memberPage.totalPages ?? 1, 1);
+  const filteredMembers =
+    isSearching && !isMobile
+      ? sortedMembers.slice((page - 1) * pageSize, page * pageSize)
+      : sortedMembers;
+  const mobileTotalPages = 1;
+  const { ref: sentinelRef, isIntersecting } = useIntersectionObserver({ rootMargin: '160px' });
   const { data: cardinals = [] } = useCardinals();
-  const { mutateAsync: changeMemberRoleAsync } = useChangeMemberRole();
-  const { mutateAsync: banMemberAsync } = useBanMember();
-  const { mutateAsync: restoreMemberAsync } = useRestoreMember();
-  const { mutate: transferLead } = useTransferLead();
   const myRole = useUserRole();
   const isLead = myRole === 'LEAD';
-  const { mutateAsync: changeMemberCardinalsAsync } = useChangeMemberCardinals();
-  const [forceConfirm, setForceConfirm] = useState<ForceConfirmState | null>(null);
+  const {
+    selectedIds,
+    selectedMemberById,
+    selectedMembers,
+    selectedCount,
+    selectedClubMemberIds,
+    selectedMemberCardinals,
+    clearSelection,
+    handleSelectionChange,
+  } = useMemberSelection(members);
+  const {
+    forceConfirm,
+    targetRole,
+    targetBanAction,
+    setForceConfirm,
+    submitCardinalsChange,
+    submitChangeRole,
+    submitBan,
+    submitRestore,
+    handleChangeCardinalsForBulk,
+    handleTransferLead,
+    handleForceConfirm,
+  } = useMemberBulkActions({
+    cardinals,
+    isLead,
+    selectedMembers,
+    selectedMemberCardinals,
+    onActionSuccess: clearSelection,
+  });
+
+  useEffect(() => {
+    if (isSearching || !isMobile || !isIntersecting || !hasNextPage || isFetchingNextPage) return;
+    fetchNextPage();
+  }, [fetchNextPage, hasNextPage, isFetchingNextPage, isIntersecting, isMobile, isSearching]);
+
+  useEffect(() => {
+    if (page <= totalPages) return;
+    const timeout = window.setTimeout(() => setPage(totalPages), 0);
+    return () => window.clearTimeout(timeout);
+  }, [page, totalPages]);
+
+  useEffect(() => {
+    if (isMobile) return;
+    const timeout = window.setTimeout(() => setIsMobileSearchOpen(false), 0);
+    return () => window.clearTimeout(timeout);
+  }, [isMobile]);
 
   const detailMember = detailMemberId
-    ? (members.find((m) => m.id === detailMemberId) ?? null)
+    ? (members.find((m) => m.id === detailMemberId) ??
+      selectedMemberById.get(detailMemberId) ??
+      null)
+    : null;
+  const cardinalModalMember = cardinalModalMemberId
+    ? (members.find((m) => m.id === cardinalModalMemberId) ??
+      selectedMemberById.get(cardinalModalMemberId) ??
+      null)
     : null;
 
   const handleMemberAction = (m: Member) => {
     setDetailMemberId(m.id);
   };
 
-  const cardinalFilteredMembers =
-    selectedCardinal === 'all'
-      ? members
-      : members.filter((m) => parseCardinals(m.cardinal).includes(String(selectedCardinal)));
+  // 센티널은 스크롤 주체 안에 있어야 한다. 표 뷰는 표 래퍼, 카드 뷰는 바깥 컨테이너가 스크롤한다.
+  const mobileSentinel =
+    isMobile && !isMobileSearchOpen ? (
+      <div ref={sentinelRef} className="h-px w-full shrink-0" />
+    ) : null;
 
-  const query = searchValue.trim().toLowerCase();
-  const filteredMembers = query
-    ? cardinalFilteredMembers.filter(
-        (m) =>
-          m.name.toLowerCase().includes(query) ||
-          m.department.toLowerCase().includes(query) ||
-          m.studentId.includes(query) ||
-          m.cardinal.includes(query),
-      )
-    : cardinalFilteredMembers;
-
-  const selectedMembers = filteredMembers.filter((m) => selectedIds.has(m.id));
-  const selectedCount = selectedMembers.length;
-
-  const targetRole = getBulkTargetRole(selectedMembers);
-  const targetBanAction = getBulkBanAction(selectedMembers);
-
-  const handleClearSelection = () => setSelectedIds(new Set());
-
-  const submitCardinalsChange = async (
-    clubMemberIds: number[],
-    cardinalIds: number[],
-    force = false,
-  ) => {
-    const results = await Promise.allSettled(
-      clubMemberIds.map((clubMemberId) =>
-        changeMemberCardinalsAsync({ clubMemberId, cardinalIds, force }),
-      ),
-    );
-
-    const attendanceFailedIds: number[] = [];
-    let otherErrorCount = 0;
-
-    results.forEach((result, idx) => {
-      if (result.status !== 'rejected') return;
-      const code = getApiErrorCode(result.reason);
-      if (code === MEMBER_CARDINAL_ERROR_CODE.REMOVAL_HAS_ATTENDANCE) {
-        attendanceFailedIds.push(clubMemberIds[idx]);
-      } else {
-        otherErrorCount += 1;
-      }
-    });
-
-    if (attendanceFailedIds.length > 0) {
-      setForceConfirm({ clubMemberIds: attendanceFailedIds, cardinalIds });
-      return;
-    }
-
-    if (otherErrorCount > 0) {
-      toastError('기수 변경에 실패했습니다.');
-      return;
-    }
-
-    toastSuccess('기수가 변경되었습니다.');
+  const handleCloseMobileSearch = () => {
+    setIsMobileSearchOpen(false);
+    resetSearch();
   };
 
-  const submitChangeRole = (clubMemberIds: number[], memberRole: ClubMemberRole) =>
-    runBulkMutation(
-      clubMemberIds.map((clubMemberId) => ({ clubMemberId, memberRole })),
-      changeMemberRoleAsync,
-      { success: '권한이 변경되었습니다.', error: '권한 변경에 실패했습니다.' },
-      (errors) => {
-        const isLeadTransferOnly = errors.some(
-          (err) => getApiErrorCode(err) === MEMBER_ROLE_ERROR_CODE.LEAD_TRANSFER_ONLY,
-        );
-        return isLeadTransferOnly ? '리더는 이양을 통해서만 변경할 수 있습니다.' : undefined;
-      },
-    );
-
-  const submitBan = (clubMemberIds: number[]) =>
-    runBulkMutation(clubMemberIds, banMemberAsync, {
-      success: '추방되었습니다.',
-      error: '추방에 실패했습니다.',
-    });
-
-  const submitRestore = (clubMemberIds: number[]) =>
-    runBulkMutation(clubMemberIds, restoreMemberAsync, {
-      success: '복구되었습니다.',
-      error: '복구에 실패했습니다.',
-    });
-
-  const handleChangeCardinalsForDetail = (cardinalIds: number[]) => {
-    if (!detailMember) return;
-    submitCardinalsChange([detailMember.clubMemberId], cardinalIds);
+  const handleMobileViewModeChange = (mode: MemberViewMode) => {
+    const nextParams = new URLSearchParams(searchParams.toString());
+    nextParams.set(MEMBER_VIEW_MODE_QUERY_KEY, mode);
+    router.replace(`${pathname}?${nextParams.toString()}`, { scroll: false });
   };
-
-  const handleChangeCardinalsForBulk = (cardinalIds: number[]) => {
-    submitCardinalsChange(
-      selectedMembers.map((m) => m.clubMemberId),
-      cardinalIds,
-    );
-  };
-
-  const handleTransferLead = (clubMemberId: number) => {
-    transferLead(clubMemberId, {
-      onSuccess: () => toastSuccess('리더로 변경되었습니다.'),
-      onError: (err) => {
-        if (getApiErrorCode(err) === MEMBER_ROLE_ERROR_CODE.ONLY_LEAD_CAN_TRANSFER) {
-          toastError('리더만 권한을 이양할 수 있습니다.');
-        } else {
-          toastError('리더 변경에 실패했습니다.');
-        }
-      },
-    });
-  };
-
-  const handleForceConfirm = () => {
-    if (!forceConfirm) return;
-    const { clubMemberIds, cardinalIds } = forceConfirm;
-    setForceConfirm(null);
-    submitCardinalsChange(clubMemberIds, cardinalIds, true);
+  const memberSelectionBarProps = {
+    selectedCount,
+    onChangePosition: () => {
+      if (ensurePositionOptions()) setIsPositionOpen(true);
+    },
+    targetRole,
+    targetBanAction,
+    onBack: clearSelection,
+    onChangeRole: targetRole
+      ? () => submitChangeRole(selectedClubMemberIds, targetRole)
+      : undefined,
+    onBan: targetBanAction === 'ban' ? () => submitBan(selectedClubMemberIds) : undefined,
+    onRestore:
+      targetBanAction === 'restore' ? () => submitRestore(selectedClubMemberIds) : undefined,
+    onChangeCardinals: handleChangeCardinalsForBulk,
+    selectedMemberName: selectedMembers[0]?.name,
+    selectedMemberCardinals,
+    onTransferLead:
+      isLead && selectedCount === 1
+        ? () => handleTransferLead(selectedMembers[0].clubMemberId)
+        : undefined,
   };
 
   return (
-    <div className="flex min-w-0 flex-col">
-      {/* Selection top bar */}
-      <MemberTopBar
-        className="sticky top-0 z-10 -mt-15"
-        selectedCount={selectedCount}
-        targetRole={targetRole}
-        targetBanAction={targetBanAction}
-        onBack={handleClearSelection}
-        onChangeRole={
-          targetRole
-            ? () =>
-                submitChangeRole(
-                  selectedMembers.map((m) => m.clubMemberId),
-                  targetRole,
-                )
-            : undefined
-        }
-        onBan={
-          targetBanAction === 'ban'
-            ? () => submitBan(selectedMembers.map((m) => m.clubMemberId))
-            : undefined
-        }
-        onRestore={
-          targetBanAction === 'restore'
-            ? () => submitRestore(selectedMembers.map((m) => m.clubMemberId))
-            : undefined
-        }
-        onChangeCardinals={handleChangeCardinalsForBulk}
-        onTransferLead={
-          isLead && selectedCount === 1
-            ? () => handleTransferLead(selectedMembers[0].clubMemberId)
-            : undefined
-        }
-      />
+    <>
+      <div className="max-tablet:!w-full max-tablet:!max-w-full max-tablet:!overflow-hidden max-tablet:!pr-0 max-tablet:h-full flex min-h-full min-w-0 pr-450">
+        <div className="bg-container-neutral max-tablet:!w-full max-tablet:!max-w-full max-tablet:!rounded-none max-tablet:h-full max-tablet:overflow-hidden flex min-h-0 min-w-0 flex-1 flex-col rounded-t-[20px]">
+          <div
+            className={cn(
+              'flex min-h-0 flex-1 flex-col',
+              isMobileSearchOpen && 'max-tablet:hidden',
+            )}
+          >
+            {/* Selection top bar */}
+            <MemberTopBar {...memberSelectionBarProps} />
 
-      {/* Main content */}
-      <div className="flex flex-col gap-400 p-700">
-        <CardinalPillList
-          cardinals={cardinals}
-          selectedCardinal={selectedCardinal}
-          onSelectCardinal={setSelectedCardinal}
-        />
+            <MemberPageHeader
+              pageSize={pageSize}
+              onPageSizeChange={(size) => {
+                setPageSize(size);
+                setPage(1);
+              }}
+              cardinals={cardinals}
+              selectedCardinal={selectedCardinal}
+              onSelectCardinal={handleSelectCardinal}
+              sortBy={sortBy}
+              onToggleSort={toggleSort}
+              searchQuery={searchQuery}
+              onSearchQueryChange={handleSearchQueryChange}
+              mobileViewMode={mobileViewMode}
+              onMobileViewModeChange={handleMobileViewModeChange}
+              onOpenMobileSearch={() => setIsMobileSearchOpen(true)}
+            />
 
-        {/* Search bar */}
-        <Card>
-          <MemberSearchBar isWrapped={false} value={searchValue} onValueChange={setSearchValue} />
-        </Card>
+            {isMobile && <MobileMemberTopBar {...memberSelectionBarProps} />}
 
-        {/* Member table */}
-        <Card>
-          <MemberTable
-            members={filteredMembers}
-            selectedIds={selectedIds}
-            onSelectionChange={setSelectedIds}
-            onMemberAction={handleMemberAction}
-          />
-        </Card>
+            {isSearching && !isSearchLoading && isSearchError && (
+              <p role="status" className="text-text-alternative px-700 py-400">
+                검색에 실패했습니다. 잠시 후 다시 시도해주세요.
+              </p>
+            )}
+            {/* Main content */}
+            <div
+              className={cn(
+                'max-tablet:min-h-0 max-tablet:flex-1 flex min-h-0 flex-col p-700',
+                // 카드 뷰는 바깥이 세로 스크롤을 맡고, 표 뷰는 표 래퍼가 직접 스크롤한다.
+                mobileViewMode === 'card'
+                  ? 'max-tablet:overflow-y-auto max-tablet:p-450'
+                  : 'max-tablet:overflow-hidden max-tablet:p-0',
+              )}
+            >
+              <div
+                className={cn(
+                  'max-tablet:flex max-tablet:min-h-0 max-tablet:flex-1 max-tablet:flex-col',
+                  mobileViewMode === 'card' && 'max-tablet:hidden',
+                )}
+              >
+                {/* Member table */}
+                <MemberTable
+                  scrollResetKey={`${page}:${pageSize}:${selectedCardinal}:${debouncedKeyword}:${sortBy}`}
+                  fixedHeight
+                  showEmptySearchResult={
+                    isSearching && !isSearchLoading && !isSearchError && searchMembers.length === 0
+                  }
+                  members={filteredMembers}
+                  page={page}
+                  totalPages={isMobile ? mobileTotalPages : totalPages}
+                  onPageChange={setPage}
+                  selectedIds={selectedIds}
+                  onSelectionChange={handleSelectionChange}
+                  onMemberAction={handleMemberAction}
+                  listFooter={mobileViewMode === 'table' ? mobileSentinel : null}
+                />
+              </div>
+
+              {mobileViewMode === 'card' && (
+                <>
+                  <MemberCardList
+                    className="tablet:hidden"
+                    members={filteredMembers}
+                    page={page}
+                    totalPages={mobileTotalPages}
+                    sortBy={sortBy}
+                    onToggleSort={toggleSort}
+                    onPageChange={setPage}
+                    selectedIds={selectedIds}
+                    onSelectionChange={handleSelectionChange}
+                    onMemberAction={handleMemberAction}
+                  />
+                  {mobileSentinel}
+                </>
+              )}
+            </div>
+          </div>
+
+          {isMobile && isMobileSearchOpen && (
+            <MemberMobileSearchPage
+              searchQuery={searchQuery}
+              isLoading={isSearchLoading}
+              isError={isSearching && isSearchError}
+              onSearchQueryChange={handleSearchQueryChange}
+              onCancel={handleCloseMobileSearch}
+              viewMode={mobileViewMode}
+              members={filteredMembers}
+              page={page}
+              totalPages={mobileTotalPages}
+              sortBy={sortBy}
+              onToggleSort={toggleSort}
+              onPageChange={setPage}
+              selectedIds={selectedIds}
+              onSelectionChange={handleSelectionChange}
+              onMemberAction={handleMemberAction}
+              listFooter={
+                !isSearching && <div ref={sentinelRef} className="h-px w-full shrink-0" />
+              }
+            />
+          )}
+        </div>
       </div>
 
-      {/* Member detail modal */}
-      <MemberDetailModal
-        open={detailMember !== null}
-        onOpenChange={(open) => {
-          if (!open) setDetailMemberId(null);
+      <ChangePositionModal
+        open={isPositionOpen}
+        onOpenChange={setIsPositionOpen}
+        memberCount={selectedCount}
+        memberName={selectedMembers[0]?.name}
+        options={positionOptions}
+        onSubmit={(option) => {
+          // 실패하면 낙관적 갱신이 되돌아가므로, 선택도 성공했을 때만 푼다.
+          updatePositions(
+            { clubMemberIds: selectedClubMemberIds, option },
+            { onSuccess: clearSelection },
+          );
         }}
-        member={detailMember}
-        onBan={detailMember ? () => submitBan([detailMember.clubMemberId]) : undefined}
-        onRestore={detailMember ? () => submitRestore([detailMember.clubMemberId]) : undefined}
-        onChangeRole={
-          detailMember
-            ? () => {
-                const nextRole = detailMember.memberRole === 'ADMIN' ? 'USER' : 'ADMIN';
-                submitChangeRole([detailMember.clubMemberId], nextRole);
-              }
-            : undefined
-        }
-        onChangeCardinals={detailMember ? handleChangeCardinalsForDetail : undefined}
-        onTransferLead={
-          isLead && detailMember ? () => handleTransferLead(detailMember.clubMemberId) : undefined
-        }
       />
 
-      {/* 출석 기록이 있는 기수 삭제 확인 */}
-      <AlertDialog
-        open={forceConfirm !== null}
-        onOpenChange={(open) => {
-          if (!open) setForceConfirm(null);
+      <PositionOptionsEmptyDialog {...positionEmptyDialogProps} />
+
+      <MemberPageModals
+        detailMember={detailMember}
+        cardinalModalMember={cardinalModalMember}
+        forceConfirm={forceConfirm}
+        isLead={isLead}
+        onCloseDetail={() => setDetailMemberId(null)}
+        onOpenCardinalModalFromDetail={(memberId) => {
+          setCardinalModalMemberId(memberId);
+          setDetailMemberId(null);
         }}
-        status="danger"
-        title={`출석 기록이 있는\n기수가 포함되어 있습니다.`}
-        description={'그래도 변경하시겠어요?\n출석/결석 기록도 함께 삭제됩니다.'}
-      >
-        <AlertDialogAction onClick={handleForceConfirm}>변경</AlertDialogAction>
-        <AlertDialogCancel>취소</AlertDialogCancel>
-      </AlertDialog>
-    </div>
+        onCloseCardinalModal={() => setCardinalModalMemberId(null)}
+        onCloseForceConfirm={() => setForceConfirm(null)}
+        onConfirmForceChange={handleForceConfirm}
+        onBan={submitBan}
+        onRestore={submitRestore}
+        onChangeRole={submitChangeRole}
+        onChangeCardinals={submitCardinalsChange}
+        onTransferLead={handleTransferLead}
+      />
+    </>
   );
 }
 

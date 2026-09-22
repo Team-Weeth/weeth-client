@@ -1,5 +1,5 @@
-import { BackIcon } from '@/assets/icons';
-import { Icon } from '@/components/ui';
+import BackIcon from '@/assets/icons/back.svg';
+import { Icon } from '@/components/ui/Icon';
 import { cn } from '@/lib/cn';
 import type { PaymentStatus } from '@/types/admin/dues';
 

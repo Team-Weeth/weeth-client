@@ -7,12 +7,25 @@ export const adminQueryKeys = {
 
   members: (clubId: string | null) => ['admin', 'members', clubId] as const,
 
+  // 포지션 옵션 — 동아리 단위 전체 목록
+  positions: (clubId: string | null) => ['admin', 'positions', clubId] as const,
+
   boards: (clubId: string | null) => ['admin', 'boards', clubId] as const,
+
+  // 페널티 — 기수별 멤버 목록, 멤버 단건 상세
+  penalties: (clubId: string | null) => ['admin', 'penalties', clubId] as const,
+  penaltyMembers: (
+    clubId: string | null,
+    cardinalNumber: number | null,
+    params?: { keyword: string; sort: string; page: number },
+  ) => ['admin', 'penalties', clubId, 'members', cardinalNumber, params] as const,
+  memberPenaltyDetail: (clubId: string | null, clubMemberId: number | null) =>
+    ['admin', 'penalties', clubId, 'detail', clubMemberId] as const,
 
   // 월간 일정 — 세션/이벤트 뮤테이션이 schedules prefix로 prefix invalidate
   schedules: (clubId: string | null) => ['admin', 'schedules', clubId] as const,
-  monthlySchedule: (clubId: string | null, year: number, month: number) =>
-    ['admin', 'schedules', clubId, year, month] as const,
+  monthlySchedule: (clubId: string | null, year: number, month: number, cardinal?: number) =>
+    ['admin', 'schedules', clubId, year, month, cardinal ?? null] as const,
   scheduleDetail: (clubId: string | null, eventId: number | null) =>
     ['admin', 'schedule', clubId, eventId] as const,
 

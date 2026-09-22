@@ -1,7 +1,7 @@
 'use client';
 
 import { useParams, useRouter } from 'next/navigation';
-import { ProfileCompleteIcon } from '@/assets/icons';
+import ProfileCompleteIcon from '@/assets/icons/profile_complete.svg';
 import Image from 'next/image';
 
 export function AlertBanner() {

@@ -2,7 +2,7 @@
 
 import type React from 'react';
 
-import { AlertDialog, AlertDialogAction, AlertDialogCancel } from '@/components/ui';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel } from '@/components/ui/alert-dialog';
 
 interface CommentDeleteDialogProps {
   open: boolean;

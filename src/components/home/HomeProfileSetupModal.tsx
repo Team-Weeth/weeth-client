@@ -2,23 +2,17 @@
 
 import { useState } from 'react';
 import { useParams } from 'next/navigation';
-import { AddIcon } from '@/assets/icons';
-import { DeleteIcon } from '@/assets/icons';
+import AddIcon from '@/assets/icons/add.svg';
+import DeleteIcon from '@/assets/icons/delete.svg';
 import { useHomeQuery } from '@/hooks/home';
 import { useUpdateClubProfileAssignmentsMutation } from '@/hooks/mutations/mypage/useMultiProfileMutations';
 import { useMyPageQueries } from '@/hooks/queries/mypage/useMyPageQueries';
 import { toastError, toastSuccess } from '@/stores/useToastStore';
 import { getApiErrorMessage } from '@/utils/shared';
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-  Button,
-  Dialog,
-  DialogContent,
-  DialogTitle,
-  Icon,
-} from '@/components/ui';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Button } from '@/components/ui/Button';
+import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
+import { Icon } from '@/components/ui/Icon';
 import { cn } from '@/lib/cn';
 import { AddProfileModal } from '@/components/mypage/AddProfileModal';
 

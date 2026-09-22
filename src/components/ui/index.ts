@@ -11,6 +11,9 @@ export type { CheckboxProps } from './Checkbox';
 export { Input } from './Input';
 export type { InputProps } from './Input';
 
+export { SuffixInput, suffixInputVariants } from './SuffixInput';
+export type { SuffixInputProps } from './SuffixInput';
+
 export { Textarea } from './Textarea';
 export type { TextareaProps } from './Textarea';
 
@@ -41,6 +44,13 @@ export {
 } from './alert-dialog';
 
 export type { AlertDialogProps } from './alert-dialog';
+
+export {
+  BottomSheet,
+  BottomSheetActionItem,
+  type BottomSheetProps,
+  type BottomSheetActionItemProps,
+} from './bottom-sheet/BottomSheet';
 
 export {
   Breadcrumb,

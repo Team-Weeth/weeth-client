@@ -7,3 +7,4 @@ export {
   ClubInfoCardSkeleton,
 } from './MyPageContentSkeletons';
 export { EditProfileSkeleton, type EditProfileSkeletonProps } from './EditProfileSkeleton';
+export { MyPagePenaltiesSkeleton } from './MyPagePenaltiesSkeleton';

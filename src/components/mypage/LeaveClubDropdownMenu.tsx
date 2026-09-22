@@ -10,9 +10,9 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-  Icon,
-} from '@/components/ui';
-import { AdminMeatballIcon } from '@/assets/icons/admin';
+} from '@/components/ui/DropdownMenu';
+import { Icon } from '@/components/ui/Icon';
+import AdminMeatballIcon from '@/assets/icons/admin/ic_admin_meatball.svg';
 import { WithdrawConfirmDialog } from './WithdrawConfirmDialog';
 
 interface LeaveClubDropdownMenuProps {

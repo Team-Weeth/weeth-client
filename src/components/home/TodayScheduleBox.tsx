@@ -2,7 +2,8 @@
 
 import { useParams, useRouter } from 'next/navigation';
 import dynamic from 'next/dynamic';
-import { Button, Chip, ChipList } from '@/components/ui';
+import { Button } from '@/components/ui/Button';
+import { Chip, ChipList } from '@/components/ui/chips';
 import { AttendanceCodeModal } from '@/components/attendance/AttendanceCodeModal';
 import { useAttendanceQuery, useCheckIn } from '@/hooks/attendance';
 import { useIsAdmin } from '@/hooks/shared';

@@ -21,6 +21,9 @@
 - [[ADR-001-react-compiler]] — React Compiler 켜고 `forwardRef` 금지
 - [[ADR-002-data-fetching-strategy]] — RSC / Server Action / React Query 사용 기준
 - [[ADR-003-zustand-pattern]] — combine + devtools + 셀렉터 훅 강제
+- [[ADR-004-openapi-typescript]] — openapi-typescript로 API 타입 자동 생성
+- [[ADR-005-admin-shared-components]] — 어드민 공용 컴포넌트 승격 기준 + 의도적으로 남긴 중복 2건
+- [[ADR-006-penalty-member-list-server-driven]] — 페널티 멤버 리스트 전체 fetch → 서버 검색·정렬·페이지네이션, 페널티 정렬 잠정 제거
 
 ## ADR 후보 (작성 대기)
 

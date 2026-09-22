@@ -94,10 +94,15 @@ function TimePicker({ value, onChange }: TimePickerProps) {
           ref={attachWheel}
           sideOffset={4}
           align="start"
-          className="bg-container-neutral z-90 flex h-60 rounded-md shadow-[0px_4px_14px_0px_rgba(0,0,0,0.25)]"
+          onTouchMove={(event) => event.stopPropagation()}
+          className="bg-container-neutral z-90 flex h-[min(240px,var(--radix-popover-content-available-height))] max-h-[calc(100dvh-16px)] touch-pan-y overflow-hidden overscroll-contain rounded-md shadow-[0px_4px_14px_0px_rgba(0,0,0,0.25)]"
         >
           {/* Hours */}
-          <div ref={hourRef} className="scrollbar-custom flex flex-col overflow-y-auto py-100">
+          <div
+            ref={hourRef}
+            onTouchMove={(event) => event.stopPropagation()}
+            className="scrollbar-custom flex h-full min-h-0 flex-col overflow-y-auto overscroll-contain py-100 [-webkit-overflow-scrolling:touch]"
+          >
             {HOURS.map((hour) => {
               const isSelected = h === hour;
               const period = hour < 12 ? '오전' : '오후';
@@ -125,7 +130,11 @@ function TimePicker({ value, onChange }: TimePickerProps) {
           <div className="bg-line w-px" />
 
           {/* Minutes */}
-          <div ref={minuteRef} className="scrollbar-custom flex flex-col overflow-y-auto py-100">
+          <div
+            ref={minuteRef}
+            onTouchMove={(event) => event.stopPropagation()}
+            className="scrollbar-custom flex h-full min-h-0 flex-col overflow-y-auto overscroll-contain py-100 [-webkit-overflow-scrolling:touch]"
+          >
             {MINUTES.map((minute) => {
               const isSelected = m === minute;
               return (

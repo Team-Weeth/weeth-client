@@ -5,7 +5,13 @@ import { useParams, useRouter } from 'next/navigation';
 import dynamic from 'next/dynamic';
 import { useQueryClient } from '@tanstack/react-query';
 
-import { Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbPage, Card } from '@/components/ui';
+import {
+  Breadcrumb,
+  BreadcrumbList,
+  BreadcrumbItem,
+  BreadcrumbPage,
+} from '@/components/ui/breadcrumb';
+import { Card } from '@/components/ui/card';
 import { AttendanceCompleteModal } from '@/components/attendance/AttendanceCompleteModal';
 import { AttendanceStatus } from '@/components/attendance/AttendanceStatus';
 import { AttendanceTodayCard } from '@/components/attendance/AttendanceTodayCard';

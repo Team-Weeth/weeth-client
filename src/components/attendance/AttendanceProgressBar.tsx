@@ -3,12 +3,15 @@ import { cn } from '@/lib/cn';
 interface AttendanceProgressBarProps extends React.HTMLAttributes<HTMLDivElement> {
   /** 출석률 (0-100). 나머지는 자동으로 결석률로 계산됨 */
   attendanceRate: number;
+  /** 나머지 영역을 결석률 색상으로 표시할지 여부 */
+  showAbsenceRate?: boolean;
 }
 
 export type { AttendanceProgressBarProps };
 
 export function AttendanceProgressBar({
   attendanceRate,
+  showAbsenceRate = true,
   className,
   ...props
 }: AttendanceProgressBarProps) {
@@ -41,7 +44,7 @@ export function AttendanceProgressBar({
       />
 
       {/* 결석률 바  */}
-      {absenceRate > 0 && (
+      {showAbsenceRate && absenceRate > 0 && (
         <div
           className="bg-state-error absolute top-0 h-full transition-all duration-300"
           style={{

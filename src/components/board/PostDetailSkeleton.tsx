@@ -1,5 +1,5 @@
-import { Divider } from '@/components/ui';
-import { Skeleton } from '@/components/ui';
+import { Divider } from '@/components/ui/Divider';
+import { Skeleton } from '@/components/ui/skeleton';
 import { PostDetailHeader } from '@/components/board/PostDetailHeader';
 
 function CommentSkeleton() {

@@ -23,6 +23,7 @@ jest.mock('next/navigation', () => {
   };
   return {
     useRouter: () => routerInstance,
+    useParams: jest.fn(() => ({ clubId: 'test-club-id' })),
     usePathname: jest.fn(() => '/'),
     useSearchParams: jest.fn(() => new URLSearchParams()),
   };

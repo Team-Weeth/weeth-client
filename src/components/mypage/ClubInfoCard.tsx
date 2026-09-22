@@ -3,8 +3,13 @@
 import { useState } from 'react';
 import dynamic from 'next/dynamic';
 import { cn } from '@/lib/cn';
-import { Avatar, AvatarFallback, AvatarImage, Button, Divider, Icon, Tag } from '@/components/ui';
-import { ArrowRightIcon, PeopleIcon } from '@/assets/icons';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Button } from '@/components/ui/Button';
+import { Divider } from '@/components/ui/Divider';
+import { Icon } from '@/components/ui/Icon';
+import { Tag } from '@/components/ui/tag';
+import ArrowRightIcon from '@/assets/icons/arrow_right.svg';
+import PeopleIcon from '@/assets/icons/people.svg';
 import type { MyPageActivityClub } from '@/types/mypage';
 import { cardClass } from './InfoCard';
 // import { LeaveClubDropdownMenu } from './LeaveClubDropdownMenu';

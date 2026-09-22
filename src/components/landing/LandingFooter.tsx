@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { cn } from '@/lib/cn';
-import { FooterLogoIcon } from '@/assets/icons';
+import FooterLogoIcon from '@/assets/icons/logo/logo_full_Footer.svg';
 import { FOOTER_MENUS } from '@/constants/landing/landing';
 
 interface LandingFooterProps {

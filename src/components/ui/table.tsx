@@ -6,13 +6,17 @@ import { cn } from '@/lib/cn';
 
 interface TableProps extends React.ComponentProps<'table'> {
   wrapperClassName?: string;
+  wrapperProps?: React.ComponentProps<'div'>;
 }
 
-function Table({ className, wrapperClassName, ...props }: TableProps) {
+function Table({ className, wrapperClassName, wrapperProps, ...props }: TableProps) {
+  const { className: wrapperPropsClassName, ...restWrapperProps } = wrapperProps ?? {};
+
   return (
     <div
       data-slot="table-container"
-      className={cn('relative w-full overflow-x-auto', wrapperClassName)}
+      className={cn('relative w-full overflow-x-auto', wrapperClassName, wrapperPropsClassName)}
+      {...restWrapperProps}
     >
       <table
         data-slot="table"

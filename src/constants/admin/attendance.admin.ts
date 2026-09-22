@@ -1,6 +1,7 @@
 import { ATTENDANCE_STATUS_BASE } from '@/constants/attendance';
-import { AdminRoundCancelIcon, AdminTimeIcon } from '@/assets/icons/admin';
-import { CheckRoundIcon } from '@/assets/icons';
+import AdminRoundCancelIcon from '@/assets/icons/admin/ic_admin_round_cancel.svg';
+import AdminTimeIcon from '@/assets/icons/admin/ic_admin_time.svg';
+import CheckRoundIcon from '@/assets/icons/check_round.svg';
 
 export const ADMIN_ATTENDANCE_STATUS_CONFIG = {
   PENDING: {

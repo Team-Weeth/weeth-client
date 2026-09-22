@@ -1,6 +1,6 @@
 import { cookies } from 'next/headers';
 
-import { AuthStoreInitializer } from '@/components/auth';
+import { AuthStoreInitializer } from '@/components/auth/AuthStoreInitializer';
 
 export default async function AuthLayout({ children }: { children: React.ReactNode }) {
   const cookieStore = await cookies();

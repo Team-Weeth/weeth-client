@@ -1,0 +1,31 @@
+export type CalendarScheduleType = 'SESSION' | 'EVENT';
+
+export interface CalendarSchedule {
+  id: number;
+  title: string;
+  start: string;
+  end: string;
+  type: CalendarScheduleType;
+  location?: string;
+}
+
+export type AttendanceStatus = 'UPCOMING' | 'OPEN' | 'COMPLETED' | 'ABSENT';
+
+export interface AttendeeInfo {
+  name: string;
+  imageUrl?: string;
+  department?: string;
+  position?: string;
+}
+
+export interface ScheduleDetail extends CalendarSchedule {
+  host?: AttendeeInfo;
+  attendees?: AttendeeInfo[];
+  attendeeCount?: number;
+  dDay?: number;
+  hasAttendanceCheck?: boolean;
+  attendanceStatus?: AttendanceStatus;
+  attendanceCompletedAt?: string;
+  description?: string;
+  clubId?: string | null;
+}

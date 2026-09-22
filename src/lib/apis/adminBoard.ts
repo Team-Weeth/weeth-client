@@ -36,6 +36,15 @@ export interface AdminBoardDto {
   isDeleted: boolean;
 }
 
+export interface AdminBoardListDto {
+  boards: AdminBoardDto[];
+  /** 한도에 포함되는 게시판 수. 전체(ALL)는 빠지지만 공지(NOTICE)는 포함된다. */
+  activeBoardCount: number;
+  /** activeBoardCount의 상한. 마찬가지로 공지를 포함한 값이다. */
+  maxBoardCount: number;
+  canCreateBoard: boolean;
+}
+
 export interface CreateBoardBody {
   name: string;
   description: string;
@@ -63,7 +72,7 @@ export interface UpdateBoardCommentBody {
 
 export const adminBoardApi = {
   getBoards: (clubId: string) =>
-    apiClient.get<ApiResponse<AdminBoardDto[]>>(`/admin/clubs/${clubId}/boards`),
+    apiClient.get<ApiResponse<AdminBoardListDto>>(`/admin/clubs/${clubId}/boards`),
 
   createBoard: (clubId: string, body: CreateBoardBody) =>
     apiClient.post<ApiResponse<AdminBoardDto>>(`/admin/clubs/${clubId}/boards`, body),

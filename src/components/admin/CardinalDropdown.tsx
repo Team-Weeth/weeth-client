@@ -1,13 +1,15 @@
-import { ArrowDownIcon } from '@/assets/icons';
+import ArrowDownIcon from '@/assets/icons/arrow_down.svg';
+import { Card } from '@/components/ui/card';
 import {
-  Card,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-  Icon,
-} from '@/components/ui';
+} from '@/components/ui/DropdownMenu';
+import { Icon } from '@/components/ui/Icon';
 import type { Cardinal } from '@/types/admin/cardinal';
+
+const CARDINAL_DROPDOWN_MAX_HEIGHT_CLASS = 'max-h-[270px]';
 
 interface CardinalDropdownProps {
   cardinals: Cardinal[];
@@ -22,6 +24,9 @@ function CardinalDropdown({
   onSelect,
   onSelectAll,
 }: CardinalDropdownProps) {
+  const sortedCardinals = [...cardinals].sort((a, b) => b.cardinalNumber - a.cardinalNumber);
+  const optionCount = sortedCardinals.length + (onSelectAll ? 1 : 0);
+
   return (
     <Card className="w-fit">
       <DropdownMenu>
@@ -36,9 +41,12 @@ function CardinalDropdown({
             <Icon src={ArrowDownIcon} size={24} className="text-icon-normal" />
           </button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="start">
+        <DropdownMenuContent
+          align="start"
+          className={optionCount > 5 ? CARDINAL_DROPDOWN_MAX_HEIGHT_CLASS : undefined}
+        >
           {onSelectAll && <DropdownMenuItem onSelect={() => onSelectAll()}>전체</DropdownMenuItem>}
-          {cardinals.map((c) => (
+          {sortedCardinals.map((c) => (
             <DropdownMenuItem key={c.id} onSelect={() => onSelect(c.id)}>
               {c.cardinalNumber}기
             </DropdownMenuItem>

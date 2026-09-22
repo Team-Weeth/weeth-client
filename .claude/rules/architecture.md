@@ -21,7 +21,6 @@ src/
 
   components/
     ui/                         # Reusable shared UI components
-      index.ts                  # Re-exports all UI components
     layout/                     # Shared layout components (Header, Footer)
     admin/                      # Admin-only components
     auth/                       # Auth-related components
@@ -41,7 +40,6 @@ src/
   constants/                    # Constants
   assets/
     icons/                      # SVG icons (organized by category folder)
-      index.ts                  # Re-exports all icons
       admin/
       logo/
   providers/                    # React Context Provider collection
@@ -54,23 +52,30 @@ src/
 - UI reused across multiple places → `components/ui/`
 - Layout components (Header, Footer, etc.) → `components/layout/`
 
-### index.ts Re-export Required
-The following folders must re-export through `index.ts`. Do not import directly from file paths within these folders.
+### Barrel Import Policy
+Avoid barrel imports from `index.ts` in runtime application code. Prefer direct imports from the exact file that owns the symbol.
 
-- `components/ui/` — shared UI components
-- `components/{feature}/` — feature-specific components (e.g. `components/home/`, `components/board/`)
-- `assets/icons/`
+Barrel imports can make Next.js/Turbopack traverse broader module graphs and may pull unused Client Components, icons, hooks, or heavy dependencies into a route's client reference graph.
 
-Route segments (`app/`) and utility folders (`lib/actions/`, `lib/apis/`, etc.) are **not** required to have a barrel `index.ts`.
+Avoid importing from these barrel paths:
+
+- `@/components/ui`
+- `@/components/{feature}`
+- `@/hooks`
+- `@/assets/icons`
+- `@/assets/icons/{category}`
+- `@/lib/apis` from Client Components
+
+Type-only barrels are acceptable only when they export types and are imported with `import type`.
 
 ```ts
 // Good
-import { Button } from '@/components/ui';
-import { ArrowRightIcon } from '@/assets/icons';
+import { Button } from '@/components/ui/Button';
+import ArrowRightIcon from '@/assets/icons/arrow_right.svg';
 
 // Bad
-import Button from '@/components/ui/Button';
-import ArrowRightIcon from '@/assets/icons/arrow_right.svg';
+import { Button } from '@/components/ui';
+import { ArrowRightIcon } from '@/assets/icons';
 ```
 
 ### Data Flow

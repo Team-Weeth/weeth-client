@@ -2,8 +2,9 @@
 
 import Image from 'next/image';
 import { cn } from '@/lib/cn';
-import { Button, type ButtonProps } from '@/components/ui';
-import { AppleLogoIcon } from '@/assets/icons';
+import { Button } from '@/components/ui/Button';
+import type { ButtonProps } from '@/components/ui/Button';
+import AppleLogoIcon from '@/assets/icons/apple_logo.svg';
 
 type AppleLoginButtonProps = Omit<ButtonProps, 'variant' | 'size'>;
 

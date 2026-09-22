@@ -2,22 +2,20 @@
 
 import { useState } from 'react';
 
-import { CheckIcon } from '@/assets/icons';
+import CheckIcon from '@/assets/icons/check.svg';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Icon } from '@/components/ui/Icon';
 import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-  Icon,
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui';
+} from '@/components/ui/table';
 import { cn } from '@/lib/cn';
 import { formatPhone } from '@/utils/shared';
-import { DuesPagination } from '@/components/admin/dues/setup/components';
+import { DuesPagination } from '@/components/admin/dues/setup/components/DuesPagination';
 import { DuesMember, FilterType, PaymentStatus } from '@/types/admin/dues';
 import { DuesSearchBar } from './DuesSearchBar';
 import { TableTabFilter } from './TableTabFilter';

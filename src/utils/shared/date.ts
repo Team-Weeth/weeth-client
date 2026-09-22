@@ -112,6 +112,7 @@ export function formatTimeDisplay(timeStr: string): string {
 export function formatSessionDateParts(start: string): {
   day: string;
   weekday: string;
+  time: string;
   timeLabel: string;
 } {
   const date = new Date(start);
@@ -125,8 +126,71 @@ export function formatSessionDateParts(start: string): {
   return {
     day: String(day),
     weekday: DAY_META[date.getDay()].en.toUpperCase(),
+    time: `${period} ${displayHour}:${minutes}`,
     timeLabel: `${month}월 ${day}일 ${period} ${displayHour}:${minutes}`,
   };
+}
+
+export function computeDDay(start: string): number {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const startDate = new Date(start);
+  startDate.setHours(0, 0, 0, 0);
+  return Math.round((startDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+}
+
+// 'D-3' | 'D-day' | 'D+1'
+export function formatDDay(dDay: number): string {
+  if (dDay === 0) return 'D-day';
+  if (dDay > 0) return `D-${dDay}`;
+  return `D+${Math.abs(dDay)}`;
+}
+
+// '3월 9일 (월) 14:00 ~ 16:00'  같은 날이면 종료 시간만, 다른 날이면 전체 표기
+export function formatScheduleTimeRange(start: string, end: string): string {
+  const startDate = new Date(start);
+  const endDate = new Date(end);
+  const isSameDay =
+    startDate.getFullYear() === endDate.getFullYear() &&
+    startDate.getMonth() === endDate.getMonth() &&
+    startDate.getDate() === endDate.getDate();
+
+  const toDateTime = (date: Date) => {
+    const month = date.getMonth() + 1;
+    const day = date.getDate();
+    const dayOfWeek = DAY_META[date.getDay()].ko;
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    return `${month}월 ${day}일 (${dayOfWeek}) ${hours}:${minutes}`;
+  };
+  const toTime = (date: Date) => {
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    return `${hours}:${minutes}`;
+  };
+
+  if (isSameDay) {
+    return `${toDateTime(startDate)} ~ ${toTime(endDate)}`;
+  }
+  return `${toDateTime(startDate)} ~ ${toDateTime(endDate)}`;
+}
+
+// '3월 9일 14:00 출석'
+export function formatAttendanceTime(isoString: string): string {
+  const date = new Date(isoString);
+  const month = date.getMonth() + 1;
+  const day = date.getDate();
+  const hours = String(date.getHours()).padStart(2, '0');
+  const minutes = String(date.getMinutes()).padStart(2, '0');
+  return `${month}월 ${day}일 ${hours}:${minutes} 출석`;
+}
+
+// '3월 9일 (월)' — 모바일 일정 헤더 포맷
+export function formatMobileDateHeader(dateStr: string): string {
+  const [y, m, d] = dateStr.split('-').map(Number);
+  const date = new Date(y, m - 1, d);
+  const weekday = DAY_META[date.getDay()].ko;
+  return `${m}월 ${d}일 (${weekday})`;
 }
 
 // 'YYYY-MM' → 'N월'

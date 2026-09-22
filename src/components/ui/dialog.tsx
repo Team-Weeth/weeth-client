@@ -3,7 +3,7 @@
 import * as React from 'react';
 import type { ReactNode } from 'react';
 import { Dialog as DialogPrimitive } from 'radix-ui';
-import { DeleteIcon } from '@/assets/icons';
+import DeleteIcon from '@/assets/icons/delete.svg';
 import { cn } from '@/lib/cn';
 import { Button } from '@/components/ui/Button';
 import { Divider } from '@/components/ui/Divider';

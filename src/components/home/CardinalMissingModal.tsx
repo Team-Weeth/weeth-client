@@ -10,7 +10,7 @@ import {
   AlertDialogAction,
   AlertDialogCancel,
   AlertDialogHeader,
-} from '@/components/ui';
+} from '@/components/ui/alert-dialog';
 
 interface CardinalMissingModalProps {
   open: boolean;

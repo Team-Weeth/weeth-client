@@ -1,11 +1,6 @@
 import { apiClient } from '@/lib/apis/client';
 import type { ApiResponse } from '@/types/common';
-import type {
-  CreateEventBody,
-  Schedule,
-  ScheduleDetail,
-  UpdateEventBody,
-} from '@/types/admin/schedule';
+import type { CreateEventBody, ScheduleDetail, UpdateEventBody } from '@/types/admin/schedule';
 import type {
   AdminSessionListData,
   CreateSessionBody,
@@ -14,9 +9,9 @@ import type {
 } from '@/types/admin/session';
 
 export const adminScheduleApi = {
-  getMonthly: (clubId: string, start: string, end: string) =>
-    apiClient.get<ApiResponse<Schedule[]>>(`/clubs/${clubId}/schedules/monthly`, {
-      params: { start, end },
+  getEventList: (clubId: string, start: string, end: string, cardinal?: number) =>
+    apiClient.get<ApiResponse<ScheduleDetail[]>>(`/admin/clubs/${clubId}/events`, {
+      params: { start, end, ...(cardinal !== undefined ? { cardinal } : {}) },
     }),
   getEventDetail: (clubId: string, eventId: number) =>
     apiClient.get<ApiResponse<ScheduleDetail>>(`/clubs/${clubId}/events/${eventId}`),

@@ -1,6 +1,6 @@
 import { unstable_rethrow } from 'next/navigation';
 
-import { ClubInfoPageContent } from '@/components/admin';
+import { ClubInfoPageContent } from '@/components/admin/club-info/ClubInfoPageContent';
 import { universityServerApi } from '@/lib/apis/university.server';
 import { deduplicateSchoolNames } from '@/utils/shared/school';
 

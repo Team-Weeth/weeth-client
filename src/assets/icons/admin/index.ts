@@ -18,6 +18,9 @@ export { default as AdminCalendarIcon } from './ic_admin_calendar.svg';
 export { default as AdminSquareLeftIcon } from './ic_admin_square_left.svg';
 export { default as AdminSquareRightIcon } from './ic_admin_square_right.svg';
 export { default as AdminCalendarEditIcon } from './ic_admin_calendar_edit.svg';
+export { default as AdminCardViewIcon } from './ic_admin_card_view.svg';
+export { default as AdminChartViewIcon } from './ic_admin_chart_view.svg';
+export { default as AdminFilterIcon } from './ic_admin_filter.svg';
 
 export { default as AdminTimeIcon } from './ic_admin_time.svg';
 export { default as AdminRadioSelectedIcon } from './ic_admin_radio_selected.svg';
@@ -41,3 +44,4 @@ export { default as AdminPaintIcon } from './ic_admin_paint.svg';
 export { default as AdminAlarmIcon } from './ic_admin_alarm.svg';
 export { default as AdminScreenIcon } from './ic_admin_screen.svg';
 export { default as AdminBackIcon } from './ic_admin_back.svg';
+export { default as AdminPenaltyIcon } from './ic_admin_penalty.svg';

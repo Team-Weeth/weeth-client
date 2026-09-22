@@ -1,6 +1,7 @@
 import { cn } from '@/lib/cn';
-import { Icon } from '@/components/ui';
-import { ArrowRightIcon, MoreHorizIcon } from '@/assets/icons';
+import { Icon } from '@/components/ui/Icon';
+import ArrowRightIcon from '@/assets/icons/arrow_right.svg';
+import MoreHorizIcon from '@/assets/icons/more-horiz.svg';
 import type { SessionStatus } from '@/types/admin/session';
 
 function AttendanceLink({ status, onClick }: { status: SessionStatus; onClick?: () => void }) {

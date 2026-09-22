@@ -10,7 +10,7 @@ import {
   BreadcrumbLink,
   BreadcrumbPage,
   BreadcrumbSeparator,
-} from '@/components/ui';
+} from '@/components/ui/breadcrumb';
 import { useAttendanceSSE, useAttendanceQR } from '@/hooks/attendance';
 import { useRemainingTime } from '@/hooks/useRemainingTime';
 import { useClubId } from '@/stores/useClubStore';

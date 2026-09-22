@@ -1,4 +1,4 @@
-import { InfoIcon } from '@/assets/icons';
+import InfoIcon from '@/assets/icons/info.svg';
 import Image from 'next/image';
 
 function Step1Info() {

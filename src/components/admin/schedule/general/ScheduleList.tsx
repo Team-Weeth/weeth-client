@@ -1,5 +1,5 @@
 import { cn } from '@/lib/cn';
-import { Button } from '@/components/ui';
+import { Button } from '@/components/ui/Button';
 import { ScheduleItem } from '@/components/admin/schedule/general/ScheduleItem';
 import type { Schedule } from '@/types/admin/schedule';
 
@@ -26,12 +26,10 @@ function ScheduleList({
       )}
       {...props}
     >
-      {/* Table header */}
       <div className="bg-container-neutral-alternative border-line border-b px-400 py-300">
-        <span className="typo-sub2 text-text-alternative">일정 내용</span>
+        <span className="typo-sub3 text-text-alternative">일정 내용</span>
       </div>
 
-      {/* Schedule items */}
       {schedules.length === 0 ? (
         <div className="border-line flex h-[150px] flex-col items-center justify-center gap-200 border-b p-400">
           <p className="typo-body2 text-text-alternative">일정이 없습니다</p>

@@ -1,4 +1,4 @@
-import { EditProfileContent } from '@/components/mypage';
+import { EditProfileContent } from '@/components/mypage/edit/EditProfileContent';
 import { universityServerApi } from '@/lib/apis/university.server';
 
 export const dynamic = 'force-dynamic';

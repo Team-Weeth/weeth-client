@@ -1,4 +1,4 @@
-import { Footer } from '@/components/layout';
+import Footer from '@/components/layout/Footer';
 import { NoticeBoardBox } from './NoticeBoardBox';
 import { CalendarBox } from './CalendarBox';
 

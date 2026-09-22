@@ -1,20 +1,15 @@
 'use client';
 
 import { useState } from 'react';
-import { CheckIcon, DeleteIcon } from '@/assets/icons';
+import CheckIcon from '@/assets/icons/check.svg';
+import DeleteIcon from '@/assets/icons/delete.svg';
 import { useUpdateClubProfileAssignmentsMutation } from '@/hooks/mutations/mypage/useMultiProfileMutations';
 import { toastError, toastSuccess } from '@/stores/useToastStore';
 import { getApiErrorMessage } from '@/utils/shared';
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-  Button,
-  Dialog,
-  DialogContent,
-  DialogTitle,
-  Icon,
-} from '@/components/ui';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Button } from '@/components/ui/Button';
+import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
+import { Icon } from '@/components/ui/Icon';
 import { cn } from '@/lib/cn';
 import type { MyPageAssignableClub, MyPageUsingProfile } from '@/types/mypage';
 

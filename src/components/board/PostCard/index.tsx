@@ -33,13 +33,15 @@ function PostCardHeader({ className, children, ...props }: React.ComponentProps<
 interface PostCardImagesProps {
   className?: string;
   files: DisplayFile[];
+  viewable?: boolean;
+  showThumbnails?: boolean;
 }
 
-function PostCardImages({ className, files }: PostCardImagesProps) {
+function PostCardImages({ className, files, viewable, showThumbnails }: PostCardImagesProps) {
   if (files.length === 0) return null;
   return (
     <div className={className}>
-      <ImageList files={files} />
+      <ImageList files={files} viewable={viewable} showThumbnails={showThumbnails} />
     </div>
   );
 }

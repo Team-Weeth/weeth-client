@@ -13,18 +13,17 @@ import { useCardinalSelector } from '@/hooks/useCardinalSelector';
 import { useSyncFormToStore } from '@/hooks/useSyncFormToStore';
 import { useCreateDuesDraft, useDiscardDuesDraft, useSaveDuesBasic } from '@/hooks/mutations/admin';
 
-import {
-  DuesSetupStepIndicator,
-  FormCard,
-  NextButton,
-  DuesAmountField,
-  SetupHeader,
-  DuesSetupStep1Skeleton,
-} from '@/components/admin/dues/setup/components';
+import { DuesAmountField } from '@/components/admin/dues/setup/components/DuesAmountField';
+import { DuesSetupStep1Skeleton } from '@/components/admin/dues/setup/components/DuesSetupStepSkeleton';
+import { DuesSetupStepIndicator } from '@/components/admin/dues/setup/components/DuesSetupStepIndicator';
+import { FormCard } from '@/components/admin/dues/setup/components/FormCard';
+import { NextButton } from '@/components/admin/dues/setup/components/NextButton';
+import { SetupHeader } from '@/components/admin/dues/setup/components/SetupHeader';
 import { useDuesStepNavigator } from '@/hooks/admin/useDuesStepNavigator';
 import { useRestoreDuesDraft } from '@/hooks/admin/useRestoreDuesDraft';
 import { ScheduleTextField } from '@/components/admin/schedule/general/ScheduleTextField';
-import { AlertDialog, Button } from '@/components/ui';
+import { AlertDialog } from '@/components/ui/alert-dialog';
+import { Button } from '@/components/ui/Button';
 
 const NAME_MAX = 30;
 const DESCRIPTION_MAX = 30;

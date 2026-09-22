@@ -2,10 +2,14 @@
 
 import { Fragment } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { Icon } from '@/components/ui';
-import { ArrowRightIcon, PhoneIcon, MailIcon } from '@/assets/icons';
+import { Icon } from '@/components/ui/Icon';
+import { MemberPositionTag } from '@/components/ui/MemberPositionTag';
+import ArrowRightIcon from '@/assets/icons/arrow_right.svg';
+import PhoneIcon from '@/assets/icons/phone.svg';
+import MailIcon from '@/assets/icons/mail.svg';
 import { useProfileSectionActions } from '@/hooks/mypage';
 import { cn } from '@/lib/cn';
+import type { MemberPositionOption } from '@/types/admin/memberPosition';
 import type { ProfileData } from '@/types/mypage';
 import { formatPhone } from '@/utils/shared';
 import { ProfileBackgroundImageEditor } from './edit/ProfileBackgroundImageEditor';
@@ -15,6 +19,9 @@ import { MyPageDropdownMenu } from './MyPageDropdownMenu';
 interface ProfileSectionProps extends React.HTMLAttributes<HTMLDivElement>, ProfileData {
   postCount?: number;
   sessionCount?: number;
+  penaltyCount?: number;
+  /** 동아리가 지정해 준 포지션. 미지정이면 태그를 그리지 않는다. */
+  position?: MemberPositionOption | null;
 }
 
 const ProfileSection = ({
@@ -29,6 +36,8 @@ const ProfileSection = ({
   department,
   postCount = 0,
   sessionCount = 0,
+  penaltyCount = 0,
+  position,
   className,
   ...props
 }: ProfileSectionProps) => {
@@ -55,6 +64,11 @@ const ProfileSection = ({
       label: '출석한 세션',
       count: sessionCount,
       href: `/${clubId}/mypage/sessions`,
+    },
+    {
+      label: '페널티',
+      count: penaltyCount,
+      href: `/${clubId}/mypage/penalties`,
     },
   ] as const;
 
@@ -103,7 +117,14 @@ const ProfileSection = ({
         <div className="mt-[10px] flex flex-col">
           <div className="flex items-center justify-between gap-400">
             <div className="flex w-full items-center justify-between">
-              <h1 className="typo-h3 text-text-strong">{name}</h1>
+              <div className="flex min-w-0 items-center gap-200">
+                <h1 className="typo-h3 text-text-strong truncate">{name}</h1>
+                {position && (
+                  <MemberPositionTag color={position.color} className="shrink-0">
+                    {position.name}
+                  </MemberPositionTag>
+                )}
+              </div>
               {schoolLabel && (
                 <span className="desktop:flex typo-caption2 text-text-alternative bg-container-neutral-alternative hidden shrink-0 rounded-md px-2 py-1">
                   {schoolLabel}
@@ -157,18 +178,18 @@ const ProfileSection = ({
                 className="flex flex-1 cursor-pointer flex-col items-center justify-center gap-2 py-200"
                 onClick={() => router.push(item.href)}
               >
-                <span className="tablet:typo-sub3 typo-button2 text-text-alternative flex items-center gap-2">
+                <span className="tablet:typo-button2 desktop:typo-sub3 typo-caption1 text-text-alternative tablet:gap-2 flex items-center gap-100">
                   {item.label}
-                  <div className="bg-icon-alternative flex size-[18px] items-center justify-center rounded-full">
+                  <div className="bg-icon-alternative tablet:size-[14px] desktop:size-[18px] flex size-3 shrink-0 items-center justify-center rounded-full">
                     <Icon
                       src={ArrowRightIcon}
                       alt=""
-                      size={8}
-                      className="text-icon-inverse pl-[1px]"
+                      size={7}
+                      className="text-icon-inverse tablet:size-[6px]! desktop:size-[7px]! size-[5px]! pl-[1px]"
                     />
                   </div>
                 </span>
-                <span className="tablet:typo-h3 typo-sub1 text-text-strong">{item.count}개</span>
+                <span className="desktop:typo-h3 typo-sub1 text-text-strong">{item.count}개</span>
               </button>
             </Fragment>
           ))}

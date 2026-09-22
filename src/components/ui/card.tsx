@@ -3,7 +3,7 @@
 import * as React from 'react';
 import { cva, type VariantProps } from 'class-variance-authority';
 
-import { ArrowRightIcon } from '@/assets/icons';
+import ArrowRightIcon from '@/assets/icons/arrow_right.svg';
 import { cn } from '@/lib/cn';
 import { Button } from '@/components/ui/Button';
 import { Icon } from '@/components/ui/Icon';

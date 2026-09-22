@@ -1,4 +1,4 @@
-import { Skeleton } from '@/components/ui';
+import { Skeleton } from '@/components/ui/skeleton';
 
 function SettingsRowSkeleton({ trailing = 'arrow' }: { trailing?: 'arrow' | 'button' }) {
   return (

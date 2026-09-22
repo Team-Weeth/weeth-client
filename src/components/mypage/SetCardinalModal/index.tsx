@@ -1,6 +1,6 @@
 'use client';
 
-import { Dialog, DialogContent } from '@/components/ui';
+import { Dialog, DialogContent } from '@/components/ui/dialog';
 import type { ClubDto } from '@/types/mypage';
 import { useCardinals } from '@/hooks/queries/useCardinalsQuery';
 import { useCardinalModal } from './useCardinalModal';

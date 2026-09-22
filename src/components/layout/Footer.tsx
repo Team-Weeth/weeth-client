@@ -3,7 +3,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
-import { FooterLogoIcon } from '@/assets/icons';
+import FooterLogoIcon from '@/assets/icons/logo/logo_full_Footer.svg';
 
 interface FooterProps {
   isSmall?: boolean;
@@ -40,7 +40,7 @@ export default function Footer({ isSmall = false }: FooterProps) {
           <div className="flex flex-col gap-200">
             <p className="typo-caption1 text-text-normal">Weeth 서비스</p>
             <a
-              href="https://landing.weeth.kr"
+              href="/landing"
               target="_blank"
               rel="noopener noreferrer"
               className="typo-body2 text-text-alternative"

@@ -1,5 +1,6 @@
 import { redirect } from 'next/navigation';
-import { ClubList, HubProfile } from '@/components/auth/hub';
+import { ClubList } from '@/components/auth/hub/ClubList';
+import { HubProfile } from '@/components/auth/hub/HubProfile';
 import { apiServer } from '@/lib/apis/server';
 import type { ApiResponse } from '@/types/common';
 import type { ClubDto } from '@/types/mypage';

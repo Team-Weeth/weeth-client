@@ -1,3 +1,6 @@
+import type { ClubPositionOption } from '@/types/admin/memberPosition';
+import type { PageResponse } from '@/types/common';
+
 export type MemberRole = 'USER' | 'ADMIN';
 export type MemberStatus = 'ACTIVE' | 'INACTIVE' | 'BANNED';
 
@@ -54,11 +57,15 @@ export interface MyPageSummaryUser {
   school: string | null;
   department: string | null;
   studentId: string | null;
+  telPublic: boolean;
+  emailPublic: boolean;
+  studentInfoPublic: boolean;
 }
 
 export interface MyPageSummaryStats {
   postCount: number;
   attendedSessionCount: number;
+  penaltyCount: number;
 }
 
 export interface MyPageUsingProfileClub {
@@ -99,6 +106,8 @@ export interface MyPageSummary {
   stats: MyPageSummaryStats;
   usingProfiles: MyPageUsingProfile[];
   currentProfile: MyPageCurrentProfile | null;
+  /** 동아리가 지정해 준 포지션. 미지정이면 null */
+  position: ClubPositionOption | null;
 }
 
 export interface MyClubMemberSummary {
@@ -140,4 +149,21 @@ export interface MyPageAttendedSessionItem {
   start: string;
   end: string;
   status: string;
+}
+
+export interface MyPagePenaltyItem {
+  penaltyId: number;
+
+  penaltyDescription: string;
+  penaltyType: string;
+  createdAt: string;
+}
+
+export interface MyPagePenaltiesResponse {
+  penaltyCount: number;
+  /** 동아리 경고 기능 비활성화 시 null */
+  warningCount: number | null;
+  /** 소속 기수 목록 */
+  cardinals: number[];
+  penalties: PageResponse<MyPagePenaltyItem>;
 }
