@@ -33,7 +33,7 @@ function RemoveButton({
       type="button"
       onClick={() => onRemove(id, fileUrl)}
       aria-label={`${fileName} 삭제`}
-      className="absolute top-1 right-1 flex h-5 w-5 items-center justify-center"
+      className="absolute top-0 right-0 flex h-5 w-5 cursor-pointer items-center justify-center"
     >
       <Icon src={CloseCircleIcon} size={20} className="text-icon-normal" />
     </button>
@@ -50,7 +50,13 @@ interface ImageCardProps {
 
 function ImageCard({ item, className, imgClassName, removable, onRemove }: ImageCardProps) {
   return (
-    <div className={cn('relative overflow-hidden rounded-sm', className)}>
+    <div
+      className={cn(
+        'relative overflow-hidden rounded-sm',
+        removable && 'cursor-pointer',
+        className,
+      )}
+    >
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         src={item.fileUrl}

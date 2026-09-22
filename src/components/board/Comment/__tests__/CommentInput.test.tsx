@@ -59,7 +59,7 @@ describe('CommentInput', () => {
       render(<CommentInput onSubmit={onSubmit} />);
       await user.type(screen.getByPlaceholderText('댓글을 입력하세요'), '  댓글 내용  ');
       await user.click(screen.getByRole('button', { name: '댓글 전송' }));
-      expect(onSubmit).toHaveBeenCalledWith('댓글 내용');
+      expect(onSubmit).toHaveBeenCalledWith('댓글 내용', []);
     });
 
     it('onSubmit 성공 후 입력창이 초기화된다', async () => {
@@ -123,7 +123,7 @@ describe('CommentInput', () => {
       const onSubmit = jest.fn().mockResolvedValue(true);
       render(<CommentInput onCancel={jest.fn()} onSubmit={onSubmit} defaultValue="기존 내용" />);
       await user.click(screen.getByRole('button', { name: '저장' }));
-      expect(onSubmit).toHaveBeenCalledWith('기존 내용');
+      expect(onSubmit).toHaveBeenCalledWith('기존 내용', []);
     });
   });
 
