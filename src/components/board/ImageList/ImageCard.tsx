@@ -31,7 +31,10 @@ function RemoveButton({
   return (
     <button
       type="button"
-      onClick={() => onRemove(id, fileUrl)}
+      onClick={(e) => {
+        e.stopPropagation();
+        onRemove(id, fileUrl);
+      }}
       aria-label={`${fileName} 삭제`}
       className="absolute top-0 right-0 flex h-5 w-5 cursor-pointer items-center justify-center"
     >
@@ -46,14 +49,23 @@ interface ImageCardProps {
   imgClassName?: string;
   removable?: boolean;
   onRemove?: (id: string | number, fileUrl: string) => void;
+  onClick?: () => void;
 }
 
-function ImageCard({ item, className, imgClassName, removable, onRemove }: ImageCardProps) {
+function ImageCard({
+  item,
+  className,
+  imgClassName,
+  removable,
+  onRemove,
+  onClick,
+}: ImageCardProps) {
   return (
     <div
+      onClick={onClick}
       className={cn(
         'relative overflow-hidden rounded-sm',
-        removable && 'cursor-pointer',
+        (removable || onClick) && 'cursor-pointer',
         className,
       )}
     >
