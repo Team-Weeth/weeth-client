@@ -60,11 +60,8 @@ function ImageCard({
   onRemove,
   onClick,
 }: ImageCardProps) {
-  return (
-    <div
-      onClick={onClick}
-      className={cn('relative overflow-hidden rounded-sm', onClick && 'cursor-pointer', className)}
-    >
+  const inner = (
+    <>
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         src={item.fileUrl}
@@ -84,8 +81,25 @@ function ImageCard({
           onRemove={onRemove}
         />
       )}
-    </div>
+    </>
   );
+
+  if (onClick) {
+    return (
+      <button
+        type="button"
+        onClick={onClick}
+        className={cn(
+          'relative cursor-pointer overflow-hidden rounded-sm border-0 bg-transparent p-0',
+          className,
+        )}
+      >
+        {inner}
+      </button>
+    );
+  }
+
+  return <div className={cn('relative overflow-hidden rounded-sm', className)}>{inner}</div>;
 }
 
 export { ImageCard, type ImageCardProps };
