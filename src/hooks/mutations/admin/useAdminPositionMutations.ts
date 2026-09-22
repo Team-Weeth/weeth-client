@@ -6,6 +6,7 @@ import {
 } from '@tanstack/react-query';
 
 import { adminQueryKeys } from '@/hooks/queries/admin/adminQueryKeys';
+import { mypageQueryKeys } from '@/hooks/queries/mypage/mypageQueryKeys';
 import { adminPositionApi } from '@/lib/apis/adminPosition';
 import { useClubId } from '@/stores';
 import { toastError, toastSuccess } from '@/stores/useToastStore';
@@ -27,6 +28,8 @@ export function useSavePositionOptions() {
     onSuccess: () => {
       // 멤버 표의 포지션 태그도 삭제/이름 변경을 반영해야 한다.
       queryClient.invalidateQueries({ queryKey: adminQueryKeys.members(clubId) });
+      // 내 포지션 옵션의 이름·색이 바뀌었을 수 있어 마이페이지 프로필도 다시 받아온다.
+      queryClient.invalidateQueries({ queryKey: mypageQueryKeys.summary(clubId) });
       // 편집기가 새 옵션의 서버 id를 받아야 다음 저장에서 중복 생성되지 않는다.
       // Promise를 돌려줘 재조회가 끝난 뒤에 저장이 완료되게 한다.
       return queryClient.invalidateQueries({ queryKey: adminQueryKeys.positions(clubId) });
@@ -61,6 +64,8 @@ export function useUpdateMemberPosition() {
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: adminQueryKeys.members(clubId) });
+      // 바꾼 대상이 본인일 수 있어 마이페이지 프로필의 포지션 태그도 다시 받아온다.
+      queryClient.invalidateQueries({ queryKey: mypageQueryKeys.summary(clubId) });
     },
   });
 }
@@ -93,6 +98,8 @@ export function useUpdateMemberPositions() {
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: adminQueryKeys.members(clubId) });
+      // 바꾼 대상이 본인일 수 있어 마이페이지 프로필의 포지션 태그도 다시 받아온다.
+      queryClient.invalidateQueries({ queryKey: mypageQueryKeys.summary(clubId) });
     },
   });
 }

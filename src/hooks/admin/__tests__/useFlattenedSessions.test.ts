@@ -74,3 +74,16 @@ it('태그가 사라진 세션도 이번 주 묶음 순서는 유지한다', () 
     LAST_WEEK.id,
   ]);
 });
+
+it('이번 주 세션은 thisWeek 순서를 따른다', () => {
+  // 두 배열의 순서가 다르면 서버가 정해 준 thisWeek 순서를 따라야 한다.
+  mockSessions([TOMORROW, YESTERDAY], [LAST_WEEK, YESTERDAY, TOMORROW]);
+
+  const { result } = renderHook(() => useFlattenedSessions(1));
+
+  expect(result.current.sessions.map((session) => session.id)).toEqual([
+    TOMORROW.id,
+    YESTERDAY.id,
+    LAST_WEEK.id,
+  ]);
+});

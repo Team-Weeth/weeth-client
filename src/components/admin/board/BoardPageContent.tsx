@@ -119,6 +119,8 @@ function BoardPageContent() {
       if (getApiErrorCode(err) === ADMIN_BOARD_ERROR.BOARD_LIMIT_EXCEEDED) {
         setCreateModalOpen(false);
         toastWarning('게시판 개수가 한도에 도달했어요.');
+        // 한도에 걸렸다는 건 캐시가 서버와 어긋났다는 뜻이라, 개수와 생성 가능 여부를 다시 받아온다.
+        queryClient.invalidateQueries({ queryKey: cacheKey });
         return;
       }
       handleNameMutationError(setCreateNameError)(err);

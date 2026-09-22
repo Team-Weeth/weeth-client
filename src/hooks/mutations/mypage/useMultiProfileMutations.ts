@@ -2,6 +2,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { revalidateHomeDashboard } from '@/lib/actions/home';
 import { uploadFile } from '@/lib/apis/upload';
 import { mypageApi } from '@/lib/apis/mypage';
+import { mypageQueryKeys } from '@/hooks/queries/mypage/mypageQueryKeys';
 import type { MyPageSummary, MyPageUsingProfile, MyPageUsingProfileClub } from '@/types/mypage';
 import { useClubStore } from '@/stores/useClubStore';
 import { useUserStore } from '@/stores/useUserStore';
@@ -41,7 +42,7 @@ const HOME_QUERY_KEY = ['home'] as const;
 const MY_PROFILES_QUERY_KEY = ['mypage', 'profiles'] as const;
 
 function getMyPageSummaryQueryKey(clubId: string) {
-  return ['mypage', 'summary', clubId] as const;
+  return mypageQueryKeys.summary(clubId);
 }
 
 function getMyProfileDetailQueryKey(profileId: number) {
