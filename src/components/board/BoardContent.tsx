@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import { useBoardPosts } from '@/hooks/board/useBoardQuery';
 import { useIntersectionObserver } from '@/hooks/board/useIntersectionObserver';
+import { useScrollRestoration } from '@/hooks/useScrollRestoration';
 import { useUserId } from '@/stores/useUserStore';
 import { formatShortDateTime } from '@/lib/formatTime';
 import { parseApiError } from '@/lib/error';
@@ -53,6 +54,8 @@ function BoardContent({
     onlyCurrentUser && currentUserId != null
       ? posts?.filter((post) => post.author.id === currentUserId)
       : posts;
+
+  useScrollRestoration(boardId !== null ? `board:${boardId}` : null, !isPending && !isError);
 
   useEffect(() => {
     if (!isError || !error) return;
