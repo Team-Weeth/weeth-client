@@ -96,7 +96,7 @@ const ProfileSection = ({
       />
 
       <div className="px-[18px] pb-[22px]">
-        <div className="-mt-16 relative z-[11] flex items-end justify-between">
+        <div className="relative z-[11] -mt-16 flex items-end justify-between">
           <ProfileImageEditor
             name={name}
             profileImageUrl={profileImageUrl}
@@ -130,8 +130,10 @@ const ProfileSection = ({
                 )}
               </div>
               {schoolLabel && (
-                <span className="desktop:flex typo-caption2 text-text-alternative bg-container-neutral-alternative hidden shrink-0 rounded-md px-2 py-1">
-                  {schoolLabel}
+                <span className="desktop:flex typo-caption2 text-text-alternative bg-container-neutral-alternative hidden shrink-0 items-start gap-[6px] rounded-xs px-2 py-1">
+                  {school && <span>{school}</span>}
+                  {school && department && <span>·</span>}
+                  {department && <span>{department}</span>}
                 </span>
               )}
               <div className="tablet:hidden flex">
@@ -167,8 +169,10 @@ const ProfileSection = ({
             </div>
           )}
           {schoolLabel && (
-            <span className="desktop:hidden typo-caption2 text-text-alternative bg-container-neutral-alternative mt-3 flex w-fit shrink-0 items-center justify-center rounded-md px-2 py-1">
-              {schoolLabel}
+            <span className="desktop:hidden typo-caption2 text-text-alternative bg-container-neutral-alternative mt-3 flex w-fit shrink-0 items-start gap-[6px] rounded-xs px-2 py-1">
+              {school && <span>{school}</span>}
+              {school && department && <span>·</span>}
+              {department && <span>{department}</span>}
             </span>
           )}
         </div>
