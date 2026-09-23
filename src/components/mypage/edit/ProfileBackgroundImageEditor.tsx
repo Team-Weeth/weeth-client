@@ -2,11 +2,11 @@
 
 import Image from 'next/image';
 import CameraIcon from '@/assets/icons/camera.svg';
-import { Divider } from '@/components/ui/Divider';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/DropdownMenu';
 import { Icon } from '@/components/ui/Icon';
@@ -97,18 +97,13 @@ function ProfileBackgroundImageEditor({
             </button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="start" side="bottom">
-            <DropdownMenuItem
-              className="text-text-alternative"
-              onSelect={() => fileInputRef.current?.click()}
-            >
+            <DropdownMenuItem onSelect={() => fileInputRef.current?.click()}>
               이미지 업로드
             </DropdownMenuItem>
             {showResetAction && (
               <>
-                <Divider className="w-[136px]" />
-                <DropdownMenuItem className="text-text-alternative" onSelect={handleReset}>
-                  기본 이미지
-                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onSelect={handleReset}>기본 이미지</DropdownMenuItem>
               </>
             )}
           </DropdownMenuContent>
