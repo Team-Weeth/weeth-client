@@ -6,8 +6,8 @@ import { useParams } from 'next/navigation';
 import { formatAmount } from '@/lib/formatAmount';
 import { useDuesSetupValues, useDuesSetupActions } from '@/stores/useDuesSetupStore';
 import { toastError } from '@/stores/useToastStore';
-import { useDuesCarryOverSourceQuery } from '@/hooks/queries/admin';
-import { useSaveDuesCarryOver } from '@/hooks/mutations/admin';
+import { useDuesCarryOverSourceQuery } from '@/hooks/queries/admin/useDuesSetupQueries';
+import { useSaveDuesCarryOver } from '@/hooks/mutations/admin/useDuesSetupMutations';
 
 import { CarryOverCard } from '@/components/admin/dues/setup/components/CarryOverCard';
 import { DuesAmountField } from '@/components/admin/dues/setup/components/DuesAmountField';
@@ -19,7 +19,7 @@ import { PrevButton } from '@/components/admin/dues/setup/components/PrevButton'
 import { SetupHeader } from '@/components/admin/dues/setup/components/SetupHeader';
 import { useDuesSetupNavigation } from '@/hooks/admin/useDuesSetupNavigation';
 import { useDuesStepNavigator } from '@/hooks/admin/useDuesStepNavigator';
-import { useEnsureDuesAccountId } from '@/hooks/admin';
+import { useEnsureDuesAccountId } from '@/hooks/admin/useEnsureDuesAccountId';
 import { ScheduleTextField } from '@/components/admin/schedule/general/ScheduleTextField';
 
 const DESCRIPTION_MAX = 30;

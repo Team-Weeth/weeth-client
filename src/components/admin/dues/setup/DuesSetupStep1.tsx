@@ -11,7 +11,11 @@ import { useDuesSetupActions, useDuesSetupValues } from '@/stores/useDuesSetupSt
 import { toastError } from '@/stores/useToastStore';
 import { useCardinalSelector } from '@/hooks/useCardinalSelector';
 import { useSyncFormToStore } from '@/hooks/useSyncFormToStore';
-import { useCreateDuesDraft, useDiscardDuesDraft, useSaveDuesBasic } from '@/hooks/mutations/admin';
+import {
+  useCreateDuesDraft,
+  useDiscardDuesDraft,
+  useSaveDuesBasic,
+} from '@/hooks/mutations/admin/useDuesSetupMutations';
 
 import { DuesAmountField } from '@/components/admin/dues/setup/components/DuesAmountField';
 import { DuesSetupStep1Skeleton } from '@/components/admin/dues/setup/components/DuesSetupStepSkeleton';

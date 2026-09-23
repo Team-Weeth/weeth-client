@@ -13,7 +13,8 @@ import { copyDuesAccountToClipboard } from '@/utils/dues/duesAccount';
 import { getApiErrorMessage } from '@/utils/shared';
 import { DUES_INSUFFICIENT_BALANCE_MESSAGE } from '@/constants/admin/dues.constants';
 import { useCardinalSelector } from '@/hooks/useCardinalSelector';
-import { useDuesDashboardQuery, useDuesPaymentTargetsQuery } from '@/hooks/queries/admin';
+import { useDuesDashboardQuery } from '@/hooks/queries/admin/useDuesDashboardQuery';
+import { useDuesPaymentTargetsQuery } from '@/hooks/queries/admin/useDuesSetupQueries';
 import {
   useExcludePaymentTargets,
   useMarkPaymentTargetsPaid,
