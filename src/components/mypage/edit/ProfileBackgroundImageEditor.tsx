@@ -96,7 +96,7 @@ function ProfileBackgroundImageEditor({
               />
             </button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="start" side="bottom">
+          <DropdownMenuContent align="end" side="bottom">
             <DropdownMenuItem onSelect={() => fileInputRef.current?.click()}>
               이미지 업로드
             </DropdownMenuItem>
