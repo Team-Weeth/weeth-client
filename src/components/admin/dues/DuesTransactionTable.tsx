@@ -99,7 +99,7 @@ function DuesTransactionTable({
           <Table>
             <TableHeader className="bg-container-neutral-alternative">
               <TableRow className="border-line border-b hover:bg-transparent">
-                <TableHead className="typo-sub3 text-text-alternative w-[88px]">상태</TableHead>
+                <TableHead className="typo-sub3 text-text-alternative w-22">상태</TableHead>
                 <TableHead className="typo-sub3 text-text-alternative min-w-32">
                   수입/지출 내용
                 </TableHead>
