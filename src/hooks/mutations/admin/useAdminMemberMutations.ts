@@ -16,7 +16,7 @@ import { adminQueryKeys } from '@/hooks/queries/admin/adminQueryKeys';
 
 type MemberPageCache = PageResponse<Member>;
 type MemberInfinitePageCache = InfiniteData<MemberPageCache>;
-// 검색 결과(useAdminMemberSearch)는 같은 members prefix에 Member[] 형태로 캐시된다.
+// 검색 결과는 같은 members prefix에 Member[] 형태로 캐시
 type MemberListCache = MemberPageCache | Member[];
 
 function getMemberPageQueryFilters(queryKey: readonly unknown[]) {
@@ -212,7 +212,7 @@ function updateMemberPage(
 ): MemberListCache | undefined {
   if (!page) return page;
 
-  // 검색 결과 캐시는 PageResponse가 아니라 Member[]이므로 content가 없다.
+  // 검색 결과 캐시는 PageResponse가 아니라 Member[]이므로 content가 없음
   if (Array.isArray(page)) return page.map(updateMember);
 
   return {

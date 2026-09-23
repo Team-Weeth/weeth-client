@@ -43,9 +43,10 @@ function createClientWithSearchCache() {
     defaultOptions: { queries: { retry: false }, mutations: { retry: false } },
   });
   // 검색 결과는 PageResponse가 아니라 Member[] 형태로 캐시된다.
-  queryClient.setQueryData([...adminQueryKeys.members('club-1'), 'search', '이', undefined], [
-    mockMember(),
-  ]);
+  queryClient.setQueryData(
+    [...adminQueryKeys.members('club-1'), 'search', '이', undefined],
+    [mockMember()],
+  );
   return queryClient;
 }
 
