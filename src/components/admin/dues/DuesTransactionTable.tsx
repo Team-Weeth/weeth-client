@@ -99,14 +99,14 @@ function DuesTransactionTable({
           <Table>
             <TableHeader className="bg-container-neutral-alternative">
               <TableRow className="border-line border-b hover:bg-transparent">
-                <TableHead className="typo-body2 text-text-alternative w-[88px]">상태</TableHead>
-                <TableHead className="typo-body2 text-text-alternative min-w-32">
+                <TableHead className="typo-sub3 text-text-alternative w-[88px]">상태</TableHead>
+                <TableHead className="typo-sub3 text-text-alternative min-w-32">
                   수입/지출 내용
                 </TableHead>
-                <TableHead className="typo-body2 text-text-alternative min-w-32">거래처</TableHead>
-                <TableHead className="typo-body2 text-text-alternative w-32">금액(원)</TableHead>
-                <TableHead className="typo-body2 text-text-alternative w-32">총 잔액</TableHead>
-                <TableHead className="typo-body2 text-text-alternative tablet:table-cell hidden w-32">
+                <TableHead className="typo-sub3 text-text-alternative min-w-32">거래처</TableHead>
+                <TableHead className="typo-sub3 text-text-alternative w-32">금액(원)</TableHead>
+                <TableHead className="typo-sub3 text-text-alternative w-32">총 잔액</TableHead>
+                <TableHead className="typo-sub3 text-text-alternative tablet:table-cell hidden w-32">
                   일자
                 </TableHead>
                 <TableHead className="tablet:table-cell hidden w-14" />
@@ -117,7 +117,7 @@ function DuesTransactionTable({
               {transactions.length === 0 ? (
                 <TableRow className="hover:bg-transparent">
                   <TableCell colSpan={8} className="py-700 text-center">
-                    <span className="typo-body2 text-text-alternative">거래 내역이 없습니다.</span>
+                    <span className="typo-body1 text-text-alternative">거래 내역이 없습니다.</span>
                   </TableCell>
                 </TableRow>
               ) : (
@@ -127,14 +127,18 @@ function DuesTransactionTable({
                     onClick={() => onMoreClick?.(tx)}
                     className="border-line hover:bg-container-neutral-interaction cursor-pointer border-t"
                   >
-                    <TableCell>
+                    <TableCell className="py-300">
                       <TransactionTypeTag type={tx.type} />
                     </TableCell>
-                    <TableCell className="typo-body2 text-text-strong">{tx.content}</TableCell>
-                    <TableCell className="typo-body2 text-text-strong">{tx.counterparty}</TableCell>
+                    <TableCell className="typo-body1 text-text-strong py-300">
+                      {tx.content}
+                    </TableCell>
+                    <TableCell className="typo-body1 text-text-strong py-300">
+                      {tx.counterparty}
+                    </TableCell>
                     <TableCell
                       className={cn(
-                        'typo-body2',
+                        'typo-body1 py-300',
                         tx.direction === 'INCOME' ? 'text-state-success' : 'text-state-error',
                       )}
                     >
@@ -143,10 +147,10 @@ function DuesTransactionTable({
                         <span>{formatAmount(tx.amount)}</span>
                       </span>
                     </TableCell>
-                    <TableCell className="typo-body2 text-text-strong">
+                    <TableCell className="typo-body1 text-text-strong py-300">
                       {formatAmount(tx.balanceAfter)}
                     </TableCell>
-                    <TableCell className="typo-body2 text-text-strong tablet:table-cell hidden">
+                    <TableCell className="typo-body1 text-text-strong tablet:table-cell hidden py-300">
                       {tx.date}
                     </TableCell>
                     {/* TODO: 영수증 정상화시 복구 */}
@@ -164,7 +168,7 @@ function DuesTransactionTable({
                         <Icon src={AdminReceiptIcon} alt="영수증" size={24} />
                       </button>
                     </TableCell> */}
-                    <TableCell className="tablet:table-cell hidden">
+                    <TableCell className="tablet:table-cell hidden py-300">
                       <button
                         type="button"
                         onClick={() => onMoreClick?.(tx)}
