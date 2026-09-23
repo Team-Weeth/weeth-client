@@ -5,7 +5,7 @@ import { Card } from '@/components/ui/card';
 import { Icon } from '@/components/ui/Icon';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/Tooltip';
 import { cn } from '@/lib/cn';
-import { toastSuccess } from '@/stores/useToastStore';
+import { copyTextToClipboard } from '@/utils/shared/clipboard';
 
 interface PaymentStatusCardProps {
   paidCount: number;
@@ -53,8 +53,7 @@ function AccountInfoCard({
   const displayText = isOverflow ? `${fullText.slice(0, 20)}...` : fullText;
 
   const handleCopy = async () => {
-    await navigator.clipboard.writeText(fullText);
-    toastSuccess('계좌번호가 복사되었습니다.');
+    await copyTextToClipboard(fullText, { successMessage: '계좌번호가 복사되었습니다.' });
     onCopy?.();
   };
 

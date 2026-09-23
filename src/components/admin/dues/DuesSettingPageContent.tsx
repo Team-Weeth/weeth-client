@@ -9,12 +9,12 @@ import { useQuery } from '@tanstack/react-query';
 
 import { Switch } from '@/components/ui/Switch';
 import { useCardinalSelector } from '@/hooks/useCardinalSelector';
-import { useDuesVisibilityToggle } from '@/hooks/admin';
+import { useDuesVisibilityToggle } from '@/hooks/admin/useDuesVisibilityToggle';
+import { useDuesDashboardQuery } from '@/hooks/queries/admin/useDuesDashboardQuery';
 import {
   duesRegistrationStatusQueryOptions,
-  useDuesDashboardQuery,
   useDuesPaymentTargetsQuery,
-} from '@/hooks/queries/admin';
+} from '@/hooks/queries/admin/useDuesSetupQueries';
 
 import { BackButton } from './BackButton';
 import { DuesSettingPageSkeleton } from './DuesSettingPageSkeleton';

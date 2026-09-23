@@ -4,70 +4,26 @@ import { useState } from 'react';
 
 import { useParams, useRouter } from 'next/navigation';
 
-import type {
-  MonthlyData,
-  DuesTransaction,
-  TransactionFilter,
-  TransactionItem,
-} from '@/types/admin/dues';
+import type { MonthlyData } from '@/types/admin/dues';
 import { useCardinalSelector } from '@/hooks/useCardinalSelector';
-import { useDuesVisibilityToggle } from '@/hooks/admin';
-import { isDuesNotRegisteredError, useDuesDashboardQuery } from '@/hooks/queries/admin';
+import { useDuesVisibilityToggle } from '@/hooks/admin/useDuesVisibilityToggle';
+import {
+  isDuesNotRegisteredError,
+  useDuesDashboardQuery,
+} from '@/hooks/queries/admin/useDuesDashboardQuery';
+import { useDuesTransactionList } from '@/hooks/admin/useDuesTransactionList';
+import { useDuesTransactionModals } from '@/hooks/admin/useDuesTransactionModals';
 import { useDuesSetupActions } from '@/stores/useDuesSetupStore';
 import { DuesPageSkeleton } from './DuesPageSkeleton';
 import { DuesTopBar } from './DuesTopBar';
 import { DuesBalanceCard } from './DuesBalanceCard';
 import { DuesChart } from './DuesChart';
-
 import { DuesGenerationFilter } from './DuesGenerationFilter';
-import { AddTransactionModal } from './modal/AddTransactionModal';
-import { EditTransactionModal } from './modal/EditTransactionModal';
+import { TransactionFormModal } from './modal/TransactionFormModal';
 import { TransactionDetailModal } from './modal/TransactionDetailModal';
-import type { TransactionDetail } from './modal/TransactionDetailModal';
-import type { TransactionFormData } from './modal/TransactionForm';
 import { DuesTransactionTable } from './DuesTransactionTable';
 import { DuesOnboardingOverlay } from './DuesOnboardingOverlay';
-import {
-  useAdminDuesTransactionsQuery,
-  useAdminDuesTransactionQuery,
-} from '@/hooks/queries/admin/useAdminDuesQueries';
-import {
-  useCreateTransaction,
-  useDeleteTransaction,
-  useUpdateTransaction,
-} from '@/hooks/mutations/admin/useAdminDuesMutations';
-import { toastError, toastSuccess } from '@/stores/useToastStore';
-import { toDateInputValue, toMonthLabel, toPeriodLabel } from '@/utils/shared/date';
-
-// 목록 데이터(DuesTransaction) → 상세 모달용. 상세 응답 도착 전 폴백으로 사용한다.
-function toTransactionDetail(tx: DuesTransaction): TransactionDetail {
-  return {
-    type: tx.type,
-    direction: tx.direction,
-    amount: String(tx.amount),
-    description: tx.content,
-    vendor: tx.counterparty,
-    date: tx.date,
-    receiptUrl: tx.receiptUrl,
-  };
-}
-
-// 상세 응답(TransactionItem) → 상세 모달용. 목록에 없는 메모·영수증 정보까지 반영한다.
-function detailToTransactionDetail(detail: TransactionItem): TransactionDetail {
-  return {
-    type: detail.type,
-    direction: detail.direction,
-    amount: String(detail.amount),
-    description: detail.title,
-    vendor: detail.source,
-    date: detail.transactedAt.slice(0, 10),
-    memo: detail.memo || undefined,
-    category: detail.category || undefined,
-    registrant: detail.registeredByName || undefined,
-    receiptUrl: detail.receipts[0]?.fileUrl,
-    receipts: detail.receipts,
-  };
-}
+import { toMonthLabel, toPeriodLabel } from '@/utils/shared/date';
 
 function DuesPageContent() {
   const [activeMonth, setActiveMonth] = useState('');
@@ -86,55 +42,27 @@ function DuesPageContent() {
     isPending: isDashboardPending,
   } = useDuesDashboardQuery(clubId, activeCardinal?.cardinalNumber ?? null);
   const isNotRegistered = isDuesNotRegisteredError(dashboardError);
+  const accountId = dashboard?.accountId ?? null;
 
-  // 거래내역 필터/정렬/페이지 — 서버 파라미터로 전달
-  const [txFilter, setTxFilter] = useState<TransactionFilter>('ALL');
-  const [txSortDesc, setTxSortDesc] = useState(true);
-  const [txPage, setTxPage] = useState(1);
+  const {
+    transactionsData,
+    filter: txFilter,
+    sortDesc: txSortDesc,
+    page: txPage,
+    setPage: setTxPage,
+    handleTabChange: handleTxTabChange,
+    handleSortToggle: handleTxSortToggle,
+  } = useDuesTransactionList(clubId, accountId);
 
-  const { data: transactionsData } = useAdminDuesTransactionsQuery(
+  const modals = useDuesTransactionModals({
     clubId,
-    dashboard?.accountId ?? 0,
-    {
-      filter: txFilter,
-      sort: txSortDesc ? 'LATEST' : 'OLDEST',
-      page: txPage - 1,
-      size: 10,
-    },
-  );
-
-  const handleTxTabChange = (tab: TransactionFilter) => {
-    setTxFilter(tab);
-    setTxPage(1);
-  };
-
-  const handleTxSortToggle = () => {
-    setTxSortDesc((prev) => !prev);
-    setTxPage(1);
-  };
-
-  // 잔액 부족 등 실패 메시지는 모달이 닫히기 전에 폼 내부에 인라인으로 노출하므로
-  // create/update는 mutateAsync로 에러를 폼까지 전파한다(제네릭 에러 토스트는 생략).
-  const { mutateAsync: createTransaction } = useCreateTransaction(
-    clubId,
-    dashboard?.accountId ?? null,
-    { onSuccess: () => toastSuccess('거래내역이 추가되었습니다.') },
-  );
-
-  const { mutateAsync: updateTransaction } = useUpdateTransaction(
-    clubId,
-    dashboard?.accountId ?? null,
-    { onSuccess: () => toastSuccess('거래내역이 수정되었습니다.') },
-  );
-
-  const { mutate: deleteTransaction } = useDeleteTransaction(clubId, dashboard?.accountId ?? null, {
-    onSuccess: () => toastSuccess('거래내역이 삭제되었습니다.'),
-    onError: () => toastError('거래내역 삭제에 실패했습니다.'),
+    accountId,
+    startYearMonth: dashboard?.period.startYearMonth,
   });
 
   const { isPublic, handlePublicChange } = useDuesVisibilityToggle(
     clubId,
-    dashboard?.accountId ?? null,
+    accountId,
     dashboard?.memberVisible,
   );
 
@@ -159,75 +87,8 @@ function DuesPageContent() {
     router.push(`/${clubId}/admin/dues/setup/1`);
   };
 
-  const [addOpen, setAddOpen] = useState(false);
-  const [detailOpen, setDetailOpen] = useState(false);
-  const [editOpen, setEditOpen] = useState(false);
-  const [selectedTransaction, setSelectedTransaction] = useState<DuesTransaction | null>(null);
-  const [editingValues, setEditingValues] = useState<Partial<TransactionFormData>>();
-
-  // 상세 모달이 열려 있을 때만 선택된 거래의 단건 상세(메모·영수증 포함)를 조회한다.
-  const { data: transactionDetail } = useAdminDuesTransactionQuery(
-    clubId,
-    dashboard?.accountId ?? 0,
-    selectedTransaction?.id ?? null,
-    detailOpen,
-  );
-
-  const handleMoreClick = (tx: DuesTransaction) => {
-    setSelectedTransaction(tx);
-    setDetailOpen(true);
-  };
-
-  const handleAddTransaction = () => {
-    setAddOpen(true);
-  };
-
-  // 거래내역 일자 선택 범위: 총 회비 등록 시작 월(startYearMonth) 1일 ~ 오늘
-  const startYearMonth = dashboard?.period.startYearMonth;
-  const transactionMinDate = startYearMonth ? `${startYearMonth}-01` : undefined;
-  const transactionMaxDate = toDateInputValue();
-
-  const handleAddSubmit = async (data: TransactionFormData) => {
-    await createTransaction({
-      type: data.type,
-      amount: Number(data.amount),
-      title: data.description,
-      source: data.vendor,
-      transactedAt: data.date,
-      memo: '',
-      receiptFile: data.receiptFile,
-    });
-  };
-
   const handleSetting = () => {
     router.push(`/${clubId}/admin/dues/setting`);
-  };
-
-  const handleEditOpen = () => {
-    if (!selectedTransaction) return;
-    setDetailOpen(false);
-    setEditingValues({
-      type: selectedTransaction.direction === 'EXPENSE' ? 'EXPENSE' : 'INCOME',
-      amount: String(selectedTransaction.amount),
-      description: selectedTransaction.content,
-      vendor: selectedTransaction.counterparty,
-      date: selectedTransaction.date,
-    });
-    setEditOpen(true);
-  };
-
-  const handleEditSubmit = async (data: TransactionFormData) => {
-    if (!selectedTransaction) return;
-    await updateTransaction({
-      transactionId: selectedTransaction.id,
-      type: data.type,
-      amount: Number(data.amount),
-      title: data.description,
-      source: data.vendor,
-      transactedAt: data.date,
-      memo: '',
-      receiptFile: data.receiptFile,
-    });
   };
 
   // 기수가 선택된 상태에서 대시보드 로딩 중일 때만 스켈레톤을 노출한다.
@@ -264,7 +125,7 @@ function DuesPageContent() {
             holderName={dashboard?.bankAccount?.holder ?? ''}
             isAccountPublic={dashboard?.bankAccountPublic ?? false}
             onViewPaymentDetail={() => router.push(`/${clubId}/admin/dues/payment-status`)}
-            onAddTransaction={handleAddTransaction}
+            onAddTransaction={modals.openAddModal}
           />
           <DuesChart
             data={monthlyData}
@@ -286,36 +147,34 @@ function DuesPageContent() {
           page={txPage}
           totalPages={transactionsData?.totalPages ?? 1}
           onPageChange={setTxPage}
-          onMoreClick={handleMoreClick}
+          onMoreClick={modals.openDetailModal}
         />
         {isNotRegistered && <DuesOnboardingOverlay onStart={startDuesSetup} />}
       </div>
 
-      <AddTransactionModal
-        open={addOpen}
-        onOpenChange={setAddOpen}
-        minDate={transactionMinDate}
-        maxDate={transactionMaxDate}
-        onSubmit={handleAddSubmit}
+      <TransactionFormModal
+        open={modals.addOpen}
+        onOpenChange={modals.setAddOpen}
+        title="거래내역 추가"
+        minDate={modals.transactionMinDate}
+        maxDate={modals.transactionMaxDate}
+        onSubmit={modals.submitAdd}
       />
-      {selectedTransaction && (
+      {modals.selectedDetail && (
         <TransactionDetailModal
-          open={detailOpen}
-          onOpenChange={setDetailOpen}
-          transaction={
-            transactionDetail && transactionDetail.transactionId === selectedTransaction.id
-              ? detailToTransactionDetail(transactionDetail)
-              : toTransactionDetail(selectedTransaction)
-          }
-          onEdit={handleEditOpen}
-          onDelete={() => deleteTransaction(selectedTransaction.id)}
+          open={modals.detailOpen}
+          onOpenChange={modals.setDetailOpen}
+          transaction={modals.selectedDetail}
+          onEdit={modals.openEditModal}
+          onDelete={modals.deleteSelected}
         />
       )}
-      <EditTransactionModal
-        open={editOpen}
-        onOpenChange={setEditOpen}
-        initialValues={editingValues}
-        onSubmit={handleEditSubmit}
+      <TransactionFormModal
+        open={modals.editOpen}
+        onOpenChange={modals.setEditOpen}
+        title="거래내역 수정"
+        initialValues={modals.editingValues}
+        onSubmit={modals.submitEdit}
       />
     </div>
   );
