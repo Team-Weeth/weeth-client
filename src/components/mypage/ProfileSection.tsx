@@ -48,6 +48,8 @@ const ProfileSection = ({
     handleHeaderImageChange,
     handleProfileImageReset,
     handleHeaderImageReset,
+    isProfileImageUpdating,
+    isHeaderImageUpdating,
   } = useProfileSectionActions({
     profileId,
     name,
@@ -85,6 +87,7 @@ const ProfileSection = ({
         onResetImage={() => {
           void handleHeaderImageReset();
         }}
+        isLoading={isHeaderImageUpdating}
         priority
         className="h-[190px] rounded-none"
         imageClassName="rounded-none"
@@ -103,6 +106,7 @@ const ProfileSection = ({
             onResetImage={() => {
               void handleProfileImageReset();
             }}
+            isLoading={isProfileImageUpdating}
             avatarSize={100}
             avatarClassName="border-line tablet:size-32 border-2"
             triggerClassName="right-0 bottom-0 size-8 border-line"
