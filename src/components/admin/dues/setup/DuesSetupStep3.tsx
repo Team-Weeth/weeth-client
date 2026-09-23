@@ -3,6 +3,7 @@
 import { useEffect } from 'react';
 import { useParams } from 'next/navigation';
 
+import { formatAmount } from '@/lib/formatAmount';
 import { useDuesSetupValues, useDuesSetupActions } from '@/stores/useDuesSetupStore';
 import { toastError } from '@/stores/useToastStore';
 import { useDuesCarryOverSourceQuery } from '@/hooks/queries/admin';
@@ -97,7 +98,7 @@ function DuesSetupStep3() {
           <div className="bg-container-primary-alternative rounded-lg px-400 py-300">
             {hasPreviousBalance ? (
               <>
-                <p className="typo-sub1 text-text-strong">{previousBalance.toLocaleString()} 원</p>
+                <p className="typo-sub1 text-text-strong">{formatAmount(previousBalance)} 원</p>
                 <p className="typo-body2 text-text-alternative">
                   이전 기수 {previousGeneration}기 잔액
                 </p>
