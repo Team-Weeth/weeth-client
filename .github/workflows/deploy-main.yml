@@ -30,7 +30,7 @@ jobs:
           echo "Started job $JOB_ID on $BRANCH"
           echo "job_id=$JOB_ID" >> "$GITHUB_OUTPUT"
         env:
-          APP_ID: ${{ secrets.AMPLIFY_APP_ID }}
+          APP_ID: ${{ secrets.AMPLIFY_MAIN_APP_ID }}
           BRANCH: main
 
       - name: Wait for deployment to finish
@@ -63,6 +63,6 @@ jobs:
           echo "❌ 타임아웃: 배포가 제한 시간 내에 끝나지 않았습니다"
           exit 1
         env:
-          APP_ID: ${{ secrets.AMPLIFY_APP_ID }}
+          APP_ID: ${{ secrets.AMPLIFY_MAIN_APP_ID }}
           BRANCH: main
           JOB_ID: ${{ steps.start.outputs.job_id }}
