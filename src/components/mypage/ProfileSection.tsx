@@ -96,7 +96,7 @@ const ProfileSection = ({
       />
 
       <div className="px-[18px] pb-[22px]">
-        <div className="-mt-16 flex items-end justify-between">
+        <div className="-mt-16 relative z-[11] flex items-end justify-between">
           <ProfileImageEditor
             name={name}
             profileImageUrl={profileImageUrl}
