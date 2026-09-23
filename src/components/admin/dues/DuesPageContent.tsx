@@ -11,8 +11,11 @@ import type {
   TransactionItem,
 } from '@/types/admin/dues';
 import { useCardinalSelector } from '@/hooks/useCardinalSelector';
-import { useDuesVisibilityToggle } from '@/hooks/admin';
-import { isDuesNotRegisteredError, useDuesDashboardQuery } from '@/hooks/queries/admin';
+import { useDuesVisibilityToggle } from '@/hooks/admin/useDuesVisibilityToggle';
+import {
+  isDuesNotRegisteredError,
+  useDuesDashboardQuery,
+} from '@/hooks/queries/admin/useDuesDashboardQuery';
 import { useDuesSetupActions } from '@/stores/useDuesSetupStore';
 import { DuesPageSkeleton } from './DuesPageSkeleton';
 import { DuesTopBar } from './DuesTopBar';
@@ -20,8 +23,7 @@ import { DuesBalanceCard } from './DuesBalanceCard';
 import { DuesChart } from './DuesChart';
 
 import { DuesGenerationFilter } from './DuesGenerationFilter';
-import { AddTransactionModal } from './modal/AddTransactionModal';
-import { EditTransactionModal } from './modal/EditTransactionModal';
+import { TransactionFormModal } from './modal/TransactionFormModal';
 import { TransactionDetailModal } from './modal/TransactionDetailModal';
 import type { TransactionDetail } from './modal/TransactionDetailModal';
 import type { TransactionFormData } from './modal/TransactionForm';
@@ -291,9 +293,10 @@ function DuesPageContent() {
         {isNotRegistered && <DuesOnboardingOverlay onStart={startDuesSetup} />}
       </div>
 
-      <AddTransactionModal
+      <TransactionFormModal
         open={addOpen}
         onOpenChange={setAddOpen}
+        title="거래내역 추가"
         minDate={transactionMinDate}
         maxDate={transactionMaxDate}
         onSubmit={handleAddSubmit}
@@ -311,9 +314,10 @@ function DuesPageContent() {
           onDelete={() => deleteTransaction(selectedTransaction.id)}
         />
       )}
-      <EditTransactionModal
+      <TransactionFormModal
         open={editOpen}
         onOpenChange={setEditOpen}
+        title="거래내역 수정"
         initialValues={editingValues}
         onSubmit={handleEditSubmit}
       />
