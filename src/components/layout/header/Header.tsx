@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useParams, usePathname, useRouter } from 'next/navigation';
+import { useParams, usePathname } from 'next/navigation';
 import LogoGrayIcon from '@/assets/icons/logo/logo_gray_Origin.svg';
 import ExitToAppIcon from '@/assets/icons/exit_to_app.svg';
 import { isMemberDetailPath } from '@/constants/member';
@@ -14,8 +14,8 @@ import { PostingActions } from './PostingActions';
 import { DefaultActions } from './DefaultActions';
 import { MobileNavSheet } from './MobileNavSheet';
 import { MobileWriteButton } from './MobileWriteButton';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Icon } from '@/components/ui/Icon';
+import { AvatarMenuButton } from '@/components/layout/header/AvatarMenuButton';
 import { useDuesVisibility } from '@/hooks/queries';
 import { useIsAdmin } from '@/hooks/shared';
 import { CalendarMobileHeader } from '@/components/calendar/CalendarMobileHeader';
@@ -31,7 +31,6 @@ const Logo = ({ width = 32, href }: { width?: number; href: string }) => (
 );
 
 export default function Header({ isMain = true }: HeaderProps) {
-  const router = useRouter();
   const pathname = usePathname();
   const { clubId } = useParams<{ clubId: string }>();
   const clubName = useClubName();
@@ -107,24 +106,7 @@ export default function Header({ isMain = true }: HeaderProps) {
                         />
                       </Link>
                     )}
-                    <button
-                      type="button"
-                      aria-label="마이페이지로 이동"
-                      onClick={() => router.push(`/${clubId}/mypage`)}
-                      className="cursor-pointer rounded-full"
-                    >
-                      <Avatar size={40} type="round">
-                        {profileImageUrl && (
-                          <AvatarImage
-                            key={profileImageUrl}
-                            src={profileImageUrl}
-                            alt="avatar"
-                            className="object-cover"
-                          />
-                        )}
-                        <AvatarFallback />
-                      </Avatar>
-                    </button>
+                    <AvatarMenuButton profileImageUrl={profileImageUrl} />
                   </>
                 )}
               </div>

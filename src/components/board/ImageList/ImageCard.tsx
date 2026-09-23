@@ -2,20 +2,9 @@
 
 import CloseCircleIcon from '@/assets/icons/close_circle.svg';
 import { Icon } from '@/components/ui/Icon';
+import { LoadingOverlay } from '@/components/ui/LoadingOverlay';
 import { cn } from '@/lib/cn';
 import type { DisplayFile } from '@/types/board';
-
-function LoadingOverlay() {
-  return (
-    <div className="absolute inset-0 flex items-center justify-center bg-black/20">
-      <div
-        role="status"
-        aria-label="이미지 업로드 중"
-        className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"
-      />
-    </div>
-  );
-}
 
 function RemoveButton({
   id,
@@ -71,7 +60,7 @@ function ImageCard({
         className={cn(item.uploaded === false && 'opacity-50', imgClassName)}
       />
 
-      {item.uploaded === false && <LoadingOverlay />}
+      {item.uploaded === false && <LoadingOverlay label="이미지 업로드 중" />}
 
       {removable && onRemove && (
         <RemoveButton

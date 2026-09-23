@@ -21,11 +21,22 @@ function LandingFooter({ className }: LandingFooterProps) {
           {FOOTER_MENUS.map(({ title, items }) => (
             <div key={title} className="flex w-[160px] flex-col gap-200">
               <p className="typo-caption1 text-[#1E2021]">{title}</p>
-              {items.map((item) => (
-                <Link key={item.label} href={item.href} className="typo-body2 text-[#909599]">
-                  {item.label}
-                </Link>
-              ))}
+              {items.map((item) =>
+                item.href.startsWith('mailto:') ? (
+                  <a
+                    key={item.label}
+                    href={item.href}
+                    className="typo-body2 text-[#909599]"
+                    suppressHydrationWarning
+                  >
+                    {item.label}
+                  </a>
+                ) : (
+                  <Link key={item.label} href={item.href} className="typo-body2 text-[#909599]">
+                    {item.label}
+                  </Link>
+                ),
+              )}
             </div>
           ))}
         </div>

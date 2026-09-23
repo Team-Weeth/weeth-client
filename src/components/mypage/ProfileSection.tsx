@@ -48,6 +48,8 @@ const ProfileSection = ({
     handleHeaderImageChange,
     handleProfileImageReset,
     handleHeaderImageReset,
+    isProfileImageUpdating,
+    isHeaderImageUpdating,
   } = useProfileSectionActions({
     profileId,
     name,
@@ -85,6 +87,7 @@ const ProfileSection = ({
         onResetImage={() => {
           void handleHeaderImageReset();
         }}
+        isLoading={isHeaderImageUpdating}
         priority
         className="h-[190px] rounded-none"
         imageClassName="rounded-none"
@@ -93,7 +96,7 @@ const ProfileSection = ({
       />
 
       <div className="px-[18px] pb-[22px]">
-        <div className="-mt-16 flex items-end justify-between">
+        <div className="relative z-[11] -mt-16 flex items-end justify-between">
           <ProfileImageEditor
             name={name}
             profileImageUrl={profileImageUrl}
@@ -103,6 +106,7 @@ const ProfileSection = ({
             onResetImage={() => {
               void handleProfileImageReset();
             }}
+            isLoading={isProfileImageUpdating}
             avatarSize={100}
             avatarClassName="border-line tablet:size-32 border-2"
             triggerClassName="right-0 bottom-0 size-8 border-line"
@@ -126,8 +130,10 @@ const ProfileSection = ({
                 )}
               </div>
               {schoolLabel && (
-                <span className="desktop:flex typo-caption2 text-text-alternative bg-container-neutral-alternative hidden shrink-0 rounded-md px-2 py-1">
-                  {schoolLabel}
+                <span className="desktop:flex typo-caption2 text-text-alternative bg-container-neutral-alternative hidden shrink-0 items-start gap-[6px] rounded-xs px-2 py-1">
+                  {school && <span>{school}</span>}
+                  {school && department && <span>·</span>}
+                  {department && <span>{department}</span>}
                 </span>
               )}
               <div className="tablet:hidden flex">
@@ -163,8 +169,10 @@ const ProfileSection = ({
             </div>
           )}
           {schoolLabel && (
-            <span className="desktop:hidden typo-caption2 text-text-alternative bg-container-neutral-alternative mt-3 flex w-fit shrink-0 items-center justify-center rounded-md px-2 py-1">
-              {schoolLabel}
+            <span className="desktop:hidden typo-caption2 text-text-alternative bg-container-neutral-alternative mt-3 flex w-fit shrink-0 items-start gap-[6px] rounded-xs px-2 py-1">
+              {school && <span>{school}</span>}
+              {school && department && <span>·</span>}
+              {department && <span>{department}</span>}
             </span>
           )}
         </div>

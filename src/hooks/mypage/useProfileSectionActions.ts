@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { isAxiosError } from 'axios';
 import {
   useDeleteMultiProfileHeaderImageMutation,
@@ -18,6 +19,7 @@ function useProfileSectionActions({ profileId, name, bio }: UseProfileSectionAct
   const updateMultiProfileMutation = useUpdateMultiProfileMutation();
   const deleteProfileImageMutation = useDeleteMultiProfileProfileImageMutation();
   const deleteHeaderImageMutation = useDeleteMultiProfileHeaderImageMutation();
+  const [updatingType, setUpdatingType] = useState<'profile' | 'header' | null>(null);
 
   const showUpdateError = (error: unknown) => {
     const message =
@@ -30,6 +32,7 @@ function useProfileSectionActions({ profileId, name, bio }: UseProfileSectionAct
   const handleProfileImageChange = async (file: File) => {
     if (!profileId) return;
 
+    setUpdatingType('profile');
     try {
       await updateMultiProfileMutation.mutateAsync({
         profileId,
@@ -40,12 +43,15 @@ function useProfileSectionActions({ profileId, name, bio }: UseProfileSectionAct
       toastSuccess('프로필 사진이 수정되었습니다.');
     } catch (error) {
       showUpdateError(error);
+    } finally {
+      setUpdatingType(null);
     }
   };
 
   const handleHeaderImageChange = async (file: File) => {
     if (!profileId) return;
 
+    setUpdatingType('header');
     try {
       await updateMultiProfileMutation.mutateAsync({
         profileId,
@@ -56,6 +62,8 @@ function useProfileSectionActions({ profileId, name, bio }: UseProfileSectionAct
       toastSuccess('배경 사진이 수정되었습니다.');
     } catch (error) {
       showUpdateError(error);
+    } finally {
+      setUpdatingType(null);
     }
   };
 
@@ -86,9 +94,11 @@ function useProfileSectionActions({ profileId, name, bio }: UseProfileSectionAct
     handleHeaderImageChange,
     handleProfileImageReset,
     handleHeaderImageReset,
-    isUpdatingImage:
-      updateMultiProfileMutation.isPending ||
-      deleteProfileImageMutation.isPending ||
+    isProfileImageUpdating:
+      (updatingType === 'profile' && updateMultiProfileMutation.isPending) ||
+      deleteProfileImageMutation.isPending,
+    isHeaderImageUpdating:
+      (updatingType === 'header' && updateMultiProfileMutation.isPending) ||
       deleteHeaderImageMutation.isPending,
   };
 }
