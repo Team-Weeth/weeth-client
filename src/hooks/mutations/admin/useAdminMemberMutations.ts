@@ -16,6 +16,8 @@ import { adminQueryKeys } from '@/hooks/queries/admin/adminQueryKeys';
 
 type MemberPageCache = PageResponse<Member>;
 type MemberInfinitePageCache = InfiniteData<MemberPageCache>;
+// 검색 결과는 같은 members prefix에 Member[] 형태로 캐시
+type MemberListCache = MemberPageCache | Member[];
 
 function getMemberPageQueryFilters(queryKey: readonly unknown[]) {
   return {
@@ -44,12 +46,12 @@ async function updateMemberCaches(
     queryClient.cancelQueries(memberInfinitePageQueryFilters),
   ]);
 
-  const previousPages = queryClient.getQueriesData<MemberPageCache>(memberPageQueryFilters);
+  const previousPages = queryClient.getQueriesData<MemberListCache>(memberPageQueryFilters);
   const previousInfinitePages = queryClient.getQueriesData<MemberInfinitePageCache>(
     memberInfinitePageQueryFilters,
   );
 
-  queryClient.setQueriesData<MemberPageCache>(memberPageQueryFilters, (old) =>
+  queryClient.setQueriesData<MemberListCache>(memberPageQueryFilters, (old) =>
     updateMemberPage(old, updateMember),
   );
   queryClient.setQueriesData<MemberInfinitePageCache>(memberInfinitePageQueryFilters, (old) =>
@@ -205,10 +207,13 @@ export function useRestoreMember() {
 }
 
 function updateMemberPage(
-  page: MemberPageCache | undefined,
+  page: MemberListCache | undefined,
   updateMember: (member: Member) => Member,
-) {
+): MemberListCache | undefined {
   if (!page) return page;
+
+  // 검색 결과 캐시는 PageResponse가 아니라 Member[]이므로 content가 없음
+  if (Array.isArray(page)) return page.map(updateMember);
 
   return {
     ...page,

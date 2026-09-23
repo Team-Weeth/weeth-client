@@ -1,7 +1,9 @@
 name-template: 'v$RESOLVED_VERSION'
 tag-template: 'v$RESOLVED_VERSION'
 commitish: 'develop'
-filter-by-commitish: true
+# 릴리즈는 배포 트리거 때문에 target을 main으로 발행한다. true로 두면 target이 develop인
+# 릴리즈만 이전 릴리즈로 인정해 기준점을 못 찾고, 초안에 과거 PR이 전부 딸려 들어온다.
+filter-by-commitish: false
 pull-request-limit: 20
 history-limit: 100
 
