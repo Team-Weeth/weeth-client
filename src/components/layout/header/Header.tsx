@@ -83,7 +83,9 @@ export default function Header({ isMain = true }: HeaderProps) {
             {isMain && (
               <div className="flex items-center justify-center gap-100">
                 <MobileNavSheet />
-                <span className="typo-sub1 text-text-normal px-1">{clubName}</span>
+                <span className="typo-sub1 text-text-normal px-1">
+                  {clubName && clubName.length > 12 ? `${clubName.slice(0, 12)}...` : clubName}
+                </span>
               </div>
             )}
             {isMain && clubId && (
@@ -132,8 +134,14 @@ export default function Header({ isMain = true }: HeaderProps) {
           </CalendarMobileHeader>
         </header>
       )}
-      <header className="tablet:flex bg-background hidden w-full items-center justify-between px-5 py-3">
-        <div className="flex items-center gap-4">
+      <header
+        className={cn(
+          'bg-background hidden w-full items-center px-5 py-3',
+          isMain ? 'tablet:grid' : 'tablet:flex tablet:justify-between',
+        )}
+        style={isMain ? { gridTemplateColumns: '1fr calc(100% - 560px) 1fr' } : undefined}
+      >
+        <div className="flex items-center gap-4 overflow-hidden">
           <Logo href={isMain ? `/${clubId}/home` : '/'} />
 
           {!isMain && (
@@ -172,11 +180,15 @@ export default function Header({ isMain = true }: HeaderProps) {
             })}
         </div>
         {isMain && (
-          <span className="typo-sub2 absolute left-1/2 -translate-x-1/2 text-neutral-700">
-            {clubName}
+          <span className="typo-sub2 truncate text-center text-neutral-700">
+            {clubName && clubName.length >= 6 ? `${clubName.slice(0, 5)}...` : clubName}
           </span>
         )}
-        {isMain && (isPostingPage ? <PostingActions /> : <DefaultActions />)}
+        {isMain && (
+          <div className="flex items-center justify-end">
+            {isPostingPage ? <PostingActions /> : <DefaultActions />}
+          </div>
+        )}
       </header>
     </div>
   );
