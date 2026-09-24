@@ -9,7 +9,7 @@ import AdminDuesIcon from '@/assets/icons/admin/ic_admin_dues.svg';
 import AdminForumIcon from '@/assets/icons/admin/ic_admin_forum.svg';
 import AdminPaintIcon from '@/assets/icons/admin/ic_admin_paint.svg';
 import AdminPenaltyIcon from '@/assets/icons/admin/ic_admin_penalty.svg';
-import AdminScreenIcon from '@/assets/icons/admin/ic_admin_screen.svg';
+import AdminAttendanceCalendarIcon from '@/assets/icons/admin/ic_admin_attendance_calendar.svg';
 import AdminSettingIcon from '@/assets/icons/admin/ic_admin_setting.svg';
 import { MobileMemberNavGroup } from './MobileMemberNavGroup';
 import ExitIcon from '@/assets/icons/exit.svg';
@@ -95,7 +95,7 @@ function AdminMobileNavSheet() {
     },
     {
       id: 'attendance',
-      icon: AdminScreenIcon,
+      icon: AdminAttendanceCalendarIcon,
       label: '출석 관리',
       path: `/${clubId}/admin/attendance`,
     },
