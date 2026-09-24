@@ -24,6 +24,10 @@ interface HeaderProps {
   isMain?: boolean;
 }
 
+const MOBILE_CLUB_NAME_MAX_LENGTH = 12;
+// 헤더 3열 그리드에서 로고+네비+액션 영역으로 예약하는 너비 (logo 32 + nav ~248 + actions ~280)
+const HEADER_SIDE_AREA_WIDTH = 560;
+
 const Logo = ({ width = 32, href }: { width?: number; href: string }) => (
   <Link href={href} aria-label="홈으로 이동" className="inline-flex">
     <Image src={LogoGrayIcon} alt="logo" width={width} height={32} className="cursor-pointer" />
@@ -84,7 +88,9 @@ export default function Header({ isMain = true }: HeaderProps) {
               <div className="flex items-center justify-center gap-100">
                 <MobileNavSheet />
                 <span className="typo-sub1 text-text-normal px-1">
-                  {clubName && clubName.length > 12 ? `${clubName.slice(0, 12)}...` : clubName}
+                  {clubName && clubName.length > MOBILE_CLUB_NAME_MAX_LENGTH
+                    ? `${clubName.slice(0, MOBILE_CLUB_NAME_MAX_LENGTH)}...`
+                    : clubName}
                 </span>
               </div>
             )}
@@ -139,7 +145,11 @@ export default function Header({ isMain = true }: HeaderProps) {
           'bg-background hidden w-full items-center px-5 py-3',
           isMain ? 'tablet:grid' : 'tablet:flex tablet:justify-between',
         )}
-        style={isMain ? { gridTemplateColumns: '1fr calc(100% - 560px) 1fr' } : undefined}
+        style={
+          isMain
+            ? { gridTemplateColumns: `1fr calc(100% - ${HEADER_SIDE_AREA_WIDTH}px) 1fr` }
+            : undefined
+        }
       >
         <div className="flex items-center gap-4 overflow-hidden">
           <Logo href={isMain ? `/${clubId}/home` : '/'} />
@@ -180,9 +190,7 @@ export default function Header({ isMain = true }: HeaderProps) {
             })}
         </div>
         {isMain && (
-          <span className="typo-sub2 truncate text-center text-neutral-700">
-            {clubName && clubName.length >= 6 ? `${clubName.slice(0, 5)}...` : clubName}
-          </span>
+          <span className="typo-sub2 truncate text-center text-neutral-700">{clubName}</span>
         )}
         {isMain && (
           <div className="flex items-center justify-end">
