@@ -3,20 +3,22 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { adminClubApi } from '@/lib/apis/adminClub';
 import type { UpdateClubBody } from '@/lib/apis/adminClub';
 import { revalidatePublicClub } from '@/lib/actions/club';
-import { useClubId } from '@/stores';
+import { useClubActions, useClubId } from '@/stores';
 import { adminQueryKeys } from '@/hooks/queries/admin/adminQueryKeys';
 
 export function useUpdateClub() {
   const queryClient = useQueryClient();
   const clubId = useClubId();
+  const { setClubName } = useClubActions();
 
   return useMutation({
     mutationFn: (body: UpdateClubBody) => {
       if (!clubId) throw new Error('clubId가 없습니다');
       return adminClubApi.update(clubId, body);
     },
-    onSuccess: () => {
+    onSuccess: (_, variables) => {
       if (clubId) revalidatePublicClub(clubId);
+      if (variables.name !== undefined) setClubName(variables.name);
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: adminQueryKeys.club(clubId) });
