@@ -37,11 +37,8 @@ interface ActiveClubCardProps {
   profile: MyPageUsingProfile;
 }
 
-function ActiveClubCard({ profile }: ActiveClubCardProps) {
-  const firstName = profile.clubs[0]?.name ?? '';
-  const extraCount = profile.clubs.length - 1;
-
-  const clubTag = (
+function ClubNameTag({ firstName, extraCount }: { firstName: string; extraCount: number }) {
+  return (
     <Tag variant="primary" className="mt-2 max-w-full self-start overflow-hidden">
       <span className="flex min-w-0 items-center">
         <span className="truncate">{firstName}</span>
@@ -49,6 +46,11 @@ function ActiveClubCard({ profile }: ActiveClubCardProps) {
       </span>
     </Tag>
   );
+}
+
+function ActiveClubCard({ profile }: ActiveClubCardProps) {
+  const firstName = profile.clubs[0]?.name ?? '';
+  const extraCount = profile.clubs.length - 1;
 
   return (
     <>
@@ -67,7 +69,7 @@ function ActiveClubCard({ profile }: ActiveClubCardProps) {
           >
             {profile.bio ?? '-'}
           </span>
-          {clubTag}
+          <ClubNameTag firstName={firstName} extraCount={extraCount} />
         </div>
       </div>
       <div className="tablet:hidden bg-container-neutral-alternative tablet:w-[220px] flex shrink-0 gap-2 rounded-lg p-450">
@@ -85,7 +87,7 @@ function ActiveClubCard({ profile }: ActiveClubCardProps) {
           >
             {profile.bio ?? '-'}
           </span>
-          {clubTag}
+          <ClubNameTag firstName={firstName} extraCount={extraCount} />
         </div>
       </div>
     </>
