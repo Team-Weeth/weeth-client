@@ -95,8 +95,9 @@ export const mypageApi = {
       `/clubs/${clubId}/users/me/mypage/penalties`,
       { params },
     ),
+  // 규정을 저장한 적이 없는 동아리는 content가 null로 내려온다
   getPenaltyRule: (clubId: string) =>
-    apiClient.get<ApiResponse<{ content: string }>>(
+    apiClient.get<ApiResponse<{ content: string | null }>>(
       `/clubs/${clubId}/users/me/mypage/penalty-rule`,
     ),
   getMyClubMemberSummary: (clubId: string) =>
