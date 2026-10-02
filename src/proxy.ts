@@ -5,7 +5,7 @@ import {
   ACCESS_COOKIE_OPTIONS,
   REFRESH_COOKIE_OPTIONS,
 } from '@/lib/apis/cookies';
-import { clearAuthCookies, requestTokenRefresh } from '@/lib/apis/refresh';
+import { clearAuthCookies, requestTokenRefresh, type RefreshedTokens } from '@/lib/apis/refresh';
 
 const PUBLIC_PATHS = ['/', '/login', '/terms', '/landing'];
 const PRIVATE_PATHS = ['/hub', '/joining', '/welcome'];
@@ -77,10 +77,40 @@ export async function proxy(request: NextRequest) {
   );
   const isClubRoute = /^\/[A-Za-z0-9]+(?:\/|$)/.test(pathname);
   if (isClubRoute && !isPrivatePath) {
+    // 액세스 토큰만 만료된 경우 여기서 갱신한다.
+    // 서버 컴포넌트(apiServer)에서 갱신하면 라우트 핸들러로 redirect해야 하는데,
+    // 클라이언트 내비게이션 중에는 라우터가 RSC 페이로드 대신 그 응답을 받아
+    // "An unexpected response was received from the server."로 깨진다.
+    let refreshed: RefreshedTokens | null = null;
+    let refreshFailed = false;
+
+    if (!hasAccessToken && hasRefreshToken) {
+      refreshed = await requestTokenRefresh(request.cookies.get(REFRESH_TOKEN_KEY)!.value);
+
+      if (refreshed) {
+        request.cookies.set(ACCESS_TOKEN_KEY, refreshed.accessToken);
+      } else {
+        // 죽은 토큰을 지워야 ClubLayout이 로그인 안내 화면을 그린다
+        refreshFailed = true;
+        request.cookies.delete(ACCESS_TOKEN_KEY);
+        request.cookies.delete(REFRESH_TOKEN_KEY);
+      }
+    }
+
     const requestHeaders = new Headers(request.headers);
     requestHeaders.set('x-pathname', pathname);
     requestHeaders.set('x-search', request.nextUrl.search);
-    return NextResponse.next({ request: { headers: requestHeaders } });
+
+    const response = NextResponse.next({ request: { headers: requestHeaders } });
+
+    if (refreshed) {
+      response.cookies.set(ACCESS_TOKEN_KEY, refreshed.accessToken, ACCESS_COOKIE_OPTIONS);
+      response.cookies.set(REFRESH_TOKEN_KEY, refreshed.refreshToken, REFRESH_COOKIE_OPTIONS);
+    } else if (refreshFailed) {
+      clearAuthCookies(response);
+    }
+
+    return response;
   }
 
   const requiresAuth = isPrivatePath;
