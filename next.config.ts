@@ -8,6 +8,12 @@ const withAnalyzer = withBundleAnalyzer({
 
 const nextConfig: NextConfig = {
   reactCompiler: true,
+  // 배포 시 .next 아티팩트가 통째로 교체되어 구 빌드의 청크 URL이 404가 된다.
+  // deploymentId를 주면 Next가 클라이언트/서버 빌드 불일치를 감지해
+  // 에러 대신 하드 내비게이션으로 복구한다.
+  // AWS_COMMIT_ID는 현재 Amplify에서 'HEAD'로 들어와 배포마다 같은 값이 되므로,
+  // 빌드마다 반드시 달라지는 AWS_JOB_ID를 쓴다.
+  deploymentId: process.env.AWS_JOB_ID,
   images: {
     remotePatterns: [
       {
