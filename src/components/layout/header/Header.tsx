@@ -149,7 +149,7 @@ export default function Header({ isMain = true }: HeaderProps) {
           isMain && 'tablet:relative',
         )}
       >
-        <div ref={leftColRef} className="flex shrink-0 items-center gap-4">
+        <div ref={leftColRef} className="flex shrink-0 items-center gap-4 pr-[14px]">
           <Logo href={isMain ? `/${clubId}/home` : '/'} />
 
           {!isMain && (
