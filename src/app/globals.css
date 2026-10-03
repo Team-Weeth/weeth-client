@@ -918,6 +918,23 @@ select:focus {
   cursor: text;
 }
 
+/* 인라인 이미지 */
+.ProseMirror figure {
+  margin: var(--spacing-400) 0;
+  display: flex;
+}
+
+.ProseMirror figure img {
+  max-width: 100%;
+  height: auto;
+  border-radius: var(--radius-sm);
+}
+
+/* 파일 첨부 블록 */
+.ProseMirror [data-file-attachment] {
+  margin: var(--spacing-200) 0;
+}
+
 /* 링크 */
 .ProseMirror a {
   @apply text-text-alternative underline underline-offset-2;
