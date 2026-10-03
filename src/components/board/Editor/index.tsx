@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect } from 'react';
 import { EditorContent, FloatingMenu } from '@tiptap/react';
 import { usePostEditor } from './usePostEditor';
 import { useLinkPopup } from './useLinkPopup';
@@ -7,9 +8,7 @@ import { BubbleMenuBar } from './BubbleMenu';
 import { TableMenu } from './TableMenu';
 import { SlashMenuContent } from './SlashMenu';
 import { LinkInput } from './LinkInput';
-import { ImageList } from '../ImageList';
-import { FileList } from '../FileList';
-import { useFileUpload } from '@/hooks/useFileUpload';
+import { useInlineFileUpload } from '@/hooks/useInlineFileUpload';
 import { createMediaItems, createLinkItem } from '@/constants/board/slashMenu';
 
 const floatingMenuTippyOptions = {
@@ -44,11 +43,19 @@ interface EditorProps {
 }
 
 export default function Editor({ initialContent }: EditorProps = {}) {
-  const { imageInputRef, fileInputRef, processFiles, picker, files, handlers } = useFileUpload();
+  const { imageInputRef, fileInputRef, setEditor, processFilesInline, picker, handlers } =
+    useInlineFileUpload();
+
   const { editor, showSlashMenu, closeSlashMenu, containerRef } = usePostEditor({
-    processFiles,
+    processFilesInline,
     initialContent,
   });
+
+  // Wire the editor instance into the inline upload hook
+  useEffect(() => {
+    setEditor(editor);
+  }, [editor, setEditor]);
+
   const {
     pos: linkInputPos,
     openFromSlashMenu,
@@ -116,12 +123,6 @@ export default function Editor({ initialContent }: EditorProps = {}) {
 
       <div className="relative" onClick={handleEditorClick}>
         <EditorContent editor={editor} className="max-w-none" />
-      </div>
-
-      {/* 게시글 하단 첨부 영역 */}
-      <div className="mt-auto flex flex-col gap-400 pt-400">
-        <ImageList files={files.imageFiles} removable viewable onRemove={files.handleRemoveFile} />
-        <FileList files={files.nonImageFiles} onRemove={files.handleRemoveFile} editable />
       </div>
     </div>
   );

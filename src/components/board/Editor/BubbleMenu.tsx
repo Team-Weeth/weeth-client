@@ -114,6 +114,7 @@ export function BubbleMenuBar({ editor, containerRef }: BubbleMenuBarProps) {
       }}
       shouldShow={({ editor: e, state }) => {
         if (e.isActive('table')) return false;
+        if (e.isActive('inlineImage') || e.isActive('fileAttachment')) return false;
         const { from, to } = state.selection;
         return from !== to;
       }}

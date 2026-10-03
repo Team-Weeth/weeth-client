@@ -9,11 +9,11 @@ import { editorExtensions } from './extensions';
 const LIST_TYPES = ['bulletList', 'orderedList', 'taskList'];
 
 interface UsePostEditorOptions {
-  processFiles?: (files: File[]) => void;
+  processFilesInline?: (files: File[]) => void;
   initialContent?: string;
 }
 
-export function usePostEditor({ processFiles, initialContent }: UsePostEditorOptions = {}) {
+export function usePostEditor({ processFilesInline, initialContent }: UsePostEditorOptions = {}) {
   const setContent = usePostStore((state) => state.setContent);
   // 마운트 시점에 한 번만 초기 content 고정 (수정 페이지용)
   const [initialContentValue] = useState(() => initialContent ?? '');
@@ -21,9 +21,9 @@ export function usePostEditor({ processFiles, initialContent }: UsePostEditorOpt
   // ref로 최신 상태 유지 → useEditor 내부 handleKeyDown stale closure 방지
   const showSlashMenuRef = useRef(false);
   const containerRef = useRef<HTMLDivElement>(null);
-  const processFilesRef = useRef(processFiles);
+  const processFilesRef = useRef(processFilesInline);
   useEffect(() => {
-    processFilesRef.current = processFiles;
+    processFilesRef.current = processFilesInline;
   });
 
   const closeSlashMenu = () => {

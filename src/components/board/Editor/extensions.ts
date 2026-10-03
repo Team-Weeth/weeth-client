@@ -1,5 +1,7 @@
 import { IndentExtension } from './IndentExtension';
 import { TableGapExtension } from './TableGapExtension';
+import { InlineImage } from './extensions/InlineImage/InlineImage';
+import { FileAttachment } from './extensions/FileAttachment';
 import Document from '@tiptap/extension-document';
 import Paragraph from '@tiptap/extension-paragraph';
 import Text from '@tiptap/extension-text';
@@ -65,7 +67,7 @@ export const editorExtensions = [
   HorizontalRule,
   HardBreak,
   History,
-  Dropcursor,
+  Dropcursor.configure({ color: '#a3a3a3', width: 2 }),
   Gapcursor,
   Typography,
   Placeholder.configure({ placeholder: "'/' 키를 눌러서 명령어를 사용해 보세요." }),
@@ -98,4 +100,6 @@ export const editorExtensions = [
   TableCell,
   TableHeader,
   TableGapExtension,
+  InlineImage,
+  FileAttachment,
 ];
