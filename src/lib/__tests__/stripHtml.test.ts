@@ -121,9 +121,24 @@ describe('stripHtml', () => {
       expect(stripHtml('&#8212;')).toBe('—');
     });
 
+    it('숫자형 엔티티 비-BMP 코드 포인트를 디코딩한다', () => {
+      expect(stripHtml('&#128512;')).toBe('😀');
+      expect(stripHtml('&#128516;')).toBe('😄');
+    });
+
     it('16진수 엔티티(&#xHH;)를 디코딩한다', () => {
       expect(stripHtml('&#x41;')).toBe('A');
       expect(stripHtml('&#x2014;')).toBe('—');
+    });
+
+    it('16진수 엔티티 비-BMP 코드 포인트를 디코딩한다', () => {
+      expect(stripHtml('&#x1F600;')).toBe('😀');
+      expect(stripHtml('&#x1F604;')).toBe('😄');
+    });
+
+    it('유효 범위를 벗어난 숫자형 엔티티는 원문을 유지한다', () => {
+      expect(stripHtml('&#1114112;')).toBe('&#1114112;');
+      expect(stripHtml('&#x110000;')).toBe('&#x110000;');
     });
 
     it('이중 인코딩된 &amp;lt;는 &lt;로 디코딩한다', () => {
