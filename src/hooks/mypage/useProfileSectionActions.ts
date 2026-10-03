@@ -19,7 +19,8 @@ function useProfileSectionActions({ profileId, name, bio }: UseProfileSectionAct
   const updateMultiProfileMutation = useUpdateMultiProfileMutation();
   const deleteProfileImageMutation = useDeleteMultiProfileProfileImageMutation();
   const deleteHeaderImageMutation = useDeleteMultiProfileHeaderImageMutation();
-  const [updatingType, setUpdatingType] = useState<'profile' | 'header' | null>(null);
+  const [isProfileUploading, setIsProfileUploading] = useState(false);
+  const [isHeaderUploading, setIsHeaderUploading] = useState(false);
 
   const showUpdateError = (error: unknown) => {
     const message =
@@ -32,7 +33,7 @@ function useProfileSectionActions({ profileId, name, bio }: UseProfileSectionAct
   const handleProfileImageChange = async (file: File) => {
     if (!profileId) return;
 
-    setUpdatingType('profile');
+    setIsProfileUploading(true);
     try {
       await updateMultiProfileMutation.mutateAsync({
         profileId,
@@ -44,14 +45,14 @@ function useProfileSectionActions({ profileId, name, bio }: UseProfileSectionAct
     } catch (error) {
       showUpdateError(error);
     } finally {
-      setUpdatingType(null);
+      setIsProfileUploading(false);
     }
   };
 
   const handleHeaderImageChange = async (file: File) => {
     if (!profileId) return;
 
-    setUpdatingType('header');
+    setIsHeaderUploading(true);
     try {
       await updateMultiProfileMutation.mutateAsync({
         profileId,
@@ -63,7 +64,7 @@ function useProfileSectionActions({ profileId, name, bio }: UseProfileSectionAct
     } catch (error) {
       showUpdateError(error);
     } finally {
-      setUpdatingType(null);
+      setIsHeaderUploading(false);
     }
   };
 
@@ -94,12 +95,8 @@ function useProfileSectionActions({ profileId, name, bio }: UseProfileSectionAct
     handleHeaderImageChange,
     handleProfileImageReset,
     handleHeaderImageReset,
-    isProfileImageUpdating:
-      (updatingType === 'profile' && updateMultiProfileMutation.isPending) ||
-      deleteProfileImageMutation.isPending,
-    isHeaderImageUpdating:
-      (updatingType === 'header' && updateMultiProfileMutation.isPending) ||
-      deleteHeaderImageMutation.isPending,
+    isProfileImageUpdating: isProfileUploading || deleteProfileImageMutation.isPending,
+    isHeaderImageUpdating: isHeaderUploading || deleteHeaderImageMutation.isPending,
   };
 }
 
