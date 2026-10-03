@@ -37,7 +37,12 @@ interface ActiveClubCardProps {
   profile: MyPageUsingProfile;
 }
 
-function ClubNameTag({ firstName, extraCount }: { firstName: string; extraCount: number }) {
+interface ClubNameTagProps {
+  firstName: string;
+  extraCount: number;
+}
+
+function ClubNameTag({ firstName, extraCount }: ClubNameTagProps) {
   return (
     <Tag variant="primary" className="mt-2 max-w-full self-start overflow-hidden">
       <span className="flex min-w-0 items-center">
