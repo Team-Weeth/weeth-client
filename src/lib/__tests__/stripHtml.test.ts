@@ -93,13 +93,21 @@ describe('stripHtml', () => {
     });
 
     it('<script> 내부 < 와 > 가 모두 있어도 plain text로 보존된다', () => {
-      expect(stripHtml('<script>if (a < b && c > d) x()</script>')).toBe(
-        'if (a < b && c > d) x()',
-      );
+      expect(stripHtml('<script>if (a < b && c > d) x()</script>')).toBe('if (a < b && c > d) x()');
     });
 
     it('<style> 내부 < 와 > 가 모두 있어도 plain text로 보존된다', () => {
       expect(stripHtml('<style>a > b, c < d {}</style>')).toBe('a > b, c < d {}');
+    });
+
+    it('<script> 내부의 리터럴 </td>가 줄바꿈으로 변환되지 않는다', () => {
+      expect(stripHtml('<script>var s = "</td></th></tr>"</script>')).toBe(
+        'var s = "</td></th></tr>"',
+      );
+    });
+
+    it('<style> 내부의 리터럴 </td>가 줄바꿈으로 변환되지 않는다', () => {
+      expect(stripHtml('<style>/* </td></tr> */</style>')).toBe('/* </td></tr> */');
     });
   });
 
