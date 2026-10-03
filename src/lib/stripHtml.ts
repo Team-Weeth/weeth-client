@@ -3,7 +3,9 @@ export function stripHtml(html: string): string {
   return html
     .replace(/<br\s*\/?>/gi, '\n')
     .replace(/<\/(p|h[1-6]|li|div|blockquote|td|th|tr)>/gi, '\n')
-    .replace(/<(script|style)[^>]*>([\s\S]*?)<\/\1>/gi, (_, _tag, content) => content)
+    .replace(/<(script|style)[^>]*>([\s\S]*?)<\/\1>/gi, (_, _tag, content) =>
+      content.replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    )
     .replace(/<[^>]*>/g, '')
     .replace(/&nbsp;/gi, ' ')
     .replace(/&lt;/gi, '<')

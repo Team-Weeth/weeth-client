@@ -91,6 +91,16 @@ describe('stripHtml', () => {
     it('주변 HTML과 함께 <script> 내 리터럴 <를 보존한다', () => {
       expect(stripHtml('<p>공지</p><script>if (a < b) x()</script>')).toBe('공지\nif (a < b) x()');
     });
+
+    it('<script> 내부 < 와 > 가 모두 있어도 plain text로 보존된다', () => {
+      expect(stripHtml('<script>if (a < b && c > d) x()</script>')).toBe(
+        'if (a < b && c > d) x()',
+      );
+    });
+
+    it('<style> 내부 < 와 > 가 모두 있어도 plain text로 보존된다', () => {
+      expect(stripHtml('<style>a > b, c < d {}</style>')).toBe('a > b, c < d {}');
+    });
   });
 
   describe('마크다운 구문 처리', () => {
