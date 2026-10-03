@@ -79,6 +79,18 @@ describe('stripHtml', () => {
     it('<style> 태그 내부 텍스트는 plain text로 노출된다', () => {
       expect(stripHtml('<style>.foo{color:red}</style><p>공지</p>')).toBe('.foo{color:red}공지');
     });
+
+    it('<script> 내부 리터럴 <는 plain text로 보존된다', () => {
+      expect(stripHtml('<script>if (a < b) x()</script>')).toBe('if (a < b) x()');
+    });
+
+    it('<style> 내부 리터럴 <는 plain text로 보존된다', () => {
+      expect(stripHtml('<style>p > a, div < span {}</style>')).toBe('p > a, div < span {}');
+    });
+
+    it('주변 HTML과 함께 <script> 내 리터럴 <를 보존한다', () => {
+      expect(stripHtml('<p>공지</p><script>if (a < b) x()</script>')).toBe('공지\nif (a < b) x()');
+    });
   });
 
   describe('마크다운 구문 처리', () => {
