@@ -145,7 +145,7 @@ export default function Header({ isMain = true }: HeaderProps) {
       )}
       <header
         className={cn(
-          'bg-background hidden w-full items-center px-5 py-3 tablet:flex tablet:justify-between',
+          'bg-background tablet:flex tablet:justify-between hidden w-full items-center px-5 py-3',
           isMain && 'tablet:relative',
         )}
       >
