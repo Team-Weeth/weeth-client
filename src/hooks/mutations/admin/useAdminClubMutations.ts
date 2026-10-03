@@ -4,6 +4,7 @@ import { adminClubApi } from '@/lib/apis/adminClub';
 import type { UpdateClubBody } from '@/lib/apis/adminClub';
 import { revalidatePublicClub } from '@/lib/actions/club';
 import { useClubActions, useClubId } from '@/stores';
+import { useClubStore } from '@/stores/useClubStore';
 import { adminQueryKeys } from '@/hooks/queries/admin/adminQueryKeys';
 
 export function useUpdateClub() {
@@ -16,12 +17,16 @@ export function useUpdateClub() {
       if (!clubId) throw new Error('clubId가 없습니다');
       return adminClubApi.update(clubId, body);
     },
-    onSuccess: (_, variables) => {
-      if (clubId) revalidatePublicClub(clubId);
-      if (variables.name !== undefined) setClubName(variables.name);
+    onMutate: () => ({ savedClubId: clubId }),
+    onSuccess: (_, variables, context) => {
+      const savedClubId = context?.savedClubId;
+      if (savedClubId) revalidatePublicClub(savedClubId);
+      if (variables.name !== undefined && useClubStore.getState().clubId === savedClubId) {
+        setClubName(variables.name);
+      }
     },
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: adminQueryKeys.club(clubId) });
+    onSettled: (_, __, ___, context) => {
+      queryClient.invalidateQueries({ queryKey: adminQueryKeys.club(context?.savedClubId ?? clubId) });
     },
   });
 }
