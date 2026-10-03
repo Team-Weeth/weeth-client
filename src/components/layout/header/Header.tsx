@@ -52,6 +52,8 @@ export default function Header({ isMain = true }: HeaderProps) {
   ] as const;
   const [visible, setVisible] = useState(true);
   const lastScrollY = useRef(0);
+  const leftColRef = useRef<HTMLDivElement>(null);
+  const [leftColWidth, setLeftColWidth] = useState(0);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -69,6 +71,15 @@ export default function Header({ isMain = true }: HeaderProps) {
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  useEffect(() => {
+    if (!isMain) return;
+    const el = leftColRef.current;
+    if (!el) return;
+    const observer = new ResizeObserver(() => setLeftColWidth(el.offsetWidth));
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [isMain]);
 
   return (
     <div
@@ -134,11 +145,11 @@ export default function Header({ isMain = true }: HeaderProps) {
       )}
       <header
         className={cn(
-          'bg-background hidden w-full items-center px-5 py-3',
-          isMain ? 'tablet:grid tablet:grid-cols-3' : 'tablet:flex tablet:justify-between',
+          'bg-background hidden w-full items-center px-5 py-3 tablet:flex tablet:justify-between',
+          isMain && 'tablet:relative',
         )}
       >
-        <div className="flex items-center gap-4 overflow-hidden">
+        <div ref={leftColRef} className="flex shrink-0 items-center gap-4">
           <Logo href={isMain ? `/${clubId}/home` : '/'} />
 
           {!isMain && (
@@ -165,7 +176,7 @@ export default function Header({ isMain = true }: HeaderProps) {
                 <Link
                   key={id}
                   href={href}
-                  className={`typo-button1 py-200 transition-colors ${
+                  className={`typo-button1 shrink-0 py-200 transition-colors ${
                     isActive
                       ? 'text-brand-primary'
                       : 'text-text-alternative hover:text-brand-primary'
@@ -177,10 +188,15 @@ export default function Header({ isMain = true }: HeaderProps) {
             })}
         </div>
         {isMain && (
-          <span className="typo-sub2 truncate text-center text-neutral-700">{clubName}</span>
+          <span
+            className="typo-sub2 absolute left-1/2 -translate-x-1/2 truncate text-center text-neutral-700"
+            style={{ maxWidth: `calc(100% - ${(leftColWidth + 16) * 2}px)` }}
+          >
+            {clubName}
+          </span>
         )}
         {isMain && (
-          <div className="flex items-center justify-end">
+          <div className="flex shrink-0 items-center justify-end">
             {isPostingPage ? <PostingActions /> : <DefaultActions />}
           </div>
         )}
