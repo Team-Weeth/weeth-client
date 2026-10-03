@@ -137,7 +137,7 @@ function EditProfileContent({ className, schools, majors, ...props }: EditProfil
           <button
             type="button"
             onClick={() => router.back()}
-            className="flex items-center justify-center p-1"
+            className="flex cursor-pointer items-center justify-center p-1"
           >
             <Icon src={BackIcon} size={21} className="text-icon-normal p-1" />
           </button>

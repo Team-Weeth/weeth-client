@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { isAxiosError } from 'axios';
 import {
   useDeleteMultiProfileHeaderImageMutation,
@@ -18,6 +19,8 @@ function useProfileSectionActions({ profileId, name, bio }: UseProfileSectionAct
   const updateMultiProfileMutation = useUpdateMultiProfileMutation();
   const deleteProfileImageMutation = useDeleteMultiProfileProfileImageMutation();
   const deleteHeaderImageMutation = useDeleteMultiProfileHeaderImageMutation();
+  const [isProfileUploading, setIsProfileUploading] = useState(false);
+  const [isHeaderUploading, setIsHeaderUploading] = useState(false);
 
   const showUpdateError = (error: unknown) => {
     const message =
@@ -30,6 +33,7 @@ function useProfileSectionActions({ profileId, name, bio }: UseProfileSectionAct
   const handleProfileImageChange = async (file: File) => {
     if (!profileId) return;
 
+    setIsProfileUploading(true);
     try {
       await updateMultiProfileMutation.mutateAsync({
         profileId,
@@ -40,12 +44,15 @@ function useProfileSectionActions({ profileId, name, bio }: UseProfileSectionAct
       toastSuccess('프로필 사진이 수정되었습니다.');
     } catch (error) {
       showUpdateError(error);
+    } finally {
+      setIsProfileUploading(false);
     }
   };
 
   const handleHeaderImageChange = async (file: File) => {
     if (!profileId) return;
 
+    setIsHeaderUploading(true);
     try {
       await updateMultiProfileMutation.mutateAsync({
         profileId,
@@ -56,6 +63,8 @@ function useProfileSectionActions({ profileId, name, bio }: UseProfileSectionAct
       toastSuccess('배경 사진이 수정되었습니다.');
     } catch (error) {
       showUpdateError(error);
+    } finally {
+      setIsHeaderUploading(false);
     }
   };
 
@@ -86,10 +95,8 @@ function useProfileSectionActions({ profileId, name, bio }: UseProfileSectionAct
     handleHeaderImageChange,
     handleProfileImageReset,
     handleHeaderImageReset,
-    isUpdatingImage:
-      updateMultiProfileMutation.isPending ||
-      deleteProfileImageMutation.isPending ||
-      deleteHeaderImageMutation.isPending,
+    isProfileImageUpdating: isProfileUploading || deleteProfileImageMutation.isPending,
+    isHeaderImageUpdating: isHeaderUploading || deleteHeaderImageMutation.isPending,
   };
 }
 
