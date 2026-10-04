@@ -763,6 +763,7 @@ select:focus {
 
 .ProseMirror p {
   @apply typo-md-body;
+  margin-bottom: 6px;
 }
 
 .ProseMirror hr {
