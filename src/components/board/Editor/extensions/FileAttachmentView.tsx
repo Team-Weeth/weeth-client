@@ -55,10 +55,8 @@ function FileAttachmentView({ node, deleteNode, editor, getPos }: NodeViewProps)
   const content = (
     <div
       className={cn(
-        'border-line inline-flex items-center gap-400 rounded-sm border px-200 py-200 transition-colors',
-        isEditable
-          ? 'bg-container-neutral'
-          : 'bg-container-neutral hover:bg-container-neutral-interaction',
+        'border-line bg-container-neutral hover:bg-container-neutral-interaction inline-flex items-center gap-400 rounded-sm border px-200 py-200 transition-colors',
+        isEditable && 'cursor-grab',
         uploading && 'opacity-60',
       )}
       data-drag-handle
