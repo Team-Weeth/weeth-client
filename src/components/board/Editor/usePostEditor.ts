@@ -2,11 +2,100 @@
 
 import { useEditor } from '@tiptap/react';
 import { TextSelection } from '@tiptap/pm/state';
+import type { EditorView } from '@tiptap/pm/view';
 import { useState, useRef, useEffect } from 'react';
 import { usePostStore } from '@/stores/usePostStore';
 import { editorExtensions } from './extensions';
+import { SUB_DRAG_TYPE, removeImageFromGroup } from './extensions/ImageGroup/ImageGroupView';
+import { MAX_GROUP_IMAGES } from './extensions/ImageGroup/ImageGroup';
+import type { GroupImage } from './extensions/ImageGroup/ImageGroup';
 
 const LIST_TYPES = ['bulletList', 'orderedList', 'taskList'];
+
+interface SideDropResult {
+  targetPos: number;
+  targetNodeType: string;
+  side: 'left' | 'right';
+}
+
+function detectSideDrop(view: EditorView, event: DragEvent): SideDropResult | null {
+  const coords = view.posAtCoords({ left: event.clientX, top: event.clientY });
+  if (!coords) return null;
+
+  const pos = coords.inside >= 0 ? coords.inside : coords.pos;
+  const node = view.state.doc.nodeAt(pos);
+  if (!node) return null;
+
+  if (node.type.name !== 'inlineImage' && node.type.name !== 'imageGroup') return null;
+
+  const dom = view.nodeDOM(pos);
+  if (!dom || !(dom instanceof HTMLElement)) return null;
+
+  const rect = dom.getBoundingClientRect();
+  const x = event.clientX - rect.left;
+  const threshold = rect.width * 0.3;
+
+  if (x < threshold) {
+    return { targetPos: pos, targetNodeType: node.type.name, side: 'left' };
+  } else if (x > rect.width - threshold) {
+    return { targetPos: pos, targetNodeType: node.type.name, side: 'right' };
+  }
+
+  return null;
+}
+
+function handleSideDropWithImage(view: EditorView, result: SideDropResult, image: GroupImage) {
+  const targetNode = view.state.doc.nodeAt(result.targetPos);
+  if (!targetNode) return;
+
+  if (targetNode.type.name === 'inlineImage') {
+    const targetImage: GroupImage = {
+      src: targetNode.attrs.src as string,
+      alt: (targetNode.attrs.alt as string) ?? null,
+      width: (targetNode.attrs.width as number) ?? null,
+      uploadId: (targetNode.attrs.uploadId as string) ?? null,
+      uploading: (targetNode.attrs.uploading as boolean) ?? false,
+    };
+    const images = result.side === 'left' ? [image, targetImage] : [targetImage, image];
+
+    const groupNode = view.state.schema.nodes.imageGroup.create({ images });
+    const tr = view.state.tr.replaceWith(
+      result.targetPos,
+      result.targetPos + targetNode.nodeSize,
+      groupNode,
+    );
+    view.dispatch(tr);
+  } else if (targetNode.type.name === 'imageGroup') {
+    const existingImages = [...(targetNode.attrs.images as GroupImage[])];
+    if (existingImages.length >= MAX_GROUP_IMAGES) return;
+    if (result.side === 'left') {
+      existingImages.unshift(image);
+    } else {
+      existingImages.push(image);
+    }
+    const tr = view.state.tr.setNodeMarkup(result.targetPos, undefined, {
+      ...targetNode.attrs,
+      images: existingImages,
+    });
+    view.dispatch(tr);
+  }
+}
+
+function findNodePosByAttrs(
+  view: EditorView,
+  typeName: string,
+  attrs: Record<string, unknown>,
+): number | null {
+  let foundPos: number | null = null;
+  view.state.doc.descendants((node, pos) => {
+    if (foundPos !== null) return false;
+    if (node.type.name === typeName && node.attrs.src === attrs.src) {
+      foundPos = pos;
+      return false;
+    }
+  });
+  return foundPos;
+}
 
 interface UsePostEditorOptions {
   processFilesInline?: (files: File[]) => void;
@@ -67,13 +156,106 @@ export function usePostEditor({ processFilesInline, initialContent }: UsePostEdi
         return false;
       },
 
-      handleDrop: (_view, event) => {
+      handleDrop: (view, event) => {
+        // 1. 외부 파일 드롭
         const droppedFiles = event.dataTransfer?.files;
         if (droppedFiles && droppedFiles.length > 0) {
           event.preventDefault();
           processFilesRef.current?.(Array.from(droppedFiles));
           return true;
         }
+
+        // 2. 서브 드래그 처리 (그룹 내 이미지 분리)
+        const subDragData = event.dataTransfer?.getData(SUB_DRAG_TYPE);
+        if (subDragData) {
+          const { image, sourceGroupPos, sourceIdx } = JSON.parse(subDragData) as {
+            image: GroupImage;
+            sourceGroupPos: number;
+            sourceIdx: number;
+          };
+
+          // 사이드 드롭 확인
+          const sideResult = detectSideDrop(view, event);
+          if (sideResult) {
+            event.preventDefault();
+            handleSideDropWithImage(view, sideResult, image);
+            removeImageFromGroup(view, sourceGroupPos, sourceIdx);
+            return true;
+          }
+
+          // 일반 위치에 독립 이미지로 배치
+          event.preventDefault();
+          removeImageFromGroup(view, sourceGroupPos, sourceIdx);
+
+          const dropPos = view.posAtCoords({ left: event.clientX, top: event.clientY });
+          if (dropPos) {
+            const inlineImageNode = view.state.schema.nodes.inlineImage.create({
+              src: image.src,
+              alt: image.alt,
+              width: image.width,
+              uploadId: image.uploadId,
+              uploading: image.uploading,
+            });
+            const tr = view.state.tr.insert(dropPos.pos, inlineImageNode);
+            view.dispatch(tr);
+          }
+          return true;
+        }
+
+        // 3. 사이드 드롭 처리 (기존 이미지 → 그룹화)
+        const dragging = (
+          view as unknown as {
+            dragging?: {
+              slice?: {
+                content?: {
+                  firstChild?: { type: { name: string }; attrs: Record<string, unknown> };
+                };
+              };
+            };
+          }
+        ).dragging;
+        const draggedNode = dragging?.slice?.content?.firstChild;
+        if (draggedNode && draggedNode.type.name === 'inlineImage') {
+          const sideResult = detectSideDrop(view, event);
+          if (sideResult) {
+            event.preventDefault();
+            const draggedImage: GroupImage = {
+              src: draggedNode.attrs.src as string,
+              alt: (draggedNode.attrs.alt as string) ?? null,
+              width: (draggedNode.attrs.width as number) ?? null,
+              uploadId: (draggedNode.attrs.uploadId as string) ?? null,
+              uploading: (draggedNode.attrs.uploading as boolean) ?? false,
+            };
+
+            // 소스 이미지 위치 찾기 및 삭제
+            const sourcePos = findNodePosByAttrs(view, 'inlineImage', draggedNode.attrs);
+            if (sourcePos !== null) {
+              const sourceNode = view.state.doc.nodeAt(sourcePos);
+              if (sourceNode) {
+                // 소스 삭제 후 target 위치를 mapping으로 보정 (DOM 재탐색 불필요)
+                const deleteTr = view.state.tr.delete(sourcePos, sourcePos + sourceNode.nodeSize);
+                const mappedTargetPos = deleteTr.mapping.map(sideResult.targetPos);
+                // 삭제된 소스가 선택 중이면 syncNodeSelection 충돌 방지
+                deleteTr.setSelection(
+                  TextSelection.near(
+                    deleteTr.doc.resolve(Math.min(sourcePos, deleteTr.doc.content.size)),
+                  ),
+                );
+                view.dispatch(deleteTr);
+
+                if (view.state.doc.nodeAt(mappedTargetPos)) {
+                  handleSideDropWithImage(
+                    view,
+                    { ...sideResult, targetPos: mappedTargetPos },
+                    draggedImage,
+                  );
+                }
+              }
+            }
+            return true;
+          }
+        }
+
         return false;
       },
 
