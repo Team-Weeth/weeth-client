@@ -729,6 +729,7 @@ select:focus {
 
 .ProseMirror:not(.prose-readonly) {
   @apply flex-1;
+  padding-top: var(--spacing-300);
 }
 
 /* placeholder */
