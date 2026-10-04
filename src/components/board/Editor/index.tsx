@@ -9,6 +9,7 @@ import { TableMenu } from './TableMenu';
 import { SlashMenuContent } from './SlashMenu';
 import { LinkInput } from './LinkInput';
 import { useInlineFileUpload } from '@/hooks/useInlineFileUpload';
+import { BlockAddMenu } from './BlockAddMenu';
 import { createMediaItems, createLinkItem } from '@/constants/board/slashMenu';
 
 const floatingMenuTippyOptions = {
@@ -66,7 +67,7 @@ export default function Editor({ initialContent }: EditorProps = {}) {
   if (!editor) return null;
 
   return (
-    <div ref={containerRef} className="relative flex min-h-[400px] w-full flex-col overflow-hidden">
+    <div ref={containerRef} className="relative flex min-h-[400px] w-full flex-col">
       {/* 숨겨진 파일 input — 슬래시 메뉴에서 각 ref를 통해 트리거 */}
       <input
         ref={imageInputRef}
@@ -88,6 +89,12 @@ export default function Editor({ initialContent }: EditorProps = {}) {
 
       <BubbleMenuBar editor={editor} containerRef={containerRef} />
       <TableMenu editor={editor} containerRef={containerRef} />
+      <BlockAddMenu
+        editor={editor}
+        containerRef={containerRef}
+        onImageUpload={picker.openImagePicker}
+        onFileUpload={picker.openFilePicker}
+      />
 
       <FloatingMenu
         editor={editor}
