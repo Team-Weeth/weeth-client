@@ -28,6 +28,7 @@ function PostCardBody({ className, content, expandable = false }: PostCardBodyPr
       'data-file-size',
       'data-content-type',
       'data-text-align',
+      'data-image-group',
     ],
   });
 

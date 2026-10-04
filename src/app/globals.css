@@ -932,6 +932,27 @@ select:focus {
   border-radius: var(--radius-sm);
 }
 
+/* 이미지 그룹 (renderHTML 폴백 — React node view 미사용 시) */
+.ProseMirror [data-image-group] {
+  display: flex;
+  gap: var(--spacing-200);
+  width: 100%;
+  align-items: flex-start;
+}
+
+.ProseMirror [data-image-group] figure {
+  margin: 0;
+  flex: 1;
+  min-width: 0;
+}
+
+.ProseMirror [data-image-group] figure img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: var(--radius-sm);
+}
+
 /* 파일 첨부 블록 */
 .ProseMirror [data-file-attachment] {
   margin: var(--spacing-200) 0;
