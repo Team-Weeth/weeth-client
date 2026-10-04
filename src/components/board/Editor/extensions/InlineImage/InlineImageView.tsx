@@ -74,7 +74,7 @@ function InlineImageView({
   return (
     <NodeViewWrapper className="w-full">
       {!nodeBefore?.isTextblock && (
-        <GapZone isEditable={isEditable} adjacentNode={nodeBefore} onInsert={handleInsertBefore} />
+        <GapZone isEditable={isEditable} onInsert={handleInsertBefore} />
       )}
 
       {/* 이미지 본체 */}
@@ -129,7 +129,7 @@ function InlineImageView({
       </div>
 
       {!nodeAfter?.isTextblock && (
-        <GapZone isEditable={isEditable} adjacentNode={nodeAfter} onInsert={handleInsertAfter} />
+        <GapZone isEditable={isEditable} onInsert={handleInsertAfter} />
       )}
     </NodeViewWrapper>
   );

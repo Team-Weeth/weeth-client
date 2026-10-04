@@ -1,15 +1,13 @@
 'use client';
 
 import { useState } from 'react';
-import type { Node } from '@tiptap/pm/model';
 
 interface GapZoneProps {
   isEditable: boolean;
-  adjacentNode: Node | null;
   onInsert: () => void;
 }
 
-function GapZone({ isEditable, adjacentNode: _adjacentNode, onInsert }: GapZoneProps) {
+function GapZone({ isEditable, onInsert }: GapZoneProps) {
   const [hover, setHover] = useState(false);
   const showLine = hover && isEditable;
 

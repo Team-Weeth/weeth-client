@@ -2,12 +2,14 @@
 
 import { NodeViewWrapper } from '@tiptap/react';
 import type { NodeViewProps } from '@tiptap/react';
+import { TextSelection } from '@tiptap/pm/state';
 import { cn } from '@/lib/cn';
 import { stripUuidPrefix } from '@/lib/board';
 import FolderIcon from '@/assets/icons/folder.svg';
 import DownloadIcon from '@/assets/icons/download.svg';
 import DeleteIcon from '@/assets/icons/delete.svg';
 import { Icon } from '@/components/ui/Icon';
+import { GapZone } from './InlineImage/GapZone';
 
 function formatFileSize(bytes: number): string {
   if (bytes < 1024) return `${bytes} B`;
@@ -15,9 +17,40 @@ function formatFileSize(bytes: number): string {
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 }
 
-function FileAttachmentView({ node, deleteNode, editor }: NodeViewProps) {
+function FileAttachmentView({ node, deleteNode, editor, getPos }: NodeViewProps) {
   const { src, fileName, fileSize, uploading } = node.attrs;
   const isEditable = editor.isEditable;
+
+  const pos = getPos();
+  const { nodeBefore } = editor.state.doc.resolve(pos);
+  const afterPos = pos + node.nodeSize;
+  const nodeAfter =
+    afterPos < editor.state.doc.content.size
+      ? editor.state.doc.resolve(afterPos).nodeAfter
+      : null;
+
+  const handleInsertBefore = () => {
+    if (nodeBefore?.isTextblock) return;
+    const p = getPos();
+    const { state } = editor;
+    const paragraph = state.schema.nodes.paragraph.create();
+    const tr = state.tr.insert(p, paragraph);
+    tr.setSelection(TextSelection.near(tr.doc.resolve(p + 1)));
+    editor.view.dispatch(tr);
+    editor.view.focus();
+  };
+
+  const handleInsertAfter = () => {
+    if (nodeAfter?.isTextblock) return;
+    const p = getPos();
+    const insertAt = p + node.nodeSize;
+    const { state } = editor;
+    const paragraph = state.schema.nodes.paragraph.create();
+    const tr = state.tr.insert(insertAt, paragraph);
+    tr.setSelection(TextSelection.near(tr.doc.resolve(insertAt + 1)));
+    editor.view.dispatch(tr);
+    editor.view.focus();
+  };
 
   const content = (
     <div
@@ -56,19 +89,29 @@ function FileAttachmentView({ node, deleteNode, editor }: NodeViewProps) {
   );
 
   return (
-    <NodeViewWrapper className="my-200">
-      {isEditable || uploading ? (
-        content
-      ) : (
-        <a
-          href={src}
-          download={stripUuidPrefix(fileName)}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex"
-        >
-          {content}
-        </a>
+    <NodeViewWrapper className="w-full">
+      {!nodeBefore?.isTextblock && (
+        <GapZone isEditable={isEditable} onInsert={handleInsertBefore} />
+      )}
+
+      <div className="my-200">
+        {isEditable || uploading ? (
+          content
+        ) : (
+          <a
+            href={src}
+            download={stripUuidPrefix(fileName)}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex"
+          >
+            {content}
+          </a>
+        )}
+      </div>
+
+      {!nodeAfter?.isTextblock && (
+        <GapZone isEditable={isEditable} onInsert={handleInsertAfter} />
       )}
     </NodeViewWrapper>
   );
