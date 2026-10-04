@@ -1,6 +1,7 @@
 import { IndentExtension } from './IndentExtension';
 import { TableGapExtension } from './TableGapExtension';
 import { InlineImage } from './extensions/InlineImage/InlineImage';
+import { ImageGroup } from './extensions/ImageGroup/ImageGroup';
 import { FileAttachment } from './extensions/FileAttachment';
 import Document from '@tiptap/extension-document';
 import Paragraph from '@tiptap/extension-paragraph';
@@ -101,5 +102,6 @@ export const editorExtensions = [
   TableHeader,
   TableGapExtension,
   InlineImage,
+  ImageGroup,
   FileAttachment,
 ];
