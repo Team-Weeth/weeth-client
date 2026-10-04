@@ -9,7 +9,7 @@ import { Loader2 } from 'lucide-react';
 import { useImageResize, CORNER_STYLES, type Corner } from './useImageResize';
 import { useToolbarPosition } from './useToolbarPosition';
 import { ImageToolbar } from './ImageToolbar';
-import { GapZone } from './GapZone';
+import { GapZone } from '../GapZone';
 
 function InlineImageView({
   node,

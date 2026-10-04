@@ -9,7 +9,7 @@ import FolderIcon from '@/assets/icons/folder.svg';
 import DownloadIcon from '@/assets/icons/download.svg';
 import DeleteIcon from '@/assets/icons/delete.svg';
 import { Icon } from '@/components/ui/Icon';
-import { GapZone } from './InlineImage/GapZone';
+import { GapZone } from './GapZone';
 
 function formatFileSize(bytes: number): string {
   if (bytes < 1024) return `${bytes} B`;
