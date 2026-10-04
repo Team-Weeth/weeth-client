@@ -28,14 +28,21 @@ function useToolbarPosition({
 }: UseToolbarPositionOptions): UseToolbarPositionResult {
   const [measuredBelow, setMeasuredBelow] = useState(false);
 
-  const pos = getPos();
-  const { nodeBefore } = editor.state.doc.resolve(pos);
+  // getPos()は ProseMirror view 업데이트 중 stale 위치를 반환할 수 있으므로 안전하게 resolve
+  let nodeBefore: Node | null = null;
+  let nodeAfter: Node | null = null;
+  try {
+    const pos = getPos();
+    nodeBefore = editor.state.doc.resolve(pos).nodeBefore;
+    const afterPos = pos + nodeSize;
+    if (afterPos <= editor.state.doc.content.size) {
+      nodeAfter = editor.state.doc.resolve(afterPos).nodeAfter;
+    }
+  } catch {
+    // Position stale during mid-update re-render
+  }
   const isFirstNode = nodeBefore === null;
   const toolbarBelow = isFirstNode || measuredBelow;
-
-  const afterPos = pos + nodeSize;
-  const nodeAfter =
-    afterPos < editor.state.doc.content.size ? editor.state.doc.resolve(afterPos).nodeAfter : null;
 
   // IntersectionObserver로 뷰포트 상단 여유를 추적 (콜백 안에서 setState → React Compiler 허용)
   // 선택 전에도 측정값이 준비되어 있어 선택 시 툴바 위치가 즉시 올바르게 표시됨

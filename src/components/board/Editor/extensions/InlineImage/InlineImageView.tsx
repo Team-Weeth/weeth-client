@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { NodeViewWrapper } from '@tiptap/react';
 import type { NodeViewProps } from '@tiptap/react';
 import { TextSelection } from '@tiptap/pm/state';
@@ -23,6 +23,7 @@ function InlineImageView({
   const imgRef = useRef<HTMLImageElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const isEditable = editor.isEditable;
+  const [sideDrop, setSideDrop] = useState<'left' | 'right' | null>(null);
 
   const { resizing, handleResizeStart } = useImageResize({
     imgRef,
@@ -78,7 +79,27 @@ function InlineImageView({
       )}
 
       {/* 이미지 본체 */}
-      <div className={cn('flex', alignClass)} data-drag-handle>
+      <div
+        className={cn('flex', alignClass)}
+        data-drag-handle
+        onDragOver={(e) => {
+          if (!isEditable || !containerRef.current) return;
+          const rect = containerRef.current.getBoundingClientRect();
+          const x = e.clientX - rect.left;
+          const threshold = rect.width * 0.3;
+          if (x < threshold) {
+            e.preventDefault();
+            setSideDrop('left');
+          } else if (x > rect.width - threshold) {
+            e.preventDefault();
+            setSideDrop('right');
+          } else {
+            setSideDrop(null);
+          }
+        }}
+        onDragLeave={() => setSideDrop(null)}
+        onDrop={() => setSideDrop(null)}
+      >
         <div ref={containerRef} className="group relative m-200 inline-block">
           {/* 업로드 중 오버레이 */}
           {uploading && (
@@ -113,6 +134,14 @@ function InlineImageView({
             />
           )}
 
+          {/* 사이드 드롭 인디케이터 */}
+          {sideDrop === 'left' && (
+            <div className="bg-brand-primary pointer-events-none absolute inset-y-0 left-0 z-30 w-[2px]" />
+          )}
+          {sideDrop === 'right' && (
+            <div className="bg-brand-primary pointer-events-none absolute inset-y-0 right-0 z-30 w-[2px]" />
+          )}
+
           {/* 4 꼭짓점 리사이즈 핸들 */}
           {showHandles &&
             (Object.keys(CORNER_STYLES) as Corner[]).map((corner) => (
@@ -128,9 +157,7 @@ function InlineImageView({
         </div>
       </div>
 
-      {!nodeAfter?.isTextblock && (
-        <GapZone isEditable={isEditable} onInsert={handleInsertAfter} />
-      )}
+      {!nodeAfter?.isTextblock && <GapZone isEditable={isEditable} onInsert={handleInsertAfter} />}
     </NodeViewWrapper>
   );
 }
