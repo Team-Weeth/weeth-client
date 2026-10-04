@@ -67,7 +67,7 @@ export const editorExtensions = [
   HorizontalRule,
   HardBreak,
   History,
-  Dropcursor.configure({ color: '#a3a3a3', width: 2 }),
+  Dropcursor.configure({ color: '#00c8aa', width: 2 }),
   Gapcursor,
   Typography,
   Placeholder.configure({ placeholder: "'/' 키를 눌러서 명령어를 사용해 보세요." }),
