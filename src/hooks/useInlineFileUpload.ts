@@ -9,20 +9,70 @@ import { usePostStore } from '@/stores/usePostStore';
 
 function updateNodeByUploadId(editor: Editor, uploadId: string, attrs: Record<string, unknown>) {
   editor.state.doc.descendants((node, pos) => {
+    // Direct node match (inlineImage, fileAttachment)
     if (node.attrs.uploadId === uploadId) {
       editor.view.dispatch(
         editor.state.tr.setNodeMarkup(pos, undefined, { ...node.attrs, ...attrs }),
       );
       return false;
     }
+
+    // imageGroup: search inside images array
+    if (node.type.name === 'imageGroup') {
+      const images = node.attrs.images as Array<{
+        uploadId: string | null;
+        [key: string]: unknown;
+      }>;
+      const idx = images.findIndex((img) => img.uploadId === uploadId);
+      if (idx !== -1) {
+        const newImages = images.map((img, i) => (i === idx ? { ...img, ...attrs } : img));
+        editor.view.dispatch(
+          editor.state.tr.setNodeMarkup(pos, undefined, { ...node.attrs, images: newImages }),
+        );
+        return false;
+      }
+    }
   });
 }
 
 function removeNodeByUploadId(editor: Editor, uploadId: string) {
   editor.state.doc.descendants((node, pos) => {
+    // Direct node match
     if (node.attrs.uploadId === uploadId) {
       editor.view.dispatch(editor.state.tr.delete(pos, pos + node.nodeSize));
       return false;
+    }
+
+    // imageGroup: remove from images array
+    if (node.type.name === 'imageGroup') {
+      const images = node.attrs.images as Array<{
+        uploadId: string | null;
+        [key: string]: unknown;
+      }>;
+      const idx = images.findIndex((img) => img.uploadId === uploadId);
+      if (idx !== -1) {
+        const newImages = images.filter((_, i) => i !== idx);
+        if (newImages.length === 0) {
+          editor.view.dispatch(editor.state.tr.delete(pos, pos + node.nodeSize));
+        } else if (newImages.length === 1) {
+          const img = newImages[0];
+          const inlineImageNode = editor.state.schema.nodes.inlineImage.create({
+            src: img.src,
+            alt: img.alt ?? null,
+            width: img.width ?? null,
+            uploadId: img.uploadId,
+            uploading: img.uploading ?? false,
+          });
+          editor.view.dispatch(
+            editor.state.tr.replaceWith(pos, pos + node.nodeSize, inlineImageNode),
+          );
+        } else {
+          editor.view.dispatch(
+            editor.state.tr.setNodeMarkup(pos, undefined, { ...node.attrs, images: newImages }),
+          );
+        }
+        return false;
+      }
     }
   });
 }
@@ -53,32 +103,33 @@ export function useInlineFileUpload(ownerType: OwnerType = 'POST') {
       const currentEditor = editorRef.current;
       if (!currentEditor) return;
 
-      let chain = currentEditor.chain().focus();
-      for (const item of newFiles) {
+      // 블록 atom 노드를 개별 insertContent로 체이닝하면 NodeSelection이 이전 노드를
+      // 덮어씌우므로, 한 번에 배열로 삽입
+      const content = newFiles.map((item) => {
         if (isImageFileName(item.fileName)) {
-          chain = chain.insertContent({
-            type: 'inlineImage',
+          return {
+            type: 'inlineImage' as const,
             attrs: {
               src: item.fileUrl,
               uploadId: item.id,
               uploading: true,
             },
-          });
-        } else {
-          chain = chain.insertContent({
-            type: 'fileAttachment',
-            attrs: {
-              src: item.fileUrl,
-              fileName: item.fileName,
-              fileSize: item.fileSize,
-              contentType: item.contentType,
-              uploadId: item.id,
-              uploading: true,
-            },
-          });
+          };
         }
-      }
-      chain.run();
+        return {
+          type: 'fileAttachment' as const,
+          attrs: {
+            src: item.fileUrl,
+            fileName: item.fileName,
+            fileSize: item.fileSize,
+            contentType: item.contentType,
+            uploadId: item.id,
+            uploading: true,
+          },
+        };
+      });
+
+      currentEditor.chain().focus().insertContent(content).run();
     },
     [addFiles],
   );
