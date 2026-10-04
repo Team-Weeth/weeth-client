@@ -72,8 +72,10 @@ function InlineImageView({
   const showHandles = isEditable && (selected || resizing);
 
   return (
-    <NodeViewWrapper>
-      <GapZone isEditable={isEditable} adjacentNode={nodeBefore} onInsert={handleInsertBefore} />
+    <NodeViewWrapper className="w-full">
+      {!nodeBefore?.isTextblock && (
+        <GapZone isEditable={isEditable} adjacentNode={nodeBefore} onInsert={handleInsertBefore} />
+      )}
 
       {/* 이미지 본체 */}
       <div className={cn('flex', alignClass)} data-drag-handle>
@@ -126,7 +128,9 @@ function InlineImageView({
         </div>
       </div>
 
-      <GapZone isEditable={isEditable} adjacentNode={nodeAfter} onInsert={handleInsertAfter} />
+      {!nodeAfter?.isTextblock && (
+        <GapZone isEditable={isEditable} adjacentNode={nodeAfter} onInsert={handleInsertAfter} />
+      )}
     </NodeViewWrapper>
   );
 }

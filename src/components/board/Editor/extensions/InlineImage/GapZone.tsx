@@ -9,17 +9,15 @@ interface GapZoneProps {
   onInsert: () => void;
 }
 
-function GapZone({ isEditable, adjacentNode, onInsert }: GapZoneProps) {
+function GapZone({ isEditable, adjacentNode: _adjacentNode, onInsert }: GapZoneProps) {
   const [hover, setHover] = useState(false);
-  const showLine = hover && isEditable && !(adjacentNode?.isTextblock ?? false);
+  const showLine = hover && isEditable;
 
   return (
     <div
       className="relative h-500 w-full cursor-text"
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
-      onDragEnter={() => setHover(true)}
-      onDragLeave={() => setHover(false)}
       onDragOver={(e) => e.preventDefault()}
       onMouseDown={(e) => e.stopPropagation()}
       onClick={onInsert}
