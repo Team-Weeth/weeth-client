@@ -47,7 +47,7 @@ function PostEditorShell({ header, initialContent, align = 'start' }: PostEditor
   return (
     <div
       className={cn(
-        'mx-auto flex max-w-[1200px] flex-1 flex-col gap-400 p-450',
+        'mx-auto flex max-w-[1000px] flex-1 flex-col gap-400 p-450',
         align === 'center' ? 'items-center' : 'items-start',
       )}
     >
