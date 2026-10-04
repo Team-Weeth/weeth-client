@@ -17,12 +17,12 @@ export const InlineImage = Node.create({
       alt: { default: null },
       title: { default: null },
       textAlign: {
-        default: 'center',
+        default: 'left',
         parseHTML: (element) => {
           if (element.tagName === 'FIGURE') {
-            return element.style.textAlign || 'center';
+            return element.style.textAlign || 'left';
           }
-          return element.getAttribute('data-text-align') || 'center';
+          return element.getAttribute('data-text-align') || 'left';
         },
         renderHTML: () => ({}),
       },
