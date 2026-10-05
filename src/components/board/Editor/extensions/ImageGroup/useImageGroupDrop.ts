@@ -221,7 +221,18 @@ export function useImageGroupDrop({
       e.dataTransfer.effectAllowed = 'move';
     };
 
+    const isInternalDrag = (e: DragEvent): boolean => {
+      if (e.dataTransfer?.types.includes(SUB_DRAG_TYPE)) return true;
+      const dragging = (
+        pmViewRef.current as unknown as {
+          dragging?: { slice?: { content?: { firstChild?: { type: { name: string } } } } };
+        }
+      ).dragging;
+      return dragging?.slice?.content?.firstChild?.type.name === 'inlineImage';
+    };
+
     const onNativeDragOver = (e: DragEvent) => {
+      if (!isInternalDrag(e)) return; // 외부 파일은 PM에게 위임
       e.preventDefault();
       e.stopPropagation();
       clearDropcursor();
@@ -236,6 +247,7 @@ export function useImageGroupDrop({
     };
 
     const onNativeDrop = (e: DragEvent) => {
+      if (!isInternalDrag(e)) return; // 외부 파일은 PM에게 위임
       e.preventDefault();
       e.stopPropagation();
       const idx = resolveDropIdx(e);
