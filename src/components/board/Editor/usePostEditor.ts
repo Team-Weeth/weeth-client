@@ -6,7 +6,7 @@ import type { EditorView } from '@tiptap/pm/view';
 import { useState, useRef, useEffect } from 'react';
 import { usePostStore } from '@/stores/usePostStore';
 import { editorExtensions } from './extensions';
-import { SUB_DRAG_TYPE, removeImageFromGroup } from './extensions/ImageGroup/ImageGroupView';
+import { SUB_DRAG_TYPE, removeImageFromGroup } from './extensions/ImageGroup/imageGroupUtils';
 import { MAX_GROUP_IMAGES } from './extensions/ImageGroup/ImageGroup';
 import type { GroupImage } from './extensions/ImageGroup/ImageGroup';
 
