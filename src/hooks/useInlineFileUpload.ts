@@ -165,6 +165,7 @@ export function useInlineFileUpload(ownerType: OwnerType = 'POST') {
   /**
    * 다이얼로그에서 삽입 방식을 선택했을 때 호출.
    * 업로드가 다이얼로그 표시 중에 완료됐을 수 있으므로 store에서 최신 상태를 읽어 노드를 생성한다.
+   * 업로드가 실패해 store에서 제거된 항목은 삽입에서 제외한다.
    */
   const confirmImageInsertMode = (mode: 'individual' | 'group') => {
     if (!pendingImageItems) return;
@@ -172,6 +173,14 @@ export function useInlineFileUpload(ownerType: OwnerType = 'POST') {
     if (!currentEditor) return;
 
     const storeFiles = usePostStore.getState().files;
+    // 업로드 실패로 store에서 제거된 항목은 건너뜀
+    const activeItems = pendingImageItems.filter((item) => storeFiles.some((f) => f.id === item.id));
+
+    if (activeItems.length === 0) {
+      setPendingImageItems(null);
+      return;
+    }
+
     const getAttrs = (item: CoreFileItem) => {
       const current = storeFiles.find((f) => f.id === item.id);
       return {
@@ -186,7 +195,7 @@ export function useInlineFileUpload(ownerType: OwnerType = 'POST') {
         .chain()
         .focus()
         .insertContent(
-          pendingImageItems.map((item) => ({
+          activeItems.map((item) => ({
             type: 'inlineImage' as const,
             attrs: getAttrs(item),
           })),
@@ -195,8 +204,8 @@ export function useInlineFileUpload(ownerType: OwnerType = 'POST') {
     } else {
       // MAX_GROUP_IMAGES(3)장씩 묶어 imageGroup 삽입. 나머지 1장은 inlineImage로.
       const chunks: CoreFileItem[][] = [];
-      for (let i = 0; i < pendingImageItems.length; i += MAX_GROUP_IMAGES) {
-        chunks.push(pendingImageItems.slice(i, i + MAX_GROUP_IMAGES));
+      for (let i = 0; i < activeItems.length; i += MAX_GROUP_IMAGES) {
+        chunks.push(activeItems.slice(i, i + MAX_GROUP_IMAGES));
       }
 
       currentEditor
