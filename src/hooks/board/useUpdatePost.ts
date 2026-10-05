@@ -5,6 +5,7 @@ import { updatePost as updatePostApi } from '@/lib/actions/board';
 import { BOARD_ACTION_ERRORS } from '@/constants/board/error';
 import { parseApiError } from '@/lib/error';
 import { resolveFilesPayload } from './resolveFilesPayload';
+import { isReferencedInContent } from '@/lib/board/getUnreferencedFiles';
 import { useClubId } from '@/stores/useClubStore';
 import type { UploadFileItem } from '@/stores/usePostStore';
 import { usePostStore } from '@/stores/usePostStore';
@@ -62,7 +63,7 @@ export function useUpdatePost() {
       }
 
       const uploadedFiles = sortByContentImageOrder(
-        files.filter((f) => f.uploaded),
+        files.filter((f) => f.uploaded && isReferencedInContent(f.fileUrl, content)),
         content,
       );
       const filesPayload = resolveFilesPayload(uploadedFiles, _snapshot?.fileIds ?? null);

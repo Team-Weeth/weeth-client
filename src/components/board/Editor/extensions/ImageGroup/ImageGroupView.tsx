@@ -15,7 +15,6 @@ import { DROP_ZONE_WIDTH } from './imageGroupUtils';
 import { useJustifiedLayout } from './useJustifiedLayout';
 import { useSubSelection } from './useSubSelection';
 import { useImageGroupDrop } from './useImageGroupDrop';
-import { usePostStore } from '@/stores/usePostStore';
 import { useAdjacentNodes } from '../useAdjacentNodes';
 
 function ImageGroupView({ node, editor, selected, getPos, updateAttributes }: NodeViewProps) {
@@ -85,8 +84,6 @@ function ImageGroupView({ node, editor, selected, getPos, updateAttributes }: No
   };
 
   const handleSubDelete = (idx: number) => {
-    const uploadId = images[idx].uploadId;
-    if (uploadId) usePostStore.getState().removeFile(uploadId);
     updateImages(images.filter((_, i) => i !== idx));
   };
 
@@ -161,9 +158,6 @@ function ImageGroupView({ node, editor, selected, getPos, updateAttributes }: No
               type="button"
               onMouseDown={(e) => e.preventDefault()}
               onClick={() => {
-                images.forEach((img) => {
-                  if (img.uploadId) usePostStore.getState().removeFile(img.uploadId);
-                });
                 editor.chain().focus().deleteSelection().run();
               }}
               className="text-state-error hover:bg-container-neutral-interaction cursor-pointer rounded px-200 py-100 transition-colors"

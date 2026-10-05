@@ -13,7 +13,6 @@ import { GapZone } from '../GapZone';
 import { FullscreenImageViewer } from '@/components/ui/FullscreenImageViewer';
 import type { FullscreenImageViewerImage } from '@/components/ui/FullscreenImageViewer';
 import { collectDocImages } from '../imageDocUtils';
-import { usePostStore } from '@/stores/usePostStore';
 
 function InlineImageView({
   node,
@@ -159,8 +158,6 @@ function InlineImageView({
               toolbarBelow={toolbarBelow}
               onAlign={(align) => updateAttributes({ textAlign: align })}
               onDelete={() => {
-                const { uploadId } = node.attrs;
-                if (uploadId) usePostStore.getState().removeFile(uploadId);
                 deleteNode();
               }}
             />
