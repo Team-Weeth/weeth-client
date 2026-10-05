@@ -12,7 +12,7 @@ import { ImageToolbar } from './ImageToolbar';
 import { GapZone } from '../GapZone';
 import { FullscreenImageViewer } from '@/components/ui/FullscreenImageViewer';
 import type { FullscreenImageViewerImage } from '@/components/ui/FullscreenImageViewer';
-import type { GroupImage } from '../ImageGroup/ImageGroup';
+import { collectDocImages } from '../imageDocUtils';
 
 function InlineImageView({
   node,
@@ -73,20 +73,11 @@ function InlineImageView({
   const handleImageClick = () => {
     const nodePos = getPos();
     if (nodePos === undefined) return;
-    const allImages: FullscreenImageViewerImage[] = [];
-    let clickedIndex = 0;
-    editor.state.doc.descendants((docNode, pos) => {
-      if (docNode.type.name === 'inlineImage') {
-        if (pos === nodePos) clickedIndex = allImages.length;
-        allImages.push({ url: docNode.attrs.src as string, alt: (docNode.attrs.alt as string) ?? undefined });
-      } else if (docNode.type.name === 'imageGroup') {
-        const imgs = docNode.attrs.images as GroupImage[];
-        imgs.forEach((img) => {
-          allImages.push({ url: img.src, alt: img.alt ?? undefined });
-        });
-      }
+    const { images, clickedIndex } = collectDocImages(editor.state.doc, {
+      kind: 'inline',
+      pos: nodePos,
     });
-    setViewerImages(allImages);
+    setViewerImages(images);
     setViewerIndex(clickedIndex);
     setViewerKey((k) => k + 1);
     setViewerOpen(true);
@@ -131,7 +122,10 @@ function InlineImageView({
       >
         <div
           ref={containerRef}
-          className={cn('group relative m-200 inline-block', !isEditable && !uploading && 'cursor-pointer')}
+          className={cn(
+            'group relative m-200 inline-block',
+            !isEditable && !uploading && 'cursor-pointer',
+          )}
           onClick={!isEditable && !uploading ? handleImageClick : undefined}
         >
           {/* 업로드 중 오버레이 */}

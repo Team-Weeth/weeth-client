@@ -12,6 +12,7 @@ import { MAX_GROUP_IMAGES } from './ImageGroup';
 import type { GroupImage } from './ImageGroup';
 import { FullscreenImageViewer } from '@/components/ui/FullscreenImageViewer';
 import type { FullscreenImageViewerImage } from '@/components/ui/FullscreenImageViewer';
+import { collectDocImages } from '../imageDocUtils';
 
 const SUB_DRAG_TYPE = 'application/x-image-sub-drag';
 // w-300 = var(--spacing-300) = 12px (DropZoneLine 너비)
@@ -104,25 +105,12 @@ function ImageGroupView({ node, editor, selected, getPos, updateAttributes }: No
   const handleImageClick = (clickedGroupIdx: number) => {
     const groupPos = getPos();
     if (groupPos === undefined) return;
-    const allImages: FullscreenImageViewerImage[] = [];
-    let clickedIndex = 0;
-    editor.state.doc.descendants((docNode, pos) => {
-      if (docNode.type.name === 'inlineImage') {
-        allImages.push({
-          url: docNode.attrs.src as string,
-          alt: (docNode.attrs.alt as string) ?? undefined,
-        });
-      } else if (docNode.type.name === 'imageGroup') {
-        const imgs = docNode.attrs.images as GroupImage[];
-        imgs.forEach((img, imgIdx) => {
-          if (pos === groupPos && imgIdx === clickedGroupIdx) {
-            clickedIndex = allImages.length;
-          }
-          allImages.push({ url: img.src, alt: img.alt ?? undefined });
-        });
-      }
+    const { images, clickedIndex } = collectDocImages(editor.state.doc, {
+      kind: 'group',
+      pos: groupPos,
+      idx: clickedGroupIdx,
     });
-    setViewerImages(allImages);
+    setViewerImages(images);
     setViewerIndex(clickedIndex);
     setViewerKey((k) => k + 1);
     setViewerOpen(true);
@@ -441,7 +429,7 @@ function ImageGroupView({ node, editor, selected, getPos, updateAttributes }: No
 
         {images.map((image, idx) => (
           <div
-            key={`${image.src}-${idx}`}
+            key={image.uploadId ?? image.src}
             className={cn('flex', !cellWidths && 'min-w-0 flex-1')}
             style={cellWidths ? { width: cellWidths[idx] } : undefined}
           >
