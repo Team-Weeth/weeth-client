@@ -31,7 +31,7 @@ function BlockAddMenu({ editor, containerRef, onImageUpload, onFileUpload }: Blo
   const buttonRef = useRef<HTMLButtonElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
 
-  const MENU_ITEMS: MenuItem[] = [
+  const menuItems: MenuItem[] = [
     {
       label: '이미지 업로드',
       icon: ImageIcon,
@@ -165,7 +165,7 @@ function BlockAddMenu({ editor, containerRef, onImageUpload, onFileUpload }: Blo
           ref={menuRef}
           className="border-line bg-container-neutral absolute top-full left-0 z-50 mt-100 min-w-[160px] rounded-md border p-100 shadow-md"
         >
-          {MENU_ITEMS.map(({ label, icon: Icon, command }) => (
+          {menuItems.map(({ label, icon: Icon, command }) => (
             <button
               key={label}
               type="button"

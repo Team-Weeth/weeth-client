@@ -28,7 +28,7 @@ function useToolbarPosition({
 }: UseToolbarPositionOptions): UseToolbarPositionResult {
   const [measuredBelow, setMeasuredBelow] = useState(false);
 
-  // getPos()は ProseMirror view 업데이트 중 stale 위치를 반환할 수 있으므로 안전하게 resolve
+  // getPos()는 ProseMirror view 업데이트 중 stale 위치를 반환할 수 있으므로 안전하게 resolve
   let nodeBefore: Node | null = null;
   let nodeAfter: Node | null = null;
   try {
