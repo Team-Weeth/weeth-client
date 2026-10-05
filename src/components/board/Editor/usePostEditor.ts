@@ -174,6 +174,16 @@ export function usePostEditor({ processFilesInline, initialContent }: UsePostEdi
             sourceIdx: number;
           };
 
+          // 드롭 대상이 imageGroup NodeView 내부인지 확인.
+          // GapZone 등 containerRef 외부지만 같은 NodeView 내부에 드롭된 경우
+          // 이미지를 제거하면 안 되므로 no-op 처리.
+          // (containerRef 내부의 드롭은 onNativeDrop에서 stopPropagation되어 여기 도달하지 않음)
+          const target = event.target as HTMLElement;
+          if (target.closest('.node-imageGroup')) {
+            event.preventDefault();
+            return true;
+          }
+
           // 사이드 드롭 확인
           const sideResult = detectSideDrop(view, event);
           if (sideResult) {
