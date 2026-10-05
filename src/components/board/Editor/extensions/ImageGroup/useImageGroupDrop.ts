@@ -63,7 +63,12 @@ export function useImageGroupDrop({
 
       const currentPos = getPos();
 
-      if (sourceGroupPos === currentPos) {
+      // position은 드래그 중 다른 트랜잭션으로 밀릴 수 있으므로 이미지 존재 여부로도 판별
+      const isSameGroup =
+        sourceGroupPos === currentPos ||
+        (sourceIdx < images.length && images[sourceIdx].src === image.src);
+
+      if (isSameGroup) {
         // 같은 그룹 내 순서 변경
         const newImages = [...images];
         newImages.splice(sourceIdx, 1);
@@ -250,7 +255,7 @@ export function useImageGroupDrop({
       el.removeEventListener('dragleave', onNativeDragLeave);
       el.removeEventListener('drop', onNativeDrop);
     };
-  }, [isEditable]);
+  }, [containerRef, isEditable]);
 
   return { dropIndicatorIdx };
 }

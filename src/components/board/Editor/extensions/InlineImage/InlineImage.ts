@@ -30,7 +30,8 @@ export const InlineImage = Node.create({
         default: null,
         parseHTML: (element) => {
           const img = element.tagName === 'IMG' ? element : element.querySelector('img');
-          return img?.getAttribute('width') ?? null;
+          const raw = img?.getAttribute('width');
+          return raw ? Number(raw) : null;
         },
         renderHTML: () => ({}),
       },
@@ -81,7 +82,7 @@ export const InlineImage = Node.create({
 
     return [
       'figure',
-      mergeAttributes({ style: `text-align: ${textAlign || 'center'}` }),
+      mergeAttributes({ style: `text-align: ${textAlign || 'left'}` }),
       ['img', imgAttrs],
     ];
   },
