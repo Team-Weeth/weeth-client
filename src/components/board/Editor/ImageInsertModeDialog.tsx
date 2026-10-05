@@ -54,7 +54,10 @@ function ImageInsertModeDialog({
               {/* 세로로 쌓인 이미지 */}
               <div className="flex w-full flex-col gap-100">
                 {[0, 1, 2].map((i) => (
-                  <div key={i} className="bg-container-neutral-alternative h-200 w-full rounded-sm" />
+                  <div
+                    key={i}
+                    className="bg-container-neutral-alternative h-200 w-full rounded-sm"
+                  />
                 ))}
               </div>
             </InsertOptionCard>
@@ -62,7 +65,10 @@ function ImageInsertModeDialog({
               {/* 가로로 나란한 이미지 */}
               <div className="flex w-full gap-100">
                 {[0, 1, 2].map((i) => (
-                  <div key={i} className="bg-container-neutral-alternative h-700 flex-1 rounded-sm" />
+                  <div
+                    key={i}
+                    className="bg-container-neutral-alternative h-700 flex-1 rounded-sm"
+                  />
                 ))}
               </div>
             </InsertOptionCard>
@@ -83,11 +89,11 @@ function InsertOptionCard({ label, onClick, children }: InsertOptionCardProps) {
   return (
     <button
       type="button"
-      className="border-line flex flex-1 cursor-pointer flex-col items-center gap-300 rounded-md border p-500 transition-all hover:border-brand-primary hover:shadow-sm"
+      className="border-line hover:border-text-alternative flex flex-1 cursor-pointer flex-col items-center gap-300 rounded-md border p-500 transition-all hover:shadow-sm"
       onClick={onClick}
     >
       {children}
-      <span className="typo-button2 text-text-strong">{label}</span>
+      <span className="typo-body2 text-text-strong">{label}</span>
     </button>
   );
 }
