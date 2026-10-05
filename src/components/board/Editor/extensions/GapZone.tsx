@@ -9,7 +9,8 @@ interface GapZoneProps {
 
 function GapZone({ isEditable, onInsert }: GapZoneProps) {
   const [hover, setHover] = useState(false);
-  const showLine = hover && isEditable;
+
+  if (!isEditable) return null;
 
   return (
     <div
@@ -20,7 +21,7 @@ function GapZone({ isEditable, onInsert }: GapZoneProps) {
       onMouseDown={(e) => e.stopPropagation()}
       onClick={onInsert}
     >
-      {showLine && (
+      {hover && (
         <div className="pointer-events-none absolute inset-x-0 top-1/2 h-px -translate-y-1/2 bg-neutral-500" />
       )}
     </div>
