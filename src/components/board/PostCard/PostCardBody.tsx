@@ -5,7 +5,7 @@ import { useEditor, EditorContent } from '@tiptap/react';
 import DOMPurify from 'isomorphic-dompurify';
 import { cn } from '@/lib/cn';
 import { useLineClamp } from '@/hooks/useLineClamp';
-import { editorExtensions } from '@/components/board/Editor/extensions';
+import { readOnlyExtensions } from '@/components/board/Editor/extensions';
 
 import { ExpandButton } from './ExpandButton';
 
@@ -38,7 +38,7 @@ function PostCardBody({ className, content, expandable = false }: PostCardBodyPr
   );
 
   const editor = useEditor({
-    extensions: editorExtensions,
+    extensions: readOnlyExtensions,
     content: sanitized,
     editable: false,
     editorProps: {
