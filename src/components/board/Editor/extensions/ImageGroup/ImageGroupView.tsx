@@ -10,10 +10,14 @@ import { Loader2, X } from 'lucide-react';
 import { GapZone } from '../GapZone';
 import { MAX_GROUP_IMAGES } from './ImageGroup';
 import type { GroupImage } from './ImageGroup';
+import { FullscreenImageViewer } from '@/components/ui/FullscreenImageViewer';
+import type { FullscreenImageViewerImage } from '@/components/ui/FullscreenImageViewer';
 
 const SUB_DRAG_TYPE = 'application/x-image-sub-drag';
 // w-300 = var(--spacing-300) = 12px (DropZoneLine 너비)
 const DROP_ZONE_WIDTH = 12;
+// gap-200 = 8px — 읽기 전용 모드에서 이미지 간 간격
+const READ_ONLY_GAP = 8;
 
 type Dim = { w: number; h: number };
 
@@ -23,6 +27,10 @@ function ImageGroupView({ node, editor, selected, getPos, updateAttributes }: No
 
   const [subSelectedIdx, setSubSelectedIdx] = useState<number | null>(null);
   const [dropIndicatorIdx, setDropIndicatorIdx] = useState<number | null>(null);
+  const [viewerOpen, setViewerOpen] = useState(false);
+  const [viewerImages, setViewerImages] = useState<FullscreenImageViewerImage[]>([]);
+  const [viewerIndex, setViewerIndex] = useState(0);
+  const [viewerKey, setViewerKey] = useState(0);
   // src → 자연 크기 캐시 (이미지 재정렬 시에도 재측정 불필요)
   const [dimsBySrc, setDimsBySrc] = useState<Record<string, Dim>>({});
   const [containerWidth, setContainerWidth] = useState(0);
@@ -73,7 +81,10 @@ function ImageGroupView({ node, editor, selected, getPos, updateAttributes }: No
 
   // Justified layout 계산
   // 편집 모드: DropZoneLine(12px) × (N+1)개가 공간을 차지함
-  const dropZoneOverhead = isEditable ? DROP_ZONE_WIDTH * (images.length + 1) : 0;
+  // 읽기 전용: gap-200(8px) × (N-1)개가 공간을 차지함
+  const dropZoneOverhead = isEditable
+    ? DROP_ZONE_WIDTH * (images.length + 1)
+    : READ_ONLY_GAP * Math.max(0, images.length - 1);
   const allDimsLoaded = containerWidth > 0 && images.every((img) => dimsBySrc[img.src]);
   let targetH: number | null = null;
   let cellWidths: number[] | null = null;
@@ -89,6 +100,33 @@ function ImageGroupView({ node, editor, selected, getPos, updateAttributes }: No
       return targetH! * (d.w / d.h) + (isEditable ? DROP_ZONE_WIDTH : 0);
     });
   }
+
+  const handleImageClick = (clickedGroupIdx: number) => {
+    const groupPos = getPos();
+    if (groupPos === undefined) return;
+    const allImages: FullscreenImageViewerImage[] = [];
+    let clickedIndex = 0;
+    editor.state.doc.descendants((docNode, pos) => {
+      if (docNode.type.name === 'inlineImage') {
+        allImages.push({
+          url: docNode.attrs.src as string,
+          alt: (docNode.attrs.alt as string) ?? undefined,
+        });
+      } else if (docNode.type.name === 'imageGroup') {
+        const imgs = docNode.attrs.images as GroupImage[];
+        imgs.forEach((img, imgIdx) => {
+          if (pos === groupPos && imgIdx === clickedGroupIdx) {
+            clickedIndex = allImages.length;
+          }
+          allImages.push({ url: img.src, alt: img.alt ?? undefined });
+        });
+      }
+    });
+    setViewerImages(allImages);
+    setViewerIndex(clickedIndex);
+    setViewerKey((k) => k + 1);
+    setViewerOpen(true);
+  };
 
   const updateImages = (newImages: GroupImage[]) => {
     if (newImages.length === 0) {
@@ -380,13 +418,14 @@ function ImageGroupView({ node, editor, selected, getPos, updateAttributes }: No
           // items-stretch는 CSS 기본값이지만, justified 미확정 시 placeholder 방식 사용
           !targetH && 'items-stretch',
           isEditable && 'cursor-grab',
+          !isEditable && 'gap-200',
         )}
         style={targetH !== null ? { height: targetH } : undefined}
         {...(subSelectedIdx === null ? { 'data-drag-handle': '' } : {})}
         onClick={handleContainerClick}
       >
         {/* 그룹 선택 링: DropZoneLine 영역을 제외한 실제 이미지 범위에만 표시 */}
-        {selected && subSelectedIdx === null && (
+        {selected && isEditable && subSelectedIdx === null && (
           <div
             className="ring-brand-primary pointer-events-none absolute rounded-sm ring-2"
             style={{
@@ -412,7 +451,9 @@ function ImageGroupView({ node, editor, selected, getPos, updateAttributes }: No
               className={cn(
                 'relative flex-1 overflow-hidden rounded-sm',
                 subSelectedIdx === idx && 'ring-brand-primary ring-2',
+                !isEditable && 'cursor-pointer',
               )}
+              onClick={!isEditable ? () => handleImageClick(idx) : undefined}
               onDoubleClick={(e) => handleDoubleClick(e, idx)}
               draggable={subSelectedIdx === idx && isEditable}
               onDragStart={subSelectedIdx === idx ? (e) => handleSubDragStart(e, idx) : undefined}
@@ -495,6 +536,15 @@ function ImageGroupView({ node, editor, selected, getPos, updateAttributes }: No
       </div>
 
       {!nodeAfter?.isTextblock && <GapZone isEditable={isEditable} onInsert={handleInsertAfter} />}
+
+      <FullscreenImageViewer
+        key={viewerKey}
+        open={viewerOpen}
+        onOpenChange={setViewerOpen}
+        images={viewerImages}
+        initialIndex={viewerIndex}
+        showThumbnails
+      />
     </NodeViewWrapper>
   );
 }

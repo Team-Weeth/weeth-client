@@ -10,6 +10,9 @@ import { useImageResize, CORNER_STYLES, type Corner } from './useImageResize';
 import { useToolbarPosition } from './useToolbarPosition';
 import { ImageToolbar } from './ImageToolbar';
 import { GapZone } from '../GapZone';
+import { FullscreenImageViewer } from '@/components/ui/FullscreenImageViewer';
+import type { FullscreenImageViewerImage } from '@/components/ui/FullscreenImageViewer';
+import type { GroupImage } from '../ImageGroup/ImageGroup';
 
 function InlineImageView({
   node,
@@ -24,6 +27,10 @@ function InlineImageView({
   const containerRef = useRef<HTMLDivElement>(null);
   const isEditable = editor.isEditable;
   const [sideDrop, setSideDrop] = useState<'left' | 'right' | null>(null);
+  const [viewerOpen, setViewerOpen] = useState(false);
+  const [viewerImages, setViewerImages] = useState<FullscreenImageViewerImage[]>([]);
+  const [viewerIndex, setViewerIndex] = useState(0);
+  const [viewerKey, setViewerKey] = useState(0);
 
   const { resizing, handleResizeStart } = useImageResize({
     imgRef,
@@ -63,6 +70,28 @@ function InlineImageView({
     editor.view.focus();
   };
 
+  const handleImageClick = () => {
+    const nodePos = getPos();
+    if (nodePos === undefined) return;
+    const allImages: FullscreenImageViewerImage[] = [];
+    let clickedIndex = 0;
+    editor.state.doc.descendants((docNode, pos) => {
+      if (docNode.type.name === 'inlineImage') {
+        if (pos === nodePos) clickedIndex = allImages.length;
+        allImages.push({ url: docNode.attrs.src as string, alt: (docNode.attrs.alt as string) ?? undefined });
+      } else if (docNode.type.name === 'imageGroup') {
+        const imgs = docNode.attrs.images as GroupImage[];
+        imgs.forEach((img) => {
+          allImages.push({ url: img.src, alt: img.alt ?? undefined });
+        });
+      }
+    });
+    setViewerImages(allImages);
+    setViewerIndex(clickedIndex);
+    setViewerKey((k) => k + 1);
+    setViewerOpen(true);
+  };
+
   const alignClass =
     textAlign === 'left'
       ? 'justify-start'
@@ -100,7 +129,11 @@ function InlineImageView({
         onDragLeave={() => setSideDrop(null)}
         onDrop={() => setSideDrop(null)}
       >
-        <div ref={containerRef} className="group relative m-200 inline-block">
+        <div
+          ref={containerRef}
+          className={cn('group relative m-200 inline-block', !isEditable && !uploading && 'cursor-pointer')}
+          onClick={!isEditable && !uploading ? handleImageClick : undefined}
+        >
           {/* 업로드 중 오버레이 */}
           {uploading && (
             <div className="absolute inset-0 z-10 flex items-center justify-center rounded-sm bg-black/30">
@@ -158,6 +191,15 @@ function InlineImageView({
       </div>
 
       {!nodeAfter?.isTextblock && <GapZone isEditable={isEditable} onInsert={handleInsertAfter} />}
+
+      <FullscreenImageViewer
+        key={viewerKey}
+        open={viewerOpen}
+        onOpenChange={setViewerOpen}
+        images={viewerImages}
+        initialIndex={viewerIndex}
+        showThumbnails
+      />
     </NodeViewWrapper>
   );
 }
