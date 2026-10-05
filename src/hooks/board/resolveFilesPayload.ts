@@ -21,7 +21,7 @@ function resolveFilesPayload(
   const filesUnchanged =
     !hasNewFiles &&
     currentExistingIds.length === snapshotFileIds.length &&
-    snapshotFileIds.every((id) => currentExistingIds.includes(id));
+    currentExistingIds.every((id, i) => id === snapshotFileIds[i]);
 
   return filesUnchanged ? null : uploadedFiles.map(toCreatePostFile);
 }

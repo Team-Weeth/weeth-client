@@ -6,10 +6,40 @@ import { BOARD_ACTION_ERRORS } from '@/constants/board/error';
 import { parseApiError } from '@/lib/error';
 import { resolveFilesPayload } from './resolveFilesPayload';
 import { useClubId } from '@/stores/useClubStore';
+import type { UploadFileItem } from '@/stores/usePostStore';
 import { usePostStore } from '@/stores/usePostStore';
 import { toast } from '@/stores/useToastStore';
 import { buildPostPath } from '@/lib/board';
 import { validatePost } from './validatePost';
+
+/**
+ * 에디터 HTML 내 <img src="..."> 출현 순서에 맞게 파일 목록을 정렬한다.
+ * 이미지 파일은 HTML 등장 순서대로, 이미지가 아닌 파일은 상대 순서를 유지한다.
+ */
+function sortByContentImageOrder(files: UploadFileItem[], content: string): UploadFileItem[] {
+  const srcPattern = /<img[^>]+src="([^"]+)"/g;
+  const orderedUrls: string[] = [];
+  let match: RegExpExecArray | null;
+  while ((match = srcPattern.exec(content)) !== null) {
+    if (!orderedUrls.includes(match[1])) orderedUrls.push(match[1]);
+  }
+  if (orderedUrls.length === 0) return files;
+
+  const rank = (fileUrl: string): number => {
+    const idx = orderedUrls.findIndex(
+      (u) =>
+        u === fileUrl || u.replace(/%20/gi, ' ') === fileUrl || u === fileUrl.replace(/ /g, '%20'),
+    );
+    return idx === -1 ? Infinity : idx;
+  };
+
+  return [...files].sort((a, b) => {
+    const ra = rank(a.fileUrl);
+    const rb = rank(b.fileUrl);
+    if (ra === Infinity && rb === Infinity) return 0;
+    return ra - rb;
+  });
+}
 
 export function useUpdatePost() {
   const router = useRouter();
@@ -31,7 +61,10 @@ export function useUpdatePost() {
         throw new Error('validation failed');
       }
 
-      const uploadedFiles = files.filter((f) => f.uploaded);
+      const uploadedFiles = sortByContentImageOrder(
+        files.filter((f) => f.uploaded),
+        content,
+      );
       const filesPayload = resolveFilesPayload(uploadedFiles, _snapshot?.fileIds ?? null);
 
       return updatePostApi(clubId!, board, postId, { title, content, files: filesPayload });
