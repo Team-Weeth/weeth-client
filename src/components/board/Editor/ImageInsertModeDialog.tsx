@@ -6,7 +6,8 @@ import {
   AlertDialogDescription,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
-import { X } from 'lucide-react';
+import { Icon } from '@/components/ui/Icon';
+import DeleteIcon from '@/assets/icons/delete.svg';
 
 interface ImageInsertModeDialogProps {
   open: boolean;
@@ -32,11 +33,10 @@ function ImageInsertModeDialog({
         {/* 닫기 버튼 */}
         <button
           type="button"
-          aria-label="닫기"
           onClick={onCancel}
           className="text-icon-alternative hover:text-icon-normal absolute top-400 right-400 transition-colors"
         >
-          <X size={16} />
+          <Icon src={DeleteIcon} size={24} alt="닫기버튼" />
         </button>
 
         <div className="flex flex-col gap-700">
