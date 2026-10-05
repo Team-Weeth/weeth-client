@@ -34,7 +34,7 @@ function ImageInsertModeDialog({
         <button
           type="button"
           onClick={onCancel}
-          className="text-icon-alternative hover:text-icon-normal absolute top-400 right-400 transition-colors"
+          className="text-icon-alternative hover:text-icon-normal absolute top-400 right-400 cursor-pointer transition-colors"
         >
           <Icon src={DeleteIcon} size={24} alt="닫기버튼" />
         </button>
