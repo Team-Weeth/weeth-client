@@ -191,6 +191,7 @@ function ImageGroupView({ node, editor, selected, getPos, updateAttributes }: No
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={image.src}
+                    alt=""
                     aria-hidden="true"
                     className="pointer-events-none block w-full opacity-0 select-none"
                     draggable={false}
