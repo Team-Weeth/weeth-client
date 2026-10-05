@@ -22,7 +22,7 @@ function GapZone({ isEditable, onInsert }: GapZoneProps) {
       onClick={onInsert}
     >
       {hover && (
-        <div className="bg-line pointer-events-none absolute inset-x-0 top-1/2 h-px -translate-y-1/2" />
+        <div className="bg-text-alternative pointer-events-none absolute inset-x-0 top-1/2 h-px -translate-y-1/2" />
       )}
     </div>
   );
