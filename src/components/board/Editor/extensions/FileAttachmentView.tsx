@@ -10,6 +10,7 @@ import DownloadIcon from '@/assets/icons/download.svg';
 import DeleteIcon from '@/assets/icons/delete.svg';
 import { Icon } from '@/components/ui/Icon';
 import { GapZone } from './GapZone';
+import { useAdjacentNodes } from './useAdjacentNodes';
 
 function formatFileSize(bytes: number): string {
   if (bytes < 1024) return `${bytes} B`;
@@ -20,19 +21,7 @@ function formatFileSize(bytes: number): string {
 function FileAttachmentView({ node, deleteNode, editor, getPos }: NodeViewProps) {
   const { src, fileName, fileSize, uploading } = node.attrs;
   const isEditable = editor.isEditable;
-
-  let nodeBefore: ReturnType<typeof editor.state.doc.resolve>['nodeBefore'] = null;
-  let nodeAfter: ReturnType<typeof editor.state.doc.resolve>['nodeAfter'] = null;
-  try {
-    const pos = getPos();
-    nodeBefore = editor.state.doc.resolve(pos).nodeBefore;
-    const afterPos = pos + node.nodeSize;
-    if (afterPos <= editor.state.doc.content.size) {
-      nodeAfter = editor.state.doc.resolve(afterPos).nodeAfter;
-    }
-  } catch {
-    // Position stale during mid-update re-render — skip GapZone logic
-  }
+  const { nodeBefore, nodeAfter } = useAdjacentNodes(editor, getPos, node.nodeSize);
 
   const handleInsertBefore = () => {
     if (nodeBefore?.isTextblock) return;

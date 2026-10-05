@@ -16,6 +16,7 @@ import { useJustifiedLayout } from './useJustifiedLayout';
 import { useSubSelection } from './useSubSelection';
 import { useImageGroupDrop } from './useImageGroupDrop';
 import { usePostStore } from '@/stores/usePostStore';
+import { useAdjacentNodes } from '../useAdjacentNodes';
 
 function ImageGroupView({ node, editor, selected, getPos, updateAttributes }: NodeViewProps) {
   const images = node.attrs.images as GroupImage[];
@@ -112,16 +113,7 @@ function ImageGroupView({ node, editor, selected, getPos, updateAttributes }: No
     editor.view.focus();
   };
 
-  // getPos()는 ProseMirror view 업데이트 중 stale 위치를 반환할 수 있으므로 안전하게 resolve
-  let nodeBefore: ReturnType<typeof editor.state.doc.resolve>['nodeBefore'] = null;
-  let nodeAfter: ReturnType<typeof editor.state.doc.resolve>['nodeAfter'] = null;
-  try {
-    const pos = getPos();
-    nodeBefore = editor.state.doc.resolve(pos).nodeBefore;
-    nodeAfter = editor.state.doc.resolve(pos + node.nodeSize).nodeAfter;
-  } catch {
-    // Position stale during mid-update re-render — skip GapZone logic
-  }
+  const { nodeBefore, nodeAfter } = useAdjacentNodes(editor, getPos, node.nodeSize);
 
   return (
     <NodeViewWrapper

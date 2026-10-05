@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import type { RefObject } from 'react';
 import type { Editor } from '@tiptap/core';
-import type { Node } from '@tiptap/pm/model';
+import { useAdjacentNodes } from '../useAdjacentNodes';
 
 const TOOLBAR_CLEARANCE = 56;
 
@@ -15,8 +15,8 @@ interface UseToolbarPositionOptions {
 
 interface UseToolbarPositionResult {
   toolbarBelow: boolean;
-  nodeBefore: Node | null;
-  nodeAfter: Node | null;
+  nodeBefore: ReturnType<typeof useAdjacentNodes>['nodeBefore'];
+  nodeAfter: ReturnType<typeof useAdjacentNodes>['nodeAfter'];
 }
 
 function useToolbarPosition({
@@ -27,20 +27,7 @@ function useToolbarPosition({
   containerRef,
 }: UseToolbarPositionOptions): UseToolbarPositionResult {
   const [measuredBelow, setMeasuredBelow] = useState(false);
-
-  // getPos()는 ProseMirror view 업데이트 중 stale 위치를 반환할 수 있으므로 안전하게 resolve
-  let nodeBefore: Node | null = null;
-  let nodeAfter: Node | null = null;
-  try {
-    const pos = getPos();
-    nodeBefore = editor.state.doc.resolve(pos).nodeBefore;
-    const afterPos = pos + nodeSize;
-    if (afterPos <= editor.state.doc.content.size) {
-      nodeAfter = editor.state.doc.resolve(afterPos).nodeAfter;
-    }
-  } catch {
-    // Position stale during mid-update re-render
-  }
+  const { nodeBefore, nodeAfter } = useAdjacentNodes(editor, getPos, nodeSize);
   const isFirstNode = nodeBefore === null;
   const toolbarBelow = isFirstNode || measuredBelow;
 
