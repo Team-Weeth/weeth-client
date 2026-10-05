@@ -22,27 +22,34 @@ function ImageInsertModeDialog({
   onCancel,
 }: ImageInsertModeDialogProps) {
   return (
-    <AlertDialog open={open} onOpenChange={(isOpen) => { if (!isOpen) onCancel(); }}>
-      <AlertDialogContent>
-        <div className="flex flex-col gap-500">
-          {/* 헤더: 타이틀 + 설명 + 닫기 버튼 */}
-          <div className="relative pr-500">
-            <AlertDialogTitle>사진 첨부 방식</AlertDialogTitle>
-            <AlertDialogDescription>
+    <AlertDialog
+      open={open}
+      onOpenChange={(isOpen) => {
+        if (!isOpen) onCancel();
+      }}
+    >
+      <AlertDialogContent className="w-[420px] p-700 pb-600">
+        {/* 닫기 버튼 */}
+        <button
+          type="button"
+          aria-label="닫기"
+          onClick={onCancel}
+          className="text-icon-alternative hover:text-icon-normal absolute top-400 right-400 transition-colors"
+        >
+          <X size={16} />
+        </button>
+
+        <div className="flex flex-col gap-700">
+          {/* 헤더 */}
+          <div className="flex flex-col items-center gap-200">
+            <AlertDialogTitle className="text-center">사진 첨부 방식</AlertDialogTitle>
+            <AlertDialogDescription className="text-center">
               이미지를 첨부할 레이아웃을 선택할 수 있어요.
             </AlertDialogDescription>
-            <button
-              type="button"
-              aria-label="닫기"
-              onClick={onCancel}
-              className="text-icon-alternative hover:text-icon-normal absolute top-0 right-0 transition-colors"
-            >
-              <X size={16} />
-            </button>
           </div>
 
           {/* 옵션 카드 */}
-          <div className="flex gap-300">
+          <div className="flex gap-400">
             <InsertOptionCard label="개별 이미지" onClick={onIndividual}>
               {/* 세로로 쌓인 이미지 */}
               <div className="flex w-full flex-col gap-100">
@@ -76,7 +83,7 @@ function InsertOptionCard({ label, onClick, children }: InsertOptionCardProps) {
   return (
     <button
       type="button"
-      className="hover:bg-container-neutral-interaction flex flex-1 cursor-pointer flex-col items-center gap-300 rounded-md border p-400 transition-colors"
+      className="border-line flex flex-1 cursor-pointer flex-col items-center gap-300 rounded-md border p-500 transition-all hover:border-brand-primary hover:shadow-sm"
       onClick={onClick}
     >
       {children}
