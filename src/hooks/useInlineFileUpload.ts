@@ -1,4 +1,4 @@
-import { useRef, useEffect, useCallback } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import type { Editor } from '@tiptap/core';
 import { useShallow } from 'zustand/react/shallow';
 import { MAX_IMAGE_FILES, MAX_NON_IMAGE_FILES } from '@/constants/board/file';
@@ -6,6 +6,7 @@ import type { OwnerType } from '@/lib/apis/file';
 import { isImageFileName } from '@/lib/board/fileUtils';
 import { useFileUploadCore, type CoreFileItem } from '@/hooks/useFileUploadCore';
 import { usePostStore } from '@/stores/usePostStore';
+import { MAX_GROUP_IMAGES } from '@/components/board/Editor/extensions/ImageGroup/ImageGroup';
 
 function updateNodeByUploadId(editor: Editor, uploadId: string, attrs: Record<string, unknown>) {
   editor.state.doc.descendants((node, pos) => {
@@ -90,6 +91,9 @@ export function useInlineFileUpload(ownerType: OwnerType = 'POST') {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const editorRef = useRef<Editor | null>(null);
 
+  // 이미지 삽입 방식 선택 다이얼로그: null이면 닫힘, 배열이면 열림
+  const [pendingImageItems, setPendingImageItems] = useState<CoreFileItem[] | null>(null);
+
   /** Call this to connect the editor instance after it's created */
   const setEditor = useCallback((editor: Editor | null) => {
     editorRef.current = editor;
@@ -103,33 +107,49 @@ export function useInlineFileUpload(ownerType: OwnerType = 'POST') {
       const currentEditor = editorRef.current;
       if (!currentEditor) return;
 
+      const imageItems = newFiles.filter((item) => isImageFileName(item.fileName));
+      const nonImageItems = newFiles.filter((item) => !isImageFileName(item.fileName));
+
       // 블록 atom 노드를 개별 insertContent로 체이닝하면 NodeSelection이 이전 노드를
       // 덮어씌우므로, 한 번에 배열로 삽입
-      const content = newFiles.map((item) => {
-        if (isImageFileName(item.fileName)) {
-          return {
-            type: 'inlineImage' as const,
-            attrs: {
-              src: item.fileUrl,
-              uploadId: item.id,
-              uploading: true,
-            },
-          };
-        }
-        return {
-          type: 'fileAttachment' as const,
-          attrs: {
-            src: item.fileUrl,
-            fileName: item.fileName,
-            fileSize: item.fileSize,
-            contentType: item.contentType,
-            uploadId: item.id,
-            uploading: true,
-          },
-        };
-      });
+      if (nonImageItems.length > 0) {
+        currentEditor
+          .chain()
+          .focus()
+          .insertContent(
+            nonImageItems.map((item) => ({
+              type: 'fileAttachment' as const,
+              attrs: {
+                src: item.fileUrl,
+                fileName: item.fileName,
+                fileSize: item.fileSize,
+                contentType: item.contentType,
+                uploadId: item.id,
+                uploading: true,
+              },
+            })),
+          )
+          .run();
+      }
 
-      currentEditor.chain().focus().insertContent(content).run();
+      if (imageItems.length === 0) return;
+
+      if (imageItems.length === 1) {
+        currentEditor
+          .chain()
+          .focus()
+          .insertContent([
+            {
+              type: 'inlineImage' as const,
+              attrs: { src: imageItems[0].fileUrl, uploadId: imageItems[0].id, uploading: true },
+            },
+          ])
+          .run();
+        return;
+      }
+
+      // 이미지 2장 이상: 삽입 방식 선택 다이얼로그 표시
+      setPendingImageItems(imageItems);
     },
     [addFiles],
   );
@@ -141,6 +161,77 @@ export function useInlineFileUpload(ownerType: OwnerType = 'POST') {
     },
     [removeFile],
   );
+
+  /**
+   * 다이얼로그에서 삽입 방식을 선택했을 때 호출.
+   * 업로드가 다이얼로그 표시 중에 완료됐을 수 있으므로 store에서 최신 상태를 읽어 노드를 생성한다.
+   */
+  const confirmImageInsertMode = (mode: 'individual' | 'group') => {
+    if (!pendingImageItems) return;
+    const currentEditor = editorRef.current;
+    if (!currentEditor) return;
+
+    const storeFiles = usePostStore.getState().files;
+    const getAttrs = (item: CoreFileItem) => {
+      const current = storeFiles.find((f) => f.id === item.id);
+      return {
+        src: current?.fileUrl ?? item.fileUrl,
+        uploadId: item.id,
+        uploading: current ? !current.uploaded : true,
+      };
+    };
+
+    if (mode === 'individual') {
+      currentEditor
+        .chain()
+        .focus()
+        .insertContent(
+          pendingImageItems.map((item) => ({
+            type: 'inlineImage' as const,
+            attrs: getAttrs(item),
+          })),
+        )
+        .run();
+    } else {
+      // MAX_GROUP_IMAGES(3)장씩 묶어 imageGroup 삽입. 나머지 1장은 inlineImage로.
+      const chunks: CoreFileItem[][] = [];
+      for (let i = 0; i < pendingImageItems.length; i += MAX_GROUP_IMAGES) {
+        chunks.push(pendingImageItems.slice(i, i + MAX_GROUP_IMAGES));
+      }
+
+      currentEditor
+        .chain()
+        .focus()
+        .insertContent(
+          chunks.flatMap((chunk): Array<{ type: string; attrs: Record<string, unknown> }> => {
+            if (chunk.length === 1) {
+              return [{ type: 'inlineImage', attrs: getAttrs(chunk[0]) }];
+            }
+            return [
+              {
+                type: 'imageGroup',
+                attrs: {
+                  images: chunk.map((item) => {
+                    const { src, uploadId, uploading } = getAttrs(item);
+                    return { src, alt: null, width: null, uploadId, uploading };
+                  }),
+                },
+              },
+            ];
+          }),
+        )
+        .run();
+    }
+
+    setPendingImageItems(null);
+  };
+
+  /** 다이얼로그를 취소했을 때 호출 — 업로드 추적 중인 파일을 store에서 제거한다. */
+  const cancelImageInsertMode = () => {
+    if (!pendingImageItems) return;
+    pendingImageItems.forEach((item) => removeFileAndNode(item.id));
+    setPendingImageItems(null);
+  };
 
   const markUploadedAndUpdateNode = useCallback(
     (id: string, storageKey: string, fileUrl: string) => {
@@ -194,5 +285,8 @@ export function useInlineFileUpload(ownerType: OwnerType = 'POST') {
     handlers: {
       handleInputChange,
     },
+    pendingImageItems,
+    confirmImageInsertMode,
+    cancelImageInsertMode,
   };
 }

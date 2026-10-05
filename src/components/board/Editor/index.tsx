@@ -10,6 +10,7 @@ import { SlashMenuContent } from './SlashMenu';
 import { LinkInput } from './LinkInput';
 import { useInlineFileUpload } from '@/hooks/useInlineFileUpload';
 import { BlockAddMenu } from './BlockAddMenu';
+import { ImageInsertModeDialog } from './ImageInsertModeDialog';
 import { createMediaItems, createLinkItem } from '@/constants/board/slashMenu';
 
 const floatingMenuTippyOptions = {
@@ -44,8 +45,17 @@ interface EditorProps {
 }
 
 export default function Editor({ initialContent }: EditorProps = {}) {
-  const { imageInputRef, fileInputRef, setEditor, processFilesInline, picker, handlers } =
-    useInlineFileUpload();
+  const {
+    imageInputRef,
+    fileInputRef,
+    setEditor,
+    processFilesInline,
+    picker,
+    handlers,
+    pendingImageItems,
+    confirmImageInsertMode,
+    cancelImageInsertMode,
+  } = useInlineFileUpload();
 
   const { editor, showSlashMenu, closeSlashMenu, containerRef } = usePostEditor({
     processFilesInline,
@@ -131,6 +141,14 @@ export default function Editor({ initialContent }: EditorProps = {}) {
       <div className="relative" onClick={handleEditorClick}>
         <EditorContent editor={editor} className="max-w-none" />
       </div>
+
+      <ImageInsertModeDialog
+        open={pendingImageItems !== null}
+        imageCount={pendingImageItems?.length ?? 0}
+        onIndividual={() => confirmImageInsertMode('individual')}
+        onGroup={() => confirmImageInsertMode('group')}
+        onCancel={cancelImageInsertMode}
+      />
     </div>
   );
 }
