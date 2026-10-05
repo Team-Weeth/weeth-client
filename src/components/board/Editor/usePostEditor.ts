@@ -2,6 +2,7 @@
 
 import { useEditor } from '@tiptap/react';
 import { TextSelection } from '@tiptap/pm/state';
+import type { Transaction } from '@tiptap/pm/state';
 import type { EditorView } from '@tiptap/pm/view';
 import { useState, useRef, useEffect } from 'react';
 import { usePostStore } from '@/stores/usePostStore';
@@ -44,9 +45,17 @@ function detectSideDrop(view: EditorView, event: DragEvent): SideDropResult | nu
   return null;
 }
 
-function handleSideDropWithImage(view: EditorView, result: SideDropResult, image: GroupImage) {
+/**
+ * 사이드 드롭 시 이미지를 타겟 위치에 추가하는 트랜잭션을 반환.
+ * 타겟 그룹이 가득 찼거나 타겟 노드가 없으면 null 반환 (소스 이미지를 제거해선 안 됨).
+ */
+function buildSideDropTransaction(
+  view: EditorView,
+  result: SideDropResult,
+  image: GroupImage,
+): Transaction | null {
   const targetNode = view.state.doc.nodeAt(result.targetPos);
-  if (!targetNode) return;
+  if (!targetNode) return null;
 
   if (targetNode.type.name === 'inlineImage') {
     const targetImage: GroupImage = {
@@ -57,28 +66,26 @@ function handleSideDropWithImage(view: EditorView, result: SideDropResult, image
       uploading: (targetNode.attrs.uploading as boolean) ?? false,
     };
     const images = result.side === 'left' ? [image, targetImage] : [targetImage, image];
-
     const groupNode = view.state.schema.nodes.imageGroup.create({ images });
-    const tr = view.state.tr.replaceWith(
+    return view.state.tr.replaceWith(
       result.targetPos,
       result.targetPos + targetNode.nodeSize,
       groupNode,
     );
-    view.dispatch(tr);
   } else if (targetNode.type.name === 'imageGroup') {
     const existingImages = [...(targetNode.attrs.images as GroupImage[])];
-    if (existingImages.length >= MAX_GROUP_IMAGES) return;
+    if (existingImages.length >= MAX_GROUP_IMAGES) return null;
     if (result.side === 'left') {
       existingImages.unshift(image);
     } else {
       existingImages.push(image);
     }
-    const tr = view.state.tr.setNodeMarkup(result.targetPos, undefined, {
+    return view.state.tr.setNodeMarkup(result.targetPos, undefined, {
       ...targetNode.attrs,
       images: existingImages,
     });
-    view.dispatch(tr);
   }
+  return null;
 }
 
 function findNodePosByAttrs(
@@ -188,8 +195,14 @@ export function usePostEditor({ processFilesInline, initialContent }: UsePostEdi
           const sideResult = detectSideDrop(view, event);
           if (sideResult) {
             event.preventDefault();
-            handleSideDropWithImage(view, sideResult, image);
-            removeImageFromGroup(view, sourceGroupPos, sourceIdx);
+            const sideTr = buildSideDropTransaction(view, sideResult, image);
+            if (sideTr) {
+              // sourceGroupPos를 사이드 드롭 트랜잭션의 매핑으로 보정한 후 제거
+              const mappedSourceGroupPos = sideTr.mapping.map(sourceGroupPos);
+              view.dispatch(sideTr);
+              removeImageFromGroup(view, mappedSourceGroupPos, sourceIdx);
+            }
+            // sideTr === null: 대상 그룹이 가득 참 → 소스 이미지 유지
             return true;
           }
 
@@ -254,11 +267,12 @@ export function usePostEditor({ processFilesInline, initialContent }: UsePostEdi
                 view.dispatch(deleteTr);
 
                 if (view.state.doc.nodeAt(mappedTargetPos)) {
-                  handleSideDropWithImage(
+                  const sideTr = buildSideDropTransaction(
                     view,
                     { ...sideResult, targetPos: mappedTargetPos },
                     draggedImage,
                   );
+                  if (sideTr) view.dispatch(sideTr);
                 }
               }
             }
