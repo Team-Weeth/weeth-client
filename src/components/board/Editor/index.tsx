@@ -144,7 +144,6 @@ export default function Editor({ initialContent }: EditorProps = {}) {
 
       <ImageInsertModeDialog
         open={pendingImageItems !== null}
-        imageCount={pendingImageItems?.length ?? 0}
         onIndividual={() => confirmImageInsertMode('individual')}
         onGroup={() => confirmImageInsertMode('group')}
         onCancel={cancelImageInsertMode}

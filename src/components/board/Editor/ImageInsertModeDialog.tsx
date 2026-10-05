@@ -1,9 +1,14 @@
 'use client';
 
-import { Dialog, DialogContent } from '@/components/ui/dialog';
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
+import { X } from 'lucide-react';
 
 interface ImageInsertModeDialogProps {
-  imageCount: number;
   open: boolean;
   onIndividual: () => void;
   onGroup: () => void;
@@ -11,46 +16,53 @@ interface ImageInsertModeDialogProps {
 }
 
 function ImageInsertModeDialog({
-  imageCount,
   open,
   onIndividual,
   onGroup,
   onCancel,
 }: ImageInsertModeDialogProps) {
   return (
-    <Dialog open={open} onOpenChange={(isOpen) => { if (!isOpen) onCancel(); }}>
-      <DialogContent showCloseButton={false} className="w-[340px]">
+    <AlertDialog open={open} onOpenChange={(isOpen) => { if (!isOpen) onCancel(); }}>
+      <AlertDialogContent>
         <div className="flex flex-col gap-500">
-          <p className="typo-sub3 text-text-strong text-center">
-            이미지 {imageCount}장을 어떻게 첨부할까요?
-          </p>
+          {/* 헤더: 타이틀 + 설명 + 닫기 버튼 */}
+          <div className="relative pr-500">
+            <AlertDialogTitle>사진 첨부 방식</AlertDialogTitle>
+            <AlertDialogDescription>
+              이미지를 첨부할 레이아웃을 선택할 수 있어요.
+            </AlertDialogDescription>
+            <button
+              type="button"
+              aria-label="닫기"
+              onClick={onCancel}
+              className="text-icon-alternative hover:text-icon-normal absolute top-0 right-0 transition-colors"
+            >
+              <X size={16} />
+            </button>
+          </div>
+
+          {/* 옵션 카드 */}
           <div className="flex gap-300">
-            <InsertOptionCard label="개별로" onClick={onIndividual}>
+            <InsertOptionCard label="개별 이미지" onClick={onIndividual}>
               {/* 세로로 쌓인 이미지 */}
               <div className="flex w-full flex-col gap-100">
                 {[0, 1, 2].map((i) => (
-                  <div
-                    key={i}
-                    className="bg-container-neutral-alternative h-200 w-full rounded-sm"
-                  />
+                  <div key={i} className="bg-container-neutral-alternative h-200 w-full rounded-sm" />
                 ))}
               </div>
             </InsertOptionCard>
-            <InsertOptionCard label="한 줄로" onClick={onGroup}>
+            <InsertOptionCard label="한 줄 이미지" onClick={onGroup}>
               {/* 가로로 나란한 이미지 */}
               <div className="flex w-full gap-100">
                 {[0, 1, 2].map((i) => (
-                  <div
-                    key={i}
-                    className="bg-container-neutral-alternative h-700 flex-1 rounded-sm"
-                  />
+                  <div key={i} className="bg-container-neutral-alternative h-700 flex-1 rounded-sm" />
                 ))}
               </div>
             </InsertOptionCard>
           </div>
         </div>
-      </DialogContent>
-    </Dialog>
+      </AlertDialogContent>
+    </AlertDialog>
   );
 }
 
