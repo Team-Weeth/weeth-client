@@ -13,16 +13,28 @@ import { toast } from '@/stores/useToastStore';
 import { buildPostPath } from '@/lib/board';
 import { validatePost } from './validatePost';
 
+/** HTML 속성値의 엔티티를 디코딩한다 (예: &amp; → &, &quot; → "). */
+function decodeHtmlEntities(str: string): string {
+  return str
+    .replace(/&amp;/gi, '&')
+    .replace(/&quot;/gi, '"')
+    .replace(/&#39;/gi, "'")
+    .replace(/&lt;/gi, '<')
+    .replace(/&gt;/gi, '>');
+}
+
 /**
  * 에디터 HTML 내 <img src="..."> 출현 순서에 맞게 파일 목록을 정렬한다.
  * 이미지 파일은 HTML 등장 순서대로, 이미지가 아닌 파일은 상대 순서를 유지한다.
+ * src 속성값은 HTML 엔티티 디코딩 후 비교한다 (&amp; → & 등).
  */
 function sortByContentImageOrder(files: UploadFileItem[], content: string): UploadFileItem[] {
   const srcPattern = /<img[^>]+src="([^"]+)"/g;
   const orderedUrls: string[] = [];
   let match: RegExpExecArray | null;
   while ((match = srcPattern.exec(content)) !== null) {
-    if (!orderedUrls.includes(match[1])) orderedUrls.push(match[1]);
+    const decoded = decodeHtmlEntities(match[1]);
+    if (!orderedUrls.includes(decoded)) orderedUrls.push(decoded);
   }
   if (orderedUrls.length === 0) return files;
 
