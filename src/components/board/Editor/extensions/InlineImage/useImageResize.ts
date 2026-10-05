@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import type { RefObject } from 'react';
 import type { Editor } from '@tiptap/core';
 
@@ -22,6 +22,13 @@ interface UseImageResizeOptions {
 
 function useImageResize({ imgRef, width, updateAttributes, editor }: UseImageResizeOptions) {
   const [resizing, setResizing] = useState(false);
+  const cleanupRef = useRef<(() => void) | null>(null);
+
+  useEffect(() => {
+    return () => {
+      cleanupRef.current?.();
+    };
+  }, []);
 
   const handleResizeStart = (corner: Corner) => (e: React.PointerEvent) => {
     e.preventDefault();
@@ -40,14 +47,18 @@ function useImageResize({ imgRef, width, updateAttributes, editor }: UseImageRes
       updateAttributes({ width: Math.round(next) });
     };
 
-    const onUp = () => {
+    const cleanup = () => {
       setResizing(false);
       document.removeEventListener('pointermove', onMove);
-      document.removeEventListener('pointerup', onUp);
+      document.removeEventListener('pointerup', cleanup);
+      document.removeEventListener('pointercancel', cleanup);
+      cleanupRef.current = null;
     };
+    cleanupRef.current = cleanup;
 
     document.addEventListener('pointermove', onMove);
-    document.addEventListener('pointerup', onUp);
+    document.addEventListener('pointerup', cleanup);
+    document.addEventListener('pointercancel', cleanup);
   };
 
   return { resizing, handleResizeStart };
