@@ -141,12 +141,12 @@ describe('usePostEditor', () => {
       const file = new File([''], 'test.png', { type: 'image/png' });
 
       const { rerender } = renderHook(
-        ({ processFiles }: { processFiles: (f: File[]) => void }) =>
-          usePostEditor({ processFiles }),
-        { initialProps: { processFiles: fn1 } },
+        ({ processFilesInline }: { processFilesInline: (f: File[]) => void }) =>
+          usePostEditor({ processFilesInline }),
+        { initialProps: { processFilesInline: fn1 } },
       );
 
-      rerender({ processFiles: fn2 });
+      rerender({ processFilesInline: fn2 });
 
       // rerender 후 paste 발생 → fn2가 호출되어야 함 (fn1 stale 아님)
       capturedConfig.editorProps.handlePaste({}, { clipboardData: { files: [file] } });
@@ -159,7 +159,7 @@ describe('usePostEditor', () => {
   describe('handlePaste', () => {
     it('파일이 있으면 processFiles를 호출하고 true를 반환한다', () => {
       const processFiles = jest.fn();
-      renderHook(() => usePostEditor({ processFiles }));
+      renderHook(() => usePostEditor({ processFilesInline: processFiles }));
 
       const file = new File([''], 'image.png', { type: 'image/png' });
       const result = capturedConfig.editorProps.handlePaste(
@@ -191,10 +191,13 @@ describe('usePostEditor', () => {
   describe('handleDrop', () => {
     it('파일이 있으면 preventDefault 호출 후 processFiles를 실행하고 true를 반환한다', () => {
       const processFiles = jest.fn();
-      renderHook(() => usePostEditor({ processFiles }));
+      renderHook(() => usePostEditor({ processFilesInline: processFiles }));
 
       const file = new File([''], 'doc.pdf');
-      const event = { preventDefault: jest.fn(), dataTransfer: { files: [file] } };
+      const event = {
+        preventDefault: jest.fn(),
+        dataTransfer: { files: [file], getData: jest.fn(() => '') },
+      };
       const result = capturedConfig.editorProps.handleDrop({}, event);
 
       expect(event.preventDefault).toHaveBeenCalled();
@@ -205,7 +208,10 @@ describe('usePostEditor', () => {
     it('파일이 없으면 false를 반환한다', () => {
       renderHook(() => usePostEditor());
 
-      const result = capturedConfig.editorProps.handleDrop({}, { dataTransfer: { files: [] } });
+      const result = capturedConfig.editorProps.handleDrop(
+        {},
+        { dataTransfer: { files: [], getData: jest.fn(() => '') } },
+      );
 
       expect(result).toBe(false);
     });
