@@ -5,7 +5,7 @@ import { NodeViewWrapper } from '@tiptap/react';
 import type { NodeViewProps } from '@tiptap/react';
 import { TextSelection } from '@tiptap/pm/state';
 import { cn } from '@/lib/cn';
-import { Loader2, X } from 'lucide-react';
+import { Loader2, Trash2, X } from 'lucide-react';
 import { GapZone } from '../GapZone';
 import type { GroupImage } from './ImageGroup';
 import { FullscreenImageViewer } from '@/components/ui/FullscreenImageViewer';
@@ -15,6 +15,7 @@ import { DROP_ZONE_WIDTH } from './imageGroupUtils';
 import { useJustifiedLayout } from './useJustifiedLayout';
 import { useSubSelection } from './useSubSelection';
 import { useImageGroupDrop } from './useImageGroupDrop';
+import { usePostStore } from '@/stores/usePostStore';
 
 function ImageGroupView({ node, editor, selected, getPos, updateAttributes }: NodeViewProps) {
   const images = node.attrs.images as GroupImage[];
@@ -36,7 +37,7 @@ function ImageGroupView({ node, editor, selected, getPos, updateAttributes }: No
   const { subSelectedIdx, setSubSelectedIdx, handleDoubleClick, handleContainerClick } =
     useSubSelection(isEditable, containerRef);
 
-  const { dropIndicatorIdx, pmViewRef, handleSubDragStart } = useImageGroupDrop({
+  const { dropIndicatorIdx, handleSubDragStart } = useImageGroupDrop({
     containerRef,
     isEditable,
     images,
@@ -83,6 +84,8 @@ function ImageGroupView({ node, editor, selected, getPos, updateAttributes }: No
   };
 
   const handleSubDelete = (idx: number) => {
+    const uploadId = images[idx].uploadId;
+    if (uploadId) usePostStore.getState().removeFile(uploadId);
     updateImages(images.filter((_, i) => i !== idx));
   };
 
@@ -157,6 +160,26 @@ function ImageGroupView({ node, editor, selected, getPos, updateAttributes }: No
               right: isEditable ? DROP_ZONE_WIDTH : 0,
             }}
           />
+        )}
+
+        {/* 그룹 선택 시 삭제 툴바 */}
+        {selected && isEditable && subSelectedIdx === null && (
+          <div className="border-line bg-container-neutral absolute bottom-full left-1/2 z-20 mb-200 flex -translate-x-1/2 items-center rounded-md border p-100 shadow-md">
+            <button
+              type="button"
+              onMouseDown={(e) => e.preventDefault()}
+              onClick={() => {
+                images.forEach((img) => {
+                  if (img.uploadId) usePostStore.getState().removeFile(img.uploadId);
+                });
+                editor.chain().focus().deleteSelection().run();
+              }}
+              className="text-state-error hover:bg-container-neutral-interaction cursor-pointer rounded px-200 py-100 transition-colors"
+              aria-label="이미지 그룹 삭제"
+            >
+              <Trash2 size={15} />
+            </button>
+          </div>
         )}
 
         <DropZoneLine idx={0} active={dropIndicatorIdx === 0} isEditable={isEditable} />
