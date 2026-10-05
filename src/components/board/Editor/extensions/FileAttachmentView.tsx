@@ -21,13 +21,18 @@ function FileAttachmentView({ node, deleteNode, editor, getPos }: NodeViewProps)
   const { src, fileName, fileSize, uploading } = node.attrs;
   const isEditable = editor.isEditable;
 
-  const pos = getPos();
-  const { nodeBefore } = editor.state.doc.resolve(pos);
-  const afterPos = pos + node.nodeSize;
-  const nodeAfter =
-    afterPos < editor.state.doc.content.size
-      ? editor.state.doc.resolve(afterPos).nodeAfter
-      : null;
+  let nodeBefore: ReturnType<typeof editor.state.doc.resolve>['nodeBefore'] = null;
+  let nodeAfter: ReturnType<typeof editor.state.doc.resolve>['nodeAfter'] = null;
+  try {
+    const pos = getPos();
+    nodeBefore = editor.state.doc.resolve(pos).nodeBefore;
+    const afterPos = pos + node.nodeSize;
+    if (afterPos <= editor.state.doc.content.size) {
+      nodeAfter = editor.state.doc.resolve(afterPos).nodeAfter;
+    }
+  } catch {
+    // Position stale during mid-update re-render — skip GapZone logic
+  }
 
   const handleInsertBefore = () => {
     if (nodeBefore?.isTextblock) return;
@@ -108,9 +113,7 @@ function FileAttachmentView({ node, deleteNode, editor, getPos }: NodeViewProps)
         )}
       </div>
 
-      {!nodeAfter?.isTextblock && (
-        <GapZone isEditable={isEditable} onInsert={handleInsertAfter} />
-      )}
+      {!nodeAfter?.isTextblock && <GapZone isEditable={isEditable} onInsert={handleInsertAfter} />}
     </NodeViewWrapper>
   );
 }
