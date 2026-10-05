@@ -59,12 +59,14 @@ describe('resolveFilesPayload', () => {
       expect(resolveFilesPayload([], [])).toBeNull();
     });
 
-    it('기존 파일 순서가 달라도 내용이 같으면 null을 반환한다', () => {
+    it('기존 파일 순서가 달라지면 전체 파일 목록을 반환한다', () => {
       const files = [
         makeFile({ id: 'b', isExisting: true }),
         makeFile({ id: 'a', isExisting: true }),
       ];
-      expect(resolveFilesPayload(files, ['a', 'b'])).toBeNull();
+      const result = resolveFilesPayload(files, ['a', 'b']);
+      expect(result).not.toBeNull();
+      expect(result).toHaveLength(2);
     });
 
     it('새 파일이 추가됐으면 전체 파일 목록을 반환한다', () => {
