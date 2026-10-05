@@ -3,7 +3,6 @@
 import { useState, useRef, useEffect } from 'react';
 import type { RefObject } from 'react';
 import type { Editor } from '@tiptap/core';
-import type { EditorView } from '@tiptap/pm/view';
 import type { NodeViewProps } from '@tiptap/react';
 import { NodeSelection } from '@tiptap/pm/state';
 import { MAX_GROUP_IMAGES } from './ImageGroup';
@@ -23,13 +22,14 @@ interface UseImageGroupDropOptions {
 
 interface UseImageGroupDropResult {
   dropIndicatorIdx: number | null;
-  handleSubDragStart: (e: React.DragEvent, idx: number) => void;
 }
 
 /**
  * imageGroup 의 드래그/드롭을 담당한다.
  *
- * - handleSubDragStart: 그룹 내 이미지의 서브 드래그 시작
+ * - 네이티브 dragstart 바인딩: 서브이미지 드래그 시 PM의 view.dom dragstart보다 먼저 실행되어
+ *   stopPropagation으로 PM이 view.dragging을 설정하지 못하게 차단.
+ *   이로써 GapZone 등 containerRef 외부에 드롭해도 PM이 imageGroup을 삭제하지 않는다.
  * - 네이티브 dragover/dragleave/drop 이벤트 바인딩 (React 이벤트 위임보다 먼저 실행)
  * - handleInternalDrop: 서브드래그 재정렬, 그룹 간 이동, 독립 inlineImage 흡수
  */
@@ -51,19 +51,13 @@ export function useImageGroupDrop({
     pmViewRef.current = editor.view;
   });
 
-  // ProseMirror의 그룹 드래그 핸들러까지 버블링되지 않도록 차단.
-  // pmView.dragging을 설정하지 않으므로, 그룹 밖에 드롭해도 PM이 아무것도 삭제하지 않는다.
-  // 서브이미지 드롭은 오직 native onNativeDrop(SUB_DRAG_TYPE)으로만 처리된다.
-  const handleSubDragStart = (e: React.DragEvent, idx: number) => {
-    e.stopPropagation();
-
-    const image = images[idx];
-    e.dataTransfer.setData(
-      SUB_DRAG_TYPE,
-      JSON.stringify({ image, sourceGroupPos: getPos(), sourceIdx: idx }),
-    );
-    e.dataTransfer.effectAllowed = 'move';
-  };
+  // Latest images/getPos for native dragstart handler (avoids stale closure)
+  const imagesRef = useRef(images);
+  const getPosRef = useRef(getPos);
+  useEffect(() => {
+    imagesRef.current = images;
+    getPosRef.current = getPos;
+  });
 
   const handleInternalDrop = (dataTransfer: DataTransfer, dropIdx: number) => {
     setDropIndicatorIdx(null);
@@ -190,6 +184,26 @@ export function useImageGroupDrop({
       pmViewRef.current.dom.dispatchEvent(new DragEvent('dragleave', { bubbles: false }));
     };
 
+    // ImageGroup spec의 draggable:true 때문에 PM의 view.dom dragstart 핸들러가
+    // React synthetic onDragStart보다 먼저 실행되어 view.dragging을 설정한다.
+    // containerRef의 네이티브 핸들러는 view.dom보다 먼저 실행되므로,
+    // 여기서 stopPropagation하면 PM이 view.dragging을 절대 설정하지 못한다.
+    // → GapZone 등 containerRef 외부에 드롭해도 PM이 imageGroup을 삭제하지 않는다.
+    const onNativeDragStart = (e: DragEvent) => {
+      const target = e.target as HTMLElement;
+      const cellEl = target.closest('[data-cell-idx]') as HTMLElement | null;
+      if (!cellEl || !e.dataTransfer) return;
+      const idx = Number(cellEl.dataset.cellIdx);
+      const image = imagesRef.current[idx];
+      if (!image) return;
+      e.stopPropagation();
+      e.dataTransfer.setData(
+        SUB_DRAG_TYPE,
+        JSON.stringify({ image, sourceGroupPos: getPosRef.current(), sourceIdx: idx }),
+      );
+      e.dataTransfer.effectAllowed = 'move';
+    };
+
     const onNativeDragOver = (e: DragEvent) => {
       e.preventDefault();
       e.stopPropagation();
@@ -214,15 +228,17 @@ export function useImageGroupDrop({
       setDropIndicatorIdx(null);
     };
 
+    el.addEventListener('dragstart', onNativeDragStart);
     el.addEventListener('dragover', onNativeDragOver);
     el.addEventListener('dragleave', onNativeDragLeave);
     el.addEventListener('drop', onNativeDrop);
     return () => {
+      el.removeEventListener('dragstart', onNativeDragStart);
       el.removeEventListener('dragover', onNativeDragOver);
       el.removeEventListener('dragleave', onNativeDragLeave);
       el.removeEventListener('drop', onNativeDrop);
     };
   }, [isEditable]);
 
-  return { dropIndicatorIdx, handleSubDragStart };
+  return { dropIndicatorIdx };
 }

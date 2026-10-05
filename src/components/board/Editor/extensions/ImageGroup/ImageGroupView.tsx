@@ -37,7 +37,7 @@ function ImageGroupView({ node, editor, selected, getPos, updateAttributes }: No
   const { subSelectedIdx, setSubSelectedIdx, handleDoubleClick, handleContainerClick } =
     useSubSelection(isEditable, containerRef);
 
-  const { dropIndicatorIdx, handleSubDragStart } = useImageGroupDrop({
+  const { dropIndicatorIdx } = useImageGroupDrop({
     containerRef,
     isEditable,
     images,
@@ -201,7 +201,6 @@ function ImageGroupView({ node, editor, selected, getPos, updateAttributes }: No
               onClick={!isEditable ? () => handleImageClick(idx) : undefined}
               onDoubleClick={(e) => handleDoubleClick(e, idx)}
               draggable={subSelectedIdx === idx && isEditable}
-              onDragStart={subSelectedIdx === idx ? (e) => handleSubDragStart(e, idx) : undefined}
             >
               {/*
                 크기 미확정 시 폴백:
