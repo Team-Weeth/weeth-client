@@ -317,6 +317,7 @@ export function usePostEditor({ processFilesInline, initialContent }: UsePostEdi
             }
 
             // 빈 paragraph가 리스트 바로 뒤에 있을 때 리스트 재진입 방지
+            if ($from.depth < 1) return false;
             const resolvedPos = state.doc.resolve($from.before());
             const nodeBefore = resolvedPos.nodeBefore;
 
