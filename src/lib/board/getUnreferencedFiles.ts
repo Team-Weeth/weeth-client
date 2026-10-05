@@ -1,15 +1,25 @@
 import type { FileItem } from '@/types/file';
 
 /**
- * HTML 내에 fileUrl이 참조되어 있는지 확인.
- * URL 인코딩 차이 허용: presigned URL 기반 경로는 공백을 %20으로 인코딩하지만
- * API가 반환하는 fileUrl은 리터럴 공백을 포함할 수 있어, 양방향을 모두 검사한다.
+ * HTML 내에 fileUrl이 인라인 노드의 src 또는 data-src 속성으로 참조되어 있는지 확인.
+ * - URL 인코딩 차이 허용 (공백 ↔ %20)
+ * - HTML 속성 엔티티 허용 (& ↔ &amp;)
+ * - 본문 텍스트에 URL이 등장하는 경우는 참조로 판정하지 않음
  */
 export function isReferencedInContent(fileUrl: string, htmlContent: string): boolean {
-  if (htmlContent.includes(fileUrl)) return true;
-  if (htmlContent.includes(fileUrl.replace(/ /g, '%20'))) return true;
-  if (htmlContent.includes(fileUrl.replace(/%20/gi, ' '))) return true;
-  return false;
+  const variants = [fileUrl, fileUrl.replace(/ /g, '%20'), fileUrl.replace(/%20/gi, ' ')];
+
+  const checkAttr = (url: string) => {
+    const encoded = url.replace(/&/g, '&amp;');
+    return (
+      htmlContent.includes(`src="${url}"`) ||
+      htmlContent.includes(`src="${encoded}"`) ||
+      htmlContent.includes(`data-src="${url}"`) ||
+      htmlContent.includes(`data-src="${encoded}"`)
+    );
+  };
+
+  return variants.some(checkAttr);
 }
 
 /**
