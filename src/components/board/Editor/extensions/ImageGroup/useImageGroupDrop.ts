@@ -6,7 +6,6 @@ import type { Editor } from '@tiptap/core';
 import type { EditorView } from '@tiptap/pm/view';
 import type { NodeViewProps } from '@tiptap/react';
 import { NodeSelection } from '@tiptap/pm/state';
-import { Slice, Fragment } from '@tiptap/pm/model';
 import { MAX_GROUP_IMAGES } from './ImageGroup';
 import type { GroupImage } from './ImageGroup';
 import { SUB_DRAG_TYPE, removeImageFromGroup } from './imageGroupUtils';
@@ -24,7 +23,6 @@ interface UseImageGroupDropOptions {
 
 interface UseImageGroupDropResult {
   dropIndicatorIdx: number | null;
-  pmViewRef: RefObject<EditorView>;
   handleSubDragStart: (e: React.DragEvent, idx: number) => void;
 }
 
@@ -53,8 +51,9 @@ export function useImageGroupDrop({
     pmViewRef.current = editor.view;
   });
 
-  // ProseMirror의 그룹 드래그 핸들러까지 버블링되지 않도록 차단하고,
-  // SUB_DRAG_TYPE 데이터와 view.dragging 슬라이스를 설정하여 Dropcursor가 동작하게 함.
+  // ProseMirror의 그룹 드래그 핸들러까지 버블링되지 않도록 차단.
+  // pmView.dragging을 설정하지 않으므로, 그룹 밖에 드롭해도 PM이 아무것도 삭제하지 않는다.
+  // 서브이미지 드롭은 오직 native onNativeDrop(SUB_DRAG_TYPE)으로만 처리된다.
   const handleSubDragStart = (e: React.DragEvent, idx: number) => {
     e.stopPropagation();
 
@@ -64,20 +63,6 @@ export function useImageGroupDrop({
       JSON.stringify({ image, sourceGroupPos: getPos(), sourceIdx: idx }),
     );
     e.dataTransfer.effectAllowed = 'move';
-
-    // Use pmViewRef.current (not editor.view) to satisfy React Compiler's no-prop-mutation rule
-    const inlineImageNode = editor.state.schema.nodes.inlineImage.create({
-      src: image.src,
-      alt: image.alt,
-      width: image.width,
-      uploadId: image.uploadId,
-      uploading: image.uploading,
-    });
-    const pmView = pmViewRef.current as unknown as { dragging: unknown };
-    pmView.dragging = {
-      slice: new Slice(Fragment.from(inlineImageNode), 0, 0),
-      move: true,
-    };
   };
 
   const handleInternalDrop = (dataTransfer: DataTransfer, dropIdx: number) => {
@@ -239,5 +224,5 @@ export function useImageGroupDrop({
     };
   }, [isEditable]);
 
-  return { dropIndicatorIdx, pmViewRef, handleSubDragStart };
+  return { dropIndicatorIdx, handleSubDragStart };
 }
