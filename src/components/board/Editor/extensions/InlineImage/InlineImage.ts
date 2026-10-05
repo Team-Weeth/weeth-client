@@ -70,8 +70,9 @@ export const InlineImage = Node.create({
     ];
   },
 
-  renderHTML({ HTMLAttributes }) {
-    const { src, alt, title, width, textAlign } = HTMLAttributes;
+  renderHTML({ node, HTMLAttributes }) {
+    const { src, alt, title } = HTMLAttributes;
+    const { width, textAlign } = node.attrs;
     const imgAttrs: Record<string, string> = {};
     if (src) imgAttrs.src = src;
     if (alt) imgAttrs.alt = alt;
