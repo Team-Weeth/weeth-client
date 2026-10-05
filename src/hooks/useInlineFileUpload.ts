@@ -174,7 +174,9 @@ export function useInlineFileUpload(ownerType: OwnerType = 'POST') {
 
     const storeFiles = usePostStore.getState().files;
     // 업로드 실패로 store에서 제거된 항목은 건너뜀
-    const activeItems = pendingImageItems.filter((item) => storeFiles.some((f) => f.id === item.id));
+    const activeItems = pendingImageItems.filter((item) =>
+      storeFiles.some((f) => f.id === item.id),
+    );
 
     if (activeItems.length === 0) {
       setPendingImageItems(null);
