@@ -11,8 +11,11 @@ import { DUES_REGISTRATION_ERROR_CODE } from '@/constants/errorCode';
 import { useDuesSetupValues, useDuesSetupActions } from '@/stores/useDuesSetupStore';
 import { toastError, toastSuccess } from '@/stores/useToastStore';
 import { getApiErrorCode } from '@/utils/shared/getApiErrorCode';
-import { useDuesPaymentTargetsQuery, useDuesRegistrationStatusQuery } from '@/hooks/queries/admin';
-import { useCompleteDuesRegistration } from '@/hooks/mutations/admin';
+import {
+  useDuesPaymentTargetsQuery,
+  useDuesRegistrationStatusQuery,
+} from '@/hooks/queries/admin/useDuesSetupQueries';
+import { useCompleteDuesRegistration } from '@/hooks/mutations/admin/useDuesSetupMutations';
 
 import { DuesSetupStep5Skeleton } from '@/components/admin/dues/setup/components/DuesSetupStepSkeleton';
 import { DuesSetupStepIndicator } from '@/components/admin/dues/setup/components/DuesSetupStepIndicator';
@@ -22,7 +25,7 @@ import { PrevButton } from '@/components/admin/dues/setup/components/PrevButton'
 import { SettingResultCardGrid } from '@/components/admin/dues/setup/components/SettingResultCardGrid';
 import { SetupHeader } from '@/components/admin/dues/setup/components/SetupHeader';
 import { useDuesSetupNavigation } from '@/hooks/admin/useDuesSetupNavigation';
-import { useEnsureDuesAccountId } from '@/hooks/admin';
+import { useEnsureDuesAccountId } from '@/hooks/admin/useEnsureDuesAccountId';
 import { formatAmount } from '@/lib/formatAmount';
 
 const MAX_AVATAR_DISPLAY = 4;
