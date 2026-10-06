@@ -6,9 +6,16 @@ import { useEffect } from 'react';
 import { Button } from '@/components/ui/Button';
 
 // 배포로 .next 아티팩트가 교체되면 구 빌드의 청크 URL이 404가 된다.
-// 브라우저마다 문구가 달라 모두 커버한다. (Safari: Importing a module script failed)
-const STALE_CHUNK_PATTERN =
-  /ChunkLoadError|Loading chunk .* failed|dynamically imported module|Importing a module script failed/i;
+// webpack/Turbopack 모두 name은 ChunkLoadError지만 message 형식은 서로 다르고,
+// 동적 import 실패 문구는 브라우저마다 달라 message는 보조 조건으로 함께 본다.
+// (Turbopack: Failed to load chunk / Safari: Importing a module script failed)
+const STALE_CHUNK_ERROR_NAME = 'ChunkLoadError';
+const STALE_CHUNK_MESSAGE_PATTERN =
+  /Loading chunk .* failed|Failed to load chunk|dynamically imported module|Importing a module script failed/i;
+
+function isStaleChunkError(error: Error) {
+  return error.name === STALE_CHUNK_ERROR_NAME || STALE_CHUNK_MESSAGE_PATTERN.test(error.message);
+}
 
 const RELOAD_AT_KEY = 'weeth-stale-chunk-reload-at';
 const RELOAD_COOLDOWN_MS = 10_000;
@@ -27,7 +34,7 @@ export default function RootError({ error, reset }: ErrorProps) {
   }, [error]);
 
   useEffect(() => {
-    if (!STALE_CHUNK_PATTERN.test(error.message)) return;
+    if (!isStaleChunkError(error)) return;
 
     // 새로고침하면 새 빌드를 받으므로 자동 복구를 시도한다.
     // 쿨다운으로 무한 새로고침을 막는다.
