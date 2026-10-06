@@ -12,12 +12,12 @@ import { GapZone } from '../GapZone';
 import type { GroupImage } from './ImageGroup';
 import { FullscreenImageViewer } from '@/components/ui/FullscreenImageViewer';
 import type { FullscreenImageViewerImage } from '@/components/ui/FullscreenImageViewer';
-import { collectDocImages } from '../utils/imageDocUtils';
-import { DROP_ZONE_WIDTH } from './utils/imageGroupUtils';
-import { useJustifiedLayout } from './hooks/useJustifiedLayout';
-import { useSubSelection } from './hooks/useSubSelection';
-import { useImageGroupDrop } from './hooks/useImageGroupDrop';
-import { useAdjacentNodes } from '../hooks/useAdjacentNodes';
+import { collectDocImages } from '@/utils/board/imageDocUtils';
+import { DROP_ZONE_WIDTH } from '@/utils/board/imageGroupUtils';
+import { useJustifiedLayout } from '@/hooks/board/useJustifiedLayout';
+import { useSubSelection } from '@/hooks/board/useSubSelection';
+import { useImageGroupDrop } from '@/hooks/board/useImageGroupDrop';
+import { useAdjacentNodes } from '@/hooks/board/useAdjacentNodes';
 
 function ImageGroupView({ node, editor, selected, getPos, updateAttributes }: NodeViewProps) {
   const images = node.attrs.images as GroupImage[];
@@ -261,14 +261,14 @@ function ImageGroupView({ node, editor, selected, getPos, updateAttributes }: No
               {subSelectedIdx === idx && isEditable && (
                 <button
                   type="button"
-                  className="absolute top-200 right-200 z-20 flex size-5 cursor-pointer items-center justify-center rounded-full bg-white/80 shadow-sm"
+                  className="absolute top-200 right-200 z-20 flex size-5 cursor-pointer items-center justify-center rounded-full bg-neutral-900/80 shadow-sm"
                   onClick={(e) => {
                     e.stopPropagation();
                     handleSubDelete(idx);
                   }}
                   aria-label="이미지 삭제"
                 >
-                  <X className="text-icon-strong size-3" />
+                  <X className="text-neutral-0 size-3" />
                 </button>
               )}
             </div>
