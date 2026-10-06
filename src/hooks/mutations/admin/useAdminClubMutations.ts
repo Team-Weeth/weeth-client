@@ -26,7 +26,9 @@ export function useUpdateClub() {
       }
     },
     onSettled: (_, __, ___, context) => {
-      queryClient.invalidateQueries({ queryKey: adminQueryKeys.club(context?.savedClubId ?? clubId) });
+      queryClient.invalidateQueries({
+        queryKey: adminQueryKeys.club(context?.savedClubId ?? clubId),
+      });
     },
   });
 }
