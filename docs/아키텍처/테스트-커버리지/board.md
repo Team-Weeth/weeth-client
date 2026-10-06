@@ -8,3 +8,4 @@
 |------|------|------------|
 | Editor 핵심 훅 + 확장 (IndentExtension, LinkInput) + E2E | [[테스트-커버리지/board/editor]] | 2026-06-25 |
 | 게시글 작성 Shell (PostEditorShell 주변 + CategorySelector + BoundTitleInput) + E2E (작성·수정) | [[테스트-커버리지/board/post-write]] | 2026-06-29 |
+| 인라인 이미지 유틸리티·훅 (imageDocUtils, useAdjacentNodes, useJustifiedLayout, useSubSelection) | [[테스트-커버리지/board/inline-image]] | 2026-10-05 |

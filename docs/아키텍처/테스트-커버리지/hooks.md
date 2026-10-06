@@ -44,6 +44,87 @@
 
 ---
 
+---
+
+## useUpdatePost (`src/hooks/board/useUpdatePost.ts`)
+
+**측정일**: 2026-10-05
+**테스트 파일**: `src/hooks/board/__tests__/useUpdatePost.test.ts`
+**총 테스트 수**: 9개
+
+### 파일별 커버리지
+
+| 파일 | Statements | Branches | Functions | Lines |
+|------|-----------|---------|---------|-------|
+| `useUpdatePost.ts` | **97.39%** | **75%** | **100%** | **97.39%** |
+
+### 테스트 구성
+
+#### `useUpdatePost.test.ts` (9개)
+
+게시글 수정 뮤테이션 훅. `usePostStore.getState()` 직접 호출 방식으로 스냅샷 diff 계산. `jest.useFakeTimers()`로 `setTimeout(push, 0)` 리다이렉트 누수 방지.
+
+| 케이스 | 검증 내용 |
+|--------|---------|
+| `updatePostApi` 올바른 인자 호출 | `clubId`, `boardId`, `postId`, `{ title, content, files: null }` |
+| `validatePost=false` | `updatePostApi` 미호출 |
+| HTML 등장 순서대로 파일 정렬 | b.png → a.png 순서로 API에 전달 |
+| `&amp;` 엔티티 디코딩 | URL에 `&amp;`가 포함된 img src를 올바르게 매칭 |
+| 성공 시 성공 토스트 | `toast({ variant: 'success' })` 호출 |
+| 성공 시 `router.push` | 게시글 상세 경로로 이동 |
+| 성공 시 `store.reset` | 스토어 초기화 |
+| API 오류 시 에러 토스트 | `toast({ variant: 'error' })` 호출 |
+| `mutate` 호출 중 `isPending=true` | 비동기 중간 상태 검증 |
+
+### 미커버 브랜치
+
+| 라인 | 내용 | 이유 |
+|------|------|------|
+| — | `_allowNavigation?.()` 및 일부 null 분기 | 25% 미커버; 스냅샷 null 등 엣지 케이스. `usePostStore._allowNavigation` 주입 없이 재현 어려움 |
+
+---
+
+## useInlineFileUpload (`src/hooks/useInlineFileUpload.ts`)
+
+**측정일**: 2026-10-05
+**테스트 파일**: `src/hooks/__tests__/useInlineFileUpload.test.ts`
+**총 테스트 수**: 7개
+
+### 파일별 커버리지
+
+| 파일 | Statements | Branches | Functions | Lines |
+|------|-----------|---------|---------|-------|
+| `useInlineFileUpload.ts` | **33.66%** | **77.77%** | **40%** | **33.66%** |
+
+> Statement/Line 커버리지가 낮은 이유: `addFilesAndInsertNodes`, `removeNodeByUploadId`, `updateNodeByUploadId`, `markUploadedAndUpdateNode`는 실제 TipTap `Editor` 인스턴스와 ProseMirror 트랜잭션이 필요해 단위 테스트로 검증 불가. E2E 대상.
+
+### 테스트 구성
+
+#### `useInlineFileUpload.test.ts` (7개)
+
+파일 업로드 후 에디터에 인라인 노드를 삽입하는 훅의 공개 인터페이스 검증. `useFileUploadCore`를 mock으로 대체해 에디터 의존성 없이 테스트.
+
+| 케이스 | 검증 내용 |
+|--------|---------|
+| `confirmImageInsertMode` — `pendingImageItems=null` | early return, `chain()` 미호출 |
+| `confirmImageInsertMode` — individual 모드 | store에 있는 항목만 삽입 대상 확인 |
+| 업로드 실패 항목 제거 | store에 없는 id는 삽입에서 제외됨 확인 |
+| `cancelImageInsertMode` — `pendingImageItems=null` | `removeFile` 미호출 |
+| `setEditor(null)` | null 설정 후 크래시 없이 동작 |
+| `processFilesInline` 참조 안정성 | 리렌더 후 동일 함수 참조 유지 |
+| `openImagePicker` | `imageInputRef.current.click()` 호출 |
+
+### 미커버 브랜치
+
+| 내용 | 이유 |
+|------|------|
+| `addFilesAndInsertNodes` (파일→에디터 노드 삽입) | 실제 TipTap Editor 필요 → E2E 대상 |
+| `removeNodeByUploadId` (ProseMirror 트랜잭션) | 실제 TipTap Editor 필요 → E2E 대상 |
+| `updateNodeByUploadId` (업로드 완료 노드 갱신) | 실제 TipTap Editor 필요 → E2E 대상 |
+| `markUploadedAndUpdateNode` | 실제 TipTap Editor 필요 → E2E 대상 |
+
+---
+
 ## 추가 예정
 
 | 파일 | 우선순위 | 비고 |
