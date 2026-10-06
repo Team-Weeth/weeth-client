@@ -229,22 +229,41 @@ export function handleInlineImageGroupDrop(view: EditorView, event: DragEvent): 
   const sourceNode = view.state.doc.nodeAt(sourcePos);
   if (!sourceNode) return true;
 
-  // 소스 삭제 후 target 위치를 mapping으로 보정 (DOM 재탐색 불필요)
-  const deleteTr = view.state.tr.delete(sourcePos, sourcePos + sourceNode.nodeSize);
-  const mappedTargetPos = deleteTr.mapping.map(sideResult.targetPos);
-  // 삭제된 소스가 선택 중이면 syncNodeSelection 충돌 방지
-  deleteTr.setSelection(
-    TextSelection.near(deleteTr.doc.resolve(Math.min(sourcePos, deleteTr.doc.content.size))),
-  );
-  view.dispatch(deleteTr);
-
-  if (view.state.doc.nodeAt(mappedTargetPos)) {
-    const sideTr = buildSideDropTransaction(
-      view,
-      { ...sideResult, targetPos: mappedTargetPos },
-      draggedImage,
-    );
-    if (sideTr) view.dispatch(sideTr);
+  // 대상 그룹이 가득 찬 경우 소스 이미지를 삭제하지 않고 no-op
+  const targetNode = view.state.doc.nodeAt(sideResult.targetPos);
+  if (targetNode?.type.name === 'imageGroup') {
+    const existing = targetNode.attrs.images as GroupImage[];
+    if (existing.length >= MAX_GROUP_IMAGES) return true;
   }
+
+  // 소스 삭제와 대상 추가를 하나의 트랜잭션으로 구성 (undo 원자성 + 이미지 유실 방지)
+  const tr = view.state.tr.delete(sourcePos, sourcePos + sourceNode.nodeSize);
+  const mappedTargetPos = tr.mapping.map(sideResult.targetPos);
+  // 삭제된 소스가 선택 중이면 syncNodeSelection 충돌 방지
+  tr.setSelection(TextSelection.near(tr.doc.resolve(Math.min(sourcePos, tr.doc.content.size))));
+
+  const targetAfterDelete = tr.doc.nodeAt(mappedTargetPos);
+  if (targetAfterDelete) {
+    if (targetAfterDelete.type.name === 'inlineImage') {
+      const targetImage: GroupImage = {
+        src: targetAfterDelete.attrs.src as string,
+        alt: (targetAfterDelete.attrs.alt as string) ?? null,
+        width: (targetAfterDelete.attrs.width as number) ?? null,
+        uploadId: (targetAfterDelete.attrs.uploadId as string) ?? null,
+        uploading: (targetAfterDelete.attrs.uploading as boolean) ?? false,
+      };
+      const images =
+        sideResult.side === 'left' ? [draggedImage, targetImage] : [targetImage, draggedImage];
+      const groupNode = view.state.schema.nodes.imageGroup.create({ images });
+      tr.replaceWith(mappedTargetPos, mappedTargetPos + targetAfterDelete.nodeSize, groupNode);
+    } else if (targetAfterDelete.type.name === 'imageGroup') {
+      const existing = targetAfterDelete.attrs.images as GroupImage[];
+      const images =
+        sideResult.side === 'left' ? [draggedImage, ...existing] : [...existing, draggedImage];
+      tr.setNodeMarkup(mappedTargetPos, undefined, { ...targetAfterDelete.attrs, images });
+    }
+  }
+
+  view.dispatch(tr);
   return true;
 }
