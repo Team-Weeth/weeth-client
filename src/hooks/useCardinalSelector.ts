@@ -19,7 +19,7 @@ function useCardinalSelector({
   scope = 'default',
 }: UseCardinalSelectorOptions = {}) {
   const clubId = useClubId();
-  const { data: cardinals = [], isPending, isFetching } = useCardinals();
+  const { data: cardinals = [], isPending, isFetching, isError } = useCardinals();
   const selectedCardinalNumber = useSelectedCardinalNumber(clubId, scope);
   const { select } = useSelectedCardinalActions();
 
@@ -54,6 +54,8 @@ function useCardinalSelector({
     activeCardinal,
     latestCardinal,
     isLoading: isPending || (isFetching && cardinals.length === 0),
+    // 조회 실패 시에도 cardinals는 빈 배열이라, 호출하는 쪽이 "기수 없음"과 구분할 수 있어야 한다.
+    isError,
   };
 }
 
