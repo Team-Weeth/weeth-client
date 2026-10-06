@@ -55,7 +55,7 @@ export const ImageGroup = Node.create({
     ];
   },
 
-  renderHTML({ node, HTMLAttributes }) {
+  renderHTML({ node }) {
     const images = (node.attrs.images ?? []) as GroupImage[];
     const children = images.map((image) => {
       const imgAttrs: Record<string, string> = {};

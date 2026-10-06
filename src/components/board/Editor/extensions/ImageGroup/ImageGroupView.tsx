@@ -12,12 +12,12 @@ import { GapZone } from '../GapZone';
 import type { GroupImage } from './ImageGroup';
 import { FullscreenImageViewer } from '@/components/ui/FullscreenImageViewer';
 import type { FullscreenImageViewerImage } from '@/components/ui/FullscreenImageViewer';
-import { collectDocImages } from '../imageDocUtils';
-import { DROP_ZONE_WIDTH } from './imageGroupUtils';
-import { useJustifiedLayout } from './useJustifiedLayout';
-import { useSubSelection } from './useSubSelection';
-import { useImageGroupDrop } from './useImageGroupDrop';
-import { useAdjacentNodes } from '../useAdjacentNodes';
+import { collectDocImages } from '../utils/imageDocUtils';
+import { DROP_ZONE_WIDTH } from './utils/imageGroupUtils';
+import { useJustifiedLayout } from './hooks/useJustifiedLayout';
+import { useSubSelection } from './hooks/useSubSelection';
+import { useImageGroupDrop } from './hooks/useImageGroupDrop';
+import { useAdjacentNodes } from '../hooks/useAdjacentNodes';
 
 function ImageGroupView({ node, editor, selected, getPos, updateAttributes }: NodeViewProps) {
   const images = node.attrs.images as GroupImage[];

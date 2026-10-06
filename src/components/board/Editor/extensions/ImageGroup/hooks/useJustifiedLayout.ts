@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import type { RefObject } from 'react';
-import type { GroupImage } from './ImageGroup';
-import { DROP_ZONE_WIDTH, READ_ONLY_GAP } from './imageGroupUtils';
+import type { GroupImage } from '../ImageGroup';
+import { DROP_ZONE_WIDTH, READ_ONLY_GAP } from '../utils/imageGroupUtils';
 
 type Dim = { w: number; h: number };
 

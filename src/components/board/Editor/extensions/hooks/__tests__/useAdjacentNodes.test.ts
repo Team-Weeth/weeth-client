@@ -1,5 +1,5 @@
 import { renderHook, act } from '@testing-library/react';
-import { useAdjacentNodes } from '@/components/board/Editor/extensions/useAdjacentNodes';
+import { useAdjacentNodes } from '@/components/board/Editor/extensions/hooks/useAdjacentNodes';
 
 type MockNode = { isTextblock: boolean; type: { name: string } };
 

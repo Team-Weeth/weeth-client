@@ -10,7 +10,7 @@ import DownloadIcon from '@/assets/icons/download.svg';
 import DeleteIcon from '@/assets/icons/delete.svg';
 import { Icon } from '@/components/ui/Icon';
 import { GapZone } from './GapZone';
-import { useAdjacentNodes } from './useAdjacentNodes';
+import { useAdjacentNodes } from './hooks/useAdjacentNodes';
 
 function formatFileSize(bytes: number): string {
   if (bytes < 1024) return `${bytes} B`;

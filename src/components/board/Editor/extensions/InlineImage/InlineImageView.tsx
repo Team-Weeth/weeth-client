@@ -6,13 +6,13 @@ import type { NodeViewProps } from '@tiptap/react';
 import { TextSelection } from '@tiptap/pm/state';
 import { cn } from '@/lib/cn';
 import { Loader2 } from 'lucide-react';
-import { useImageResize, CORNER_STYLES, type Corner } from './useImageResize';
-import { useToolbarPosition } from './useToolbarPosition';
+import { useImageResize, CORNER_STYLES, type Corner } from './hooks/useImageResize';
+import { useToolbarPosition } from './hooks/useToolbarPosition';
 import { ImageToolbar } from './ImageToolbar';
 import { GapZone } from '../GapZone';
 import { FullscreenImageViewer } from '@/components/ui/FullscreenImageViewer';
 import type { FullscreenImageViewerImage } from '@/components/ui/FullscreenImageViewer';
-import { collectDocImages } from '../imageDocUtils';
+import { collectDocImages } from '../utils/imageDocUtils';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/Tooltip';
 
 function InlineImageView({

@@ -1,4 +1,4 @@
-import { collectDocImages } from '@/components/board/Editor/extensions/imageDocUtils';
+import { collectDocImages } from '@/components/board/Editor/extensions/utils/imageDocUtils';
 import type { GroupImage } from '@/components/board/Editor/extensions/ImageGroup/ImageGroup';
 
 type MockNode = {
