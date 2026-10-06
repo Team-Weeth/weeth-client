@@ -75,7 +75,9 @@ export function useUpdatePost() {
       }
 
       const uploadedFiles = sortByContentImageOrder(
-        files.filter((f) => f.uploaded && isReferencedInContent(f.fileUrl, content)),
+        files.filter(
+          (f) => f.uploaded && (f.isExisting || isReferencedInContent(f.fileUrl, content)),
+        ),
         content,
       );
       const filesPayload = resolveFilesPayload(uploadedFiles, _snapshot?.fileIds ?? null);
