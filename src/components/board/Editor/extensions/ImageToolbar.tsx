@@ -3,12 +3,7 @@
 import { cn } from '@/lib/cn';
 import { AlignLeft, AlignCenter, AlignRight, Trash2, Ungroup } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/components/ui/Tooltip';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/Tooltip';
 
 type TextAlign = 'left' | 'center' | 'right';
 

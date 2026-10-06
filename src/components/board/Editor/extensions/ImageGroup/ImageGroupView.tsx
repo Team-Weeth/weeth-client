@@ -7,7 +7,7 @@ import { TextSelection } from '@tiptap/pm/state';
 import { Fragment } from '@tiptap/pm/model';
 import { cn } from '@/lib/cn';
 import { Loader2, X } from 'lucide-react';
-import { ImageToolbar } from '../InlineImage/ImageToolbar';
+import { ImageToolbar } from '../ImageToolbar';
 import { GapZone } from '../GapZone';
 import type { GroupImage } from './ImageGroup';
 import { FullscreenImageViewer } from '@/components/ui/FullscreenImageViewer';
@@ -268,7 +268,7 @@ function ImageGroupView({ node, editor, selected, getPos, updateAttributes }: No
                   }}
                   aria-label="이미지 삭제"
                 >
-                  <X className="size-3 text-icon-strong" />
+                  <X className="text-icon-strong size-3" />
                 </button>
               )}
             </div>

@@ -8,7 +8,7 @@ import { cn } from '@/lib/cn';
 import { Loader2 } from 'lucide-react';
 import { useImageResize, CORNER_STYLES, type Corner } from './hooks/useImageResize';
 import { useToolbarPosition } from './hooks/useToolbarPosition';
-import { ImageToolbar } from './ImageToolbar';
+import { ImageToolbar } from '../ImageToolbar';
 import { GapZone } from '../GapZone';
 import { FullscreenImageViewer } from '@/components/ui/FullscreenImageViewer';
 import type { FullscreenImageViewerImage } from '@/components/ui/FullscreenImageViewer';
