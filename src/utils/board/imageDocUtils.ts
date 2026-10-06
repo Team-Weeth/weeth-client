@@ -1,6 +1,6 @@
 import type { Node as ProseMirrorNode } from '@tiptap/pm/model';
 import type { FullscreenImageViewerImage } from '@/components/ui/FullscreenImageViewer';
-import type { GroupImage } from '../ImageGroup/ImageGroup';
+import type { GroupImage } from '@/components/board/Editor/extensions/ImageGroup/ImageGroup';
 
 type ImageAnchor = { kind: 'inline'; pos: number } | { kind: 'group'; pos: number; idx: number };
 

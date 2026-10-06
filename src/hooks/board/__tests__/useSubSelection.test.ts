@@ -1,5 +1,5 @@
 import { renderHook, act } from '@testing-library/react';
-import { useSubSelection } from '@/components/board/Editor/extensions/ImageGroup/hooks/useSubSelection';
+import { useSubSelection } from '@/hooks/board/useSubSelection';
 
 function makeContainerRef(el: HTMLDivElement | null) {
   return { current: el };

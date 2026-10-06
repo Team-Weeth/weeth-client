@@ -1,6 +1,6 @@
 import type { Transaction } from '@tiptap/pm/state';
 import type { NodeViewProps } from '@tiptap/react';
-import type { GroupImage } from '../ImageGroup';
+import type { GroupImage } from '@/components/board/Editor/extensions/ImageGroup/ImageGroup';
 
 export const SUB_DRAG_TYPE = 'application/x-image-sub-drag';
 

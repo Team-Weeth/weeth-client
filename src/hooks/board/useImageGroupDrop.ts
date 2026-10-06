@@ -5,9 +5,9 @@ import type { RefObject } from 'react';
 import type { Editor } from '@tiptap/core';
 import type { NodeViewProps } from '@tiptap/react';
 import { NodeSelection } from '@tiptap/pm/state';
-import { MAX_GROUP_IMAGES } from '../ImageGroup';
-import type { GroupImage } from '../ImageGroup';
-import { SUB_DRAG_TYPE } from '../utils/imageGroupUtils';
+import { MAX_GROUP_IMAGES } from '@/components/board/Editor/extensions/ImageGroup/ImageGroup';
+import type { GroupImage } from '@/components/board/Editor/extensions/ImageGroup/ImageGroup';
+import { SUB_DRAG_TYPE } from '@/utils/board/imageGroupUtils';
 
 interface UseImageGroupDropOptions {
   containerRef: RefObject<HTMLDivElement | null>;

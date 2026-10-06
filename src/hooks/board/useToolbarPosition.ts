@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import type { RefObject } from 'react';
 import type { Editor } from '@tiptap/core';
-import { useAdjacentNodes } from '../../hooks/useAdjacentNodes';
+import { useAdjacentNodes } from '@/hooks/board/useAdjacentNodes';
 
 const TOOLBAR_CLEARANCE = 56;
 

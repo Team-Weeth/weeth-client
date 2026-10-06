@@ -1,9 +1,9 @@
 import { renderHook, act } from '@testing-library/react';
-import { useJustifiedLayout } from '@/components/board/Editor/extensions/ImageGroup/hooks/useJustifiedLayout';
+import { useJustifiedLayout } from '@/hooks/board/useJustifiedLayout';
 import {
   DROP_ZONE_WIDTH,
   READ_ONLY_GAP,
-} from '@/components/board/Editor/extensions/ImageGroup/utils/imageGroupUtils';
+} from '@/utils/board/imageGroupUtils';
 import type { GroupImage } from '@/components/board/Editor/extensions/ImageGroup/ImageGroup';
 
 function makeImage(src: string): GroupImage {
