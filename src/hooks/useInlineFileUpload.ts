@@ -204,10 +204,18 @@ export function useInlineFileUpload(ownerType: OwnerType = 'POST') {
         )
         .run();
     } else {
-      // MAX_GROUP_IMAGES(3)장씩 묶어 imageGroup 삽입. 나머지 1장은 inlineImage로.
+      // MAX_GROUP_IMAGES(3)장씩 묶어 imageGroup 삽입.
       const chunks: CoreFileItem[][] = [];
       for (let i = 0; i < activeItems.length; i += MAX_GROUP_IMAGES) {
         chunks.push(activeItems.slice(i, i + MAX_GROUP_IMAGES));
+      }
+
+      // 마지막 청크가 1장이면 이전 청크에서 1장을 가져와 2장으로 만든다.
+      // e.g. 4장 → [[1,2,3],[4]] → [[1,2],[3,4]]
+      if (chunks.length > 1 && chunks[chunks.length - 1].length === 1) {
+        const last = chunks[chunks.length - 1];
+        const prev = chunks[chunks.length - 2];
+        last.unshift(prev.pop()!);
       }
 
       currentEditor
@@ -216,6 +224,7 @@ export function useInlineFileUpload(ownerType: OwnerType = 'POST') {
         .insertContent(
           chunks.flatMap((chunk): Array<{ type: string; attrs: Record<string, unknown> }> => {
             if (chunk.length === 1) {
+              // activeItems가 1장일 때만 도달 (단일 청크)
               return [{ type: 'inlineImage', attrs: getAttrs(chunk[0]) }];
             }
             return [
