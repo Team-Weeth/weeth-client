@@ -4,8 +4,8 @@ import type { GroupImage } from './ImageGroup';
 
 export const SUB_DRAG_TYPE = 'application/x-image-sub-drag';
 
-// w-300 = var(--spacing-300) = 12px (DropZoneLine 너비)
-export const DROP_ZONE_WIDTH = 12;
+// w-600 = var(--spacing-600) = 24px (DropZoneLine 너비)
+export const DROP_ZONE_WIDTH = 24;
 
 // gap-200 = 8px — 읽기 전용 모드에서 이미지 간 간격
 export const READ_ONLY_GAP = 8;

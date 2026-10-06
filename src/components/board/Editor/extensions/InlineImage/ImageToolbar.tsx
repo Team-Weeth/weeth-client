@@ -1,8 +1,14 @@
 'use client';
 
 import { cn } from '@/lib/cn';
-import { AlignLeft, AlignCenter, AlignRight, Trash2 } from 'lucide-react';
+import { AlignLeft, AlignCenter, AlignRight, Trash2, Ungroup } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/Tooltip';
 
 type TextAlign = 'left' | 'center' | 'right';
 
@@ -20,49 +26,91 @@ const ALIGN_ITEMS: AlignItem[] = [
 
 const ICON_SIZE = 15;
 
-interface ImageToolbarProps {
-  textAlign: TextAlign;
-  toolbarBelow: boolean;
-  onAlign: (align: TextAlign) => void;
+interface ImageToolbarBaseProps {
+  toolbarBelow?: boolean;
   onDelete: () => void;
 }
 
-function ImageToolbar({ textAlign, toolbarBelow, onAlign, onDelete }: ImageToolbarProps) {
+interface ImageToolbarImageProps extends ImageToolbarBaseProps {
+  mode: 'image';
+  textAlign: TextAlign;
+  onAlign: (align: TextAlign) => void;
+}
+
+interface ImageToolbarGroupProps extends ImageToolbarBaseProps {
+  mode: 'group';
+  onUngroup: () => void;
+}
+
+type ImageToolbarProps = ImageToolbarImageProps | ImageToolbarGroupProps;
+
+function ImageToolbar({ toolbarBelow = false, onDelete, ...rest }: ImageToolbarProps) {
   return (
-    <div
-      className={cn(
-        'border-line bg-container-neutral absolute left-1/2 z-20 flex -translate-x-1/2 items-center rounded-md border p-100 shadow-md',
-        toolbarBelow ? 'top-full mt-200' : 'bottom-full mb-200',
-      )}
-    >
-      {ALIGN_ITEMS.map(({ value, label, icon: Icon }) => (
-        <button
-          key={value}
-          type="button"
-          onMouseDown={(e) => e.preventDefault()}
-          onClick={() => onAlign(value)}
-          className={cn(
-            'cursor-pointer rounded px-200 py-100 transition-colors',
-            textAlign === value
-              ? 'text-brand-primary'
-              : 'text-icon-alternative hover:bg-container-neutral-interaction',
-          )}
-          aria-label={label}
-        >
-          <Icon size={ICON_SIZE} />
-        </button>
-      ))}
-      <div className="bg-line mx-100 h-4 w-px" />
-      <button
-        type="button"
-        onMouseDown={(e) => e.preventDefault()}
-        onClick={onDelete}
-        className="text-state-error hover:bg-container-neutral-interaction cursor-pointer rounded px-200 py-100 transition-colors"
-        aria-label="이미지 삭제"
+    <TooltipProvider>
+      <div
+        className={cn(
+          'border-line bg-container-neutral absolute left-1/2 z-20 flex -translate-x-1/2 items-center rounded-md border p-100 shadow-md',
+          'transition-all duration-150',
+          toolbarBelow ? 'top-full mt-200' : 'bottom-full mb-200',
+        )}
       >
-        <Trash2 size={ICON_SIZE} />
-      </button>
-    </div>
+        {rest.mode === 'image' ? (
+          ALIGN_ITEMS.map(({ value, label, icon: Icon }) => (
+            <Tooltip key={value}>
+              <TooltipTrigger asChild>
+                <button
+                  type="button"
+                  onMouseDown={(e) => e.preventDefault()}
+                  onClick={() => rest.onAlign(value)}
+                  className={cn(
+                    'cursor-pointer rounded px-200 py-100 transition-colors',
+                    rest.textAlign === value
+                      ? 'text-brand-primary'
+                      : 'text-icon-alternative hover:bg-container-neutral-interaction',
+                  )}
+                  aria-label={label}
+                >
+                  <Icon size={ICON_SIZE} />
+                </button>
+              </TooltipTrigger>
+              <TooltipContent variant="dark">{label}</TooltipContent>
+            </Tooltip>
+          ))
+        ) : (
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button
+                type="button"
+                onMouseDown={(e) => e.preventDefault()}
+                onClick={rest.onUngroup}
+                className="text-icon-alternative hover:bg-container-neutral-interaction cursor-pointer rounded px-200 py-100 transition-colors"
+                aria-label="그룹 해제"
+              >
+                <Ungroup size={ICON_SIZE} />
+              </button>
+            </TooltipTrigger>
+            <TooltipContent variant="dark">그룹 해제</TooltipContent>
+          </Tooltip>
+        )}
+        <div className="bg-line mx-100 h-4 w-px" />
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <button
+              type="button"
+              onMouseDown={(e) => e.preventDefault()}
+              onClick={onDelete}
+              className="text-state-error hover:bg-container-neutral-interaction cursor-pointer rounded px-200 py-100 transition-colors"
+              aria-label={rest.mode === 'group' ? '그룹 삭제' : '이미지 삭제'}
+            >
+              <Trash2 size={ICON_SIZE} />
+            </button>
+          </TooltipTrigger>
+          <TooltipContent variant="dark">
+            {rest.mode === 'group' ? '그룹 삭제' : '이미지 삭제'}
+          </TooltipContent>
+        </Tooltip>
+      </div>
+    </TooltipProvider>
   );
 }
 

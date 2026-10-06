@@ -4,8 +4,10 @@ import { useState, useRef } from 'react';
 import { NodeViewWrapper } from '@tiptap/react';
 import type { NodeViewProps } from '@tiptap/react';
 import { TextSelection } from '@tiptap/pm/state';
+import { Fragment } from '@tiptap/pm/model';
 import { cn } from '@/lib/cn';
-import { Loader2, Trash2, X } from 'lucide-react';
+import { Loader2, X } from 'lucide-react';
+import { ImageToolbar } from '../InlineImage/ImageToolbar';
 import { GapZone } from '../GapZone';
 import type { GroupImage } from './ImageGroup';
 import { FullscreenImageViewer } from '@/components/ui/FullscreenImageViewer';
@@ -87,6 +89,23 @@ function ImageGroupView({ node, editor, selected, getPos, updateAttributes }: No
     updateImages(images.filter((_, i) => i !== idx));
   };
 
+  const handleUngroup = () => {
+    const pos = getPos();
+    const { state } = editor;
+    const inlineNodes = images.map((img) =>
+      state.schema.nodes.inlineImage.create({
+        src: img.src,
+        alt: img.alt,
+        width: img.width,
+        uploadId: img.uploadId,
+        uploading: img.uploading,
+      }),
+    );
+    editor.view.dispatch(
+      state.tr.replaceWith(pos, pos + node.nodeSize, Fragment.from(inlineNodes)),
+    );
+  };
+
   const handleInsertBefore = () => {
     const pos = getPos();
     const { state } = editor;
@@ -131,6 +150,9 @@ function ImageGroupView({ node, editor, selected, getPos, updateAttributes }: No
           'relative flex w-full',
           // items-stretch는 CSS 기본값이지만, justified 미확정 시 placeholder 방식 사용
           !targetH && 'items-stretch',
+          // justified 레이아웃 확정 전 높이 붕괴 방지 + 전환 부드럽게
+          !targetH && 'min-h-[200px]',
+          'transition-[height] duration-200',
           isEditable && 'cursor-grab',
           !isEditable && 'gap-200',
         )}
@@ -151,21 +173,13 @@ function ImageGroupView({ node, editor, selected, getPos, updateAttributes }: No
           />
         )}
 
-        {/* 그룹 선택 시 삭제 툴바 */}
+        {/* 그룹 선택 시 툴바 (그룹 해제 + 삭제) */}
         {selected && isEditable && subSelectedIdx === null && (
-          <div className="border-line bg-container-neutral absolute bottom-full left-1/2 z-20 mb-200 flex -translate-x-1/2 items-center rounded-md border p-100 shadow-md">
-            <button
-              type="button"
-              onMouseDown={(e) => e.preventDefault()}
-              onClick={() => {
-                editor.chain().focus().deleteSelection().run();
-              }}
-              className="text-state-error hover:bg-container-neutral-interaction cursor-pointer rounded px-200 py-100 transition-colors"
-              aria-label="이미지 그룹 삭제"
-            >
-              <Trash2 size={15} />
-            </button>
-          </div>
+          <ImageToolbar
+            mode="group"
+            onUngroup={handleUngroup}
+            onDelete={() => editor.chain().focus().deleteSelection().run()}
+          />
         )}
 
         <DropZoneLine idx={0} active={dropIndicatorIdx === 0} isEditable={isEditable} />
@@ -182,7 +196,10 @@ function ImageGroupView({ node, editor, selected, getPos, updateAttributes }: No
               className={cn(
                 'relative flex-1 overflow-hidden rounded-sm',
                 subSelectedIdx === idx && 'ring-brand-primary ring-2',
+                // 읽기 전용: 클릭으로 뷰어 오픈
                 !isEditable && 'cursor-pointer',
+                // 편집 모드 + 그룹 선택 상태: pointer로 "더블클릭 가능" 힌트 제공
+                isEditable && selected && subSelectedIdx === null && 'cursor-pointer',
               )}
               onClick={!isEditable ? () => handleImageClick(idx) : undefined}
               onDoubleClick={(e) => handleDoubleClick(e, idx)}
@@ -244,14 +261,14 @@ function ImageGroupView({ node, editor, selected, getPos, updateAttributes }: No
               {subSelectedIdx === idx && isEditable && (
                 <button
                   type="button"
-                  className="bg-state-error absolute top-200 right-200 z-20 flex size-5 items-center justify-center rounded-full text-white"
+                  className="absolute top-200 right-200 z-20 flex size-5 cursor-pointer items-center justify-center rounded-full bg-white/80 shadow-sm"
                   onClick={(e) => {
                     e.stopPropagation();
                     handleSubDelete(idx);
                   }}
                   aria-label="이미지 삭제"
                 >
-                  <X className="size-3" />
+                  <X className="size-3 text-icon-strong" />
                 </button>
               )}
             </div>
@@ -289,7 +306,7 @@ function DropZoneLine({ idx, active, isEditable }: DropZoneLineProps) {
   if (!isEditable) return null;
 
   return (
-    <div data-drop-idx={idx} className="relative z-10 h-full w-300 shrink-0">
+    <div data-drop-idx={idx} className="relative z-10 h-full w-600 shrink-0">
       {active && (
         <div className="bg-brand-primary absolute inset-y-0 left-1/2 w-[2px] -translate-x-1/2" />
       )}
