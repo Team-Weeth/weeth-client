@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect } from 'react';
 import { EditorContent, FloatingMenu } from '@tiptap/react';
 import { usePostEditor } from './usePostEditor';
 import { useLinkPopup } from './useLinkPopup';
@@ -7,9 +8,9 @@ import { BubbleMenuBar } from './BubbleMenu';
 import { TableMenu } from './TableMenu';
 import { SlashMenuContent } from './SlashMenu';
 import { LinkInput } from './LinkInput';
-import { ImageList } from '../ImageList';
-import { FileList } from '../FileList';
-import { useFileUpload } from '@/hooks/useFileUpload';
+import { useInlineFileUpload } from '@/hooks/useInlineFileUpload';
+import { BlockAddMenu } from './BlockAddMenu';
+import { ImageInsertModeDialog } from './ImageInsertModeDialog';
 import { createMediaItems, createLinkItem } from '@/constants/board/slashMenu';
 
 const floatingMenuTippyOptions = {
@@ -44,11 +45,28 @@ interface EditorProps {
 }
 
 export default function Editor({ initialContent }: EditorProps = {}) {
-  const { imageInputRef, fileInputRef, processFiles, picker, files, handlers } = useFileUpload();
+  const {
+    imageInputRef,
+    fileInputRef,
+    setEditor,
+    processFilesInline,
+    picker,
+    handlers,
+    pendingImageItems,
+    confirmImageInsertMode,
+    cancelImageInsertMode,
+  } = useInlineFileUpload();
+
   const { editor, showSlashMenu, closeSlashMenu, containerRef } = usePostEditor({
-    processFiles,
+    processFilesInline,
     initialContent,
   });
+
+  // Wire the editor instance into the inline upload hook
+  useEffect(() => {
+    setEditor(editor);
+  }, [editor, setEditor]);
+
   const {
     pos: linkInputPos,
     openFromSlashMenu,
@@ -59,7 +77,7 @@ export default function Editor({ initialContent }: EditorProps = {}) {
   if (!editor) return null;
 
   return (
-    <div ref={containerRef} className="relative flex min-h-[400px] w-full flex-col overflow-hidden">
+    <div ref={containerRef} className="relative flex min-h-[400px] w-full flex-col">
       {/* 숨겨진 파일 input — 슬래시 메뉴에서 각 ref를 통해 트리거 */}
       <input
         ref={imageInputRef}
@@ -81,6 +99,12 @@ export default function Editor({ initialContent }: EditorProps = {}) {
 
       <BubbleMenuBar editor={editor} containerRef={containerRef} />
       <TableMenu editor={editor} containerRef={containerRef} />
+      <BlockAddMenu
+        editor={editor}
+        containerRef={containerRef}
+        onImageUpload={picker.openImagePicker}
+        onFileUpload={picker.openFilePicker}
+      />
 
       <FloatingMenu
         editor={editor}
@@ -118,11 +142,12 @@ export default function Editor({ initialContent }: EditorProps = {}) {
         <EditorContent editor={editor} className="max-w-none" />
       </div>
 
-      {/* 게시글 하단 첨부 영역 */}
-      <div className="mt-auto flex flex-col gap-400 pt-400">
-        <ImageList files={files.imageFiles} removable viewable onRemove={files.handleRemoveFile} />
-        <FileList files={files.nonImageFiles} onRemove={files.handleRemoveFile} editable />
-      </div>
+      <ImageInsertModeDialog
+        open={pendingImageItems !== null}
+        onIndividual={() => confirmImageInsertMode('individual')}
+        onGroup={() => confirmImageInsertMode('group')}
+        onCancel={cancelImageInsertMode}
+      />
     </div>
   );
 }

@@ -312,7 +312,7 @@
   --opacity-100: #355d5a80;
   --opacity-200: #00c8aa66;
 
-  --static-floating-surface: #1e2021;
+  --static-floating-surface: #2a2c2e;
   --static-on-floating: #ffffff;
   --static-floating-border: #ffffff33;
   --static-floating-divider: #ffffff4d;
@@ -729,6 +729,7 @@ select:focus {
 
 .ProseMirror:not(.prose-readonly) {
   @apply flex-1;
+  padding-top: var(--spacing-300);
 }
 
 /* placeholder */
@@ -763,6 +764,7 @@ select:focus {
 
 .ProseMirror p {
   @apply typo-md-body;
+  margin-bottom: 6px;
 }
 
 .ProseMirror hr {
@@ -916,6 +918,44 @@ select:focus {
   height: 20px;
   position: relative;
   cursor: text;
+}
+
+/* 인라인 이미지 */
+.ProseMirror figure {
+  margin: var(--spacing-400) 0;
+  display: flex;
+}
+
+.ProseMirror figure img {
+  max-width: 100%;
+  height: auto;
+  border-radius: var(--radius-sm);
+}
+
+/* 이미지 그룹 (renderHTML 폴백 — React node view 미사용 시) */
+.ProseMirror [data-image-group] {
+  display: flex;
+  gap: var(--spacing-200);
+  width: 100%;
+  align-items: flex-start;
+}
+
+.ProseMirror [data-image-group] figure {
+  margin: 0;
+  flex: 1;
+  min-width: 0;
+}
+
+.ProseMirror [data-image-group] figure img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: var(--radius-sm);
+}
+
+/* 파일 첨부 블록 */
+.ProseMirror [data-file-attachment] {
+  margin: var(--spacing-200) 0;
 }
 
 /* 링크 */

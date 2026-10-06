@@ -47,14 +47,14 @@ function PostEditorShell({ header, initialContent, align = 'start' }: PostEditor
   return (
     <div
       className={cn(
-        'mx-auto flex max-w-[1200px] flex-1 flex-col gap-400 p-450',
+        'mx-auto flex max-w-[1000px] flex-1 flex-col gap-400 p-450',
         align === 'center' ? 'items-center' : 'items-start',
       )}
     >
       {header}
       <div className="flex w-full flex-col items-start">
         <BoundTitleInput />
-        <div className="flex w-full max-w-[900px] items-center gap-200 rounded-lg p-100">
+        <div className="flex w-full items-center gap-200 rounded-lg p-100">
           <Editor initialContent={initialContent} />
         </div>
       </div>

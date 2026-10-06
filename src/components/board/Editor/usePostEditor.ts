@@ -5,15 +5,20 @@ import { TextSelection } from '@tiptap/pm/state';
 import { useState, useRef, useEffect } from 'react';
 import { usePostStore } from '@/stores/usePostStore';
 import { editorExtensions } from './extensions';
+import {
+  handleFileDrop,
+  handleSubImageDrop,
+  handleInlineImageGroupDrop,
+} from './postEditorDropHandlers';
 
 const LIST_TYPES = ['bulletList', 'orderedList', 'taskList'];
 
 interface UsePostEditorOptions {
-  processFiles?: (files: File[]) => void;
+  processFilesInline?: (files: File[]) => void;
   initialContent?: string;
 }
 
-export function usePostEditor({ processFiles, initialContent }: UsePostEditorOptions = {}) {
+export function usePostEditor({ processFilesInline, initialContent }: UsePostEditorOptions = {}) {
   const setContent = usePostStore((state) => state.setContent);
   // 마운트 시점에 한 번만 초기 content 고정 (수정 페이지용)
   const [initialContentValue] = useState(() => initialContent ?? '');
@@ -21,9 +26,9 @@ export function usePostEditor({ processFiles, initialContent }: UsePostEditorOpt
   // ref로 최신 상태 유지 → useEditor 내부 handleKeyDown stale closure 방지
   const showSlashMenuRef = useRef(false);
   const containerRef = useRef<HTMLDivElement>(null);
-  const processFilesRef = useRef(processFiles);
+  const processFilesRef = useRef(processFilesInline);
   useEffect(() => {
-    processFilesRef.current = processFiles;
+    processFilesRef.current = processFilesInline;
   });
 
   const closeSlashMenu = () => {
@@ -67,15 +72,10 @@ export function usePostEditor({ processFiles, initialContent }: UsePostEditorOpt
         return false;
       },
 
-      handleDrop: (_view, event) => {
-        const droppedFiles = event.dataTransfer?.files;
-        if (droppedFiles && droppedFiles.length > 0) {
-          event.preventDefault();
-          processFilesRef.current?.(Array.from(droppedFiles));
-          return true;
-        }
-        return false;
-      },
+      handleDrop: (view, event) =>
+        handleFileDrop(event, processFilesRef.current) ||
+        handleSubImageDrop(view, event) ||
+        handleInlineImageGroupDrop(view, event),
 
       handleKeyDown: (view, event) => {
         // 슬래시 메뉴 우선 처리 (ref로 stale closure 없이 최신 값 참조)
@@ -125,6 +125,7 @@ export function usePostEditor({ processFiles, initialContent }: UsePostEditorOpt
             }
 
             // 빈 paragraph가 리스트 바로 뒤에 있을 때 리스트 재진입 방지
+            if ($from.depth < 1) return false;
             const resolvedPos = state.doc.resolve($from.before());
             const nodeBefore = resolvedPos.nodeBefore;
 

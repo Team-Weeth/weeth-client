@@ -5,7 +5,7 @@ import { useEditor, EditorContent } from '@tiptap/react';
 import DOMPurify from 'isomorphic-dompurify';
 import { cn } from '@/lib/cn';
 import { useLineClamp } from '@/hooks/useLineClamp';
-import { editorExtensions } from '@/components/board/Editor/extensions';
+import { readOnlyExtensions } from '@/components/board/Editor/extensions';
 
 import { ExpandButton } from './ExpandButton';
 
@@ -16,7 +16,21 @@ interface PostCardBodyProps {
 }
 
 function PostCardBody({ className, content, expandable = false }: PostCardBodyProps) {
-  const sanitized = DOMPurify.sanitize(content, { ADD_ATTR: ['target', 'rel', 'colwidth'] });
+  const sanitized = DOMPurify.sanitize(content, {
+    ADD_TAGS: ['figure'],
+    ADD_ATTR: [
+      'target',
+      'rel',
+      'colwidth',
+      'data-file-attachment',
+      'data-src',
+      'data-file-name',
+      'data-file-size',
+      'data-content-type',
+      'data-text-align',
+      'data-image-group',
+    ],
+  });
 
   const { ref, isClamped, isExpanded, setIsExpanded } = useLineClamp<HTMLDivElement>(
     expandable,
@@ -24,7 +38,7 @@ function PostCardBody({ className, content, expandable = false }: PostCardBodyPr
   );
 
   const editor = useEditor({
-    extensions: editorExtensions,
+    extensions: readOnlyExtensions,
     content: sanitized,
     editable: false,
     editorProps: {
