@@ -130,7 +130,20 @@ function InlineImageView({
                   'group relative m-200 inline-block',
                   !isEditable && !uploading && 'cursor-pointer',
                 )}
+                role={!isEditable && !uploading ? 'button' : undefined}
+                tabIndex={!isEditable && !uploading ? 0 : undefined}
+                aria-label={!isEditable && !uploading ? (alt ?? '이미지 보기') : undefined}
                 onClick={!isEditable && !uploading ? handleImageClick : undefined}
+                onKeyDown={
+                  !isEditable && !uploading
+                    ? (e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                          e.preventDefault();
+                          handleImageClick();
+                        }
+                      }
+                    : undefined
+                }
               >
                 {/* 업로드 중 오버레이 */}
                 {uploading && (
