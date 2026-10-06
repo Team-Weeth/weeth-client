@@ -107,8 +107,8 @@
 | 케이스 | 검증 내용 |
 |--------|---------|
 | `confirmImageInsertMode` — `pendingImageItems=null` | early return, `chain()` 미호출 |
-| `confirmImageInsertMode` — individual 모드 | store에 있는 항목만 삽입 대상 확인 |
-| 업로드 실패 항목 제거 | store에 없는 id는 삽입에서 제외됨 확인 |
+| `confirmImageInsertMode` — individual 모드 | `addFilesAndInsertNodes` 2장 호출로 `pendingImageItems` 설정 후 `insertContent` 호출 내용 검증 |
+| 업로드 실패 항목 제거 | `pendingImageItems` 설정 후 store에서 항목 제거 → 해당 id가 `insertContent`에서 제외됨 검증 |
 | `cancelImageInsertMode` — `pendingImageItems=null` | `removeFile` 미호출 |
 | `setEditor(null)` | null 설정 후 크래시 없이 동작 |
 | `processFilesInline` 참조 안정성 | 리렌더 후 동일 함수 참조 유지 |

@@ -2,8 +2,8 @@ import React from 'react';
 import { renderHook, act } from '@testing-library/react';
 import { useInlineFileUpload } from '@/hooks/useInlineFileUpload';
 import type { CoreFileItem } from '@/hooks/useFileUploadCore';
+import { useFileUploadCore } from '@/hooks/useFileUploadCore';
 
-// useFileUploadCore: processFiles를 호출할 수 있는 최소 mock
 jest.mock('@/hooks/useFileUploadCore', () => ({
   useFileUploadCore: jest.fn(() => ({
     processFiles: jest.fn(),
@@ -67,25 +67,6 @@ function makeItem(id: string, fileName = 'img.png'): CoreFileItem {
   };
 }
 
-function getStoreFiles() {
-  return (
-    usePostStore as unknown as { getState: () => { files: Array<{ id: string }> } }
-  ).getState().files;
-}
-
-function addToStore(items: CoreFileItem[]) {
-  const state = (
-    usePostStore as unknown as {
-      getState: () => {
-        files: Array<{ id: string; fileUrl: string; uploaded: boolean }>;
-        addFiles: (f: CoreFileItem[]) => void;
-      };
-    }
-  ).getState();
-  state.addFiles(items);
-}
-
-// 에디터 mock: insertContent를 캡처할 수 있도록 chain mock 구성
 function createMockEditor() {
   const insertedContent: unknown[] = [];
   interface MockChain {
@@ -107,9 +88,15 @@ function createMockEditor() {
   };
 }
 
+/** 가장 최근 renderHook 호출에서 훅이 useFileUploadCore에 전달한 addFiles 콜백을 반환 */
+function getAddFilesCallback(): (items: CoreFileItem[]) => void {
+  const calls = (useFileUploadCore as jest.Mock).mock.calls;
+  return calls[calls.length - 1][0].addFiles;
+}
+
 describe('useInlineFileUpload', () => {
   beforeEach(() => {
-    // 스토어 파일 목록 초기화
+    (useFileUploadCore as jest.Mock).mockClear();
     const state = (
       usePostStore as unknown as { getState: () => { files: Array<unknown> } }
     ).getState();
@@ -131,10 +118,9 @@ describe('useInlineFileUpload', () => {
       expect(mockEditor.chain).not.toHaveBeenCalled();
     });
 
-    it('individual 모드에서 store에 있는 이미지만 inlineImage로 삽입한다', () => {
+    it('individual 모드에서 pendingImageItems의 이미지를 inlineImage로 삽입한다', () => {
       const item1 = makeItem('img-1');
       const item2 = makeItem('img-2');
-      addToStore([item1, item2]);
 
       const { result } = renderHook(() => useInlineFileUpload());
       const mockEditor = createMockEditor();
@@ -142,18 +128,29 @@ describe('useInlineFileUpload', () => {
         result.current.setEditor(mockEditor as never);
       });
 
-      // pendingImageItems를 설정하려면 addFilesAndInsertNodes를 트리거해야 하나
-      // 내부 상태이므로 setPendingImageItems를 직접 호출할 수 없음
-      // 대신 훅이 노출하는 pendingImageItems를 통해 간접 검증
-      // → 실제 삽입이 일어나는지 cancelImageInsertMode를 통해 테스트
+      // 이미지 2장 전달 → addFilesAndInsertNodes 내부에서 pendingImageItems 설정
+      const addFilesAndInsertNodes = getAddFilesCallback();
+      act(() => {
+        addFilesAndInsertNodes([item1, item2]);
+      });
+
+      expect(result.current.pendingImageItems).toHaveLength(2);
+
+      act(() => {
+        result.current.confirmImageInsertMode('individual');
+      });
+
+      expect(mockEditor._inserted).toHaveLength(1);
+      expect(mockEditor._inserted[0]).toEqual([
+        { type: 'inlineImage', attrs: { src: 'blob:img-1', uploadId: 'img-1', uploading: true } },
+        { type: 'inlineImage', attrs: { src: 'blob:img-2', uploadId: 'img-2', uploading: true } },
+      ]);
       expect(result.current.pendingImageItems).toBeNull();
     });
 
-    it('업로드 실패로 store에서 제거된 항목은 삽입하지 않는다', async () => {
+    it('업로드 실패로 store에서 제거된 항목은 삽입하지 않는다', () => {
       const item1 = makeItem('ok-1');
       const item2 = makeItem('fail-2');
-      // ok-1만 스토어에 추가 (fail-2는 업로드 실패로 제거됨)
-      addToStore([item1]);
 
       const { result } = renderHook(() => useInlineFileUpload());
       const mockEditor = createMockEditor();
@@ -161,13 +158,31 @@ describe('useInlineFileUpload', () => {
         result.current.setEditor(mockEditor as never);
       });
 
-      // pendingImageItems를 직접 주입하기 위해 내부 상태를 우회
-      // confirmImageInsertMode는 pendingImageItems가 null이면 early return이므로
-      // 실제 pendingImageItems 설정 시나리오를 직접 검증하려면
-      // usePostStore.getState().files에서 item2가 없어야 함을 확인
-      const storeFiles = getStoreFiles();
-      expect(storeFiles.some((f) => f.id === 'ok-1')).toBe(true);
-      expect(storeFiles.some((f) => f.id === 'fail-2')).toBe(false);
+      // 두 항목 모두 전달 → pendingImageItems = [item1, item2], store에도 둘 다 추가
+      const addFilesAndInsertNodes = getAddFilesCallback();
+      act(() => {
+        addFilesAndInsertNodes([item1, item2]);
+      });
+
+      expect(result.current.pendingImageItems).toHaveLength(2);
+
+      // fail-2가 업로드 실패로 store에서 제거
+      const removeFile = (
+        usePostStore as unknown as { getState: () => { removeFile: (id: string) => void } }
+      ).getState().removeFile;
+      act(() => {
+        removeFile('fail-2');
+      });
+
+      act(() => {
+        result.current.confirmImageInsertMode('individual');
+      });
+
+      // store에 남은 ok-1만 삽입
+      expect(mockEditor._inserted).toHaveLength(1);
+      expect(mockEditor._inserted[0]).toEqual([
+        { type: 'inlineImage', attrs: { src: 'blob:ok-1', uploadId: 'ok-1', uploading: true } },
+      ]);
     });
   });
 
@@ -199,7 +214,6 @@ describe('useInlineFileUpload', () => {
         result.current.setEditor(null);
       });
 
-      // null 설정 후에도 훅이 크래시 없이 동작해야 함
       act(() => {
         result.current.confirmImageInsertMode('individual');
       });
@@ -219,7 +233,6 @@ describe('useInlineFileUpload', () => {
     it('openImagePicker가 예외 없이 실행된다 (input ref에 click 위임)', () => {
       const { result } = renderHook(() => useInlineFileUpload());
       const mockClick = jest.fn();
-      // imageInputRef.current를 직접 교체해 click 호출을 검증
       (result.current.imageInputRef as React.MutableRefObject<HTMLInputElement | null>).current = {
         click: mockClick,
       } as never;
