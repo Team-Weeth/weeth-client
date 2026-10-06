@@ -22,6 +22,7 @@ interface UseImageResizeOptions {
 
 function useImageResize({ imgRef, width, updateAttributes, editor }: UseImageResizeOptions) {
   const [resizing, setResizing] = useState(false);
+  const [displayWidth, setDisplayWidth] = useState<number | null>(null);
   const cleanupRef = useRef<(() => void) | null>(null);
 
   useEffect(() => {
@@ -37,6 +38,7 @@ function useImageResize({ imgRef, width, updateAttributes, editor }: UseImageRes
     const startWidth = imgRef.current?.offsetWidth ?? width ?? 400;
     const flip = corner === 'top-left' || corner === 'bottom-left' ? -1 : 1;
     setResizing(true);
+    setDisplayWidth(Math.round(startWidth));
 
     const containerWidth =
       editor.view.dom.closest('.ProseMirror')?.clientWidth ?? editor.view.dom.clientWidth;
@@ -44,11 +46,14 @@ function useImageResize({ imgRef, width, updateAttributes, editor }: UseImageRes
     const onMove = (ev: PointerEvent) => {
       const delta = (ev.clientX - startX) * flip;
       const next = Math.max(MIN_WIDTH, Math.min(startWidth + delta, containerWidth));
-      updateAttributes({ width: Math.round(next) });
+      const rounded = Math.round(next);
+      updateAttributes({ width: rounded });
+      setDisplayWidth(rounded);
     };
 
     const cleanup = () => {
       setResizing(false);
+      setDisplayWidth(null);
       document.removeEventListener('pointermove', onMove);
       document.removeEventListener('pointerup', cleanup);
       document.removeEventListener('pointercancel', cleanup);
@@ -61,7 +66,7 @@ function useImageResize({ imgRef, width, updateAttributes, editor }: UseImageRes
     document.addEventListener('pointercancel', cleanup);
   };
 
-  return { resizing, handleResizeStart };
+  return { resizing, displayWidth, handleResizeStart };
 }
 
 export { useImageResize, CORNER_STYLES, type Corner };
