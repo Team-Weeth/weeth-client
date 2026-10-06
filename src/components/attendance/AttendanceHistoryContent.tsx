@@ -47,13 +47,18 @@ function AttendanceHistoryContent() {
     activeCardinal,
     setSelectedCardinalId,
     isLoading: isCardinalLoading,
+    isError: isCardinalError,
   } = useCardinalSelector({ autoSelectLatest: true, scope: 'attendance' });
 
   const {
     data: summary,
     isPending,
-    isError,
+    isError: isDetailError,
   } = useAttendanceDetailQuery(activeCardinal?.cardinalNumber);
+
+  // 기수 조회가 실패하면 기수가 없어 상세 조회도 실행되지 않는다.
+  // 두 실패를 함께 보지 않으면 오류가 "기록 없음"으로 표시된다.
+  const isError = isCardinalError || isDetailError;
 
   useEffect(() => {
     if (isError) toastError('출석 기록을 불러오지 못했습니다.');
@@ -63,7 +68,7 @@ function AttendanceHistoryContent() {
   const records = attendances.map(toDisplayRecord);
 
   // 기수를 아직 모르면 조회 자체를 하지 않으므로, 기수 로딩도 로딩 상태로 함께 본다.
-  const isLoading = isCardinalLoading || (cardinals.length > 0 && isPending && !isError);
+  const isLoading = !isError && (isCardinalLoading || (cardinals.length > 0 && isPending));
 
   return (
     <div className="mx-auto flex w-full max-w-[1025px] flex-col gap-700 px-450 pt-600">
