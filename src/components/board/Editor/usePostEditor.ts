@@ -42,6 +42,7 @@ export function usePostEditor({ processFilesInline, initialContent }: UsePostEdi
   };
 
   const editor = useEditor({
+    immediatelyRender: false,
     extensions: editorExtensions,
     content: initialContentValue,
 
