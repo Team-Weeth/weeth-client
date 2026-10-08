@@ -26,9 +26,12 @@ PR을 올리기 전 변경된 코드의 **개발 품질**을 점검합니다.
 ### 1. 변경 범위 파악
 
 ```bash
-git diff $ARGUMENTS --name-only   # 변경 파일 목록
-git diff $ARGUMENTS --stat        # 파일별 변경 라인 수
-git diff $ARGUMENTS               # 전체 diff
+# 인자 없으면 develop...HEAD를 기본 범위로 사용 (--staged 등 명시 인자는 그대로 전달)
+RANGE="${ARGUMENTS:-develop...HEAD}"
+
+git diff $RANGE --name-only   # 변경 파일 목록
+git diff $RANGE --stat        # 파일별 변경 라인 수
+git diff $RANGE               # 전체 diff
 ```
 
 - 변경 파일을 도메인/레이어별로 분류 (UI / hooks / apis / actions / app)
