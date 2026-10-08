@@ -1,6 +1,6 @@
 import { renderHook, act, waitFor } from '@testing-library/react';
 import { useEditor } from '@tiptap/react';
-import { usePostEditor } from '@/components/board/Editor/usePostEditor';
+import { usePostEditor } from '@/hooks/board/usePostEditor';
 
 jest.mock('@tiptap/react', () => ({ useEditor: jest.fn() }));
 jest.mock('@/stores/usePostStore');

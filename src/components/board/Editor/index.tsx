@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react';
 import { EditorContent, FloatingMenu } from '@tiptap/react';
-import { usePostEditor } from './usePostEditor';
+import { usePostEditor } from '@/hooks/board/usePostEditor';
 import { useLinkPopup } from './useLinkPopup';
 import { BubbleMenuBar } from './BubbleMenu';
 import { TableMenu } from './TableMenu';
