@@ -98,7 +98,12 @@ export function useInlineFileUpload(ownerType: OwnerType = 'POST') {
   const pendingInsertAtRef = useRef<number | { from: number; to: number } | null>(null);
 
   // 언마운트 시 트랜잭션 구독 해제
-  useEffect(() => () => { transactionUnsubRef.current?.(); }, []);
+  useEffect(
+    () => () => {
+      transactionUnsubRef.current?.();
+    },
+    [],
+  );
 
   /** Call this to connect the editor instance after it's created */
   const setEditor = useCallback((editor: Editor | null) => {
@@ -118,13 +123,11 @@ export function useInlineFileUpload(ownerType: OwnerType = 'POST') {
       if (typeof current === 'number') {
         const result = transaction.mapping.mapResult(current);
         // 위치 자체가 삭제 범위에 포함되거나 문서 밖으로 벗어나면 현재 커서로 폴백
-        pendingInsertAtRef.current =
-          result.deleted || result.pos > docSize ? null : result.pos;
+        pendingInsertAtRef.current = result.deleted || result.pos > docSize ? null : result.pos;
       } else {
         const from = transaction.mapping.map(current.from);
         const to = transaction.mapping.map(current.to, 1);
-        pendingInsertAtRef.current =
-          from > docSize ? null : { from, to: Math.min(to, docSize) };
+        pendingInsertAtRef.current = from > docSize ? null : { from, to: Math.min(to, docSize) };
       }
     };
 

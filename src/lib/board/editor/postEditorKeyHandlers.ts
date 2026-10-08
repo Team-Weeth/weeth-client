@@ -51,9 +51,7 @@ export function createKeyDownHandler(
       if ($from.parentOffset === 0 && $from.parent.textContent === '') {
         // 빈 헤딩 → 일반 단락으로 전환
         if ($from.parent.type.name === 'heading') {
-          view.dispatch(
-            state.tr.setBlockType($from.pos, $from.pos, state.schema.nodes.paragraph),
-          );
+          view.dispatch(state.tr.setBlockType($from.pos, $from.pos, state.schema.nodes.paragraph));
           return true;
         }
 

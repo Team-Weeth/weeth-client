@@ -231,7 +231,9 @@ describe('usePostEditor', () => {
       renderHook(() => usePostEditor({ processFilesInline: processFiles }));
 
       // PNG 매직 바이트 (8바이트 시그니처 + 패딩)
-      const pngHeader = new Uint8Array([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 0, 0, 0, 0]);
+      const pngHeader = new Uint8Array([
+        0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 0, 0, 0, 0,
+      ]);
       const file = new File([pngHeader], 'paste', { type: '' });
 
       const result = capturedConfig.editorProps.handlePaste(

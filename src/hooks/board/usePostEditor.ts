@@ -62,11 +62,13 @@ export function usePostEditor({ processFilesInline, initialContent }: UsePostEdi
     },
 
     editorProps: {
+      // eslint-disable-next-line react-hooks/refs
       handlePaste: createPasteHandler(() => processFilesRef.current),
       handleDrop: (view, event) =>
         handleFileDrop(view, event, processFilesRef.current) ||
         handleSubImageDrop(view, event) ||
         handleInlineImageGroupDrop(view, event),
+      // eslint-disable-next-line react-hooks/refs
       handleKeyDown: createKeyDownHandler(() => showSlashMenuRef.current),
     },
   });

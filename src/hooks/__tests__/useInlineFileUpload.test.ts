@@ -88,6 +88,8 @@ function createMockEditor(options?: { nodeSelection?: boolean }) {
   };
   return {
     chain: jest.fn(() => chain),
+    on: jest.fn(),
+    off: jest.fn(),
     state: { selection },
     _inserted: insertedContent,
     _insertedAt: insertedContentAt,
