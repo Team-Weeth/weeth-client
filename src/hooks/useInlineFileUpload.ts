@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import type { Editor } from '@tiptap/core';
+import type { Transaction } from '@tiptap/pm/state';
 import { useShallow } from 'zustand/react/shallow';
 import type { OwnerType } from '@/lib/apis/file';
 import { isImageFileName } from '@/lib/board/fileUtils';
@@ -89,15 +90,46 @@ export function useInlineFileUpload(ownerType: OwnerType = 'POST') {
   const imageInputRef = useRef<HTMLInputElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const editorRef = useRef<Editor | null>(null);
+  const transactionUnsubRef = useRef<(() => void) | null>(null);
 
   // 이미지 삽입 방식 선택 다이얼로그: null이면 닫힘, 배열이면 열림
   const [pendingImageItems, setPendingImageItems] = useState<CoreFileItem[] | null>(null);
   // 다이얼로그 열릴 때의 삽입 위치 보존 (NodeSelection 대응)
   const pendingInsertAtRef = useRef<number | { from: number; to: number } | null>(null);
 
+  // 언마운트 시 트랜잭션 구독 해제
+  useEffect(() => () => { transactionUnsubRef.current?.(); }, []);
+
   /** Call this to connect the editor instance after it's created */
   const setEditor = useCallback((editor: Editor | null) => {
+    transactionUnsubRef.current?.();
+    transactionUnsubRef.current = null;
     editorRef.current = editor;
+    if (!editor) return;
+
+    // 다이얼로그가 열린 동안 문서 변경이 발생하면 저장된 삽입 위치를 트랜잭션 매핑으로 갱신.
+    // 저장 위치 앞에서 노드가 삭제되면 위치가 밀리거나 범위를 벗어나 잘못된 위치에 삽입될 수 있다.
+    const onTransaction = ({ transaction }: { transaction: Transaction }) => {
+      if (!transaction.docChanged || pendingInsertAtRef.current === null) return;
+
+      const current = pendingInsertAtRef.current;
+      const docSize = transaction.doc.content.size;
+
+      if (typeof current === 'number') {
+        const result = transaction.mapping.mapResult(current);
+        // 위치 자체가 삭제 범위에 포함되거나 문서 밖으로 벗어나면 현재 커서로 폴백
+        pendingInsertAtRef.current =
+          result.deleted || result.pos > docSize ? null : result.pos;
+      } else {
+        const from = transaction.mapping.map(current.from);
+        const to = transaction.mapping.map(current.to, 1);
+        pendingInsertAtRef.current =
+          from > docSize ? null : { from, to: Math.min(to, docSize) };
+      }
+    };
+
+    editor.on('transaction', onTransaction);
+    transactionUnsubRef.current = () => editor.off('transaction', onTransaction);
   }, []);
 
   // Intercept addFiles to also insert nodes into the editor
