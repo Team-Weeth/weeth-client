@@ -171,6 +171,61 @@ describe('usePostEditor', () => {
       expect(result).toBe(true);
     });
 
+    it('files가 없고 items에 이미지 파일이 있으면 processFiles를 호출하고 true를 반환한다', () => {
+      const processFiles = jest.fn();
+      renderHook(() => usePostEditor({ processFilesInline: processFiles }));
+
+      const file = new File([''], 'screenshot.png', { type: 'image/png' });
+      const result = capturedConfig.editorProps.handlePaste(
+        {},
+        {
+          clipboardData: {
+            files: [],
+            items: [{ kind: 'file', type: 'image/png', getAsFile: () => file }],
+          },
+        },
+      );
+
+      expect(processFiles).toHaveBeenCalledWith([file]);
+      expect(result).toBe(true);
+    });
+
+    it('items에 이미지가 있어도 files가 우선한다', () => {
+      const processFiles = jest.fn();
+      renderHook(() => usePostEditor({ processFilesInline: processFiles }));
+
+      const fileFromFiles = new File([''], 'from-files.png', { type: 'image/png' });
+      const fileFromItems = new File([''], 'from-items.png', { type: 'image/png' });
+      const result = capturedConfig.editorProps.handlePaste(
+        {},
+        {
+          clipboardData: {
+            files: [fileFromFiles],
+            items: [{ kind: 'file', type: 'image/png', getAsFile: () => fileFromItems }],
+          },
+        },
+      );
+
+      expect(processFiles).toHaveBeenCalledWith([fileFromFiles]);
+      expect(result).toBe(true);
+    });
+
+    it('items에 이미지가 없으면 false를 반환한다', () => {
+      renderHook(() => usePostEditor());
+
+      const result = capturedConfig.editorProps.handlePaste(
+        {},
+        {
+          clipboardData: {
+            files: [],
+            items: [{ kind: 'string', type: 'text/plain', getAsFile: () => null }],
+          },
+        },
+      );
+
+      expect(result).toBe(false);
+    });
+
     it('파일이 없으면 false를 반환한다', () => {
       renderHook(() => usePostEditor());
 

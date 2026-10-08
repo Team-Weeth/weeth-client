@@ -69,6 +69,21 @@ export function usePostEditor({ processFilesInline, initialContent }: UsePostEdi
           processFilesRef.current?.(Array.from(clipboardFiles));
           return true;
         }
+
+        // files가 비어있을 때 items에서 이미지 추출
+        // (브라우저 이미지 복사·스크린샷 등은 files 대신 items에만 존재)
+        const items = event.clipboardData?.items;
+        if (items) {
+          const imageFiles = Array.from(items)
+            .filter((item) => item.kind === 'file' && item.type.startsWith('image/'))
+            .map((item) => item.getAsFile())
+            .filter((f): f is File => f !== null);
+          if (imageFiles.length > 0) {
+            processFilesRef.current?.(imageFiles);
+            return true;
+          }
+        }
+
         return false;
       },
 
