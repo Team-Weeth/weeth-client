@@ -14,11 +14,11 @@ PR을 올리기 전 변경된 코드의 **개발 품질**을 점검합니다.
 
 ## Arguments
 
-`$ARGUMENTS`로 검증 범위 지정. 생략 시 `main` 브랜치 대비 현재 브랜치의 모든 변경.
+`$ARGUMENTS`로 검증 범위 지정. 생략 시 `develop` 브랜치 대비 현재 브랜치의 모든 변경.
 
-- `/pre-pr-check` → `git diff main...HEAD`
+- `/pre-pr-check` → `git diff develop...HEAD`
 - `/pre-pr-check --staged` → `git diff --staged`
-- `/pre-pr-check develop` → `git diff develop...HEAD`
+- `/pre-pr-check main` → `git diff main...HEAD`
 - `/pre-pr-check abc1234` → 특정 커밋
 
 ## Workflow (순서대로)
