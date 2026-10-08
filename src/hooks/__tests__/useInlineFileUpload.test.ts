@@ -66,9 +66,7 @@ function createMockEditor(options?: { nodeSelection?: boolean }) {
 
   // NodeSelection mock: 'node' 프로퍼티 포함, from=10 / to=11
   // TextSelection mock: 'node' 프로퍼티 없음, from=5 / to=5 (커서)
-  const selection = options?.nodeSelection
-    ? { from: 10, to: 11, node: {} }
-    : { from: 5, to: 5 };
+  const selection = options?.nodeSelection ? { from: 10, to: 11, node: {} } : { from: 5, to: 5 };
 
   interface MockChain {
     focus: jest.Mock;
@@ -214,7 +212,10 @@ describe('useInlineFileUpload', () => {
       expect(mockEditor._insertedAt).toHaveLength(1);
       expect(mockEditor._insertedAt[0].pos).toBe(11);
       expect(mockEditor._insertedAt[0].content).toEqual([
-        { type: 'inlineImage', attrs: { src: 'blob:img-new', uploadId: 'img-new', uploading: true } },
+        {
+          type: 'inlineImage',
+          attrs: { src: 'blob:img-new', uploadId: 'img-new', uploading: true },
+        },
       ]);
       // insertContent는 호출되지 않아야 한다
       expect(mockEditor._inserted).toHaveLength(0);
@@ -238,7 +239,10 @@ describe('useInlineFileUpload', () => {
       expect(mockEditor._insertedAt).toHaveLength(1);
       expect(mockEditor._insertedAt[0].pos).toEqual({ from: 5, to: 5 });
       expect(mockEditor._insertedAt[0].content).toEqual([
-        { type: 'inlineImage', attrs: { src: 'blob:img-new', uploadId: 'img-new', uploading: true } },
+        {
+          type: 'inlineImage',
+          attrs: { src: 'blob:img-new', uploadId: 'img-new', uploading: true },
+        },
       ]);
     });
   });
