@@ -30,15 +30,17 @@ function toDisplayImages(files: FileItem[], content: string): DisplayFile[] {
 
   if (fileImages.length > 0) return fileImages;
 
-  // fileUrls에 이미지가 없을 때: content HTML의 <img src="..."> 속성에서 추출
-  const result: DisplayFile[] = [];
-  const pattern = /<img[^>]+src="([^"]+)"/g;
-  let m: RegExpExecArray | null;
-  let i = 0;
-  while ((m = pattern.exec(content)) !== null) {
-    result.push({ id: `inline-${i++}`, fileName: '', fileUrl: m[1].replace(/&amp;/g, '&') });
-  }
-  return result;
+  // fileUrls에 이미지가 없을 때: content HTML의 img[src] 속성에서 추출
+  // (인라인 이미지 전용 게시글에서 목록 미리보기를 표시하기 위함)
+  // 정규식 대신 DOMParser를 사용해 data-src 등 다른 src 속성으로의 오매칭 방지
+  const doc = new DOMParser().parseFromString(content, 'text/html');
+  return Array.from(doc.querySelectorAll('img'))
+    .map((img, i) => ({
+      id: `inline-${i}`,
+      fileName: '',
+      fileUrl: img.getAttribute('src') ?? '',
+    }))
+    .filter((item) => item.fileUrl !== '');
 }
 
 interface BoardContentProps {
