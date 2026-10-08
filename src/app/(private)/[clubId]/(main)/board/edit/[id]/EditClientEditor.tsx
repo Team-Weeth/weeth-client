@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 
 import { CategorySelector, PostEditorShell } from '@/components/board';
 import { useWritableBoards } from '@/hooks/board/useWritableBoards';
@@ -12,19 +12,12 @@ interface EditClientEditorProps {
 }
 
 function EditClientEditor({ post }: EditClientEditorProps) {
-  const initializedRef = useRef(false);
-
   useEffect(() => {
-    if (initializedRef.current) return;
-    initializedRef.current = true;
     usePostStore.getState().initFromDetail(post);
-  }, [post]);
-
-  useEffect(() => {
     return () => {
       usePostStore.getState().reset();
     };
-  }, []);
+  }, [post]);
 
   const { writableItems } = useWritableBoards();
 
