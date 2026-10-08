@@ -16,17 +16,16 @@ export interface CoreFileItem {
   uploaded: boolean;
 }
 
-interface FileUploadCoreOptions {
+type FileUploadCoreOptions = {
   ownerType: OwnerType;
-  /** 설정 시 파일 합산 총 개수를 제한 */
-  maxTotalFiles?: number;
   isAlive: (id: string) => boolean;
   removeFile: (id: string) => void;
   markUploaded: (id: string, storageKey: string, fileUrl: string) => void;
   addFiles: (files: CoreFileItem[]) => void;
-  /** `maxTotalFiles` 설정 시 현재 파일 목록을 반환. 미설정 시 불필요. */
-  getCurrentFiles?: () => { fileName: string }[];
-}
+} & (
+  | { maxTotalFiles: number; getCurrentFiles: () => { fileName: string }[] }
+  | { maxTotalFiles?: undefined; getCurrentFiles?: never }
+);
 
 /**
  * 파일 업로드 공통 로직 훅
@@ -127,7 +126,7 @@ export function useFileUploadCore({
     let toProcess: File[];
 
     if (maxTotalFiles !== undefined) {
-      const currentFiles = getCurrentFiles?.() ?? [];
+      const currentFiles = getCurrentFiles!();
       const totalSlots = maxTotalFiles - currentFiles.length;
       if (valid.length > 0 && totalSlots <= 0) {
         toast({
