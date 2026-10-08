@@ -8,9 +8,9 @@ import {
   handleFileDrop,
   handleSubImageDrop,
   handleInlineImageGroupDrop,
-} from '@/components/board/Editor/postEditorDropHandlers';
-import { createPasteHandler } from '@/components/board/Editor/postEditorPasteHandler';
-import { createKeyDownHandler } from '@/components/board/Editor/postEditorKeyHandlers';
+} from '@/lib/board/editor/postEditorDropHandlers';
+import { createPasteHandler } from '@/lib/board/editor/postEditorPasteHandler';
+import { createKeyDownHandler } from '@/lib/board/editor/postEditorKeyHandlers';
 
 interface UsePostEditorOptions {
   processFilesInline?: (files: File[]) => void;
