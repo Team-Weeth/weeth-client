@@ -90,6 +90,13 @@ export default function Editor({ initialContent }: EditorProps = {}) {
         const files = e.dataTransfer?.files;
         if (!files || files.length === 0) return;
         e.preventDefault();
+        // 드롭 좌표로 selection 설정. 좌표를 resolve하지 못하면 문서 끝으로 이동.
+        const dropPos = editor.view.posAtCoords({ left: e.clientX, top: e.clientY });
+        if (dropPos) {
+          editor.commands.setTextSelection(dropPos.pos);
+        } else {
+          editor.commands.focus('end');
+        }
         processFilesInline(Array.from(files));
       }}
     >
