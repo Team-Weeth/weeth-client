@@ -106,8 +106,7 @@ export function handleFileDrop(
   // 이를 생략하면 이전 커서 위치에 파일이 삽입
   const coords = view.posAtCoords({ left: event.clientX, top: event.clientY });
   if (coords) {
-    const pos = coords.inside >= 0 ? coords.inside : coords.pos;
-    const tr = view.state.tr.setSelection(TextSelection.near(view.state.doc.resolve(pos)));
+    const tr = view.state.tr.setSelection(TextSelection.near(view.state.doc.resolve(coords.pos)));
     view.dispatch(tr);
   }
 
