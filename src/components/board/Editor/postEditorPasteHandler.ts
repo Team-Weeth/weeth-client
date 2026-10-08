@@ -1,19 +1,18 @@
-import type { MutableRefObject } from 'react';
 import type { EditorView } from '@tiptap/pm/view';
 import type { Slice } from '@tiptap/pm/model';
 import { sniffAsImageFile } from '@/lib/board/imageSniff';
 
 /**
  * TipTap handlePaste 핸들러 팩토리.
- * processFilesRef를 캡처해 stale closure 없이 최신 함수를 참조한다.
+ * getter 함수를 통해 최신 processFiles를 참조하므로 stale closure가 없다.
  */
 export function createPasteHandler(
-  processFilesRef: MutableRefObject<((files: File[]) => void) | undefined>,
+  getProcessFiles: () => ((files: File[]) => void) | undefined,
 ): (view: EditorView, event: ClipboardEvent, slice: Slice) => boolean {
   return (view, event, slice) => {
     const clipboardFiles = event.clipboardData?.files;
     if (clipboardFiles && clipboardFiles.length > 0) {
-      processFilesRef.current?.(Array.from(clipboardFiles));
+      getProcessFiles()?.(Array.from(clipboardFiles));
       return true;
     }
 
@@ -26,7 +25,7 @@ export function createPasteHandler(
         .map((item) => item.getAsFile())
         .filter((f): f is File => f !== null);
       if (imageFiles.length > 0) {
-        processFilesRef.current?.(imageFiles);
+        getProcessFiles()?.(imageFiles);
         return true;
       }
 
@@ -40,7 +39,7 @@ export function createPasteHandler(
         void (async () => {
           const detected = await Promise.all(untypedFiles.map(sniffAsImageFile));
           const validImages = detected.filter((f): f is File => f !== null);
-          if (validImages.length > 0) processFilesRef.current?.(validImages);
+          if (validImages.length > 0) getProcessFiles()?.(validImages);
         })();
         return true;
       }

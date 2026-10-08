@@ -1,4 +1,3 @@
-import type { MutableRefObject } from 'react';
 import { TextSelection } from '@tiptap/pm/state';
 import type { EditorView } from '@tiptap/pm/view';
 
@@ -6,14 +5,14 @@ const LIST_TYPES = ['bulletList', 'orderedList', 'taskList'];
 
 /**
  * TipTap handleKeyDown 핸들러 팩토리.
- * showSlashMenuRef를 캡처해 stale closure 없이 최신 슬래시 메뉴 상태를 참조한다.
+ * getter 함수를 통해 최신 슬래시 메뉴 상태를 참조하므로 stale closure가 없다.
  */
 export function createKeyDownHandler(
-  showSlashMenuRef: MutableRefObject<boolean>,
+  getShowSlashMenu: () => boolean,
 ): (view: EditorView, event: KeyboardEvent) => boolean {
   return (view, event) => {
-    // 슬래시 메뉴 우선 처리 (ref로 stale closure 없이 최신 값 참조)
-    if (showSlashMenuRef.current) {
+    // 슬래시 메뉴 우선 처리
+    if (getShowSlashMenu()) {
       if (event.key === 'Enter' || event.key === 'ArrowUp' || event.key === 'ArrowDown') {
         event.preventDefault();
         return true;

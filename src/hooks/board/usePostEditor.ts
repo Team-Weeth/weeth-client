@@ -62,12 +62,12 @@ export function usePostEditor({ processFilesInline, initialContent }: UsePostEdi
     },
 
     editorProps: {
-      handlePaste: createPasteHandler(processFilesRef),
+      handlePaste: createPasteHandler(() => processFilesRef.current),
       handleDrop: (view, event) =>
         handleFileDrop(view, event, processFilesRef.current) ||
         handleSubImageDrop(view, event) ||
         handleInlineImageGroupDrop(view, event),
-      handleKeyDown: createKeyDownHandler(showSlashMenuRef),
+      handleKeyDown: createKeyDownHandler(() => showSlashMenuRef.current),
     },
   });
 
