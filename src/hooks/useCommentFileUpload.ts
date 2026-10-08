@@ -16,8 +16,6 @@ export function useCommentFileUpload() {
 
   const core = useFileUploadCore({
     ownerType: 'COMMENT',
-    maxImageFiles: 1,
-    maxNonImageFiles: 1,
     maxTotalFiles: 1,
     isAlive: (id) => filesRef.current.some((f) => f.id === id),
     removeFile: (id) => {

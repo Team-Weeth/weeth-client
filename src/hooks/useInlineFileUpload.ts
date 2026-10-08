@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import type { Editor } from '@tiptap/core';
+import type { Transaction } from '@tiptap/pm/state';
 import { useShallow } from 'zustand/react/shallow';
-import { MAX_IMAGE_FILES, MAX_NON_IMAGE_FILES } from '@/constants/board/file';
 import type { OwnerType } from '@/lib/apis/file';
 import { isImageFileName } from '@/lib/board/fileUtils';
 import { useFileUploadCore, type CoreFileItem } from '@/hooks/useFileUploadCore';
@@ -90,13 +90,49 @@ export function useInlineFileUpload(ownerType: OwnerType = 'POST') {
   const imageInputRef = useRef<HTMLInputElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const editorRef = useRef<Editor | null>(null);
+  const transactionUnsubRef = useRef<(() => void) | null>(null);
 
   // 이미지 삽입 방식 선택 다이얼로그: null이면 닫힘, 배열이면 열림
   const [pendingImageItems, setPendingImageItems] = useState<CoreFileItem[] | null>(null);
+  // 다이얼로그 열릴 때의 삽입 위치 보존 (NodeSelection 대응)
+  const pendingInsertAtRef = useRef<number | { from: number; to: number } | null>(null);
+
+  // 언마운트 시 트랜잭션 구독 해제
+  useEffect(
+    () => () => {
+      transactionUnsubRef.current?.();
+    },
+    [],
+  );
 
   /** Call this to connect the editor instance after it's created */
   const setEditor = useCallback((editor: Editor | null) => {
+    transactionUnsubRef.current?.();
+    transactionUnsubRef.current = null;
     editorRef.current = editor;
+    if (!editor) return;
+
+    // 다이얼로그가 열린 동안 문서 변경이 발생하면 저장된 삽입 위치를 트랜잭션 매핑으로 갱신.
+    // 저장 위치 앞에서 노드가 삭제되면 위치가 밀리거나 범위를 벗어나 잘못된 위치에 삽입될 수 있다.
+    const onTransaction = ({ transaction }: { transaction: Transaction }) => {
+      if (!transaction.docChanged || pendingInsertAtRef.current === null) return;
+
+      const current = pendingInsertAtRef.current;
+      const docSize = transaction.doc.content.size;
+
+      if (typeof current === 'number') {
+        const result = transaction.mapping.mapResult(current);
+        // 위치 자체가 삭제 범위에 포함되거나 문서 밖으로 벗어나면 현재 커서로 폴백
+        pendingInsertAtRef.current = result.deleted || result.pos > docSize ? null : result.pos;
+      } else {
+        const from = transaction.mapping.map(current.from);
+        const to = transaction.mapping.map(current.to, 1);
+        pendingInsertAtRef.current = from > docSize ? null : { from, to: Math.min(to, docSize) };
+      }
+    };
+
+    editor.on('transaction', onTransaction);
+    transactionUnsubRef.current = () => editor.off('transaction', onTransaction);
   }, []);
 
   // Intercept addFiles to also insert nodes into the editor
@@ -110,13 +146,55 @@ export function useInlineFileUpload(ownerType: OwnerType = 'POST') {
       const imageItems = newFiles.filter((item) => isImageFileName(item.fileName));
       const nonImageItems = newFiles.filter((item) => !isImageFileName(item.fileName));
 
+      // NodeSelection으로 atom 노드가 선택된 경우 insertContent는 해당 노드를
+      // 대체(replaceWith)하므로, 선택 노드 뒤 위치를 삽입 대상으로 삼는다.
+      const { selection } = currentEditor.state;
+      const insertAt: number | { from: number; to: number } =
+        'node' in selection ? selection.to : { from: selection.from, to: selection.to };
+
+      if (imageItems.length === 0 || imageItems.length === 1) {
+        // 비-이미지와 이미지(최대 1장)를 한 번에 삽입 — 개별 insertContent 호출을 피해
+        // NodeSelection이 이미 반영된 insertAt 위치에 순서대로 삽입한다.
+        const content: Array<{ type: string; attrs: Record<string, unknown> }> = [
+          ...nonImageItems.map((item) => ({
+            type: 'fileAttachment' as const,
+            attrs: {
+              src: item.fileUrl,
+              fileName: item.fileName,
+              fileSize: item.fileSize,
+              contentType: item.contentType,
+              uploadId: item.id,
+              uploading: true,
+            },
+          })),
+          ...(imageItems.length === 1
+            ? [
+                {
+                  type: 'inlineImage' as const,
+                  attrs: {
+                    src: imageItems[0].fileUrl,
+                    uploadId: imageItems[0].id,
+                    uploading: true,
+                  },
+                },
+              ]
+            : []),
+        ];
+        if (content.length > 0) {
+          currentEditor.chain().focus().insertContentAt(insertAt, content).run();
+        }
+        return;
+      }
+
+      // 이미지 2장 이상: 비-이미지를 먼저 삽입한 뒤 다이얼로그 표시.
       // 블록 atom 노드를 개별 insertContent로 체이닝하면 NodeSelection이 이전 노드를
-      // 덮어씌우므로, 한 번에 배열로 삽입
+      // 덮어씌우므로, 한 번에 배열로 삽입.
       if (nonImageItems.length > 0) {
         currentEditor
           .chain()
           .focus()
-          .insertContent(
+          .insertContentAt(
+            insertAt,
             nonImageItems.map((item) => ({
               type: 'fileAttachment' as const,
               attrs: {
@@ -130,25 +208,13 @@ export function useInlineFileUpload(ownerType: OwnerType = 'POST') {
             })),
           )
           .run();
+        // 비-이미지 삽입 후 커서가 이동하므로 다이얼로그에서는 현재 커서 위치에 삽입
+        pendingInsertAtRef.current = null;
+      } else {
+        // 이미지만 있는 경우: NodeSelection이 유지될 수 있으므로 위치 보존
+        pendingInsertAtRef.current = insertAt;
       }
 
-      if (imageItems.length === 0) return;
-
-      if (imageItems.length === 1) {
-        currentEditor
-          .chain()
-          .focus()
-          .insertContent([
-            {
-              type: 'inlineImage' as const,
-              attrs: { src: imageItems[0].fileUrl, uploadId: imageItems[0].id, uploading: true },
-            },
-          ])
-          .run();
-        return;
-      }
-
-      // 이미지 2장 이상: 삽입 방식 선택 다이얼로그 표시
       setPendingImageItems(imageItems);
     },
     [addFiles],
@@ -180,6 +246,7 @@ export function useInlineFileUpload(ownerType: OwnerType = 'POST') {
 
     if (activeItems.length === 0) {
       setPendingImageItems(null);
+      pendingInsertAtRef.current = null;
       return;
     }
 
@@ -192,17 +259,24 @@ export function useInlineFileUpload(ownerType: OwnerType = 'POST') {
       };
     };
 
+    // 다이얼로그 열릴 때 저장해 둔 삽입 위치가 있으면 사용 (NodeSelection 대응),
+    // 없으면 현재 커서 위치에 삽입 (비-이미지가 먼저 삽입된 경우)
+    const savedInsertAt = pendingInsertAtRef.current;
+    const doInsert = (content: Array<{ type: string; attrs: Record<string, unknown> }>) => {
+      if (savedInsertAt !== null) {
+        currentEditor.chain().focus().insertContentAt(savedInsertAt, content).run();
+      } else {
+        currentEditor.chain().focus().insertContent(content).run();
+      }
+    };
+
     if (mode === 'individual') {
-      currentEditor
-        .chain()
-        .focus()
-        .insertContent(
-          activeItems.map((item) => ({
-            type: 'inlineImage' as const,
-            attrs: getAttrs(item),
-          })),
-        )
-        .run();
+      doInsert(
+        activeItems.map((item) => ({
+          type: 'inlineImage' as const,
+          attrs: getAttrs(item),
+        })),
+      );
     } else {
       // MAX_GROUP_IMAGES(3)장씩 묶어 imageGroup 삽입.
       const chunks: CoreFileItem[][] = [];
@@ -218,32 +292,29 @@ export function useInlineFileUpload(ownerType: OwnerType = 'POST') {
         last.unshift(prev.pop()!);
       }
 
-      currentEditor
-        .chain()
-        .focus()
-        .insertContent(
-          chunks.flatMap((chunk): Array<{ type: string; attrs: Record<string, unknown> }> => {
-            if (chunk.length === 1) {
-              // activeItems가 1장일 때만 도달 (단일 청크)
-              return [{ type: 'inlineImage', attrs: getAttrs(chunk[0]) }];
-            }
-            return [
-              {
-                type: 'imageGroup',
-                attrs: {
-                  images: chunk.map((item) => {
-                    const { src, uploadId, uploading } = getAttrs(item);
-                    return { src, alt: null, width: null, uploadId, uploading };
-                  }),
-                },
+      doInsert(
+        chunks.flatMap((chunk): Array<{ type: string; attrs: Record<string, unknown> }> => {
+          if (chunk.length === 1) {
+            // activeItems가 1장일 때만 도달 (단일 청크)
+            return [{ type: 'inlineImage', attrs: getAttrs(chunk[0]) }];
+          }
+          return [
+            {
+              type: 'imageGroup',
+              attrs: {
+                images: chunk.map((item) => {
+                  const { src, uploadId, uploading } = getAttrs(item);
+                  return { src, alt: null, width: null, uploadId, uploading };
+                }),
               },
-            ];
-          }),
-        )
-        .run();
+            },
+          ];
+        }),
+      );
     }
 
     setPendingImageItems(null);
+    pendingInsertAtRef.current = null;
   };
 
   /** 다이얼로그를 취소했을 때 호출 — 업로드 추적 중인 파일을 store에서 제거한다. */
@@ -251,6 +322,7 @@ export function useInlineFileUpload(ownerType: OwnerType = 'POST') {
     if (!pendingImageItems) return;
     pendingImageItems.forEach((item) => removeFileAndNode(item.id));
     setPendingImageItems(null);
+    pendingInsertAtRef.current = null;
   };
 
   const markUploadedAndUpdateNode = useCallback(
@@ -268,13 +340,10 @@ export function useInlineFileUpload(ownerType: OwnerType = 'POST') {
 
   const core = useFileUploadCore({
     ownerType,
-    maxImageFiles: MAX_IMAGE_FILES,
-    maxNonImageFiles: MAX_NON_IMAGE_FILES,
     isAlive: (id) => usePostStore.getState().files.some((f) => f.id === id),
     removeFile: removeFileAndNode,
     markUploaded: markUploadedAndUpdateNode,
     addFiles: addFilesAndInsertNodes,
-    getCurrentFiles: () => usePostStore.getState().files,
   });
 
   // Keep processFiles ref stable for paste/drop handlers
