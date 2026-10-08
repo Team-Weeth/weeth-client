@@ -63,7 +63,7 @@ export function usePostEditor({ processFilesInline, initialContent }: UsePostEdi
     },
 
     editorProps: {
-      handlePaste: (_view, event) => {
+      handlePaste: (view, event, slice) => {
         const clipboardFiles = event.clipboardData?.files;
         if (clipboardFiles && clipboardFiles.length > 0) {
           processFilesRef.current?.(Array.from(clipboardFiles));
@@ -82,6 +82,17 @@ export function usePostEditor({ processFilesInline, initialContent }: UsePostEdi
             processFilesRef.current?.(imageFiles);
             return true;
           }
+        }
+
+        // NodeSelection 상태에서 tiptap 기본 동작은 선택된 노드를 붙여넣기 내용으로
+        // 교체(replaceWith)한다. 직접 slice를 선택 노드 하단에 삽입하여 교체를 방지한다.
+        const { selection } = view.state;
+        if ('node' in selection && slice) {
+          const tr = view.state.tr;
+          tr.replaceRange(selection.to, selection.to, slice);
+          tr.scrollIntoView();
+          view.dispatch(tr);
+          return true;
         }
 
         return false;

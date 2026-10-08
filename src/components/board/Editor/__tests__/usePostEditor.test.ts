@@ -24,6 +24,7 @@ const mockSetContent = jest.fn();
 type EditorPropsHandler = (
   view: Record<string, unknown>,
   event: Record<string, unknown>,
+  slice?: Record<string, unknown>,
 ) => boolean;
 type EditorEventCallback = (args: Record<string, unknown>) => void;
 
@@ -43,6 +44,21 @@ let capturedConfig = {} as CapturedEditorConfig;
 const minimalView = {
   state: { selection: { $from: {} } },
 };
+
+// handlePaste 테스트용 view mock — NodeSelection 여부 설정 가능
+function createPasteView(options?: { nodeSelection?: boolean }) {
+  const selection = options?.nodeSelection
+    ? { from: 10, to: 12, node: {} } // NodeSelection
+    : { from: 5, to: 5 }; // TextSelection (node 프로퍼티 없음)
+  const tr = {
+    replaceRange: jest.fn().mockReturnThis(),
+    scrollIntoView: jest.fn().mockReturnThis(),
+  };
+  return {
+    state: { selection, tr },
+    dispatch: jest.fn(),
+  };
+}
 
 // 백틱 인라인 코드 단축키 테스트용 view mock
 function createBacktickView(textBefore: string) {
@@ -213,15 +229,12 @@ describe('usePostEditor', () => {
     it('items에 이미지가 없으면 false를 반환한다', () => {
       renderHook(() => usePostEditor());
 
-      const result = capturedConfig.editorProps.handlePaste(
-        {},
-        {
-          clipboardData: {
-            files: [],
-            items: [{ kind: 'string', type: 'text/plain', getAsFile: () => null }],
-          },
+      const result = capturedConfig.editorProps.handlePaste(createPasteView(), {
+        clipboardData: {
+          files: [],
+          items: [{ kind: 'string', type: 'text/plain', getAsFile: () => null }],
         },
-      );
+      });
 
       expect(result).toBe(false);
     });
@@ -229,7 +242,9 @@ describe('usePostEditor', () => {
     it('파일이 없으면 false를 반환한다', () => {
       renderHook(() => usePostEditor());
 
-      const result = capturedConfig.editorProps.handlePaste({}, { clipboardData: { files: [] } });
+      const result = capturedConfig.editorProps.handlePaste(createPasteView(), {
+        clipboardData: { files: [] },
+      });
 
       expect(result).toBe(false);
     });
@@ -237,9 +252,26 @@ describe('usePostEditor', () => {
     it('clipboardData가 없으면 false를 반환한다', () => {
       renderHook(() => usePostEditor());
 
-      const result = capturedConfig.editorProps.handlePaste({}, {});
+      const result = capturedConfig.editorProps.handlePaste(createPasteView(), {});
 
       expect(result).toBe(false);
+    });
+
+    it('NodeSelection 상태에서 파일 없이 붙여넣기하면 slice를 선택 노드 하단에 삽입한다', () => {
+      renderHook(() => usePostEditor());
+
+      const view = createPasteView({ nodeSelection: true });
+      const mockSlice = { content: {}, openStart: 0, openEnd: 0 };
+      const result = capturedConfig.editorProps.handlePaste(
+        view,
+        { clipboardData: { files: [], items: [] } },
+        mockSlice,
+      );
+
+      expect(view.state.tr.replaceRange).toHaveBeenCalledWith(12, 12, mockSlice);
+      expect(view.state.tr.scrollIntoView).toHaveBeenCalled();
+      expect(view.dispatch).toHaveBeenCalledWith(view.state.tr);
+      expect(result).toBe(true);
     });
   });
 
