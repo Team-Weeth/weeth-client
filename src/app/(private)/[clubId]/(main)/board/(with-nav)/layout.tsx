@@ -13,9 +13,9 @@ interface BoardLayoutProps {
 
 async function BoardNavLoader({ clubId }: { clubId: string }) {
   const response = await boardServerApi.getBoards(clubId).catch(() => null);
-  const boards = [...(response?.data ?? [])].sort(
-    (a, b) => (BOARD_TYPE_ORDER[a.type] ?? 99) - (BOARD_TYPE_ORDER[b.type] ?? 99),
-  );
+  const boards = [...(response?.data ?? [])]
+    .filter((b) => b.boardConfig?.canRead !== false)
+    .sort((a, b) => (BOARD_TYPE_ORDER[a.type] ?? 99) - (BOARD_TYPE_ORDER[b.type] ?? 99));
   const items = boards.map(toBoardNavItem);
 
   return (
