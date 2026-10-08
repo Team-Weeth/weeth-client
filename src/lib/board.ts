@@ -66,12 +66,14 @@ function toBoardNavItem(board: {
   id: number | null;
   name: string;
   type: 'ALL' | 'NOTICE' | 'GENERAL';
+  isPrivate?: boolean;
   boardConfig?: { canWrite: boolean; canComment: boolean };
 }): BoardNavItem {
   return {
     id: board.id,
     label: board.name,
     type: board.type,
+    isPrivate: board.isPrivate,
     canWrite: board.boardConfig?.canWrite,
   };
 }
