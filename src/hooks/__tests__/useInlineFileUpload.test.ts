@@ -60,11 +60,20 @@ function makeItem(id: string, fileName = 'img.png'): CoreFileItem {
   };
 }
 
-function createMockEditor() {
+function createMockEditor(options?: { nodeSelection?: boolean }) {
   const insertedContent: unknown[] = [];
+  const insertedContentAt: Array<{ pos: unknown; content: unknown }> = [];
+
+  // NodeSelection mock: 'node' 프로퍼티 포함, from=10 / to=11
+  // TextSelection mock: 'node' 프로퍼티 없음, from=5 / to=5 (커서)
+  const selection = options?.nodeSelection
+    ? { from: 10, to: 11, node: {} }
+    : { from: 5, to: 5 };
+
   interface MockChain {
     focus: jest.Mock;
     insertContent: jest.Mock;
+    insertContentAt: jest.Mock;
     run: jest.Mock;
   }
   const chain: MockChain = {
@@ -73,11 +82,17 @@ function createMockEditor() {
       insertedContent.push(content);
       return chain;
     }),
+    insertContentAt: jest.fn((pos: unknown, content: unknown) => {
+      insertedContentAt.push({ pos, content });
+      return chain;
+    }),
     run: jest.fn(),
   };
   return {
     chain: jest.fn(() => chain),
+    state: { selection },
     _inserted: insertedContent,
+    _insertedAt: insertedContentAt,
   };
 }
 
@@ -133,8 +148,8 @@ describe('useInlineFileUpload', () => {
         result.current.confirmImageInsertMode('individual');
       });
 
-      expect(mockEditor._inserted).toHaveLength(1);
-      expect(mockEditor._inserted[0]).toEqual([
+      expect(mockEditor._insertedAt).toHaveLength(1);
+      expect(mockEditor._insertedAt[0].content).toEqual([
         { type: 'inlineImage', attrs: { src: 'blob:img-1', uploadId: 'img-1', uploading: true } },
         { type: 'inlineImage', attrs: { src: 'blob:img-2', uploadId: 'img-2', uploading: true } },
       ]);
@@ -172,9 +187,58 @@ describe('useInlineFileUpload', () => {
       });
 
       // store에 남은 ok-1만 삽입
-      expect(mockEditor._inserted).toHaveLength(1);
-      expect(mockEditor._inserted[0]).toEqual([
+      expect(mockEditor._insertedAt).toHaveLength(1);
+      expect(mockEditor._insertedAt[0].content).toEqual([
         { type: 'inlineImage', attrs: { src: 'blob:ok-1', uploadId: 'ok-1', uploading: true } },
+      ]);
+    });
+  });
+
+  describe('addFilesAndInsertNodes — NodeSelection', () => {
+    it('이미지 노드가 선택된 상태(NodeSelection)에서 이미지를 붙여넣으면 선택 노드 하단에 삽입된다', () => {
+      const item = makeItem('img-new');
+
+      const { result } = renderHook(() => useInlineFileUpload());
+      // nodeSelection: true → selection = { from: 10, to: 11, node: {} }
+      const mockEditor = createMockEditor({ nodeSelection: true });
+      act(() => {
+        result.current.setEditor(mockEditor as never);
+      });
+
+      const addFilesAndInsertNodes = getAddFilesCallback();
+      act(() => {
+        addFilesAndInsertNodes([item]);
+      });
+
+      // insertContentAt이 selection.to(11) 위치에 호출돼야 한다 (선택 노드 대체 X)
+      expect(mockEditor._insertedAt).toHaveLength(1);
+      expect(mockEditor._insertedAt[0].pos).toBe(11);
+      expect(mockEditor._insertedAt[0].content).toEqual([
+        { type: 'inlineImage', attrs: { src: 'blob:img-new', uploadId: 'img-new', uploading: true } },
+      ]);
+      // insertContent는 호출되지 않아야 한다
+      expect(mockEditor._inserted).toHaveLength(0);
+    });
+
+    it('텍스트 커서(TextSelection) 상태에서 이미지를 붙여넣으면 커서 위치에 삽입된다', () => {
+      const item = makeItem('img-new');
+
+      const { result } = renderHook(() => useInlineFileUpload());
+      // 기본 TextSelection: selection = { from: 5, to: 5 }
+      const mockEditor = createMockEditor();
+      act(() => {
+        result.current.setEditor(mockEditor as never);
+      });
+
+      const addFilesAndInsertNodes = getAddFilesCallback();
+      act(() => {
+        addFilesAndInsertNodes([item]);
+      });
+
+      expect(mockEditor._insertedAt).toHaveLength(1);
+      expect(mockEditor._insertedAt[0].pos).toEqual({ from: 5, to: 5 });
+      expect(mockEditor._insertedAt[0].content).toEqual([
+        { type: 'inlineImage', attrs: { src: 'blob:img-new', uploadId: 'img-new', uploading: true } },
       ]);
     });
   });
