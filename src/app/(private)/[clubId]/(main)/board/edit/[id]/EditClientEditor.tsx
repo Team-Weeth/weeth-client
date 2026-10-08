@@ -17,7 +17,8 @@ function EditClientEditor({ post }: EditClientEditorProps) {
     return () => {
       usePostStore.getState().reset();
     };
-  }, [post]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [post.id]);
 
   const { writableItems } = useWritableBoards();
 
