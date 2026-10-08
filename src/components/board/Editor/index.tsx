@@ -79,7 +79,7 @@ export default function Editor({ initialContent }: EditorProps = {}) {
   return (
     <div
       ref={containerRef}
-      className="relative flex min-h-[400px] w-full flex-col"
+      className="relative flex min-h-[400px] w-full flex-1 flex-col"
       onDragOver={(e) => {
         // 에디터 콘텐츠 영역 밖(하단 빈 공간)에서도 파일 드롭을 허용
         if (Array.from(e.dataTransfer.types).includes('Files')) e.preventDefault();

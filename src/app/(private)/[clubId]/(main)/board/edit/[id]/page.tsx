@@ -29,7 +29,7 @@ export default async function PostEditPage({ params, searchParams }: PostEditPag
   }
 
   return (
-    <main className="w-full">
+    <main className="flex w-full flex-1 flex-col">
       <EditClientEditor post={response.data} />
     </main>
   );
