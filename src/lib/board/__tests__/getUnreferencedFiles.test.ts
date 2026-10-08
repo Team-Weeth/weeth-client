@@ -62,6 +62,18 @@ describe('isReferencedInContent', () => {
       const html = '<img src="https://example.com/my file.png" />';
       expect(isReferencedInContent(fileUrl, html)).toBe(true);
     });
+
+    it('fileUrl은 리터럴 공백·괄호, HTML에 %20·%28·%29로 인코딩된 경우 true를 반환한다', () => {
+      const fileUrl = 'https://example.com/my file (1).png';
+      const html = '<img src="https://example.com/my%20file%20%281%29.png" />';
+      expect(isReferencedInContent(fileUrl, html)).toBe(true);
+    });
+
+    it('fileUrl이 %20·%28·%29 인코딩, HTML에 리터럴 문자인 경우 true를 반환한다', () => {
+      const fileUrl = 'https://example.com/my%20file%20%281%29.png';
+      const html = '<img src="https://example.com/my file (1).png" />';
+      expect(isReferencedInContent(fileUrl, html)).toBe(true);
+    });
   });
 
   describe('HTML 엔티티 허용', () => {
