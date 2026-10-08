@@ -40,11 +40,12 @@ export function isReferencedInContent(fileUrl: string, htmlContent: string): boo
   let m: RegExpExecArray | null;
   while ((m = attrPattern.exec(htmlContent)) !== null) {
     const rawAttr = m[1].replace(/&amp;/g, '&');
+    const baseRawAttr = rawAttr.includes('?') ? rawAttr.split('?')[0] : rawAttr;
     let decodedAttr: string;
     try {
-      decodedAttr = decodeURIComponent(rawAttr);
+      decodedAttr = decodeURIComponent(baseRawAttr);
     } catch {
-      decodedAttr = rawAttr;
+      decodedAttr = baseRawAttr;
     }
     if (decodedAttr === decodedFileUrl) return true;
   }

@@ -74,6 +74,18 @@ describe('isReferencedInContent', () => {
       const html = '<img src="https://example.com/my file (1).png" />';
       expect(isReferencedInContent(fileUrl, html)).toBe(true);
     });
+
+    it('fileUrl에 쿼리와 %20 인코딩, HTML src에 같은 쿼리와 리터럴 공백이 있으면 true를 반환한다', () => {
+      const fileUrl = 'https://example.com/my%20file.png?token=abc';
+      const html = '<img src="https://example.com/my file.png?token=abc" />';
+      expect(isReferencedInContent(fileUrl, html)).toBe(true);
+    });
+
+    it('fileUrl에 쿼리와 %28·%29 인코딩, HTML src에 같은 쿼리와 리터럴 괄호가 있으면 true를 반환한다', () => {
+      const fileUrl = 'https://example.com/my%20file%20%281%29.png?token=abc';
+      const html = '<img src="https://example.com/my file (1).png?token=abc" />';
+      expect(isReferencedInContent(fileUrl, html)).toBe(true);
+    });
   });
 
   describe('HTML 엔티티 허용', () => {
@@ -83,10 +95,11 @@ describe('isReferencedInContent', () => {
       expect(isReferencedInContent(fileUrl, html)).toBe(true);
     });
 
-    it('fileUrl에 &amp;가 리터럴로 포함되어 있고 HTML src에 &만 있으면 false를 반환한다', () => {
+    it('fileUrl에 &amp;가 리터럴로 포함되어 있고 HTML src에 &만 있어도 base path가 같으면 true를 반환한다', () => {
       const fileUrl = 'https://s3.example.com/img?foo=1&amp;bar=2';
       const html = '<img src="https://s3.example.com/img?foo=1&bar=2" />';
-      expect(isReferencedInContent(fileUrl, html)).toBe(false);
+      // 디코딩 비교 단계에서 양쪽 쿼리를 모두 제거하므로 base path(img)가 일치
+      expect(isReferencedInContent(fileUrl, html)).toBe(true);
     });
   });
 });
