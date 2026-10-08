@@ -1,7 +1,6 @@
 'use client';
 
 import { useEditor } from '@tiptap/react';
-import { TextSelection } from '@tiptap/pm/state';
 import { useState, useRef, useEffect } from 'react';
 import { usePostStore } from '@/stores/usePostStore';
 import { editorExtensions } from '@/components/board/Editor/extensions';
@@ -10,9 +9,8 @@ import {
   handleSubImageDrop,
   handleInlineImageGroupDrop,
 } from '@/components/board/Editor/postEditorDropHandlers';
-import { sniffAsImageFile } from '@/lib/board/imageSniff';
-
-const LIST_TYPES = ['bulletList', 'orderedList', 'taskList'];
+import { createPasteHandler } from '@/components/board/Editor/postEditorPasteHandler';
+import { createKeyDownHandler } from '@/components/board/Editor/postEditorKeyHandlers';
 
 interface UsePostEditorOptions {
   processFilesInline?: (files: File[]) => void;
@@ -64,132 +62,12 @@ export function usePostEditor({ processFilesInline, initialContent }: UsePostEdi
     },
 
     editorProps: {
-      handlePaste: (view, event, slice) => {
-        const clipboardFiles = event.clipboardData?.files;
-        if (clipboardFiles && clipboardFiles.length > 0) {
-          processFilesRef.current?.(Array.from(clipboardFiles));
-          return true;
-        }
-
-        // files가 비어있을 때 items에서 이미지 추출
-        // (브라우저 이미지 복사·스크린샷 등은 files 대신 items에만 존재)
-        const items = event.clipboardData?.items;
-        if (items) {
-          const imageFiles = Array.from(items)
-            .filter((item) => item.kind === 'file' && item.type.startsWith('image/'))
-            .map((item) => item.getAsFile())
-            .filter((f): f is File => f !== null);
-          if (imageFiles.length > 0) {
-            processFilesRef.current?.(imageFiles);
-            return true;
-          }
-
-          // MIME 유형이 비어 있는 파일 항목: 실제 바이트를 확인해 이미지 여부 판정
-          // (스크린샷·일부 브라우저에서 type이 빈 문자열로 올 수 있음)
-          const untypedFiles = Array.from(items)
-            .filter((item) => item.kind === 'file' && item.type === '')
-            .map((item) => item.getAsFile())
-            .filter((f): f is File => f !== null);
-          if (untypedFiles.length > 0) {
-            void (async () => {
-              const detected = await Promise.all(untypedFiles.map(sniffAsImageFile));
-              const validImages = detected.filter((f): f is File => f !== null);
-              if (validImages.length > 0) processFilesRef.current?.(validImages);
-            })();
-            return true;
-          }
-        }
-
-        // NodeSelection 상태에서 tiptap 기본 동작은 선택된 노드를 붙여넣기 내용으로
-        // 교체(replaceWith)한다. 직접 slice를 선택 노드 하단에 삽입하여 교체를 방지한다.
-        const { selection } = view.state;
-        if ('node' in selection && slice) {
-          const tr = view.state.tr;
-          tr.replaceRange(selection.to, selection.to, slice);
-          tr.scrollIntoView();
-          view.dispatch(tr);
-          return true;
-        }
-
-        return false;
-      },
-
+      handlePaste: createPasteHandler(processFilesRef),
       handleDrop: (view, event) =>
         handleFileDrop(view, event, processFilesRef.current) ||
         handleSubImageDrop(view, event) ||
         handleInlineImageGroupDrop(view, event),
-
-      handleKeyDown: (view, event) => {
-        // 슬래시 메뉴 우선 처리 (ref로 stale closure 없이 최신 값 참조)
-        if (showSlashMenuRef.current) {
-          if (event.key === 'Enter' || event.key === 'ArrowUp' || event.key === 'ArrowDown') {
-            event.preventDefault();
-            return true;
-          }
-        }
-
-        const { state } = view;
-        const { $from } = state.selection;
-
-        // 백틱 인라인 코드 단축키
-        if (event.key === '`') {
-          const blockStart = $from.start();
-          const textBefore = state.doc.textBetween(blockStart, $from.pos);
-          const openIndex = textBefore.lastIndexOf('`');
-
-          if (openIndex !== -1) {
-            const innerText = textBefore.slice(openIndex + 1);
-
-            if (innerText.length > 0) {
-              event.preventDefault();
-              const from = blockStart + openIndex;
-              const to = $from.pos;
-              const codeMark = state.schema.marks.code.create();
-              const codeText = state.schema.text(innerText, [codeMark]);
-              const tr = state.tr.replaceWith(from, to, codeText);
-              tr.removeStoredMark(state.schema.marks.code);
-
-              view.dispatch(tr);
-              return true;
-            }
-          }
-        }
-
-        // Backspace UX 개선
-        if (event.key === 'Backspace') {
-          if ($from.parentOffset === 0 && $from.parent.textContent === '') {
-            // 빈 헤딩 → 일반 단락으로 전환
-            if ($from.parent.type.name === 'heading') {
-              view.dispatch(
-                state.tr.setBlockType($from.pos, $from.pos, state.schema.nodes.paragraph),
-              );
-              return true;
-            }
-
-            // 빈 paragraph가 리스트 바로 뒤에 있을 때 리스트 재진입 방지
-            if ($from.depth < 1) return false;
-            const resolvedPos = state.doc.resolve($from.before());
-            const nodeBefore = resolvedPos.nodeBefore;
-
-            if (
-              $from.parent.type.name === 'paragraph' &&
-              nodeBefore &&
-              LIST_TYPES.includes(nodeBefore.type.name)
-            ) {
-              const paragraphStart = $from.before();
-              const paragraphEnd = $from.after();
-              const endOfPrevNode = paragraphStart - 1;
-              const tr = state.tr.delete(paragraphStart, paragraphEnd);
-              const mappedPos = tr.mapping.map(endOfPrevNode);
-              tr.setSelection(TextSelection.near(tr.doc.resolve(mappedPos), -1));
-              view.dispatch(tr);
-              return true;
-            }
-          }
-        }
-
-        return false;
-      },
+      handleKeyDown: createKeyDownHandler(showSlashMenuRef),
     },
   });
 
