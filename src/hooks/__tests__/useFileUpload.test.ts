@@ -1,7 +1,7 @@
 import { renderHook, act, waitFor } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
 
-import { MAX_FILE_SIZE, MAX_IMAGE_FILES, MAX_NON_IMAGE_FILES } from '@/constants/board/file';
+import { MAX_FILE_SIZE } from '@/constants/board/file';
 import { useFileUpload } from '@/hooks/useFileUpload';
 import { fileApi } from '@/lib/apis/file';
 import { server } from '@/mocks/server';
@@ -71,51 +71,6 @@ describe('useFileUpload', () => {
 
       expect(mockToast).toHaveBeenCalledWith(expect.objectContaining({ variant: 'error' }));
       expect(usePostStore.getState().files).toHaveLength(0);
-    });
-
-    it('이미지 최대 개수 초과 → 초과 안내 토스트, 최대치까지만 스토어에 추가 후 업로드 오류로 정리된다', async () => {
-      const { result } = renderHook(() => useFileUpload());
-      const images = Array.from({ length: MAX_IMAGE_FILES + 1 }, (_, i) =>
-        makeFile(`img${i}.png`, 'image/png'),
-      );
-
-      act(() => {
-        result.current.processFiles(images);
-      });
-
-      expect(mockToast).toHaveBeenCalledWith(
-        expect.objectContaining({
-          title: expect.stringContaining(`${MAX_IMAGE_FILES}개`),
-          variant: 'error',
-        }),
-      );
-
-      // presigned URL 실패 후 파일이 정리될 때까지 대기 (act 경고 방지)
-      await waitFor(() => {
-        expect(usePostStore.getState().files).toHaveLength(0);
-      });
-    });
-
-    it('비이미지 파일 최대 개수 초과 → 초과 안내 토스트, presigned URL 실패 후 정리된다', async () => {
-      const { result } = renderHook(() => useFileUpload());
-      const pdfs = Array.from({ length: MAX_NON_IMAGE_FILES + 1 }, (_, i) =>
-        makeFile(`doc${i}.pdf`, 'application/pdf'),
-      );
-
-      act(() => {
-        result.current.processFiles(pdfs);
-      });
-
-      expect(mockToast).toHaveBeenCalledWith(
-        expect.objectContaining({
-          title: expect.stringContaining(`${MAX_NON_IMAGE_FILES}개`),
-          variant: 'error',
-        }),
-      );
-
-      await waitFor(() => {
-        expect(usePostStore.getState().files).toHaveLength(0);
-      });
     });
 
     it('빈 배열을 넘기면 토스트도 발생하지 않고 파일도 추가되지 않는다', () => {

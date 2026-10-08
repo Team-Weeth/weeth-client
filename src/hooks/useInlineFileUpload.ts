@@ -1,7 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import type { Editor } from '@tiptap/core';
 import { useShallow } from 'zustand/react/shallow';
-import { MAX_IMAGE_FILES, MAX_NON_IMAGE_FILES } from '@/constants/board/file';
 import type { OwnerType } from '@/lib/apis/file';
 import { isImageFileName } from '@/lib/board/fileUtils';
 import { useFileUploadCore, type CoreFileItem } from '@/hooks/useFileUploadCore';
@@ -268,8 +267,6 @@ export function useInlineFileUpload(ownerType: OwnerType = 'POST') {
 
   const core = useFileUploadCore({
     ownerType,
-    maxImageFiles: MAX_IMAGE_FILES,
-    maxNonImageFiles: MAX_NON_IMAGE_FILES,
     isAlive: (id) => usePostStore.getState().files.some((f) => f.id === id),
     removeFile: removeFileAndNode,
     markUploaded: markUploadedAndUpdateNode,

@@ -2,7 +2,7 @@ import { useRef } from 'react';
 import { MAX_FILE_SIZE, ALLOWED_EXTENSIONS } from '@/constants/board/file';
 import { fileApi } from '@/lib/apis/file';
 import type { OwnerType } from '@/lib/apis/file';
-import { isImageFile, isImageFileName, isAllowedExtension } from '@/lib/board/fileUtils';
+import { isAllowedExtension } from '@/lib/board/fileUtils';
 import { toast } from '@/stores/useToastStore';
 
 export interface CoreFileItem {
@@ -18,9 +18,7 @@ export interface CoreFileItem {
 
 interface FileUploadCoreOptions {
   ownerType: OwnerType;
-  maxImageFiles: number;
-  maxNonImageFiles: number;
-  /** 설정 시 이미지·파일 합산 총 개수를 제한 (per-type 제한 대신 사용) */
+  /** 설정 시 파일 합산 총 개수를 제한 */
   maxTotalFiles?: number;
   isAlive: (id: string) => boolean;
   removeFile: (id: string) => void;
@@ -37,8 +35,6 @@ interface FileUploadCoreOptions {
  */
 export function useFileUploadCore({
   ownerType,
-  maxImageFiles,
-  maxNonImageFiles,
   maxTotalFiles,
   isAlive,
   removeFile,
@@ -127,11 +123,10 @@ export function useFileUploadCore({
     }
     const valid = extValid.filter((f) => f.size <= MAX_FILE_SIZE);
 
-    const currentFiles = getCurrentFiles();
     let toProcess: File[];
 
     if (maxTotalFiles !== undefined) {
-      // 합산 총 개수 제한 모드
+      const currentFiles = getCurrentFiles();
       const totalSlots = maxTotalFiles - currentFiles.length;
       if (valid.length > 0 && totalSlots <= 0) {
         toast({
@@ -148,32 +143,7 @@ export function useFileUploadCore({
       }
       toProcess = valid.slice(0, Math.max(0, totalSlots));
     } else {
-      // 이미지·파일 각각 개수 제한 모드
-      const incomingImages = valid.filter((f) => isImageFile(f));
-      const incomingNonImages = valid.filter((f) => !isImageFile(f));
-
-      const imageSlots =
-        maxImageFiles - currentFiles.filter((f) => isImageFileName(f.fileName)).length;
-      const nonImageSlots =
-        maxNonImageFiles - currentFiles.filter((f) => !isImageFileName(f.fileName)).length;
-
-      if (incomingImages.length > imageSlots) {
-        toast({
-          title: `이미지는 최대 ${maxImageFiles}개까지 첨부할 수 있습니다.`,
-          variant: 'error',
-        });
-      }
-      if (incomingNonImages.length > nonImageSlots) {
-        toast({
-          title: `파일은 최대 ${maxNonImageFiles}개까지 첨부할 수 있습니다.`,
-          variant: 'error',
-        });
-      }
-
-      toProcess = [
-        ...incomingImages.slice(0, Math.max(0, imageSlots)),
-        ...incomingNonImages.slice(0, Math.max(0, nonImageSlots)),
-      ];
+      toProcess = valid;
     }
 
     if (toProcess.length === 0) return;

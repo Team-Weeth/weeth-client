@@ -41,13 +41,6 @@ jest.mock('@/stores/usePostStore', () => {
 });
 
 jest.mock('@/stores/useToastStore', () => ({ toast: jest.fn() }));
-jest.mock('@/constants/board/file', () => ({
-  MAX_IMAGE_FILES: 10,
-  MAX_NON_IMAGE_FILES: 5,
-}));
-jest.mock('@/lib/board/fileUtils', () => ({
-  isImageFileName: jest.fn((name: string) => name.endsWith('.png') || name.endsWith('.jpg')),
-}));
 jest.mock('@/components/board/Editor/extensions/ImageGroup/ImageGroup', () => ({
   MAX_GROUP_IMAGES: 3,
 }));
