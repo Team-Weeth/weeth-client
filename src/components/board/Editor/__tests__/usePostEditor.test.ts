@@ -1,4 +1,4 @@
-import { renderHook, act } from '@testing-library/react';
+import { renderHook, act, waitFor } from '@testing-library/react';
 import { useEditor } from '@tiptap/react';
 import { usePostEditor } from '@/components/board/Editor/usePostEditor';
 
@@ -224,6 +224,58 @@ describe('usePostEditor', () => {
 
       expect(processFiles).toHaveBeenCalledWith([fileFromFiles]);
       expect(result).toBe(true);
+    });
+
+    it('items에 MIME 유형이 없는 파일이라도 이미지 바이트이면 processFiles를 비동기로 호출한다', async () => {
+      const processFiles = jest.fn();
+      renderHook(() => usePostEditor({ processFilesInline: processFiles }));
+
+      // PNG 매직 바이트 (8바이트 시그니처 + 패딩)
+      const pngHeader = new Uint8Array([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 0, 0, 0, 0]);
+      const file = new File([pngHeader], 'paste', { type: '' });
+
+      const result = capturedConfig.editorProps.handlePaste(
+        {},
+        {
+          clipboardData: {
+            files: [],
+            items: [{ kind: 'file', type: '', getAsFile: () => file }],
+          },
+        },
+      );
+
+      expect(result).toBe(true);
+
+      await waitFor(() => {
+        expect(processFiles).toHaveBeenCalledWith(
+          expect.arrayContaining([expect.objectContaining({ type: 'image/png' })]),
+        );
+      });
+    });
+
+    it('items에 MIME 유형이 없는 파일이 이미지 바이트가 아니면 processFiles를 호출하지 않는다', async () => {
+      const processFiles = jest.fn();
+      renderHook(() => usePostEditor({ processFilesInline: processFiles }));
+
+      // PDF 매직 바이트 (%PDF)
+      const pdfHeader = new Uint8Array([0x25, 0x50, 0x44, 0x46, 0, 0, 0, 0, 0, 0, 0, 0]);
+      const file = new File([pdfHeader], 'document', { type: '' });
+
+      const result = capturedConfig.editorProps.handlePaste(
+        {},
+        {
+          clipboardData: {
+            files: [],
+            items: [{ kind: 'file', type: '', getAsFile: () => file }],
+          },
+        },
+      );
+
+      expect(result).toBe(true);
+
+      // 비동기 판정이 완료될 때까지 대기 후 호출 없음을 확인
+      await act(async () => {});
+      expect(processFiles).not.toHaveBeenCalled();
     });
 
     it('items에 이미지가 없으면 false를 반환한다', () => {

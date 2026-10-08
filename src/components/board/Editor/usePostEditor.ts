@@ -13,6 +13,47 @@ import {
 
 const LIST_TYPES = ['bulletList', 'orderedList', 'taskList'];
 
+const SNIFF_SIZE = 12;
+
+function sniffImageMimeType(buffer: ArrayBuffer): string | null {
+  const b = new Uint8Array(buffer);
+  if (b[0] === 0x89 && b[1] === 0x50 && b[2] === 0x4e && b[3] === 0x47) return 'image/png';
+  if (b[0] === 0xff && b[1] === 0xd8 && b[2] === 0xff) return 'image/jpeg';
+  if (b[0] === 0x47 && b[1] === 0x49 && b[2] === 0x46 && b[3] === 0x38) return 'image/gif';
+  if (
+    b[0] === 0x52 &&
+    b[1] === 0x49 &&
+    b[2] === 0x46 &&
+    b[3] === 0x46 &&
+    b[8] === 0x57 &&
+    b[9] === 0x45 &&
+    b[10] === 0x42 &&
+    b[11] === 0x50
+  )
+    return 'image/webp';
+  if (b[0] === 0x42 && b[1] === 0x4d) return 'image/bmp';
+  return null;
+}
+
+/**
+ * 파일 바이트를 읽어 이미지 여부를 판정.
+ * MIME 유형이 있으면 판정 유형과 비교해 불일치 시 올바른 유형으로 새 File 반환.
+ * 이미지가 아니면 null 반환.
+ */
+async function sniffAsImageFile(file: File): Promise<File | null> {
+  const buffer = await new Promise<ArrayBuffer>((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result as ArrayBuffer);
+    reader.onerror = () => reject(reader.error);
+    reader.readAsArrayBuffer(file.slice(0, SNIFF_SIZE));
+  });
+  const detectedType = sniffImageMimeType(buffer);
+  if (detectedType === null) return null;
+  if (file.type === detectedType) return file;
+  const ext = detectedType === 'image/jpeg' ? 'jpg' : detectedType.split('/')[1];
+  return new File([file], file.name || `paste.${ext}`, { type: detectedType });
+}
+
 interface UsePostEditorOptions {
   processFilesInline?: (files: File[]) => void;
   initialContent?: string;
@@ -80,6 +121,21 @@ export function usePostEditor({ processFilesInline, initialContent }: UsePostEdi
             .filter((f): f is File => f !== null);
           if (imageFiles.length > 0) {
             processFilesRef.current?.(imageFiles);
+            return true;
+          }
+
+          // MIME 유형이 비어 있는 파일 항목: 실제 바이트를 확인해 이미지 여부 판정
+          // (스크린샷·일부 브라우저에서 type이 빈 문자열로 올 수 있음)
+          const untypedFiles = Array.from(items)
+            .filter((item) => item.kind === 'file' && item.type === '')
+            .map((item) => item.getAsFile())
+            .filter((f): f is File => f !== null);
+          if (untypedFiles.length > 0) {
+            void (async () => {
+              const detected = await Promise.all(untypedFiles.map(sniffAsImageFile));
+              const validImages = detected.filter((f): f is File => f !== null);
+              if (validImages.length > 0) processFilesRef.current?.(validImages);
+            })();
             return true;
           }
         }
