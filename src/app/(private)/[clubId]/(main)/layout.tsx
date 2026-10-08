@@ -3,6 +3,7 @@ import type { ReactNode } from 'react';
 import { homeServerApi } from '@/lib/apis/home.server';
 import { UserHydrator } from '@/providers/user-hydrator';
 import { Header, ScrollRestoration } from '@/components/layout';
+import { FcmAutoRegister } from '@/components/notification/FcmAutoRegister';
 
 export default async function MainLayout({
   children,
@@ -20,6 +21,7 @@ export default async function MainLayout({
   return (
     <UserHydrator userInfo={userInfo} clubInfo={{ clubId: resolvedClubId, clubName }}>
       <div className="mx-auto flex min-h-screen max-w-[1440px] flex-col">
+        <FcmAutoRegister />
         <ScrollRestoration />
         <Header />
         {children}

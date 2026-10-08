@@ -1,6 +1,7 @@
 import { cookies } from 'next/headers';
 
 import { AuthStoreInitializer } from '@/components/auth/AuthStoreInitializer';
+import { FcmAutoRegister } from '@/components/notification/FcmAutoRegister';
 
 export default async function AuthLayout({ children }: { children: React.ReactNode }) {
   const cookieStore = await cookies();
@@ -9,6 +10,7 @@ export default async function AuthLayout({ children }: { children: React.ReactNo
   return (
     <>
       <AuthStoreInitializer name={userName} />
+      <FcmAutoRegister />
       {children}
     </>
   );
