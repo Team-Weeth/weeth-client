@@ -73,7 +73,7 @@ export function usePostEditor({ processFilesInline, initialContent }: UsePostEdi
       },
 
       handleDrop: (view, event) =>
-        handleFileDrop(event, processFilesRef.current) ||
+        handleFileDrop(view, event, processFilesRef.current) ||
         handleSubImageDrop(view, event) ||
         handleInlineImageGroupDrop(view, event),
 

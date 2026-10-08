@@ -197,8 +197,11 @@ describe('usePostEditor', () => {
       const event = {
         preventDefault: jest.fn(),
         dataTransfer: { files: [file], getData: jest.fn(() => '') },
+        clientX: 0,
+        clientY: 0,
       };
-      const result = capturedConfig.editorProps.handleDrop({}, event);
+      const mockView = { posAtCoords: jest.fn(() => null), dispatch: jest.fn() };
+      const result = capturedConfig.editorProps.handleDrop(mockView, event);
 
       expect(event.preventDefault).toHaveBeenCalled();
       expect(processFiles).toHaveBeenCalledWith([file]);

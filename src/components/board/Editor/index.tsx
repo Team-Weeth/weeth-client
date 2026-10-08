@@ -77,7 +77,22 @@ export default function Editor({ initialContent }: EditorProps = {}) {
   if (!editor) return null;
 
   return (
-    <div ref={containerRef} className="relative flex min-h-[400px] w-full flex-col">
+    <div
+      ref={containerRef}
+      className="relative flex min-h-[400px] w-full flex-col"
+      onDragOver={(e) => {
+        // 에디터 콘텐츠 영역 밖(하단 빈 공간)에서도 파일 드롭을 허용
+        if (Array.from(e.dataTransfer.types).includes('Files')) e.preventDefault();
+      }}
+      onDrop={(e) => {
+        // TipTap(ProseMirror)이 이미 처리한 드롭은 defaultPrevented가 true → 스킵
+        if (e.defaultPrevented) return;
+        const files = e.dataTransfer?.files;
+        if (!files || files.length === 0) return;
+        e.preventDefault();
+        processFilesInline(Array.from(files));
+      }}
+    >
       {/* 숨겨진 파일 input — 슬래시 메뉴에서 각 ref를 통해 트리거 */}
       <input
         ref={imageInputRef}
