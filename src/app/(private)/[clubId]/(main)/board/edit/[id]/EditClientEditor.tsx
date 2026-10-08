@@ -20,6 +20,12 @@ function EditClientEditor({ post }: EditClientEditorProps) {
     usePostStore.getState().initFromDetail(post);
   }, [post]);
 
+  useEffect(() => {
+    return () => {
+      usePostStore.getState().reset();
+    };
+  }, []);
+
   const { writableItems } = useWritableBoards();
 
   const board = usePostStore((s) => s.board);
