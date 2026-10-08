@@ -24,7 +24,8 @@ interface FileUploadCoreOptions {
   removeFile: (id: string) => void;
   markUploaded: (id: string, storageKey: string, fileUrl: string) => void;
   addFiles: (files: CoreFileItem[]) => void;
-  getCurrentFiles: () => { fileName: string }[];
+  /** `maxTotalFiles` 설정 시 현재 파일 목록을 반환. 미설정 시 불필요. */
+  getCurrentFiles?: () => { fileName: string }[];
 }
 
 /**
@@ -126,7 +127,7 @@ export function useFileUploadCore({
     let toProcess: File[];
 
     if (maxTotalFiles !== undefined) {
-      const currentFiles = getCurrentFiles();
+      const currentFiles = getCurrentFiles?.() ?? [];
       const totalSlots = maxTotalFiles - currentFiles.length;
       if (valid.length > 0 && totalSlots <= 0) {
         toast({

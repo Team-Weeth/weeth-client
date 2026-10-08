@@ -32,7 +32,8 @@ export function isReferencedInContent(fileUrl: string, htmlContent: string): boo
   try {
     decodedFileUrl = decodeURIComponent(baseFileUrl);
   } catch {
-    return false;
+    // 잘못된 퍼센트 인코딩이더라도 regex 루프는 계속 시도
+    decodedFileUrl = baseFileUrl;
   }
 
   const attrPattern = /(?:src|data-src)="([^"]*)"/g;

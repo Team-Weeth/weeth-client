@@ -271,7 +271,6 @@ export function useInlineFileUpload(ownerType: OwnerType = 'POST') {
     removeFile: removeFileAndNode,
     markUploaded: markUploadedAndUpdateNode,
     addFiles: addFilesAndInsertNodes,
-    getCurrentFiles: () => usePostStore.getState().files,
   });
 
   // Keep processFiles ref stable for paste/drop handlers

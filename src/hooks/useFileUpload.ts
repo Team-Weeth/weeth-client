@@ -22,7 +22,6 @@ export function useFileUpload(ownerType: OwnerType = 'POST') {
     removeFile,
     markUploaded,
     addFiles,
-    getCurrentFiles: () => usePostStore.getState().files,
   });
 
   const imageFiles = files.filter((f) => isImageFileName(f.fileName));
