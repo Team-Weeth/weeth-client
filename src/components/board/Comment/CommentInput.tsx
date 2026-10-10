@@ -1,8 +1,6 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-
-const BELOW_DESKTOP_MEDIA = '(max-width: 1031px)';
 import FolderPlusIcon from '@/assets/icons/folder_plus.svg';
 import SendIcon from '@/assets/icons/send.svg';
 import { Button } from '@/components/ui/Button';
@@ -14,6 +12,8 @@ import { Dialog, DialogClose, DialogContent, DialogTitle } from '@/components/ui
 import { useCommentFileUpload } from '@/hooks/useCommentFileUpload';
 import { cn } from '@/lib/cn';
 import type { CreatePostFile, DisplayFile } from '@/types/file';
+
+const BELOW_DESKTOP_MEDIA = '(max-width: 1031px)';
 
 interface CommentInputProps {
   className?: string;

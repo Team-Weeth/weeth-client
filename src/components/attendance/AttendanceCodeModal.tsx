@@ -182,7 +182,7 @@ function AttendanceCodeModal({
                 >
                   {cornerSegments.map((segment, idx) => (
                     <path
-                      key={idx}
+                      key={`corner-${idx}`}
                       d={segment}
                       fill="none"
                       stroke={'var(--color-brand-primary)'}
