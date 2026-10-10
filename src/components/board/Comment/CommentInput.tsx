@@ -1,6 +1,8 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+
+const BELOW_DESKTOP_MEDIA = '(max-width: 1031px)';
 import FolderPlusIcon from '@/assets/icons/folder_plus.svg';
 import SendIcon from '@/assets/icons/send.svg';
 import { Button } from '@/components/ui/Button';
@@ -8,12 +10,7 @@ import { Icon } from '@/components/ui/Icon';
 import { Textarea } from '@/components/ui/Textarea';
 import { FileList } from '@/components/board/FileList';
 import { ImageList } from '@/components/board/ImageList/ImageList';
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogTitle,
-} from '@/components/ui/dialog';
+import { Dialog, DialogClose, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { useCommentFileUpload } from '@/hooks/useCommentFileUpload';
 import { cn } from '@/lib/cn';
 import type { CreatePostFile, DisplayFile } from '@/types/file';
@@ -46,6 +43,7 @@ function CommentInput({
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const cameraInputRef = useRef<HTMLInputElement>(null);
   const galleryInputRef = useRef<HTMLInputElement>(null);
+  const pendingActionRef = useRef<(() => void) | null>(null);
   const [value, setValue] = useState(defaultValue);
   const [attachMenuOpen, setAttachMenuOpen] = useState(false);
 
@@ -58,8 +56,18 @@ function CommentInput({
     getUploadedFiles,
   } = useCommentFileUpload();
 
+  useEffect(() => {
+    if (!attachMenuOpen) return;
+    const mql = window.matchMedia(BELOW_DESKTOP_MEDIA);
+    const handleChange = (e: MediaQueryListEvent) => {
+      if (!e.matches) setAttachMenuOpen(false);
+    };
+    mql.addEventListener('change', handleChange);
+    return () => mql.removeEventListener('change', handleChange);
+  }, [attachMenuOpen]);
+
   const handleAttachClick = () => {
-    if (window.matchMedia('(max-width: 1031px)').matches) {
+    if (window.matchMedia(BELOW_DESKTOP_MEDIA).matches) {
       setAttachMenuOpen(true);
     } else {
       openFilePicker();
@@ -207,14 +215,24 @@ function CommentInput({
       )}
 
       <Dialog open={attachMenuOpen} onOpenChange={setAttachMenuOpen}>
-        <DialogContent className="flex flex-col gap-200" showCloseButton={false}>
+        <DialogContent
+          className="flex flex-col gap-200"
+          showCloseButton={false}
+          onCloseAutoFocus={(e) => {
+            e.preventDefault();
+            pendingActionRef.current?.();
+            pendingActionRef.current = null;
+          }}
+        >
           <DialogTitle className="sr-only">파일 첨부</DialogTitle>
           <DialogClose asChild>
             <Button
               type="button"
               variant="secondary"
               className="w-full"
-              onClick={() => setTimeout(() => cameraInputRef.current?.click(), 100)}
+              onClick={() => {
+                pendingActionRef.current = () => cameraInputRef.current?.click();
+              }}
             >
               카메라
             </Button>
@@ -224,7 +242,9 @@ function CommentInput({
               type="button"
               variant="secondary"
               className="w-full"
-              onClick={() => setTimeout(() => galleryInputRef.current?.click(), 100)}
+              onClick={() => {
+                pendingActionRef.current = () => galleryInputRef.current?.click();
+              }}
             >
               사진 선택
             </Button>
@@ -234,7 +254,9 @@ function CommentInput({
               type="button"
               variant="secondary"
               className="w-full"
-              onClick={() => setTimeout(() => openFilePicker(), 100)}
+              onClick={() => {
+                pendingActionRef.current = openFilePicker;
+              }}
             >
               파일 선택
             </Button>
