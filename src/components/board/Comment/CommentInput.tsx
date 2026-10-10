@@ -1,19 +1,16 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
-import FolderPlusIcon from '@/assets/icons/folder_plus.svg';
+import { useRef, useState } from 'react';
 import SendIcon from '@/assets/icons/send.svg';
 import { Button } from '@/components/ui/Button';
 import { Icon } from '@/components/ui/Icon';
 import { Textarea } from '@/components/ui/Textarea';
+import { AttachButton } from '@/components/ui/AttachButton';
 import { FileList } from '@/components/board/FileList';
 import { ImageList } from '@/components/board/ImageList/ImageList';
-import { Dialog, DialogClose, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { useCommentFileUpload } from '@/hooks/useCommentFileUpload';
 import { cn } from '@/lib/cn';
 import type { CreatePostFile, DisplayFile } from '@/types/file';
-
-const BELOW_DESKTOP_MEDIA = '(max-width: 1031px)';
 
 interface CommentInputProps {
   className?: string;
@@ -41,11 +38,7 @@ function CommentInput({
   onRemoveExistingFile,
 }: CommentInputProps) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const cameraInputRef = useRef<HTMLInputElement>(null);
-  const galleryInputRef = useRef<HTMLInputElement>(null);
-  const pendingActionRef = useRef<(() => void) | null>(null);
   const [value, setValue] = useState(defaultValue);
-  const [attachMenuOpen, setAttachMenuOpen] = useState(false);
 
   const {
     fileInputRef,
@@ -55,24 +48,6 @@ function CommentInput({
     clearFiles,
     getUploadedFiles,
   } = useCommentFileUpload();
-
-  useEffect(() => {
-    if (!attachMenuOpen) return;
-    const mql = window.matchMedia(BELOW_DESKTOP_MEDIA);
-    const handleChange = (e: MediaQueryListEvent) => {
-      if (!e.matches) setAttachMenuOpen(false);
-    };
-    mql.addEventListener('change', handleChange);
-    return () => mql.removeEventListener('change', handleChange);
-  }, [attachMenuOpen]);
-
-  const handleAttachClick = () => {
-    if (window.matchMedia(BELOW_DESKTOP_MEDIA).matches) {
-      setAttachMenuOpen(true);
-    } else {
-      openFilePicker();
-    }
-  };
 
   const handleChange = (newValue: string) => {
     setValue(newValue);
@@ -127,36 +102,11 @@ function CommentInput({
           onChange={handleInputChange}
           aria-hidden="true"
         />
-        <input
-          ref={cameraInputRef}
-          type="file"
-          accept="image/*"
-          capture="environment"
+        <AttachButton
           disabled={disabled}
-          className="hidden"
+          onOpenFilePicker={openFilePicker}
           onChange={handleInputChange}
-          aria-hidden="true"
         />
-        <input
-          ref={galleryInputRef}
-          type="file"
-          accept="image/*"
-          disabled={disabled}
-          className="hidden"
-          onChange={handleInputChange}
-          aria-hidden="true"
-        />
-        <Button
-          type="button"
-          variant="secondary"
-          size="icon-md"
-          disabled={disabled}
-          className="shrink-0"
-          onClick={handleAttachClick}
-          aria-label="파일 첨부"
-        >
-          <Icon src={FolderPlusIcon} size={20} className="text-icon-normal" />
-        </Button>
         <div className="min-w-0 flex-1">
           <Textarea
             ref={textareaRef}
@@ -213,56 +163,6 @@ function CommentInput({
           </button>
         </div>
       )}
-
-      <Dialog open={attachMenuOpen} onOpenChange={setAttachMenuOpen}>
-        <DialogContent
-          className="flex flex-col gap-200"
-          showCloseButton={false}
-          onCloseAutoFocus={(e) => {
-            e.preventDefault();
-            pendingActionRef.current?.();
-            pendingActionRef.current = null;
-          }}
-        >
-          <DialogTitle className="sr-only">파일 첨부</DialogTitle>
-          <DialogClose asChild>
-            <Button
-              type="button"
-              variant="secondary"
-              className="w-full"
-              onClick={() => {
-                pendingActionRef.current = () => cameraInputRef.current?.click();
-              }}
-            >
-              카메라
-            </Button>
-          </DialogClose>
-          <DialogClose asChild>
-            <Button
-              type="button"
-              variant="secondary"
-              className="w-full"
-              onClick={() => {
-                pendingActionRef.current = () => galleryInputRef.current?.click();
-              }}
-            >
-              사진 선택
-            </Button>
-          </DialogClose>
-          <DialogClose asChild>
-            <Button
-              type="button"
-              variant="secondary"
-              className="w-full"
-              onClick={() => {
-                pendingActionRef.current = openFilePicker;
-              }}
-            >
-              파일 선택
-            </Button>
-          </DialogClose>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 }
