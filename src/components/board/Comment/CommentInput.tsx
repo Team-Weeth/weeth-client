@@ -5,7 +5,7 @@ import SendIcon from '@/assets/icons/send.svg';
 import { Button } from '@/components/ui/Button';
 import { Icon } from '@/components/ui/Icon';
 import { Textarea } from '@/components/ui/Textarea';
-import { AttachButton } from '@/components/ui/AttachButton';
+import { AttachButton } from '@/components/board/AttachButton';
 import { FileList } from '@/components/board/FileList';
 import { ImageList } from '@/components/board/ImageList/ImageList';
 import { useCommentFileUpload } from '@/hooks/useCommentFileUpload';
