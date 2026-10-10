@@ -13,8 +13,10 @@ export default async function BoardByIdPage({ params }: BoardByIdPageProps) {
   if (!boardId || !Number.isInteger(boardIdNum)) notFound();
 
   const response = await boardServerApi.getBoards(clubId).catch(() => null);
-  const board = response?.data?.find((b) => b.id === boardIdNum);
-  if (board?.boardConfig?.canRead === false) notFound();
+  if (!response) notFound();
+
+  const board = response.data?.find((b) => b.id === boardIdNum);
+  if (!board || board.boardConfig?.canRead === false) notFound();
 
   return <BoardContent boardId={boardIdNum} />;
 }
