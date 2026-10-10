@@ -29,7 +29,7 @@ function CameraViewport({
   children,
   ...props
 }: CameraViewportProps) {
-  const internalWebcamRef = useRef<Webcam>(null);
+  const internalWebcamRef = useRef<Webcam | null>(null);
   const resolvedWebcamRef = webcamRef ?? internalWebcamRef;
   const [isReady, setIsReady] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -50,7 +50,9 @@ function CameraViewport({
       ) : (
         <>
           <Webcam
-            ref={resolvedWebcamRef as React.RefObject<Webcam>}
+            ref={(instance) => {
+              (resolvedWebcamRef as React.MutableRefObject<Webcam | null>).current = instance;
+            }}
             audio={false}
             videoConstraints={{ facingMode: { ideal: 'environment' } }}
             onUserMedia={() => {
