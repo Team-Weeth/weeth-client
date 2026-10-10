@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import type { QRCode } from 'jsqr';
-import type Webcam from 'react-webcam';
+import Webcam from 'react-webcam';
 
 import CameraIcon from '@/assets/icons/camera.svg';
 import CheckRoundIcon from '@/assets/icons/check_round.svg';
@@ -14,7 +14,6 @@ import {
   DialogBody,
   DialogFooter,
 } from '@/components/ui/dialog';
-import { CameraViewport } from '@/components/ui/CameraViewport';
 import { Icon } from '@/components/ui/Icon';
 import { InputOTP } from '@/components/attendance/InputOTP';
 import { useAttendanceSSE, useQRScanner } from '@/hooks/attendance';
@@ -53,6 +52,8 @@ function AttendanceCodeModal({
 }: AttendanceCodeModalProps) {
   const [code, setCode] = useState('');
   const [scanning, setScanning] = useState(false);
+  const [cameraReady, setCameraReady] = useState(false);
+  const [cameraError, setCameraError] = useState<string | null>(null);
   const [detectedLocation, setDetectedLocation] = useState<QRCode['location'] | null>(null);
   const [videoSize, setVideoSize] = useState<VideoSize>({ width: 1, height: 1 });
   const [viewportSize, setViewportSize] = useState<ViewportSize>({ width: 1, height: 1 });
@@ -73,6 +74,8 @@ function AttendanceCodeModal({
       confirmTimeoutRef.current = null;
     }
     setScanning(false);
+    setCameraReady(false);
+    setCameraError(null);
     setDetectedLocation(null);
     setVideoSize({ width: 1, height: 1 });
     setViewportSize({ width: 1, height: 1 });
@@ -169,31 +172,63 @@ function AttendanceCodeModal({
 
         <DialogBody className="flex-1 items-center justify-start gap-300 self-stretch p-400">
           {scanning ? (
-            <CameraViewport
+            <div
               ref={viewportRef}
-              webcamRef={webcamRef}
-              onReady={(w, h) => setVideoSize({ width: w, height: h })}
+              className="bg-container-neutral-alternative relative aspect-3/4 w-full max-w-70 overflow-hidden rounded-md"
             >
-              {detectedLocation && (
-                <svg
-                  className="pointer-events-none absolute inset-0 h-full w-full"
-                  viewBox={`0 0 ${viewportSize.width} ${viewportSize.height}`}
-                  preserveAspectRatio="none"
-                >
-                  {cornerSegments.map((segment, idx) => (
-                    <path
-                      key={`corner-${idx}`}
-                      d={segment}
-                      fill="none"
-                      stroke={'var(--color-brand-primary)'}
-                      strokeWidth="3"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  ))}
-                </svg>
+              {cameraError ? (
+                <div className="flex h-full w-full items-center justify-center p-400 text-center">
+                  <p className="typo-body2 text-state-error">{cameraError}</p>
+                </div>
+              ) : (
+                <>
+                  <Webcam
+                    ref={webcamRef}
+                    audio={false}
+                    videoConstraints={{ facingMode: { ideal: 'environment' } }}
+                    onUserMedia={() => {
+                      const video = webcamRef.current?.video;
+                      setVideoSize({
+                        width: video?.videoWidth || 1,
+                        height: video?.videoHeight || 1,
+                      });
+                      setCameraReady(true);
+                    }}
+                    onUserMediaError={(err) => {
+                      const message = typeof err === 'string' ? err : err.message;
+                      setCameraError(message || '카메라에 접근할 수 없습니다.');
+                    }}
+                    className="h-full w-full object-cover"
+                  />
+                  {cameraReady && detectedLocation && (
+                    <svg
+                      className="pointer-events-none absolute inset-0 h-full w-full"
+                      viewBox={`0 0 ${viewportSize.width} ${viewportSize.height}`}
+                      preserveAspectRatio="none"
+                    >
+                      {cornerSegments.map((segment, idx) => (
+                        <path
+                          key={idx}
+                          d={segment}
+                          fill="none"
+                          stroke={'var(--color-brand-primary)'}
+                          strokeWidth="3"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                      ))}
+                    </svg>
+                  )}
+                  {!cameraReady && (
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <p className="typo-caption2 text-text-alternative">
+                        카메라를 준비 중이에요...
+                      </p>
+                    </div>
+                  )}
+                </>
               )}
-            </CameraViewport>
+            </div>
           ) : (
             <>
               <div className="bg-container-neutral-alternative flex items-start gap-2.5 self-stretch rounded-md p-300">
