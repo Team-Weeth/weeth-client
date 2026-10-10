@@ -8,6 +8,12 @@ import { Icon } from '@/components/ui/Icon';
 import { Textarea } from '@/components/ui/Textarea';
 import { FileList } from '@/components/board/FileList';
 import { ImageList } from '@/components/board/ImageList/ImageList';
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import { useCommentFileUpload } from '@/hooks/useCommentFileUpload';
 import { cn } from '@/lib/cn';
 import type { CreatePostFile, DisplayFile } from '@/types/file';
@@ -38,7 +44,10 @@ function CommentInput({
   onRemoveExistingFile,
 }: CommentInputProps) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const cameraInputRef = useRef<HTMLInputElement>(null);
+  const galleryInputRef = useRef<HTMLInputElement>(null);
   const [value, setValue] = useState(defaultValue);
+  const [attachMenuOpen, setAttachMenuOpen] = useState(false);
 
   const {
     fileInputRef,
@@ -48,6 +57,14 @@ function CommentInput({
     clearFiles,
     getUploadedFiles,
   } = useCommentFileUpload();
+
+  const handleAttachClick = () => {
+    if (window.matchMedia('(max-width: 1031px)').matches) {
+      setAttachMenuOpen(true);
+    } else {
+      openFilePicker();
+    }
+  };
 
   const handleChange = (newValue: string) => {
     setValue(newValue);
@@ -102,13 +119,32 @@ function CommentInput({
           onChange={handleInputChange}
           aria-hidden="true"
         />
+        <input
+          ref={cameraInputRef}
+          type="file"
+          accept="image/*"
+          capture="environment"
+          disabled={disabled}
+          className="hidden"
+          onChange={handleInputChange}
+          aria-hidden="true"
+        />
+        <input
+          ref={galleryInputRef}
+          type="file"
+          accept="image/*"
+          disabled={disabled}
+          className="hidden"
+          onChange={handleInputChange}
+          aria-hidden="true"
+        />
         <Button
           type="button"
           variant="secondary"
           size="icon-md"
           disabled={disabled}
           className="shrink-0"
-          onClick={openFilePicker}
+          onClick={handleAttachClick}
           aria-label="파일 첨부"
         >
           <Icon src={FolderPlusIcon} size={20} className="text-icon-normal" />
@@ -169,6 +205,42 @@ function CommentInput({
           </button>
         </div>
       )}
+
+      <Dialog open={attachMenuOpen} onOpenChange={setAttachMenuOpen}>
+        <DialogContent className="flex flex-col gap-200" showCloseButton={false}>
+          <DialogTitle className="sr-only">파일 첨부</DialogTitle>
+          <DialogClose asChild>
+            <Button
+              type="button"
+              variant="secondary"
+              className="w-full"
+              onClick={() => setTimeout(() => cameraInputRef.current?.click(), 100)}
+            >
+              카메라
+            </Button>
+          </DialogClose>
+          <DialogClose asChild>
+            <Button
+              type="button"
+              variant="secondary"
+              className="w-full"
+              onClick={() => setTimeout(() => galleryInputRef.current?.click(), 100)}
+            >
+              사진 선택
+            </Button>
+          </DialogClose>
+          <DialogClose asChild>
+            <Button
+              type="button"
+              variant="secondary"
+              className="w-full"
+              onClick={() => setTimeout(() => openFilePicker(), 100)}
+            >
+              파일 선택
+            </Button>
+          </DialogClose>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
