@@ -17,9 +17,10 @@ interface AttachButtonProps {
 }
 
 function AttachButton({ disabled, onOpenFilePicker, onChange, className }: AttachButtonProps) {
+  const attachButtonRef = useRef<HTMLButtonElement>(null);
   const cameraInputRef = useRef<HTMLInputElement>(null);
   const galleryInputRef = useRef<HTMLInputElement>(null);
-  const pendingActionRef = useRef<(() => void) | null>(null);
+  const actionTakenRef = useRef(false);
   const [attachMenuOpen, setAttachMenuOpen] = useState(false);
 
   useEffect(() => {
@@ -62,6 +63,7 @@ function AttachButton({ disabled, onOpenFilePicker, onChange, className }: Attac
         aria-hidden="true"
       />
       <Button
+        ref={attachButtonRef}
         type="button"
         variant="secondary"
         size="icon-md"
@@ -78,8 +80,10 @@ function AttachButton({ disabled, onOpenFilePicker, onChange, className }: Attac
           showCloseButton={false}
           onCloseAutoFocus={(e) => {
             e.preventDefault();
-            pendingActionRef.current?.();
-            pendingActionRef.current = null;
+            if (!actionTakenRef.current) {
+              attachButtonRef.current?.focus();
+            }
+            actionTakenRef.current = false;
           }}
         >
           <DialogTitle className="sr-only">파일 첨부</DialogTitle>
@@ -89,7 +93,8 @@ function AttachButton({ disabled, onOpenFilePicker, onChange, className }: Attac
               variant="secondary"
               className="w-full"
               onClick={() => {
-                pendingActionRef.current = () => cameraInputRef.current?.click();
+                actionTakenRef.current = true;
+                cameraInputRef.current?.click();
               }}
             >
               카메라
@@ -101,7 +106,8 @@ function AttachButton({ disabled, onOpenFilePicker, onChange, className }: Attac
               variant="secondary"
               className="w-full"
               onClick={() => {
-                pendingActionRef.current = () => galleryInputRef.current?.click();
+                actionTakenRef.current = true;
+                galleryInputRef.current?.click();
               }}
             >
               사진 선택
@@ -113,7 +119,8 @@ function AttachButton({ disabled, onOpenFilePicker, onChange, className }: Attac
               variant="secondary"
               className="w-full"
               onClick={() => {
-                pendingActionRef.current = onOpenFilePicker;
+                actionTakenRef.current = true;
+                onOpenFilePicker();
               }}
             >
               파일 선택
