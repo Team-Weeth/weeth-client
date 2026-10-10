@@ -4,6 +4,7 @@ import { cn } from '@/lib/cn';
 import { Divider } from '@/components/ui/Divider';
 import { Icon } from '@/components/ui/Icon';
 import PinIcon from '@/assets/icons/pin.svg';
+import RoundLockIcon from '@/assets/icons/round_lock.svg';
 import { MegaphoneIcon } from '@/components/board/MegaphoneIcon';
 import type { BoardNavItem } from '@/types/board';
 
@@ -37,12 +38,21 @@ function ChannelList({ className, items, activeId, onItemSelect, ...props }: Cha
                 'focus-visible:outline-ring focus-visible:outline-2 focus-visible:outline-offset-2',
                 isActive
                   ? 'bg-container-primary text-text-inverse'
-                  : 'text-text-normal hover:bg-container-neutral-interaction',
+                  : item.isPrivate
+                    ? 'text-text-alternative hover:bg-container-neutral-interaction'
+                    : 'text-text-normal hover:bg-container-neutral-interaction',
               )}
               aria-current={isActive ? 'page' : undefined}
               onClick={() => onItemSelect?.(item.id)}
             >
-              {item.type === 'NOTICE' ? (
+              {item.isPrivate ? (
+                <Icon
+                  src={RoundLockIcon}
+                  size={24}
+                  alt="비공개"
+                  className={isActive ? 'text-text-inverse' : 'text-icon-alternative'}
+                />
+              ) : item.type === 'NOTICE' ? (
                 <MegaphoneIcon
                   accentColor={isActive ? 'var(--color-text-strong)' : 'var(--color-brand-primary)'}
                 />

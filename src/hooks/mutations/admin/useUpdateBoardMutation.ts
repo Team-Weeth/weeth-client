@@ -18,6 +18,7 @@ export function useUpdateBoardMutation(callbacks?: MutationCallbacks<unknown>) {
     },
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: adminQueryKeys.boards(clubId) });
+      await queryClient.invalidateQueries({ queryKey: ['boards', clubId] });
       if (clubId) await revalidateBoards(clubId);
       callbacks?.onSuccess?.();
     },

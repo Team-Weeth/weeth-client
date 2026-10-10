@@ -170,6 +170,7 @@ describe('toBoardNavItem', () => {
       id: 2,
       label: '공지사항',
       type: 'NOTICE',
+      isPrivate: undefined,
       canWrite: false,
     });
   });
@@ -181,7 +182,26 @@ describe('toBoardNavItem', () => {
       id: null,
       label: '전체',
       type: 'ALL',
+      isPrivate: undefined,
       canWrite: undefined,
+    });
+  });
+
+  it('isPrivate=true이면 isPrivate가 true다', () => {
+    const board = {
+      id: 3,
+      name: '비공개 게시판',
+      type: 'GENERAL' as const,
+      isPrivate: true,
+      boardConfig: { canWrite: true, canComment: true },
+    };
+
+    expect(toBoardNavItem(board)).toEqual({
+      id: 3,
+      label: '비공개 게시판',
+      type: 'GENERAL',
+      isPrivate: true,
+      canWrite: true,
     });
   });
 });

@@ -138,4 +138,36 @@ describe('CommentInput', () => {
       expect(screen.getByRole('button', { name: '댓글 전송' })).toBeDisabled();
     });
   });
+
+  describe('첨부 메뉴', () => {
+    function mockMatchMedia(matches: boolean) {
+      Object.defineProperty(window, 'matchMedia', {
+        writable: true,
+        value: jest.fn().mockReturnValue({
+          matches,
+          addEventListener: jest.fn(),
+          removeEventListener: jest.fn(),
+        }),
+      });
+    }
+
+    it('모바일에서 첨부 버튼 클릭 시 카메라·사진·파일 선택 메뉴가 열린다', async () => {
+      mockMatchMedia(true);
+      const user = userEvent.setup();
+      render(<CommentInput />);
+      await user.click(screen.getByRole('button', { name: '파일 첨부' }));
+      expect(screen.getByRole('dialog')).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: '카메라' })).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: '사진 선택' })).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: '파일 선택' })).toBeInTheDocument();
+    });
+
+    it('데스크톱에서 첨부 버튼 클릭 시 메뉴 없이 파일 피커가 바로 열린다', async () => {
+      mockMatchMedia(false);
+      const user = userEvent.setup();
+      render(<CommentInput />);
+      await user.click(screen.getByRole('button', { name: '파일 첨부' }));
+      expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+    });
+  });
 });
