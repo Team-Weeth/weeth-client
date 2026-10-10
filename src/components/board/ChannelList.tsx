@@ -49,6 +49,7 @@ function ChannelList({ className, items, activeId, onItemSelect, ...props }: Cha
                 <Icon
                   src={RoundLockIcon}
                   size={24}
+                  alt="비공개"
                   className={isActive ? 'text-text-inverse' : 'text-icon-alternative'}
                 />
               ) : item.type === 'NOTICE' ? (
