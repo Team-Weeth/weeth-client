@@ -1,11 +1,11 @@
 'use client';
 
 import { useRef, useState } from 'react';
-import FolderPlusIcon from '@/assets/icons/folder_plus.svg';
 import SendIcon from '@/assets/icons/send.svg';
 import { Button } from '@/components/ui/Button';
 import { Icon } from '@/components/ui/Icon';
 import { Textarea } from '@/components/ui/Textarea';
+import { AttachButton } from '@/components/board/AttachButton';
 import { FileList } from '@/components/board/FileList';
 import { ImageList } from '@/components/board/ImageList/ImageList';
 import { useCommentFileUpload } from '@/hooks/useCommentFileUpload';
@@ -102,17 +102,11 @@ function CommentInput({
           onChange={handleInputChange}
           aria-hidden="true"
         />
-        <Button
-          type="button"
-          variant="secondary"
-          size="icon-md"
+        <AttachButton
           disabled={disabled}
-          className="shrink-0"
-          onClick={openFilePicker}
-          aria-label="파일 첨부"
-        >
-          <Icon src={FolderPlusIcon} size={20} className="text-icon-normal" />
-        </Button>
+          onOpenFilePicker={openFilePicker}
+          onChange={handleInputChange}
+        />
         <div className="min-w-0 flex-1">
           <Textarea
             ref={textareaRef}

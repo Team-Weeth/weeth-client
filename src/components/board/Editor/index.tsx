@@ -1,15 +1,16 @@
 'use client';
 
+import { useEffect } from 'react';
 import { EditorContent, FloatingMenu } from '@tiptap/react';
-import { usePostEditor } from './usePostEditor';
+import { usePostEditor } from '@/hooks/board/usePostEditor';
 import { useLinkPopup } from './useLinkPopup';
 import { BubbleMenuBar } from './BubbleMenu';
 import { TableMenu } from './TableMenu';
 import { SlashMenuContent } from './SlashMenu';
 import { LinkInput } from './LinkInput';
-import { ImageList } from '../ImageList';
-import { FileList } from '../FileList';
-import { useFileUpload } from '@/hooks/useFileUpload';
+import { useInlineFileUpload } from '@/hooks/useInlineFileUpload';
+import { BlockAddMenu } from './BlockAddMenu';
+import { ImageInsertModeDialog } from './ImageInsertModeDialog';
 import { createMediaItems, createLinkItem } from '@/constants/board/slashMenu';
 
 const floatingMenuTippyOptions = {
@@ -44,11 +45,28 @@ interface EditorProps {
 }
 
 export default function Editor({ initialContent }: EditorProps = {}) {
-  const { imageInputRef, fileInputRef, processFiles, picker, files, handlers } = useFileUpload();
+  const {
+    imageInputRef,
+    fileInputRef,
+    setEditor,
+    processFilesInline,
+    picker,
+    handlers,
+    pendingImageItems,
+    confirmImageInsertMode,
+    cancelImageInsertMode,
+  } = useInlineFileUpload();
+
   const { editor, showSlashMenu, closeSlashMenu, containerRef } = usePostEditor({
-    processFiles,
+    processFilesInline,
     initialContent,
   });
+
+  // Wire the editor instance into the inline upload hook
+  useEffect(() => {
+    setEditor(editor);
+  }, [editor, setEditor]);
+
   const {
     pos: linkInputPos,
     openFromSlashMenu,
@@ -59,7 +77,29 @@ export default function Editor({ initialContent }: EditorProps = {}) {
   if (!editor) return null;
 
   return (
-    <div ref={containerRef} className="relative flex min-h-[400px] w-full flex-col overflow-hidden">
+    <div
+      ref={containerRef}
+      className="relative flex min-h-[400px] w-full flex-1 flex-col"
+      onDragOver={(e) => {
+        // 에디터 콘텐츠 영역 밖(하단 빈 공간)에서도 파일 드롭을 허용
+        if (Array.from(e.dataTransfer.types).includes('Files')) e.preventDefault();
+      }}
+      onDrop={(e) => {
+        // TipTap(ProseMirror)이 이미 처리한 드롭은 defaultPrevented가 true → 스킵
+        if (e.defaultPrevented) return;
+        const files = e.dataTransfer?.files;
+        if (!files || files.length === 0) return;
+        e.preventDefault();
+        // 드롭 좌표로 selection 설정. 좌표를 resolve하지 못하면 문서 끝으로 이동.
+        const dropPos = editor.view.posAtCoords({ left: e.clientX, top: e.clientY });
+        if (dropPos) {
+          editor.commands.setTextSelection(dropPos.pos);
+        } else {
+          editor.commands.focus('end');
+        }
+        processFilesInline(Array.from(files));
+      }}
+    >
       {/* 숨겨진 파일 input — 슬래시 메뉴에서 각 ref를 통해 트리거 */}
       <input
         ref={imageInputRef}
@@ -81,6 +121,12 @@ export default function Editor({ initialContent }: EditorProps = {}) {
 
       <BubbleMenuBar editor={editor} containerRef={containerRef} />
       <TableMenu editor={editor} containerRef={containerRef} />
+      <BlockAddMenu
+        editor={editor}
+        containerRef={containerRef}
+        onImageUpload={picker.openImagePicker}
+        onFileUpload={picker.openFilePicker}
+      />
 
       <FloatingMenu
         editor={editor}
@@ -118,11 +164,12 @@ export default function Editor({ initialContent }: EditorProps = {}) {
         <EditorContent editor={editor} className="max-w-none" />
       </div>
 
-      {/* 게시글 하단 첨부 영역 */}
-      <div className="mt-auto flex flex-col gap-400 pt-400">
-        <ImageList files={files.imageFiles} removable viewable onRemove={files.handleRemoveFile} />
-        <FileList files={files.nonImageFiles} onRemove={files.handleRemoveFile} editable />
-      </div>
+      <ImageInsertModeDialog
+        open={pendingImageItems !== null}
+        onIndividual={() => confirmImageInsertMode('individual')}
+        onGroup={() => confirmImageInsertMode('group')}
+        onCancel={cancelImageInsertMode}
+      />
     </div>
   );
 }

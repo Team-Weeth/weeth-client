@@ -37,11 +37,25 @@ interface ActiveClubCardProps {
   profile: MyPageUsingProfile;
 }
 
+interface ClubNameTagProps {
+  firstName: string;
+  extraCount: number;
+}
+
+function ClubNameTag({ firstName, extraCount }: ClubNameTagProps) {
+  return (
+    <Tag variant="primary" className="mt-2 max-w-full self-start overflow-hidden">
+      <span className="flex min-w-0 items-center">
+        <span className="truncate">{firstName}</span>
+        {extraCount > 0 && <span className="shrink-0">{` 외 ${extraCount}`}</span>}
+      </span>
+    </Tag>
+  );
+}
+
 function ActiveClubCard({ profile }: ActiveClubCardProps) {
-  const clubLabel =
-    profile.clubs.length > 1
-      ? `${profile.clubs[0].name} 외 ${profile.clubs.length - 1}`
-      : (profile.clubs[0]?.name ?? '');
+  const firstName = profile.clubs[0]?.name ?? '';
+  const extraCount = profile.clubs.length - 1;
 
   return (
     <>
@@ -50,7 +64,7 @@ function ActiveClubCard({ profile }: ActiveClubCardProps) {
           <AvatarImage src={profile.profileImageUrl ?? undefined} alt={profile.name} />
           <AvatarFallback />
         </Avatar>
-        <div className="flex flex-col">
+        <div className="flex min-w-0 flex-col">
           <span className="typo-sub3 text-text-strong line-clamp-1">{profile.name}</span>
           <span
             className={cn(
@@ -60,9 +74,7 @@ function ActiveClubCard({ profile }: ActiveClubCardProps) {
           >
             {profile.bio ?? '-'}
           </span>
-          <Tag variant="primary" className="mt-2 self-start">
-            {clubLabel}
-          </Tag>
+          <ClubNameTag firstName={firstName} extraCount={extraCount} />
         </div>
       </div>
       <div className="tablet:hidden bg-container-neutral-alternative tablet:w-[220px] flex shrink-0 gap-2 rounded-lg p-450">
@@ -70,7 +82,7 @@ function ActiveClubCard({ profile }: ActiveClubCardProps) {
           <AvatarImage src={profile.profileImageUrl ?? undefined} alt={profile.name} />
           <AvatarFallback />
         </Avatar>
-        <div className="flex flex-col">
+        <div className="flex min-w-0 flex-col">
           <span className="typo-sub3 text-text-strong">{profile.name}</span>
           <span
             className={cn(
@@ -80,9 +92,7 @@ function ActiveClubCard({ profile }: ActiveClubCardProps) {
           >
             {profile.bio ?? '-'}
           </span>
-          <Tag variant="primary" className="mt-2 self-start">
-            {clubLabel}
-          </Tag>
+          <ClubNameTag firstName={firstName} extraCount={extraCount} />
         </div>
       </div>
     </>

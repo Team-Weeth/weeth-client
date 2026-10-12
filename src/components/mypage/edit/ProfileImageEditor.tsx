@@ -3,12 +3,13 @@
 import { Icon } from '@/components/ui/Icon';
 import {
   DropdownMenu,
-  DropdownMenuTrigger,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
 } from '@/components/ui/DropdownMenu';
-import { Divider } from '@/components/ui/Divider';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { LoadingOverlay } from '@/components/ui/LoadingOverlay';
 import CameraIcon from '@/assets/icons/camera.svg';
 import { useImagePreview } from '@/hooks/mypage';
 import { cn } from '@/lib/cn';
@@ -19,6 +20,7 @@ interface ProfileImageEditorProps {
   profileImageUrl?: string;
   onFileChange?: (file: File) => void;
   onResetImage?: () => void;
+  isLoading?: boolean;
   className?: string;
   avatarSize?: AvatarProps['size'];
   avatarClassName?: string;
@@ -34,6 +36,7 @@ function ProfileImageEditor({
   profileImageUrl,
   onFileChange,
   onResetImage,
+  isLoading = false,
   className,
   avatarSize = 128,
   avatarClassName,
@@ -60,6 +63,13 @@ function ProfileImageEditor({
         />
         <AvatarFallback className={fallbackClassName} />
       </Avatar>
+      {isLoading && (
+        <LoadingOverlay
+          label="프로필 이미지 업로드 중"
+          className="z-10 rounded-full bg-black/30"
+          spinnerClassName="size-5"
+        />
+      )}
       <input
         ref={fileInputRef}
         type="file"
@@ -73,8 +83,9 @@ function ProfileImageEditor({
           <button
             type="button"
             aria-label="프로필 이미지 수정"
+            disabled={isLoading}
             className={cn(
-              'bg-container-neutral border-button-neutral absolute -right-[2px] bottom-[2px] flex size-6 cursor-pointer items-center justify-center rounded-full border transition-all duration-200',
+              'bg-container-neutral border-button-neutral absolute -right-[2px] bottom-[2px] flex size-6 cursor-pointer items-center justify-center rounded-full border transition-all duration-200 disabled:cursor-not-allowed disabled:opacity-50',
               triggerClassName,
             )}
           >
@@ -87,18 +98,13 @@ function ProfileImageEditor({
           </button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="start" side="bottom">
-          <DropdownMenuItem
-            className="text-text-alternative"
-            onSelect={() => fileInputRef.current?.click()}
-          >
+          <DropdownMenuItem onSelect={() => fileInputRef.current?.click()}>
             이미지 업로드
           </DropdownMenuItem>
           {showResetAction && (
             <>
-              <Divider className="w-[136px]" />
-              <DropdownMenuItem className="text-text-alternative" onSelect={handleReset}>
-                기본 이미지
-              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onSelect={handleReset}>기본 이미지</DropdownMenuItem>
             </>
           )}
         </DropdownMenuContent>

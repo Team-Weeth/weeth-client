@@ -11,16 +11,34 @@ import { formatShortDateTime } from '@/lib/formatTime';
 import { parseApiError } from '@/lib/error';
 import { BOARD_PAGE_ERRORS } from '@/constants/board/error';
 import { toastError } from '@/stores/useToastStore';
-import type { FileItem } from '@/types/file';
+import type { FileItem, DisplayFile } from '@/types/file';
 import { buildPostPath } from '@/lib/board';
 import { PostActionMenu } from './PostActionMenu';
 import { PostCard } from './PostCard';
 import { BoardContentSkeleton } from './BoardContentSkeleton';
 
-function toDisplayImages(files: FileItem[]) {
-  return files
+/**
+ * 게시글 목록용 이미지 목록 생성.
+ * fileUrls에 이미지가 있으면 그대로 반환하고,
+ * 없으면 content HTML에서 인라인 이미지 src를 추출한다.
+ * (인라인 이미지 전용 게시글에서 목록 미리보기를 표시하기 위함)
+ */
+function toDisplayImages(files: FileItem[], content: string): DisplayFile[] {
+  const fileImages = files
     .filter((f) => f.contentType.startsWith('image/'))
     .map((f) => ({ id: f.fileId, fileName: f.fileName, fileUrl: f.fileUrl, uploaded: true }));
+
+  if (fileImages.length > 0) return fileImages;
+
+  // fileUrls에 이미지가 없을 때: content HTML의 img[src] 속성에서 추출
+  const doc = new DOMParser().parseFromString(content, 'text/html');
+  return Array.from(doc.querySelectorAll('img'))
+    .map((img, i) => ({
+      id: `inline-${i}`,
+      fileName: '',
+      fileUrl: img.getAttribute('src') ?? '',
+    }))
+    .filter((item) => item.fileUrl !== '');
 }
 
 interface BoardContentProps {
@@ -133,7 +151,7 @@ function BoardContent({
             <PostCard.ListContent title={post.title} content={post.content} isNew={post.isNew} />
           </Link>
           <div className="relative z-10">
-            <PostCard.Images files={toDisplayImages(post.fileUrls)} />
+            <PostCard.Images files={toDisplayImages(post.fileUrls, post.content)} />
           </div>
           <div className="relative z-10">
             <PostCard.Actions

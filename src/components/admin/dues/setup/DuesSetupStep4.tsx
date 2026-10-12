@@ -10,7 +10,7 @@ import { Switch } from '@/components/ui/Switch';
 import { useDuesSetupValues, useDuesSetupActions } from '@/stores/useDuesSetupStore';
 import { toastError } from '@/stores/useToastStore';
 import { useSyncFormToStore } from '@/hooks/useSyncFormToStore';
-import { useSaveDuesBankAccount } from '@/hooks/mutations/admin';
+import { useSaveDuesBankAccount } from '@/hooks/mutations/admin/useDuesSetupMutations';
 
 import { BankSelectField } from '@/components/admin/dues/setup/components/BankSelectField';
 import { DuesSetupStep4Skeleton } from '@/components/admin/dues/setup/components/DuesSetupStepSkeleton';
@@ -21,7 +21,7 @@ import { PrevButton } from '@/components/admin/dues/setup/components/PrevButton'
 import { SetupHeader } from '@/components/admin/dues/setup/components/SetupHeader';
 import { useDuesSetupNavigation } from '@/hooks/admin/useDuesSetupNavigation';
 import { useDuesStepNavigator } from '@/hooks/admin/useDuesStepNavigator';
-import { useEnsureDuesAccountId } from '@/hooks/admin';
+import { useEnsureDuesAccountId } from '@/hooks/admin/useEnsureDuesAccountId';
 
 import { ScheduleTextField } from '@/components/admin/schedule/general/ScheduleTextField';
 

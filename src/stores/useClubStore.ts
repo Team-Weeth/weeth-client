@@ -23,6 +23,7 @@ export const useClubStore = create(
             false,
             'setClub',
           ),
+        setClubName: (clubName: string) => set({ clubName }, false, 'setClubName'),
         reset: () => set(initialState, false, 'reset'),
       })),
       {
@@ -57,6 +58,7 @@ export const useClubActions = () =>
       setClubId: store.setClubId,
       syncClubId: store.syncClubId,
       setClub: store.setClub,
+      setClubName: store.setClubName,
       reset: store.reset,
     })),
   );

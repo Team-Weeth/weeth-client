@@ -1,4 +1,5 @@
 export { useAttendanceQR } from './useAttendanceQR';
+export { useAttendanceDetailQuery } from './useAttendanceDetailQuery';
 export { useAttendanceQuery } from './useAttendanceQuery';
 export { useAttendanceSSE } from './useAttendanceSSE';
 export { useCheckIn } from './useCheckIn';

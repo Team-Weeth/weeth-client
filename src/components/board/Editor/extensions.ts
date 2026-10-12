@@ -1,5 +1,8 @@
 import { IndentExtension } from './IndentExtension';
 import { TableGapExtension } from './TableGapExtension';
+import { InlineImage } from './extensions/InlineImage/InlineImage';
+import { ImageGroup } from './extensions/ImageGroup/ImageGroup';
+import { FileAttachment } from './extensions/FileAttachment';
 import Document from '@tiptap/extension-document';
 import Paragraph from '@tiptap/extension-paragraph';
 import Text from '@tiptap/extension-text';
@@ -47,7 +50,7 @@ const NormalizedLink = Link.extend({
   },
 });
 
-export const editorExtensions = [
+const baseExtensions = [
   Document,
   Paragraph,
   Text,
@@ -64,11 +67,7 @@ export const editorExtensions = [
   ListItem,
   HorizontalRule,
   HardBreak,
-  History,
-  Dropcursor,
-  Gapcursor,
   Typography,
-  Placeholder.configure({ placeholder: "'/' 키를 눌러서 명령어를 사용해 보세요." }),
   TaskList,
   TaskItem.configure({ nested: true, onReadOnlyChecked: () => false }),
   IndentExtension,
@@ -98,4 +97,18 @@ export const editorExtensions = [
   TableCell,
   TableHeader,
   TableGapExtension,
+  InlineImage,
+  ImageGroup,
+  FileAttachment,
 ];
+
+export const editorExtensions = [
+  ...baseExtensions,
+  History,
+  Dropcursor.configure({ color: 'var(--color-brand-primary)', width: 2 }),
+  Gapcursor,
+  Placeholder.configure({ placeholder: "'/' 키를 눌러서 명령어를 사용해 보세요." }),
+];
+
+/** 읽기 전용 뷰에서 사용. 편집 전용 플러그인(Dropcursor, Gapcursor, History, Placeholder)을 제외. */
+export const readOnlyExtensions = baseExtensions;

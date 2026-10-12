@@ -19,7 +19,7 @@ function useCardinalSelector({
   scope = 'default',
 }: UseCardinalSelectorOptions = {}) {
   const clubId = useClubId();
-  const { data: cardinals = [], isPending, isFetching } = useCardinals();
+  const { data: cardinals = [], isPending, isFetching, isError } = useCardinals();
   const selectedCardinalNumber = useSelectedCardinalNumber(clubId, scope);
   const { select } = useSelectedCardinalActions();
 
@@ -35,7 +35,12 @@ function useCardinalSelector({
       ? cardinals.find((c) => c.cardinalNumber === selectedCardinalNumber)
       : undefined;
 
-  const activeCardinal = selectedCardinal ?? (autoSelectLatest ? latestCardinal : undefined);
+  // null은 "전체"를 명시적으로 선택한 상태라 autoSelectLatest로도 덮어쓰지 않는다.
+  // undefined(아직 선택 안 함)일 때만 최신 기수로 대체한다.
+  const isExplicitAll = selectedCardinalNumber === null;
+  const activeCardinal = isExplicitAll
+    ? undefined
+    : (selectedCardinal ?? (autoSelectLatest ? latestCardinal : undefined));
 
   const setSelectedCardinalId = (id: number | null) => {
     if (!clubId) return;
@@ -54,6 +59,8 @@ function useCardinalSelector({
     activeCardinal,
     latestCardinal,
     isLoading: isPending || (isFetching && cardinals.length === 0),
+    // 조회 실패 시에도 cardinals는 빈 배열이라, 호출하는 쪽이 "기수 없음"과 구분할 수 있어야 한다.
+    isError,
   };
 }
 

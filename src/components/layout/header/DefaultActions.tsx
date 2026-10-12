@@ -1,10 +1,10 @@
 'use client';
 
 import Link from 'next/link';
-import { useParams, usePathname, useRouter } from 'next/navigation';
+import { useParams, usePathname } from 'next/navigation';
 import dynamic from 'next/dynamic';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button, buttonVariants } from '@/components/ui/Button';
+import { AvatarMenuButton } from '@/components/layout/header/AvatarMenuButton';
 import { Icon } from '@/components/ui/Icon';
 import EditIcon from '@/assets/icons/edit.svg';
 import ExitToAppIcon from '@/assets/icons/exit_to_app.svg';
@@ -23,7 +23,6 @@ const ProfileIncompleteModal = dynamic(() =>
 );
 
 function DefaultActions() {
-  const router = useRouter();
   const pathname = usePathname();
   const { clubId } = useParams<{ clubId: string }>();
   const {
@@ -75,24 +74,7 @@ function DefaultActions() {
             운영진
           </Link>
         )}
-        <button
-          type="button"
-          aria-label="마이페이지로 이동"
-          onClick={() => router.push(`/${clubId}/mypage`)}
-          className="cursor-pointer rounded-full"
-        >
-          <Avatar size={40} type="round">
-            {profileImageUrl && (
-              <AvatarImage
-                key={profileImageUrl}
-                src={profileImageUrl}
-                alt="avatar"
-                className="object-cover"
-              />
-            )}
-            <AvatarFallback />
-          </Avatar>
-        </button>
+        <AvatarMenuButton profileImageUrl={profileImageUrl} />
       </div>
 
       <CardinalMissingModal open={cardinalModalOpen} onClose={() => setCardinalModalOpen(false)} />

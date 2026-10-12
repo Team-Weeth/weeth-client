@@ -13,6 +13,7 @@ import { CommentDirtyGuardDialog } from '@/components/board/CommentDirtyGuardDia
 import { FileList } from '@/components/board/FileList';
 import { formatShortDateTime } from '@/lib/formatTime';
 import { toDisplayFile, isImageFileByType, mapComment } from '@/lib/board';
+import { getUnreferencedFiles } from '@/lib/board/getUnreferencedFiles';
 import { usePostDetailQuery } from '@/hooks/board/usePostDetailQuery';
 import { useCreateComment } from '@/hooks/board/useCreateComment';
 import { useUpdateComment } from '@/hooks/board/useUpdateComment';
@@ -108,10 +109,13 @@ function PostDetailContent({ initialData }: PostDetailContentProps) {
 
   const isPostAuthor = currentUserId !== null && currentPost.author.id === currentUserId;
   const canComment = currentPost.boardConfig?.canComment ?? true;
-  const imageFiles = currentPost.fileUrls
+
+  // 인라인 참조된 파일은 하단 목록에서 제외 (하위 호환)
+  const unreferencedFiles = getUnreferencedFiles(currentPost.content, currentPost.fileUrls);
+  const imageFiles = unreferencedFiles
     .filter((f) => isImageFileByType(f.contentType))
     .map(toDisplayFile);
-  const nonImageFiles = currentPost.fileUrls
+  const nonImageFiles = unreferencedFiles
     .filter((f) => !isImageFileByType(f.contentType))
     .map(toDisplayFile);
 

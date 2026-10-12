@@ -66,15 +66,20 @@ function DuesMemberPaymentTable({
   const [sortUnpaidFirst, setSortUnpaidFirst] = useState(false);
   const [page, setPage] = useState(1);
 
-  const countByStatus = (status: PaymentStatus) =>
-    members.filter((m) => m.status === status).length;
+  const statusCounts = members.reduce(
+    (acc, m) => {
+      acc[m.status] += 1;
+      return acc;
+    },
+    { paid: 0, unpaid: 0, refunded: 0, excluded: 0 } as Record<PaymentStatus, number>,
+  );
 
   const filters: { key: FilterType; label: string; count: number }[] = [
     { key: 'all', label: '전체', count: members.length },
-    { key: 'paid', label: '완료', count: countByStatus('paid') },
-    { key: 'unpaid', label: '미납', count: countByStatus('unpaid') },
-    { key: 'refunded', label: '환불', count: countByStatus('refunded') },
-    { key: 'excluded', label: '제외', count: countByStatus('excluded') },
+    { key: 'paid', label: '완료', count: statusCounts.paid },
+    { key: 'unpaid', label: '미납', count: statusCounts.unpaid },
+    { key: 'refunded', label: '환불', count: statusCounts.refunded },
+    { key: 'excluded', label: '제외', count: statusCounts.excluded },
   ];
 
   const filtered = members

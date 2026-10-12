@@ -99,6 +99,7 @@ function ProfileCard({
                   <Button
                     variant="primarySoft"
                     size="sm"
+                    className="ml-100 shrink-0"
                     onClick={() =>
                       setSelectedClub(
                         assignableClub ?? {

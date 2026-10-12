@@ -182,6 +182,7 @@
   --padding-450: 18px;
   --padding-500: 20px;
 
+  --radius-xs: 6px;
   --radius-sm: 8px;
   --radius-md: 12px;
   --radius-lg: 16px;
@@ -311,7 +312,7 @@
   --opacity-100: #355d5a80;
   --opacity-200: #00c8aa66;
 
-  --static-floating-surface: #1e2021;
+  --static-floating-surface: #2a2c2e;
   --static-on-floating: #ffffff;
   --static-floating-border: #ffffff33;
   --static-floating-divider: #ffffff4d;
@@ -482,6 +483,7 @@
   --padding-450: var(--spacing-450);
   --padding-500: var(--spacing-500);
 
+  --radius-xs: 6px;
   --radius-sm: 8px;
   --radius-md: 12px;
   --radius-lg: 16px;
@@ -727,6 +729,7 @@ select:focus {
 
 .ProseMirror:not(.prose-readonly) {
   @apply flex-1;
+  padding-top: var(--spacing-300);
 }
 
 /* placeholder */
@@ -761,6 +764,7 @@ select:focus {
 
 .ProseMirror p {
   @apply typo-md-body;
+  margin-bottom: 6px;
 }
 
 .ProseMirror hr {
@@ -916,6 +920,44 @@ select:focus {
   cursor: text;
 }
 
+/* 인라인 이미지 */
+.ProseMirror figure {
+  margin: var(--spacing-400) 0;
+  display: flex;
+}
+
+.ProseMirror figure img {
+  max-width: 100%;
+  height: auto;
+  border-radius: var(--radius-sm);
+}
+
+/* 이미지 그룹 (renderHTML 폴백 — React node view 미사용 시) */
+.ProseMirror [data-image-group] {
+  display: flex;
+  gap: var(--spacing-200);
+  width: 100%;
+  align-items: flex-start;
+}
+
+.ProseMirror [data-image-group] figure {
+  margin: 0;
+  flex: 1;
+  min-width: 0;
+}
+
+.ProseMirror [data-image-group] figure img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: var(--radius-sm);
+}
+
+/* 파일 첨부 블록 */
+.ProseMirror [data-file-attachment] {
+  margin: var(--spacing-200) 0;
+}
+
 /* 링크 */
 .ProseMirror a {
   @apply text-text-alternative underline underline-offset-2;
@@ -1006,6 +1048,68 @@ select:focus {
   }
 }
 
+/*
+ * 로딩 스피너. 기존 Lottie(loading.json)의 Trim Paths + 회전을 그대로 옮긴 것이다.
+ * 원주 = 2π × 28 ≈ 175.93, 한 사이클 1.6s(원본 25fps 기준 40프레임).
+ * dash 값은 원본 키프레임의 cubic-bezier(0.333, 0, 0.667, 1) 이징을 적용해 샘플링했으므로
+ * 여기서는 linear로 재생한다.
+ */
+@keyframes loading-spinner-rotate {
+  from {
+    transform: rotate(-90deg);
+  }
+  to {
+    transform: rotate(270deg);
+  }
+}
+
+@keyframes loading-spinner-dash {
+  0% {
+    stroke-dasharray: 0 175.93;
+    stroke-dashoffset: 0;
+  }
+  10% {
+    stroke-dasharray: 12.1 175.93;
+    stroke-dashoffset: 0;
+  }
+  20% {
+    stroke-dasharray: 42.5 175.93;
+    stroke-dashoffset: 0;
+  }
+  30% {
+    stroke-dasharray: 82.7 175.93;
+    stroke-dashoffset: 0;
+  }
+  40% {
+    stroke-dasharray: 114.2 175.93;
+    stroke-dashoffset: -9.8;
+  }
+  50% {
+    stroke-dasharray: 122.7 175.93;
+    stroke-dashoffset: -34.9;
+  }
+  60% {
+    stroke-dasharray: 105.9 175.93;
+    stroke-dashoffset: -69.3;
+  }
+  70% {
+    stroke-dasharray: 69.3 175.93;
+    stroke-dashoffset: -106.7;
+  }
+  80% {
+    stroke-dasharray: 34.9 175.93;
+    stroke-dashoffset: -141;
+  }
+  90% {
+    stroke-dasharray: 9.8 175.93;
+    stroke-dashoffset: -166.2;
+  }
+  100% {
+    stroke-dasharray: 0 175.93;
+    stroke-dashoffset: -175.93;
+  }
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
@@ -1035,6 +1139,17 @@ select:focus {
     -ms-overflow-style: none;
     /* Firefox */
     scrollbar-width: none;
+  }
+
+  /* fill-box 기준이라 그룹(원)의 중심을 축으로 회전한다 */
+  .loading-spinner-rotate {
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: loading-spinner-rotate 1.6s cubic-bezier(0.333, 0, 0.667, 1) infinite;
+  }
+
+  .loading-spinner-dash {
+    animation: loading-spinner-dash 1.6s linear infinite;
   }
 
   /* Chrome, Safari and Opera */

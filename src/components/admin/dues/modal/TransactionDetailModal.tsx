@@ -16,6 +16,7 @@ import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { ModalIconButton } from '@/components/admin/modal/ModalIconButton';
 import { SCHEDULE_MODAL_CONTENT_CLASS } from '@/components/admin/schedule/modal/constants';
 import { cn } from '@/lib/cn';
+import { formatAmount } from '@/lib/formatAmount';
 import { TRANSACTION_TYPE_TAG } from '../DuesTransactionTable';
 import type { TransactionDirection, TransactionType } from '@/types/admin/dues';
 import { DuesReceiptCard } from '@/components/dues/DuesReceiptCard';
@@ -73,7 +74,7 @@ function TransactionDetailModal({
   const isEditable = type === 'EXPENSE' || type === 'INCOME';
   const sign = direction === 'INCOME' ? '+' : '-';
   const numAmount = Number(amount);
-  const formattedAmount = (isNaN(numAmount) ? 0 : numAmount).toLocaleString('ko-KR');
+  const formattedAmount = formatAmount(isNaN(numAmount) ? 0 : numAmount);
   const classificationLabel = category ? `${typeConfig.label} · ${category}` : typeConfig.label;
 
   const receiptTransaction: DuesTransaction = {

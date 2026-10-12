@@ -1,7 +1,6 @@
 export { AttendanceContent } from './AttendanceContent';
 
 export { AttendanceHistoryContent } from './AttendanceHistoryContent';
-export type { AttendanceHistoryContentProps } from './AttendanceHistoryContent';
 
 export { AttendanceQRContent } from './AttendanceQRContent';
 export type { AttendanceQRContentProps } from './AttendanceQRContent';

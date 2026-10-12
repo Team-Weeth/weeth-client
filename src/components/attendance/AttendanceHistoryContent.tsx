@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 
+import { CardinalDropdown } from '@/components/common/CardinalDropdown';
 import {
   Breadcrumb,
   BreadcrumbList,
@@ -14,17 +15,15 @@ import {
 } from '@/components/ui/breadcrumb';
 import { Divider } from '@/components/ui/Divider';
 import { Tag } from '@/components/ui/tag';
+import { useAttendanceDetailQuery } from '@/hooks/attendance/useAttendanceDetailQuery';
+import { useCardinalSelector } from '@/hooks/useCardinalSelector';
 import { cn } from '@/lib/cn';
 import { formatKoreanDate, formatTime } from '@/lib/formatTime';
 import { USER_ATTENDANCE_STATUS_CONFIG } from '@/constants/attendance';
 import { toastError } from '@/stores/useToastStore';
 import type { AttendanceSummary } from '@/types/attendance';
+import { AttendanceHistorySkeleton } from './AttendanceHistorySkeleton';
 import { StatBox } from './StatBox';
-
-interface AttendanceHistoryContentProps {
-  summary?: AttendanceSummary;
-  errorMessage?: string;
-}
 
 function toDisplayRecord(record: AttendanceSummary['attendances'][number]) {
   const startDate = new Date(record.start);
@@ -41,14 +40,35 @@ function toDisplayRecord(record: AttendanceSummary['attendances'][number]) {
   };
 }
 
-function AttendanceHistoryContent({ summary, errorMessage }: AttendanceHistoryContentProps) {
+function AttendanceHistoryContent() {
   const { clubId } = useParams<{ clubId: string }>();
+  const {
+    cardinals,
+    activeCardinal,
+    setSelectedCardinalId,
+    isLoading: isCardinalLoading,
+    isError: isCardinalError,
+  } = useCardinalSelector({ autoSelectLatest: true, scope: 'attendance' });
+
+  const {
+    data: summary,
+    isPending,
+    isError: isDetailError,
+  } = useAttendanceDetailQuery(activeCardinal?.cardinalNumber);
+
+  // 기수 조회가 실패하면 기수가 없어 상세 조회도 실행되지 않는다.
+  // 두 실패를 함께 보지 않으면 오류가 "기록 없음"으로 표시된다.
+  const isError = isCardinalError || isDetailError;
+
+  useEffect(() => {
+    if (isError) toastError('출석 기록을 불러오지 못했습니다.');
+  }, [isError]);
+
   const { total, attendanceCount, absenceCount, attendances = [] } = summary ?? {};
   const records = attendances.map(toDisplayRecord);
 
-  useEffect(() => {
-    if (errorMessage) toastError(errorMessage);
-  }, [errorMessage]);
+  // 기수를 아직 모르면 조회 자체를 하지 않으므로, 기수 로딩도 로딩 상태로 함께 본다.
+  const isLoading = !isError && (isCardinalLoading || (cardinals.length > 0 && isPending));
 
   return (
     <div className="mx-auto flex w-full max-w-[1025px] flex-col gap-700 px-450 pt-600">
@@ -68,61 +88,69 @@ function AttendanceHistoryContent({ summary, errorMessage }: AttendanceHistoryCo
             <BreadcrumbSeparator />
             <BreadcrumbItem>
               <BreadcrumbPage className="typo-caption1 text-text-alternative">
-                출석 조회
+                출석 기록
               </BreadcrumbPage>
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
-        <h1 className="typo-h2 text-text-normal text-pretty">출석 조회</h1>
+        <div className="flex w-full items-center justify-between gap-400">
+          <h1 className="typo-h2 text-text-normal text-pretty">출석 기록</h1>
+          <CardinalDropdown
+            cardinals={cardinals}
+            activeCardinal={activeCardinal}
+            onSelect={setSelectedCardinalId}
+            disabled={isCardinalLoading || cardinals.length === 0}
+          />
+        </div>
       </div>
 
-      {summary ? (
-        <div className="flex flex-col gap-700">
-          <div className="bg-container-neutral flex flex-col gap-400 rounded-lg p-400">
-            <div className="flex gap-200">
-              <StatBox label="세션" value={`${total ?? 0}회`} />
-              <StatBox label="출석" value={`${attendanceCount ?? 0}회`} />
-              <StatBox label="결석" value={`${absenceCount ?? 0}회`} />
-            </div>
-
-            <Divider />
-
-            <div className="flex flex-col gap-400">
-              {records.length === 0 ? (
-                <p className="typo-body2 text-text-alternative py-400 text-center">
-                  출석 기록이 없습니다.
-                </p>
-              ) : (
-                records.map((record) => (
-                  <div key={record.id} className="flex flex-col gap-200">
-                    <div className="flex items-center gap-200">
-                      <Tag
-                        className={cn(
-                          'w-[49px] justify-center rounded-full py-[2px]',
-                          record.statusClassName,
-                        )}
-                      >
-                        {record.statusLabel}
-                      </Tag>
-                      <span className="typo-sub3 text-text-strong">{record.title}</span>
-                    </div>
-                    <div className="typo-body2 text-text-alternative flex flex-col">
-                      <span>날짜 : {record.date}</span>
-                      <span>장소 : {record.location}</span>
-                    </div>
-                  </div>
-                ))
-              )}
-            </div>
-          </div>
-        </div>
-      ) : (
+      {isLoading ? (
+        <AttendanceHistorySkeleton />
+      ) : isError ? (
         <p className="typo-body2 text-text-alternative py-400 text-center">
           출석 정보를 불러올 수 없습니다.
         </p>
+      ) : (
+        <div className="bg-container-neutral flex flex-col gap-400 rounded-lg p-400">
+          <div className="flex gap-200">
+            <StatBox label="세션" value={`${total ?? 0}회`} />
+            <StatBox label="출석" value={`${attendanceCount ?? 0}회`} />
+            <StatBox label="결석" value={`${absenceCount ?? 0}회`} />
+          </div>
+
+          <Divider />
+
+          <div className="flex flex-col gap-400">
+            {records.length === 0 ? (
+              <p className="typo-body2 text-text-alternative py-400 text-center">
+                출석 기록이 없습니다.
+              </p>
+            ) : (
+              records.map((record) => (
+                <div key={record.id} className="flex flex-col gap-200">
+                  <div className="flex items-center gap-200">
+                    <Tag
+                      className={cn(
+                        'w-[49px] justify-center rounded-full py-[2px]',
+                        record.statusClassName,
+                      )}
+                    >
+                      {record.statusLabel}
+                    </Tag>
+                    <span className="typo-sub3 text-text-strong">{record.title}</span>
+                  </div>
+                  <div className="typo-body2 text-text-alternative flex flex-col">
+                    <span>날짜 : {record.date}</span>
+                    <span>장소 : {record.location}</span>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        </div>
       )}
     </div>
   );
 }
 
-export { AttendanceHistoryContent, type AttendanceHistoryContentProps };
+export { AttendanceHistoryContent };

@@ -94,7 +94,7 @@ function MemberNavGroup({ clubId, pathname, collapsed }: MemberNavGroupProps) {
         )}
       >
         <div className="min-h-0 overflow-hidden">
-          <div className="flex flex-col gap-100">
+          <div className="flex flex-col gap-100 pt-100">
             {items.map(({ label, icon, path, active }) => (
               <MemberNavTooltip key={path} label={label} enabled={collapsed && expanded}>
                 <Link
@@ -102,7 +102,7 @@ function MemberNavGroup({ clubId, pathname, collapsed }: MemberNavGroupProps) {
                   aria-label={label}
                   aria-current={active ? 'page' : undefined}
                   className={cn(
-                    'typo-sub3 text-text-normal hover:bg-container-neutral-interaction flex shrink-0 items-center rounded-md',
+                    'typo-sub3 text-text-normal hover:bg-container-neutral-interaction flex w-full shrink-0 items-center rounded-md transition-colors',
                     collapsed ? 'justify-center p-400' : 'gap-200 py-[11px] pr-400 pl-10',
                     active && 'bg-container-neutral-interaction font-bold',
                   )}

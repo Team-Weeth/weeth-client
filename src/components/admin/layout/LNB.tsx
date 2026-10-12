@@ -6,7 +6,7 @@ import AdminForumIcon from '@/assets/icons/admin/ic_admin_forum.svg';
 import AdminCalendarIcon from '@/assets/icons/admin/ic_admin_calendar.svg';
 import AdminSettingIcon from '@/assets/icons/admin/ic_admin_setting.svg';
 import AdminDuesIcon from '@/assets/icons/admin/ic_admin_dues.svg';
-import AdminScreenIcon from '@/assets/icons/admin/ic_admin_screen.svg';
+import AdminAttendanceCalendarIcon from '@/assets/icons/admin/ic_admin_attendance_calendar.svg';
 import AdminPenaltyIcon from '@/assets/icons/admin/ic_admin_penalty.svg';
 import ExitIcon from '@/assets/icons/exit.svg';
 import PeopleIcon from '@/assets/icons/people.svg';
@@ -46,7 +46,7 @@ function LNB() {
     },
     {
       id: 'attendance',
-      icon: AdminScreenIcon,
+      icon: AdminAttendanceCalendarIcon,
       label: '출석 관리',
       path: `/${clubId}/admin/attendance`,
     },
@@ -110,7 +110,7 @@ function LNB() {
       <nav
         className={cn(
           // 창이 낮아 메뉴가 넘치면 눌리는 대신 세로 스크롤로 처리한다.
-          'bg-background tablet:flex hidden h-full shrink-0 flex-col overflow-x-hidden overflow-y-auto transition-[width] duration-200',
+          'bg-background tablet:flex scrollbar-none hidden h-full shrink-0 flex-col overflow-x-hidden overflow-y-auto transition-[width] duration-200',
           collapsed ? 'w-22' : 'w-60',
         )}
       >
@@ -146,7 +146,7 @@ function LNB() {
         )}
 
         {collapsed ? (
-          <div className="border-line flex shrink-0 flex-col items-center justify-center gap-100 self-stretch border-b p-400">
+          <div className="flex shrink-0 flex-col items-center justify-center gap-100 self-stretch p-400">
             {exitNavNode}
           </div>
         ) : (

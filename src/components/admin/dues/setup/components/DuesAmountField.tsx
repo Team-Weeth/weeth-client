@@ -1,6 +1,7 @@
 'use client';
 
 import { cn } from '@/lib/cn';
+import { formatAmount } from '@/lib/formatAmount';
 
 interface DuesAmountFieldProps {
   id?: string;
@@ -43,7 +44,7 @@ function DuesAmountField({
             id={id}
             type="text"
             inputMode="numeric"
-            value={value ? Number(value).toLocaleString() : ''}
+            value={value ? formatAmount(Number(value)) : ''}
             onChange={(e) => onChange(e.target.value.replace(/\D/g, ''))}
             onBlur={onBlur}
             placeholder={placeholder}

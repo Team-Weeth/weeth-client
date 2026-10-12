@@ -110,7 +110,7 @@ function LNBLogoutModal({ collapsed }: LNBLogoutModalProps) {
             openMenu();
           }
         }}
-        className="flex grow"
+        className="flex min-w-0 grow"
       >
         <LNBClubInfo collapsed={collapsed} />
       </div>

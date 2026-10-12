@@ -6,8 +6,8 @@ import { useParams } from 'next/navigation';
 import { DuesSearchBar } from '@/components/admin/dues/DuesSearchBar';
 import { useDuesSetupValues, useDuesSetupActions } from '@/stores/useDuesSetupStore';
 import { toastError } from '@/stores/useToastStore';
-import { useDuesPaymentTargetsQuery } from '@/hooks/queries/admin';
-import { useSaveDuesPaymentTargets } from '@/hooks/mutations/admin';
+import { useDuesPaymentTargetsQuery } from '@/hooks/queries/admin/useDuesSetupQueries';
+import { useSaveDuesPaymentTargets } from '@/hooks/mutations/admin/useDuesSetupMutations';
 
 import { DuesMemberTable } from '@/components/admin/dues/setup/components/DuesMemberTable';
 import { DuesPagination } from '@/components/admin/dues/setup/components/DuesPagination';
@@ -19,7 +19,8 @@ import { PrevButton } from '@/components/admin/dues/setup/components/PrevButton'
 import { SetupHeader } from '@/components/admin/dues/setup/components/SetupHeader';
 import { useDuesSetupNavigation } from '@/hooks/admin/useDuesSetupNavigation';
 import { useDuesStepNavigator } from '@/hooks/admin/useDuesStepNavigator';
-import { usePaymentTargetFilter, useEnsureDuesAccountId } from '@/hooks/admin';
+import { usePaymentTargetFilter } from '@/hooks/admin/usePaymentTargetFilter';
+import { useEnsureDuesAccountId } from '@/hooks/admin/useEnsureDuesAccountId';
 
 function DuesSetupStep2() {
   const { clubId } = useParams<{ clubId: string }>();

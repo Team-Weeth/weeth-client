@@ -1,7 +1,10 @@
 'use client';
 
 import { useAddProfileFlow } from '@/hooks/mypage';
-import { useCreateMultiProfileMutation } from '@/hooks/mutations/mypage/useMultiProfileMutations';
+import {
+  useCreateMultiProfileMutation,
+  useUpdateMultiProfileMutation,
+} from '@/hooks/mutations/mypage/useMultiProfileMutations';
 import { useAssignableClubsQuery } from '@/hooks/queries/mypage/useMyPageQueries';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { toastError, toastSuccess } from '@/stores/useToastStore';
@@ -15,6 +18,7 @@ interface AddProfileModalProps {
   onOpenChange: (open: boolean) => void;
   tutorialMode?: boolean;
   initialSelectedClubIds?: string[];
+  editingProfileId?: number;
 }
 
 function AddProfileModal({
@@ -22,6 +26,7 @@ function AddProfileModal({
   onOpenChange,
   tutorialMode = false,
   initialSelectedClubIds,
+  editingProfileId,
 }: AddProfileModalProps) {
   const assignableClubsQuery = useAssignableClubsQuery();
   const clubs = assignableClubsQuery.data ?? [];
@@ -46,6 +51,8 @@ function AddProfileModal({
     },
   );
   const createMultiProfileMutation = useCreateMultiProfileMutation();
+  const updateMultiProfileMutation = useUpdateMultiProfileMutation();
+  const isSubmitting = createMultiProfileMutation.isPending || updateMultiProfileMutation.isPending;
 
   const handleClose = () => {
     resetFlow();
@@ -56,13 +63,23 @@ function AddProfileModal({
     const { name, bio } = getValues();
 
     try {
-      await createMultiProfileMutation.mutateAsync({
-        name: name.trim(),
-        bio: bio.trim(),
-        clubIds: selectedClubIds,
-        profileImageFile,
-        headerImageFile,
-      });
+      if (tutorialMode && editingProfileId !== undefined) {
+        await updateMultiProfileMutation.mutateAsync({
+          profileId: editingProfileId,
+          name: name.trim(),
+          bio: bio.trim(),
+          profileImageFile,
+          headerImageFile,
+        });
+      } else {
+        await createMultiProfileMutation.mutateAsync({
+          name: name.trim(),
+          bio: bio.trim(),
+          clubIds: selectedClubIds,
+          profileImageFile,
+          headerImageFile,
+        });
+      }
       toastSuccess('프로필이 추가되었습니다.');
       handleClose();
     } catch (error) {
@@ -71,7 +88,7 @@ function AddProfileModal({
   };
 
   const handleStepOneSubmit = async () => {
-    if (createMultiProfileMutation.isPending) return;
+    if (isSubmitting) return;
 
     const isValid = await handleNext();
     if (!isValid) return;
@@ -119,7 +136,7 @@ function AddProfileModal({
             onToggleClub={handleToggleClub}
             onPrev={() => setStep(1)}
             onConfirm={handleConfirm}
-            isSubmitting={createMultiProfileMutation.isPending || assignableClubsQuery.isPending}
+            isSubmitting={isSubmitting || assignableClubsQuery.isPending}
           />
         )}
       </DialogContent>
