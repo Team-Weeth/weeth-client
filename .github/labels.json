@@ -58,5 +58,25 @@
     "name": "✅ Test",
     "color": "ccffc4",
     "description": "test 관련(storybook, jest...)"
+  },
+  {
+    "name": "🚀 Release",
+    "color": "5319E7",
+    "description": "develop → main 릴리즈 PR (릴리즈 노트 제외)"
+  },
+  {
+    "name": "🚑 Hotfix",
+    "color": "D93F0B",
+    "description": "main 직행 긴급 수정 (patch)"
+  },
+  {
+    "name": "💥 Breaking",
+    "color": "b60205",
+    "description": "릴리즈 PR을 major로 올림"
+  },
+  {
+    "name": "🩹 Patch",
+    "color": "FBCA04",
+    "description": "릴리즈 PR을 patch로 올림"
   }
 ]
