@@ -1,5 +1,3 @@
-import type { FileItem } from '@/types/file';
-
 /**
  * HTML 내에 fileUrl이 인라인 노드의 src 또는 data-src 속성으로 참조되어 있는지 확인.
  * - URL 인코딩 차이 허용 (공백 ↔ %20, 기타 퍼센트 인코딩)
@@ -32,7 +30,6 @@ export function isReferencedInContent(fileUrl: string, htmlContent: string): boo
   try {
     decodedFileUrl = decodeURIComponent(baseFileUrl);
   } catch {
-    // 잘못된 퍼센트 인코딩이더라도 regex 루프는 계속 시도
     decodedFileUrl = baseFileUrl;
   }
 
@@ -51,14 +48,4 @@ export function isReferencedInContent(fileUrl: string, htmlContent: string): boo
   }
 
   return false;
-}
-
-/**
- * 게시글 HTML 내에서 참조되지 않은 파일만 반환 (하위 호환용)
- *
- * 새 게시글: 모든 파일이 HTML에 인라인 → 빈 배열 반환
- * 기존 게시글: HTML에 참조 없음 → 전체 배열 반환
- */
-export function getUnreferencedFiles(htmlContent: string, files: FileItem[]): FileItem[] {
-  return files.filter((f) => !isReferencedInContent(f.fileUrl, htmlContent));
 }
