@@ -1,6 +1,6 @@
-import { renderHook, act } from '@testing-library/react';
+import { renderHook, act, waitFor } from '@testing-library/react';
 import { useEditor } from '@tiptap/react';
-import { usePostEditor } from '@/components/board/Editor/usePostEditor';
+import { usePostEditor } from '@/hooks/board/usePostEditor';
 
 jest.mock('@tiptap/react', () => ({ useEditor: jest.fn() }));
 jest.mock('@/stores/usePostStore');
@@ -24,6 +24,7 @@ const mockSetContent = jest.fn();
 type EditorPropsHandler = (
   view: Record<string, unknown>,
   event: Record<string, unknown>,
+  slice?: Record<string, unknown>,
 ) => boolean;
 type EditorEventCallback = (args: Record<string, unknown>) => void;
 
@@ -43,6 +44,21 @@ let capturedConfig = {} as CapturedEditorConfig;
 const minimalView = {
   state: { selection: { $from: {} } },
 };
+
+// handlePaste 테스트용 view mock — NodeSelection 여부 설정 가능
+function createPasteView(options?: { nodeSelection?: boolean }) {
+  const selection = options?.nodeSelection
+    ? { from: 10, to: 12, node: {} } // NodeSelection
+    : { from: 5, to: 5 }; // TextSelection (node 프로퍼티 없음)
+  const tr = {
+    replaceRange: jest.fn().mockReturnThis(),
+    scrollIntoView: jest.fn().mockReturnThis(),
+  };
+  return {
+    state: { selection, tr },
+    dispatch: jest.fn(),
+  };
+}
 
 // 백틱 인라인 코드 단축키 테스트용 view mock
 function createBacktickView(textBefore: string) {
@@ -171,10 +187,118 @@ describe('usePostEditor', () => {
       expect(result).toBe(true);
     });
 
+    it('files가 없고 items에 이미지 파일이 있으면 processFiles를 호출하고 true를 반환한다', () => {
+      const processFiles = jest.fn();
+      renderHook(() => usePostEditor({ processFilesInline: processFiles }));
+
+      const file = new File([''], 'screenshot.png', { type: 'image/png' });
+      const result = capturedConfig.editorProps.handlePaste(
+        {},
+        {
+          clipboardData: {
+            files: [],
+            items: [{ kind: 'file', type: 'image/png', getAsFile: () => file }],
+          },
+        },
+      );
+
+      expect(processFiles).toHaveBeenCalledWith([file]);
+      expect(result).toBe(true);
+    });
+
+    it('items에 이미지가 있어도 files가 우선한다', () => {
+      const processFiles = jest.fn();
+      renderHook(() => usePostEditor({ processFilesInline: processFiles }));
+
+      const fileFromFiles = new File([''], 'from-files.png', { type: 'image/png' });
+      const fileFromItems = new File([''], 'from-items.png', { type: 'image/png' });
+      const result = capturedConfig.editorProps.handlePaste(
+        {},
+        {
+          clipboardData: {
+            files: [fileFromFiles],
+            items: [{ kind: 'file', type: 'image/png', getAsFile: () => fileFromItems }],
+          },
+        },
+      );
+
+      expect(processFiles).toHaveBeenCalledWith([fileFromFiles]);
+      expect(result).toBe(true);
+    });
+
+    it('items에 MIME 유형이 없는 파일이라도 이미지 바이트이면 processFiles를 비동기로 호출한다', async () => {
+      const processFiles = jest.fn();
+      renderHook(() => usePostEditor({ processFilesInline: processFiles }));
+
+      // PNG 매직 바이트 (8바이트 시그니처 + 패딩)
+      const pngHeader = new Uint8Array([
+        0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 0, 0, 0, 0,
+      ]);
+      const file = new File([pngHeader], 'paste', { type: '' });
+
+      const result = capturedConfig.editorProps.handlePaste(
+        {},
+        {
+          clipboardData: {
+            files: [],
+            items: [{ kind: 'file', type: '', getAsFile: () => file }],
+          },
+        },
+      );
+
+      expect(result).toBe(true);
+
+      await waitFor(() => {
+        expect(processFiles).toHaveBeenCalledWith(
+          expect.arrayContaining([expect.objectContaining({ type: 'image/png' })]),
+        );
+      });
+    });
+
+    it('items에 MIME 유형이 없는 파일이 이미지 바이트가 아니면 processFiles를 호출하지 않는다', async () => {
+      const processFiles = jest.fn();
+      renderHook(() => usePostEditor({ processFilesInline: processFiles }));
+
+      // PDF 매직 바이트 (%PDF)
+      const pdfHeader = new Uint8Array([0x25, 0x50, 0x44, 0x46, 0, 0, 0, 0, 0, 0, 0, 0]);
+      const file = new File([pdfHeader], 'document', { type: '' });
+
+      const result = capturedConfig.editorProps.handlePaste(
+        {},
+        {
+          clipboardData: {
+            files: [],
+            items: [{ kind: 'file', type: '', getAsFile: () => file }],
+          },
+        },
+      );
+
+      expect(result).toBe(true);
+
+      // 비동기 판정이 완료될 때까지 대기 후 호출 없음을 확인
+      await act(async () => {});
+      expect(processFiles).not.toHaveBeenCalled();
+    });
+
+    it('items에 이미지가 없으면 false를 반환한다', () => {
+      renderHook(() => usePostEditor());
+
+      const result = capturedConfig.editorProps.handlePaste(createPasteView(), {
+        clipboardData: {
+          files: [],
+          items: [{ kind: 'string', type: 'text/plain', getAsFile: () => null }],
+        },
+      });
+
+      expect(result).toBe(false);
+    });
+
     it('파일이 없으면 false를 반환한다', () => {
       renderHook(() => usePostEditor());
 
-      const result = capturedConfig.editorProps.handlePaste({}, { clipboardData: { files: [] } });
+      const result = capturedConfig.editorProps.handlePaste(createPasteView(), {
+        clipboardData: { files: [] },
+      });
 
       expect(result).toBe(false);
     });
@@ -182,9 +306,26 @@ describe('usePostEditor', () => {
     it('clipboardData가 없으면 false를 반환한다', () => {
       renderHook(() => usePostEditor());
 
-      const result = capturedConfig.editorProps.handlePaste({}, {});
+      const result = capturedConfig.editorProps.handlePaste(createPasteView(), {});
 
       expect(result).toBe(false);
+    });
+
+    it('NodeSelection 상태에서 파일 없이 붙여넣기하면 slice를 선택 노드 하단에 삽입한다', () => {
+      renderHook(() => usePostEditor());
+
+      const view = createPasteView({ nodeSelection: true });
+      const mockSlice = { content: {}, openStart: 0, openEnd: 0 };
+      const result = capturedConfig.editorProps.handlePaste(
+        view,
+        { clipboardData: { files: [], items: [] } },
+        mockSlice,
+      );
+
+      expect(view.state.tr.replaceRange).toHaveBeenCalledWith(12, 12, mockSlice);
+      expect(view.state.tr.scrollIntoView).toHaveBeenCalled();
+      expect(view.dispatch).toHaveBeenCalledWith(view.state.tr);
+      expect(result).toBe(true);
     });
   });
 
@@ -197,8 +338,11 @@ describe('usePostEditor', () => {
       const event = {
         preventDefault: jest.fn(),
         dataTransfer: { files: [file], getData: jest.fn(() => '') },
+        clientX: 0,
+        clientY: 0,
       };
-      const result = capturedConfig.editorProps.handleDrop({}, event);
+      const mockView = { posAtCoords: jest.fn(() => null), dispatch: jest.fn() };
+      const result = capturedConfig.editorProps.handleDrop(mockView, event);
 
       expect(event.preventDefault).toHaveBeenCalled();
       expect(processFiles).toHaveBeenCalledWith([file]);

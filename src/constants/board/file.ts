@@ -1,5 +1,3 @@
-export const MAX_IMAGE_FILES = 5;
-export const MAX_NON_IMAGE_FILES = 5;
 export const MAX_FILE_SIZE = 30 * 1024 * 1024; // 30MB
 
 export const ALLOWED_EXTENSIONS = ['png', 'jpg', 'jpeg', 'pdf', 'webp'] as const;

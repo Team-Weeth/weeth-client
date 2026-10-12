@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useEditor, EditorContent } from '@tiptap/react';
 import DOMPurify from 'isomorphic-dompurify';
 import { cn } from '@/lib/cn';
@@ -51,9 +51,12 @@ function PostCardBody({ className, content, expandable = false }: PostCardBodyPr
     },
   });
 
-  // content prop이 바뀔 때(React Query 갱신 등) 에디터 내용 동기화
+  // content prop이 바뀔 때(React Query 갱신 등) 에디터 내용 동기화.
+  const prevSanitizedRef = useRef(sanitized);
   useEffect(() => {
     if (!editor) return;
+    if (prevSanitizedRef.current === sanitized) return;
+    prevSanitizedRef.current = sanitized;
     editor.commands.setContent(sanitized);
   }, [editor, sanitized]);
 

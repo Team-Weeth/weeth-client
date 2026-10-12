@@ -2,8 +2,8 @@ import { TextSelection } from '@tiptap/pm/state';
 import type { Transaction } from '@tiptap/pm/state';
 import type { EditorView } from '@tiptap/pm/view';
 import { SUB_DRAG_TYPE, removeImageFromGroup } from '@/utils/board/imageGroupUtils';
-import { MAX_GROUP_IMAGES } from './extensions/ImageGroup/ImageGroup';
-import type { GroupImage } from './extensions/ImageGroup/ImageGroup';
+import { MAX_GROUP_IMAGES } from '@/components/board/Editor/extensions/ImageGroup/ImageGroup';
+import type { GroupImage } from '@/components/board/Editor/extensions/ImageGroup/ImageGroup';
 
 interface SideDropResult {
   targetPos: number;
@@ -94,12 +94,22 @@ function findNodePosByAttrs(
 
 /** 외부 파일 드롭 처리 */
 export function handleFileDrop(
+  view: EditorView,
   event: DragEvent,
   processFiles: ((files: File[]) => void) | undefined,
 ): boolean {
   const droppedFiles = event.dataTransfer?.files;
   if (!droppedFiles || droppedFiles.length === 0) return false;
   event.preventDefault();
+
+  // 드롭 좌표를 문서 위치로 변환해 커서를 이동 후 삽입
+  // 이를 생략하면 이전 커서 위치에 파일이 삽입
+  const coords = view.posAtCoords({ left: event.clientX, top: event.clientY });
+  if (coords) {
+    const tr = view.state.tr.setSelection(TextSelection.near(view.state.doc.resolve(coords.pos)));
+    view.dispatch(tr);
+  }
+
   processFiles?.(Array.from(droppedFiles));
   return true;
 }
@@ -118,7 +128,6 @@ export function handleSubImageDrop(view: EditorView, event: DragEvent): boolean 
   // 드롭 대상이 imageGroup NodeView 내부인지 확인.
   // GapZone 등 containerRef 외부지만 같은 NodeView 내부에 드롭된 경우
   // 이미지를 제거하면 안 되므로 no-op 처리.
-  // (containerRef 내부의 드롭은 onNativeDrop에서 stopPropagation되어 여기 도달하지 않음)
   const target = event.target as HTMLElement;
   if (target.closest('.node-imageGroup')) {
     event.preventDefault();
@@ -143,7 +152,6 @@ export function handleSubImageDrop(view: EditorView, event: DragEvent): boolean 
   }
 
   // 일반 위치에 독립 이미지로 배치
-  // dropPos를 제거 전에 먼저 계산해야 이미지 유실 및 레이아웃 밀림을 방지할 수 있다.
   event.preventDefault();
   const dropPos = view.posAtCoords({ left: event.clientX, top: event.clientY });
   if (!dropPos) return true; // 에디터 밖에 드롭 → 이미지 유실 방지
