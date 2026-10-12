@@ -83,4 +83,15 @@ describe('useCardinalSelector', () => {
     expect(result.current.latestCardinal).toBeUndefined();
     expect(result.current.selectedCardinalId).toBeNull();
   });
+
+  it('autoSelectLatest=true여도 setSelectedCardinalId(null)로 전체를 선택하면 activeCardinal이 undefined로 유지된다', () => {
+    const { result } = renderHook(() => useCardinalSelector({ autoSelectLatest: true }));
+
+    act(() => {
+      result.current.setSelectedCardinalId(null);
+    });
+
+    expect(result.current.selectedCardinalId).toBeNull();
+    expect(result.current.activeCardinal).toBeUndefined();
+  });
 });
