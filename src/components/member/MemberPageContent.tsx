@@ -138,6 +138,7 @@ function MemberPageContent() {
             cardinals={cardinals}
             activeCardinal={activeCardinal}
             onSelect={setSelectedCardinalId}
+            onSelectAll={() => setSelectedCardinalId(null)}
           />
         </div>
         <MemberFilterContainer

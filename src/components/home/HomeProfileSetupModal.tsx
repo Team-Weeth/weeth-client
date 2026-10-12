@@ -155,6 +155,7 @@ function HomeProfileSetupModal({ open, onOpenChange }: HomeProfileSetupModalProp
             variant="secondary"
             size="lg"
             onClick={handleCreateProfile}
+            disabled={summaryQuery.isPending}
             className="my-4 flex gap-100"
           >
             <Icon src={AddIcon} size={18} className="text-icon-normal" />
@@ -189,6 +190,7 @@ function HomeProfileSetupModal({ open, onOpenChange }: HomeProfileSetupModalProp
         onOpenChange={setAddProfileModalOpen}
         tutorialMode
         initialSelectedClubIds={[clubId]}
+        editingProfileId={currentProfile?.profileId}
       />
     </>
   );

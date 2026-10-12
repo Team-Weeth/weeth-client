@@ -35,7 +35,12 @@ function useCardinalSelector({
       ? cardinals.find((c) => c.cardinalNumber === selectedCardinalNumber)
       : undefined;
 
-  const activeCardinal = selectedCardinal ?? (autoSelectLatest ? latestCardinal : undefined);
+  // null은 "전체"를 명시적으로 선택한 상태라 autoSelectLatest로도 덮어쓰지 않는다.
+  // undefined(아직 선택 안 함)일 때만 최신 기수로 대체한다.
+  const isExplicitAll = selectedCardinalNumber === null;
+  const activeCardinal = isExplicitAll
+    ? undefined
+    : (selectedCardinal ?? (autoSelectLatest ? latestCardinal : undefined));
 
   const setSelectedCardinalId = (id: number | null) => {
     if (!clubId) return;
