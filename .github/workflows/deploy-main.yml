@@ -9,8 +9,26 @@ permissions:
   contents: read
 
 jobs:
+  # main에 머지되지 않은 커밋(예: develop을 타깃으로 publish된 릴리즈)이 운영에 나가지 않도록 차단
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with:
+          fetch-depth: 0
+
+      - name: Verify release commit is on main
+        env:
+          TAG_NAME: ${{ github.event.release.tag_name }}
+        run: |
+          if ! git merge-base --is-ancestor "$GITHUB_SHA" origin/main; then
+            echo "::error::Release $TAG_NAME ($GITHUB_SHA) is not on main. Aborting prod deploy."
+            exit 1
+          fi
+
   deploy:
-    if: ${{ github.event.release.target_commitish == 'main' }}
+    needs: verify
     runs-on: ubuntu-latest
     steps:
       - name: Configure AWS credentials
@@ -26,6 +44,7 @@ jobs:
             --app-id "$APP_ID" \
             --branch-name "$BRANCH" \
             --job-type RELEASE \
+            --commit-id "$GITHUB_SHA" \
             --query 'jobSummary.jobId' --output text)
           echo "Started job $JOB_ID on $BRANCH"
           echo "job_id=$JOB_ID" >> "$GITHUB_OUTPUT"
@@ -66,3 +85,39 @@ jobs:
           APP_ID: ${{ secrets.AMPLIFY_MAIN_APP_ID }}
           BRANCH: main
           JOB_ID: ${{ steps.start.outputs.job_id }}
+
+  # 어느 단계에서 끝나든 결과를 Slack으로 알린다 (SLACK_WEBHOOK_URL 미설정 시 건너뜀)
+  notify:
+    needs: [verify, deploy]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Notify Slack
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          TAG_NAME: ${{ github.event.release.tag_name }}
+          RELEASE_URL: ${{ github.event.release.html_url }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          VERIFY_RESULT: ${{ needs.verify.result }}
+          DEPLOY_RESULT: ${{ needs.deploy.result }}
+        run: |
+          if [[ -z "${SLACK_WEBHOOK_URL:-}" ]]; then
+            echo "SLACK_WEBHOOK_URL is not set. Skip."
+            exit 0
+          fi
+
+          repo=${GITHUB_REPOSITORY#*/}
+          if [[ "$DEPLOY_RESULT" == "success" ]]; then
+            text="✅ *[$repo]* $TAG_NAME 운영 배포 완료 · <$RELEASE_URL|릴리즈 노트>"
+          else
+            # 처음으로 성공하지 못한 단계 (이후 단계는 skipped)
+            stage=deploy result=$DEPLOY_RESULT
+            if [[ "$VERIFY_RESULT" != "success" ]]; then
+              stage=verify result=$VERIFY_RESULT
+            fi
+            text="❌ *[$repo]* $TAG_NAME 운영 배포 실패 ($stage: $result) · <$RUN_URL|Actions 로그>"
+          fi
+
+          payload=$(jq -nc --arg text "$text" '{text: $text}')
+          curl -fsS --max-time 10 -H 'Content-Type: application/json' -d "$payload" "$SLACK_WEBHOOK_URL" >/dev/null \
+            || echo "::warning::Slack 알림 전송 실패"
