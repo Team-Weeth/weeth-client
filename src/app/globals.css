@@ -1048,6 +1048,68 @@ select:focus {
   }
 }
 
+/*
+ * 로딩 스피너. 기존 Lottie(loading.json)의 Trim Paths + 회전을 그대로 옮긴 것이다.
+ * 원주 = 2π × 28 ≈ 175.93, 한 사이클 1.6s(원본 25fps 기준 40프레임).
+ * dash 값은 원본 키프레임의 cubic-bezier(0.333, 0, 0.667, 1) 이징을 적용해 샘플링했으므로
+ * 여기서는 linear로 재생한다.
+ */
+@keyframes loading-spinner-rotate {
+  from {
+    transform: rotate(-90deg);
+  }
+  to {
+    transform: rotate(270deg);
+  }
+}
+
+@keyframes loading-spinner-dash {
+  0% {
+    stroke-dasharray: 0 175.93;
+    stroke-dashoffset: 0;
+  }
+  10% {
+    stroke-dasharray: 12.1 175.93;
+    stroke-dashoffset: 0;
+  }
+  20% {
+    stroke-dasharray: 42.5 175.93;
+    stroke-dashoffset: 0;
+  }
+  30% {
+    stroke-dasharray: 82.7 175.93;
+    stroke-dashoffset: 0;
+  }
+  40% {
+    stroke-dasharray: 114.2 175.93;
+    stroke-dashoffset: -9.8;
+  }
+  50% {
+    stroke-dasharray: 122.7 175.93;
+    stroke-dashoffset: -34.9;
+  }
+  60% {
+    stroke-dasharray: 105.9 175.93;
+    stroke-dashoffset: -69.3;
+  }
+  70% {
+    stroke-dasharray: 69.3 175.93;
+    stroke-dashoffset: -106.7;
+  }
+  80% {
+    stroke-dasharray: 34.9 175.93;
+    stroke-dashoffset: -141;
+  }
+  90% {
+    stroke-dasharray: 9.8 175.93;
+    stroke-dashoffset: -166.2;
+  }
+  100% {
+    stroke-dasharray: 0 175.93;
+    stroke-dashoffset: -175.93;
+  }
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
@@ -1077,6 +1139,17 @@ select:focus {
     -ms-overflow-style: none;
     /* Firefox */
     scrollbar-width: none;
+  }
+
+  /* fill-box 기준이라 그룹(원)의 중심을 축으로 회전한다 */
+  .loading-spinner-rotate {
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: loading-spinner-rotate 1.6s cubic-bezier(0.333, 0, 0.667, 1) infinite;
+  }
+
+  .loading-spinner-dash {
+    animation: loading-spinner-dash 1.6s linear infinite;
   }
 
   /* Chrome, Safari and Opera */
