@@ -10,6 +10,7 @@ export type BoardType = 'ALL' | 'NOTICE' | 'GENERAL';
 export type UserRole = 'USER' | 'ADMIN' | 'LEAD';
 
 export interface BoardConfig {
+  canRead?: boolean;
   canWrite: boolean;
   canComment: boolean;
 }
@@ -21,11 +22,13 @@ interface BoardBase {
 
 export interface BoardNavItem extends BoardBase {
   label: string;
+  isPrivate?: boolean;
   canWrite?: boolean;
 }
 
 export interface Board extends BoardBase {
   name: string;
+  isPrivate?: boolean;
   boardConfig?: BoardConfig;
 }
 
