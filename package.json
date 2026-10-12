@@ -90,7 +90,6 @@
     "hast-util-to-html": "^9.0.5",
     "isomorphic-dompurify": "^3.18.0",
     "jsqr": "^1.4.0",
-    "lottie-react": "^2.4.1",
     "lowlight": "^3.3.0",
     "lucide-react": "^0.468.0",
     "module-details-from-path": "1.0.4",
