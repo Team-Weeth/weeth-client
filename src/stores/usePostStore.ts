@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import { combine, devtools } from 'zustand/middleware';
 
 import type { PostDetail } from '@/types/board';
-import { isReferencedInContent } from '@/lib/board/getUnreferencedFiles';
+import { isFileReferencedInContent } from '@/lib/board/getUnreferencedFiles';
 
 export interface UploadFileItem {
   id: string;
@@ -135,7 +135,7 @@ export const usePostStore = create(
               (f) =>
                 f.uploaded &&
                 !(isEdit && f.isExisting) &&
-                isReferencedInContent(f.fileUrl, state.content),
+                isFileReferencedInContent(f, state.content),
             )
             .map((f) => ({
               fileName: f.fileName,

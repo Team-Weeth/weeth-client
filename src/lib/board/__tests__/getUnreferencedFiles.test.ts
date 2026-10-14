@@ -1,4 +1,8 @@
-import { isReferencedInContent, getUnreferencedFiles } from '@/lib/board/getUnreferencedFiles';
+import {
+  isReferencedInContent,
+  isFileReferencedInContent,
+  getUnreferencedFiles,
+} from '@/lib/board/getUnreferencedFiles';
 import type { FileItem } from '@/types/file';
 
 function makeFileItem(overrides: Partial<FileItem> = {}): FileItem {
@@ -101,6 +105,48 @@ describe('isReferencedInContent', () => {
       // 디코딩 비교 단계에서 양쪽 쿼리를 모두 제거하므로 base path(img)가 일치
       expect(isReferencedInContent(fileUrl, html)).toBe(true);
     });
+  });
+});
+
+describe('isFileReferencedInContent', () => {
+  // 운영에서 실제로 확인된 값. 본문에는 업로드에 쓴 S3 주소가 퍼센트 인코딩된 채로 들어가고,
+  // 조회 응답의 fileUrl은 CDN 도메인에 인코딩되지 않은 경로로 내려온다.
+  const STORAGE_KEY = 'POST/2026-10/41fc98a2_01_ES-Lab00 (1).pdf';
+  const CDN_URL = `https://cdn.weeth.kr/${STORAGE_KEY}`;
+  const S3_CONTENT =
+    '<div data-file-attachment="" data-src="https://weeth-s3-prod.s3.ap-northeast-2.amazonaws.com/POST/2026-10/41fc98a2_01_ES-Lab00%20%281%29.pdf"></div>';
+
+  it('호스트와 인코딩이 달라도 storageKey가 같으면 참조로 판정한다', () => {
+    expect(
+      isFileReferencedInContent({ fileUrl: CDN_URL, storageKey: STORAGE_KEY }, S3_CONTENT),
+    ).toBe(true);
+  });
+
+  it('storageKey가 다르면 참조로 판정하지 않는다', () => {
+    const other = { fileUrl: CDN_URL, storageKey: 'POST/2026-10/other_file.pdf' };
+    expect(isFileReferencedInContent(other, S3_CONTENT)).toBe(false);
+  });
+
+  it('storageKey가 없으면 URL 비교로 폴백한다', () => {
+    const url = 'https://example.com/image.png';
+    expect(isFileReferencedInContent({ fileUrl: url }, `<img src="${url}" />`)).toBe(true);
+    expect(isFileReferencedInContent({ fileUrl: url }, '<p>본문</p>')).toBe(false);
+  });
+
+  it('본문에 인라인 참조가 없으면 false를 반환한다', () => {
+    expect(
+      isFileReferencedInContent(
+        { fileUrl: CDN_URL, storageKey: STORAGE_KEY },
+        '<p>본문만 있음</p>',
+      ),
+    ).toBe(false);
+  });
+
+  it('쿼리스트링이 붙은 presigned URL도 경로로 매칭한다', () => {
+    const content = `<img src="https://weeth-s3-prod.s3.ap-northeast-2.amazonaws.com/${STORAGE_KEY}?X-Amz-Signature=abc" />`;
+    expect(isFileReferencedInContent({ fileUrl: CDN_URL, storageKey: STORAGE_KEY }, content)).toBe(
+      true,
+    );
   });
 });
 
