@@ -54,6 +54,21 @@ function sortByContentImageOrder(files: UploadFileItem[], content: string): Uplo
   });
 }
 
+/**
+ * 수정 저장 시 게시글에 남길 파일인지 판정한다.
+ *
+ * 첨부를 지우는 유일한 방법이 에디터에서 노드를 삭제하는 것이므로, 본문 참조 여부가 곧 유지 여부다.
+ * 다만 본문에 인라인된 적 없는 첨부(구버전 게시글)는 지울 수단 자체가 없어,
+ * 참조가 없다는 이유로 삭제하면 수정만 해도 첨부가 사라진다. 그래서 이 경우는 그대로 유지한다.
+ */
+function isKeptInPost(content: string) {
+  return (file: UploadFileItem): boolean => {
+    if (!file.uploaded) return false;
+    if (file.isExisting && !file.wasInlined) return true;
+    return isFileReferencedInContent(file, content);
+  };
+}
+
 export function useUpdatePost() {
   const router = useRouter();
   const { clubId: clubIdParam } = useParams<{ clubId: string }>();
@@ -74,10 +89,7 @@ export function useUpdatePost() {
         throw new Error('validation failed');
       }
 
-      const uploadedFiles = sortByContentImageOrder(
-        files.filter((f) => f.uploaded && (f.isExisting || isFileReferencedInContent(f, content))),
-        content,
-      );
+      const uploadedFiles = sortByContentImageOrder(files.filter(isKeptInPost(content)), content);
       const filesPayload = resolveFilesPayload(uploadedFiles, _snapshot?.fileIds ?? null);
 
       return updatePostApi(clubId!, board, postId, { title, content, files: filesPayload });
