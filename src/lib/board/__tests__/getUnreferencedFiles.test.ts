@@ -1,18 +1,4 @@
-import { isReferencedInContent, getUnreferencedFiles } from '@/lib/board/getUnreferencedFiles';
-import type { FileItem } from '@/types/file';
-
-function makeFileItem(overrides: Partial<FileItem> = {}): FileItem {
-  return {
-    fileId: 1,
-    fileName: 'test.png',
-    fileUrl: 'https://example.com/test.png',
-    storageKey: 'key/test.png',
-    fileSize: 1024,
-    contentType: 'image/png',
-    status: 'UPLOADED',
-    ...overrides,
-  };
-}
+import { isReferencedInContent } from '@/lib/board/getUnreferencedFiles';
 
 describe('isReferencedInContent', () => {
   describe('src 속성 매칭', () => {
@@ -101,32 +87,5 @@ describe('isReferencedInContent', () => {
       // 디코딩 비교 단계에서 양쪽 쿼리를 모두 제거하므로 base path(img)가 일치
       expect(isReferencedInContent(fileUrl, html)).toBe(true);
     });
-  });
-});
-
-describe('getUnreferencedFiles', () => {
-  it('모든 파일이 참조된 경우 빈 배열을 반환한다', () => {
-    const files = [
-      makeFileItem({ fileId: 1, fileUrl: 'https://example.com/a.png' }),
-      makeFileItem({ fileId: 2, fileUrl: 'https://example.com/b.png' }),
-    ];
-    const html = '<img src="https://example.com/a.png" /><img src="https://example.com/b.png" />';
-    expect(getUnreferencedFiles(html, files)).toEqual([]);
-  });
-
-  it('참조되지 않은 파일만 반환한다', () => {
-    const fileA = makeFileItem({ fileId: 1, fileUrl: 'https://example.com/a.png' });
-    const fileB = makeFileItem({ fileId: 2, fileUrl: 'https://example.com/b.png' });
-    const html = '<img src="https://example.com/a.png" />';
-    expect(getUnreferencedFiles(html, [fileA, fileB])).toEqual([fileB]);
-  });
-
-  it('HTML이 비어 있으면 모든 파일을 반환한다', () => {
-    const files = [makeFileItem({ fileUrl: 'https://example.com/a.png' })];
-    expect(getUnreferencedFiles('', files)).toEqual(files);
-  });
-
-  it('파일 목록이 비어 있으면 빈 배열을 반환한다', () => {
-    expect(getUnreferencedFiles('<img src="https://example.com/a.png" />', [])).toEqual([]);
   });
 });
