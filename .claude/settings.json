@@ -37,23 +37,13 @@
         ]
       }
     ],
-    "PostToolUse": [
-      {
-        "matcher": "Edit|Write",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash -lc 'set -o pipefail; cd \"$CLAUDE_PROJECT_DIR\" && pnpm lint:fix --quiet 2>&1 | tail -5'"
-          }
-        ]
-      }
-    ],
     "Stop": [
       {
         "hooks": [
           {
             "type": "command",
-            "command": "cd \"$CLAUDE_PROJECT_DIR\" && echo '⚡ TypeScript 검사 중...' && pnpm typecheck 2>&1 && echo '✅ 타입 에러 없음' || echo '❌ 타입 에러 발견 — 위 오류를 확인하세요'"
+            "command": "cd \"$CLAUDE_PROJECT_DIR\" && node scripts/harness/verify.mjs --stop-hook",
+            "timeout": 300
           }
         ]
       }
