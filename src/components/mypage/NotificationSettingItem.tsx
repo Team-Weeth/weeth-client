@@ -13,7 +13,9 @@ function NotificationSettingItem({ className, ...props }: NotificationSettingIte
   const { permission, isPending, enable, disable } = useFcmToken();
   // 사용자 의도(localStorage)는 최초 1회만 읽는다. permission이 초기 'unsupported'라
   // 첫 렌더의 checked는 항상 false → SSR/하이드레이션 불일치 없음.
-  const [preferenceEnabled, setPreferenceEnabled] = useState(() => getFcmPreference() === 'enabled');
+  const [preferenceEnabled, setPreferenceEnabled] = useState(
+    () => getFcmPreference() === 'enabled',
+  );
 
   // 실제 수신 여부 = 사용자 의도(enabled) AND 브라우저 권한(granted)
   const checked = preferenceEnabled && permission === 'granted';

@@ -33,9 +33,7 @@ function getExistingRegistration(): Promise<ServiceWorkerRegistration | undefine
 
 /** 현재 환경에서 웹 푸시를 시도할 수 있는지 (네이티브/SSR/미지원 브라우저 제외) */
 export function isWebPushSupportable(): boolean {
-  return (
-    !isNativeApp() && typeof window !== 'undefined' && typeof Notification !== 'undefined'
-  );
+  return !isNativeApp() && typeof window !== 'undefined' && typeof Notification !== 'undefined';
 }
 
 /** 현재 브라우저 알림 권한 상태 */
