@@ -13,7 +13,7 @@ Return ONLY this to the caller — no raw Figma JSON, no full file dumps:
 ```
 ✅ Files created/modified:
   - src/components/.../X.tsx
-  - src/components/ui/index.ts (export added)
+  - consuming component files (direct imports)
 
 Token mapping (Figma → Weeth):
   <short table, max ~15 rows>
@@ -81,7 +81,7 @@ Workflow:
 1. Map every Figma property through the cached token map.
 2. For each Figma component reference, check `components` list in the cache — if a Weeth equivalent exists, import it instead of rebuilding.
 3. `Write` the new component file.
-4. `Edit` `src/components/ui/index.ts` to add the export (if it's a UI component).
+4. Update consumers using direct imports from the component file; follow `AGENTS.md`.
 
 ## Step 5 — One-pass verification (no loop)
 
@@ -99,7 +99,7 @@ Exactly one screenshot comparison. No iterative loop in v1.
 
 ## Step 6 — Sanity check & return
 
-Run `pnpm lint --silent` on the created file path only (or skip if it's too noisy). Then return the contract from the top of this file.
+Run `pnpm exec eslint <created-or-modified-file-paths>`; report failures rather than skipping them. Then return the contract from the top of this file.
 
 ## Hard rules — cost discipline
 
@@ -107,4 +107,4 @@ Run `pnpm lint --silent` on the created file path only (or skip if it's too nois
 - Never call `get_screenshot` more than twice per run (once for verification, optionally once after a fix).
 - Never paste raw Figma JSON or full screenshots into your final message — the parent context is not for raw payloads.
 - Never invent design tokens. Surface the gap and let the user decide.
-- Never use `forwardRef`, `useMemo`/`useCallback` (React Compiler is on), or relative imports.
+- Follow `AGENTS.md` for ref props and manual memoization; use project aliases for application imports.

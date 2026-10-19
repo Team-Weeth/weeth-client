@@ -13,9 +13,11 @@ Systematically analyzes code changes to detect issues and provide actionable fix
 
 ## Arguments
 
-Use `$ARGUMENTS` to specify the review scope. Defaults to `HEAD~1` if omitted.
+Use `$ARGUMENTS` to specify the review scope. For a PR review, resolve the base using
+`.claude/rules/git-workflow.md`; use `HEAD~1` only for an explicitly requested last-commit review.
+Pass validated arguments as arguments, never as shell code.
 
-- `/code-review` → `git diff HEAD~1`
+- `/code-review` → diff against the resolved PR base
 - `/code-review --staged` → `git diff --staged`
 - `/code-review abc1234` → specific commit
 
@@ -62,11 +64,11 @@ Output must strictly follow the format in `template.md`.
 
 ### Performance
 
-- Unnecessary re-renders (missing `useMemo`/`useCallback`, inline object/array declarations)
+- Unnecessary re-renders supported by profiling or compiler diagnostics; follow the React Compiler policy in `AGENTS.md`
 - Excessive bundle size (importing entire libraries unnecessarily)
 - Missing image optimization (using `<img>` instead of `next/image`)
 - Infinite loop risk (mutating dependent state inside `useEffect`)
-- Missing memoization for expensive computations
+- Expensive computations with demonstrated performance impact; choose optimization based on evidence
 
 ### Architecture
 
@@ -75,7 +77,7 @@ Output must strictly follow the format in `template.md`.
 - Use design tokens first (hardcoded color or spacing values are forbidden)
 - Not using `cn()` (direct string concatenation for className is forbidden)
 - Not using cva variants (inline conditional className handling)
-- Missing re-export in `src/components/ui/index.ts`
+- Runtime imports must follow the direct-import policy in `AGENTS.md`; do not require barrel re-exports
 
 ### TypeScript
 

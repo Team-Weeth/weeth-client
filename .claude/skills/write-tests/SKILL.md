@@ -12,6 +12,10 @@ Analyzes the target file and writes Jest + React Testing Library tests.
 
 For strategy, rules, and file location conventions, refer to `.claude/rules/testing.md`.
 
+Before choosing a diff range, read `.claude/rules/git-workflow.md`. Set `BASE_REF`
+to the explicit base, existing PR base, or `origin/develop`, and verify the ref exists.
+For `--staged`, use only the index; do not replace it with a branch range.
+
 ## Arguments
 
 - `/write-tests src/components/ui/Button.tsx` — unit test
@@ -37,7 +41,7 @@ For strategy, rules, and file location conventions, refer to `.claude/rules/test
 ### S1. Collect changed files on the branch
 
 ```bash
-git diff main...HEAD --name-only --diff-filter=AM
+git diff "$BASE_REF"...HEAD --name-only --diff-filter=AM
 ```
 
 **Exclude** the following from the results:
@@ -160,7 +164,7 @@ If the test file already exists:
 #### 5-1. Collect test files written on the current branch
 
 ```bash
-git diff main...HEAD --name-only --diff-filter=AM | grep -E '(__tests__|\.test\.|\.spec\.)'
+git diff "$BASE_REF"...HEAD --name-only --diff-filter=AM | grep -E '(__tests__|\.test\.|\.spec\.)'
 ```
 
 #### 5-2. Derive source file paths

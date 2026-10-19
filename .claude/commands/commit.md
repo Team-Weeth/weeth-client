@@ -9,6 +9,8 @@ Use `$ARGUMENTS` to provide a commit message hint. If omitted, the message is de
 - `/commit` → auto-derive from changes
 - `/commit add button component` → use hint to compose message
 
+Read `.claude/rules/git-workflow.md` first for protected branches, staging and authorization.
+
 ## Workflow (follow in order)
 
 ### 1. Check changes
@@ -19,7 +21,7 @@ git diff --staged
 ```
 
 - If no files are staged, **stop** and notify the user
-- Direct commits to `main` are forbidden — check the current branch and abort if on `main`
+- Direct commits to `main` or `develop` are forbidden — check the current branch and abort if on `main` or `develop`
 
 ```bash
 git branch --show-current
@@ -67,20 +69,21 @@ feat: 여러 가지 수정  ← too vague
 update: 업데이트      ← invalid type
 ```
 
-### 4. Confirm with user, then commit
+### 4. Commit within the authorized scope
 
-Show the proposed commit message to the user and wait for approval before committing.
+If the user requested a commit or a completed PR, commit the reviewed task-owned changes.
+Ask only if commit authority or ownership of staged changes is unresolved.
 
 ```bash
 git commit -m "<type>: <message>"
 ```
 
-- If the user requests changes, revise and re-confirm
+- If the user requests changes, revise within the existing authorization
 - On success, print the commit hash and message
 
 ## Rules
 
-- **Never** commit directly to `main`
+- **Never** commit directly to `main` or `develop`
 - Never use `--no-verify` (hook bypass is forbidden)
 - Use `--amend` only when explicitly requested by the user
-- Never `git add` unstaged files without explicit instruction
+- Stage only explicit task-owned paths when staging is authorized by the commit/PR request
