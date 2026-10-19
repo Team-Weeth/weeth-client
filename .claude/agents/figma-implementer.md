@@ -44,7 +44,7 @@ Check for `.claude/figma-token-map.json`. This is the cached mapping from Figma 
 - **Exists and < 7 days old** → read it, skip rebuilding.
 - **Missing or stale** → build it now:
   1. `mcp__figma__get_variable_defs` on the target file (one call)
-  2. `Read` `src/app/globals.css` (tokens) + `src/components/ui/index.ts` (component inventory)
+  2. `Read` `src/app/globals.css` (tokens)
   3. Produce a JSON file:
      ```json
      {
@@ -52,13 +52,16 @@ Check for `.claude/figma-token-map.json`. This is the cached mapping from Figma 
        "figmaFileKey": "...",
        "colors": { "figmaVarName": "text-text-strong", ... },
        "spacing": { "16": "p-400", ... },
-       "typography": { "Sub1/Bold": "typo-sub1" },
-       "components": ["Button", "TextField", ...]
+       "typography": { "Sub1/Bold": "typo-sub1" }
      }
      ```
   4. `Write` it to `.claude/figma-token-map.json`.
 
-This cache is the single biggest cost saver — without it every run re-reads globals.css + index.ts.
+This cache is the single biggest cost saver — without it every run re-reads globals.css.
+
+Do not cache the component inventory. Every run, `Glob` `src/components/ui/**/*.tsx` (excluding `__tests__`)
+for the current list. `src/components/ui/index.ts` is a compatibility barrel that no longer receives new
+exports, so it is not an inventory.
 
 ## Step 3 — Fetch design context (scoped)
 
@@ -79,7 +82,7 @@ Follow `.claude/rules/component-guide.md` strictly:
 
 Workflow:
 1. Map every Figma property through the cached token map.
-2. For each Figma component reference, check `components` list in the cache — if a Weeth equivalent exists, import it instead of rebuilding.
+2. For each Figma component reference, check the globbed component inventory — if a Weeth equivalent exists, import it directly from its file instead of rebuilding.
 3. `Write` the new component file.
 4. Update consumers using direct imports from the component file; follow `AGENTS.md`.
 
