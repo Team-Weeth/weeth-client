@@ -13,7 +13,7 @@ import { CommentDirtyGuardDialog } from '@/components/board/CommentDirtyGuardDia
 import { FileList } from '@/components/board/FileList';
 import { formatShortDateTime } from '@/lib/formatTime';
 import { toDisplayFile, isImageFileByType, mapComment } from '@/lib/board';
-import { isReferencedInContent } from '@/lib/board/getUnreferencedFiles';
+import { isFileReferencedInContent } from '@/lib/board/getUnreferencedFiles';
 import { usePostDetailQuery } from '@/hooks/board/usePostDetailQuery';
 import { useCreateComment } from '@/hooks/board/useCreateComment';
 import { useUpdateComment } from '@/hooks/board/useUpdateComment';
@@ -113,7 +113,7 @@ function PostDetailContent({ initialData }: PostDetailContentProps) {
   const nonImageFiles = currentPost.fileUrls
     .filter(
       (f) =>
-        !isImageFileByType(f.contentType) && !isReferencedInContent(f.fileUrl, currentPost.content),
+        !isImageFileByType(f.contentType) && !isFileReferencedInContent(f, currentPost.content),
     )
     .map(toDisplayFile);
 
