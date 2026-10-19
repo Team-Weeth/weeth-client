@@ -26,9 +26,14 @@ Pass validated arguments as arguments, never as shell code.
 ### 1. Analyze changes
 
 ```bash
-git diff $ARGUMENTS --name-only   # list changed files
-git diff $ARGUMENTS               # full diff
+# Default PR scope: BASE_REF is resolved and validated using git-workflow.md.
+git diff --name-only "$BASE_REF"...HEAD
+git diff "$BASE_REF"...HEAD
 ```
+
+For `--staged`, run `git diff --cached --name-only` and `git diff --cached` instead.
+For an explicit single commit, validate it as a commit object and use `git show <commit>`;
+do not interpret it as a diff from that commit to the current working tree.
 
 - List changed files and assess impact
 - Check whether related test files exist

@@ -23,20 +23,21 @@ For `--staged`, use only the index; do not replace it with a branch range.
 - `/pre-pr-check` → `git diff "$BASE_REF"...HEAD`
 - `/pre-pr-check --staged` → `git diff --staged`
 - `/pre-pr-check main` → `git diff main...HEAD`
-- `/pre-pr-check abc1234` → 특정 커밋
+- `/pre-pr-check abc1234` → 해당 커밋을 base로 현재 브랜치 변경 검토
 
 ## Workflow (순서대로)
 
 ### 1. 변경 범위 파악
 
 ```bash
-# 인자 없으면 검증된 BASE_REF를 사용 (--staged 등 명시 인자는 그대로 전달)
-RANGE="${ARGUMENTS:-${BASE_REF}...HEAD}"
-
-git diff $RANGE --name-only   # 변경 파일 목록
-git diff $RANGE --stat        # 파일별 변경 라인 수
-git diff $RANGE               # 전체 diff
+# 브랜치/커밋 인자는 검증한 뒤 BASE_REF에 설정한다.
+git diff --name-only "$BASE_REF"...HEAD
+git diff --stat "$BASE_REF"...HEAD
+git diff "$BASE_REF"...HEAD
 ```
+
+`--staged` 요청은 위 명령 대신 `git diff --cached`와 그 `--name-only`, `--stat`
+형태를 사용한다. 사용자 인자를 shell 코드나 검증하지 않은 옵션으로 실행하지 않는다.
 
 - 변경 파일을 도메인/레이어별로 분류 (UI / hooks / apis / actions / app)
 - 각 파일의 전체 컨텍스트(주변 코드, import 관계)를 Read로 확인

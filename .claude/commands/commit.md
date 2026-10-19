@@ -20,7 +20,8 @@ git status
 git diff --staged
 ```
 
-- If no files are staged, **stop** and notify the user
+- If no files are staged, inspect task-owned changes and stage explicit paths when the
+  commit/PR request authorizes it. Stop only if ownership or scope is unresolved.
 - Direct commits to `main` or `develop` are forbidden — check the current branch and abort if on `main` or `develop`
 
 ```bash

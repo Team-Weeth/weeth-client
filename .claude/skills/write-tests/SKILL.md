@@ -22,7 +22,7 @@ For `--staged`, use only the index; do not replace it with a branch range.
 - `/write-tests src/hooks/useAutoScroll.ts` — hook test
 - `/write-tests src/components/board/PostList.tsx --integration` — MSW integration test
 - `/write-tests --suggest` — analyze changed files on the current branch and recommend test targets
-- `/write-tests` (omitted) — target the currently open file in the IDE, or ask the user
+- `/write-tests` (omitted) — run Suggest Mode using the resolved branch base
 
 ## Workflow (follow in order)
 
