@@ -124,6 +124,13 @@ describe('isFileReferencedInContent', () => {
     ).toBe(false);
   });
 
+  it('이름이 src로 끝나는 다른 속성은 참조로 보지 않는다', () => {
+    const content = `<div data-original-src="https://weeth-s3-prod.s3.amazonaws.com/${STORAGE_KEY}"></div>`;
+    expect(isFileReferencedInContent({ fileUrl: CDN_URL, storageKey: STORAGE_KEY }, content)).toBe(
+      false,
+    );
+  });
+
   it('쿼리스트링이 붙은 presigned URL도 경로로 매칭한다', () => {
     const content = `<img src="https://weeth-s3-prod.s3.ap-northeast-2.amazonaws.com/${STORAGE_KEY}?X-Amz-Signature=abc" />`;
     expect(isFileReferencedInContent({ fileUrl: CDN_URL, storageKey: STORAGE_KEY }, content)).toBe(
