@@ -13,7 +13,7 @@ Return ONLY this to the caller — no raw Figma JSON, no full file dumps:
 ```
 ✅ Files created/modified:
   - src/components/.../X.tsx
-  - src/components/ui/index.ts (export added)
+  - consuming component files (direct imports)
 
 Token mapping (Figma → Weeth):
   <short table, max ~15 rows>
@@ -44,7 +44,7 @@ Check for `.claude/figma-token-map.json`. This is the cached mapping from Figma 
 - **Exists and < 7 days old** → read it, skip rebuilding.
 - **Missing or stale** → build it now:
   1. `mcp__figma__get_variable_defs` on the target file (one call)
-  2. `Read` `src/app/globals.css` (tokens) + `src/components/ui/index.ts` (component inventory)
+  2. `Read` `src/app/globals.css` (tokens)
   3. Produce a JSON file:
      ```json
      {
@@ -52,13 +52,16 @@ Check for `.claude/figma-token-map.json`. This is the cached mapping from Figma 
        "figmaFileKey": "...",
        "colors": { "figmaVarName": "text-text-strong", ... },
        "spacing": { "16": "p-400", ... },
-       "typography": { "Sub1/Bold": "typo-sub1" },
-       "components": ["Button", "TextField", ...]
+       "typography": { "Sub1/Bold": "typo-sub1" }
      }
      ```
   4. `Write` it to `.claude/figma-token-map.json`.
 
-This cache is the single biggest cost saver — without it every run re-reads globals.css + index.ts.
+This cache is the single biggest cost saver — without it every run re-reads globals.css.
+
+Do not cache the component inventory. Every run, `Glob` `src/components/ui/**/*.tsx` (excluding `__tests__`)
+for the current list. `src/components/ui/index.ts` is a compatibility barrel that no longer receives new
+exports, so it is not an inventory.
 
 ## Step 3 — Fetch design context (scoped)
 
@@ -79,9 +82,9 @@ Follow `.claude/rules/component-guide.md` strictly:
 
 Workflow:
 1. Map every Figma property through the cached token map.
-2. For each Figma component reference, check `components` list in the cache — if a Weeth equivalent exists, import it instead of rebuilding.
+2. For each Figma component reference, check the globbed component inventory — if a Weeth equivalent exists, import it directly from its file instead of rebuilding.
 3. `Write` the new component file.
-4. `Edit` `src/components/ui/index.ts` to add the export (if it's a UI component).
+4. Update consumers using direct imports from the component file; follow `AGENTS.md`.
 
 ## Step 5 — One-pass verification (no loop)
 
@@ -99,7 +102,7 @@ Exactly one screenshot comparison. No iterative loop in v1.
 
 ## Step 6 — Sanity check & return
 
-Run `pnpm lint --silent` on the created file path only (or skip if it's too noisy). Then return the contract from the top of this file.
+Run `pnpm exec eslint <created-or-modified-file-paths>`; report failures rather than skipping them. Then return the contract from the top of this file.
 
 ## Hard rules — cost discipline
 
@@ -107,4 +110,4 @@ Run `pnpm lint --silent` on the created file path only (or skip if it's too nois
 - Never call `get_screenshot` more than twice per run (once for verification, optionally once after a fix).
 - Never paste raw Figma JSON or full screenshots into your final message — the parent context is not for raw payloads.
 - Never invent design tokens. Surface the gap and let the user decide.
-- Never use `forwardRef`, `useMemo`/`useCallback` (React Compiler is on), or relative imports.
+- Follow `AGENTS.md` for ref props and manual memoization; use project aliases for application imports.
