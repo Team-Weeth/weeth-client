@@ -11,6 +11,7 @@ import type { ThemeMode } from '@/types/theme';
 // import { getApiErrorMessage } from '@/utils/shared';
 import { InfoSection } from './InfoSection';
 import { LogoutConfirmDialog } from './LogoutConfirmDialog';
+import { NotificationSettingItem } from './NotificationSettingItem';
 import { SupportListItem } from './SupportListItem';
 import { ThemeModeModal } from './ThemeModeModal';
 // import { WithdrawConfirmDialog } from './WithdrawConfirmDialog';
@@ -75,6 +76,12 @@ function MyPageSettingsContent({ className, ...props }: MyPageSettingsContentPro
 
       <InfoSection title="고객지원">
         <div className="bg-container-neutral flex flex-col rounded-lg px-1 py-2">
+          <NotificationSettingItem />
+
+          <div className="tablet:px-400 my-2">
+            <div className="bg-line h-px w-full" />
+          </div>
+
           <div className="flex flex-col gap-2">
             <SupportListItem
               title="서비스 이용 약관"
