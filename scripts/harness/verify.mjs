@@ -4,7 +4,8 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 export function changedFiles(cwd, base) {
-  const git = (args) => execFileSync('git', args, { cwd, encoding: 'utf8' });
+  const git = (args) =>
+    execFileSync('git', args, { cwd, encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] });
   const lists = [
     git(['diff', '--name-only', '-z', '--diff-filter=ACMRD']),
     git(['diff', '--cached', '--name-only', '-z', '--diff-filter=ACMRD']),
@@ -16,6 +17,18 @@ export function changedFiles(cwd, base) {
     lists.push(git(['diff', '--name-only', '-z', '--diff-filter=ACMRD', `${sha}...HEAD`]));
   }
   return [...new Set(lists.flatMap((list) => list.split('\0').filter(Boolean)))].sort();
+}
+
+export function validateMetadata(files, cwd) {
+  for (const file of files) {
+    if (!['.claude/settings.json', '.mcp.json', 'package.json'].includes(file)) continue;
+    if (!existsSync(path.join(cwd, file))) continue;
+    try {
+      JSON.parse(readFileSync(path.join(cwd, file), 'utf8'));
+    } catch {
+      throw new Error(`Invalid JSON: ${file}`);
+    }
+  }
 }
 
 export function verificationPlan(files, cwd, full = false) {
@@ -94,6 +107,13 @@ function main() {
     console.log(JSON.stringify({ files, plan }, null, 2));
     return;
   }
+  // These files can be excluded by .prettierignore; still reject malformed settings.
+  validateMetadata(
+    args.includes('--full')
+      ? [...files, '.claude/settings.json', '.mcp.json', 'package.json']
+      : files,
+    cwd,
+  );
   let status = 0;
   let output = '';
   for (const [command, commandArgs] of plan) {

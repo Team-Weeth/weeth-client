@@ -5,9 +5,17 @@ import os from 'node:os';
 import path from 'node:path';
 import { test } from 'node:test';
 import { fileURLToPath } from 'node:url';
-import { changedFiles, verificationPlan, stopResult } from './verify.mjs';
+import { changedFiles, verificationPlan, stopResult, validateMetadata } from './verify.mjs';
 
 const cli = fileURLToPath(new URL('./verify.mjs', import.meta.url));
+
+test('malformed harness JSON fails even when format ignores the file', (t) => {
+  const { cwd, write } = fixture(t);
+  write('.claude/settings.json', '{');
+  assert.throws(() => validateMetadata(['.claude/settings.json'], cwd), /Invalid JSON/);
+  write('.claude/settings.json', '{}');
+  assert.doesNotThrow(() => validateMetadata(['.claude/settings.json', '.mcp.json'], cwd));
+});
 
 test('Stop CLI reports command failure with exit 2 and handles its retry before Git access', (t) => {
   const { cwd, git, write } = fixture(t);
