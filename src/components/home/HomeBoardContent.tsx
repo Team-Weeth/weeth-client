@@ -12,7 +12,8 @@ import { Button } from '@/components/ui/Button';
 import { useParams, useRouter } from 'next/navigation';
 import { useIsAdmin } from '@/hooks/shared';
 import { HomeBoardContentSkeleton } from '@/components/home/skeleton';
-import { buildPostPath, toDisplayFile, isImageFileByType } from '@/lib/board';
+import { buildPostPath } from '@/lib/board';
+import { toDisplayImages } from '@/lib/board/toDisplayImages';
 
 function HomeBoardContent() {
   const { isAdmin } = useIsAdmin();
@@ -72,9 +73,7 @@ function HomeBoardContent() {
       <main className="flex min-w-0 flex-1 flex-col gap-400">
         {posts.map((post) => {
           const isMyPost = myUserId !== undefined && post.author.id === myUserId;
-          const images = post.fileUrls
-            .filter((f) => isImageFileByType(f.contentType))
-            .map(toDisplayFile);
+          const images = toDisplayImages(post.fileUrls, post.content);
           const hasAttachment = post.fileUrls.length > 0;
 
           return (

@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import { combine, devtools } from 'zustand/middleware';
 
 import type { PostDetail } from '@/types/board';
-import { isReferencedInContent } from '@/lib/board/getUnreferencedFiles';
+import { isFileReferencedInContent } from '@/lib/board/getUnreferencedFiles';
 
 export interface UploadFileItem {
   id: string;
@@ -14,6 +14,12 @@ export interface UploadFileItem {
   contentType: string;
   uploaded: boolean;
   isExisting?: boolean;
+  /**
+   * 수정 진입 시점에 본문에 인라인 참조되어 있었는지.
+   * 인라인된 적 없는 첨부(구버전 게시글)는 에디터에서 지울 방법이 없으므로,
+   * 사용자가 지운 파일과 구분하기 위해 기록한다.
+   */
+  wasInlined?: boolean;
 }
 
 interface Snapshot {
@@ -117,6 +123,7 @@ export const usePostStore = create(
               contentType: f.contentType,
               uploaded: true,
               isExisting: true,
+              wasInlined: isFileReferencedInContent(f, post.content),
             })),
             _snapshot: { title: post.title, content: post.content, fileIds },
           },
@@ -125,18 +132,13 @@ export const usePostStore = create(
         );
       },
 
-      getPayload: (isEdit = false) => {
+      getPayload: () => {
         const state = get();
         return {
           title: state.title,
           content: state.content,
           files: state.files
-            .filter(
-              (f) =>
-                f.uploaded &&
-                !(isEdit && f.isExisting) &&
-                isReferencedInContent(f.fileUrl, state.content),
-            )
+            .filter((f) => f.uploaded && isFileReferencedInContent(f, state.content))
             .map((f) => ({
               fileName: f.fileName,
               storageKey: f.storageKey,

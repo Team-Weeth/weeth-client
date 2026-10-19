@@ -208,6 +208,77 @@ describe('useUpdatePost', () => {
     });
   });
 
+  describe('기존 파일 유지 여부', () => {
+    async function updateAndGetPayload(files: UploadFileItem[], content: string) {
+      mockGetState.mockReturnValue(makeStoreState({ files, content, _snapshot: null }));
+      mockUpdatePostApi.mockResolvedValue({ id: 1, boardId: 10 });
+
+      const queryClient = createQueryClient();
+      const { result } = renderHook(() => useUpdatePost(), { wrapper: createWrapper(queryClient) });
+
+      act(() => {
+        result.current.updatePost(1);
+      });
+
+      await waitFor(() => expect(mockUpdatePostApi).toHaveBeenCalled());
+
+      const [, , , payload] = mockUpdatePostApi.mock.calls[0] as [
+        unknown,
+        unknown,
+        unknown,
+        { files: Array<{ fileName: string }> | null },
+      ];
+      return payload;
+    }
+
+    it('본문에 인라인되어 있던 기존 파일을 본문에서 지우면 payload에서 제외한다', async () => {
+      const file = makeFile({
+        id: '1',
+        fileUrl: 'https://cdn.weeth.kr/POST/a.pdf',
+        storageKey: 'POST/a.pdf',
+        fileName: 'a.pdf',
+        isExisting: true,
+        wasInlined: true,
+      });
+
+      const payload = await updateAndGetPayload([file], '<p>첨부를 지운 본문</p>');
+
+      expect(payload.files).toEqual([]);
+    });
+
+    it('본문에 인라인된 적 없는 기존 파일은 본문에 없어도 유지한다', async () => {
+      const file = makeFile({
+        id: '1',
+        fileUrl: 'https://cdn.weeth.kr/POST/legacy.pdf',
+        storageKey: 'POST/legacy.pdf',
+        fileName: 'legacy.pdf',
+        isExisting: true,
+        wasInlined: false,
+      });
+
+      const payload = await updateAndGetPayload([file], '<p>본문만 수정</p>');
+
+      expect(payload.files?.map((f) => f.fileName)).toEqual(['legacy.pdf']);
+    });
+
+    it('본문에 여전히 인라인되어 있는 기존 파일은 유지한다', async () => {
+      const file = makeFile({
+        id: '1',
+        fileUrl: 'https://cdn.weeth.kr/POST/a.pdf',
+        storageKey: 'POST/a.pdf',
+        fileName: 'a.pdf',
+        isExisting: true,
+        wasInlined: true,
+      });
+      const content =
+        '<div data-file-attachment="" data-src="https://weeth-s3-prod.s3.amazonaws.com/POST/a.pdf"></div>';
+
+      const payload = await updateAndGetPayload([file], content);
+
+      expect(payload.files?.map((f) => f.fileName)).toEqual(['a.pdf']);
+    });
+  });
+
   describe('성공 처리', () => {
     it('성공 시 성공 토스트를 표시한다', async () => {
       mockGetState.mockReturnValue(makeStoreState());
