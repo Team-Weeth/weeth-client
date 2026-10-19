@@ -1,0 +1,20 @@
+{
+  "mcpServers": {
+    "playwright": {
+      "type": "stdio",
+      "command": "pnpm",
+      "args": ["dlx", "@playwright/mcp@0.0.83"]
+    },
+    "weeth-api": {
+      "type": "stdio",
+      "command": "pnpm",
+      "args": ["dlx", "@ivotoby/openapi-mcp-server@1.16.1"],
+      "env": {
+        "API_BASE_URL": "https://api-dev.v4.weeth.kr",
+        "OPENAPI_SPEC_PATH": "https://api-dev.v4.weeth.kr/v3/api-docs/public",
+        "TOOLS_MODE": "dynamic",
+        "VERBOSE": "false"
+      }
+    }
+  }
+}

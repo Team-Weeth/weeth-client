@@ -55,6 +55,6 @@ next-env.d.ts
 # Obsidian
 docs/.obsidian/
 
-# Figma MCP (contains API token)
-.mcp.json
+# Personal Figma metadata (contains API token)
+# Shared .mcp.json contains no credentials; keep personal MCP credentials in user/local config.
 figma_meta.json
