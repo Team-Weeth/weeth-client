@@ -68,7 +68,11 @@ function MobileNavSheet() {
       </SheetTrigger>
       <SheetContent
         side="left"
-        className="tablet:max-w-93.75 bg-container-neutral scrollbar-none top-16 h-[calc(100dvh-64px)] w-full max-w-110 overflow-y-auto"
+        className="tablet:max-w-93.75 bg-container-neutral scrollbar-none w-full max-w-110 overflow-y-auto"
+        style={{
+          top: 'calc(env(safe-area-inset-top, 0px) + 64px)',
+          height: 'calc(100dvh - env(safe-area-inset-top, 0px) - 64px)',
+        }}
       >
         <nav className="flex flex-1 flex-col gap-200 px-450 py-400" aria-label="주요 메뉴">
           {navItems

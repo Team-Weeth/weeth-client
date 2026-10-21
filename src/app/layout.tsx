@@ -22,6 +22,7 @@ export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
   maximumScale: 1,
+  viewportFit: 'cover',
 };
 
 export const metadata: Metadata = {
@@ -94,7 +95,15 @@ y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
           </>
         )}
       </head>
-      <body className={cn(inter.variable, 'w-full antialiased')}>
+      <body
+        className={cn(inter.variable, 'w-full antialiased')}
+        style={{
+          paddingTop: 'env(safe-area-inset-top)',
+          paddingLeft: 'env(safe-area-inset-left)',
+          paddingRight: 'env(safe-area-inset-right)',
+          paddingBottom: 'env(safe-area-inset-bottom)',
+        }}
+      >
         {isProduction && (
           <noscript>
             <iframe

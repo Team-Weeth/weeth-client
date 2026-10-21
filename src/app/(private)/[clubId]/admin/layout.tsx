@@ -53,7 +53,16 @@ export default async function AdminLayout({
     <UserHydrator userInfo={userInfo} clubInfo={{ clubId: resolvedClubId, clubName }}>
       <ClubIdSyncer clubId={clubId}>
         <AdminScopeProvider>
-          <div data-admin className="fixed inset-0 flex flex-col">
+          <div
+            data-admin
+            className="fixed inset-0 flex flex-col"
+            style={{
+              paddingTop: 'env(safe-area-inset-top)',
+              paddingLeft: 'env(safe-area-inset-left)',
+              paddingRight: 'env(safe-area-inset-right)',
+              paddingBottom: 'env(safe-area-inset-bottom)',
+            }}
+          >
             <Header />
             <div className="flex flex-1 overflow-hidden">
               <LNB />
