@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import Link from 'next/link';
 import { useRecentPostsQuery, useHomeQuery } from '@/hooks/home';
 import { useIntersectionObserver } from '@/hooks/board/useIntersectionObserver';
+import { useScrollRestoration } from '@/hooks/useScrollRestoration';
 import { formatMonthDay } from '@/lib/formatTime';
 import { PostActionMenu, PostCard } from '../board';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
@@ -33,6 +34,26 @@ function HomeBoardContent() {
   const { ref: sentinelRef, isIntersecting } = useIntersectionObserver({
     rootMargin: '200px',
   });
+
+  const { pendingTarget, clearPendingTarget } = useScrollRestoration(
+    `home:recent-posts:${clubId}`,
+    !isPending,
+  );
+
+  useEffect(() => {
+    if (pendingTarget === null || isFetchingNextPage) return;
+
+    const reachable = document.body.scrollHeight >= pendingTarget + window.innerHeight;
+
+    if (reachable || !hasNextPage) {
+      requestAnimationFrame(() => {
+        window.scrollTo({ top: pendingTarget, behavior: 'instant' });
+      });
+      clearPendingTarget();
+    } else {
+      fetchNextPage();
+    }
+  }, [pendingTarget, isFetchingNextPage, hasNextPage, fetchNextPage, clearPendingTarget]);
 
   useEffect(() => {
     if (isIntersecting && hasNextPage && !isFetchingNextPage) {
@@ -123,6 +144,7 @@ function HomeBoardContent() {
           );
         })}
       </main>
+      {isFetchingNextPage && <HomeBoardContentSkeleton />}
       <div ref={sentinelRef} />
     </div>
   );
