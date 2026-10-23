@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import { cookies } from 'next/headers';
 import { API_BASE_PATH } from '@/constants/api';
 import { ClubAccessPage } from '@/components/auth/invite/ClubAccessPage';
@@ -5,6 +6,25 @@ import { ClubConfirmCard } from '@/components/auth/invite/ClubConfirmCard';
 import { ClubErrorPage } from '@/components/auth/invite/ClubErrorPage';
 import { ACCESS_TOKEN_KEY } from '@/lib/apis/cookies';
 import type { Club } from '@/types';
+
+export async function generateMetadata({
+  params,
+}: ClubPageProps): Promise<Metadata> {
+  const { clubId } = await params;
+  try {
+    const response = await fetch(`${API_BASE_PATH}/clubs/${clubId}`, {
+      headers: { 'Content-Type': 'application/json' },
+      next: { revalidate: 300, tags: [`public-club-${clubId}`] },
+    });
+    if (response.ok) {
+      const json = (await response.json()) as { data: Club };
+      return { title: { absolute: `${json.data.name} | Weeth` } };
+    }
+  } catch {
+    // fall through to default
+  }
+  return { title: '동아리' };
+}
 
 interface ClubPageProps {
   params: Promise<{ clubId: string }>;

@@ -1,11 +1,23 @@
+import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
 import { cookies, headers } from 'next/headers';
 
 import { ClubAccessPage } from '@/components/auth/invite/ClubAccessPage';
 import { ClubErrorPage } from '@/components/auth/invite/ClubErrorPage';
 import { ApiError, apiServer } from '@/lib/apis/server';
-import { ACCESS_TOKEN_KEY, REFRESH_TOKEN_KEY } from '@/lib/apis/cookies';
+import { ACCESS_TOKEN_KEY, CLUB_NAME_KEY, REFRESH_TOKEN_KEY } from '@/lib/apis/cookies';
 import type { Club } from '@/types';
+
+export async function generateMetadata(): Promise<Metadata> {
+  const cookieStore = await cookies();
+  const clubName = cookieStore.get(CLUB_NAME_KEY)?.value;
+  return {
+    title: {
+      default: clubName ?? 'Weeth',
+      template: clubName ? `%s · ${clubName} | Weeth` : '%s | Weeth',
+    },
+  };
+}
 
 interface ClubLayoutProps {
   children: ReactNode;
