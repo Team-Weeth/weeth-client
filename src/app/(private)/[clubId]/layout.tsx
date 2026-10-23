@@ -12,6 +12,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const cookieStore = await cookies();
   const clubName = cookieStore.get(CLUB_NAME_KEY)?.value;
   return {
+    robots: { index: false },
     title: {
       default: clubName ?? 'Weeth',
       template: clubName ? `%s · ${clubName} | Weeth` : '%s | Weeth',
