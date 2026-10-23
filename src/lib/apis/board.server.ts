@@ -13,10 +13,11 @@ import type {
 
 export const boardServerApi = {
   /** 게시판 목록 조회 (RSC) — 거의 변하지 않으므로 30분 캐싱 */
-  getBoards: (clubId: string) =>
+  getBoards: cache((clubId: string) =>
     apiServer.get<ApiResponse<Board[]>>(`/clubs/${clubId}/boards`, {
       next: { revalidate: 1800, tags: ['boards'] },
     }),
+  ),
 
   /** 게시글 상세 조회 (RSC) — cache()로 같은 렌더 내 중복 호출 방지 */
   getPostById: cache((clubId: string, boardId: number, postId: number) =>
