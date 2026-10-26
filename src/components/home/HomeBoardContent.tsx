@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useRecentPostsQuery, useHomeQuery } from '@/hooks/home';
 import { useIntersectionObserver } from '@/hooks/board/useIntersectionObserver';
@@ -25,12 +25,15 @@ function HomeBoardContent() {
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
+    isFetchNextPageError,
     isPending,
   } = useRecentPostsQuery();
 
   const { data: myUserId } = useHomeQuery({
     select: (data) => data.myInfo.userInfo.id,
   });
+  const frameRef = useRef<number | null>(null);
+
   const { ref: sentinelRef, isIntersecting } = useIntersectionObserver({
     rootMargin: '200px',
   });
@@ -41,25 +44,38 @@ function HomeBoardContent() {
   );
 
   useEffect(() => {
-    if (pendingTarget === null || isFetchingNextPage) return;
+    if (pendingTarget === null || isFetchingNextPage || isFetchNextPageError) return;
 
     const reachable = document.body.scrollHeight >= pendingTarget + window.innerHeight;
 
     if (reachable || !hasNextPage) {
-      requestAnimationFrame(() => {
+      frameRef.current = requestAnimationFrame(() => {
         window.scrollTo({ top: pendingTarget, behavior: 'instant' });
       });
       clearPendingTarget();
     } else {
       fetchNextPage();
     }
-  }, [pendingTarget, isFetchingNextPage, hasNextPage, fetchNextPage, clearPendingTarget]);
+  }, [
+    pendingTarget,
+    isFetchingNextPage,
+    isFetchNextPageError,
+    hasNextPage,
+    fetchNextPage,
+    clearPendingTarget,
+  ]);
 
   useEffect(() => {
-    if (isIntersecting && hasNextPage && !isFetchingNextPage) {
+    return () => {
+      if (frameRef.current !== null) cancelAnimationFrame(frameRef.current);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (isIntersecting && hasNextPage && !isFetchingNextPage && !isFetchNextPageError) {
       fetchNextPage();
     }
-  }, [isIntersecting, hasNextPage, isFetchingNextPage, fetchNextPage]);
+  }, [isIntersecting, hasNextPage, isFetchingNextPage, isFetchNextPageError, fetchNextPage]);
 
   if (isPending) return <HomeBoardContentSkeleton />;
 

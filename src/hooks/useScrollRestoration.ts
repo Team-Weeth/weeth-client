@@ -20,10 +20,14 @@ function useScrollRestoration(key: string | null, ready: boolean) {
 
   const [initialSaved] = useState<number | null>(() => {
     if (typeof window === 'undefined' || !key) return null;
-    const saved = sessionStorage.getItem(`scroll:${key}`);
-    if (!saved) return null;
-    const top = parseInt(saved, 10);
-    return top > 0 ? top : null;
+    try {
+      const saved = sessionStorage.getItem(`scroll:${key}`);
+      if (!saved) return null;
+      const top = parseInt(saved, 10);
+      return top > 0 ? top : null;
+    } catch {
+      return null;
+    }
   });
 
   // 복원: ready가 true로 바뀌는 시점에 저장된 위치를 pendingTarget으로 설정
@@ -37,10 +41,14 @@ function useScrollRestoration(key: string | null, ready: boolean) {
     if (!key) return;
     return () => {
       const top = window.scrollY;
-      if (top > 0) {
-        sessionStorage.setItem(`scroll:${key}`, String(top));
-      } else {
-        sessionStorage.removeItem(`scroll:${key}`);
+      try {
+        if (top > 0) {
+          sessionStorage.setItem(`scroll:${key}`, String(top));
+        } else {
+          sessionStorage.removeItem(`scroll:${key}`);
+        }
+      } catch {
+        // storage access blocked — skip silently
       }
     };
   }, [key]);

@@ -82,6 +82,31 @@ describe('useScrollToTopOnNavigate', () => {
     });
   });
 
+  describe('쿼리만 변경된 뒤로가기 (회귀)', () => {
+    beforeEach(() => {
+      // window.location.pathname을 usePathname 목 값과 일치시켜 same-pathname popstate를 재현한다
+      window.history.pushState({}, '', '/home');
+    });
+
+    afterEach(() => {
+      window.history.replaceState({}, '', '/');
+    });
+
+    it('쿼리만 변경된 뒤로가기 후 push 내비게이션 시 window.scrollTo(0, 0)을 호출한다', () => {
+      const { rerender } = renderHook(() => useScrollToTopOnNavigate());
+      scrollToSpy.mockClear();
+
+      act(() => {
+        window.dispatchEvent(new PopStateEvent('popstate'));
+      });
+
+      mockUsePathname.mockReturnValue('/board');
+      rerender();
+
+      expect(scrollToSpy).toHaveBeenCalledWith(0, 0);
+    });
+  });
+
   it('언마운트 시 popstate 이벤트 리스너가 제거된다', () => {
     const removeListenerSpy = jest.spyOn(window, 'removeEventListener');
     const { unmount } = renderHook(() => useScrollToTopOnNavigate());

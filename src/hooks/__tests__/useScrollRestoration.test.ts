@@ -113,3 +113,31 @@ describe('저장', () => {
     expect(sessionStorage.getItem('scroll:key-a')).toBe('250');
   });
 });
+
+describe('저장소 접근 실패', () => {
+  it('getItem 실패 시 렌더 중단 없이 pendingTarget이 null이다', () => {
+    jest.spyOn(Storage.prototype, 'getItem').mockImplementation(() => {
+      throw new DOMException('Access denied');
+    });
+    const { result } = renderHook(() => useScrollRestoration('test-key', true));
+    expect(result.current.pendingTarget).toBeNull();
+  });
+
+  it('setItem 실패 시 언마운트가 에러 없이 완료된다', () => {
+    mockScrollY(500);
+    jest.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
+      throw new DOMException('Access denied');
+    });
+    const { unmount } = renderHook(() => useScrollRestoration('test-key', true));
+    expect(() => unmount()).not.toThrow();
+  });
+
+  it('removeItem 실패 시 언마운트가 에러 없이 완료된다', () => {
+    mockScrollY(0);
+    jest.spyOn(Storage.prototype, 'removeItem').mockImplementation(() => {
+      throw new DOMException('Access denied');
+    });
+    const { unmount } = renderHook(() => useScrollRestoration('test-key', true));
+    expect(() => unmount()).not.toThrow();
+  });
+});
