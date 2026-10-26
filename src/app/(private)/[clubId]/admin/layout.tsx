@@ -57,10 +57,10 @@ export default async function AdminLayout({
             data-admin
             className="fixed inset-0 flex flex-col"
             style={{
-              paddingTop: 'env(safe-area-inset-top)',
-              paddingLeft: 'env(safe-area-inset-left)',
-              paddingRight: 'env(safe-area-inset-right)',
-              paddingBottom: 'env(safe-area-inset-bottom)',
+              paddingTop: 'var(--safe-area-inset-top)',
+              paddingLeft: 'var(--safe-area-inset-left)',
+              paddingRight: 'var(--safe-area-inset-right)',
+              paddingBottom: 'var(--safe-area-inset-bottom)',
             }}
           >
             <Header />
