@@ -1,9 +1,10 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useRecentPostsQuery, useHomeQuery } from '@/hooks/home';
 import { useIntersectionObserver } from '@/hooks/board/useIntersectionObserver';
+import { useScrollRestoration } from '@/hooks/useScrollRestoration';
 import { formatMonthDay } from '@/lib/formatTime';
 import { PostActionMenu, PostCard } from '../board';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
@@ -24,21 +25,57 @@ function HomeBoardContent() {
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
+    isFetchNextPageError,
     isPending,
   } = useRecentPostsQuery();
 
   const { data: myUserId } = useHomeQuery({
     select: (data) => data.myInfo.userInfo.id,
   });
+  const frameRef = useRef<number | null>(null);
+
   const { ref: sentinelRef, isIntersecting } = useIntersectionObserver({
     rootMargin: '200px',
   });
 
+  const { pendingTarget, clearPendingTarget } = useScrollRestoration(
+    `home:recent-posts:${clubId}`,
+    !isPending,
+  );
+
   useEffect(() => {
-    if (isIntersecting && hasNextPage && !isFetchingNextPage) {
+    if (pendingTarget === null || isFetchingNextPage || isFetchNextPageError) return;
+
+    const reachable = document.body.scrollHeight >= pendingTarget + window.innerHeight;
+
+    if (reachable || !hasNextPage) {
+      frameRef.current = requestAnimationFrame(() => {
+        window.scrollTo({ top: pendingTarget, behavior: 'instant' });
+      });
+      clearPendingTarget();
+    } else {
       fetchNextPage();
     }
-  }, [isIntersecting, hasNextPage, isFetchingNextPage, fetchNextPage]);
+  }, [
+    pendingTarget,
+    isFetchingNextPage,
+    isFetchNextPageError,
+    hasNextPage,
+    fetchNextPage,
+    clearPendingTarget,
+  ]);
+
+  useEffect(() => {
+    return () => {
+      if (frameRef.current !== null) cancelAnimationFrame(frameRef.current);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (isIntersecting && hasNextPage && !isFetchingNextPage && !isFetchNextPageError) {
+      fetchNextPage();
+    }
+  }, [isIntersecting, hasNextPage, isFetchingNextPage, isFetchNextPageError, fetchNextPage]);
 
   if (isPending) return <HomeBoardContentSkeleton />;
 
@@ -123,6 +160,7 @@ function HomeBoardContent() {
           );
         })}
       </main>
+      {isFetchingNextPage && <HomeBoardContentSkeleton />}
       <div ref={sentinelRef} />
     </div>
   );
