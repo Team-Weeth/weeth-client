@@ -8,21 +8,14 @@ interface PostDetailPageProps {
   params: Promise<{ clubId: string; boardId: string; postId: string }>;
 }
 
-export async function generateMetadata({
-  params,
-}: PostDetailPageProps): Promise<Metadata> {
+export async function generateMetadata({ params }: PostDetailPageProps): Promise<Metadata> {
   const { clubId, boardId, postId } = await params;
   const boardIdNum = Number(boardId);
   const postIdNum = Number(postId);
-  if (!Number.isInteger(boardIdNum) || !Number.isInteger(postIdNum))
-    return { title: '게시글' };
+  if (!Number.isInteger(boardIdNum) || !Number.isInteger(postIdNum)) return { title: '게시글' };
 
   try {
-    const response = await boardServerApi.getPostById(
-      clubId,
-      boardIdNum,
-      postIdNum,
-    );
+    const response = await boardServerApi.getPostById(clubId, boardIdNum, postIdNum);
     if (response?.data) return { title: response.data.title };
   } catch {
     // fall through to default

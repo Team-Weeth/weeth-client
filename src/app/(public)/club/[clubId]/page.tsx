@@ -7,9 +7,7 @@ import { ClubErrorPage } from '@/components/auth/invite/ClubErrorPage';
 import { ACCESS_TOKEN_KEY } from '@/lib/apis/cookies';
 import type { Club } from '@/types';
 
-export async function generateMetadata({
-  params,
-}: ClubPageProps): Promise<Metadata> {
+export async function generateMetadata({ params }: ClubPageProps): Promise<Metadata> {
   const { clubId } = await params;
   try {
     const response = await fetch(`${API_BASE_PATH}/clubs/${clubId}`, {
@@ -18,7 +16,8 @@ export async function generateMetadata({
     });
     if (response.ok) {
       const json = (await response.json()) as { data: Club };
-      return { title: { absolute: `${json.data.name} | Weeth` } };
+      const fullTitle = `${json.data.name} | Weeth`;
+      return { title: { absolute: fullTitle }, openGraph: { title: fullTitle } };
     }
   } catch {
     // fall through to default

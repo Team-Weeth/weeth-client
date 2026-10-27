@@ -8,9 +8,7 @@ interface BoardByIdPageProps {
   params: Promise<{ clubId: string; boardId: string }>;
 }
 
-export async function generateMetadata({
-  params,
-}: BoardByIdPageProps): Promise<Metadata> {
+export async function generateMetadata({ params }: BoardByIdPageProps): Promise<Metadata> {
   const { clubId, boardId } = await params;
   const boardIdNum = Number(boardId);
   if (!boardId || !Number.isInteger(boardIdNum)) return { title: '게시판' };
@@ -18,7 +16,7 @@ export async function generateMetadata({
   try {
     const response = await boardServerApi.getBoards(clubId);
     const board = response.data?.find((b) => b.id === boardIdNum);
-    if (board) return { title: board.name };
+    if (board && board.boardConfig?.canRead !== false) return { title: board.name };
   } catch {
     // fall through to default
   }
