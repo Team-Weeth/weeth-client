@@ -1,3 +1,5 @@
+import { cache } from 'react';
+
 import { apiServer } from '@/lib/apis/server';
 import type { ApiResponse } from '@/types/common';
 import type {
@@ -11,16 +13,18 @@ import type {
 
 export const boardServerApi = {
   /** 게시판 목록 조회 (RSC) — 거의 변하지 않으므로 30분 캐싱 */
-  getBoards: (clubId: string) =>
+  getBoards: cache((clubId: string) =>
     apiServer.get<ApiResponse<Board[]>>(`/clubs/${clubId}/boards`, {
       next: { revalidate: 1800, tags: ['boards'] },
     }),
+  ),
 
-  /** 게시글 상세 조회 (RSC)*/
-  getPostById: (clubId: string, boardId: number, postId: number) =>
+  /** 게시글 상세 조회 (RSC) — cache()로 같은 렌더 내 중복 호출 방지 */
+  getPostById: cache((clubId: string, boardId: number, postId: number) =>
     apiServer.get<ApiResponse<PostDetail>>(`/clubs/${clubId}/boards/${boardId}/posts/${postId}`, {
       cache: 'no-store',
     }),
+  ),
 
   /** 공지 읽음 처리 (Server Action) */
   readAllNotices: (clubId: string, boardId: number) =>

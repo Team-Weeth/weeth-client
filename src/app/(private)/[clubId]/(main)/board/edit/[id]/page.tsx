@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
 import { boardServerApi } from '@/lib/apis/board.server';
@@ -10,6 +11,8 @@ interface PostEditPageProps {
 
 const isValidId = (value?: string): value is string =>
   typeof value === 'string' && /^\d+$/.test(value);
+
+export const metadata: Metadata = { title: '글 수정' };
 
 export default async function PostEditPage({ params, searchParams }: PostEditPageProps) {
   const { clubId, id } = await params;
