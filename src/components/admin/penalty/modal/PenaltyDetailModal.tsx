@@ -64,7 +64,7 @@ function PenaltyDetailModal({
           />
         </div>
 
-        <div className="bg-container-neutral max-tablet:pb-[max(16px,env(safe-area-inset-bottom))] max-tablet:[&>button]:flex-1 flex shrink-0 items-center justify-end gap-200 px-400 pt-400 pb-500">
+        <div className="bg-container-neutral max-tablet:pb-[max(16px,var(--safe-area-inset-bottom))] max-tablet:[&>button]:flex-1 flex shrink-0 items-center justify-end gap-200 px-400 pt-400 pb-500">
           <Button variant="secondary" size="lg" onClick={handleClose}>
             취소
           </Button>
