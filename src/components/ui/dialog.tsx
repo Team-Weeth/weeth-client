@@ -71,7 +71,7 @@ function DialogContent({
           'bg-container-neutral data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 fixed top-[50%] left-[50%] z-[80] grid w-78.75 max-w-[calc(100%-2rem)] translate-x-[-50%] translate-y-[-50%] rounded-lg border p-400 shadow-lg duration-200 outline-none sm:max-w-lg',
           isAdminScope &&
             adminMobileFullscreen &&
-            'max-tablet:inset-0 max-tablet:top-0 max-tablet:left-0 max-tablet:h-screen max-tablet:w-screen max-tablet:max-w-none max-tablet:translate-x-0 max-tablet:translate-y-0 max-tablet:rounded-none max-tablet:border-0 max-tablet:p-0',
+            'max-tablet:inset-0 max-tablet:top-0 max-tablet:left-0 max-tablet:h-screen max-tablet:w-screen max-tablet:max-w-none max-tablet:translate-x-0 max-tablet:translate-y-0 max-tablet:rounded-none max-tablet:border-0 max-tablet:px-0 max-tablet:pt-safe max-tablet:pb-safe',
           className,
         )}
         {...props}

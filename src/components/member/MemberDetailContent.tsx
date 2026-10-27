@@ -32,7 +32,7 @@ function MemberDetailContent() {
   }, [isMobile, clubId, memberId, router]);
 
   return (
-    <div className="flex min-w-0 flex-1 flex-col gap-4 px-450 pt-450 pb-[100px]">
+    <div className="flex min-w-0 flex-1 flex-col gap-4 px-450 pt-450 pb-[calc(100px+var(--safe-area-inset-bottom))]">
       <div className="flex items-center gap-1">
         <button
           type="button"
@@ -61,7 +61,10 @@ function MemberDetailContent() {
         <MemberDetailBody member={member} />
       )}
 
-      <div className="bg-background fixed right-0 bottom-0 left-0 px-450 pt-300 pb-500">
+      <div
+        className="bg-background fixed right-0 bottom-0 left-0 px-450 pt-300"
+        style={{ paddingBottom: 'calc(var(--spacing-500) + var(--safe-area-inset-bottom))' }}
+      >
         <Button variant="primary" size="lg" className="w-full" onClick={() => router.back()}>
           완료
         </Button>
