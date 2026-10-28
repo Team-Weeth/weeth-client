@@ -110,6 +110,18 @@ function PostDetailContent({ initialData }: PostDetailContentProps) {
   const isPostAuthor = currentUserId !== null && currentPost.author.id === currentUserId;
   const canComment = currentPost.boardConfig?.canComment ?? true;
 
+  const unreferencedImageHtml = currentPost.fileUrls
+    .filter(
+      (f) =>
+        isImageFileByType(f.contentType) && !isFileReferencedInContent(f, currentPost.content),
+    )
+    .map((f) => `<figure><img src="${f.fileUrl}" alt="${f.fileName}" /></figure>`)
+    .join('\n');
+
+  const contentWithImages = unreferencedImageHtml
+    ? `${currentPost.content}\n${unreferencedImageHtml}`
+    : currentPost.content;
+
   const nonImageFiles = currentPost.fileUrls
     .filter(
       (f) =>
@@ -149,7 +161,7 @@ function PostDetailContent({ initialData }: PostDetailContentProps) {
 
         <Divider />
 
-        <PostCard.Body content={currentPost.content} />
+        <PostCard.Body content={contentWithImages} />
 
         <FileList files={nonImageFiles} />
 
