@@ -3,6 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "verify:changed": "node scripts/harness/verify.mjs",
+    "verify:full": "node scripts/harness/verify.mjs --full",
+    "test:harness": "node --test scripts/harness/verify.test.mjs",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
