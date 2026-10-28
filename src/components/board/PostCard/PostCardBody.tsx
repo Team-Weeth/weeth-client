@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import DOMPurify from 'isomorphic-dompurify';
 import { cn } from '@/lib/cn';
 import { useLineClamp } from '@/hooks/useLineClamp';
@@ -52,7 +52,10 @@ function PostCardBody({ className, content, expandable = false }: PostCardBodyPr
     sanitized,
   );
 
-  const allImages = useMemo(() => extractImages(sanitized), [sanitized]);
+  const [allImages, setAllImages] = useState<FullscreenImageViewerImage[]>([]);
+  useEffect(() => {
+    setAllImages(extractImages(sanitized));
+  }, [sanitized]);
 
   const [viewerOpen, setViewerOpen] = useState(false);
   const [viewerIndex, setViewerIndex] = useState(0);
