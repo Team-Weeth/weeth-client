@@ -3,8 +3,10 @@
 import { useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
+import { trackFeedbackEntryClicked } from '@/lib/analytics/feedbackEvents';
 // import { useLeaveClubMutation } from '@/hooks/mutations/mypage/useMultiProfileMutations';
 import { cn } from '@/lib/cn';
+import { useClubFeatures } from '@/providers/club-feature-provider';
 // import { toastError, toastSuccess } from '@/stores/useToastStore';
 import { useThemeStore } from '@/stores/theme-store';
 import type { ThemeMode } from '@/types/theme';
@@ -26,6 +28,7 @@ const THEME_MODE_LABELS: Record<ThemeMode, string> = {
 function MyPageSettingsContent({ className, ...props }: MyPageSettingsContentProps) {
   const router = useRouter();
   const { clubId } = useParams<{ clubId: string }>();
+  const { feedbackFabEnabled } = useClubFeatures();
   const isBelowTablet = useMediaQuery('(max-width: 695.98px)');
   const mode = useThemeStore((state) => state.mode);
   const hasHydrated = useThemeStore((state) => state.hasHydrated);
@@ -43,6 +46,11 @@ function MyPageSettingsContent({ className, ...props }: MyPageSettingsContentPro
     }
     setSelectedThemeMode(mode);
     setIsThemeModalOpen(true);
+  };
+
+  const handleOpenFeedback = () => {
+    trackFeedbackEntryClicked({ variant: 'settings', clubId });
+    router.push(`/${clubId}/mypage/settings/feedback`);
   };
 
   const handleConfirmThemeMode = () => {
@@ -113,12 +121,23 @@ function MyPageSettingsContent({ className, ...props }: MyPageSettingsContentPro
             <div className="bg-line h-px w-full" />
           </div>
 
-          <SupportListItem
-            title="서비스 문의 메일"
-            variant="copy"
-            copyText="help@weeth.kr"
-            layout="row"
-          />
+          <div className="flex flex-col gap-2">
+            {/* 서비스 피드백 A/B: FAB(A안) 동아리는 설정 항목 대신 FAB로만 진입한다. */}
+            {!feedbackFabEnabled && (
+              <SupportListItem
+                title="서비스 피드백"
+                variant="link"
+                layout="row"
+                onClick={handleOpenFeedback}
+              />
+            )}
+            <SupportListItem
+              title="서비스 문의 메일"
+              variant="copy"
+              copyText="help@weeth.kr"
+              layout="row"
+            />
+          </div>
         </div>
       </InfoSection>
 
