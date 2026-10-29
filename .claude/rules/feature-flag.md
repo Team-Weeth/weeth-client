@@ -74,7 +74,7 @@ function MemberManagement() {
 
 This example assumes `memberManagementV2Enabled` has been registered using the steps above. Share common UI and logic between versions instead of duplicating the entire feature. Keep both versions while clubs need different behavior; remove the old implementation and flag after a temporary rollout completes.
 
-Boolean version switching is supported by this structure. Statistical A/B testing additionally requires experiment assignment and exposure/outcome measurement; those are not implemented here.
+Boolean version switching is supported by this structure. Statistical A/B testing additionally requires experiment assignment and exposure/outcome measurement; the generic structure does not provide them. The service feedback A/B (`feedbackFabEnabled`) measures through PostHog: `components/feedback/FeedbackAnalytics.tsx` registers `club_id`/`feedback_variant` super properties, and `lib/analytics/feedbackEvents.ts` holds the typed event helpers. Feedback submission is tracked inside `useCreateFeedbackMutation`, so UIs only call the entry/open helpers.
 
 ## Defaults and Refresh Behavior
 
