@@ -1,106 +1,31 @@
 ---
 name: pr-writer
-description: Analyzes code changes and generates a PR body following .github/pull_request_template.md format. Use for PR creation or PR update requests.
+description: Creates or updates a PR title and body from the complete diff against its actual base.
 ---
 
-## Step 0. Pre-flight Checks (Required — run BEFORE PR creation)
+# PR writer
 
-Run these checks and verify each passes. If a check fails on newly changed files, fix and re-run; if it fails on pre-existing issues unrelated to this branch, note it in the PR body.
+Read `.claude/rules/git-workflow.md` for base selection, staging, authorization and draft handoff.
 
-```bash
-pnpm typecheck     # TypeScript
-pnpm lint          # ESLint (0 errors; warnings ok)
-pnpm format:check  # Prettier
-pnpm build         # Next.js build
-pnpm test          # all Jest tests
-```
+## Verify the relevant scope
 
-If `pnpm typecheck` / `pnpm build` fail with missing-module errors, run `pnpm install` first and retry. If `pnpm format:check` fails on files touched in this branch, run `pnpm prettier --write <paths>` on only those files before proceeding. If `pnpm test` fails on tests unrelated to this branch's changes, note it in the PR body.
+Use the verification matrix in `AGENTS.md`. Documentation-only PRs do not require
+an application build. Runtime changes require types, lint and affected tests; build
+configuration changes also require a build. Run matching Playwright specs when
+editor flows or E2E files change, with the required development credentials available.
 
-**Playwright E2E (conditional)** — Run if any of the following apply to this branch:
-- Added or modified files under `e2e/`
-- Changed pages/components/hooks covered by E2E specs (`board/write`, `board/edit`, editor-related)
+Do not install dependencies as a generic response to every type error. Diagnose
+missing packages versus stale generated Next types. Report exact failures and skipped
+checks; do not claim they are pre-existing without baseline evidence.
 
-```bash
-pnpm exec playwright test   # DEV_ACCESS_TOKEN must be set in .env.local
-```
+## Describe the final change
 
-If new specs fail, fix and re-run before proceeding. If pre-existing specs unrelated to this branch fail, note it in the PR body.
-
-Do not proceed to Step 1 until all checks are green (or failures are confirmed pre-existing and unrelated).
-
-## Step 1. Analyze Changes
-```bash
-BASE_BRANCH=$(git remote show origin | sed -n '/HEAD branch/s/.*: //p')
-git diff "origin/${BASE_BRANCH}"...HEAD --stat
-git log "origin/${BASE_BRANCH}"...HEAD --oneline
-git diff "origin/${BASE_BRANCH}"...HEAD
-```
-
-## Step 2. Extract Issue Number from Branch Name
-```bash
-git branch --show-current
-# e.g. feat/WTH-42-button-component → issue #42
-```
-
-## Step 3. Determine PR Type
-
-| Change | PR Type |
-|--------|---------|
-| New files, new feature | 새로운 기능 추가 |
-| Bug fix | 버그 수정 |
-| Refactor, restructure | 코드 리팩토링 |
-| Typo, variable rename, tab size | 코드에 영향 없는 변경사항 |
-| Comment add/edit | 주석 추가 및 수정 |
-| README, md files | 문서 수정 |
-| package.json, CI, etc. | 빌드/패키지 매니저 수정 |
-| File/folder rename | 파일 혹은 폴더명 수정 |
-| File/folder delete | 파일 혹은 폴더 삭제 |
-
-## Step 4. Output
-
-### PR Title
-
-Generate the title using this format: `[Type] WTH-{number}: 작업 내용 요약`
-
-Map PR type → prefix:
-
-| PR Type | Prefix |
-|---------|--------|
-| 새로운 기능 추가 | `[Feat]` |
-| 버그 수정 | `[Fix]` |
-| 코드 리팩토링 | `[Refactor]` |
-| 코드에 영향 없는 변경사항 | `[Style]` |
-| 주석 추가 및 수정 | `[Chore]` |
-| 문서 수정 | `[Docs]` |
-| 빌드/패키지 매니저 수정 | `[Chore]` |
-| 파일 혹은 폴더명 수정 | `[Chore]` |
-| 파일 혹은 폴더 삭제 | `[Chore]` |
-
-Example: `[Feat] WTH-42: 회비 납부현황 페이지 구현`
-
-### PR Body
-
-Fill [template.md](template.md) with analysis results.
-Leave screenshot section with a placeholder for user to fill in.
-
-## Step 5. PR Update
-
-When updating an existing PR after additional commits, analyze only changes since last push:
-```bash
-LAST_PUSH=$(git rev-parse @{push} 2>/dev/null || git rev-parse origin/$(git branch --show-current) 2>/dev/null || echo "HEAD")
-git diff "${LAST_PUSH}" --stat
-git log "${LAST_PUSH}"..HEAD --oneline
-git diff "${LAST_PUSH}"
-```
-
-Append under existing Key Changes with a separator:
-```markdown
-#### 🔄 추가 변경사항 (2차)
-
-- change 1
-- change 2
-```
-
-- Indicate which iteration (2nd, 3rd, ...).
-- Update PR type checkboxes if changed.
+1. Resolve and validate the explicit/PR/default base using the Git workflow.
+2. Inspect `git diff "$BASE_REF"...HEAD`, `git log "$BASE_REF"..HEAD`, and local changes.
+3. Follow `.github/pull_request_template.md`. Use a Korean title with the applicable
+   [Feat], [Fix], [Refactor], [Docs] or [Chore] prefix. Include WTH only when it exists.
+4. Explain the concrete problem, final behavior, verification and limitations.
+   Do not copy example issue numbers or invent closing references.
+5. Create/update only when authorized; pass explicit base/head and use draft when requested.
+6. Verify the remote PR state. On subsequent changes, rewrite the body from the full
+   current base-to-head diff; do not append a chronological history since last push.

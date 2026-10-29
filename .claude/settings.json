@@ -23,7 +23,25 @@
       "Glob(**)",
       "Grep(**)",
       "Edit(**)",
-      "Write(**)"
+      "Write(**)",
+      "Bash(gh api:*)"
+    ],
+    "ask": [
+      "Bash(gh api *-X *)",
+      "Bash(gh api *--method *)",
+      "Bash(gh api *-f *)",
+      "Bash(gh api *-F *)",
+      "Bash(gh api *--field *)",
+      "Bash(gh api *--raw-field *)",
+      "Bash(gh api *--input *)"
+    ],
+    "deny": [
+      "Bash(gh pr merge:*)",
+      "Bash(gh api *merge*)",
+      "Bash(git push * main)",
+      "Bash(git push *:main)",
+      "Bash(git push * develop)",
+      "Bash(git push *:develop)"
     ]
   },
   "hooks": {

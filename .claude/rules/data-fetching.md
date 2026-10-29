@@ -24,7 +24,7 @@
 All API calls must go through `lib/apis/`. Do not call `fetch` directly.
 
 - Shared instance: `lib/apis/instance.ts` — wraps `fetch`, handles error and 204
-- Domain APIs: `lib/apis/{domain}.ts` — use the instance, re-export from `lib/apis/index.ts`
+- Domain APIs: `lib/apis/{domain}.ts` — use the instance and import directly from the owning domain file
 
 ```ts
 // lib/apis/post.ts
