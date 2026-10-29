@@ -9,3 +9,9 @@ export interface CreateFeedbackRequest {
   content: string;
   channel: FeedbackChannel;
 }
+
+/** 채팅 패널의 봇 메시지 문구 — title은 굵게 표시되는 첫 줄, content는 줄바꿈(\n)을 그대로 보여준다. */
+export interface FeedbackBotMessageCopy {
+  title?: string;
+  content: string;
+}
