@@ -9,7 +9,7 @@ function FeedbackChatBotMessage({ title, content, className }: FeedbackChatBotMe
   return (
     <div className={cn('text-text-normal flex flex-col gap-200 self-start', className)}>
       {title && <p className="typo-sub3 text-text-strong">{title}</p>}
-      <p className="typo-body2 break-words whitespace-pre-line">{content}</p>
+      <p className="typo-body1 break-words break-keep whitespace-pre-line">{content}</p>
     </div>
   );
 }

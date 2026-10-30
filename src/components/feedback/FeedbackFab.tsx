@@ -65,11 +65,11 @@ function FeedbackFabMenu({ className }: FeedbackFabProps) {
               type="button"
               aria-label="Weeth 메뉴"
               className={cn(
-                'bg-container-floating fixed right-[18px] bottom-[calc(18px+var(--safe-area-inset-bottom))] z-40 flex h-12 w-12 cursor-pointer items-center justify-center rounded-full shadow-[0px_4px_14px_0px_rgba(0,0,0,0.15)]',
+                'bg-container-neutral fixed right-[18px] bottom-[calc(18px+var(--safe-area-inset-bottom))] z-40 flex h-12 w-12 cursor-pointer items-center justify-center rounded-full shadow-md',
                 className,
               )}
             >
-              <Icon src={LogoInitialIcon} size={28} className="text-icon-strong" />
+              <Icon src={LogoInitialIcon} size={28} className="text-icon-normal" />
             </button>
           </DropdownMenuTrigger>
           <DropdownMenuContent side="top" align="end" sideOffset={8}>

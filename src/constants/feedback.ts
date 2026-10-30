@@ -25,3 +25,6 @@ export function shouldHideFeedbackFabOnMobile(pathname: string, clubId: string) 
     new RegExp(`^/${clubId}${route}/?$`).test(pathname),
   );
 }
+
+/** 모바일 채팅 바텀시트 높이 비율 — Figma(16016:30679)에서 812px 화면 중 743px를 차지한다. */
+export const FEEDBACK_CHAT_SHEET_SNAP_POINT = 743 / 812;
