@@ -22,7 +22,7 @@ function FeedbackPageContent({ className, ...props }: FeedbackPageContentProps) 
   }, [clubId]);
 
   return (
-    <div className={cn('flex min-w-0 flex-1 flex-col gap-4', className)} {...props}>
+    <div className={cn('tablet:gap-4 flex min-w-0 flex-1 flex-col', className)} {...props}>
       <div className="tablet:py-0 flex items-center gap-1 py-300">
         <button
           type="button"

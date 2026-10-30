@@ -68,7 +68,8 @@ describe('FeedbackPageContent', () => {
     ).toBeInTheDocument();
     expect(getTextarea()).toHaveAttribute('placeholder', '의견을 자유롭게 남겨주세요.');
     expect(getTextarea()).toHaveAttribute('maxLength', String(FEEDBACK_CONTENT_MAX_LENGTH));
-    expect(screen.getByText(`0/${FEEDBACK_CONTENT_MAX_LENGTH}`)).toBeInTheDocument();
+    // Figma에 글자 수 카운터가 없어 입력 제한(maxLength)만 확인한다.
+    expect(screen.queryByText(`0/${FEEDBACK_CONTENT_MAX_LENGTH}`)).not.toBeInTheDocument();
     expect(trackFeedbackOpened).toHaveBeenCalledWith({
       variant: 'settings',
       clubId: 'test-club-id',
@@ -103,13 +104,12 @@ describe('FeedbackPageContent', () => {
       expect(getSubmitButton()).toBeDisabled();
     });
 
-    it('내용을 입력하면 활성화되고 글자 수가 갱신된다', async () => {
+    it('내용을 입력하면 활성화된다', async () => {
       const { user } = renderPage();
 
       await user.type(getTextarea(), '좋아요');
 
       expect(getSubmitButton()).toBeEnabled();
-      expect(screen.getByText(`3/${FEEDBACK_CONTENT_MAX_LENGTH}`)).toBeInTheDocument();
     });
   });
 

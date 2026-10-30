@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import { isAxiosError } from 'axios';
-import { CharacterCountRow } from '@/components/mypage/CharacterCountRow';
 import { FeedbackBanner } from '@/components/mypage/feedback/FeedbackBanner';
 import { Button } from '@/components/ui/Button';
 import { Textarea } from '@/components/ui/Textarea';
@@ -65,36 +64,38 @@ function FeedbackForm({ onSubmitted, className, ...props }: FeedbackFormProps) {
 
   return (
     <form
-      className={cn('flex flex-col gap-800', className)}
+      // Figma 기준 간격: 데스크톱은 본문 18px 들여쓰기·입력창→버튼 40px, 모바일은 전송 버튼을 하단에 고정한다.
+      className={cn('tablet:gap-800 tablet:p-450 flex flex-col pb-[120px]', className)}
       onSubmit={handleSubmit}
       noValidate
       {...props}
     >
-      <div className="flex flex-col gap-600">
+      <div className="tablet:gap-800 flex flex-col gap-400">
         <FeedbackBanner />
-        <div className="flex flex-col gap-200">
-          <h2 className="typo-h3 text-text-strong">Weeth에 바라는 점이 있나요?</h2>
-          <p className="typo-body1 tablet:typo-body2 text-text-normal whitespace-pre-line">
-            {
-              'Weeth를 사용하면서 아쉬웠던 점이나\n새롭게 필요한 기능이 있나요?\n남겨주시면 더 나은 Weeth를 만드는 데 참고할게요 :)'
-            }
-          </p>
-        </div>
-        <div className="flex flex-col gap-200">
+        <div className="tablet:gap-600 flex flex-col gap-400">
+          <div className="flex flex-col gap-200">
+            <h2 className="typo-h3 text-text-strong">Weeth에 바라는 점이 있나요?</h2>
+            <p className="typo-body1 text-text-normal whitespace-pre-line">
+              {
+                'Weeth를 사용하면서 아쉬웠던 점이나\n새롭게 필요한 기능이 있나요?\n남겨주시면 더 나은 Weeth를 만드는 데 참고할게요 :)'
+              }
+            </p>
+          </div>
           <Textarea
             aria-label="서비스 피드백 내용"
             placeholder="의견을 자유롭게 남겨주세요."
             value={values.content}
             onChange={(event) => setValues((prev) => ({ ...prev, content: event.target.value }))}
             maxLength={FEEDBACK_CONTENT_MAX_LENGTH}
-            className="tablet:min-h-[175px] min-h-[328px] rounded-lg px-400 py-300"
+            className="typo-body1 tablet:min-h-[175px] min-h-[329px] rounded-md p-300"
           />
-          <CharacterCountRow value={values.content} maxLength={FEEDBACK_CONTENT_MAX_LENGTH} />
         </div>
       </div>
-      <Button type="submit" size="lg" className="w-full" disabled={isSubmitDisabled}>
-        전송
-      </Button>
+      <div className="tablet:static tablet:z-auto tablet:p-0 fixed inset-x-0 bottom-12 z-20 px-450">
+        <Button type="submit" size="lg" className="w-full" disabled={isSubmitDisabled}>
+          전송
+        </Button>
+      </div>
     </form>
   );
 }
