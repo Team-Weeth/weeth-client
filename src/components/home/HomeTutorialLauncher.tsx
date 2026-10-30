@@ -1,111 +1,22 @@
 'use client';
 
-import { useEffect, useState, useSyncExternalStore } from 'react';
-import dynamic from 'next/dynamic';
-import { useParams } from 'next/navigation';
-import { useHomeQuery } from '@/hooks/home';
-import {
-  HOME_TUTORIAL_SLIDES,
-  getHomeTutorialPendingKey,
-  getHomeTutorialSeenKey,
-  getHomeTutorialVariantByRole,
-} from '@/constants/home/tutorial';
-import { HomeTutorialDialog } from './HomeTutorialDialog';
+import { useHomeTutorial } from '@/hooks/home/useHomeTutorial';
+import { useClubFeatures } from '@/providers/club-feature-provider';
 import { HomeTutorialButton } from './HomeTutorialButton';
-const HomeProfileSetupModal = dynamic(() =>
-  import('./HomeProfileSetupModal').then((m) => m.HomeProfileSetupModal),
-);
-
-function subscribeTutorialSeen(callback: () => void) {
-  window.addEventListener('storage', callback);
-  return () => {
-    window.removeEventListener('storage', callback);
-  };
-}
+import { HomeTutorialHost } from './HomeTutorialHost';
 
 function HomeTutorialLauncher() {
-  const { clubId } = useParams<{ clubId: string }>();
-  const [open, setOpen] = useState(false);
-  const [autoOpenDismissed, setAutoOpenDismissed] = useState(false);
-  const [profileSetupModalOpen, setProfileSetupModalOpen] = useState(false);
-
-  const { data: role } = useHomeQuery({
-    select: (data) => data.myInfo.userInfo.role,
+  const { feedbackFabEnabled } = useClubFeatures();
+  const { tutorialVariant, slides, isOpen, openTutorial, onOpenChange } = useHomeTutorial({
+    autoOpen: true,
   });
-  const tutorialVariant = getHomeTutorialVariantByRole(role);
-  const slides = tutorialVariant ? HOME_TUTORIAL_SLIDES[tutorialVariant] : [];
-  const hasSeenTutorial = useSyncExternalStore(
-    subscribeTutorialSeen,
-    () =>
-      tutorialVariant
-        ? window.localStorage.getItem(getHomeTutorialSeenKey(clubId, tutorialVariant)) === 'true'
-        : false,
-    () => false,
-  );
-  const pendingLeadClubId = useSyncExternalStore(
-    subscribeTutorialSeen,
-    () => window.sessionStorage.getItem(getHomeTutorialPendingKey('lead')),
-    () => null,
-  );
-  const pendingMemberClubId = useSyncExternalStore(
-    subscribeTutorialSeen,
-    () => window.sessionStorage.getItem(getHomeTutorialPendingKey('member')),
-    () => null,
-  );
-  const pendingClubId =
-    tutorialVariant === 'lead'
-      ? pendingLeadClubId
-      : tutorialVariant === 'member'
-        ? pendingMemberClubId
-        : null;
-
-  const shouldAutoOpen =
-    tutorialVariant !== null && pendingClubId === clubId && !hasSeenTutorial && !autoOpenDismissed;
-  const isDialogOpen = open || shouldAutoOpen;
-
-  useEffect(() => {
-    if (role !== 'LEAD' && pendingLeadClubId === clubId) {
-      window.sessionStorage.removeItem(getHomeTutorialPendingKey('lead'));
-    }
-    if (role !== 'USER' && pendingMemberClubId === clubId) {
-      window.sessionStorage.removeItem(getHomeTutorialPendingKey('member'));
-    }
-  }, [clubId, pendingLeadClubId, pendingMemberClubId, role]);
-
-  useEffect(() => {
-    if (!tutorialVariant || pendingClubId !== clubId) return;
-    if (hasSeenTutorial) {
-      window.sessionStorage.removeItem(getHomeTutorialPendingKey(tutorialVariant));
-    }
-  }, [clubId, hasSeenTutorial, pendingClubId, tutorialVariant]);
-
-  const handleOpenChange = (nextOpen: boolean) => {
-    if (!nextOpen && shouldAutoOpen && tutorialVariant) {
-      window.localStorage.setItem(getHomeTutorialSeenKey(clubId, tutorialVariant), 'true');
-      window.sessionStorage.removeItem(getHomeTutorialPendingKey(tutorialVariant));
-      setAutoOpenDismissed(true);
-    }
-
-    setOpen(nextOpen);
-  };
+  // A안에서는 FAB의 "서비스 안내"가 다시 보기 진입점을 대신하므로 "?" 버튼을 숨긴다. 첫 방문 자동 열림은 유지한다.
+  const showTutorialButton = tutorialVariant !== null && !feedbackFabEnabled;
 
   return (
     <>
-      {tutorialVariant && <HomeTutorialButton onClick={() => setOpen(true)} />}
-
-      {slides.length > 0 && (
-        <HomeTutorialDialog
-          open={isDialogOpen}
-          onOpenChange={handleOpenChange}
-          slides={slides}
-          onSecondaryAction={(action) => {
-            if (action === 'open-profile-setup-modal') {
-              setProfileSetupModalOpen(true);
-            }
-          }}
-        />
-      )}
-      <HomeProfileSetupModal open={profileSetupModalOpen} onOpenChange={setProfileSetupModalOpen} />
+      {showTutorialButton && <HomeTutorialButton onClick={openTutorial} />}
+      <HomeTutorialHost open={isOpen} onOpenChange={onOpenChange} slides={slides} />
     </>
   );
 }

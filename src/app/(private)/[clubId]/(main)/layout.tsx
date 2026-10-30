@@ -5,6 +5,7 @@ import { homeServerApi } from '@/lib/apis/home.server';
 import { ClubFeatureProvider } from '@/providers/club-feature-provider';
 import { UserHydrator } from '@/providers/user-hydrator';
 import { FeedbackAnalytics } from '@/components/feedback/FeedbackAnalytics';
+import { FeedbackFab } from '@/components/feedback/FeedbackFab';
 import { Header, ScrollRestoration } from '@/components/layout';
 
 export default async function MainLayout({
@@ -32,6 +33,7 @@ export default async function MainLayout({
           <Header />
           {children}
         </div>
+        <FeedbackFab />
       </ClubFeatureProvider>
     </UserHydrator>
   );
