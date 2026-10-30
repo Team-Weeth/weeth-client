@@ -82,3 +82,9 @@ Boolean version switching is supported by this structure. Statistical A/B testin
 - Components outside a provider use `DEFAULT_CLUB_FEATURES`, currently all `false`. This fallback does not replace wiring the provider for a new page.
 - Values are a snapshot from the server render. The client does not poll or subscribe to Flagsmith changes. Updated settings take effect when a fresh server lookup runs, for example after refreshing the page.
 - Feature flags control UI availability and do not replace backend permission checks.
+
+## Local Overrides for Development
+
+On the local dev server only (`NODE_ENV=development`), the `weeth_dev_flag_overrides` cookie overrides fetched values. Its value is URL-encoded JSON keyed by `ClubFeatures` property names, for example `{"warningEnabled":true}`. Unknown keys and non-boolean values are ignored, and production builds never read the cookie (`src/flags/club-features/dev-overrides.ts`).
+
+Design verification specs set it through `test.use({ flagOverrides: { ... } })` in `e2e/design/design-helpers.ts`. Do not add environment-variable or hardcoded overrides for local checks.
