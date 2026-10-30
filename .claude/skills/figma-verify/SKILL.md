@@ -105,6 +105,10 @@ pnpm test:e2e:design e2e/design/<feature>.spec.ts
 자주 나오는 원인:
 
 - **lineHeight ❌**: 공용 컴포넌트의 기본 클래스(`DialogTitle`의 `leading-none` 등)가 `typo-*`를 덮는다. `cn()`(tailwind-merge)은 커스텀 `typo-*` 유틸과의 충돌을 모른다.
+- **margin이 예상보다 큼**: margin 유틸(`m*`)은 spacing이 아니라 Figma margin 이름을 따른 `--margin-*` 스케일을 쓴다. `gap-600`은 24px이지만 `mt-600`은 40px이고, 24px margin은 `mt-400`이다.
+- **바텀시트 높이 ❌**: vaul 시트는 요소 높이가 화면 전체이고 transform으로 내려간다. 높이 대신 `offsetTop`과 하단 요소의 `offsetBottom`으로 확인한다.
+- **strict mode violation**: 스크린리더용 `sr-only` 제목과 화면 제목이 함께 있는 경우다. Playwright는 1px짜리 `sr-only`도 visible로 보므로 `visible` 필터로는 안 되고, 화면 쪽 요소(`aria-hidden` 등)로 좁힌다.
+- **dev 서버에서 입력이 반영되지 않음**: 하이드레이션 전에 `fill`했기 때문이다. `expect(...).toPass()` 안에서 `fill('')`로 비운 뒤 다시 입력한다. 같은 값을 다시 넣으면 React가 변경으로 보지 않는다.
 - **색 ❌가 1~2 단위**: 허용 오차 안이면 통과한다. 그보다 크면 토큰이 잘못 연결된 것이다.
 - **borderRadius가 비정상적으로 큼**: 측정기가 짧은 변의 절반으로 자르므로 `rounded-full`은 지름의 절반으로 비교한다.
 - **측정값이 흔들림**: 애니메이션 중이다. 헬퍼가 박스가 멈출 때까지 기다리고 `reducedMotion`도 켜져 있다. 그래도 흔들리면 열림 애니메이션이 끝나는 조건을 스펙에서 기다린다.
