@@ -11,6 +11,7 @@ import {
 } from '@/components/ui/DropdownMenu';
 import { Icon } from '@/components/ui/Icon';
 import { HomeTutorialHost } from '@/components/home/HomeTutorialHost';
+import { FeedbackChat } from '@/components/feedback/FeedbackChat';
 import { FeedbackChatBotMessage } from '@/components/feedback/FeedbackChatBotMessage';
 import { FeedbackChatPanel } from '@/components/feedback/FeedbackChatPanel';
 import {
@@ -19,6 +20,7 @@ import {
 } from '@/constants/feedback';
 import { useHomeTutorial } from '@/hooks/home/useHomeTutorial';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
+import { trackFeedbackEntryClicked, trackFeedbackOpened } from '@/lib/analytics/feedbackEvents';
 import { cn } from '@/lib/cn';
 import { useClubFeatures } from '@/providers/club-feature-provider';
 
@@ -44,6 +46,7 @@ function FeedbackFabMenu({ className }: FeedbackFabProps) {
   // 프로필 설정 모달이 마운트 시점에 마이페이지 쿼리를 호출하므로 처음 열 때까지 마운트를 미룬다.
   const [tutorialMounted, setTutorialMounted] = useState(false);
   const [guideOpen, setGuideOpen] = useState(false);
+  const [feedbackOpen, setFeedbackOpen] = useState(false);
 
   const hideFab = isMobile && shouldHideFeedbackFabOnMobile(pathname, clubId);
 
@@ -54,6 +57,12 @@ function FeedbackFabMenu({ className }: FeedbackFabProps) {
       return;
     }
     setGuideOpen(true);
+  };
+
+  const handleFeedbackSelect = () => {
+    trackFeedbackEntryClicked({ variant: 'fab', clubId });
+    setFeedbackOpen(true);
+    trackFeedbackOpened({ variant: 'fab', clubId });
   };
 
   return (
@@ -74,6 +83,7 @@ function FeedbackFabMenu({ className }: FeedbackFabProps) {
           </DropdownMenuTrigger>
           <DropdownMenuContent side="top" align="end" sideOffset={8}>
             <DropdownMenuItem onSelect={handleServiceGuideSelect}>서비스 안내</DropdownMenuItem>
+            <DropdownMenuItem onSelect={handleFeedbackSelect}>서비스 피드백</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       )}
@@ -93,6 +103,8 @@ function FeedbackFabMenu({ className }: FeedbackFabProps) {
           ))}
         </div>
       </FeedbackChatPanel>
+
+      <FeedbackChat clubId={clubId} open={feedbackOpen} onOpenChange={setFeedbackOpen} />
     </>
   );
 }
