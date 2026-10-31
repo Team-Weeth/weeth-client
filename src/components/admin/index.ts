@@ -40,7 +40,6 @@ export {
 export { MemberPageContent } from './member/MemberPageContent';
 export { MemberPageHeader, type MemberPageHeaderProps } from './member/MemberPageHeader';
 export { MemberPageModals, type ForceConfirmState } from './member/MemberPageModals';
-export { MemberSearchBar, type MemberSearchBarProps } from './member/MemberSearchBar';
 export { MemberStatusBadge, type MemberStatusBadgeProps } from './member/MemberStatusBadge';
 export { MemberTable } from './member/MemberTable';
 export { MemberTopBar, type MemberTopBarProps } from './member/MemberTopBar';
