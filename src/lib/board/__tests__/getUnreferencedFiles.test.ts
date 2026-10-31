@@ -105,7 +105,13 @@ describe('isFileReferencedInContent', () => {
   });
 
   it('storageKey가 다르면 참조로 판정하지 않는다', () => {
-    const other = { fileUrl: CDN_URL, storageKey: 'POST/2026-10/other_file.pdf' };
+    // fileUrl과 storageKey가 모두 다른 파일을 가리켜야 정확한 검증이 된다.
+    // CDN_URL의 경로가 S3_CONTENT와 같으면 3단계 경로 폴백에서 매칭되므로
+    // 완전히 다른 파일의 URL을 사용한다.
+    const other = {
+      fileUrl: 'https://cdn.weeth.kr/POST/2026-10/other_file.pdf',
+      storageKey: 'POST/2026-10/other_file.pdf',
+    };
     expect(isFileReferencedInContent(other, S3_CONTENT)).toBe(false);
   });
 
@@ -136,5 +142,43 @@ describe('isFileReferencedInContent', () => {
     expect(isFileReferencedInContent({ fileUrl: CDN_URL, storageKey: STORAGE_KEY }, content)).toBe(
       true,
     );
+  });
+
+  describe('경로 전용 폴백 — CDN·S3 도메인 불일치', () => {
+    it('storageKey가 없고 CDN·S3 도메인이 달라도 경로가 같으면 참조로 판정한다', () => {
+      const cdnUrl = 'https://cdn.weeth.kr/POST/image.png';
+      const s3Html =
+        '<img src="https://weeth-s3-prod.s3.ap-northeast-2.amazonaws.com/POST/image.png" />';
+      expect(isFileReferencedInContent({ fileUrl: cdnUrl }, s3Html)).toBe(true);
+    });
+
+    it('storageKey가 없고 도메인이 달라도 경로가 다르면 참조로 판정하지 않는다', () => {
+      const cdnUrl = 'https://cdn.weeth.kr/POST/image-a.png';
+      const s3Html =
+        '<img src="https://weeth-s3-prod.s3.ap-northeast-2.amazonaws.com/POST/image-b.png" />';
+      expect(isFileReferencedInContent({ fileUrl: cdnUrl }, s3Html)).toBe(false);
+    });
+
+    it('CDN URL에 쿼리가 붙어 있어도 경로만 비교해 참조로 판정한다', () => {
+      const cdnUrl =
+        'https://cdn.weeth.kr/POST/image.png?response-content-type=image%2Fpng&token=xyz';
+      const s3Html =
+        '<img src="https://weeth-s3-prod.s3.ap-northeast-2.amazonaws.com/POST/image.png" />';
+      expect(isFileReferencedInContent({ fileUrl: cdnUrl }, s3Html)).toBe(true);
+    });
+
+    it('경로에 퍼센트 인코딩이 있어도 디코딩 후 비교해 참조로 판정한다', () => {
+      const cdnUrl = 'https://cdn.weeth.kr/POST/my%20file%20%281%29.png';
+      const s3Html =
+        '<img src="https://weeth-s3-prod.s3.ap-northeast-2.amazonaws.com/POST/my file (1).png" />';
+      expect(isFileReferencedInContent({ fileUrl: cdnUrl }, s3Html)).toBe(true);
+    });
+
+    it('storageKey가 빈 문자열로 명시된 경우에도 경로 폴백이 적용된다', () => {
+      const cdnUrl = 'https://cdn.weeth.kr/POST/image.png';
+      const s3Html =
+        '<img src="https://weeth-s3-prod.s3.ap-northeast-2.amazonaws.com/POST/image.png" />';
+      expect(isFileReferencedInContent({ fileUrl: cdnUrl, storageKey: '' }, s3Html)).toBe(true);
+    });
   });
 });
