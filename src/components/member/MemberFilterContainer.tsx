@@ -6,7 +6,7 @@ import type { ClubMemberPosition } from '@/types/member';
 import { MemberFilterDropdown } from './MemberFilterDropdown';
 import ResetIcon from '@/assets/icons/reset.svg';
 import { Icon } from '@/components/ui/Icon';
-import { MemberSearchBar } from './MemberSearchBar';
+import { SearchBar } from '@/components/ui/SearchBar';
 
 interface MemberFilterContainerProps {
   positionOptions: ClubMemberPosition[];
@@ -66,7 +66,11 @@ function MemberFilterContainer({
         )}
       </div>
       <div className="tablet:w-auto w-full">
-        <MemberSearchBar value={searchQuery} onValueChange={onSearchQueryChange} />
+        <SearchBar
+          value={searchQuery}
+          onValueChange={onSearchQueryChange}
+          placeholder="이름을 검색해 보세요"
+        />
       </div>
     </div>
   );
