@@ -40,6 +40,8 @@ function CalendarMain({ className }: CalendarMainProps) {
   const selectedSchedule = useCalendarSelectedSchedule();
   const {
     toggleDate,
+    prevMonth,
+    nextMonth,
     goToYearMonth,
     goToYearMonthDate,
     openMonthPicker,
@@ -147,6 +149,8 @@ function CalendarMain({ className }: CalendarMainProps) {
             onSelectDate={toggleDate}
             onScheduleClick={handleOpenScheduleDetail}
             onCrossMonthDateClick={(dateStr, y, m) => goToYearMonthDate(y, m, dateStr)}
+            onPrevMonth={prevMonth}
+            onNextMonth={nextMonth}
           />
         </>
       )}

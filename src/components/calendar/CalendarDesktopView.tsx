@@ -15,6 +15,8 @@ interface CalendarDesktopViewProps {
   onSelectDate: (date: string) => void;
   onScheduleClick: (schedule: ScheduleDetail) => void;
   onCrossMonthDateClick: (dateStr: string, y: number, m: number) => void;
+  onPrevMonth: () => void;
+  onNextMonth: () => void;
 }
 
 function CalendarDesktopView({
@@ -27,11 +29,21 @@ function CalendarDesktopView({
   onSelectDate,
   onScheduleClick,
   onCrossMonthDateClick,
+  onPrevMonth,
+  onNextMonth,
 }: CalendarDesktopViewProps) {
   return (
     <div className="tablet:flex hidden items-start gap-400">
       <div className="flex flex-col gap-300">
-        <CalendarMini eventDates={eventDates} />
+        <CalendarMini
+          year={year}
+          month={month}
+          selectedDate={selectedDate}
+          eventDates={eventDates}
+          onPrevMonth={onPrevMonth}
+          onNextMonth={onNextMonth}
+          onToggleDate={onSelectDate}
+        />
         <CalendarFilter />
       </div>
       <div className="flex flex-1 items-start gap-400">
