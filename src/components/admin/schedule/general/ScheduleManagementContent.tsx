@@ -5,13 +5,16 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Button } from '@/components/ui/Button';
 import { Icon } from '@/components/ui/Icon';
-import { CardinalDropdown } from '@/components/admin/CardinalDropdown';
-import { SearchBar } from '@/components/ui/SearchBar';
+import { AdminPageContainer } from '@/components/admin/AdminPageContainer';
+import { ScheduleManagementHeader } from '@/components/admin/schedule/general/ScheduleManagementHeader';
 import { CalendarGrid } from '@/components/calendar/CalendarGrid';
 import { CalendarMini } from '@/components/calendar/CalendarMini';
 import { CalendarUpcomingPanel } from '@/components/calendar/CalendarUpcomingPanel';
 import { MonthNavigator } from '@/components/admin/schedule/general/MonthNavigator';
-import { ScheduleFilterChips, type ScheduleFilter } from '@/components/admin/schedule/general/ScheduleFilterChips';
+import {
+  ScheduleFilterChips,
+  type ScheduleFilter,
+} from '@/components/admin/schedule/general/ScheduleFilterChips';
 import { CreateScheduleModal } from '@/components/admin/schedule/modal/CreateScheduleModal';
 import { EditScheduleModal } from '@/components/admin/schedule/modal/EditScheduleModal';
 import AdminCalendarEditIcon from '@/assets/icons/admin/ic_admin_calendar_edit.svg';
@@ -101,116 +104,120 @@ function ScheduleManagementContent() {
   };
 
   return (
-    <div className="tablet:p-700 flex min-w-0 flex-col gap-400 p-400">
-      {/* Header row */}
-      <div className="flex items-center justify-between gap-400">
-        <h1 className="typo-h3 text-text-strong shrink-0">일정 관리</h1>
-        <div className="flex items-center gap-300">
-          <SearchBar
-            value={searchValue}
-            onValueChange={setSearchValue}
-            placeholder="검색어를 입력하세요"
-            expandable
-          />
-          <CardinalDropdown
-            cardinals={cardinals}
-            activeCardinal={activeCardinal}
-            onSelect={setSelectedCardinalId}
-            onSelectAll={() => setSelectedCardinalId(null)}
-          />
-        </div>
-      </div>
-
-      {/* Filter chips + Month nav row */}
-      <div className="flex flex-col gap-300">
-        <ScheduleFilterChips
-          totalCount={totalCount}
-          eventCount={eventCount}
-          sessionCount={sessionCount}
-          activeFilter={activeFilter}
-          onFilterChange={setActiveFilter}
+    <AdminPageContainer>
+      <div className="tablet:p-700 flex min-w-0 flex-col gap-400 p-400">
+        {/* Header row */}
+        <ScheduleManagementHeader
+          searchValue={searchValue}
+          onSearchValueChange={setSearchValue}
+          cardinals={cardinals}
+          activeCardinal={activeCardinal}
+          onCardinalSelect={setSelectedCardinalId}
+          onCardinalSelectAll={() => setSelectedCardinalId(null)}
         />
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-300">
-            <MonthNavigator year={year} month={month} onPrev={handlePrevMonth} onNext={handleNextMonth} />
-            <button
-              type="button"
-              onClick={goToToday}
-              className="typo-caption1 text-text-alternative hover:text-text-normal cursor-pointer transition-colors"
-            >
-              오늘
-            </button>
+
+        {/* Filter chips + Month nav row */}
+        <div className="flex flex-col gap-300">
+          <ScheduleFilterChips
+            totalCount={totalCount}
+            eventCount={eventCount}
+            sessionCount={sessionCount}
+            activeFilter={activeFilter}
+            onFilterChange={setActiveFilter}
+          />
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-300">
+              <MonthNavigator
+                year={year}
+                month={month}
+                onPrev={handlePrevMonth}
+                onNext={handleNextMonth}
+              />
+              <button
+                type="button"
+                onClick={goToToday}
+                className="typo-caption1 text-text-alternative hover:text-text-normal cursor-pointer transition-colors"
+              >
+                오늘
+              </button>
+            </div>
+            <Button variant="primary" size="md" onClick={() => openCreateModal('EVENT')}>
+              <Icon src={AdminCalendarEditIcon} size={20} className="text-text-inverse mr-1" />
+              일정 생성
+            </Button>
           </div>
-          <Button variant="primary" size="md" onClick={() => openCreateModal('EVENT')}>
-            <Icon src={AdminCalendarEditIcon} size={20} className="text-text-inverse mr-1" />
-            일정 생성
-          </Button>
         </div>
-      </div>
 
-      {/* Main content: CalendarGrid + side panel */}
-      <div className="flex items-start gap-400">
-        <CalendarGrid
-          year={year}
-          month={month}
-          schedules={calendarSchedules}
-          selectedDate={selectedDate}
-          onSelectDate={handleToggleDate}
-          onScheduleClick={handleScheduleClick}
-          className="min-w-0 flex-1"
-        />
-
-        <div className="hidden flex-col gap-300 desktop:flex">
-          {/* Overview link */}
-          <Link
-            href={`/${clubId}/admin/schedule/overview`}
-            className="bg-container-neutral hover:bg-container-neutral-interaction flex w-[195px] items-center justify-between rounded-md px-[14px] py-300 transition-colors"
-          >
-            <span className="typo-caption1 text-text-normal">일정 모아보기</span>
-            <Image src={ArrowRightIcon} alt="" width={10} height={10} className="text-icon-alternative" />
-          </Link>
-
-          <CalendarMini
+        {/* Main content: CalendarGrid + side panel */}
+        <div className="flex items-start gap-400">
+          <CalendarGrid
             year={year}
             month={month}
-            selectedDate={selectedDate}
-            eventDates={eventDates}
-            onPrevMonth={handlePrevMonth}
-            onNextMonth={handleNextMonth}
-            onToggleDate={handleToggleDate}
-          />
-
-          <CalendarUpcomingPanel
             schedules={calendarSchedules}
+            selectedDate={selectedDate}
+            onSelectDate={handleToggleDate}
             onScheduleClick={handleScheduleClick}
+            className="min-w-0 flex-1"
           />
+
+          <div className="desktop:flex hidden flex-col gap-300">
+            {/* Overview link */}
+            <Link
+              href={`/${clubId}/admin/schedule/overview`}
+              className="bg-container-neutral hover:bg-container-neutral-interaction flex w-[195px] items-center justify-between rounded-md px-[14px] py-300 transition-colors"
+            >
+              <span className="typo-caption1 text-text-normal">일정 모아보기</span>
+              <Image
+                src={ArrowRightIcon}
+                alt=""
+                width={10}
+                height={10}
+                className="text-icon-alternative"
+              />
+            </Link>
+
+            <CalendarMini
+              year={year}
+              month={month}
+              selectedDate={selectedDate}
+              eventDates={eventDates}
+              onPrevMonth={handlePrevMonth}
+              onNextMonth={handleNextMonth}
+              onToggleDate={handleToggleDate}
+            />
+
+            <CalendarUpcomingPanel
+              schedules={calendarSchedules}
+              onScheduleClick={handleScheduleClick}
+            />
+          </div>
         </div>
-      </div>
 
-      {/* Modals */}
-      <CreateScheduleModal
-        open={createModalOpen}
-        onOpenChange={setCreateModalOpen}
-        cardinalNumber={activeCardinal?.cardinalNumber ?? latestCardinal?.cardinalNumber ?? null}
-        activeTab={createModalTab}
-        onActiveTabChange={setCreateModalTab}
-        onCreateSession={(body) => submitCreate(body)}
-      />
-
-      {editTarget?.type === 'EVENT' && (
-        <EditScheduleModal
-          key={editTarget.id}
-          open
-          onOpenChange={(open) => {
-            if (!open) setEditTarget(null);
-          }}
-          schedule={editTarget}
-          onDelete={handleDelete}
+        {/* Modals */}
+        <CreateScheduleModal
+          open={createModalOpen}
+          onOpenChange={setCreateModalOpen}
+          cardinalNumber={activeCardinal?.cardinalNumber ?? latestCardinal?.cardinalNumber ?? null}
+          activeTab={createModalTab}
+          onActiveTabChange={setCreateModalTab}
+          onCreateSession={(body) => submitCreate(body)}
         />
-      )}
 
-      {forceConfirmDialog}
-    </div>
+        {editTarget?.type === 'EVENT' && (
+          <EditScheduleModal
+            key={editTarget.id}
+            open
+            onOpenChange={(open) => {
+              if (!open) setEditTarget(null);
+            }}
+            schedule={editTarget}
+            onDelete={handleDelete}
+          />
+        )}
+
+        {forceConfirmDialog}
+      </div>
+    </AdminPageContainer>
   );
 }
 
