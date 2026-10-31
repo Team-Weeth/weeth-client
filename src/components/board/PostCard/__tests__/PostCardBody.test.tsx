@@ -65,9 +65,7 @@ describe('PostCardBody', () => {
     it('여러 이미지 중 두 번째를 클릭하면 initialIndex가 1로 설정된다', async () => {
       const user = userEvent.setup();
       render(
-        <PostCardBody
-          content='<img src="/a.png" alt="첫 번째" /><img src="/b.png" alt="두 번째" />'
-        />,
+        <PostCardBody content='<img src="/a.png" alt="첫 번째" /><img src="/b.png" alt="두 번째" />' />,
       );
       const imgs = screen.getAllByRole('img');
 
