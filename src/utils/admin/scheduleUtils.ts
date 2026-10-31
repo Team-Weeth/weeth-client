@@ -1,4 +1,6 @@
 import { DAY_META } from '@/constants/shared/date';
+import type { Schedule } from '@/types/admin/schedule';
+import type { ScheduleDetail } from '@/types/calendar';
 
 const INVALID_DATE_FALLBACK = '-';
 
@@ -76,4 +78,16 @@ export function formatScheduleDateTime(dateString: string): string {
 export function formatYearMonth(year: number, month: number): string {
   const shortYear = String(year).slice(2);
   return `${shortYear}년 ${month}월`;
+}
+
+/** admin Schedule → user-side ScheduleDetail 변환 (CalendarGrid/UpcomingPanel 공유용) */
+export function toCalendarScheduleDetail(s: Schedule): ScheduleDetail {
+  return {
+    id: s.id,
+    title: s.title,
+    start: s.start,
+    end: s.end,
+    type: s.type,
+    location: s.location,
+  };
 }
