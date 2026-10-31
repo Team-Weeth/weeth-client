@@ -82,10 +82,21 @@ function toDecodedPath(url: string): string {
  */
 export function isFileReferencedInContent(file: ReferenceableFile, htmlContent: string): boolean {
   const key = file.storageKey ? decodeSafely(file.storageKey).replace(/^\/+/, '') : '';
+  const srcValues = extractSrcValues(htmlContent);
 
-  if (key && extractSrcValues(htmlContent).some((v) => toDecodedPath(v).endsWith(`/${key}`))) {
+  // 1. storageKey 기반 — 호스트(CDN/S3)와 무관하게 경로로 비교
+  if (key && srcValues.some((v) => toDecodedPath(v).endsWith(`/${key}`))) {
     return true;
   }
 
-  return isReferencedInContent(file.fileUrl, htmlContent);
+  // 2. 전체 URL 비교 — 같은 호스트, 인코딩 차이 허용
+  if (isReferencedInContent(file.fileUrl, htmlContent)) return true;
+
+  // 3. 경로 전용 폴백 — storageKey가 빈 문자열이면서 CDN↔S3 도메인이 다른 경우 방어
+  const filePath = toDecodedPath(file.fileUrl);
+  if (filePath !== '/' && srcValues.some((v) => toDecodedPath(v) === filePath)) {
+    return true;
+  }
+
+  return false;
 }

@@ -45,6 +45,7 @@ export async function updatePost(
 ) {
   try {
     const response = await boardServerApi.updatePost(clubId, boardId, postId, body);
+    updateTag(`post-${postId}`);
     revalidatePath(`/${clubId}/board`, 'layout');
     revalidatePath(`/${clubId}/board/${boardId}/${postId}`);
     return response.data;
@@ -56,6 +57,7 @@ export async function updatePost(
 export async function deletePost(clubId: string, boardId: number, postId: number) {
   try {
     await boardServerApi.deletePost(clubId, boardId, postId);
+    updateTag(`post-${postId}`);
     revalidatePath(`/${clubId}/board`, 'layout');
   } catch (error) {
     rethrowWithCode(error);

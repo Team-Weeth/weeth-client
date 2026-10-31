@@ -16,10 +16,10 @@ export const boardServerApi = {
       next: { revalidate: 1800, tags: ['boards'] },
     }),
 
-  /** 게시글 상세 조회 (RSC)*/
+  /** 게시글 상세 조회 (RSC) — 수정·삭제 Server Action에서 revalidateTag(`post-${postId}`)로 무효화 */
   getPostById: (clubId: string, boardId: number, postId: number) =>
     apiServer.get<ApiResponse<PostDetail>>(`/clubs/${clubId}/boards/${boardId}/posts/${postId}`, {
-      cache: 'no-store',
+      next: { revalidate: 60, tags: [`post-${postId}`] },
     }),
 
   /** 공지 읽음 처리 (Server Action) */

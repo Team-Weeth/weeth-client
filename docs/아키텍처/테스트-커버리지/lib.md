@@ -6,38 +6,57 @@
 
 ## getUnreferencedFiles (`src/lib/board/getUnreferencedFiles.ts`)
 
-**측정일**: 2026-10-05
+**측정일**: 2026-10-31
 **테스트 파일**: `src/lib/board/__tests__/getUnreferencedFiles.test.ts`
-**총 테스트 수**: 14개
+**총 테스트 수**: 25개
 
 ### 파일별 커버리지
 
 | 파일 | Statements | Branches | Functions | Lines |
 |------|-----------|---------|---------|-------|
-| `getUnreferencedFiles.ts` | **100%** | **100%** | **100%** | **100%** |
+| `getUnreferencedFiles.ts` | 95.09% | 90.32% | **100%** | 95.09% |
 
 ### 테스트 구성
 
-#### `getUnreferencedFiles.test.ts` (14개)
+#### `isReferencedInContent` (14개)
 
-HTML 내 `src="/..."` 또는 `data-src="/..."` 속성에 URL이 참조됐는지 판별하는 유틸리티. 본문 텍스트·다른 속성 노출 방지, URL 인코딩(공백 ↔ `%20`)·HTML 엔티티(`&` ↔ `&amp;`) 변형 허용.
+HTML 내 `src`/`data-src` 속성에 URL이 참조됐는지 판별. 본문 텍스트·다른 속성 노출 방지, 공백↔`%20` 인코딩·`&`↔`&amp;` 엔티티 허용.
 
 | 케이스 | 검증 내용 |
 |--------|---------|
 | `src="url"` 포함 | `true` |
 | `data-src="url"` 포함 | `true` |
-| 본문 텍스트에만 URL 등장 | `false` (속성 외 참조 불허) |
+| 본문 텍스트에만 URL 등장 | `false` |
 | `href` 등 다른 속성 | `false` |
 | HTML에 URL 없음 | `false` |
 | HTML 빈 문자열 | `false` |
-| `fileUrl` 공백 → HTML `%20` | `true` |
-| `fileUrl` `%20` → HTML 공백 | `true` |
-| `fileUrl` `&` → HTML `&amp;` | `true` |
-| `fileUrl` 리터럴 `&amp;` vs HTML `&` | `false` (단방향 변환만 허용) |
-| `getUnreferencedFiles` — 모두 참조됨 | 빈 배열 반환 |
-| `getUnreferencedFiles` — 일부만 참조됨 | 미참조 파일만 반환 |
-| `getUnreferencedFiles` — HTML 빈 문자열 | 전체 파일 반환 |
-| `getUnreferencedFiles` — 파일 목록 빈 배열 | 빈 배열 반환 |
+| fileUrl 공백 → HTML `%20` (양방향 6케이스) | `true` |
+| fileUrl `&` → HTML `&amp;` | `true` |
+
+#### `isFileReferencedInContent` (11개)
+
+CDN↔S3 도메인 불일치 환경에서 storageKey 우선 비교 → URL 비교 → 경로 비교 순으로 폴백.
+
+| 케이스 | 검증 내용 |
+|--------|---------|
+| storageKey 일치 (CDN·S3 도메인 다름) | `true` |
+| storageKey 불일치 (파일 자체가 다름) | `false` |
+| storageKey 없음 → URL 비교로 폴백 | `true`/`false` |
+| 본문에 인라인 참조 없음 | `false` |
+| `data-original-src` 등 유사 속성명 | `false` (오탐 방지) |
+| 쿼리 붙은 presigned URL | `true` |
+| CDN·S3 도메인 다름 + 동일 경로 | `true` (3단계 경로 폴백) |
+| CDN·S3 도메인 다름 + 다른 경로 | `false` |
+| CDN URL에 쿼리 + S3 src에 쿼리 없음 | `true` (쿼리 제거 후 경로 비교) |
+| 경로 퍼센트 인코딩 차이 | `true` (디코딩 후 비교) |
+| `storageKey: ''` 명시 + 경로 일치 | `true` |
+
+### 미커버 분기
+
+| 라인 | 내용 | 이유 |
+|------|------|------|
+| 59–61 | `decodeSafely` catch 블록 | 잘못된 퍼센트 인코딩(`%ZZ` 등)이어야 트리거. 방어 코드로 실사용 불가 경로 |
+| 71–72 | `toDecodedPath` catch 블록 | `new URL()`이 예외를 던지는 상대 경로 입력이어야 트리거. 동일하게 방어 코드 |
 
 ---
 
