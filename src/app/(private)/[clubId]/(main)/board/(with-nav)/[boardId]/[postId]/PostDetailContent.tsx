@@ -112,8 +112,7 @@ function PostDetailContent({ initialData }: PostDetailContentProps) {
 
   const unreferencedImageHtml = currentPost.fileUrls
     .filter(
-      (f) =>
-        isImageFileByType(f.contentType) && !isFileReferencedInContent(f, currentPost.content),
+      (f) => isImageFileByType(f.contentType) && !isFileReferencedInContent(f, currentPost.content),
     )
     .map((f) => `<figure><img src="${f.fileUrl}" alt="${f.fileName}" /></figure>`)
     .join('\n');
@@ -130,7 +129,7 @@ function PostDetailContent({ initialData }: PostDetailContentProps) {
     .map(toDisplayFile);
 
   return (
-    <div className="bg-container-neutral flex flex-1 flex-col items-center overflow-hidden rounded-(--radius-lg)">
+    <main className="bg-container-neutral flex flex-1 flex-col items-center overflow-hidden rounded-(--radius-lg)">
       <PostDetailHeader />
 
       <div className="flex flex-col items-start gap-600 self-stretch px-450 pt-450">
@@ -238,7 +237,7 @@ function PostDetailContent({ initialData }: PostDetailContentProps) {
         onConfirm={onNavGuardConfirm}
         onCancel={onNavGuardCancel}
       />
-    </div>
+    </main>
   );
 }
 
