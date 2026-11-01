@@ -157,7 +157,7 @@ function AdminCalendarGrid({
                 data-calendar-cell={cell.dateStr}
                 onClick={handleCellClick}
                 className={cn(
-                  'flex flex-col items-start justify-self-stretch overflow-hidden p-[6px]',
+                  'flex flex-col items-start justify-self-stretch overflow-hidden pt-300 pr-200 pb-[6px] pl-[6px]',
                   (cell.isCurrentMonth || onCrossMonthDateClick) && 'cursor-pointer',
                   !isLastRow && 'border-line border-b',
                   !isLastCol && 'border-line border-r',
@@ -181,8 +181,7 @@ function AdminCalendarGrid({
                     aria-pressed={isSelected}
                     disabled={!cell.isCurrentMonth}
                     className={cn(
-                      'flex size-5 shrink-0 cursor-pointer items-center justify-center rounded-full text-center transition-colors',
-                      isTodayHighlighted || isSelected ? 'typo-caption1' : 'typo-caption2',
+                      'typo-caption2 flex size-5 shrink-0 cursor-pointer items-center justify-center rounded-full text-center transition-colors',
                       circleBg,
                       dateTextColor,
                       !circleBg && cell.isCurrentMonth && 'hover:bg-container-neutral-alternative',
