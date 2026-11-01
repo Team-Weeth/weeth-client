@@ -23,23 +23,27 @@ function ScheduleManagementHeader({
   onCardinalSelectAll,
 }: ScheduleManagementHeaderProps) {
   return (
-    <div className="flex items-center justify-between gap-400">
+    <div className="mb-500 flex items-center justify-between self-stretch">
       <div className="flex items-center gap-200">
         <h1 className="typo-h2 text-text-strong shrink-0">일정 관리</h1>
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
-              <button type="button" aria-label="도움말">
+              <button
+                type="button"
+                aria-label="도움말"
+                className="flex items-center justify-center"
+              >
                 <Icon src={InfoCircleIcon} size={24} className="text-icon-disabled" />
               </button>
             </TooltipTrigger>
             <TooltipContent
               variant="dark-sm"
               side="bottom"
-              sideOffset={4}
+              sideOffset={8}
               align="start"
-              alignOffset={-128}
-              className="max-w-[280px]"
+              alignOffset={-110}
+              className="max-w-[539px]"
             >
               일반 일정과 세션 일정을 추가하고 수정하는 페이지입니다. 동아리 활동과 정기 모임 일정을
               관리할 수 있습니다.
