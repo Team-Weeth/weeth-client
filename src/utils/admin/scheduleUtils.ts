@@ -76,8 +76,7 @@ export function formatScheduleDateTime(dateString: string): string {
 }
 
 export function formatYearMonth(year: number, month: number): string {
-  const shortYear = String(year).slice(2);
-  return `${shortYear}년 ${month}월`;
+  return `${year}.${String(month).padStart(2, '0')}`;
 }
 
 /** admin Schedule → user-side ScheduleDetail 변환 (CalendarGrid/UpcomingPanel 공유용) */
