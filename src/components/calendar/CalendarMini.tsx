@@ -24,7 +24,9 @@ function CalendarMini({ eventDates = [], className }: CalendarMiniProps) {
   const month = useCalendarMonth();
   const selectedDate = useCalendarSelectedDate();
   const { prevMonth, nextMonth, toggleDate } = useCalendarActions();
+
   const cells = buildCalendarCells(year, month);
+
   const hasEvent = (cell: (typeof cells)[number]) => {
     if (!cell.isCurrentMonth) return false;
     return eventDates.some(
