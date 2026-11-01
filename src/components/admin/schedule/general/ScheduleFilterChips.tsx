@@ -14,7 +14,11 @@ interface ScheduleFilterChipsProps {
   className?: string;
 }
 
-const CHIPS: { key: ScheduleFilter; label: string; countKey: 'totalCount' | 'eventCount' | 'sessionCount' }[] = [
+const CHIPS: {
+  key: ScheduleFilter;
+  label: string;
+  countKey: 'totalCount' | 'eventCount' | 'sessionCount';
+}[] = [
   { key: 'all', label: '전체', countKey: 'totalCount' },
   { key: 'EVENT', label: '일반 일정', countKey: 'eventCount' },
   { key: 'SESSION', label: '세션', countKey: 'sessionCount' },
@@ -31,7 +35,7 @@ function ScheduleFilterChips({
   const counts = { totalCount, eventCount, sessionCount };
 
   return (
-    <div className={cn('flex items-center gap-200', className)}>
+    <div className={cn('flex items-center gap-[5px]', className)}>
       {CHIPS.map(({ key, label, countKey }) => {
         const isActive = activeFilter === key;
         return (
@@ -40,16 +44,13 @@ function ScheduleFilterChips({
             type="button"
             onClick={() => onFilterChange(key)}
             className={cn(
-              'typo-caption1 flex cursor-pointer items-center gap-100 rounded-full px-300 py-200 transition-colors',
+              'typo-button2 flex min-w-[40px] cursor-pointer items-center justify-center rounded-[10px] px-400 py-200 transition-colors',
               isActive
-                ? 'bg-button-primary text-text-inverse'
-                : 'bg-container-neutral text-text-alternative hover:bg-container-neutral-interaction',
+                ? 'bg-button-neutral text-text-strong border border-transparent'
+                : 'border-line text-text-normal hover:bg-container-neutral-interaction border',
             )}
           >
-            {label}
-            <span className={cn('typo-caption2', isActive ? 'text-text-inverse' : 'text-text-disabled')}>
-              {counts[countKey]}
-            </span>
+            {label} {counts[countKey]}
           </button>
         );
       })}
