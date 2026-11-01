@@ -10,7 +10,7 @@ import { Icon } from '@/components/ui/Icon';
 import type { Cardinal } from '@/types/admin/cardinal';
 import type { MemberSortBy } from '@/utils/admin/memberPageUtils';
 import { CardinalPillList } from './CardinalPillList';
-import { SearchBar } from '@/components/ui/SearchBar';
+import { MemberSearchBar } from './MemberSearchBar';
 import { MemberViewToggle, type MemberViewMode } from './MemberViewToggle';
 
 interface MemberPageHeaderProps {
@@ -77,7 +77,7 @@ function MemberPageHeader({
         <h1 className="typo-h2 text-text-strong">멤버 목록</h1>
 
         <div className="flex items-center gap-400">
-          <SearchBar value={searchQuery} onValueChange={onSearchQueryChange} expandable />
+          <MemberSearchBar value={searchQuery} onValueChange={onSearchQueryChange} />
           <div className="bg-line h-3.5 w-px" aria-hidden />
           <button
             type="button"
