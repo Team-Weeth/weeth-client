@@ -22,7 +22,7 @@ function AdminCalendarUpcomingPanel({
   return (
     <div
       className={cn(
-        'border-line bg-container-neutral flex w-[258px] flex-col items-start gap-[14px] rounded-[15px] border px-400 py-450',
+        'border-line bg-container-neutral flex w-full flex-col items-start gap-[14px] rounded-[15px] border px-400 py-450',
         className,
       )}
     >

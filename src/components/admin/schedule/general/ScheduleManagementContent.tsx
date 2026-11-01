@@ -161,7 +161,7 @@ function ScheduleManagementContent() {
               className="desktop:col-start-1 desktop:row-start-2 min-w-0"
             />
 
-            <div className="desktop:col-start-2 desktop:row-start-2 desktop:flex hidden max-h-[638px] flex-col items-start gap-500 self-start rounded-lg bg-neutral-200 p-500">
+            <div className="tablet:flex desktop:col-start-2 desktop:row-start-2 desktop:max-h-[638px] desktop:self-start hidden flex-col items-start gap-500 self-stretch rounded-lg bg-neutral-200 p-500">
               <Link
                 href={`/${clubId}/admin/schedule/overview`}
                 className={cn(
@@ -181,6 +181,7 @@ function ScheduleManagementContent() {
                 onPrevMonth={handlePrevMonth}
                 onNextMonth={handleNextMonth}
                 onToggleDate={handleToggleDate}
+                className="desktop:flex hidden"
               />
 
               <AdminCalendarUpcomingPanel
