@@ -56,7 +56,7 @@ function CalendarMini({
               type="button"
               aria-label="이전 달"
               onClick={onPrevMonth}
-              className="text-icon-alternative bg-container-neutral flex size-5 cursor-pointer items-center justify-center rounded-sm"
+              className="bg-container-neutral text-icon-alternative flex size-5 cursor-pointer items-center justify-center rounded-sm"
             >
               <Icon src={ArrowLeftIcon} size={8} className="text-icon-alternative" />
             </button>
@@ -64,7 +64,7 @@ function CalendarMini({
               type="button"
               aria-label="다음 달"
               onClick={onNextMonth}
-              className="text-icon-alternative bg-container-neutral flex size-5 cursor-pointer items-center justify-center rounded-sm"
+              className="bg-container-neutral text-icon-alternative flex size-5 cursor-pointer items-center justify-center rounded-sm"
             >
               <Icon src={ArrowRightIcon} size={8} className="text-icon-alternative" />
             </button>
