@@ -39,11 +39,7 @@ function CalendarUpcomingPanel({
           </p>
         ) : (
           schedules.map((schedule) => (
-            <UpcomingItem
-              key={schedule.id}
-              schedule={schedule}
-              onScheduleClick={onScheduleClick}
-            />
+            <UpcomingItem key={schedule.id} schedule={schedule} onScheduleClick={onScheduleClick} />
           ))
         )}
       </div>
