@@ -7,7 +7,7 @@ import ArrowRightIcon from '@/assets/icons/arrow_right.svg';
 import { DAY_META, DAY_HEADER_COLOR } from '@/constants/shared/date';
 import { buildCalendarCells, getCalendarCellColors } from '@/utils/shared/calendar';
 
-interface AdminCalendarMiniProps {
+interface CalendarMiniProps {
   year: number;
   month: number;
   selectedDate?: string | null;
@@ -19,7 +19,7 @@ interface AdminCalendarMiniProps {
   className?: string;
 }
 
-function AdminCalendarMini({
+function CalendarMini({
   year,
   month,
   selectedDate,
@@ -28,7 +28,7 @@ function AdminCalendarMini({
   onNextMonth,
   onToggleDate,
   className,
-}: AdminCalendarMiniProps) {
+}: CalendarMiniProps) {
   const cells = buildCalendarCells(year, month);
 
   const hasEvent = (cell: (typeof cells)[number]) => {
@@ -130,4 +130,4 @@ function AdminCalendarMini({
   );
 }
 
-export { AdminCalendarMini, type AdminCalendarMiniProps };
+export { CalendarMini, type CalendarMiniProps };

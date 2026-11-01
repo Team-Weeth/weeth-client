@@ -7,9 +7,9 @@ import { Button, buttonVariants } from '@/components/ui/Button';
 import { Icon } from '@/components/ui/Icon';
 import { AdminPageContainer } from '@/components/admin/AdminPageContainer';
 import { ScheduleManagementHeader } from '@/components/admin/schedule/general/ScheduleManagementHeader';
-import { AdminCalendarGrid } from '@/components/admin/schedule/AdminCalendarGrid';
-import { AdminCalendarMini } from '@/components/admin/schedule/AdminCalendarMini';
-import { AdminCalendarUpcomingPanel } from '@/components/admin/schedule/AdminCalendarUpcomingPanel';
+import { CalendarGrid } from '@/components/admin/schedule/calendar/CalendarGrid';
+import { CalendarMini } from '@/components/admin/schedule/calendar/CalendarMini';
+import { CalendarUpcomingPanel } from '@/components/admin/schedule/calendar/CalendarUpcomingPanel';
 import { MonthNavigator } from '@/components/admin/schedule/general/MonthNavigator';
 import {
   ScheduleFilterChips,
@@ -151,7 +151,7 @@ function ScheduleManagementContent() {
               </Button>
             </div>
 
-            <AdminCalendarGrid
+            <CalendarGrid
               year={year}
               month={month}
               schedules={calendarSchedules}
@@ -173,7 +173,7 @@ function ScheduleManagementContent() {
                 <Icon src={ArrowRightIcon} size={10} />
               </Link>
 
-              <AdminCalendarMini
+              <CalendarMini
                 year={year}
                 month={month}
                 selectedDate={selectedDate}
@@ -184,7 +184,7 @@ function ScheduleManagementContent() {
                 className="desktop:flex hidden"
               />
 
-              <AdminCalendarUpcomingPanel
+              <CalendarUpcomingPanel
                 schedules={calendarSchedules}
                 onScheduleClick={handleScheduleClick}
               />

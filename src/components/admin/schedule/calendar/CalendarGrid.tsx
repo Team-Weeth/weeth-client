@@ -17,7 +17,7 @@ const SCHEDULE_TAG_VARIANT: Record<string, TagProps['variant']> = {
   EVENT: 'secondary',
 };
 
-interface AdminCalendarGridProps {
+interface CalendarGridProps {
   year: number;
   month: number;
   schedules?: ScheduleDetail[];
@@ -28,7 +28,7 @@ interface AdminCalendarGridProps {
   className?: string;
 }
 
-function AdminCalendarGrid({
+function CalendarGrid({
   year,
   month,
   schedules = [],
@@ -37,7 +37,7 @@ function AdminCalendarGrid({
   onScheduleClick,
   onCrossMonthDateClick,
   className,
-}: AdminCalendarGridProps) {
+}: CalendarGridProps) {
   const cells = buildCalendarCells(year, month);
   const totalRows = cells.length / 7;
 
@@ -238,4 +238,4 @@ function AdminCalendarGrid({
   );
 }
 
-export { AdminCalendarGrid, type AdminCalendarGridProps };
+export { CalendarGrid, type CalendarGridProps };

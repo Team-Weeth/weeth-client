@@ -8,17 +8,17 @@ import ArrowRightIcon from '@/assets/icons/arrow_right.svg';
 import { formatSessionDateParts } from '@/utils/shared/date';
 import type { ScheduleDetail } from '@/types/calendar';
 
-interface AdminCalendarUpcomingPanelProps {
+interface CalendarUpcomingPanelProps {
   schedules: ScheduleDetail[];
   onScheduleClick?: (schedule: ScheduleDetail) => void;
   className?: string;
 }
 
-function AdminCalendarUpcomingPanel({
+function CalendarUpcomingPanel({
   schedules,
   onScheduleClick,
   className,
-}: AdminCalendarUpcomingPanelProps) {
+}: CalendarUpcomingPanelProps) {
   return (
     <div
       className={cn(
@@ -39,7 +39,7 @@ function AdminCalendarUpcomingPanel({
           </p>
         ) : (
           schedules.map((schedule) => (
-            <AdminUpcomingItem
+            <UpcomingItem
               key={schedule.id}
               schedule={schedule}
               onScheduleClick={onScheduleClick}
@@ -53,12 +53,12 @@ function AdminCalendarUpcomingPanel({
 
 const SOFT_TAG_CLASS = 'typo-caption1 bg-text-alternative/10 text-text-alternative';
 
-interface AdminUpcomingItemProps {
+interface UpcomingItemProps {
   schedule: ScheduleDetail;
   onScheduleClick?: (schedule: ScheduleDetail) => void;
 }
 
-function AdminUpcomingItem({ schedule, onScheduleClick }: AdminUpcomingItemProps) {
+function UpcomingItem({ schedule, onScheduleClick }: UpcomingItemProps) {
   const { time } = formatSessionDateParts(schedule.start);
   const dotColor = SCHEDULE_DOT_COLOR[schedule.type] ?? 'bg-brand-primary';
 
@@ -89,4 +89,4 @@ function AdminUpcomingItem({ schedule, onScheduleClick }: AdminUpcomingItemProps
   );
 }
 
-export { AdminCalendarUpcomingPanel, type AdminCalendarUpcomingPanelProps };
+export { CalendarUpcomingPanel, type CalendarUpcomingPanelProps };
