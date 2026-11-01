@@ -18,6 +18,7 @@ export {
 } from './MemberPositionEditor';
 export { MemberPageHeader, type MemberPageHeaderProps } from './MemberPageHeader';
 export { MemberPageModals, type ForceConfirmState } from './MemberPageModals';
+export { MemberSearchBar, type MemberSearchBarProps } from './MemberSearchBar';
 export { MemberStatusBadge, type MemberStatusBadgeProps } from './MemberStatusBadge';
 export { MemberTopBar, type MemberTopBarProps } from './MemberTopBar';
 export {

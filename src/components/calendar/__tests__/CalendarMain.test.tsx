@@ -126,10 +126,7 @@ function mockStore(overrides: { year: number; month: number; selectedDate?: stri
   useCalendarSelectedSchedule.mockReturnValue(null);
   useCalendarActions.mockReturnValue({
     toggleDate: jest.fn(),
-    prevMonth: jest.fn(),
-    nextMonth: jest.fn(),
     goToYearMonth: jest.fn(),
-    goToYearMonthDate: jest.fn(),
     openMonthPicker: jest.fn(),
     closeMonthPicker: jest.fn(),
     openScheduleDetail: jest.fn(),

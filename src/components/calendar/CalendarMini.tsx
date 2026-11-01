@@ -6,29 +6,24 @@ import ArrowLeftIcon from '@/assets/icons/arrow_left.svg';
 import ArrowRightIcon from '@/assets/icons/arrow_right.svg';
 import { DAY_META, DAY_HEADER_COLOR } from '@/constants/shared/date';
 import { buildCalendarCells, getCalendarCellColors } from '@/utils/shared/calendar';
+import {
+  useCalendarYear,
+  useCalendarMonth,
+  useCalendarSelectedDate,
+  useCalendarActions,
+} from '@/stores/useCalendarStore';
 
 interface CalendarMiniProps {
-  year: number;
-  month: number;
-  selectedDate?: string | null;
   /** Dates with a schedule dot indicator */
   eventDates?: Date[];
-  onPrevMonth: () => void;
-  onNextMonth: () => void;
-  onToggleDate: (dateStr: string) => void;
   className?: string;
 }
 
-function CalendarMini({
-  year,
-  month,
-  selectedDate,
-  eventDates = [],
-  onPrevMonth,
-  onNextMonth,
-  onToggleDate,
-  className,
-}: CalendarMiniProps) {
+function CalendarMini({ eventDates = [], className }: CalendarMiniProps) {
+  const year = useCalendarYear();
+  const month = useCalendarMonth();
+  const selectedDate = useCalendarSelectedDate();
+  const { prevMonth, nextMonth, toggleDate } = useCalendarActions();
   const cells = buildCalendarCells(year, month);
 
   const hasEvent = (cell: (typeof cells)[number]) => {
@@ -55,16 +50,16 @@ function CalendarMini({
             <button
               type="button"
               aria-label="이전 달"
-              onClick={onPrevMonth}
-              className="bg-container-neutral text-icon-alternative flex size-5 cursor-pointer items-center justify-center rounded-sm"
+              onClick={prevMonth}
+              className="text-icon-alternative bg-container-neutral flex size-5 cursor-pointer items-center justify-center rounded-sm"
             >
               <Icon src={ArrowLeftIcon} size={8} className="text-icon-alternative" />
             </button>
             <button
               type="button"
               aria-label="다음 달"
-              onClick={onNextMonth}
-              className="bg-container-neutral text-icon-alternative flex size-5 cursor-pointer items-center justify-center rounded-sm"
+              onClick={nextMonth}
+              className="text-icon-alternative bg-container-neutral flex size-5 cursor-pointer items-center justify-center rounded-sm"
             >
               <Icon src={ArrowRightIcon} size={8} className="text-icon-alternative" />
             </button>
@@ -106,7 +101,7 @@ function CalendarMini({
                 aria-label={`${cell.dateStr}${cell.isToday ? ' (오늘)' : ''}`}
                 aria-pressed={isSelected}
                 disabled={!cell.isCurrentMonth}
-                onClick={() => cell.isCurrentMonth && onToggleDate(cell.dateStr)}
+                onClick={() => cell.isCurrentMonth && toggleDate(cell.dateStr)}
                 className={cn(
                   'typo-caption2 relative flex h-[26px] w-6 cursor-pointer flex-col items-center justify-center justify-self-start rounded-[4px] text-center transition-colors',
                   cellBg,

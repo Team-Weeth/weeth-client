@@ -24,7 +24,7 @@ function CalendarUpcomingPanel({
   return (
     <div
       className={cn(
-        'bg-container-neutral flex max-h-[346px] shrink-0 flex-col items-start rounded-md px-[14px] pt-[14px] pb-200',
+        'bg-container-neutral flex max-h-[346px] w-[273px] shrink-0 flex-col items-start rounded-md px-[14px] pt-[14px] pb-200',
         className,
       )}
     >
