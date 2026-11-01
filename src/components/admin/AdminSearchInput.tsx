@@ -24,20 +24,20 @@ function AdminSearchInput({
   return (
     <div
       className={cn(
-        'bg-container-neutral-alternative flex items-center gap-[10px] rounded-sm px-400 py-300',
+        'flex items-center gap-[10px] rounded-sm bg-neutral-200 px-400 py-300',
         className,
       )}
       onClick={() => inputRef.current?.focus()}
       {...props}
     >
-      <Icon src={SearchIcon} size={24} className="text-icon-normal shrink-0" />
+      <Icon src={SearchIcon} size={20} className="text-icon-normal shrink-0" />
       <input
         ref={inputRef}
         type="text"
         value={value}
         onChange={(e) => onValueChange(e.target.value)}
         placeholder={placeholder}
-        className="typo-body2 text-text-normal placeholder:text-text-alternative min-w-0 flex-1 bg-transparent focus:outline-none"
+        className="typo-body1 text-text-normal placeholder:text-text-alternative min-w-0 flex-1 bg-transparent focus:outline-none"
       />
       {value && (
         <button
