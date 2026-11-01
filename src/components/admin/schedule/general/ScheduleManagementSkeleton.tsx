@@ -53,7 +53,7 @@ function ScheduleManagementSkeleton() {
         </div>
 
         {/* Side panel skeleton */}
-        <div className="hidden flex-col gap-300 desktop:flex">
+        <div className="desktop:flex hidden flex-col gap-300">
           <Skeleton className="h-10 w-[195px] rounded-md" />
           <Skeleton className="h-[200px] w-[195px] rounded-md" />
           <Skeleton className="h-[200px] w-[273px] rounded-md" />
