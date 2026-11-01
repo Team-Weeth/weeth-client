@@ -2,14 +2,14 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
-import { Button } from '@/components/ui/Button';
+import { cn } from '@/lib/cn';
+import { Button, buttonVariants } from '@/components/ui/Button';
 import { Icon } from '@/components/ui/Icon';
 import { AdminPageContainer } from '@/components/admin/AdminPageContainer';
 import { ScheduleManagementHeader } from '@/components/admin/schedule/general/ScheduleManagementHeader';
-import { CalendarGrid } from '@/components/calendar/CalendarGrid';
-import { CalendarMini } from '@/components/calendar/CalendarMini';
-import { CalendarUpcomingPanel } from '@/components/calendar/CalendarUpcomingPanel';
+import { AdminCalendarGrid } from '@/components/admin/schedule/AdminCalendarGrid';
+import { AdminCalendarMini } from '@/components/admin/schedule/AdminCalendarMini';
+import { AdminCalendarUpcomingPanel } from '@/components/admin/schedule/AdminCalendarUpcomingPanel';
 import { MonthNavigator } from '@/components/admin/schedule/general/MonthNavigator';
 import {
   ScheduleFilterChips,
@@ -17,7 +17,7 @@ import {
 } from '@/components/admin/schedule/general/ScheduleFilterChips';
 import { CreateScheduleModal } from '@/components/admin/schedule/modal/CreateScheduleModal';
 import { EditScheduleModal } from '@/components/admin/schedule/modal/EditScheduleModal';
-import AdminCalendarEditIcon from '@/assets/icons/admin/ic_admin_calendar_edit.svg';
+import AdminPlusIcon from '@/assets/icons/admin/ic_admin_plus.svg';
 import ArrowRightIcon from '@/assets/icons/arrow_right.svg';
 import { useClubId } from '@/stores';
 import { useCardinalSelector } from '@/hooks/useCardinalSelector';
@@ -105,7 +105,7 @@ function ScheduleManagementContent() {
 
   return (
     <AdminPageContainer>
-      <div className="tablet:p-700 flex min-w-0 flex-col gap-400 p-400">
+      <div className="tablet:p-700 flex min-w-0 flex-col p-400">
         {/* Header row */}
         <ScheduleManagementHeader
           searchValue={searchValue}
@@ -116,8 +116,8 @@ function ScheduleManagementContent() {
           onCardinalSelectAll={() => setSelectedCardinalId(null)}
         />
 
-        {/* Filter chips + Month nav row */}
-        <div className="flex flex-col gap-300">
+        {/* Filter chips + Month nav row + CalendarGrid */}
+        <div className="flex flex-col gap-[22px]">
           <ScheduleFilterChips
             totalCount={totalCount}
             eventCount={eventCount}
@@ -125,71 +125,69 @@ function ScheduleManagementContent() {
             activeFilter={activeFilter}
             onFilterChange={setActiveFilter}
           />
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-300">
-              <MonthNavigator
-                year={year}
-                month={month}
-                onPrev={handlePrevMonth}
-                onNext={handleNextMonth}
-              />
-              <button
-                type="button"
-                onClick={goToToday}
-                className="typo-caption1 text-text-alternative hover:text-text-normal cursor-pointer transition-colors"
-              >
-                오늘
-              </button>
+
+          {/* Month nav row + CalendarGrid + side panel */}
+          {/* desktop: 2-col grid — MonthNav in [1,1], CalendarGrid in [2,1], side panel in [2,2] */}
+          <div className="desktop:grid desktop:[grid-template-columns:minmax(0,1fr)_auto] desktop:gap-x-400 desktop:gap-y-300 flex min-w-0 flex-col gap-300">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-500">
+                <MonthNavigator
+                  year={year}
+                  month={month}
+                  onPrev={handlePrevMonth}
+                  onNext={handleNextMonth}
+                />
+                <button
+                  type="button"
+                  onClick={goToToday}
+                  className="border-line typo-caption1 text-text-normal flex cursor-pointer items-center justify-center rounded-full border px-300 py-200 transition-colors hover:border-neutral-500"
+                >
+                  오늘
+                </button>
+              </div>
+              <Button variant="primary" size="md" onClick={() => openCreateModal('EVENT')}>
+                <Icon src={AdminPlusIcon} size={20} className="text-text-inverse mr-1" />
+                일정 생성
+              </Button>
             </div>
-            <Button variant="primary" size="md" onClick={() => openCreateModal('EVENT')}>
-              <Icon src={AdminCalendarEditIcon} size={20} className="text-text-inverse mr-1" />
-              일정 생성
-            </Button>
-          </div>
-        </div>
 
-        {/* Main content: CalendarGrid + side panel */}
-        <div className="flex items-start gap-400">
-          <CalendarGrid
-            year={year}
-            month={month}
-            schedules={calendarSchedules}
-            selectedDate={selectedDate}
-            onSelectDate={handleToggleDate}
-            onScheduleClick={handleScheduleClick}
-            className="min-w-0 flex-1"
-          />
-
-          <div className="desktop:flex hidden flex-col gap-300">
-            {/* Overview link */}
-            <Link
-              href={`/${clubId}/admin/schedule/overview`}
-              className="bg-container-neutral hover:bg-container-neutral-interaction flex w-[195px] items-center justify-between rounded-md px-[14px] py-300 transition-colors"
-            >
-              <span className="typo-caption1 text-text-normal">일정 모아보기</span>
-              <Image
-                src={ArrowRightIcon}
-                alt=""
-                width={10}
-                height={10}
-                className="text-icon-alternative"
-              />
-            </Link>
-
-            <CalendarMini
+            <AdminCalendarGrid
               year={year}
               month={month}
+              schedules={calendarSchedules}
               selectedDate={selectedDate}
-              eventDates={eventDates}
-              onPrevMonth={handlePrevMonth}
-              onNextMonth={handleNextMonth}
-              onToggleDate={handleToggleDate}
+              onSelectDate={handleToggleDate}
+              onScheduleClick={handleScheduleClick}
+              className="desktop:col-start-1 desktop:row-start-2 min-w-0"
             />
 
-            <CalendarUpcomingPanel
-              schedules={calendarSchedules}
-              onScheduleClick={handleScheduleClick}
-            />
+            <div className="desktop:col-start-2 desktop:row-start-2 desktop:flex hidden max-h-[638px] flex-col items-start gap-500 self-start rounded-lg bg-neutral-200 p-500">
+              <Link
+                href={`/${clubId}/admin/schedule/overview`}
+                className={cn(
+                  buttonVariants({ variant: 'secondary', size: 'md' }),
+                  'w-full gap-100',
+                )}
+              >
+                일정 모아보기
+                <Icon src={ArrowRightIcon} size={10} />
+              </Link>
+
+              <AdminCalendarMini
+                year={year}
+                month={month}
+                selectedDate={selectedDate}
+                eventDates={eventDates}
+                onPrevMonth={handlePrevMonth}
+                onNextMonth={handleNextMonth}
+                onToggleDate={handleToggleDate}
+              />
+
+              <AdminCalendarUpcomingPanel
+                schedules={calendarSchedules}
+                onScheduleClick={handleScheduleClick}
+              />
+            </div>
           </div>
         </div>
 
