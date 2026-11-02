@@ -21,7 +21,6 @@ const inter = Inter({
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
-  maximumScale: 1,
   viewportFit: 'cover',
 };
 
@@ -66,6 +65,13 @@ export default function RootLayout({
   return (
     <html lang="ko" suppressHydrationWarning>
       <head>
+        <link
+          rel="preload"
+          href="/fonts/PretendardVariable.woff2"
+          as="font"
+          type="font/woff2"
+          crossOrigin="anonymous"
+        />
         <script
           dangerouslySetInnerHTML={{
             __html: `(function(){try{var isLanding=/^\\/landing(?:\\/|$)/.test(location.pathname);if(isLanding){document.documentElement.classList.remove('dark');return;}var t=localStorage.getItem('weeth-theme');var mode='auto';if(t){var parsed=JSON.parse(t);var state=parsed&&parsed.state?parsed.state:{};mode=state.mode||'auto';}var prefersDark=window.matchMedia('(prefers-color-scheme: dark)').matches;var shouldDark=mode==='auto'?prefersDark:mode==='dark';document.documentElement.classList.toggle('dark',shouldDark);}catch(e){}})()`,
