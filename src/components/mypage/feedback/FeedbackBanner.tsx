@@ -22,7 +22,8 @@ function FeedbackBanner({
   return (
     <div
       className={cn(
-        'tablet:h-[214px] relative h-[108px] w-full overflow-hidden rounded-lg',
+        // 폭에 비례해 높이를 정하고(940→214) 좁아지면 108에서 멈춰 가운데를 자른다(모바일 339×108).
+        'relative aspect-[940/214] min-h-[108px] w-full overflow-hidden rounded-lg',
         className,
       )}
       {...props}
