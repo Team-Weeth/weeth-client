@@ -15,7 +15,7 @@
 
 [**weeth.kr 바로가기**](https://weeth.kr)
 
-<sub>[미리보기](#미리보기) · [주요 기능](#주요-기능) · [기술 스택](#기술-스택) · [시작하기](#시작하기) · [프로젝트 구조](#프로젝트-구조)</sub>
+<sub>[미리보기](#미리보기) · [주요 기능](#주요-기능) · [기술 스택](#기술-스택) · [시작하기](#시작하기) · [프로젝트 구조](#프로젝트-구조) · [팀원](#팀원)</sub>
 
 </div>
 
@@ -300,6 +300,20 @@ src/
 ```
 
 `[clubId]` 동적 세그먼트가 곧 클럽 컨텍스트입니다. 사용자는 URL을 따라 클럽을 바꿔가며 활동합니다.
+
+<br />
+
+## 팀원
+
+<table>
+  <tr>
+    <td align="center"><a href="https://github.com/JIN921"><img src="https://github.com/JIN921.png" width="92" /><br /><sub><b>이유진</b></sub></a></td>
+    <td align="center"><a href="https://github.com/hyxklee"><img src="https://github.com/hyxklee.png" width="92" /><br /><sub><b>이강혁</b></sub></a></td>
+    <td align="center"><a href="https://github.com/dalzzy"><img src="https://github.com/dalzzy.png" width="92" /><br /><sub><b>다현</b></sub></a></td>
+    <td align="center"><a href="https://github.com/nabbang6"><img src="https://github.com/nabbang6.png" width="92" /><br /><sub><b>나영</b></sub></a></td>
+    <td align="center"><a href="https://github.com/woneeeee"><img src="https://github.com/woneeeee.png" width="92" /><br /><sub><b>지원</b></sub></a></td>
+  </tr>
+</table>
 
 <br />
 
