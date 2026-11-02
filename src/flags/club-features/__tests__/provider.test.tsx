@@ -1,4 +1,5 @@
 import { render, screen } from '@testing-library/react';
+import { DEFAULT_CLUB_FEATURES } from '@/flags/club-features/definitions';
 import { ClubFeatureProvider, useClubFeatures } from '@/providers/club-feature-provider';
 
 function WarningFeature() {
@@ -20,11 +21,15 @@ it('reads the current club snapshot through intermediate components and updates 
     </section>
   );
   const { rerender } = render(
-    <ClubFeatureProvider features={{ warningEnabled: true }}>{content}</ClubFeatureProvider>,
+    <ClubFeatureProvider features={{ ...DEFAULT_CLUB_FEATURES, warningEnabled: true }}>
+      {content}
+    </ClubFeatureProvider>,
   );
   expect(screen.getByText('경고 ON')).toBeInTheDocument();
   rerender(
-    <ClubFeatureProvider features={{ warningEnabled: false }}>{content}</ClubFeatureProvider>,
+    <ClubFeatureProvider features={{ ...DEFAULT_CLUB_FEATURES, warningEnabled: false }}>
+      {content}
+    </ClubFeatureProvider>,
   );
   expect(screen.getByText('경고 OFF')).toBeInTheDocument();
 });
