@@ -29,6 +29,8 @@ interface ReplyItemProps {
   canEdit?: boolean;
   onEdit?: (content: string, files: CreatePostFile[] | null) => Promise<boolean> | boolean;
   onDelete?: () => void;
+  /** 작성자(아바타+이름) 클릭 시 호출 — 전달 시에만 클릭 가능해진다 */
+  onAuthorClick?: () => void;
 }
 
 function ReplyItem({
@@ -44,6 +46,7 @@ function ReplyItem({
   canEdit = true,
   onEdit,
   onDelete,
+  onAuthorClick,
 }: ReplyItemProps) {
   const activeEditId = useActiveEditId();
   const { startEdit, cancelEdit } = useCommentEditActions();
@@ -85,13 +88,28 @@ function ReplyItem({
       <Icon src={ReplyIcon} size={20} className="text-icon-alternative" />
       <div className="bg-container-neutral-alternative relative flex-1 rounded-lg p-400">
         <div className="flex flex-col gap-200">
-          <div className="flex items-center gap-[5px]">
-            <Avatar size={24}>
-              <AvatarImage src={profileImage ?? undefined} alt={name} />
-              <AvatarFallback />
-            </Avatar>
-            <span className="typo-sub3 text-text-strong">{name}</span>
-          </div>
+          {onAuthorClick ? (
+            <button
+              type="button"
+              onClick={onAuthorClick}
+              className="flex w-fit cursor-pointer items-center gap-[5px]"
+              aria-label={`${name} 프로필 보기`}
+            >
+              <Avatar size={24}>
+                <AvatarImage src={profileImage ?? undefined} alt={name} />
+                <AvatarFallback />
+              </Avatar>
+              <span className="typo-sub3 text-text-strong">{name}</span>
+            </button>
+          ) : (
+            <div className="flex items-center gap-[5px]">
+              <Avatar size={24}>
+                <AvatarImage src={profileImage ?? undefined} alt={name} />
+                <AvatarFallback />
+              </Avatar>
+              <span className="typo-sub3 text-text-strong">{name}</span>
+            </div>
+          )}
           {isEditing ? (
             <CommentInput
               defaultValue={content}

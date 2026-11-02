@@ -124,6 +124,8 @@ export interface UpdateCommentBody {
 /** mapComment 변환 결과 (UI 표시용) */
 export interface MappedComment {
   id: number;
+  /** 작성자 식별자 (프로필 조회 모달 조회용) */
+  authorId: number;
   profileImage: string;
   name: string;
   content: string;

@@ -1,9 +1,11 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useCommentEditActions, useActiveEditId } from '@/stores/useCommentEditStore';
 import { useParams, useRouter } from 'next/navigation';
+import { Dialog } from '@/components/ui/dialog';
 import { Divider } from '@/components/ui/Divider';
+import { MemberDetailModal } from '@/components/member/MemberDetailModal';
 import { PostCard } from '@/components/board/PostCard';
 import { PostDetailHeader } from '@/components/board/PostDetailHeader';
 import { PostActionMenu } from '@/components/board/PostActionMenu';
@@ -56,6 +58,9 @@ function PostDetailContent({ initialData }: PostDetailContentProps) {
 
   const activeEditId = useActiveEditId();
   const { cancelEdit } = useCommentEditActions();
+
+  // 작성자(게시글/댓글/대댓글) 클릭 시 열리는 프로필 조회 모달 — author.id로 조회
+  const [selectedAuthorId, setSelectedAuthorId] = useState<number | null>(null);
 
   // 페이지 언마운트 시 편집 상태 초기화
   useEffect(() => {
@@ -143,6 +148,7 @@ function PostDetailContent({ initialData }: PostDetailContentProps) {
           }}
           date={formatShortDateTime(currentPost.time)}
           hasAttachment={currentPost.fileUrls.length > 0}
+          onAuthorClick={() => setSelectedAuthorId(currentPost.author.id)}
         />
 
         <Divider />
@@ -196,11 +202,13 @@ function PostDetailContent({ initialData }: PostDetailContentProps) {
                   canEdit={activeReplyId === null}
                   onReplySuccess={forceCloseReply}
                   onReplyDirtyChange={setIsReplyDirty}
+                  onAuthorClick={() => setSelectedAuthorId(mapped.authorId)}
                   replies={mapped.replies.map((reply) => ({
                     ...reply,
                     canEdit: activeReplyId === null,
                     onEdit: async (content, files) => updateComment(reply.id, content, files),
                     onDelete: () => deleteComment(reply.id),
+                    onAuthorClick: () => setSelectedAuthorId(reply.authorId),
                   }))}
                   onReply={async (content, files) => {
                     if (!canComment) return false;
@@ -226,6 +234,17 @@ function PostDetailContent({ initialData }: PostDetailContentProps) {
         onConfirm={onNavGuardConfirm}
         onCancel={onNavGuardCancel}
       />
+
+      <Dialog
+        open={selectedAuthorId !== null}
+        onOpenChange={(open) => {
+          if (!open) setSelectedAuthorId(null);
+        }}
+      >
+        {selectedAuthorId !== null && (
+          <MemberDetailModal clubMemberId={selectedAuthorId} open={selectedAuthorId !== null} />
+        )}
+      </Dialog>
     </div>
   );
 }

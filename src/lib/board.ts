@@ -46,6 +46,7 @@ function mapComment(comment: PostComment, currentUserId: number | null): MappedC
   const isDeleted = comment.isDeleted ?? comment.content === DELETED_COMMENT_CONTENT;
   return {
     id: comment.id,
+    authorId: comment.author.id,
     profileImage: comment.author.profileImageUrl,
     name: comment.author.name,
     content: comment.content,
