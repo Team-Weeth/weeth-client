@@ -383,6 +383,37 @@ pnpm exec playwright test --update-snapshots
 
 > 스냅샷 파일은 git에 반드시 커밋해야 CI에서 비교가 가능합니다.
 
+### 8-6. Figma 대비 디자인 검증
+
+Figma 값(크기·여백·타이포·색·그림자)을 기대값으로 적고 실제 화면을 측정해 비교합니다.
+스크린샷 회귀(8-5)가 "바뀌었는지"를 본다면, 이 검증은 "Figma와 같은지"를 봅니다.
+
+```
+e2e/design/
+  ├── design-helpers.ts      # design.check / design.spacing / design.screenshot, flagOverrides
+  └── {feature}.spec.ts      # 화면별 Figma 대조 스펙
+```
+
+```ts
+import { test } from './design-helpers';
+
+test.use({ viewport: { width: 1280, height: 1080 }, flagOverrides: { someFlagEnabled: true } });
+
+test('패널', async ({ page, design }) => {
+  await page.goto('/...');
+  await design.check('패널', page.getByRole('dialog'), { width: 410, borderRadius: 16 });
+});
+```
+
+```bash
+pnpm test:e2e:design e2e/design/{feature}.spec.ts   # dev 서버(:3000)가 떠 있어야 함
+```
+
+- 불일치는 표로 출력되고, 전체 비교표는 `test-results/**/design-report.md`에 남습니다.
+- `flagOverrides`는 dev 서버에서만 동작합니다 (`src/flags/club-features/dev-overrides.ts`).
+- Figma 값 읽는 법·변환 규칙·❌ 처리 순서는 `.claude/skills/figma-verify/SKILL.md`를 따릅니다.
+- `design` 프로젝트는 `chromium`/`mobile-chrome` 실행에 포함되지 않습니다.
+
 ---
 
 ## 9. 규칙 & 금지사항
