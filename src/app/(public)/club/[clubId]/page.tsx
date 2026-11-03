@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+import type { Metadata, ResolvingMetadata } from 'next';
 import { cookies } from 'next/headers';
 import { API_BASE_PATH } from '@/constants/api';
 import { ClubAccessPage } from '@/components/auth/invite/ClubAccessPage';
@@ -7,8 +7,13 @@ import { ClubErrorPage } from '@/components/auth/invite/ClubErrorPage';
 import { ACCESS_TOKEN_KEY } from '@/lib/apis/cookies';
 import type { Club } from '@/types';
 
-export async function generateMetadata({ params }: ClubPageProps): Promise<Metadata> {
+export async function generateMetadata(
+  { params }: ClubPageProps,
+  parent: ResolvingMetadata,
+): Promise<Metadata> {
   const { clubId } = await params;
+  const parentOpenGraph = (await parent).openGraph;
+
   try {
     const response = await fetch(`${API_BASE_PATH}/clubs/${clubId}`, {
       headers: { 'Content-Type': 'application/json' },
@@ -17,7 +22,14 @@ export async function generateMetadata({ params }: ClubPageProps): Promise<Metad
     if (response.ok) {
       const json = (await response.json()) as { data: Club };
       const fullTitle = `${json.data.name} | Weeth`;
-      return { title: { absolute: fullTitle }, openGraph: { title: fullTitle } };
+      return {
+        title: { absolute: fullTitle },
+        openGraph: {
+          title: fullTitle,
+          description: parentOpenGraph?.description,
+          images: parentOpenGraph?.images,
+        },
+      };
     }
   } catch {
     // fall through to default
