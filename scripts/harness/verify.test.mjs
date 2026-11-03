@@ -7,6 +7,8 @@ import { test } from 'node:test';
 import { fileURLToPath } from 'node:url';
 import {
   changedFiles,
+  CMD_METACHAR,
+  filterShellSafe,
   findInlineSecrets,
   formatTarget,
   stopResult,
@@ -37,11 +39,18 @@ test('Stop CLI reports command failure with exit 2 and handles its retry before 
     '#!/bin/sh\necho fixture-verification-failed >&2\nexit 1\n',
     { mode: 0o755 },
   );
+  if (process.platform === 'win32') {
+    writeFileSync(
+      path.join(fakeBin, 'pnpm.cmd'),
+      '@echo off\r\necho fixture-verification-failed>&2\r\nexit /b 1\r\n',
+    );
+  }
+  const pathSep = process.platform === 'win32' ? ';' : ':';
   const failure = spawnSync(process.execPath, [cli, '--stop-hook'], {
     cwd,
     encoding: 'utf8',
     input: '{}',
-    env: { ...process.env, PATH: `${fakeBin}:${process.env.PATH}` },
+    env: { ...process.env, PATH: `${fakeBin}${pathSep}${process.env.PATH}` },
   });
   assert.equal(failure.status, 2);
   assert.match(failure.stderr, /fixture-verification-failed/);
@@ -88,7 +97,7 @@ test('collects branch, staged, unstaged, untracked, renamed and deleted paths wi
   git('add', 'staged.ts');
   write('unstaged.ts', 'unstaged\n');
   write('한국어 space.ts');
-  write('line\nbreak.ts');
+  if (process.platform !== 'win32') write('line\nbreak.ts');
   const files = changedFiles(cwd, base);
   for (const f of [
     'committed.ts',
@@ -97,7 +106,7 @@ test('collects branch, staged, unstaged, untracked, renamed and deleted paths wi
     'unstaged.ts',
     'renamed space.ts',
     '한국어 space.ts',
-    'line\nbreak.ts',
+    ...(process.platform !== 'win32' ? ['line\nbreak.ts'] : []),
   ])
     assert.ok(files.includes(f), f);
   assert.equal(files.length, new Set(files).size);
@@ -216,6 +225,23 @@ test('format target is limited to formattable files inside the repository', (t) 
   assert.equal(target(path.join(cwd, 'image.png')), undefined);
   assert.equal(target(outside), undefined);
   assert.equal(formatTarget({}, cwd), undefined);
+});
+
+test('CMD_METACHAR matches cmd.exe injection characters and filterShellSafe removes them on Windows', () => {
+  for (const c of ['&', '|', '<', '>', '^', '(', ')', '!', '"']) {
+    assert.ok(CMD_METACHAR.test(`foo${c}bar.ts`), `${c} must match`);
+  }
+  assert.ok(!CMD_METACHAR.test('safe-path.ts'), 'hyphen path must not match');
+  assert.ok(!CMD_METACHAR.test('한국어 space.ts'), 'unicode with space must not match');
+  assert.ok(!CMD_METACHAR.test('src/a.tsx'), 'forward slash must not match');
+
+  const input = ['safe.ts', 'foo&bar.ts', 'baz|qux.ts'];
+  const result = filterShellSafe(input);
+  if (process.platform === 'win32') {
+    assert.deepEqual(result, ['safe.ts']);
+  } else {
+    assert.deepEqual(result, input);
+  }
 });
 
 test('shared MCP config rejects inline credentials but allows env references', (t) => {

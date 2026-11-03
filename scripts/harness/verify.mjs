@@ -9,6 +9,8 @@ const FORMATTABLE = /\.(?:md|json|ya?ml|[cm]?[jt]sx?|css)$/;
 const LINTABLE = /\.[cm]?[jt]sx?$/;
 const SECRET_NAME = /token|secret|password|api[_-]?key|authorization|headers/i;
 const ENV_REFERENCE = /^\$\{[A-Za-z_][A-Za-z0-9_]*(?::-[^}]*)?\}$/;
+// cmd.exe metacharacters that can split or redirect commands when shell: true is used on Windows.
+export const CMD_METACHAR = /[&|<>^()!"]/;
 
 export function changedFiles(cwd, base) {
   const git = (args) =>
@@ -108,7 +110,21 @@ export function formatTarget(input, cwd) {
   if (typeof filePath !== 'string' || !existsSync(filePath)) return undefined;
   const relative = path.relative(realpathSync(cwd), realpathSync(filePath));
   if (!relative || relative.startsWith('..') || path.isAbsolute(relative)) return undefined;
+  if (process.platform === 'win32' && CMD_METACHAR.test(relative)) return undefined;
   return FORMATTABLE.test(relative) ? relative : undefined;
+}
+
+// On Windows, spawnSync with shell:true joins args into a cmd.exe command string.
+// Reject file paths containing metacharacters that would split or redirect that command.
+export function filterShellSafe(files) {
+  if (process.platform !== 'win32') return files;
+  return files.filter((f) => {
+    if (CMD_METACHAR.test(f)) {
+      console.error(`verify: skipping ${f} — path contains a cmd.exe metacharacter`);
+      return false;
+    }
+    return true;
+  });
 }
 
 export function verificationPlan(files, cwd, { full = false, hook = false } = {}) {
@@ -131,21 +147,21 @@ export function verificationPlan(files, cwd, { full = false, hook = false } = {}
   const wide = full || (!hook && (dependency || config));
   const plan = [];
   if (scriptChanged || full) plan.push(['node', ['--test', 'scripts/harness/verify.test.mjs']]);
-  const format = existing.filter((file) => FORMATTABLE.test(file));
+  const format = filterShellSafe(existing.filter((file) => FORMATTABLE.test(file)));
   if (full) plan.push(['pnpm', ['format:check']]);
   else if (format.length)
     plan.push(['pnpm', ['exec', 'prettier', '--check', '--', ...format.map((f) => `./${f}`)]]);
   if (full || runtime || dependency || config) {
     // Preserve Next route type validation; never delete a running dev server's output.
     plan.push(['pnpm', ['typecheck']]);
-    const lintable = existing.filter((f) => LINTABLE.test(f));
+    const lintable = filterShellSafe(existing.filter((f) => LINTABLE.test(f)));
     if (wide) plan.push(['pnpm', ['lint']]);
     else if (lintable.length)
       plan.push([
         'pnpm',
         ['exec', 'eslint', '--no-warn-ignored', '--', ...lintable.map((f) => `./${f}`)],
       ]);
-    const changedSource = existing.filter((f) => /^src\/.*\.[jt]sx?$/.test(f));
+    const changedSource = filterShellSafe(existing.filter((f) => /^src\/.*\.[jt]sx?$/.test(f)));
     const removedSource = files.some((f) => f.startsWith('src/') && !existsSync(path.join(cwd, f)));
     if (wide || (!hook && removedSource)) plan.push(['pnpm', ['exec', 'jest', '--runInBand']]);
     else if (changedSource.length)
