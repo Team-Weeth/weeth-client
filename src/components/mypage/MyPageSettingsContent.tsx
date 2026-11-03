@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { useMediaQuery } from '@/hooks/useMediaQuery';
+import { useIsMobile } from '@/hooks/useIsMobile';
 import { trackFeedbackEntryClicked } from '@/lib/analytics/feedbackEvents';
 // import { useLeaveClubMutation } from '@/hooks/mutations/mypage/useMultiProfileMutations';
 import { cn } from '@/lib/cn';
@@ -29,7 +29,7 @@ function MyPageSettingsContent({ className, ...props }: MyPageSettingsContentPro
   const router = useRouter();
   const { clubId } = useParams<{ clubId: string }>();
   const { feedbackFabEnabled } = useClubFeatures();
-  const isBelowTablet = useMediaQuery('(max-width: 695.98px)');
+  const isBelowTablet = useIsMobile();
   const mode = useThemeStore((state) => state.mode);
   const hasHydrated = useThemeStore((state) => state.hasHydrated);
   const setMode = useThemeStore((state) => state.setMode);
