@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import EditIcon from '@/assets/icons/edit.svg';
 import InfoCircleIcon from '@/assets/icons/info_circle.svg';
-import { useMediaQuery } from '@/hooks/useMediaQuery';
+import { useIsMobile } from '@/hooks/useIsMobile';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/Button';
 import { Icon } from '@/components/ui/Icon';
@@ -32,7 +32,7 @@ function ProfileCard({
   assignableClubMap,
 }: ProfileCardProps) {
   const router = useRouter();
-  const isBelowTablet = useMediaQuery('(max-width: 695.98px)');
+  const isBelowTablet = useIsMobile();
   const [selectedClub, setSelectedClub] = useState<MyPageAssignableClub | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
