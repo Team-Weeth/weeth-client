@@ -11,7 +11,7 @@ frontend:
       commands:
         - |
           set -e
-          matched=$(env | grep -E '^(PREVIEW_ACCESS_TOKEN|CLUB_ID|NEXT_PUBLIC_SENTRY_DSN)=') || grep_status=$?
+          matched=$(env | grep -E '^(PREVIEW_ACCESS_TOKEN|CLUB_ID|NEXT_PUBLIC_SENTRY_DSN|ENABLE_DEV_FLAG_OVERRIDES)=') || grep_status=$?
           if [ "${grep_status:-0}" -gt 1 ]; then exit "$grep_status"; fi
           if [ -n "$matched" ]; then printf '%s\n' "$matched" >> .env.production; fi
           printf 'NEXT_PUBLIC_SENTRY_RELEASE=%s\n' "$AWS_COMMIT_ID" >> .env.production
