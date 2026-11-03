@@ -29,6 +29,15 @@ import { toastError } from '@/stores/useToastStore';
 import { buildBoardPath } from '@/lib/board';
 import type { PostDetail } from '@/types/board';
 
+function escapeHtml(value: string): string {
+  return value
+    .replace(/&/g, '&amp;')
+    .replace(/"/g, '&quot;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/'/g, '&#39;');
+}
+
 interface PostDetailContentProps {
   initialData: PostDetail;
 }
@@ -114,7 +123,10 @@ function PostDetailContent({ initialData }: PostDetailContentProps) {
     .filter(
       (f) => isImageFileByType(f.contentType) && !isFileReferencedInContent(f, currentPost.content),
     )
-    .map((f) => `<figure><img src="${f.fileUrl}" alt="${f.fileName}" /></figure>`)
+    .map(
+      (f) =>
+        `<figure><img src="${escapeHtml(f.fileUrl)}" alt="${escapeHtml(f.fileName)}" /></figure>`,
+    )
     .join('\n');
 
   const contentWithImages = unreferencedImageHtml
