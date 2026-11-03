@@ -187,6 +187,7 @@ function formatEdited(input, cwd) {
     cwd,
     encoding: 'utf8',
     timeout: 30000,
+    shell: process.platform === 'win32',
   });
   if (result.status !== 0) console.error(`prettier skipped: ${target}`);
 }
@@ -231,6 +232,7 @@ function main() {
       timeout: hook ? 60000 : 600000,
       maxBuffer: 8 * 1024 * 1024,
       stdio: hook ? 'pipe' : 'inherit',
+      shell: process.platform === 'win32',
     });
     if (result.status !== 0) {
       status = 1;
