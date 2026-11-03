@@ -7,9 +7,9 @@ describe('isReferencedInContent', () => {
       expect(isReferencedInContent(url, `<img src="${url}" alt="test" />`)).toBe(true);
     });
 
-    it('data-src="url" 형태로 포함된 경우 true를 반환한다', () => {
+    it('img가 아닌 요소의 data-src에 포함된 경우 false를 반환한다', () => {
       const url = 'https://example.com/image.png';
-      expect(isReferencedInContent(url, `<div data-src="${url}"></div>`)).toBe(true);
+      expect(isReferencedInContent(url, `<div data-src="${url}"></div>`)).toBe(false);
     });
 
     it('본문 텍스트에만 URL이 등장하는 경우 false를 반환한다', () => {
@@ -98,18 +98,23 @@ describe('isFileReferencedInContent', () => {
   const S3_CONTENT =
     '<div data-file-attachment="" data-src="https://weeth-s3-prod.s3.ap-northeast-2.amazonaws.com/POST/2026-10/41fc98a2_01_ES-Lab00%20%281%29.pdf"></div>';
 
-  it('호스트와 인코딩이 달라도 storageKey가 같으면 참조로 판정한다', () => {
+  it('div[data-file-attachment][data-src]에 포함된 경우 img[src]가 없으므로 false를 반환한다', () => {
     expect(
       isFileReferencedInContent({ fileUrl: CDN_URL, storageKey: STORAGE_KEY }, S3_CONTENT),
+    ).toBe(false);
+  });
+
+  it('img[src]로 삽입된 경우 호스트·인코딩이 달라도 storageKey가 같으면 참조로 판정한다', () => {
+    const imgContent =
+      '<img src="https://weeth-s3-prod.s3.ap-northeast-2.amazonaws.com/POST/2026-10/41fc98a2_01_ES-Lab00%20%281%29.pdf" />';
+    expect(
+      isFileReferencedInContent({ fileUrl: CDN_URL, storageKey: STORAGE_KEY }, imgContent),
     ).toBe(true);
   });
 
   it('storageKey가 다르면 참조로 판정하지 않는다', () => {
-    // fileUrl과 storageKey가 모두 다른 파일을 가리켜야 정확한 검증이 된다.
-    // CDN_URL의 경로가 S3_CONTENT와 같으면 3단계 경로 폴백에서 매칭되므로
-    // 완전히 다른 파일의 URL을 사용한다.
     const other = {
-      fileUrl: 'https://cdn.weeth.kr/POST/2026-10/other_file.pdf',
+      fileUrl: CDN_URL,
       storageKey: 'POST/2026-10/other_file.pdf',
     };
     expect(isFileReferencedInContent(other, S3_CONTENT)).toBe(false);

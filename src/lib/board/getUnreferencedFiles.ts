@@ -1,18 +1,17 @@
-const SRC_ATTRIBUTE_NAMES = new Set(['src', 'data-src']);
-
 /**
- * 본문에서 src/data-src 속성값만 추출한다. HTML 엔티티(&amp;)는 디코딩한다.
+ * 본문에서 <img> 요소의 src 속성값만 추출한다. HTML 엔티티(&amp;)는 디코딩한다.
  *
- * 속성 이름을 통째로 잡아 비교하므로 data-original-src처럼 이름이 src로 끝나는
- * 다른 속성은 걸리지 않는다. (부분 문자열로 찾으면 오탐이 난다)
+ * img가 아닌 요소(div[data-file-attachment] 등)의 data-src는 추출하지 않는다.
+ * PostCardBody가 img로 렌더하지 않는 요소는 참조로 판정하지 않기 위함이다.
  */
 function extractSrcValues(htmlContent: string): string[] {
-  const attrPattern = /([\w-]+)="([^"]*)"/g;
+  const imgTagPattern = /<img\b[^>]*>/gi;
+  const srcAttrPattern = /\ssrc="([^"]*)"/i;
   const values: string[] = [];
   let match: RegExpExecArray | null;
-  while ((match = attrPattern.exec(htmlContent)) !== null) {
-    const [, name, value] = match;
-    if (SRC_ATTRIBUTE_NAMES.has(name)) values.push(value.replace(/&amp;/g, '&'));
+  while ((match = imgTagPattern.exec(htmlContent)) !== null) {
+    const srcMatch = srcAttrPattern.exec(match[0]);
+    if (srcMatch) values.push(srcMatch[1].replace(/&amp;/g, '&'));
   }
   return values;
 }
@@ -92,10 +91,14 @@ export function isFileReferencedInContent(file: ReferenceableFile, htmlContent: 
   // 2. 전체 URL 비교 — 같은 호스트, 인코딩 차이 허용
   if (isReferencedInContent(file.fileUrl, htmlContent)) return true;
 
-  // 3. 경로 전용 폴백 — storageKey가 빈 문자열이면서 CDN↔S3 도메인이 다른 경우 방어
-  const filePath = toDecodedPath(file.fileUrl);
-  if (filePath !== '/' && srcValues.some((v) => toDecodedPath(v) === filePath)) {
-    return true;
+  // 3. 경로 전용 폴백 — storageKey가 없을 때만 실행. CDN↔S3 도메인이 달라 step 1·2를 통과하지 못한 경우를 보완한다.
+  // storageKey가 있으면 step 1이 이미 정규 비교를 마쳤으므로 경로 폴백을 건너뛴다.
+  // 주의: 호스트를 구분하지 않으므로, 본문에 같은 경로를 가진 외부 이미지가 있으면 오 판정이 발생할 수 있다.
+  if (!key) {
+    const filePath = toDecodedPath(file.fileUrl);
+    if (filePath !== '/' && srcValues.some((v) => toDecodedPath(v) === filePath)) {
+      return true;
+    }
   }
 
   return false;
