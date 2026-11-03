@@ -1,5 +1,5 @@
-import { SchedulePageContent } from '@/components/admin/schedule/general/SchedulePageContent';
+import { ScheduleManagementContent } from '@/components/admin/schedule/general/ScheduleManagementContent';
 
 export default function SchedulePage() {
-  return <SchedulePageContent />;
+  return <ScheduleManagementContent />;
 }

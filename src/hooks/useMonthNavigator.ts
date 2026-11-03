@@ -24,7 +24,13 @@ function useMonthNavigator() {
     }
   };
 
-  return { year, month, prev, next };
+  const goToToday = () => {
+    const now = new Date();
+    setYear(now.getFullYear());
+    setMonth(now.getMonth() + 1);
+  };
+
+  return { year, month, prev, next, goToToday };
 }
 
 export { useMonthNavigator };

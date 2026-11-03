@@ -36,6 +36,8 @@ const tooltipContentVariants = cva(
           'bg-container-primary-interaction text-text-inverse typo-body2 p-200 [box-shadow:var(--shadow-sm)]',
         sm: 'bg-container-neutral-alternative text-text-strong typo-caption2 px-200 py-100 [box-shadow:var(--shadow-sm)]',
         dark: 'typo-sub1 bg-container-floating text-text-on-floating flex items-center justify-center gap-[10px] rounded-sm px-[14px] py-[10px] shadow-md',
+        'dark-sm':
+          'typo-caption2 bg-container-floating text-text-on-floating flex items-center justify-center gap-[10px] rounded-sm px-[14px] py-[10px] shadow-md',
       },
     },
     defaultVariants: {
