@@ -1,18 +1,33 @@
-const SRC_ATTRIBUTE_NAMES = new Set(['src', 'data-src']);
-
 /**
- * 본문에서 src/data-src 속성값만 추출한다. HTML 엔티티(&amp;)는 디코딩한다.
+ * 본문에서 <img> 요소의 src 속성값만 추출한다. HTML 엔티티(&amp;)는 디코딩한다.
  *
- * 속성 이름을 통째로 잡아 비교하므로 data-original-src처럼 이름이 src로 끝나는
- * 다른 속성은 걸리지 않는다. (부분 문자열로 찾으면 오탐이 난다)
+ * img가 아닌 요소(div[data-file-attachment] 등)의 data-src는 추출하지 않는다.
+ * PostCardBody가 img로 렌더하지 않는 요소는 참조로 판정하지 않기 위함이다.
  */
 function extractSrcValues(htmlContent: string): string[] {
-  const attrPattern = /([\w-]+)="([^"]*)"/g;
+  const imgTagPattern = /<img\b[^>]*>/gi;
+  const srcAttrPattern = /\ssrc="([^"]*)"/i;
   const values: string[] = [];
   let match: RegExpExecArray | null;
-  while ((match = attrPattern.exec(htmlContent)) !== null) {
-    const [, name, value] = match;
-    if (SRC_ATTRIBUTE_NAMES.has(name)) values.push(value.replace(/&amp;/g, '&'));
+  while ((match = imgTagPattern.exec(htmlContent)) !== null) {
+    const srcMatch = srcAttrPattern.exec(match[0]);
+    if (srcMatch) values.push(srcMatch[1].replace(/&amp;/g, '&'));
+  }
+  return values;
+}
+
+/**
+ * 본문에서 div[data-file-attachment] 요소의 data-src 속성값을 추출한다.
+ * 파일 첨부 노드가 에디터에 남아 있는지 확인할 때 사용한다.
+ */
+function extractAttachmentDataSrcs(htmlContent: string): string[] {
+  const tagPattern = /<div\b[^>]*data-file-attachment[^>]*>/gi;
+  const dataSrcPattern = /\sdata-src="([^"]*)"/i;
+  const values: string[] = [];
+  let match: RegExpExecArray | null;
+  while ((match = tagPattern.exec(htmlContent)) !== null) {
+    const m = dataSrcPattern.exec(match[0]);
+    if (m) values.push(m[1].replace(/&amp;/g, '&'));
   }
   return values;
 }
@@ -82,10 +97,46 @@ function toDecodedPath(url: string): string {
  */
 export function isFileReferencedInContent(file: ReferenceableFile, htmlContent: string): boolean {
   const key = file.storageKey ? decodeSafely(file.storageKey).replace(/^\/+/, '') : '';
+  const srcValues = extractSrcValues(htmlContent);
 
-  if (key && extractSrcValues(htmlContent).some((v) => toDecodedPath(v).endsWith(`/${key}`))) {
+  // 1. storageKey 기반 — 호스트(CDN/S3)와 무관하게 경로로 비교
+  if (key && srcValues.some((v) => toDecodedPath(v).endsWith(`/${key}`))) {
     return true;
   }
 
-  return isReferencedInContent(file.fileUrl, htmlContent);
+  // 2. 전체 URL 비교 — 같은 호스트, 인코딩 차이 허용
+  if (isReferencedInContent(file.fileUrl, htmlContent)) return true;
+
+  // 3. 경로 전용 폴백 — storageKey가 없을 때만 실행. CDN↔S3 도메인이 달라 step 1·2를 통과하지 못한 경우를 보완한다.
+  // storageKey가 있으면 step 1이 이미 정규 비교를 마쳤으므로 경로 폴백을 건너뛴다.
+  // 주의: 호스트를 구분하지 않으므로, 본문에 같은 경로를 가진 외부 이미지가 있으면 오 판정이 발생할 수 있다.
+  if (!key) {
+    const filePath = toDecodedPath(file.fileUrl);
+    if (filePath !== '/' && srcValues.some((v) => toDecodedPath(v) === filePath)) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+/**
+ * 본문에 div[data-file-attachment][data-src]로 첨부 노드가 남아 있는지 확인한다.
+ * storageKey 기반 경로 비교로 CDN↔S3 도메인 차이를 허용한다.
+ *
+ * isFileReferencedInContent와 달리 <img src>는 확인하지 않는다.
+ * 수정 시 첨부 노드가 에디터에 남아 있는지 판정하는 용도로만 쓴다.
+ */
+export function isAttachmentNodeInContent(file: ReferenceableFile, htmlContent: string): boolean {
+  const attachmentSrcs = extractAttachmentDataSrcs(htmlContent);
+  if (attachmentSrcs.length === 0) return false;
+
+  const key = file.storageKey ? decodeSafely(file.storageKey).replace(/^\/+/, '') : '';
+  if (key) {
+    return attachmentSrcs.some((v) => toDecodedPath(v).endsWith(`/${key}`));
+  }
+
+  // storageKey가 없으면 URL 직접 비교
+  const filePath = toDecodedPath(file.fileUrl);
+  return filePath !== '/' && attachmentSrcs.some((v) => toDecodedPath(v) === filePath);
 }
