@@ -19,7 +19,7 @@ import {
   shouldHideFeedbackFabOnMobile,
 } from '@/constants/feedback';
 import { useHomeTutorial } from '@/hooks/home/useHomeTutorial';
-import { useMediaQuery } from '@/hooks/useMediaQuery';
+import { useIsMobile } from '@/hooks/useIsMobile';
 import { trackFeedbackEntryClicked, trackFeedbackOpened } from '@/lib/analytics/feedbackEvents';
 import { cn } from '@/lib/cn';
 import { useClubFeatures } from '@/providers/club-feature-provider';
@@ -40,7 +40,7 @@ function FeedbackFab({ className }: FeedbackFabProps) {
 function FeedbackFabMenu({ className }: FeedbackFabProps) {
   const { clubId } = useParams<{ clubId: string }>();
   const pathname = usePathname();
-  const isMobile = useMediaQuery('(max-width: 695.98px)');
+  const isMobile = useIsMobile();
   // 홈 자동 열림은 HomeTutorialLauncher가 담당하므로 FAB은 메뉴로 여는 경우만 다룬다.
   const tutorial = useHomeTutorial({ autoOpen: false });
   // 프로필 설정 모달이 마운트 시점에 마이페이지 쿼리를 호출하므로 처음 열 때까지 마운트를 미룬다.

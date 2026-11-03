@@ -422,25 +422,10 @@ export function useDeleteSkill(callbacks?: MutationCallbacks) {
 
 ---
 
-### Step 9. Update index.ts
+### Step 9. Connect consumers
 
-**1. `src/lib/apis/index.ts`** — add new domain API export (preserve existing exports):
-
-```ts
-export { skillApi } from './skill';
-```
-
-**2. `src/hooks/index.ts`** — add generated Query/Mutation hooks only if created (preserve existing exports):
-
-```ts
-// if useQuery hook was generated
-export { useSkillList, useSkill } from './useSkillQuery';
-
-// if useMutation hook was generated
-export { useCreateSkill, useDeleteSkill } from './useSkillMutation';
-```
-
-Create `src/hooks/index.ts` if it does not exist.
+Use direct imports from the generated API/action/hook files, following `AGENTS.md`.
+Do not create or extend runtime barrels. Keep existing compatibility exports unchanged.
 
 ---
 
@@ -454,8 +439,7 @@ Create `src/hooks/index.ts` if it does not exist.
   - src/hooks/useSkillQuery.ts           (useSkillList, useSkill)
 
 ✅ Updated files
-  - src/lib/apis/index.ts                (added skillApi export)
-  - src/hooks/index.ts                   (added useSkillList, useSkill export)
+  - consuming components               (direct API/hook imports)
 
 📋 Strategy per endpoint
   GET    /api/v4/skills          → useSkillList()       [React Query]
