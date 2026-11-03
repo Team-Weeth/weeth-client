@@ -6,7 +6,7 @@ import { BottomSheet } from '@/components/ui/BottomSheet';
 import { Dialog, DialogClose, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { Icon } from '@/components/ui/Icon';
 import { FEEDBACK_CHAT_SHEET_SNAP_POINT } from '@/constants/feedback';
-import { useMediaQuery } from '@/hooks/useMediaQuery';
+import { useIsMobile } from '@/hooks/useIsMobile';
 import { cn } from '@/lib/cn';
 
 interface FeedbackChatPanelProps {
@@ -30,7 +30,7 @@ function FeedbackChatPanel({
   footer,
   className,
 }: FeedbackChatPanelProps) {
-  const isMobile = useMediaQuery('(max-width: 695.98px)');
+  const isMobile = useIsMobile();
 
   if (isMobile) {
     return (

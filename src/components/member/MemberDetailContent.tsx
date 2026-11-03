@@ -6,14 +6,14 @@ import BackIcon from '@/assets/icons/back.svg';
 import { Button } from '@/components/ui/Button';
 import { Icon } from '@/components/ui/Icon';
 import { useMemberDetailQuery } from '@/hooks/member/useMemberDetailQuery';
-import { useMediaQuery } from '@/hooks/useMediaQuery';
+import { useIsMobile } from '@/hooks/useIsMobile';
 import { MemberDetailBody } from './MemberDetailBody';
 import { MemberDetailSkeleton } from './MemberDetailSkeleton';
 
 function MemberDetailContent() {
   const router = useRouter();
   const { clubId, memberId } = useParams<{ clubId: string; memberId: string }>();
-  const isMobile = useMediaQuery('(max-width: 695.98px)');
+  const isMobile = useIsMobile();
   const hasMountedRef = useRef(false);
   const {
     data: member,
