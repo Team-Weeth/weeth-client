@@ -1,7 +1,10 @@
+import type { Metadata } from 'next';
 import { cookies } from 'next/headers';
 import { redirect as nextRedirect } from 'next/navigation';
 import { LoginPageClient } from '@/components/auth/LoginPageClient';
 import { ACCESS_TOKEN_KEY, REFRESH_TOKEN_KEY } from '@/lib/apis/cookies';
+
+export const metadata: Metadata = { title: '로그인' };
 
 export default async function LoginPage({
   searchParams,

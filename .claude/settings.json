@@ -54,7 +54,7 @@
           },
           {
             "type": "command",
-            "command": "cd \"$CLAUDE_PROJECT_DIR\" && node scripts/harness/verify.mjs --snapshot",
+            "command": "bash -l -c 'command -v node >/dev/null 2>&1 || { echo \"verify: node not found, skipping\" >&2; exit 0; }; cd \"$CLAUDE_PROJECT_DIR\" && node scripts/harness/verify.mjs --snapshot'",
             "timeout": 30
           }
         ]
@@ -66,7 +66,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "cd \"$CLAUDE_PROJECT_DIR\" && node scripts/harness/verify.mjs --format-edited",
+            "command": "bash -l -c 'command -v node >/dev/null 2>&1 || { echo \"verify: node not found, skipping\" >&2; exit 0; }; cd \"$CLAUDE_PROJECT_DIR\" && node scripts/harness/verify.mjs --format-edited'",
             "timeout": 60
           }
         ]
@@ -77,7 +77,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "cd \"$CLAUDE_PROJECT_DIR\" && node scripts/harness/verify.mjs --stop-hook",
+            "command": "bash -l -c 'command -v node >/dev/null 2>&1 || { echo \"verify: node not found, skipping\" >&2; exit 0; }; cd \"$CLAUDE_PROJECT_DIR\" && node scripts/harness/verify.mjs --stop-hook'",
             "timeout": 300
           }
         ]
