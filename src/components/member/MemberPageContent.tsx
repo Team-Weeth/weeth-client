@@ -12,7 +12,7 @@ import { Dialog } from '@/components/ui/dialog';
 import type { MemberRoleFilterValue } from '@/constants/member';
 import { useCardinalSelector } from '@/hooks/useCardinalSelector';
 import { useIntersectionObserver } from '@/hooks/board/useIntersectionObserver';
-import { useMediaQuery } from '@/hooks/useMediaQuery';
+import { useIsMobile } from '@/hooks/useIsMobile';
 import { useMembersQuery } from '@/hooks/member/useMembersQuery';
 import { usePositionOptionsQuery } from '@/hooks/member/usePositionOptionsQuery';
 import { cn } from '@/lib/cn';
@@ -26,7 +26,7 @@ function MemberPageContent() {
   const router = useRouter();
   const { clubId } = useParams<{ clubId: string }>();
   const searchParams = useSearchParams();
-  const isMobile = useMediaQuery('(max-width: 695.98px)');
+  const isMobile = useIsMobile();
   const { cardinals, activeCardinal, setSelectedCardinalId } = useCardinalSelector({
     autoSelectLatest: true,
     scope: 'member',

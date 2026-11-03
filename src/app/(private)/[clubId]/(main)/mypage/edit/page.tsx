@@ -1,6 +1,8 @@
+import type { Metadata } from 'next';
 import { EditProfileContent } from '@/components/mypage/edit/EditProfileContent';
 import { universityServerApi } from '@/lib/apis/university.server';
 
+export const metadata: Metadata = { title: '프로필 수정' };
 export const dynamic = 'force-dynamic';
 
 export default async function EditProfilePage() {

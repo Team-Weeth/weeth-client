@@ -17,7 +17,7 @@ Use the existing club feature flag architecture when implementing club-specific 
 
 ## Usage
 
-Fetch flags in a server page and wrap the client UI with the provider:
+Every page under `[clubId]/(main)` is already wrapped: `app/(private)/[clubId]/(main)/layout.tsx` fetches `getClubFeatures(clubId)` in parallel with the dashboard and renders `ClubFeatureProvider` around the layout content, so `(main)` pages just call `useClubFeatures()`. Pages outside `(main)` (e.g. `[clubId]/admin/*`) fetch flags in the server page and wrap the client UI themselves:
 
 ```tsx
 import { getClubFeatures } from '@/flags/club-features/server';
@@ -32,7 +32,7 @@ return (
 );
 ```
 
-The club key resets child state when switching clubs. The current member and penalty pages also include `features.warningEnabled` in the key to reset editing state when that value changes.
+The club key resets child state when switching clubs. The admin member and penalty pages also include `features.warningEnabled` in the key to reset editing state when that value changes. The `(main)` layout keys only by `clubId`: adding flag values to the layout key would remount the whole `(main)` tree whenever any flag changes, so a `(main)` component whose local state depends on a flag should key that state locally instead.
 
 Read flags only in components that need to branch:
 
@@ -47,7 +47,7 @@ function WarningAction() {
 }
 ```
 
-Intermediate components do not need flag props. React portals, including modals, inherit the context when rendered within the provider's React tree. Wrap new pages with the provider as well; it is not currently installed globally.
+Intermediate components do not need flag props. React portals, including modals, inherit the context when rendered within the provider's React tree. New pages under `(main)` need no extra wiring; new pages outside `(main)` must wrap themselves with the provider, as it is not installed globally.
 
 ## Adding a Feature
 
@@ -74,7 +74,7 @@ function MemberManagement() {
 
 This example assumes `memberManagementV2Enabled` has been registered using the steps above. Share common UI and logic between versions instead of duplicating the entire feature. Keep both versions while clubs need different behavior; remove the old implementation and flag after a temporary rollout completes.
 
-Boolean version switching is supported by this structure. Statistical A/B testing additionally requires experiment assignment and exposure/outcome measurement; those are not implemented here.
+Boolean version switching is supported by this structure. Statistical A/B testing additionally requires experiment assignment and exposure/outcome measurement; the generic structure does not provide them. The service feedback A/B (`feedbackFabEnabled`) measures through PostHog: `components/feedback/FeedbackAnalytics.tsx` registers `club_id`/`feedback_variant` super properties, and `lib/analytics/feedbackEvents.ts` holds the typed event helpers. Feedback submission is tracked inside `useCreateFeedbackMutation`, so UIs only call the entry/open helpers.
 
 ## Defaults and Refresh Behavior
 

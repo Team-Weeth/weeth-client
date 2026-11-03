@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 
 import { AlertDialog, AlertDialogAction, AlertDialogCancel } from '@/components/ui/alert-dialog';
 import type { TopBarAction } from '@/constants/admin/memberTopBar.constants';
-import { useMediaQuery } from '@/hooks/useMediaQuery';
+import { useIsMobile } from '@/hooks/useIsMobile';
 import type { ClubMemberRole, Member } from '@/types/admin/member';
 import {
   getMemberCardinalNumbers,
@@ -68,7 +68,7 @@ function MemberPageModals({
   const [pendingDetailAction, setPendingDetailAction] = useState<TopBarAction | null>(null);
   const [displayedDetailMember, setDisplayedDetailMember] = useState<Member | null>(detailMember);
   const detailCacheResetTimeoutRef = useRef<ReturnType<typeof setTimeout> | number | null>(null);
-  const isMobile = useMediaQuery('(max-width: 695.98px)');
+  const isMobile = useIsMobile();
   const detailOpen = detailMember !== null;
   const bottomSheetDetailMember = detailMember ?? displayedDetailMember;
 

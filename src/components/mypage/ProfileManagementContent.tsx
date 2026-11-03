@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useParams } from 'next/navigation';
-import { useMediaQuery } from '@/hooks/useMediaQuery';
+import { useIsMobile } from '@/hooks/useIsMobile';
 import { Button } from '@/components/ui/Button';
 import { Icon } from '@/components/ui/Icon';
 import { cn } from '@/lib/cn';
@@ -19,7 +19,7 @@ type ProfileManagementContentProps = React.HTMLAttributes<HTMLDivElement>;
 function ProfileManagementContent({ className, ...props }: ProfileManagementContentProps) {
   const router = useRouter();
   const { clubId } = useParams<{ clubId: string }>();
-  const isBelowTablet = useMediaQuery('(max-width: 695.98px)');
+  const isBelowTablet = useIsMobile();
   const profilesQuery = useMyProfilesQuery();
   const { clubMap: assignableClubMap } = useAssignableClubMap();
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
