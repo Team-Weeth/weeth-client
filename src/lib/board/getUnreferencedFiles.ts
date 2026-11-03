@@ -16,6 +16,22 @@ function extractSrcValues(htmlContent: string): string[] {
   return values;
 }
 
+/**
+ * 본문에서 div[data-file-attachment] 요소의 data-src 속성값을 추출한다.
+ * 파일 첨부 노드가 에디터에 남아 있는지 확인할 때 사용한다.
+ */
+function extractAttachmentDataSrcs(htmlContent: string): string[] {
+  const tagPattern = /<div\b[^>]*data-file-attachment[^>]*>/gi;
+  const dataSrcPattern = /\sdata-src="([^"]*)"/i;
+  const values: string[] = [];
+  let match: RegExpExecArray | null;
+  while ((match = tagPattern.exec(htmlContent)) !== null) {
+    const m = dataSrcPattern.exec(match[0]);
+    if (m) values.push(m[1].replace(/&amp;/g, '&'));
+  }
+  return values;
+}
+
 function stripQuery(url: string): string {
   return url.includes('?') ? url.split('?')[0] : url;
 }
@@ -102,4 +118,25 @@ export function isFileReferencedInContent(file: ReferenceableFile, htmlContent: 
   }
 
   return false;
+}
+
+/**
+ * 본문에 div[data-file-attachment][data-src]로 첨부 노드가 남아 있는지 확인한다.
+ * storageKey 기반 경로 비교로 CDN↔S3 도메인 차이를 허용한다.
+ *
+ * isFileReferencedInContent와 달리 <img src>는 확인하지 않는다.
+ * 수정 시 첨부 노드가 에디터에 남아 있는지 판정하는 용도로만 쓴다.
+ */
+export function isAttachmentNodeInContent(file: ReferenceableFile, htmlContent: string): boolean {
+  const attachmentSrcs = extractAttachmentDataSrcs(htmlContent);
+  if (attachmentSrcs.length === 0) return false;
+
+  const key = file.storageKey ? decodeSafely(file.storageKey).replace(/^\/+/, '') : '';
+  if (key) {
+    return attachmentSrcs.some((v) => toDecodedPath(v).endsWith(`/${key}`));
+  }
+
+  // storageKey가 없으면 URL 직접 비교
+  const filePath = toDecodedPath(file.fileUrl);
+  return filePath !== '/' && attachmentSrcs.some((v) => toDecodedPath(v) === filePath);
 }
