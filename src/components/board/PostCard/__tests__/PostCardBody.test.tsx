@@ -15,8 +15,8 @@ jest.mock('@/hooks/useLineClamp', () => ({
 }));
 
 jest.mock('@/components/ui/FullscreenImageViewer', () => ({
-  FullscreenImageViewer: ({ open }: { open: boolean }) =>
-    open ? <div data-testid="image-viewer" /> : null,
+  FullscreenImageViewer: ({ open, initialIndex }: { open: boolean; initialIndex: number }) =>
+    open ? <div data-testid="image-viewer" data-initial-index={initialIndex} /> : null,
 }));
 
 const mockSetIsExpanded = jest.fn();
@@ -48,7 +48,7 @@ describe('PostCardBody', () => {
       const user = userEvent.setup();
       render(<PostCardBody content='<img src="/photo.png" alt="사진" />' />);
 
-      await user.click(screen.getByRole('img'));
+      await user.click(screen.getByRole('button', { name: '사진' }));
 
       expect(screen.getByTestId('image-viewer')).toBeInTheDocument();
     });
@@ -67,12 +67,11 @@ describe('PostCardBody', () => {
       render(
         <PostCardBody content='<img src="/a.png" alt="첫 번째" /><img src="/b.png" alt="두 번째" />' />,
       );
-      const imgs = screen.getAllByRole('img');
+      const imgs = screen.getAllByRole('button');
 
       await user.click(imgs[1]);
 
-      // viewer가 열리면 두 번째 이미지가 선택됨을 확인
-      expect(screen.getByTestId('image-viewer')).toBeInTheDocument();
+      expect(screen.getByTestId('image-viewer')).toHaveAttribute('data-initial-index', '1');
     });
   });
 
@@ -88,7 +87,7 @@ describe('PostCardBody', () => {
 
     it('이미 alt가 있는 img는 그대로 유지된다', () => {
       render(<PostCardBody content='<img src="/photo.png" alt="사진 설명" />' />);
-      expect(screen.getByRole('img')).toHaveAttribute('alt', '사진 설명');
+      expect(screen.getByRole('button', { name: '사진 설명' })).toHaveAttribute('alt', '사진 설명');
     });
   });
 
