@@ -1,11 +1,19 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import dynamic from 'next/dynamic';
 import DOMPurify from 'isomorphic-dompurify';
 import { cn } from '@/lib/cn';
 import { useLineClamp } from '@/hooks/useLineClamp';
-import { FullscreenImageViewer } from '@/components/ui/FullscreenImageViewer';
 import type { FullscreenImageViewerImage } from '@/components/ui/FullscreenImageViewer';
+
+const FullscreenImageViewer = dynamic(
+  () =>
+    import('@/components/ui/FullscreenImageViewer').then((mod) => ({
+      default: mod.FullscreenImageViewer,
+    })),
+  { ssr: false },
+);
 
 import { ExpandButton } from './ExpandButton';
 
@@ -13,9 +21,16 @@ interface PostCardBodyProps {
   className?: string;
   content: string;
   expandable?: boolean;
+  /** Set true for the LCP image: injects fetchpriority="high" into the first <img> in content */
+  priority?: boolean;
 }
 
-function PostCardBody({ className, content, expandable = false }: PostCardBodyProps) {
+function PostCardBody({
+  className,
+  content,
+  expandable = false,
+  priority = false,
+}: PostCardBodyProps) {
   const sanitized = DOMPurify.sanitize(content, {
     ADD_TAGS: ['figure'],
     ADD_ATTR: [
@@ -29,8 +44,13 @@ function PostCardBody({ className, content, expandable = false }: PostCardBodyPr
       'data-content-type',
       'data-text-align',
       'data-image-group',
+      'fetchpriority',
     ],
   });
+
+  // Inject fetchpriority="high" into the first <img> for LCP optimization.
+  // Applied after sanitization so DOMPurify does not strip the attribute.
+  const html = priority ? sanitized.replace(/<img\b/, '<img fetchpriority="high"') : sanitized;
 
   const { ref, isClamped, isExpanded, setIsExpanded } = useLineClamp<HTMLDivElement>(
     expandable,
@@ -104,7 +124,7 @@ function PostCardBody({ className, content, expandable = false }: PostCardBodyPr
             '[&_img]:cursor-pointer',
             className,
           )}
-          dangerouslySetInnerHTML={{ __html: sanitized }}
+          dangerouslySetInnerHTML={{ __html: html }}
           onClick={handleClick}
           onKeyDown={handleKeyDown}
         />
