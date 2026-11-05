@@ -111,7 +111,7 @@ function BoardContent({
 
   return (
     <main className="flex min-w-0 flex-1 flex-col gap-400">
-      {filteredPosts.map((post) => (
+      {filteredPosts.map((post, index) => (
         <PostCardRoot key={post.id} className="relative">
           <PostCardHeader>
             <PostAuthorInfo
@@ -132,7 +132,10 @@ function BoardContent({
             <PostCardListContent title={post.title} content={post.content} isNew={post.isNew} />
           </Link>
           <div className="relative z-10">
-            <PostCardImages files={toDisplayImages(post.fileUrls, post.content)} />
+            <PostCardImages
+              files={toDisplayImages(post.fileUrls, post.content)}
+              priority={index === 0}
+            />
           </div>
           <div className="relative z-10">
             <PostCardActions
