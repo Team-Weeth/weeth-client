@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { Avatar as AvatarPrimitive } from 'radix-ui';
+import NextImage from 'next/image';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@/lib/cn';
 
@@ -44,28 +44,63 @@ const avatarVariants = cva('group/avatar relative flex shrink-0 overflow-hidden 
   },
 });
 
-interface AvatarProps
-  extends React.ComponentProps<typeof AvatarPrimitive.Root>, VariantProps<typeof avatarVariants> {}
+type ImageStatus = 'idle' | 'loaded' | 'error';
 
-function Avatar({ className, type, size, colorScheme, ...props }: AvatarProps) {
+const AvatarContext = React.createContext<{
+  status: ImageStatus;
+  setStatus: React.Dispatch<React.SetStateAction<ImageStatus>>;
+  size: number;
+} | null>(null);
+
+interface AvatarProps
+  extends React.HTMLAttributes<HTMLDivElement>, VariantProps<typeof avatarVariants> {}
+
+function Avatar({ className, type, size, colorScheme, children, ...props }: AvatarProps) {
+  const [status, setStatus] = React.useState<ImageStatus>('idle');
+  const resolvedSize = (size ?? 64) as number;
+
   return (
-    <AvatarPrimitive.Root
-      data-slot="avatar"
-      data-type={type ?? 'round'}
-      data-size={size ?? 64}
-      data-color={colorScheme ?? 'default'}
-      className={cn(avatarVariants({ type, size, colorScheme }), className)}
-      {...props}
-    />
+    <AvatarContext.Provider value={{ status, setStatus, size: resolvedSize }}>
+      <div
+        data-slot="avatar"
+        data-type={type ?? 'round'}
+        data-size={size ?? 64}
+        data-color={colorScheme ?? 'default'}
+        className={cn(avatarVariants({ type, size, colorScheme }), className)}
+        {...props}
+      >
+        {children}
+      </div>
+    </AvatarContext.Provider>
   );
 }
 
-function AvatarImage({ className, ...props }: React.ComponentProps<typeof AvatarPrimitive.Image>) {
+interface AvatarImageProps {
+  src?: string | null;
+  alt?: string;
+  className?: string;
+}
+
+function AvatarImage({ src, alt = '', className }: AvatarImageProps) {
+  const ctx = React.useContext(AvatarContext);
+  const setStatus = ctx?.setStatus;
+
+  React.useEffect(() => {
+    setStatus?.('idle');
+  }, [src, setStatus]);
+
+  if (!src) return null;
+
   return (
-    <AvatarPrimitive.Image
+    <NextImage
       data-slot="avatar-image"
       className={cn('aspect-square size-full object-cover', className)}
-      {...props}
+      src={src}
+      alt={alt}
+      width={ctx?.size ?? 64}
+      height={ctx?.size ?? 64}
+      onLoad={() => ctx?.setStatus('loaded')}
+      onError={() => ctx?.setStatus('error')}
     />
   );
 }
@@ -128,13 +163,28 @@ function DefaultClubAvatarIcon() {
 function AvatarFallback({
   className,
   variant,
+  delayMs = 0,
   children,
   ...props
-}: React.ComponentProps<typeof AvatarPrimitive.Fallback> & { variant?: 'person' | 'club' }) {
+}: React.HTMLAttributes<HTMLSpanElement> & {
+  variant?: 'person' | 'club';
+  delayMs?: number;
+}) {
+  const ctx = React.useContext(AvatarContext);
+  const [canRender, setCanRender] = React.useState(delayMs === 0);
+
+  React.useEffect(() => {
+    if (delayMs === 0) return;
+    const timer = setTimeout(() => setCanRender(true), delayMs);
+    return () => clearTimeout(timer);
+  }, [delayMs]);
+
+  if (ctx?.status === 'loaded' || !canRender) return null;
+
   const defaultIcon = variant === 'club' ? <DefaultClubAvatarIcon /> : <DefaultAvatarIcon />;
 
   return (
-    <AvatarPrimitive.Fallback
+    <span
       data-slot="avatar-fallback"
       className={cn(
         'flex size-full items-center justify-center',
@@ -156,7 +206,7 @@ function AvatarFallback({
       {...props}
     >
       {children ?? defaultIcon}
-    </AvatarPrimitive.Fallback>
+    </span>
   );
 }
 
