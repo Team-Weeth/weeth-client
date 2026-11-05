@@ -1,18 +1,4 @@
 {
-  "mcpServers": {
-    "playwright": {
-      "command": "npx",
-      "args": ["-y", "@playwright/mcp@latest"]
-    },
-    "weeth-api": {
-      "command": "npx",
-      "args": ["-y", "@ivotoby/openapi-mcp-server"],
-      "env": {
-        "API_BASE_URL": "https://api-dev.v4.weeth.kr",
-        "OPENAPI_SPEC_PATH": "https://api-dev.v4.weeth.kr/swagger-ui/index.html#/"
-      }
-    }
-  },
   "permissions": {
     "allow": [
       "Bash(pnpm *)",
