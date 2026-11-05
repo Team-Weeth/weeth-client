@@ -14,7 +14,12 @@ import { toastError } from '@/stores/useToastStore';
 import { buildPostPath } from '@/lib/board';
 import { toDisplayImages } from '@/lib/board/toDisplayImages';
 import { PostActionMenu } from './PostActionMenu';
-import { PostCard } from './PostCard';
+import { PostCardRoot } from './PostCard/PostCardRoot';
+import { PostCardHeader } from './PostCard/PostCardHeader';
+import { PostAuthorInfo } from './PostCard/PostAuthorInfo';
+import { PostCardListContent } from './PostCard/PostCardListContent';
+import { PostCardImages } from './PostCard/PostCardImages';
+import { PostCardActions } from './PostCard/PostCardActions';
 import { BoardContentSkeleton } from './BoardContentSkeleton';
 
 interface BoardContentProps {
@@ -107,9 +112,9 @@ function BoardContent({
   return (
     <main className="flex min-w-0 flex-1 flex-col gap-400">
       {filteredPosts.map((post) => (
-        <PostCard.Root key={post.id} className="relative">
-          <PostCard.Header>
-            <PostCard.Author
+        <PostCardRoot key={post.id} className="relative">
+          <PostCardHeader>
+            <PostAuthorInfo
               author={post.author}
               date={formatShortDateTime(post.time)}
               hasAttachment={post.fileUrls.length > 0}
@@ -119,18 +124,18 @@ function BoardContent({
                 <PostActionMenu postId={post.id} boardId={post.boardId} />
               </div>
             )}
-          </PostCard.Header>
+          </PostCardHeader>
           <Link
             href={buildPostPath(clubId, post.id, post.boardId)}
             className="after:absolute after:inset-0 after:content-['']"
           >
-            <PostCard.ListContent title={post.title} content={post.content} isNew={post.isNew} />
+            <PostCardListContent title={post.title} content={post.content} isNew={post.isNew} />
           </Link>
           <div className="relative z-10">
-            <PostCard.Images files={toDisplayImages(post.fileUrls, post.content)} />
+            <PostCardImages files={toDisplayImages(post.fileUrls, post.content)} />
           </div>
           <div className="relative z-10">
-            <PostCard.Actions
+            <PostCardActions
               postId={post.id}
               boardId={post.boardId}
               likeCount={post.like.likeCount}
@@ -142,7 +147,7 @@ function BoardContent({
               }
             />
           </div>
-        </PostCard.Root>
+        </PostCardRoot>
       ))}
       {isFetchingNextPage && <BoardContentSkeleton />}
       <div ref={sentinelRef} />
