@@ -1,5 +1,6 @@
 'use client';
 
+import NextImage from 'next/image';
 import CloseCircleIcon from '@/assets/icons/close_circle.svg';
 import { Icon } from '@/components/ui/Icon';
 import { LoadingOverlay } from '@/components/ui/LoadingOverlay';
@@ -39,6 +40,10 @@ interface ImageCardProps {
   removable?: boolean;
   onRemove?: (id: string | number, fileUrl: string) => void;
   onClick?: () => void;
+  /** next/image sizes attribute — pass the expected CSS display width for srcset selection */
+  sizes?: string;
+  /** Set true for the LCP image to add fetchpriority="high" and disable lazy loading */
+  priority?: boolean;
 }
 
 function ImageCard({
@@ -48,18 +53,36 @@ function ImageCard({
   removable,
   onRemove,
   onClick,
+  sizes = '100vw',
+  priority = false,
 }: ImageCardProps) {
+  const isLocal = item.uploaded === false;
+
   const inner = (
     <>
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        src={item.fileUrl}
-        alt={item.fileName}
-        draggable={false}
-        loading={item.uploaded === false ? 'eager' : 'lazy'}
-        data-loading={item.uploaded === false ? 'true' : undefined}
-        className={cn(item.uploaded === false && 'opacity-50', imgClassName)}
-      />
+      {isLocal ? (
+        // Blob / local preview: next/image cannot optimize local object URLs
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src={item.fileUrl}
+          alt={item.fileName}
+          draggable={false}
+          loading="eager"
+          data-loading="true"
+          className={cn('h-full w-full opacity-50', imgClassName)}
+        />
+      ) : (
+        <NextImage
+          src={item.fileUrl}
+          alt={item.fileName}
+          width={0}
+          height={0}
+          sizes={sizes}
+          draggable={false}
+          priority={priority}
+          className={cn('h-full w-full', imgClassName)}
+        />
+      )}
 
       {item.uploaded === false && <LoadingOverlay label="이미지 업로드 중" />}
 
