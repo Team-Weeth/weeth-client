@@ -172,6 +172,40 @@ describe('채팅형 서비스 피드백', () => {
         { content: '버튼이 안 눌려요', channel: 'CHAT' },
       ]);
     });
+
+    it('전송에 실패하면 늘어난 다시 보내기 줄이 보이도록 끝으로 스크롤한다', async () => {
+      let respond: () => void = () => {};
+      const responded = new Promise<void>((resolve) => {
+        respond = resolve;
+      });
+      server.use(
+        http.post(FEEDBACK_URL, async () => {
+          await responded;
+          return HttpResponse.json({ code: 500, message: 'error', data: null }, { status: 500 });
+        }),
+      );
+      // jsdom에는 scrollIntoView가 없어 직접 심고, 다른 테스트에 남지 않도록 되돌린다.
+      const scrollIntoView = jest.fn();
+      Element.prototype.scrollIntoView = scrollIntoView;
+      try {
+        const user = userEvent.setup();
+        renderFab();
+        const dialog = await openFeedbackChat(user);
+
+        await user.type(
+          within(dialog).getByRole('textbox', { name: '서비스 피드백 입력' }),
+          '버튼이 안 눌려요{Enter}',
+        );
+        await within(dialog).findByText('전송 중');
+        scrollIntoView.mockClear();
+        respond();
+
+        expect(await within(dialog).findByText('전송 실패')).toBeInTheDocument();
+        expect(scrollIntoView).toHaveBeenCalledWith({ block: 'end' });
+      } finally {
+        delete (Element.prototype as Partial<Element>).scrollIntoView;
+      }
+    });
   });
 
   describe('입력', () => {

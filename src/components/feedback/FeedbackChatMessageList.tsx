@@ -16,10 +16,13 @@ interface FeedbackChatMessageListProps {
 
 function FeedbackChatMessageList({ messages, onRetry, className }: FeedbackChatMessageListProps) {
   const endRef = useRef<HTMLDivElement>(null);
+  // 전송 실패처럼 개수는 그대로이고 마지막 말풍선 아래 줄만 늘어날 때도 끝까지 보이도록 상태 변화에도 스크롤한다.
+  const lastMessage = messages.at(-1);
+  const lastStatus = lastMessage?.role === 'user' ? lastMessage.status : undefined;
 
   useEffect(() => {
     endRef.current?.scrollIntoView?.({ block: 'end' });
-  }, [messages.length]);
+  }, [messages.length, lastStatus]);
 
   return (
     <div role="log" aria-label="서비스 피드백 대화" className={cn('flex flex-col', className)}>
