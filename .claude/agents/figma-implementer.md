@@ -90,6 +90,8 @@ Workflow:
 
 Exactly one screenshot comparison. No iterative loop in v1.
 
+This step is a quick layout sanity check. Numeric verification against Figma (sizes, spacing, typography, shadows) belongs to the `figma-verify` skill, which the parent runs after implementation.
+
 1. `mcp__figma__get_screenshot` on the same node — request a modest size (the image is for layout sanity, not pixel diff).
 2. Run a **checklist-based** comparison in your head — DO NOT describe the screenshot byte-by-byte:
    - [ ] Layout direction (row/column) matches
