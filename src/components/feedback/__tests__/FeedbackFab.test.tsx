@@ -5,6 +5,7 @@ import { FeedbackFab } from '@/components/feedback/FeedbackFab';
 import { DEFAULT_CLUB_FEATURES } from '@/flags/club-features/definitions';
 import { ClubFeatureProvider } from '@/providers/club-feature-provider';
 import { mockMatchMedia, stubLayoutObservers } from '@/test-utils/browser';
+import { createQueryClient, createWrapper } from '@/test-utils/query';
 import type { HomeDashboard } from '@/types/home';
 import type { Role } from '@/types/user';
 
@@ -22,10 +23,13 @@ jest.mock('@/components/home/HomeProfileSetupModal', () => ({
 
 function renderFab({ enabled = true, role = 'LEAD' }: { enabled?: boolean; role?: Role } = {}) {
   mockRole = role;
+  const QueryWrapper = createWrapper(createQueryClient());
   return render(
-    <ClubFeatureProvider features={{ ...DEFAULT_CLUB_FEATURES, feedbackFabEnabled: enabled }}>
-      <FeedbackFab />
-    </ClubFeatureProvider>,
+    <QueryWrapper>
+      <ClubFeatureProvider features={{ ...DEFAULT_CLUB_FEATURES, feedbackFabEnabled: enabled }}>
+        <FeedbackFab />
+      </ClubFeatureProvider>
+    </QueryWrapper>,
   );
 }
 
@@ -49,13 +53,16 @@ describe('FeedbackFab', () => {
     expect(screen.queryByRole('button', { name: 'Weeth 메뉴' })).not.toBeInTheDocument();
   });
 
-  it('A안 플래그가 켜져 있으면 FAB 메뉴에 서비스 안내 항목을 보여준다', async () => {
+  it('A안 플래그가 켜져 있으면 FAB 메뉴에 서비스 안내·서비스 피드백 항목을 보여준다', async () => {
     const user = userEvent.setup();
     renderFab();
 
     await user.click(screen.getByRole('button', { name: 'Weeth 메뉴' }));
 
-    expect(screen.getByRole('menuitem', { name: '서비스 안내' })).toBeInTheDocument();
+    expect(screen.getAllByRole('menuitem').map((item) => item.textContent)).toEqual([
+      '서비스 안내',
+      '서비스 피드백',
+    ]);
   });
 
   it.each([
