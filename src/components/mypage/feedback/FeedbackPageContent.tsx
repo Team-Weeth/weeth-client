@@ -23,14 +23,15 @@ function FeedbackPageContent({ className, ...props }: FeedbackPageContentProps) 
 
   return (
     <div className={cn('tablet:gap-4 flex min-w-0 flex-1 flex-col', className)} {...props}>
-      <div className="tablet:py-0 flex items-center gap-1 py-300">
+      {/* 모바일은 32px 버튼 안쪽 여백만큼 당겨서 꺾쇠를 본문 왼쪽 끝에 맞춘다 (Figma PageNavigation_v4). */}
+      <div className="tablet:ml-0 tablet:gap-1 tablet:py-0 -ml-[10px] flex items-center py-300">
         <button
           type="button"
           onClick={() => router.push(`/${clubId}/mypage/settings`)}
           aria-label="서비스 설정으로 돌아가기"
-          className="flex cursor-pointer items-center justify-center p-1"
+          className="flex size-8 cursor-pointer items-center justify-center"
         >
-          <Icon src={BackIcon} size={21} className="text-icon-normal p-1" />
+          <Icon src={BackIcon} size={17} className="text-icon-normal" />
         </button>
         <h1 className="tablet:typo-h3 typo-sub1 text-text-normal">서비스 피드백</h1>
       </div>
