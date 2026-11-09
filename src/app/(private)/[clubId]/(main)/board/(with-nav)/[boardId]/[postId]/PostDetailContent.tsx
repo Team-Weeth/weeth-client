@@ -19,11 +19,20 @@ import { boardApi } from '@/lib/apis/board';
 import { parseApiError } from '@/lib/error';
 import { BOARD_PAGE_ERRORS } from '@/constants/board/error';
 import { toastError } from '@/stores/useToastStore';
+import { CommentSkeleton } from '@/components/board/PostDetailSkeleton';
 import type { PostDetail } from '@/types/board';
 
 const CommentSection = dynamic(
   () => import('./CommentSection').then((m) => ({ default: m.CommentSection })),
-  { ssr: false },
+  {
+    ssr: false,
+    loading: () => (
+      <div className="flex flex-col gap-200 self-stretch pb-400">
+        <CommentSkeleton />
+        <CommentSkeleton />
+      </div>
+    ),
+  },
 );
 
 function escapeHtml(value: string): string {
