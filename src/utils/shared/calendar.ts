@@ -1,4 +1,5 @@
 import { getDaysInMonth, getFirstDayOfMonth } from '@/utils/shared/date';
+import type { ScheduleDetail } from '@/types/calendar';
 
 export type CalendarCell = {
   day: number;
@@ -65,6 +66,23 @@ export function buildCalendarCells(year: number, month: number): CalendarCell[] 
       };
     }
   });
+}
+
+export function buildScheduleMap(schedules: ScheduleDetail[]): Map<string, ScheduleDetail[]> {
+  const map = new Map<string, ScheduleDetail[]>();
+  for (const s of schedules) {
+    const startStr = s.start.split('T')[0];
+    const endStr = s.end.split('T')[0];
+    const cursor = new Date(`${startStr}T00:00:00`);
+    const endDate = new Date(`${endStr}T00:00:00`);
+    while (cursor <= endDate) {
+      const key = `${cursor.getFullYear()}-${String(cursor.getMonth() + 1).padStart(2, '0')}-${String(cursor.getDate()).padStart(2, '0')}`;
+      if (!map.has(key)) map.set(key, []);
+      map.get(key)!.push(s);
+      cursor.setDate(cursor.getDate() + 1);
+    }
+  }
+  return map;
 }
 
 export function getCalendarCellColors(

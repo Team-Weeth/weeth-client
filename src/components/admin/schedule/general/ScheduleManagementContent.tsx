@@ -146,7 +146,10 @@ function ScheduleManagementContent() {
                 />
                 <button
                   type="button"
-                  onClick={goToToday}
+                  onClick={() => {
+                    goToToday();
+                    setSelectedDate(null);
+                  }}
                   className="border-line typo-caption1 text-text-normal flex cursor-pointer items-center justify-center rounded-full border px-300 py-200 transition-colors hover:border-neutral-500"
                 >
                   오늘

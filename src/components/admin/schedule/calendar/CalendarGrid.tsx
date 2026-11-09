@@ -1,14 +1,17 @@
 'use client';
 
 import { useRef } from 'react';
-import { flushSync } from 'react-dom';
 import { cn } from '@/lib/cn';
 import { DAY_META, DAY_HEADER_COLOR } from '@/constants/shared/date';
-import { buildCalendarCells, getCalendarCellColors } from '@/utils/shared/calendar';
+import {
+  buildCalendarCells,
+  buildScheduleMap,
+  getCalendarCellColors,
+} from '@/utils/shared/calendar';
 import { Tag, type TagProps } from '@/components/ui/tag';
 import type { ScheduleDetail } from '@/types/calendar';
 import { CalendarDayPopup } from '@/components/calendar/CalendarDayPopup';
-import { useCalendarDayPopup } from '@/hooks/useCalendarDayPopup';
+import { useCalendarGridInteraction } from '@/hooks/admin/useCalendarGridInteraction';
 
 const MAX_VISIBLE_TAGS = 2;
 
@@ -40,19 +43,15 @@ function CalendarGrid({
 }: CalendarGridProps) {
   const cells = buildCalendarCells(year, month);
   const totalRows = cells.length / 7;
-
-  const scheduleMap = new Map<string, ScheduleDetail[]>();
-  for (const s of schedules) {
-    const key = s.start.split('T')[0];
-    if (!scheduleMap.has(key)) scheduleMap.set(key, []);
-    scheduleMap.get(key)?.push(s);
-  }
+  const scheduleMap = buildScheduleMap(schedules);
 
   const wrapperRef = useRef<HTMLDivElement>(null);
-  const { isPopupVisible, popupState, openPopup, closePopup } = useCalendarDayPopup(
+  const { isPopupVisible, popupState, handleCellClick, closePopup } = useCalendarGridInteraction({
     wrapperRef,
     selectedDate,
-  );
+    onSelectDate,
+    onCrossMonthDateClick,
+  });
 
   return (
     <div ref={wrapperRef} className={cn('relative h-[636px]', className)}>
@@ -93,69 +92,11 @@ function CalendarGrid({
               cell.dayOfWeek,
             );
 
-            const handleCellClick = (e: React.MouseEvent<HTMLDivElement>) => {
-              if (!cell.isCurrentMonth) {
-                if (!onCrossMonthDateClick) return;
-                flushSync(() => {
-                  onCrossMonthDateClick(cell.dateStr, cell.year, cell.month);
-                });
-                // flushSync 이후 DOM은 새 달로 재렌더링됨.
-                // 새 달의 셀 element를 직접 쿼리해 위치를 계산한다.
-                const wrapper = wrapperRef.current;
-                if (!wrapper) return;
-                const newCellEl = wrapper.querySelector(
-                  `[data-calendar-cell="${cell.dateStr}"]`,
-                ) as HTMLElement | null;
-                if (!newCellEl) return;
-                const newCells = buildCalendarCells(cell.year, cell.month);
-                const newIndex = newCells.findIndex((c) => c.dateStr === cell.dateStr);
-                if (newIndex === -1) return;
-                const newCol = newIndex % 7;
-                const newRow = Math.floor(newIndex / 7);
-                const newTotalRows = newCells.length / 7;
-                const [, m, d] = cell.dateStr.split('-');
-                openPopup({
-                  dateStr: cell.dateStr,
-                  formattedDate: `${Number(m)}월 ${Number(d)}일`,
-                  row: newRow,
-                  col: newCol,
-                  totalRows: newTotalRows,
-                  wRect: wrapper.getBoundingClientRect(),
-                  cRect: newCellEl.getBoundingClientRect(),
-                });
-                return;
-              }
-
-              const isDeselect = selectedDate === cell.dateStr;
-              onSelectDate?.(cell.dateStr);
-
-              if (isDeselect) {
-                closePopup();
-                return;
-              }
-
-              const wrapper = wrapperRef.current;
-              const cellEl = e.currentTarget;
-
-              if (wrapper) {
-                const [, m, d] = cell.dateStr.split('-');
-                openPopup({
-                  dateStr: cell.dateStr,
-                  formattedDate: `${Number(m)}월 ${Number(d)}일`,
-                  row,
-                  col,
-                  totalRows,
-                  wRect: wrapper.getBoundingClientRect(),
-                  cRect: cellEl.getBoundingClientRect(),
-                });
-              }
-            };
-
             return (
               <div
                 key={cell.dateStr}
                 data-calendar-cell={cell.dateStr}
-                onClick={handleCellClick}
+                onClick={(e) => handleCellClick(cell, row, col, totalRows, e)}
                 className={cn(
                   'flex flex-col items-start justify-self-stretch overflow-hidden pt-300 pr-200 pb-[6px] pl-[6px]',
                   (cell.isCurrentMonth || onCrossMonthDateClick) && 'cursor-pointer',
