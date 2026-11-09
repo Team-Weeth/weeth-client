@@ -36,6 +36,94 @@
 </div>
 <br />
 
+## 기술 스택
+
+<table>
+  <tr>
+    <td><b>Core</b></td>
+    <td>
+      <img src="https://img.shields.io/badge/React_19-61DAFB?style=flat-square&logo=react&logoColor=black" />
+      <img src="https://img.shields.io/badge/Next.js_16-000000?style=flat-square&logo=nextdotjs&logoColor=white" />
+      <img src="https://img.shields.io/badge/TypeScript-3178C6?style=flat-square&logo=typescript&logoColor=white" />
+    </td>
+  </tr>
+  <tr>
+    <td><b>Styling</b></td>
+    <td>
+      <img src="https://img.shields.io/badge/Tailwind_v4-06B6D4?style=flat-square&logo=tailwindcss&logoColor=white" />
+      <img src="https://img.shields.io/badge/Radix_UI-161618?style=flat-square&logo=radixui&logoColor=white" />
+      <img src="https://img.shields.io/badge/CVA-000000?style=flat-square" />
+    </td>
+  </tr>
+  <tr>
+    <td><b>State · Data</b></td>
+    <td>
+      <img src="https://img.shields.io/badge/TanStack_Query-FF4154?style=flat-square&logo=reactquery&logoColor=white" />
+      <img src="https://img.shields.io/badge/Zustand-443E38?style=flat-square" />
+      <img src="https://img.shields.io/badge/axios-5A29E4?style=flat-square&logo=axios&logoColor=white" />
+      <img src="https://img.shields.io/badge/Zod-3E67B1?style=flat-square&logo=zod&logoColor=white" />
+    </td>
+  </tr>
+  <tr>
+    <td><b>Editor</b></td>
+    <td>
+      <img src="https://img.shields.io/badge/tiptap_2.4-000000?style=flat-square&logo=tiptap&logoColor=white" />
+    </td>
+  </tr>
+  <tr>
+    <td><b>Mobile</b></td>
+    <td>
+      <img src="https://img.shields.io/badge/Capacitor_8-119EFF?style=flat-square&logo=capacitor&logoColor=white" />
+    </td>
+  </tr>
+  <tr>
+    <td><b>Testing</b></td>
+    <td>
+      <img src="https://img.shields.io/badge/Jest-C21325?style=flat-square&logo=jest&logoColor=white" />
+      <img src="https://img.shields.io/badge/Testing_Library-E33332?style=flat-square&logo=testinglibrary&logoColor=white" />
+      <img src="https://img.shields.io/badge/Playwright-2EAD33?style=flat-square&logo=playwright&logoColor=white" />
+      <img src="https://img.shields.io/badge/MSW-FF6A33?style=flat-square&logo=mockserviceworker&logoColor=white" />
+    </td>
+  </tr>
+  <tr>
+    <td><b>Infra · Tooling</b></td>
+    <td>
+      <img src="https://img.shields.io/badge/AWS_Amplify-FF9900?style=flat-square&logo=awsamplify&logoColor=white" />
+      <img src="https://img.shields.io/badge/Sentry-362D59?style=flat-square&logo=sentry&logoColor=white" />
+      <img src="https://img.shields.io/badge/PostHog-1D4AFF?style=flat-square&logo=posthog&logoColor=white" />
+      <img src="https://img.shields.io/badge/Flagsmith-1D1D2E?style=flat-square&logo=flagsmith&logoColor=white" />
+      <img src="https://img.shields.io/badge/pnpm-F69220?style=flat-square&logo=pnpm&logoColor=white" />
+    </td>
+  </tr>
+</table>
+
+React Compiler가 켜져 있어 `useMemo`, `useCallback`, `React.memo`는 대부분 필요하지 않습니다.
+
+<br />
+
+## 프로젝트 구조
+
+```text
+src/
+├── app/                  # Next.js App Router
+│   ├── (private)/        # 인증 필요 — [clubId] 기반 메인 / 어드민
+│   ├── (public)/         # 인증 불필요 — 로그인 · 랜딩 · 클럽 공개 페이지
+│   └── globals.css       # 디자인 토큰 (CSS 변수 · @utility)
+├── components/           # ui / layout / 도메인별 컴포넌트
+├── lib/
+│   ├── actions/          # Server Actions ("use server")
+│   ├── apis/             # API 호출 함수
+│   └── cn.ts             # className 머지 유틸
+├── stores/               # Zustand 전역 상태
+├── hooks/                # 커스텀 훅
+├── flags/                # Flagsmith 기능 플래그
+└── types/                # 타입 정의
+```
+
+`[clubId]` 동적 세그먼트가 곧 클럽 컨텍스트입니다. 사용자는 URL을 따라 클럽을 바꿔가며 활동합니다.
+
+<br />
+
 ## 소개
 
 - Weeth는 동아리 운영에서 반복되는 일들을 하나의 서비스로 정리했습니다. 
@@ -189,70 +277,6 @@ Flagsmith 기반 클럽별 기능 On/Off · 버전 분기
 
 <br />
 
-## 기술 스택
-
-<table>
-  <tr>
-    <td><b>Core</b></td>
-    <td>
-      <img src="https://img.shields.io/badge/React_19-61DAFB?style=flat-square&logo=react&logoColor=black" />
-      <img src="https://img.shields.io/badge/Next.js_16-000000?style=flat-square&logo=nextdotjs&logoColor=white" />
-      <img src="https://img.shields.io/badge/TypeScript-3178C6?style=flat-square&logo=typescript&logoColor=white" />
-    </td>
-  </tr>
-  <tr>
-    <td><b>Styling</b></td>
-    <td>
-      <img src="https://img.shields.io/badge/Tailwind_v4-06B6D4?style=flat-square&logo=tailwindcss&logoColor=white" />
-      <img src="https://img.shields.io/badge/Radix_UI-161618?style=flat-square&logo=radixui&logoColor=white" />
-      <img src="https://img.shields.io/badge/CVA-000000?style=flat-square" />
-    </td>
-  </tr>
-  <tr>
-    <td><b>State · Data</b></td>
-    <td>
-      <img src="https://img.shields.io/badge/TanStack_Query-FF4154?style=flat-square&logo=reactquery&logoColor=white" />
-      <img src="https://img.shields.io/badge/Zustand-443E38?style=flat-square" />
-      <img src="https://img.shields.io/badge/axios-5A29E4?style=flat-square&logo=axios&logoColor=white" />
-      <img src="https://img.shields.io/badge/Zod-3E67B1?style=flat-square&logo=zod&logoColor=white" />
-    </td>
-  </tr>
-  <tr>
-    <td><b>Editor</b></td>
-    <td>
-      <img src="https://img.shields.io/badge/tiptap_2.4-000000?style=flat-square&logo=tiptap&logoColor=white" />
-    </td>
-  </tr>
-  <tr>
-    <td><b>Mobile</b></td>
-    <td>
-      <img src="https://img.shields.io/badge/Capacitor_8-119EFF?style=flat-square&logo=capacitor&logoColor=white" />
-    </td>
-  </tr>
-  <tr>
-    <td><b>Testing</b></td>
-    <td>
-      <img src="https://img.shields.io/badge/Jest-C21325?style=flat-square&logo=jest&logoColor=white" />
-      <img src="https://img.shields.io/badge/Testing_Library-E33332?style=flat-square&logo=testinglibrary&logoColor=white" />
-      <img src="https://img.shields.io/badge/Playwright-2EAD33?style=flat-square&logo=playwright&logoColor=white" />
-      <img src="https://img.shields.io/badge/MSW-FF6A33?style=flat-square&logo=mockserviceworker&logoColor=white" />
-    </td>
-  </tr>
-  <tr>
-    <td><b>Infra · Tooling</b></td>
-    <td>
-      <img src="https://img.shields.io/badge/AWS_Amplify-FF9900?style=flat-square&logo=awsamplify&logoColor=white" />
-      <img src="https://img.shields.io/badge/Sentry-362D59?style=flat-square&logo=sentry&logoColor=white" />
-      <img src="https://img.shields.io/badge/PostHog-1D4AFF?style=flat-square&logo=posthog&logoColor=white" />
-      <img src="https://img.shields.io/badge/Flagsmith-1D1D2E?style=flat-square&logo=flagsmith&logoColor=white" />
-      <img src="https://img.shields.io/badge/pnpm-F69220?style=flat-square&logo=pnpm&logoColor=white" />
-    </td>
-  </tr>
-</table>
-
-React Compiler가 켜져 있어 `useMemo`, `useCallback`, `React.memo`는 대부분 필요하지 않습니다.
-
-<br />
 
 ## 시작하기
 
@@ -297,28 +321,7 @@ pnpm cap:open:android   # Android Studio 열기
 
 <br />
 
-## 프로젝트 구조
 
-```text
-src/
-├── app/                  # Next.js App Router
-│   ├── (private)/        # 인증 필요 — [clubId] 기반 메인 / 어드민
-│   ├── (public)/         # 인증 불필요 — 로그인 · 랜딩 · 클럽 공개 페이지
-│   └── globals.css       # 디자인 토큰 (CSS 변수 · @utility)
-├── components/           # ui / layout / 도메인별 컴포넌트
-├── lib/
-│   ├── actions/          # Server Actions ("use server")
-│   ├── apis/             # API 호출 함수
-│   └── cn.ts             # className 머지 유틸
-├── stores/               # Zustand 전역 상태
-├── hooks/                # 커스텀 훅
-├── flags/                # Flagsmith 기능 플래그
-└── types/                # 타입 정의
-```
-
-`[clubId]` 동적 세그먼트가 곧 클럽 컨텍스트입니다. 사용자는 URL을 따라 클럽을 바꿔가며 활동합니다.
-
-<br />
 
 
 
