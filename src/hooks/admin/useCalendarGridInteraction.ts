@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { flushSync } from 'react-dom';
 import { buildCalendarCells } from '@/utils/shared/calendar';
 import { useCalendarDayPopup, type PopupState } from '@/hooks/useCalendarDayPopup';
@@ -27,14 +28,23 @@ interface UseCalendarGridInteractionResult {
 
 function useCalendarGridInteraction({
   wrapperRef,
-  selectedDate,
+  selectedDate: externalSelectedDate,
   onSelectDate,
   onCrossMonthDateClick,
 }: UseCalendarGridInteractionParams): UseCalendarGridInteractionResult {
+  const isControlled = externalSelectedDate !== undefined;
+  const [internalDate, setInternalDate] = useState<string | null>(null);
+  const selectedDate = isControlled ? externalSelectedDate : internalDate;
+
   const { isPopupVisible, popupState, openPopup, closePopup } = useCalendarDayPopup(
     wrapperRef,
     selectedDate,
   );
+
+  const setDate = (date: string) => {
+    onSelectDate?.(date);
+    if (!isControlled) setInternalDate(date);
+  };
 
   const handleCellClick = (
     cell: CalendarCell,
@@ -78,13 +88,13 @@ function useCalendarGridInteraction({
     const isPopupOpenForThisDate = isPopupVisible && popupState?.dateStr === cell.dateStr;
 
     if (isPopupOpenForThisDate) {
-      onSelectDate?.(cell.dateStr);
+      setDate(cell.dateStr);
       closePopup();
       return;
     }
 
     if (selectedDate !== cell.dateStr) {
-      onSelectDate?.(cell.dateStr);
+      setDate(cell.dateStr);
     }
 
     const wrapper = wrapperRef.current;

@@ -43,7 +43,7 @@ function CalendarGrid({
 }: CalendarGridProps) {
   const cells = buildCalendarCells(year, month);
   const totalRows = cells.length / 7;
-  const scheduleMap = buildScheduleMap(schedules);
+  const scheduleMap = buildScheduleMap(schedules, cells);
 
   const wrapperRef = useRef<HTMLDivElement>(null);
   const { isPopupVisible, popupState, handleCellClick, closePopup } = useCalendarGridInteraction({
