@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
 import { cookies, headers } from 'next/headers';
 
@@ -6,6 +7,30 @@ import { ClubErrorPage } from '@/components/auth/invite/ClubErrorPage';
 import { ApiError, apiServer } from '@/lib/apis/server';
 import { ACCESS_TOKEN_KEY, REFRESH_TOKEN_KEY } from '@/lib/apis/cookies';
 import type { Club } from '@/types';
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ clubId: string }>;
+}): Promise<Metadata> {
+  const { clubId } = await params;
+
+  let clubName: string | undefined;
+  try {
+    const res = await apiServer.get<{ data: Club }>(`/clubs/${clubId}`);
+    clubName = res.data.name;
+  } catch {
+    // fall through to default
+  }
+
+  return {
+    robots: { index: false },
+    title: {
+      default: clubName ?? 'Weeth',
+      template: clubName ? `%s · ${clubName} | Weeth` : '%s | Weeth',
+    },
+  };
+}
 
 interface ClubLayoutProps {
   children: ReactNode;

@@ -15,7 +15,7 @@ import type { Member } from '@/types/admin/member';
 import { EMPTY_MEMBER_PAGE, useAdminMembers, useAdminMembersInfinite } from '@/hooks/queries/admin';
 import { useCardinals } from '@/hooks/queries';
 import { useIntersectionObserver } from '@/hooks/board/useIntersectionObserver';
-import { useMediaQuery } from '@/hooks/useMediaQuery';
+import { useIsMobile } from '@/hooks/useIsMobile';
 import { useUserRole } from '@/stores';
 import { cn } from '@/lib/cn';
 import { AdminPageContainer } from '@/components/admin/AdminPageContainer';
@@ -51,7 +51,7 @@ function MemberPageContent() {
   const [detailMemberId, setDetailMemberId] = useState<string | null>(null);
   const [cardinalModalMemberId, setCardinalModalMemberId] = useState<string | null>(null);
   const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
-  const isMobile = useMediaQuery('(max-width: 695.98px)');
+  const isMobile = useIsMobile();
   const viewModeParam = searchParams.get(MEMBER_VIEW_MODE_QUERY_KEY);
   const mobileViewMode: MemberViewMode = isMemberViewMode(viewModeParam) ? viewModeParam : 'table';
   const [page, setPage] = useState(1);

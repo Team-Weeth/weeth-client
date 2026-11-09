@@ -21,20 +21,21 @@ const inter = Inter({
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
-  maximumScale: 1,
   viewportFit: 'cover',
 };
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://www.weeth.kr'),
-  title: '우리 동아리만의 사이트를 원한다면, 위드',
+  title: {
+    default: '우리 동아리만의 사이트를 원한다면, 위드',
+    template: '%s | Weeth',
+  },
   description:
     '동아리의 출석부터 활동 공유까지! 위드에서 동아리만의 사이트를 개설하여 관리해보세요.',
   icons: {
     icon: '/assets/favicon/favicon.svg',
   },
   openGraph: {
-    title: '우리 동아리만의 사이트를 원한다면, 위드',
     description:
       '동아리의 출석부터 활동 공유까지! 위드에서 동아리만의 사이트를 개설하여 관리해보세요.',
     images: [
@@ -50,7 +51,6 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: '우리 동아리만의 사이트를 원한다면, 위드',
     description:
       '동아리의 출석부터 활동 공유까지! 위드에서 동아리만의 사이트를 개설하여 관리해보세요.',
     images: ['/assets/og/og-image.png'],
@@ -65,6 +65,13 @@ export default function RootLayout({
   return (
     <html lang="ko" suppressHydrationWarning>
       <head>
+        <link
+          rel="preload"
+          href="/fonts/PretendardVariable.woff2"
+          as="font"
+          type="font/woff2"
+          crossOrigin="anonymous"
+        />
         <script
           dangerouslySetInnerHTML={{
             __html: `(function(){try{var isLanding=/^\\/landing(?:\\/|$)/.test(location.pathname);if(isLanding){document.documentElement.classList.remove('dark');return;}var t=localStorage.getItem('weeth-theme');var mode='auto';if(t){var parsed=JSON.parse(t);var state=parsed&&parsed.state?parsed.state:{};mode=state.mode||'auto';}var prefersDark=window.matchMedia('(prefers-color-scheme: dark)').matches;var shouldDark=mode==='auto'?prefersDark:mode==='dark';document.documentElement.classList.toggle('dark',shouldDark);}catch(e){}})()`,

@@ -1,9 +1,12 @@
+import type { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 import { ClubList } from '@/components/auth/hub/ClubList';
 import { HubProfile } from '@/components/auth/hub/HubProfile';
 import { apiServer } from '@/lib/apis/server';
 import type { ApiResponse } from '@/types/common';
 import type { ClubDto } from '@/types/mypage';
+
+export const metadata: Metadata = { title: '동아리 선택' };
 
 export default async function ClubSelectPage() {
   const res = await apiServer.get<ApiResponse<ClubDto[]>>('/clubs');
