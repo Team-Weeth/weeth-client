@@ -58,7 +58,7 @@ function CalendarGrid({
     <div ref={wrapperRef} className={cn('relative h-[636px]', className)}>
       <div className="border-line bg-container-neutral flex h-full flex-col overflow-hidden rounded-[15px] border shadow-sm">
         {/* Weekday header row */}
-        <div className="border-line grid shrink-0 grid-cols-[repeat(7,minmax(92px,1fr))] border-b">
+        <div className="border-line grid shrink-0 grid-cols-[repeat(7,minmax(0,1fr))] border-b">
           {DAY_META.map((d, i) => (
             <div
               key={d.en}
@@ -73,7 +73,7 @@ function CalendarGrid({
         </div>
 
         {/* Date cells */}
-        <div className="grid flex-1 auto-rows-fr grid-cols-[repeat(7,minmax(92px,1fr))]">
+        <div className="grid flex-1 auto-rows-fr grid-cols-[repeat(7,minmax(0,1fr))]">
           {cells.map((cell, i) => {
             const col = i % 7;
             const row = Math.floor(i / 7);

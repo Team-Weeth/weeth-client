@@ -44,7 +44,11 @@ function ScheduleManagementContent() {
   const [createModalTab, setCreateModalTab] = useState<ScheduleType>('EVENT');
   const [editTarget, setEditTarget] = useState<Schedule | null>(null);
 
-  const { data: schedules = [] } = useAdminMonthlySchedules(
+  const {
+    data: schedules = [],
+    isPending,
+    isError,
+  } = useAdminMonthlySchedules(
     year,
     month,
     selectedCardinalId !== null ? activeCardinal?.cardinalNumber : undefined,
@@ -72,6 +76,9 @@ function ScheduleManagementContent() {
   // convert to calendar ScheduleDetail for shared components
   const calendarSchedules: ScheduleDetail[] = filtered.map(toCalendarScheduleDetail);
   const eventDates = calendarSchedules.map((s) => new Date(s.start));
+
+  const now = new Date();
+  const upcomingSchedules = calendarSchedules.filter((s) => new Date(s.end) > now);
 
   const handleToggleDate = (dateStr: string) => {
     setSelectedDate((prev) => (prev === dateStr ? null : dateStr));
@@ -151,19 +158,40 @@ function ScheduleManagementContent() {
               </Button>
             </div>
 
-            <CalendarGrid
-              year={year}
-              month={month}
-              schedules={calendarSchedules}
-              selectedDate={selectedDate}
-              onSelectDate={handleToggleDate}
-              onScheduleClick={handleScheduleClick}
-              className="desktop:col-start-1 desktop:row-start-2 min-w-0"
-            />
+            <Link
+              href={`/${clubId}/admin/schedule/overview?year=${year}&month=${month}`}
+              className={cn(
+                buttonVariants({ variant: 'secondary', size: 'md' }),
+                'tablet:hidden gap-100',
+              )}
+            >
+              일정 모아보기
+              <Icon src={ArrowRightIcon} size={10} />
+            </Link>
+
+            {isPending ? (
+              <div className="bg-container-neutral-alternative desktop:col-start-1 desktop:row-start-2 h-[636px] min-w-0 animate-pulse rounded-[15px]" />
+            ) : isError ? (
+              <div className="border-line bg-container-neutral desktop:col-start-1 desktop:row-start-2 flex h-[636px] min-w-0 items-center justify-center rounded-[15px] border shadow-sm">
+                <span className="typo-body2 text-text-alternative">
+                  일정을 불러오지 못했습니다.
+                </span>
+              </div>
+            ) : (
+              <CalendarGrid
+                year={year}
+                month={month}
+                schedules={calendarSchedules}
+                selectedDate={selectedDate}
+                onSelectDate={handleToggleDate}
+                onScheduleClick={handleScheduleClick}
+                className="desktop:col-start-1 desktop:row-start-2 min-w-0"
+              />
+            )}
 
             <div className="tablet:flex desktop:col-start-2 desktop:row-start-2 desktop:max-h-[638px] desktop:self-start hidden flex-col items-start gap-500 self-stretch rounded-lg bg-neutral-200 p-500">
               <Link
-                href={`/${clubId}/admin/schedule/overview`}
+                href={`/${clubId}/admin/schedule/overview?year=${year}&month=${month}`}
                 className={cn(
                   buttonVariants({ variant: 'secondary', size: 'md' }),
                   'w-full gap-100',
@@ -185,7 +213,7 @@ function ScheduleManagementContent() {
               />
 
               <CalendarUpcomingPanel
-                schedules={calendarSchedules}
+                schedules={upcomingSchedules}
                 onScheduleClick={handleScheduleClick}
               />
             </div>

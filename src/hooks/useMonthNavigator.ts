@@ -2,9 +2,9 @@
 
 import { useState } from 'react';
 
-function useMonthNavigator() {
-  const [year, setYear] = useState(() => new Date().getFullYear());
-  const [month, setMonth] = useState(() => new Date().getMonth() + 1);
+function useMonthNavigator(initialYear?: number, initialMonth?: number) {
+  const [year, setYear] = useState(() => initialYear ?? new Date().getFullYear());
+  const [month, setMonth] = useState(() => initialMonth ?? new Date().getMonth() + 1);
 
   const prev = () => {
     if (month === 1) {
