@@ -1,24 +1,17 @@
 'use client';
 
 import { useEffect } from 'react';
-import { useCommentEditActions, useActiveEditId } from '@/stores/useCommentEditStore';
+import dynamic from 'next/dynamic';
 import { useParams, useRouter } from 'next/navigation';
 import { Divider } from '@/components/ui/Divider';
 import { PostCard } from '@/components/board/PostCard';
 import { PostDetailHeader } from '@/components/board/PostDetailHeader';
 import { PostActionMenu } from '@/components/board/PostActionMenu';
-import { CommentInput } from '@/components/board/Comment/CommentInput';
-import { CommentItem } from '@/components/board/Comment/CommentItem';
-import { CommentDirtyGuardDialog } from '@/components/board/CommentDirtyGuardDialog';
 import { FileList } from '@/components/board/FileList';
 import { formatShortDateTime } from '@/lib/formatTime';
-import { toDisplayFile, isImageFileByType, mapComment } from '@/lib/board';
+import { toDisplayFile, isImageFileByType, buildBoardPath } from '@/lib/board';
 import { isFileReferencedInContent } from '@/lib/board/getUnreferencedFiles';
 import { usePostDetailQuery } from '@/hooks/board/usePostDetailQuery';
-import { useCreateComment } from '@/hooks/board/useCreateComment';
-import { useUpdateComment } from '@/hooks/board/useUpdateComment';
-import { useDeleteComment } from '@/hooks/board/useDeleteComment';
-import { useReplyForm } from '@/hooks/board/useReplyForm';
 import { useSetActiveBoardId, useBoardTypeMap } from '@/stores/useBoardNavStore';
 import { useClubId } from '@/stores/useClubStore';
 import { useUserId } from '@/stores/useUserStore';
@@ -26,8 +19,21 @@ import { boardApi } from '@/lib/apis/board';
 import { parseApiError } from '@/lib/error';
 import { BOARD_PAGE_ERRORS } from '@/constants/board/error';
 import { toastError } from '@/stores/useToastStore';
-import { buildBoardPath } from '@/lib/board';
+import { CommentSkeleton } from '@/components/board/PostDetailSkeleton';
 import type { PostDetail } from '@/types/board';
+
+const CommentSection = dynamic(
+  () => import('./CommentSection').then((m) => ({ default: m.CommentSection })),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="flex flex-col gap-200 self-stretch pb-400">
+        <CommentSkeleton />
+        <CommentSkeleton />
+      </div>
+    ),
+  },
+);
 
 function escapeHtml(value: string): string {
   return value
@@ -59,32 +65,6 @@ function PostDetailContent({ initialData }: PostDetailContentProps) {
     initialData,
   );
   const currentPost = data ?? initialData;
-
-  const { createComment, isPending } = useCreateComment(currentPost.boardId, currentPost.id);
-  const { updateComment } = useUpdateComment(currentPost.boardId, currentPost.id);
-  const { deleteComment } = useDeleteComment(currentPost.boardId, currentPost.id);
-
-  const activeEditId = useActiveEditId();
-  const { cancelEdit } = useCommentEditActions();
-
-  // 페이지 언마운트 시 편집 상태 초기화
-  useEffect(() => {
-    return () => cancelEdit();
-  }, [cancelEdit]);
-
-  const {
-    activeReplyId,
-    setIsReplyDirty,
-    setIsCommentDirty,
-    handleReplyToggle,
-    forceCloseReply,
-    switchGuardOpen,
-    onSwitchConfirm,
-    onSwitchCancel,
-    navGuardOpen,
-    onNavGuardConfirm,
-    onNavGuardCancel,
-  } = useReplyForm();
 
   useEffect(() => {
     if (!isError || !error) return;
@@ -172,7 +152,7 @@ function PostDetailContent({ initialData }: PostDetailContentProps) {
 
         <Divider />
 
-        <PostCard.Body content={contentWithImages} />
+        <PostCard.Body content={contentWithImages} priority />
 
         <FileList files={nonImageFiles} />
 
@@ -189,65 +169,12 @@ function PostDetailContent({ initialData }: PostDetailContentProps) {
         />
       </div>
 
-      <div id="comments" className="self-stretch px-450 pt-200 pb-400">
-        <CommentInput
-          placeholder={canComment ? '댓글을 입력하세요.' : '댓글을 작성할 수 없는 게시판입니다.'}
-          onSubmit={async (v, files) => createComment(v, undefined, files)}
-          onValueChange={(v) => setIsCommentDirty(v.trim().length > 0)}
-          disabled={!canComment || isPending}
-        />
-      </div>
-
-      {currentPost.comments.length > 0 && (
-        <>
-          <div className="self-stretch px-450">
-            <Divider />
-          </div>
-
-          <div className="flex flex-col gap-200 self-stretch pb-400">
-            {currentPost.comments.map((comment) => {
-              const mapped = mapComment(comment, currentUserId);
-              return (
-                <CommentItem
-                  key={comment.id}
-                  {...mapped}
-                  replyOpen={activeReplyId === comment.id}
-                  onReplyToggle={() => {
-                    if (!canComment || activeEditId !== null) return;
-                    handleReplyToggle(comment.id);
-                  }}
-                  canEdit={activeReplyId === null}
-                  onReplySuccess={forceCloseReply}
-                  onReplyDirtyChange={setIsReplyDirty}
-                  replies={mapped.replies.map((reply) => ({
-                    ...reply,
-                    canEdit: activeReplyId === null,
-                    onEdit: async (content, files) => updateComment(reply.id, content, files),
-                    onDelete: () => deleteComment(reply.id),
-                  }))}
-                  onReply={async (content, files) => {
-                    if (!canComment) return false;
-                    return createComment(content, comment.id, files);
-                  }}
-                  onEdit={async (content, files) => updateComment(comment.id, content, files)}
-                  onDelete={() => deleteComment(comment.id)}
-                />
-              );
-            })}
-          </div>
-        </>
-      )}
-
-      <CommentDirtyGuardDialog
-        open={switchGuardOpen}
-        onConfirm={onSwitchConfirm}
-        onCancel={onSwitchCancel}
-      />
-
-      <CommentDirtyGuardDialog
-        open={navGuardOpen}
-        onConfirm={onNavGuardConfirm}
-        onCancel={onNavGuardCancel}
+      <CommentSection
+        boardId={currentPost.boardId}
+        postId={currentPost.id}
+        comments={currentPost.comments}
+        canComment={canComment}
+        currentUserId={currentUserId}
       />
     </main>
   );
