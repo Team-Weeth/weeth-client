@@ -130,12 +130,14 @@ Weeth는 동아리 운영에서 반복되는 일들을 하나의 서비스로 �
 <td width="50%" valign="top">
 
 ### 인증
+
 쿠키 기반 인증 · Apple·Kakao 소셜 로그인
 
 </td>
 <td width="50%" valign="top">
 
 ### 게시판
+
 tiptap 리치 에디터 · 공지/일반 게시판 · 댓글·대댓글·좋아요
 
 </td>
@@ -144,12 +146,14 @@ tiptap 리치 에디터 · 공지/일반 게시판 · 댓글·대댓글·좋아�
 <td valign="top">
 
 ### 출석
+
 세션별 출석 코드 · QR 스캔 · 실시간 출석 현황
 
 </td>
 <td valign="top">
 
 ### 마이페이지
+
 프로필 · 활동 기수(Cardinal) · 출석 통계
 
 </td>
@@ -158,12 +162,14 @@ tiptap 리치 에디터 · 공지/일반 게시판 · 댓글·대댓글·좋아�
 <td valign="top">
 
 ### 어드민
+
 멤버 · 게시판 · 일정 · 출석 · 클럽 정보 관리 대시보드
 
 </td>
 <td valign="top">
 
 ### 기능 플래그
+
 Flagsmith 기반 클럽별 기능 On/Off · 버전 분기
 
 </td>
@@ -266,17 +272,17 @@ pnpm cap:open:android   # Android Studio 열기
 
 ## 스크립트
 
-| 명령어 | 설명 |
-| --- | --- |
-| `pnpm dev` | 개발 서버 |
-| `pnpm build` | 프로덕션 빌드 |
-| `pnpm lint` | ESLint 검사 |
-| `pnpm format:check` | Prettier 포맷 검사 |
-| `pnpm typecheck` | 타입 검사 (`tsc --noEmit`) |
-| `pnpm test` | Jest 테스트 |
-| `pnpm test:e2e` | Playwright E2E 테스트 |
-| `pnpm analyze` | 번들 사이즈 분석 |
-| `pnpm generate:types` | Swagger에서 API 타입 생성 |
+| 명령어                | 설명                       |
+| --------------------- | -------------------------- |
+| `pnpm dev`            | 개발 서버                  |
+| `pnpm build`          | 프로덕션 빌드              |
+| `pnpm lint`           | ESLint 검사                |
+| `pnpm format:check`   | Prettier 포맷 검사         |
+| `pnpm typecheck`      | 타입 검사 (`tsc --noEmit`) |
+| `pnpm test`           | Jest 테스트                |
+| `pnpm test:e2e`       | Playwright E2E 테스트      |
+| `pnpm analyze`        | 번들 사이즈 분석           |
+| `pnpm generate:types` | Swagger에서 API 타입 생성  |
 
 <br />
 
