@@ -78,6 +78,20 @@ This ensures components only re-render when the specific slice they subscribe to
 - File name: `use{Name}Store.ts` (e.g. `usePostStore.ts`)
 - Always export selector hooks from the store file; do not use the raw store hook in components
 
+### Mixing persisted and memory-only fields
+
+When a store needs both (e.g. `useDuesSetupStore`, `useTourStore`), wrap `combine` with `persist` and use `partialize` to pick only the fields that should survive a reload — comment each memory-only field with why it resets.
+
+```ts
+persist(
+  combine(initialState, (set) => ({ /* actions */ })),
+  {
+    name: 'storeName',
+    partialize: (state) => ({ persistedField: state.persistedField }),
+  },
+),
+```
+
 ## React Query Pattern
 
 ### staleTime / gcTime

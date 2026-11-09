@@ -16,6 +16,7 @@ Weeth client is a club management/community service built on Next.js 16.
 - Auth: cookie-based (accessToken/refreshToken)
 - **React Compiler** enabled (`reactCompiler: true`) — `useMemo`, `useCallback`, `React.memo` are unnecessary unless truly needed
 - **No `forwardRef`** — React 19 passes `ref` as a regular prop. Refactor any existing `forwardRef` usage on sight.
+- `react-joyride` 3.2.0 — product tours. **v3 API, not v2** (named export, `useJoyride`, an `options` prop). See `.claude/rules/tour.md`.
 
 ## Project Structure
 
@@ -78,7 +79,7 @@ No direct commits to main branch.
 
 ## Detail Rules
 
-Architecture, code style, component guide, state management, and git conventions are documented in `.claude/rules/`. Refer to those files for comprehensive guidance.
+Architecture, code style, component guide, state management, product tours, and git conventions are documented in `.claude/rules/`. Refer to those files for comprehensive guidance.
 
 ## Team Knowledge Base (`docs/`)
 

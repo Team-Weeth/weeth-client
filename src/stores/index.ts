@@ -55,3 +55,12 @@ export {
   useCalendarFilters,
   useCalendarActions,
 } from './useCalendarStore';
+export {
+  useTourStore,
+  useTourCompleted,
+  useTourHasHydrated,
+  useIsTourSuppressed,
+  useActiveTourId,
+  useTourActions,
+  type TourState,
+} from './useTourStore';

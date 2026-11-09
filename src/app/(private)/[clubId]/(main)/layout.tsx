@@ -1,5 +1,7 @@
 import type { ReactNode } from 'react';
 
+import { TourMount } from '@/components/tour/TourMount';
+import { getClubFeatures } from '@/flags/club-features/server';
 import { homeServerApi } from '@/lib/apis/home.server';
 import { UserHydrator } from '@/providers/user-hydrator';
 import { Header, ScrollRestoration } from '@/components/layout';
@@ -13,7 +15,10 @@ export default async function MainLayout({
 }>) {
   const { clubId } = await params;
 
-  const { data } = await homeServerApi.getDashboard(clubId);
+  const [{ data }, features] = await Promise.all([
+    homeServerApi.getDashboard(clubId),
+    getClubFeatures(clubId),
+  ]);
   const { userInfo } = data.myInfo;
   const { id: resolvedClubId, name: clubName } = data.club;
 
@@ -23,6 +28,7 @@ export default async function MainLayout({
         <ScrollRestoration />
         <Header />
         {children}
+        <TourMount clubId={clubId} scope="main" features={features} />
       </div>
     </UserHydrator>
   );

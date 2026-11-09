@@ -4,6 +4,7 @@ import { useEffect, useState, useSyncExternalStore } from 'react';
 import dynamic from 'next/dynamic';
 import { useParams } from 'next/navigation';
 import { useHomeQuery } from '@/hooks/home';
+import { useTourActions } from '@/stores';
 import {
   HOME_TUTORIAL_SLIDES,
   getHomeTutorialPendingKey,
@@ -12,6 +13,8 @@ import {
 } from '@/constants/home/tutorial';
 import { HomeTutorialDialog } from './HomeTutorialDialog';
 import { HomeTutorialButton } from './HomeTutorialButton';
+
+const HOME_TUTORIAL_SUPPRESSOR_ID = 'home-tutorial';
 const HomeProfileSetupModal = dynamic(() =>
   import('./HomeProfileSetupModal').then((m) => m.HomeProfileSetupModal),
 );
@@ -62,6 +65,15 @@ function HomeTutorialLauncher() {
   const shouldAutoOpen =
     tutorialVariant !== null && pendingClubId === clubId && !hasSeenTutorial && !autoOpenDismissed;
   const isDialogOpen = open || shouldAutoOpen;
+
+  const { suppress, release } = useTourActions();
+  useEffect(() => {
+    if (!isDialogOpen) return;
+    suppress(HOME_TUTORIAL_SUPPRESSOR_ID);
+    return () => {
+      release(HOME_TUTORIAL_SUPPRESSOR_ID);
+    };
+  }, [isDialogOpen, release, suppress]);
 
   useEffect(() => {
     if (role !== 'LEAD' && pendingLeadClubId === clubId) {
