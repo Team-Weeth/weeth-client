@@ -39,6 +39,8 @@ interface CommentItemProps {
   onReply?: (value: string, files: CreatePostFile[]) => Promise<boolean> | boolean;
   onEdit?: (content: string, files: CreatePostFile[] | null) => Promise<boolean> | boolean;
   onDelete?: () => void;
+  /** 작성자(아바타+이름) 클릭 시 호출 — 전달 시에만 클릭 가능해진다 */
+  onAuthorClick?: () => void;
 }
 
 function CommentItem({
@@ -61,6 +63,7 @@ function CommentItem({
   onReply,
   onEdit,
   onDelete,
+  onAuthorClick,
 }: CommentItemProps) {
   const activeEditId = useActiveEditId();
   const { startEdit, cancelEdit } = useCommentEditActions();
@@ -111,13 +114,28 @@ function CommentItem({
     <div className={cn('flex flex-col', className)}>
       <div className="flex items-start gap-[7px] self-stretch px-450 py-400">
         <div className="flex flex-1 flex-col gap-200">
-          <div className="flex items-center gap-[5px]">
-            <Avatar size={24}>
-              <AvatarImage src={profileImage ?? undefined} alt={name} />
-              <AvatarFallback />
-            </Avatar>
-            <span className="typo-sub3 text-text-strong">{name}</span>
-          </div>
+          {onAuthorClick ? (
+            <button
+              type="button"
+              onClick={onAuthorClick}
+              className="flex w-fit cursor-pointer items-center gap-[5px]"
+              aria-label={`${name} 프로필 보기`}
+            >
+              <Avatar size={24}>
+                <AvatarImage src={profileImage ?? undefined} alt={name} />
+                <AvatarFallback />
+              </Avatar>
+              <span className="typo-sub3 text-text-strong">{name}</span>
+            </button>
+          ) : (
+            <div className="flex items-center gap-[5px]">
+              <Avatar size={24}>
+                <AvatarImage src={profileImage ?? undefined} alt={name} />
+                <AvatarFallback />
+              </Avatar>
+              <span className="typo-sub3 text-text-strong">{name}</span>
+            </div>
+          )}
           {isEditing ? (
             <CommentInput
               className="mt-100"
