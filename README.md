@@ -4,7 +4,7 @@
 
 <h3>동아리 운영과 커뮤니티를 한 곳에서</h3>
 
-출석, 게시판, 멤버 관리, 어드민까지. 동아리에 필요한 기능을 하나의 서비스로 묶었습니다.
+ 출석, 게시판, 멤버 관리, 어드민까지. 동아리에 필요한 기능을 하나의 서비스로 묶었습니다.
 
 <br />
 
@@ -13,20 +13,37 @@
 [![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![Capacitor](https://img.shields.io/badge/Capacitor-119EFF?style=for-the-badge&logo=capacitor&logoColor=white)](https://capacitorjs.com/)
 
-[**weeth.kr 바로가기**](https://weeth.kr)
+ [**weeth.kr 바로가기**](https://weeth.kr)
 
-<sub>[미리보기](#미리보기) · [주요 기능](#주요-기능) · [기술 스택](#기술-스택) · [시작하기](#시작하기) · [프로젝트 구조](#프로젝트-구조) · [팀원](#팀원)</sub>
+<sub> [팀원](#팀원) · [기술 스택](#기술-스택) ·  [미리보기](#미리보기) · [주요 기능](#주요-기능) · [시작하기](#시작하기) · [프로젝트 구조](#프로젝트-구조) </sub>
 
 </div>
 
 <br />
 
+## 팀원
+
+<div align="center">
+<table>
+  <tr>
+    <td align="center"><a href="https://github.com/JIN921"><img src="https://github.com/JIN921.png" width="92" /><br /><sub><b>이유진</b></sub></a></td>
+    <td align="center"><a href="https://github.com/hyxklee"><img src="https://github.com/hyxklee.png" width="92" /><br /><sub><b>이강혁</b></sub></a></td>
+    <td align="center"><a href="https://github.com/dalzzy"><img src="https://github.com/dalzzy.png" width="92" /><br /><sub><b>다현</b></sub></a></td>
+    <td align="center"><a href="https://github.com/nabbang6"><img src="https://github.com/nabbang6.png" width="92" /><br /><sub><b>나영</b></sub></a></td>
+    <td align="center"><a href="https://github.com/woneeeee"><img src="https://github.com/woneeeee.png" width="92" /><br /><sub><b>지원</b></sub></a></td>
+  </tr>
+</table>
+</div>
+<br />
+
 ## 소개
 
-Weeth는 동아리 운영에서 반복되는 일들을 하나의 서비스로 정리했습니다. 한 번 가입하면 여러 동아리를 넘나들며 활동할 수 있고, 클럽 컨텍스트는 URL로 전환됩니다. 웹과 iOS·Android를 하나의 코드베이스(Capacitor)로 서비스하며, React Server Components를 바탕으로 가볍게 동작합니다.
-
+- Weeth는 동아리 운영에서 반복되는 일들을 하나의 서비스로 정리했습니다. 
+- 한 번 가입하면 여러 동아리를 넘나들며 활동할 수 있고, 클럽 컨텍스트는 URL로 전환됩니다. 
+- 웹과 iOS·Android를 하나의 코드베이스(Capacitor)로 서비스하며, React Server Components를 바탕으로 가볍게 동작합니다.
+<div align="center">
 <table>
-<tr>
+<tr width="100%">
 <td width="50%" valign="top">
 
 **회원은 이렇게 써요**
@@ -49,7 +66,7 @@ Weeth는 동아리 운영에서 반복되는 일들을 하나의 서비스로 �
 </td>
 </tr>
 </table>
-
+</div>
 <br />
 
 ## 미리보기
@@ -303,19 +320,7 @@ src/
 
 <br />
 
-## 팀원
 
-<table>
-  <tr>
-    <td align="center"><a href="https://github.com/JIN921"><img src="https://github.com/JIN921.png" width="92" /><br /><sub><b>이유진</b></sub></a></td>
-    <td align="center"><a href="https://github.com/hyxklee"><img src="https://github.com/hyxklee.png" width="92" /><br /><sub><b>이강혁</b></sub></a></td>
-    <td align="center"><a href="https://github.com/dalzzy"><img src="https://github.com/dalzzy.png" width="92" /><br /><sub><b>다현</b></sub></a></td>
-    <td align="center"><a href="https://github.com/nabbang6"><img src="https://github.com/nabbang6.png" width="92" /><br /><sub><b>나영</b></sub></a></td>
-    <td align="center"><a href="https://github.com/woneeeee"><img src="https://github.com/woneeeee.png" width="92" /><br /><sub><b>지원</b></sub></a></td>
-  </tr>
-</table>
-
-<br />
 
 <div align="center">
 <sub>Team Weeth</sub>
