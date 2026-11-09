@@ -37,21 +37,3 @@ jest.mock('next/image', () => ({
     return <img src={src} alt={alt} {...props} />;
   },
 }));
-
-// jsdom은 matchMedia를 구현하지 않는다 — prefers-reduced-motion 등을 쓰는 코드를 위한 전역 폴리필.
-// 일부 테스트는 `@jest-environment node`로 window 자체가 없으므로 가드한다.
-if (typeof window !== 'undefined') {
-  Object.defineProperty(window, 'matchMedia', {
-    writable: true,
-    value: jest.fn().mockImplementation((query: string) => ({
-      matches: false,
-      media: query,
-      onchange: null,
-      addEventListener: jest.fn(),
-      removeEventListener: jest.fn(),
-      addListener: jest.fn(),
-      removeListener: jest.fn(),
-      dispatchEvent: jest.fn(),
-    })),
-  });
-}

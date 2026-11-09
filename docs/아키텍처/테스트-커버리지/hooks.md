@@ -125,6 +125,75 @@
 
 ---
 
+## useScrollToTopOnNavigate (`src/hooks/useScrollToTopOnNavigate.ts`)
+
+**측정일**: 2026-10-22
+**테스트 파일**: `src/hooks/__tests__/useScrollToTopOnNavigate.test.ts`
+**총 테스트 수**: 7개
+
+### 파일별 커버리지
+
+| 파일 | Statements | Branches | Functions | Lines |
+|------|-----------|---------|---------|-------|
+| `useScrollToTopOnNavigate.ts` | **100%** | **100%** | **100%** | **100%** |
+
+### 테스트 구성
+
+#### `useScrollToTopOnNavigate.test.ts` (7개)
+
+pathname 변경 시 `window.scrollTo(0, 0)`을 호출하고, popstate(뒤로/앞으로가기) 발생 시 생략하는 훅. `requestAnimationFrame`을 동기 spy로 대체하고 `PopStateEvent`를 직접 dispatch해 검증.
+
+| 케이스 | 검증 내용 |
+|--------|---------|
+| 마운트 시 scroll-to-top | `window.scrollTo(0, 0)` 호출 |
+| push 내비게이션 | pathname 변경 → `scrollTo(0, 0)` 호출 |
+| popstate + pathname 변경 | `scrollTo` 미호출 (복원 방해 방지) |
+| 뒤로가기 후 push 내비게이션 | 플래그 리셋 → `scrollTo(0, 0)` 다시 호출 |
+| 연속 push 내비게이션 | 매번 `scrollTo` 호출 |
+| 언마운트 시 리스너 제거 | `removeEventListener('popstate', ...)` 호출 |
+| rAF 정리 | 언마운트 시 `cancelAnimationFrame` 호출 |
+
+---
+
+## useScrollRestoration (`src/hooks/useScrollRestoration.ts`)
+
+**측정일**: 2026-10-22
+**테스트 파일**: `src/hooks/__tests__/useScrollRestoration.test.ts`
+**총 테스트 수**: 10개
+
+### 파일별 커버리지
+
+| 파일 | Statements | Branches | Functions | Lines |
+|------|-----------|---------|---------|-------|
+| `useScrollRestoration.ts` | **100%** | **92.85%** | **100%** | **100%** |
+
+### 테스트 구성
+
+#### `useScrollRestoration.test.ts` (10개)
+
+스크롤 위치를 `sessionStorage`에 저장하고 복원하는 훅. `Object.defineProperty`로 `window.scrollY`를 제어하고 `renderHook` + `act`로 상태 전이를 검증.
+
+| 케이스 | 검증 내용 |
+|--------|---------|
+| 복원 — 저장된 위치 없음 | `pendingTarget`이 `null` |
+| 복원 — 저장된 위치 있음 | `pendingTarget`이 저장된 값으로 설정 |
+| 복원 — `ready=false` | sessionStorage에 값이 있어도 `pendingTarget`이 `null` |
+| 복원 — `key=null` | `pendingTarget`이 `null` |
+| 복원 — `ready` false→true 변경 | `pendingTarget`이 설정됨 |
+| `clearPendingTarget` | 호출 후 `pendingTarget`이 `null`로 초기화 |
+| 저장 — `scrollY > 0` | 언마운트 시 `sessionStorage`에 값 저장 |
+| 저장 — `scrollY = 0` | 언마운트 시 `sessionStorage` 키 제거 |
+| 저장 — `key=null` | 언마운트해도 `setItem` 미호출 |
+| 저장 — key 변경 | 이전 key의 cleanup이 실행되어 이전 키로 저장 |
+
+### 미커버 브랜치
+
+| 라인 | 내용 | 이유 |
+|------|------|------|
+| 4 | `typeof window !== 'undefined'` | Jest는 jsdom(브라우저 환경)이므로 SSR 분기(`useEffect` fallback) 미재현 |
+
+---
+
 ## 추가 예정
 
 | 파일 | 우선순위 | 비고 |

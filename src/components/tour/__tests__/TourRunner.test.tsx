@@ -1,6 +1,7 @@
 import { act, render } from '@testing-library/react';
 import { EXAMPLE_ADMIN_WARNING_TOUR } from '@/tours/examples/admin-warning.example';
 import { TourRunner } from '@/components/tour/TourRunner';
+import { mockMatchMedia } from '@/test-utils/browser';
 import {
   trackTourCompleted,
   trackTourSkipped,
@@ -63,6 +64,7 @@ function emit(eventType: string, data: unknown) {
 }
 
 beforeEach(() => {
+  mockMatchMedia(false);
   const mock = getMock();
   // 참조를 유지해야 on()이 캡처한 handlers 클로저와 emit()이 같은 객체를 본다.
   Object.keys(mock.handlers).forEach((key) => delete mock.handlers[key]);

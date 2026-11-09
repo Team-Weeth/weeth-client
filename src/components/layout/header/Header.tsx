@@ -83,7 +83,7 @@ export default function Header({ isMain = true }: HeaderProps) {
   return (
     <div
       className={cn(
-        'bg-background sticky top-0 z-[70] w-full transition-transform duration-300 ease-in-out',
+        'bg-background pt-safe sticky top-0 z-[70] w-full transition-transform duration-300 ease-in-out',
         visible ? 'translate-y-0' : '-translate-y-full',
       )}
     >

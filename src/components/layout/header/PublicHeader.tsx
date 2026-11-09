@@ -124,11 +124,11 @@ export default function PublicHeader({ className, showAuthButtons = true }: Publ
 
   return (
     <motion.header
-      initial={{ y: -80, opacity: 0 }}
-      animate={{ y: visible ? 0 : -80, opacity: visible ? 1 : 0 }}
+      initial={{ y: '-100%', opacity: 0 }}
+      animate={{ y: visible ? '0%' : '-100%', opacity: visible ? 1 : 0 }}
       transition={{ duration: 0.25, ease: 'easeInOut' }}
       className={cn(
-        'fixed top-0 left-0 z-1 w-full bg-[#F3F5F7]',
+        'pt-safe fixed top-0 left-0 z-1 w-full bg-[#F3F5F7]',
         !visible && 'pointer-events-none',
         className,
       )}

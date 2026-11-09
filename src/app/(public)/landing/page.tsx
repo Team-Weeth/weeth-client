@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import { ClubTypesSection } from '@/components/landing/ClubTypesSection';
 import {
   PhilosophySection,
@@ -10,6 +11,10 @@ import { LandingFooter } from '@/components/landing/LandingFooter';
 import { TestimonialSection } from '@/components/landing/TestimonialSection';
 import PublicHeader from '@/components/layout/header/PublicHeader';
 import { USER_FEATURES, ADMIN_FEATURES } from '@/constants/landing/landing';
+
+export const metadata: Metadata = {
+  title: { absolute: '우리 동아리만의 사이트를 원한다면, 위드' },
+};
 
 export default function LandingPage() {
   return (

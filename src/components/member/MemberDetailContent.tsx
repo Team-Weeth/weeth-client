@@ -6,14 +6,14 @@ import BackIcon from '@/assets/icons/back.svg';
 import { Button } from '@/components/ui/Button';
 import { Icon } from '@/components/ui/Icon';
 import { useMemberDetailQuery } from '@/hooks/member/useMemberDetailQuery';
-import { useMediaQuery } from '@/hooks/useMediaQuery';
+import { useIsMobile } from '@/hooks/useIsMobile';
 import { MemberDetailBody } from './MemberDetailBody';
 import { MemberDetailSkeleton } from './MemberDetailSkeleton';
 
 function MemberDetailContent() {
   const router = useRouter();
   const { clubId, memberId } = useParams<{ clubId: string; memberId: string }>();
-  const isMobile = useMediaQuery('(max-width: 695.98px)');
+  const isMobile = useIsMobile();
   const hasMountedRef = useRef(false);
   const {
     data: member,
@@ -32,7 +32,7 @@ function MemberDetailContent() {
   }, [isMobile, clubId, memberId, router]);
 
   return (
-    <div className="flex min-w-0 flex-1 flex-col gap-4 px-450 pt-450 pb-[100px]">
+    <div className="flex min-w-0 flex-1 flex-col gap-4 px-450 pt-450 pb-[calc(100px+var(--safe-area-inset-bottom))]">
       <div className="flex items-center gap-1">
         <button
           type="button"
@@ -61,7 +61,10 @@ function MemberDetailContent() {
         <MemberDetailBody member={member} />
       )}
 
-      <div className="bg-background fixed right-0 bottom-0 left-0 px-450 pt-300 pb-500">
+      <div
+        className="bg-background fixed right-0 bottom-0 left-0 px-450 pt-300"
+        style={{ paddingBottom: 'calc(var(--spacing-500) + var(--safe-area-inset-bottom))' }}
+      >
         <Button variant="primary" size="lg" className="w-full" onClick={() => router.back()}>
           완료
         </Button>

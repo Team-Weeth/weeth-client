@@ -1,3 +1,4 @@
+import { DEFAULT_CLUB_FEATURES } from '@/flags/club-features/definitions';
 import { ClubFeatureProvider } from '@/providers/club-feature-provider';
 import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -59,7 +60,7 @@ describe('PenaltyDetailModal', () => {
 
   it('선택한 기수의 내역만 표시하고 유형별 건수를 집계한다', () => {
     render(
-      <ClubFeatureProvider features={{ warningEnabled: true }}>
+      <ClubFeatureProvider features={{ ...DEFAULT_CLUB_FEATURES, warningEnabled: true }}>
         <PenaltyDetailModal
           open
           onOpenChange={jest.fn()}

@@ -1,3 +1,4 @@
+import { DEFAULT_CLUB_FEATURES } from '@/flags/club-features/definitions';
 import { EXAMPLE_ADMIN_WARNING_TOUR } from '@/tours/examples/admin-warning.example';
 import { selectEligibleTour, type SelectEligibleTourInput } from '@/tours/registry';
 
@@ -15,7 +16,7 @@ function buildInput(overrides: Partial<SelectEligibleTourInput> = {}): SelectEli
     scope: 'admin',
     pathname: '/club-1/admin/penalty',
     role: 'ADMIN' as Role,
-    features: { warningEnabled: true },
+    features: { ...DEFAULT_CLUB_FEATURES, warningEnabled: true },
     completed: {},
     isSuppressed: false,
     seenKeyFor: (tourId) => `seen:${tourId}`,
@@ -56,7 +57,10 @@ describe('selectEligibleTour — Gating Matrix', () => {
 
   it('피처 플래그가 꺼져 있으면 null을 반환한다', () => {
     expect(
-      selectEligibleTour(tours, buildInput({ features: { warningEnabled: false } })),
+      selectEligibleTour(
+        tours,
+        buildInput({ features: { ...DEFAULT_CLUB_FEATURES, warningEnabled: false } }),
+      ),
     ).toBeNull();
   });
 

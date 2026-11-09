@@ -150,7 +150,7 @@ function FullscreenImageViewer({
         {/* target === currentTarget: 배경 클릭 시에만 닫힘 — 자식마다 stopPropagation 불필요 */}
         <DialogPrimitive.Content
           aria-describedby={undefined}
-          className="fixed inset-0 z-[90] flex flex-col outline-none"
+          className="pt-safe pb-safe fixed inset-0 z-[90] flex flex-col outline-none"
           onClick={(e) => {
             if (e.target !== e.currentTarget) return;
             if (viewer.zoom > 1) return;
