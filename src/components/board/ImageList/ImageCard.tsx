@@ -56,6 +56,7 @@ function ImageCard({
         src={item.fileUrl}
         alt={item.fileName}
         draggable={false}
+        loading={item.uploaded === false ? 'eager' : 'lazy'}
         data-loading={item.uploaded === false ? 'true' : undefined}
         className={cn(item.uploaded === false && 'opacity-50', imgClassName)}
       />
