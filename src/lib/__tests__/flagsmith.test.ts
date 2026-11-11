@@ -77,6 +77,18 @@ describe('Flagsmith club targeting', () => {
     fetchMock.mockResolvedValueOnce(new Response('Unavailable', { status: 503 }));
     await expect(isFeatureEnabled('club_warning_enabled')).resolves.toBe(false);
   });
+
+  it('조회에 실패하거나 환경 ID가 없으면 fallback 값을 쓴다', async () => {
+    fetchMock.mockRejectedValue(new Error('down'));
+    await expect(getFeatureFlags(['wax_enabled'], {}, true)).resolves.toEqual({
+      wax_enabled: true,
+    });
+    await expect(getFeatureFlags(['wax_enabled'])).resolves.toEqual({ wax_enabled: false });
+    delete process.env.NEXT_PUBLIC_FLAGSMITH_ENVIRONMENT_ID;
+    await expect(getFeatureFlags(['wax_enabled'], {}, true)).resolves.toEqual({
+      wax_enabled: true,
+    });
+  });
 });
 
 it('retrieves multiple feature values in one request', async () => {
