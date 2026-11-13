@@ -1,0 +1,27 @@
+{
+  "banks": {
+    "apple": ["wakppu/apple_crack_1.mp3", "wakppu/apple_crack_2.mp3"],
+    "balloon": ["wakppu/balloon_crack_1.mp3", "wakppu/balloon_crack_2.mp3"],
+    "butter": ["wakppu/butter_crack_1.mp3", "wakppu/butter_crack_2.mp3"],
+    "choco": ["wakppu/choco_crack_1.mp3", "wakppu/choco_crack_2.mp3"],
+    "apple-knead": ["wakppu/apple_knead_1.mp3", "wakppu/apple_knead_2.mp3"],
+    "choco-knead": ["wakppu/choco_knead_1.mp3", "wakppu/choco_knead_2.mp3"]
+  },
+  "variants": [
+    { "bank": "balloon", "knead": "apple-knead", "rate": 1.08 },
+    { "bank": "apple", "knead": "choco-knead", "rate": 0.88 },
+    { "bank": "balloon", "knead": "apple-knead", "rate": 1.15 },
+    { "bank": "butter", "knead": "apple-knead", "rate": 1.0 },
+    { "bank": "choco", "knead": "choco-knead", "rate": 0.85 },
+    { "bank": "apple", "knead": "apple-knead", "rate": 1.0 },
+    { "bank": "butter", "knead": "choco-knead", "rate": 1.1 },
+    { "bank": "balloon", "knead": "apple-knead", "rate": 0.97 },
+    { "bank": "choco", "knead": "choco-knead", "rate": 1.05 }
+  ],
+  "whack": ["whack-1.mp3", "whack-2.mp3"],
+  "ambience": {
+    "classroom": "ambience-classroom.mp3",
+    "hallway": "ambience-hallway.mp3"
+  },
+  "chalk": "chalk.mp3"
+}

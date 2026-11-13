@@ -18,6 +18,7 @@ import { useIntersectionObserver } from '@/hooks/board/useIntersectionObserver';
 import { useIsMobile } from '@/hooks/useIsMobile';
 import { useUserRole } from '@/stores';
 import { cn } from '@/lib/cn';
+import { AdminPageContainer } from '@/components/admin/AdminPageContainer';
 import { useMemberBulkActions } from './hooks/useMemberBulkActions';
 import { useDebouncedValue } from '@/hooks/useDebouncedValue';
 import { useAdminMemberSearch } from '@/hooks/queries/admin/useAdminMemberQueries';
@@ -223,120 +224,116 @@ function MemberPageContent() {
 
   return (
     <>
-      <div className="max-tablet:!w-full max-tablet:!max-w-full max-tablet:!overflow-hidden max-tablet:!pr-0 max-tablet:h-full flex min-h-full min-w-0 pr-450">
-        <div className="bg-container-neutral max-tablet:!w-full max-tablet:!max-w-full max-tablet:!rounded-none max-tablet:h-full max-tablet:overflow-hidden flex min-h-0 min-w-0 flex-1 flex-col rounded-t-[20px]">
+      <AdminPageContainer
+        className="max-tablet:!h-full max-tablet:!max-w-full max-tablet:!w-full max-tablet:!overflow-hidden max-tablet:!pr-0"
+        innerClassName="max-tablet:!h-full max-tablet:!max-w-full max-tablet:!w-full max-tablet:!rounded-none max-tablet:overflow-hidden min-h-0"
+      >
+        <div
+          className={cn('flex min-h-0 flex-1 flex-col', isMobileSearchOpen && 'max-tablet:hidden')}
+        >
+          {/* Selection top bar */}
+          <MemberTopBar {...memberSelectionBarProps} />
+
+          <MemberPageHeader
+            pageSize={pageSize}
+            onPageSizeChange={(size) => {
+              setPageSize(size);
+              setPage(1);
+            }}
+            cardinals={cardinals}
+            selectedCardinal={selectedCardinal}
+            onSelectCardinal={handleSelectCardinal}
+            sortBy={sortBy}
+            onToggleSort={toggleSort}
+            searchQuery={searchQuery}
+            onSearchQueryChange={handleSearchQueryChange}
+            mobileViewMode={mobileViewMode}
+            onMobileViewModeChange={handleMobileViewModeChange}
+            onOpenMobileSearch={() => setIsMobileSearchOpen(true)}
+          />
+
+          {isMobile && <MobileMemberTopBar {...memberSelectionBarProps} />}
+
+          {isSearching && !isSearchLoading && isSearchError && (
+            <p role="status" className="text-text-alternative px-700 py-400">
+              검색에 실패했습니다. 잠시 후 다시 시도해주세요.
+            </p>
+          )}
+          {/* Main content */}
           <div
             className={cn(
-              'flex min-h-0 flex-1 flex-col',
-              isMobileSearchOpen && 'max-tablet:hidden',
+              'max-tablet:min-h-0 max-tablet:flex-1 flex min-h-0 flex-col p-700',
+              // 카드 뷰는 바깥이 세로 스크롤을 맡고, 표 뷰는 표 래퍼가 직접 스크롤한다.
+              mobileViewMode === 'card'
+                ? 'max-tablet:overflow-y-auto max-tablet:p-450'
+                : 'max-tablet:overflow-hidden max-tablet:p-0',
             )}
           >
-            {/* Selection top bar */}
-            <MemberTopBar {...memberSelectionBarProps} />
-
-            <MemberPageHeader
-              pageSize={pageSize}
-              onPageSizeChange={(size) => {
-                setPageSize(size);
-                setPage(1);
-              }}
-              cardinals={cardinals}
-              selectedCardinal={selectedCardinal}
-              onSelectCardinal={handleSelectCardinal}
-              sortBy={sortBy}
-              onToggleSort={toggleSort}
-              searchQuery={searchQuery}
-              onSearchQueryChange={handleSearchQueryChange}
-              mobileViewMode={mobileViewMode}
-              onMobileViewModeChange={handleMobileViewModeChange}
-              onOpenMobileSearch={() => setIsMobileSearchOpen(true)}
-            />
-
-            {isMobile && <MobileMemberTopBar {...memberSelectionBarProps} />}
-
-            {isSearching && !isSearchLoading && isSearchError && (
-              <p role="status" className="text-text-alternative px-700 py-400">
-                검색에 실패했습니다. 잠시 후 다시 시도해주세요.
-              </p>
-            )}
-            {/* Main content */}
             <div
               className={cn(
-                'max-tablet:min-h-0 max-tablet:flex-1 flex min-h-0 flex-col p-700',
-                // 카드 뷰는 바깥이 세로 스크롤을 맡고, 표 뷰는 표 래퍼가 직접 스크롤한다.
-                mobileViewMode === 'card'
-                  ? 'max-tablet:overflow-y-auto max-tablet:p-450'
-                  : 'max-tablet:overflow-hidden max-tablet:p-0',
+                'max-tablet:flex max-tablet:min-h-0 max-tablet:flex-1 max-tablet:flex-col',
+                mobileViewMode === 'card' && 'max-tablet:hidden',
               )}
             >
-              <div
-                className={cn(
-                  'max-tablet:flex max-tablet:min-h-0 max-tablet:flex-1 max-tablet:flex-col',
-                  mobileViewMode === 'card' && 'max-tablet:hidden',
-                )}
-              >
-                {/* Member table */}
-                <MemberTable
-                  scrollResetKey={`${page}:${pageSize}:${selectedCardinal}:${debouncedKeyword}:${sortBy}`}
-                  fixedHeight
-                  showEmptySearchResult={
-                    isSearching && !isSearchLoading && !isSearchError && searchMembers.length === 0
-                  }
+              {/* Member table */}
+              <MemberTable
+                scrollResetKey={`${page}:${pageSize}:${selectedCardinal}:${debouncedKeyword}:${sortBy}`}
+                fixedHeight
+                showEmptySearchResult={
+                  isSearching && !isSearchLoading && !isSearchError && searchMembers.length === 0
+                }
+                members={filteredMembers}
+                page={page}
+                totalPages={isMobile ? mobileTotalPages : totalPages}
+                onPageChange={setPage}
+                selectedIds={selectedIds}
+                onSelectionChange={handleSelectionChange}
+                onMemberAction={handleMemberAction}
+                listFooter={mobileViewMode === 'table' ? mobileSentinel : null}
+              />
+            </div>
+
+            {mobileViewMode === 'card' && (
+              <>
+                <MemberCardList
+                  className="tablet:hidden"
                   members={filteredMembers}
                   page={page}
-                  totalPages={isMobile ? mobileTotalPages : totalPages}
+                  totalPages={mobileTotalPages}
+                  sortBy={sortBy}
+                  onToggleSort={toggleSort}
                   onPageChange={setPage}
                   selectedIds={selectedIds}
                   onSelectionChange={handleSelectionChange}
                   onMemberAction={handleMemberAction}
-                  listFooter={mobileViewMode === 'table' ? mobileSentinel : null}
                 />
-              </div>
-
-              {mobileViewMode === 'card' && (
-                <>
-                  <MemberCardList
-                    className="tablet:hidden"
-                    members={filteredMembers}
-                    page={page}
-                    totalPages={mobileTotalPages}
-                    sortBy={sortBy}
-                    onToggleSort={toggleSort}
-                    onPageChange={setPage}
-                    selectedIds={selectedIds}
-                    onSelectionChange={handleSelectionChange}
-                    onMemberAction={handleMemberAction}
-                  />
-                  {mobileSentinel}
-                </>
-              )}
-            </div>
+                {mobileSentinel}
+              </>
+            )}
           </div>
-
-          {isMobile && isMobileSearchOpen && (
-            <MemberMobileSearchPage
-              searchQuery={searchQuery}
-              isLoading={isSearchLoading}
-              isError={isSearching && isSearchError}
-              onSearchQueryChange={handleSearchQueryChange}
-              onCancel={handleCloseMobileSearch}
-              viewMode={mobileViewMode}
-              members={filteredMembers}
-              page={page}
-              totalPages={mobileTotalPages}
-              sortBy={sortBy}
-              onToggleSort={toggleSort}
-              onPageChange={setPage}
-              selectedIds={selectedIds}
-              onSelectionChange={handleSelectionChange}
-              onMemberAction={handleMemberAction}
-              listFooter={
-                !isSearching && <div ref={sentinelRef} className="h-px w-full shrink-0" />
-              }
-            />
-          )}
         </div>
-      </div>
+
+        {isMobile && isMobileSearchOpen && (
+          <MemberMobileSearchPage
+            searchQuery={searchQuery}
+            isLoading={isSearchLoading}
+            isError={isSearching && isSearchError}
+            onSearchQueryChange={handleSearchQueryChange}
+            onCancel={handleCloseMobileSearch}
+            viewMode={mobileViewMode}
+            members={filteredMembers}
+            page={page}
+            totalPages={mobileTotalPages}
+            sortBy={sortBy}
+            onToggleSort={toggleSort}
+            onPageChange={setPage}
+            selectedIds={selectedIds}
+            onSelectionChange={handleSelectionChange}
+            onMemberAction={handleMemberAction}
+            listFooter={!isSearching && <div ref={sentinelRef} className="h-px w-full shrink-0" />}
+          />
+        )}
+      </AdminPageContainer>
 
       <ChangePositionModal
         open={isPositionOpen}

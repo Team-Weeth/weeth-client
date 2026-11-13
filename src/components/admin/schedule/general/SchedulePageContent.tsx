@@ -31,17 +31,20 @@ function SchedulePageContent() {
   const clubId = useClubId();
   const { cardinals, selectedCardinalId, setSelectedCardinalId, activeCardinal, latestCardinal } =
     useCardinalSelector();
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const activeTab: ScheduleTab = searchParams.get('tab') === 'session' ? 'session' : 'all';
   const {
     year: currentYear,
     month: currentMonth,
     prev: handlePrevMonth,
     next: handleNextMonth,
-  } = useMonthNavigator();
+  } = useMonthNavigator(
+    searchParams.get('year') ? Number(searchParams.get('year')) : undefined,
+    searchParams.get('month') ? Number(searchParams.get('month')) : undefined,
+  );
   const [searchValue, setSearchValue] = useState('');
-  const router = useRouter();
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
-  const activeTab: ScheduleTab = searchParams.get('tab') === 'session' ? 'session' : 'all';
   const handleTabChange = (value: string) => {
     const params = new URLSearchParams(searchParams);
     if (value === 'session') params.set('tab', 'session');
