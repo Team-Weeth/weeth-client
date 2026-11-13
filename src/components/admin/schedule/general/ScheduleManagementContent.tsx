@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { cn } from '@/lib/cn';
 import { Button, buttonVariants } from '@/components/ui/Button';
@@ -17,6 +17,8 @@ import {
 } from '@/components/admin/schedule/general/ScheduleFilterChips';
 import { CreateScheduleModal } from '@/components/admin/schedule/modal/CreateScheduleModal';
 import { EditScheduleModal } from '@/components/admin/schedule/modal/EditScheduleModal';
+import { AdminScheduleDetailModal } from '@/components/admin/schedule/modal/AdminScheduleDetailModal';
+import { CustomAlertDialog } from '@/components/alert/CustomAlertDialog';
 import AdminPlusIcon from '@/assets/icons/admin/ic_admin_plus.svg';
 import ArrowRightIcon from '@/assets/icons/arrow_right.svg';
 import { useClubId } from '@/stores';
@@ -42,7 +44,22 @@ function ScheduleManagementContent() {
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [createModalTab, setCreateModalTab] = useState<ScheduleType>('EVENT');
+  const [detailTarget, setDetailTarget] = useState<Schedule | null>(null);
   const [editTarget, setEditTarget] = useState<Schedule | null>(null);
+  const [deleteConfirmTarget, setDeleteConfirmTarget] = useState<Schedule | null>(null);
+  const [isCreateDropdownOpen, setIsCreateDropdownOpen] = useState(false);
+  const createDropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!isCreateDropdownOpen) return;
+    const handleClickOutside = (e: MouseEvent) => {
+      if (!createDropdownRef.current?.contains(e.target as Node)) {
+        setIsCreateDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [isCreateDropdownOpen]);
 
   const {
     data: schedules = [],
@@ -96,10 +113,29 @@ function ScheduleManagementContent() {
 
   const handleScheduleClick = (schedule: ScheduleDetail) => {
     const original = schedules.find((s) => s.id === schedule.id);
-    if (original) setEditTarget(original);
+    if (original) setDetailTarget(original);
   };
 
-  const handleDelete = (schedule: Schedule) => {
+  const handleDetailEdit = (schedule: Schedule) => {
+    setDetailTarget(null);
+    if (schedule.type === 'EVENT') setEditTarget(schedule);
+  };
+
+  const handleDetailDelete = (schedule: Schedule) => {
+    setDeleteConfirmTarget(schedule);
+  };
+
+  const handleDeleteConfirm = () => {
+    if (!deleteConfirmTarget) return;
+    deleteSchedule(deleteConfirmTarget.id, {
+      onSuccess: () => {
+        setDeleteConfirmTarget(null);
+        setDetailTarget(null);
+      },
+    });
+  };
+
+  const handleEditDelete = (schedule: Schedule) => {
     deleteSchedule(schedule.id, {
       onSuccess: () => setEditTarget(null),
     });
@@ -155,10 +191,42 @@ function ScheduleManagementContent() {
                   오늘
                 </button>
               </div>
-              <Button variant="primary" size="md" onClick={() => openCreateModal('EVENT')}>
-                <Icon src={AdminPlusIcon} size={20} className="text-text-inverse mr-1" />
-                일정 생성
-              </Button>
+              <div ref={createDropdownRef} className="relative">
+                <Button
+                  variant="primary"
+                  size="md"
+                  onClick={() => setIsCreateDropdownOpen((v) => !v)}
+                >
+                  <Icon src={AdminPlusIcon} size={20} className="text-text-inverse mr-1" />
+                  일정 생성
+                </Button>
+                {isCreateDropdownOpen && (
+                  <div className="animate-in fade-in zoom-in-95 border-line bg-background absolute top-[calc(100%+8px)] right-0 z-20 flex flex-col items-start gap-200 rounded-lg border p-400 shadow-[0_10px_40px_0_rgba(0,0,0,0.40)] duration-150">
+                    <Button
+                      variant="secondary"
+                      size="lg"
+                      className="w-[186px]"
+                      onClick={() => {
+                        openCreateModal('EVENT');
+                        setIsCreateDropdownOpen(false);
+                      }}
+                    >
+                      일반 일정
+                    </Button>
+                    <Button
+                      variant="secondary"
+                      size="lg"
+                      className="w-[186px]"
+                      onClick={() => {
+                        openCreateModal('SESSION');
+                        setIsCreateDropdownOpen(false);
+                      }}
+                    >
+                      세션
+                    </Button>
+                  </div>
+                )}
+              </div>
             </div>
 
             <Link
@@ -233,6 +301,19 @@ function ScheduleManagementContent() {
           onCreateSession={(body) => submitCreate(body)}
         />
 
+        {detailTarget && (
+          <AdminScheduleDetailModal
+            key={`detail-${detailTarget.id}`}
+            open
+            onOpenChange={(open) => {
+              if (!open) setDetailTarget(null);
+            }}
+            schedule={detailTarget}
+            onEdit={handleDetailEdit}
+            onDelete={handleDetailDelete}
+          />
+        )}
+
         {editTarget?.type === 'EVENT' && (
           <EditScheduleModal
             key={editTarget.id}
@@ -241,9 +322,21 @@ function ScheduleManagementContent() {
               if (!open) setEditTarget(null);
             }}
             schedule={editTarget}
-            onDelete={handleDelete}
+            onDelete={handleEditDelete}
           />
         )}
+
+        <CustomAlertDialog
+          open={deleteConfirmTarget !== null}
+          onOpenChange={(open) => {
+            if (!open) setDeleteConfirmTarget(null);
+          }}
+          title="이 일정을 삭제하시겠어요?"
+          description={'삭제된 일정은 복구할 수 없습니다.\n신중히 확인 후 진행해 주세요.'}
+          actionLabel="삭제"
+          onAction={handleDeleteConfirm}
+          placement="center"
+        />
 
         {forceConfirmDialog}
       </div>

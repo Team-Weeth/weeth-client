@@ -1,4 +1,4 @@
-import { Card, Skeleton } from '@/components/ui';
+import { Skeleton } from '@/components/ui/skeleton';
 
 function ScheduleListSkeleton() {
   return (
@@ -35,30 +35,24 @@ function ScheduleListSkeleton() {
 
 function SchedulePageSkeleton() {
   return (
-    <div className="tablet:p-700 flex min-w-0 flex-col gap-400 p-400">
-      <Skeleton className="h-8 w-36 rounded-sm" />
+    <div className="flex flex-col">
+      <div className="flex flex-col gap-300 p-700">
+        <Skeleton className="size-10 rounded-sm" />
+        <Skeleton className="h-9 w-48" />
+      </div>
 
-      <div className="flex flex-col gap-0">
-        <div className="border-line flex h-8 gap-0 border-b">
-          <Skeleton className="h-7 w-20 rounded-none" />
-          <Skeleton className="ml-400 h-7 w-14 rounded-none" />
-        </div>
+      <div className="flex flex-col gap-[22px] px-500">
+        <Skeleton className="h-12 w-[187px] rounded-md" />
 
-        <div className="mt-400">
-          <Card className="tablet:gap-700 tablet:px-600 tablet:pt-600 tablet:pb-800 min-w-78 gap-600 px-400 pt-400 pb-600">
-            <div className="flex items-center justify-between">
-              <Skeleton className="h-8 w-8 rounded-sm" />
-              <Skeleton className="h-6 w-28" />
-              <Skeleton className="h-8 w-8 rounded-sm" />
-            </div>
+        <div className="bg-background flex flex-col gap-700 rounded-lg p-600">
+          <Skeleton className="h-5 w-24" />
 
-            <div className="tablet:flex-row flex flex-col gap-300">
-              <Skeleton className="tablet:w-123 h-12 w-full rounded-sm" />
-              <Skeleton className="tablet:w-36 h-12 w-full rounded-sm" />
-            </div>
+          <div className="flex items-center justify-between gap-400">
+            <Skeleton className="h-12 flex-1 rounded-sm" />
+            <Skeleton className="h-12 w-32 rounded-md" />
+          </div>
 
-            <ScheduleListSkeleton />
-          </Card>
+          <ScheduleListSkeleton />
         </div>
       </div>
     </div>

@@ -1,5 +1,4 @@
 import { cn } from '@/lib/cn';
-import { Button } from '@/components/ui/Button';
 import { ScheduleItem } from '@/components/admin/schedule/general/ScheduleItem';
 import type { Schedule } from '@/types/admin/schedule';
 
@@ -7,17 +6,9 @@ interface ScheduleListProps extends React.HTMLAttributes<HTMLDivElement> {
   schedules: Schedule[];
   onEdit?: (schedule: Schedule) => void;
   onDelete?: (schedule: Schedule) => void;
-  onCreateClick?: () => void;
 }
 
-function ScheduleList({
-  className,
-  schedules,
-  onEdit,
-  onDelete,
-  onCreateClick,
-  ...props
-}: ScheduleListProps) {
+function ScheduleList({ className, schedules, onEdit, onDelete, ...props }: ScheduleListProps) {
   return (
     <div
       className={cn(
@@ -31,11 +22,8 @@ function ScheduleList({
       </div>
 
       {schedules.length === 0 ? (
-        <div className="border-line flex h-[150px] flex-col items-center justify-center gap-200 border-b p-400">
-          <p className="typo-body2 text-text-alternative">일정이 없습니다</p>
-          <Button variant="secondary" size="lg" className="w-[308px]" onClick={onCreateClick}>
-            일반 일정 생성하기
-          </Button>
+        <div className="flex h-[188px] items-center justify-center py-800">
+          <p className="typo-sub1 text-text-alternative text-center">아직 등록된 일정이 없어요</p>
         </div>
       ) : (
         schedules.map((schedule, index) => (
