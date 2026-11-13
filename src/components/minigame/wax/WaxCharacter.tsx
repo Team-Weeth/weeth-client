@@ -17,7 +17,12 @@ import {
 } from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { clone as cloneSkinned } from 'three/examples/jsm/utils/SkeletonUtils.js';
-import { bubbleTexture, nameTagTexture } from '@/components/minigame/wax/waxTextures';
+import { roundGeometry } from '@/lib/minigame/waxRounding';
+import {
+  bubbleTexture,
+  nameTagTexture,
+  reactionBubbleTexture,
+} from '@/components/minigame/wax/waxTextures';
 import {
   WAX_BALL_LOOKS,
   WAX_CHARACTERS,
@@ -65,7 +70,17 @@ const models = new Map<string, Promise<GLTF>>();
 function loadCharacter(character: string) {
   let promise = models.get(character);
   if (!promise) {
-    promise = new GLTFLoader().loadAsync(waxCharacterUrl(character));
+    promise = new GLTFLoader().loadAsync(waxCharacterUrl(character)).then((gltf) => {
+      // 각진 로우폴리 모델을 한 번만 둥글게 만든다. 복제본(cloneSkinned)은 이 형상을 함께 쓴다.
+      gltf.scene.traverse((child) => {
+        const mesh = child as Mesh;
+        if (!mesh.isMesh) return;
+        const rounded = roundGeometry(mesh.geometry);
+        mesh.geometry.dispose();
+        mesh.geometry = rounded;
+      });
+      return gltf;
+    });
     models.set(character, promise);
   }
   return promise;
@@ -94,32 +109,63 @@ function prepare(gltf: GLTF, height: number) {
   return { model, scale };
 }
 
-function NameTag({ name, own, height }: { name: string; own: boolean; height: number }) {
+/**
+ * 이름표 알약의 장면 높이(m). 시안 캡처에서 이름표(23px)가 이전 이름표의 약 2배라 그 비율로 키웠다.
+ * 감정 말풍선은 이 높이를 기준으로 시안 비율(23 : 56)에 맞춘다.
+ */
+const TAG_HEIGHT = 0.26;
+/** 교수님(NPC) 이름표는 시안 대상이 아니고 가까이 다가오면 화면을 가려 이전 크기를 유지한다. */
+const NPC_TAG_HEIGHT = 0.13;
+const EMOTE_SIZE = (TAG_HEIGHT * 56) / 23;
+const TAG_Y = 0.25;
+/** 감정 말풍선 중심 높이: 이름표 위 4px(시안) 간격 */
+const EMOTE_Y = TAG_Y + TAG_HEIGHT / 2 + (TAG_HEIGHT * 4) / 23 + EMOTE_SIZE / 2;
+
+function NameTag({
+  name,
+  own,
+  npc,
+  height,
+}: {
+  name: string;
+  own: boolean;
+  npc: boolean;
+  height: number;
+}) {
   const [tag] = useState(() => nameTagTexture(name, own));
   useEffect(() => () => tag.texture.dispose(), [tag]);
+  const scale = (npc ? NPC_TAG_HEIGHT : TAG_HEIGHT) / tag.height;
   return (
-    <sprite position={[0, height + 0.2, 0]} scale={[0.2 * tag.aspect, 0.2, 1]} renderOrder={20}>
-      <spriteMaterial map={tag.texture} depthWrite={false} transparent />
+    <sprite
+      position={[0, height + TAG_Y, 0]}
+      scale={[scale * tag.aspect, scale, 1]}
+      renderOrder={20}
+    >
+      <spriteMaterial map={tag.texture} depthWrite={false} transparent toneMapped={false} />
     </sprite>
   );
 }
 
-const BUBBLES: Record<WaxBubble, { text: string; color: string }> = {
+const BUBBLES: Record<'!' | '딱!' | '흠…', { text: string; color: string }> = {
   '!': { text: '!', color: '#e53935' },
   '딱!': { text: '딱!', color: '#d84315' },
   '흠…': { text: '흠…', color: '#37474f' },
-  ...(Object.fromEntries(
-    WAX_EMOTES.map((emote) => [emote.kind, { text: emote.bubble, color: emote.color }]),
-  ) as Record<WaxEmoteKind, { text: string; color: string }>),
 };
+
+const EMOTE_KINDS = new Set<string>(WAX_EMOTES.map((emote) => emote.kind));
 
 let bubbleTextures: Record<string, Texture> | null = null;
 
-/** 말풍선 텍스처는 캐릭터마다 만들지 않고 한 벌을 함께 쓴다(최대 27명 × 8종이면 GPU 메모리가 크다). */
+/** 말풍선 텍스처는 캐릭터마다 만들지 않고 한 벌을 함께 쓴다(최대 27명 × 7종이면 GPU 메모리가 크다). */
 function sharedBubbleTextures() {
-  bubbleTextures ??= Object.fromEntries(
-    Object.entries(BUBBLES).map(([key, { text, color }]) => [key, bubbleTexture(text, color)]),
-  );
+  bubbleTextures ??= {
+    ...Object.fromEntries(
+      Object.entries(BUBBLES).map(([key, { text, color }]) => [key, bubbleTexture(text, color)]),
+    ),
+    ...Object.fromEntries(
+      WAX_EMOTES.map((emote) => [emote.kind, reactionBubbleTexture(emote.sprite)]),
+    ),
+  };
   return bubbleTextures;
 }
 
@@ -134,7 +180,8 @@ function Bubble({ group, height }: { group: RefObject<Sprite | null>; height: nu
       renderOrder={21}
       userData={{ textures }}
     >
-      <spriteMaterial depthWrite={false} transparent />
+      {/* 시안 색 그대로 보이도록 톤 매핑을 끈다. */}
+      <spriteMaterial depthWrite={false} transparent toneMapped={false} />
     </sprite>
   );
 }
@@ -148,6 +195,7 @@ export function WaxCharacter({
   smooth = true,
   pose,
   rod = false,
+  npc = false,
 }: {
   character: string;
   name?: string;
@@ -156,6 +204,8 @@ export function WaxCharacter({
   smooth?: boolean;
   pose: () => WaxPose | null;
   rod?: boolean;
+  /** 교수님처럼 플레이어가 아닌 캐릭터. 이름표를 작게 그린다. */
+  npc?: boolean;
 }) {
   const root = useRef<Group>(null);
   const bubble = useRef<Sprite>(null);
@@ -237,14 +287,20 @@ export function WaxCharacter({
       }
     }
     if (bubble.current) {
-      bubble.current.visible = Boolean(next.bubble);
-      if (next.bubble) {
-        const textures = bubble.current.userData.textures as Record<string, Texture>;
-        if (bubble.current.material.map !== textures[next.bubble]) {
-          bubble.current.material.map = textures[next.bubble];
+      const textures = bubble.current.userData.textures as Record<string, Texture>;
+      // 화면에서 고를 수 없는 표현(thumbs)은 그릴 말풍선이 없어 숨긴다.
+      const map = next.bubble ? textures[next.bubble] : undefined;
+      bubble.current.visible = Boolean(map);
+      if (map) {
+        if (bubble.current.material.map !== map) {
+          bubble.current.material.map = map;
           bubble.current.material.needsUpdate = true;
         }
-        bubble.current.position.y = height + 0.7 + Math.sin(performance.now() / 120) * 0.03;
+        // 감정 말풍선은 이름표 바로 위에 시안 크기로, 경고 말풍선("!", "딱!")은 기존처럼 크게 띄운다.
+        const emote = EMOTE_KINDS.has(next.bubble ?? '');
+        bubble.current.scale.setScalar(emote ? EMOTE_SIZE : 0.55);
+        bubble.current.position.y =
+          height + (emote ? EMOTE_Y : 0.7) + Math.sin(performance.now() / 120) * 0.03;
       }
     }
   });
@@ -258,7 +314,7 @@ export function WaxCharacter({
         <sphereGeometry args={[0.075, 20, 14]} />
         <meshLambertMaterial color={WAX_SCENE.skin} />
       </mesh>
-      {name && <NameTag name={name} own={own} height={height} />}
+      {name && <NameTag name={name} own={own} npc={npc} height={height} />}
       <Bubble group={bubble} height={height} />
     </group>
   );

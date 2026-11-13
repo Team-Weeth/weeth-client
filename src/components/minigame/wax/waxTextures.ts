@@ -217,22 +217,125 @@ export function posterTexture(title: string, body: string, color: string) {
   return texture(element);
 }
 
-/** 머리 위 이름표. 산사의 "나 · 이름" 말풍선 형식. */
+/** 디자인 토큰의 현재 값. 캔버스에는 CSS 변수를 쓸 수 없어 그릴 때 읽는다(미니게임은 라이트 테마 고정). */
+function token(name: string, fallback: string) {
+  return getComputedStyle(document.documentElement).getPropertyValue(name).trim() || fallback;
+}
+
+/**
+ * 머리 위 이름표. 시안(23px 높이 알약)을 5배로 그린다. 내 캐릭터는 이름 앞에 '나' 배지를 붙인다.
+ * height는 캔버스 높이 대비 알약 높이 비율로, 장면에서 알약 크기를 맞출 때 쓴다.
+ */
 export function nameTagTexture(name: string, own: boolean) {
-  const { element, context } = canvas(512, 128);
-  context.font = `700 44px ${FONT}`;
-  const label = own ? `나 · ${name}` : name;
-  const width = Math.min(500, context.measureText(label).width + 64);
-  const left = (512 - width) / 2;
-  context.fillStyle = own ? 'rgba(18, 90, 72, 0.92)' : 'rgba(255, 255, 255, 0.92)';
+  const k = 5;
+  const border = 1 * k;
+  const padX = 6 * k;
+  const gap = 4 * k;
+  const badge = 13 * k;
+  const pillHeight = 23 * k;
+  const nameFont = `500 ${8 * k}px ${FONT}`;
+  const measure = canvas(1, 1).context;
+  measure.font = nameFont;
+  const nameWidth = measure.measureText(name).width;
+  const pillWidth = border * 2 + padX * 2 + nameWidth + (own ? badge + gap : 0);
+  const { element, context } = canvas(Math.ceil(pillWidth) + 8, pillHeight + 8);
+  const left = 4;
+  const top = 4;
+  context.fillStyle = token('--container-neutral-alternative', '#e9eef2');
   context.beginPath();
-  context.roundRect(left, 20, width, 84, 42);
+  context.roundRect(left, top, pillWidth, pillHeight, pillHeight / 2);
   context.fill();
-  context.fillStyle = own ? '#ffffff' : '#1f2a37';
-  context.textAlign = 'center';
+  context.fillStyle = token('--container-neutral', '#ffffff');
+  context.beginPath();
+  context.roundRect(
+    left + border,
+    top + border,
+    pillWidth - border * 2,
+    pillHeight - border * 2,
+    pillHeight / 2,
+  );
+  context.fill();
   context.textBaseline = 'middle';
-  context.fillText(label, 256, 64);
-  return { texture: texture(element), aspect: 512 / 128 };
+  let x = left + border + padX;
+  const middle = top + pillHeight / 2;
+  if (own) {
+    context.fillStyle = token('--container-primary', '#00c8aa');
+    context.beginPath();
+    context.arc(x + badge / 2, middle, badge / 2, 0, Math.PI * 2);
+    context.fill();
+    context.fillStyle = token('--text-inverse', '#ffffff');
+    context.font = `700 ${6 * k}px ${FONT}`;
+    context.textAlign = 'center';
+    context.fillText('나', x + badge / 2, middle + 0.5);
+    x += badge + gap;
+  }
+  context.fillStyle = token('--text-strong', '#000000');
+  context.font = nameFont;
+  context.textAlign = 'left';
+  context.fillText(name, x, middle + 0.5);
+  return {
+    texture: texture(element),
+    aspect: element.width / element.height,
+    height: pillHeight / element.height,
+  };
+}
+
+/** reactions.png(2172×724)에서 칸별로 잘라 쓸 원본 픽셀 범위. Figma 반응 아이콘의 자르기 비율을 옮긴 값이다. */
+const REACTION_SOURCE = [
+  { x: 0, y: 94.9, size: 551.6, lift: 0 },
+  { x: 551.6, y: 94.9, size: 551.6, lift: 0 },
+  { x: 1086, y: 94.9, size: 551.6, lift: 1 },
+  { x: 1637.6, y: 86.2, size: 534.4, lift: 2 },
+];
+
+/** 시안의 감정 말풍선(검은 별, 꼬리 포함) 경로. 55.245×55.388 */
+const REACTION_BUBBLE_PATH =
+  'M26.9625 0L34.8591 7.89666H46.022V19.0595L53.925 26.9593L45.3128 35.5715L49.0236 55.3885L55.2453 48.8678L35.5779 45.3064L26.9625 53.9186L19.0658 46.022H7.90302V34.8591L0 26.9593L7.89666 19.0627V7.89984H19.0595L26.9625 0Z';
+
+let reactionImage: HTMLImageElement | null = null;
+
+/**
+ * 머리 위 감정 말풍선. 56px 시안을 256px 캔버스에 그린다: 46도 돌린 검은 별 위에 반응 아이콘(30px)을 얹는다.
+ * 아이콘 이미지는 비동기로 받으므로 다 받으면 다시 그린다.
+ */
+export function reactionBubbleTexture(sprite: number) {
+  const size = 256;
+  const k = size / 56;
+  const { element, context } = canvas(size, size);
+  const result = texture(element);
+  const draw = (image?: HTMLImageElement) => {
+    context.clearRect(0, 0, size, size);
+    context.save();
+    context.translate(28 * k, 28.2 * k);
+    context.rotate((46 * Math.PI) / 180);
+    context.scale(k, k);
+    context.translate(-55.245 / 2, -55.388 / 2);
+    context.fillStyle = '#000000';
+    context.fill(new Path2D(REACTION_BUBBLE_PATH));
+    context.restore();
+    const source = REACTION_SOURCE[sprite];
+    if (image && source) {
+      context.drawImage(
+        image,
+        source.x,
+        source.y,
+        source.size,
+        source.size,
+        13 * k,
+        (13 - source.lift) * k,
+        30 * k,
+        30 * k,
+      );
+    }
+    result.needsUpdate = true;
+  };
+  draw();
+  const image = (reactionImage ??= Object.assign(new Image(), {
+    src: '/images/wax/reactions.png',
+  }));
+  if (image.complete && image.naturalWidth) draw(image);
+  else image.addEventListener('load', () => draw(image), { once: true });
+  return result;
 }
 
 /** 말풍선("딱!", "!", "흠…"). */
