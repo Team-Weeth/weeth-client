@@ -66,6 +66,8 @@ export function useAdminSessionList(cardinal?: number | null) {
   });
 }
 
+// TODO: getEventDetail은 유저 경로(/clubs/{clubId}/events/{id})를 사용 중.
+// 어드민 전용 상세 API 제공 시 adminScheduleApi 엔드포인트를 교체해야 한다.
 export function useAdminScheduleDetail(eventId: number) {
   const clubId = useClubId();
 
@@ -76,6 +78,8 @@ export function useAdminScheduleDetail(eventId: number) {
   });
 }
 
+// TODO: getSessionDetail은 유저 경로(/clubs/{clubId}/sessions/{id})를 사용 중.
+// 어드민 전용 상세 API 제공 시 adminScheduleApi 엔드포인트를 교체해야 한다.
 export function useAdminSessionDetail(sessionId: number) {
   const clubId = useClubId();
 
