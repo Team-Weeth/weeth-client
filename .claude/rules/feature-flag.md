@@ -7,7 +7,7 @@ Use the existing club feature flag architecture when implementing club-specific 
 - `src/flags/club-features/definitions.ts`: Flagsmith keys, the derived `ClubFeatures` type, and default values.
 - `src/flags/club-features/server.ts`: Server-only `getClubFeatures(clubId)`. Fetches the registered flags together using the `club:<clubId>` identity and the `club_id` trait. React `cache` deduplicates calls with the same club ID within a server render request; it is not a persistent cache across requests.
 - `src/providers/club-feature-provider.tsx`: `ClubFeatureProvider` shares the server result through React Context. `useClubFeatures()` reads that result without making network requests.
-- `src/lib/flagsmith.ts`: Flagsmith SDK initialization, batched flag lookup, and failure handling.
+- `src/lib/flagsmith.ts`: Flagsmith SDK initialization, batched flag lookup, and failure handling. `getAllFeatureFlags` lists every flag for the dev panel and throws on failure instead of returning defaults.
 
 ## Implementation Rules
 
@@ -83,8 +83,15 @@ Boolean version switching is supported by this structure. Statistical A/B testin
 - Values are a snapshot from the server render. The client does not poll or subscribe to Flagsmith changes. Updated settings take effect when a fresh server lookup runs, for example after refreshing the page.
 - Feature flags control UI availability and do not replace backend permission checks.
 
-## Local Overrides for Development
+## Overrides for Development
 
-On the local dev server only (`NODE_ENV=development`), the `weeth_dev_flag_overrides` cookie overrides fetched values. Its value is URL-encoded JSON keyed by `ClubFeatures` property names, for example `{"warningEnabled":true}`. Unknown keys and non-boolean values are ignored, and production builds never read the cookie (`src/flags/club-features/dev-overrides.ts`).
+The `weeth_dev_flag_overrides` cookie overrides Flagsmith values in two environments: the local dev server (`NODE_ENV=development`) and deployments that set the server env `ENABLE_DEV_FLAG_OVERRIDES=true` (the dev Amplify app). `NEXT_PUBLIC_APP_ENV=production` always disables it, even if the other conditions match. The gate is `isDevFlagOverrideEnabled()` in `src/flags/club-features/dev-overrides.ts`.
 
-Design verification specs set it through `test.use({ flagOverrides: { ... } })` in `e2e/design/design-helpers.ts`. Do not add environment-variable or hardcoded overrides for local checks.
+- Dev deployments are production builds, so `NODE_ENV` cannot tell them apart from production. Enable them only through the explicit env, never with a negative check like `NEXT_PUBLIC_APP_ENV !== 'production'`.
+- Amplify SSR reads runtime env only from `.env.production`, which `amplify.yml` writes from an allowlist. `ENABLE_DEV_FLAG_OVERRIDES` is in that list; setting it in the Amplify console is enough.
+- The cookie value is URL-encoded JSON keyed by **flag names** (Flagsmith feature names), for example `{"club_warning_enabled":true}`. Names outside `[A-Za-z0-9_.-]{1,64}`, non-boolean values, and entries beyond 30 are ignored. It applies to every club in that browser. `getClubFeatures` applies it on top of the fetched values, so an override only changes behavior for names registered in `CLUB_FEATURE_FLAGS`.
+- It must be a cookie, not localStorage: flag values are resolved during the server render.
+
+Where overrides are allowed, the club layout renders `DevFlagPanel` (`src/components/dev/`) at the bottom left. It is loaded through `LazyDevFlagPanel` (`next/dynamic`); a static import would ship the panel and the Flagsmith SDK in the layout bundle even where it never renders. The panel lists only the flags the developer put in, each with a switch; deleting one falls back to the Flagsmith value. Flags go in two ways: typing a flag name (added as ON, for flags not created in Flagsmith yet), or 전체 플래그에서 고르기, which fetches every flag for the current club identity on demand (`getAllFeatureFlags` in `src/lib/flagsmith.ts`, React Query) and adds the chosen one with its current value. Each change writes the cookie and calls `router.refresh()`.
+
+Design verification specs set the cookie through `test.use({ flagOverrides: { warningEnabled: true } })` in `e2e/design/design-helpers.ts`. The fixture takes `ClubFeatures` property names and converts them to flag names (`toDevFlagOverrides`), and hides the panel (`[data-dev-overlay]`). Do not add other environment-variable or hardcoded overrides for local checks.

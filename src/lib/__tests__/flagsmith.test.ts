@@ -1,6 +1,6 @@
 /** @jest-environment node */
 
-import { getFeatureFlags, isFeatureEnabled } from '../flagsmith';
+import { getAllFeatureFlags, getFeatureFlags, isFeatureEnabled } from '../flagsmith';
 
 describe('Flagsmith club targeting', () => {
   const originalFetch = global.fetch;
@@ -76,6 +76,27 @@ describe('Flagsmith club targeting', () => {
   it('returns false on HTTP failures', async () => {
     fetchMock.mockResolvedValueOnce(new Response('Unavailable', { status: 503 }));
     await expect(isFeatureEnabled('club_warning_enabled')).resolves.toBe(false);
+  });
+
+  it('lists every flag for the club identity', async () => {
+    fetchMock.mockResolvedValueOnce(
+      Response.json({
+        flags: [
+          { feature: { name: 'club_warning_enabled' }, enabled: true },
+          { feature: { name: 'another_feature' }, enabled: false },
+        ],
+      }),
+    );
+    await expect(
+      getAllFeatureFlags({ identifier: 'club:abc', traits: { club_id: 'abc' } }),
+    ).resolves.toEqual({ club_warning_enabled: true, another_feature: false });
+  });
+
+  it('throws instead of hiding failures when listing every flag', async () => {
+    fetchMock.mockRejectedValueOnce(new Error('offline'));
+    await expect(getAllFeatureFlags()).rejects.toThrow();
+    delete process.env.NEXT_PUBLIC_FLAGSMITH_ENVIRONMENT_ID;
+    await expect(getAllFeatureFlags()).rejects.toThrow();
   });
 
   it('조회에 실패하거나 환경 ID가 없으면 fallback 값을 쓴다', async () => {

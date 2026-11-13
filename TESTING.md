@@ -410,7 +410,7 @@ pnpm test:e2e:design e2e/design/{feature}.spec.ts   # dev 서버(:3000)가 떠 �
 ```
 
 - 불일치는 표로 출력되고, 전체 비교표는 `test-results/**/design-report.md`에 남습니다.
-- `flagOverrides`는 dev 서버에서만 동작합니다 (`src/flags/club-features/dev-overrides.ts`).
+- `flagOverrides`는 로컬 dev 서버와 `ENABLE_DEV_FLAG_OVERRIDES=true`인 dev 배포에서만 동작합니다 (`src/flags/club-features/dev-overrides.ts`). 화면에서 직접 바꿀 때는 왼쪽 아래 개발용 플래그 패널(깃발 버튼)을 씁니다.
 - Figma 값 읽는 법·변환 규칙·❌ 처리 순서는 `.claude/skills/figma-verify/SKILL.md`를 따릅니다.
 - `design` 프로젝트는 `chromium`/`mobile-chrome` 실행에 포함되지 않습니다.
 
