@@ -134,3 +134,90 @@ describe('WaxAudio 녹음 조각 재생', () => {
     expect(grains[0].peak).toBeLessThan(grains.at(-1)!.peak);
   });
 });
+
+describe('WaxAudio 모바일 오디오 세션', () => {
+  const originalContext = globalThis.AudioContext;
+  const originalFetch = globalThis.fetch;
+  const originalUserAgent = navigator.userAgent;
+  const originalCreateObjectURL = URL.createObjectURL;
+  const originalRevokeObjectURL = URL.revokeObjectURL;
+  let play: jest.SpyInstance;
+
+  function setUserAgent(value: string) {
+    Object.defineProperty(navigator, 'userAgent', { value, configurable: true });
+  }
+
+  function setAudioSession(value: { type: string } | undefined) {
+    Object.defineProperty(navigator, 'audioSession', { value, configurable: true });
+  }
+
+  beforeEach(() => {
+    URL.createObjectURL = jest.fn(() => 'blob:silence');
+    URL.revokeObjectURL = jest.fn();
+    play = jest.spyOn(HTMLMediaElement.prototype, 'play').mockResolvedValue(undefined);
+    jest.spyOn(HTMLMediaElement.prototype, 'pause').mockImplementation(() => {});
+    globalThis.fetch = mockFetch() as unknown as typeof fetch;
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
+    globalThis.AudioContext = originalContext;
+    globalThis.fetch = originalFetch;
+    URL.createObjectURL = originalCreateObjectURL;
+    URL.revokeObjectURL = originalRevokeObjectURL;
+    setUserAgent(originalUserAgent);
+    setAudioSession(undefined);
+  });
+
+  it('Audio Session API가 있으면 소리를 켤 때 무음 스위치를 무시하는 playback 세션으로 바꾼다', async () => {
+    const { context } = audioContext();
+    globalThis.AudioContext = jest.fn(() => context) as unknown as typeof AudioContext;
+    const session = { type: 'auto' };
+    setAudioSession(session);
+    const audio = new WaxAudio();
+    await audio.enable();
+    expect(session.type).toBe('playback');
+    expect(play).not.toHaveBeenCalled();
+    audio.close();
+  });
+
+  it('Audio Session API가 없는 iOS는 무음 오디오를 반복 재생해 세션을 바꾸고, 닫으면 정리한다', async () => {
+    const { context } = audioContext();
+    globalThis.AudioContext = jest.fn(() => context) as unknown as typeof AudioContext;
+    setUserAgent('Mozilla/5.0 (iPhone; CPU iPhone OS 16_7 like Mac OS X) AppleWebKit/605.1.15');
+    const audio = new WaxAudio();
+    await audio.enable();
+    expect(play).toHaveBeenCalledTimes(1);
+    const element = play.mock.contexts[0] as HTMLAudioElement;
+    expect(element.loop).toBe(true);
+    expect(element.hasAttribute('playsinline')).toBe(true);
+    audio.close();
+    expect(URL.revokeObjectURL).toHaveBeenCalledWith('blob:silence');
+  });
+
+  it('iOS가 아니면 무음 오디오를 재생하지 않는다', async () => {
+    const { context } = audioContext();
+    globalThis.AudioContext = jest.fn(() => context) as unknown as typeof AudioContext;
+    setUserAgent('Mozilla/5.0 (Linux; Android 14) AppleWebKit/537.36 Chrome/130 Mobile');
+    const audio = new WaxAudio();
+    await audio.enable();
+    expect(play).not.toHaveBeenCalled();
+    audio.close();
+  });
+
+  it('앱 전환 등으로 멈춘 재생은 resume()에서 다시 살리고, 재생 중이면 건드리지 않는다', async () => {
+    const { context } = audioContext();
+    globalThis.AudioContext = jest.fn(() => context) as unknown as typeof AudioContext;
+    const audio = new WaxAudio();
+    await audio.enable();
+    context.resume.mockClear();
+
+    audio.resume();
+    expect(context.resume).not.toHaveBeenCalled();
+
+    context.state = 'interrupted';
+    audio.resume();
+    expect(context.resume).toHaveBeenCalledTimes(1);
+    audio.close();
+  });
+});
