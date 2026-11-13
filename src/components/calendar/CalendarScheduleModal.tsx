@@ -59,6 +59,7 @@ function CalendarScheduleModal({
             <CalendarScheduleDetailContent
               schedule={schedule}
               clubId={clubId}
+              onClose={() => onOpenChange(false)}
               onShare={onShare}
               onViewAttendees={openAttendeeList}
             />
