@@ -64,6 +64,8 @@ export async function proxy(request: NextRequest) {
 
   const isPublicPath =
     PUBLIC_PATHS.some((path) => pathname === path) ||
+    pathname === '/play/wax' ||
+    pathname.startsWith('/play/wax/') ||
     pathname.startsWith('/club/') ||
     pathname.startsWith('/kakao/') ||
     pathname === '/apple/oauth';
