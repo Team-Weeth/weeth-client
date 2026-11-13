@@ -68,6 +68,7 @@ e2e/auth.spec.ts                 ← Playwright E2E
 - Components using React Query → wrap with `QueryClientProvider` + `retry: false` required
 - Hooks/components depending on Zustand store → fix values with `jest.mock('@/stores/use{Name}Store', ...)`
 - APIs not in global handlers → register with `server.use()` in the test file's `beforeEach`
+- `react-joyride` (`useJoyride`) must be mocked — `jsdom` has no layout engine, so `getBoundingClientRect()` always returns zeros and the real library can't position a spotlight or tooltip. Replace it with a fake exposing an event registry and a `controls.start` spy. See `.claude/rules/tour.md` → Testing.
 
 ### Adding MSW Handlers
 

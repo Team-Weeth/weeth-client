@@ -3,7 +3,9 @@ import type { ReactNode } from 'react';
 
 import { Header } from '@/components/admin/layout/Header';
 import { LNB } from '@/components/admin/layout/LNB';
+import { TourMount } from '@/components/tour/TourMount';
 import { buttonVariants } from '@/components/ui/Button';
+import { getClubFeatures } from '@/flags/club-features/server';
 import { cn } from '@/lib/cn';
 import { homeServerApi } from '@/lib/apis/home.server';
 import { ApiError } from '@/lib/apis/server';
@@ -32,8 +34,12 @@ export default async function AdminLayout({
   );
 
   let dashboard;
+  let features;
   try {
-    dashboard = await homeServerApi.getDashboard(clubId);
+    [dashboard, features] = await Promise.all([
+      homeServerApi.getDashboard(clubId),
+      getClubFeatures(clubId),
+    ]);
   } catch (error) {
     if (error instanceof ApiError && error.status === 403) {
       return forbidden;
@@ -71,6 +77,7 @@ export default async function AdminLayout({
               </main>
             </div>
           </div>
+          <TourMount clubId={clubId} scope="admin" features={features} />
         </AdminScopeProvider>
       </ClubIdSyncer>
     </UserHydrator>

@@ -46,6 +46,11 @@ if echo "$prompt" | grep -qE "컴포넌트 설계|합성|composition|compound|re
   suggestions+=("  → /vercel-composition-patterns   컴포넌트 합성 패턴 (React 19)")
 fi
 
+# /feature-tour
+if echo "$prompt" | grep -qE "투어|온보딩|코치마크|스포트라이트|기능 소개|기능 안내|신규 기능|joyride|coachmark|product tour|워크스루"; then
+  suggestions+=("  → /feature-tour   기능 스포트라이트 투어(코치마크) 추가")
+fi
+
 
 # 매칭된 스킬이 있을 때만 출력
 if [ ${#suggestions[@]} -gt 0 ]; then

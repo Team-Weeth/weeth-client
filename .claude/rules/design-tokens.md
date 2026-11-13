@@ -104,6 +104,18 @@ Composite classes defined with `@utility`. Includes font-size + line-height + fo
 | `bg-state-caution` / `text-state-caution` | Caution (yellow) |
 | `bg-state-error` / `text-state-error` | Error (red) |
 
+## z-index Ladder
+
+No central scale existed before this table — that's how `Toast` ended up at `z-[9999]` with nothing documented between it and `z-90`. Place any new overlay by this table instead of picking an arbitrary large number.
+
+| Layer | Value | Example |
+| --- | --- | --- |
+| Page-level overlays | `z-10` – `z-50` | `NoticePopup`, editor floating menus |
+| Popover-family (Radix) | `z-90` | `popover`, `DropdownMenu`, `CalendarPicker`, `alert-dialog`, `TimePicker` |
+| `ui/Tooltip` | `z-[100]` | hover tooltips |
+| Product tour | `z-[110]` | see `.claude/rules/tour.md` |
+| Toaster | `z-[9999]` | `Toast` |
+
 ## Dark Mode
 
 Adding the `.dark` class to `html` or a parent element automatically applies dark tokens. Using only semantic tokens (without the `dark:` prefix) provides automatic switching.
