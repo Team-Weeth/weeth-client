@@ -94,11 +94,12 @@ export function tileFloorTexture(
 /** 복도 한가운데 바닥 엠블럼. */
 export function emblemTexture() {
   const { element, context } = canvas(512, 512);
-  context.fillStyle = '#12805c';
+  // Weeth 메인 컬러(#04C7A9) 카펫에 흰 테두리·글자
+  context.fillStyle = '#04c7a9';
   context.beginPath();
   context.arc(256, 256, 248, 0, Math.PI * 2);
   context.fill();
-  context.strokeStyle = '#ffd166';
+  context.strokeStyle = '#ffffff';
   context.lineWidth = 18;
   context.beginPath();
   context.arc(256, 256, 212, 0, Math.PI * 2);
@@ -109,7 +110,6 @@ export function emblemTexture() {
   context.font = `900 104px ${FONT}`;
   context.fillText('WEETH', 256, 226);
   context.font = `800 50px ${FONT}`;
-  context.fillStyle = '#ffd166';
   context.fillText('UNIVERSITY', 256, 318);
   return texture(element);
 }
@@ -230,6 +230,8 @@ export function nameTagTexture(name: string, own: boolean) {
   const k = 5;
   const border = 1 * k;
   const padX = 6 * k;
+  // 시안 피드백: 오른쪽만 2px 더 띄운다.
+  const padRight = padX + 2 * k;
   const gap = 4 * k;
   const badge = 13 * k;
   const pillHeight = 23 * k;
@@ -237,7 +239,7 @@ export function nameTagTexture(name: string, own: boolean) {
   const measure = canvas(1, 1).context;
   measure.font = nameFont;
   const nameWidth = measure.measureText(name).width;
-  const pillWidth = border * 2 + padX * 2 + nameWidth + (own ? badge + gap : 0);
+  const pillWidth = border * 2 + padX + padRight + nameWidth + (own ? badge + gap : 0);
   const { element, context } = canvas(Math.ceil(pillWidth) + 8, pillHeight + 8);
   const left = 4;
   const top = 4;

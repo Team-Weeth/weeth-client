@@ -1010,7 +1010,8 @@ function Hallway({ layout }: { layout: WaxLayout }) {
         receiveShadow
       >
         <circleGeometry args={[1.5, 48]} />
-        <meshStandardMaterial map={emblem} roughness={0.7} />
+        {/* 브랜드 색이 조명·톤 매핑에 바래지 않도록 톤 매핑을 끄고 반사광을 줄인다. */}
+        <meshStandardMaterial map={emblem} roughness={1} toneMapped={false} />
       </mesh>
       {Array.from({ length: 11 }, (_, i) => (
         <HallLight
