@@ -95,7 +95,11 @@ function DevFlagPanel({ clubId, overrides, className }: DevFlagPanelProps) {
           )}
         </button>
       </PopoverTrigger>
-      <PopoverContent side="top" data-dev-overlay className="w-80 gap-300 p-400">
+      <PopoverContent
+        side="top"
+        data-dev-overlay
+        className="max-h-[var(--radix-popover-content-available-height)] w-80 gap-300 overflow-y-auto p-400"
+      >
         {isBrowsing ? (
           <DevFlagBrowser
             clubId={clubId}
