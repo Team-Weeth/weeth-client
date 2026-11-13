@@ -8,11 +8,11 @@ import { Icon } from '@/components/ui/Icon';
 import { cn } from '@/lib/cn';
 import { useAssignableClubMap, useMyProfilesQuery } from '@/hooks/queries/mypage/useMyPageQueries';
 import AddRoundIcon from '@/assets/icons/add_round.svg';
-import BackIcon from '@/assets/icons/back.svg';
 import { useRouter } from 'next/navigation';
 import { AddProfileModal } from './AddProfileModal';
 import { ProfileCard } from './ProfileCard';
 import { ProfileManagementSkeleton } from './skeleton/ProfileManagementSkeleton';
+import { MyPageBackButton } from '@/components/mypage/MyPageBackButton';
 
 type ProfileManagementContentProps = React.HTMLAttributes<HTMLDivElement>;
 
@@ -40,14 +40,8 @@ function ProfileManagementContent({ className, ...props }: ProfileManagementCont
 
   return (
     <div className={cn('tablet:gap-6 flex min-w-0 flex-1 flex-col', className)} {...props}>
-      <div className="tablet:items-start flex items-center gap-1 py-300">
-        <button
-          type="button"
-          onClick={() => router.back()}
-          className="flex items-center justify-center p-1"
-        >
-          <Icon src={BackIcon} size={21} className="text-icon-normal p-1" />
-        </button>
+      <div className="tablet:items-start tablet:gap-1 flex items-center py-300">
+        <MyPageBackButton onClick={() => router.back()} />
         <div className="flex flex-col">
           <h1 className="tablet:typo-h3 typo-sub1 text-text-normal">프로필 관리</h1>
           <p className="tablet:flex typo-body2 text-text-alternative hidden">

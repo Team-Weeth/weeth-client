@@ -1,16 +1,15 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import BackIcon from '@/assets/icons/back.svg';
 import { useAddProfileFlow } from '@/hooks/mypage';
 import { useCreateMultiProfileMutation } from '@/hooks/mutations/mypage/useMultiProfileMutations';
 import { useAssignableClubsQuery } from '@/hooks/queries/mypage/useMyPageQueries';
-import { Icon } from '@/components/ui/Icon';
 import { cn } from '@/lib/cn';
 import { toastError, toastSuccess } from '@/stores/useToastStore';
 import { getApiErrorMessage } from '@/utils/shared';
 import { StepOneContent } from './AddProfileModal/StepOneContent';
 import { StepTwoContent } from './AddProfileModal/StepTwoContent';
+import { MyPageBackButton } from '@/components/mypage/MyPageBackButton';
 
 type AddProfilePageContentProps = React.HTMLAttributes<HTMLDivElement>;
 
@@ -63,14 +62,8 @@ function AddProfilePageContent({ className, ...props }: AddProfilePageContentPro
       className={cn('tablet:hidden flex min-w-0 flex-1 flex-col gap-4 pb-[168px]', className)}
       {...props}
     >
-      <div className="flex items-center gap-1 py-300">
-        <button
-          type="button"
-          onClick={handleClose}
-          className="flex items-center justify-center p-1"
-        >
-          <Icon src={BackIcon} size={21} className="text-icon-normal p-1" />
-        </button>
+      <div className="tablet:gap-1 flex items-center py-300">
+        <MyPageBackButton onClick={handleClose} />
         <h1 className="typo-sub1 text-text-normal">프로필 추가하기</h1>
       </div>
 
