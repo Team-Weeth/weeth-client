@@ -13,6 +13,7 @@ import HomeIcon from '@/assets/icons/home.svg';
 import MenuIcon from '@/assets/icons/menu.svg';
 import CalendarIcon from '@/assets/icons/calendar.svg';
 import AdminDuesIcon from '@/assets/icons/admin/ic_admin_dues.svg';
+import GamepadIcon from '@/assets/icons/gamepad.svg';
 import { Divider } from '@/components/ui/Divider';
 import { Icon } from '@/components/ui/Icon';
 import { Sheet, SheetClose, SheetContent, SheetTrigger } from '@/components/ui/Sheet';
@@ -22,6 +23,9 @@ import { useLogout } from '@/hooks/useLogout';
 import { useDuesVisibility } from '@/hooks/queries';
 import { useIsAdmin } from '@/hooks/shared';
 import { useActiveBoardId } from '@/stores/useBoardNavStore';
+import { WAX_EVENT_BANNER_HEIGHT, WAX_EVENT_COPY, getWaxEventPath } from '@/constants/waxEvent';
+import { useWaxEventBannerClosed } from '@/hooks/useWaxEventDismissal';
+import { useClubFeatures } from '@/providers/club-feature-provider';
 
 function MobileNavSheet() {
   const pathname = usePathname();
@@ -31,6 +35,10 @@ function MobileNavSheet() {
   const { data: rawBoards } = useBoardList();
   const { data: duesVisibility } = useDuesVisibility();
   const activeBoardId = useActiveBoardId();
+  const { waxEventEnabled } = useClubFeatures();
+  const { closed: isBannerClosed } = useWaxEventBannerClosed();
+  // 시트는 헤더 바로 아래에서 열리므로, 헤더 위 띠배너가 보이면 그만큼 내린다.
+  const headerHeight = 64 + (waxEventEnabled && !isBannerClosed ? WAX_EVENT_BANNER_HEIGHT : 0);
   const isDuesVisible = duesVisibility?.visible === true;
 
   const isPostingPage = pathname.includes('/write') || /\/board\/edit\/\d+$/.test(pathname);
@@ -51,6 +59,16 @@ function MobileNavSheet() {
     ...(isDuesVisible
       ? [{ id: 'dues', label: '회비', href: `/${clubId}/dues`, icon: AdminDuesIcon }]
       : []),
+    ...(waxEventEnabled
+      ? [
+          {
+            id: 'event',
+            label: WAX_EVENT_COPY.navLabel,
+            href: getWaxEventPath(clubId),
+            icon: GamepadIcon,
+          },
+        ]
+      : []),
     { id: 'admin', label: '운영진 서비스', href: `/${clubId}/admin`, icon: ExitIcon },
     { id: 'mypage', label: 'MY', href: `/${clubId}/mypage`, icon: PersonIcon },
   ] as const;
@@ -70,8 +88,8 @@ function MobileNavSheet() {
         side="left"
         className="tablet:max-w-93.75 bg-container-neutral scrollbar-none w-full max-w-110 overflow-y-auto"
         style={{
-          top: 'calc(var(--safe-area-inset-top) + 64px)',
-          height: 'calc(100dvh - var(--safe-area-inset-top) - 64px)',
+          top: `calc(var(--safe-area-inset-top) + ${headerHeight}px)`,
+          height: `calc(100dvh - var(--safe-area-inset-top) - ${headerHeight}px)`,
           paddingBottom: 'var(--safe-area-inset-bottom)',
           paddingLeft: 'var(--safe-area-inset-left)',
           paddingRight: 'var(--safe-area-inset-right)',
