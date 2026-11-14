@@ -1,7 +1,11 @@
 import { expect, test as base, type Locator, type Page, type TestInfo } from '@playwright/test';
 
 import type { ClubFeatures } from '../../src/flags/club-features/definitions';
-import { DEV_FLAG_OVERRIDE_COOKIE } from '../../src/flags/club-features/dev-overrides';
+import {
+  DEV_FLAG_OVERRIDE_COOKIE,
+  serializeDevFlagOverrides,
+  toDevFlagOverrides,
+} from '../../src/flags/club-features/dev-overrides';
 
 /**
  * Figma 대비 디자인 검증 헬퍼.
@@ -472,10 +476,11 @@ export class DesignChecker {
   }
 }
 
-/** 로컬 dev 오버레이(TanStack Query devtools, Next dev 표시)가 화면 요소를 가리지 않게 숨긴다. */
+/** 로컬 dev 오버레이(TanStack Query devtools, Next dev 표시, 개발용 플래그 패널)가 화면 요소를 가리지 않게 숨긴다. */
 function hideDevOverlays() {
   const style = document.createElement('style');
-  style.textContent = '.tsqd-parent-container, nextjs-portal { display: none !important; }';
+  style.textContent =
+    '.tsqd-parent-container, nextjs-portal, [data-dev-overlay] { display: none !important; }';
   const inject = () => document.head.appendChild(style);
   if (document.head) inject();
   else document.addEventListener('DOMContentLoaded', inject, { once: true });
@@ -494,7 +499,7 @@ export const test = base.extend<{
       await context.addCookies([
         {
           name: DEV_FLAG_OVERRIDE_COOKIE,
-          value: encodeURIComponent(JSON.stringify(flagOverrides)),
+          value: serializeDevFlagOverrides(toDevFlagOverrides(flagOverrides)),
           url: baseURL ?? 'http://localhost:3000',
         },
       ]);

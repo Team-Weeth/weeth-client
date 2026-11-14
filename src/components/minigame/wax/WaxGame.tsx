@@ -263,6 +263,15 @@ export function WaxGame() {
     return () => clearTimeout(timer);
   }, [caught]);
 
+  // 앱 전환·전화 등으로 멈춘 소리는 다음 터치·키 입력 때 다시 살린다(iOS는 사용자 입력 안에서만 허용).
+  useEffect(() => {
+    if (!started) return;
+    const resume = () => sound.current?.resume();
+    const events = ['pointerdown', 'keydown', 'touchend'] as const;
+    events.forEach((name) => window.addEventListener(name, resume, { passive: true }));
+    return () => events.forEach((name) => window.removeEventListener(name, resume));
+  }, [started]);
+
   /*
    * 뒤로가기(모바일 제스처 포함)로 나가려 하면 바로 떠나지 않고 나가기 모달을 띄운다.
    * 입장할 때 같은 주소의 기록을 하나 더 쌓아 두고, 뒤로가기로 그 기록이 빠지면 모달을 열고 다시 쌓는다.

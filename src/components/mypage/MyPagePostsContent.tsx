@@ -3,10 +3,8 @@
 import { useEffect } from 'react';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
-import BackIcon from '@/assets/icons/back.svg';
 import { BoardContentSkeleton } from '@/components/board/BoardContentSkeleton';
 import { PostCard } from '@/components/board/PostCard';
-import { Icon } from '@/components/ui/Icon';
 import { useIntersectionObserver } from '@/hooks/board/useIntersectionObserver';
 import { useMyPagePostsQuery } from '@/hooks/queries/mypage/useMyPagePostsQuery';
 import { useMyPageQueries } from '@/hooks/queries/mypage/useMyPageQueries';
@@ -16,6 +14,7 @@ import { parseApiError } from '@/lib/error';
 import { formatShortDateTime } from '@/lib/formatTime';
 import { toastError } from '@/stores/useToastStore';
 import { PostActionMenu } from '../board';
+import { MyPageBackButton } from '@/components/mypage/MyPageBackButton';
 
 type MyPagePostsContentProps = React.HTMLAttributes<HTMLDivElement>;
 
@@ -49,14 +48,8 @@ function MyPagePostsContent({ className, ...props }: MyPagePostsContentProps) {
 
   return (
     <div className={cn('flex min-w-0 flex-1 flex-col gap-4', className)} {...props}>
-      <div className="tablet:py-0 flex items-center gap-1 py-300">
-        <button
-          type="button"
-          onClick={() => router.back()}
-          className="flex cursor-pointer items-center justify-center p-1"
-        >
-          <Icon src={BackIcon} size={21} className="text-icon-normal p-1" />
-        </button>
+      <div className="tablet:py-0 tablet:gap-1 flex items-center py-300">
+        <MyPageBackButton onClick={() => router.back()} />
         <div className="flex flex-col gap-1">
           <h1 className="tablet:typo-h3 typo-sub1 text-text-normal">내가 쓴 글</h1>
         </div>

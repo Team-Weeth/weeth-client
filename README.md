@@ -4,7 +4,7 @@
 
 <h3>동아리 운영과 커뮤니티를 한 곳에서</h3>
 
- 출석, 게시판, 멤버 관리, 어드민까지. 동아리에 필요한 기능을 하나의 서비스로 묶었습니다.
+출석, 게시판, 멤버 관리, 어드민까지. 동아리에 필요한 기능을 하나의 서비스로 묶었습니다.
 
 <br />
 
@@ -13,9 +13,9 @@
 [![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![Capacitor](https://img.shields.io/badge/Capacitor-119EFF?style=for-the-badge&logo=capacitor&logoColor=white)](https://capacitorjs.com/)
 
- [**weeth.kr 바로가기**](https://weeth.kr)
+[**weeth.kr 바로가기**](https://weeth.kr)
 
-<sub> [팀원](#팀원) · [기술 스택](#기술-스택) ·  [미리보기](#미리보기) · [주요 기능](#주요-기능) · [시작하기](#시작하기) · [프로젝트 구조](#프로젝트-구조) </sub>
+<sub> [팀원](#팀원) · [기술 스택](#기술-스택) · [미리보기](#미리보기) · [주요 기능](#주요-기능) · [시작하기](#시작하기) · [프로젝트 구조](#프로젝트-구조) </sub>
 
 </div>
 
@@ -126,8 +126,8 @@ src/
 
 ## 소개
 
-- Weeth는 동아리 운영에서 반복되는 일들을 하나의 서비스로 정리했습니다. 
-- 한 번 가입하면 여러 동아리를 넘나들며 활동할 수 있고, 클럽 컨텍스트는 URL로 전환됩니다. 
+- Weeth는 동아리 운영에서 반복되는 일들을 하나의 서비스로 정리했습니다.
+- 한 번 가입하면 여러 동아리를 넘나들며 활동할 수 있고, 클럽 컨텍스트는 URL로 전환됩니다.
 - 웹과 iOS·Android를 하나의 코드베이스(Capacitor)로 서비스하며, React Server Components를 바탕으로 가볍게 동작합니다.
 <div align="center">
 <table>
@@ -235,12 +235,14 @@ src/
 <td width="50%" valign="top">
 
 ### 인증
+
 쿠키 기반 인증 · Apple·Kakao 소셜 로그인
 
 </td>
 <td width="50%" valign="top">
 
 ### 게시판
+
 tiptap 리치 에디터 · 공지/일반 게시판 · 댓글·대댓글·좋아요
 
 </td>
@@ -249,12 +251,14 @@ tiptap 리치 에디터 · 공지/일반 게시판 · 댓글·대댓글·좋아�
 <td valign="top">
 
 ### 출석
+
 세션별 출석 코드 · QR 스캔 · 실시간 출석 현황
 
 </td>
 <td valign="top">
 
 ### 마이페이지
+
 프로필 · 활동 기수(Cardinal) · 출석 통계
 
 </td>
@@ -263,12 +267,14 @@ tiptap 리치 에디터 · 공지/일반 게시판 · 댓글·대댓글·좋아�
 <td valign="top">
 
 ### 어드민
+
 멤버 · 게시판 · 일정 · 출석 · 클럽 정보 관리 대시보드
 
 </td>
 <td valign="top">
 
 ### 기능 플래그
+
 Flagsmith 기반 클럽별 기능 On/Off · 버전 분기
 
 </td>
@@ -276,7 +282,6 @@ Flagsmith 기반 클럽별 기능 On/Off · 버전 분기
 </table>
 
 <br />
-
 
 ## 시작하기
 
@@ -307,23 +312,19 @@ pnpm cap:open:android   # Android Studio 열기
 
 ## 스크립트
 
-| 명령어 | 설명 |
-| --- | --- |
-| `pnpm dev` | 개발 서버 |
-| `pnpm build` | 프로덕션 빌드 |
-| `pnpm lint` | ESLint 검사 |
-| `pnpm format:check` | Prettier 포맷 검사 |
-| `pnpm typecheck` | 타입 검사 (`tsc --noEmit`) |
-| `pnpm test` | Jest 테스트 |
-| `pnpm test:e2e` | Playwright E2E 테스트 |
-| `pnpm analyze` | 번들 사이즈 분석 |
-| `pnpm generate:types` | Swagger에서 API 타입 생성 |
+| 명령어                | 설명                       |
+| --------------------- | -------------------------- |
+| `pnpm dev`            | 개발 서버                  |
+| `pnpm build`          | 프로덕션 빌드              |
+| `pnpm lint`           | ESLint 검사                |
+| `pnpm format:check`   | Prettier 포맷 검사         |
+| `pnpm typecheck`      | 타입 검사 (`tsc --noEmit`) |
+| `pnpm test`           | Jest 테스트                |
+| `pnpm test:e2e`       | Playwright E2E 테스트      |
+| `pnpm analyze`        | 번들 사이즈 분석           |
+| `pnpm generate:types` | Swagger에서 API 타입 생성  |
 
 <br />
-
-
-
-
 
 <div align="center">
 <sub>Team Weeth</sub>
