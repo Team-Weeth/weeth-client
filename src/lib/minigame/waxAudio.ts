@@ -4,6 +4,8 @@
  * 누르는 동안에는 주무르는(knead) 녹음을 이전 소리를 끊어 가며 이어 재생한다.
  * 어떤 녹음을 쓸지는 public/audio/wax/banks.json이 정한다. 출처: public/audio/wax/CREDITS.md
  */
+import { IOSAudioSession } from '@/lib/minigame/iOSAudioSession';
+
 const BASE = '/audio/wax/';
 
 interface BankManifest {
@@ -31,11 +33,6 @@ interface Bank {
 
 type Ambience = 'classroom' | 'hallway' | 'none';
 
-/** iOS 17+ Safari의 Audio Session API. 아직 TypeScript DOM 타입에 없다. */
-interface AudioSessionNavigator extends Navigator {
-  audioSession?: { type: string };
-}
-
 export class WaxAudio {
   private context: AudioContext | null = null;
   private master: GainNode | null = null;
@@ -47,7 +44,7 @@ export class WaxAudio {
   private voices = new Set<AudioBufferSourceNode>();
   private kneading: { source: AudioBufferSourceNode; gain: GainNode } | null = null;
   private muteState = false;
-  private silence: { element: HTMLAudioElement; url: string } | null = null;
+  private session = new IOSAudioSession();
 
   get muted() {
     return this.muteState;
@@ -66,7 +63,7 @@ export class WaxAudio {
   /** 브라우저 정책상 사용자 입력 안에서 호출해야 한다. */
   async enable() {
     // 오디오 세션 전환도 사용자 입력 안에서만 통하므로 await 전에 한다.
-    this.unlockPlayback();
+    this.session.unlock();
     this.context ??= new AudioContext({ latencyHint: 'interactive' });
     const context = this.context;
     await context.resume();
@@ -84,36 +81,6 @@ export class WaxAudio {
   }
 
   /**
-   * iOS Safari는 Web Audio를 무음 스위치를 따르는 ambient 세션으로 재생한다. 사용자가 직접 소리를 켠 경우에만
-   * 미디어 재생(playback) 세션으로 바꿔, 유튜브처럼 무음 모드에서도 들리게 한다.
-   * Audio Session API가 없는 iOS 16 이하는 무음 `<audio>`를 반복 재생하는 동안 세션이 playback으로 유지된다.
-   */
-  private unlockPlayback() {
-    const session = (navigator as AudioSessionNavigator).audioSession;
-    if (session) {
-      session.type = 'playback';
-      return;
-    }
-    if (!isIOS()) return;
-    if (!this.silence) {
-      const url = URL.createObjectURL(silentWav());
-      const element = new Audio(url);
-      element.loop = true;
-      element.setAttribute('playsinline', '');
-      this.silence = { element, url };
-      document.addEventListener('visibilitychange', this.onVisibilityChange);
-    }
-    void this.silence.element.play().catch(() => {
-      /* 세션을 못 바꾸면 무음 스위치를 따르는 기존 동작으로 남는다. */
-    });
-  }
-
-  private onVisibilityChange = () => {
-    // 다른 앱으로 가 있는 동안 무음 재생으로 세션을 붙잡지 않는다. 돌아와 터치하면 resume()이 다시 튼다.
-    if (document.hidden) this.silence?.element.pause();
-  };
-
-  /**
    * 앱 전환·알림·전화로 멈춘(suspended, iOS는 interrupted) 재생을 다시 살린다.
    * 브라우저가 사용자 입력 안에서만 허용하므로 터치·키 입력 때 부른다.
    */
@@ -124,10 +91,7 @@ export class WaxAudio {
       void context.resume().catch(() => {
         /* 다음 입력에서 다시 시도한다. */
       });
-    if (this.silence?.element.paused)
-      void this.silence.element.play().catch(() => {
-        /* 다음 입력에서 다시 시도한다. */
-      });
+    this.session.resume();
   }
 
   private async load(context: AudioContext) {
@@ -344,12 +308,7 @@ export class WaxAudio {
     }
     this.voices.clear();
     this.loops.clear();
-    if (this.silence) {
-      this.silence.element.pause();
-      URL.revokeObjectURL(this.silence.url);
-      document.removeEventListener('visibilitychange', this.onVisibilityChange);
-      this.silence = null;
-    }
+    this.session.close();
     void this.context?.close();
     this.context = null;
     this.master = null;
@@ -358,37 +317,6 @@ export class WaxAudio {
     this.manifest = null;
     this.loading = null;
   }
-}
-
-/** iPadOS는 데스크톱 Safari처럼 MacIntel로 보고하므로 터치 지원 여부로 구분한다. */
-function isIOS() {
-  return (
-    /iPhone|iPad|iPod/.test(navigator.userAgent) ||
-    (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)
-  );
-}
-
-/** 0.5초짜리 8bit 무음 WAV. 8bit PCM은 128이 0이다. */
-function silentWav(seconds = 0.5, sampleRate = 8000) {
-  const samples = Math.floor(seconds * sampleRate);
-  const view = new DataView(new ArrayBuffer(44 + samples));
-  const write = (offset: number, text: string) =>
-    [...text].forEach((char, i) => view.setUint8(offset + i, char.charCodeAt(0)));
-  write(0, 'RIFF');
-  view.setUint32(4, 36 + samples, true);
-  write(8, 'WAVE');
-  write(12, 'fmt ');
-  view.setUint32(16, 16, true);
-  view.setUint16(20, 1, true);
-  view.setUint16(22, 1, true);
-  view.setUint32(24, sampleRate, true);
-  view.setUint32(28, sampleRate, true);
-  view.setUint16(32, 1, true);
-  view.setUint16(34, 8, true);
-  write(36, 'data');
-  view.setUint32(40, samples, true);
-  new Uint8Array(view.buffer, 44).fill(128);
-  return new Blob([view.buffer], { type: 'audio/wav' });
 }
 
 /** 5ms 에너지 포락선에서 급격히 커지는 지점을 깨지는 순간으로 본다. 결과는 음량 오름차순. */
