@@ -117,7 +117,14 @@ function toggleView(current: WaxView, touch: boolean): WaxView {
   return next;
 }
 
-export function WaxGame() {
+interface WaxGameProps {
+  /** 서비스 화면 안에 넣을 때. 입장 전에는 부모 영역(GNB 아래)을 채우고, 입장하면 화면 전체를 덮는다. */
+  embedded?: boolean;
+  /** 나가기를 눌렀을 때 할 일. 없으면 이전 페이지로 돌아간다. */
+  onLeave?: () => void;
+}
+
+export function WaxGame({ embedded = false, onLeave }: WaxGameProps = {}) {
   const game = useWaxConnection();
   const { state, layout, myId, status, pressing } = game;
   const [started, setStarted] = useState(false);
@@ -295,6 +302,12 @@ export function WaxGame() {
   function leave() {
     leaving.current = true;
     setExitOpen(false);
+    if (onLeave) {
+      // 쌓아 둔 기록만 빼고 같은 페이지에 남는다. 화면을 진입 상태로 되돌리는 건 부모가 한다.
+      if (window.history.state?.waxExitGuard) window.history.back();
+      onLeave();
+      return;
+    }
     // 쌓아 둔 기록과 게임 페이지를 함께 건너 이전 페이지로 간다. 이전 페이지가 없으면 그대로 남으므로 홈으로 보낸다.
     window.history.go(-2);
     setTimeout(() => {
@@ -355,7 +368,12 @@ export function WaxGame() {
 
   return (
     <main
-      className="bg-container-neutral-alternative fixed inset-0 overflow-hidden select-none"
+      className={cn(
+        'bg-container-neutral-alternative overflow-hidden select-none',
+        // 서비스 안에서는 입장 전까지 부모 영역만 채우고, 입장하면 GNB(z-70) 위로 화면 전체를 덮는다. 팝업(z-80)보다는 아래다.
+        embedded && !started ? 'absolute inset-0' : 'fixed inset-0',
+        embedded && started && 'z-[75]',
+      )}
       data-testid="wax-game"
       data-ready={sceneReady && Boolean(layout)}
       data-world={game.worldId ?? ''}
