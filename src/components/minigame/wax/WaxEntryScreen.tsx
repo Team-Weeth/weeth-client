@@ -3,6 +3,9 @@
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { Button } from '@/components/ui/Button';
+import EntryGlow from '@/assets/icons/minigame/wax/entry_glow.svg';
+import EntryShine from '@/assets/icons/minigame/wax/entry_shine.svg';
+import LoadingSpinner from '@/assets/icons/minigame/wax/loading_spinner.svg';
 
 /** 진입 화면이 떠 있는 동안 순서대로 반복해서 보여주는 문구 */
 const LOADING_MESSAGES = [
@@ -60,7 +63,7 @@ function Illustration() {
       />
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
-        src="/images/wax/entry-shine.svg"
+        src={EntryShine.src}
         alt=""
         className="absolute block max-w-none"
         style={{ inset: '66.14% 43.1% 32.18% 53.46%' }}
@@ -92,7 +95,7 @@ export function WaxEntryScreen({
       */}
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
-        src="/images/wax/entry-glow.svg"
+        src={EntryGlow.src}
         alt=""
         aria-hidden
         className="pointer-events-none absolute left-1/2 block max-w-none -translate-x-1/2"
@@ -153,7 +156,7 @@ export function WaxEntryScreen({
           {loading ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
-              src="/images/wax/loading-spinner.svg"
+              src={LoadingSpinner.src}
               alt=""
               width={24}
               height={24}

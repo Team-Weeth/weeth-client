@@ -4,12 +4,27 @@ import { Fragment, useState } from 'react';
 import { LogOut, VolumeX } from 'lucide-react';
 import { WAX_EMOTES } from '@/constants/wax';
 import { cn } from '@/lib/cn';
+import WeethLogo from '@/assets/icons/logo/logo_full_Compact.svg';
+import DividerIcon from '@/assets/icons/minigame/wax/divider.svg';
+import HelpIcon from '@/assets/icons/minigame/wax/help.svg';
+import CautionIcon from '@/assets/icons/minigame/wax/icon_caution.svg';
+import CollisionIcon from '@/assets/icons/minigame/wax/icon_collision.svg';
+import EditIcon from '@/assets/icons/minigame/wax/icon_edit.svg';
+import PersonIcon from '@/assets/icons/minigame/wax/icon_person.svg';
+import PeopleIcon from '@/assets/icons/minigame/wax/people.svg';
+import ReactionDividerIcon from '@/assets/icons/minigame/wax/reaction_divider.svg';
+import SoundOnIcon from '@/assets/icons/minigame/wax/sound_on.svg';
+import VisibilityIcon from '@/assets/icons/minigame/wax/visibility.svg';
+import type { StaticImageData } from 'next/image';
 import type { CSSProperties, ReactNode } from 'react';
 import type { WaxEmoteKind, WaxProfessorMode } from '@/types/wax';
 
 const IMAGES = '/images/wax';
 
-/** 디자인 에셋(SVG·스프라이트)을 원본 크기 그대로 그린다. 최적화할 필요가 없는 작은 정적 파일이다. */
+/**
+ * 디자인 에셋을 원본 크기 그대로 그린다. SVG 아이콘은 `src/assets/icons`에서 불러온 값을,
+ * CSS로 잘라 쓰는 큰 PNG 스프라이트는 `public/images/wax` 안의 파일 이름을 받는다.
+ */
 function Asset({
   src,
   width,
@@ -17,7 +32,7 @@ function Asset({
   className,
   style,
 }: {
-  src: string;
+  src: string | StaticImageData;
   width?: number;
   height?: number;
   className?: string;
@@ -26,7 +41,7 @@ function Asset({
   return (
     // eslint-disable-next-line @next/next/no-img-element
     <img
-      src={`${IMAGES}/${src}`}
+      src={typeof src === 'string' ? `${IMAGES}/${src}` : src.src}
       alt=""
       width={width}
       height={height}
@@ -78,10 +93,10 @@ export function ClassroomBadge({
         aria-label="Weeth 알아보기"
         className="shrink-0"
       >
-        <Asset src="logo.svg" width={54} height={24} />
+        <Asset src={WeethLogo} width={54} height={24} />
       </a>
       {/* 360px 미만(아주 좁은 화면)은 오른쪽 버튼 자리가 모자라 로고만 둔다. */}
-      <Asset src="divider.svg" width={1} height={26} className="shrink-0 max-[359px]:hidden" />
+      <Asset src={DividerIcon} width={1} height={26} className="shrink-0 max-[359px]:hidden" />
       <span className="typo-button2 text-text-normal tablet:hidden min-w-0 truncate max-[359px]:hidden">
         {shortLabel}
       </span>
@@ -114,7 +129,7 @@ export function RoomControls({
         className="flex h-[42px] w-[46px] items-center justify-center gap-[3px]"
         aria-label={`접속 ${players}명`}
       >
-        <Asset src="people.svg" width={18} height={18} />
+        <Asset src={PeopleIcon} width={18} height={18} />
         <span className="text-text-normal text-[13px] font-medium">{players}</span>
       </span>
       <button
@@ -127,7 +142,7 @@ export function RoomControls({
         {muted ? (
           <VolumeX className="text-text-normal size-[20px]" strokeWidth={1.8} />
         ) : (
-          <Asset src="sound-on.svg" width={20} height={20} />
+          <Asset src={SoundOnIcon} width={20} height={20} />
         )}
       </button>
       <button
@@ -136,7 +151,7 @@ export function RoomControls({
         className="grid size-[42px] place-items-center"
         onClick={onToggleView}
       >
-        <Asset src="visibility.svg" width={20} height={20} />
+        <Asset src={VisibilityIcon} width={20} height={20} />
       </button>
       {/* 나가기는 시안에 없어 다른 버튼과 같은 lucide 계열·굵기로 맞춘다. */}
       <button
@@ -162,7 +177,7 @@ export function HelpButton({ onClick, className }: { onClick: () => void; classN
       )}
       onClick={onClick}
     >
-      <Asset src="help.svg" width={28} height={28} />
+      <Asset src={HelpIcon} width={28} height={28} />
     </button>
   );
 }
@@ -188,7 +203,7 @@ export function ReactionPanel({
         <Fragment key={emote.kind}>
           {index > 0 && (
             <span className="flex h-0 w-[34px] items-center justify-center">
-              <Asset src="reaction-divider.svg" width={1} height={34} className="-rotate-90" />
+              <Asset src={ReactionDividerIcon} width={1} height={34} className="-rotate-90" />
             </span>
           )}
           <button
@@ -325,6 +340,8 @@ const PROFESSOR_ALERT: Record<
   },
 };
 
+const ALERT_ICONS = { edit: EditIcon, person: PersonIcon, caution: CautionIcon } as const;
+
 export function ProfessorAlert({
   mode,
   className,
@@ -348,13 +365,13 @@ export function ProfessorAlert({
       {alert.icon === 'collision' ? (
         <span className="relative size-[14px] shrink-0">
           <Asset
-            src="icon-collision.svg"
+            src={CollisionIcon}
             className="absolute"
             style={{ inset: '6.25% 7.54% 6.22% 9.4%', width: 'auto', height: 'auto' }}
           />
         </span>
       ) : (
-        <Asset src={`icon-${alert.icon}.svg`} width={14} height={14} className="shrink-0" />
+        <Asset src={ALERT_ICONS[alert.icon]} width={14} height={14} className="shrink-0" />
       )}
       <span className="typo-caption1">{alert.text}</span>
     </div>

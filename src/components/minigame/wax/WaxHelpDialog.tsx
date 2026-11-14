@@ -1,5 +1,8 @@
 'use client';
 
+import { Button, buttonVariants } from '@/components/ui/Button';
+import { cn } from '@/lib/cn';
+import BubbleTail from '@/assets/icons/minigame/wax/bubble_tail.svg';
 import type { ReactNode, Ref } from 'react';
 
 const SECTIONS: { title: string; items: { label?: string; text: string; more?: string }[] }[] = [
@@ -63,9 +66,7 @@ export function WaxHelpDialog({
       aria-label="조작 방법과 출처"
       className="bg-container-neutral m-auto w-[min(calc(100vw-32px),343px)] overflow-hidden rounded-[16px] p-0 backdrop:bg-black/40 open:flex open:max-h-[min(884px,calc(100dvh-48px))] open:flex-col"
     >
-      <h2 className="text-text-normal shrink-0 px-[20px] pt-[18px] pb-[14px] text-[22px] leading-[28px] font-semibold tracking-[-0.005em]">
-        조작 방법
-      </h2>
+      <h2 className="typo-h3 text-text-normal shrink-0 px-[20px] pt-[18px] pb-[14px]">조작 방법</h2>
       {/* 내용 높이를 기준으로 두고 최대 높이에 닿을 때만 줄어든다. flex-1(기준 0)이면 WebKit에서 본문이 접힌다. */}
       <div className="min-h-0 flex-auto overflow-x-hidden overflow-y-auto">
         <div className="flex flex-col items-center gap-[10px] px-[14px] pb-[16px]">
@@ -128,32 +129,27 @@ export function WaxHelpDialog({
         {/* 말풍선은 버튼 위에서 위아래로 살짝 떠다닌다. 버튼과 레이아웃은 움직이지 않는다. */}
         <div className="flex h-[35px] w-[217px] justify-center" aria-hidden>
           <div className="flex animate-[wax-bob_1.6s_ease-in-out_infinite] flex-col items-center motion-reduce:animate-none">
-            <span className="bg-container-floating text-text-on-floating flex h-[27px] items-center rounded-[7px] px-[14px] text-[13px] leading-[18px] font-medium tracking-[-0.005em] whitespace-nowrap">
+            <span className="bg-container-floating text-text-on-floating typo-body2 flex h-[27px] items-center rounded-[7px] px-[14px] whitespace-nowrap">
               Weeth 알아보기
             </span>
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src="/images/wax/bubble-tail.svg"
-              alt=""
-              width={12}
-              height={6}
-              className="-mt-px"
-            />
+            <img src={BubbleTail.src} alt="" width={12} height={6} className="-mt-px" />
           </div>
         </div>
         <div className="flex justify-between gap-[10px]">
+          {/* 링크라 Button 대신 같은 버튼 스타일(primary·md)을 입힌다. */}
           <a
             href={weethUrl}
             target="_blank"
             rel="noreferrer"
-            className="bg-button-primary typo-button1 text-text-inverse flex w-[217px] items-center justify-center rounded-sm px-400 py-200"
+            className={cn(buttonVariants({ variant: 'primary', size: 'md' }), 'w-[217px]')}
           >
             누가 만들었지?
           </a>
           <form method="dialog" className="flex flex-1">
-            <button className="bg-button-neutral typo-button1 text-text-strong flex-1 rounded-sm px-400 py-200">
+            <Button type="submit" variant="secondary" size="md" className="flex-1">
               닫기
-            </button>
+            </Button>
           </form>
         </div>
       </div>
