@@ -27,14 +27,16 @@ describe('getClubFeatures', () => {
     mockGetFeatureFlags.mockResolvedValueOnce({
       club_warning_enabled: false,
       club_feedback_fab_enabled: true,
+      wax_enabled: true,
     });
 
     await expect(getClubFeatures('club-a')).resolves.toEqual({
       warningEnabled: false,
       feedbackFabEnabled: true,
+      waxEventEnabled: true,
     });
     expect(mockGetFeatureFlags).toHaveBeenCalledWith(
-      expect.arrayContaining(['club_warning_enabled', 'club_feedback_fab_enabled']),
+      expect.arrayContaining(['club_warning_enabled', 'club_feedback_fab_enabled', 'wax_enabled']),
       { identifier: 'club:club-a', traits: { club_id: 'club-a' } },
     );
   });
