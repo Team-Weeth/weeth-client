@@ -276,6 +276,15 @@ export function WaxGame() {
     return () => clearTimeout(timer);
   }, [caught]);
 
+  // 앱 전환·전화 등으로 멈춘 소리는 다음 터치·키 입력 때 다시 살린다(iOS는 사용자 입력 안에서만 허용).
+  useEffect(() => {
+    if (!started) return;
+    const resume = () => sound.current?.resume();
+    const events = ['pointerdown', 'keydown', 'touchend'] as const;
+    events.forEach((name) => window.addEventListener(name, resume, { passive: true }));
+    return () => events.forEach((name) => window.removeEventListener(name, resume));
+  }, [started]);
+
   // 둘러보기처럼 서버 명령이 없는 입력도 서버에 알려야 오래 가만히 앉아 둘러보는 사람이 내보내지지 않는다.
   useEffect(() => {
     if (status !== 'connected') return;

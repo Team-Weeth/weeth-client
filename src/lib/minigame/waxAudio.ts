@@ -4,6 +4,8 @@
  * 누르는 동안에는 주무르는(knead) 녹음을 이전 소리를 끊어 가며 이어 재생한다.
  * 어떤 녹음을 쓸지는 public/audio/wax/banks.json이 정한다. 출처: public/audio/wax/CREDITS.md
  */
+import { IOSAudioSession } from '@/lib/minigame/iOSAudioSession';
+
 const BASE = '/audio/wax/';
 
 interface BankManifest {
@@ -42,6 +44,7 @@ export class WaxAudio {
   private voices = new Set<AudioBufferSourceNode>();
   private kneading: { source: AudioBufferSourceNode; gain: GainNode } | null = null;
   private muteState = false;
+  private session = new IOSAudioSession();
 
   get muted() {
     return this.muteState;
@@ -59,6 +62,8 @@ export class WaxAudio {
 
   /** 브라우저 정책상 사용자 입력 안에서 호출해야 한다. */
   async enable() {
+    // 오디오 세션 전환도 사용자 입력 안에서만 통하므로 await 전에 한다.
+    this.session.unlock();
     this.context ??= new AudioContext({ latencyHint: 'interactive' });
     const context = this.context;
     await context.resume();
@@ -73,6 +78,20 @@ export class WaxAudio {
       throw error;
     });
     await this.loading;
+  }
+
+  /**
+   * 앱 전환·알림·전화로 멈춘(suspended, iOS는 interrupted) 재생을 다시 살린다.
+   * 브라우저가 사용자 입력 안에서만 허용하므로 터치·키 입력 때 부른다.
+   */
+  resume() {
+    const context = this.context;
+    if (!context) return;
+    if (context.state !== 'running' && context.state !== 'closed')
+      void context.resume().catch(() => {
+        /* 다음 입력에서 다시 시도한다. */
+      });
+    this.session.resume();
   }
 
   private async load(context: AudioContext) {
@@ -289,6 +308,7 @@ export class WaxAudio {
     }
     this.voices.clear();
     this.loops.clear();
+    this.session.close();
     void this.context?.close();
     this.context = null;
     this.master = null;
