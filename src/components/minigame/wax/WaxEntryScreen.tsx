@@ -19,7 +19,7 @@ const MESSAGE_INTERVAL_MS = 1500;
 
 /**
  * 세로 간격은 시안 세 장(가시 영역 812·636·420px)의 값을 화면 높이에 비례해 잇는다.
- * 812px 이상(데스크톱 포함)은 위에서부터 같은 간격으로 쌓고 남는 공간은 버튼 아래로 둔다.
+ * 812px보다 높은 화면(데스크톱·세로 모니터 포함)은 같은 간격으로 쌓은 묶음을 세로 가운데에 둔다.
  * 636px보다 짧으면 일러스트는 270px로 두고 제목·설명·일러스트 영역만 스크롤된다.
  */
 const LAYOUT = {
@@ -28,6 +28,9 @@ const LAYOUT = {
   illustration: 'clamp(270px, calc(28.4dvh + 89px), 320px)',
   bottom: 'clamp(0px, calc(9.09dvh - 51.8px), 22px)',
   ctaGap: 'clamp(12px, min(calc(3.41dvh + 10.3px), calc(9.26dvh - 26.9px)), 38px)',
+  // 묶음의 위 여백(최대 110px)이 아래 여백(20px)보다 커서 가운데에 두면 내용이 아래로 치우친다.
+  // 812px보다 높은 화면에서만 그 차이(90px)를 아래에 더해 보이는 내용이 정확히 가운데 오게 한다.
+  centerOffset: 'clamp(0px, calc(100dvh - 812px), 90px)',
 };
 
 /** 대기·로딩 구분 없이 진입 화면이 떠 있는 동안 계속 돈다. */
@@ -90,82 +93,91 @@ export function WaxEntryScreen({
   return (
     <div className="absolute inset-0 flex flex-col overflow-hidden bg-[#1f2524]">
       {/*
+        내용 묶음을 세로 가운데에 둔다(남는 높이는 위아래로 나눔). 화면이 내용보다 짧으면 여백 없이 꽉 차고
+        본문 영역만 줄어들며 스크롤된다. 빛은 이 묶음 기준으로 위치를 잡아 함께 움직인다.
+      */}
+      <div
+        className="relative my-auto flex max-h-full min-h-0 w-full flex-col"
+        style={{ paddingBottom: LAYOUT.centerOffset }}
+      >
+        {/*
         일러스트 뒤 빛. 스크롤 영역 안에 두면 영역 경계에서 잘려 직선이 보여 배경 층에 둔다.
         위치는 시안의 일러스트 기준 비율(빛 상자 = 일러스트의 195% × 209%, 위로 51.88%)을 그대로 계산한다.
       */}
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        src={EntryGlow.src}
-        alt=""
-        aria-hidden
-        className="pointer-events-none absolute left-1/2 block max-w-none -translate-x-1/2"
-        style={{
-          width: `calc(${LAYOUT.illustration} * 1.95)`,
-          height: `calc(${LAYOUT.illustration} * 2.0876)`,
-          top: `calc(${LAYOUT.top} + ${TEXT_BLOCK_HEIGHT}px + ${LAYOUT.gap} - ${LAYOUT.illustration} * 0.5188)`,
-        }}
-      />
-      {/* 내용 높이만큼만 차지하고, 화면이 짧을 때만 줄어들며 스크롤된다(flex-grow 없음). */}
-      <div className="relative min-h-0 shrink overflow-x-hidden overflow-y-auto">
-        <div
-          className="flex flex-col items-center"
-          style={{ paddingTop: LAYOUT.top, paddingBottom: LAYOUT.bottom, gap: LAYOUT.gap }}
-        >
-          <div className="flex w-[296px] max-w-[calc(100%-32px)] flex-col items-center gap-[10px] text-center">
-            <p className="typo-caption1 rounded-full bg-[rgba(0,200,170,0.12)] px-[10px] py-[4px] text-[#00fac8]">
-              Weeth 미니게임
-            </p>
-            <h1 className="text-[28px] leading-[36px] font-bold tracking-[0.01em] text-white">
-              교수님 몰래
-              <br />
-              왁뿌하기
-            </h1>
-            <p className="text-[13px] leading-[20px] font-medium tracking-[-0.005em] text-[#f8f8f8]">
-              강의실 책상에 앉으면 왁뿌볼을 깰 수 있어요.
-              <br />
-              소리가 너무 크면 교수님이
-              <br />
-              회초리를 들고 다가오니 주의!!
-            </p>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={EntryGlow.src}
+          alt=""
+          aria-hidden
+          className="pointer-events-none absolute left-1/2 block max-w-none -translate-x-1/2"
+          style={{
+            width: `calc(${LAYOUT.illustration} * 1.95)`,
+            height: `calc(${LAYOUT.illustration} * 2.0876)`,
+            top: `calc(${LAYOUT.top} + ${TEXT_BLOCK_HEIGHT}px + ${LAYOUT.gap} - ${LAYOUT.illustration} * 0.5188)`,
+          }}
+        />
+        {/* 내용 높이만큼만 차지하고, 화면이 짧을 때만 줄어들며 스크롤된다(flex-grow 없음). */}
+        <div className="relative min-h-0 shrink overflow-x-hidden overflow-y-auto">
+          <div
+            className="flex flex-col items-center"
+            style={{ paddingTop: LAYOUT.top, paddingBottom: LAYOUT.bottom, gap: LAYOUT.gap }}
+          >
+            <div className="flex w-[296px] max-w-[calc(100%-32px)] flex-col items-center gap-[10px] text-center">
+              <p className="typo-caption1 rounded-full bg-[rgba(0,200,170,0.12)] px-[10px] py-[4px] text-[#00fac8]">
+                Weeth 미니게임
+              </p>
+              <h1 className="text-[28px] leading-[36px] font-bold tracking-[0.01em] text-white">
+                교수님 몰래
+                <br />
+                왁뿌하기
+              </h1>
+              <p className="text-[13px] leading-[20px] font-medium tracking-[-0.005em] text-[#f8f8f8]">
+                강의실 책상에 앉으면 왁뿌볼을 깰 수 있어요.
+                <br />
+                소리가 너무 크면 교수님이
+                <br />
+                회초리를 들고 다가오니 주의!!
+              </p>
+            </div>
+            <Illustration />
           </div>
-          <Illustration />
         </div>
-      </div>
-      <div
-        className="relative flex shrink-0 flex-col items-center px-[20px] pt-[8px] pb-[max(20px,env(safe-area-inset-bottom))]"
-        style={{ gap: LAYOUT.ctaGap }}
-      >
-        {/* 문구는 진입 화면이 떠 있는 동안 계속 순서대로 바뀐다. 오류가 있으면 오류 문구를 대신 보여준다. */}
-        <p
-          role="status"
-          className={
-            error
-              ? 'typo-caption2 text-state-error h-[16px] text-center'
-              : 'typo-caption2 h-[16px] text-center text-[#aaa]'
-          }
+        <div
+          className="relative flex shrink-0 flex-col items-center px-[20px] pt-[8px] pb-[max(20px,env(safe-area-inset-bottom))]"
+          style={{ gap: LAYOUT.ctaGap }}
         >
-          {error ?? <LoadingMessage />}
-        </p>
-        <Button
-          size="lg"
-          disabled={loading}
-          aria-label={loading ? '불러오는 중' : actionLabel}
-          className="h-[56px] w-full max-w-[335px] p-400"
-          onClick={onAction}
-        >
-          {loading ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={LoadingSpinner.src}
-              alt=""
-              width={24}
-              height={24}
-              className="animate-[wax-spin_2s_linear_infinite] motion-reduce:animate-none"
-            />
-          ) : (
-            actionLabel
-          )}
-        </Button>
+          {/* 문구는 진입 화면이 떠 있는 동안 계속 순서대로 바뀐다. 오류가 있으면 오류 문구를 대신 보여준다. */}
+          <p
+            role="status"
+            className={
+              error
+                ? 'typo-caption2 text-state-error h-[16px] text-center'
+                : 'typo-caption2 h-[16px] text-center text-[#aaa]'
+            }
+          >
+            {error ?? <LoadingMessage />}
+          </p>
+          <Button
+            size="lg"
+            disabled={loading}
+            aria-label={loading ? '불러오는 중' : actionLabel}
+            className="h-[56px] w-full max-w-[335px] p-400"
+            onClick={onAction}
+          >
+            {loading ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={LoadingSpinner.src}
+                alt=""
+                width={24}
+                height={24}
+                className="animate-[wax-spin_2s_linear_infinite] motion-reduce:animate-none"
+              />
+            ) : (
+              actionLabel
+            )}
+          </Button>
+        </div>
       </div>
     </div>
   );
