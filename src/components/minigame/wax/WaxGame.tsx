@@ -2,8 +2,20 @@
 
 import { useEffect, useRef, useState } from 'react';
 import dynamic from 'next/dynamic';
-import { Eye, HelpCircle, Link2, PenLine, Users, Volume2, VolumeX } from 'lucide-react';
 import { preloadWaxCharacters } from '@/components/minigame/wax/WaxCharacter';
+import { WaxEntryScreen } from '@/components/minigame/wax/WaxEntryScreen';
+import { WaxExitDialog } from '@/components/minigame/wax/WaxExitDialog';
+import { WaxHelpDialog } from '@/components/minigame/wax/WaxHelpDialog';
+import {
+  ClassroomBadge,
+  DepthButton,
+  HelpButton,
+  NoiseIndicator,
+  NoticeBadge,
+  ProfessorAlert,
+  ReactionPanel,
+  RoomControls,
+} from '@/components/minigame/wax/WaxHud';
 import { useWaxConnection } from '@/hooks/useWaxConnection';
 import { lockPointer } from '@/lib/minigame/pointerLock';
 import { WaxAudio } from '@/lib/minigame/waxAudio';
@@ -12,7 +24,7 @@ import { cn } from '@/lib/cn';
 import type { PointerEvent, RefObject } from 'react';
 import type { WaxControls, WaxNearSeat, WaxView } from '@/components/minigame/wax/WaxScene';
 import type { WaxHeldBallInput } from '@/components/minigame/wax/WaxHeldBall';
-import type { WaxProfessorMode, WaxState } from '@/types/wax';
+import type { WaxState } from '@/types/wax';
 
 const Scene = dynamic(() => import('@/components/minigame/wax/WaxScene').then((m) => m.WaxScene), {
   ssr: false,
@@ -25,18 +37,10 @@ const Scene = dynamic(() => import('@/components/minigame/wax/WaxScene').then((m
 
 const WEETH_URL =
   'https://www.weeth.kr/landing?utm_source=wax&utm_medium=minigame&utm_campaign=professor';
-
-const PROFESSOR_LABEL: Record<
-  WaxProfessorMode,
-  { text: string; tone: 'calm' | 'warn' | 'danger' }
-> = {
-  writing: { text: '판서 중', tone: 'calm' },
-  turning: { text: '어흠… 돌아본다!', tone: 'warn' },
-  watching: { text: '보고 있다', tone: 'danger' },
-  chasing: { text: '누군가 들켰다', tone: 'danger' },
-  whacking: { text: '딱!', tone: 'danger' },
-  returning: { text: '교단으로 돌아가는 중', tone: 'warn' },
-};
+/** 나가기 모달에서 들어온 방문을 따로 셀 수 있게 utm_content를 붙인다. */
+const WEETH_EXIT_URL = `${WEETH_URL}&utm_content=exit`;
+/** 이전 페이지 없이 바로 들어온 경우(새 탭·공유 링크) 나가기를 누르면 이동할 곳 */
+const EXIT_FALLBACK = '/';
 
 const glass = 'rounded-lg border border-line bg-container-neutral/85 shadow-lg backdrop-blur-md';
 
@@ -50,7 +54,9 @@ function roster(state: WaxState | null) {
     .join('|');
 }
 
-/** 화면 왼쪽 아래 가상 조이스틱. 터치 기기에서 걷기에 쓴다. */
+/** 화면 왼쪽 아래 가상 조이스틱. 터치 기기에서 걷기에 쓴다. 손잡이는 바깥 원 안에서만 움직인다. */
+const JOYSTICK_TRAVEL = 28;
+
 function Joystick({ controlsRef }: { controlsRef: RefObject<WaxControls> }) {
   const [knob, setKnob] = useState({ x: 0, y: 0 });
   const origin = useRef<{ x: number; y: number; id: number } | null>(null);
@@ -58,11 +64,11 @@ function Joystick({ controlsRef }: { controlsRef: RefObject<WaxControls> }) {
     if (!origin.current || origin.current.id !== event.pointerId) return;
     const dx = event.clientX - origin.current.x;
     const dy = event.clientY - origin.current.y;
-    const length = Math.min(44, Math.hypot(dx, dy));
+    const length = Math.min(JOYSTICK_TRAVEL, Math.hypot(dx, dy));
     const angle = Math.atan2(dy, dx);
     const next = { x: Math.cos(angle) * length, y: Math.sin(angle) * length };
     setKnob(next);
-    controlsRef.current.joystick = { x: next.x / 44, y: next.y / 44 };
+    controlsRef.current.joystick = { x: next.x / JOYSTICK_TRAVEL, y: next.y / JOYSTICK_TRAVEL };
   }
   function end() {
     origin.current = null;
@@ -72,7 +78,7 @@ function Joystick({ controlsRef }: { controlsRef: RefObject<WaxControls> }) {
   return (
     <div
       aria-label="이동 조이스틱"
-      className="border-line bg-container-neutral/60 relative size-[112px] touch-none rounded-full border backdrop-blur"
+      className="bg-neutral-0/70 relative size-[105px] touch-none rounded-full border-2 border-neutral-900/12 backdrop-blur-[6px]"
       onPointerDown={(event) => {
         try {
           event.currentTarget.setPointerCapture(event.pointerId);
@@ -92,27 +98,9 @@ function Joystick({ controlsRef }: { controlsRef: RefObject<WaxControls> }) {
       onPointerCancel={end}
     >
       <div
-        className="bg-button-primary absolute top-1/2 left-1/2 size-[48px] rounded-full shadow-md"
+        className="bg-brand-primary absolute top-1/2 left-1/2 size-[49px] rounded-full"
         style={{ transform: `translate(calc(-50% + ${knob.x}px), calc(-50% + ${knob.y}px))` }}
       />
-    </div>
-  );
-}
-
-function NoiseGauge({ noise }: { noise: number }) {
-  const value = Math.min(100, Math.max(0, noise));
-  return (
-    <div className="w-full" aria-label={`소음 ${Math.round(value)}`}>
-      <p className="typo-caption1 text-text-strong mb-100">소음</p>
-      <div className="bg-container-neutral-alternative relative h-[12px] overflow-hidden rounded-full">
-        <div
-          className={cn(
-            'h-full rounded-full transition-[width] duration-100',
-            value > 70 ? 'bg-state-error' : value > 40 ? 'bg-state-caution' : 'bg-primary-500',
-          )}
-          style={{ width: `${value}%` }}
-        />
-      </div>
     </div>
   );
 }
@@ -145,6 +133,8 @@ export function WaxGame() {
   const [pop, setPop] = useState<{ text: string; key: number; big: boolean } | null>(null);
   /** 서버가 입력 없음으로 내보내기까지 남은 초. 20초 이하일 때만 값이 있다. */
   const [idleLeft, setIdleLeft] = useState<number | null>(null);
+  const [exitOpen, setExitOpen] = useState(false);
+  const leaving = useRef(false);
   const sound = useRef<WaxAudio | null>(null);
   const controls = useRef<WaxControls>({
     joystick: { x: 0, y: 0 },
@@ -166,13 +156,10 @@ export function WaxGame() {
   const room = layout?.rooms.find((candidate) => candidate.id === you?.room);
   const seat = room && you?.seat != null ? room.seats[you.seat] : null;
   const professor = state?.professors.find((candidate) => candidate.room === you?.room);
-  const mine = state?.players.find((player) => player.id === myId);
-  const myName = mine?.name;
   const seatedVariant =
     seat && (you?.status === 'seated' || you?.status === 'spotted' || you?.status === 'whacked')
       ? seat.variant
       : null;
-  const invite = game.worldId ? `/play/wax?world=${encodeURIComponent(game.worldId)}` : '';
 
   useEffect(() => {
     setTouch(window.matchMedia('(pointer: coarse)').matches);
@@ -243,7 +230,7 @@ export function WaxGame() {
     if (!started) return;
     function down(event: KeyboardEvent) {
       if (event.metaKey || event.ctrlKey) return;
-      if (document.querySelector('dialog[open]')) return;
+      if (document.querySelector('dialog[open], [role=alertdialog]')) return;
       // 꾹 누르는 동안 오는 반복 keydown도 막아야 한다. 막지 않으면 포커스가 남은 HUD 버튼(시점 전환 등)이
       // Space를 뗄 때 클릭돼 앉아 있는 사이 몰래 1인칭으로 바뀐다.
       if (event.code === 'Space') {
@@ -284,6 +271,37 @@ export function WaxGame() {
     events.forEach((name) => window.addEventListener(name, resume, { passive: true }));
     return () => events.forEach((name) => window.removeEventListener(name, resume));
   }, [started]);
+
+  /*
+   * 뒤로가기(모바일 제스처 포함)로 나가려 하면 바로 떠나지 않고 나가기 모달을 띄운다.
+   * 입장할 때 같은 주소의 기록을 하나 더 쌓아 두고, 뒤로가기로 그 기록이 빠지면 모달을 열고 다시 쌓는다.
+   * 탭 닫기는 브라우저가 직접 만든 모달을 허용하지 않아 다루지 않는다.
+   */
+  useEffect(() => {
+    if (!started) return;
+    const guard = () =>
+      window.history.pushState({ ...window.history.state, waxExitGuard: true }, '');
+    if (!window.history.state?.waxExitGuard) guard();
+    function back() {
+      if (leaving.current || window.history.state?.waxExitGuard) return;
+      if (document.pointerLockElement) document.exitPointerLock();
+      setExitOpen(true);
+      guard();
+    }
+    window.addEventListener('popstate', back);
+    return () => window.removeEventListener('popstate', back);
+  }, [started]);
+
+  function leave() {
+    leaving.current = true;
+    setExitOpen(false);
+    // 쌓아 둔 기록과 게임 페이지를 함께 건너 이전 페이지로 간다. 이전 페이지가 없으면 그대로 남으므로 홈으로 보낸다.
+    window.history.go(-2);
+    setTimeout(() => {
+      // 쌓아 둔 기록에 그대로 있으면 돌아갈 곳이 없었다는 뜻이다.
+      if (window.history.state?.waxExitGuard) window.location.assign(EXIT_FALLBACK);
+    }, 400);
+  }
 
   // 둘러보기처럼 서버 명령이 없는 입력도 서버에 알려야 오래 가만히 앉아 둘러보는 사람이 내보내지지 않는다.
   useEffect(() => {
@@ -331,27 +349,6 @@ export function WaxGame() {
     game.join();
   }
 
-  async function share() {
-    if (!invite) return;
-    const url = new URL(invite, window.location.origin).href;
-    try {
-      if (navigator.share)
-        await navigator.share({
-          title: '교수님 몰래 왁뿌볼',
-          text: '수업 중에 왁뿌볼 깨러 올래? 교수님 조심ㅋㅋ',
-          url,
-        });
-      else {
-        await navigator.clipboard.writeText(url);
-        setNotice('초대 링크를 복사했어요. 친구에게 보내주세요.');
-      }
-    } catch (error) {
-      if (!(error instanceof DOMException && error.name === 'AbortError'))
-        setNotice('초대 링크를 길게 눌러 복사해주세요.');
-    }
-  }
-
-  const label = professor ? PROFESSOR_LABEL[professor.mode] : null;
   const recentEjections = (state?.ejections ?? []).filter(
     (event) => (state?.now ?? 0) - event.at < 3200,
   );
@@ -399,227 +396,112 @@ export function WaxGame() {
         <div className="from-primary-100 to-container-neutral-alternative absolute inset-0 bg-gradient-to-b" />
       )}
 
-      {/* 상단 바 */}
+      {/* 상단 바: 가장자리에서 10px. 공유는 브라우저 기능으로 충분해 뺐고 도움말은 아래로 옮겼다. */}
       {started && (
-        <header className="pointer-events-none absolute inset-x-0 top-0 flex items-start justify-between gap-300 p-400">
-          <div
-            className={cn(
-              glass,
-              'tablet:gap-300 tablet:px-400 tablet:py-300 pointer-events-auto flex items-center gap-200 px-300 py-200 whitespace-nowrap',
-            )}
-          >
-            <a
-              href={WEETH_URL}
-              target="_blank"
-              rel="noreferrer"
-              className="typo-sub1 text-text-strong"
-            >
-              weeth <span className="typo-caption1 text-primary-600">PLAY</span>
-            </a>
-            <span className="bg-line h-[16px] w-px" />
-            <span className="typo-button2 text-text-strong">
-              {room ? `${room.name} ${room.subject}` : '복도'}
-            </span>
-            {myName && (
-              <span className="typo-caption2 text-text-alternative tablet:inline hidden">
-                나 · {myName}
-              </span>
-            )}
-            <span
-              className={cn(
-                'typo-caption2',
-                status === 'connected' ? 'text-primary-600' : 'text-text-alternative',
-              )}
-            >
-              ●<span className="tablet:inline hidden"> </span>
-              <span className="tablet:inline hidden">
-                {status === 'connected'
-                  ? '연결됨'
-                  : status === 'connecting'
-                    ? '연결 중'
-                    : status === 'reconnecting'
-                      ? '다시 연결 중'
-                      : '연결 끊김'}
-              </span>
-            </span>
-          </div>
-          {recentEjections.length > 0 && (
-            <div className="pointer-events-none flex flex-col items-center gap-100">
-              {recentEjections.slice(-3).map((event) => (
-                <div
-                  key={`${event.id}-${event.at}`}
-                  className={cn(glass, 'typo-button2 text-text-strong px-400 py-200')}
-                >
-                  👋 {event.name} 님이{' '}
-                  {layout?.rooms.find((candidate) => candidate.id === event.room)?.name}에서
-                  쫓겨났어요
-                </div>
-              ))}
-            </div>
-          )}
-          <div
-            className={cn(
-              glass,
-              'tablet:px-200 tablet:py-200 pointer-events-auto flex items-center gap-100 px-100 py-100 whitespace-nowrap',
-            )}
-          >
-            <span className="typo-caption1 text-text-normal flex items-center gap-100 px-200">
-              <Users className="size-[16px]" /> {state?.players.length ?? 0}
-            </span>
-            <button
-              aria-label={muted ? '소리 켜기' : '소리 끄기'}
-              className="hover:bg-container-neutral-interaction rounded-sm p-200"
-              onClick={() => {
-                const next = !muted;
-                setMuted(next);
-                if (sound.current) sound.current.muted = next;
-              }}
-            >
-              {muted ? <VolumeX className="size-[18px]" /> : <Volume2 className="size-[18px]" />}
-            </button>
-            <button
-              aria-label={view === 'third' ? '1인칭으로 보기' : '3인칭으로 보기'}
-              className="typo-caption1 hover:bg-container-neutral-interaction flex items-center gap-100 rounded-sm px-200 py-200"
-              onClick={() => setView(toggleView(view, touch))}
-            >
-              <Eye className="size-[16px]" />
-              <span className="tablet:inline hidden">{view === 'third' ? '3인칭' : '1인칭'}</span>
-            </button>
-            <button
-              aria-label="친구 초대"
-              className="hover:bg-container-neutral-interaction rounded-sm p-200"
-              onClick={() => void share()}
-            >
-              <Link2 className="size-[18px]" />
-            </button>
-            <button
-              aria-label="도움말"
-              className="hover:bg-container-neutral-interaction rounded-sm p-200"
-              onClick={() => help.current?.showModal()}
-            >
-              <HelpCircle className="size-[18px]" />
-            </button>
-          </div>
+        <header className="pointer-events-none absolute inset-x-0 top-0 flex items-start justify-between gap-200 px-[10px] pt-400">
+          <ClassroomBadge
+            label={room ? `${room.name} ${room.subject}` : '복도'}
+            shortLabel={room ? room.name : '복도'}
+            href={WEETH_URL}
+          />
+          <RoomControls
+            players={state?.players.length ?? 0}
+            muted={muted}
+            firstPerson={view === 'first'}
+            onToggleMute={() => {
+              const next = !muted;
+              setMuted(next);
+              if (sound.current) sound.current.muted = next;
+            }}
+            onToggleView={() => setView(toggleView(view, touch))}
+            onExit={() => {
+              if (document.pointerLockElement) document.exitPointerLock();
+              setExitOpen(true);
+            }}
+          />
         </header>
       )}
 
-      {/* 앉기 안내 */}
-      {started && near && you?.status === 'walking' && layout && (
-        <div className="pointer-events-none absolute inset-x-0 bottom-[160px] flex justify-center">
-          <button
-            className={cn(glass, 'pointer-events-auto flex items-center gap-300 px-500 py-300')}
-            onClick={() => (controls.current.sitRequest = true)}
-          >
-            <span className="bg-button-primary typo-button2 text-text-inverse rounded-sm px-200 py-100">
-              E
-            </span>
-            <span className="typo-button1 text-text-strong">앉아서 왁뿌볼 깨기</span>
-          </button>
+      {/* GNB 아래 16px 가운데 안내: 쫓겨남, 재연결 */}
+      {started && (recentEjections.length > 0 || status === 'reconnecting') && (
+        <div className="pointer-events-none absolute inset-x-0 top-[74px] flex flex-col items-center gap-200 px-[10px]">
+          {status === 'reconnecting' && (
+            <NoticeBadge kind="reconnecting">
+              교실을 정비하고 있어요. 다시 연결하는 중...
+            </NoticeBadge>
+          )}
+          {recentEjections.slice(-3).map((event) => (
+            <NoticeBadge key={`${event.id}-${event.at}`} kind="ejected">
+              {event.name}님이{' '}
+              {layout?.rooms.find((candidate) => candidate.id === event.room)?.name}에서 쫓겨났어요
+            </NoticeBadge>
+          ))}
         </div>
       )}
 
-      {/* 착석 HUD */}
-      {started && seatedVariant !== null && you && (
-        <section className="tablet:inset-x-auto tablet:right-0 tablet:justify-end pointer-events-none absolute inset-x-0 bottom-0 flex justify-center p-400">
-          <div
-            className={cn(
-              glass,
-              'tablet:w-[320px] pointer-events-auto flex w-full max-w-[560px] flex-col gap-300 p-400',
-            )}
-          >
-            <div className="flex items-center">
-              {label && (
-                <span
-                  className={cn(
-                    'typo-caption1 flex items-center gap-100 rounded-full px-300 py-100',
-                    label.tone === 'calm' && 'bg-container-primary-alternative text-primary-700',
-                    label.tone === 'warn' && 'bg-state-caution/20 text-text-strong',
-                    label.tone === 'danger' && 'bg-state-error/15 text-state-error',
-                  )}
-                >
-                  {label.tone === 'calm' ? (
-                    <PenLine className="size-[14px]" />
-                  ) : (
-                    <Eye className="size-[14px]" />
-                  )}
-                  교수님 {label.text}
-                </span>
-              )}
-            </div>
-            <NoiseGauge noise={you.noise} />
-            <div className="flex items-center gap-300">
-              <button
-                className={cn(
-                  'typo-button1 text-text-inverse flex-1 rounded-md py-300 transition-transform',
-                  pressing ? 'bg-button-primary-interaction scale-[0.97]' : 'bg-button-primary',
-                  you.status !== 'seated' && 'bg-button-disabled',
-                )}
-                disabled={you.status !== 'seated'}
-                onPointerDown={(event) => {
-                  event.stopPropagation();
-                  game.startPress();
-                }}
-              >
-                {you.status === 'seated' ? '꾹 누르기 (Space)' : '들켰다…!'}
-              </button>
-              <button
-                className="bg-button-neutral typo-button2 text-text-normal rounded-md px-400 py-300"
-                onPointerDown={(event) => event.stopPropagation()}
-                onClick={() => game.stand()}
-              >
-                일어나기 (Q)
-              </button>
-            </div>
-          </div>
-        </section>
+      {/* 앉기: 조이스틱 오른쪽, 조이스틱 바닥보다 21px 위 */}
+      {started && near && you?.status === 'walking' && layout && (
+        <DepthButton
+          tone="primary"
+          label="앉아서 왁뿌볼 깨기"
+          shortcut={touch ? undefined : 'E'}
+          className="absolute right-[14px] bottom-[45px] w-[220px]"
+          onClick={() => (controls.current.sitRequest = true)}
+        />
       )}
 
-      {/* 걷는 중 안내와 조이스틱 */}
+      {/* 착석: 교수님 상태는 왁뿌볼 바로 위, 소리 게이지는 오른쪽, 일어나기는 아래. 표현 패널은 숨긴다. */}
+      {started && seatedVariant !== null && you && (
+        <>
+          {professor && (
+            <ProfessorAlert
+              mode={professor.mode}
+              className="pointer-events-none absolute left-1/2 -translate-x-1/2"
+              // 왁뿌볼은 3D 장면에서 카메라에 붙어 있어 화면 위치를 장면이 CSS 변수로 알려준다.
+              style={{ top: 'calc(var(--wax-ball-top, 55%) - 38px)' }}
+            />
+          )}
+          {/* "소리" 글자(21px)가 게이지(14px)보다 넓어 함께 가운데 정렬된다. 게이지가 오른쪽 18px에 오도록 맞춘 값 */}
+          <NoiseIndicator
+            noise={you.noise}
+            className="pointer-events-none absolute right-[14.5px] bottom-[98px]"
+          />
+          <DepthButton
+            tone="neutral"
+            label={you.status === 'seated' ? '일어나기' : '들켰다…!'}
+            shortcut={touch ? undefined : 'Q'}
+            className="absolute bottom-[18px] left-1/2 w-[339px] max-w-[calc(100%-20px)] -translate-x-1/2"
+            onClick={() => game.stand()}
+          />
+        </>
+      )}
+
+      {/* 걷는 중: 조이스틱(모바일), 키 안내(PC), 감정 표현과 도움말(오른쪽 10px) */}
       {started && seatedVariant === null && (
         <>
           {touch && (
-            <div className="absolute bottom-600 left-600 flex items-end gap-300">
+            <div className="absolute bottom-600 left-600">
               <Joystick controlsRef={controls} />
             </div>
           )}
           <p className="typo-caption1 text-text-strong tablet:block pointer-events-none absolute inset-x-0 bottom-400 hidden text-center drop-shadow">
             {touch
               ? '조이스틱으로 걷기 · 화면 드래그로 둘러보기 · 의자를 눌러 앉기'
-              : 'WASD 걷기 · Shift 달리기 · 드래그로 둘러보기 · 휠 확대 · E 앉기 · V 시점 · 1~5 표현'}
+              : 'WASD 걷기 · Shift 달리기 · 드래그로 둘러보기 · 휠 확대 · E 앉기 · V 시점 · 1~4 표현'}
           </p>
+          {sceneReady && layout && (
+            <ReactionPanel
+              className="absolute top-1/2 right-[10px] -translate-y-1/2"
+              onEmote={(kind) => game.emote(kind)}
+            />
+          )}
+          {!(near && you?.status === 'walking') && (
+            <HelpButton
+              className="absolute right-[10px] bottom-600"
+              onClick={() => help.current?.showModal()}
+            />
+          )}
         </>
-      )}
-
-      {/* 표현: 데스크톱은 아래 가운데 줄, 모바일은 조이스틱·착석 HUD를 피해 오른쪽 세로 줄 */}
-      {started && sceneReady && layout && (
-        <nav
-          aria-label="표현 보내기"
-          className="tablet:top-auto tablet:right-auto tablet:bottom-[52px] tablet:left-1/2 tablet:-translate-x-1/2 tablet:translate-y-0 tablet:flex-row pointer-events-none absolute top-1/2 right-300 flex -translate-y-1/2 flex-col gap-200"
-        >
-          {WAX_EMOTES.map((emote, index) => (
-            <button
-              key={emote.kind}
-              aria-label={`${emote.label} 보내기 (${index + 1})`}
-              className={cn(
-                glass,
-                'tablet:size-auto tablet:gap-100 tablet:px-300 tablet:py-200 pointer-events-auto flex size-[44px] items-center justify-center transition-transform active:scale-90',
-                mine?.emote === emote.kind && 'ring-primary-500 scale-110 ring-2',
-              )}
-              onPointerDown={(event) => event.stopPropagation()}
-              onClick={() => game.emote(emote.kind)}
-            >
-              <span className="text-[20px] leading-none">{emote.icon}</span>
-              <span className="typo-caption1 text-text-strong tablet:inline hidden">
-                {emote.label}
-              </span>
-              {!touch && (
-                <span className="typo-caption2 text-text-alternative tablet:inline hidden">
-                  {index + 1}
-                </span>
-              )}
-            </button>
-          ))}
-        </nav>
       )}
 
       {/* 깨지는 소리 의성어 */}
@@ -657,7 +539,7 @@ export function WaxGame() {
         <div
           className={cn(
             glass,
-            'typo-body2 text-text-strong absolute top-[88px] left-1/2 -translate-x-1/2 px-400 py-200',
+            'typo-body2 text-text-strong absolute top-[74px] left-1/2 -translate-x-1/2 px-400 py-200',
           )}
           role="status"
         >
@@ -665,57 +547,23 @@ export function WaxGame() {
         </div>
       )}
 
-      {/* 시작 화면 */}
-      {(!started || !sceneReady || !layout) && (
-        <div className="bg-container-neutral-alternative/70 absolute inset-0 grid place-items-center p-400 backdrop-blur-sm">
-          <div
-            className={cn(glass, 'flex w-full max-w-[440px] flex-col gap-400 p-600 text-center')}
-          >
-            <p className="typo-caption1 text-primary-600">WEETH 미니게임</p>
-            <h1 className="typo-h2 text-text-strong">교수님 몰래 왁뿌볼</h1>
-            <p className="typo-body2 text-text-normal">
-              복도를 걸어 강의실에 들어가 빈 의자에 앉으면, 책상 밑에서 왁뿌볼을 깰 수 있어요. 너무
-              크게 깨면 교수님이 회초리를 들고 다가와요.
-            </p>
-            {status === 'error' || status === 'disconnected' ? (
-              <button
-                className="bg-button-primary typo-button1 text-text-inverse rounded-md py-300"
-                onClick={() => game.join(status !== 'error')}
-              >
-                {game.errorCode === 'world_full' ? '다른 교실로 입장' : '다시 입장하기'}
-              </button>
-            ) : (
-              <button
-                className="bg-button-primary typo-button1 text-text-inverse disabled:bg-button-disabled rounded-md py-300"
-                disabled={!assetsReady || starting || (started && !sceneReady)}
-                onClick={() => void start()}
-              >
-                {!assetsReady
-                  ? '캐릭터 불러오는 중…'
-                  : starting
-                    ? '소리 준비 중…'
-                    : started
-                      ? '학교 문 여는 중…'
-                      : '소리 켜고 입장하기'}
-              </button>
-            )}
-            {game.error && <p className="typo-caption2 text-state-error">{game.error}</p>}
-          </div>
-        </div>
-      )}
-
-      {/* 서버 재시작·네트워크 끊김 뒤 자동 재접속 중. 장면은 그대로 두고 알리기만 한다. */}
-      {started && status === 'reconnecting' && (
-        <div
-          className={cn(
-            glass,
-            'typo-body2 text-text-strong absolute top-[88px] left-1/2 -translate-x-1/2 px-400 py-200 whitespace-nowrap',
-          )}
-          role="status"
-        >
-          교실을 정비하고 있어요. 다시 연결하는 중…
-        </div>
-      )}
+      {/* 진입 화면: 캐릭터·소리·장면을 준비하는 동안 CTA를 막고 로딩 문구를 돌린다. */}
+      {(!started || !sceneReady || !layout) &&
+        (status === 'error' || status === 'disconnected' ? (
+          <WaxEntryScreen
+            loading={false}
+            actionLabel={game.errorCode === 'world_full' ? '다른 교실로 입장' : '다시 입장하기'}
+            onAction={() => game.join(status !== 'error')}
+            error={game.error || undefined}
+          />
+        ) : (
+          <WaxEntryScreen
+            loading={!assetsReady || starting || (started && !sceneReady)}
+            actionLabel="소리 켜고 입장하기"
+            onAction={() => void start()}
+            error={game.error || undefined}
+          />
+        ))}
 
       {/* 연결이 끊긴 뒤 */}
       {/* 입력이 없어 곧 내보내진다 */}
@@ -723,7 +571,7 @@ export function WaxGame() {
         <div
           className={cn(
             glass,
-            'typo-body2 text-text-strong absolute top-[88px] left-1/2 -translate-x-1/2 px-400 py-200 text-center',
+            'typo-body2 text-text-strong absolute top-[74px] left-1/2 -translate-x-1/2 px-400 py-200 text-center',
           )}
           role="status"
         >
@@ -752,78 +600,13 @@ export function WaxGame() {
           </div>
         )}
 
-      <dialog
-        ref={help}
-        className="m-auto w-[min(92vw,480px)] rounded-lg p-0 backdrop:bg-black/40"
-        aria-label="조작 방법과 출처"
-      >
-        <div className="flex flex-col gap-300 p-600">
-          <h2 className="typo-h3 text-text-strong">조작 방법</h2>
-          <ul className="typo-body2 text-text-normal list-disc pl-500">
-            <li>WASD·방향키로 걷기, Shift 달리기 (모바일은 조이스틱)</li>
-            <li>
-              드래그로 둘러보기, 휠로 확대/축소, V로 1인칭 전환(1인칭에서는 마우스만 움직여도
-              돌아가요. Esc로 해제)
-            </li>
-            <li>빈 의자 근처에서 E 또는 의자 클릭으로 앉기, Q로 일어나기</li>
-            <li>
-              앉아 있을 때도 1인칭처럼 마우스로 둘러볼 수 있어요(화면을 한 번 클릭하면 마우스가
-              고정돼요. 모바일은 드래그)
-            </li>
-            <li>
-              Space 또는 마우스를 꾹 눌러 왁뿌볼 깨기(모바일은 공이나 버튼을 꾹). 손을 떼면 소음이
-              내려가요
-            </li>
-            <li>들키면 다가오는 교수님 쪽으로 시선이 저절로 돌아가요</li>
-            <li>
-              숫자 1~5 또는 표현 버튼으로 친구에게 인사·ㅋㅋㅋ·최고·쉿·살려줘를 보낼 수 있어요
-            </li>
-            <li>교수님이 돌아보는 중에는 같은 소리도 더 크게 들켜요</li>
-          </ul>
-          <h2 className="typo-sub2 text-text-strong">출처</h2>
-          <p className="typo-caption2 text-text-alternative">
-            왁뿌볼 소리:{' '}
-            <a
-              className="underline"
-              href="https://github.com/apple77771/wakppuball-simulator"
-              target="_blank"
-              rel="noreferrer"
-            >
-              WAK-PPU-BALL sound effects
-            </a>{' '}
-            by apple77771,{' '}
-            <a
-              className="underline"
-              href="https://creativecommons.org/licenses/by/4.0/"
-              target="_blank"
-              rel="noreferrer"
-            >
-              CC BY 4.0
-            </a>
-            . 게임에서 구간·음높이·음량을 바꿔 재생해요.
-          </p>
-          <p className="typo-caption2 text-text-alternative">
-            회초리·교실 배경음: Freesound CC0(Qat, okieactor, SEF7, DeanHopkins). 캐릭터: Kenney
-            Mini Characters (CC0). 자세한 내용은 /audio/wax/CREDITS.md에 있어요.
-          </p>
-          <div className="flex justify-end gap-200">
-            <a
-              href={WEETH_URL}
-              target="_blank"
-              rel="noreferrer"
-              className="bg-button-neutral typo-button2 text-text-normal rounded-md px-400 py-200"
-            >
-              Weeth 알아보기
-            </a>
-            <button
-              className="bg-button-primary typo-button2 text-text-inverse rounded-md px-400 py-200"
-              onClick={() => help.current?.close()}
-            >
-              닫기
-            </button>
-          </div>
-        </div>
-      </dialog>
+      <WaxHelpDialog ref={help} weethUrl={WEETH_URL} />
+      <WaxExitDialog
+        open={exitOpen}
+        weethUrl={WEETH_EXIT_URL}
+        onStay={() => setExitOpen(false)}
+        onLeave={leave}
+      />
     </main>
   );
 }

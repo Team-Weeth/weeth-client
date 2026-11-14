@@ -51,7 +51,7 @@ async function walkIntoRoom(page: Page) {
 
 test('로그인 없이 게임 소개와 입장 버튼을 보여준다', async ({ page }) => {
   await page.goto('/play/wax');
-  await expect(page.getByRole('heading', { name: '교수님 몰래 왁뿌볼' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: /교수님 몰래/ })).toBeVisible();
   await expect(page.getByRole('button', { name: '소리 켜고 입장하기' })).toBeEnabled({
     timeout: 20000,
   });
@@ -88,7 +88,7 @@ test('같은 월드의 두 사람: 착석·깨기·적발·문 앞 퇴장이 서
     await walkIntoRoom(actor);
     await actor.keyboard.press('KeyE');
     await expect(actor.getByTestId('wax-game')).toHaveAttribute('data-status', 'seated');
-    await expect(actor.getByRole('button', { name: /꾹 누르기/ })).toBeVisible();
+    await expect(actor.getByRole('button', { name: /일어나기/ })).toBeVisible();
 
     // 계속 누르면 깨지다가 들킨다.
     await actor.keyboard.down('Space');
@@ -114,7 +114,7 @@ test('같은 월드의 두 사람: 착석·깨기·적발·문 앞 퇴장이 서
     expect(Number(after.z)).toBeCloseTo(1.4, 1);
     await expect(watcher.getByText(/님이 102호에서 쫓겨났어요/)).toBeVisible();
     await actor.getByRole('button', { name: '도움말' }).click();
-    await expect(actor.getByRole('link', { name: 'Weeth 알아보기' })).toHaveAttribute(
+    await expect(actor.getByRole('link', { name: '누가 만들었지?' })).toHaveAttribute(
       'href',
       /landing.*utm_source=wax/,
     );

@@ -203,6 +203,7 @@ function Professor({ room, latest }: { room: WaxRoom; latest: RefObject<WaxState
       name={room.professorName}
       height={WAX_PROFESSOR_HEIGHT}
       rod
+      npc
       pose={(): WaxPose | null => {
         const professor = latest.current?.professors.find(
           (candidate) => candidate.room === room.id,

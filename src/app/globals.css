@@ -1060,6 +1060,28 @@ select:focus {
   color: var(--code-built-in);
 }
 
+/* 왁뿌볼 도움말의 "Weeth 알아보기" 말풍선이 위아래로 떠다닌다. */
+@keyframes wax-bob {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-3px);
+  }
+}
+
+/* 왁뿌볼 진입 화면 스피너: 0.8초에 한 바퀴 돌고 1.2초 멈춘다(시안 모션). */
+@keyframes wax-spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  40%,
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
 @keyframes gallery-scroll {
   0% {
     transform: translateX(0);
