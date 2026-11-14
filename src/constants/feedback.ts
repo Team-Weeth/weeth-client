@@ -43,6 +43,9 @@ export const FEEDBACK_CHAT_THANKS_MESSAGES = [
   '보내주셔서 고마워요! 💚\n남겨주신 이야기는 빠짐없이 살펴보고,\n더 편한 Weeth를 만드는 데 참고할게요.',
 ] as const;
 
+/** 전송 성공 직후 답장이 붙으면 기계적으로 느껴져서, 사람이 읽고 답하는 듯한 간격을 둔다. */
+export const FEEDBACK_CHAT_REPLY_DELAY_MS = 3000;
+
 export const FEEDBACK_CHAT_INPUT_PLACEHOLDER = '의견을 자유롭게 남겨주세요';
 
 /** 모바일 채팅 바텀시트 높이 비율 — Figma(16016:30679)에서 812px 화면 중 743px를 차지한다. */

@@ -1,5 +1,6 @@
 'use client';
 
+import { FEEDBACK_CHAT_REPLY_DELAY_MS } from '@/constants/feedback';
 import { useCreateFeedbackMutation } from '@/hooks/mutations/useCreateFeedbackMutation';
 import { useFeedbackChatActions, useFeedbackChatMessages } from '@/stores/useFeedbackChatStore';
 import {
@@ -16,12 +17,13 @@ function useFeedbackChat(clubId: string) {
 
   // mutate의 호출별 콜백은 마지막 호출·마운트된 상태에서만 실행되므로,
   // 연속 전송이나 패널을 닫은 뒤 도착한 응답도 반영되도록 Promise 결과로 상태를 갱신한다.
+  // 답장 타이머도 같은 이유로 언마운트 시 정리하지 않는다. 패널을 닫아도 답장은 대화에 남아야 한다.
   const deliver = (message: FeedbackChatUserMessage) => {
     setMessageStatus(clubId, message.id, 'sending');
     mutateAsync(buildFeedbackChatRequest(message)).then(
       () => {
         setMessageStatus(clubId, message.id, 'sent');
-        addReply(clubId);
+        setTimeout(() => addReply(clubId, message.id), FEEDBACK_CHAT_REPLY_DELAY_MS);
       },
       () => {
         setMessageStatus(clubId, message.id, 'failed');

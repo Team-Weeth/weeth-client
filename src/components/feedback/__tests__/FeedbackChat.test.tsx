@@ -23,6 +23,14 @@ jest.mock('@/hooks/home/useHomeQuery', () => ({
     return { data: select ? select(dashboard) : dashboard };
   },
 }));
+// 답장 지연(3초)을 그대로 두면 답장을 기다리는 테스트가 모두 느려지므로 기본은 0으로 두고, 지연을 검증할 때만 바꾼다.
+let mockReplyDelayMs = 0;
+jest.mock('@/constants/feedback', () => ({
+  ...jest.requireActual('@/constants/feedback'),
+  get FEEDBACK_CHAT_REPLY_DELAY_MS() {
+    return mockReplyDelayMs;
+  },
+}));
 jest.mock('@/lib/analytics/feedbackEvents', () => ({
   ...jest.requireActual('@/lib/analytics/feedbackEvents'),
   trackFeedbackEntryClicked: jest.fn(),
@@ -67,6 +75,7 @@ async function openFeedbackChat(user: ReturnType<typeof userEvent.setup>) {
 }
 
 beforeEach(() => {
+  mockReplyDelayMs = 0;
   mockMatchMedia(false);
   switchClub(CLUB_ID);
   useFeedbackChatStore.getState().reset();
@@ -124,6 +133,27 @@ describe('채팅형 서비스 피드백', () => {
         ),
       ).toBeInTheDocument();
       expect(bodies).toEqual([{ content: '알림이 늦게 와요', channel: 'CHAT' }]);
+    });
+
+    it('전송에 성공해도 감사 답장은 잠시 뒤에 붙인다', async () => {
+      mockReplyDelayMs = 300;
+      const user = userEvent.setup();
+      interceptFeedbackRequests();
+      renderFab();
+      const dialog = await openFeedbackChat(user);
+
+      await user.type(
+        within(dialog).getByRole('textbox', { name: '서비스 피드백 입력' }),
+        '알림이 늦게 와요{Enter}',
+      );
+
+      await waitFor(() =>
+        expect(useFeedbackChatStore.getState().conversations[CLUB_ID]).toEqual([
+          expect.objectContaining({ content: '알림이 늦게 와요', status: 'sent' }),
+        ]),
+      );
+      expect(within(dialog).queryByText(/소중한 의견 감사합니다/)).not.toBeInTheDocument();
+      expect(await within(dialog).findByText(/소중한 의견 감사합니다/)).toBeInTheDocument();
     });
 
     it('전송에 성공할 때마다 감사 답장 문구를 돌려 쓴다', async () => {
