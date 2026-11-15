@@ -439,13 +439,13 @@ export function WaxGame() {
         </div>
       )}
 
-      {/* 앉기: 조이스틱 오른쪽, 조이스틱 바닥보다 21px 위 */}
+      {/* 앉기: 조이스틱 오른쪽, 조이스틱 바닥보다 21px 위. 좁은 화면에서는 조이스틱(왼쪽 24px + 105px)과 12px 띄운다. */}
       {started && near && you?.status === 'walking' && layout && (
         <DepthButton
           tone="primary"
           label="앉아서 왁뿌볼 깨기"
           shortcut={touch ? undefined : 'E'}
-          className="absolute right-[14px] bottom-[45px] w-[220px]"
+          className="absolute right-[14px] bottom-[45px] w-[240px] max-w-[calc(100%-155px)]"
           onClick={() => (controls.current.sitRequest = true)}
         />
       )}
@@ -461,10 +461,10 @@ export function WaxGame() {
               style={{ top: 'calc(var(--wax-ball-top, 55%) - 38px)' }}
             />
           )}
-          {/* "소리" 글자(21px)가 게이지(14px)보다 넓어 함께 가운데 정렬된다. 게이지가 오른쪽 18px에 오도록 맞춘 값 */}
+          {/* "소리" 글자(21px)가 게이지(14px)보다 넓어 함께 가운데 정렬된다. 게이지가 오른쪽 28px에 오도록 맞춘 값 */}
           <NoiseIndicator
             noise={you.noise}
-            className="pointer-events-none absolute right-[14.5px] bottom-[98px]"
+            className="pointer-events-none absolute right-[24.5px] bottom-[118px]"
           />
           <DepthButton
             tone="neutral"

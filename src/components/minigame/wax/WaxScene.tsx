@@ -1,6 +1,6 @@
 'use client';
 
-import { Component, useEffect, useRef, useState } from 'react';
+import { Component, useContext, useEffect, useRef, useState } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import {
   ACESFilmicToneMapping,
@@ -15,6 +15,7 @@ import {
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 import { WaxCharacter } from '@/components/minigame/wax/WaxCharacter';
 import { WaxHeldBall } from '@/components/minigame/wax/WaxHeldBall';
+import { WaxNameTagContext, WaxNameTagLayer } from '@/components/minigame/wax/WaxNameTags';
 import { WAX_BLOCK_LAYER, WaxSchool } from '@/components/minigame/wax/WaxSchool';
 import { WAX_PROFESSOR_HEIGHT, WAX_SCENE } from '@/constants/wax';
 import {
@@ -37,6 +38,8 @@ import type {
 } from 'three';
 import type { WaxAnimation, WaxPose } from '@/components/minigame/wax/WaxCharacter';
 import type { WaxHeldBallInput } from '@/components/minigame/wax/WaxHeldBall';
+import type { WaxNameTagRegistry } from '@/components/minigame/wax/WaxNameTags';
+import type { WaxFadeUnit } from '@/components/minigame/wax/WaxSchool';
 import type { WaxPoint } from '@/lib/minigame/waxCollision';
 import type {
   WaxEmoteKind,
@@ -310,24 +313,66 @@ function Lighting() {
   );
 }
 
-/** 가릴 수 있는 벽(WAX_BLOCK_LAYER) 메시와 바닥 평면 범위를 한 번 모은다. 학교는 움직이지 않는다. */
+/** 함께 흐려지는 메시 묶음. 벽 조각 하나이거나 fadeUnit 그룹(사물함 한 줄, 게시판 등) 전체다. */
+interface FadeTarget {
+  meshes: Mesh[];
+  /** 바닥 평면에서 차지하는 범위 */
+  footprint: WaxRect;
+  /** 벽처럼 좌우 여유를 두고 가림을 판정할지 */
+  margin: boolean;
+  minY: number;
+  maxY: number;
+}
+
+/** 이름표 높이(약 1.4~2m)를 막는 벽인지. 창턱·문 위 벽처럼 위아래가 트인 조각은 이름표를 가리지 않는다. */
+function blocksNameTag(target: FadeTarget) {
+  return target.minY < 1.2 && target.maxY > 2;
+}
+
+/** 가릴 수 있는 벽(WAX_BLOCK_LAYER)을 흐릴 단위로 한 번 모은다. 학교는 움직이지 않는다. */
 function collectWalls(scene: Scene) {
   const layers = new Layers();
   layers.set(WAX_BLOCK_LAYER);
-  const walls: Object3D[] = [];
+  const targets = new Map<Object3D, FadeTarget>();
   scene.updateMatrixWorld();
   scene.traverse((object) => {
     if (!(object as Mesh).isMesh || !object.layers.test(layers)) return;
+    let root: Object3D = object;
+    for (let parent = object.parent; parent; parent = parent.parent)
+      if (parent.userData.fadeUnit) {
+        root = parent;
+        break;
+      }
     const box = new Box3().setFromObject(object);
-    object.userData.footprint = {
-      minX: box.min.x,
-      maxX: box.max.x,
-      minZ: box.min.z,
-      maxZ: box.max.z,
-    };
-    walls.push(object);
+    const target = targets.get(root);
+    if (target) {
+      target.footprint.minX = Math.min(target.footprint.minX, box.min.x);
+      target.footprint.maxX = Math.max(target.footprint.maxX, box.max.x);
+      target.footprint.minZ = Math.min(target.footprint.minZ, box.min.z);
+      target.footprint.maxZ = Math.max(target.footprint.maxZ, box.max.z);
+      target.minY = Math.min(target.minY, box.min.y);
+      target.maxY = Math.max(target.maxY, box.max.y);
+      return;
+    }
+    targets.set(root, {
+      meshes: [],
+      footprint: { minX: box.min.x, maxX: box.max.x, minZ: box.min.z, maxZ: box.max.z },
+      margin: (root.userData.fadeUnit as WaxFadeUnit | undefined) !== 'furniture',
+      minY: box.min.y,
+      maxY: box.max.y,
+    });
   });
-  return walls;
+  // 묶음은 레이어에 없는 장식(환기구·손잡이·포스터)까지 함께 흐린다.
+  for (const [root, target] of targets)
+    root.traverse((child) => {
+      const mesh = child as Mesh;
+      if (!mesh.isMesh) return;
+      const material = mesh.material as MeshStandardMaterial;
+      mesh.userData.baseOpacity ??= material.opacity;
+      mesh.userData.baseTransparent = material.transparent;
+      target.meshes.push(mesh);
+    });
+  return [...targets.values()];
 }
 
 /** 선분이 사각형을 지나는지(Liang–Barsky). */
@@ -356,19 +401,21 @@ function segmentHitsRect(x0: number, z0: number, x1: number, z1: number, rect: W
   return t0 < 1 - 0.6 / Math.max(0.6, Math.hypot(dx, dz));
 }
 
-/** 벽 재질을 반투명으로 바꾸거나 원래 투명도(창유리 등)로 되돌린다. */
-function setFaded(object: Object3D, faded: boolean) {
-  const material = (object as Mesh).material as MeshStandardMaterial | undefined;
-  if (!material || Array.isArray(material)) return;
-  const base = (object.userData.baseOpacity as number | undefined) ?? 1;
-  const opacity = faded ? Math.min(base, 0.15) : base;
-  if (material.opacity === opacity) return;
-  const transparent = opacity < 1;
-  // 불투명 재질은 셰이더에 OPAQUE가 고정되므로 투명 여부가 바뀌면 다시 컴파일해야 한다.
-  if (material.transparent !== transparent) material.needsUpdate = true;
-  material.transparent = transparent;
-  material.opacity = opacity;
-  material.depthWrite = !faded;
+/** 벽 재질을 반투명으로 바꾸거나 원래 투명도(창유리, 투명 배경 표지판 등)로 되돌린다. */
+function setFaded(target: FadeTarget, faded: boolean) {
+  for (const mesh of target.meshes) {
+    const material = mesh.material as MeshStandardMaterial | undefined;
+    if (!material || Array.isArray(material)) continue;
+    const base = mesh.userData.baseOpacity as number;
+    const opacity = faded ? Math.min(base, 0.15) : base;
+    if (material.opacity === opacity && material.depthWrite === !faded) continue;
+    const transparent = faded || (mesh.userData.baseTransparent as boolean);
+    // 불투명 재질은 셰이더에 OPAQUE가 고정되므로 투명 여부가 바뀌면 다시 컴파일해야 한다.
+    if (material.transparent !== transparent) material.needsUpdate = true;
+    material.transparent = transparent;
+    material.opacity = opacity;
+    material.depthWrite = !faded;
+  }
 }
 
 interface LocalState {
@@ -416,8 +463,9 @@ function LocalController({
   const keys = useRef(new Set<string>());
   const [obstacles] = useState(() => buildObstacles(layout));
   const lastNear = useRef('');
-  const faded = useRef(new Set<Object3D>());
-  const walls = useRef<Object3D[]>([]);
+  const faded = useRef(new Set<FadeTarget>());
+  const walls = useRef<FadeTarget[]>([]);
+  const nameTags = useContext(WaxNameTagContext);
   const interior = useRef({
     minX: Math.min(layout.hall.minX, ...layout.rooms.map((room) => room.bounds.minX)) + 0.3,
     maxX: Math.max(layout.hall.maxX, ...layout.rooms.map((room) => room.bounds.maxX)) - 0.3,
@@ -429,6 +477,25 @@ function LocalController({
   useEffect(() => {
     onReady();
   }, [onReady]);
+
+  // 다른 강의실 사람의 이름표가 벽 너머로 보이지 않게 한다.
+  // 지금 흐려진 벽(카메라와 나 사이)은 비쳐 보이므로 제외한다.
+  useEffect(() => {
+    const registry = nameTags?.current;
+    if (!registry) return;
+    registry.blocked = (fromX, fromZ, toX, toZ) => {
+      if (!walls.current.length) walls.current = collectWalls(scene);
+      return walls.current.some(
+        (wall) =>
+          blocksNameTag(wall) &&
+          !faded.current.has(wall) &&
+          segmentHitsRect(fromX, fromZ, toX, toZ, wall.footprint),
+      );
+    };
+    return () => {
+      registry.blocked = () => false;
+    };
+  }, [nameTags, scene]);
 
   useEffect(() => {
     const movement = [
@@ -594,7 +661,15 @@ function LocalController({
       const seatKey = `${server.room}:${server.seat}`;
       if (me.seatKey !== seatKey) {
         me.seatKey = seatKey;
-        rig.seatYaw = 0;
+        // 앉자마자 그 강의실 교수님 쪽으로 고개를 돌린다. 둘러볼 수 있는 범위를 넘지는 않는다.
+        const teacher = state.professors.find((candidate) => candidate.room === server.room);
+        rig.seatYaw = teacher
+          ? MathUtils.clamp(
+              Math.atan2(teacher.x - seat.x, -(teacher.z - seat.z)),
+              -SEATED_YAW_LIMIT,
+              SEATED_YAW_LIMIT,
+            )
+          : 0;
         rig.seatPitch = SEATED_PITCH;
       }
       // 들키면 다가와서 때리는 교수님 쪽으로 고개가 저절로 돌아간다.
@@ -669,20 +744,20 @@ function LocalController({
       const desired = target.clone().addScaledVector(direction, distance);
       cam.position.lerp(desired, 1 - Math.exp(-delta * 14));
       // 카메라와 캐릭터 사이의 벽은 지우지 않고 반투명하게 만든다.
-      // 바닥 평면에서 카메라→캐릭터 선분(좌우 0.9m 여유 포함)이 벽 바닥면을 지나면 가린다고 본다.
+      // 바닥 평면에서 카메라→캐릭터 선분(벽은 좌우 0.9m 여유 포함)이 바닥면을 지나면 가린다고 본다.
+      // 홀로 선 가구는 여유 없이 판정한다. 옆을 지나기만 해도 흐려지면 물체가 깜빡이는 것처럼 보인다.
       if (!walls.current.length) walls.current = collectWalls(scene);
-      const hits = new Set<Object3D>();
+      const hits = new Set<FadeTarget>();
       const side = new Vector3(-direction.z, 0, direction.x).normalize().multiplyScalar(0.9);
       for (const wall of walls.current) {
-        const box = wall.userData.footprint as WaxRect;
-        for (const offset of [0, 1, -1])
+        for (const offset of wall.margin ? [0, 1, -1] : [0])
           if (
             segmentHitsRect(
               cam.position.x + side.x * offset,
               cam.position.z + side.z * offset,
               me.x + side.x * offset,
               me.z + side.z * offset,
-              box,
+              wall.footprint,
             )
           ) {
             hits.add(wall);
@@ -916,6 +991,7 @@ function World(props: SceneProps) {
         onReady={props.onReady}
       />
       <PointerLook rig={rig} seated={seated} firstPerson={view === 'first' && !seated} />
+      <WaxNameTagLayer />
     </>
   );
 }
@@ -943,29 +1019,42 @@ class SceneBoundary extends Component<
 }
 
 export function WaxScene(props: SceneProps & { className?: string }) {
+  const nameTags = useRef<WaxNameTagRegistry>({
+    layer: null,
+    entries: new Set(),
+    blocked: () => false,
+  });
   return (
     <div className={props.className}>
-      <SceneBoundary onReady={props.onReady}>
-        <Canvas
-          shadows
-          dpr={[1, 1.75]}
-          camera={{ position: [0, 4, 8], fov: 55, near: 0.03, far: 200 }}
-          gl={{ antialias: true, powerPreference: 'high-performance' }}
-          onCreated={({ gl }) => {
-            gl.toneMapping = ACESFilmicToneMapping;
-            gl.toneMappingExposure = 1.05;
-            gl.outputColorSpace = SRGBColorSpace;
-            gl.domElement.tabIndex = 0;
-            gl.domElement.setAttribute('aria-label', '3D 학교. WASD로 걷고 드래그로 둘러보세요.');
-            gl.domElement.style.outline = 'none';
-            gl.domElement.style.touchAction = 'none';
-          }}
-        >
-          <color attach="background" args={[WAX_SCENE.sky]} />
-          <fog attach="fog" args={[WAX_SCENE.sky, 30, 80]} />
-          <World {...props} />
-        </Canvas>
-      </SceneBoundary>
+      <WaxNameTagContext value={nameTags}>
+        <SceneBoundary onReady={props.onReady}>
+          <Canvas
+            shadows
+            dpr={[1, 1.75]}
+            camera={{ position: [0, 4, 8], fov: 55, near: 0.03, far: 200 }}
+            gl={{ antialias: true, powerPreference: 'high-performance' }}
+            onCreated={({ gl }) => {
+              gl.toneMapping = ACESFilmicToneMapping;
+              gl.toneMappingExposure = 1.05;
+              gl.outputColorSpace = SRGBColorSpace;
+              gl.domElement.tabIndex = 0;
+              gl.domElement.setAttribute('aria-label', '3D 학교. WASD로 걷고 드래그로 둘러보세요.');
+              gl.domElement.style.outline = 'none';
+              gl.domElement.style.touchAction = 'none';
+            }}
+          >
+            <color attach="background" args={[WAX_SCENE.sky]} />
+            <fog attach="fog" args={[WAX_SCENE.sky, 30, 80]} />
+            <World {...props} />
+          </Canvas>
+        </SceneBoundary>
+      </WaxNameTagContext>
+      <div
+        ref={(element) => {
+          nameTags.current.layer = element;
+        }}
+        className="pointer-events-none absolute inset-0 overflow-hidden"
+      />
     </div>
   );
 }

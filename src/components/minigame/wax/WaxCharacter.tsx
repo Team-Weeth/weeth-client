@@ -18,11 +18,8 @@ import {
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { clone as cloneSkinned } from 'three/examples/jsm/utils/SkeletonUtils.js';
 import { roundGeometry } from '@/lib/minigame/waxRounding';
-import {
-  bubbleTexture,
-  nameTagTexture,
-  reactionBubbleTexture,
-} from '@/components/minigame/wax/waxTextures';
+import { useWaxNameTag } from '@/components/minigame/wax/WaxNameTags';
+import { bubbleTexture, reactionBubbleTexture } from '@/components/minigame/wax/waxTextures';
 import {
   WAX_BALL_LOOKS,
   WAX_CHARACTERS,
@@ -132,18 +129,9 @@ function NameTag({
   npc: boolean;
   height: number;
 }) {
-  const [tag] = useState(() => nameTagTexture(name, own));
-  useEffect(() => () => tag.texture.dispose(), [tag]);
-  const scale = (npc ? NPC_TAG_HEIGHT : TAG_HEIGHT) / tag.height;
-  return (
-    <sprite
-      position={[0, height + TAG_Y, 0]}
-      scale={[scale * tag.aspect, scale, 1]}
-      renderOrder={20}
-    >
-      <spriteMaterial map={tag.texture} depthWrite={false} transparent toneMapped={false} />
-    </sprite>
-  );
+  const anchor = useRef<Group>(null);
+  useWaxNameTag(anchor, name, own, npc ? NPC_TAG_HEIGHT : TAG_HEIGHT);
+  return <group ref={anchor} position={[0, height + TAG_Y, 0]} />;
 }
 
 const BUBBLES: Record<'!' | '딱!' | '흠…', { text: string; color: string }> = {
