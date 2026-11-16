@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useSyncExternalStore } from 'react';
-import { EVENTS, STATUS, useJoyride } from 'react-joyride';
+import { ACTIONS, EVENTS, STATUS, useJoyride } from 'react-joyride';
 import { useTourActions, useUserId } from '@/stores';
 import { TOUR_BASE_OPTIONS, TOUR_LOCALE } from '@/tours/config';
 import {
@@ -98,8 +98,18 @@ function TourRunner({ clubId, tour }: TourRunnerProps) {
         });
       }),
       on(EVENTS.TOUR_END, (data) => {
-        markSeen(seenKey, tour.version);
-        if (data.status === STATUS.FINISHED) {
+        // 어떤 스텝도 못 띄웠다면(모든 대상이 TARGET_NOT_FOUND) seen으로 기록하지 않는다 —
+        // 다음 기회(셀렉터 복구, 느린 렌더 등)에 다시 보여줄 수 있어야 한다.
+        if (viewedStepIdsRef.current.size > 0) {
+          markSeen(seenKey, tour.version);
+        }
+
+        // continuous 모드의 close 액션(오버레이 클릭/ESC)은 한 스텝씩만 넘긴다 — 마지막 스텝에서
+        // 반복되면 FINISHED로 끝나지만 실제로는 사용자가 빠져나가려 한 것이다. 완료로 집계하지 않는다.
+        const isGenuineCompletion =
+          data.status === STATUS.FINISHED && data.action !== ACTIONS.CLOSE;
+
+        if (isGenuineCompletion) {
           trackTourCompleted({
             tourId: tour.id,
             tourVersion: tour.version,
@@ -122,7 +132,11 @@ function TourRunner({ clubId, tour }: TourRunnerProps) {
       }),
     ];
 
-    return () => unsubscribers.forEach((unsubscribe) => unsubscribe());
+    return () => {
+      unsubscribers.forEach((unsubscribe) => unsubscribe());
+      // 투어가 TOUR_END 없이(언마운트로) 끝났다면 락이 영구히 남아 다른 투어를 막는다 — 항상 해제한다.
+      finish();
+    };
   }, [clubId, finish, markSeen, on, tour, userId]);
 
   useEffect(() => {

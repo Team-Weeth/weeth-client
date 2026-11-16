@@ -21,13 +21,13 @@
 4. **seen 상태는 로컬(`localStorage` 키 `weeth-tour`) + 로그아웃 시 보존 allowlist.** 서버 저장은 후속 과제로 남긴다.
 5. **킬스위치 플래그(`club_tour_enabled`)는 두지 않는다.** 각 투어는 자기 기능의 피처 플래그(`requiresFeature`)를 재사용하고, 전면 중단이 필요하면 레지스트리에서 정의를 제거한다.
 6. **기존 `HomeTutorialDialog`는 그대로 둔다.** 투어 쪽에서 억제자(suppressor) 패턴으로 공존시킨다.
-7. **이번 PR(현재 PR)은 문서 + 스킬만 고정한다.** `src/tours/` 런타임 코드는 다음 PR. 이 ADR의 "결정"은 그 다음 PR이 따라야 할 아키텍처 스펙이기도 하다.
+7. **이 PR은 문서 + 스킬 + `src/tours/` 런타임 인프라까지 포함한다.** 처음엔 문서/스킬만 고정하고 런타임을 다음 PR로 미룰 계획이었으나, 같은 PR 안에서 인프라까지 구현해 파이프라인이 실제로 동작하는지 검증했다. `TOUR_REGISTRY`는 비어 있어 실제로 노출되는 투어는 아직 없다 — `src/tours/examples/`의 예시는 등록되지 않은 참고용이다. 레지스트리에 투어가 하나라도 등록되는 시점이 "진짜 첫 배포"다.
 
 ## 이유
 
 - `react-joyride`의 React 19 peer 지원 확인(`react: 16.8 - 19`), Floating UI 기반 포지셔닝, `targetWaitTimeout`이 `MutationObserver` 없이 타깃 폴링/타임아웃/자동 진행을 대체, 내장 포커스 트랩, `'use client'` 경계로 번들을 분리할 수 있다는 점이 결정적이었다.
 - `src/flags/club-features/`(definitions.ts + server.ts + `__tests__/`)가 "자기 폴더를 갖는 작은 횡단 서브시스템"의 선례이고, `.claude/rules/feature-flag.md`와 그대로 대응된다 — `src/tours/`도 같은 모양을 따른다.
-- 킬스위치를 따로 안 둔 이유: `overlayClickAction: 'close'`(클릭 시 종료), `dismissKeyAction: 'close'`(ESC), 레지스트리에서 정의 제거 + 배포가 이미 탈출구다. 플래그 하나를 추가로 유지하는 비용이 지금 당장의 이득보다 크다고 판단했다. 오버레이가 UI를 막는 사고가 실제로 나면 재검토한다.
+- 킬스위치를 따로 안 둔 이유: "건너뛰기" 버튼이 모든 스텝에서 `ACTIONS.SKIP`을 정확히 쏘고, 레지스트리에서 정의 제거 + 배포가 이미 탈출구다. (오버레이 클릭/ESC는 `close` 액션이라 한 스텝씩만 넘긴다 — 즉시 종료가 아니다. 다단계 투어에서 이걸로 빠져나가면 결국 `tour_completed`로 집계되므로, 런타임에서 `action === 'close'`로 끝난 완료를 `tour_skipped`로 재분류한다. 자세한 내용은 `.claude/rules/tour.md`의 Analytics 절 참고.) 플래그 하나를 추가로 유지하는 비용이 지금 당장의 이득보다 크다고 판단했다. 오버레이가 UI를 막는 사고가 실제로 나면 재검토한다.
 
 ## 대안 / 트레이드오프
 

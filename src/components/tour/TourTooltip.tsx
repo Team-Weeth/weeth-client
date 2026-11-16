@@ -8,7 +8,7 @@ import { AdminScopeBoundary } from '@/providers/admin-scope-provider';
 import type { TooltipRenderProps } from 'react-joyride';
 
 const tourTooltipVariants = cva(
-  'bg-container-floating text-text-on-floating border-floating-border flex flex-col gap-300 rounded-md border p-400 shadow-md',
+  'bg-container-floating text-text-on-floating border-floating-border flex w-(--tour-tooltip-width) flex-col gap-300 rounded-md border p-400 shadow-md',
   {
     variants: {
       tone: {

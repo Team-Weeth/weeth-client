@@ -18,7 +18,8 @@ interface TourMountProps {
 function TourMount({ clubId, scope, features }: TourMountProps) {
   const tour = useEligibleTour({ clubId, scope, features });
   if (!tour) return null;
-  return <TourRunner clubId={clubId} tour={tour} />;
+  // key로 투어 전환마다 깨끗하게 unmount/remount시켜 락 해제·ref 초기화 경계를 명확히 한다.
+  return <TourRunner key={tour.id} clubId={clubId} tour={tour} />;
 }
 
 export { TourMount, type TourMountProps };

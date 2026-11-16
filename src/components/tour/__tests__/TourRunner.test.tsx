@@ -115,11 +115,18 @@ describe('TourRunner', () => {
     );
   });
 
-  it('TOUR_END(FINISHED)에서 완료를 기록하고 markSeen + finish를 호출한다', () => {
+  it('TOUR_END(FINISHED, action=next)에서 완료를 기록하고 markSeen + finish를 호출한다', () => {
     render(<TourRunner clubId="club-1" tour={EXAMPLE_ADMIN_WARNING_TOUR} />);
 
     emit('tour:start', { size: 1 });
-    emit('tour:end', { status: 'finished', step: { id: 'type-toggle' }, index: 0, origin: null });
+    emit('tooltip', { step: { id: 'type-toggle' }, index: 0 });
+    emit('tour:end', {
+      status: 'finished',
+      action: 'next',
+      step: { id: 'type-toggle' },
+      index: 0,
+      origin: null,
+    });
 
     expect(trackTourCompleted).toHaveBeenCalledWith(
       expect.objectContaining({ tourId: 'admin-warning', clubId: 'club-1' }),
@@ -135,8 +142,10 @@ describe('TourRunner', () => {
   it('TOUR_END(SKIPPED)에서 스킵을 기록한다', () => {
     render(<TourRunner clubId="club-1" tour={EXAMPLE_ADMIN_WARNING_TOUR} />);
 
+    emit('tooltip', { step: { id: 'type-toggle' }, index: 0 });
     emit('tour:end', {
       status: 'skipped',
+      action: 'skip',
       step: { id: 'type-toggle' },
       index: 0,
       origin: 'button_skip',
@@ -146,6 +155,49 @@ describe('TourRunner', () => {
       expect.objectContaining({ stepId: 'type-toggle', origin: 'button_skip' }),
     );
     expect(trackTourCompleted).not.toHaveBeenCalled();
+    expect(mockFinish).toHaveBeenCalledTimes(1);
+  });
+
+  it('TOUR_END(FINISHED, action=close)는 완료가 아니라 스킵으로 기록한다 — 오버레이/ESC 연타로 끝까지 민 경우', () => {
+    render(<TourRunner clubId="club-1" tour={EXAMPLE_ADMIN_WARNING_TOUR} />);
+
+    emit('tooltip', { step: { id: 'type-toggle' }, index: 0 });
+    emit('tour:end', {
+      status: 'finished',
+      action: 'close',
+      step: { id: 'type-toggle' },
+      index: 1,
+      origin: 'keyboard',
+    });
+
+    expect(trackTourSkipped).toHaveBeenCalledWith(
+      expect.objectContaining({ stepId: 'type-toggle', origin: 'keyboard' }),
+    );
+    expect(trackTourCompleted).not.toHaveBeenCalled();
+  });
+
+  it('어떤 스텝도 노출되지 않았으면(TOOLTIP 없이 종료) markSeen을 호출하지 않는다 — 다음 기회에 재시도', () => {
+    render(<TourRunner clubId="club-1" tour={EXAMPLE_ADMIN_WARNING_TOUR} />);
+
+    emit('error:target_not_found', { step: { id: 'type-toggle' } });
+    emit('tour:end', {
+      status: 'finished',
+      action: 'next',
+      step: { id: 'type-toggle' },
+      index: 1,
+      origin: null,
+    });
+
+    expect(mockMarkSeen).not.toHaveBeenCalled();
+    expect(mockFinish).toHaveBeenCalledTimes(1);
+  });
+
+  it('언마운트되면 TOUR_END 없이도 락을 해제한다', () => {
+    const { unmount } = render(<TourRunner clubId="club-1" tour={EXAMPLE_ADMIN_WARNING_TOUR} />);
+
+    expect(mockFinish).not.toHaveBeenCalled();
+    unmount();
+
     expect(mockFinish).toHaveBeenCalledTimes(1);
   });
 });

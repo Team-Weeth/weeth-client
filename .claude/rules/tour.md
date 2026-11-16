@@ -53,6 +53,7 @@ This project uses `useJoyride()` only — never the `<Joyride>` component. The h
 5. Never target an element inside a Radix `Dialog` / `Sheet` / `Popover`. Radix sets `pointer-events: none` on `<body>` while open, which hides the spotlight from assistive tech and blocks clicks. Use a suppressor instead (see Gating Matrix).
 6. No raw colors — see Token Bridge. Numeric literals live only in `src/tours/config.ts`.
 7. Only one tour runs at a time (the `activeTourId` lock in `useTourStore`). Bump `definition.version` whenever a tour's copy or steps change so users who already saw it see it again.
+8. `overlayClickAction: 'close'` / `dismissKeyAction: 'close'` do **not** exit the tour — v3's `close()` action only advances one step (`index + 1`), same as clicking the skip-less primary button. On a multi-step tour, repeated overlay-clicks/ESC march through to the end and finish as `STATUS.FINISHED`, not `SKIPPED`. There is no `'skip'` value for these two options (only `closeButtonAction` has one). `TourRunner` corrects for this in its own analytics — a `TOUR_END` whose `action` is `ACTIONS.CLOSE` is recorded as `tour_skipped` even when `status === STATUS.FINISHED` — but the actual UX (ESC doesn't dismiss in one press on anything but a 1-step tour) is an accepted v3 limitation, not something to "fix" via these options.
 
 ## Target Convention
 
@@ -102,7 +103,7 @@ Verified `Options` keys (from v3.2.0 `src/types/common.ts`): `overlayColor backg
 2. **Numbers → named constants in `src/tours/config.ts`.** `zIndex` / `spotlightRadius` / padding are typed `number`, so `var()` is not possible. Keep them in one file with a comment explaining why they're literals.
 3. **Everything else → our `tooltipComponent`.** Use Tailwind token classes only. Never touch `styles.tooltip*` / `styles.button*`. The only `styles` key this project sets is the spotlight ring (`styles.spotlight`, typed `SVGAttributes<SVGPathElement>` in v3).
 
-Request exactly one new token (confirm with the user per `design-tokens.md`'s "Adding New Tokens"):
+Reuse `--tour-tooltip-width`, already declared in `globals.css` — do not add another width token per tour:
 
 ```css
 --tour-tooltip-width: min(320px, calc(100vw - 32px)); /* v3 default of 380px is wider than our 360px mobile base */
@@ -160,7 +161,7 @@ const TOUR_BASE_OPTIONS = {
 | No suppressors | `suppressors.length === 0` | Render nothing |
 | Lock acquired | `requestStart(tour.id) === true` | Render nothing |
 
-Only one tour is active at a time — a single `activeTourId` slot in `useTourStore`. A modal that currently occupies the screen (e.g. `HomeTutorialDialog`) registers as a suppressor while open; this also covers `NoticePopup` and future modals without new gating code.
+Only one tour is active at a time — a single `activeTourId` slot in `useTourStore`. Any modal/overlay that can occupy the screen over a tour target must register itself as a suppressor while open — there is no automatic coverage. `HomeTutorialDialog` and `NoticePopup` both do this today; a new overlay component needs the same four lines (`suppress()` on open, `release()` on close/unmount) wired into its own component.
 
 ## z-index Ladder
 
@@ -195,6 +196,8 @@ function trackEvent(name: string, properties?: Record<string, unknown>) {
 | `tour_step_failed` | `EVENTS.TARGET_NOT_FOUND` | `+ step_id reason` |
 
 `tour_step_failed` is not optional: v3 silently advances past a missing target, so this is the only signal that a `data-tour` attribute was removed by an unrelated refactor. `origin` comes from v3's `ORIGIN` enum (`button_skip` / `button_close` / `overlay` / `keyboard`) — it distinguishes "not interested" from "closed by accident". `tour_step_viewed` fires on `EVENTS.TOOLTIP`, not `STEP_BEFORE`, so a step that auto-advanced on timeout is not counted as "viewed". Event names live only in `src/tours/analytics.ts`.
+
+If **every** step in a run fails with `TARGET_NOT_FOUND` (nothing was ever shown), the tour is not marked seen — it stays eligible so the next page load (after the selector regresses or a slow render finishes) gets a real chance to show it. A run where at least one step was viewed is marked seen regardless of how it ends. Likewise, a multi-step tour that the user exits via overlay-click/ESC (`close` only advances one step at a time — see "Hard Rules") is recorded as `tour_skipped`, never `tour_completed`, even if `close` happened to land past the last step.
 
 ## Accessibility & Mobile
 

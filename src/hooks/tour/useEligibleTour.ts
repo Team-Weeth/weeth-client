@@ -50,7 +50,9 @@ function useEligibleTour({ clubId, scope, features }: UseEligibleTourInput): Tou
     requestStart(candidate.id);
   }, [activeTourId, candidate, requestStart]);
 
-  if (!activeTourId) return null;
+  // 이미 시작된 투어라도 억제자가 새로 뜨면(예: 홈 튜토리얼이 뒤늦게 열림) 더 이상 렌더하지 않는다.
+  // TourRunner가 언마운트되며 락을 해제하므로, 억제가 풀리면 자연스럽게 재평가된다.
+  if (!activeTourId || isSuppressed) return null;
   return listRegisteredTours().find((tour) => tour.id === activeTourId) ?? null;
 }
 
