@@ -28,7 +28,7 @@ function ScheduleItem({
   return (
     <div
       className={cn(
-        'border-line tablet:gap-600 tablet:px-500 tablet:py-400 flex items-start gap-400 px-400 py-300',
+        'border-line tablet:gap-600 tablet:pl-500 tablet:pr-600 tablet:py-400 flex items-center gap-400 px-400 py-300',
         !isLast && 'border-b',
         className,
       )}
@@ -52,7 +52,7 @@ function ScheduleItem({
 
       {/* Action buttons */}
       <div className="tablet:flex-row tablet:items-center flex shrink-0 flex-col items-stretch gap-200">
-        <Button variant="secondary" size="md" onClick={onEdit}>
+        <Button variant="secondary" size="sm" className="text-text-strong" onClick={onEdit}>
           수정
         </Button>
         <AlertDialog
@@ -60,7 +60,7 @@ function ScheduleItem({
           title="이 일정을 삭제하시겠어요?"
           description={'삭제된 일정은 복구할 수 없습니다.\n신중히 확인 후 진행해 주세요.'}
           trigger={
-            <Button variant="danger" size="md">
+            <Button variant="danger" size="sm">
               삭제
             </Button>
           }
