@@ -75,7 +75,8 @@ function FeedbackFabMenu({ className }: FeedbackFabProps) {
               aria-label="Weeth 메뉴"
               className={cn(
                 // Figma 기준 모바일은 우측 18·하단 40, 데스크톱은 우측·하단 32에 띄운다.
-                'bg-container-neutral tablet:right-700 tablet:bottom-[calc(32px+var(--safe-area-inset-bottom))] fixed right-450 bottom-[calc(40px+var(--safe-area-inset-bottom))] z-40 flex h-12 w-12 cursor-pointer items-center justify-center rounded-full shadow-md',
+                // 다크 모드에서는 기본 그림자가 어두운 배경에 묻히므로 진한 그림자와 테두리로 경계를 살린다.
+                'bg-container-neutral tablet:right-700 tablet:bottom-[calc(32px+var(--safe-area-inset-bottom))] dark:shadow-dark dark:ring-line fixed right-450 bottom-[calc(40px+var(--safe-area-inset-bottom))] z-40 flex h-12 w-12 cursor-pointer items-center justify-center rounded-full shadow-md dark:ring-1',
                 className,
               )}
             >

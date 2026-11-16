@@ -22,7 +22,8 @@ function FeedbackPageContent({ className, ...props }: FeedbackPageContentProps) 
 
   return (
     <div className={cn('tablet:gap-4 flex min-w-0 flex-1 flex-col', className)} {...props}>
-      <div className="tablet:gap-1 tablet:py-0 flex items-center py-300">
+      {/* 모바일은 전역 헤더를 숨기고 이 헤더만 쓰므로, 긴 폼을 내려도 뒤로가기가 보이게 상단에 고정한다. */}
+      <div className="tablet:gap-1 tablet:py-0 tablet:static bg-background sticky top-[var(--safe-area-inset-top)] z-10 flex items-center py-300">
         <MyPageBackButton
           onClick={() => router.push(`/${clubId}/mypage/settings`)}
           aria-label="서비스 설정으로 돌아가기"
