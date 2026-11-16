@@ -15,6 +15,11 @@ describe('club feature definitions', () => {
     expect(DEFAULT_CLUB_FEATURES.feedbackFabEnabled).toBe(false);
   });
 
+  it('어드민 일정 관리 개편 플래그를 등록하고 기본값은 OFF(개편 전 화면)로 둔다', () => {
+    expect(CLUB_FEATURE_FLAGS.adminScheduleV2Enabled).toBe('club_admin_schedule_v2_enabled');
+    expect(DEFAULT_CLUB_FEATURES.adminScheduleV2Enabled).toBe(false);
+  });
+
   it('모든 등록 플래그에 기본값이 있다', () => {
     expect(Object.keys(DEFAULT_CLUB_FEATURES).sort()).toEqual(
       Object.keys(CLUB_FEATURE_FLAGS).sort(),
@@ -28,12 +33,14 @@ describe('getClubFeatures', () => {
       club_warning_enabled: false,
       club_feedback_fab_enabled: true,
       wax_enabled: true,
+      club_admin_schedule_v2_enabled: true,
     });
 
     await expect(getClubFeatures('club-a')).resolves.toEqual({
       warningEnabled: false,
       feedbackFabEnabled: true,
       waxEventEnabled: true,
+      adminScheduleV2Enabled: true,
     });
     expect(mockGetFeatureFlags).toHaveBeenCalledWith(
       expect.arrayContaining(['club_warning_enabled', 'club_feedback_fab_enabled', 'wax_enabled']),

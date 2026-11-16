@@ -5,6 +5,8 @@ export const CLUB_FEATURE_FLAGS = {
   // 왁뿌볼 이벤트 진입점(상단 띠배너·GNB 이벤트 탭·홈 팝업). 게임 운영 스위치와 같은 플래그라
   // 게임을 닫으면 진입점도 함께 사라진다. 게임 화면(`isWaxEnabled`)과 달리 조회에 실패하면 숨긴다.
   waxEventEnabled: 'wax_enabled',
+  // 어드민 일정 관리 개편(WTH-11). ON이면 캘린더형 일정 관리 화면, OFF면 기존 목록형 화면을 노출한다.
+  adminScheduleV2Enabled: 'club_admin_schedule_v2_enabled',
 } as const;
 
 export type ClubFeatures = { [K in keyof typeof CLUB_FEATURE_FLAGS]: boolean };
@@ -13,4 +15,5 @@ export const DEFAULT_CLUB_FEATURES: ClubFeatures = {
   warningEnabled: false,
   feedbackFabEnabled: false,
   waxEventEnabled: false,
+  adminScheduleV2Enabled: false,
 };
