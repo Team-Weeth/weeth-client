@@ -1,20 +1,17 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import dynamic from 'next/dynamic';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { cn } from '@/lib/cn';
 import { Button } from '@/components/ui/Button';
 import { Icon } from '@/components/ui/Icon';
 import { AdminPageContainer } from '@/components/admin/AdminPageContainer';
+import { AdminSearchInput } from '@/components/admin/AdminSearchInput';
 import { MonthNavigator } from '@/components/admin/schedule/general/MonthNavigator';
 import { ScheduleList } from '@/components/admin/schedule/general/ScheduleList';
 import { ScheduleListSkeleton } from '@/components/admin/schedule/general/SchedulePageSkeleton';
-import { SessionScheduleList } from '@/components/admin/schedule/general/SessionScheduleList';
-import { CreateScheduleModal } from '@/components/admin/schedule/modal/CreateScheduleModal';
-import { EditScheduleModal } from '@/components/admin/schedule/modal/EditScheduleModal';
-import { EditSessionModal } from '@/components/admin/schedule/modal/EditSessionModal';
 import AdminBackIcon from '@/assets/icons/admin/ic_admin_back.svg';
-import SearchIcon from '@/assets/icons/search.svg';
 import AdminPlusIcon from '@/assets/icons/admin/ic_admin_plus.svg';
 import InfoCircleIcon from '@/assets/icons/info_circle.svg';
 import { useMonthNavigator } from '@/hooks/useMonthNavigator';
@@ -27,6 +24,32 @@ import {
 } from '@/hooks/queries/admin/useAdminScheduleQueries';
 import type { Schedule, ScheduleType } from '@/types/admin/schedule';
 import type { AdminSession, AdminSessionGroup } from '@/types/admin/session';
+
+const SessionScheduleList = dynamic(
+  () =>
+    import('@/components/admin/schedule/general/SessionScheduleList').then((m) => ({
+      default: m.SessionScheduleList,
+    })),
+  { loading: () => <ScheduleListSkeleton /> },
+);
+
+const CreateScheduleModal = dynamic(() =>
+  import('@/components/admin/schedule/modal/CreateScheduleModal').then((m) => ({
+    default: m.CreateScheduleModal,
+  })),
+);
+
+const EditScheduleModal = dynamic(() =>
+  import('@/components/admin/schedule/modal/EditScheduleModal').then((m) => ({
+    default: m.EditScheduleModal,
+  })),
+);
+
+const EditSessionModal = dynamic(() =>
+  import('@/components/admin/schedule/modal/EditSessionModal').then((m) => ({
+    default: m.EditSessionModal,
+  })),
+);
 
 const FILTER_CHIPS: { key: ScheduleType; label: string }[] = [
   { key: 'EVENT', label: '일반 일정' },
@@ -193,21 +216,11 @@ function ScheduleOverviewContent() {
               />
 
               <div className="flex shrink-0 items-center justify-between gap-400">
-                <div className="relative w-[492px] shrink-0">
-                  <Icon
-                    src={SearchIcon}
-                    size={24}
-                    className="text-icon-alternative absolute top-1/2 left-400 -translate-y-1/2"
-                  />
-                  <input
-                    type="text"
-                    autoComplete="off"
-                    value={searchValue}
-                    onChange={(e) => setSearchValue(e.target.value)}
-                    placeholder="검색어를 입력하세요"
-                    className="bg-container-neutral typo-body1 placeholder:text-text-alternative h-12 w-full rounded-sm py-300 pr-300 pl-14 focus:outline-none"
-                  />
-                </div>
+                <AdminSearchInput
+                  value={searchValue}
+                  onValueChange={setSearchValue}
+                  className="w-[492px] shrink-0"
+                />
                 <Button
                   variant="primary"
                   size="lg"

@@ -1,20 +1,18 @@
 'use client';
 
 import { useState } from 'react';
-import Image from 'next/image';
+import dynamic from 'next/dynamic';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/card';
 import { Icon } from '@/components/ui/Icon';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { AdminCalendarEditIcon } from '@/assets/icons/admin';
-import { SearchIcon } from '@/assets/icons';
+import { AdminSearchInput } from '@/components/admin/AdminSearchInput';
 import { CardinalDropdown } from '@/components/admin';
 import { MonthNavigator } from '@/components/admin/schedule/general/MonthNavigator';
 import { ScheduleList } from '@/components/admin/schedule/general/ScheduleList';
-import { SessionTabContent } from '@/components/admin/schedule/session/SessionTabContent';
-import { CreateScheduleModal } from '@/components/admin/schedule/modal/CreateScheduleModal';
-import { EditScheduleModal } from '@/components/admin/schedule/modal/EditScheduleModal';
+import { ScheduleListSkeleton } from '@/components/admin/schedule/general/SchedulePageSkeleton';
 import { useClubId } from '@/stores';
 import { useCardinalSelector, useMonthNavigator } from '@/hooks';
 import { useSessionMutations } from '@/hooks/admin';
@@ -22,8 +20,25 @@ import {
   useAdminMonthlySchedules,
   useDeleteSchedule,
 } from '@/hooks/queries/admin/useAdminScheduleQueries';
-import { ScheduleListSkeleton } from '@/components/admin/schedule/general/SchedulePageSkeleton';
 import type { Schedule, ScheduleType } from '@/types/admin/schedule';
+
+const SessionTabContent = dynamic(() =>
+  import('@/components/admin/schedule/session/SessionTabContent').then((m) => ({
+    default: m.SessionTabContent,
+  })),
+);
+
+const CreateScheduleModal = dynamic(() =>
+  import('@/components/admin/schedule/modal/CreateScheduleModal').then((m) => ({
+    default: m.CreateScheduleModal,
+  })),
+);
+
+const EditScheduleModal = dynamic(() =>
+  import('@/components/admin/schedule/modal/EditScheduleModal').then((m) => ({
+    default: m.EditScheduleModal,
+  })),
+);
 
 type ScheduleTab = 'all' | 'session';
 
@@ -111,24 +126,11 @@ function SchedulePageContent() {
               onNext={handleNextMonth}
             />
             <div className="tablet:flex-row tablet:flex-wrap tablet:items-center tablet:justify-between flex flex-col gap-300">
-              <div className="tablet:w-123 relative w-full">
-                <Image
-                  src={SearchIcon}
-                  alt="검색"
-                  width={24}
-                  height={24}
-                  className="absolute top-1/2 left-400 -translate-y-1/2"
-                />
-                <input
-                  type="text"
-                  name=""
-                  autoComplete="off"
-                  value={searchValue}
-                  onChange={(e) => setSearchValue(e.target.value)}
-                  placeholder="Search for name"
-                  className="bg-container-neutral-alternative typo-body1 placeholder:text-text-alternative h-12 w-full rounded-sm py-300 pr-300 pl-14 focus:outline-none"
-                />
-              </div>
+              <AdminSearchInput
+                value={searchValue}
+                onValueChange={setSearchValue}
+                className="tablet:w-123 w-full"
+              />
               <Button
                 variant="primary"
                 size="lg"
