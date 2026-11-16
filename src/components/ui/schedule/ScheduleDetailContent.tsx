@@ -10,7 +10,7 @@ import {
   AvatarGroup,
   AvatarGroupCount,
 } from '@/components/ui/avatar';
-import { LABEL_CLASS } from '@/components/calendar/calendarScheduleDetailConstants';
+const LABEL_CLASS = 'typo-button2 text-text-alternative w-[56px] shrink-0';
 import { useScheduleDetailDerived } from '@/hooks/useScheduleDetailDerived';
 import { formatScheduleTimeRange } from '@/utils/shared/date';
 import TimeIcon from '@/assets/icons/time.svg';
@@ -56,14 +56,16 @@ function ScheduleDetailContent({
             )}
           </div>
         </div>
-        <button
-          type="button"
-          aria-label="닫기"
-          onClick={onClose}
-          className="hover:bg-container-neutral-interaction flex size-[40px] shrink-0 cursor-pointer items-center justify-center rounded-sm transition-colors"
-        >
-          <Icon src={DeleteIcon} size={28} className="text-icon-normal" />
-        </button>
+        {onClose && (
+          <button
+            type="button"
+            aria-label="닫기"
+            onClick={onClose}
+            className="hover:bg-container-neutral-interaction flex size-[40px] shrink-0 cursor-pointer items-center justify-center rounded-sm transition-colors"
+          >
+            <Icon src={DeleteIcon} size={28} className="text-icon-normal" />
+          </button>
+        )}
       </div>
 
       {/* Body */}

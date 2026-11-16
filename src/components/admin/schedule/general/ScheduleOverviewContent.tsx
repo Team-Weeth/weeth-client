@@ -84,8 +84,11 @@ function ScheduleOverviewContent() {
   }, [activeFilter]);
 
   const eventCount = schedules.filter((s) => s.type === 'EVENT').length;
-  const sessionCount = sessionGroups.length;
-  const chipCounts: Record<ScheduleType, number> = { EVENT: eventCount, SESSION: sessionCount };
+  const sessionGroupCount = sessionGroups.length;
+  const chipCounts: Record<ScheduleType, number> = {
+    EVENT: eventCount,
+    SESSION: sessionGroupCount,
+  };
 
   const query = searchValue.trim().toLowerCase();
   const eventFiltered = query

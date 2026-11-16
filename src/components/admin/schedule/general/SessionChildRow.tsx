@@ -58,6 +58,7 @@ function SessionChildRow({ session, isLast, onEdit }: SessionChildRowProps) {
       </div>
 
       {/* 출석 관리 */}
+      {/* TODO: 출석 관리 페이지 연결 필요 */}
       <div className="flex h-full max-w-[200px] min-w-[160px] flex-1 items-center py-[13px] pr-600 pl-400">
         <button
           type="button"
@@ -83,7 +84,12 @@ function SessionChildRow({ session, isLast, onEdit }: SessionChildRowProps) {
 
       {/* 수정 */}
       <div className="flex h-full w-[70px] shrink-0 items-center justify-center">
-        <button type="button" onClick={() => onEdit?.(session)} className="group cursor-pointer">
+        <button
+          type="button"
+          onClick={() => onEdit?.(session)}
+          aria-label="수정"
+          className="group cursor-pointer"
+        >
           <Icon
             src={EditIcon}
             size={20}

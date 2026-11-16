@@ -1,8 +1,9 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
 import { cn } from '@/lib/cn';
+import { DropdownMenu } from 'radix-ui';
 import { Button, buttonVariants } from '@/components/ui/Button';
 import { Icon } from '@/components/ui/Icon';
 import { AdminPageContainer } from '@/components/admin/AdminPageContainer';
@@ -47,20 +48,6 @@ function ScheduleManagementContent() {
   const [detailTarget, setDetailTarget] = useState<Schedule | null>(null);
   const [editTarget, setEditTarget] = useState<Schedule | null>(null);
   const [deleteConfirmTarget, setDeleteConfirmTarget] = useState<Schedule | null>(null);
-  const [isCreateDropdownOpen, setIsCreateDropdownOpen] = useState(false);
-  const createDropdownRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (!isCreateDropdownOpen) return;
-    const handleClickOutside = (e: MouseEvent) => {
-      if (!createDropdownRef.current?.contains(e.target as Node)) {
-        setIsCreateDropdownOpen(false);
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, [isCreateDropdownOpen]);
-
   const {
     data: schedules = [],
     isPending,
@@ -191,42 +178,42 @@ function ScheduleManagementContent() {
                   오늘
                 </button>
               </div>
-              <div ref={createDropdownRef} className="relative">
-                <Button
-                  variant="primary"
-                  size="md"
-                  onClick={() => setIsCreateDropdownOpen((v) => !v)}
-                >
-                  <Icon src={AdminPlusIcon} size={20} className="text-text-inverse mr-1" />
-                  일정 생성
-                </Button>
-                {isCreateDropdownOpen && (
-                  <div className="animate-in fade-in zoom-in-95 border-line bg-background absolute top-[calc(100%+8px)] right-0 z-20 flex flex-col items-start gap-200 rounded-lg border p-400 shadow-[0_10px_40px_0_rgba(0,0,0,0.40)] duration-150">
-                    <Button
-                      variant="secondary"
-                      size="lg"
-                      className="w-[186px]"
-                      onClick={() => {
-                        openCreateModal('EVENT');
-                        setIsCreateDropdownOpen(false);
-                      }}
-                    >
-                      일반 일정
-                    </Button>
-                    <Button
-                      variant="secondary"
-                      size="lg"
-                      className="w-[186px]"
-                      onClick={() => {
-                        openCreateModal('SESSION');
-                        setIsCreateDropdownOpen(false);
-                      }}
-                    >
-                      세션
-                    </Button>
-                  </div>
-                )}
-              </div>
+              <DropdownMenu.Root>
+                <DropdownMenu.Trigger asChild>
+                  <Button variant="primary" size="md">
+                    <Icon src={AdminPlusIcon} size={20} className="text-text-inverse mr-1" />
+                    일정 생성
+                  </Button>
+                </DropdownMenu.Trigger>
+                <DropdownMenu.Portal>
+                  <DropdownMenu.Content
+                    align="end"
+                    sideOffset={8}
+                    className="animate-in fade-in zoom-in-95 border-line bg-background z-20 flex flex-col items-start gap-200 rounded-lg border p-400 shadow-[0_10px_40px_0_rgba(0,0,0,0.40)] duration-150"
+                  >
+                    <DropdownMenu.Item asChild>
+                      <Button
+                        variant="secondary"
+                        size="lg"
+                        className="w-[186px]"
+                        onClick={() => openCreateModal('EVENT')}
+                      >
+                        일반 일정
+                      </Button>
+                    </DropdownMenu.Item>
+                    <DropdownMenu.Item asChild>
+                      <Button
+                        variant="secondary"
+                        size="lg"
+                        className="w-[186px]"
+                        onClick={() => openCreateModal('SESSION')}
+                      >
+                        세션
+                      </Button>
+                    </DropdownMenu.Item>
+                  </DropdownMenu.Content>
+                </DropdownMenu.Portal>
+              </DropdownMenu.Root>
             </div>
 
             <Link

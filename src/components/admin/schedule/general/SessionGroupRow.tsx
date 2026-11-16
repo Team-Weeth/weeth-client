@@ -141,6 +141,7 @@ function SessionGroupRow({ group, expanded, onToggle, onEdit }: SessionGroupRowP
         )}
       >
         {!repeating && (
+          // TODO: 출석 관리 페이지 연결 필요
           <button
             type="button"
             className={cn(
@@ -166,7 +167,12 @@ function SessionGroupRow({ group, expanded, onToggle, onEdit }: SessionGroupRowP
 
       {/* 수정 */}
       <div className={cn('flex w-[70px] shrink-0 items-center justify-center self-stretch', cellH)}>
-        <button type="button" onClick={() => onEdit?.(group)} className="group cursor-pointer">
+        <button
+          type="button"
+          onClick={() => onEdit?.(group)}
+          aria-label="수정"
+          className="group cursor-pointer"
+        >
           <Icon
             src={EditIcon}
             size={20}
