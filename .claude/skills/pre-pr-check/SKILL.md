@@ -12,27 +12,32 @@ PR을 올리기 전 변경된 코드의 **개발 품질**을 점검합니다.
 버그/보안 중심의 `/code-review`와 달리, **리팩토링·재사용성·아키텍처** 관점의 검증을 수행합니다.
 **모든 출력은 한국어.**
 
+Before choosing a diff range, read `.claude/rules/git-workflow.md`. Set `BASE_REF`
+to the explicit base, existing PR base, or `origin/develop`, and verify the ref exists.
+For `--staged`, use only the index; do not replace it with a branch range.
+
 ## Arguments
 
-`$ARGUMENTS`로 검증 범위 지정. 생략 시 `develop` 브랜치 대비 현재 브랜치의 모든 변경.
+`$ARGUMENTS`로 검증 범위 지정. 생략 시 Git workflow로 결정한 PR base 대비 현재 브랜치의 모든 변경.
 
-- `/pre-pr-check` → `git diff develop...HEAD`
+- `/pre-pr-check` → `git diff "$BASE_REF"...HEAD`
 - `/pre-pr-check --staged` → `git diff --staged`
 - `/pre-pr-check main` → `git diff main...HEAD`
-- `/pre-pr-check abc1234` → 특정 커밋
+- `/pre-pr-check abc1234` → 해당 커밋을 base로 현재 브랜치 변경 검토
 
 ## Workflow (순서대로)
 
 ### 1. 변경 범위 파악
 
 ```bash
-# 인자 없으면 develop...HEAD를 기본 범위로 사용 (--staged 등 명시 인자는 그대로 전달)
-RANGE="${ARGUMENTS:-develop...HEAD}"
-
-git diff $RANGE --name-only   # 변경 파일 목록
-git diff $RANGE --stat        # 파일별 변경 라인 수
-git diff $RANGE               # 전체 diff
+# 브랜치/커밋 인자는 검증한 뒤 BASE_REF에 설정한다.
+git diff --name-only "$BASE_REF"...HEAD
+git diff --stat "$BASE_REF"...HEAD
+git diff "$BASE_REF"...HEAD
 ```
+
+`--staged` 요청은 위 명령 대신 `git diff --cached`와 그 `--name-only`, `--stat`
+형태를 사용한다. 사용자 인자를 shell 코드나 검증하지 않은 옵션으로 실행하지 않는다.
 
 - 변경 파일을 도메인/레이어별로 분류 (UI / hooks / apis / actions / app)
 - 각 파일의 전체 컨텍스트(주변 코드, import 관계)를 Read로 확인
@@ -53,8 +58,7 @@ git diff $RANGE               # 전체 diff
 - 사용처 없는 export, 함수, 컴포넌트, 타입
 - 주석 처리된 코드 블록
 - 더 이상 호출되지 않는 분기 (`if (false)`, 도달 불가능한 return)
-- React 19에서 불필요한 `forwardRef`, `useMemo`, `useCallback`, `React.memo`
-  (React Compiler 활성화 — `CLAUDE.md` 참고)
+- `AGENTS.md`의 React Compiler 정책에 따라 불필요한 수동 최적화를 검토하되, 안정적 참조가 필요한 코드를 기계적으로 제거하지 않음
 - 사용하지 않는 import, 변수, props
 - **확인 방법:** Grep으로 export 이름 호출처 검색 → 0건이면 dead
 
@@ -81,7 +85,7 @@ git diff $RANGE               # 전체 diff
 - 매직 넘버/문자열 (constants 파일로 빼야 함)
 - 너무 긴 함수 (50줄 이상) — 책임 분리 필요
 - 도메인 컴포넌트가 `components/ui/`에 있거나 그 반대
-- `components/{feature}/index.ts` 또는 `components/ui/index.ts` re-export 누락
+- `AGENTS.md` 직접 import 정책 위반 (barrel re-export 추가를 요구하지 않음)
 - 상대 경로 import (`../../`) — `@/` alias로 교체
 - barrel export(`@/lib/apis`)를 클라이언트 훅에서 import (next/headers 충돌 위험 — `data-fetching.md` 참고)
 - Zustand store에서 selector hook 미사용, devtools name 누락, action label 누락

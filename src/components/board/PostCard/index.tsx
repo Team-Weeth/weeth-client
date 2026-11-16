@@ -1,50 +1,12 @@
-import { cn } from '@/lib/cn';
-import { ImageList } from '@/components/board/ImageList';
-import type { DisplayFile } from '@/types/board';
+import { PostCardRoot } from './PostCardRoot';
+import { PostCardHeader } from './PostCardHeader';
+import { PostCardImages, type PostCardImagesProps } from './PostCardImages';
 import { PostAuthorInfo } from './PostAuthorInfo';
 import { PostCardTitle } from './PostCardTitle';
 import { PostCardBody } from './PostCardBody';
 import { PostCardListContent } from './PostCardListContent';
 import { PostCardDetailContent } from './PostCardDetailContent';
 import { PostCardActions, type PostCardActionsProps } from './PostCardActions';
-
-function PostCardRoot({ className, children, ...props }: React.ComponentProps<'article'>) {
-  return (
-    <article
-      className={cn(
-        'bg-container-neutral flex flex-col items-start gap-400 self-stretch overflow-x-hidden rounded-(--radius-lg) px-450 py-400',
-        className,
-      )}
-      {...props}
-    >
-      {children}
-    </article>
-  );
-}
-
-function PostCardHeader({ className, children, ...props }: React.ComponentProps<'div'>) {
-  return (
-    <div className={cn('flex items-center justify-between self-stretch', className)} {...props}>
-      {children}
-    </div>
-  );
-}
-
-interface PostCardImagesProps {
-  className?: string;
-  files: DisplayFile[];
-  viewable?: boolean;
-  showThumbnails?: boolean;
-}
-
-function PostCardImages({ className, files, viewable, showThumbnails }: PostCardImagesProps) {
-  if (files.length === 0) return null;
-  return (
-    <div className={className}>
-      <ImageList files={files} viewable={viewable} showThumbnails={showThumbnails} />
-    </div>
-  );
-}
 
 const PostCard = {
   Root: PostCardRoot,

@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/Button';
 import { Divider } from '@/components/ui/Divider';
 import { Icon } from '@/components/ui/Icon';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { useMediaQuery } from '@/hooks/useMediaQuery';
+import { useIsMobile } from '@/hooks/useIsMobile';
 import { cn } from '@/lib/cn';
 import { MemberFilterChip } from './MemberFilterChip';
 
@@ -31,7 +31,7 @@ function MemberFilterDropdown<T extends string>({
   onApply,
   className,
 }: MemberFilterDropdownProps<T>) {
-  const isMobile = useMediaQuery('(max-width: 695.98px)');
+  const isMobile = useIsMobile();
   const [open, setOpen] = useState(false);
   const [draft, setDraft] = useState<T[]>(selected);
 

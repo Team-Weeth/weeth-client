@@ -48,3 +48,5 @@
 - **React Compiler 켜진 상태에서 수동 `useMemo`/`useCallback`은 노이즈** — 측정 없이 추가 금지. ([[../아키텍처/결정-기록/ADR-001-react-compiler]])
 - **`forwardRef` 사용 금지** — React 19에선 `ref`가 일반 prop. 발견 시 즉시 리팩터링.
 - **revert된 머지를 다시 통합하면 대량 충돌** — `Revert Merge`한 브랜치를 나중에 재머지하면 변경이 안 살아나고 `modify/delete` 충돌 폭발. 파일별로 잡지 말고 `revert의 revert`로 근본 원인부터 제거할 것. ([[git-revert된-머지-재통합-충돌]])
+- **react-joyride는 v3 — v2 예제를 그대로 쓰면 안 된다** — default export 없음, `callback`→`onEvent`, `styles.options`→`options`. ([[react-joyride-nextjs-투어]])
+- **포탈된 투어 UI는 `[data-admin]` 밖이다** — `AdminScopeBoundary`로 감싸야 어드민 타이포 스케일이 적용된다.

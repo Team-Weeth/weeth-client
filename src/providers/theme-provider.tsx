@@ -10,7 +10,11 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   const mode = useThemeStore((state) => state.mode);
   const hasHydrated = useThemeStore((state) => state.hasHydrated);
   const setDark = useThemeStore((state) => state.setDark);
-  const forceLight = pathname.startsWith('/landing');
+  // 랜딩과 미니게임(서비스 안 이벤트 페이지 포함)은 시안이 라이트 전용이라 사용자 테마와 관계없이 밝게 보여준다.
+  const forceLight =
+    pathname.startsWith('/landing') ||
+    pathname.startsWith('/play') ||
+    /^\/[^/]+\/event(?:\/|$)/.test(pathname);
 
   useEffect(() => {
     if (forceLight) {

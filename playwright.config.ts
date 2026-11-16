@@ -27,6 +27,7 @@ export default defineConfig({
     },
     {
       name: 'chromium',
+      testIgnore: /design\//,
       use: {
         ...devices['Desktop Chrome'],
         storageState: 'e2e/.auth/user.json',
@@ -35,9 +36,22 @@ export default defineConfig({
     },
     {
       name: 'mobile-chrome',
+      testIgnore: /design\//,
       use: {
         ...devices['Pixel 5'],
         storageState: 'e2e/.auth/user.json',
+      },
+      dependencies: ['setup'],
+    },
+    // Figma 대비 디자인 검증. 화면마다 Figma 프레임 크기로 뷰포트를 지정하므로 기기 프리셋을 쓰지 않는다.
+    // 실행: pnpm test:e2e:design [파일 경로]
+    {
+      name: 'design',
+      testMatch: /design\/.*\.spec\.ts/,
+      use: {
+        ...devices['Desktop Chrome'],
+        storageState: 'e2e/.auth/user.json',
+        contextOptions: { reducedMotion: 'reduce' },
       },
       dependencies: ['setup'],
     },

@@ -1,7 +1,7 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Icon } from '@/components/ui/Icon';
 import { Tag } from '@/components/ui/tag';
-import { useMediaQuery } from '@/hooks/useMediaQuery';
+import { useIsMobile } from '@/hooks/useIsMobile';
 import { cn } from '@/lib/cn';
 import type { MemberProfile } from '@/types/member';
 import { toPositionTagVariant } from '@/utils/member/memberMapper';
@@ -24,7 +24,7 @@ function MemberProfileCard({
 }: MemberProfileCardProps) {
   const router = useRouter();
   const { clubId } = useParams<{ clubId: string }>();
-  const isMobile = useMediaQuery('(max-width: 695.98px)');
+  const isMobile = useIsMobile();
   const sortedCardinals = [...member.cardinals].sort((a, b) => b - a);
   const [latestCardinal, ...hiddenCardinals] = sortedCardinals;
 

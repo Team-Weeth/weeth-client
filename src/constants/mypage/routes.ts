@@ -15,6 +15,7 @@ const MOBILE_HEADER_HIDDEN_MYPAGE_PATHS = [
   '/mypage/penalties',
   '/mypage/edit',
   '/mypage/settings/theme',
+  '/mypage/settings/feedback',
   '/mypage/profiles/add',
 ] as const;
 

@@ -47,7 +47,7 @@ Generate the component based on [template.md](template.md) structure.
 - No hardcoded values
 - Always expose `className`
 - Support `asChild` when using Radix UI
-- Add export to `src/components/ui/index.ts`
+- Use direct imports from the component file; follow `AGENTS.md` without adding runtime barrel exports
 - Figma designs are assumed desktop (1032px) baseline
 - Confirm with user if mobile/tablet responsiveness is not specified
 - Breakpoints: `mobile(360px)`, `tablet(696px)`, `desktop(1032px)`
@@ -62,5 +62,5 @@ Generate the component based on [template.md](template.md) structure.
 **Self-check:**
 - [ ] No hardcoded values
 - [ ] className exposed
-- [ ] Export added to index.ts
+- [ ] Consumers import directly from the owning file
 - [ ] Only design tokens used

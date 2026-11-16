@@ -6,7 +6,7 @@ import { cn } from '@/lib/cn';
 import { Icon } from './Icon';
 
 const baseStyles = cn(
-  'w-full bg-container-neutral text-text-normal typo-body2',
+  'w-full bg-container-neutral text-text-normal',
   'rounded-sm border border-transparent px-300 py-200',
   'placeholder:text-text-alternative',
   'focus:outline-none focus:border-brand-primary',
@@ -16,7 +16,7 @@ const baseStyles = cn(
 
 const wrapperStyles = cn(
   'flex w-full items-end gap-200',
-  'bg-container-neutral text-text-normal typo-body2',
+  'bg-container-neutral text-text-normal',
   'rounded-sm border border-transparent px-400 py-200',
   'focus-within:border-brand-primary',
   'transition-colors',
@@ -38,6 +38,9 @@ function Textarea({
   rows = 4,
   ...props
 }: TextareaProps) {
+  // typo-* 유틸리티끼리는 tailwind-merge가 병합하지 못하고 CSS 선언 순서로 결정되므로, 지정한 경우 기본값을 빼준다.
+  const hasTypo = className?.split(' ').some((c) => c.startsWith('typo-'));
+  const typoClass = hasTypo ? undefined : 'typo-body2';
   const innerRef = useRef<HTMLTextAreaElement>(null);
   const [internalValue, setInternalValue] = useState(() => String(props.defaultValue ?? ''));
 
@@ -57,6 +60,9 @@ function Textarea({
     if (!el || !autoGrow) return;
     el.style.height = 'auto';
     el.style.height = `${el.scrollHeight}px`;
+    // max-height에 막혀 더 자라지 못하면 넘친 내용을 스크롤로 볼 수 있게 한다.
+    const maxHeight = parseFloat(getComputedStyle(el).maxHeight);
+    el.style.overflowY = el.scrollHeight > maxHeight ? 'auto' : '';
   };
 
   // eslint-disable-next-line react-hooks/exhaustive-deps -- resizeToContent reads autoGrow and innerRef internally
@@ -95,6 +101,7 @@ function Textarea({
       <div
         className={cn(
           wrapperStyles,
+          typoClass,
           props.disabled && 'bg-container-neutral text-text-disabled cursor-not-allowed',
           wrapperClassName,
         )}
@@ -103,7 +110,8 @@ function Textarea({
           ref={setRef}
           className={cn(
             'block w-full resize-none bg-transparent p-0',
-            'text-text-normal typo-body2',
+            'text-text-normal',
+            typoClass,
             'placeholder:text-text-alternative',
             'focus:outline-none',
             'disabled:text-text-disabled disabled:cursor-not-allowed',
@@ -136,6 +144,7 @@ function Textarea({
       ref={setRef}
       className={cn(
         baseStyles,
+        typoClass,
         'block resize-none',
         autoGrow ? 'overflow-hidden' : 'scrollbar-custom overflow-y-auto',
         className,

@@ -4,7 +4,7 @@ import type { MouseEvent } from 'react';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Tag } from '@/components/ui/tag';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/Tooltip';
-import { useMediaQuery } from '@/hooks/useMediaQuery';
+import { useIsMobile } from '@/hooks/useIsMobile';
 
 interface MemberHiddenCardinalsBadgeProps {
   cardinals: number[];
@@ -15,7 +15,7 @@ function MemberHiddenCardinalsBadge({
   cardinals,
   onTriggerClick,
 }: MemberHiddenCardinalsBadgeProps) {
-  const isMobile = useMediaQuery('(max-width: 695.98px)');
+  const isMobile = useIsMobile();
   const label = cardinals.map((cardinal) => `${cardinal}기`).join(', ');
   const badge = (
     <Tag variant="end" className="rounded-[5px]">

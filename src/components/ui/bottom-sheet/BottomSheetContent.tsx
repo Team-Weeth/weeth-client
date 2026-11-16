@@ -91,7 +91,12 @@ function BottomSheetContent({
             </div>
 
             {(footer || showCancelButton) && (
-              <div className={cn('shrink-0 px-400 pt-300 pb-800', footerClassName)}>
+              <div
+                className={cn('shrink-0 px-400 pt-300', footerClassName)}
+                style={{
+                  paddingBottom: 'calc(var(--spacing-800) + var(--safe-area-inset-bottom))',
+                }}
+              >
                 {footer ??
                   (showCancelButton && (
                     <Button

@@ -5,7 +5,10 @@ import { updatePost as updatePostApi } from '@/lib/actions/board';
 import { BOARD_ACTION_ERRORS } from '@/constants/board/error';
 import { parseApiError } from '@/lib/error';
 import { resolveFilesPayload } from './resolveFilesPayload';
-import { isFileReferencedInContent } from '@/lib/board/getUnreferencedFiles';
+import {
+  isFileReferencedInContent,
+  isAttachmentNodeInContent,
+} from '@/lib/board/getUnreferencedFiles';
 import { useClubId } from '@/stores/useClubStore';
 import type { UploadFileItem } from '@/stores/usePostStore';
 import { usePostStore } from '@/stores/usePostStore';
@@ -65,7 +68,7 @@ function isKeptInPost(content: string) {
   return (file: UploadFileItem): boolean => {
     if (!file.uploaded) return false;
     if (file.isExisting && !file.wasInlined) return true;
-    return isFileReferencedInContent(file, content);
+    return isFileReferencedInContent(file, content) || isAttachmentNodeInContent(file, content);
   };
 }
 

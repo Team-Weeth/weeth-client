@@ -1,5 +1,8 @@
+import type { Metadata } from 'next';
 import { HubProfile } from '@/components/auth/hub/HubProfile';
 import { InviteCodeForm } from '@/components/auth/hub/InviteCodeForm';
+
+export const metadata: Metadata = { title: '동아리 가입' };
 
 export default function JoinClubPage() {
   return (

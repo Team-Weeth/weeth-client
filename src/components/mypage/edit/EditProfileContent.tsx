@@ -7,7 +7,6 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/Button';
-import { Icon } from '@/components/ui/Icon';
 import { useNavigationGuard } from '@/hooks/useNavigationGuard';
 import { useMyPageQueries } from '@/hooks/queries/mypage/useMyPageQueries';
 import { cn } from '@/lib/cn';
@@ -18,7 +17,7 @@ import { formatPhone } from '@/utils/shared';
 import { EditProfileSkeleton } from '@/components/mypage/skeleton';
 import { PersonalInfoFields } from './PersonalInfoFields';
 import { SchoolInfoFields } from './SchoolInfoFields';
-import BackIcon from '@/assets/icons/back.svg';
+import { MyPageBackButton } from '@/components/mypage/MyPageBackButton';
 
 const toFormString = (value: string | null | undefined) => value ?? '';
 
@@ -133,14 +132,8 @@ function EditProfileContent({ className, schools, majors, ...props }: EditProfil
         )}
         {...props}
       >
-        <div className="tablet:pt-0 flex items-center gap-1 pt-300">
-          <button
-            type="button"
-            onClick={() => router.back()}
-            className="flex cursor-pointer items-center justify-center p-1"
-          >
-            <Icon src={BackIcon} size={21} className="text-icon-normal p-1" />
-          </button>
+        <div className="tablet:pt-0 tablet:gap-1 flex items-center pt-300">
+          <MyPageBackButton onClick={() => router.back()} />
           <div className="flex flex-col gap-1">
             <h1 className="tablet:typo-h3 typo-sub1 text-text-normal">개인정보 수정</h1>
           </div>

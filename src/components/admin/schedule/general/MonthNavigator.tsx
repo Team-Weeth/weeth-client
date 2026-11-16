@@ -15,7 +15,7 @@ interface MonthNavigatorProps extends React.HTMLAttributes<HTMLDivElement> {
 
 function MonthNavigator({ className, year, month, onPrev, onNext, ...props }: MonthNavigatorProps) {
   return (
-    <div className={cn('flex items-center gap-200', className)} {...props}>
+    <div className={cn('flex items-center justify-center gap-400', className)} {...props}>
       <button
         type="button"
         onClick={onPrev}

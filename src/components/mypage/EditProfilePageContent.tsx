@@ -2,15 +2,14 @@
 
 import { useRef } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import BackIcon from '@/assets/icons/back.svg';
 import { Button } from '@/components/ui/Button';
-import { Icon } from '@/components/ui/Icon';
 import { useScrollToTopOnBlur } from '@/hooks/useScrollToTopOnBlur';
 import { useEditProfileActions, useEditProfileForm } from '@/hooks/mypage';
 import { useMyProfileDetailQuery } from '@/hooks/queries/mypage/useMyPageQueries';
 import { DeleteProfileDialog } from './DeleteProfileDialog';
 import { EditProfileFormContent } from './EditProfileFormContent';
 import { ProfileManagementSkeleton } from './skeleton/ProfileManagementSkeleton';
+import { MyPageBackButton } from '@/components/mypage/MyPageBackButton';
 
 function EditProfilePageContent() {
   const router = useRouter();
@@ -61,14 +60,8 @@ function EditProfilePageContent() {
         ref={formContainerRef}
         className="tablet:hidden flex min-w-0 flex-1 flex-col gap-4 pb-[196px]"
       >
-        <div className="flex items-center gap-1 py-300">
-          <button
-            type="button"
-            onClick={handleClose}
-            className="flex items-center justify-center p-1"
-          >
-            <Icon src={BackIcon} size={21} className="text-icon-normal p-1" />
-          </button>
+        <div className="tablet:gap-1 flex items-center py-300">
+          <MyPageBackButton onClick={handleClose} />
           <h1 className="typo-sub1 text-text-normal">프로필 수정</h1>
         </div>
 

@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 
 import { AttendanceQRContent } from '@/components/attendance/AttendanceQRContent';
@@ -7,6 +8,8 @@ interface AttendanceQRPageProps {
   params: Promise<{ clubId: string }>;
   searchParams: Promise<{ sessionId?: string }>;
 }
+
+export const metadata: Metadata = { title: 'QR 출석' };
 
 export default async function AttendanceQRPage({ params, searchParams }: AttendanceQRPageProps) {
   const { clubId } = await params;

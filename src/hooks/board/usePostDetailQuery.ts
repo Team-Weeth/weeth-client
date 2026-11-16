@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { boardApi } from '@/lib/apis/board';
 import { useClubId } from '@/stores/useClubStore';
@@ -6,11 +7,13 @@ import type { PostDetail } from '@/types/board';
 
 export function usePostDetailQuery(boardId: number, postId: number, initialData?: PostDetail) {
   const clubId = useClubId();
+  const [mountedAt] = useState(Date.now);
 
   return useQuery({
     queryKey: ['posts', 'detail', clubId, boardId, postId],
     queryFn: () => boardApi.getPostById(clubId!, boardId, postId).then((res) => res.data.data),
     initialData,
+    initialDataUpdatedAt: initialData ? mountedAt : undefined,
     enabled: !!clubId,
     staleTime: BOARD_STALE_TIME,
     gcTime: BOARD_GC_TIME,

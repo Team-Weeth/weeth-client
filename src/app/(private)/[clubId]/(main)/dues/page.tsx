@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import { DuesContent } from '@/components/dues/DuesContent';
 import { ApiError, apiServer } from '@/lib/apis/server';
 import type { ApiResponse } from '@/types/common';
@@ -6,6 +7,8 @@ import type { DuesVisibilityResponse } from '@/types/dues';
 interface DuesPageProps {
   params: Promise<{ clubId: string }>;
 }
+
+export const metadata: Metadata = { title: '회비' };
 
 export default async function DuesPage({ params }: DuesPageProps) {
   const { clubId } = await params;

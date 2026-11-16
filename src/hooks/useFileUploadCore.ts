@@ -84,7 +84,8 @@ export function useFileUploadCore({
           if (!res.ok) throw new Error(`Upload failed (${res.status})`);
 
           if (isAlive(id)) {
-            markUploaded(id, presigned.storageKey, presigned.putUrl.split('?')[0]);
+            const fileUrl = presigned.putUrl.split('?')[0];
+            markUploaded(id, presigned.storageKey, fileUrl);
           }
         } finally {
           uploadAbortMap.current.delete(id);

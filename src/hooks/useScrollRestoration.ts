@@ -18,24 +18,37 @@ const useIsomorphicLayoutEffect = typeof window !== 'undefined' ? useLayoutEffec
 function useScrollRestoration(key: string | null, ready: boolean) {
   const [pendingTarget, setPendingTarget] = useState<number | null>(null);
 
+  const [initialSaved] = useState<number | null>(() => {
+    if (typeof window === 'undefined' || !key) return null;
+    try {
+      const saved = sessionStorage.getItem(`scroll:${key}`);
+      if (!saved) return null;
+      const top = parseInt(saved, 10);
+      return top > 0 ? top : null;
+    } catch {
+      return null;
+    }
+  });
+
   // 복원: ready가 true로 바뀌는 시점에 저장된 위치를 pendingTarget으로 설정
   useIsomorphicLayoutEffect(() => {
-    if (!ready || !key) return;
-    const saved = sessionStorage.getItem(`scroll:${key}`);
-    if (!saved) return;
-    const top = parseInt(saved, 10);
-    if (top > 0) setPendingTarget(top);
-  }, [ready, key]);
+    if (!ready || initialSaved === null) return;
+    setPendingTarget(initialSaved);
+  }, [ready, initialSaved]);
 
   // 저장: 언마운트 시 현재 스크롤 위치 기록
-  useEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     if (!key) return;
     return () => {
       const top = window.scrollY;
-      if (top > 0) {
-        sessionStorage.setItem(`scroll:${key}`, String(top));
-      } else {
-        sessionStorage.removeItem(`scroll:${key}`);
+      try {
+        if (top > 0) {
+          sessionStorage.setItem(`scroll:${key}`, String(top));
+        } else {
+          sessionStorage.removeItem(`scroll:${key}`);
+        }
+      } catch {
+        // storage access blocked — skip silently
       }
     };
   }, [key]);

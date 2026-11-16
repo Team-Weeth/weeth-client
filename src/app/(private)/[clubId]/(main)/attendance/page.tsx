@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import { AttendanceContent } from '@/components/attendance/AttendanceContent';
 import { attendanceServerApi } from '@/lib/apis/attendance.server';
 import type { AttendanceData } from '@/types/attendance';
@@ -6,6 +7,8 @@ interface AttendancePageProps {
   params: Promise<{ clubId: string }>;
   searchParams: Promise<{ sessionId?: string; code?: string }>;
 }
+
+export const metadata: Metadata = { title: '출석' };
 
 export default async function AttendancePage({ params, searchParams }: AttendancePageProps) {
   const { clubId } = await params;

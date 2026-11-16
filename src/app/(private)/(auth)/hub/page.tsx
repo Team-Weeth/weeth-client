@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import { unstable_rethrow } from 'next/navigation';
 import { HubActionCard } from '@/components/auth/hub/HubActionCard';
 import { HubProfile } from '@/components/auth/hub/HubProfile';
@@ -13,6 +14,8 @@ interface MembershipStatusResponse {
     hasWaitingClub: boolean;
   };
 }
+
+export const metadata: Metadata = { title: '허브' };
 
 export default async function HubPage({
   searchParams,

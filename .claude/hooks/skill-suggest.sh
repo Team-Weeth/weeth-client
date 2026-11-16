@@ -26,6 +26,11 @@ if echo "$prompt" | grep -qE "figma|피그마|디자인|컴포넌트 변환|ui �
   suggestions+=("  → /figma-to-component   Figma → React 컴포넌트 변환")
 fi
 
+# /figma-verify
+if echo "$prompt" | grep -qE "디자인 차이|디자인 검증|피그마랑|figma랑|피그마와|figma와|ui 검증|화면 검증|대조"; then
+  suggestions+=("  → /figma-verify   Figma 대비 구현 화면 수치 검증")
+fi
+
 # /pr-writer
 if echo "$prompt" | grep -qE "pr 작성|pr 내용|풀리퀘 설명|pr description|pr body"; then
   suggestions+=("  → /pr-writer     PR 본문 자동 작성")
@@ -39,6 +44,11 @@ fi
 # /vercel-composition-patterns
 if echo "$prompt" | grep -qE "컴포넌트 설계|합성|composition|compound|render prop|리팩토링|props 정리|boolean prop"; then
   suggestions+=("  → /vercel-composition-patterns   컴포넌트 합성 패턴 (React 19)")
+fi
+
+# /feature-tour
+if echo "$prompt" | grep -qE "투어|온보딩|코치마크|스포트라이트|기능 소개|기능 안내|신규 기능|joyride|coachmark|product tour|워크스루"; then
+  suggestions+=("  → /feature-tour   기능 스포트라이트 투어(코치마크) 추가")
 fi
 
 

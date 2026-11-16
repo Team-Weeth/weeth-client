@@ -40,13 +40,13 @@ export default function HomePage() { ... }
 ```ts
 // Good
 import { cn } from '@/lib/cn';
-import { Button } from '@/components/ui';
+import { Button } from '@/components/ui/Button';
 
 // Bad
 import { cn } from '../../lib/cn';
 ```
 
-### Import Order (auto-sorted by Prettier)
+### Import Order (maintain manually; current Prettier config does not sort imports)
 1. React, Next.js
 2. External libraries
 3. Internal modules (`@/`)

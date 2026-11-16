@@ -23,8 +23,6 @@ export function UserProfileHeader() {
         <Avatar type="round">
           <AvatarImage
             key={userInfo?.profileImageUrl ?? 'fallback'}
-            width={64}
-            height={64}
             alt="프로필"
             src={userInfo?.profileImageUrl ?? undefined}
           />
