@@ -297,7 +297,6 @@ function ScheduleManagementContent() {
           onOpenChange={setCreateModalOpen}
           cardinalNumber={activeCardinal?.cardinalNumber ?? latestCardinal?.cardinalNumber ?? null}
           activeTab={createModalTab}
-          onActiveTabChange={setCreateModalTab}
           onCreateSession={(body) => submitCreate(body)}
         />
 

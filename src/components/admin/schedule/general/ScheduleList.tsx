@@ -12,7 +12,7 @@ function ScheduleList({ className, schedules, onEdit, onDelete, ...props }: Sche
   return (
     <div
       className={cn(
-        'border-line bg-container-neutral flex flex-col overflow-hidden rounded-sm border',
+        'border-line bg-container-neutral flex flex-col overflow-clip rounded-sm border',
         className,
       )}
       {...props}
@@ -21,9 +21,9 @@ function ScheduleList({ className, schedules, onEdit, onDelete, ...props }: Sche
         <span className="typo-sub3 text-text-alternative">일정 내용</span>
       </div>
 
-      <div className="min-h-0 flex-1 overflow-y-auto">
+      <div className={cn(schedules.length > 0 && 'min-h-0 flex-1 overflow-y-auto')}>
         {schedules.length === 0 ? (
-          <div className="flex h-[188px] items-center justify-center py-800">
+          <div className="flex h-[188px] items-center justify-center">
             <p className="typo-sub1 text-text-alternative text-center">아직 등록된 일정이 없어요</p>
           </div>
         ) : (

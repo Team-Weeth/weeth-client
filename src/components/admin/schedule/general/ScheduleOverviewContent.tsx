@@ -9,6 +9,7 @@ import { AdminPageContainer } from '@/components/admin/AdminPageContainer';
 import { MonthNavigator } from '@/components/admin/schedule/general/MonthNavigator';
 import { ScheduleList } from '@/components/admin/schedule/general/ScheduleList';
 import { ScheduleListSkeleton } from '@/components/admin/schedule/general/SchedulePageSkeleton';
+import { SessionScheduleList } from '@/components/admin/schedule/general/SessionScheduleList';
 import { CreateScheduleModal } from '@/components/admin/schedule/modal/CreateScheduleModal';
 import { EditScheduleModal } from '@/components/admin/schedule/modal/EditScheduleModal';
 import AdminBackIcon from '@/assets/icons/admin/ic_admin_back.svg';
@@ -20,6 +21,7 @@ import { useCardinalSelector } from '@/hooks/useCardinalSelector';
 import { useSessionMutations } from '@/hooks/admin/useSessionMutations';
 import {
   useAdminMonthlySchedules,
+  useAdminMonthlySessionList,
   useDeleteSchedule,
 } from '@/hooks/queries/admin/useAdminScheduleQueries';
 import type { Schedule, ScheduleType } from '@/types/admin/schedule';
@@ -52,11 +54,18 @@ function ScheduleOverviewContent() {
   const [createModalTab, setCreateModalTab] = useState<ScheduleType>('EVENT');
   const [editTarget, setEditTarget] = useState<Schedule | null>(null);
 
-  const { data: schedules = [], isLoading } = useAdminMonthlySchedules(
+  const { data: schedules = [], isLoading: isEventLoading } = useAdminMonthlySchedules(
     currentYear,
     currentMonth,
     activeCardinal?.cardinalNumber,
   );
+  const { data: sessionData, isLoading: isSessionLoading } = useAdminMonthlySessionList(
+    currentYear,
+    currentMonth,
+    activeCardinal?.cardinalNumber,
+  );
+  const sessionGroups = sessionData?.sessions ?? [];
+
   const { mutate: deleteSchedule } = useDeleteSchedule();
   const { submitCreate, forceConfirmDialog } = useSessionMutations();
 
@@ -69,19 +78,19 @@ function ScheduleOverviewContent() {
   }, [activeFilter]);
 
   const eventCount = schedules.filter((s) => s.type === 'EVENT').length;
-  const sessionCount = schedules.filter((s) => s.type === 'SESSION').length;
+  const sessionCount = sessionGroups.length;
   const chipCounts: Record<ScheduleType, number> = { EVENT: eventCount, SESSION: sessionCount };
 
-  const typeFiltered = schedules.filter((s) => s.type === activeFilter);
-
   const query = searchValue.trim().toLowerCase();
-  const filtered = query
-    ? typeFiltered.filter(
-        (s) => s.title.toLowerCase().includes(query) || s.location.toLowerCase().includes(query),
-      )
-    : typeFiltered;
+  const eventFiltered = query
+    ? schedules
+        .filter((s) => s.type === 'EVENT')
+        .filter(
+          (s) => s.title.toLowerCase().includes(query) || s.location.toLowerCase().includes(query),
+        )
+    : schedules.filter((s) => s.type === 'EVENT');
 
-  const sortedSchedules = [...filtered].sort(
+  const sortedSchedules = [...eventFiltered].sort(
     (a, b) => new Date(a.start).getTime() - new Date(b.start).getTime(),
   );
 
@@ -97,8 +106,8 @@ function ScheduleOverviewContent() {
   };
 
   return (
-    <AdminPageContainer>
-      <div className="flex flex-col">
+    <AdminPageContainer className="h-full">
+      <div className="flex min-h-0 flex-1 flex-col">
         {/* Header */}
         <div className="flex shrink-0 flex-col items-start gap-300 p-700">
           <Button variant="secondary" size="icon-md" onClick={() => router.back()}>
@@ -108,7 +117,7 @@ function ScheduleOverviewContent() {
         </div>
 
         {/* Content */}
-        <div className="flex flex-col gap-[22px] px-500 pb-[26px]">
+        <div className="flex min-h-0 flex-1 flex-col gap-[22px] px-500 pb-[26px]">
           {/* Filter chips */}
           <div className="bg-background relative flex h-12 w-fit shrink-0 items-center gap-[5px] overflow-hidden rounded-md px-[6px]">
             {/* Sliding indicator */}
@@ -144,10 +153,10 @@ function ScheduleOverviewContent() {
           </div>
 
           {/* Below chips: optional SESSION banner + main content card */}
-          <div className="flex flex-col gap-300">
+          <div className="flex min-h-0 flex-1 flex-col gap-300">
             {activeFilter === 'SESSION' && (
               <div className="bg-background flex shrink-0 items-center gap-200 rounded-md px-300 py-400">
-                <Icon src={InfoCircleIcon} size={20} className="text-icon-normal shrink-0" />
+                <Icon src={InfoCircleIcon} size={20} className="text-icon-alternative shrink-0" />
                 <p className="typo-body2 text-text-normal">
                   세션은 출석을 진행할 동아리의 공식적인 모임을 관리합니다. 생성된 세션은 출석
                   관리에 자동으로 연결되며, 출석 내역 확인 및 수정은 출석 관리 탭에서 진행해주세요.
@@ -156,7 +165,7 @@ function ScheduleOverviewContent() {
             )}
 
             {/* Main content card */}
-            <div className="bg-background flex flex-col gap-700 rounded-lg p-600">
+            <div className="bg-background flex min-h-0 flex-col gap-700 overflow-hidden rounded-lg p-600">
               <MonthNavigator
                 year={currentYear}
                 month={currentMonth}
@@ -192,10 +201,21 @@ function ScheduleOverviewContent() {
                 </Button>
               </div>
 
-              {isLoading ? (
+              {activeFilter === 'SESSION' ? (
+                isSessionLoading ? (
+                  <ScheduleListSkeleton />
+                ) : (
+                  <SessionScheduleList
+                    className={sessionGroups.length > 0 ? 'min-h-0 flex-1' : undefined}
+                    sessions={sessionGroups}
+                    searchValue={searchValue}
+                  />
+                )
+              ) : isEventLoading ? (
                 <ScheduleListSkeleton />
               ) : (
                 <ScheduleList
+                  className={sortedSchedules.length > 0 ? 'min-h-0 flex-1' : undefined}
                   schedules={sortedSchedules}
                   onEdit={setEditTarget}
                   onDelete={handleDelete}
@@ -211,7 +231,6 @@ function ScheduleOverviewContent() {
         onOpenChange={setCreateModalOpen}
         cardinalNumber={activeCardinal?.cardinalNumber ?? latestCardinal?.cardinalNumber ?? null}
         activeTab={createModalTab}
-        onActiveTabChange={setCreateModalTab}
         onCreateSession={(body) => submitCreate(body)}
       />
 
