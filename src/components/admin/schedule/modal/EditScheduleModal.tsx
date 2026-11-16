@@ -68,16 +68,11 @@ function EditScheduleModal({ open, onOpenChange, schedule, onDelete }: EditSched
 function EditScheduleModalLoading({ onClose }: { onClose: () => void }) {
   return (
     <>
-      <div className="tablet:px-700 tablet:pt-700 flex items-start justify-between px-400 pt-400">
-        <div className="flex h-8 items-end">
-          <span className="typo-button2 text-text-strong border-brand-primary border-b-2 px-100 pb-200">
-            일반 일정
-          </span>
-        </div>
+      <div className="bg-background flex h-[96px] shrink-0 items-center justify-between pr-[10px] pl-700">
+        <h2 className="typo-h3 text-text-normal m-0">일반 일정 수정</h2>
         <ModalIconButton icon={AdminCloseIcon} label="닫기" onClick={onClose} />
       </div>
       <div className="scrollbar-none tablet:px-700 min-h-0 flex-1 touch-pan-y overflow-y-auto px-400">
-        <Skeleton className="mt-400 mb-200 h-8 w-36" />
         <div className="flex flex-col gap-400 py-400">
           <ModalFieldSkeleton />
           <ModalFieldSkeleton inputHeight="h-[88px]" />
@@ -191,23 +186,29 @@ function EditScheduleModalContent({
 
   return (
     <>
-      <div className="tablet:px-700 tablet:pt-700 flex items-start justify-between px-400 pt-400">
-        <div className="flex h-8 items-end">
-          <span className="typo-button2 text-text-strong border-brand-primary border-b-2 px-100 pb-200">
-            일반 일정
-          </span>
-        </div>
+      <div className="bg-background flex h-[96px] shrink-0 items-center justify-between pr-[10px] pl-700">
+        <h2 className="typo-h3 text-text-normal m-0">일반 일정 수정</h2>
         <div className="flex items-center gap-200">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <ModalIconButton icon={AdminMeatballIcon} label="메뉴" />
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem destructive onSelect={() => setDeleteConfirmOpen(true)}>
-                일반 일정 삭제
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <CustomAlertDialog
+            open={deleteConfirmOpen}
+            onOpenChange={setDeleteConfirmOpen}
+            title="이 일정을 삭제하시겠어요?"
+            description={'삭제된 일정은 복구할 수 없습니다.\n신중히 확인 후 진행해 주세요.'}
+            actionLabel="삭제"
+            onAction={handleDeleteConfirm}
+            placement="below-right"
+          >
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <ModalIconButton icon={AdminMeatballIcon} label="메뉴" />
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem destructive onSelect={() => setDeleteConfirmOpen(true)}>
+                  일반 일정 삭제
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </CustomAlertDialog>
 
           <DiscardConfirmArea
             open={discardSource === 'close'}
@@ -225,7 +226,6 @@ function EditScheduleModalContent({
       </div>
 
       <div className="scrollbar-none tablet:px-700 min-h-0 flex-1 touch-pan-y overflow-y-auto overscroll-contain px-400 [-webkit-overflow-scrolling:touch]">
-        <h2 className="typo-h3 text-text-normal py-400">일반 일정 수정</h2>
         <ScheduleFormBody
           form={form}
           onFormChange={updateForm}
@@ -254,16 +254,6 @@ function EditScheduleModalContent({
           저장
         </Button>
       </div>
-
-      <CustomAlertDialog
-        open={deleteConfirmOpen}
-        onOpenChange={setDeleteConfirmOpen}
-        title="이 일정을 삭제하시겠어요?"
-        description={'삭제된 일정은 복구할 수 없습니다.\n신중히 확인 후 진행해 주세요.'}
-        actionLabel="삭제"
-        onAction={handleDeleteConfirm}
-        placement="center"
-      />
     </>
   );
 }
