@@ -1,5 +1,6 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
 import { cn } from '@/lib/cn';
 import { Icon } from '@/components/ui/Icon';
 import { SessionStatusTag } from '@/components/admin/schedule/session/SessionStatusTag';
@@ -12,6 +13,7 @@ import {
   formatTimeRange,
   isRepeating,
 } from '@/utils/admin/sessionScheduleListUtils';
+import { useClubId } from '@/stores';
 import type { AdminSessionGroup } from '@/types/admin/session';
 
 function ProgressBar({ completed, total }: { completed: number; total: number }) {
@@ -34,6 +36,8 @@ interface SessionGroupRowProps {
 }
 
 function SessionGroupRow({ group, expanded, onToggle, onEdit }: SessionGroupRowProps) {
+  const router = useRouter();
+  const clubId = useClubId();
   const repeating = isRepeating(group);
   const firstSession = group.sessions[0];
   const derivedStatus = deriveSessionStatus(
@@ -141,9 +145,10 @@ function SessionGroupRow({ group, expanded, onToggle, onEdit }: SessionGroupRowP
         )}
       >
         {!repeating && (
-          // TODO: 출석 관리 페이지 연결 필요
+          // TODO: 연결된 세션의 출석 관리 탭으로 바로 이동하도록 수정 필요 (예: /${clubId}/admin/attendance?sessionId=${group.sessions[0]?.id})
           <button
             type="button"
+            onClick={() => router.push(`/${clubId}/admin/attendance`)}
             className={cn(
               'typo-sub3 group flex cursor-pointer items-center gap-100',
               isOpen

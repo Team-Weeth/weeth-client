@@ -1,5 +1,6 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
 import { cn } from '@/lib/cn';
 import { Icon } from '@/components/ui/Icon';
 import { SessionStatusTag } from '@/components/admin/schedule/session/SessionStatusTag';
@@ -8,6 +9,7 @@ import SubdirectoryArrowRightIcon from '@/assets/icons/admin/ic_subdirectory_arr
 import SmArrowRightIcon from '@/assets/icons/admin/ic_admin_sm_arrow_right.svg';
 import { deriveChildSessionStatus } from '@/utils/admin/sessionUtils';
 import { formatSessionDate, formatTimeRange } from '@/utils/admin/sessionScheduleListUtils';
+import { useClubId } from '@/stores';
 import type { AdminSession } from '@/types/admin/session';
 
 interface SessionChildRowProps {
@@ -17,6 +19,8 @@ interface SessionChildRowProps {
 }
 
 function SessionChildRow({ session, isLast, onEdit }: SessionChildRowProps) {
+  const router = useRouter();
+  const clubId = useClubId();
   const derivedStatus = deriveChildSessionStatus(session.status, session.start);
   const isOpen = derivedStatus === 'OPEN';
 
@@ -58,10 +62,11 @@ function SessionChildRow({ session, isLast, onEdit }: SessionChildRowProps) {
       </div>
 
       {/* 출석 관리 */}
-      {/* TODO: 출석 관리 페이지 연결 필요 */}
+      {/* TODO: 연결된 세션의 출석 관리 탭으로 바로 이동하도록 수정 필요 (예: /${clubId}/admin/attendance?sessionId=${session.id}) */}
       <div className="flex h-full max-w-[200px] min-w-[160px] flex-1 items-center py-[13px] pr-600 pl-400">
         <button
           type="button"
+          onClick={() => router.push(`/${clubId}/admin/attendance`)}
           className={cn(
             'typo-sub3 group flex cursor-pointer items-center gap-100',
             isOpen
