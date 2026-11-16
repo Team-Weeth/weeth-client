@@ -39,7 +39,6 @@ function AdminScheduleDetailModal({
       <AlertDialogPortal>
         <AlertDialogOverlay onClick={handleClose} />
         <AlertDialogPrimitive.Content
-          aria-label={attendeeListOpen ? '참석자 목록' : detail.title}
           className={cn(
             'bg-background border-line border',
             'data-[state=open]:animate-in data-[state=closed]:animate-out',
@@ -51,6 +50,9 @@ function AdminScheduleDetailModal({
             '[box-shadow:var(--shadow-dialog)]',
           )}
         >
+          <AlertDialogPrimitive.Title className="sr-only">
+            {attendeeListOpen ? '참석자 목록' : detail.title}
+          </AlertDialogPrimitive.Title>
           {attendeeListOpen ? (
             <CalendarAttendeeListContent
               attendees={detail.attendees ?? []}
