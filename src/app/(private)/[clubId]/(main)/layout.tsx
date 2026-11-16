@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 
+import { TourMount } from '@/components/tour/TourMount';
 import { getClubFeatures } from '@/flags/club-features/server';
 import { homeServerApi } from '@/lib/apis/home.server';
 import { ClubFeatureProvider } from '@/providers/club-feature-provider';
@@ -34,6 +35,7 @@ export default async function MainLayout({
           {children}
         </div>
         <FeedbackFab />
+        <TourMount clubId={clubId} scope="main" features={features} />
       </ClubFeatureProvider>
     </UserHydrator>
   );

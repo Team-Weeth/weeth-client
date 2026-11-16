@@ -60,6 +60,8 @@ For example, add `equipmentEnabled: 'club_equipment_enabled'` to the key map and
 
 Club targeting belongs in Flagsmith segments, not hardcoded club ID lists. For an entirely new management page, gate both its navigation entry and direct route access. Backend authorization must independently enforce access to its APIs.
 
+If the new feature should be introduced with a product tour, the tour's `requiresFeature` reuses this same flag's key — never create a tour-only flag. See `.claude/rules/tour.md`.
+
 ## Existing and New Versions
 
 For small differences, branch inside the existing component. When structure or behavior differs substantially, keep separate versions in the feature folder and choose between them at a shared entry point:
