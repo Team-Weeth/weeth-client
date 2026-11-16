@@ -12,6 +12,7 @@ import { ScheduleListSkeleton } from '@/components/admin/schedule/general/Schedu
 import { SessionScheduleList } from '@/components/admin/schedule/general/SessionScheduleList';
 import { CreateScheduleModal } from '@/components/admin/schedule/modal/CreateScheduleModal';
 import { EditScheduleModal } from '@/components/admin/schedule/modal/EditScheduleModal';
+import { EditSessionModal } from '@/components/admin/schedule/modal/EditSessionModal';
 import AdminBackIcon from '@/assets/icons/admin/ic_admin_back.svg';
 import SearchIcon from '@/assets/icons/search.svg';
 import AdminPlusIcon from '@/assets/icons/admin/ic_admin_plus.svg';
@@ -25,6 +26,7 @@ import {
   useDeleteSchedule,
 } from '@/hooks/queries/admin/useAdminScheduleQueries';
 import type { Schedule, ScheduleType } from '@/types/admin/schedule';
+import type { AdminSession, AdminSessionGroup } from '@/types/admin/session';
 
 const FILTER_CHIPS: { key: ScheduleType; label: string }[] = [
   { key: 'EVENT', label: '일반 일정' },
@@ -53,6 +55,10 @@ function ScheduleOverviewContent() {
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [createModalTab, setCreateModalTab] = useState<ScheduleType>('EVENT');
   const [editTarget, setEditTarget] = useState<Schedule | null>(null);
+  const [editSessionTarget, setEditSessionTarget] = useState<{
+    target: AdminSession | AdminSessionGroup;
+    parentGroup?: AdminSessionGroup;
+  } | null>(null);
 
   const { data: schedules = [], isLoading: isEventLoading } = useAdminMonthlySchedules(
     currentYear,
@@ -100,6 +106,15 @@ function ScheduleOverviewContent() {
     });
   };
 
+  const handleEditGroup = (group: AdminSessionGroup) => {
+    setEditSessionTarget({ target: group });
+  };
+
+  const handleEditSession = (session: AdminSession) => {
+    const parentGroup = sessionGroups.find((g) => g.sessions.some((s) => s.id === session.id));
+    setEditSessionTarget({ target: session, parentGroup });
+  };
+
   const openCreateModal = (tab: ScheduleType) => {
     setCreateModalTab(tab);
     setCreateModalOpen(true);
@@ -117,7 +132,7 @@ function ScheduleOverviewContent() {
         </div>
 
         {/* Content */}
-        <div className="flex min-h-0 flex-1 flex-col gap-[22px] px-500 pb-[26px]">
+        <div className="flex min-h-0 flex-1 flex-col gap-[22px] px-700 pb-[26px]">
           {/* Filter chips */}
           <div className="bg-background relative flex h-12 w-fit shrink-0 items-center gap-[5px] overflow-hidden rounded-md px-[6px]">
             {/* Sliding indicator */}
@@ -209,6 +224,8 @@ function ScheduleOverviewContent() {
                     className={sessionGroups.length > 0 ? 'min-h-0 flex-1' : undefined}
                     sessions={sessionGroups}
                     searchValue={searchValue}
+                    onEditGroup={handleEditGroup}
+                    onEditSession={handleEditSession}
                   />
                 )
               ) : isEventLoading ? (
@@ -245,6 +262,23 @@ function ScheduleOverviewContent() {
           onDelete={handleDelete}
         />
       )}
+
+      {editSessionTarget !== null &&
+        (() => {
+          const t = editSessionTarget.target;
+          const key = 'sessions' in t ? (t.sessions[0]?.id ?? t.groupId) : t.id;
+          return (
+            <EditSessionModal
+              key={key}
+              open
+              onOpenChange={(open) => {
+                if (!open) setEditSessionTarget(null);
+              }}
+              target={t}
+              parentGroup={editSessionTarget.parentGroup}
+            />
+          );
+        })()}
 
       {forceConfirmDialog}
     </AdminPageContainer>
