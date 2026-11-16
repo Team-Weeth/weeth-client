@@ -14,6 +14,7 @@ import { EditScheduleModal } from '@/components/admin/schedule/modal/EditSchedul
 import AdminBackIcon from '@/assets/icons/admin/ic_admin_back.svg';
 import SearchIcon from '@/assets/icons/search.svg';
 import AdminPlusIcon from '@/assets/icons/admin/ic_admin_plus.svg';
+import InfoCircleIcon from '@/assets/icons/info_circle.svg';
 import { useMonthNavigator } from '@/hooks/useMonthNavigator';
 import { useCardinalSelector } from '@/hooks/useCardinalSelector';
 import { useSessionMutations } from '@/hooks/admin/useSessionMutations';
@@ -99,7 +100,7 @@ function ScheduleOverviewContent() {
     <AdminPageContainer>
       <div className="flex flex-col">
         {/* Header */}
-        <div className="flex flex-col items-start gap-300 p-700">
+        <div className="flex shrink-0 flex-col items-start gap-300 p-700">
           <Button variant="secondary" size="icon-md" onClick={() => router.back()}>
             <Icon src={AdminBackIcon} size={24} className="text-icon-normal" />
           </Button>
@@ -107,9 +108,9 @@ function ScheduleOverviewContent() {
         </div>
 
         {/* Content */}
-        <div className="flex flex-col gap-[22px] px-500">
+        <div className="flex flex-col gap-[22px] px-500 pb-[26px]">
           {/* Filter chips */}
-          <div className="bg-background relative flex h-12 w-fit items-center gap-[5px] overflow-hidden rounded-md px-[6px]">
+          <div className="bg-background relative flex h-12 w-fit shrink-0 items-center gap-[5px] overflow-hidden rounded-md px-[6px]">
             {/* Sliding indicator */}
             <div
               style={{ left: chipIndicator.left, width: chipIndicator.width }}
@@ -142,52 +143,65 @@ function ScheduleOverviewContent() {
             })}
           </div>
 
-          {/* Main content card */}
-          <div className="bg-background flex flex-col gap-700 rounded-lg p-600">
-            <MonthNavigator
-              year={currentYear}
-              month={currentMonth}
-              onPrev={handlePrevMonth}
-              onNext={handleNextMonth}
-              className="justify-start"
-            />
-
-            <div className="flex items-center justify-between gap-400">
-              <div className="relative flex-1">
-                <Icon
-                  src={SearchIcon}
-                  size={24}
-                  className="text-icon-alternative absolute top-1/2 left-400 -translate-y-1/2"
-                />
-                <input
-                  type="text"
-                  autoComplete="off"
-                  value={searchValue}
-                  onChange={(e) => setSearchValue(e.target.value)}
-                  placeholder="검색어를 입력하세요"
-                  className="bg-container-neutral typo-body1 placeholder:text-text-alternative h-12 w-full rounded-sm py-300 pr-300 pl-14 focus:outline-none"
-                />
+          {/* Below chips: optional SESSION banner + main content card */}
+          <div className="flex flex-col gap-300">
+            {activeFilter === 'SESSION' && (
+              <div className="bg-background flex shrink-0 items-center gap-200 rounded-md px-300 py-400">
+                <Icon src={InfoCircleIcon} size={20} className="text-icon-normal shrink-0" />
+                <p className="typo-body2 text-text-normal">
+                  세션은 출석을 진행할 동아리의 공식적인 모임을 관리합니다. 생성된 세션은 출석
+                  관리에 자동으로 연결되며, 출석 내역 확인 및 수정은 출석 관리 탭에서 진행해주세요.
+                </p>
               </div>
-              <Button
-                variant="primary"
-                size="lg"
-                className="shrink-0"
-                onClick={() => openCreateModal(activeFilter)}
-              >
-                <Icon src={AdminPlusIcon} size={20} className="text-text-inverse mr-100" />
-                일정 생성
-              </Button>
-            </div>
-
-            {isLoading ? (
-              <ScheduleListSkeleton />
-            ) : (
-              <ScheduleList
-                schedules={sortedSchedules}
-                onEdit={setEditTarget}
-                onDelete={handleDelete}
-              />
             )}
+
+            {/* Main content card */}
+            <div className="bg-background flex flex-col gap-700 rounded-lg p-600">
+              <MonthNavigator
+                year={currentYear}
+                month={currentMonth}
+                onPrev={handlePrevMonth}
+                onNext={handleNextMonth}
+                className="shrink-0 justify-start"
+              />
+
+              <div className="flex shrink-0 items-center justify-between gap-400">
+                <div className="relative w-[492px] shrink-0">
+                  <Icon
+                    src={SearchIcon}
+                    size={24}
+                    className="text-icon-alternative absolute top-1/2 left-400 -translate-y-1/2"
+                  />
+                  <input
+                    type="text"
+                    autoComplete="off"
+                    value={searchValue}
+                    onChange={(e) => setSearchValue(e.target.value)}
+                    placeholder="검색어를 입력하세요"
+                    className="bg-container-neutral typo-body1 placeholder:text-text-alternative h-12 w-full rounded-sm py-300 pr-300 pl-14 focus:outline-none"
+                  />
+                </div>
+                <Button
+                  variant="primary"
+                  size="lg"
+                  className="shrink-0"
+                  onClick={() => openCreateModal(activeFilter)}
+                >
+                  <Icon src={AdminPlusIcon} size={20} className="text-text-inverse mr-100" />
+                  {activeFilter === 'SESSION' ? '세션 생성' : '일정 생성'}
+                </Button>
+              </div>
+
+              {isLoading ? (
+                <ScheduleListSkeleton />
+              ) : (
+                <ScheduleList
+                  schedules={sortedSchedules}
+                  onEdit={setEditTarget}
+                  onDelete={handleDelete}
+                />
+              )}
+            </div>
           </div>
         </div>
       </div>
