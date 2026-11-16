@@ -20,7 +20,6 @@ import {
 import { addYearsToDateInput } from '@/utils/shared/date';
 import { cn } from '@/lib/cn';
 import type { Cardinal } from '@/types/admin/cardinal';
-import { SessionInfoBanner } from '@/components/admin/schedule/session/SessionInfoBanner';
 import type { ScheduleFormState, SessionFormState } from './types';
 
 interface SessionScheduleFormProps {
@@ -50,15 +49,12 @@ function SessionScheduleForm({
 
   return (
     <div className="flex flex-col gap-400 py-400">
-      {/* 안내 배너 */}
-      <SessionInfoBanner />
-
       {/* 세션 제목 */}
       <ScheduleTextField
         label="세션 제목"
         value={form.title}
         onChange={(v) => onFormChange({ title: v })}
-        placeholder="예 : 7기 정기 모임"
+        placeholder="ex) 7기 정기 모임"
         maxLength={30}
       />
 

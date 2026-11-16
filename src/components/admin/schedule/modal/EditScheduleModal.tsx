@@ -76,7 +76,7 @@ function EditScheduleModalLoading({ onClose }: { onClose: () => void }) {
         </div>
         <ModalIconButton icon={AdminCloseIcon} label="닫기" onClick={onClose} />
       </div>
-      <div className="scrollbar-custom tablet:px-700 min-h-0 flex-1 touch-pan-y overflow-y-auto px-400">
+      <div className="scrollbar-none tablet:px-700 min-h-0 flex-1 touch-pan-y overflow-y-auto px-400">
         <Skeleton className="mt-400 mb-200 h-8 w-36" />
         <div className="flex flex-col gap-400 py-400">
           <ModalFieldSkeleton />
@@ -224,7 +224,7 @@ function EditScheduleModalContent({
         </div>
       </div>
 
-      <div className="scrollbar-custom tablet:px-700 min-h-0 flex-1 touch-pan-y overflow-y-auto overscroll-contain px-400 [-webkit-overflow-scrolling:touch]">
+      <div className="scrollbar-none tablet:px-700 min-h-0 flex-1 touch-pan-y overflow-y-auto overscroll-contain px-400 [-webkit-overflow-scrolling:touch]">
         <h2 className="typo-h3 text-text-normal py-400">일반 일정 수정</h2>
         <ScheduleFormBody
           form={form}

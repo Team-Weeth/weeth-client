@@ -199,7 +199,7 @@ function EditSessionModalContent({
       </div>
 
       {/* Body */}
-      <div className="scrollbar-custom tablet:px-15 min-h-0 flex-1 touch-pan-y overflow-y-auto overscroll-contain px-400 [-webkit-overflow-scrolling:touch]">
+      <div className="scrollbar-none tablet:px-15 min-h-0 flex-1 touch-pan-y overflow-y-auto overscroll-contain px-400 [-webkit-overflow-scrolling:touch]">
         <h2 className="typo-h3 text-text-normal py-400">세션 수정</h2>
         <ScheduleFormBody
           form={form}

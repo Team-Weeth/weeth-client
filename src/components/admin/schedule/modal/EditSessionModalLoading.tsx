@@ -20,7 +20,7 @@ function EditSessionModalLoading({ onClose }: EditSessionModalLoadingProps) {
         </div>
         <ModalIconButton icon={AdminCloseIcon} label="닫기" onClick={onClose} />
       </div>
-      <div className="scrollbar-custom tablet:px-700 min-h-0 flex-1 touch-pan-y overflow-y-auto px-400">
+      <div className="scrollbar-none tablet:px-700 min-h-0 flex-1 touch-pan-y overflow-y-auto px-400">
         <Skeleton className="mt-400 mb-200 h-8 w-28" />
         <div className="flex flex-col gap-400 py-400">
           <Skeleton className="h-10 w-full rounded-sm" />
