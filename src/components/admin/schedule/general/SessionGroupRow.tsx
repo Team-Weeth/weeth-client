@@ -144,15 +144,21 @@ function SessionGroupRow({ group, expanded, onToggle, onEdit }: SessionGroupRowP
           <button
             type="button"
             className={cn(
-              'typo-sub3 flex items-center gap-100',
-              isOpen ? 'text-brand-primary' : 'text-text-alternative',
+              'typo-sub3 group flex cursor-pointer items-center gap-100',
+              isOpen
+                ? 'text-brand-primary'
+                : 'text-text-alternative hover:text-text-normal active:text-text-strong',
             )}
           >
             <span>출석 관리</span>
             <Icon
               src={SmArrowRightIcon}
               size={16}
-              className={isOpen ? 'text-brand-primary' : 'text-text-alternative'}
+              className={cn(
+                isOpen
+                  ? 'text-brand-primary'
+                  : 'text-text-alternative group-hover:text-text-normal group-active:text-text-strong',
+              )}
             />
           </button>
         )}
@@ -160,8 +166,12 @@ function SessionGroupRow({ group, expanded, onToggle, onEdit }: SessionGroupRowP
 
       {/* 수정 */}
       <div className={cn('flex w-[70px] shrink-0 items-center justify-center self-stretch', cellH)}>
-        <button type="button" onClick={() => onEdit?.(group)}>
-          <Icon src={EditIcon} size={20} className="text-icon-alternative" />
+        <button type="button" onClick={() => onEdit?.(group)} className="group cursor-pointer">
+          <Icon
+            src={EditIcon}
+            size={20}
+            className="text-icon-alternative group-hover:text-icon-normal group-active:text-icon-strong"
+          />
         </button>
       </div>
     </div>
