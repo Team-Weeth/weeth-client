@@ -31,7 +31,7 @@ function useEligibleTour({ clubId, scope, features }: UseEligibleTourInput): Tou
   const hasHydrated = useTourHasHydrated();
   const isSuppressed = useIsTourSuppressed();
   const activeTourId = useActiveTourId();
-  const { requestStart } = useTourActions();
+  const { requestStart, finish } = useTourActions();
 
   const candidate = hasHydrated
     ? selectEligibleTour(listRegisteredTours(), {
@@ -45,13 +45,20 @@ function useEligibleTour({ clubId, scope, features }: UseEligibleTourInput): Tou
       })
     : null;
 
+  // 락의 획득과 해제를 같은 effect, 같은 의존성(candidate)에 묶는다. activeTourId를 의존성에
+  // 넣지 않는 게 중요하다 — 넣으면 requestStart가 만든 그 변화 때문에 즉시 재실행되어 cleanup이
+  // 등록되자마자 버려진다(Strict Mode의 mount→cleanup→remount 재생에서 락이 영구히 풀려버림).
   useEffect(() => {
-    if (!candidate || activeTourId) return;
-    requestStart(candidate.id);
-  }, [activeTourId, candidate, requestStart]);
+    if (!candidate) return;
+    const acquired = requestStart(candidate.id);
+    if (!acquired) return; // 다른 투어가 이미 점유 중 — 우리가 쥔 락이 아니므로 해제 책임도 없다.
+    return () => {
+      finish();
+    };
+  }, [candidate, finish, requestStart]);
 
-  // 이미 시작된 투어라도 억제자가 새로 뜨면(예: 홈 튜토리얼이 뒤늦게 열림) 더 이상 렌더하지 않는다.
-  // TourRunner가 언마운트되며 락을 해제하므로, 억제가 풀리면 자연스럽게 재평가된다.
+  // 이미 시작된 투어라도 억제자가 새로 뜨면(예: 홈 튜토리얼이 뒤늦게 열림) candidate가 null이 되어
+  // 위 effect가 즉시 락을 해제한다. 여기서도 한 번 더 막아 그 사이의 한 프레임 노출을 없앤다.
   if (!activeTourId || isSuppressed) return null;
   return listRegisteredTours().find((tour) => tour.id === activeTourId) ?? null;
 }

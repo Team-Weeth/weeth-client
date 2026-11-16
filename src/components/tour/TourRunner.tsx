@@ -132,11 +132,7 @@ function TourRunner({ clubId, tour }: TourRunnerProps) {
       }),
     ];
 
-    return () => {
-      unsubscribers.forEach((unsubscribe) => unsubscribe());
-      // 투어가 TOUR_END 없이(언마운트로) 끝났다면 락이 영구히 남아 다른 투어를 막는다 — 항상 해제한다.
-      finish();
-    };
+    return () => unsubscribers.forEach((unsubscribe) => unsubscribe());
   }, [clubId, finish, markSeen, on, tour, userId]);
 
   useEffect(() => {

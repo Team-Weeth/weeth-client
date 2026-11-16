@@ -191,13 +191,4 @@ describe('TourRunner', () => {
     expect(mockMarkSeen).not.toHaveBeenCalled();
     expect(mockFinish).toHaveBeenCalledTimes(1);
   });
-
-  it('언마운트되면 TOUR_END 없이도 락을 해제한다', () => {
-    const { unmount } = render(<TourRunner clubId="club-1" tour={EXAMPLE_ADMIN_WARNING_TOUR} />);
-
-    expect(mockFinish).not.toHaveBeenCalled();
-    unmount();
-
-    expect(mockFinish).toHaveBeenCalledTimes(1);
-  });
 });
