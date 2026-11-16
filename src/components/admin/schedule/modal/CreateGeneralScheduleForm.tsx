@@ -65,7 +65,7 @@ function CreateGeneralScheduleForm({ cardinalNumber, onClose }: CreateGeneralSch
           form={form}
           onFormChange={updateForm}
           titleLabel="일정 제목"
-          titlePlaceholder="예 : 중간고사 기간"
+          titlePlaceholder="ex)중간고사 기간"
         />
       </div>
 
