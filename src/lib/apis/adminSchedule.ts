@@ -21,6 +21,10 @@ export const adminScheduleApi = {
     apiClient.get<ApiResponse<AdminSessionListData>>(`/admin/clubs/${clubId}/sessions`, {
       params: cardinal !== undefined ? { cardinal } : undefined,
     }),
+  getMonthlySessionList: (clubId: string, start: string, end: string, cardinal?: number) =>
+    apiClient.get<ApiResponse<AdminSessionListData>>(`/admin/clubs/${clubId}/sessions`, {
+      params: { start, end, ...(cardinal !== undefined ? { cardinal } : {}) },
+    }),
   createSession: (clubId: string, body: CreateSessionBody) =>
     apiClient.post<ApiResponse<null>>(`/admin/clubs/${clubId}/sessions`, body),
   updateSession: (

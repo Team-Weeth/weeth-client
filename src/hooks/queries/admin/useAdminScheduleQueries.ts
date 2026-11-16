@@ -51,6 +51,22 @@ export function useAdminMonthlySchedules(year: number, month: number, cardinal?:
   });
 }
 
+export function useAdminMonthlySessionList(year: number, month: number, cardinal?: number) {
+  const clubId = useClubId();
+  const { start, end } = toMonthRange(year, month);
+
+  return useQuery({
+    queryKey: adminQueryKeys.monthlySession(clubId, year, month, cardinal),
+    queryFn: async () => {
+      const res = await adminScheduleApi.getMonthlySessionList(clubId!, start, end, cardinal);
+      return res.data.data;
+    },
+    enabled: !!clubId,
+    staleTime: 5 * 60 * 1000,
+    gcTime: 10 * 60 * 1000,
+  });
+}
+
 export function useAdminSessionList(cardinal?: number | null) {
   const clubId = useClubId();
 
