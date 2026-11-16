@@ -43,8 +43,11 @@ export const FEEDBACK_CHAT_THANKS_MESSAGES = [
   '보내주셔서 고마워요! 💚\n남겨주신 이야기는 빠짐없이 살펴보고,\n더 편한 Weeth를 만드는 데 참고할게요.',
 ] as const;
 
-/** 전송 성공 직후 답장이 붙으면 기계적으로 느껴져서, 사람이 읽고 답하는 듯한 간격을 둔다. */
-export const FEEDBACK_CHAT_REPLY_DELAY_MS = 3000;
+/**
+ * 응답이 빨라도 "전송 중"을 이만큼은 보여준 뒤 답장을 붙인다.
+ * 바로 답장하면 기계적으로 느껴지고, 전송 중을 지운 뒤 기다리게 하면 멈춘 것처럼 보인다.
+ */
+export const FEEDBACK_CHAT_MIN_SENDING_MS = 2000;
 
 export const FEEDBACK_CHAT_INPUT_PLACEHOLDER = '의견을 자유롭게 남겨주세요';
 
