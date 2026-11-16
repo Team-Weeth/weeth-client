@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
@@ -13,13 +13,24 @@ import { Sheet, SheetClose, SheetContent, SheetTrigger } from '@/components/ui/S
 import { cn } from '@/lib/cn';
 import { NAV_ITEMS } from '@/constants/landing/landing';
 import { InquiryDialog } from '@/components/landing/InquiryDialog';
+import { WAX_EVENT_COPY, WAX_GAME_PATH } from '@/constants/waxEvent';
 
 interface PublicHeaderProps {
   className?: string;
   showAuthButtons?: boolean;
+  /** 헤더 위에 붙는 띠배너. 노치 영역은 배너가 채운다. */
+  topBanner?: ReactNode;
+  /** 왁뿌볼 이벤트 탭을 메뉴에 보일지 */
+  showEventTab?: boolean;
 }
 
-function PublicMobileMenu({ showAuthButtons }: { showAuthButtons: boolean }) {
+function PublicMobileMenu({
+  showAuthButtons,
+  showEventTab,
+}: {
+  showAuthButtons: boolean;
+  showEventTab: boolean;
+}) {
   const [inquiryOpen, setInquiryOpen] = useState(false);
 
   return (
@@ -74,6 +85,17 @@ function PublicMobileMenu({ showAuthButtons }: { showAuthButtons: boolean }) {
               </button>
             </SheetClose>
 
+            {showEventTab && (
+              <SheetClose asChild>
+                <Link
+                  href={WAX_GAME_PATH}
+                  className="cursor-pointer py-300 text-[24px] leading-[30px] font-bold tracking-[-0.005em]"
+                >
+                  {WAX_EVENT_COPY.navLabel}
+                </Link>
+              </SheetClose>
+            )}
+
             {showAuthButtons && (
               <>
                 <SheetClose asChild>
@@ -101,7 +123,12 @@ function PublicMobileMenu({ showAuthButtons }: { showAuthButtons: boolean }) {
   );
 }
 
-export default function PublicHeader({ className, showAuthButtons = true }: PublicHeaderProps) {
+export default function PublicHeader({
+  className,
+  showAuthButtons = true,
+  topBanner,
+  showEventTab = false,
+}: PublicHeaderProps) {
   const [visible, setVisible] = useState(true);
   const lastScrollY = useRef(0);
 
@@ -128,11 +155,12 @@ export default function PublicHeader({ className, showAuthButtons = true }: Publ
       animate={{ y: visible ? '0%' : '-100%', opacity: visible ? 1 : 0 }}
       transition={{ duration: 0.25, ease: 'easeInOut' }}
       className={cn(
-        'pt-safe fixed top-0 left-0 z-1 w-full bg-[#F3F5F7]',
+        'pt-safe fixed top-0 left-0 z-1 w-full bg-[#F3F5F7] has-[[data-top-banner]]:pt-0',
         !visible && 'pointer-events-none',
         className,
       )}
     >
+      {topBanner}
       <div className="tablet:hidden flex items-center justify-between bg-[#F3F5F7] px-450 py-3">
         <Link href="/landing" aria-label="홈으로 이동">
           <Image
@@ -146,7 +174,7 @@ export default function PublicHeader({ className, showAuthButtons = true }: Publ
             }}
           />
         </Link>
-        <PublicMobileMenu showAuthButtons={showAuthButtons} />
+        <PublicMobileMenu showAuthButtons={showAuthButtons} showEventTab={showEventTab} />
       </div>
 
       <div className="tablet:flex hidden w-full items-center justify-between px-450 py-300">
@@ -183,6 +211,14 @@ export default function PublicHeader({ className, showAuthButtons = true }: Publ
                   {label}
                 </Link>
               ),
+            )}
+            {showEventTab && (
+              <Link
+                href={WAX_GAME_PATH}
+                className="typo-button1 whitespace-nowrap text-[#909599] transition-colors hover:text-black"
+              >
+                {WAX_EVENT_COPY.navLabel}
+              </Link>
             )}
           </nav>
         </div>

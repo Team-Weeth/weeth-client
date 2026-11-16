@@ -18,6 +18,8 @@ const FEEDBACK_FAB_HIDDEN_MOBILE_ROUTES = [
   '/mypage/profiles/add',
   '/mypage/profiles/[^/]+/edit',
   '/mypage/settings/theme',
+  // 왁뿌볼 이벤트 페이지: 하단 "소리 켜고 입장하기" 버튼
+  '/event',
 ] as const;
 
 export function shouldHideFeedbackFabOnMobile(pathname: string, clubId: string) {

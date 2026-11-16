@@ -19,6 +19,9 @@ import { AvatarMenuButton } from '@/components/layout/header/AvatarMenuButton';
 import { useDuesVisibility } from '@/hooks/queries';
 import { useIsAdmin } from '@/hooks/shared';
 import { CalendarMobileHeader } from '@/components/calendar/CalendarMobileHeader';
+import { WaxEventTopBanner } from '@/components/wax-event/WaxEventTopBanner';
+import { WAX_EVENT_COPY, getWaxEventPath } from '@/constants/waxEvent';
+import { useClubFeatures } from '@/providers/club-feature-provider';
 
 interface HeaderProps {
   isMain?: boolean;
@@ -37,6 +40,7 @@ export default function Header({ isMain = true }: HeaderProps) {
   const profileImageUrl = useUserProfileImageUrl();
   const { isAdmin } = useIsAdmin();
   const { data: duesVisibility } = useDuesVisibility();
+  const { waxEventEnabled } = useClubFeatures();
   const isDuesVisible = duesVisibility?.visible === true;
   const isPostingPage = pathname.includes('/write') || /\/board\/edit\/\d+$/.test(pathname);
   const shouldHideMobileHeader =
@@ -48,6 +52,9 @@ export default function Header({ isMain = true }: HeaderProps) {
     { id: 'calendar', label: '캘린더', href: `/${clubId}/calendar` },
     { id: 'member', label: '멤버', href: `/${clubId}/member` },
     ...(isDuesVisible ? [{ id: 'dues', label: '회비', href: `/${clubId}/dues` }] : []),
+    ...(waxEventEnabled
+      ? [{ id: 'event', label: WAX_EVENT_COPY.navLabel, href: getWaxEventPath(clubId) }]
+      : []),
   ] as const;
   const [visible, setVisible] = useState(true);
   const lastScrollY = useRef(0);
@@ -83,10 +90,13 @@ export default function Header({ isMain = true }: HeaderProps) {
   return (
     <div
       className={cn(
-        'bg-background pt-safe sticky top-0 z-[70] w-full transition-transform duration-300 ease-in-out',
+        'bg-background pt-safe sticky top-0 z-[70] w-full transition-transform duration-300 ease-in-out has-[[data-top-banner]]:pt-0',
         visible ? 'translate-y-0' : '-translate-y-full',
       )}
     >
+      {isMain && waxEventEnabled && (
+        <WaxEventTopBanner href={getWaxEventPath(clubId)} hideOnMobile={shouldHideMobileHeader} />
+      )}
       {!shouldHideMobileHeader && (
         <header className="tablet:hidden bg-background flex items-center justify-between gap-100 py-3 pr-450 pl-200">
           <CalendarMobileHeader>
