@@ -11,6 +11,14 @@ export const WAX_SCENE = {
   roomFloor: '#d8b48a',
   roomFloorLine: '#c39a6e',
   wall: '#f3efe7',
+  // 복도: 참고 사진의 크림색 벽, 검은 걸레받이, 하늘색 2단 사물함.
+  // 조명·톤 매핑에서 밝은 색의 채도가 빠져, 화면에서 참고 사진(채도 약 0.27)만큼 보이도록 더 진하게 잡았다.
+  hallWall: '#f0d47b',
+  hallWallBand: '#e5c766',
+  hallBaseboard: '#2f3237',
+  lockerBlue: ['#5a9fd4', '#64a8db'],
+  lockerVent: '#3b7cb2',
+  lockerHandle: '#dfe3e8',
   wallAccent: '#c9a27c',
   baseboard: '#5b7c99',
   ceiling: '#f7f9fb',
@@ -36,21 +44,14 @@ export const WAX_SCENE = {
 } as const;
 
 /**
- * 플레이어끼리 주고받는 표현. 순서가 키보드 1~5 단축키다. bubble은 머리 위 말풍선 글자(1~2자),
- * icon·label은 버튼에 쓴다(ㅋㅋ처럼 글자 말풍선도 버튼에서는 이모지로 보여준다).
+ * 플레이어끼리 주고받는 표현. 순서가 감정 표현 패널 순서이자 키보드 1~4 단축키다.
+ * sprite는 /images/wax/reactions.png(가로 4칸)에서 쓸 칸이다. 서버는 thumbs도 받지만 화면에서는 고르지 않는다.
  */
-export const WAX_EMOTES: {
-  kind: WaxEmoteKind;
-  bubble: string;
-  icon: string;
-  label: string;
-  color: string;
-}[] = [
-  { kind: 'wave', bubble: '👋', icon: '👋', label: '안녕', color: '#1e88e5' },
-  { kind: 'laugh', bubble: 'ㅋㅋ', icon: '😆', label: 'ㅋㅋㅋ', color: '#f9a825' },
-  { kind: 'thumbs', bubble: '👍', icon: '👍', label: '최고', color: '#43a047' },
-  { kind: 'shh', bubble: '🤫', icon: '🤫', label: '쉿', color: '#6d4c41' },
-  { kind: 'help', bubble: '😭', icon: '😭', label: '살려줘', color: '#8e24aa' },
+export const WAX_EMOTES: { kind: WaxEmoteKind; label: string; sprite: number }[] = [
+  { kind: 'wave', label: '안녕', sprite: 0 },
+  { kind: 'shh', label: '쉿', sprite: 1 },
+  { kind: 'help', label: '살려줘', sprite: 2 },
+  { kind: 'laugh', label: 'ㅋㅋㅋ', sprite: 3 },
 ];
 
 export type WaxFinish = 'gloss' | 'matte' | 'pearl' | 'marble' | 'glitter';

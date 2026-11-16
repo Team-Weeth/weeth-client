@@ -60,6 +60,9 @@ function Textarea({
     if (!el || !autoGrow) return;
     el.style.height = 'auto';
     el.style.height = `${el.scrollHeight}px`;
+    // max-height에 막혀 더 자라지 못하면 넘친 내용을 스크롤로 볼 수 있게 한다.
+    const maxHeight = parseFloat(getComputedStyle(el).maxHeight);
+    el.style.overflowY = el.scrollHeight > maxHeight ? 'auto' : '';
   };
 
   // eslint-disable-next-line react-hooks/exhaustive-deps -- resizeToContent reads autoGrow and innerRef internally

@@ -23,6 +23,13 @@ type Vec3 = [number, number, number];
 /** 카메라와 캐릭터 사이를 가리면 반투명해지는 벽 레이어. */
 export const WAX_BLOCK_LAYER = 1;
 
+/**
+ * 여러 메시를 한 덩어리로 흐리게 할 그룹 표시(userData.fadeUnit). 몸체만 흐려지고 손잡이·포스터 같은 장식이
+ * 그대로 남으면 물체가 깨진 것처럼 보인다. 'wall'은 벽에 붙은 것이라 벽처럼 좌우 여유를 두고 판정하고,
+ * 'furniture'는 홀로 선 가구라 시선 한가운데를 실제로 가릴 때만 흐린다.
+ */
+export type WaxFadeUnit = 'wall' | 'furniture';
+
 const H = WAX_WALL_HEIGHT;
 const T = 0.2;
 
@@ -84,16 +91,18 @@ function Plane({
   size,
   map,
   rotation = [-Math.PI / 2, 0, 0],
+  roughness = 0.9,
 }: {
   position: Vec3;
   size: [number, number];
   map: Texture;
   rotation?: Vec3;
+  roughness?: number;
 }) {
   return (
     <mesh position={position} rotation={rotation} receiveShadow>
       <planeGeometry args={size} />
-      <meshStandardMaterial map={map} roughness={0.9} />
+      <meshStandardMaterial map={map} roughness={roughness} />
     </mesh>
   );
 }
@@ -199,6 +208,20 @@ function CeilingLight({ position }: { position: Vec3 }) {
       <planeGeometry args={[1.2, 0.5]} />
       <meshStandardMaterial color={WAX_SCENE.light} emissive="#fffbe8" emissiveIntensity={1} />
     </mesh>
+  );
+}
+
+/** 복도 천장의 긴 형광등(2줄). 복도를 가로지르는 방향(z)으로 길다. */
+function HallLight({ position, length }: { position: Vec3; length: number }) {
+  return (
+    <group position={position}>
+      {[-0.13, 0.13].map((dx) => (
+        <mesh key={dx} position={[dx, 0, 0]} rotation={[Math.PI / 2, 0, 0]}>
+          <planeGeometry args={[0.2, length]} />
+          <meshStandardMaterial color="#ffffff" emissive="#ffffff" emissiveIntensity={1.3} />
+        </mesh>
+      ))}
+    </group>
   );
 }
 
@@ -472,7 +495,8 @@ function Classroom({ room, layoutDoorHalf }: { room: WaxRoom; layoutDoorHalf: nu
         color={theme.trim}
         shadow={false}
       />
-      {/* 복도 쪽 벽의 교실 안쪽 면. 문 구멍은 비운다. */}
+      {/* 복도 쪽 벽의 교실 안쪽 면. 문 구멍은 비운다. 뒷자리 뒤로 카메라가 복도까지 물러나면
+          복도 벽과 함께 흐려져야 자리가 보인다. */}
       {[
         [bounds.minX, room.doorX - layoutDoorHalf],
         [room.doorX + layoutDoorHalf, bounds.maxX],
@@ -483,6 +507,7 @@ function Classroom({ room, layoutDoorHalf }: { room: WaxRoom; layoutDoorHalf: nu
           size={[to - from, H, 0.01]}
           color={theme.wall}
           shadow={false}
+          block
         />
       ))}
       <Box
@@ -490,6 +515,7 @@ function Classroom({ room, layoutDoorHalf }: { room: WaxRoom; layoutDoorHalf: nu
         size={[width, 0.12, 0.02]}
         color={theme.trim}
         shadow={false}
+        block
       />
       <RoomProps kind={theme.prop} corner={cornerProp} side={sideProp} accent={theme.trim} />
       {/* 화이트보드 */}
@@ -534,8 +560,11 @@ function Classroom({ room, layoutDoorHalf }: { room: WaxRoom; layoutDoorHalf: nu
           color="#37474f"
         />
       ))}
-      <group position={[bounds.maxX - 0.18, 3.6, bounds.minZ + 3.2]}>
-        <Box position={[0, 0, 0]} size={[0.26, 0.34, 1.1]} color="#fafafa" />
+      <group
+        position={[bounds.maxX - 0.18, 3.6, bounds.minZ + 3.2]}
+        userData={{ fadeUnit: 'wall' satisfies WaxFadeUnit }}
+      >
+        <Box position={[0, 0, 0]} size={[0.26, 0.34, 1.1]} color="#fafafa" block />
         <Box position={[-0.135, -0.1, 0]} size={[0.01, 0.04, 0.9]} color="#b0bec5" shadow={false} />
       </group>
       {/* 천장 빔프로젝터와 말아 올린 스크린 */}
@@ -578,8 +607,9 @@ function Classroom({ room, layoutDoorHalf }: { room: WaxRoom; layoutDoorHalf: nu
       <group
         position={[bounds.minX + 2.6, 1.7, bounds.maxZ - T / 2 - 0.03]}
         rotation={[0, Math.PI, 0]}
+        userData={{ fadeUnit: 'wall' satisfies WaxFadeUnit }}
       >
-        <Box position={[0, 0, 0]} size={[3.2, 1.2, 0.04]} color="#c49a6c" shadow={false} />
+        <Box position={[0, 0, 0]} size={[3.2, 1.2, 0.04]} color="#c49a6c" shadow={false} block />
         {[-1.1, -0.35, 0.4, 1.1].map((dx, i) => (
           <Box
             key={dx}
@@ -629,8 +659,11 @@ function Doorway({ room, layout }: { room: WaxRoom; layout: WaxLayout }) {
         block
       />
       {/* 열어둔 미닫이 문짝: 문 옆 벽 안쪽으로 밀려 있다 */}
-      <group position={[-half - 0.95, 1.1, -0.16]}>
-        <Box position={[0, 0, 0]} size={[1.0, 2.15, 0.05]} color={WAX_SCENE.door} />
+      <group
+        position={[-half - 0.95, 1.1, -0.16]}
+        userData={{ fadeUnit: 'wall' satisfies WaxFadeUnit }}
+      >
+        <Box position={[0, 0, 0]} size={[1.0, 2.15, 0.05]} color={WAX_SCENE.door} block />
         <Box
           position={[0, 0.35, -0.03]}
           size={[0.6, 0.7, 0.01]}
@@ -669,8 +702,6 @@ function Poster({ index, position }: { index: number; position: Vec3 }) {
 
 type HallFurniture = ReturnType<typeof hallFurniture>[number];
 
-const LOCKER_COLORS = ['#8fa9bd', '#9db8aa', '#b7a891'];
-
 /** 복도 소품 하나. 자리와 크기는 충돌 판정(hallFurniture)과 같다. */
 function HallItem({ item }: { item: HallFurniture }) {
   if (item.kind === 'bench')
@@ -696,28 +727,46 @@ function HallItem({ item }: { item: HallFurniture }) {
   if (item.kind === 'locker') {
     const count = Math.round(item.width / 0.42);
     const unit = item.width / count;
+    const front = item.depth / 2;
     return (
-      <group position={[item.x, 0, item.z]}>
+      <group
+        position={[item.x, 0, item.z]}
+        userData={{ fadeUnit: 'furniture' satisfies WaxFadeUnit }}
+      >
         {Array.from({ length: count }, (_, i) => (
           <group key={i} position={[-item.width / 2 + unit * (i + 0.5), 0, 0]}>
             <Box
               position={[0, 0.82, 0]}
               size={[unit - 0.02, 1.64, item.depth]}
-              color={LOCKER_COLORS[i % LOCKER_COLORS.length]}
+              color={WAX_SCENE.lockerBlue[i % WAX_SCENE.lockerBlue.length]}
               block
             />
+            {/* 2단 사물함: 칸마다 위쪽 환기구 3줄과 오른쪽 손잡이 */}
             <Box
-              position={[0, 1.42, item.depth / 2 + 0.005]}
-              size={[unit * 0.6, 0.12, 0.01]}
-              color="#263238"
+              position={[0, 0.84, front + 0.004]}
+              size={[unit - 0.02, 0.015, 0.008]}
+              color={WAX_SCENE.lockerVent}
               shadow={false}
             />
-            <Box
-              position={[unit * 0.3, 0.9, item.depth / 2 + 0.01]}
-              size={[0.03, 0.12, 0.02]}
-              color="#eceff1"
-              shadow={false}
-            />
+            {[0.06, 0.88].map((bottom) => (
+              <group key={bottom}>
+                {[0, 1, 2].map((k) => (
+                  <Box
+                    key={k}
+                    position={[-unit * 0.05, bottom + 0.62 - k * 0.05, front + 0.006]}
+                    size={[unit * 0.42, 0.018, 0.01]}
+                    color={WAX_SCENE.lockerVent}
+                    shadow={false}
+                  />
+                ))}
+                <Box
+                  position={[unit * 0.3, bottom + 0.36, front + 0.01]}
+                  size={[0.03, 0.12, 0.02]}
+                  color={WAX_SCENE.lockerHandle}
+                  shadow={false}
+                />
+              </group>
+            ))}
           </group>
         ))}
       </group>
@@ -785,7 +834,11 @@ function Kiosk({ item }: { item: HallFurniture }) {
 function VendingMachine({ item }: { item: HallFurniture }) {
   const front = useTexture(() => vendingTexture(item.z < 2.5 ? '#e53935' : '#1e88e5'));
   return (
-    <group position={[item.x, 0, item.z]} rotation={[0, -Math.PI / 2, 0]}>
+    <group
+      position={[item.x, 0, item.z]}
+      rotation={[0, -Math.PI / 2, 0]}
+      userData={{ fadeUnit: 'furniture' satisfies WaxFadeUnit }}
+    >
       <Box
         position={[0, 0.95, 0]}
         size={[item.depth - 0.05, 1.9, item.width]}
@@ -842,8 +895,9 @@ function Hallway({ layout }: { layout: WaxLayout }) {
   const { hall } = layout;
   const width = hall.maxX - hall.minX;
   const depth = hall.maxZ - hall.minZ;
+  // 밝고 광택 있는 흰 타일(참고 사진). 반사광이 보이도록 거칠기를 낮춘다.
   const floor = useTexture(() =>
-    tileFloorTexture([width / 2.4, depth / 2.4], '#efece6', '#e4e0d8', '#d6d0c5'),
+    tileFloorTexture([width / 2.4, depth / 2.4], '#f7f8fa', '#eef0f3', '#c5c9cf'),
   );
   const emblem = useTexture(emblemTexture);
   const sign = useTexture(buildingSignTexture);
@@ -861,6 +915,7 @@ function Hallway({ layout }: { layout: WaxLayout }) {
         position={[centerX, 0.001, (hall.minZ + hall.maxZ) / 2]}
         size={[width, depth]}
         map={floor}
+        roughness={0.35}
       />
       {/* 복도와 강의실 사이 벽(문 구멍 포함) */}
       {segments.map(([from, to]) => (
@@ -868,7 +923,7 @@ function Hallway({ layout }: { layout: WaxLayout }) {
           key={from}
           position={[(from + to) / 2, H / 2, layout.wallZ]}
           size={[to - from, H, T]}
-          color={WAX_SCENE.wall}
+          color={WAX_SCENE.hallWall}
           block
         />
       ))}
@@ -877,33 +932,48 @@ function Hallway({ layout }: { layout: WaxLayout }) {
           key={`top-${from}`}
           position={[(from + to) / 2, (2.2 + H) / 2, layout.wallZ]}
           size={[to - from, H - 2.2, T]}
-          color={WAX_SCENE.wall}
+          color={WAX_SCENE.hallWall}
           block
         />
       ))}
-      {/* 복도 아래쪽 띠: 벽과 같은 구간에만 붙여 문 구멍을 가리지 않는다. */}
+      {/* 복도 아래쪽 띠와 검은 걸레받이: 벽과 같은 구간에만 붙여 문 구멍을 가리지 않는다. */}
       {segments.map(([from, to]) => (
-        <Box
-          key={`band-${from}`}
-          position={[(from + to) / 2, 0.5, layout.wallZ + T / 2 + 0.005]}
-          size={[to - from, 1.0, 0.01]}
-          color={WAX_SCENE.wallAccent}
-          shadow={false}
-        />
+        <group key={`band-${from}`}>
+          <Box
+            position={[(from + to) / 2, 0.5, layout.wallZ + T / 2 + 0.005]}
+            size={[to - from, 1.0, 0.01]}
+            color={WAX_SCENE.hallWallBand}
+            shadow={false}
+            block
+          />
+          <Box
+            position={[(from + to) / 2, 0.06, layout.wallZ + T / 2 + 0.012]}
+            size={[to - from, 0.12, 0.012]}
+            color={WAX_SCENE.hallBaseboard}
+            shadow={false}
+            block
+          />
+        </group>
       ))}
       <Box
         position={[centerX, 0.5, hall.maxZ - 0.005]}
         size={[width, 1.0, 0.01]}
-        color={WAX_SCENE.wallAccent}
+        color={WAX_SCENE.hallWallBand}
         shadow={false}
       />
-      {/* 높은 벽을 나누는 나무 몰딩과 건물 사인 */}
+      <Box
+        position={[centerX, 0.06, hall.maxZ - 0.012]}
+        size={[width, 0.12, 0.012]}
+        color={WAX_SCENE.hallBaseboard}
+        shadow={false}
+      />
+      {/* 높은 벽을 나누는 몰딩과 건물 사인 */}
       {segments.map(([from, to]) => (
         <Box
           key={`trim-${from}`}
           position={[(from + to) / 2, 3.2, layout.wallZ + T / 2 + 0.03]}
           size={[to - from, 0.08, 0.06]}
-          color={WAX_SCENE.wallAccent}
+          color={WAX_SCENE.hallWallBand}
           shadow={false}
           block
         />
@@ -921,17 +991,18 @@ function Hallway({ layout }: { layout: WaxLayout }) {
         to={hall.maxX + T}
         at={hall.maxZ + T / 2}
         windows={windows}
+        color={WAX_SCENE.hallWall}
       />
       <Box
         position={[hall.minX - T / 2, H / 2, (hall.minZ + hall.maxZ) / 2]}
         size={[T, H, depth]}
-        color={WAX_SCENE.wall}
+        color={WAX_SCENE.hallWall}
         block
       />
       <Box
         position={[hall.maxX + T / 2, H / 2, (hall.minZ + hall.maxZ) / 2]}
         size={[T, H, depth]}
-        color={WAX_SCENE.wall}
+        color={WAX_SCENE.hallWall}
         block
       />
       {layout.rooms.map((room) => (
@@ -943,6 +1014,7 @@ function Hallway({ layout }: { layout: WaxLayout }) {
           <group
             key={`board-${room.id}`}
             position={[centerX - 1.6, 1.6, layout.wallZ + T / 2 + 0.02]}
+            userData={{ fadeUnit: 'wall' satisfies WaxFadeUnit }}
           >
             <Box
               position={[0, 0, 0]}
@@ -965,16 +1037,14 @@ function Hallway({ layout }: { layout: WaxLayout }) {
         receiveShadow
       >
         <circleGeometry args={[1.5, 48]} />
-        <meshStandardMaterial map={emblem} roughness={0.7} />
+        {/* 브랜드 색이 조명·톤 매핑에 바래지 않도록 톤 매핑을 끄고 반사광을 줄인다. */}
+        <meshStandardMaterial map={emblem} roughness={1} toneMapped={false} />
       </mesh>
-      {Array.from({ length: 7 }, (_, i) => (
-        <CeilingLight
+      {Array.from({ length: 11 }, (_, i) => (
+        <HallLight
           key={i}
-          position={[
-            hall.minX + 2.5 + i * ((width - 5) / 6),
-            H - 0.03,
-            (hall.minZ + hall.maxZ) / 2,
-          ]}
+          position={[hall.minX + 2 + i * ((width - 4) / 10), H - 0.03, (hall.minZ + hall.maxZ) / 2]}
+          length={Math.min(1.8, depth - 0.6)}
         />
       ))}
     </group>

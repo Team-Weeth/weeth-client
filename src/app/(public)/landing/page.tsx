@@ -10,17 +10,33 @@ import { HeroSection } from '@/components/landing/HeroSection';
 import { LandingFooter } from '@/components/landing/LandingFooter';
 import { TestimonialSection } from '@/components/landing/TestimonialSection';
 import PublicHeader from '@/components/layout/header/PublicHeader';
+import {
+  WaxEventTopBanner,
+  WaxEventTopBannerSpacer,
+} from '@/components/wax-event/WaxEventTopBanner';
 import { USER_FEATURES, ADMIN_FEATURES } from '@/constants/landing/landing';
+import { WAX_GAME_PATH } from '@/constants/waxEvent';
+import { isWaxEventEnabled } from '@/flags/wax/server';
+
+// 이벤트 플래그를 바꾸면 1분 안에 랜딩에 반영된다.
+export const revalidate = 60;
 
 export const metadata: Metadata = {
   title: { absolute: '우리 동아리만의 사이트를 원한다면, 위드' },
 };
 
-export default function LandingPage() {
+export default async function LandingPage() {
+  const waxEventEnabled = await isWaxEventEnabled();
+
   return (
     <>
-      <PublicHeader />
+      <PublicHeader
+        topBanner={waxEventEnabled && <WaxEventTopBanner href={WAX_GAME_PATH} />}
+        showEventTab={waxEventEnabled}
+      />
       <main className="flex min-h-screen w-full flex-col">
+        {/* 고정 헤더에 붙은 배너만큼 본문을 내린다. */}
+        {waxEventEnabled && <WaxEventTopBannerSpacer />}
         <div>
           <HeroSection />
           <PhilosophySection />

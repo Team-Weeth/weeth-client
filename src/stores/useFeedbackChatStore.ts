@@ -47,10 +47,12 @@ export const useFeedbackChatStore = create(
           false,
           'setMessageStatus',
         ),
-      addReply: (clubId: string) =>
+      addReply: (clubId: string, repliedMessageId: string) =>
         set(
           (state) => {
             const messages = state.conversations[clubId] ?? [];
+            // 답장을 기다리는 사이 로그아웃 등으로 대화가 비워졌다면 원래 메시지 없이 답장만 남지 않게 한다.
+            if (!messages.some((message) => message.id === repliedMessageId)) return state;
             const replyCount = messages.filter((message) => message.role === 'reply').length;
             return {
               conversations: {

@@ -27,17 +27,20 @@ src/
     board/                      # Board-related components
     home/                       # Home-related components
     mypage/                     # My page related components
+    tour/                       # Product tour UI (TourMount, TourRunner, TourTooltip) — see .claude/rules/tour.md
 
   lib/
     actions/                    # Next.js Server Actions ("use server")
     apis/                       # API call functions
     schemas/                    # Validation schemas (Zod, etc.)
+    analytics.ts                # PostHog event wrapper
     cn.ts                       # className merge utility
 
   stores/                       # Zustand global state
   hooks/                        # Custom React hooks
   types/                        # TypeScript type definitions
   constants/                    # Constants
+  tours/                        # Product tour definitions + registry (own feature folder, like flags/club-features/) — see .claude/rules/tour.md
   assets/
     icons/                      # SVG icons (organized by category folder)
       admin/

@@ -20,7 +20,23 @@ function getInviteLinkExampleServerFallback() {
   return `${getAppOriginServerFallback()}/clubId=example-club?code=abcd-abcd`;
 }
 
+type SearchParamsRecord = Record<string, string | string[] | undefined>;
+
+/** Next.js 페이지의 `searchParams` 객체를 쿼리 문자열로 되돌린다. 배열 값은 같은 키로 반복한다. */
+function toURLSearchParams(searchParams: SearchParamsRecord) {
+  const query = new URLSearchParams();
+  for (const [key, value] of Object.entries(searchParams)) {
+    if (Array.isArray(value)) {
+      value.forEach((v) => query.append(key, v));
+    } else if (value !== undefined) {
+      query.set(key, value);
+    }
+  }
+  return query;
+}
+
 export {
+  toURLSearchParams,
   getAppOrigin,
   getAppOriginServerFallback,
   getInviteLinkExample,

@@ -265,7 +265,8 @@ export function WaxHeldBall({
 }) {
   const look = WAX_BALL_LOOKS[variant % WAX_BALL_LOOKS.length];
   const stack = [...look.layers, look.core];
-  const { camera, scene } = useThree();
+  const { camera, scene, gl, size } = useThree();
+  const screenTop = useRef({ value: -1, point: new Vector3(), up: new Vector3() });
   const root = useRef<Group>(null);
   const ball = useRef<Group>(null);
   const shell = useRef<Mesh<BufferGeometry, MeshPhysicalMaterial>>(null);
@@ -363,6 +364,23 @@ export function WaxHeldBall({
     group.translateY(-0.062 - (1 - rise) * 0.18 - state.lower * 0.2);
     group.scale.setScalar((0.7 + rise * 0.3) * 1.12);
     group.visible = state.lower < 0.98;
+    // 교수님 상태 알림을 공 바로 위에 두도록 공 윗부분의 화면 y좌표를 CSS 변수로 알린다.
+    // 들켜서 공을 내리는 동안에는 알림이 따라 내려가지 않게 마지막 위치를 둔다.
+    const top = screenTop.current;
+    if (state.lower <= 0.02) {
+      top.up.set(0, 1, 0).applyQuaternion(camera.quaternion);
+      top.point
+        .copy(group.position)
+        .addScaledVector(top.up, RADIUS * group.scale.x)
+        .project(camera);
+      const y = Math.round(((1 - top.point.y) / 2) * size.height);
+      if (Math.abs(y - top.value) >= 1) {
+        top.value = y;
+        gl.domElement
+          .closest<HTMLElement>('[data-testid=wax-game]')
+          ?.style.setProperty('--wax-ball-top', `${y}px`);
+      }
+    }
 
     if (state.layer !== current.layer) {
       if (state.layer >= 0) burst(stack[state.layer % stack.length]);

@@ -7,9 +7,11 @@ import { usePathname } from 'next/navigation';
 import CloseCircleIcon from '@/assets/icons/close_circle.svg';
 import { cn } from '@/lib/cn';
 import { getActivePopup, type PopupDocument } from '@/lib/apis/popup';
+import { useTourActions } from '@/stores';
 import DefaultPopupImg from '@/assets/image/popup_default_img_1.png';
 
 const HIDE_KEY = 'popup_hide_until';
+const NOTICE_POPUP_SUPPRESSOR_ID = 'notice-popup';
 
 function NoticePopup() {
   const [popup, setPopup] = useState<PopupDocument | null>(null);
@@ -39,6 +41,15 @@ function NoticePopup() {
 
     checkPopup();
   }, [isHomePage]);
+
+  const { suppress, release } = useTourActions();
+  useEffect(() => {
+    if (!isVisible) return;
+    suppress(NOTICE_POPUP_SUPPRESSOR_ID);
+    return () => {
+      release(NOTICE_POPUP_SUPPRESSOR_ID);
+    };
+  }, [isVisible, release, suppress]);
 
   const handleClose = () => setIsVisible(false);
 
