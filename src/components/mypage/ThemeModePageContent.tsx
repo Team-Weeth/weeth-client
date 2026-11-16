@@ -2,13 +2,12 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import BackIcon from '@/assets/icons/back.svg';
 import { useThemeStore } from '@/stores/theme-store';
 import { Button } from '@/components/ui/Button';
-import { Icon } from '@/components/ui/Icon';
 import { cn } from '@/lib/cn';
 import type { ThemeMode } from '@/types/theme';
 import { ThemeModeSelector } from './ThemeModeSelector';
+import { MyPageBackButton } from '@/components/mypage/MyPageBackButton';
 
 type ThemeModePageContentProps = React.HTMLAttributes<HTMLDivElement>;
 
@@ -33,14 +32,8 @@ function ThemeModePageContent({ className, ...props }: ThemeModePageContentProps
       className={cn('tablet:hidden flex min-w-0 flex-1 flex-col gap-4 pb-[140px]', className)}
       {...props}
     >
-      <div className="flex items-center gap-1 py-300">
-        <button
-          type="button"
-          onClick={() => router.back()}
-          className="flex items-center justify-center p-1"
-        >
-          <Icon src={BackIcon} size={21} className="text-icon-normal p-1" />
-        </button>
+      <div className="tablet:gap-1 flex items-center py-300">
+        <MyPageBackButton onClick={() => router.back()} />
         <h1 className="typo-sub1 text-text-normal">화면 모드</h1>
       </div>
 

@@ -3,8 +3,7 @@
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { useParams, useRouter } from 'next/navigation';
-import { BackIcon, EmptyListIcon } from '@/assets/icons';
-import { Icon } from '@/components/ui/Icon';
+import { EmptyListIcon } from '@/assets/icons';
 import { Tag } from '@/components/ui/tag';
 import { PenaltyRulesDialog } from '@/components/mypage/PenaltyRulesDialog';
 import { useIntersectionObserver } from '@/hooks/board/useIntersectionObserver';
@@ -16,6 +15,7 @@ import { toastError } from '@/stores/useToastStore';
 import { MyPagePenaltiesSkeleton } from '@/components/mypage/skeleton';
 import { PenaltyCountSummary } from '@/components/admin/penalty/modal/PenaltyCountSummary';
 import { CardinalDropdown } from '@/components/common/CardinalDropdown';
+import { MyPageBackButton } from '@/components/mypage/MyPageBackButton';
 
 type MyPagePenaltiesContentProps = React.HTMLAttributes<HTMLDivElement>;
 
@@ -65,15 +65,8 @@ function MyPagePenaltiesContent({ className, ...props }: MyPagePenaltiesContentP
 
   return (
     <div className={cn('flex min-w-0 flex-1 flex-col gap-4', className)} {...props}>
-      <div className="tablet:py-0 flex items-center gap-1 py-300">
-        <button
-          type="button"
-          onClick={() => router.back()}
-          aria-label="뒤로가기"
-          className="flex cursor-pointer items-center justify-center p-1"
-        >
-          <Icon src={BackIcon} size={21} className="text-icon-normal p-1" />
-        </button>
+      <div className="tablet:py-0 tablet:gap-1 flex items-center py-300">
+        <MyPageBackButton onClick={() => router.back()} />
         <div className="flex w-full items-center justify-between gap-1">
           <h1 className="tablet:typo-h3 typo-sub1 text-text-normal">페널티</h1>
           <div className="flex items-center gap-3">

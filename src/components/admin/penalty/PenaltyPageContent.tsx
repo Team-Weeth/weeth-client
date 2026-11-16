@@ -13,6 +13,7 @@ import { useClubId } from '@/stores';
 import { cn } from '@/lib/cn';
 import type { PenaltyMember, PenaltyRecordDraft, PenaltySortBy } from '@/types/admin/penalty';
 import { getNextPenaltySort } from '@/utils/admin/penaltyPageUtils';
+import { AdminPageContainer } from '@/components/admin/AdminPageContainer';
 import { usePenaltyRecordActions } from './hooks/usePenaltyRecordActions';
 import { PenaltyDetailModal } from './modal/PenaltyDetailModal';
 import { PenaltySettingModal } from './modal/PenaltySettingModal';
@@ -126,45 +127,43 @@ function PenaltyPageContent() {
   };
 
   return (
-    <div className="flex min-h-full min-w-0 pr-450">
-      <div className="bg-container-neutral flex min-w-0 flex-1 flex-col rounded-t-[20px]">
-        <PenaltyPageHeader
-          cardinalNumbers={cardinalNumbers}
-          selectedCardinal={activeCardinal ?? 0}
-          onSelectCardinal={handleSelectCardinal}
-          onOpenSetting={() => setIsSettingOpen(true)}
+    <AdminPageContainer>
+      <PenaltyPageHeader
+        cardinalNumbers={cardinalNumbers}
+        selectedCardinal={activeCardinal ?? 0}
+        onSelectCardinal={handleSelectCardinal}
+        onOpenSetting={() => setIsSettingOpen(true)}
+      />
+
+      <div className="flex flex-col gap-400 px-700 pt-400 pb-700">
+        <PenaltyAddSection
+          draft={draft}
+          onDraftChange={handleDraftChange}
+          onSubmit={handleSubmitRecord}
+          selectedMembers={selectedMembers}
+          memberQuery={memberQuery}
+          onMemberQueryChange={setMemberQuery}
+          onRemoveMember={handleRemoveMember}
         />
-
-        <div className="flex flex-col gap-400 px-700 pt-400 pb-700">
-          <PenaltyAddSection
-            draft={draft}
-            onDraftChange={handleDraftChange}
-            onSubmit={handleSubmitRecord}
-            selectedMembers={selectedMembers}
-            memberQuery={memberQuery}
-            onMemberQueryChange={setMemberQuery}
-            onRemoveMember={handleRemoveMember}
-          />
-          <div className="flex items-center justify-between px-4">
-            <h2 className="typo-sub1 text-text-strong">멤버 리스트</h2>
-            <PenaltySortButton
-              sortBy={sortBy}
-              nextSortBy={nextSortBy}
-              onToggleSort={() => setSortBy(nextSortBy)}
-            />
-          </div>
-
-          <PenaltyTable
-            members={visibleMembers}
-            selectedIds={selectedIds}
-            onSelectionChange={handleSelectionChange}
-            onOpenDetail={setDetailMember}
-            page={page}
-            totalPages={totalPages}
-            onPageChange={setPage}
-            className={cn(isMembersFetching && 'pointer-events-none opacity-60 transition-opacity')}
+        <div className="flex items-center justify-between px-4">
+          <h2 className="typo-sub1 text-text-strong">멤버 리스트</h2>
+          <PenaltySortButton
+            sortBy={sortBy}
+            nextSortBy={nextSortBy}
+            onToggleSort={() => setSortBy(nextSortBy)}
           />
         </div>
+
+        <PenaltyTable
+          members={visibleMembers}
+          selectedIds={selectedIds}
+          onSelectionChange={handleSelectionChange}
+          onOpenDetail={setDetailMember}
+          page={page}
+          totalPages={totalPages}
+          onPageChange={setPage}
+          className={cn(isMembersFetching && 'pointer-events-none opacity-60 transition-opacity')}
+        />
       </div>
 
       <PenaltySettingModal
@@ -185,7 +184,7 @@ function PenaltyPageContent() {
         onUpdateRecord={updateRecord}
         onDeleteRecord={deleteRecord}
       />
-    </div>
+    </AdminPageContainer>
   );
 }
 

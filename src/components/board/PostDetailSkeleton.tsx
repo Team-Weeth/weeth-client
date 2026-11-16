@@ -63,4 +63,4 @@ function PostDetailSkeleton() {
   );
 }
 
-export { PostDetailSkeleton };
+export { PostDetailSkeleton, CommentSkeleton };

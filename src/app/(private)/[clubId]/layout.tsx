@@ -4,6 +4,7 @@ import { cookies, headers } from 'next/headers';
 
 import { ClubAccessPage } from '@/components/auth/invite/ClubAccessPage';
 import { ClubErrorPage } from '@/components/auth/invite/ClubErrorPage';
+import { DevFlagPanelSlot } from '@/components/dev/DevFlagPanelSlot';
 import { ApiError, apiServer } from '@/lib/apis/server';
 import { ACCESS_TOKEN_KEY, REFRESH_TOKEN_KEY } from '@/lib/apis/cookies';
 import type { Club } from '@/types';
@@ -74,5 +75,10 @@ export default async function ClubLayout({ children, params }: ClubLayoutProps) 
     throw error;
   }
 
-  return <>{children}</>;
+  return (
+    <>
+      {children}
+      <DevFlagPanelSlot clubId={clubId} />
+    </>
+  );
 }

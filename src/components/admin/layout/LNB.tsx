@@ -21,11 +21,12 @@ import { NavSection } from '@/components/admin/layout/NavSection';
 import { NavItem } from '@/components/admin/layout/NavItem';
 import { MemberNavGroup } from '@/components/admin/layout/MemberNavGroup';
 import { useAdminLNBActions, useAdminLNBCollapsed } from '@/stores/useAdminLNBStore';
+import { BREAKPOINTS } from '@/constants/shared/breakpoints';
 
 function LNB() {
   const pathname = usePathname();
   const { clubId } = useParams<{ clubId: string }>();
-  const isBelowDesktop = useMediaQuery('(max-width: 1023.98px)');
+  const isBelowDesktop = useMediaQuery(`(max-width: ${BREAKPOINTS.desktop - 0.02}px)`);
   const collapsed = useAdminLNBCollapsed();
   const { setCollapsed } = useAdminLNBActions();
 

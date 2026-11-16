@@ -1,5 +1,5 @@
-import { SchedulePageSkeleton } from '@/components/admin/schedule/general/SchedulePageSkeleton';
+import { ScheduleManagementSkeleton } from '@/components/admin/schedule/general/ScheduleManagementSkeleton';
 
 export default function Loading() {
-  return <SchedulePageSkeleton />;
+  return <ScheduleManagementSkeleton />;
 }

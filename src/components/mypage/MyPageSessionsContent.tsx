@@ -2,7 +2,6 @@
 
 import { useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import BackIcon from '@/assets/icons/back.svg';
 import CalendarIcon from '@/assets/icons/calendar.svg';
 import { Icon } from '@/components/ui/Icon';
 import { Tag } from '@/components/ui/tag';
@@ -14,6 +13,7 @@ import { formatTime } from '@/lib/formatTime';
 import { toastError } from '@/stores/useToastStore';
 import { formatSessionDateParts } from '@/utils/shared/date';
 import { BoardContentSkeleton } from '@/components/board/BoardContentSkeleton';
+import { MyPageBackButton } from '@/components/mypage/MyPageBackButton';
 
 type MyPageSessionsContentProps = React.HTMLAttributes<HTMLDivElement>;
 
@@ -46,14 +46,8 @@ function MyPageSessionsContent({ className, ...props }: MyPageSessionsContentPro
 
   return (
     <div className={cn('flex min-w-0 flex-1 flex-col gap-4', className)} {...props}>
-      <div className="tablet:py-0 flex items-center gap-1 py-300">
-        <button
-          type="button"
-          onClick={() => router.back()}
-          className="flex items-center justify-center p-1"
-        >
-          <Icon src={BackIcon} size={21} className="text-icon-normal p-1" />
-        </button>
+      <div className="tablet:py-0 tablet:gap-1 flex items-center py-300">
+        <MyPageBackButton onClick={() => router.back()} />
         <div className="flex flex-col gap-1">
           <h1 className="tablet:typo-h3 typo-sub1 text-text-normal">출석한 세션</h1>
         </div>

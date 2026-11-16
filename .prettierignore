@@ -41,6 +41,7 @@ Thumbs.db
 # Project docs / agent prompts
 .claude/
 CLAUDE.md
+README.md
 .github/pull_request_template.md
 
 # Obsidian vault (외부 앱이 관리하는 파일)
