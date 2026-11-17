@@ -10,6 +10,7 @@ import {
 import { ScheduleCalendarSection } from '@/components/admin/schedule/general/ScheduleCalendarSection';
 import { CreateScheduleModal } from '@/components/admin/schedule/modal/CreateScheduleModal';
 import { EditScheduleModal } from '@/components/admin/schedule/modal/EditScheduleModal';
+import { EditSessionModal } from '@/components/admin/schedule/modal/EditSessionModal';
 import { AdminScheduleDetailModal } from '@/components/admin/schedule/modal/AdminScheduleDetailModal';
 import { CustomAlertDialog } from '@/components/alert/CustomAlertDialog';
 import { useClubId } from '@/stores';
@@ -48,7 +49,7 @@ function ScheduleManagementContent() {
     selectedCardinalId !== null ? activeCardinal?.cardinalNumber : undefined,
   );
   const { mutate: deleteSchedule } = useDeleteSchedule();
-  const { submitCreate, forceConfirmDialog } = useSessionMutations();
+  const { submitCreate, submitDeleteSession, forceConfirmDialog } = useSessionMutations();
 
   // filter by type
   const typeFiltered =
@@ -100,7 +101,7 @@ function ScheduleManagementContent() {
 
   const handleDetailEdit = (schedule: Schedule) => {
     setDetailTarget(null);
-    if (schedule.type === 'EVENT') setEditTarget(schedule);
+    setEditTarget(schedule);
   };
 
   const handleDetailDelete = (schedule: Schedule) => {
@@ -109,18 +110,27 @@ function ScheduleManagementContent() {
 
   const handleDeleteConfirm = () => {
     if (!deleteConfirmTarget) return;
-    deleteSchedule(deleteConfirmTarget.id, {
-      onSuccess: () => {
-        setDeleteConfirmTarget(null);
-        setDetailTarget(null);
-      },
-    });
+    const onSuccess = () => {
+      setDeleteConfirmTarget(null);
+      setDetailTarget(null);
+    };
+    if (deleteConfirmTarget.type === 'SESSION') {
+      submitDeleteSession(deleteConfirmTarget.id, 'THIS_ONLY', false, { onSuccess });
+    } else {
+      deleteSchedule(deleteConfirmTarget.id, { onSuccess });
+    }
   };
 
   const handleEditDelete = (schedule: Schedule) => {
-    deleteSchedule(schedule.id, {
-      onSuccess: () => setEditTarget(null),
-    });
+    if (schedule.type === 'SESSION') {
+      submitDeleteSession(schedule.id, 'THIS_ONLY', false, {
+        onSuccess: () => setEditTarget(null),
+      });
+    } else {
+      deleteSchedule(schedule.id, {
+        onSuccess: () => setEditTarget(null),
+      });
+    }
   };
 
   const openCreateModal = (tab: ScheduleType) => {
@@ -201,6 +211,24 @@ function ScheduleManagementContent() {
             }}
             schedule={editTarget}
             onDelete={handleEditDelete}
+          />
+        )}
+
+        {editTarget?.type === 'SESSION' && (
+          <EditSessionModal
+            key={editTarget.id}
+            open
+            onOpenChange={(open) => {
+              if (!open) setEditTarget(null);
+            }}
+            target={{
+              id: editTarget.id,
+              cardinal: editTarget.cardinal,
+              title: editTarget.title,
+              start: editTarget.start,
+              end: editTarget.end,
+              status: 'SCHEDULED',
+            }}
           />
         )}
 
