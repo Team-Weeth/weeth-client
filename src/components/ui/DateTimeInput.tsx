@@ -23,7 +23,7 @@ function DateTimeInput({
 }: DateTimeInputProps) {
   return (
     <div className={cn('flex flex-col', className)} {...props}>
-      <div className="flex h-12 items-center px-400">
+      <div className="flex items-center px-100 py-200">
         <span className="typo-sub3 text-text-normal">{label}</span>
       </div>
       <div className="flex items-center gap-200">

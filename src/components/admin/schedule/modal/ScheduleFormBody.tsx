@@ -33,7 +33,7 @@ function ScheduleFormBody({
         label="모임 장소 (선택)"
         value={form.location}
         onChange={(v) => onFormChange({ location: v })}
-        placeholder="장소를 입력해주세요."
+        placeholder="장소를 입력해 주세요"
         maxLength={SCHEDULE_FIELD_LIMITS.location}
       />
 
@@ -41,7 +41,7 @@ function ScheduleFormBody({
         label="일정 설명 (선택)"
         value={form.content}
         onChange={(v) => onFormChange({ content: v })}
-        placeholder="일정에 대한 설명을 입력해주세요."
+        placeholder="일정에 대한 설명을 입력해 주세요"
         maxLength={SCHEDULE_FIELD_LIMITS.content}
       />
     </div>

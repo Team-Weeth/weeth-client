@@ -33,6 +33,8 @@ export const adminQueryKeys = {
   sessions: (clubId: string | null) => ['admin', 'sessions', clubId] as const,
   sessionsByCardinal: (clubId: string | null, cardinal: number | null) =>
     ['admin', 'sessions', clubId, cardinal] as const,
+  monthlySession: (clubId: string | null, year: number, month: number, cardinal?: number) =>
+    ['admin', 'sessions', clubId, year, month, cardinal ?? null] as const,
   sessionDetail: (clubId: string | null, sessionId: number | null) =>
     ['admin', 'sessionDetail', clubId, sessionId] as const,
 

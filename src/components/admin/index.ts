@@ -50,7 +50,7 @@ export {
   type MemberViewMode,
   type MemberViewToggleProps,
 } from './member/MemberViewToggle';
-export { SchedulePageContent } from './schedule/general/SchedulePageContent';
+export { ScheduleOverviewContent } from './schedule/general/ScheduleOverviewContent';
 export { EditScheduleModal, type EditScheduleModalProps } from './schedule/modal/EditScheduleModal';
 export {
   CreateScheduleModal,

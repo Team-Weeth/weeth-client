@@ -165,23 +165,26 @@ function EditSessionModalContent({
   return (
     <>
       {/* Header */}
-      <div className="tablet:px-700 tablet:pt-700 flex items-start justify-between px-400 pt-400">
-        <div className="flex h-8 items-end">
-          <span className="typo-button2 text-text-strong border-brand-primary border-b-2 px-100 pb-200">
-            세션
-          </span>
-        </div>
+      <div className="bg-background flex h-[96px] shrink-0 items-center justify-between pr-[10px] pl-700">
+        <h2 className="typo-h3 text-text-normal m-0">세션 수정</h2>
         <div className="flex items-center gap-200">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <ModalIconButton icon={AdminMeatballIcon} label="메뉴" />
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem destructive onSelect={() => setDeleteConfirmOpen(true)}>
-                세션 삭제
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <CustomAlertDialog
+            open={deleteConfirmOpen}
+            onOpenChange={setDeleteConfirmOpen}
+            placement="below-right"
+            {...deleteDialogProps}
+          >
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <ModalIconButton icon={AdminMeatballIcon} label="메뉴" />
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem destructive onSelect={() => setDeleteConfirmOpen(true)}>
+                  세션 삭제
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </CustomAlertDialog>
 
           <DiscardConfirmArea
             open={discardSource === 'close'}
@@ -199,8 +202,7 @@ function EditSessionModalContent({
       </div>
 
       {/* Body */}
-      <div className="scrollbar-custom tablet:px-15 min-h-0 flex-1 touch-pan-y overflow-y-auto overscroll-contain px-400 [-webkit-overflow-scrolling:touch]">
-        <h2 className="typo-h3 text-text-normal py-400">세션 수정</h2>
+      <div className="scrollbar-none tablet:px-700 min-h-0 flex-1 touch-pan-y overflow-y-auto overscroll-contain px-400 [-webkit-overflow-scrolling:touch]">
         <ScheduleFormBody
           form={form}
           onFormChange={updateForm}
@@ -238,14 +240,6 @@ function EditSessionModalContent({
           </Button>
         </CustomAlertDialog>
       </div>
-
-      {/* 삭제 확인 */}
-      <CustomAlertDialog
-        open={deleteConfirmOpen}
-        onOpenChange={setDeleteConfirmOpen}
-        placement="center"
-        {...deleteDialogProps}
-      />
 
       {/* CLOSED 세션 포함 시 force=true 재요청 동의 (modal 위에 overlay) */}
       {forceConfirmDialog}

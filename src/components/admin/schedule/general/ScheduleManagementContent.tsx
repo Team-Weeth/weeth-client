@@ -1,24 +1,18 @@
 'use client';
 
 import { useState } from 'react';
-import Link from 'next/link';
-import { cn } from '@/lib/cn';
-import { Button, buttonVariants } from '@/components/ui/Button';
-import { Icon } from '@/components/ui/Icon';
 import { AdminPageContainer } from '@/components/admin/AdminPageContainer';
 import { ScheduleManagementHeader } from '@/components/admin/schedule/general/ScheduleManagementHeader';
-import { CalendarGrid } from '@/components/admin/schedule/calendar/CalendarGrid';
-import { CalendarMini } from '@/components/admin/schedule/calendar/CalendarMini';
-import { CalendarUpcomingPanel } from '@/components/admin/schedule/calendar/CalendarUpcomingPanel';
-import { MonthNavigator } from '@/components/admin/schedule/general/MonthNavigator';
 import {
   ScheduleFilterChips,
   type ScheduleFilter,
 } from '@/components/admin/schedule/general/ScheduleFilterChips';
+import { ScheduleCalendarSection } from '@/components/admin/schedule/general/ScheduleCalendarSection';
 import { CreateScheduleModal } from '@/components/admin/schedule/modal/CreateScheduleModal';
 import { EditScheduleModal } from '@/components/admin/schedule/modal/EditScheduleModal';
-import AdminPlusIcon from '@/assets/icons/admin/ic_admin_plus.svg';
-import ArrowRightIcon from '@/assets/icons/arrow_right.svg';
+import { EditSessionModal } from '@/components/admin/schedule/modal/EditSessionModal';
+import { AdminScheduleDetailModal } from '@/components/admin/schedule/modal/AdminScheduleDetailModal';
+import { CustomAlertDialog } from '@/components/alert/CustomAlertDialog';
 import { useClubId } from '@/stores';
 import { useCardinalSelector } from '@/hooks/useCardinalSelector';
 import { useMonthNavigator } from '@/hooks/useMonthNavigator';
@@ -42,8 +36,9 @@ function ScheduleManagementContent() {
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [createModalTab, setCreateModalTab] = useState<ScheduleType>('EVENT');
+  const [detailTarget, setDetailTarget] = useState<Schedule | null>(null);
   const [editTarget, setEditTarget] = useState<Schedule | null>(null);
-
+  const [deleteConfirmTarget, setDeleteConfirmTarget] = useState<Schedule | null>(null);
   const {
     data: schedules = [],
     isPending,
@@ -54,7 +49,7 @@ function ScheduleManagementContent() {
     selectedCardinalId !== null ? activeCardinal?.cardinalNumber : undefined,
   );
   const { mutate: deleteSchedule } = useDeleteSchedule();
-  const { submitCreate, forceConfirmDialog } = useSessionMutations();
+  const { submitCreate, submitDeleteSession, forceConfirmDialog } = useSessionMutations();
 
   // filter by type
   const typeFiltered =
@@ -94,15 +89,48 @@ function ScheduleManagementContent() {
     setSelectedDate(null);
   };
 
-  const handleScheduleClick = (schedule: ScheduleDetail) => {
-    const original = schedules.find((s) => s.id === schedule.id);
-    if (original) setEditTarget(original);
+  const handleGoToToday = () => {
+    goToToday();
+    setSelectedDate(null);
   };
 
-  const handleDelete = (schedule: Schedule) => {
-    deleteSchedule(schedule.id, {
-      onSuccess: () => setEditTarget(null),
-    });
+  const handleScheduleClick = (schedule: ScheduleDetail) => {
+    const original = schedules.find((s) => s.id === schedule.id);
+    if (original) setDetailTarget(original);
+  };
+
+  const handleDetailEdit = (schedule: Schedule) => {
+    setDetailTarget(null);
+    setEditTarget(schedule);
+  };
+
+  const handleDetailDelete = (schedule: Schedule) => {
+    setDeleteConfirmTarget(schedule);
+  };
+
+  const handleDeleteConfirm = () => {
+    if (!deleteConfirmTarget) return;
+    const onSuccess = () => {
+      setDeleteConfirmTarget(null);
+      setDetailTarget(null);
+    };
+    if (deleteConfirmTarget.type === 'SESSION') {
+      submitDeleteSession(deleteConfirmTarget.id, 'THIS_ONLY', false, { onSuccess });
+    } else {
+      deleteSchedule(deleteConfirmTarget.id, { onSuccess });
+    }
+  };
+
+  const handleEditDelete = (schedule: Schedule) => {
+    if (schedule.type === 'SESSION') {
+      submitDeleteSession(schedule.id, 'THIS_ONLY', false, {
+        onSuccess: () => setEditTarget(null),
+      });
+    } else {
+      deleteSchedule(schedule.id, {
+        onSuccess: () => setEditTarget(null),
+      });
+    }
   };
 
   const openCreateModal = (tab: ScheduleType) => {
@@ -133,94 +161,23 @@ function ScheduleManagementContent() {
             onFilterChange={setActiveFilter}
           />
 
-          {/* Month nav row + CalendarGrid + side panel */}
-          {/* desktop: 2-col grid — MonthNav in [1,1], CalendarGrid in [2,1], side panel in [2,2] */}
-          <div className="desktop:grid desktop:[grid-template-columns:minmax(0,1fr)_auto] desktop:gap-x-400 desktop:gap-y-300 flex min-w-0 flex-col gap-300">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-500">
-                <MonthNavigator
-                  year={year}
-                  month={month}
-                  onPrev={handlePrevMonth}
-                  onNext={handleNextMonth}
-                />
-                <button
-                  type="button"
-                  onClick={() => {
-                    goToToday();
-                    setSelectedDate(null);
-                  }}
-                  className="border-line typo-caption1 text-text-normal flex cursor-pointer items-center justify-center rounded-full border px-300 py-200 transition-colors hover:border-neutral-500"
-                >
-                  오늘
-                </button>
-              </div>
-              <Button variant="primary" size="md" onClick={() => openCreateModal('EVENT')}>
-                <Icon src={AdminPlusIcon} size={20} className="text-text-inverse mr-1" />
-                일정 생성
-              </Button>
-            </div>
-
-            <Link
-              href={`/${clubId}/admin/schedule/overview?year=${year}&month=${month}`}
-              className={cn(
-                buttonVariants({ variant: 'secondary', size: 'md' }),
-                'tablet:hidden gap-100',
-              )}
-            >
-              일정 모아보기
-              <Icon src={ArrowRightIcon} size={10} />
-            </Link>
-
-            {isPending ? (
-              <div className="bg-container-neutral-alternative desktop:col-start-1 desktop:row-start-2 h-[636px] min-w-0 animate-pulse rounded-[15px]" />
-            ) : isError ? (
-              <div className="border-line bg-container-neutral desktop:col-start-1 desktop:row-start-2 flex h-[636px] min-w-0 items-center justify-center rounded-[15px] border shadow-sm">
-                <span className="typo-body2 text-text-alternative">
-                  일정을 불러오지 못했습니다.
-                </span>
-              </div>
-            ) : (
-              <CalendarGrid
-                year={year}
-                month={month}
-                schedules={calendarSchedules}
-                selectedDate={selectedDate}
-                onSelectDate={handleToggleDate}
-                onScheduleClick={handleScheduleClick}
-                className="desktop:col-start-1 desktop:row-start-2 min-w-0"
-              />
-            )}
-
-            <div className="tablet:flex desktop:col-start-2 desktop:row-start-2 desktop:max-h-[638px] desktop:self-start hidden flex-col items-start gap-500 self-stretch rounded-lg bg-neutral-200 p-500">
-              <Link
-                href={`/${clubId}/admin/schedule/overview?year=${year}&month=${month}`}
-                className={cn(
-                  buttonVariants({ variant: 'secondary', size: 'md' }),
-                  'w-full gap-100',
-                )}
-              >
-                일정 모아보기
-                <Icon src={ArrowRightIcon} size={10} />
-              </Link>
-
-              <CalendarMini
-                year={year}
-                month={month}
-                selectedDate={selectedDate}
-                eventDates={eventDates}
-                onPrevMonth={handlePrevMonth}
-                onNextMonth={handleNextMonth}
-                onToggleDate={handleToggleDate}
-                className="desktop:flex hidden"
-              />
-
-              <CalendarUpcomingPanel
-                schedules={upcomingSchedules}
-                onScheduleClick={handleScheduleClick}
-              />
-            </div>
-          </div>
+          <ScheduleCalendarSection
+            year={year}
+            month={month}
+            calendarSchedules={calendarSchedules}
+            selectedDate={selectedDate}
+            eventDates={eventDates}
+            upcomingSchedules={upcomingSchedules}
+            isPending={isPending}
+            isError={isError}
+            clubId={clubId}
+            onPrevMonth={handlePrevMonth}
+            onNextMonth={handleNextMonth}
+            onGoToToday={handleGoToToday}
+            onToggleDate={handleToggleDate}
+            onScheduleClick={handleScheduleClick}
+            onCreateSchedule={openCreateModal}
+          />
         </div>
 
         {/* Modals */}
@@ -229,9 +186,21 @@ function ScheduleManagementContent() {
           onOpenChange={setCreateModalOpen}
           cardinalNumber={activeCardinal?.cardinalNumber ?? latestCardinal?.cardinalNumber ?? null}
           activeTab={createModalTab}
-          onActiveTabChange={setCreateModalTab}
           onCreateSession={(body) => submitCreate(body)}
         />
+
+        {detailTarget && (
+          <AdminScheduleDetailModal
+            key={`detail-${detailTarget.id}`}
+            open
+            onOpenChange={(open) => {
+              if (!open) setDetailTarget(null);
+            }}
+            schedule={detailTarget}
+            onEdit={handleDetailEdit}
+            onDelete={handleDetailDelete}
+          />
+        )}
 
         {editTarget?.type === 'EVENT' && (
           <EditScheduleModal
@@ -241,9 +210,39 @@ function ScheduleManagementContent() {
               if (!open) setEditTarget(null);
             }}
             schedule={editTarget}
-            onDelete={handleDelete}
+            onDelete={handleEditDelete}
           />
         )}
+
+        {editTarget?.type === 'SESSION' && (
+          <EditSessionModal
+            key={editTarget.id}
+            open
+            onOpenChange={(open) => {
+              if (!open) setEditTarget(null);
+            }}
+            target={{
+              id: editTarget.id,
+              cardinal: editTarget.cardinal,
+              title: editTarget.title,
+              start: editTarget.start,
+              end: editTarget.end,
+              status: 'SCHEDULED',
+            }}
+          />
+        )}
+
+        <CustomAlertDialog
+          open={deleteConfirmTarget !== null}
+          onOpenChange={(open) => {
+            if (!open) setDeleteConfirmTarget(null);
+          }}
+          title="이 일정을 삭제하시겠어요?"
+          description={'삭제된 일정은 복구할 수 없습니다.\n신중히 확인 후 진행해 주세요.'}
+          actionLabel="삭제"
+          onAction={handleDeleteConfirm}
+          placement="center"
+        />
 
         {forceConfirmDialog}
       </div>

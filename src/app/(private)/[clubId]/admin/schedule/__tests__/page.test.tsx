@@ -4,6 +4,7 @@ import { redirect } from 'next/navigation';
 import { DEFAULT_CLUB_FEATURES } from '@/flags/club-features/definitions';
 import { getClubFeatures } from '@/flags/club-features/server';
 import { ScheduleManagementContent } from '@/components/admin/schedule/general/ScheduleManagementContent';
+import { ScheduleOverviewContent } from '@/components/admin/schedule/general/ScheduleOverviewContent';
 import { SchedulePageContent } from '@/components/admin/schedule/general/SchedulePageContent';
 import SchedulePage from '../page';
 import ScheduleOverviewPage from '../overview/page';
@@ -16,6 +17,9 @@ jest.mock('next/navigation', () => ({
 jest.mock('@/flags/club-features/server', () => ({ getClubFeatures: jest.fn() }));
 jest.mock('@/components/admin/schedule/general/ScheduleManagementContent', () => ({
   ScheduleManagementContent: () => null,
+}));
+jest.mock('@/components/admin/schedule/general/ScheduleOverviewContent', () => ({
+  ScheduleOverviewContent: () => null,
 }));
 jest.mock('@/components/admin/schedule/general/SchedulePageContent', () => ({
   SchedulePageContent: () => null,
@@ -87,6 +91,6 @@ describe('일정 관리 개편 플래그 ON', () => {
   it('/admin/schedule/overview에서 목록형 화면을 보여준다', async () => {
     const element = await ScheduleOverviewPage(props());
 
-    expect(element.type).toBe(SchedulePageContent);
+    expect(element.type).toBe(ScheduleOverviewContent);
   });
 });

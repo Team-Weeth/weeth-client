@@ -1,5 +1,5 @@
 import { redirect } from 'next/navigation';
-import { SchedulePageContent } from '@/components/admin/schedule/general/SchedulePageContent';
+import { ScheduleOverviewContent } from '@/components/admin/schedule/general/ScheduleOverviewContent';
 import { getClubFeatures } from '@/flags/club-features/server';
 import { toURLSearchParams } from '@/utils/shared/url';
 
@@ -21,5 +21,5 @@ export default async function ScheduleOverviewPage({
     redirect(`/${clubId}/admin/schedule${query ? `?${query}` : ''}`);
   }
 
-  return <SchedulePageContent />;
+  return <ScheduleOverviewContent />;
 }

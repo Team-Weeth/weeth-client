@@ -5,12 +5,12 @@ import AdminCalendarIcon from '@/assets/icons/admin/ic_admin_calendar.svg';
 import LocationIcon from '@/assets/icons/location.svg';
 
 const scheduleTagVariants = cva(
-  'typo-caption1 inline-flex h-6 items-center gap-100 rounded-[5px] px-200 py-100 whitespace-nowrap',
+  'typo-caption1 inline-flex h-6 items-center gap-100 rounded-sm px-200 py-100 whitespace-nowrap',
   {
     variants: {
       variant: {
         type: 'bg-brand-primary/10 text-brand-primary',
-        info: 'bg-container-neutral-alternative text-text-alternative',
+        info: 'bg-text-alternative/10 text-text-alternative',
       },
     },
     defaultVariants: {

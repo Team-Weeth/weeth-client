@@ -12,16 +12,11 @@ interface EditSessionModalLoadingProps {
 function EditSessionModalLoading({ onClose }: EditSessionModalLoadingProps) {
   return (
     <>
-      <div className="tablet:px-700 tablet:pt-700 flex items-start justify-between px-400 pt-400">
-        <div className="flex h-8 items-end">
-          <span className="typo-button2 text-text-strong border-brand-primary border-b-2 px-100 pb-200">
-            세션
-          </span>
-        </div>
+      <div className="bg-background flex h-[96px] shrink-0 items-center justify-between pr-[10px] pl-700">
+        <h2 className="typo-h3 text-text-normal m-0">세션 수정</h2>
         <ModalIconButton icon={AdminCloseIcon} label="닫기" onClick={onClose} />
       </div>
-      <div className="scrollbar-custom tablet:px-700 min-h-0 flex-1 touch-pan-y overflow-y-auto px-400">
-        <Skeleton className="mt-400 mb-200 h-8 w-28" />
+      <div className="scrollbar-none tablet:px-700 min-h-0 flex-1 touch-pan-y overflow-y-auto px-400">
         <div className="flex flex-col gap-400 py-400">
           <Skeleton className="h-10 w-full rounded-sm" />
           <SessionModalFieldSkeleton />
