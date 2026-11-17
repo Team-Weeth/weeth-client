@@ -90,12 +90,13 @@ function SessionScheduleList({
                   onToggle={() => toggle(group.groupId)}
                   onEdit={onEditGroup}
                 />
-                {isRepeating(group) && group.sessions.length > 1 && (
+                {isRepeating(group) && group.sessions.length > 0 && (
                   <div
                     className={cn(
                       'grid transition-[grid-template-rows] duration-200 ease-in-out',
                       expanded ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]',
                     )}
+                    {...(!expanded && { inert: true })}
                   >
                     <div className="min-w-fit overflow-hidden">
                       {group.sessions.map((session, idx) => (
