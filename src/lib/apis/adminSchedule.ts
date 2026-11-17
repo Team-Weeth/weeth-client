@@ -17,13 +17,11 @@ export const adminScheduleApi = {
     apiClient.get<ApiResponse<ScheduleDetail>>(`/clubs/${clubId}/events/${eventId}`),
   getSessionDetail: (clubId: string, sessionId: number) =>
     apiClient.get<ApiResponse<ScheduleDetail>>(`/clubs/${clubId}/sessions/${sessionId}`),
+  // TODO: 서버 API가 start/end 날짜 필터를 지원하지 않아 전체 세션을 반환함.
+  // 서버에 월간 필터 파라미터가 추가되면 getSessionList에 start/end를 전달하도록 수정 필요.
   getSessionList: (clubId: string, cardinal?: number) =>
     apiClient.get<ApiResponse<AdminSessionListData>>(`/admin/clubs/${clubId}/sessions`, {
       params: cardinal !== undefined ? { cardinal } : undefined,
-    }),
-  getMonthlySessionList: (clubId: string, start: string, end: string, cardinal?: number) =>
-    apiClient.get<ApiResponse<AdminSessionListData>>(`/admin/clubs/${clubId}/sessions`, {
-      params: { start, end, ...(cardinal !== undefined ? { cardinal } : {}) },
     }),
   createSession: (clubId: string, body: CreateSessionBody) =>
     apiClient.post<ApiResponse<null>>(`/admin/clubs/${clubId}/sessions`, body),

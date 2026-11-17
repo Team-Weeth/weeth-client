@@ -16,7 +16,7 @@ import {
 
 jest.mock('@/lib/apis/adminSchedule', () => ({
   adminScheduleApi: {
-    getMonthlySessionList: jest.fn(),
+    getSessionList: jest.fn(),
     createEvent: jest.fn(),
     createSession: jest.fn(),
     updateSession: jest.fn(),
@@ -76,9 +76,9 @@ describe('isSessionForceRequiredError', () => {
 });
 
 describe('useAdminMonthlySessionList', () => {
-  it('월간 세션 목록을 조회한다', async () => {
+  it('세션 목록을 조회한다', async () => {
     const mockData = { thisWeek: [], sessions: [] };
-    (adminScheduleApi.getMonthlySessionList as jest.Mock).mockResolvedValue({
+    (adminScheduleApi.getSessionList as jest.Mock).mockResolvedValue({
       data: { data: mockData },
     });
 
@@ -88,16 +88,11 @@ describe('useAdminMonthlySessionList', () => {
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
     expect(result.current.data).toEqual(mockData);
-    expect(adminScheduleApi.getMonthlySessionList).toHaveBeenCalledWith(
-      'club-1',
-      '2026-06-01T00:00:00',
-      '2026-06-30T23:59:59',
-      undefined,
-    );
+    expect(adminScheduleApi.getSessionList).toHaveBeenCalledWith('club-1', undefined);
   });
 
   it('기수 필터를 전달한다', async () => {
-    (adminScheduleApi.getMonthlySessionList as jest.Mock).mockResolvedValue({
+    (adminScheduleApi.getSessionList as jest.Mock).mockResolvedValue({
       data: { data: { thisWeek: [], sessions: [] } },
     });
 
@@ -106,12 +101,7 @@ describe('useAdminMonthlySessionList', () => {
     });
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(adminScheduleApi.getMonthlySessionList).toHaveBeenCalledWith(
-      'club-1',
-      '2026-02-01T00:00:00',
-      '2026-02-28T23:59:59',
-      7,
-    );
+    expect(adminScheduleApi.getSessionList).toHaveBeenCalledWith('club-1', 7);
   });
 });
 

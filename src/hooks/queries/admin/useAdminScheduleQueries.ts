@@ -53,12 +53,11 @@ export function useAdminMonthlySchedules(year: number, month: number, cardinal?:
 
 export function useAdminMonthlySessionList(year: number, month: number, cardinal?: number) {
   const clubId = useClubId();
-  const { start, end } = toMonthRange(year, month);
 
   return useQuery({
     queryKey: adminQueryKeys.monthlySession(clubId, year, month, cardinal),
     queryFn: async () => {
-      const res = await adminScheduleApi.getMonthlySessionList(clubId!, start, end, cardinal);
+      const res = await adminScheduleApi.getSessionList(clubId!, cardinal);
       return res.data.data;
     },
     enabled: !!clubId,
