@@ -14,6 +14,7 @@ import { ScheduleListSkeleton } from '@/components/admin/schedule/general/Schedu
 import AdminBackIcon from '@/assets/icons/admin/ic_admin_back.svg';
 import AdminPlusIcon from '@/assets/icons/admin/ic_admin_plus.svg';
 import InfoCircleIcon from '@/assets/icons/info_circle.svg';
+import { isRepeating } from '@/utils/admin/sessionScheduleListUtils';
 import { useMonthNavigator } from '@/hooks/useMonthNavigator';
 import { useCardinalSelector } from '@/hooks/useCardinalSelector';
 import { useSessionMutations } from '@/hooks/admin/useSessionMutations';
@@ -83,16 +84,18 @@ function ScheduleOverviewContent() {
     parentGroup?: AdminSessionGroup;
   } | null>(null);
 
-  const { data: schedules = [], isLoading: isEventLoading } = useAdminMonthlySchedules(
-    currentYear,
-    currentMonth,
-    activeCardinal?.cardinalNumber,
-  );
-  const { data: sessionData, isLoading: isSessionLoading } = useAdminMonthlySessionList(
-    currentYear,
-    currentMonth,
-    activeCardinal?.cardinalNumber,
-  );
+  const {
+    data: schedules = [],
+    isLoading: isEventLoading,
+    isError: isEventError,
+    refetch: refetchEvents,
+  } = useAdminMonthlySchedules(currentYear, currentMonth, activeCardinal?.cardinalNumber);
+  const {
+    data: sessionData,
+    isLoading: isSessionLoading,
+    isError: isSessionError,
+    refetch: refetchSessions,
+  } = useAdminMonthlySessionList(currentYear, currentMonth, activeCardinal?.cardinalNumber);
   const sessionGroups = sessionData?.sessions ?? [];
 
   const { mutate: deleteSchedule } = useDeleteSchedule();
@@ -133,7 +136,12 @@ function ScheduleOverviewContent() {
   };
 
   const handleEditGroup = (group: AdminSessionGroup) => {
-    setEditSessionTarget({ target: group });
+    if (isRepeating(group)) {
+      setEditSessionTarget({ target: group });
+    } else {
+      const session = group.sessions[0];
+      if (session) setEditSessionTarget({ target: session });
+    }
   };
 
   const handleEditSession = (session: AdminSession) => {
@@ -151,7 +159,12 @@ function ScheduleOverviewContent() {
       <div className="flex min-h-0 flex-1 flex-col">
         {/* Header */}
         <div className="flex shrink-0 flex-col items-start gap-300 p-700">
-          <Button variant="secondary" size="icon-md" onClick={() => router.back()}>
+          <Button
+            variant="secondary"
+            size="icon-md"
+            aria-label="뒤로 가기"
+            onClick={() => router.back()}
+          >
             <Icon src={AdminBackIcon} size={24} className="text-icon-normal" />
           </Button>
           <h1 className="typo-h2 text-text-strong">일정 모아보기</h1>
@@ -235,6 +248,13 @@ function ScheduleOverviewContent() {
               {activeFilter === 'SESSION' ? (
                 isSessionLoading ? (
                   <ScheduleListSkeleton />
+                ) : isSessionError ? (
+                  <div className="flex h-[188px] flex-col items-center justify-center gap-300">
+                    <p className="typo-body2 text-text-alternative">세션을 불러오지 못했습니다.</p>
+                    <Button variant="secondary" size="md" onClick={() => refetchSessions()}>
+                      다시 시도
+                    </Button>
+                  </div>
                 ) : (
                   <SessionScheduleList
                     className={sessionGroups.length > 0 ? 'min-h-0 flex-1' : undefined}
@@ -246,6 +266,13 @@ function ScheduleOverviewContent() {
                 )
               ) : isEventLoading ? (
                 <ScheduleListSkeleton />
+              ) : isEventError ? (
+                <div className="flex h-[188px] flex-col items-center justify-center gap-300">
+                  <p className="typo-body2 text-text-alternative">일정을 불러오지 못했습니다.</p>
+                  <Button variant="secondary" size="md" onClick={() => refetchEvents()}>
+                    다시 시도
+                  </Button>
+                </div>
               ) : (
                 <ScheduleList
                   className={sortedSchedules.length > 0 ? 'min-h-0 flex-1' : undefined}
