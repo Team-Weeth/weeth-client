@@ -1,4 +1,4 @@
-import { trackEvent } from '@/lib/analytics';
+import { trackGA } from '@/lib/analytics/ga';
 
 import type { TourScope } from './types';
 import type { FailureReason, Origin } from 'react-joyride';
@@ -12,7 +12,7 @@ interface TourBaseParams {
 
 /** Event names live only here — see .claude/rules/tour.md ("Analytics"). */
 function trackTourStarted(params: TourBaseParams & { stepCount: number }) {
-  trackEvent('tour_started', {
+  trackGA('tour_started', {
     tour_id: params.tourId,
     tour_version: params.tourVersion,
     club_id: params.clubId,
@@ -22,7 +22,7 @@ function trackTourStarted(params: TourBaseParams & { stepCount: number }) {
 }
 
 function trackTourStepViewed(params: TourBaseParams & { stepId: string; stepIndex: number }) {
-  trackEvent('tour_step_viewed', {
+  trackGA('tour_step_viewed', {
     tour_id: params.tourId,
     tour_version: params.tourVersion,
     club_id: params.clubId,
@@ -33,7 +33,7 @@ function trackTourStepViewed(params: TourBaseParams & { stepId: string; stepInde
 }
 
 function trackTourCompleted(params: TourBaseParams & { durationMs: number }) {
-  trackEvent('tour_completed', {
+  trackGA('tour_completed', {
     tour_id: params.tourId,
     tour_version: params.tourVersion,
     club_id: params.clubId,
@@ -45,7 +45,7 @@ function trackTourCompleted(params: TourBaseParams & { durationMs: number }) {
 function trackTourSkipped(
   params: TourBaseParams & { stepId: string; stepIndex: number; origin: Origin | null },
 ) {
-  trackEvent('tour_skipped', {
+  trackGA('tour_skipped', {
     tour_id: params.tourId,
     tour_version: params.tourVersion,
     club_id: params.clubId,
@@ -57,7 +57,7 @@ function trackTourSkipped(
 }
 
 function trackTourStepFailed(params: TourBaseParams & { stepId: string; reason: FailureReason }) {
-  trackEvent('tour_step_failed', {
+  trackGA('tour_step_failed', {
     tour_id: params.tourId,
     tour_version: params.tourVersion,
     club_id: params.clubId,
