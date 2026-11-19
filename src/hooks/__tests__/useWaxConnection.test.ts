@@ -78,6 +78,7 @@ describe('useWaxConnection', () => {
   const NativeWebSocket = globalThis.WebSocket;
 
   beforeEach(() => {
+    window.localStorage.clear();
     jest.useFakeTimers();
     FakeSocket.instances = [];
     globalThis.WebSocket = FakeSocket as unknown as typeof WebSocket;
@@ -95,6 +96,7 @@ describe('useWaxConnection', () => {
     const socket = FakeSocket.instances[0];
     act(() => {
       socket.open();
+      socket.receive(welcome('w1'));
       socket.receive(seatedState());
     });
     act(() => result.current.startPress());
@@ -157,7 +159,7 @@ describe('useWaxConnection', () => {
     act(() => jest.advanceTimersByTime(800));
     const second = FakeSocket.instances[1];
     act(() => second.open());
-    expect(second.joined()).toEqual({ type: 'join', worldId: 'w1' });
+    expect(second.joined()).toEqual({ type: 'join', worldId: 'w1', token: expect.any(String) });
     act(() => {
       second.receive(welcome('w1'));
       second.receive(seatedState(20000));
@@ -185,7 +187,7 @@ describe('useWaxConnection', () => {
     act(() => jest.advanceTimersByTime(1500));
     const third = FakeSocket.instances[2];
     act(() => third.open());
-    expect(third.joined()).toEqual({ type: 'join' });
+    expect(third.joined()).toEqual({ type: 'join', token: expect.any(String) });
     unmount();
   });
 
@@ -349,6 +351,120 @@ describe('useWaxConnection', () => {
     act(() => result.current.sit(1, 3));
     expect(socket.send).toHaveBeenLastCalledWith(JSON.stringify({ type: 'sit', room: 1, seat: 3 }));
     now.mockRestore();
+    unmount();
+  });
+  it('prepare는 연결만 하고 추천 닉네임을 받은 뒤, 이름을 고르면 그 이름과 기기 토큰으로 입장한다', () => {
+    const { result, unmount } = renderHook(() => useWaxConnection());
+    act(() => result.current.prepare());
+    const socket = FakeSocket.instances[0];
+    act(() => socket.open());
+    expect(socket.joined()).toBeUndefined();
+    act(() => socket.receive({ type: 'hello', suggestion: '수상한 복학생' }));
+    expect(result.current.suggestion).toBe('수상한 복학생');
+    expect(result.current.status).toBe('naming');
+    act(() => result.current.enter('왁뿌볼고수'));
+    const join = socket.joined();
+    expect(join).toEqual({ type: 'join', name: '왁뿌볼고수', token: expect.any(String) });
+    expect(join.token).toMatch(/^[A-Za-z0-9-]{16,64}$/);
+    // 같은 기기는 같은 토큰을 쓴다.
+    expect(window.localStorage.getItem('wax:device-token')).toBe(join.token);
+    expect(window.localStorage.getItem('wax:nickname')).toBe('왁뿌볼고수');
+    unmount();
+  });
+
+  it('서버가 닉네임을 거절하면 연결을 유지한 채 사유를 알려주고, 다시 고르면 같은 연결로 입장한다', () => {
+    const { result, unmount } = renderHook(() => useWaxConnection());
+    act(() => result.current.prepare());
+    const socket = FakeSocket.instances[0];
+    act(() => {
+      socket.open();
+      socket.receive({ type: 'hello', suggestion: '수상한 복학생' });
+    });
+    act(() => result.current.enter('특수!'));
+    act(() =>
+      socket.receive({
+        type: 'error',
+        code: 'invalid_name',
+        message: '닉네임은 2~8자의 한글·영문·숫자로 정해주세요.',
+      }),
+    );
+    expect(result.current.nameError).toContain('2~8자');
+    expect(result.current.status).toBe('naming');
+    expect(socket.close).not.toHaveBeenCalled();
+    act(() => result.current.enter('수상한 복학생'));
+    expect(result.current.nameError).toBe('');
+    const joins = socket.send.mock.calls
+      .map(([raw]) => JSON.parse(raw))
+      .filter((m) => m.type === 'join');
+    expect(joins.at(-1)).toMatchObject({ name: '수상한 복학생' });
+    expect(FakeSocket.instances).toHaveLength(1);
+    unmount();
+  });
+
+  it('모달에 머무는 동안 연결이 끊겨도 끊김 화면 없이 기다리고, 이름을 고르면 다시 연결해 바로 입장한다', () => {
+    const { result, unmount } = renderHook(() => useWaxConnection());
+    act(() => result.current.prepare());
+    const first = FakeSocket.instances[0];
+    act(() => {
+      first.open();
+      first.receive({ type: 'hello', suggestion: '수상한 복학생' });
+    });
+    act(() => first.close());
+    expect(result.current.status).toBe('naming');
+    act(() => jest.advanceTimersByTime(30000));
+    expect(FakeSocket.instances).toHaveLength(1);
+    act(() => result.current.enter('왁뿌볼고수'));
+    const second = FakeSocket.instances[1];
+    act(() => second.open());
+    expect(second.joined()).toMatchObject({ type: 'join', name: '왁뿌볼고수' });
+    unmount();
+  });
+
+  it('입장한 뒤 끊겨 다시 들어갈 때도 고른 이름으로 입장한다', () => {
+    const { result, unmount } = renderHook(() => useWaxConnection());
+    act(() => result.current.prepare());
+    const first = FakeSocket.instances[0];
+    act(() => first.open());
+    act(() => result.current.enter('왁뿌볼고수'));
+    act(() => first.receive(welcome('w1')));
+    act(() => first.close());
+    act(() => jest.advanceTimersByTime(800));
+    const second = FakeSocket.instances[1];
+    act(() => second.open());
+    expect(second.joined()).toMatchObject({ worldId: 'w1', name: '왁뿌볼고수' });
+    unmount();
+  });
+
+  it('모달을 닫으면 입장하지 않은 연결을 닫는다', () => {
+    const { result, unmount } = renderHook(() => useWaxConnection());
+    act(() => result.current.prepare());
+    const socket = FakeSocket.instances[0];
+    act(() => socket.open());
+    act(() => result.current.cancelNaming());
+    expect(socket.close).toHaveBeenCalledTimes(1);
+    expect(result.current.status).toBe('idle');
+    unmount();
+  });
+  it('입장(welcome) 전에는 게임 명령을 보내지 않아 닉네임을 고르는 동안 연결이 끊기지 않는다', () => {
+    const { result, unmount } = renderHook(() => useWaxConnection());
+    act(() => result.current.prepare());
+    const socket = FakeSocket.instances[0];
+    act(() => {
+      socket.open();
+      socket.receive({ type: 'hello', suggestion: '수상한 복학생' });
+    });
+    act(() => {
+      result.current.stand();
+      result.current.emote('wave');
+      result.current.sit(1, 0);
+      result.current.sendMove(1, 2, 0);
+    });
+    expect(socket.send).not.toHaveBeenCalled();
+    expect(result.current.status).toBe('naming');
+    act(() => result.current.enter('왁뿌볼고수'));
+    act(() => socket.receive(welcome('w1')));
+    act(() => result.current.emote('wave'));
+    expect(socket.send).toHaveBeenLastCalledWith(JSON.stringify({ type: 'emote', kind: 'wave' }));
     unmount();
   });
 });

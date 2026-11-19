@@ -120,6 +120,7 @@ export interface WaxWelcome {
 }
 
 export type WaxCommand =
+  | { type: 'join'; worldId?: string; name?: string; token?: string }
   | { type: 'move'; x: number; z: number; yaw: number }
   | { type: 'sit'; room: number; seat: number }
   | { type: 'stand' }
@@ -127,3 +128,27 @@ export type WaxCommand =
   | { type: 'emote'; kind: WaxEmoteKind }
   | { type: 'active' }
   | { type: 'heartbeat' };
+
+/** 연결이 받아들여지면 서버가 먼저 보내는 추천 닉네임. 닉네임 결정 모달에 띄운다. */
+export interface WaxHello {
+  type: 'hello';
+  suggestion: string;
+}
+
+export type WaxRankingPeriod = 'DAILY' | 'WEEKLY';
+
+export interface WaxRankingEntry {
+  rank: number;
+  name: string;
+  /** 한 판에 깬 왁스 수의 기간 내 최고 기록 */
+  brokenWaxes: number;
+}
+
+/** 서버 `GET /minigame/wax/rankings` 응답. 기간은 한국 시간 기준(일간 자정, 주간 월요일 자정에 초기화). */
+export interface WaxRanking {
+  period: WaxRankingPeriod;
+  startDate: string;
+  resetAt: string;
+  rankings: WaxRankingEntry[];
+  me: WaxRankingEntry | null;
+}
