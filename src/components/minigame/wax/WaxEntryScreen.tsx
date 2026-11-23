@@ -83,11 +83,14 @@ export function WaxEntryScreen({
   loading,
   actionLabel,
   onAction,
+  onRanking,
   error,
 }: {
   loading: boolean;
   actionLabel: string;
   onAction: () => void;
+  /** 있으면 CTA 아래에 랭킹 보기 링크를 둔다. */
+  onRanking?: () => void;
   error?: string;
 }) {
   return (
@@ -177,6 +180,15 @@ export function WaxEntryScreen({
               actionLabel
             )}
           </Button>
+          {onRanking && (
+            <button
+              type="button"
+              className="typo-button2 -mt-[4px] text-[#aaa] underline-offset-2 hover:underline"
+              onClick={onRanking}
+            >
+              랭킹 보기
+            </button>
+          )}
         </div>
       </div>
     </div>

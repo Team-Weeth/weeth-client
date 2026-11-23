@@ -11,6 +11,8 @@ async function game(page: Page) {
 async function enter(page: Page, url = '/play/wax') {
   await page.goto(url);
   await page.getByRole('button', { name: '소리 켜고 입장하기' }).click();
+  // 닉네임 결정 모달에서 서버가 추천한 이름 그대로 입장한다.
+  await page.getByRole('button', { name: '이 이름으로 입장' }).click();
   await expect(page.getByTestId('wax-game')).toHaveAttribute('data-ready', 'true', {
     timeout: 20000,
   });
@@ -48,6 +50,23 @@ async function walkIntoRoom(page: Page) {
   await holdUntil(page, 'KeyA', (state) => Number(state.x) <= 4.4);
   await holdUntil(page, 'KeyW', (state) => state.room === '2' && Number(state.z) < -1);
 }
+
+test('닉네임을 직접 입력하는 동안 게임 단축키(Q·E·숫자)가 동작하지 않고 그 이름으로 입장한다', async ({
+  page,
+}) => {
+  await page.goto('/play/wax');
+  await page.getByRole('button', { name: '소리 켜고 입장하기' }).click();
+  const input = page.getByRole('textbox', { name: '닉네임 직접 입력' });
+  await input.click();
+  // 한글 ㅂ·ㄷ은 물리 키 Q·E다. 숫자는 감정 표현 단축키다.
+  await page.keyboard.type('qe12ab');
+  await expect(input).toHaveValue('qe12ab');
+  await page.getByRole('button', { name: '직접 입력한 이름으로 입장' }).click();
+  await expect(page.getByTestId('wax-game')).toHaveAttribute('data-ready', 'true', {
+    timeout: 20000,
+  });
+  await expect(page.getByText('qe12ab', { exact: true })).toBeVisible();
+});
 
 test('로그인 없이 게임 소개와 입장 버튼을 보여준다', async ({ page }) => {
   await page.goto('/play/wax');
@@ -127,6 +146,8 @@ test('같은 월드의 두 사람: 착석·깨기·적발·문 앞 퇴장이 서
 test('형식이 틀린 초대 링크는 거절하고 새 교실로 다시 입장할 수 있다', async ({ page }) => {
   await page.goto('/play/wax?world=expired-classroom');
   await page.getByRole('button', { name: '소리 켜고 입장하기' }).click();
+  // 초대 링크 검사는 이름을 고른 뒤 입장(join)할 때 서버가 한다.
+  await page.getByRole('button', { name: '이 이름으로 입장' }).click();
   await expect(page.getByText('잘못된 초대 링크예요').first()).toBeVisible();
   await page.getByRole('button', { name: '다시 입장하기' }).click();
   await expect(page.getByTestId('wax-game')).toHaveAttribute('data-ready', 'true', {
@@ -189,6 +210,7 @@ test('모바일에서 가로 넘침 없이 조이스틱으로 걷는다', async 
   try {
     await page.goto('/play/wax');
     await page.getByRole('button', { name: '소리 켜고 입장하기' }).tap();
+    await page.getByRole('button', { name: '이 이름으로 입장' }).tap();
     await expect(page.getByTestId('wax-game')).toHaveAttribute('data-ready', 'true', {
       timeout: 20000,
     });

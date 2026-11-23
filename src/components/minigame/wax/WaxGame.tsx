@@ -6,6 +6,9 @@ import { preloadWaxCharacters } from '@/components/minigame/wax/WaxCharacter';
 import { WaxEntryScreen } from '@/components/minigame/wax/WaxEntryScreen';
 import { WaxExitDialog } from '@/components/minigame/wax/WaxExitDialog';
 import { WaxHelpDialog } from '@/components/minigame/wax/WaxHelpDialog';
+import { WaxNicknameDialog } from '@/components/minigame/wax/WaxNicknameDialog';
+import { WaxRankingDialog } from '@/components/minigame/wax/WaxRankingDialog';
+import { WaxRankingHud } from '@/components/minigame/wax/WaxRankingHud';
 import {
   ClassroomBadge,
   DepthButton,
@@ -52,6 +55,13 @@ function roster(state: WaxState | null) {
     )
     .sort()
     .join('|');
+}
+
+function isTyping(target: EventTarget | null) {
+  return (
+    target instanceof HTMLElement &&
+    (target.isContentEditable || ['INPUT', 'TEXTAREA', 'SELECT'].includes(target.tagName))
+  );
 }
 
 /** 화면 왼쪽 아래 가상 조이스틱. 터치 기기에서 걷기에 쓴다. 손잡이는 바깥 원 안에서만 움직인다. */
@@ -141,6 +151,9 @@ export function WaxGame({ embedded = false, onLeave }: WaxGameProps = {}) {
   /** 서버가 입력 없음으로 내보내기까지 남은 초. 20초 이하일 때만 값이 있다. */
   const [idleLeft, setIdleLeft] = useState<number | null>(null);
   const [exitOpen, setExitOpen] = useState(false);
+  /** 닉네임 결정 모달. 입장 버튼을 누르면 열리고, 이름을 고르거나 닫으면 닫힌다. 서버가 이름을 거절하면 다시 연다. */
+  const [choosing, setChoosing] = useState(false);
+  const [rankingOpen, setRankingOpen] = useState(false);
   const leaving = useRef(false);
   const sound = useRef<WaxAudio | null>(null);
   const controls = useRef<WaxControls>({
@@ -237,7 +250,9 @@ export function WaxGame({ embedded = false, onLeave }: WaxGameProps = {}) {
     if (!started) return;
     function down(event: KeyboardEvent) {
       if (event.metaKey || event.ctrlKey) return;
-      if (document.querySelector('dialog[open], [role=alertdialog]')) return;
+      // 단축키는 물리 키(event.code)로 본다. 한글 입력 중 ㅂ·ㄷ도 Q·E라서, 입력칸이나 모달(닉네임 등)에서는 무시한다.
+      if (isTyping(event.target)) return;
+      if (document.querySelector('dialog[open], [role=alertdialog], [role=dialog]')) return;
       // 꾹 누르는 동안 오는 반복 keydown도 막아야 한다. 막지 않으면 포커스가 남은 HUD 버튼(시점 전환 등)이
       // Space를 뗄 때 클릭돼 앉아 있는 사이 몰래 1인칭으로 바뀐다.
       if (event.code === 'Space') {
@@ -349,6 +364,10 @@ export function WaxGame({ embedded = false, onLeave }: WaxGameProps = {}) {
     if (game.error) setNotice(game.error);
   }, [game.error]);
 
+  useEffect(() => {
+    if (game.nameError) setChoosing(true);
+  }, [game.nameError]);
+
   async function start() {
     setStarting(true);
     sound.current ??= new WaxAudio();
@@ -358,13 +377,40 @@ export function WaxGame({ embedded = false, onLeave }: WaxGameProps = {}) {
       setNotice('소리를 불러오지 못했어요. 소리 없이 시작합니다.');
     }
     setStarting(false);
+    leaving.current = false;
     setStarted(true);
-    game.join();
+    setChoosing(true);
+    // 연결해서 추천 닉네임을 받는다. 입장(join)은 모달에서 이름을 고른 뒤에 한다.
+    game.prepare();
+  }
+
+  function enter(name: string) {
+    setChoosing(false);
+    game.enter(name);
+  }
+
+  function cancelNaming() {
+    // 입장 시도 때 쌓은 뒤로가기 기록을 뺀다. 남기면 진입 화면에서 뒤로가기를 한 번 더 눌러야 이전 페이지로 간다.
+    // 빼면서 생기는 popstate를 나가기 시도로 보지 않도록 leaving을 켠다(다음 start에서 끈다).
+    if (window.history.state?.waxExitGuard) {
+      leaving.current = true;
+      window.history.back();
+    }
+    setChoosing(false);
+    setStarted(false);
+    game.cancelNaming();
   }
 
   const recentEjections = (state?.ejections ?? []).filter(
     (event) => (state?.now ?? 0) - event.at < 3200,
   );
+  /** 위 가운데(74px)에 안내가 떠 있는지. 좁은 화면에서는 안내가 오른쪽 위 랭킹까지 덮어서 그동안 랭킹을 숨긴다. */
+  const topNotice =
+    started &&
+    (recentEjections.length > 0 ||
+      status === 'reconnecting' ||
+      Boolean(notice) ||
+      idleLeft !== null);
 
   return (
     <main
@@ -422,21 +468,44 @@ export function WaxGame({ embedded = false, onLeave }: WaxGameProps = {}) {
             shortLabel={room ? room.name : '복도'}
             href={WEETH_URL}
           />
-          <RoomControls
-            players={state?.players.length ?? 0}
-            muted={muted}
-            firstPerson={view === 'first'}
-            onToggleMute={() => {
-              const next = !muted;
-              setMuted(next);
-              if (sound.current) sound.current.muted = next;
-            }}
-            onToggleView={() => setView(toggleView(view, touch))}
-            onExit={() => {
-              if (document.pointerLockElement) document.exitPointerLock();
-              setExitOpen(true);
-            }}
-          />
+          {/*
+            오른쪽 열: 방 버튼 아래 16px에 같은 폭으로 오늘 랭킹을 붙인다. 고정 좌표로 두면 브라우저(Safari 상단 여백·글자 크기)에 따라
+            버튼이 더 아래 그려져 랭킹이 버튼을 덮는다. 버튼 묶음 기준으로 놓아 버튼 높이가 어떻든 항상 그 아래에 온다.
+            랭킹은 absolute라 헤더 폭 계산에 끼지 않는다(끼면 왼쪽 교실 배지가 잘린다).
+          */}
+          <div className="relative min-w-0">
+            <RoomControls
+              players={state?.players.length ?? 0}
+              muted={muted}
+              firstPerson={view === 'first'}
+              onToggleMute={() => {
+                const next = !muted;
+                setMuted(next);
+                if (sound.current) sound.current.muted = next;
+              }}
+              onToggleView={() => setView(toggleView(view, touch))}
+              onExit={() => {
+                if (document.pointerLockElement) document.exitPointerLock();
+                setExitOpen(true);
+              }}
+            />
+            {/*
+            걷는 중·앉은 중 모두 보여 깨는 동안 이번 판 수가 오른다.
+            랭킹은 가장 클 때(상위 3명 + 내 순위 + 이번 판) 위 74px~310px이다. 세로 가운데의 감정 표현 패널(높이 244px)이
+            그 아래 12px보다 위로 오는 높이 888px 미만에서는 패널 열(오른쪽 10px, 폭 56px) 왼쪽으로 비킨다.
+            위 가운데 안내는 가장 긴 문구(내보내기 경고)가 약 440px라 폭 1024px 미만에서 랭킹과 겹친다. 안내가 떠 있는 동안만 숨긴다.
+          */}
+            {sceneReady && layout && you && (
+              <WaxRankingHud
+                brokenNow={you.bigCracks}
+                className={cn(
+                  // 폭은 바로 위 방 버튼 묶음과 같게(좌우 0) 둔다. 비킬 때도 같은 폭으로 옮긴다.
+                  'absolute inset-x-0 top-full mt-[16px] [@media(max-height:887px)]:right-[66px] [@media(max-height:887px)]:left-[-66px]',
+                  topNotice && 'max-[1023px]:hidden',
+                )}
+              />
+            )}
+          </div>
         </header>
       )}
 
@@ -579,6 +648,7 @@ export function WaxGame({ embedded = false, onLeave }: WaxGameProps = {}) {
             loading={!assetsReady || starting || (started && !sceneReady)}
             actionLabel="소리 켜고 입장하기"
             onAction={() => void start()}
+            onRanking={started ? undefined : () => setRankingOpen(true)}
             error={game.error || undefined}
           />
         ))}
@@ -618,6 +688,14 @@ export function WaxGame({ embedded = false, onLeave }: WaxGameProps = {}) {
           </div>
         )}
 
+      <WaxNicknameDialog
+        open={choosing}
+        suggestion={game.suggestion}
+        serverError={game.nameError || undefined}
+        onEnter={enter}
+        onCancel={cancelNaming}
+      />
+      <WaxRankingDialog open={rankingOpen} onClose={() => setRankingOpen(false)} />
       <WaxHelpDialog ref={help} weethUrl={WEETH_URL} />
       <WaxExitDialog
         open={exitOpen}
