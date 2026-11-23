@@ -377,6 +377,7 @@ export function WaxGame({ embedded = false, onLeave }: WaxGameProps = {}) {
       setNotice('소리를 불러오지 못했어요. 소리 없이 시작합니다.');
     }
     setStarting(false);
+    leaving.current = false;
     setStarted(true);
     setChoosing(true);
     // 연결해서 추천 닉네임을 받는다. 입장(join)은 모달에서 이름을 고른 뒤에 한다.
@@ -389,6 +390,12 @@ export function WaxGame({ embedded = false, onLeave }: WaxGameProps = {}) {
   }
 
   function cancelNaming() {
+    // 입장 시도 때 쌓은 뒤로가기 기록을 뺀다. 남기면 진입 화면에서 뒤로가기를 한 번 더 눌러야 이전 페이지로 간다.
+    // 빼면서 생기는 popstate를 나가기 시도로 보지 않도록 leaving을 켠다(다음 start에서 끈다).
+    if (window.history.state?.waxExitGuard) {
+      leaving.current = true;
+      window.history.back();
+    }
     setChoosing(false);
     setStarted(false);
     game.cancelNaming();
