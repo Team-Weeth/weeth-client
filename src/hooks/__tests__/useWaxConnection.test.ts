@@ -368,6 +368,9 @@ describe('useWaxConnection', () => {
     expect(join.token).toMatch(/^[A-Za-z0-9-]{16,64}$/);
     // 같은 기기는 같은 토큰을 쓴다.
     expect(window.localStorage.getItem('wax:device-token')).toBe(join.token);
+    // 직접 입력한 이름은 서버가 입장을 받아준 뒤에 저장한다.
+    expect(window.localStorage.getItem('wax:nickname')).toBeNull();
+    act(() => socket.receive(welcome('w1')));
     expect(window.localStorage.getItem('wax:nickname')).toBe('왁뿌볼고수');
     unmount();
   });
@@ -391,6 +394,8 @@ describe('useWaxConnection', () => {
     expect(result.current.nameError).toContain('2~8자');
     expect(result.current.status).toBe('naming');
     expect(socket.close).not.toHaveBeenCalled();
+    // 거절된 이름은 다음 방문 때 미리 채우지 않도록 저장하지 않는다.
+    expect(window.localStorage.getItem('wax:nickname')).toBeNull();
     act(() => result.current.enter('수상한 복학생'));
     expect(result.current.nameError).toBe('');
     const joins = socket.send.mock.calls
@@ -417,6 +422,41 @@ describe('useWaxConnection', () => {
     const second = FakeSocket.instances[1];
     act(() => second.open());
     expect(second.joined()).toMatchObject({ type: 'join', name: '왁뿌볼고수' });
+    unmount();
+  });
+
+  it('이름을 보낸 뒤 입장(welcome) 전에 끊기면 고른 이름으로 다시 연결해 입장한다', () => {
+    const { result, unmount } = renderHook(() => useWaxConnection());
+    act(() => result.current.prepare());
+    const first = FakeSocket.instances[0];
+    act(() => {
+      first.open();
+      first.receive({ type: 'hello', suggestion: '수상한 복학생' });
+    });
+    act(() => result.current.enter('왁뿌볼고수'));
+    act(() => first.close());
+    // 모달은 이미 닫혔으므로 이름 고르기 상태로 멈추지 않고 재접속한다.
+    expect(result.current.status).toBe('reconnecting');
+    act(() => jest.advanceTimersByTime(800));
+    const second = FakeSocket.instances[1];
+    act(() => second.open());
+    expect(second.joined()).toMatchObject({ type: 'join', name: '왁뿌볼고수' });
+    act(() => second.receive(welcome('w1')));
+    expect(result.current.worldId).toBe('w1');
+    unmount();
+  });
+
+  it('닉네임이 거절된 뒤 모달에 머무는 동안 끊기면 거절된 이름으로 재접속하지 않고 기다린다', () => {
+    const { result, unmount } = renderHook(() => useWaxConnection());
+    act(() => result.current.prepare());
+    const first = FakeSocket.instances[0];
+    act(() => first.open());
+    act(() => result.current.enter('특수!'));
+    act(() => first.receive({ type: 'error', code: 'invalid_name', message: '거절' }));
+    act(() => first.close());
+    expect(result.current.status).toBe('naming');
+    act(() => jest.advanceTimersByTime(30000));
+    expect(FakeSocket.instances).toHaveLength(1);
     unmount();
   });
 

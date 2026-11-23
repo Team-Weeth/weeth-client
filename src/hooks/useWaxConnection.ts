@@ -60,6 +60,8 @@ export function useWaxConnection() {
   const entered = useRef(false);
   /** 닉네임 모달 단계인지. 이 동안 연결이 끊겨도(서버의 입장 전 대기 한도) 끊김 화면을 띄우지 않는다. */
   const naming = useRef(false);
+  /** 모달에서 이름을 골라 입장(join)을 보냈고 아직 welcome을 받지 못했다. 이때는 모달이 닫혀 있다. */
+  const submitted = useRef(false);
 
   /** 3D 장면은 매 프레임 이 ref를 읽는다. React 상태는 HUD용이다. */
   const latest = useRef<WaxState | null>(null);
@@ -154,6 +156,7 @@ export function useWaxConnection() {
   function join(useInvite = true) {
     reconnect.current = null;
     naming.current = false;
+    submitted.current = false;
     if (reconnectTimer.current) clearTimeout(reconnectTimer.current);
     setErrorCode(null);
     connect(inviteWorld(useInvite), true);
@@ -167,6 +170,7 @@ export function useWaxConnection() {
     setNameError('');
     setSuggestion(null);
     naming.current = true;
+    submitted.current = false;
     entryWorld.current = inviteWorld(useInvite);
     connect(entryWorld.current, false);
   }
@@ -174,8 +178,7 @@ export function useWaxConnection() {
   /** 닉네임 모달에서 이름을 골랐을 때. 모달에 오래 머물러 연결이 끊겼으면 다시 연결해 바로 입장한다. */
   function enter(chosen: string) {
     name.current = chosen;
-    // 직접 입력한 이름만 다음 방문 때 미리 채운다. 추천 이름은 매번 새로 받는다.
-    if (WAX_NICKNAME_PATTERN.test(chosen)) saveWaxNickname(chosen);
+    submitted.current = true;
     setNameError('');
     const ws = socket.current;
     if (ws?.readyState === WebSocket.OPEN) {
@@ -186,6 +189,7 @@ export function useWaxConnection() {
   /** 닉네임 모달을 닫았을 때. 입장하지 않은 연결을 닫는다. */
   function cancelNaming() {
     naming.current = false;
+    submitted.current = false;
     const ws = socket.current;
     socket.current = null;
     ws?.close();
@@ -247,6 +251,11 @@ export function useWaxConnection() {
           joined = true;
           entered.current = true;
           naming.current = false;
+          submitted.current = false;
+          // 직접 입력한 이름만 다음 방문 때 미리 채운다. 추천 이름은 매번 새로 받는다.
+          // 서버가 받아준 뒤에 저장해야 거절된 이름이 다음 방문 때 다시 채워지지 않는다.
+          if (name.current && WAX_NICKNAME_PATTERN.test(name.current))
+            saveWaxNickname(name.current);
           lastActiveAt.current = Date.now();
           setWelcome(next);
           // 이후 연결이 끊기면 같은 교실로 다시 들어간다. 서버는 닫힌 교실도 같은 id로 다시 연다.
@@ -263,6 +272,7 @@ export function useWaxConnection() {
           if (joined) setError(String(message.message));
           else if (message.code === 'invalid_name') {
             // 연결은 그대로 두고 모달에서 다시 고르게 한다.
+            submitted.current = false;
             setNameError(String(message.message));
             setStatus('naming');
           } else if (reconnect.current) {
@@ -272,6 +282,7 @@ export function useWaxConnection() {
           } else {
             // 첫 입장이 거절됐다. 재접속하지 않고 사유를 보여준다.
             naming.current = false;
+            submitted.current = false;
             setError(String(message.message));
             setErrorCode(typeof message.code === 'string' ? message.code : null);
             setStatus('error');
@@ -295,12 +306,17 @@ export function useWaxConnection() {
       latest.current = null;
       setState(null);
       // 모달에 머무는 동안 끊겼다. 이름을 고르면 enter가 다시 연결한다.
-      if (naming.current && !joined) setStatus('naming');
+      if (naming.current && !joined && !submitted.current) setStatus('naming');
       else if (kicked) {
         reconnect.current = null;
         setStatus('idle');
-      } else if (reconnect.current) scheduleReconnect();
-      else setStatus((previous) => (previous === 'error' ? 'error' : 'disconnected'));
+      } else {
+        // 이름을 보낸 뒤 welcome 전에 끊겼다(배포 중 재시작 등). 모달은 이미 닫혔으니 고른 이름으로 다시 들어간다.
+        if (submitted.current && !reconnect.current)
+          reconnect.current = { worldId: entryWorld.current, attempt: 0 };
+        if (reconnect.current) scheduleReconnect();
+        else setStatus((previous) => (previous === 'error' ? 'error' : 'disconnected'));
+      }
     };
   }
 
