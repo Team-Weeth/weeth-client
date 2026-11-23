@@ -51,6 +51,21 @@ export function useAdminMonthlySchedules(year: number, month: number, cardinal?:
   });
 }
 
+export function useAdminMonthlySessionList(year: number, month: number, cardinal?: number) {
+  const clubId = useClubId();
+
+  return useQuery({
+    queryKey: adminQueryKeys.monthlySession(clubId, year, month, cardinal),
+    queryFn: async () => {
+      const res = await adminScheduleApi.getSessionList(clubId!, cardinal);
+      return res.data.data;
+    },
+    enabled: !!clubId,
+    staleTime: 5 * 60 * 1000,
+    gcTime: 10 * 60 * 1000,
+  });
+}
+
 export function useAdminSessionList(cardinal?: number | null) {
   const clubId = useClubId();
 
@@ -66,6 +81,8 @@ export function useAdminSessionList(cardinal?: number | null) {
   });
 }
 
+// TODO: getEventDetail은 유저 경로(/clubs/{clubId}/events/{id})를 사용 중.
+// 어드민 전용 상세 API 제공 시 adminScheduleApi 엔드포인트를 교체해야 한다.
 export function useAdminScheduleDetail(eventId: number) {
   const clubId = useClubId();
 
@@ -76,6 +93,8 @@ export function useAdminScheduleDetail(eventId: number) {
   });
 }
 
+// TODO: getSessionDetail은 유저 경로(/clubs/{clubId}/sessions/{id})를 사용 중.
+// 어드민 전용 상세 API 제공 시 adminScheduleApi 엔드포인트를 교체해야 한다.
 export function useAdminSessionDetail(sessionId: number) {
   const clubId = useClubId();
 

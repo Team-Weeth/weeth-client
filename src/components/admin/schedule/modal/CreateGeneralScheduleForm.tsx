@@ -59,13 +59,12 @@ function CreateGeneralScheduleForm({ cardinalNumber, onClose }: CreateGeneralSch
 
   return (
     <>
-      <div className="scrollbar-custom tablet:px-15 min-h-0 flex-1 touch-pan-y overflow-y-auto overscroll-contain px-400 [-webkit-overflow-scrolling:touch]">
-        <h2 className="typo-h3 text-text-normal py-400">일반 일정 생성</h2>
+      <div className="scrollbar-none min-h-0 flex-1 touch-pan-y overflow-y-auto overscroll-contain px-700 [-webkit-overflow-scrolling:touch]">
         <ScheduleFormBody
           form={form}
           onFormChange={updateForm}
           titleLabel="일정 제목"
-          titlePlaceholder="예 : 중간고사 기간"
+          titlePlaceholder="ex)중간고사 기간"
         />
       </div>
 

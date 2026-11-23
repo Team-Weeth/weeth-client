@@ -7,7 +7,7 @@ interface ScheduleFormFieldProps extends React.HTMLAttributes<HTMLDivElement> {
 function ScheduleFormField({ label, className, children, ...props }: ScheduleFormFieldProps) {
   return (
     <div className={cn('flex flex-col', className)} {...props}>
-      <div className="flex h-12 items-center px-400">
+      <div className="flex items-center px-100 py-200">
         <label className="typo-sub3 text-text-normal">{label}</label>
       </div>
       {children}

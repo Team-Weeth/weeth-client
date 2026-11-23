@@ -102,8 +102,7 @@ function CreateSessionScheduleForm({ onCreateSession, onClose }: CreateSessionSc
 
   return (
     <>
-      <div className="scrollbar-custom tablet:px-15 min-h-0 flex-1 touch-pan-y overflow-y-auto overscroll-contain px-400 [-webkit-overflow-scrolling:touch]">
-        <h2 className="typo-h3 text-text-normal py-400">세션 생성</h2>
+      <div className="scrollbar-none min-h-0 flex-1 touch-pan-y overflow-y-auto overscroll-contain px-700 [-webkit-overflow-scrolling:touch]">
         <SessionScheduleForm
           form={form}
           onFormChange={updateForm}
@@ -120,7 +119,7 @@ function CreateSessionScheduleForm({ onCreateSession, onClose }: CreateSessionSc
           취소
         </Button>
         <Button variant="primary" size="lg" disabled={!isValid} onClick={handleSubmit}>
-          세션 생성
+          저장
         </Button>
       </div>
     </>

@@ -29,7 +29,10 @@ function ModalIconButton({
       ref={ref}
       type={type}
       aria-label={label}
-      className={cn('flex cursor-pointer items-center justify-center rounded-sm p-200', className)}
+      className={cn(
+        'hover:bg-button-neutral active:bg-button-neutral-interaction flex cursor-pointer items-center justify-center rounded-sm p-200',
+        className,
+      )}
       {...props}
     >
       <Icon src={icon} size={size} alt={label} />

@@ -194,6 +194,47 @@ pathname 변경 시 `window.scrollTo(0, 0)`을 호출하고, popstate(뒤로/앞
 
 ---
 
+## useAdminScheduleQueries (`src/hooks/queries/admin/useAdminScheduleQueries.ts`)
+
+**측정일**: 2026-11-16
+**테스트 파일**: `src/hooks/queries/admin/__tests__/useAdminScheduleQueries.test.ts`
+**총 테스트 수**: 25개
+
+### 파일별 커버리지
+
+| 파일 | Statements | Branches | Functions | Lines |
+|------|-----------|---------|---------|-------|
+| `useAdminScheduleQueries.ts` | **78.62%** | **66.66%** | **90%** | **78.62%** |
+
+### 테스트 구성
+
+#### `useAdminScheduleQueries.test.ts` (25개)
+
+어드민 일정·세션 CRUD 훅. `isSessionForceRequiredError` 순수 함수 단위 테스트 + 각 mutation/query 훅의 성공·실패 경로 검증. MSW 없이 `adminScheduleApi` 직접 mock.
+
+| 케이스 | 검증 내용 |
+|--------|---------|
+| `isSessionForceRequiredError` (5) | null/비 AxiosError → false / 404/500 → false / 409 비 SESSION_SCHEDULE_FORCE_REQUIRED → false / 409 SESSION_SCHEDULE_FORCE_REQUIRED → true |
+| `useAdminMonthlySchedules` (2) | 성공 시 data 반환 / 실패 시 에러 |
+| `useAdminMonthlySessionList` (2) | 성공 시 data 반환 / 실패 시 에러 |
+| `useAdminScheduleDetail` (1) | 성공 시 data 반환 |
+| `useAdminSessionDetail` (1) | 성공 시 data 반환 |
+| `useCreateSchedule` (3) | 성공 토스트 + onSuccess 콜백 / 에러 토스트 / isPending 상태 |
+| `useDeleteSchedule` (3) | 성공 토스트 / 에러 토스트 / isPending 상태 |
+| `useCreateSessionGroup` (3) | 성공 토스트 / forceRequired 에러 처리 / 일반 에러 토스트 |
+| `useUpdateSessionGroup` (3) | 성공 토스트 / forceRequired 에러 처리 / 일반 에러 토스트 |
+| `useDeleteSessionGroup` (2) | 성공 토스트 / 에러 토스트 |
+
+### 미커버 브랜치
+
+| 내용 | 이유 |
+|------|------|
+| `useCreateSchedule`, `useDeleteSchedule` — `onSuccess` 콜백 null 분기 | 콜백 미전달 시 undefined 호출 방지 가드. 실제 사용처에서 항상 전달하므로 단위 테스트 추가 대비 ROI 낮음 |
+| `useCreateSessionGroup`/`useUpdateSessionGroup` — `onForceRequired` null 분기 | 위와 동일 |
+| 일부 query 에러 분기 | `useSuspenseQuery` 에러 경로는 ErrorBoundary 통합 테스트 대상 |
+
+---
+
 ## 추가 예정
 
 | 파일 | 우선순위 | 비고 |

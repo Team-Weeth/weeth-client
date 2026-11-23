@@ -36,7 +36,6 @@ function CalendarScheduleModal({
       <AlertDialogPortal>
         <AlertDialogOverlay onClick={() => onOpenChange(false)} />
         <AlertDialogPrimitive.Content
-          aria-label={attendeeListOpen ? '참석자 목록' : schedule.title}
           className={cn(
             'bg-background border-line border',
             'data-[state=open]:animate-in data-[state=closed]:animate-out',
@@ -48,6 +47,9 @@ function CalendarScheduleModal({
             '[box-shadow:var(--shadow-dialog)]',
           )}
         >
+          <AlertDialogPrimitive.Title className="sr-only">
+            {attendeeListOpen ? '참석자 목록' : schedule.title}
+          </AlertDialogPrimitive.Title>
           {attendeeListOpen ? (
             <CalendarAttendeeListContent
               attendees={schedule.attendees ?? []}
@@ -59,6 +61,7 @@ function CalendarScheduleModal({
             <CalendarScheduleDetailContent
               schedule={schedule}
               clubId={clubId}
+              onClose={() => onOpenChange(false)}
               onShare={onShare}
               onViewAttendees={openAttendeeList}
             />
