@@ -19,9 +19,7 @@ export async function getDevFlagOverrides(): Promise<DevFlagOverrides> {
   return parseDevFlagOverrides(cookieStore.get(DEV_FLAG_OVERRIDE_COOKIE)?.value);
 }
 
-const userScopedFlagKeys = new Set<string>(
-  USER_SCOPED_FLAGS.map((k) => CLUB_FEATURE_FLAGS[k]),
-);
+const userScopedFlagKeys = new Set<string>(USER_SCOPED_FLAGS.map((k) => CLUB_FEATURE_FLAGS[k]));
 
 /** 동아리 identity로 조회할 플래그 키 */
 const clubFlagKeys = Object.values(CLUB_FEATURE_FLAGS).filter((k) => !userScopedFlagKeys.has(k));
@@ -44,10 +42,7 @@ export const getClubFeatures = cache(
     const resolved = { ...clubFlags, ...userFlags, ...overrides };
 
     return Object.fromEntries(
-      Object.entries(CLUB_FEATURE_FLAGS).map(([key, flagKey]) => [
-        key,
-        resolved[flagKey] === true,
-      ]),
+      Object.entries(CLUB_FEATURE_FLAGS).map(([key, flagKey]) => [key, resolved[flagKey] === true]),
     ) as ClubFeatures;
   },
 );
