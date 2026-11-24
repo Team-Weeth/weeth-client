@@ -11,10 +11,6 @@ jest.mock('@sentry/nextjs', () => ({
   captureException: jest.fn(),
 }));
 
-jest.mock('@/lib/auth/nativeBridgeToken', () => ({
-  signNativeBridgeToken: jest.fn(() => 'mock-bridge-token'),
-}));
-
 function createRequest(url: string, cookies?: Record<string, string>) {
   const request = new NextRequest(new URL(url, 'http://localhost:3000'));
   if (cookies) {
@@ -153,35 +149,6 @@ describe('Apple OAuth route handler', () => {
       const cookies = getSetCookies(response);
 
       expect(cookies['userName']).toBeUndefined();
-    });
-  });
-
-  describe('네이티브 앱 분기', () => {
-    it('state에 native: 접두사가 있으면 bridge token으로 리다이렉트', async () => {
-      mockAppleApiSuccess();
-
-      const response = await GET(createRequest('/apple/oauth?code=auth_code_123&state=native:'));
-      const location = getRedirectLocation(response);
-
-      expect(location).toContain('kr.weeth.client://auth/callback');
-      expect(location).toContain('t=mock-bridge-token');
-    });
-
-    it('네이티브 + join 의도', async () => {
-      const { signNativeBridgeToken } = jest.requireMock('@/lib/auth/nativeBridgeToken');
-      mockAppleApiSuccess();
-
-      const state = 'native:join:club1:code1';
-      const response = await GET(createRequest(`/apple/oauth?code=auth_code_123&state=${state}`));
-
-      expect(getRedirectLocation(response)).toContain('kr.weeth.client://auth/callback');
-      expect(signNativeBridgeToken).toHaveBeenCalledWith(
-        expect.objectContaining({
-          accessToken: 'apple-access-token',
-          refreshToken: 'apple-refresh-token',
-          redirectUrl: expect.stringContaining('/joining'),
-        }),
-      );
     });
   });
 

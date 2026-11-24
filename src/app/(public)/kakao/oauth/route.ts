@@ -2,9 +2,7 @@ import * as Sentry from '@sentry/nextjs';
 import { NextRequest, NextResponse } from 'next/server';
 
 import { API_BASE_PATH } from '@/constants/api';
-import { NATIVE_OAUTH_CALLBACK_URL } from '@/constants/nativeAuth';
 import { decodeOAuthState } from '@/lib/auth/oauthState';
-import { signNativeBridgeToken } from '@/lib/auth/nativeBridgeToken';
 import { getPostLoginUrl } from '@/lib/auth/redirectPaths';
 import {
   ACCESS_COOKIE_OPTIONS,
@@ -71,11 +69,6 @@ export async function GET(request: NextRequest) {
   } else {
     // type === 'none'
     redirectUrl = registered ? '/hub' : '/login?terms=true';
-  }
-
-  if (decoded.isNative) {
-    const bridgeToken = signNativeBridgeToken({ accessToken, refreshToken, name, redirectUrl });
-    return NextResponse.redirect(`${NATIVE_OAUTH_CALLBACK_URL}?t=${bridgeToken}`);
   }
 
   const redirectResponse = NextResponse.redirect(new URL(redirectUrl, appUrl));

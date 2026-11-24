@@ -3,14 +3,12 @@ import { NextRequest, NextResponse } from 'next/server';
 
 import { API_BASE_PATH } from '@/constants/api';
 import { APPLE_PENDING_STATE_KEY } from '@/constants/apple';
-import { NATIVE_OAUTH_CALLBACK_URL } from '@/constants/nativeAuth';
 import {
   ACCESS_COOKIE_OPTIONS,
   ACCESS_TOKEN_KEY,
   REFRESH_COOKIE_OPTIONS,
   REFRESH_TOKEN_KEY,
 } from '@/lib/apis/cookies';
-import { signNativeBridgeToken } from '@/lib/auth/nativeBridgeToken';
 import { decodeOAuthState } from '@/lib/auth/oauthState';
 import { getPostLoginUrl } from '@/lib/auth/redirectPaths';
 
@@ -117,16 +115,6 @@ export async function GET(request: NextRequest) {
   } else {
     // type === 'none'
     redirectUrl = registered ? '/hub' : '/login?terms=true';
-  }
-
-  if (decoded.isNative) {
-    const bridgeToken = signNativeBridgeToken({
-      accessToken,
-      refreshToken,
-      name: name ?? undefined,
-      redirectUrl,
-    });
-    return NextResponse.redirect(`${NATIVE_OAUTH_CALLBACK_URL}?t=${bridgeToken}`);
   }
 
   const redirectResponse = NextResponse.redirect(new URL(redirectUrl, appUrl));

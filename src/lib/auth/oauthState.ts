@@ -3,22 +3,6 @@ interface OAuthStateParams {
   clubId?: string;
   code?: string;
   redirectPath?: string;
-  native?: boolean;
-}
-
-const NATIVE_PREFIX = 'native:';
-
-function encodeOAuthStateInner({
-  intent,
-  clubId,
-  code,
-  redirectPath,
-}: Omit<OAuthStateParams, 'native'>): string {
-  if (intent === 'join' && clubId && code) return `join:${clubId}:${code}`;
-  if (intent === 'join-no-code' && clubId) return `join-no-code:${clubId}`;
-  if (intent) return intent;
-  if (redirectPath) return redirectPath;
-  return '';
 }
 
 export function encodeOAuthState({
@@ -26,14 +10,15 @@ export function encodeOAuthState({
   clubId,
   code,
   redirectPath,
-  native,
 }: OAuthStateParams): string | undefined {
-  const inner = encodeOAuthStateInner({ intent, clubId, code, redirectPath });
-  if (native) return `${NATIVE_PREFIX}${inner}`;
-  return inner || undefined;
+  if (intent === 'join' && clubId && code) return `join:${clubId}:${code}`;
+  if (intent === 'join-no-code' && clubId) return `join-no-code:${clubId}`;
+  if (intent) return intent;
+  if (redirectPath) return redirectPath;
+  return undefined;
 }
 
-type OAuthStateVariant =
+export type OAuthState =
   | { type: 'join'; clubId: string; code: string }
   | { type: 'join-no-code'; clubId: string }
   | { type: 'redirect'; path: string }
@@ -41,9 +26,7 @@ type OAuthStateVariant =
   | { type: 'none' }
   | { type: 'invalid' };
 
-export type OAuthState = OAuthStateVariant & { isNative: boolean };
-
-function decodeOAuthStateInner(state: string): OAuthStateVariant {
+export function decodeOAuthState(state: string | null): OAuthState {
   if (!state) return { type: 'none' };
 
   if (state.startsWith('join-no-code:')) {
@@ -63,13 +46,4 @@ function decodeOAuthStateInner(state: string): OAuthStateVariant {
   }
 
   return { type: 'intent', intent: state };
-}
-
-export function decodeOAuthState(state: string | null): OAuthState {
-  if (!state) return { type: 'none', isNative: false };
-
-  const isNative = state.startsWith(NATIVE_PREFIX);
-  const inner = isNative ? state.slice(NATIVE_PREFIX.length) : state;
-
-  return { ...decodeOAuthStateInner(inner), isNative };
 }
