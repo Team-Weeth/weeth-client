@@ -24,10 +24,29 @@ jest.mock('@/components/mypage/feedback/FeedbackPageContent', () => ({
 const mockGetClubFeatures = jest.mocked(getClubFeatures);
 const mockGetDashboard = jest.mocked(homeServerApi.getDashboard);
 
+const dashboardFixture: Awaited<ReturnType<typeof homeServerApi.getDashboard>> = {
+  code: 200,
+  message: 'OK',
+  data: {
+    myInfo: {
+      userInfo: { id: 42, name: 'Tester', profileImageUrl: null, role: 'USER' },
+      bio: null,
+    },
+    club: {
+      id: 'club-1',
+      name: 'Test',
+      code: 'TEST',
+      schoolName: '',
+      description: '',
+      memberCount: 1,
+      profileImageUrl: null,
+      backgroundImageUrl: null,
+    },
+  },
+};
+
 beforeEach(() => {
-  mockGetDashboard.mockResolvedValue({
-    data: { myInfo: { userInfo: { id: 42 } }, club: { id: 'club-1', name: 'Test' } },
-  } as any);
+  mockGetDashboard.mockResolvedValue(dashboardFixture);
 });
 
 function renderPage(clubId = 'club-1') {
