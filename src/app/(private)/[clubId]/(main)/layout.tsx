@@ -18,12 +18,11 @@ export default async function MainLayout({
 }>) {
   const { clubId } = await params;
 
-  const [{ data }, features] = await Promise.all([
-    homeServerApi.getDashboard(clubId),
-    getClubFeatures(clubId),
-  ]);
+  const { data } = await homeServerApi.getDashboard(clubId);
   const { userInfo } = data.myInfo;
   const { id: resolvedClubId, name: clubName } = data.club;
+
+  const features = await getClubFeatures(clubId, String(userInfo.id));
 
   return (
     <UserHydrator userInfo={userInfo} clubInfo={{ clubId: resolvedClubId, clubName }}>
