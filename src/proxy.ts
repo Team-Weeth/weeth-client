@@ -68,7 +68,8 @@ export async function proxy(request: NextRequest) {
     pathname.startsWith('/play/wax/') ||
     pathname.startsWith('/club/') ||
     pathname.startsWith('/kakao/') ||
-    pathname === '/apple/oauth';
+    pathname === '/apple/oauth' ||
+    pathname === '/auth/native-callback';
 
   if (isPublicPath) {
     return NextResponse.next();
