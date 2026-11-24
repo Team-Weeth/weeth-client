@@ -5,7 +5,7 @@ Use the existing club feature flag architecture when implementing club-specific 
 ## Files
 
 - `src/flags/club-features/definitions.ts`: Flagsmith keys, the derived `ClubFeatures` type, and default values.
-- `src/flags/club-features/server.ts`: Server-only `getClubFeatures(clubId)`. Fetches the registered flags together using the `club:<clubId>` identity and the `club_id` trait. React `cache` deduplicates calls with the same club ID within a server render request; it is not a persistent cache across requests.
+- `src/flags/club-features/server.ts`: Server-only `getClubFeatures(clubId, userId?)`. Fetches club-scoped flags with `club:<clubId>` identity and user-scoped flags (listed in `USER_SCOPED_FLAGS`) with `user:<userId>` identity. When `userId` is omitted, user-scoped flags resolve to `false`. React `cache` deduplicates calls with the same club ID within a server render request; it is not a persistent cache across requests.
 - `src/providers/club-feature-provider.tsx`: `ClubFeatureProvider` shares the server result through React Context. `useClubFeatures()` reads that result without making network requests.
 - `src/lib/flagsmith.ts`: Flagsmith SDK initialization, batched flag lookup, and failure handling. `getAllFeatureFlags` lists every flag for the dev panel and throws on failure instead of returning defaults.
 
@@ -48,6 +48,18 @@ function WarningAction() {
 ```
 
 Intermediate components do not need flag props. React portals, including modals, inherit the context when rendered within the provider's React tree. New pages under `(main)` need no extra wiring; new pages outside `(main)` must wrap themselves with the provider, as it is not installed globally.
+
+## User-Scoped Flags
+
+Most flags use the `club:<clubId>` identity so every member of a club sees the same value. Flags that need per-user assignment (e.g. A/B experiments with Flagsmith `% Split`) use the `user:<userId>` identity instead.
+
+To make a flag user-scoped:
+
+1. Add its `ClubFeatures` key to `USER_SCOPED_FLAGS` in `definitions.ts`.
+2. Pass `userId` when calling `getClubFeatures(clubId, userId)`. Pages under `(main)` get `userId` from `homeServerApi.getDashboard`; the `(main)/layout.tsx` already does this.
+3. Call sites that do not need the user-scoped flag can omit `userId`; the flag resolves to `false`.
+
+`getClubFeatures` issues two parallel `getFeatureFlags` calls — one for club flags, one for user flags — and merges the results before applying dev overrides.
 
 ## Adding a Feature
 
