@@ -58,5 +58,5 @@ Records unit test coverage for files under `src/components/calendar/`.
 |------|----------|-------|
 | `CalendarMobileScheduleDetailContent.tsx` | 낮음 | `CalendarMain.test`에서 모킹 중. `valueTypography` 전달과 필드 렌더링 |
 | `CalendarMobileGrid.tsx` | 낮음 | 스토어 연동 래퍼. 그리드 로직은 `MonthGrid`에서 검증 |
-| `SwipeableMonthCalendar.tsx` | 낮음 | 스와이프는 jsdom에서 검증 불가. 3패널 구성·요일 헤더 정도만 가능 |
-| `MobileDayScheduleList.tsx` | 중간 | 사용자·어드민 공용 날짜 헤더·목록. 현재 `AdminMobileScheduleView.test`에서 간접 검증 |
+| `SwipeableMonthCalendar.tsx` | 완료 (2026-11-28) | `__tests__/SwipeableMonthCalendar.test.tsx` — 3패널·요일 헤더·선택·클릭. 스와이프는 jsdom에서 검증 불가 |
+| `MobileDayScheduleList.tsx` | 완료 (2026-11-28) | `__tests__/MobileDayScheduleList.test.tsx` — 날짜 헤더·개수·빈 상태·클릭·listRef 연결 |
