@@ -3,11 +3,11 @@
 import { useState } from 'react';
 import { AlertDialog as AlertDialogPrimitive } from 'radix-ui';
 import { cn } from '@/lib/cn';
-import { Button } from '@/components/ui/Button';
 import { AlertDialogPortal, AlertDialogOverlay } from '@/components/ui/alert-dialog';
 import { ScheduleDetailContent } from '@/components/ui/schedule/ScheduleDetailContent';
 import { CalendarAttendeeListContent } from '@/components/calendar/CalendarAttendeeListContent';
 import { CalendarModalFooter } from '@/components/calendar/CalendarModalFooter';
+import { AdminScheduleDetailActions } from '@/components/admin/schedule/modal/AdminScheduleDetailActions';
 import { toCalendarScheduleDetail } from '@/utils/admin/scheduleUtils';
 import type { Schedule } from '@/types/admin/schedule';
 
@@ -65,24 +65,10 @@ function AdminScheduleDetailModal({
               onClose={handleClose}
               footer={
                 <CalendarModalFooter>
-                  <div className="flex gap-200">
-                    <Button
-                      variant="secondary"
-                      size="lg"
-                      className="flex-1"
-                      onClick={() => onDelete(schedule)}
-                    >
-                      삭제
-                    </Button>
-                    <Button
-                      variant="primary"
-                      size="lg"
-                      className="flex-1"
-                      onClick={() => onEdit(schedule)}
-                    >
-                      수정
-                    </Button>
-                  </div>
+                  <AdminScheduleDetailActions
+                    onEdit={() => onEdit(schedule)}
+                    onDelete={() => onDelete(schedule)}
+                  />
                 </CalendarModalFooter>
               }
             />
