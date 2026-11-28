@@ -7,10 +7,8 @@ import { CalendarMobileScheduleDetailContentSkeleton } from '@/components/calend
 import { AdminScheduleMobileBackHeader } from '@/components/admin/schedule/general/AdminScheduleMobileBackHeader';
 import { AdminScheduleDetailActions } from '@/components/admin/schedule/modal/AdminScheduleDetailActions';
 import { useAdminScheduleDetailQuery } from '@/hooks/queries/admin/useAdminScheduleDetailQuery';
+import { ADMIN_DEFAULT_TYPO } from '@/constants/admin/typography.constants';
 import type { Schedule } from '@/types/admin/schedule';
-
-// 디자인은 default Body2(14px / 20px / 400). 어드민 영역의 typo-body2는 13px라 값을 직접 지정한다.
-const DEFAULT_BODY2_CLASS = 'text-[14px] leading-[20px] font-normal tracking-(--letter-spacing)';
 
 interface AdminScheduleMobileDetailViewProps {
   schedule: Schedule;
@@ -58,7 +56,8 @@ function AdminScheduleMobileDetailView({
             schedule={detail}
             clubId={clubId}
             onViewAttendees={() => setAttendeeListOpen(true)}
-            valueTypography={DEFAULT_BODY2_CLASS}
+            // 디자인은 default Body2(14px). 어드민 영역의 typo-body2는 13px이다.
+            valueTypography={ADMIN_DEFAULT_TYPO.body2}
           />
         )}
       </div>

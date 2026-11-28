@@ -2,6 +2,7 @@
 
 import { Icon } from '@/components/ui/Icon';
 import { cn } from '@/lib/cn';
+import { ADMIN_DEFAULT_TYPO } from '@/constants/admin/typography.constants';
 import AdminBackIcon from '@/assets/icons/admin/ic_admin_back.svg';
 
 interface AdminScheduleMobileBackHeaderProps {
@@ -33,10 +34,8 @@ function AdminScheduleMobileBackHeader({
         >
           <Icon src={AdminBackIcon} size={24} className="text-icon-normal" />
         </button>
-        {/* 디자인은 default Sub1(18px). 어드민 영역에는 18px 타이포가 없어 크기를 직접 지정한다. */}
-        <h1 className="text-text-normal text-[18px] leading-[22px] font-semibold tracking-(--letter-spacing)">
-          {title}
-        </h1>
+        {/* 디자인은 default Sub1(18px). 어드민 영역의 typo-sub1은 16px이다. */}
+        <h1 className={cn(ADMIN_DEFAULT_TYPO.sub1, 'text-text-normal')}>{title}</h1>
       </div>
     </div>
   );
