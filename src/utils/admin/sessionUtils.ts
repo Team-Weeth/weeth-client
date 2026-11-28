@@ -116,3 +116,10 @@ export function deriveSessionStatus(
 export function deriveChildSessionStatus(status: SessionStatus, start: string): SessionStatus {
   return deriveSessionStatus(status, start, start);
 }
+
+// 월간 일정 목록(Schedule)에는 세션 상태가 없어, 세션 목록과 같은 날짜 기준(시작일이 오늘이면 진행 중)으로 판정한다.
+// TODO: [백엔드] 월간 일정 응답(GET /admin/clubs/{clubId}/events)에 세션 status(OPEN·COMPLETED·CANCELED 등)를
+// 포함해 달라고 요청. 날짜 추정은 당일 조기 종료·취소된 세션도 진행 중으로 오판한다. 받게 되면 status 기준으로 교체.
+export function isSessionInProgress(start: string): boolean {
+  return deriveStatusFromDateRange(start, start) === 'OPEN';
+}

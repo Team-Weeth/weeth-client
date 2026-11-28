@@ -18,7 +18,7 @@ import { CreateScheduleModal } from '@/components/admin/schedule/modal/CreateSch
 import { EditScheduleModal } from '@/components/admin/schedule/modal/EditScheduleModal';
 import { EditSessionModal } from '@/components/admin/schedule/modal/EditSessionModal';
 import { AdminScheduleDetailModal } from '@/components/admin/schedule/modal/AdminScheduleDetailModal';
-import { CustomAlertDialog } from '@/components/alert/CustomAlertDialog';
+import { ScheduleDeleteAlertDialog } from '@/components/admin/schedule/modal/ScheduleDeleteAlertDialog';
 import { useClubId } from '@/stores';
 import { useCardinalSelector } from '@/hooks/useCardinalSelector';
 import { useMonthNavigator } from '@/hooks/useMonthNavigator';
@@ -29,6 +29,7 @@ import {
   useDeleteSchedule,
 } from '@/hooks/queries/admin/useAdminScheduleQueries';
 import { toCalendarScheduleDetail } from '@/utils/admin/scheduleUtils';
+import { isSessionInProgress } from '@/utils/admin/sessionUtils';
 import type { Schedule, ScheduleType } from '@/types/admin/schedule';
 import type { ScheduleDetail } from '@/types/calendar';
 
@@ -338,16 +339,19 @@ function ScheduleManagementContent() {
         />
       )}
 
-      <CustomAlertDialog
+      <ScheduleDeleteAlertDialog
         open={deleteConfirmTarget !== null}
         onOpenChange={(open) => {
           if (!open) setDeleteConfirmTarget(null);
         }}
-        title="이 일정을 삭제하시겠어요?"
-        description={'삭제된 일정은 복구할 수 없습니다.\n신중히 확인 후 진행해 주세요.'}
-        actionLabel="삭제"
-        onAction={handleDeleteConfirm}
-        placement="center"
+        scheduleType={deleteConfirmTarget?.type}
+        // TODO: [백엔드] 출석 진행 중인 세션 삭제를 서버에서도 거부하고 전용 에러 코드를 내려 달라고 요청.
+        // 지금은 클라이언트 날짜 추정으로만 막고 있어 우회·오판이 가능하다. 코드가 정해지면 삭제 onError에서
+        // 이 안내(inProgress)를 띄우도록 useSessionMutations의 force-confirm 처리와 같은 방식으로 연결한다.
+        inProgress={
+          deleteConfirmTarget?.type === 'SESSION' && isSessionInProgress(deleteConfirmTarget.start)
+        }
+        onConfirm={handleDeleteConfirm}
       />
 
       {forceConfirmDialog}
