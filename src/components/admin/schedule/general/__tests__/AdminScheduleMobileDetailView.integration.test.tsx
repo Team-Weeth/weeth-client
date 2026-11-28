@@ -1,4 +1,4 @@
-import { render, screen, within } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import { server } from '@/mocks/server';
@@ -94,8 +94,7 @@ describe('AdminScheduleMobileDetailView (integration)', () => {
     const { user, onBack } = renderDetailView();
     await screen.findByRole('heading', { name: '상세 제목' });
 
-    const attendeeRow = screen.getByText('참석자').parentElement as HTMLElement;
-    await user.click(within(attendeeRow).getByRole('button'));
+    await user.click(screen.getByRole('button', { name: '참석자 1명 목록 보기' }));
 
     expect(screen.getByRole('heading', { name: '참석자 목록' })).toBeInTheDocument();
     expect(screen.getByText('김철수')).toBeInTheDocument();

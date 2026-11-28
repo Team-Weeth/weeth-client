@@ -114,6 +114,7 @@ function CalendarMobileScheduleDetailContent({
               <span className={LABEL_CLASS}>참석자</span>
               <button
                 type="button"
+                aria-label={`참석자 ${schedule.attendeeCount ?? visibleAttendees.length}명 목록 보기`}
                 className="flex cursor-pointer items-center gap-200 rounded-sm transition-opacity hover:opacity-75"
                 onClick={onViewAttendees}
               >
