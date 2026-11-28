@@ -143,7 +143,7 @@ function EditSessionModalContent({
   const deleteDialogProps =
     isRecurring && isChildOfRecurringGroup
       ? {
-          title: '이 세션을 삭제하시겠어요?\n반복 설정이 되어있는 세션이에요.',
+          title: '해당 세션을 삭제하시겠어요?\n반복 설정이 되어있는 세션이에요.',
           actionLabel: '이 세션 일정만 삭제',
           onAction: () => handleDeleteConfirm('this'),
           secondActionLabel: '이후 모든 세션 일정 삭제',
@@ -156,8 +156,8 @@ function EditSessionModalContent({
             onAction: () => handleDeleteConfirm('all'),
           }
         : {
-            title: '이 세션을 삭제하시겠어요?',
-            description: '삭제된 세션은 복구할 수 없습니다.\n신중히 확인 후 진행해 주세요.',
+            title: '해당 세션을 삭제하시겠어요?',
+            description: '삭제된 세션은 복구가 불가능합니다.',
             actionLabel: '삭제',
             onAction: () => handleDeleteConfirm('this'),
           };
