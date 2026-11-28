@@ -13,6 +13,7 @@ import { AdminScheduleBottomBar } from '@/components/admin/schedule/general/Admi
 import { AdminScheduleCreateSheet } from '@/components/admin/schedule/general/AdminScheduleCreateSheet';
 import { AdminScheduleMonthPickerView } from '@/components/admin/schedule/general/AdminScheduleMonthPickerView';
 import { AdminScheduleMobileSearch } from '@/components/admin/schedule/general/AdminScheduleMobileSearch';
+import { AdminScheduleMobileDetailView } from '@/components/admin/schedule/general/AdminScheduleMobileDetailView';
 import { CreateScheduleModal } from '@/components/admin/schedule/modal/CreateScheduleModal';
 import { EditScheduleModal } from '@/components/admin/schedule/modal/EditScheduleModal';
 import { EditSessionModal } from '@/components/admin/schedule/modal/EditSessionModal';
@@ -21,6 +22,7 @@ import { CustomAlertDialog } from '@/components/alert/CustomAlertDialog';
 import { useClubId } from '@/stores';
 import { useCardinalSelector } from '@/hooks/useCardinalSelector';
 import { useMonthNavigator } from '@/hooks/useMonthNavigator';
+import { useIsTablet } from '@/hooks/useIsTablet';
 import { useSessionMutations } from '@/hooks/admin/useSessionMutations';
 import {
   useAdminMonthlySchedules,
@@ -49,6 +51,8 @@ function ScheduleManagementContent() {
   const [isMonthPickerOpen, setIsMonthPickerOpen] = useState(false);
   // 월 이동 화면에서 연도만 넘겨볼 때는 캘린더를 바꾸지 않고, 월을 고른 시점에 반영한다.
   const [pickerYear, setPickerYear] = useState(year);
+  const isTablet = useIsTablet();
+  const isMobileDetailOpen = detailTarget !== null && !isTablet;
 
   const {
     data: schedules = [],
@@ -160,7 +164,15 @@ function ScheduleManagementContent() {
     <>
       {/* Mobile view — 화면 높이에 고정하고 일정 목록만 내부에서 스크롤한다 */}
       <div className="tablet:hidden h-full overflow-hidden bg-neutral-300">
-        {isMonthPickerOpen ? (
+        {isMobileDetailOpen && detailTarget ? (
+          <AdminScheduleMobileDetailView
+            key={detailTarget.id}
+            schedule={detailTarget}
+            onBack={() => setDetailTarget(null)}
+            onEdit={handleDetailEdit}
+            onDelete={handleDetailDelete}
+          />
+        ) : isMonthPickerOpen ? (
           <div className="scrollbar-none bg-background h-full overflow-y-auto overscroll-contain">
             <AdminScheduleMonthPickerView
               year={pickerYear}
@@ -204,7 +216,7 @@ function ScheduleManagementContent() {
           />
         )}
 
-        {!isMonthPickerOpen && (
+        {!isMonthPickerOpen && !isMobileDetailOpen && (
           <AdminScheduleBottomBar
             overviewHref={`/${clubId}/admin/schedule/overview?year=${year}&month=${month}`}
             onCreateClick={() => setIsCreateSheetOpen(true)}
@@ -282,7 +294,8 @@ function ScheduleManagementContent() {
         onCreateSession={(body) => submitCreate(body)}
       />
 
-      {detailTarget && (
+      {/* 태블릿 이상은 모달, 모바일은 위의 AdminScheduleMobileDetailView 화면으로 상세를 표시한다. */}
+      {detailTarget && isTablet && (
         <AdminScheduleDetailModal
           key={`detail-${detailTarget.id}`}
           open
