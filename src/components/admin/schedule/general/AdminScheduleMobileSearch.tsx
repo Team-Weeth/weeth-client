@@ -6,6 +6,7 @@ import { TooltipProvider } from '@/components/ui/Tooltip';
 import { UpcomingItem } from '@/components/calendar/CalendarUpcomingPanel';
 import AdminSearchSmallIcon from '@/assets/icons/admin/ic_admin_search_small.svg';
 import AdminDeleteIcon from '@/assets/icons/admin/ic_admin_delete.svg';
+import { matchesScheduleQuery } from '@/utils/admin/scheduleUtils';
 import type { ScheduleDetail } from '@/types/calendar';
 
 interface AdminScheduleMobileSearchProps {
@@ -28,14 +29,8 @@ function AdminScheduleMobileSearch({
 
   // TODO: [백엔드] 검색 대상이 현재 조회 중인 월의 일정(schedules)뿐이다. 다른 달 일정까지 검색해야 하면
   // 제목·장소 검색 API(기간 무관)가 필요하다. 제공되면 이 클라이언트 필터를 서버 검색 쿼리로 교체한다.
-  const query = searchQuery.trim().toLowerCase();
-  const filtered = query
-    ? schedules.filter(
-        (s) =>
-          s.title.toLowerCase().includes(query) ||
-          (s.location?.toLowerCase().includes(query) ?? false),
-      )
-    : [];
+  const query = searchQuery.trim();
+  const filtered = query ? schedules.filter((s) => matchesScheduleQuery(s, query)) : [];
 
   return (
     <section className="tablet:hidden fixed inset-0 z-10 flex flex-col bg-neutral-300">
@@ -46,6 +41,7 @@ function AdminScheduleMobileSearch({
           <input
             ref={inputRef}
             type="text"
+            aria-label="일정 검색"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="일정 검색"
