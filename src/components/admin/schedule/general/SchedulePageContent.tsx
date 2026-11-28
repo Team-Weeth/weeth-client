@@ -20,6 +20,7 @@ import {
   useAdminMonthlySchedules,
   useDeleteSchedule,
 } from '@/hooks/queries/admin/useAdminScheduleQueries';
+import { matchesScheduleQuery } from '@/utils/admin/scheduleUtils';
 import type { Schedule, ScheduleType } from '@/types/admin/schedule';
 
 const SessionTabContent = dynamic(() =>
@@ -85,12 +86,7 @@ function SchedulePageContent() {
   const { submitCreate, forceConfirmDialog } = useSessionMutations();
 
   // 검색 필터링
-  const query = searchValue.trim().toLowerCase();
-  const filteredSchedules = query
-    ? schedules.filter(
-        (s) => s.title.toLowerCase().includes(query) || s.location.toLowerCase().includes(query),
-      )
-    : schedules;
+  const filteredSchedules = schedules.filter((s) => matchesScheduleQuery(s, searchValue));
 
   // 날짜순 정렬
   const sortedSchedules = [...filteredSchedules].sort(

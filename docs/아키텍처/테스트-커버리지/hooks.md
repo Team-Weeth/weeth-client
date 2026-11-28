@@ -235,6 +235,65 @@ pathname 변경 시 `window.scrollTo(0, 0)`을 호출하고, popstate(뒤로/앞
 
 ---
 
+## useAdminScheduleDetailQuery (`src/hooks/queries/admin/useAdminScheduleDetailQuery.ts`)
+
+**Measured**: 2026-11-28
+**Test file**: `src/hooks/queries/admin/__tests__/useAdminScheduleDetailQuery.test.tsx`
+**Total tests**: 5
+
+### Coverage by file
+
+| File | Statements | Branches | Functions | Lines |
+|------|-----------|---------|---------|-------|
+| `useAdminScheduleDetailQuery.ts` | 100% | 100% | 100% | 100% |
+
+### Test composition
+
+#### `useAdminScheduleDetailQuery.test.tsx` (5 tests)
+
+`renderHook` + MSW(`/api/proxy/clubs/:clubId/schedules/:id`)로 상세 조회와 목록 데이터 대체를 검증한다.
+
+| Case | What is verified |
+|------|-----------------|
+| 응답 전 | 로딩 상태, 목록 데이터(제목·장소)로 상세 채움 |
+| 응답 후 | 제목·설명·주최자·참석자 수·참석자 매핑, clubId 반환 |
+| type 쿼리 | 일정 유형을 `type` 파라미터로 전달 |
+| 조회 실패 | 목록 데이터로 대체 (주최자 없음) |
+| clubId 없음 | 조회하지 않고 목록 데이터 사용 |
+
+---
+
+## useMonthNavigator (`src/hooks/useMonthNavigator.ts`)
+
+**Measured**: 2026-11-28
+**Test file**: `src/hooks/__tests__/useMonthNavigator.test.ts`
+**Total tests**: 6
+
+### Coverage by file
+
+| File | Statements | Branches | Functions | Lines |
+|------|-----------|---------|---------|-------|
+| `useMonthNavigator.ts` | 90.24% | 100% | 80% | 90.24% |
+
+### Test composition
+
+#### `useMonthNavigator.test.ts` (6 tests)
+
+| Case | What is verified |
+|------|-----------------|
+| 초기값 | 현재 년/월 |
+| prev / next | 이전·다음 달 이동 |
+| 연도 경계 | 1월 → 전년 12월, 12월 → 다음 해 1월 |
+| goToYearMonth | 지정한 년/월로 이동 |
+
+### Uncovered branches
+
+| Lines | Content | Reason |
+|-------|---------|--------|
+| 28–31 | `goToToday` | 기존 테스트에 없던 케이스. 컴포넌트 테스트(`AdminMobileScheduleView`)에서는 콜백으로만 검증 |
+
+---
+
 ## 추가 예정
 
 | 파일 | 우선순위 | 비고 |

@@ -90,3 +90,16 @@ export function toCalendarScheduleDetail(s: Schedule): ScheduleDetail {
     location: s.location,
   };
 }
+
+/** 일정 검색: 제목 또는 장소에 검색어가 포함되면 일치. 검색어는 앞뒤 공백·대소문자를 무시하고, 빈 검색어는 모두 일치. */
+export function matchesScheduleQuery(
+  schedule: { title: string; location?: string | null },
+  query: string,
+): boolean {
+  const normalized = query.trim().toLowerCase();
+  if (!normalized) return true;
+  return (
+    schedule.title.toLowerCase().includes(normalized) ||
+    (schedule.location?.toLowerCase().includes(normalized) ?? false)
+  );
+}

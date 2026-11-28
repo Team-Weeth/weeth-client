@@ -30,7 +30,12 @@ function useMonthNavigator(initialYear?: number, initialMonth?: number) {
     setMonth(now.getMonth() + 1);
   };
 
-  return { year, month, prev, next, goToToday };
+  const goToYearMonth = (nextYear: number, nextMonth: number) => {
+    setYear(nextYear);
+    setMonth(nextMonth);
+  };
+
+  return { year, month, prev, next, goToToday, goToYearMonth };
 }
 
 export { useMonthNavigator };

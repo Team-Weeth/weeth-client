@@ -15,6 +15,7 @@ import AdminBackIcon from '@/assets/icons/admin/ic_admin_back.svg';
 import AdminPlusIcon from '@/assets/icons/admin/ic_admin_plus.svg';
 import InfoCircleIcon from '@/assets/icons/info_circle.svg';
 import { isRepeating } from '@/utils/admin/sessionScheduleListUtils';
+import { matchesScheduleQuery } from '@/utils/admin/scheduleUtils';
 import { useMonthNavigator } from '@/hooks/useMonthNavigator';
 import { useCardinalSelector } from '@/hooks/useCardinalSelector';
 import { useSessionMutations } from '@/hooks/admin/useSessionMutations';
@@ -116,14 +117,9 @@ function ScheduleOverviewContent() {
     SESSION: sessionGroupCount,
   };
 
-  const query = searchValue.trim().toLowerCase();
-  const eventFiltered = query
-    ? schedules
-        .filter((s) => s.type === 'EVENT')
-        .filter(
-          (s) => s.title.toLowerCase().includes(query) || s.location.toLowerCase().includes(query),
-        )
-    : schedules.filter((s) => s.type === 'EVENT');
+  const eventFiltered = schedules.filter(
+    (s) => s.type === 'EVENT' && matchesScheduleQuery(s, searchValue),
+  );
 
   const sortedSchedules = [...eventFiltered].sort(
     (a, b) => new Date(a.start).getTime() - new Date(b.start).getTime(),

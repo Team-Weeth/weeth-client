@@ -63,4 +63,15 @@ describe('useMonthNavigator', () => {
     expect(result.current.year).toBe(2027);
     expect(result.current.month).toBe(1);
   });
+
+  it('goToYearMonth() — 지정한 년/월로 이동한다', () => {
+    const { result } = renderHook(() => useMonthNavigator());
+
+    act(() => {
+      result.current.goToYearMonth(2024, 3);
+    });
+
+    expect(result.current.year).toBe(2024);
+    expect(result.current.month).toBe(3);
+  });
 });

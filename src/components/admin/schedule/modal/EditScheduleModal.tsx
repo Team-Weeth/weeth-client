@@ -9,10 +9,10 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/DropdownMenu';
-import { CustomAlertDialog } from '@/components/alert';
 import AdminCloseIcon from '@/assets/icons/admin/ic_admin_close.svg';
 import AdminMeatballIcon from '@/assets/icons/admin/ic_admin_meatball.svg';
 import { ModalIconButton } from '@/components/admin/modal/ModalIconButton';
+import { ScheduleDeleteAlertDialog } from '@/components/admin/schedule/modal/ScheduleDeleteAlertDialog';
 import type { Schedule } from '@/types/admin/schedule';
 import {
   useAdminScheduleDetail,
@@ -189,26 +189,21 @@ function EditScheduleModalContent({
       <div className="bg-background flex h-[96px] shrink-0 items-center justify-between pr-[10px] pl-700">
         <h2 className="typo-h3 text-text-normal m-0">일반 일정 수정</h2>
         <div className="flex items-center gap-200">
-          <CustomAlertDialog
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <ModalIconButton icon={AdminMeatballIcon} label="메뉴" />
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem destructive onSelect={() => setDeleteConfirmOpen(true)}>
+                일반 일정 삭제
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+          <ScheduleDeleteAlertDialog
             open={deleteConfirmOpen}
             onOpenChange={setDeleteConfirmOpen}
-            title="이 일정을 삭제하시겠어요?"
-            description={'삭제된 일정은 복구할 수 없습니다.\n신중히 확인 후 진행해 주세요.'}
-            actionLabel="삭제"
-            onAction={handleDeleteConfirm}
-            placement="below-right"
-          >
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <ModalIconButton icon={AdminMeatballIcon} label="메뉴" />
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem destructive onSelect={() => setDeleteConfirmOpen(true)}>
-                  일반 일정 삭제
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </CustomAlertDialog>
+            onConfirm={handleDeleteConfirm}
+          />
 
           <DiscardConfirmArea
             open={discardSource === 'close'}

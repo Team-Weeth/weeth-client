@@ -24,7 +24,8 @@ const MONTHS = [
 
 interface CalendarMonthPickerProps {
   year: number;
-  selectedMonth: number;
+  /** 선택 표시할 월(1~12). 보고 있는 연도에 선택된 월이 없으면 null */
+  selectedMonth: number | null;
   onMonthSelect: (month: number) => void;
   onYearChange?: (year: number) => void;
   onGoToToday?: () => void;
@@ -71,14 +72,16 @@ function CalendarMonthPicker({
           const isSelected = month === selectedMonth;
 
           return (
+            // size 프리셋(typo-button1 포함)을 쓰지 않아 typo-sub1만 적용된다.
             <Button
               key={month}
               variant={isSelected ? 'primary' : 'secondary'}
+              size={null}
               aria-label={`${year}년 ${label}`}
               aria-pressed={isSelected}
               onClick={() => onMonthSelect(month)}
               className={cn(
-                'typo-sub3 h-20 w-full rounded-md border p-0',
+                'typo-sub1 h-20 w-full rounded-md border p-0',
                 isSelected
                   ? 'border-container-primary'
                   : 'border-line bg-container-neutral text-text-alternative',
@@ -91,7 +94,13 @@ function CalendarMonthPicker({
       </div>
 
       {/* Go to today CTA */}
-      <Button variant="primary" size="lg" onClick={onGoToToday} className="w-full">
+      {/* size="lg"와 같은 여백·모서리를 직접 지정해 lg의 typo-button1과 typo-sub1이 겹치지 않게 한다. */}
+      <Button
+        variant="primary"
+        size={null}
+        onClick={onGoToToday}
+        className="typo-sub1 w-full rounded-md px-400 py-300"
+      >
         오늘 날짜로 이동
       </Button>
 

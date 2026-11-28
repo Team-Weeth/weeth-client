@@ -1,10 +1,11 @@
 import { cn } from '@/lib/cn';
-import { AlertDialog, AlertDialogAction, AlertDialogCancel } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/Button';
 import { ScheduleTag } from '@/components/admin/schedule/general/ScheduleTag';
+import { ScheduleDeleteAlertDialog } from '@/components/admin/schedule/modal/ScheduleDeleteAlertDialog';
 import { SCHEDULE_TYPE_LABEL } from '@/constants/admin/schedule.constants';
 import type { Schedule } from '@/types/admin/schedule';
 import { getDayLabel, getDayOfMonth, formatScheduleDateTime } from '@/utils/admin/scheduleUtils';
+import { isSessionInProgress } from '@/utils/admin/sessionUtils';
 
 interface ScheduleItemProps extends React.HTMLAttributes<HTMLDivElement> {
   schedule: Schedule;
@@ -55,19 +56,16 @@ function ScheduleItem({
         <Button variant="secondary" size="sm" className="text-text-strong" onClick={onEdit}>
           수정
         </Button>
-        <AlertDialog
-          status="danger"
-          title="이 일정을 삭제하시겠어요?"
-          description={'삭제된 일정은 복구할 수 없습니다.\n신중히 확인 후 진행해 주세요.'}
+        <ScheduleDeleteAlertDialog
           trigger={
             <Button variant="danger" size="sm">
               삭제
             </Button>
           }
-        >
-          <AlertDialogAction onClick={onDelete}>삭제</AlertDialogAction>
-          <AlertDialogCancel>취소</AlertDialogCancel>
-        </AlertDialog>
+          scheduleType={schedule.type}
+          inProgress={schedule.type === 'SESSION' && isSessionInProgress(schedule.start)}
+          onConfirm={() => onDelete?.()}
+        />
       </div>
     </div>
   );

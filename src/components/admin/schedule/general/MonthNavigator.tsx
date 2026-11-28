@@ -11,9 +11,21 @@ interface MonthNavigatorProps extends React.HTMLAttributes<HTMLDivElement> {
   month: number;
   onPrev: () => void;
   onNext: () => void;
+  /** 주어지면 연·월 텍스트를 버튼으로 렌더링한다 (모바일 월 이동 화면 진입). */
+  onLabelClick?: () => void;
 }
 
-function MonthNavigator({ className, year, month, onPrev, onNext, ...props }: MonthNavigatorProps) {
+function MonthNavigator({
+  className,
+  year,
+  month,
+  onPrev,
+  onNext,
+  onLabelClick,
+  ...props
+}: MonthNavigatorProps) {
+  const label = formatYearMonth(year, month);
+
   return (
     <div className={cn('flex items-center justify-center gap-400', className)} {...props}>
       <button
@@ -23,7 +35,18 @@ function MonthNavigator({ className, year, month, onPrev, onNext, ...props }: Mo
       >
         <Image src={AdminSquareLeftIcon} alt="이전 달" width={20} height={20} />
       </button>
-      <span className="typo-sub1 text-text-strong">{formatYearMonth(year, month)}</span>
+      {onLabelClick ? (
+        <button
+          type="button"
+          aria-label={`${label}, 월 선택`}
+          onClick={onLabelClick}
+          className="typo-sub1 text-text-strong cursor-pointer"
+        >
+          {label}
+        </button>
+      ) : (
+        <span className="typo-sub1 text-text-strong">{label}</span>
+      )}
       <button
         type="button"
         onClick={onNext}
