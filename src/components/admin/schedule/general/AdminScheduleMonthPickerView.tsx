@@ -5,7 +5,7 @@ import { AdminScheduleMobileBackHeader } from '@/components/admin/schedule/gener
 
 interface AdminScheduleMonthPickerViewProps {
   year: number;
-  selectedMonth: number;
+  selectedMonth: number | null;
   onYearChange: (year: number) => void;
   onMonthSelect: (month: number) => void;
   onGoToToday: () => void;

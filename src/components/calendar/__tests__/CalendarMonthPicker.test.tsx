@@ -37,8 +37,8 @@ describe('CalendarMonthPicker', () => {
     );
   });
 
-  it('선택한 월이 범위 밖이면 어떤 월도 선택 상태가 아니다', () => {
-    renderPicker({ selectedMonth: 0 });
+  it('선택한 월이 없으면(null) 어떤 월도 선택 상태가 아니다', () => {
+    renderPicker({ selectedMonth: null });
 
     expect(screen.queryByRole('button', { pressed: true })).not.toBeInTheDocument();
   });
