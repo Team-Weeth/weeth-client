@@ -81,7 +81,12 @@ function ScheduleManagementContent() {
   const upcomingSchedules = calendarSchedules.filter((s) => new Date(s.end) > now);
 
   // selected date schedules for mobile view
-  const activeDateStr = selectedDate ?? toDateInputValue();
+  // 사용자 캘린더(useCalendarScheduleData)와 같은 기준: 날짜를 고르지 않았으면 이번 달은 오늘, 다른 달은 그 달 1일.
+  // 목록 데이터는 보고 있는 달의 일정뿐이라, 다른 달에서 오늘을 기준으로 삼으면 일정이 있어도 0개로 보인다.
+  const today = toDateInputValue();
+  const viewingMonthPrefix = `${year}-${String(month).padStart(2, '0')}`;
+  const activeDateStr =
+    selectedDate ?? (today.startsWith(viewingMonthPrefix) ? today : `${viewingMonthPrefix}-01`);
   const selectedDateSchedules = allCalendarSchedules.filter(
     (s) => s.start.slice(0, 10) <= activeDateStr && s.end.slice(0, 10) >= activeDateStr,
   );

@@ -5,6 +5,7 @@ import { server } from '@/mocks/server';
 import { ScheduleManagementContent } from '@/components/admin/schedule/general/ScheduleManagementContent';
 import { useIsTablet } from '@/hooks/useIsTablet';
 import { createQueryClient, createWrapper } from '@/test-utils/query';
+import { formatMobileDateHeader, toDateInputValue } from '@/utils/shared/date';
 import type { Schedule } from '@/types/admin/schedule';
 
 jest.mock('@/stores', () => ({ useClubId: () => 'club-1' }));
@@ -27,10 +28,12 @@ jest.mock('@/hooks/useCardinalSelector', () => ({
 }));
 
 const mockGoToYearMonth = jest.fn();
+// 보고 있는 연·월. 기본은 이번 달이고, 다른 달 시나리오에서만 바꾼다.
+const mockViewing = { year: 0, month: 0 };
 jest.mock('@/hooks/useMonthNavigator', () => ({
   useMonthNavigator: () => ({
-    year: 2026,
-    month: 6,
+    year: mockViewing.year,
+    month: mockViewing.month,
     prev: jest.fn(),
     next: jest.fn(),
     goToToday: jest.fn(),
@@ -110,6 +113,9 @@ async function openMobileDetail(user: ReturnType<typeof userEvent.setup>, title:
 
 describe('ScheduleManagementContent (integration)', () => {
   beforeEach(() => {
+    const now = new Date();
+    mockViewing.year = now.getFullYear();
+    mockViewing.month = now.getMonth() + 1;
     jest.mocked(useIsTablet).mockReturnValue(false);
     setSchedules([
       createSchedule(),
@@ -138,8 +144,32 @@ describe('ScheduleManagementContent (integration)', () => {
     renderContent();
 
     expect(screen.getByRole('heading', { name: '일정 관리' })).toBeInTheDocument();
+    expect(screen.getByText(formatMobileDateHeader(toDateInputValue()))).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /팀 회의/ })).toBeInTheDocument();
     expect(screen.getByRole('link', { name: '일정 모아보기' })).toBeInTheDocument();
+  });
+
+  it('날짜를 고르지 않고 다른 달을 보면 그 달 1일을 기준으로 목록을 표시한다', () => {
+    const now = new Date();
+    // 이번 달과 겹치지 않는 다음 달
+    const next = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+    mockViewing.year = next.getFullYear();
+    mockViewing.month = next.getMonth() + 1;
+    const firstDay = toDateInputValue(next);
+    setSchedules([
+      createSchedule({
+        id: 3,
+        title: '월초 행사',
+        start: `${firstDay}T10:00:00`,
+        end: `${firstDay}T12:00:00`,
+      }),
+    ]);
+
+    renderContent();
+
+    expect(screen.getByText(formatMobileDateHeader(firstDay))).toBeInTheDocument();
+    expect(screen.getByText('일정 1개')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /월초 행사/ })).toBeInTheDocument();
   });
 
   describe('모바일 일정 상세', () => {
@@ -201,6 +231,11 @@ describe('ScheduleManagementContent (integration)', () => {
   });
 
   describe('월 이동', () => {
+    beforeEach(() => {
+      mockViewing.year = 2026;
+      mockViewing.month = 6;
+    });
+
     it('연·월을 누르면 월 이동 화면을 열고 하단 바를 숨긴다', async () => {
       const user = renderContent();
 
