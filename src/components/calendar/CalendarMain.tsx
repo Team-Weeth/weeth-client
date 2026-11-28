@@ -23,6 +23,9 @@ import {
   useCalendarActions,
 } from '@/stores/useCalendarStore';
 import { useClubId } from '@/stores';
+import { WAX_EVENT_BANNER_HEIGHT } from '@/constants/waxEvent';
+import { useWaxEventBannerClosed } from '@/hooks/useWaxEventDismissal';
+import { useClubFeatures } from '@/providers/club-feature-provider';
 import { CalendarScheduleModal } from '@/components/calendar/CalendarScheduleModal';
 import { CalendarMobileScheduleDetailContentSkeleton } from '@/components/calendar/skeleton/CalendarMobileScheduleDetailContentSkeleton';
 
@@ -52,6 +55,10 @@ function CalendarMain({ className }: CalendarMainProps) {
   } = useCalendarActions();
 
   const isTablet = useIsTablet();
+  const { waxEventEnabled } = useClubFeatures();
+  const { closed: isWaxBannerClosed } = useWaxEventBannerClosed();
+  const mobileHeaderHeight =
+    64 + (waxEventEnabled && !isWaxBannerClosed ? WAX_EVENT_BANNER_HEIGHT : 0);
   const [pickerYear, setPickerYear] = useState(year);
 
   const { cardinals, activeCardinal, setSelectedCardinalId } = useCardinalSelector({
@@ -152,7 +159,12 @@ function CalendarMain({ className }: CalendarMainProps) {
       )}
 
       {!isTablet && selectedSchedule && (
-        <div className="bg-background fixed inset-0 z-[65] flex flex-col overflow-hidden pt-16">
+        <div
+          className="bg-background fixed inset-0 z-[65] flex flex-col overflow-hidden"
+          // 고정 헤더(z-[70]) 아래에서 시작해야 상단(일정 유형 태그)이 가려지지 않는다.
+          // MobileNavSheet와 같은 기준: 헤더 64px + 왁뿌볼 띠배너(노출 시) + safe-area 상단.
+          style={{ paddingTop: `calc(var(--safe-area-inset-top) + ${mobileHeaderHeight}px)` }}
+        >
           {attendeeListOpen ? (
             <CalendarAttendeeListContent
               attendees={fullDetail?.attendees ?? []}
