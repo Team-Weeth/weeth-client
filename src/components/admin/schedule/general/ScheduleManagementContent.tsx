@@ -8,6 +8,10 @@ import {
   type ScheduleFilter,
 } from '@/components/admin/schedule/general/ScheduleFilterChips';
 import { ScheduleCalendarSection } from '@/components/admin/schedule/general/ScheduleCalendarSection';
+import { AdminMobileScheduleView } from '@/components/admin/schedule/general/AdminMobileScheduleView';
+import { AdminScheduleBottomBar } from '@/components/admin/schedule/general/AdminScheduleBottomBar';
+import { AdminScheduleCreateSheet } from '@/components/admin/schedule/general/AdminScheduleCreateSheet';
+import { AdminScheduleMobileSearch } from '@/components/admin/schedule/general/AdminScheduleMobileSearch';
 import { CreateScheduleModal } from '@/components/admin/schedule/modal/CreateScheduleModal';
 import { EditScheduleModal } from '@/components/admin/schedule/modal/EditScheduleModal';
 import { EditSessionModal } from '@/components/admin/schedule/modal/EditSessionModal';
@@ -39,6 +43,9 @@ function ScheduleManagementContent() {
   const [detailTarget, setDetailTarget] = useState<Schedule | null>(null);
   const [editTarget, setEditTarget] = useState<Schedule | null>(null);
   const [deleteConfirmTarget, setDeleteConfirmTarget] = useState<Schedule | null>(null);
+  const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
+  const [isCreateSheetOpen, setIsCreateSheetOpen] = useState(false);
+
   const {
     data: schedules = [],
     isPending,
@@ -70,10 +77,17 @@ function ScheduleManagementContent() {
 
   // convert to calendar ScheduleDetail for shared components
   const calendarSchedules: ScheduleDetail[] = filtered.map(toCalendarScheduleDetail);
+  const allCalendarSchedules: ScheduleDetail[] = schedules.map(toCalendarScheduleDetail);
   const eventDates = calendarSchedules.map((s) => new Date(s.start));
 
   const now = new Date();
   const upcomingSchedules = calendarSchedules.filter((s) => new Date(s.end) > now);
+
+  // selected date schedules for mobile view
+  const activeDateStr = selectedDate ?? toTodayStr();
+  const selectedDateSchedules = allCalendarSchedules.filter(
+    (s) => s.start.slice(0, 10) <= activeDateStr && s.end.slice(0, 10) >= activeDateStr,
+  );
 
   const handleToggleDate = (dateStr: string) => {
     setSelectedDate((prev) => (prev === dateStr ? null : dateStr));
@@ -139,115 +153,171 @@ function ScheduleManagementContent() {
   };
 
   return (
-    <AdminPageContainer>
-      <div className="tablet:p-700 flex min-w-0 flex-col p-400">
-        {/* Header row */}
-        <ScheduleManagementHeader
-          searchValue={searchValue}
-          onSearchValueChange={setSearchValue}
+    <>
+      {/* Mobile view — 화면 높이에 고정하고 일정 목록만 내부에서 스크롤한다 */}
+      <div className="tablet:hidden h-full overflow-hidden bg-neutral-300">
+        <AdminMobileScheduleView
+          year={year}
+          month={month}
+          selectedDate={selectedDate}
+          calendarSchedules={allCalendarSchedules}
+          selectedDateSchedules={selectedDateSchedules}
           cardinals={cardinals}
           activeCardinal={activeCardinal}
+          onPrevMonth={handlePrevMonth}
+          onNextMonth={handleNextMonth}
+          onGoToToday={handleGoToToday}
+          onDateClick={handleToggleDate}
           onCardinalSelect={setSelectedCardinalId}
           onCardinalSelectAll={() => setSelectedCardinalId(null)}
+          onSearchClick={() => setIsMobileSearchOpen(true)}
+          onScheduleClick={handleScheduleClick}
+          isPending={isPending}
+          isError={isError}
         />
 
-        {/* Filter chips + Month nav row + CalendarGrid */}
-        <div className="flex flex-col gap-[22px]">
-          <ScheduleFilterChips
-            totalCount={totalCount}
-            eventCount={eventCount}
-            sessionCount={sessionCount}
-            activeFilter={activeFilter}
-            onFilterChange={setActiveFilter}
-          />
-
-          <ScheduleCalendarSection
-            year={year}
-            month={month}
-            calendarSchedules={calendarSchedules}
-            selectedDate={selectedDate}
-            eventDates={eventDates}
-            upcomingSchedules={upcomingSchedules}
-            isPending={isPending}
-            isError={isError}
-            clubId={clubId}
-            onPrevMonth={handlePrevMonth}
-            onNextMonth={handleNextMonth}
-            onGoToToday={handleGoToToday}
-            onToggleDate={handleToggleDate}
-            onScheduleClick={handleScheduleClick}
-            onCreateSchedule={openCreateModal}
-          />
-        </div>
-
-        {/* Modals */}
-        <CreateScheduleModal
-          open={createModalOpen}
-          onOpenChange={setCreateModalOpen}
-          cardinalNumber={activeCardinal?.cardinalNumber ?? latestCardinal?.cardinalNumber ?? null}
-          activeTab={createModalTab}
-          onCreateSession={(body) => submitCreate(body)}
+        <AdminScheduleBottomBar
+          overviewHref={`/${clubId}/admin/schedule/overview?year=${year}&month=${month}`}
+          onCreateClick={() => setIsCreateSheetOpen(true)}
         />
 
-        {detailTarget && (
-          <AdminScheduleDetailModal
-            key={`detail-${detailTarget.id}`}
-            open
-            onOpenChange={(open) => {
-              if (!open) setDetailTarget(null);
-            }}
-            schedule={detailTarget}
-            onEdit={handleDetailEdit}
-            onDelete={handleDetailDelete}
-          />
-        )}
+        <AdminScheduleCreateSheet
+          open={isCreateSheetOpen}
+          onOpenChange={setIsCreateSheetOpen}
+          onSelect={openCreateModal}
+        />
 
-        {editTarget?.type === 'EVENT' && (
-          <EditScheduleModal
-            key={editTarget.id}
-            open
-            onOpenChange={(open) => {
-              if (!open) setEditTarget(null);
-            }}
-            schedule={editTarget}
-            onDelete={handleEditDelete}
-          />
-        )}
-
-        {editTarget?.type === 'SESSION' && (
-          <EditSessionModal
-            key={editTarget.id}
-            open
-            onOpenChange={(open) => {
-              if (!open) setEditTarget(null);
-            }}
-            target={{
-              id: editTarget.id,
-              cardinal: editTarget.cardinal,
-              title: editTarget.title,
-              start: editTarget.start,
-              end: editTarget.end,
-              status: 'SCHEDULED',
+        {isMobileSearchOpen && (
+          <AdminScheduleMobileSearch
+            schedules={allCalendarSchedules}
+            onClose={() => setIsMobileSearchOpen(false)}
+            onScheduleClick={(schedule) => {
+              setIsMobileSearchOpen(false);
+              handleScheduleClick(schedule);
             }}
           />
         )}
-
-        <CustomAlertDialog
-          open={deleteConfirmTarget !== null}
-          onOpenChange={(open) => {
-            if (!open) setDeleteConfirmTarget(null);
-          }}
-          title="이 일정을 삭제하시겠어요?"
-          description={'삭제된 일정은 복구할 수 없습니다.\n신중히 확인 후 진행해 주세요.'}
-          actionLabel="삭제"
-          onAction={handleDeleteConfirm}
-          placement="center"
-        />
-
-        {forceConfirmDialog}
       </div>
-    </AdminPageContainer>
+
+      {/* Desktop view */}
+      <AdminPageContainer className="tablet:flex hidden">
+        <div className="tablet:p-700 flex min-w-0 flex-col p-400">
+          {/* Header row */}
+          <ScheduleManagementHeader
+            searchValue={searchValue}
+            onSearchValueChange={setSearchValue}
+            cardinals={cardinals}
+            activeCardinal={activeCardinal}
+            onCardinalSelect={setSelectedCardinalId}
+            onCardinalSelectAll={() => setSelectedCardinalId(null)}
+          />
+
+          {/* Filter chips + Month nav row + CalendarGrid */}
+          <div className="flex flex-col gap-[22px]">
+            <ScheduleFilterChips
+              totalCount={totalCount}
+              eventCount={eventCount}
+              sessionCount={sessionCount}
+              activeFilter={activeFilter}
+              onFilterChange={setActiveFilter}
+            />
+
+            <ScheduleCalendarSection
+              year={year}
+              month={month}
+              calendarSchedules={calendarSchedules}
+              selectedDate={selectedDate}
+              eventDates={eventDates}
+              upcomingSchedules={upcomingSchedules}
+              isPending={isPending}
+              isError={isError}
+              clubId={clubId}
+              onPrevMonth={handlePrevMonth}
+              onNextMonth={handleNextMonth}
+              onGoToToday={handleGoToToday}
+              onToggleDate={handleToggleDate}
+              onScheduleClick={handleScheduleClick}
+              onCreateSchedule={openCreateModal}
+            />
+          </div>
+        </div>
+      </AdminPageContainer>
+
+      {/* Modals (shared between mobile and desktop) */}
+      <CreateScheduleModal
+        open={createModalOpen}
+        onOpenChange={setCreateModalOpen}
+        cardinalNumber={activeCardinal?.cardinalNumber ?? latestCardinal?.cardinalNumber ?? null}
+        activeTab={createModalTab}
+        onCreateSession={(body) => submitCreate(body)}
+      />
+
+      {detailTarget && (
+        <AdminScheduleDetailModal
+          key={`detail-${detailTarget.id}`}
+          open
+          onOpenChange={(open) => {
+            if (!open) setDetailTarget(null);
+          }}
+          schedule={detailTarget}
+          onEdit={handleDetailEdit}
+          onDelete={handleDetailDelete}
+        />
+      )}
+
+      {editTarget?.type === 'EVENT' && (
+        <EditScheduleModal
+          key={editTarget.id}
+          open
+          onOpenChange={(open) => {
+            if (!open) setEditTarget(null);
+          }}
+          schedule={editTarget}
+          onDelete={handleEditDelete}
+        />
+      )}
+
+      {editTarget?.type === 'SESSION' && (
+        <EditSessionModal
+          key={editTarget.id}
+          open
+          onOpenChange={(open) => {
+            if (!open) setEditTarget(null);
+          }}
+          target={{
+            id: editTarget.id,
+            cardinal: editTarget.cardinal,
+            title: editTarget.title,
+            start: editTarget.start,
+            end: editTarget.end,
+            status: 'SCHEDULED',
+          }}
+        />
+      )}
+
+      <CustomAlertDialog
+        open={deleteConfirmTarget !== null}
+        onOpenChange={(open) => {
+          if (!open) setDeleteConfirmTarget(null);
+        }}
+        title="이 일정을 삭제하시겠어요?"
+        description={'삭제된 일정은 복구할 수 없습니다.\n신중히 확인 후 진행해 주세요.'}
+        actionLabel="삭제"
+        onAction={handleDeleteConfirm}
+        placement="center"
+      />
+
+      {forceConfirmDialog}
+    </>
   );
+}
+
+function toTodayStr(): string {
+  const d = new Date();
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${day}`;
 }
 
 export { ScheduleManagementContent };
