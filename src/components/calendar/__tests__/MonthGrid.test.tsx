@@ -2,6 +2,18 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MonthGrid } from '@/components/calendar/MonthGrid';
 import type { MonthGridProps } from '@/components/calendar/MonthGrid';
+import type { ScheduleDetail } from '@/types/calendar';
+
+function createSchedule(overrides: Partial<ScheduleDetail> = {}): ScheduleDetail {
+  return {
+    id: 1,
+    title: '일정',
+    type: 'EVENT',
+    start: '2026-06-10T10:00:00',
+    end: '2026-06-10T12:00:00',
+    ...overrides,
+  };
+}
 
 function renderGrid(props: Partial<MonthGridProps> = {}) {
   const onDateClick = jest.fn();
@@ -70,6 +82,23 @@ describe('MonthGrid', () => {
     await user.click(screen.getByRole('button', { name: '2026-07-01' }));
 
     expect(onDateClick).not.toHaveBeenCalled();
+  });
+
+  it('일정이 있는 날짜의 접근성 라벨에 일정 유형을 담는다', () => {
+    renderGrid({
+      schedules: [
+        createSchedule({ id: 1, type: 'SESSION', start: '2026-06-10T19:00:00' }),
+        createSchedule({ id: 2, type: 'EVENT', start: '2026-06-10T10:00:00' }),
+        createSchedule({ id: 3, type: 'EVENT', start: '2026-06-12T10:00:00' }),
+        // 다른 달 일정은 표시하지 않는다
+        createSchedule({ id: 4, type: 'EVENT', start: '2026-07-01T10:00:00' }),
+      ],
+    });
+
+    expect(screen.getByRole('button', { name: '2026-06-10, 세션·일반 일정 있음' })).toBeEnabled();
+    expect(screen.getByRole('button', { name: '2026-06-12, 일반 일정 있음' })).toBeEnabled();
+    expect(screen.getByRole('button', { name: '2026-06-11' })).toBeEnabled();
+    expect(screen.getByRole('button', { name: '2026-07-01' })).toBeDisabled();
   });
 
   it('1월이면 이전 칸을 전년도 12월 날짜로 채운다', () => {

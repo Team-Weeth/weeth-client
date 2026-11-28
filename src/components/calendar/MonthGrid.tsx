@@ -24,12 +24,13 @@ function MonthGrid({ year, month, selectedDate, schedules, onDateClick }: MonthG
     scheduleTypesByDate.set(date, types);
   }
 
-  const getScheduleDots = (cell: (typeof cells)[number]): string[] => {
+  // 점은 색으로만 구분되므로, 같은 정보를 날짜 버튼의 접근성 라벨에도 담는다.
+  const getScheduleDots = (cell: (typeof cells)[number]): { color: string; label: string }[] => {
     if (!cell.isCurrentMonth) return [];
     const types = scheduleTypesByDate.get(cell.dateStr);
-    const dots: string[] = [];
-    if (types?.has('SESSION')) dots.push(SCHEDULE_DOT_COLOR.SESSION);
-    if (types?.has('EVENT')) dots.push(SCHEDULE_DOT_COLOR.EVENT);
+    const dots: { color: string; label: string }[] = [];
+    if (types?.has('SESSION')) dots.push({ color: SCHEDULE_DOT_COLOR.SESSION, label: '세션' });
+    if (types?.has('EVENT')) dots.push({ color: SCHEDULE_DOT_COLOR.EVENT, label: '일반 일정' });
     return dots;
   };
 
@@ -50,7 +51,9 @@ function MonthGrid({ year, month, selectedDate, schedules, onDateClick }: MonthG
           <button
             key={cell.dateStr}
             type="button"
-            aria-label={`${cell.dateStr}${cell.isToday ? ' (오늘)' : ''}`}
+            aria-label={`${cell.dateStr}${cell.isToday ? ' (오늘)' : ''}${
+              dots.length > 0 ? `, ${dots.map((dot) => dot.label).join('·')} 있음` : ''
+            }`}
             aria-pressed={isSelected}
             disabled={!cell.isCurrentMonth}
             onClick={() => cell.isCurrentMonth && onDateClick(cell.dateStr)}
@@ -70,8 +73,8 @@ function MonthGrid({ year, month, selectedDate, schedules, onDateClick }: MonthG
               {cell.day}
             </span>
             <div className="flex h-[4px] items-center gap-[2px]">
-              {dots.map((dotColor) => (
-                <span key={dotColor} className={cn('size-[4px] rounded-full', dotColor)} />
+              {dots.map((dot) => (
+                <span key={dot.label} className={cn('size-[4px] rounded-full', dot.color)} />
               ))}
             </div>
           </button>
