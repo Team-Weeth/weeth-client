@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation';
 import { ScheduleManagementContent } from '@/components/admin/schedule/general/ScheduleManagementContent';
 import { SchedulePageContent } from '@/components/admin/schedule/general/SchedulePageContent';
 import { getClubFeatures } from '@/flags/club-features/server';
+import { homeServerApi } from '@/lib/apis/home.server';
 import { toURLSearchParams } from '@/utils/shared/url';
 
 export const metadata: Metadata = { title: '운영진 · 일정 관리' };
@@ -14,7 +15,8 @@ interface SchedulePageProps {
 
 export default async function SchedulePage({ params, searchParams }: SchedulePageProps) {
   const { clubId } = await params;
-  const { adminScheduleV2Enabled } = await getClubFeatures(clubId);
+  const { data } = await homeServerApi.getDashboard(clubId);
+  const { adminScheduleV2Enabled } = await getClubFeatures(clubId, String(data.myInfo.userInfo.id));
 
   // 개편 전 화면은 목록형 화면이 이 경로에서 `tab` 쿼리까지 직접 처리한다.
   if (!adminScheduleV2Enabled) return <SchedulePageContent />;

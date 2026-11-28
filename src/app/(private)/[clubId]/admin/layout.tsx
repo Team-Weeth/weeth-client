@@ -36,10 +36,9 @@ export default async function AdminLayout({
   let dashboard;
   let features;
   try {
-    [dashboard, features] = await Promise.all([
-      homeServerApi.getDashboard(clubId),
-      getClubFeatures(clubId),
-    ]);
+    dashboard = await homeServerApi.getDashboard(clubId);
+    const { userInfo } = dashboard.data.myInfo;
+    features = await getClubFeatures(clubId, String(userInfo.id));
   } catch (error) {
     if (error instanceof ApiError && error.status === 403) {
       return forbidden;

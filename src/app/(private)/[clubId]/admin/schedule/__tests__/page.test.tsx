@@ -14,6 +14,11 @@ jest.mock('next/navigation', () => ({
   }),
 }));
 jest.mock('@/flags/club-features/server', () => ({ getClubFeatures: jest.fn() }));
+jest.mock('@/lib/apis/home.server', () => ({
+  homeServerApi: {
+    getDashboard: jest.fn(() => Promise.resolve({ data: { myInfo: { userInfo: { id: 7 } } } })),
+  },
+}));
 jest.mock('@/components/admin/schedule/general/ScheduleManagementContent', () => ({
   ScheduleManagementContent: () => null,
 }));
@@ -49,7 +54,7 @@ describe('일정 관리 개편 플래그 OFF', () => {
     const element = await SchedulePage(props({ tab: 'session' }));
 
     expect(element.type).toBe(SchedulePageContent);
-    expect(mockGetClubFeatures).toHaveBeenCalledWith('club-a');
+    expect(mockGetClubFeatures).toHaveBeenCalledWith('club-a', '7');
     expect(mockRedirect).not.toHaveBeenCalled();
   });
 
