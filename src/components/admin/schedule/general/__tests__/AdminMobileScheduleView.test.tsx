@@ -33,6 +33,8 @@ function renderView(props: Partial<AdminMobileScheduleViewProps> = {}) {
       year={2026}
       month={6}
       selectedDate={null}
+      // 부모(ScheduleManagementContent)처럼 선택 날짜가 없으면 오늘(고정 시각 2026-06-15)을 넘긴다.
+      activeDateStr={props.selectedDate ?? '2026-06-15'}
       calendarSchedules={[]}
       selectedDateSchedules={[]}
       cardinals={[]}

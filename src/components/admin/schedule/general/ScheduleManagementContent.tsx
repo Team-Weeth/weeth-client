@@ -8,12 +8,7 @@ import {
   type ScheduleFilter,
 } from '@/components/admin/schedule/general/ScheduleFilterChips';
 import { ScheduleCalendarSection } from '@/components/admin/schedule/general/ScheduleCalendarSection';
-import { AdminMobileScheduleView } from '@/components/admin/schedule/general/AdminMobileScheduleView';
-import { AdminScheduleBottomBar } from '@/components/admin/schedule/general/AdminScheduleBottomBar';
-import { AdminScheduleCreateSheet } from '@/components/admin/schedule/general/AdminScheduleCreateSheet';
-import { AdminScheduleMonthPickerView } from '@/components/admin/schedule/general/AdminScheduleMonthPickerView';
-import { AdminScheduleMobileSearch } from '@/components/admin/schedule/general/AdminScheduleMobileSearch';
-import { AdminScheduleMobileDetailView } from '@/components/admin/schedule/general/AdminScheduleMobileDetailView';
+import { AdminScheduleMobileScreen } from '@/components/admin/schedule/general/AdminScheduleMobileScreen';
 import { CreateScheduleModal } from '@/components/admin/schedule/modal/CreateScheduleModal';
 import { EditScheduleModal } from '@/components/admin/schedule/modal/EditScheduleModal';
 import { EditSessionModal } from '@/components/admin/schedule/modal/EditSessionModal';
@@ -28,8 +23,9 @@ import {
   useAdminMonthlySchedules,
   useDeleteSchedule,
 } from '@/hooks/queries/admin/useAdminScheduleQueries';
-import { toCalendarScheduleDetail } from '@/utils/admin/scheduleUtils';
+import { matchesScheduleQuery, toCalendarScheduleDetail } from '@/utils/admin/scheduleUtils';
 import { isSessionInProgress } from '@/utils/admin/sessionUtils';
+import { toDateInputValue } from '@/utils/shared/date';
 import type { Schedule, ScheduleType } from '@/types/admin/schedule';
 import type { ScheduleDetail } from '@/types/calendar';
 
@@ -46,12 +42,9 @@ function ScheduleManagementContent() {
   const [createModalTab, setCreateModalTab] = useState<ScheduleType>('EVENT');
   const [detailTarget, setDetailTarget] = useState<Schedule | null>(null);
   const [editTarget, setEditTarget] = useState<Schedule | null>(null);
+  // 다이얼로그가 닫히는 애니메이션 동안에도 문구가 유지되도록 대상과 열림 상태를 분리한다.
   const [deleteConfirmTarget, setDeleteConfirmTarget] = useState<Schedule | null>(null);
-  const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
-  const [isCreateSheetOpen, setIsCreateSheetOpen] = useState(false);
-  const [isMonthPickerOpen, setIsMonthPickerOpen] = useState(false);
-  // 월 이동 화면에서 연도만 넘겨볼 때는 캘린더를 바꾸지 않고, 월을 고른 시점에 반영한다.
-  const [pickerYear, setPickerYear] = useState(year);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const isTablet = useIsTablet();
   const isMobileDetailOpen = detailTarget !== null && !isTablet;
 
@@ -72,12 +65,7 @@ function ScheduleManagementContent() {
     activeFilter === 'all' ? schedules : schedules.filter((s) => s.type === activeFilter);
 
   // filter by search
-  const query = searchValue.trim().toLowerCase();
-  const filtered = query
-    ? typeFiltered.filter(
-        (s) => s.title.toLowerCase().includes(query) || s.location.toLowerCase().includes(query),
-      )
-    : typeFiltered;
+  const filtered = typeFiltered.filter((s) => matchesScheduleQuery(s, searchValue));
 
   // counts (before search filter, after type would be meaningless; use raw schedules)
   const totalCount = schedules.length;
@@ -93,7 +81,7 @@ function ScheduleManagementContent() {
   const upcomingSchedules = calendarSchedules.filter((s) => new Date(s.end) > now);
 
   // selected date schedules for mobile view
-  const activeDateStr = selectedDate ?? toTodayStr();
+  const activeDateStr = selectedDate ?? toDateInputValue();
   const selectedDateSchedules = allCalendarSchedules.filter(
     (s) => s.start.slice(0, 10) <= activeDateStr && s.end.slice(0, 10) >= activeDateStr,
   );
@@ -129,12 +117,13 @@ function ScheduleManagementContent() {
 
   const handleDetailDelete = (schedule: Schedule) => {
     setDeleteConfirmTarget(schedule);
+    setIsDeleteDialogOpen(true);
   };
 
   const handleDeleteConfirm = () => {
     if (!deleteConfirmTarget) return;
     const onSuccess = () => {
-      setDeleteConfirmTarget(null);
+      setIsDeleteDialogOpen(false);
       setDetailTarget(null);
     };
     if (deleteConfirmTarget.type === 'SESSION') {
@@ -163,84 +152,35 @@ function ScheduleManagementContent() {
 
   return (
     <>
-      {/* Mobile view — 화면 높이에 고정하고 일정 목록만 내부에서 스크롤한다 */}
-      <div className="tablet:hidden h-full overflow-hidden bg-neutral-300">
-        {isMobileDetailOpen && detailTarget ? (
-          <AdminScheduleMobileDetailView
-            key={detailTarget.id}
-            schedule={detailTarget}
-            onBack={() => setDetailTarget(null)}
-            onEdit={handleDetailEdit}
-            onDelete={handleDetailDelete}
-          />
-        ) : isMonthPickerOpen ? (
-          <div className="scrollbar-none bg-background h-full overflow-y-auto overscroll-contain">
-            <AdminScheduleMonthPickerView
-              year={pickerYear}
-              selectedMonth={pickerYear === year ? month : 0}
-              onYearChange={setPickerYear}
-              onMonthSelect={(m) => {
-                goToYearMonth(pickerYear, m);
-                setSelectedDate(null);
-                setIsMonthPickerOpen(false);
-              }}
-              onGoToToday={() => {
-                handleGoToToday();
-                setIsMonthPickerOpen(false);
-              }}
-              onBack={() => setIsMonthPickerOpen(false)}
-            />
-          </div>
-        ) : (
-          <AdminMobileScheduleView
-            year={year}
-            month={month}
-            selectedDate={selectedDate}
-            calendarSchedules={allCalendarSchedules}
-            selectedDateSchedules={selectedDateSchedules}
-            cardinals={cardinals}
-            activeCardinal={activeCardinal}
-            onPrevMonth={handlePrevMonth}
-            onNextMonth={handleNextMonth}
-            onGoToToday={handleGoToToday}
-            onOpenMonthPicker={() => {
-              setPickerYear(year);
-              setIsMonthPickerOpen(true);
-            }}
-            onDateClick={handleToggleDate}
-            onCardinalSelect={setSelectedCardinalId}
-            onCardinalSelectAll={() => setSelectedCardinalId(null)}
-            onSearchClick={() => setIsMobileSearchOpen(true)}
-            onScheduleClick={handleScheduleClick}
-            isPending={isPending}
-            isError={isError}
-          />
-        )}
-
-        {!isMonthPickerOpen && !isMobileDetailOpen && (
-          <AdminScheduleBottomBar
-            overviewHref={`/${clubId}/admin/schedule/overview?year=${year}&month=${month}`}
-            onCreateClick={() => setIsCreateSheetOpen(true)}
-          />
-        )}
-
-        <AdminScheduleCreateSheet
-          open={isCreateSheetOpen}
-          onOpenChange={setIsCreateSheetOpen}
-          onSelect={openCreateModal}
-        />
-
-        {isMobileSearchOpen && (
-          <AdminScheduleMobileSearch
-            schedules={allCalendarSchedules}
-            onClose={() => setIsMobileSearchOpen(false)}
-            onScheduleClick={(schedule) => {
-              setIsMobileSearchOpen(false);
-              handleScheduleClick(schedule);
-            }}
-          />
-        )}
-      </div>
+      <AdminScheduleMobileScreen
+        year={year}
+        month={month}
+        selectedDate={selectedDate}
+        activeDateStr={activeDateStr}
+        schedules={allCalendarSchedules}
+        selectedDateSchedules={selectedDateSchedules}
+        cardinals={cardinals}
+        activeCardinal={activeCardinal}
+        isPending={isPending}
+        isError={isError}
+        detailTarget={isMobileDetailOpen ? detailTarget : null}
+        overviewHref={`/${clubId}/admin/schedule/overview?year=${year}&month=${month}`}
+        onPrevMonth={handlePrevMonth}
+        onNextMonth={handleNextMonth}
+        onGoToToday={handleGoToToday}
+        onSelectYearMonth={(nextYear, nextMonth) => {
+          goToYearMonth(nextYear, nextMonth);
+          setSelectedDate(null);
+        }}
+        onDateClick={handleToggleDate}
+        onCardinalSelect={setSelectedCardinalId}
+        onCardinalSelectAll={() => setSelectedCardinalId(null)}
+        onScheduleClick={handleScheduleClick}
+        onCloseDetail={() => setDetailTarget(null)}
+        onEditDetail={handleDetailEdit}
+        onDeleteDetail={handleDetailDelete}
+        onCreate={openCreateModal}
+      />
 
       {/* Desktop view */}
       <AdminPageContainer className="tablet:flex hidden">
@@ -340,10 +280,8 @@ function ScheduleManagementContent() {
       )}
 
       <ScheduleDeleteAlertDialog
-        open={deleteConfirmTarget !== null}
-        onOpenChange={(open) => {
-          if (!open) setDeleteConfirmTarget(null);
-        }}
+        open={isDeleteDialogOpen}
+        onOpenChange={setIsDeleteDialogOpen}
         scheduleType={deleteConfirmTarget?.type}
         // TODO: [백엔드] 출석 진행 중인 세션 삭제를 서버에서도 거부하고 전용 에러 코드를 내려 달라고 요청.
         // 지금은 클라이언트 날짜 추정으로만 막고 있어 우회·오판이 가능하다. 코드가 정해지면 삭제 onError에서
@@ -357,14 +295,6 @@ function ScheduleManagementContent() {
       {forceConfirmDialog}
     </>
   );
-}
-
-function toTodayStr(): string {
-  const d = new Date();
-  const y = d.getFullYear();
-  const m = String(d.getMonth() + 1).padStart(2, '0');
-  const day = String(d.getDate()).padStart(2, '0');
-  return `${y}-${m}-${day}`;
 }
 
 export { ScheduleManagementContent };

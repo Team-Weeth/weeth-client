@@ -1,12 +1,12 @@
 'use client';
 
 import { cn } from '@/lib/cn';
-import { TooltipProvider } from '@/components/ui/Tooltip';
-import { AdminMobileCalendarGrid } from '@/components/admin/schedule/general/AdminMobileCalendarGrid';
+import { SwipeableMonthCalendar } from '@/components/calendar/SwipeableMonthCalendar';
+import { MobileDayScheduleList } from '@/components/calendar/MobileDayScheduleList';
 import { AdminScheduleMobileHeader } from '@/components/admin/schedule/general/AdminScheduleMobileHeader';
-import { UpcomingItem } from '@/components/calendar/CalendarUpcomingPanel';
+import { ADMIN_SCHEDULE_BOTTOM_BAR_OFFSET_CLASS } from '@/components/admin/schedule/general/AdminScheduleBottomBar';
 import { useScrollableList } from '@/hooks/useScrollableList';
-import { formatMobileDateHeader } from '@/utils/shared/date';
+import { toDateInputValue } from '@/utils/shared/date';
 import type { ScheduleDetail } from '@/types/calendar';
 import type { Cardinal } from '@/types/admin/cardinal';
 
@@ -14,6 +14,8 @@ interface AdminMobileScheduleViewProps {
   year: number;
   month: number;
   selectedDate: string | null;
+  /** 목록에 표시할 날짜(YYYY-MM-DD). 선택한 날짜가 없으면 오늘. 부모가 계산해 넘긴다. */
+  activeDateStr: string;
   calendarSchedules: ScheduleDetail[];
   selectedDateSchedules: ScheduleDetail[];
   cardinals: Cardinal[];
@@ -35,6 +37,7 @@ function AdminMobileScheduleView({
   year,
   month,
   selectedDate,
+  activeDateStr,
   calendarSchedules,
   selectedDateSchedules,
   cardinals,
@@ -51,8 +54,7 @@ function AdminMobileScheduleView({
   isPending,
   isError,
 }: AdminMobileScheduleViewProps) {
-  const today = todayStr();
-  const activeDateStr = selectedDate ?? today;
+  const today = toDateInputValue();
   // 오늘이 아닌 날짜를 선택했거나 다른 달을 보고 있으면 [오늘] 버튼을 노출한다.
   const isViewingToday =
     activeDateStr === today && today.startsWith(`${year}-${String(month).padStart(2, '0')}`);
@@ -84,7 +86,7 @@ function AdminMobileScheduleView({
         </div>
       ) : (
         <>
-          <AdminMobileCalendarGrid
+          <SwipeableMonthCalendar
             year={year}
             month={month}
             selectedDate={selectedDate}
@@ -96,60 +98,24 @@ function AdminMobileScheduleView({
 
           <div className="bg-button-neutral h-px w-full shrink-0" />
 
-          <div className="flex min-h-0 flex-1 flex-col">
-            {/* Date header — 고정 */}
-            <div
-              className={cn(
-                'relative z-10 -mx-450 flex shrink-0 items-center gap-200 px-450 py-300',
-                hasScrolled && 'shadow-date-header [clip-path:inset(0_0_-28px_0)]',
-              )}
-            >
-              <span className="typo-sub1 text-text-normal">
-                {formatMobileDateHeader(activeDateStr)}
-              </span>
-              <span className="typo-caption2 text-text-alternative">
-                일정 {selectedDateSchedules.length}개
-              </span>
-            </div>
-
-            {/* Schedule list — 이 영역만 스크롤. 하단 고정 바(AdminScheduleBottomBar)만큼 여백을 둔다 */}
-            <TooltipProvider>
-              <div
-                ref={listRef}
-                onScroll={onScroll}
-                className="scrollbar-none flex min-h-0 flex-1 flex-col gap-300 overflow-y-auto overscroll-contain pb-[120px]"
-              >
-                {selectedDateSchedules.length === 0 ? (
-                  <div className="flex w-full flex-col items-center justify-center pt-800 pb-700">
-                    <p className="typo-body2 text-text-alternative text-center">
-                      등록된 일정이 없어요
-                    </p>
-                  </div>
-                ) : (
-                  selectedDateSchedules.map((schedule) => (
-                    <UpcomingItem
-                      key={schedule.id}
-                      schedule={schedule}
-                      showDateColumn={false}
-                      onScheduleClick={onScheduleClick}
-                    />
-                  ))
-                )}
-              </div>
-            </TooltipProvider>
-          </div>
+          {/* 날짜 헤더는 고정, 목록만 스크롤. 하단 고정 바(AdminScheduleBottomBar)만큼 여백을 둔다 */}
+          <MobileDayScheduleList
+            dateStr={activeDateStr}
+            schedules={selectedDateSchedules}
+            hasScrolled={hasScrolled}
+            listRef={listRef}
+            onScroll={onScroll}
+            onScheduleClick={onScheduleClick}
+            className="min-h-0 flex-1"
+            listClassName={cn(
+              'min-h-0 flex-1 overscroll-contain',
+              ADMIN_SCHEDULE_BOTTOM_BAR_OFFSET_CLASS,
+            )}
+          />
         </>
       )}
     </div>
   );
-}
-
-function todayStr(): string {
-  const d = new Date();
-  const y = d.getFullYear();
-  const m = String(d.getMonth() + 1).padStart(2, '0');
-  const day = String(d.getDate()).padStart(2, '0');
-  return `${y}-${m}-${day}`;
 }
 
 export { AdminMobileScheduleView, type AdminMobileScheduleViewProps };

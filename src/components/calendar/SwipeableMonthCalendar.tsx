@@ -6,7 +6,7 @@ import { MonthGrid } from '@/components/calendar/MonthGrid';
 import { useSwipeNavigation } from '@/hooks/useSwipeNavigation';
 import type { ScheduleDetail } from '@/types/calendar';
 
-interface AdminMobileCalendarGridProps {
+interface SwipeableMonthCalendarProps {
   year: number;
   month: number;
   selectedDate: string | null;
@@ -17,7 +17,11 @@ interface AdminMobileCalendarGridProps {
   className?: string;
 }
 
-function AdminMobileCalendarGrid({
+/**
+ * 좌우 스와이프로 월을 넘기는 모바일 월 캘린더. 상태는 갖지 않고 props로만 동작한다.
+ * 사용자 캘린더(CalendarMobileGrid)와 어드민 일정 관리(AdminMobileScheduleView)가 함께 쓴다.
+ */
+function SwipeableMonthCalendar({
   year,
   month,
   selectedDate,
@@ -26,7 +30,7 @@ function AdminMobileCalendarGrid({
   onPrevMonth,
   onNextMonth,
   className,
-}: AdminMobileCalendarGridProps) {
+}: SwipeableMonthCalendarProps) {
   const prevMonthData = month === 1 ? { year: year - 1, month: 12 } : { year, month: month - 1 };
   const nextMonthData = month === 12 ? { year: year + 1, month: 1 } : { year, month: month + 1 };
 
@@ -52,6 +56,7 @@ function AdminMobileCalendarGrid({
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
     >
+      {/* Weekday header row — static, not part of the sliding strip */}
       <div className="grid grid-cols-7 pb-100">
         {DAY_META.map((d, i) => (
           <div
@@ -63,6 +68,12 @@ function AdminMobileCalendarGrid({
         ))}
       </div>
 
+      {/*
+        3-panel sliding strip.
+        Strip is 300% wide; each panel is w-1/3 = 1× container width.
+        translateX(-33.333%) centers the middle (current) panel.
+        dragX shifts by pixels to reveal prev / next during a swipe.
+      */}
       <div
         className="flex w-[300%]"
         style={{
@@ -87,4 +98,4 @@ function AdminMobileCalendarGrid({
   );
 }
 
-export { AdminMobileCalendarGrid, type AdminMobileCalendarGridProps };
+export { SwipeableMonthCalendar, type SwipeableMonthCalendarProps };
