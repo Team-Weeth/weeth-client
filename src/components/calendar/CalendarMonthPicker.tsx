@@ -78,7 +78,7 @@ function CalendarMonthPicker({
               aria-pressed={isSelected}
               onClick={() => onMonthSelect(month)}
               className={cn(
-                'typo-sub3 h-20 w-full rounded-md border p-0',
+                'typo-sub1 h-20 w-full rounded-md border p-0',
                 isSelected
                   ? 'border-container-primary'
                   : 'border-line bg-container-neutral text-text-alternative',
@@ -91,7 +91,7 @@ function CalendarMonthPicker({
       </div>
 
       {/* Go to today CTA */}
-      <Button variant="primary" size="lg" onClick={onGoToToday} className="w-full">
+      <Button variant="primary" size="lg" onClick={onGoToToday} className="typo-sub1 w-full">
         오늘 날짜로 이동
       </Button>
 
