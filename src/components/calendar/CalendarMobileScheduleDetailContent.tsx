@@ -22,12 +22,18 @@ interface CalendarMobileScheduleDetailContentProps {
   schedule: ScheduleDetail;
   clubId?: string | null;
   onViewAttendees: () => void;
+  /**
+   * 장소·주최자·설명 값의 타이포. 기본값은 typo-body2.
+   * 어드민 영역([data-admin])에서는 typo-body2가 13px로 줄어들어, default Body2가 필요하면 지정한다.
+   */
+  valueTypography?: string;
 }
 
 function CalendarMobileScheduleDetailContent({
   schedule,
   clubId,
   onViewAttendees,
+  valueTypography = 'typo-body2',
 }: CalendarMobileScheduleDetailContentProps) {
   const {
     resolvedClubId,
@@ -45,7 +51,7 @@ function CalendarMobileScheduleDetailContent({
     <div className="flex flex-col px-450 pb-700">
       {/* Header */}
       <div className="border-line flex flex-col gap-300 border-b pt-200 pb-400">
-        <div className="flex flex-col gap-200">
+        <div className="flex flex-col gap-300">
           <Tag variant={tagVariant}>{typeLabel}</Tag>
           <h2 className="typo-h3 text-text-strong">{schedule.title}</h2>
         </div>
@@ -83,7 +89,7 @@ function CalendarMobileScheduleDetailContent({
               <span className={LABEL_CLASS}>장소</span>
               <div className="flex items-center gap-200">
                 <Icon src={LocationIcon} size={18} className="text-icon-alternative" />
-                <span className="typo-body2 text-text-normal">{schedule.location}</span>
+                <span className={cn(valueTypography, 'text-text-normal')}>{schedule.location}</span>
               </div>
             </div>
           )}
@@ -97,7 +103,9 @@ function CalendarMobileScheduleDetailContent({
                   ) : null}
                   <AvatarFallback variant="person" />
                 </Avatar>
-                <span className="typo-body2 text-text-normal">{schedule.host.name}</span>
+                <span className={cn(valueTypography, 'text-text-normal')}>
+                  {schedule.host.name}
+                </span>
               </div>
             </div>
           )}
@@ -125,8 +133,8 @@ function CalendarMobileScheduleDetailContent({
           )}
           {schedule.description && (
             <div className="flex items-start gap-300">
-              <span className={cn(LABEL_CLASS, 'pt-[2px]')}>설명</span>
-              <span className="typo-body2 text-text-normal flex-1 whitespace-pre-wrap">
+              <span className={LABEL_CLASS}>설명</span>
+              <span className={cn(valueTypography, 'text-text-normal flex-1 whitespace-pre-wrap')}>
                 {schedule.description}
               </span>
             </div>
