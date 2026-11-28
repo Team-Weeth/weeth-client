@@ -155,7 +155,7 @@ describe('EditSessionModalContent', () => {
     await user.click(screen.getByRole('button', { name: '메뉴' }));
     await user.click(screen.getByText('세션 삭제'));
 
-    expect(screen.getByText('이 세션을 삭제하시겠어요?')).toBeInTheDocument();
+    expect(screen.getByText('해당 세션을 삭제하시겠어요?')).toBeInTheDocument();
   });
 
   it('비반복 단일 세션 삭제 확인 시 THIS_ONLY로 삭제한다', async () => {
