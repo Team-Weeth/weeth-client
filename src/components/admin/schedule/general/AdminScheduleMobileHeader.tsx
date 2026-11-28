@@ -14,6 +14,7 @@ interface AdminScheduleMobileHeaderProps {
   onPrevMonth: () => void;
   onNextMonth: () => void;
   onGoToToday: () => void;
+  onOpenMonthPicker: () => void;
   /** 오늘이 아닌 날짜를 보고 있을 때만 [오늘] 버튼을 노출한다. */
   showTodayButton: boolean;
   cardinals: Cardinal[];
@@ -29,6 +30,7 @@ function AdminScheduleMobileHeader({
   onPrevMonth,
   onNextMonth,
   onGoToToday,
+  onOpenMonthPicker,
   showTodayButton,
   cardinals,
   activeCardinal,
@@ -80,6 +82,7 @@ function AdminScheduleMobileHeader({
             month={month}
             onPrev={onPrevMonth}
             onNext={onNextMonth}
+            onLabelClick={onOpenMonthPicker}
             className="justify-start"
           />
           {showTodayButton && (

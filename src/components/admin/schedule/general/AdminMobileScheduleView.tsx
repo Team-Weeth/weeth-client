@@ -21,6 +21,7 @@ interface AdminMobileScheduleViewProps {
   onPrevMonth: () => void;
   onNextMonth: () => void;
   onGoToToday: () => void;
+  onOpenMonthPicker: () => void;
   onDateClick: (dateStr: string) => void;
   onCardinalSelect: (id: number) => void;
   onCardinalSelectAll: () => void;
@@ -41,6 +42,7 @@ function AdminMobileScheduleView({
   onPrevMonth,
   onNextMonth,
   onGoToToday,
+  onOpenMonthPicker,
   onDateClick,
   onCardinalSelect,
   onCardinalSelectAll,
@@ -65,6 +67,7 @@ function AdminMobileScheduleView({
         onPrevMonth={onPrevMonth}
         onNextMonth={onNextMonth}
         onGoToToday={onGoToToday}
+        onOpenMonthPicker={onOpenMonthPicker}
         showTodayButton={!isViewingToday}
         cardinals={cardinals}
         activeCardinal={activeCardinal}

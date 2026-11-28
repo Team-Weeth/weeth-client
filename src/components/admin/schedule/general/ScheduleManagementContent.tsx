@@ -11,6 +11,7 @@ import { ScheduleCalendarSection } from '@/components/admin/schedule/general/Sch
 import { AdminMobileScheduleView } from '@/components/admin/schedule/general/AdminMobileScheduleView';
 import { AdminScheduleBottomBar } from '@/components/admin/schedule/general/AdminScheduleBottomBar';
 import { AdminScheduleCreateSheet } from '@/components/admin/schedule/general/AdminScheduleCreateSheet';
+import { AdminScheduleMonthPickerView } from '@/components/admin/schedule/general/AdminScheduleMonthPickerView';
 import { AdminScheduleMobileSearch } from '@/components/admin/schedule/general/AdminScheduleMobileSearch';
 import { CreateScheduleModal } from '@/components/admin/schedule/modal/CreateScheduleModal';
 import { EditScheduleModal } from '@/components/admin/schedule/modal/EditScheduleModal';
@@ -33,7 +34,7 @@ function ScheduleManagementContent() {
   const clubId = useClubId();
   const { cardinals, selectedCardinalId, setSelectedCardinalId, activeCardinal, latestCardinal } =
     useCardinalSelector();
-  const { year, month, prev, next, goToToday } = useMonthNavigator();
+  const { year, month, prev, next, goToToday, goToYearMonth } = useMonthNavigator();
 
   const [searchValue, setSearchValue] = useState('');
   const [activeFilter, setActiveFilter] = useState<ScheduleFilter>('all');
@@ -45,6 +46,9 @@ function ScheduleManagementContent() {
   const [deleteConfirmTarget, setDeleteConfirmTarget] = useState<Schedule | null>(null);
   const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
   const [isCreateSheetOpen, setIsCreateSheetOpen] = useState(false);
+  const [isMonthPickerOpen, setIsMonthPickerOpen] = useState(false);
+  // 월 이동 화면에서 연도만 넘겨볼 때는 캘린더를 바꾸지 않고, 월을 고른 시점에 반영한다.
+  const [pickerYear, setPickerYear] = useState(year);
 
   const {
     data: schedules = [],
@@ -156,30 +160,56 @@ function ScheduleManagementContent() {
     <>
       {/* Mobile view — 화면 높이에 고정하고 일정 목록만 내부에서 스크롤한다 */}
       <div className="tablet:hidden h-full overflow-hidden bg-neutral-300">
-        <AdminMobileScheduleView
-          year={year}
-          month={month}
-          selectedDate={selectedDate}
-          calendarSchedules={allCalendarSchedules}
-          selectedDateSchedules={selectedDateSchedules}
-          cardinals={cardinals}
-          activeCardinal={activeCardinal}
-          onPrevMonth={handlePrevMonth}
-          onNextMonth={handleNextMonth}
-          onGoToToday={handleGoToToday}
-          onDateClick={handleToggleDate}
-          onCardinalSelect={setSelectedCardinalId}
-          onCardinalSelectAll={() => setSelectedCardinalId(null)}
-          onSearchClick={() => setIsMobileSearchOpen(true)}
-          onScheduleClick={handleScheduleClick}
-          isPending={isPending}
-          isError={isError}
-        />
+        {isMonthPickerOpen ? (
+          <div className="scrollbar-none bg-background h-full overflow-y-auto overscroll-contain">
+            <AdminScheduleMonthPickerView
+              year={pickerYear}
+              selectedMonth={pickerYear === year ? month : 0}
+              onYearChange={setPickerYear}
+              onMonthSelect={(m) => {
+                goToYearMonth(pickerYear, m);
+                setSelectedDate(null);
+                setIsMonthPickerOpen(false);
+              }}
+              onGoToToday={() => {
+                handleGoToToday();
+                setIsMonthPickerOpen(false);
+              }}
+              onBack={() => setIsMonthPickerOpen(false)}
+            />
+          </div>
+        ) : (
+          <AdminMobileScheduleView
+            year={year}
+            month={month}
+            selectedDate={selectedDate}
+            calendarSchedules={allCalendarSchedules}
+            selectedDateSchedules={selectedDateSchedules}
+            cardinals={cardinals}
+            activeCardinal={activeCardinal}
+            onPrevMonth={handlePrevMonth}
+            onNextMonth={handleNextMonth}
+            onGoToToday={handleGoToToday}
+            onOpenMonthPicker={() => {
+              setPickerYear(year);
+              setIsMonthPickerOpen(true);
+            }}
+            onDateClick={handleToggleDate}
+            onCardinalSelect={setSelectedCardinalId}
+            onCardinalSelectAll={() => setSelectedCardinalId(null)}
+            onSearchClick={() => setIsMobileSearchOpen(true)}
+            onScheduleClick={handleScheduleClick}
+            isPending={isPending}
+            isError={isError}
+          />
+        )}
 
-        <AdminScheduleBottomBar
-          overviewHref={`/${clubId}/admin/schedule/overview?year=${year}&month=${month}`}
-          onCreateClick={() => setIsCreateSheetOpen(true)}
-        />
+        {!isMonthPickerOpen && (
+          <AdminScheduleBottomBar
+            overviewHref={`/${clubId}/admin/schedule/overview?year=${year}&month=${month}`}
+            onCreateClick={() => setIsCreateSheetOpen(true)}
+          />
+        )}
 
         <AdminScheduleCreateSheet
           open={isCreateSheetOpen}
