@@ -45,12 +45,14 @@ Flagsmith `% Split` 세그먼트를 `user:{userId}` identity로 조회하여 유
   - 해시 기반이라 소규모 동아리에서는 한쪽으로 쏠릴 수 있다 (예: 16명 동아리 5:11).
   - 핵심 지표인 피드백 제출자 비율을 **전체 유저 기준**으로 비교하므로 감수한다. 동아리별 비교는 참고용으로만 본다.
   - 동아리→유저 단위 전환 시 기존 유저 절반 정도는 보던 화면이 바뀐다. 실험 데이터는 prod 전환일부터 따로 집계해야 한다.
+  - `getClubFeatures(clubId, userId)`에 `userId`가 필요해지면서, `getDashboard` 완료 후에야 플래그를 조회할 수 있다 (직렬 워터폴). `getDashboard`는 ISR 캐시(`revalidate: 300`)이므로 캐시 히트 시 영향이 거의 없으나, 콜드 스타트(최초 요청 · 캐시 만료 직후)에서는 `getDashboard` 응답 시간만큼 TTFB가 늘어난다. 병렬 조회를 복구하려면 `getClubFeatures` 내부에서 club 플래그 fetch와 `getDashboard`를 동시에 시작하는 구조로 리팩터링해야 한다.
 
 ## 영향
 
 - `src/flags/club-features/definitions.ts`: `feedbackFabEnabled` 키 변경 + `USER_SCOPED_FLAGS` 추가
 - `src/flags/club-features/server.ts`: `getClubFeatures(clubId, userId?)` 시그니처 확장, 유저/동아리 identity 분리 조회
 - `src/app/(private)/[clubId]/(main)/layout.tsx`: 대시보드 응답의 `userInfo.id`를 `getClubFeatures`에 전달
+- `src/app/(private)/[clubId]/(main)/event/page.tsx`, `admin/layout.tsx`, `admin/member/page.tsx`, `admin/penalty/page.tsx`, `admin/schedule/page.tsx`, `admin/schedule/overview/page.tsx`: `getClubFeatures` 호출에 `userId` 추가 (캐시 키 통일)
 - `.claude/rules/feature-flag.md`: 유저 단위 플래그 조회 방식 문서화
 - `src/flags/club-features/__tests__/server.test.ts`: 분리 조회 테스트 추가
 - Flagsmith: 기존 `club_feedback_fab_enabled` 플래그 및 세그먼트 정리 (전환 완료 후)
